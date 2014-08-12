@@ -1,4 +1,6 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal abstract class Node
 	{
@@ -8,5 +10,7 @@
 		}
 
 		public Token FirstToken { get; private set; }
+
+		public abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
 	}
 }

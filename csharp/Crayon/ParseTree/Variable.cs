@@ -19,5 +19,10 @@
 			}
 			return this;
 		}
+
+		public override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
+		{
+			lookup[this.Name] = true;
+		}
 	}
 }

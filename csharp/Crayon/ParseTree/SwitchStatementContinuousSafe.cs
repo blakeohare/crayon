@@ -77,5 +77,10 @@ namespace Crayon.ParseTree
 			public SearchTree Left { get; set; }
 			public SearchTree Right { get; set; }
 		}
+
+		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		{
+			this.OriginalSwitchStatement.GetAllVariableNames(lookup);
+		}
 	}
 }

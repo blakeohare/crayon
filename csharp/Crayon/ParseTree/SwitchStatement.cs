@@ -185,5 +185,16 @@ namespace Crayon.ParseTree
 			int expectedTotal = max - min + 1;
 			return expectedTotal == integersUsed.Count;
 		}
+
+		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		{
+			foreach (Chunk chunk in this.chunks)
+			{
+				foreach (Executable line in chunk.Code)
+				{
+					line.GetAllVariableNames(lookup);
+				}
+			}
+		}
 	}
 }

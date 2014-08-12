@@ -46,5 +46,10 @@ namespace Crayon.ParseTree
 
 			return Listify(this);
 		}
+
+		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		{
+			this.Target.GetAllVariableNames(lookup);
+		}
 	}
 }

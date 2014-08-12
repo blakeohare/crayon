@@ -40,5 +40,20 @@ namespace Crayon.ParseTree
 
 			return Listify(this);
 		}
+
+		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		{
+			foreach (Executable line in this.Code)
+			{
+				line.GetAllVariableNames(lookup);
+			}
+		}
+
+		public IList<string> GetVariableDeclarationList()
+		{
+			Dictionary<string, bool> variableNamesDict = new Dictionary<string, bool>();
+			this.GetAllVariableNames(variableNamesDict);
+			return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
+		}
 	}
 }

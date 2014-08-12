@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Crayon.ParseTree;
+using System.Linq;
 
 namespace Crayon.Translator.JavaScript
 {
@@ -423,6 +424,13 @@ namespace Crayon.Translator.JavaScript
 			}
 			output.Add(") {\r\n");
 			this.CurrentIndention++;
+
+			foreach (string varName in functionDef.GetVariableDeclarationList())
+			{
+				output.Add(this.CurrentTabIndention);
+				output.Add("var v_" + varName + " = null;\r\n");
+			}
+
 			Translate(output, functionDef.Code);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);

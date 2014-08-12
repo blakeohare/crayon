@@ -58,5 +58,9 @@ namespace Crayon.ParseTree
 		{
 			return new Executable[] { ex };
 		}
+
+		// To be overridden if necessary.
+		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		{ }
 	}
 }
