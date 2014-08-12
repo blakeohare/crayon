@@ -1,0 +1,1078 @@
+﻿enum OpCodes
+{
+	ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
+	ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
+	ASSIGN_INDEX, // no args. value stack: [root, index, value]
+	ASSIGN_STEP,
+	ASSIGN_VAR, // 1: variable name ID
+	BINARY_OP,
+	BREAK, // no ops. This should be resolved into a jump before actually being run.
+	CALL_FUNCTION, // 1: num args passed
+	CALL_FRAMEWORK_FUNCTION, // 1: function ID (not identifier ID). Since these are defined by the framework, function count is verified at compile time and popped accordingly at runtime by the op itself.
+	CALL_FUNCTION_ON_VARIABLE, // 1: function ID, 2: num args passed
+	CONTINUE, // no ops. This should be resolved into a jump before actually being run.
+	DEF_ORIGINAL_CODE,
+	DEF_LIST, // 1: size
+	DEF_DICTIONARY,
+	DEREF_DOT, // 1: step ID
+	DUPLICATE_STACK_TOP, // no args. get the top of the stack, and push it again.
+	FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
+	INDEX,
+	INDEX_INT,
+	INDEX_STRING,
+	JUMP,
+	JUMP_IF_FALSE,
+	JUMP_IF_FALSE_NO_POP,
+	JUMP_IF_TRUE,
+	JUMP_IF_TRUE_NO_POP,
+	LITERAL, // populates the special cache with the entry this refers to. 1: type ID, 2: value ID (value for int, 1/0 for bool, ignored for null, lookup table ID for float/string)
+	LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
+	NEGATIVE_SIGN, // no args. pop, flip, push.
+	POP, // no args. pop value from value stack.
+	RETURN,
+	RETURN_NULL,
+	STEP,
+	STREAM_LITERALS, // 2n: See detailed comment in the STREAM_LITLERALS implementation in interpreter.cry
+	STREAM_VARIABLES, // n: push all these variable values to the stack. 
+	VARIABLE, // 1: id
+	VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
+}
+
+// Needs to be in sync with BinaryOps.cs
+// TODO: sync dynamically
+enum BinaryOps
+{
+	ADDITION = 0,
+	SUBTRACTION = 1,
+	MULTIPLICATION = 2,
+	DIVISION = 3,
+	MODULO = 4,
+	EXPONENT = 5,
+	BITWISE_AND = 6,
+	BITWISE_OR = 7,
+	BITWISE_XOR = 8,
+	BIT_SHIFT_LEFT = 9,
+	BIT_SHIFT_RIGHT = 10,
+	EQUALS = 12,
+	NOT_EQUALS = 13,
+	LESS_THAN = 14,
+	LESS_THAN_OR_EQUAL = 15,
+	GREATER_THAN = 16,
+	GREATER_THAN_OR_EQUAL = 17,
+}
+
+const MAX_OP = BinaryOps.GREATER_THAN_OR_EQUAL + 1;
+
+enum Types {
+	NULL = %%%TYPE_ID_NULL%%%,
+	BOOLEAN = %%%TYPE_ID_BOOLEAN%%%,
+	INTEGER = %%%TYPE_ID_INTEGER%%%,
+	FLOAT = %%%TYPE_ID_FLOAT%%%,
+	STRING = %%%TYPE_ID_STRING%%%,
+	LIST = %%%TYPE_ID_LIST%%%,
+	DICTIONARY = %%%TYPE_ID_DICTIONARY%%%,
+	INSTANCE = %%%TYPE_ID_INSTANCE%%%,
+	FUNCTION = %%%TYPE_ID_FUNCTION%%%,
+	SYS_FUNCTION = %%%TYPE_ID_SYS_FUNCTION%%%,
+	METHOD = %%%TYPE_ID_METHOD%%%,
+	SYS_METHOD = %%%TYPE_ID_SYS_METHOD%%%,
+	NATIVE_OBJECT = %%%TYPE_ID_NATIVE_OBJECT%%%,
+}
+
+function getTypeFromId(id) {
+	switch (id) {
+		case Types.NULL: return "null";
+		case Types.BOOLEAN: return "boolean";
+		case Types.INTEGER: return "integer";
+		case Types.FLOAT: return "float";
+		case Types.STRING: return "string";
+		case Types.LIST: return "list";
+		case Types.DICTIONARY: return "dictionary";
+		case Types.INSTANCE: return "instance"; // TODO: make this more specific
+		case Types.FUNCTION: return "function";
+		case Types.SYS_FUNCTION: return "system function";
+		case Types.METHOD: return "method";
+		case Types.SYS_METHOD: return "system method";
+		case Types.NATIVE_OBJECT: return "native object"; // TODO: make this more specific
+	}
+}
+
+function getBinaryOpFromId(id) {
+	switch (id) {
+		case BinaryOps.ADDITION: return '+';
+		case BinaryOps.SUBTRACTION: return '-';
+		case BinaryOps.MULTIPLICATION: return '*';
+		case BinaryOps.DIVISION: return '/';
+		case BinaryOps.MODULO: return '%';
+		case BinaryOps.EXPONENT: return '**';
+		case BinaryOps.BITWISE_AND: return '&';
+		case BinaryOps.BITWISE_OR: return '|';
+		case BinaryOps.BITWISE_XOR: return '^';
+		case BinaryOps.BIT_SHIFT_LEFT: return '<<';
+		case BinaryOps.BIT_SHIFT_RIGHT: return '>>';
+		case BinaryOps.EQUALS: return '==';
+		case BinaryOps.NOT_EQUALS: return '!=';
+		case BinaryOps.LESS_THAN: return '<';
+		case BinaryOps.LESS_THAN_OR_EQUAL: return '<=';
+		case BinaryOps.GREATER_THAN: return '>';
+		case BinaryOps.GREATER_THAN_OR_EQUAL: return '>=';
+		default: return "unknown";
+	}
+}
+
+enum NativeObjectTypes {
+	SCREEN = 1,
+}
+
+const MAX_TYPE = Types.NATIVE_OBJECT + 1;
+
+struct StackFrame {
+	pc,
+	locals,
+	valueStack,
+	args,
+	previous,
+	returnValueUsed
+}
+
+struct Code {
+	ops,
+	args
+}
+
+struct Token {
+	lineIndex,
+	colIndex,
+	fileId
+}
+
+struct Value {
+	type,
+	internalValue,
+	methods // TODO: do the thing you did for Scripty where you don't cache these
+}
+
+specialCache = [];
+
+function buildLiteral(type, value, floatTable, stringTable) {
+	if (type == Types.NULL) return VALUE_NULL;
+	if (type == Types.INTEGER) return build_integer(value);
+	if (type == Types.FLOAT) return $_list_get(floatTable, value);
+	if (type == Types.STRING) return $_list_get(stringTable, value);
+	if (type == Types.BOOLEAN && value == 1) return VALUE_TRUE;
+	if (type == Types.BOOLEAN && value == 0) return VALUE_FALSE;
+	return null;
+}
+
+function main() {
+
+	stack = new StackFrame(
+		0, // pc
+		{}, // locals
+		[], // valueStack
+		[], // args
+		null, // previous
+		false); // returnValueUsed
+	
+	byteCode = loadByteCode();
+	identifiers = rawIdentifiers();
+	stringTable = rawStrings();
+	floatTable = rawFloats();
+	inv_identifiers = {};
+	for (i = 0; i < $_list_length(identifiers); i += 1) {
+		// sequential dictionary adds create slow lookups in some implementations of javascript.
+		// This is okay, since this isn't called very often.
+		$_dictionary_set(inv_identifiers, identifiers[i], i);
+	}
+	ops = Code$byteCode.ops;
+	opArgs = Code$byteCode.args;
+
+	for (i = 0; i < $_list_length(ops); i += 1) {
+		op = $_list_get(ops, i);
+		args = $_list_get(opArgs, i);
+		
+		if (op == OpCodes.LITERAL) {
+			value = buildLiteral($_list_get(args, 0), $_list_get(args, 1), floatTable, stringTable);
+		} else if (op == OpCodes.LITERAL_STREAM) {
+			value = [];
+			for (j = 0; j < $_list_length(args); j += 2) {
+				typeId = $_list_get(args, j);
+				valueId = $_list_get(args, j + 1);
+				$_list_push(value, buildLiteral(typeId, valueId, floatTable, stringTable));
+			}
+			$_list_reverse(value);
+		} else if (op == OpCodes.VARIABLE_STREAM) {
+			value = [];
+			toggled = false;
+			for (j = 0; j < $_list_length(args); j += 1) {
+				id = $_list_get(args, j);
+				if (toggled) {
+					item = [];
+					$_list_push(item, $_list_get(args, j));
+					j += 1;
+					$_list_push(item, $_list_get(args, j));
+					j += 1;
+					$_list_push(item, $_list_get(args, j));
+					$_list_push(value, item);
+				} else if (id == -1) {
+					toggled = true;
+				}
+			}
+		} else {
+			value = null;
+		}
+		
+		$_list_push(specialCache, value);
+	}
+
+	error = interpret(stack, ops, opArgs, identifiers, inv_identifiers, stringTable, floatTable, specialCache);
+	if (error == null) {
+		// enqueue an asynchrnous call to interpret again.
+		// I may do this as an awkward if statement and then have two framework functions to serialize, each platform having a noop for one of them.
+	} else {
+		// error message and stack trace
+		$_print(error);
+	}
+}
+
+VALUE_NULL = new Value(Types.NULL, null);
+
+const INTEGER_POSITIVE_CACHE = 1000;
+const INTEGER_NEGATIVE_CACHE = 100;
+INTEGERS_POS = [];
+INTEGERS_NEG = [];
+for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
+	$_list_push(INTEGERS_POS, new Value(Types.INTEGER, i));
+}
+NEG_INTEGERS = [];
+for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
+	$_list_push(INTEGERS_NEG, new Value(Types.INTEGER, -i));
+}
+VALUE_TRUE = new Value(Types.BOOLEAN, true);
+VALUE_FALSE = new Value(Types.BOOLEAN, false);
+VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+
+function build_integer(value) {
+	if (value < 0) {
+		if (value > -INTEGER_NEGATIVE_CACHE) {
+			return INTEGERS_NEG[-value];
+		}
+	} else {
+		if (value < INTEGER_POSITIVE_CACHE) {
+			return INTEGERS_POS[value];
+		}
+	}
+	return new Value(Types.INTEGER, value);
+}
+
+PRIMITIVE_METHODS = {
+	// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
+	Types.STRING + "lower": %%%PRIMITIVE_METHOD_STRING_LOWER%%%,
+	Types.STRING + "reverse": %%%PRIMITIVE_METHOD_STRING_REPLACE%%%,
+	Types.STRING + "split": %%%PRIMITIVE_METHOD_STRING_SPLIT%%%,
+	Types.STRING + "trim": %%%PRIMITIVE_METHOD_STRING_TRIM%%%,
+	Types.STRING + "upper": %%%PRIMITIVE_METHOD_STRING_UPPER%%%,
+
+	Types.LIST + "add": %%%PRIMITIVE_METHOD_LIST_ADD%%%,
+	Types.LIST + "clear": %%%PRIMITIVE_METHOD_LIST_CLEAR%%%,
+	Types.LIST + "contains": %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%,
+	Types.LIST + "insert": %%%PRIMITIVE_METHOD_LIST_INSERT%%%,
+	Types.LIST + "pop": %%%PRIMITIVE_METHOD_LIST_POP%%%,
+	Types.LIST + "reverse": %%%PRIMITIVE_METHOD_LIST_REVERSE%%%,
+
+	Types.DICTIONARY + "add": %%%PRIMITIVE_METHOD_DICTIONARY_ADD%%%,
+	Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
+	Types.DICTIONARY + "contains": %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%,
+	Types.DICTIONARY + "entries": %%%PRIMITIVE_METHOD_DICTIONARY_ENTRIES%%%,
+	Types.DICTIONARY + "pop": %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%,
+	Types.DICTIONARY + "values": %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%,
+};
+
+function valueToString(value) {
+	type = Value$value.type;
+	value = Value$value.internalValue;
+	if (type == Types.NULL) return "null";
+	if (type == Types.INTEGER || type == Types.FLOAT || type == Types.STRING) return $_string_cast_strong(value);
+	if (type == Types.LIST) {
+		// TODO: this will recurse infinitely if the list points to itself somehow.
+		output = "[";
+		for (i = 0; i < $_list_length(value); i += 1) {
+			if (i > 0) output += ", ";
+			output += valueToString($_list_get(value, i));
+		}
+		output += "]";
+		return output;
+	}
+	return "TODO: toString for " + getTypeFromId(type);
+}
+
+function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, specialCache) {
+	valueStack = StackFrame$stack.valueStack;
+	locals = StackFrame$stack.locals;
+	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
+	while (true) {
+		row = args[StackFrame$stack.pc];
+		switch (ops[StackFrame$stack.pc]) {
+			
+			case OpCodes.ASSIGN_FUNCTION_ARG:
+				$_comment('ASSIGN_FUNCTION_ARG');
+				return killExecution(stack, "TODO: assign function arg");
+
+			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP:
+				$_comment('ASSIGN_FUNCTION_ARG_AND_JUMP');
+				return killExecution(stack, "TODO: assign function arg and jump");
+
+			case OpCodes.ASSIGN_INDEX:
+				$_comment('ASSIGN_INDEX');
+				value = $_list_pop(valueStack);
+				index = $_list_pop(valueStack);
+				root = $_list_pop(valueStack);
+				type = Value$root.type;
+				if (type == Types.LIST) {
+					if (Value$index.type == Types.INTEGER) {
+						index = Value$index.internalValue;
+						list = Value$root.internalValue;
+						if (index < 0) {
+							return killExecution(stack, "Index must be non-negative.");
+						} else if (index >= $_list_length(list)) {
+							return killExecution(stack, "Index is out of range.");
+						} else {
+							$_list_set(list, index, value);
+						}
+					} else {
+						return killExecution(stack, "List index must be an integer.");
+					}
+				} else if (type == Types.DICTIONARY) {
+					return killExecution(stack, "TODO: indexing into a dictionary");
+				} else {
+					return killExecution(stack, getTypeFromId(type) + " type does not support indexing");
+				}
+				break;
+
+			case OpCodes.ASSIGN_STEP:
+				$_comment('ASSIGN_STEP');
+				return killExecution(stack, "TODO: assign step");
+				break;
+
+			case OpCodes.ASSIGN_VAR:
+				$_comment('ASSIGN_VAR');
+				thing = $_list_pop(valueStack);
+				$_dictionary_set(locals, row[0], thing);
+				break;
+
+			case OpCodes.BINARY_OP:
+				$_comment('BINARY_OP');
+				rightObj = $_list_pop(valueStack);
+				leftObj = $_list_pop(valueStack);
+
+				leftType = Value$leftObj.type;
+				if (rightObj == null) {
+					return killExecution(stack, "WAT: " + valueToString(leftObj));
+				}
+				rightType = Value$rightObj.type;
+				
+				left = Value$leftObj.internalValue;
+				right = Value$rightObj.internalValue;
+				
+				// TODO: special switch for when left == right
+				op = $_list_get(row, 0);
+				output = null;
+				if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
+					if (leftType == rightType) {
+						if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
+							if (left == right) { // may have to change if a platform doesn't support == for strings
+								output = VALUE_TRUE;
+							} else {
+								output = VALUE_FALSE;
+							}
+						} 
+					} else {
+						if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+							if (left == right) {
+								output = VALUE_TRUE;
+							} else {
+								output = VALUE_FALSE;
+							}
+						} else {
+							output = VALUE_FALSE;
+						}
+					}
+					
+					if (output != null) {
+						if (op == BinaryOps.NOT_EQUALS) {
+							if (Value$output.internalValue) {
+								output = VALUE_FALSE;
+							} else {
+								output = VALUE_TRUE;
+							}
+						}
+						//$_list_push(valueStack, output);
+					} else {
+						return killExecution(stack, "== and != not defined here yet.");
+					}
+				} else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
+					output = new Value(Types.STRING, valueToString(leftObj) + valueToString(rightObj));
+				} else {
+					switch
+						{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
+						((((Value$leftObj.type * MAX_OP) + op) * MAX_TYPE) + Value$rightObj.type) {
+						
+						// int + int
+						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
+							$_comment('int + int');
+							output = build_integer(left + right); break;
+
+						// float + int
+						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
+							$_comment('float + int');
+							output = new Value(Types.FLOAT, left + right); break;
+
+						// int + float
+						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
+							$_comment('int + float');
+							output = new Value(Types.FLOAT, left + right); break;
+
+						// float + float
+						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
+							$_comment('float + float');
+							output = new Value(Types.FLOAT, left + right); break;
+							
+						// int - int
+						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
+							$_comment('int - int');
+							output = build_integer(left - right); break;
+							
+						// int - float
+						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
+							$_comment('int - float');
+							output = new Value(Types.FLOAT, left - right); break;
+							
+						// float - int
+						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
+							$_comment('float - int');
+							output = new Value(Types.FLOAT, left - right); break;
+							
+						// float - float
+						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
+							$_comment('float - float');
+							output = new Value(Types.FLOAT, left - right); break;
+
+						// int * int
+						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
+							$_comment('int * int');
+							output = build_integer(left * right); break;
+
+						// float * int
+						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
+							$_comment('float * int');
+							output = new Value(Types.FLOAT, left * right); break;
+
+						// int * float
+						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
+							$_comment('int * float');
+							output = new Value(Types.INTEGER, left * right); break;
+
+						// float * float
+						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
+							$_comment('float * float');
+							output = new Value(Types.FLOAT, left * right); break;
+							
+						// int / int
+						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
+							$_comment('int / int');
+							if (right == 0) return killExecution(stack, "Division by 0"); output = build_integer($_unsafe_integer_division(left, right)); break;
+							
+						// int / float
+						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
+							$_comment('int / float');
+							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+
+						// float / int
+						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
+							$_comment('float / int');
+							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+
+						// float / float
+						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
+							$_comment('float / float');
+							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+
+						// int < int
+						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
+							$_comment('int < int');
+							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// int <= int
+						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
+							$_comment('int <= int');
+							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							
+						// float < int
+						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
+							$_comment('float < int');
+							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float <= int
+						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
+							$_comment('float <= int');
+							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							
+						// int < float
+						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
+							$_comment('int < float');
+							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// int <= float
+						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
+							$_comment('int <= float');
+							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float < float
+						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
+							$_comment('float < float');
+							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float <= float
+						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
+							$_comment('float <= float');
+							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// int >= int
+						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
+							$_comment('int >= int');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						//int > int
+						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
+							$_comment('int > int');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float >= int
+						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
+							$_comment('float >= int');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float > int
+						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
+							$_comment('float > int');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// int >= float
+						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
+							$_comment('int >= float');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// int > float
+						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
+							$_comment('int > float');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float >= float
+						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
+							$_comment('float >= float');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						// float > float
+						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
+							$_comment('float > float');
+							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+
+						default:
+							$_comment('unrecognized op');
+							return killExecution(stack, "The '" + getBinaryOpFromId($_list_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftObj.type) + " and " + getTypeFromId(Value$rightObj.type));
+							break;
+					}
+				}
+
+				$_list_push(valueStack, output);
+				break;
+			
+			case OpCodes.CALL_FRAMEWORK_FUNCTION:
+				$_comment('CALL_FRAMEWORK_FUNCTION');
+				// TODO: the types for these values must be verified.
+				output = VALUE_NULL;
+				switch (row[0]) {
+					case %%%FF_CLOCK_TICK%%%:
+						$_insert_platform_code('ff_clock_tick');
+						break;
+					case %%%FF_CURRENT_TIME%%%:
+						$_insert_platform_code('ff_current_time');
+						break;
+					case %%%FF_DRAW_RECTANGLE%%%:
+						alpha = $_list_pop(valueStack);
+						blue = $_list_pop(valueStack);
+						green = $_list_pop(valueStack);
+						red = $_list_pop(valueStack);
+						height = $_list_pop(valueStack);
+						width = $_list_pop(valueStack);
+						y = $_list_pop(valueStack);
+						x = $_list_pop(valueStack);
+						scr = $_list_pop(valueStack);
+						$_insert_platform_code('ff_draw_rectangle');
+						break;
+					case %%%FF_FILL_SCREEN%%%:
+						blue = $_list_pop(valueStack);
+						green = $_list_pop(valueStack);
+						red = $_list_pop(valueStack);
+						scr = $_list_pop(valueStack);
+						$_insert_platform_code('ff_fill_screen');
+						break;
+					case %%%FF_FLOOR%%%:
+						value = $_list_pop(valueStack);
+						$_insert_platform_code('ff_floor');
+						break;
+					case %%%FF_GET_EVENTS%%%:
+						$_insert_platform_code('ff_get_events');
+						break;
+					case %%%FF_INITIALIZE_GAME%%%: 
+						fps = $_list_pop(valueStack);
+						$_insert_platform_code('ff_initialize_game');
+						break;
+					case %%%FF_INITIALIZE_SCREEN%%%:
+						height = $_list_pop(valueStack);
+						width = $_list_pop(valueStack);
+						$_insert_platform_code('ff_initialize_screen');
+						break;
+					case %%%FF_INVALIDATE_DISPLAY%%%: 
+						$_insert_platform_code('ff_invalidate_display'); 
+						break;
+					case %%%FF_PRINT%%%: 
+						$_insert_platform_code('ff_print'); 
+						break;
+					case %%%FF_RANDOM%%%:
+						$_insert_platform_code('ff_random');
+						break;
+					case %%%FF_SET_TITLE%%%:
+						value = $_list_pop(valueStack);
+						value = valueToString(value);
+						$_insert_platform_code('ff_set_title');
+						break;
+					default: 
+						return killExecution(stack, "Invalid framework function: " + $_string_cast_weak(row[0])); 
+						break;
+				}
+				if (row[1] == 1) {
+					$_list_push(valueStack, output);
+				}
+				break;
+
+			case OpCodes.CALL_FUNCTION:
+				$_comment('CALL_FUNCTION');
+				// This is mostly replicated below. Be sure to keep changes in sync.
+				func = $_list_pop(valueStack);
+				funcArgs = [];
+				argCount = $_list_get(row, 0);
+				returnValueUsed = $_list_get(row, 1) == 1;
+				while (argCount > 0) {
+					$_list_push(funcArgs, $_list_pop(valueStack));
+					argCount -= 1;
+				}
+				if ($_list_get(row, 0) > 1) {
+					$_list_reverse(funcArgs);
+				}
+				funcType = Value$func.type;
+				if (funcType == Types.SYS_METHOD) {
+					sysMethod = Value$func.internalValue;
+					context = $_list_get(sysMethod, 0);
+					methodId = $_list_get(sysMethod, 1);
+					error = callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUsed);
+					if (error != null) {
+						return killExecution(stack, error);
+					}
+				} else if (funcType == Types.METHOD) {
+					return killExecution(stack, "TODO: invoke user method");
+				} else if (funcType == Types.SYS_FUNCTION) {
+					return killExecution(stack, "TODO: invoke system function");
+				} else if (funcType == Types.FUNCTION) {
+					valueStack = [];
+					stack = new StackFrame(Value$func.internalValue[0], {}, valueStack, funcArgs, stack, returnValueUsed);
+				} else {
+					return killExecution(stack, "Cannot invoke " + getTypeFromId(funcType) + " like a function.");
+				}
+				break;
+
+			case OpCodes.CALL_FUNCTION_ON_VARIABLE:
+				$_comment('CALL_FUNCTION_ON_VARIABLE');
+				// This is mostly replicated above. Be sure to keep changes in sync.
+				funcArgs = [];
+				argCount = row[1];
+				returnValueUsed = $_list_get(row, 2) == 1;
+				while (argCount > 0) {
+					$_list_push(funcArgs, $_list_pop(valueStack));
+					argCount -= 1;
+				}
+				if ($_list_get(row, 1) > 1) {
+					$_list_reverse(funcArgs);
+				}
+				funcPointer = $_dictionary_get(locals, row[0], null);
+				if (funcPointer != null) {
+					
+					type = Value$funcPointer.type;
+					if (type == Types.FUNCTION) {
+						valueStack = [];
+						stack = new StackFrame(Value$funcPointer.internalValue[0], {}, valueStack, funcArgs, stack, returnValueUsed);
+					} else {
+						return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
+					}
+				} else {
+					return killExecution(stack, "That function is not defined: '" + identifiers[row[0]] + "'");
+				}
+				break;
+
+			case OpCodes.DEF_LIST:
+				$_comment('DEF_LIST');
+				value = [];
+				size = row[0];
+				while (size > 0) {
+					$_list_push(value, $_list_pop(valueStack));
+					size -= 1;
+				}
+				$_list_reverse(value);
+				$_list_push(valueStack, new Value(Types.LIST, value));
+				break;
+
+			case OpCodes.DEF_DICTIONARY:
+				$_comment('DEF_DICTIONARY');
+				return killExecution(stack, "TODO: define dictionary");
+				break;
+				
+			case OpCodes.DEREF_DOT:
+				$_comment('DEREF_DOT');
+				// TODO: no caching of methods occur here because ideally, I want to create another op for dotStepInvoke which eliminates the need to instantiate the method in 99.5% of cases.
+				root = $_list_pop(valueStack);
+				type = Value$root.type;
+				if (type == Types.INSTANCE) {
+					
+				} else if (row[0] == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
+					len = -1;
+					if (type == Types.LIST) {
+						// might need to revisit this if other platforms aren't as easy to do a list implementation?
+						len = $_list_length(Value$root.internalValue);
+					} else if (type == Types.DICTIONARY) {
+						return killExecution(stack, "dictionary length not implemented yet.");
+					} else if (type == Types.STRING) {
+						len = $_string_length(Value$root.internalValue);
+					} else {
+						return killExecution(stack, getTypeFromId(type) + " does not have a length property.");
+					}
+
+					if (len < INTEGER_POSITIVE_CACHE) {
+						$_list_push(valueStack, INTEGERS_POS[len]);
+					} else {
+						$_list_push(valueStack, new Value(Types.INTEGER, len));
+					}
+				} else {
+					// Everything else will presumably be hit 99% of the time via the DOT_STEP_INVOKE op instead of here, since they're methods. 
+					// Therefore I'm not particularly concerned about optimizing the rest of this.
+
+					primitive_method_id = $_dictionary_get(PRIMITIVE_METHODS, $_string_cast_weak(type) + identifiers[row[0]], -1);
+					if (primitive_method_id == -1) {
+						return killExecution(stack, getTypeFromId(type) + " type does not have a field called '" + identifiers[row[0]] + "'.");
+					} else {
+						$_list_push(valueStack, new Value(Types.SYS_METHOD, [root, primitive_method_id]));
+					}
+				}
+				break;
+
+			case OpCodes.DUPLICATE_STACK_TOP:
+				$_comment('DUPLICATE_STACK_TOP');
+				$_list_push(valueStack, $_list_get(valueStack, $_list_length(valueStack) - 1));
+				break;
+
+			case OpCodes.FUNCTION_DEFINITION:
+				$_comment('FUNCTION_DEFINITION');
+				funcDef = new Value(Types.FUNCTION, 
+					// PC                             Max arg count    Name ID]
+					[StackFrame$stack.pc + row[1],    row[2],          identifiers[row[0]]]);
+				$_list_push(valueStack, funcDef);
+				break;
+
+			case OpCodes.INDEX:
+				$_comment('INDEX');
+				index = $_list_pop(valueStack);
+				root = $_list_pop(valueStack);
+				if (Value$root.type == Types.LIST) {
+					if (Value$index.type != Types.INTEGER) {
+						return killExecution(stack, "List index must be an integer.");
+					} else {
+						indexValue = Value$index.internalValue;
+						listValue = Value$root.internalValue;
+						if (indexValue < 0) return killExecution(stack, "List index cannot be negative.");
+						else if (indexValue >= $_list_length(listValue)) return killExecution(stack, "List index is out of bounds");
+						else {
+							item = $_list_get(listValue, indexValue);
+							$_list_push(valueStack, item);
+						}
+					}
+				} else if (Value$root.type == Types.DICTIONARY) {
+					return killExecution(stack, "TODO: index into a dictionary");
+				} else {
+					//$_print(StackFrame$stack.pc);
+					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
+				}
+				break;
+
+			case OpCodes.INDEX_INT:
+				$_comment('INDEX_INT');
+				return killExecution(stack, "TODO: index int");
+				break;
+
+			case OpCodes.INDEX_STRING:
+				$_comment('INDEX_STRING');
+				return killExecution(stack, "TODO: index string");
+				break;
+
+			case OpCodes.JUMP:
+				$_comment('JUMP');
+				StackFrame$stack.pc += row[0];
+				break;
+			
+			case OpCodes.JUMP_IF_FALSE:
+				$_comment('JUMP_IF_FALSE');
+				expr = $_list_pop(valueStack);
+				if (Value$expr.type != Types.BOOLEAN) {
+					return killExecution(stack, "Boolean expected.");
+				} else if (!Value$expr.internalValue) {
+					StackFrame$stack.pc += row[0];
+				}
+				break;
+
+			case OpCodes.JUMP_IF_FALSE_NO_POP:
+				$_comment('JUMP_IF_FALSE_NON_POP');
+				return killExecution(stack, "TODO: jump if false no pop");
+				break;
+
+			case OpCodes.JUMP_IF_TRUE:
+				$_comment('JUMP_IF_TRUE');
+				expr = $_list_pop(valueStack);
+				if (Value$expr.type != Types.BOOLEAN) {
+					return killExecution(stack, "Boolean expected.");
+				} else if (Value$expr.internalValue) {
+					StackFrame$stack.pc += row[0];
+				}
+				break;
+
+			case OpCodes.JUMP_IF_TRUE_NO_POP:
+				$_comment('JUMP_IF_TRUE_NO_POP');
+				return killExecution(stack, "TODO: jump if true no pop");
+				break;
+				
+			case OpCodes.LITERAL:
+				$_comment('LITERAL');
+				$_list_push(valueStack, $_list_get(specialCache, StackFrame$stack.pc));
+				break;
+
+			case OpCodes.LITERAL_STREAM:
+				$_comment('LITERAL_STREAM');
+				values = $_list_get(specialCache, StackFrame$stack.pc);
+				for (i = $_list_length(values) - 1; i >= 0; i -= 1) {
+					$_list_push(valueStack, $_list_get(values, i));
+				}
+				break;
+
+			case OpCodes.POP:
+				$_comment('POP');
+				//$_print("Pop at: " + $_string_cast_weak(StackFrame$stack.pc));
+				$_list_pop(valueStack);
+				break;
+
+			case OpCodes.RETURN:
+				$_comment('RETURN');
+				returnValue = $_list_pop(valueStack);
+				useReturnValue = StackFrame$stack.returnValueUsed;
+				stack = StackFrame$stack.previous;
+				valueStack = StackFrame$stack.valueStack;
+				if (useReturnValue) {
+					$_list_push(valueStack, returnValue);
+				}
+				break;
+			
+			case OpCodes.RETURN_NULL:
+				$_comment('RETURN_NULL');
+				useReturnValue = StackFrame$stack.returnValueUsed;
+				stack = StackFrame$stack.previous;
+				if (stack == null) {
+					return null;
+				}
+				valueStack = StackFrame$stack.valueStack;
+				if (useReturnValue) {
+					$_list_push(valueStack, VALUE_NULL);
+				}
+				break;
+
+			case OpCodes.STEP:
+				$_comment('STEP');
+				return killExecution(stack, "TODO: step");
+				break;
+				
+			case OpCodes.VARIABLE:
+				$_comment('VARIABLE');
+				value = $_dictionary_get(locals, row[0], null);
+				if (value == null) {
+					return killExecution(stack, "Variable not defined: " + identifiers[row[0]]);
+				} else {
+					$_list_push(valueStack, value);
+				}
+				break;
+
+			case OpCodes.VARIABLE_STREAM:
+				$_comment('VARIABLE_STREAM');
+				for (i = 0; $_list_get(row, i) != -1; i += 1) {
+					value = $_dictionary_get(locals, $_list_get(row, i), null);
+					if (value == null) {
+						sc_row = $_list_get(specialCache, StackFrame$stack.pc);
+						fakeToken = $_list_get(sc_row, i);
+						return killExecutionWithTokenOverride(stack, fakeToken, "Variable not defined: " + identifiers[$_list_get(row, i)]);
+					} else {
+						$_list_push(valueStack, value);
+					}
+				}
+				break;
+
+			default:
+				$_comment('THIS SHOULD NEVER HAPPEN');
+				return killExecution(stack, "Bad op code at: " + $_string_cast_weak(ops[StackFrame$stack.pc]));
+		}
+		StackFrame$stack.pc += 1;
+	}
+}
+
+function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUsed) {
+	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
+	output = VALUE_NULL;
+	switch (methodId) {
+		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
+			if ($_list_length(funcArgs) != 1) return "List add method requires exactly 1 argument";
+			$_list_push(Value$context.internalValue, $_list_get(funcArgs, 0));
+			break;
+		default:
+			return "Unknown system method";
+	}
+	if (returnValueUsed) {
+		$_list_push(valueStack, output);
+	}
+}
+
+function killExecution(stack, message) {
+	return killExecutionWithTokenOverride(stack, null, message);
+}
+
+function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
+	fullMessage = '';
+	allTokens = rawTokenData();
+	allFiles = sourceFiles();
+	first = true;
+	while (stack != null) {
+		pc = StackFrame$stack.pc;
+		stack = StackFrame$stack.previous;
+		
+		token = $_list_get(allTokens, pc);
+		if (first && firstTokenOverride != null) {
+			token = firstTokenOverride;
+		}
+
+		if (token != null) {
+			line = $_list_get(token, 0);
+			col = $_list_get(token, 1);
+			fileData = $_list_get(allFiles, $_list_get(token, 2));
+			lines = $_list_split(fileData, '\n');
+			filename = lines[0];
+			linevalue = lines[line + 1];
+			fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
+			if (first) {
+				linedisplay = '';
+				arrowdisplay = '';
+				lefttrim = true;
+				for (i = 0; i < $_string_length(linevalue); i += 1) {
+					c = $_string_char_at(linevalue, i);
+					if (lefttrim) {
+						if (c == ' ' || c == '\t' || c == '\r') {
+							col -= 1;
+						} else {
+							lefttrim = false;
+							i -= 1;
+						}
+					} else {
+						if (col == 0) {
+							arrowdisplay += '^';
+							linedisplay += c;
+						} else if (c == '\t') {
+							arrowdisplay += '    ';
+							linedisplay += '    ';
+						} else {
+							arrowdisplay += ' ';
+							linedisplay += c;
+						}
+						col -= 1;
+					}
+				}
+				lineCopy = linevalue;
+
+				fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+			}
+		} else {
+			fullMessage += "[No Stack Info]\n";
+		}
+		first = false;
+		token = null;
+	}
+	return "Error:\n" + fullMessage;
+}
+
+function loadByteCode() {
+	raw = rawByteCode();
+	
+	ops = [];
+	args = [];
+	for (i = 0; i < $_string_length(raw); i += 1) {
+		row = raw[i];
+		$_list_push(ops, row[0]);
+		$_list_remove_at(row, 0);
+		$_list_push(args, row);
+	}
+	
+	return new Code(ops, args);
+}
+
+function rawByteCode() {
+	return [
+		%%%USER_COMPILED_BYTE_CODE%%%
+	];
+}
+
+function rawIdentifiers() {
+	return [
+		%%%IDENTIFIER_TABLE%%%
+	];
+}
+
+function rawStrings() {
+	rawData = [
+		%%%STRING_TABLE%%%
+	];
+	output = [];
+	for (i = 0; i < $_list_length(rawData); i += 1) {
+		$_list_push(output, new Value(Types.STRING, $_list_get(rawData, i)));
+	}
+	return output;	
+}
+
+function rawFloats() {
+	return [
+		%%%FLOAT_TABLE%%%
+	];
+}
+
+function rawTokenData() {
+	return [
+		%%%TOKEN_DATA%%%
+	];
+}
+
+function sourceFiles() {
+	return [
+		%%%FILE_DATA%%%
+	];
+}
+
+main();

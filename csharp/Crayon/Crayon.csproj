@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6A25BB31-4280-470F-959E-25D6D5A173AD}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Crayon</RootNamespace>
+    <AssemblyName>Crayon</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BinaryOps.cs" />
+    <Compile Include="ByteBuffer.cs" />
+    <Compile Include="ByteCodeCompiler.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="EofException.cs" />
+    <Compile Include="ExpressionParser.cs" />
+    <Compile Include="OpCode.cs" />
+    <Compile Include="Packager.cs" />
+    <Compile Include="ParserException.cs" />
+    <Compile Include="ParseTree\Assignment.cs" />
+    <Compile Include="ParseTree\BinaryOpChain.cs" />
+    <Compile Include="ParseTree\BooleanCombination.cs" />
+    <Compile Include="ParseTree\BooleanConstant.cs" />
+    <Compile Include="ParseTree\BooleanNot.cs" />
+    <Compile Include="ParseTree\BracketIndex.cs" />
+    <Compile Include="ParseTree\BreakStatement.cs" />
+    <Compile Include="ParseTree\ClassDefinition.cs" />
+    <Compile Include="ParseTree\ConstStatement.cs" />
+    <Compile Include="ParseTree\ContinueStatement.cs" />
+    <Compile Include="ParseTree\DictionaryDefinition.cs" />
+    <Compile Include="ParseTree\DotStep.cs" />
+    <Compile Include="ParseTree\DoWhileLoop.cs" />
+    <Compile Include="ParseTree\EnumDefinition.cs" />
+    <Compile Include="ParseTree\Executable.cs" />
+    <Compile Include="ExecutableParser.cs" />
+    <Compile Include="ParseTree\Expression.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserContext.cs" />
+    <Compile Include="ParseTree\ExpressionAsExecutable.cs" />
+    <Compile Include="ParseTree\FloatConstant.cs" />
+    <Compile Include="ParseTree\ForLoop.cs" />
+    <Compile Include="FrameworkFunction.cs" />
+    <Compile Include="ParseTree\FunctionCall.cs" />
+    <Compile Include="ParseTree\FunctionDefinition.cs" />
+    <Compile Include="ParseTree\IfStatement.cs" />
+    <Compile Include="ParseTree\Increment.cs" />
+    <Compile Include="ParseTree\Instantiate.cs" />
+    <Compile Include="ParseTree\IntegerConstant.cs" />
+    <Compile Include="ParseTree\ListDefinition.cs" />
+    <Compile Include="ParseTree\NegativeSign.cs" />
+    <Compile Include="ParseTree\Node.cs" />
+    <Compile Include="ParseTree\NullConstant.cs" />
+    <Compile Include="ParseTree\ReturnStatement.cs" />
+    <Compile Include="ParseTree\StringConstant.cs" />
+    <Compile Include="ParseTree\StructInstance.cs" />
+    <Compile Include="ParseTree\StructDefinition.cs" />
+    <Compile Include="ParseTree\SwitchStatement.cs" />
+    <Compile Include="ParseTree\SwitchStatementContinuousSafe.cs" />
+    <Compile Include="ParseTree\SwitchStatementUnsafeBlotchy.cs" />
+    <Compile Include="ParseTree\SystemFunctionCall.cs" />
+    <Compile Include="ParseTree\Ternary.cs" />
+    <Compile Include="ParseTree\Variable.cs" />
+    <Compile Include="ParseTree\WhileLoop.cs" />
+    <Compile Include="PlatformTarget.cs" />
+    <Compile Include="PrimitiveMethods.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="Tokenizer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TokenStream.cs" />
+    <Compile Include="Translator\AbstractPlatformImplementation.cs" />
+    <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\AbstractTranslator.cs" />
+    <Compile Include="Translator\JavaScript\Browser\BrowserImplementation.cs" />
+    <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
+    <Compile Include="Translator\Python\PyGame\PyGameImplementation.cs" />
+    <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\Python\PythonTranslator.cs" />
+    <Compile Include="Types.cs" />
+    <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host.txt" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
+    <EmbeddedResource Include="Translator\Python\PyGame\PyGame.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translator\Interpreter.cry" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

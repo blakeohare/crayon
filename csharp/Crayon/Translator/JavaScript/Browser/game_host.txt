@@ -1,0 +1,5 @@
+﻿
+<div id="host" oncontextmenu="return false;">
+    <div>Crayon</div>
+    <button onclick="setup()">Begin</button>
+</div>
