@@ -114,7 +114,9 @@ namespace Crayon
 
 			// TODO: once you start adding more platforms, do this in a more reasonable streamlined way. 
 			bool isAsync = this.parser.Mode == PlatformTarget.JavaScript_Browser;
+			bool isAutoload = this.parser.Mode == PlatformTarget.Python_PyGame;
 			interpreter = interpreter.Replace("%%%PLATFORM_IS_ASYNC%%%", isAsync ? "true" : "false");
+			interpreter = interpreter.Replace("%%%PLATFORM_IS_AUTOLOAD%%%", isAutoload ? "true" : "false");
 
 			foreach (PrimitiveMethods primitiveMethod in Enum.GetValues(typeof(PrimitiveMethods)).Cast<PrimitiveMethods>())
 			{

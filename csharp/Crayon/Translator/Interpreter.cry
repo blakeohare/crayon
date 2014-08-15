@@ -166,6 +166,7 @@ struct ProgramData {
 	tickerRegistered
 }
 
+// If I assign to this global directly, the translator will think this is a local variable.
 pd = [null];
 
 function buildLiteral(type, value, floatTable, stringTable) {
@@ -1157,4 +1158,6 @@ function sourceFiles() {
 	];
 }
 
-main();
+if (%%%PLATFORM_IS_AUTOLOAD%%%) {
+	main();
+}

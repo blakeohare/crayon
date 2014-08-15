@@ -1,5 +1,86 @@
 ﻿// TODO: I ripped this from a game I made, Dungeon Dude. I need to go through and scrape out the parts specific to that.
 
+var R = {};
+
+R.now = function () {
+    return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
+};
+
+R._global_vars = {
+    'width': 0,
+    'height': 0,
+    'fps': 60,
+    'canvas': null,
+    'image_loader': null,
+    'image_store': null,
+    'temp_image': null,
+    'print_output': null,
+    'event_queue': [],
+    'ctx': null,
+    'last_frame_began': R.now(),
+};
+
+R.computeDelayMillis = function () {
+    var ideal = 1.0 / R._global_vars.fps;
+    var diff = R.now() - R._global_vars.last_frame_began;
+    var delay = ideal - diff;
+    return Math.floor(delay * 1000);
+};
+
+R.initializeGame = function (fps) {
+    R._global_vars['fps'] = fps;
+};
+
+R.pump_event_objects = function () {
+    var new_events = [];
+    var output = R._global_vars['event_queue'];
+    R._global_vars['event_queue'] = new_events;
+    return output;
+};
+
+// TODO: also apply keydown and mousedown handlers
+// TODO: (here and python as well) throw an error if you attempt to call this twice.
+R.initializeScreen = function (width, height) {
+    var canvasHost = document.getElementById('crayon_host');
+    canvasHost.innerHTML =
+        '<canvas id="crayon_screen" width="' + width + '" height="' + height + '"></canvas>' +
+        '<div style="display:none;">' +
+            '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
+            '<div id="crayon_image_store"></div>' +
+            '<div id="crayon_temp_image"></div>' +
+        '</div>' +
+        '<div style="font-family:&quot;Courier New&quot;; font-size:11px;" id="crayon_print_output"></div>';
+    var canvas = document.getElementById('crayon_screen');
+    R._global_vars['canvas'] = canvas;
+    R._global_vars['image_loader'] = document.getElementById('crayon_image_loader');
+    R._global_vars['image_store'] = document.getElementById('crayon_image_store');
+    R._global_vars['temp_image'] = document.getElementById('crayon_temp_image');
+    R._global_vars['print_output'] = document.getElementById('crayon_print_output');
+    R._global_vars['ctx'] = canvas.getContext('2d');
+};
+
+R._toHex = function (r, g, b) {
+    var hd = '0123456789abcdef';
+    return '#'
+        + hd[r >> 4] + hd[r & 15]
+        + hd[g >> 4] + hd[g & 15]
+        + hd[b >> 4] + hd[b & 15];
+};
+
+R.fillScreen = function (r, g, b) {
+    var gb = R._global_vars;
+    gb.ctx.fillStyle = R._toHex(r, g, b);
+    gb.ctx.fillRect(0, 0, gb.width, gb.height);
+};
+
+R.drawRect = function (x, y, width, height, r, g, b) {
+    var gb = R._global_vars;
+    gb.ctx.fillStyle = R._toHex(r, g, b);
+    gb.ctx.fillRect(x, y, width, height);
+};
+
+/////////////////////////////////
+
 var Q = {};
 Q._hexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 Q._image_load_queue = [];

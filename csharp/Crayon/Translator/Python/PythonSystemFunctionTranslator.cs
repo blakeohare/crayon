@@ -155,10 +155,6 @@ namespace Crayon.Translator.Python
 					output.Add("v_scr[1][1].fill((v_red[1], v_green[1], v_blue[1]))");
 					break;
 
-				case "ff_invalidate_display":
-					output.Add("pass");
-					break;
-
 				case "ff_floor":
 					output.Add("v_output = v_build_integer(int(v_value[1]))");
 					break;
