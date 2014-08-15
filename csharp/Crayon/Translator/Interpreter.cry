@@ -154,6 +154,20 @@ struct Value {
 
 specialCache = [];
 
+struct ProgramData {
+	stackTop,
+	ops,
+	args,
+	specialCache,
+	identifiers,
+	inv_identifiers,
+	stringTable,
+	floatTable,
+	tickerRegistered
+}
+
+pd = [null];
+
 function buildLiteral(type, value, floatTable, stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
 	if (type == Types.INTEGER) return build_integer(value);
@@ -173,7 +187,7 @@ function main() {
 		[], // args
 		null, // previous
 		false); // returnValueUsed
-	
+
 	byteCode = loadByteCode();
 	identifiers = rawIdentifiers();
 	stringTable = rawStrings();
@@ -225,13 +239,73 @@ function main() {
 		$_list_push(specialCache, value);
 	}
 
-	error = interpret(stack, ops, opArgs, identifiers, inv_identifiers, stringTable, floatTable, specialCache);
-	if (error == null) {
-		// enqueue an asynchrnous call to interpret again.
-		// I may do this as an awkward if statement and then have two framework functions to serialize, each platform having a noop for one of them.
+	p = new ProgramData(
+		stack,
+		ops,
+		opArgs,
+		specialCache,
+		identifiers,
+		inv_identifiers,
+		stringTable,
+		floatTable,
+		false);
+
+	pd[0] = p;
+	
+	runTick();
+}
+
+function runTick() {
+	p = pd[0];
+
+	if (%%%PLATFORM_IS_ASYNC%%%) {
+		if (!ProgramData$p.tickerRegistered) {
+			ProgramData$p.tickerRegistered = true;
+			$_register_ticker();
+		}
+
+		error = interpret(
+			ProgramData$p.stackTop,
+			ProgramData$p.ops,
+			ProgramData$p.args,
+			ProgramData$p.identifiers,
+			ProgramData$p.inv_identifiers,
+			ProgramData$p.stringTable,
+			ProgramData$p.floatTable,
+			ProgramData$p.specialCache);
+		if (error == null) {
+			// do nothing, let the next tick occur
+			$_register_timeout();
+		} else {
+			if ($_string_length(error) > 0) {
+				// error message and stack trace
+				$_print(error);
+			}
+			// execution ended, either with error or gracefully.
+			$_unregister_ticker();
+		}
 	} else {
-		// error message and stack trace
-		$_print(error);
+		while (true) {
+			error = interpret(
+				ProgramData$p.stackTop,
+				ProgramData$p.ops, 
+				ProgramData$p.args, 
+				ProgramData$p.identifiers, 
+				ProgramData$p.inv_identifiers, 
+				ProgramData$p.stringTable, 
+				ProgramData$p.floatTable, 
+				ProgramData$p.specialCache);
+			if (error == null) {
+				$_pause_for_frame();
+			} else if (error == '') {
+				// empty string means the execution came to an end.
+				return;
+			} else {
+				// error message and stack trace
+				$_print(error);
+				return;
+			}
+		}
 	}
 }
 
@@ -313,7 +387,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 	while (true) {
 		row = args[StackFrame$stack.pc];
 		switch (ops[StackFrame$stack.pc]) {
-			
+
 			case OpCodes.ASSIGN_FUNCTION_ARG:
 				$_comment('ASSIGN_FUNCTION_ARG');
 				return killExecution(stack, "TODO: assign function arg");
@@ -586,14 +660,18 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 				$_list_push(valueStack, output);
 				break;
-			
+
 			case OpCodes.CALL_FRAMEWORK_FUNCTION:
 				$_comment('CALL_FRAMEWORK_FUNCTION');
 				// TODO: the types for these values must be verified.
 				output = VALUE_NULL;
 				switch (row[0]) {
 					case %%%FF_CLOCK_TICK%%%:
-						$_insert_platform_code('ff_clock_tick');
+						programdata = pd[0];
+						ProgramData$programdata.stackTop = stack;
+						StackFrame$stack.pc += 1;
+						return null;
+						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
 						break;
 					case %%%FF_CURRENT_TIME%%%:
 						$_insert_platform_code('ff_current_time');
@@ -632,9 +710,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						height = $_list_pop(valueStack);
 						width = $_list_pop(valueStack);
 						$_insert_platform_code('ff_initialize_screen');
-						break;
-					case %%%FF_INVALIDATE_DISPLAY%%%: 
-						$_insert_platform_code('ff_invalidate_display'); 
 						break;
 					case %%%FF_PRINT%%%: 
 						$_insert_platform_code('ff_print'); 
@@ -685,7 +760,8 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					return killExecution(stack, "TODO: invoke system function");
 				} else if (funcType == Types.FUNCTION) {
 					valueStack = [];
-					stack = new StackFrame(Value$func.internalValue[0], {}, valueStack, funcArgs, stack, returnValueUsed);
+					locals = {};
+					stack = new StackFrame(Value$func.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed);
 				} else {
 					return killExecution(stack, "Cannot invoke " + getTypeFromId(funcType) + " like a function.");
 				}
@@ -710,7 +786,8 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					type = Value$funcPointer.type;
 					if (type == Types.FUNCTION) {
 						valueStack = [];
-						stack = new StackFrame(Value$funcPointer.internalValue[0], {}, valueStack, funcArgs, stack, returnValueUsed);
+						locals = {};
+						stack = new StackFrame(Value$funcPointer.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed);
 					} else {
 						return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 					}
@@ -807,7 +884,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				} else if (Value$root.type == Types.DICTIONARY) {
 					return killExecution(stack, "TODO: index into a dictionary");
 				} else {
-					//$_print(StackFrame$stack.pc);
 					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
 				}
 				break;
@@ -872,7 +948,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.POP:
 				$_comment('POP');
-				//$_print("Pop at: " + $_string_cast_weak(StackFrame$stack.pc));
 				$_list_pop(valueStack);
 				break;
 
@@ -881,7 +956,12 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				returnValue = $_list_pop(valueStack);
 				useReturnValue = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
+				if (stack == null) {
+					StackFrame$stack.pc += 1;
+					return '';
+				}
 				valueStack = StackFrame$stack.valueStack;
+				locals = StackFrame$stack.locals;
 				if (useReturnValue) {
 					$_list_push(valueStack, returnValue);
 				}
@@ -891,8 +971,10 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_comment('RETURN_NULL');
 				useReturnValue = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
+				locals = StackFrame$stack.locals;
 				if (stack == null) {
-					return null;
+					StackFrame$stack.pc += 1;
+					return '';
 				}
 				valueStack = StackFrame$stack.valueStack;
 				if (useReturnValue) {

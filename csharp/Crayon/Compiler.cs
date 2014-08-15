@@ -112,6 +112,10 @@ namespace Crayon
 			interpreter = interpreter.Replace("%%%TOKEN_DATA%%%", tokenTable);
 			interpreter = interpreter.Replace("%%%FILE_DATA%%%", fileTable);
 
+			// TODO: once you start adding more platforms, do this in a more reasonable streamlined way. 
+			bool isAsync = this.parser.Mode == PlatformTarget.JavaScript_Browser;
+			interpreter = interpreter.Replace("%%%PLATFORM_IS_ASYNC%%%", isAsync ? "true" : "false");
+
 			foreach (PrimitiveMethods primitiveMethod in Enum.GetValues(typeof(PrimitiveMethods)).Cast<PrimitiveMethods>())
 			{
 				interpreter = interpreter.Replace("%%%PRIMITIVE_METHOD_" + primitiveMethod.ToString() + "%%%", "" + (int)primitiveMethod);

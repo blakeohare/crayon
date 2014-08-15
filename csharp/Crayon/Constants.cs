@@ -11,18 +11,11 @@ namespace Crayon
 			{ "TYPE_NATIVE_OBJECT_SCREEN", 1 },
 		};
 
-		public static string DoReplacements(string text)
+		public static string DoReplacements(string text, PlatformTarget platform)
 		{
-			Dictionary<string, object> replacements = new Dictionary<string, object>();
-
 			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
 			{
-				replacements.Add("%%%TYPE_" + t.ToString() + "%%%", (int)t);
-			}
-
-			foreach (string key in replacements.Keys)
-			{
-				text = text.Replace(key, replacements[key].ToString());
+				text = text.Replace("%%%TYPE_" + t.ToString() + "%%%", ((int)t).ToString());
 			}
 
 			foreach (string key in values.Keys)

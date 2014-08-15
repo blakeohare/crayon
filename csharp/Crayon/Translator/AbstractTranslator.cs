@@ -57,7 +57,6 @@ namespace Crayon.Translator
 
 		private void TranslateFunctionDefinitionWrapped(List<string> output, FunctionDefinition functionDef)
 		{
-
 			foreach (Expression expr in functionDef.DefaultValues)
 			{
 				if (expr != null)
@@ -94,9 +93,15 @@ namespace Crayon.Translator
 		// stick arbitrary code at the front of a file.
 		public string DoTranslationOfInterpreterClassWithEmbeddedByteCode(Parser parser, Executable[] finalCodeBase)
 		{
-			List<string> output = new List<string>();
-			this.systemFunctionTranslator.Platform.SerializeBoilerPlates(parser, output);
-			Translate(output, finalCodeBase);
+			string prefix = this.systemFunctionTranslator.Platform.SerializeBoilerPlates(parser);
+
+			return BeginTranslation(prefix, finalCodeBase);
+		}
+
+		private string BeginTranslation(string prefix, Executable[] code)
+		{
+			List<string> output = new List<string>() { prefix, "\r\n" };
+			this.Translate(output, code);
 			return string.Join("", output);
 		}
 

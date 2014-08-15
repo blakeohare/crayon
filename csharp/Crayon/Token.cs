@@ -16,5 +16,10 @@
 			this.Col = colIndex;
 			this.HasWhitespacePrefix = hasWhitespacePrefix;
 		}
+
+		public override string ToString()
+		{
+			return "Token: '" + this.Value + "'";
+		}
 	}
 }

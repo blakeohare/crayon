@@ -9,6 +9,26 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslatePauseForFrame(List<string> output)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
+		protected override void TranslateRegisterTimeout(List<string> output)
+		{
+			output.Add("window.setTimeout(v_runTick, _computeDelay())");
+		}
+
+		protected override void TranslateRegisterTicker(List<string> output)
+		{
+			// nope.
+		}
+
+		protected override void TranslateUnregisterTicker(List<string> output)
+		{
+			// nope.
+		}
+
 		protected override void TranslateUnsafeFloatDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
 		{
 			this.Translator.TranslateExpression(output, numerator);
@@ -125,12 +145,6 @@ namespace Crayon.Translator.JavaScript
 		{
 			switch (id)
 			{
-				case "ff_clock_tick":
-					//output.Add("_global_vars['clock'].tick(_global_vars['fps'])");
-					//break;
-					output.Add("AHHHHHHHHHHHHHHHHHHHHHHHHHH\r\nTICK TOCK TICK TOCK TICK TOCK");
-					break;
-
 				case "ff_current_time":
 					//output.Add("v_output = [" + (int)Types.FLOAT + ", time.time()]");
 					//break;
@@ -145,10 +159,6 @@ namespace Crayon.Translator.JavaScript
 
 				case "ff_fill_screen":
 					output.Add("TODO('fill the screen');");
-					break;
-
-				case "ff_invalidate_display":
-					output.Add("TODO('invalidate display');");
 					break;
 
 				case "ff_floor":

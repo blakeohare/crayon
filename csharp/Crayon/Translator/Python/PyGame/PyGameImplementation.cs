@@ -4,14 +4,13 @@ namespace Crayon.Translator.Python.PyGame
 {
 	internal class PyGameImplementation : AbstractPlatformImplementation
 	{
-		public override void SerializeBoilerPlates(Parser parser, List<string> output)
+		public override string SerializeBoilerPlates(Parser parser)
 		{
 			string pygameCode = Util.ReadFileInternally("Translator/Python/PyGame/PyGame.py");
 
-			pygameCode = Constants.DoReplacements(pygameCode);
+			pygameCode = Constants.DoReplacements(pygameCode, parser.Mode);
 
-			output.Add(pygameCode);
-			output.Add("\r\n");
+			return pygameCode;
 		}
 	}
 }

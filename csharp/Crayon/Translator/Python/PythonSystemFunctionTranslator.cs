@@ -11,6 +11,28 @@ namespace Crayon.Translator.Python
 
 		}
 
+		protected override void TranslatePauseForFrame(List<string> output)
+		{
+			output.Add("pygame.display.flip()\r\n");
+			output.Add(this.Translator.CurrentTabIndention);
+			output.Add("_global_vars['clock'].tick(_global_vars['fps'])");
+		}
+
+		protected override void TranslateUnregisterTicker(List<string> output)
+		{
+			throw new Exception("This code path should be optimized out of the python translation.");
+		}
+
+		protected override void TranslateRegisterTimeout(List<string> output)
+		{
+			throw new Exception("This code path should be optimized out of the python translation.");
+		}
+
+		protected override void TranslateRegisterTicker(List<string> output)
+		{
+			throw new Exception("This code path should be optimized out of the python translation.");
+		}
+
 		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)
 		{
 #if DEBUG
@@ -120,10 +142,6 @@ namespace Crayon.Translator.Python
 		{
 			switch (id)
 			{
-				case "ff_clock_tick":
-					output.Add("_global_vars['clock'].tick(_global_vars['fps'])");
-					break;
-
 				case "ff_current_time":
 					output.Add("v_output = [" + (int)Types.FLOAT + ", time.time()]");
 					break;
@@ -138,7 +156,7 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_invalidate_display":
-					output.Add("_PDF()");
+					output.Add("pass");
 					break;
 
 				case "ff_floor":

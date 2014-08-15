@@ -4,12 +4,15 @@ namespace Crayon.Translator.JavaScript.Browser
 {
 	internal class BrowserImplementation : AbstractPlatformImplementation
 	{
-		public override void SerializeBoilerPlates(Parser parser, List<string> output)
+		public override string SerializeBoilerPlates(Parser parser)
 		{
+			List<string> output = new List<string>();
 			output.Add(Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js"));
 			output.Add("\r\n");
 			output.Add(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js"));
 			output.Add("\r\n");
+
+			return string.Join("", output);
 		}
 
 		public static void GenerateHtmlFile(string folder)

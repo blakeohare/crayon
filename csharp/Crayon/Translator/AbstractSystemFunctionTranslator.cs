@@ -34,17 +34,25 @@ namespace Crayon.Translator
 				case "_list_reverse": VerifyCount(functionCall, 1); TranslateListReverse(output, args[0]); break;
 				case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
 				case "_list_split": VerifyCount(functionCall, 2); TranslateListSplit(output, args[0], args[1]); break;
+				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
+				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
+				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
+				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
 				case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
 				case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
 				default: throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);
 			}
 		}
 
+		protected abstract void TranslatePauseForFrame(List<string> output);
+		protected abstract void TranslateUnregisterTicker(List<string> output);
+		protected abstract void TranslateRegisterTimeout(List<string> output);
+		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateComment(List<string> output, Expression commentValue);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
 		protected abstract void TranslateListSplit(List<string> output, Expression originalString, Expression sep);
