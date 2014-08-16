@@ -713,6 +713,8 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						$_insert_platform_code('ff_initialize_screen');
 						break;
 					case %%%FF_PRINT%%%: 
+						value = $_list_pop(valueStack);
+						string1 = valueToString(value);
 						$_insert_platform_code('ff_print'); 
 						break;
 					case %%%FF_RANDOM%%%:

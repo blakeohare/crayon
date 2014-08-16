@@ -146,14 +146,10 @@ namespace Crayon.Translator.JavaScript
 			switch (id)
 			{
 				case "ff_current_time":
-					//output.Add("v_output = [" + (int)Types.FLOAT + ", time.time()]");
-					//break;
-					output.Add("v_output = [" + (int)Types.FLOAT + ", (Date.now ? Date.now() : new Date().getTime()) / 1000];");
+					output.Add("v_output = [" + (int)Types.FLOAT + ", R.now()];");
 					break;
 
 				case "ff_draw_rectangle":
-					//output.Add("_PDR(v_scr[1][1], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
-					//break;
 					output.Add("R.drawRect(v_x[1], v_y[1], v_width[1], v_height[1], v_red[1], v_green[1], v_blue[1])");
 					break;
 
@@ -162,11 +158,11 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_floor":
-					output.Add("v_output = Math.floor(v_value[1]);");
+					output.Add("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_value[1])]");
 					break;
 
 				case "ff_get_events":
-					output.Add("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()];");
+					output.Add("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()]");
 					break;
 
 				case "ff_initialize_game":
@@ -178,7 +174,7 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_print":
-					output.Add("TODO('print!');");
+					output.Add("R.print(v_string1)");
 					break;
 
 				case "ff_random":

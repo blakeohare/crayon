@@ -57,6 +57,101 @@ R.initializeScreen = function (width, height) {
     R._global_vars['temp_image'] = document.getElementById('crayon_temp_image');
     R._global_vars['print_output'] = document.getElementById('crayon_print_output');
     R._global_vars['ctx'] = canvas.getContext('2d');
+    R._global_vars['print_lines'] = [];
+
+    document.onkeydown = R._keydown;
+    document.onkeyup = R._keyup;
+};
+
+R.shiftLines = function () {
+    while (R._global_vars.print_lines.length >= 20) {
+        R._global_vars.print_lines = R._global_vars.print_lines.slice(1);
+    }
+    var last = [];
+    R._global_vars.print_lines.push(last);
+    return last;
+};
+
+R.print = function (value) {
+    var line = R.shiftLines();
+    var col = 0;
+
+    for (var i = 0; i < value.length; ++i, ++col) {
+        if (col == 80) {
+            line = R.shiftLines();
+            col = 0;
+        }
+        var c = value.charAt(i);
+        switch (c) {
+            case '<': line.push('&lt;'); break;
+            case '>': line.push('&gt;'); break;
+            case '&': line.push('&amp;'); break;
+            case ' ': line.push('&nbsp;'); break;
+            case '\t': line.push('&nbsp;&nbsp;&nbsp;&nbsp;'); break;
+            case '\n': 
+                line = R.shiftLines();
+                col = 0;
+                break;
+            default: line.push(c); break;
+        }
+    }
+    
+    var lines = R._global_vars.print_lines;
+    var output = [];
+    for (var i = 0; i < lines.length; ++i) {
+        output.push(lines[i].join(''));
+    }
+    R._global_vars.print_output.innerHTML = output.join('<br />');
+};
+
+R._commonStrings = {
+    s_key: [%%%TYPE_STRING%%%, 'key']
+};
+
+R._keydown = function (ev) {
+    R._keydownup(ev, true);
+};
+
+R._keyup = function (ev) {
+    R._keydownup(ev, false);
+};
+
+R._keydownup = function (ev, down) {
+    var keycode = R._getKeyCode(ev);
+    if (keycode != null) {
+        R._global_vars.event_queue.push([%%%TYPE_LIST%%%, [R._commonStrings.s_key, down ? v_VALUE_TRUE : v_VALUE_FALSE, keycode]]);
+    }
+};
+
+R._keyCodeLookup = {
+	'k13': 'enter',
+	'k16': 'shift', 'k17': 'ctrl', 'k18': 'alt',
+	'k32': 'space',
+	
+	'k48': '0', 'k49': '1', 'k50': '2', 'k51': '3', 'k52': '4',
+	'k53': '5', 'k54': '6', 'k55': '7', 'k56': '8', 'k57': '9',
+	
+	'k65': 'a', 'k66': 'b', 'k67': 'c', 'k68': 'd', 'k69': 'e',
+	'k70': 'f', 'k71': 'g', 'k72': 'h', 'k73': 'i', 'k74': 'j',
+	'k75': 'k', 'k76': 'l', 'k77': 'm', 'k78': 'n', 'k79': 'o',
+	'k80': 'p', 'k81': 'q', 'k82': 'r', 'k83': 's', 'k84': 't',
+	'k85': 'u', 'k86': 'v', 'k87': 'w', 'k88': 'x', 'k89': 'y',
+	'k90': 'z',
+	
+	'k37': 'left', 'k38': 'up', 'k39': 'right', 'k40': 'down',
+	
+	'k187': '=',
+	'k189': '-'
+};
+
+for (var _key in R._keyCodeLookup) {
+    R._keyCodeLookup[_key] = [%%%TYPE_STRING%%%, R._keyCodeLookup[_key]];
+}
+
+R._getKeyCode = function (ev) {
+    var keyCode = ev.which ? ev.which : ev.keyCode;
+    var output = R._keyCodeLookup['k' + keyCode];
+    return output === undefined ? null : output;
 };
 
 R._toHex = function (r, g, b) {

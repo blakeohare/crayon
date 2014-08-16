@@ -172,7 +172,7 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_print":
-					output.Add("print(str(v_valueStack.pop()))");
+					output.Add("print(v_string1)");
 					break;
 
 				case "ff_random":

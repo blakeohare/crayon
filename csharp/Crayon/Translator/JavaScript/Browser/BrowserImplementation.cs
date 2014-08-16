@@ -12,7 +12,10 @@ namespace Crayon.Translator.JavaScript.Browser
 			output.Add(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js"));
 			output.Add("\r\n");
 
-			return string.Join("", output);
+			string code = string.Join("", output);
+			code = Constants.DoReplacements(code, PlatformTarget.JavaScript_Browser);
+
+			return code;
 		}
 
 		public static void GenerateHtmlFile(string folder)
