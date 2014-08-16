@@ -17,7 +17,11 @@ R._global_vars = {
     'print_output': null,
     'event_queue': [],
     'ctx': null,
-    'last_frame_began': R.now(),
+    'last_frame_began': R.now()
+};
+
+R.beginFrame = function() {
+    R._global_vars.last_frame_began = R.now();
 };
 
 R.computeDelayMillis = function () {
@@ -75,8 +79,9 @@ R.shiftLines = function () {
 R.print = function (value) {
     var line = R.shiftLines();
     var col = 0;
+    var i;
 
-    for (var i = 0; i < value.length; ++i, ++col) {
+    for (i = 0; i < value.length; ++i, ++col) {
         if (col == 80) {
             line = R.shiftLines();
             col = 0;
@@ -98,7 +103,7 @@ R.print = function (value) {
     
     var lines = R._global_vars.print_lines;
     var output = [];
-    for (var i = 0; i < lines.length; ++i) {
+    for (i = 0; i < lines.length; ++i) {
         output.push(lines[i].join(''));
     }
     R._global_vars.print_output.innerHTML = output.join('<br />');

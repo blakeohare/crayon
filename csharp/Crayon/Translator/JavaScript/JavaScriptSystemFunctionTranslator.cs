@@ -9,6 +9,11 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateBeginFrame(List<string> output)
+		{
+			output.Add("R.beginFrame()");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new Exception("This should have been optimized out.");

@@ -1,5 +1,5 @@
 function main() {
-	$initialize_game(30);
+	$initialize_game(60);
 	screen_width = 640;
 	screen_height = 480;
 	screen = $initialize_screen(screen_width, screen_height);

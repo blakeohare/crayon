@@ -11,6 +11,11 @@ namespace Crayon.Translator.Python
 
 		}
 
+		protected override void TranslateBeginFrame(List<string> output)
+		{
+			throw new Exception("This code path should be optimized out of the python translation.");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			output.Add("pygame.display.flip()\r\n");

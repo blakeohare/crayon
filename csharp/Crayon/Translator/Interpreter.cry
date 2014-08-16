@@ -265,6 +265,8 @@ function runTick() {
 			$_register_ticker();
 		}
 
+		$_begin_frame();
+
 		error = interpret(
 			ProgramData$p.stackTop,
 			ProgramData$p.ops,

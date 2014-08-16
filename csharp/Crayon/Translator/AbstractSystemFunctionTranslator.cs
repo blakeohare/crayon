@@ -22,6 +22,7 @@ namespace Crayon.Translator
 			{
 				case "_insert_platform_code": VerifyCount(functionCall, 1); TranslateInsertFrameworkCode(tab, output, ((StringConstant)args[0]).Value); break;
 
+				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, args[0]); break;
 				case "_dictionary_get": VerifyCount(functionCall, 3); TranslateDictionaryGet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
@@ -49,6 +50,7 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslateUnregisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
