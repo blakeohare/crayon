@@ -82,14 +82,20 @@ namespace Crayon
 			string thisFolder = folder != null ? System.IO.Path.Combine(root, folder) : root;
 			foreach (string subfolder in System.IO.Directory.GetDirectories(thisFolder))
 			{
-				GetRelativePaths(root, System.IO.Path.Combine(thisFolder, subfolder), output);
+				string lowername = subfolder.ToLowerInvariant();
+				bool ignore = lowername == ".svn";
+				if (!ignore)
+				{
+					GetRelativePaths(root, System.IO.Path.Combine(thisFolder, subfolder), output);
+				}
 			}
 
 			foreach (string file in System.IO.Directory.GetFiles(thisFolder))
 			{
 				string extension = System.IO.Path.GetExtension(file).ToLowerInvariant();
 				bool ignore = (extension == ".cry") ||
-					file == "thumbs.db";
+					file == "thumbs.db" ||
+					file == ".ds_store";
 
 				if (!ignore)
 				{
