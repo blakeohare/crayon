@@ -65,6 +65,68 @@ R.initializeScreen = function (width, height) {
 
     document.onkeydown = R._keydown;
     document.onkeyup = R._keyup;
+    
+    canvas.addEventListener('mousedown', R._mousedown);
+    canvas.addEventListener('mouseup', R._mouseup);
+    canvas.addEventListener('mousemove', R._mousemove);
+};
+
+R._mousedown = function(ev) {
+    R._mousething(ev, true, true);
+};
+
+R._mouseup = function(ev) {
+    R._mousething(ev, true, false);
+};
+
+R._mousemove = function(ev) {
+    R._mousething(ev, false, 'ignored');
+};
+
+R._mousething = function(ev, click, down) {
+    var pos = R._mouse_get_pos_from_event(ev);
+    var x = Math.floor(pos[0]);
+    var y = Math.floor(pos[1]);
+    var data = [];
+
+    if (click) {
+        var rightclick = false;
+        if (!ev) ev = window.event;
+        if (ev.which) rightclick = (ev.which == 3);
+        else if (ev.button) rightclick = (ev.button == 2);
+        data.push(R._commonStrings['s_mouse' + (rightclick ? 'right' : 'left') + (down ? 'down' : 'up')]);
+    } else {
+        data.push(R._commonStrings.s_mousemove);
+    }
+    data.push([%%%TYPE_INTEGER%%%, x]);
+    data.push([%%%TYPE_INTEGER%%%, y]);
+
+    R._global_vars.event_queue.push([%%%TYPE_LIST%%%, data]);
+};
+
+R._mouse_get_pos_from_event = function (ev) {
+	var obj = R._global_vars.canvas;
+	var obj_left = 0;
+	var obj_top = 0;
+	var xpos;
+	var ypos;
+	while (obj.offsetParent) {
+		obj_left += obj.offsetLeft;
+		obj_top += obj.offsetTop;
+		obj = obj.offsetParent;
+	}
+	if (ev) {
+		//FireFox
+		xpos = ev.pageX;
+		ypos = ev.pageY;
+	} else {
+		//IE
+		xpos = window.event.x + document.body.scrollLeft - 2;
+		ypos = window.event.y + document.body.scrollTop - 2;
+	}
+	xpos -= obj_left;
+	ypos -= obj_top;
+	return [xpos, ypos];
 };
 
 R.shiftLines = function () {
@@ -110,7 +172,12 @@ R.print = function (value) {
 };
 
 R._commonStrings = {
-    s_key: [%%%TYPE_STRING%%%, 'key']
+    s_key: [%%%TYPE_STRING%%%, 'key'],
+    s_mouseleftdown: [%%%TYPE_STRING%%%, 'mouseleftdown'],
+    s_mouseleftup: [%%%TYPE_STRING%%%, 'mouseleftup'],
+    s_mousemove: [%%%TYPE_STRING%%%, 'mousemove'],
+    s_mouserightdown: [%%%TYPE_STRING%%%, 'mouserightdown'],
+    s_mouserightup: [%%%TYPE_STRING%%%, 'mouserightup']
 };
 
 R._keydown = function (ev) {

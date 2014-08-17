@@ -29,7 +29,7 @@ for i in range(12):
 	KEY_LOOKUP[pygame.K_F1 + i] = 'f' + str(i + 1)
 
 COMMON_STRINGS = {}
-for value in KEY_LOOKUP.values() + 'exit closebutton key alt-f4'.split(' '):
+for value in KEY_LOOKUP.values() + 'exit closebutton key alt-f4 mousemove mouseleftdown mouseleftup mouserightdown mouserightup'.split(' '):
 	COMMON_STRINGS[value] = [%%%TYPE_STRING%%%, value]
 
 def _pygame_pump_events():
@@ -45,6 +45,16 @@ def _pygame_pump_events():
 					evlist.append([%%%TYPE_LIST%%%, [COMMON_STRINGS['exit'], COMMON_STRINGS['alt-f4']]])
 		elif ev.type == pygame.QUIT:
 			evlist.append([%%%TYPE_LIST%%%, [COMMON_STRINGS['exit'], COMMON_STRINGS['closebutton']]])
+		elif ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
+			x, y = ev.pos
+			right = ev.button == 3
+			down = ev.type == pygame.MOUSEBUTTONDOWN
+			type = COMMON_STRINGS['mouse' + ('right' if right else 'left') + ('down' if down else 'up')]
+			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x], [%%%TYPE_INTEGER%%%, y]]])
+		elif ev.type == pygame.MOUSEMOTION:
+			x, y = ev.pos
+			type = COMMON_STRINGS['mousemove']
+			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x], [%%%TYPE_INTEGER%%%, y]]])
 		
 	return [%%%TYPE_LIST%%%, evlist]
 

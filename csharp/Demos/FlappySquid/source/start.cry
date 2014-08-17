@@ -44,6 +44,8 @@ function main() {
 				if (key == 'space') {
 					space_pressed = true;
 				}
+			} else if (type == 'mouseleftdown') {
+				space_pressed = true;
 			} else if (type == 'exit') {
 				return;
 			}
