@@ -18,10 +18,10 @@
 		CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
 		CONTINUE, // no ops. This should be resolved into a jump before actually being run.
 		DEF_ORIGINAL_CODE,
+		DEF_DICTIONARY, // 1: size
 		DEF_LIST, // 1: size
-		DEF_DICTIONARY,
 		DEREF_DOT, // 1: step ID
-		DUPLICATE_STACK_TOP, // no args. get the top of the stack, and push it again.
+		DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 		FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
 		INDEX,
 		INDEX_INT,

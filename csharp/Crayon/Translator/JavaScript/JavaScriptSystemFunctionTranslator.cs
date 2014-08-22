@@ -9,6 +9,22 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateDictionaryContains(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, key);
+			output.Add("] !== undefined)");
+		}
+
+		protected override void TranslateDictionarySize(List<string> output, ParseTree.Expression dictionary)
+		{
+			output.Add("Object.keys(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(").length");
+		}
+
 		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
 		{
 			output.Add("slow_dictionary_get_keys(");

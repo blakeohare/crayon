@@ -24,9 +24,11 @@ namespace Crayon.Translator
 
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, args[0]); break;
+				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get": VerifyCount(functionCall, 3); TranslateDictionaryGet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
+				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_kill_execution": VerifyCount(functionCall, 1); TranslateKillExecution(output, args[0]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
@@ -51,6 +53,8 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
+		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslateUnregisterTicker(List<string> output);

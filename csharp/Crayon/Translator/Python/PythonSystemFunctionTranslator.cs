@@ -9,6 +9,23 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		// Not safe for dictionaries that can contain a value of None.
+		protected override void TranslateDictionaryContains(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".get(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", None) != None)");
+		}
+
+		protected override void TranslateDictionarySize(List<string> output, ParseTree.Expression dictionary)
+		{
+			output.Add("len(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(")");
+		}
+
 		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);

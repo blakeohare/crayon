@@ -211,6 +211,24 @@ namespace Crayon
 			buffer.Concat(condition);
 		}
 
+		private BinaryOps ConvertOpString(Token token)
+		{
+			switch (token.Value)
+			{
+				case "+=": return BinaryOps.ADDITION;
+				case "-=": return BinaryOps.SUBTRACTION;
+				case "*=": return BinaryOps.MULTIPLICATION;
+				case "/=": return BinaryOps.DIVISION;
+				case "%=": return BinaryOps.MODULO;
+				case "&=": return BinaryOps.BITWISE_AND;
+				case "|=": return BinaryOps.BITWISE_OR;
+				case "^=": return BinaryOps.BITWISE_XOR;
+				case "<<=": return BinaryOps.BIT_SHIFT_LEFT;
+				case ">>=": return BinaryOps.BIT_SHIFT_RIGHT;
+				default: throw new ParserException(token, "Unrecognized op.");
+			}
+		}
+
 		private void CompileAssignment(Parser parser, ByteBuffer buffer, Assignment assignment)
 		{
 			if (assignment.AssignmentOp == "=")
@@ -253,29 +271,46 @@ namespace Crayon
 			}
 			else
 			{
+				BinaryOps op = this.ConvertOpString(assignment.AssignmentOpToken);
 				if (assignment.Target is Variable)
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name));
 					this.CompileExpression(parser, buffer, assignment.Value, true);
-					BinaryOps op;
-					switch (assignment.AssignmentOp)
-					{
-						case "+=": op = BinaryOps.ADDITION; break;
-						case "-=": op = BinaryOps.SUBTRACTION; break;
-						case "*=": op = BinaryOps.MULTIPLICATION; break;
-						default: throw new NotImplementedException("Need to do the rest of these.");
-					}
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
 					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(varTarget.Name));
 				}
 				else if (assignment.Target is DotStep)
 				{
-					throw new NotImplementedException();
+					DotStep dotExpr = (DotStep)assignment.Target;
+					int stepId = parser.GetId(dotExpr.StepToken.Value);
+					this.CompileExpression(parser, buffer, dotExpr.Root, true);
+					if (!(dotExpr.Root is ThisKeyword))
+					{
+						buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 1);
+					}
+					buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId);
+					this.CompileExpression(parser, buffer, assignment.Value, true);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+					if (dotExpr.Root is ThisKeyword)
+					{
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_THIS_STEP, stepId);
+					}
+					else
+					{
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId);
+					}
 				}
 				else if (assignment.Target is BracketIndex)
 				{
-					throw new NotImplementedException();
+					BracketIndex indexExpr = (BracketIndex)assignment.Target;
+					this.CompileExpression(parser, buffer, indexExpr.Root, true);
+					this.CompileExpression(parser, buffer, indexExpr.Index, true);
+					buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 2);
+					buffer.Add(indexExpr.BracketToken, OpCode.INDEX);
+					this.CompileExpression(parser, buffer, assignment.Value, true);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX);
 				}
 				else
 				{
@@ -355,7 +390,25 @@ namespace Crayon
 			else if (expr is NullConstant) this.CompileNullConstant(parser, buffer, (NullConstant)expr, outputUsed);
 			else if (expr is ThisKeyword) this.CompileThisKeyword(parser, buffer, (ThisKeyword)expr, outputUsed);
 			else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
+			else if (expr is DictionaryDefinition) this.CompileDictionaryDefinition(parser, buffer, (DictionaryDefinition)expr, outputUsed);
 			else throw new NotImplementedException();
+		}
+
+		private void CompileDictionaryDefinition(Parser parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)
+		{
+			if (!outputUsed) throw new ParserException(dictDef.FirstToken, "Cannot have a dictionary all by itself.");
+
+			int itemCount = dictDef.Keys.Length;
+			List<Expression> expressionList = new List<Expression>();
+			for (int i = 0; i < itemCount; ++i)
+			{
+				expressionList.Add(dictDef.Keys[i]);
+				expressionList.Add(dictDef.Values[i]);
+			}
+
+			this.CompileExpressionList(parser, buffer, expressionList, true);
+
+			buffer.Add(dictDef.FirstToken, OpCode.DEF_DICTIONARY, itemCount);
 		}
 
 		private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
@@ -401,12 +454,12 @@ namespace Crayon
 				{
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, (int)Types.INTEGER, 1);
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP);
+					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
 				}
 				else
 				{
-					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP);
+					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, (int)Types.INTEGER, 1);
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
