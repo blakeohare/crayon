@@ -547,7 +547,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				obj = $_list_pop(valueStack);
 				nameId = row[0];
 				if (Value$obj.type == Types.INSTANCE) {
-					dict = $_list_get(obj, 1);
+					dict = $_list_get(Value$obj.internalValue, 1);
 					$_dictionary_set(dict, nameId, value);
 				} else {
 					killExecution(stack, "Cannot assign to a field on this type.");

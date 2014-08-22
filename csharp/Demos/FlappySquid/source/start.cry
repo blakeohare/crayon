@@ -1,3 +1,13 @@
+class Pipe {
+	constructor(opening) {
+		this.opening = opening;
+		this.left = 0;
+		this.right = 0;
+		this.top = 0;
+		this.bottom = 0;
+	}
+}
+
 function main() {
 	$initialize_game(60);
 	screen_width = 640;
@@ -77,22 +87,21 @@ function main() {
 				i += 99999;
 			} else {
 				pipe = pipes[i];
-				if (pipe == null) {
-					pipe = $random() * (pipe_area_height - pipe_vspacing - 20) + 10 + (pipe_vspacing / 2);
-					pipe = [$floor(pipe), 0, 0, 0, 0];
+				if (pipe == null) {					
+					pipe_opening = $random() * (pipe_area_height - pipe_vspacing - 20) + 10 + (pipe_vspacing / 2);
+					pipe = new Pipe($floor(pipe_opening));
 					pipes[i] = pipe;
 					pipes.add(null);
 				}
 				
 				right = left + pipe_width;
-				opening = pipe[0];
+				opening = pipe.opening;
 				top = opening - 50;
 				bottom = opening + 50;
-				pipez = pipe;
-				pipez[1] = left;
-				pipe[2] = right;
-				pipe[3] = top;
-				pipe[4] = bottom;
+				pipe.left = left;
+				pipe.right = right;
+				pipe.top = top;
+				pipe.bottom = bottom;
 				
 				if (right < 0) do_trim = true;
 			}
@@ -110,12 +119,8 @@ function main() {
 		for (i = 0; i < pipes.length; ++i) {
 			pipe = pipes[i];
 			if (pipe != null) {
-				left = pipe[1];
-				right = pipe[2];
-				top = pipe[3];
-				bottom = pipe[4];
-				$draw_rectangle(screen, left, 0, pipe_width, top, 0, 100, 0, 255);
-				$draw_rectangle(screen, left, bottom, pipe_width, pipe_area_height - bottom, 0, 100, 0, 255);
+				$draw_rectangle(screen, pipe.left, 0, pipe_width, pipe.top, 0, 100, 0, 255);
+				$draw_rectangle(screen, pipe.left, pipe.bottom, pipe_width, pipe_area_height - pipe.bottom, 0, 100, 0, 255);
 			}
 		}
 		

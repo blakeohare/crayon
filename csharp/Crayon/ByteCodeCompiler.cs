@@ -243,7 +243,7 @@ namespace Crayon
 					{
 						this.CompileExpression(parser, buffer, dotStep.Root, true);
 						this.CompileExpression(parser, buffer, assignment.Value, true);
-						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP);
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value));
 					}
 				}
 				else
