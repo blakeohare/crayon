@@ -170,6 +170,27 @@ namespace Crayon
 		private Dictionary<string, Expression> constLookup = new Dictionary<string, Expression>();
 		private HashSet<string> things = new HashSet<string>();
 
+		private Dictionary<string, ClassDefinition> classDefinitions = new Dictionary<string, ClassDefinition>();
+
+		public ClassDefinition GetClass(string name)
+		{
+			if (this.classDefinitions.ContainsKey(name))
+			{
+				return this.classDefinitions[name];
+			}
+			return null;
+		}
+
+		public void RegisterClass(ClassDefinition classDef)
+		{
+			string name = classDef.NameToken.Value;
+			if (this.classDefinitions.ContainsKey(name))
+			{
+				throw new ParserException(classDef.FirstToken, "Multiple classes with the name: '" + name + "'");
+			}
+			this.classDefinitions[name] = classDef;
+		}
+
 		private void VerifyNameFree(Token nameToken)
 		{
 			if (things.Contains(nameToken.Value))

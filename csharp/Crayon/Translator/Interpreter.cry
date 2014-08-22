@@ -232,6 +232,7 @@ function main() {
 		if (op == OpCodes.CLASS_DEFINITION) {
 			args = $_list_get(opArgs, i);
 			id = $_list_length(classTable);
+			lastClassId = id;
 			nameId = $_list_get(args, 0);
 			$_dictionary_set(nameToClassId, nameId, id);
 			baseClassNameId = $_list_get(args, 1);
@@ -240,18 +241,14 @@ function main() {
 
 			baseClassId = 0;
 			if (baseClassNameId > 0) {
-				if (_dictionary_contains(nameToClassId, baseClassNameId)) {
-					baseClassId = _dictionary_get(nameToClassId, baseClassNameId);
-				} else {
-					// TODO: create a killExecution method that only requires a token and no stack
-					return "Base class name not found.";
-				}
+				// base class name not found is a compile time error.
+				baseClassId = $_dictionary_get(nameToClassId, baseClassNameId, 0);
 			}
 			
 			if (baseClassId == 0) {
 				methodLookup = {};
 			} else {
-				methodLookup = copy_dictionary($_list_get(classMethods, baseClassId));
+				methodLookup = copyDictionary($_list_get(classMethods, baseClassId));
 			}
 
 			for (j = 0; j < methodCount; j += 1) {
@@ -293,6 +290,8 @@ function main() {
 		}
 	}
 
+	lastClassId = 0;
+
 	for (i = 0; i < $_list_length(ops); i += 1) {
 		op = $_list_get(ops, i);
 		args = $_list_get(opArgs, i);
@@ -327,11 +326,16 @@ function main() {
 		} else if (op == OpCodes.CLASS_DEFINITION) {
 			nameId = $_list_get(args, 0);
 			classId = $_dictionary_get(nameToClassId, nameId, 0);
+			lastClassId = classId;
 			value = [classId];
 		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
 			nameId = $_list_get(args, 1);
 			classId = $_dictionary_get(nameToClassId, nameId, 0);
 			value = [classId];
+		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
+			classInfo = classTable[lastClassId];
+			baseClassId = classInfo[3];
+			value = [baseClassId];
 		} else {
 			value = null;
 		}
@@ -795,7 +799,30 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.CALL_BASE_CONSTRUCTOR:
 				$_comment('CALL_BASE_CONSTRUCTOR');
-				return killExecution(stack, "TODO: CALL_BASE_CONSTRUCTOR");
+				sc_row = $_list_get(specialCache, StackFrame$stack.pc);
+				classId = $_list_get(sc_row, 0);
+				classData = $_list_get(classTable, classId);
+				value = StackFrame$stack.objectContext;
+				
+				// This is copied identically below in CALL_CONSTRUCTOR
+				pc = $_list_get(classData, 1);
+				argCount = $_list_get(row, 0);
+				if (pc != 0) {
+					funcArgs = [];
+					while (argCount > 0) {
+						$_list_push(funcArgs, $_list_pop(valueStack));
+						argCount -= 1;
+					}
+					if ($_list_get(row, 0) > 1) {
+						$_list_reverse(funcArgs);
+					}
+
+					valueStack = [];
+					locals = {};
+					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
+				} else {
+					$_list_push(valueStack, value);
+				}
 				break;
 
 			case OpCodes.CALL_CONSTRUCTOR:
@@ -828,11 +855,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					valueStack = [];
 					locals = {};
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
-				} else if (argCount != 0) {
-					return killExecution(stack, "Supplied arguments for non existent constructor.");
 				} else {
-					// TODO: if any constructor is defined in a base class, you must explicitly call it
-					// otherwise throw a compile error. Then I don't have to do a weird dance here.
 					$_list_push(valueStack, value);
 				}
 				break;
@@ -1018,7 +1041,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					value = $_dictionary_get(dict, row[0], null);
 					if (value == null) {
 						classId = $_list_get(Value$root.internalValue, 0);
-						$_print(classMethods);
 						method = $_dictionary_get($_list_get(classMethods, classId), row[0], null);
 						if (method == null) {
 							return killExecution(stack, "Field used before it was defined.");

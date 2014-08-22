@@ -129,7 +129,7 @@ namespace Crayon
 			{
 				baseToken = tokens.PopExpected("base");
 				tokens.PopExpected("(");
-				while (tokens.PopIfPresent(")"))
+				while (!tokens.PopIfPresent(")"))
 				{
 					if (baseArgs.Count > 0)
 					{
@@ -224,6 +224,8 @@ namespace Crayon
 					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(tokens);
 				}
 			}
+
+			if (baseClasses.Count > 1) throw new ParserException(baseClasses[1], "Cannot support interfaces yet.");
 
 			return new ClassDefinition(classToken, classNameToken, baseClasses, methods, constructorDef);
 		}
