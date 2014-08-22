@@ -48,6 +48,7 @@ namespace Crayon
 						throw new ParserException(fileToken, "Expected string path to file.");
 					}
 					tokens.PopExpected(";");
+					return new ImportStatement(importToken, fileToken);
 				}
 
 				if (value == "enum")

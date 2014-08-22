@@ -324,6 +324,12 @@ namespace Crayon
 
 		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot)
 		{
+			if (pathOfFilesRelativeToRoot.Contains(filename))
+			{
+				throw new Exception("File imported multiple times: '" + filename + "'");
+			}
+			pathOfFilesRelativeToRoot.Add(filename);
+
 			int fileId = fileIdCounter++;
 			string code = codeOverride ?? Util.ReadFileExternally(System.IO.Path.Combine(rootFolder, filename), true);
 			this.RegisterFileUsed(filename, code, fileId);
@@ -335,7 +341,18 @@ namespace Crayon
 			List<Executable> executables = new List<Executable>();
 			while (tokens.HasMore)
 			{
-				executables.Add(ExecutableParser.Parse(tokens, false, true, true));
+				Executable executable = ExecutableParser.Parse(tokens, false, true, true);
+				if (executable is ImportStatement)
+				{
+					ImportStatement importStatement = (ImportStatement)executable;
+					string filePath = importStatement.FilePath;
+					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot);
+					executables.AddRange(importedCode);
+				}
+				else
+				{
+					executables.Add(executable);
+				}
 			}
 
 			return executables.ToArray();

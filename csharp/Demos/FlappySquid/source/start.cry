@@ -1,12 +1,5 @@
-class Pipe {
-	constructor(opening) {
-		this.opening = opening;
-		this.left = 0;
-		this.right = 0;
-		this.top = 0;
-		this.bottom = 0;
-	}
-}
+import 'pipe.cry';
+
 
 function main() {
 	$initialize_game(60);

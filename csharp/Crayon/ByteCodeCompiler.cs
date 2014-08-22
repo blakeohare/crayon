@@ -215,7 +215,9 @@ namespace Crayon
 		{
 			switch (token.Value)
 			{
+				case "++": return BinaryOps.ADDITION;
 				case "+=": return BinaryOps.ADDITION;
+				case "--": return BinaryOps.SUBTRACTION;
 				case "-=": return BinaryOps.SUBTRACTION;
 				case "*=": return BinaryOps.MULTIPLICATION;
 				case "/=": return BinaryOps.DIVISION;

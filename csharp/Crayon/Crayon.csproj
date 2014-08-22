@@ -80,6 +80,7 @@
     <Compile Include="ParseTree\FunctionCall.cs" />
     <Compile Include="ParseTree\FunctionDefinition.cs" />
     <Compile Include="ParseTree\IfStatement.cs" />
+    <Compile Include="ParseTree\ImportStatement.cs" />
     <Compile Include="ParseTree\Increment.cs" />
     <Compile Include="ParseTree\Instantiate.cs" />
     <Compile Include="ParseTree\IntegerConstant.cs" />
