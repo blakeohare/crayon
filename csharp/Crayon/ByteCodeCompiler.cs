@@ -334,6 +334,7 @@ namespace Crayon
 					ByteBuffer defaultValueCode = new ByteBuffer();
 
 					this.CompileExpression(parser, defaultValueCode, defaultValue, true);
+					defaultValueCode.Add(argNames[i], OpCode.ASSIGN_VAR, parser.GetId(argName));
 
 					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, parser.GetId(argName), i, defaultValueCode.Size);
 					buffer.Concat(defaultValueCode);
@@ -391,7 +392,35 @@ namespace Crayon
 			else if (expr is ThisKeyword) this.CompileThisKeyword(parser, buffer, (ThisKeyword)expr, outputUsed);
 			else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
 			else if (expr is DictionaryDefinition) this.CompileDictionaryDefinition(parser, buffer, (DictionaryDefinition)expr, outputUsed);
+			else if (expr is BooleanCombination) this.CompileBooleanCombination(parser, buffer, (BooleanCombination)expr, outputUsed);
 			else throw new NotImplementedException();
+		}
+
+		private void CompileBooleanCombination(Parser parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
+		{
+			if (!outputUsed) throw new ParserException(boolComb.FirstToken, "Cannot have this expression here.");
+
+			ByteBuffer rightBuffer = new ByteBuffer();
+			Expression[] expressions = boolComb.Expressions;
+			this.CompileExpression(parser, rightBuffer, expressions[expressions.Length - 1], true);
+			for (int i = expressions.Length - 2; i >= 0; --i)
+			{
+				ByteBuffer leftBuffer = new ByteBuffer();
+				this.CompileExpression(parser, leftBuffer, expressions[i], true);
+				Token op = boolComb.Ops[i];
+				if (op.Value == "&&")
+				{
+					leftBuffer.Add(op, OpCode.JUMP_IF_FALSE_NO_POP, rightBuffer.Size);
+				}
+				else
+				{
+					leftBuffer.Add(op, OpCode.JUMP_IF_TRUE_NO_POP, rightBuffer.Size);
+				}
+				leftBuffer.Concat(rightBuffer);
+				rightBuffer = leftBuffer;
+			}
+
+			buffer.Concat(rightBuffer);
 		}
 
 		private void CompileDictionaryDefinition(Parser parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)

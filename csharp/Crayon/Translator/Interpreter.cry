@@ -35,7 +35,6 @@
 	POP, // no args. pop value from value stack.
 	RETURN,
 	RETURN_NULL,
-	STEP,
 	STREAM_LITERALS, // 2n: See detailed comment in the STREAM_LITLERALS implementation in interpreter.cry
 	STREAM_VARIABLES, // n: push all these variable values to the stack. 
 	THIS, // pushes the current object context onto the stack.
@@ -163,8 +162,7 @@ struct Token {
 
 struct Value {
 	type,
-	internalValue,
-	methods // TODO: do the thing you did for Scripty where you don't cache these
+	internalValue
 }
 
 specialCache = [];
@@ -521,7 +519,14 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP:
 				$_comment('ASSIGN_FUNCTION_ARG_AND_JUMP');
-				return killExecution(stack, "TODO: assign function arg and jump");
+				nameId = row[0];
+				index = row[1];
+				if (index < $_list_length(StackFrame$stack.args)) {
+					value = $_list_get(StackFrame$stack.args, index);
+					$_dictionary_set(locals, nameId, value);
+					StackFrame$stack.pc += row[2];
+				}
+				break;
 
 			case OpCodes.ASSIGN_INDEX:
 				$_comment('ASSIGN_INDEX');
@@ -1246,7 +1251,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.JUMP_IF_FALSE_NO_POP:
 				$_comment('JUMP_IF_FALSE_NON_POP');
-				return killExecution(stack, "TODO: jump if false no pop");
+				expr = $_list_pop(valueStack);
+				if (Value$expr.type != Types.BOOLEAN) {
+					return killExecution(stack, "Boolean expected.");
+				} else if (!Value$expr.internalValue) {
+					StackFrame$stack.pc += row[0];
+					$_list_push(valueStack, VALUE_FALSE);
+				}
 				break;
 
 			case OpCodes.JUMP_IF_TRUE:
@@ -1261,7 +1272,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.JUMP_IF_TRUE_NO_POP:
 				$_comment('JUMP_IF_TRUE_NO_POP');
-				return killExecution(stack, "TODO: jump if true no pop");
+				expr = $_list_pop(valueStack);
+				if (Value$expr.type != Types.BOOLEAN) {
+					return killExecution(stack, "Boolean expected.");
+				} else if (Value$expr.internalValue) {
+					StackFrame$stack.pc += row[0];
+					$_list_push(valueStack, VALUE_TRUE);
+				}
 				break;
 				
 			case OpCodes.LITERAL:
@@ -1310,11 +1327,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				if (useReturnValue) {
 					$_list_push(valueStack, VALUE_NULL);
 				}
-				break;
-
-			case OpCodes.STEP:
-				$_comment('STEP');
-				return killExecution(stack, "TODO: step");
 				break;
 
 			case OpCodes.THIS:
