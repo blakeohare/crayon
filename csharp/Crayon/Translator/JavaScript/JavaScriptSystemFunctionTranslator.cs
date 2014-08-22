@@ -9,6 +9,13 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
+		{
+			output.Add("slow_dictionary_get_keys(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(")");
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			output.Add("R.beginFrame()");

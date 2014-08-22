@@ -7,8 +7,12 @@ namespace Crayon.Translator.Python
 	{
 		public PythonSystemFunctionTranslator(AbstractPlatformImplementation platform)
 			: base(platform)
-		{
+		{ }
 
+		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
+		{
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".keys()[:]");
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)

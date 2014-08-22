@@ -75,6 +75,7 @@ namespace Crayon
 					case "break": return ParseBreak(tokens);
 					case "continue": return ParseContinue(tokens);
 					case "const": return ParseConst(tokens);
+					case "constructor": return ParseConstructor(tokens);
 					default: break;
 				}
 			}
@@ -95,6 +96,53 @@ namespace Crayon
 			}
 
 			return new ExpressionAsExecutable(expr);
+		}
+
+		private static Executable ParseConstructor(TokenStream tokens)
+		{
+			Token constructorToken = tokens.PopExpected("constructor");
+			tokens.PopExpected("(");
+			List<Token> argNames = new List<Token>();
+			List<Expression> argValues = new List<Expression>();
+			while (!tokens.PopIfPresent(")"))
+			{
+				if (argNames.Count > 0)
+				{
+					tokens.PopExpected(",");
+				}
+
+				Token argName = tokens.Pop();
+				Parser.VerifyIdentifier(argName);
+				Expression defaultValue = null;
+				if (tokens.PopIfPresent("="))
+				{
+					defaultValue = ExpressionParser.Parse(tokens);
+				}
+
+				argNames.Add(argName);
+				argValues.Add(defaultValue);
+			}
+
+			List<Expression> baseArgs = new List<Expression>();
+			Token baseToken = null;
+			if (tokens.PopIfPresent(":"))
+			{
+				baseToken = tokens.PopExpected("base");
+				tokens.PopExpected("(");
+				while (tokens.PopIfPresent(")"))
+				{
+					if (baseArgs.Count > 0)
+					{
+						tokens.PopExpected(",");
+					}
+
+					baseArgs.Add(ExpressionParser.Parse(tokens));
+				}
+			}
+
+			IList<Executable> code = Parser.ParseBlock(tokens, true);
+
+			return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken);
 		}
 
 		private static Executable ParseConst(TokenStream tokens)
@@ -159,12 +207,25 @@ namespace Crayon
 			}
 			tokens.PopExpected("{");
 			List<FunctionDefinition> methods = new List<FunctionDefinition>();
+			ConstructorDefinition constructorDef = null;
 			while (!tokens.PopIfPresent("}"))
 			{
-				methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(tokens));
+				if (tokens.IsNext("function"))
+				{
+					methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(tokens));
+				}
+				else if (tokens.IsNext("constructor"))
+				{
+					if (constructorDef != null)
+					{
+						throw new ParserException(tokens.Pop(), "Multiple constructors are not allowed. Use optional arguments.");
+					}
+
+					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(tokens);
+				}
 			}
 
-			return new ClassDefinition(classToken, classNameToken, baseClasses, methods);
+			return new ClassDefinition(classToken, classNameToken, baseClasses, methods, constructorDef);
 		}
 
 		private static Executable ParseStruct(TokenStream tokens)

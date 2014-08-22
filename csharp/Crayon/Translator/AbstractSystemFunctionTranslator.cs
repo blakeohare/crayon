@@ -25,6 +25,7 @@ namespace Crayon.Translator
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, args[0]); break;
 				case "_dictionary_get": VerifyCount(functionCall, 3); TranslateDictionaryGet(output, args[0], args[1], args[2]); break;
+				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_kill_execution": VerifyCount(functionCall, 1); TranslateKillExecution(output, args[0]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -64,6 +65,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateListLength(List<string> output, Expression list);
 		protected abstract void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue);
+		protected abstract void TranslateDictionaryGetKeys(List<string> output, Expression dictionary);
 		protected abstract void TranslateListReverse(List<string> output, Expression listVar);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dict, Expression key, Expression value);

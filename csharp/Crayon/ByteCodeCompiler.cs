@@ -33,7 +33,7 @@ namespace Crayon
 		public void Compile(Parser parser, ByteBuffer buffer, Executable line)
 		{
 			if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
-			else if (line is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)line);
+			else if (line is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)line, false);
 			else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
 			else if (line is WhileLoop) this.CompileWhileLoop(parser, buffer, (WhileLoop)line);
 			else if (line is BreakStatement) this.CompileBreakStatement(parser, buffer, (BreakStatement)line);
@@ -41,7 +41,87 @@ namespace Crayon
 			else if (line is ForLoop) this.CompileForLoop(parser, buffer, (ForLoop)line);
 			else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
 			else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
+			else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
 			else throw new NotImplementedException("Invalid target for byte code compilation");
+		}
+
+		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
+		{
+			ByteBuffer methodBuffer = new ByteBuffer();
+			bool hasConstructor = classDefinition.Constructor != null;
+
+			if (hasConstructor)
+			{
+				this.CompileConstructor(parser, methodBuffer, classDefinition.Constructor);
+			}
+
+			Dictionary<int, int> methodOffsets = new Dictionary<int, int>();
+			Dictionary<int, int> argCount = new Dictionary<int,int>();
+			List<int> methodIds = new List<int>();
+			foreach (FunctionDefinition method in classDefinition.Methods)
+			{
+				int methodName = parser.GetId(method.NameToken.Value);
+				if (methodOffsets.ContainsKey(methodName))
+				{
+					throw new ParserException(method.NameToken, "A method with this name already exists in this class.");
+				}
+				methodIds.Add(methodName);
+				methodOffsets[methodName] = methodBuffer.Size;
+				argCount[methodName] = method.ArgNames.Length;
+
+				this.CompileFunctionDefinition(parser, methodBuffer, method, true);
+			}
+
+			List<int> args = new List<int>();
+			// class name ID
+			args.Add(parser.GetId(classDefinition.NameToken.Value));
+			
+			// subclass ID or -1
+			if (classDefinition.SubClasses.Length > 1) throw new NotImplementedException("Interfaces not supported yet.");
+			if (classDefinition.SubClasses.Length == 0)
+			{
+				args.Add(-1);
+			}
+			else
+			{
+				args.Add(parser.GetId(classDefinition.SubClasses[0].Value));
+			}
+
+			// has constructor? (the byte code is always next after the jump)
+			args.Add(hasConstructor ? classDefinition.Constructor.Args.Length : -1);
+
+			// how many methods?
+			args.Add(methodIds.Count);
+
+			// each method is a set of 3 integers...
+			foreach (int methodId in methodIds)
+			{
+				// name of the method...
+				args.Add(methodId);
+				// PC offset...
+				args.Add(methodOffsets[methodId] + 2);
+				// Maximum number of args...
+				args.Add(argCount[methodId]);
+			}
+
+			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
+			buffer.Add(null, OpCode.JUMP, methodBuffer.Size);
+			buffer.Concat(methodBuffer);
+		}
+
+		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
+		{
+			// TODO: throw parser exception in the resolver if a return appears with any value
+			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues);
+
+			if (constructor.BaseToken != null)
+			{
+				this.CompileExpressionList(parser, buffer, constructor.BaseArgs, true);
+				buffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
+			}
+
+			this.Compile(parser, buffer, constructor.Code);
+			buffer.Add(null, OpCode.RETURN_NULL);
 		}
 
 		private void CompileReturnStatement(Parser parser, ByteBuffer buffer, ReturnStatement returnStatement)
@@ -153,7 +233,18 @@ namespace Crayon
 				}
 				else if (assignment.Target is DotStep)
 				{
-					throw new NotImplementedException();
+					DotStep dotStep = (DotStep)assignment.Target;
+					if (dotStep.Root is ThisKeyword)
+					{
+						this.CompileExpression(parser, buffer, assignment.Value, true);
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(dotStep.StepToken.Value));
+					}
+					else
+					{
+						this.CompileExpression(parser, buffer, dotStep.Root, true);
+						this.CompileExpression(parser, buffer, assignment.Value, true);
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP);
+					}
 				}
 				else
 				{
@@ -193,19 +284,15 @@ namespace Crayon
 			}
 		}
 
-		private void CompileFunctionDefinition(Parser parser, ByteBuffer buffer, FunctionDefinition funDef)
+		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues)
 		{
-			// TODO: make this aware if it is a method or function
-
-			ByteBuffer tBuffer = new ByteBuffer();
-
-			for (int i = 0; i < funDef.ArgNames.Length; ++i)
+			for (int i = 0; i < argNames.Count; ++i)
 			{
-				string argName = funDef.ArgNames[i].Value;
-				Expression defaultValue = funDef.DefaultValues[i];
+				string argName = argNames[i].Value;
+				Expression defaultValue = argValues[i];
 				if (defaultValue == null)
 				{
-					tBuffer.Add(funDef.NameToken, OpCode.ASSIGN_FUNCTION_ARG, parser.GetId(argName), i);
+					buffer.Add(argNames[i], OpCode.ASSIGN_FUNCTION_ARG, parser.GetId(argName), i);
 				}
 				else
 				{
@@ -213,10 +300,17 @@ namespace Crayon
 
 					this.CompileExpression(parser, defaultValueCode, defaultValue, true);
 
-					tBuffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, parser.GetId(argName), i, defaultValueCode.Size);
-					tBuffer.Concat(defaultValueCode);
+					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, parser.GetId(argName), i, defaultValueCode.Size);
+					buffer.Concat(defaultValueCode);
 				}
 			}
+		}
+
+		private void CompileFunctionDefinition(Parser parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
+		{
+			ByteBuffer tBuffer = new ByteBuffer();
+
+			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues);
 
 			Compile(parser, tBuffer, funDef.Code);
 
@@ -226,14 +320,16 @@ namespace Crayon
 				funDef.FirstToken,
 				OpCode.FUNCTION_DEFINITION,
 				parser.GetId(funDef.NameToken.Value), // local var to save in
-				2, // offset from current PC where code is located
-				funDef.ArgNames.Length); // max number of args supplied
-
-			buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(funDef.NameToken.Value));
-			buffer.Add(null, OpCode.JUMP, offset);
+				isMethod ? 0 : 2, // offset from current PC where code is located
+				funDef.ArgNames.Length, // max number of args supplied
+				isMethod ? 1 : 0); // is a method
+			if (!isMethod)
+			{
+				buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(funDef.NameToken.Value));
+				buffer.Add(null, OpCode.JUMP, offset);
+			}
 
 			buffer.Concat(tBuffer);
-
 		}
 
 		private void CompileExpressionAsExecutable(Parser parser, ByteBuffer buffer, ExpressionAsExecutable expr)
@@ -257,7 +353,22 @@ namespace Crayon
 			else if (expr is Increment) this.CompileIncrement(parser, buffer, (Increment)expr, outputUsed);
 			else if (expr is FloatConstant) this.CompileFloatConstant(parser, buffer, (FloatConstant)expr, outputUsed);
 			else if (expr is NullConstant) this.CompileNullConstant(parser, buffer, (NullConstant)expr, outputUsed);
+			else if (expr is ThisKeyword) this.CompileThisKeyword(parser, buffer, (ThisKeyword)expr, outputUsed);
+			else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
 			else throw new NotImplementedException();
+		}
+
+		private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
+		{
+			this.CompileExpressionList(parser, buffer, instantiate.Args, true);
+			buffer.Add(instantiate.NameToken, OpCode.CALL_CONSTRUCTOR, instantiate.Args.Length, parser.GetId(instantiate.NameToken.Value), outputUsed ? 1 : 0);
+		}
+
+		private void CompileThisKeyword(Parser parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
+		{
+			if (!outputUsed) throw new ParserException(thisKeyword.FirstToken, "This expression doesn't do anything.");
+
+			buffer.Add(thisKeyword.FirstToken, OpCode.THIS);
 		}
 
 		private void CompileNullConstant(Parser parser, ByteBuffer buffer, NullConstant nullConstant, bool outputUsed)

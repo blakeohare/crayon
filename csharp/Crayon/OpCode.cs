@@ -5,13 +5,17 @@
 		ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
 		ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
 		ASSIGN_INDEX, // no args. value stack: [root, index, value]
-		ASSIGN_STEP,
+		ASSIGN_STEP, // name ID of step. value stack: [root, value]
+		ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
 		ASSIGN_VAR, // 1: variable name ID
 		BINARY_OP,
 		BREAK, // no ops. This should be resolved into a jump before actually being run.
+		CALL_BASE_CONSTRUCTOR, // 1: num args passed
+		CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 		CALL_FUNCTION, // 1: num args passed
 		CALL_FRAMEWORK_FUNCTION, // 1: function ID (not identifier ID). Since these are defined by the framework, function count is verified at compile time and popped accordingly at runtime by the op itself.
 		CALL_FUNCTION_ON_VARIABLE, // 1: function ID, 2: num args passed
+		CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
 		CONTINUE, // no ops. This should be resolved into a jump before actually being run.
 		DEF_ORIGINAL_CODE,
 		DEF_LIST, // 1: size
@@ -36,6 +40,7 @@
 		STEP,
 		STREAM_LITERALS, // 2n: See detailed comment in the STREAM_LITLERALS implementation in interpreter.cry
 		STREAM_VARIABLES, // n: push all these variable values to the stack. 
+		THIS, // pushes the current object context onto the stack.
 		VARIABLE, // 1: id
 		VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
 	}

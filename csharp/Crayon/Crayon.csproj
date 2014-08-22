@@ -61,6 +61,7 @@
     <Compile Include="ParseTree\BracketIndex.cs" />
     <Compile Include="ParseTree\BreakStatement.cs" />
     <Compile Include="ParseTree\ClassDefinition.cs" />
+    <Compile Include="ParseTree\ConstructorDefinition.cs" />
     <Compile Include="ParseTree\ConstStatement.cs" />
     <Compile Include="ParseTree\ContinueStatement.cs" />
     <Compile Include="ParseTree\DictionaryDefinition.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="ParseTree\SwitchStatementUnsafeBlotchy.cs" />
     <Compile Include="ParseTree\SystemFunctionCall.cs" />
     <Compile Include="ParseTree\Ternary.cs" />
+    <Compile Include="ParseTree\ThisKeyword.cs" />
     <Compile Include="ParseTree\Variable.cs" />
     <Compile Include="ParseTree\WhileLoop.cs" />
     <Compile Include="PlatformTarget.cs" />
@@ -124,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\Interpreter.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Translator\OO_readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

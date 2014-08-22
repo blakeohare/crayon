@@ -3,13 +3,17 @@
 	ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
 	ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
 	ASSIGN_INDEX, // no args. value stack: [root, index, value]
-	ASSIGN_STEP,
+	ASSIGN_STEP, // name ID of step. value stack: [root, value]
+	ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
 	ASSIGN_VAR, // 1: variable name ID
 	BINARY_OP,
 	BREAK, // no ops. This should be resolved into a jump before actually being run.
+	CALL_BASE_CONSTRUCTOR, // 1: num args passed
+	CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 	CALL_FUNCTION, // 1: num args passed
 	CALL_FRAMEWORK_FUNCTION, // 1: function ID (not identifier ID). Since these are defined by the framework, function count is verified at compile time and popped accordingly at runtime by the op itself.
 	CALL_FUNCTION_ON_VARIABLE, // 1: function ID, 2: num args passed
+	CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
 	CONTINUE, // no ops. This should be resolved into a jump before actually being run.
 	DEF_ORIGINAL_CODE,
 	DEF_LIST, // 1: size
@@ -34,6 +38,7 @@
 	STEP,
 	STREAM_LITERALS, // 2n: See detailed comment in the STREAM_LITLERALS implementation in interpreter.cry
 	STREAM_VARIABLES, // n: push all these variable values to the stack. 
+	THIS, // pushes the current object context onto the stack.
 	VARIABLE, // 1: id
 	VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
 }
@@ -132,7 +137,8 @@ struct StackFrame {
 	valueStack,
 	args,
 	previous,
-	returnValueUsed
+	returnValueUsed,
+	objectContext
 }
 
 struct Code {
@@ -163,11 +169,14 @@ struct ProgramData {
 	inv_identifiers,
 	stringTable,
 	floatTable,
+	classTable,
+	classMethods,
 	tickerRegistered
 }
 
 // If I assign to this global directly, the translator will think this is a local variable.
 pd = [null];
+instanceCounter = [0];
 
 function buildLiteral(type, value, floatTable, stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
@@ -179,6 +188,17 @@ function buildLiteral(type, value, floatTable, stringTable) {
 	return null;
 }
 
+function copyDictionary(dict) {
+	key_list = $_dictionary_get_keys(dict);
+	output = {};
+	for (i = 0; i < $_list_length(key_list); i += 1) {
+		key = $_list_get(key_list, i);
+		value = $_dictionary_get(dict, key, 0);
+		$_dictionary_set(output, key, value);
+	}
+	return output;
+}
+
 function main() {
 
 	stack = new StackFrame(
@@ -187,7 +207,8 @@ function main() {
 		[], // valueStack
 		[], // args
 		null, // previous
-		false); // returnValueUsed
+		false, // returnValueUsed
+		null); // object context
 
 	byteCode = loadByteCode();
 	identifiers = rawIdentifiers();
@@ -201,6 +222,76 @@ function main() {
 	}
 	ops = Code$byteCode.ops;
 	opArgs = Code$byteCode.args;
+
+	nameToClassId = {};
+	classTable = [null]; // class ID 0 is not valid. First entry should be at index 1.
+	classMethods = [null]; // same here
+
+	for (i = 0; i < $_list_length(ops); i += 1) {
+		op = $_list_get(ops, i);
+		if (op == OpCodes.CLASS_DEFINITION) {
+			args = $_list_get(opArgs, i);
+			id = $_list_length(classTable);
+			nameId = $_list_get(args, 0);
+			$_dictionary_set(nameToClassId, nameId, id);
+			baseClassNameId = $_list_get(args, 1);
+			constructorArgsCount = $_list_get(args, 2); // -1 if no constructor present
+			methodCount = $_list_get(args, 3);
+
+			baseClassId = 0;
+			if (baseClassNameId > 0) {
+				if (_dictionary_contains(nameToClassId, baseClassNameId)) {
+					baseClassId = _dictionary_get(nameToClassId, baseClassNameId);
+				} else {
+					// TODO: create a killExecution method that only requires a token and no stack
+					return "Base class name not found.";
+				}
+			}
+			
+			if (baseClassId == 0) {
+				methodLookup = {};
+			} else {
+				methodLookup = copy_dictionary($_list_get(classMethods, baseClassId));
+			}
+
+			for (j = 0; j < methodCount; j += 1) {
+				methodNameId = $_list_get(args, (j * 3) + 4);
+				pcOffset = $_list_get(args, (j * 3) + 5);
+				maxArgs = $_list_get(args, (j * 3) + 6);
+
+				methodData = [
+					methodNameId,
+					maxArgs,
+					i + pcOffset
+				];
+
+				$_dictionary_set(methodLookup, methodNameId, methodData);
+			}
+
+			classRow = [
+				nameId,
+				0, // PC of constructor (0 if absent, overriden to correct value below)
+				0, // maximum arg count of constructor
+				baseClassId,
+				0, // do base constructors need to be invoked? (overridden below if yes)
+				0 // Is class usable? This gets changed to 1 when the class definition is encountered.
+			];
+			if (constructorArgsCount >= 0) {
+				classRow[1] = i + 2;
+				classRow[2] = constructorArgsCount;
+			}
+			
+			if (baseClassId != 0) {
+				baseClassInfo = $_list_get(classTable, baseClassId);
+				if ($_list_get(baseClassInfo, 1) > 0 || $_list_get(baseClassInfo, 4) == 1) {
+					classRow[4] = 1;
+				}
+			}
+
+			$_list_push(classTable, classRow);
+			$_list_push(classMethods, methodLookup);
+		}
+	}
 
 	for (i = 0; i < $_list_length(ops); i += 1) {
 		op = $_list_get(ops, i);
@@ -233,6 +324,14 @@ function main() {
 					toggled = true;
 				}
 			}
+		} else if (op == OpCodes.CLASS_DEFINITION) {
+			nameId = $_list_get(args, 0);
+			classId = $_dictionary_get(nameToClassId, nameId, 0);
+			value = [classId];
+		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
+			nameId = $_list_get(args, 1);
+			classId = $_dictionary_get(nameToClassId, nameId, 0);
+			value = [classId];
 		} else {
 			value = null;
 		}
@@ -249,6 +348,8 @@ function main() {
 		inv_identifiers,
 		stringTable,
 		floatTable,
+		classTable,
+		classMethods,
 		false);
 
 	pd[0] = p;
@@ -275,6 +376,8 @@ function runTick() {
 			ProgramData$p.inv_identifiers,
 			ProgramData$p.stringTable,
 			ProgramData$p.floatTable,
+			ProgramData$p.classTable,
+			ProgramData$p.classMethods,
 			ProgramData$p.specialCache);
 		if (error == null) {
 			// do nothing, let the next tick occur
@@ -291,12 +394,14 @@ function runTick() {
 		while (true) {
 			error = interpret(
 				ProgramData$p.stackTop,
-				ProgramData$p.ops, 
-				ProgramData$p.args, 
-				ProgramData$p.identifiers, 
-				ProgramData$p.inv_identifiers, 
-				ProgramData$p.stringTable, 
-				ProgramData$p.floatTable, 
+				ProgramData$p.ops,
+				ProgramData$p.args,
+				ProgramData$p.identifiers,
+				ProgramData$p.inv_identifiers,
+				ProgramData$p.stringTable,
+				ProgramData$p.floatTable,
+				ProgramData$p.classTable,
+				ProgramData$p.classMethods,
 				ProgramData$p.specialCache);
 			if (error == null) {
 				$_pause_for_frame();
@@ -380,10 +485,14 @@ function valueToString(value) {
 		output += "]";
 		return output;
 	}
+	if (type == Types.INSTANCE) {
+		output = "INSTANCE: " + $_string_cast_strong(value);
+		return output;
+	}
 	return "TODO: toString for " + getTypeFromId(type);
 }
 
-function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, specialCache) {
+function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, classTable, classMethods, specialCache) {
 	valueStack = StackFrame$stack.valueStack;
 	locals = StackFrame$stack.locals;
 	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
@@ -392,8 +501,10 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 		switch (ops[StackFrame$stack.pc]) {
 
 			case OpCodes.ASSIGN_FUNCTION_ARG:
-				$_comment('ASSIGN_FUNCTION_ARG');
-				return killExecution(stack, "TODO: assign function arg");
+				nameId = row[0];
+				value = $_list_get(StackFrame$stack.args, row[1]);
+				$_dictionary_set(locals, nameId, value);
+				break;
 
 			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP:
 				$_comment('ASSIGN_FUNCTION_ARG_AND_JUMP');
@@ -428,7 +539,25 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.ASSIGN_STEP:
 				$_comment('ASSIGN_STEP');
-				return killExecution(stack, "TODO: assign step");
+				value = $_list_pop(valueStack);
+				obj = $_list_pop(valueStack);
+				nameId = row[0];
+				if (Value$obj.type == Types.INSTANCE) {
+					dict = $_list_get(obj, 1);
+					$_dictionary_set(dict, nameId, value);
+				} else {
+					killExecution(stack, "Cannot assign to a field on this type.");
+				}
+				break;
+				
+			case OpCodes.ASSIGN_THIS_STEP:
+				$_comment('ASSIGN_THIS_STEP');
+				obj = StackFrame$stack.objectContext; // obj will never be null because that is a compile error.
+				// TODO: prevent assignment to methods
+				value = $_list_pop(valueStack);
+				nameId = row[0];
+				dict = $_list_get(Value$obj.internalValue, 1);
+				$_dictionary_set(dict, nameId, value);
 				break;
 
 			case OpCodes.ASSIGN_VAR:
@@ -664,6 +793,50 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_list_push(valueStack, output);
 				break;
 
+			case OpCodes.CALL_BASE_CONSTRUCTOR:
+				$_comment('CALL_BASE_CONSTRUCTOR');
+				return killExecution(stack, "TODO: CALL_BASE_CONSTRUCTOR");
+				break;
+
+			case OpCodes.CALL_CONSTRUCTOR:
+				$_comment('CALL_CONSTRUCTOR');
+				sc_row = $_list_get(specialCache, StackFrame$stack.pc);
+				classId = $_list_get(sc_row, 0);
+				instanceCounter[0] += 1;
+				value = new Value(Types.INSTANCE, [classId, {}, instanceCounter[0]]);
+				classData = $_list_get(classTable, classId);
+				if (classData[5] == 0) {
+					return killExecution(stack, "This class has not been defined yet.");
+				}
+				pc = $_list_get(classData, 1);
+				argCount = $_list_get(row, 0);
+				if (pc != 0) {
+					funcArgs = [];
+					returnValueUsed = $_list_get(row, 2) == 1;
+					while (argCount > 0) {
+						$_list_push(funcArgs, $_list_pop(valueStack));
+						argCount -= 1;
+					}
+					if ($_list_get(row, 0) > 1) {
+						$_list_reverse(funcArgs);
+					}
+
+					if (returnValueUsed) {
+						$_list_push(valueStack, value);
+					}
+
+					valueStack = [];
+					locals = {};
+					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
+				} else if (argCount != 0) {
+					return killExecution(stack, "Supplied arguments for non existent constructor.");
+				} else {
+					// TODO: if any constructor is defined in a base class, you must explicitly call it
+					// otherwise throw a compile error. Then I don't have to do a weird dance here.
+					$_list_push(valueStack, value);
+				}
+				break;
+
 			case OpCodes.CALL_FRAMEWORK_FUNCTION:
 				$_comment('CALL_FRAMEWORK_FUNCTION');
 				// TODO: the types for these values must be verified.
@@ -760,13 +933,22 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						return killExecution(stack, error);
 					}
 				} else if (funcType == Types.METHOD) {
-					return killExecution(stack, "TODO: invoke user method");
+					methodData = Value$func.internalValue;
+					obj = methodData[0];
+					pc = methodData[1];
+					maxArgs = methodData[2];
+					if (maxArgs < $_list_length(funcArgs)) {
+						return killExecution(stack, "Too many args were passed in.");
+					}
+					valueStack = [];
+					locals = {};
+					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, returnValueUsed, obj);
 				} else if (funcType == Types.SYS_FUNCTION) {
 					return killExecution(stack, "TODO: invoke system function");
 				} else if (funcType == Types.FUNCTION) {
 					valueStack = [];
 					locals = {};
-					stack = new StackFrame(Value$func.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed);
+					stack = new StackFrame(Value$func.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed, null);
 				} else {
 					return killExecution(stack, "Cannot invoke " + getTypeFromId(funcType) + " like a function.");
 				}
@@ -792,13 +974,21 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					if (type == Types.FUNCTION) {
 						valueStack = [];
 						locals = {};
-						stack = new StackFrame(Value$funcPointer.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed);
+						stack = new StackFrame(Value$funcPointer.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed, null);
 					} else {
 						return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 					}
 				} else {
 					return killExecution(stack, "That function is not defined: '" + identifiers[row[0]] + "'");
 				}
+				break;
+
+			case OpCodes.CLASS_DEFINITION:
+				$_comment('CLASS_DEFINITION');
+				sc_row = $_list_get(specialCache, StackFrame$stack.pc);
+				classId = $_list_get(sc_row, 0);
+				classInfo = $_list_get(classTable, classId);
+				classInfo[5] = 1;
 				break;
 
 			case OpCodes.DEF_LIST:
@@ -824,7 +1014,22 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				root = $_list_pop(valueStack);
 				type = Value$root.type;
 				if (type == Types.INSTANCE) {
-					
+					dict = $_list_get(Value$root.internalValue, 1);
+					value = $_dictionary_get(dict, row[0], null);
+					if (value == null) {
+						classId = $_list_get(Value$root.internalValue, 0);
+						$_print(classMethods);
+						method = $_dictionary_get($_list_get(classMethods, classId), row[0], null);
+						if (method == null) {
+							return killExecution(stack, "Field used before it was defined.");
+						} else {
+							value = new Value(Types.METHOD, [root, method[2], method[1]]); // context, pc, maxArgs
+							$_dictionary_set(dict, row[0], value);
+							$_list_push(valueStack, value);
+						}
+					} else {
+						$_list_push(valueStack, value);
+					}
 				} else if (row[0] == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
 					len = -1;
 					if (type == Types.LIST) {
@@ -863,10 +1068,14 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			case OpCodes.FUNCTION_DEFINITION:
 				$_comment('FUNCTION_DEFINITION');
-				funcDef = new Value(Types.FUNCTION, 
-					// PC                             Max arg count    Name ID]
-					[StackFrame$stack.pc + row[1],    row[2],          identifiers[row[0]]]);
-				$_list_push(valueStack, funcDef);
+				if (row[3] == 1) {
+					
+				} else {
+					funcDef = new Value(Types.FUNCTION, 
+						// PC                             Max arg count    Name ID]
+						[StackFrame$stack.pc + row[1],    row[2],          identifiers[row[0]]]);
+					$_list_push(valueStack, funcDef);
+				}
 				break;
 
 			case OpCodes.INDEX:
@@ -976,11 +1185,10 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_comment('RETURN_NULL');
 				useReturnValue = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
-				locals = StackFrame$stack.locals;
 				if (stack == null) {
-					StackFrame$stack.pc += 1;
 					return '';
 				}
+				locals = StackFrame$stack.locals;
 				valueStack = StackFrame$stack.valueStack;
 				if (useReturnValue) {
 					$_list_push(valueStack, VALUE_NULL);
@@ -991,7 +1199,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_comment('STEP');
 				return killExecution(stack, "TODO: step");
 				break;
-				
+
+			case OpCodes.THIS:
+				$_comment('THIS');
+				// will never be called outside of a method.
+				$_list_push(valueStack, StackFrame$stack.objectContext);
+				break;
+
 			case OpCodes.VARIABLE:
 				$_comment('VARIABLE');
 				value = $_dictionary_get(locals, row[0], null);

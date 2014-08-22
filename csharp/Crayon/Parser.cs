@@ -9,6 +9,8 @@ namespace Crayon
 		private int fileIdCounter = 0;
 		private int intCounter = 0;
 
+		public bool IsInClass { get; set; }
+
 		// TODO: why isn't this static?
 		private Dictionary<string, FrameworkFunction> ffLookup = new Dictionary<string, FrameworkFunction>();
 
@@ -198,6 +200,7 @@ namespace Crayon
 		{
 			this.Mode = mode;
 			this.folder = rootFolder;
+			this.IsInClass = false;
 
 			foreach (object name in Enum.GetValues(typeof(FrameworkFunction)))
 			{
@@ -335,6 +338,13 @@ namespace Crayon
 			{
 				throw new ParserException(token, "Identifier expected.");
 			}
+		}
+
+		private static readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>(
+			"if else class function constructor return break continue for do while true false null this import enum switch base case default foreach try catch finally new".Split(' '));
+		internal static bool IsReservedKeyword(string value)
+		{
+			return RESERVED_KEYWORDS.Contains(value);
 		}
 
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
