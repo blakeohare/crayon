@@ -7,6 +7,7 @@
 	ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
 	ASSIGN_VAR, // 1: variable name ID
 	BINARY_OP,
+	BOOLEAN_NOT, // no args.
 	BREAK, // no ops. This should be resolved into a jump before actually being run.
 	CALL_BASE_CONSTRUCTOR, // 1: num args passed
 	CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
@@ -674,6 +675,24 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
 						((((Value$leftObj.type * MAX_OP) + op) * MAX_TYPE) + Value$rightObj.type) {
 						
+						case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
+							$_comment('int ** float');
+							output = new Value(Types.FLOAT, $_exponent(left, right));
+							break;
+
+						case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
+							$_comment('float ** float');
+							output = new Value(Types.FLOAT, $_exponent(left, right));
+							break;
+							
+						case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
+							$_comment('float % float');
+							if (right == 0) return killExecution(stack, "Modulo by 0");
+							t = left % right;
+							if (t < 0) t += right;
+							output = new Value(Types.FLOAT, t);
+							break;
+
 						case (Types.INTEGER * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.INTEGER:
 							$_comment('int % int');
 							if (right == 0) return killExecution(stack, "Modulo by 0");
@@ -739,7 +758,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						// int * float
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int * float');
-							output = new Value(Types.INTEGER, left * right); break;
+							output = new Value(Types.FLOAT, left * right); break;
 
 						// float * float
 						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
@@ -856,6 +875,17 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_list_push(valueStack, output);
 				break;
 
+			case OpCodes.BOOLEAN_NOT:
+				$_comment('BOOLEAN_NOT');
+				value = $_list_pop(valueStack);
+				if (Value$value.type != Types.BOOLEAN) return killExecution(stack, "Boolean expected.");
+				if (Value$value.internalValue) {
+					$_list_push(valueStack, VALUE_FALSE);
+				} else {
+					$_list_push(valueStack, VALUE_TRUE);
+				}
+				break;
+
 			case OpCodes.CALL_BASE_CONSTRUCTOR:
 				$_comment('CALL_BASE_CONSTRUCTOR');
 				sc_row = $_list_get(specialCache, StackFrame$stack.pc);
@@ -924,6 +954,12 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				// TODO: the types for these values must be verified.
 				output = VALUE_NULL;
 				switch (row[0]) {
+					case %%%FF_ARCTAN2%%%:
+						x = $_list_pop(valueStack);
+						y = $_list_pop(valueStack);
+						$_insert_platform_code('ff_arctan2');
+						break;
+
 					case %%%FF_BLIT_IMAGE%%%:
 						y = $_list_pop(valueStack);
 						x = $_list_pop(valueStack);

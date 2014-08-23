@@ -5,7 +5,7 @@ namespace Crayon
 {
 	internal static class Tokenizer
 	{
-		private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>("++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^=".Split(' '));
+		private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>("++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= **".Split(' '));
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
 		private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
 
@@ -87,7 +87,7 @@ namespace Crayon
 					{
 						stringToken += c;
 						stringType = null;
-						tokens.Add(new Token(stringToken, fileID, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
+						tokens.Add(new Token(stringToken, fileID, filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
 					}
 					else
 					{
@@ -103,7 +103,7 @@ namespace Crayon
 					}
 					else
 					{
-						tokens.Add(new Token(normalToken, fileID, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
+						tokens.Add(new Token(normalToken, fileID, filename, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
 						--i;
 						normalToken = null;
 					}
@@ -111,7 +111,7 @@ namespace Crayon
 				}
 				else if (TWO_CHAR_TOKENS.Contains(c2))
 				{
-					tokens.Add(new Token(c2, fileID, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+					tokens.Add(new Token(c2, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
 					++i;
 					previousIsWhitespace = false;
 				}
@@ -154,7 +154,7 @@ namespace Crayon
 				}
 				else
 				{
-					tokens.Add(new Token("" + c, fileID, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+					tokens.Add(new Token("" + c, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
 					previousIsWhitespace = false;
 				}
 			}

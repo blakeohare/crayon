@@ -56,8 +56,9 @@ class Tile {
 				this.image_cycle = [imgLib.images['tiles/exit']];
 			} else if (this.type == 'exitsign') {
 				this.image_cycle = [];
-				for (i = 1; i <= 4; ++i) {
-					this.image_cycle.add(imgLib.images['tiles/exitsign/' + i]);
+				indexes = [1, 1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 4, 3, 2];
+				for (i = 0; i < indexes.length; ++i) {
+					this.image_cycle.add(imgLib.images['tiles/exitsign/' + indexes[i]]);
 				}
 			} else {
 				$print('WAT: ' + this.type);

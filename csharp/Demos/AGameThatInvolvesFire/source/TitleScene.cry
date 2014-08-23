@@ -12,16 +12,35 @@ class TitleScene : SceneBase {
 		for (i = 0; i < events.length; ++i) {
 			ev = events[i];
 			if (ev[0] == 'key' && ev[1]) {
-				if (ev[2] == 'up') {
+				key = ev[2];
+				if (key == 'up') {
 					if (this.index > 0) {
 						this.index--;
 					}
-				} else if (ev[2] == 'down') {
+				} else if (key == 'down') {
 					if (this.index < 2) {
 						this.index++;
 					}
-				} else if (ev[2] == 'enter') {
+				} else if (key == 'enter') {
 					this.execute(this.index);
+				} else if (key == '1') {
+					this.next = new PlayScene(1);
+				} else if (key == '2') {
+					this.next = new PlayScene(2);
+				} else if (key == '3') {
+					this.next = new PlayScene(3);
+				} else if (key == '4') {
+					this.next = new PlayScene(4);
+				} else if (key == '5') {
+					this.next = new PlayScene(5);
+				} else if (key == '6') {
+					this.next = new PlayScene(6);
+				} else if (key == '7') {
+					this.next = new PlayScene(7);
+				} else if (key == '8') {
+					this.next = new PlayScene(8);
+				} else if (key == '9') {
+					this.next = new PlayScene(9);
 				}
 			} else if (ev[0] == 'mouseleftdown' || ev[0] == 'mouseleftup' || ev[0] == 'mousemove') {
 				is_move = ev[0] == 'mousemove';
@@ -55,7 +74,7 @@ class TitleScene : SceneBase {
 
 		if (index == 0) {
 			// play game
-			this.next = new PlayScene('level-1');
+			this.next = new PlayScene(1);
 		} else if (index == 1) {
 			// instructions
 			$print('instructions');

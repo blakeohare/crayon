@@ -9,6 +9,7 @@
 		ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
 		ASSIGN_VAR, // 1: variable name ID
 		BINARY_OP,
+		BOOLEAN_NOT, // no args.
 		BREAK, // no ops. This should be resolved into a jump before actually being run.
 		CALL_BASE_CONSTRUCTOR, // 1: num args passed
 		CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID

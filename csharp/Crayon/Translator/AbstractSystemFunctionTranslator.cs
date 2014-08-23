@@ -29,6 +29,7 @@ namespace Crayon.Translator
 				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
+				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_kill_execution": VerifyCount(functionCall, 1); TranslateKillExecution(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -55,6 +56,7 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
 		protected abstract void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep);
 		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);

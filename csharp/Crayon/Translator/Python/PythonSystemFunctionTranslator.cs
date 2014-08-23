@@ -9,6 +9,15 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
+		{
+			output.Add("float(");
+			this.Translator.TranslateExpression(output, baseNum);
+			output.Add(" ** ");
+			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
 		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
 		{
 			output.Add("(");
@@ -185,6 +194,10 @@ namespace Crayon.Translator.Python
 		{
 			switch (id)
 			{
+				case "ff_arctan2":
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.atan2(v_y[1], v_x[1])]");
+					break;
+
 				case "ff_blit_image":
 					output.Add("_global_vars['screen'].blit(v_image[1][1], (v_x[1], v_y[1]))");
 					break;

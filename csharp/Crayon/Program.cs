@@ -5,12 +5,12 @@
 		static void Main(string[] args)
 		{
 #if DEBUG
-			string sourceFolder = "C:\\Things\\Projects\\Crayon\\Demos\\FlappySquid\\source";
-			string outputFolder = "C:\\Things\\Projects\\Crayon\\Demos\\FlappySquid\\output";
-			string rawPlatform = "py";
+			string sourceFolder = @"C:\things\projects\Crayon\Demos\AGameThatInvolvesFire\source";
+			string outputFolder = @"C:\things\projects\Crayon\Demos\AGameThatInvolvesFire\output";
+			string rawPlatform = "js";
 
 #else
-			if (args.Length != #)
+			if (args.Length != 3)
 			{
 				System.Console.WriteLine("Usage:");
 				System.Console.WriteLine("  C:\\Things> crayon.exe sourcefolder outputfolder platform");

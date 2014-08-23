@@ -395,7 +395,32 @@ namespace Crayon
 			else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
 			else if (expr is DictionaryDefinition) this.CompileDictionaryDefinition(parser, buffer, (DictionaryDefinition)expr, outputUsed);
 			else if (expr is BooleanCombination) this.CompileBooleanCombination(parser, buffer, (BooleanCombination)expr, outputUsed);
+			else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
+			else if (expr is Ternary) this.CompileTernary(parser, buffer, (Ternary)expr, outputUsed);
 			else throw new NotImplementedException();
+		}
+
+		private void CompileTernary(Parser parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)
+		{
+			if (!outputUsed) throw new ParserException(ternary.FirstToken, "Cannot have this expression here.");
+
+			this.CompileExpression(parser, buffer, ternary.Condition, true);
+			ByteBuffer trueBuffer = new ByteBuffer();
+			this.CompileExpression(parser, trueBuffer, ternary.TrueValue, true);
+			ByteBuffer falseBuffer = new ByteBuffer();
+			this.CompileExpression(parser, falseBuffer, ternary.FalseValue, true);
+			trueBuffer.Add(null, OpCode.JUMP, falseBuffer.Size);
+			buffer.Add(ternary.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueBuffer.Size);
+			buffer.Concat(trueBuffer);
+			buffer.Concat(falseBuffer);
+		}
+
+		private void CompileBooleanNot(Parser parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)
+		{
+			if (!outputUsed) throw new ParserException(boolNot.FirstToken, "Cannot have this expression here.");
+
+			this.CompileExpression(parser, buffer, boolNot.Root, true);
+			buffer.Add(boolNot.FirstToken, OpCode.BOOLEAN_NOT);
 		}
 
 		private void CompileBooleanCombination(Parser parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
@@ -577,6 +602,7 @@ namespace Crayon
 					case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
 					case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
 					case "!=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.NOT_EQUALS); break;
+					case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
 					default: throw new NotImplementedException("Binary op: " + opChain.Ops[i].Value);
 				}
 			}
