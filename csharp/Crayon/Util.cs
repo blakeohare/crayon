@@ -5,6 +5,16 @@ namespace Crayon
 {
 	internal static class Util
 	{
+		public static void EnsureFolderExists(string path)
+		{
+			string folder = System.IO.Path.GetDirectoryName(path);
+			if (!System.IO.Directory.Exists(folder))
+			{
+				Util.EnsureFolderExists(folder);
+				System.IO.Directory.CreateDirectory(folder);
+			}
+		}
+
 		public static string FloatToString(double value)
 		{
 			string output = value.ToString();

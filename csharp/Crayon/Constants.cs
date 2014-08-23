@@ -9,6 +9,7 @@ namespace Crayon
 		private static readonly Dictionary<string, int> values = new Dictionary<string, int>()
 		{
 			{ "TYPE_NATIVE_OBJECT_SCREEN", 1 },
+			{ "TYPE_NATIVE_OBJECT_IMAGE", 2 },
 		};
 
 		public static string DoReplacements(string text, PlatformTarget platform)

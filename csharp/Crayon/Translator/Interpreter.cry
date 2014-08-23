@@ -902,6 +902,14 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				// TODO: the types for these values must be verified.
 				output = VALUE_NULL;
 				switch (row[0]) {
+					case %%%FF_BLIT_IMAGE%%%:
+						y = $_list_pop(valueStack);
+						x = $_list_pop(valueStack);
+						image = $_list_pop(valueStack);
+						screen = $_list_pop(valueStack);
+						$_insert_platform_code('ff_blit_image');
+						break;
+
 					case %%%FF_CLOCK_TICK%%%:
 						programdata = pd[0];
 						ProgramData$programdata.stackTop = stack;
@@ -912,6 +920,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					case %%%FF_CURRENT_TIME%%%:
 						$_insert_platform_code('ff_current_time');
 						break;
+						
+					case %%%FF_DOWNLOAD_IMAGE%%%:
+						url = $_list_pop(valueStack);
+						key = $_list_pop(valueStack);
+						$_insert_platform_code('ff_download_image');
+						break;
+
 					case %%%FF_DRAW_RECTANGLE%%%:
 						alpha = $_list_pop(valueStack);
 						blue = $_list_pop(valueStack);
@@ -924,6 +939,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						scr = $_list_pop(valueStack);
 						$_insert_platform_code('ff_draw_rectangle');
 						break;
+
 					case %%%FF_FILL_SCREEN%%%:
 						blue = $_list_pop(valueStack);
 						green = $_list_pop(valueStack);
@@ -938,15 +954,28 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					case %%%FF_GET_EVENTS%%%:
 						$_insert_platform_code('ff_get_events');
 						break;
+						
+					case %%%FF_GET_IMAGE%%%:
+						key = $_list_pop(valueStack);
+						$_insert_platform_code('ff_get_image');
+						break;
+
 					case %%%FF_INITIALIZE_GAME%%%: 
 						fps = $_list_pop(valueStack);
 						$_insert_platform_code('ff_initialize_game');
 						break;
+
 					case %%%FF_INITIALIZE_SCREEN%%%:
 						height = $_list_pop(valueStack);
 						width = $_list_pop(valueStack);
 						$_insert_platform_code('ff_initialize_screen');
 						break;
+						
+					case %%%FF_IS_IMAGE_LOADED%%%:
+						key = $_list_pop(valueStack);
+						$_insert_platform_code('ff_is_image_loaded');
+						break;
+
 					case %%%FF_PRINT%%%: 
 						value = $_list_pop(valueStack);
 						string1 = valueToString(value);

@@ -75,3 +75,15 @@ def _kill_execution(message):
 _PDR = pygame.draw.rect
 _PDF = pygame.display.flip
 _PR = pygame.Rect
+
+_images_downloaded = {}
+
+def download_image_impl(key, url):
+	img = pygame.image.load(url.replace('/', os.sep))
+	_images_downloaded[key] = img
+
+def get_image_impl(key):
+	surf = _images_downloaded.get(key, None)
+	if surf == None: return None
+	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)]
+

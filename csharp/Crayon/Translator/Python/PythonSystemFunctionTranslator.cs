@@ -168,8 +168,16 @@ namespace Crayon.Translator.Python
 		{
 			switch (id)
 			{
+				case "ff_blit_image":
+					output.Add("v_screen[1][1].blit(v_image[1][1], (v_x[1], v_y[1]))");
+					break;
+
 				case "ff_current_time":
 					output.Add("v_output = [" + (int)Types.FLOAT + ", time.time()]");
+					break;
+
+				case "ff_download_image":
+					output.Add("download_image_impl(v_key[1], v_url[1])");
 					break;
 
 				case "ff_draw_rectangle":
@@ -189,12 +197,20 @@ namespace Crayon.Translator.Python
 					output.Add("v_output = _pygame_pump_events()");
 					break;
 
+				case "ff_get_image":
+					output.Add("v_output = get_image_impl(v_key[1])");
+					break;
+
 				case "ff_initialize_game":
 					output.Add("platform_begin(v_fps[1])");
 					break;
 
 				case "ff_initialize_screen":
 					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1])");
+					break;
+
+				case "ff_is_image_loaded":
+					output.Add("v_output = v_VALUE_TRUE");
 					break;
 
 				case "ff_print":

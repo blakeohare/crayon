@@ -52,6 +52,17 @@ namespace Crayon
 		private void SerializePython(string folder, string finalCode, IList<string> filesToCopyOver)
 		{
 			System.IO.File.WriteAllText(System.IO.Path.Combine(folder, "game.py"), finalCode);
+			foreach (string fileToCopyOver in filesToCopyOver)
+			{
+				string relativeFile = fileToCopyOver.Substring(this.folder.Length + 1);
+				string finalPath = System.IO.Path.Combine(folder, relativeFile);
+				Util.EnsureFolderExists(finalPath);
+				if (System.IO.File.Exists(finalPath))
+				{
+					System.IO.File.Delete(finalPath);
+				}
+				System.IO.File.Copy(fileToCopyOver, finalPath);
+			}
 		}
 
 		private void SerializeJavaScript(string folder, string finalCode, IList<string> filesToCopyOver)
