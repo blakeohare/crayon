@@ -7,6 +7,7 @@ import 'TitleScene.cry';
 import 'Tile.cry';
 import 'Sprite.cry';
 import 'LevelStore.cry';
+import 'StaticImageScene.cry';
 
 level_store = new LevelStore();
 

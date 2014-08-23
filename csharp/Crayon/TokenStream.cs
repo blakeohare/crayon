@@ -77,7 +77,7 @@ namespace Crayon
 			Token token = this.Pop();
 			if (token.Value != value)
 			{
-				throw new Exception("Line: " + (token.Line + 1) + ", Col: " + (token.Col + 1) + ", Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'");
+				throw new ParserException(token, " Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'");
 			}
 			return token;
 		}

@@ -9,6 +9,15 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, haystack);
+			output.Add(".indexOf(");
+			this.Translator.TranslateExpression(output, needle);
+			output.Add(") != -1)");
+		}
+
 		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
 		{
 			output.Add("Math.pow(");
@@ -244,6 +253,11 @@ namespace Crayon.Translator.JavaScript
 
 				case "ff_is_image_loaded":
 					output.Add("v_output = R.is_image_loaded(v_key[1]) ? v_VALUE_TRUE : v_VALUE_FALSE");
+					break;
+
+				case "ff_parse_int":
+					// TODO: need to throw if not an integer
+					output.Add("v_output = [" + (int)Types.INTEGER + ", parseInt(v_value[1])]");
 					break;
 
 				case "ff_print":

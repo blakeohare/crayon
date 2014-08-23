@@ -6,6 +6,7 @@ class Tile {
 		this.image_cycle = null;
 		this.image_cycle_length = 0;
 		this.static_image = null;
+		this.styling = null;
 		
 		if (this.type == 'floor' || this.type == 'entrance' || this.type == 'exit' || this.type == 'fire') {
 			this.passable = true;
@@ -42,7 +43,7 @@ class Tile {
 	function render(imgLib, render_counter, x, y) {
 		if (this.image_cycle == null) {
 			if (this.type == 'floor') {
-				this.image_cycle = [imgLib.images['tiles/floor']];
+				this.image_cycle = [imgLib.images['tiles/floor' + this.styling]];
 			} else if (this.type == 'fire') {
 				this.image_cycle = [];
 				for (i = 1; i <= 6; ++i) {

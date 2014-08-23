@@ -47,6 +47,7 @@ namespace Crayon.Translator
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
+				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
 				case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
 				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
@@ -56,6 +57,7 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
 		protected abstract void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep);

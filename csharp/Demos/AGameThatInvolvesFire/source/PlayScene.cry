@@ -70,7 +70,6 @@ class PlayScene : SceneBase {
 			dy = this.player.y - fy;
 			if (dx * dx + dy * dy < 20 * 20) {
 				this.wincounter = 60;
-				$print('level won');
 			}
 		} else if (this.wincounter == 0) {
 			this.next = new PlayScene(this.level + 1);

@@ -23,45 +23,25 @@ class TitleScene : SceneBase {
 					}
 				} else if (key == 'enter') {
 					this.execute(this.index);
-				} else if (key == '1') {
-					this.next = new PlayScene(1);
-				} else if (key == '2') {
-					this.next = new PlayScene(2);
-				} else if (key == '3') {
-					this.next = new PlayScene(3);
-				} else if (key == '4') {
-					this.next = new PlayScene(4);
-				} else if (key == '5') {
-					this.next = new PlayScene(5);
-				} else if (key == '6') {
-					this.next = new PlayScene(6);
-				} else if (key == '7') {
-					this.next = new PlayScene(7);
-				} else if (key == '8') {
-					this.next = new PlayScene(8);
-				} else if (key == '9') {
-					this.next = new PlayScene(9);
+				} else if ('123456789'.contains(key)) {
+					this.next = new PlayScene($parse_int(key));
 				}
 			} else if (ev[0] == 'mouseleftdown' || ev[0] == 'mouseleftup' || ev[0] == 'mousemove') {
 				is_move = ev[0] == 'mousemove';
 				release = ev[0] == 'mouseleftup';
-				if (ev[0] != 'mousemove') {
-					this.is_mouse_down = ev[0] == 'mouseleftdown';
-				}
 				
-				if (this.is_mouse_down || ev[0] != 'mousemove') {
-					x = ev[1];
-					y = ev[2];
-					index_hit = -1;
-					for (j = 0; j < 3; ++j) {
-						if (x > this.lefts[j] && x < this.rights[j] && y > this.ys[j] && y < (this.ys[j] + 20)) {
-							index_hit = j;
-						}
+				
+				x = ev[1];
+				y = ev[2];
+				index_hit = -1;
+				for (j = 0; j < 3; ++j) {
+					if (x > this.lefts[j] && x < this.rights[j] && y > this.ys[j] && y < (this.ys[j] + 30)) {
+						index_hit = j;
 					}
-					if (index_hit != -1) {
-						this.index = index_hit;
-					}
-					
+				}
+				if (index_hit != -1) {
+					this.index = index_hit;
+				
 					if (release) {
 						this.execute(this.index);
 					}
@@ -73,14 +53,11 @@ class TitleScene : SceneBase {
 	function execute(index) {
 
 		if (index == 0) {
-			// play game
 			this.next = new PlayScene(1);
 		} else if (index == 1) {
-			// instructions
-			$print('instructions');
+			this.next = new StaticImageScene('instructions');
 		} else if (index == 2) {
-			// credits
-			$print('credits');
+			this.next = new StaticImageScene('credits');
 		}
 	}
 	
@@ -91,7 +68,7 @@ class TitleScene : SceneBase {
 	function render(imgLib) {
 		flicker = this.counter / 4;
 		bg = imgLib.images['menus/title'];
-		$blit_image(bg, 0, 0);
+		$blit_image(bg, 0, 0);		
 		img = imgLib.images['menus/cursor' + (1 + (flicker % 2))];
 		$blit_image(img, this.lefts[this.index], this.ys[this.index]);
 		$blit_image(img, this.rights[this.index], this.ys[this.index]);

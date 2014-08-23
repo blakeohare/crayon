@@ -7,10 +7,11 @@ class LevelStore {
 			'1': 'entrance',
 			'2': 'exit',
 			'f': 'fire',
-			'i': 'exitsign'
+			'i': 'exitsign',
+			'*': 'floor',
 		};
 		
-		this.levels['level-1'] = this.build_level(type_mapping, [
+		this.levels['level-1'] = this.build_level(1, type_mapping, [
 			"xxxxxxxxxxxxxxxxxxxx",
 			"x   xxx   fx   x   x",
 			"1 x   x xxxx x x x x",
@@ -26,7 +27,7 @@ class LevelStore {
 			"xfx   x   xx   x   2",
 			"xxxxxxxxxxxxxxxxxxxx"]);
 			
-		this.levels['level-2'] = this.build_level(type_mapping, [
+		this.levels['level-2'] = this.build_level(2, type_mapping, [
 			"xxxxxxxxxxxxi2xxxxxx",
 			"x  f               x",
 			"x                  x",
@@ -34,7 +35,7 @@ class LevelStore {
 			"x                  x",
 			"x                  x",
 			"x                  x",
-			"x                  x",
+			"x  *               x",
 			"x                 fx",
 			"x                  x",
 			"x                  x",
@@ -42,46 +43,72 @@ class LevelStore {
 			"1                  x",
 			"xxxxxxxxxxxxxxxxxxxx"]);
 			
-		this.levels['level-3'] = this.build_level(type_mapping, [
+		this.levels['level-3'] = this.build_level(3, type_mapping, [
 			"xxxxxxxxxxxxxxxxxxxx",
 			"xxxxxxfxxxxxxxxxxxxx",
-			"xxxxxx xfxxxxxxxxxxxx",
-			"xxxxxx x xfxxxxxxxxx",
-			"xxxxxx x x xfxxxxxxx",
-			"xxxxxx x x x xfxxxxx",
-			"xxxxxx x x x x xfxxx",
-			"xxxxxx x x x x x xfx",
-			"xxxxxx x x x x x x x",
-			"xxxxxx x x x x x x x",
+			"xxxxxx xxfxxxxxxxxxx",
+			"xxxxxx xx xxfxxxxxxx",
+			"xxxxxx xx xx xxfxxxx",
+			"xxxxxx xx xx xx xxfx",
+			"xxxxxx xx xx xx xx x",
+			"xxxxxx xx xx xx xx x",
+			"xxxxxx*xx xx xx xx x",
+			"xxxxxx xx xx xx xx x",
 			"x                  x",
 			"i xxxxxxxxxxxxxxxx x",
 			"2 xxxxxxxxxxx      x",
 			"xxxxxxxxxxxxx1xxxxxx"]);
 				   
-		this.levels['level-4'] = this.build_level(type_mapping, [
+		this.levels['level-4'] = this.build_level(4, type_mapping, [
 		  "xxxxxxxxxxxxxxxxxx1x",      
-		  "xxxxxxxxfxxxxxxxxx x",      
+		  "xxxxf    xxxxxxxxx x",      
 		  "xxxxxxxx xxxxxxxxx x",    
 		  "xxxxxxxx xxxxxxxxx x",
 		  "xxxxxxxx x     xxx x",
 		  "xxxxxxxx       xxx x",
-		  "                   x",  
-		  "                   x",                                                                                                                                                  
+		  "x                  x",  
+		  "x                  x",                                                                                                                                                  
 		  "x xxxxxx       xxxxx",
-		  "x xxxxxx     x xxxxx",
+		  "x xxxxxx*    x xxxxx",
 		  "x xxxxxxxxxxxx xxxxx",
 		  "x xxxxxxxxxxxx xxxxx",
 		  "x xxxxxxxxxxxxfxxxxx",
 		  "x2xxxxxxxxxxxxxxxxxx"]);
 		
+		this.levels['level-5'] = this.build_level(5, type_mapping, [
+		  "xxxxxxxxxxxxxxxxxxxx",
+		  "xxxxf              x",
+		  "x 1 xxxxxxxxxxxxxxxx",
+		  "x x               xx",
+		  "x x               xx",
+		  "x xxx             xx",
+		  "x   x  xxxxxxxxx  xx",
+		  "xxx x  xxxxxxxxx  xx",
+		  "xxx    xxxxxxxxx  xx",
+		  "xxx    xxxxxxxxx  xx",
+		  "xf  x  xxxxxxxxx  xx",
+		  "xxxxx             xx",
+		  "x f x*             2",
+		  "xxxxxxxxxxxxxxxxxxxx"]);
+		
 	}
 	
 	function get_fresh_grid(level) {
+		id = this.levels[level]['id'];
 		output = make_grid(20, 14);
 		copyThis = this.levels[level]['grid'];
 		for (y = 0; y < 14; ++y) {
 			for (x = 0; x < 20; ++x) {
-				output[x][y] = new Tile(copyThis[x][y], x, y);
+				key = copyThis[x][y];
+				styling = null;
+				if (key == 'floor') {
+					style = id % 2 == 1 ? '1' : '2';
+					variation = $random() < .5 ? 'a' : 'b';
+					styling = style + variation;
+				}
+				t = new Tile(key, x, y);
+				t.styling = styling;
+				output[x][y] = t;
 			}
 		}
 		
@@ -105,10 +132,15 @@ class LevelStore {
 		return this.levels[level]['finish'];
 	}
 	
-	function build_level(type_mapping, rows) {
+	function get_powerups(level) {
+		return this.levels[level]['powerups'];
+	}
+	
+	function build_level(id, type_mapping, rows) {
 		grid = make_grid(20, 14);
 		player_start = null;
 		finish = null;
+		powerups = [];
 		for (y = 0; y < 14; ++y) {
 			for (x = 0; x < 20; ++x) {
 				key = rows[y][x];
@@ -117,6 +149,8 @@ class LevelStore {
 					player_start = [x, y];
 				} else if (key == '2') {
 					finish = [x, y];
+				} else if (key == '*') {
+					powerups.add([x, y]);
 				}
 			}
 		}
@@ -124,7 +158,9 @@ class LevelStore {
 		return {
 			'grid': grid,
 			'start': player_start,
-			'finish': finish
+			'finish': finish,
+			'powerups': powerups,
+			'id': id
 		};
 	}
 }

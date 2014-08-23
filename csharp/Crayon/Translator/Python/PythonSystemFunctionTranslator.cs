@@ -9,6 +9,15 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, needle);
+			output.Add(" in ");
+			this.Translator.TranslateExpression(output, haystack);
+			output.Add(")");
+		}
+
 		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
 		{
 			output.Add("float(");
@@ -241,6 +250,10 @@ namespace Crayon.Translator.Python
 
 				case "ff_is_image_loaded":
 					output.Add("v_output = v_VALUE_TRUE");
+					break;
+
+				case "ff_parse_int":
+					output.Add("v_output = [" + (int)Types.INTEGER + ", int(v_value[1])]");
 					break;
 
 				case "ff_print":

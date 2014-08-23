@@ -4,8 +4,8 @@ class ImageLibrary {
 		this.image_objects = [];
 		
 		keys = 
-			"menus/title menus/cursor1 menus/cursor2".split(' ') +
-			"tiles/wall tiles/floor tiles/entrance tiles/exit".split(' ') +
+			"menus/title menus/cursor1 menus/cursor2 menus/instructions menus/credits".split(' ') +
+			"tiles/wall tiles/entrance tiles/exit".split(' ') +
 			"sprites/player/dead".split(' ');
 		directions = 'n s e w'.split(' ');
 		for (i = 1; i <= 6; ++i) {
@@ -19,6 +19,11 @@ class ImageLibrary {
 				keys.add('sprites/player/' + directions[i] + j);
 			}
 		}
+		
+		keys.add('tiles/floor1a');
+		keys.add('tiles/floor1b');
+		keys.add('tiles/floor2a');
+		keys.add('tiles/floor2b');
 		
 		for (i = 0; i < keys.length; ++i) {
 			key = keys[i];

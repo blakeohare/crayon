@@ -465,6 +465,7 @@ function build_integer(value) {
 
 PRIMITIVE_METHODS = {
 	// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
+	Types.STRING + "contains": %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%,
 	Types.STRING + "lower": %%%PRIMITIVE_METHOD_STRING_LOWER%%%,
 	Types.STRING + "reverse": %%%PRIMITIVE_METHOD_STRING_REPLACE%%%,
 	Types.STRING + "split": %%%PRIMITIVE_METHOD_STRING_SPLIT%%%,
@@ -1031,6 +1032,11 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						$_insert_platform_code('ff_is_image_loaded');
 						break;
 
+					case %%%FF_PARSE_INT%%%:
+						value = $_list_pop(valueStack);
+						$_insert_platform_code('ff_parse_int');
+						break;
+
 					case %%%FF_PRINT%%%: 
 						value = $_list_pop(valueStack);
 						string1 = valueToString(value);
@@ -1491,6 +1497,18 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 				$_list_push(wrappedList, new Value(Types.STRING, $_list_get(rawList, i)));
 			}
 			output = new Value(Types.LIST, wrappedList);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%:
+			haystack = Value$context.internalValue;
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String contains method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_contains(haystack, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
 			break;
 		default:
 			return "Unknown system method";
