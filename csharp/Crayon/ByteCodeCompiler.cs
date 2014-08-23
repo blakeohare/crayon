@@ -575,6 +575,7 @@ namespace Crayon
 					case "-": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.SUBTRACTION); break;
 					case "*": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MULTIPLICATION); break;
 					case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
+					case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
 					case "!=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.NOT_EQUALS); break;
 					default: throw new NotImplementedException("Binary op: " + opChain.Ops[i].Value);
 				}

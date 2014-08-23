@@ -178,7 +178,8 @@ struct ProgramData {
 	floatTable,
 	classTable,
 	classMethods,
-	tickerRegistered
+	tickerRegistered,
+	globalVarScope
 }
 
 // If I assign to this global directly, the translator will think this is a local variable.
@@ -361,7 +362,8 @@ function main() {
 		floatTable,
 		classTable,
 		classMethods,
-		false);
+		false,
+		StackFrame$stack.locals);
 
 	pd[0] = p;
 	
@@ -389,7 +391,8 @@ function runTick() {
 			ProgramData$p.floatTable,
 			ProgramData$p.classTable,
 			ProgramData$p.classMethods,
-			ProgramData$p.specialCache);
+			ProgramData$p.specialCache,
+			ProgramData$p.globalVarScope);
 		if (error == null) {
 			// do nothing, let the next tick occur
 			$_register_timeout();
@@ -413,7 +416,8 @@ function runTick() {
 				ProgramData$p.floatTable,
 				ProgramData$p.classTable,
 				ProgramData$p.classMethods,
-				ProgramData$p.specialCache);
+				ProgramData$p.specialCache,
+				ProgramData$p.globalVarScope);
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {
@@ -503,7 +507,7 @@ function valueToString(value) {
 	return "TODO: toString for " + getTypeFromId(type);
 }
 
-function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, classTable, classMethods, specialCache) {
+function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, classTable, classMethods, specialCache, globals) {
 	valueStack = StackFrame$stack.valueStack;
 	locals = StackFrame$stack.locals;
 	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
@@ -670,6 +674,14 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
 						((((Value$leftObj.type * MAX_OP) + op) * MAX_TYPE) + Value$rightObj.type) {
 						
+						case (Types.INTEGER * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.INTEGER:
+							$_comment('int % int');
+							if (right == 0) return killExecution(stack, "Modulo by 0");
+							t = left % right;
+							if (t < 0) t += right;
+							output = build_integer(t);
+							break;
+
 						case (Types.LIST * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.LIST:
 							$_comment('list + list');
 							output = new Value(Types.LIST, $_list_concat(left, right)); break;
@@ -802,7 +814,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						//int > int
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('int > int');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
 
 						// float >= int
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
@@ -916,7 +928,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						y = $_list_pop(valueStack);
 						x = $_list_pop(valueStack);
 						image = $_list_pop(valueStack);
-						screen = $_list_pop(valueStack);
 						$_insert_platform_code('ff_blit_image');
 						break;
 
@@ -1065,6 +1076,10 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					$_list_reverse(funcArgs);
 				}
 				funcPointer = $_dictionary_get(locals, row[0], null);
+				if (funcPointer == null) {
+					funcPointer = $_dictionary_get(globals, row[0], null);
+				}
+
 				if (funcPointer != null) {
 					
 					type = Value$funcPointer.type;
@@ -1098,7 +1113,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				first = true;
 				anticipatedSize = size;
 				while (size > 0) {
-					$_print(size);
 					value = $_list_pop(valueStack);
 					key = $_list_pop(valueStack);
 					keyType = Value$key.type;
@@ -1255,7 +1269,16 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 							
 						$_list_push(valueStack, value);
 					}
-
+				} else if (Value$root.type == Types.STRING) {
+					t = Value$root.internalValue;
+					if (Value$index.type != Types.INTEGER) {
+						return killExecution(stack, "indexes into strings must be integers.");
+					}
+					index = Value$index.internalValue;
+					if (index < 0 || index >= $_string_length(t)) {
+						return killExecution(stack, "String index out of range.");
+					}
+					$_list_push(valueStack, new Value(Types.STRING, $_string_char_at(t, index)));
 				} else {
 					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
 				}
@@ -1376,7 +1399,12 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_comment('VARIABLE');
 				value = $_dictionary_get(locals, row[0], null);
 				if (value == null) {
-					return killExecution(stack, "Variable not defined: " + identifiers[row[0]]);
+					value = $_dictionary_get(globals, row[0], null);
+					if (value == null) {
+						return killExecution(stack, "Variable not defined: " + identifiers[row[0]]);
+					} else {
+						$_list_push(valueStack, value);
+					}
 				} else {
 					$_list_push(valueStack, value);
 				}
@@ -1386,6 +1414,9 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				$_comment('VARIABLE_STREAM');
 				for (i = 0; $_list_get(row, i) != -1; i += 1) {
 					value = $_dictionary_get(locals, $_list_get(row, i), null);
+					if (value == null) {
+						value = $_dictionary_get(globals, $_list_get(row, i), null);
+					}
 					if (value == null) {
 						sc_row = $_list_get(specialCache, StackFrame$stack.pc);
 						fakeToken = $_list_get(sc_row, i);

@@ -25,8 +25,8 @@ R._global_vars = {
     'image_keys_by_index': [null]
 };
 
-R.blit = function(ignored, canvas, x, y) {
-    R._global_vars.ctx.drawImage(canvas, x, y);
+R.blit = function(canvas, x, y) {
+    R._global_vars.ctx.drawImage(canvas, x, y);5
 };
 
 R.is_image_loaded = function(key) {

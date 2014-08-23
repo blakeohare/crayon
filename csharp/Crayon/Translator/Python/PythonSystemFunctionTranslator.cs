@@ -186,7 +186,7 @@ namespace Crayon.Translator.Python
 			switch (id)
 			{
 				case "ff_blit_image":
-					output.Add("v_screen[1][1].blit(v_image[1][1], (v_x[1], v_y[1]))");
+					output.Add("_global_vars['screen'].blit(v_image[1][1], (v_x[1], v_y[1]))");
 					break;
 
 				case "ff_current_time":

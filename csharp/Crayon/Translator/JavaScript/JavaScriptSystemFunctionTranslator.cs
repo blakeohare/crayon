@@ -190,7 +190,7 @@ namespace Crayon.Translator.JavaScript
 			switch (id)
 			{
 				case "ff_blit_image":
-					output.Add("R.blit(null, v_image[1][1], v_x[1], v_y[1])");
+					output.Add("R.blit(v_image[1][1], v_x[1], v_y[1])");
 					break;
 
 				case "ff_current_time":
