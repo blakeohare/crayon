@@ -1,6 +1,4 @@
-﻿// TODO: I ripped this from a game I made, Dungeon Dude. I need to go through and scrape out the parts specific to that.
-
-var R = {};
+﻿var R = {};
 
 R.now = function () {
     return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
