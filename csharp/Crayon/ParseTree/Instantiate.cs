@@ -21,11 +21,22 @@ namespace Crayon.ParseTree
 
 			StructDefinition structDefinition = parser.GetStructDefinition(className);
 
-			if (structDefinition != null)
+			if (parser.IsTranslateMode)
 			{
-				StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args);
-				si = (StructInstance)si.Resolve(parser);
-				return si;
+				if (structDefinition != null)
+				{
+					StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args);
+					si = (StructInstance)si.Resolve(parser);
+					return si;
+				}
+			}
+			else
+			{
+				ClassDefinition classDefinition = parser.GetClass(className);
+				if (classDefinition == null)
+				{
+					throw new ParserException(this.NameToken, "Class not defined: '" + className + "'");
+				}
 			}
 
 			for (int i = 0; i < this.Args.Length; ++i)

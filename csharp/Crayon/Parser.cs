@@ -349,6 +349,11 @@ namespace Crayon
 					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot);
 					executables.AddRange(importedCode);
 				}
+				else if (executable is ClassDefinition)
+				{
+					this.RegisterClass((ClassDefinition)executable);
+					executables.Add(executable);
+				}
 				else
 				{
 					executables.Add(executable);

@@ -9,6 +9,23 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, listA);
+			output.Add(" + ");
+			this.Translator.TranslateExpression(output, listB);
+			output.Add(")");
+		}
+
+		protected override void TranslateStringSplit(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression sep)
+		{
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".split(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(")");
+		}
+
 		// Not safe for dictionaries that can contain a value of None.
 		protected override void TranslateDictionaryContains(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
 		{
@@ -182,11 +199,11 @@ namespace Crayon.Translator.Python
 
 				case "ff_draw_rectangle":
 					// TODO: alpha?
-					output.Add("_PDR(v_scr[1][1], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
+					output.Add("_PDR(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
 					break;
 
 				case "ff_fill_screen":
-					output.Add("v_scr[1][1].fill((v_red[1], v_green[1], v_blue[1]))");
+					output.Add("_global_vars['screen'].fill((v_red[1], v_green[1], v_blue[1]))");
 					break;
 
 				case "ff_floor":

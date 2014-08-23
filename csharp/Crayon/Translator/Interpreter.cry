@@ -512,7 +512,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 		switch (ops[StackFrame$stack.pc]) {
 
 			case OpCodes.ASSIGN_FUNCTION_ARG:
+				$_comment('ASSIGN_FUNCTION_ARG');
 				nameId = row[0];
+				index = row[1];
+				if (index >= $_list_length(StackFrame$stack.args)) {
+					// pass in previous stack so that it's pointing at the spot where you invoke the function.
+					return killExecution(StackFrame$stack.previous, "Not enough arguments supplied.");
+				}
 				value = $_list_get(StackFrame$stack.args, row[1]);
 				$_dictionary_set(locals, nameId, value);
 				break;
@@ -664,6 +670,10 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
 						((((Value$leftObj.type * MAX_OP) + op) * MAX_TYPE) + Value$rightObj.type) {
 						
+						case (Types.LIST * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.LIST:
+							$_comment('list + list');
+							output = new Value(Types.LIST, $_list_concat(left, right)); break;
+
 						// int + int
 						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 							$_comment('int + int');
@@ -936,7 +946,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						width = $_list_pop(valueStack);
 						y = $_list_pop(valueStack);
 						x = $_list_pop(valueStack);
-						scr = $_list_pop(valueStack);
 						$_insert_platform_code('ff_draw_rectangle');
 						break;
 
@@ -944,7 +953,6 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						blue = $_list_pop(valueStack);
 						green = $_list_pop(valueStack);
 						red = $_list_pop(valueStack);
-						scr = $_list_pop(valueStack);
 						$_insert_platform_code('ff_fill_screen');
 						break;
 					case %%%FF_FLOOR%%%:
@@ -1403,6 +1411,19 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
 			if ($_list_length(funcArgs) != 1) return "List add method requires exactly 1 argument";
 			$_list_push(Value$context.internalValue, $_list_get(funcArgs, 0));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
+			if ($_list_length(funcArgs) != 1) return "String split method requires exactly 1 argument";
+			sep = $_list_get(funcArgs, 0);
+			if (Value$sep.type != Types.STRING) {
+				return "Split method requires a string. Found a " + typeToString(Value$sep.type) + " instead.";
+			}
+			rawList = $_string_split(Value$context.internalValue, Value$sep.internalValue);
+			wrappedList = [];
+			for (i = 0; i < $_list_length(rawList); i += 1) {
+				$_list_push(wrappedList, new Value(Types.STRING, $_list_get(rawList, i)));
+			}
+			output = new Value(Types.LIST, wrappedList);
 			break;
 		default:
 			return "Unknown system method";

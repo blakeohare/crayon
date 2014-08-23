@@ -33,8 +33,6 @@ namespace Crayon.ParseTree
 				throw new ParserException(this.NameToken, "'" + this.NameToken.Value + "' is a reserved keyword.");
 			}
 
-			parser.RegisterClass(this);
-
 			if (this.SubClasses.Length > 0)
 			{
 				ClassDefinition baseClassDef = parser.GetClass(this.SubClasses[0].Value);

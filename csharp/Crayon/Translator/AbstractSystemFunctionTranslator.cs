@@ -30,6 +30,7 @@ namespace Crayon.Translator
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_kill_execution": VerifyCount(functionCall, 1); TranslateKillExecution(output, args[0]); break;
+				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
 				case "_list_pop": VerifyCount(functionCall, 1); TranslateListPop(output, args[0]); break;
@@ -46,6 +47,7 @@ namespace Crayon.Translator
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
+				case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
 				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
 				case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
 				case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
@@ -53,6 +55,8 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
+		protected abstract void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep);
 		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateBeginFrame(List<string> output);

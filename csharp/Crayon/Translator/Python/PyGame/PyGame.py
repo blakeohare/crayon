@@ -66,6 +66,7 @@ def _pygame_initialize_screen(width, height):
 	_global_vars['width'] = width
 	_global_vars['height'] = height
 	screen = pygame.display.set_mode((_global_vars['width'], _global_vars['height']))
+	_global_vars['screen'] = screen
 	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_SCREEN%%%, screen)]
 
 

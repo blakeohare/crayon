@@ -99,6 +99,8 @@ R.initializeScreen = function (width, height) {
     R._global_vars['print_output'] = document.getElementById('crayon_print_output');
     R._global_vars['ctx'] = canvas.getContext('2d');
     R._global_vars['print_lines'] = [];
+    R._global_vars['width'] = width;
+    R._global_vars['height'] = height;
 
     document.onkeydown = R._keydown;
     document.onkeyup = R._keyup;
