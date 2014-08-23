@@ -6,6 +6,10 @@ R.now = function () {
     return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
 };
 
+R.get_image_impl = function(key) {
+    return [%%%TYPE_NATIVE_OBJECT%%%, [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, R._global_vars.image_downloads[key]]];
+}
+
 R._global_vars = {
     'width': 0,
     'height': 0,
@@ -17,8 +21,42 @@ R._global_vars = {
     'print_output': null,
     'event_queue': [],
     'ctx': null,
-    'last_frame_began': R.now()
+    'last_frame_began': R.now(),
+    'image_downloads': {},
+    'image_download_counter': 0,
+    'image_keys_by_index': [null]
 };
+
+R.blit = function(ignored, canvas, x, y) {
+    R._global_vars.ctx.drawImage(canvas, x, y);
+};
+
+R.is_image_loaded = function(key) {
+    return R._global_vars.image_downloads[key] !== undefined;
+};
+
+
+R.enqueue_image_download = function(key, url) {
+    var id = ++R._global_vars.image_download_counter;
+    R._global_vars.image_keys_by_index.push(key);
+    var loader_queue = document.getElementById('crayon_image_loader_queue');
+    loader_queue.innerHTML += '<img id="image_loader_img_' + id + '" onload="R.finish_load_image(' + id + ')" crossOrigin="anonymous" />' +
+        '<canvas id="image_loader_canvas_' + id + '" />';
+    var img = document.getElementById('image_loader_img_' + id);
+    img.src = url;
+
+};
+
+R.finish_load_image = function(id) {
+    var key = R._global_vars.image_keys_by_index[id];
+    var img = document.getElementById('image_loader_img_' + id);
+    var canvas = document.getElementById('image_loader_canvas_' + id);
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var context = canvas.getContext('2d');
+    context.drawImage(img, 0, 0);
+    R._global_vars.image_downloads[key] = canvas;
+}
 
 R.beginFrame = function() {
     R._global_vars.last_frame_began = R.now();
@@ -50,6 +88,7 @@ R.initializeScreen = function (width, height) {
         '<canvas id="crayon_screen" width="' + width + '" height="' + height + '"></canvas>' +
         '<div style="display:none;">' +
             '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
+            '<div id="crayon_image_loader_queue"></div>' +
             '<div id="crayon_image_store"></div>' +
             '<div id="crayon_temp_image"></div>' +
         '</div>' +

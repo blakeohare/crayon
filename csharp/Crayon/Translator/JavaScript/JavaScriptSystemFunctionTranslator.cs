@@ -173,8 +173,16 @@ namespace Crayon.Translator.JavaScript
 		{
 			switch (id)
 			{
+				case "ff_blit_image":
+					output.Add("R.blit(null, v_image[1][1], v_x[1], v_y[1])");
+					break;
+
 				case "ff_current_time":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", R.now()];");
+					output.Add("v_output = [" + (int)Types.FLOAT + ", R.now()]");
+					break;
+
+				case "ff_download_image":
+					output.Add("R.enqueue_image_download(v_key[1], v_url[1])");
 					break;
 
 				case "ff_draw_rectangle":
@@ -193,12 +201,20 @@ namespace Crayon.Translator.JavaScript
 					output.Add("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()]");
 					break;
 
+				case "ff_get_image":
+					output.Add("v_output = R.get_image_impl(v_key[1])");
+					break;
+
 				case "ff_initialize_game":
 					output.Add("R.initializeGame(v_fps[1])");
 					break;
 
 				case "ff_initialize_screen":
 					output.Add("R.initializeScreen(v_width[1], v_height[1])");
+					break;
+
+				case "ff_is_image_loaded":
+					output.Add("v_output = R.is_image_loaded(v_key[1]) ? v_VALUE_TRUE : v_VALUE_FALSE");
 					break;
 
 				case "ff_print":

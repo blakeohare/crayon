@@ -52,10 +52,15 @@ namespace Crayon
 		private void SerializePython(string folder, string finalCode, IList<string> filesToCopyOver)
 		{
 			System.IO.File.WriteAllText(System.IO.Path.Combine(folder, "game.py"), finalCode);
+			this.JustCopyFilesOver(folder, filesToCopyOver);
+		}
+
+		private void JustCopyFilesOver(string destFolder, IList<string> filesToCopyOver)
+		{
 			foreach (string fileToCopyOver in filesToCopyOver)
 			{
 				string relativeFile = fileToCopyOver.Substring(this.folder.Length + 1);
-				string finalPath = System.IO.Path.Combine(folder, relativeFile);
+				string finalPath = System.IO.Path.Combine(destFolder, relativeFile);
 				Util.EnsureFolderExists(finalPath);
 				if (System.IO.File.Exists(finalPath))
 				{
@@ -69,6 +74,7 @@ namespace Crayon
 		{
 			Crayon.Translator.JavaScript.Browser.BrowserImplementation.GenerateHtmlFile(folder);
 			System.IO.File.WriteAllText(System.IO.Path.Combine(folder, "code.js"), finalCode);
+			this.JustCopyFilesOver(folder, filesToCopyOver);
 		}
 
 		private string GetPlatformFolderName(PlatformTarget platform)
