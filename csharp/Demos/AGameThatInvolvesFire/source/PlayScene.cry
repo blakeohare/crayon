@@ -1,0 +1,80 @@
+class PlayScene : SceneBase {
+	constructor(level) : base() {
+		this.grid = level_store.get_fresh_grid(level);
+		start = level_store.get_starting_point(level);
+		this.finish = level_store.get_finish(level);
+		this.player = new Sprite('player', start[0] * 40 + 20, start[1] * 40 + 20);
+		//this.level = level;
+		this.counter = 0;
+		this.sprites = [this.player];
+		this.fires = null;
+	}
+	
+	function process_input(events) {
+		for (i = 0; i < events.length; ++i) {
+			if (events[i][0] == 'mouseleftdown') {
+				x = events[i][1];
+				y = events[i][2];
+				this.move_player_towards(x, y - 40);
+			}
+		}
+	}
+	
+	function move_player_towards(x, y) {
+	
+		if (this.player.onfire < 0) {
+			this.player.targetX = x;
+			this.player.targetY = y;
+		}
+		
+	}
+	
+	function update() {
+		this.counter++;
+		
+		if (this.player.onfire == 0) {
+			this.next = new TitleScene();
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			sprite = this.sprites[i];
+			sprite.update(this.grid);
+		}
+		
+		if (this.fires == null) {
+			this.fires = [];
+			for (y = 0; y < 14; ++y) {
+				for (x = 0; x < 20; ++x) {
+					tile = this.grid[x][y];
+					if (tile.type == 'fire') {
+						this.fires.add(tile);
+					}
+				}
+			}
+		}
+		
+		for (i = 0; i < this.fires.length; ++i) {
+			fire = this.fires[i];
+			fire.age++;
+			if (fire.age == 30) {
+				fire.spread(this.grid, this.fires);
+			}
+		}
+	}
+	
+	function render(imgLib) {
+		rc = this.counter / 3;
+		grid = this.grid;
+		for (y = 0; y < 14; ++y) {
+			for (x = 0; x < 20; ++x) {
+				
+				grid[x][y].render(imgLib, rc, x, y);
+			}
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			sprite = this.sprites[i];
+			sprite.render(imgLib, this.counter);
+		}
+	}
+}

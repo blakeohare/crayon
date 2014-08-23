@@ -1,0 +1,107 @@
+class Sprite {
+	constructor(type, x, y) {
+		this.type = type;
+		this.direction = 's';
+		this.x = x;
+		this.y = y;
+		this.dx = 0;
+		this.dy = 0;
+		this.tile = null;
+		this.targetX = null;
+		this.targetY = null;
+		this.v = 3.0;
+		this.lastdir = 's';
+		this.ismoving = false;
+		this.onfire = -1;
+	}
+	
+	function update(grid) {
+	
+		this.onfire--;
+	
+		if (this.targetX != null) {
+			this.calculate_dxdy();
+		}
+		
+		if (this.dx != 0 || this.dy != 0) {
+			this.update_direction(this.dx, this.dy);
+			this.ismoving = true;
+		} else {
+			this.ismoving = false;
+		}
+		
+		newx = this.x + this.dx;
+		newy = this.y + this.dy;
+		col = $floor(newx / 40);
+		row = $floor(newy / 40);
+		if (col < 0 || row < 0 || col >= 20 && row >= 14) {
+			this.targetX = null;
+			this.targetY = null;
+		} else {
+			tile = grid[col][row];
+			if (tile.passable) {
+				this.x = newx;
+				this.y = newy;
+			}
+			this.tile = tile;
+			
+			if (this.onfire < 0 && this.tile.type == 'fire') {
+				this.onfire = 60;
+				this.targetX = null;
+				this.targetY = null;
+			}
+		}
+		
+		this.dx = 0;
+		this.dy = 0;
+	}
+	
+	function update_direction(dx, dy) {
+		angle = -1 * $arctan2(dy, dx);
+		pi = 3.14159265358979;
+		angle = (angle * .99) % (2 * pi);
+		if (angle < pi / 4 || angle > 7 * pi / 4) {
+			this.lastdir = 'e';
+		} else if (angle < 3 * pi / 4) {
+			this.lastdir = 'n';
+		} else if (angle < 5 * pi / 4) {
+			this.lastdir = 'w';
+		} else {
+			this.lastdir = 's';
+		}
+	}
+	
+	function calculate_dxdy() {
+		dx = this.targetX - this.x;
+		dy = this.targetY - this.y;
+		distance = (dx * dx + dy * dy) ** .5;
+		
+		if (distance < this.v) {
+			this.dx = dx;
+			this.dy = dy;
+		} else {
+			percent = this.v / distance;
+			this.dx = dx * percent;
+			this.dy = dy * percent;
+		}
+	}
+	
+	function render(imgLib, rc) {
+		img = null;
+		if (this.onfire >= 0) {
+			img = imgLib.images['sprites/player/dead'];
+		} else if (this.type == 'player') {
+			frame = 1;
+			if (this.ismoving) {
+				frame = (rc / 3) % 4;
+				frame += 1;
+				if (frame == 4) {
+					frame = 2;
+				}
+			}
+			img = imgLib.images['sprites/player/' + this.lastdir + frame];
+		}
+		
+		$blit_image(img, $floor(this.x - 20), $floor(this.y - 20) + 40);
+	}
+}

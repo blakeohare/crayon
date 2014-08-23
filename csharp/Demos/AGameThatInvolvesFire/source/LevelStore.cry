@@ -1,0 +1,71 @@
+class LevelStore {
+	constructor() {
+		this.levels = {};
+		type_mapping = {
+			' ': 'floor',
+			'x': 'wall',
+			'1': 'entrance',
+			'2': 'exit',
+			'f': 'fire',
+			'i': 'exitsign'
+		};
+		
+		this.levels['level-1'] = this.build_level(type_mapping, [
+			"xxxxxxxxxxxxxxxxxxxx",
+			"x   xxx  fx    x   x",
+			"1 x   x xxx xx x x x",
+			"x xxx x x   xx x x x",
+			"x   x x x xxxx x x x",
+			"xxx x x x x    x x x",
+			"xfx x x x x xxxx xfx",
+			"x   x     x      x x",
+			"xxxxxxxxxxx xxxxxx x",
+			"x   x   x   x      x",
+			"x x x x x xxxxxxxx x",
+			"x x x x x    x   xxi",
+			"xfx   x   xx   x   2",
+			"xxxxxxxxxxxxxxxxxxxx"]);
+	}
+	
+	function get_fresh_grid(level) {
+		output = make_grid(20, 14);
+		copyThis = this.levels[level]['grid'];
+		for (y = 0; y < 14; ++y) {
+			for (x = 0; x < 20; ++x) {
+				output[x][y] = new Tile(copyThis[x][y], x, y);
+			}
+		}
+		return output;
+	}
+	
+	function get_starting_point(level) {
+		return this.levels[level]['start'];
+	}
+	
+	function get_finish(level) {
+		return this.levels[level]['finish'];
+	}
+	
+	function build_level(type_mapping, rows) {
+		grid = make_grid(20, 14);
+		player_start = null;
+		finish = null;
+		for (y = 0; y < 14; ++y) {
+			for (x = 0; x < 20; ++x) {
+				key = rows[y][x];
+				grid[x][y] = type_mapping[key];
+				if (key == '1') {
+					player_start = [x, y];
+				} else if (key == '2') {
+					finish = [x, y];
+				}
+			}
+		}
+		
+		return {
+			'grid': grid,
+			'start': player_start,
+			'finish': finish
+		};
+	}
+}
