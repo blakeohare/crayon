@@ -116,7 +116,27 @@ class LevelStore {
 			for (x = 0; x < 20; ++x) {
 				t = output[x][y];
 				if (t.type == 'wall') {
-					//has_n =
+					borders = [true, true, true, true];
+					if (x > 0 && output[x - 1][y].type != 'wall') {
+						borders[0] = false;
+					}
+					if (x < 19 && output[x + 1][y].type != 'wall') {
+						borders[2] = false;
+					}
+					if (y > 0 && output[x][y - 1].type != 'wall') {
+						borders[1] = false;
+					}
+					if (y < 13 && output[x][y + 1].type != 'wall') {
+						borders[3] = false;
+					}
+					styling = '';
+					if (!borders[1]) styling += 'n';
+					if (!borders[3]) styling += 's';
+					if (!borders[2]) styling += 'e';
+					if (!borders[0]) styling += 'w';
+					
+					if (styling.length > 0) styling = '_' + styling;
+					t.styling = styling;
 				}
 			}
 		}

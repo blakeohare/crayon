@@ -50,7 +50,7 @@ class Tile {
 					this.image_cycle.add(imgLib.images['tiles/fire/' + i]);
 				}
 			} else if (this.type == 'wall') {
-				this.image_cycle = [imgLib.images['tiles/wall']];
+				this.image_cycle = [imgLib.images['tiles/walls/wall' + this.styling]];
 			} else if (this.type == 'entrance') {
 				this.image_cycle = [imgLib.images['tiles/entrance']];
 			} else if (this.type == 'exit') {

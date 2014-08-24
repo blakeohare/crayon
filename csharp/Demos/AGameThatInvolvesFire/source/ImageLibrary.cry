@@ -5,7 +5,7 @@ class ImageLibrary {
 		
 		keys = 
 			"menus/title menus/cursor1 menus/cursor2 menus/instructions menus/credits".split(' ') +
-			"tiles/wall tiles/entrance tiles/exit".split(' ') +
+			"tiles/walls/wall tiles/entrance tiles/exit".split(' ') +
 			"sprites/player/dead".split(' ');
 		directions = 'n s e w'.split(' ');
 		for (i = 1; i <= 6; ++i) {
@@ -18,6 +18,12 @@ class ImageLibrary {
 			for (j = 1; j <= 3; ++j) {
 				keys.add('sprites/player/' + directions[i] + j);
 			}
+		}
+		
+		mdirs = 'e ew n ne new ns nse nsew nsw nw s se sew sw w'.split(' ');
+		for (i = 0; i < mdirs.length; ++i) {
+			mdir = mdirs[i];
+			keys.add('tiles/walls/wall_' + mdir);
 		}
 		
 		keys.add('tiles/floor1a');
