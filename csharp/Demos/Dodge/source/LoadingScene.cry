@@ -1,0 +1,29 @@
+class LoadingScene : SceneBase {
+	constructor(imageLibrary) : base() {
+		this.imageLibrary = imageLibrary;
+		this.progress = 0.0;
+	}
+	
+	function process_input(events) {
+		
+	}
+	
+	function update() {
+		this.imageLibrary.update();
+		if (this.imageLibrary.done) {
+			this.next = new PlayScene();
+			this.imageLibrary.finalize();
+		}
+	}
+	
+	// because this scene is shown while initializing the 
+	// image library, it can't be used here.
+	function render(imageLib) {
+		x = 10;
+		y = 10;
+		width = 400;
+		height = 20;
+		$draw_rectangle(null, x, y, width, height, 128, 128, 128, 255);
+		
+	}
+}
