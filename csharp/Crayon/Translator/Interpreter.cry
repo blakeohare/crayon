@@ -491,6 +491,10 @@ function valueToString(value) {
 	type = Value$value.type;
 	value = Value$value.internalValue;
 	if (type == Types.NULL) return "null";
+	if (type == Types.BOOLEAN) {
+		if (value) return "true";
+		return "false";
+	}
 	if (type == Types.INTEGER || type == Types.FLOAT || type == Types.STRING) return $_string_cast_strong(value);
 	if (type == Types.LIST) {
 		// TODO: this will recurse infinitely if the list points to itself somehow.
@@ -644,7 +648,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 							} else {
 								output = VALUE_FALSE;
 							}
-						} 
+						} else if (leftType == Types.INSTANCE) {
+							if ($_list_get(left, 2) == $_list_get(right, 2)) {
+								output = VALUE_TRUE;
+							} else {
+								output = VALUE_FALSE;
+							}
+						}
 					} else {
 						if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 							if (left == right) {
