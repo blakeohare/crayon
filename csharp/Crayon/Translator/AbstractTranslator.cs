@@ -93,7 +93,7 @@ namespace Crayon.Translator
 		protected abstract string TabString { get; }
 
 		private string tabIndention = "";
-		public string CurrentTabIndention { get { return this.IsMin ? "" : this.tabIndention; } }
+		public string CurrentTabIndention { get { return (this.IsMin && !(this is Python.PythonTranslator)) ? "" : this.tabIndention; } }
 
 		// TODO: Nope. This works for JS and PY but will fail miserable on more structured programming languages that don't just allow you to
 		// stick arbitrary code at the front of a file.
