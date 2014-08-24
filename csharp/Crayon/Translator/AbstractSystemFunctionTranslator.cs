@@ -49,7 +49,10 @@ namespace Crayon.Translator
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
 				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
+				case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
 				case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
+				case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
+				case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
 				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
 				case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
 				case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
@@ -57,6 +60,9 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
+		protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
+		protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);

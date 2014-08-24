@@ -9,6 +9,24 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateStringLower(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".toLowerCase()");
+		}
+
+		protected override void TranslateStringTrim(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".trim()");
+		}
+
+		protected override void TranslateStringUpper(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".toUpperCase()");
+		}
+
 		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
 		{
 			output.Add("(");

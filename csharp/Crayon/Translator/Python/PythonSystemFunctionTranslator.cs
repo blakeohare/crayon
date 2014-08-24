@@ -9,6 +9,24 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		protected override void TranslateStringLower(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".lower()");
+		}
+
+		protected override void TranslateStringTrim(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".strip()");
+		}
+
+		protected override void TranslateStringUpper(List<string> output, ParseTree.Expression stringValue)
+		{
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".upper()");
+		}
+
 		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
 		{
 			output.Add("(");

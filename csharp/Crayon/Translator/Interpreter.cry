@@ -1509,6 +1509,18 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 				output = VALUE_FALSE;
 			}
 			break;
+		case %%%PRIMITIVE_METHOD_STRING_UPPER%%%:
+			t = $_string_upper(Value$context.internalValue);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
+			t = $_string_lower(Value$context.internalValue);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_TRIM%%%:
+			t = $_string_trim(Value$context.internalValue);
+			output = new Value(Types.STRING, t);
+			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
 			di = Value$context.internalValue;
 			keys = DictImpl$di.keyLookup;
