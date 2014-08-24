@@ -9,6 +9,22 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateListLastIndex(List<string> output, ParseTree.Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".length - 1");
+		}
+
+		protected override void TranslateListInsert(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".splice(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(", 0, ");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
 		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
@@ -214,7 +230,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateListReverse(List<string> output, ParseTree.Expression listVar)
+		protected override void TranslateListReverseInPlace(List<string> output, ParseTree.Expression listVar)
 		{
 			this.Translator.TranslateExpression(output, listVar);
 			output.Add(".reverse()");

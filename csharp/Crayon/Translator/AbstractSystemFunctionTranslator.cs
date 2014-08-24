@@ -35,11 +35,13 @@ namespace Crayon.Translator
 				case "_kill_execution": VerifyCount(functionCall, 1); TranslateKillExecution(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
+				case "_list_insert": VerifyCount(functionCall, 3); TranslateListInsert(output, args[0], args[1], args[2]); break;
+				case "_list_last_index": VerifyCount(functionCall, 1); TranslateListLastIndex(output, args[0]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
 				case "_list_pop": VerifyCount(functionCall, 1); TranslateListPop(output, args[0]); break;
 				case "_list_push": VerifyCount(functionCall, 2); TranslateListPush(output, args[0], args[1]); break;
 				case "_list_remove_at": VerifyCount(functionCall, 2); TranslateListRemoveAt(output, args[0], args[1]); break;
-				case "_list_reverse": VerifyCount(functionCall, 1); TranslateListReverse(output, args[0]); break;
+				case "_list_reverse_in_place": VerifyCount(functionCall, 1); TranslateListReverseInPlace(output, args[0]); break;
 				case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
 				case "_list_split": VerifyCount(functionCall, 2); TranslateListSplit(output, args[0], args[1]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
@@ -64,6 +66,8 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateListLastIndex(List<string> output, Expression list);
+		protected abstract void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
 		protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateStringReverse(List<string> output, Expression stringValue);
@@ -92,7 +96,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListLength(List<string> output, Expression list);
 		protected abstract void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue);
 		protected abstract void TranslateDictionaryGetKeys(List<string> output, Expression dictionary);
-		protected abstract void TranslateListReverse(List<string> output, Expression listVar);
+		protected abstract void TranslateListReverseInPlace(List<string> output, Expression listVar);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dict, Expression key, Expression value);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);

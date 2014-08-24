@@ -314,7 +314,7 @@ function main() {
 				valueId = $_list_get(args, j + 1);
 				$_list_push(value, buildLiteral(typeId, valueId, floatTable, stringTable));
 			}
-			$_list_reverse(value);
+			$_list_reverse_in_place(value);
 		} else if (op == OpCodes.VARIABLE_STREAM) {
 			value = [];
 			toggled = false;
@@ -478,6 +478,7 @@ PRIMITIVE_METHODS = {
 	Types.LIST + "contains": %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%,
 	Types.LIST + "insert": %%%PRIMITIVE_METHOD_LIST_INSERT%%%,
 	Types.LIST + "pop": %%%PRIMITIVE_METHOD_LIST_POP%%%,
+	Types.LIST + "remove": %%%PRIMITIVE_METHOD_LIST_REMOVE%%%,
 	Types.LIST + "reverse": %%%PRIMITIVE_METHOD_LIST_REVERSE%%%,
 
 	Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
@@ -915,7 +916,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						argCount -= 1;
 					}
 					if ($_list_get(row, 0) > 1) {
-						$_list_reverse(funcArgs);
+						$_list_reverse_in_place(funcArgs);
 					}
 
 					valueStack = [];
@@ -946,7 +947,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						argCount -= 1;
 					}
 					if ($_list_get(row, 0) > 1) {
-						$_list_reverse(funcArgs);
+						$_list_reverse_in_place(funcArgs);
 					}
 
 					if (returnValueUsed) {
@@ -1082,7 +1083,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					argCount -= 1;
 				}
 				if ($_list_get(row, 0) > 1) {
-					$_list_reverse(funcArgs);
+					$_list_reverse_in_place(funcArgs);
 				}
 				funcType = Value$func.type;
 				if (funcType == Types.SYS_METHOD) {
@@ -1126,7 +1127,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					argCount -= 1;
 				}
 				if ($_list_get(row, 1) > 1) {
-					$_list_reverse(funcArgs);
+					$_list_reverse_in_place(funcArgs);
 				}
 				funcPointer = $_dictionary_get(locals, row[0], null);
 				if (funcPointer == null) {
@@ -1205,7 +1206,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 					$_list_push(value, $_list_pop(valueStack));
 					size -= 1;
 				}
-				$_list_reverse(value);
+				$_list_reverse_in_place(value);
 				$_list_push(valueStack, new Value(Types.LIST, value));
 				break;
 
@@ -1489,21 +1490,108 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 	}
 }
 
-function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUsed) {
+function doEqualityComparisonAndReturnCode(a, b) {
+	leftType = Value$a.type;
+	rightType = Value$b.type;
+	if (leftType == rightType || 
+		(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
+		(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+		output = false;
+		left = Value$a.internalValue;
+		right = Value$b.internalValue;
+		if (leftType < Types.LIST) {
+			if (left == right) {
+				return 1;
+			}
+			return 0;
+		}
+
+		if (leftType == Types.INSTANCE) {
+			if ($_list_get(left, 2) == $_list_get(right, 2)) {
+				return 1;
+			}
+			return 0;
+		}
+
+		// == is not defined for this type. If a user needs to compare two things of one of the remaining types,
+		// they are probably writing bad code.
+		return 2;
+	}
+	return 0;
+}
+
+function wrongArgCountError(name, expected, actual) {
+	if (expected == 0) {
+		output = name + " does not accept any arguments.";
+	} else if (expected == 1) {
+		output = name + " accepts exactly 1 argument.";
+	} else {
+		output = name + " requires " + expected + " arguments.";
+	}
+
+	output += " Found: " + actual;
+	return output;
+}
+
+function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, returnValueUsed) {
 	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
 	output = VALUE_NULL;
+	context = Value$wrappedContext.internalValue;
 	switch (methodId) {
 		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
-			if ($_list_length(funcArgs) != 1) return "List add method requires exactly 1 argument";
-			$_list_push(Value$context.internalValue, $_list_get(funcArgs, 0));
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List add method", 1, $_list_length(funcArgs));
+			$_list_push(context, $_list_get(funcArgs, 0));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CLEAR%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List clear method", 0, $_list_length(funcArgs));
+			Value$wrappedContext.internalValue = [];
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List contains method", 1, $_list_length(funcArgs));
+			len = $_list_length(context);
+			target = $_list_get(funcArgs, 0);
+			output = VALUE_FALSE;
+			for (i = 0; i < len; i += 1) {
+				if (doEqualityComparisonAndReturnCode(target, $_list_get(context, i)) == 1) {
+					output = VALUE_TRUE;
+					i += len;
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_INSERT%%%:
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("List insert method", 2, $_list_length(funcArgs));
+			index = $_list_get(funcArgs, 0);
+			value = $_list_get(funcArgs, 1);
+			if (Value$index.type != Types.INTEGER) return "First argument of list.insert needs to be an integer.";
+			index = Value$index.internalValue;
+			if (index < 0 || index > $_list_length(context)) return "Index out of bounds.";
+			$_list_insert(context, Value$index.internalValue, value);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_POP%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List pop method", 0, $_list_length(funcArgs));
+			if ($_list_length(context) == 0) return "Cannot pop from empty list.";
+			output = $_list_get(context, $_list_last_index(context));
+			$_list_pop(context);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REMOVE%%%:
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("List remove method", 2, $_list_length(funcArgs));
+			index = $_list_get(funcArgs, 0);
+			if (Value$index.type != Types.INTEGER) return "First argument of list.remove needs to be an integer.";
+			if (index < 0 || index >= $_list_length(context)) return "Index out of bounds.";
+			output = $_list_get(context, index);
+			$_list_remove_at(context, index);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REVERSE%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List reverse method", 0, $_list_length(funcArgs));
+			$_list_reverse_in_place(context);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
-			if ($_list_length(funcArgs) != 1) return "String split method requires exactly 1 argument";
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String split method", 1, $_list_length(funcArgs));
 			sep = $_list_get(funcArgs, 0);
 			if (Value$sep.type != Types.STRING) {
 				return "Split method requires a string. Found a " + typeToString(Value$sep.type) + " instead.";
 			}
-			rawList = $_string_split(Value$context.internalValue, Value$sep.internalValue);
+			rawList = $_string_split(context, Value$sep.internalValue);
 			wrappedList = [];
 			for (i = 0; i < $_list_length(rawList); i += 1) {
 				$_list_push(wrappedList, new Value(Types.STRING, $_list_get(rawList, i)));
@@ -1511,37 +1599,39 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 			output = new Value(Types.LIST, wrappedList);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%:
-			haystack = Value$context.internalValue;
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String contains method", 1, $_list_length(funcArgs));
 			item = $_list_get(funcArgs, 0);
 			if (Value$item.type != Types.STRING) {
 				return "String contains method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
 			}
-			if ($_string_contains(haystack, Value$item.internalValue)) {
+			if ($_string_contains(context, Value$item.internalValue)) {
 				output = VALUE_TRUE;
 			} else {
 				output = VALUE_FALSE;
 			}
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_UPPER%%%:
-			t = $_string_upper(Value$context.internalValue);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String upper method", 0, $_list_length(funcArgs));
+			t = $_string_upper(context);
 			output = new Value(Types.STRING, t);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
-			t = $_string_lower(Value$context.internalValue);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String lower method", 0, $_list_length(funcArgs));
+			t = $_string_lower(context);
 			output = new Value(Types.STRING, t);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_TRIM%%%:
-			t = $_string_trim(Value$context.internalValue);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String trim method", 0, $_list_length(funcArgs));
+			t = $_string_trim(context);
 			output = new Value(Types.STRING, t);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_REVERSE%%%:
-			t = $_string_reverse(Value$context.internalValue);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String reverse method", 0, $_list_length(funcArgs));
+			t = $_string_reverse(context);
 			output = new Value(Types.STRING, t);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_REPLACE%%%:
-			if ($_string_length(funcArgs) != 2) {
-				return "string.replace requires two arguments.";
-			}
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("String replace method", 2, $_list_length(funcArgs));
 			a = $_list_get(funcArgs, 0);
 			b = $_list_get(funcArgs, 1);
 
@@ -1549,31 +1639,31 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 				return "string replace must take in two strings as arguments.";
 			}
 
-			t = $_string_replace(Value$context.internalValue, Value$a.internalValue, Value$b.internalValue);
+			t = $_string_replace(context, Value$a.internalValue, Value$b.internalValue);
 			output = new Value(Types.STRING, t);
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%:
-			di = Value$context.internalValue;
-			DictImpl$di.keyLookup = {};
-			DictImpl$di.valueLookup = {};
-			DictImpl$di.size = 0;
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary clear method", 0, $_list_length(funcArgs));
+			DictImpl$context.keyLookup = {};
+			DictImpl$context.valueLookup = {};
+			DictImpl$context.size = 0;
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%:
-			di = Value$context.internalValue;
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("Dictionary remove method", 1, $_list_length(funcArgs));
 			key = $_list_get(funcArgs, 0);
 			keyType = Value$key.type;
-			if (DictImpl$di.keyType != keyType) return "Key not found.";
-			keyLookup = DictImpl$di.keyLookup;
+			if (DictImpl$context.keyType != keyType) return "Key not found.";
+			keyLookup = DictImpl$context.keyLookup;
 			keyValue = Value$key.internalValue;
 			if (keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
 			if ($_dictionary_get(keyLookup, keyValue, null) == null) return "Key not found.";
 			$_dictionary_remove(keyLookup, keyValue);
-			$_dictionary_remove(DictImpl$di.valueLookup, keyValue);
-			DictImpl$di.size -= 1;
+			$_dictionary_remove(DictImpl$context.valueLookup, keyValue);
+			DictImpl$context.size -= 1;
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
-			di = Value$context.internalValue;
-			keys = DictImpl$di.keyLookup;
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("Dictionary contains method", 1, $_list_length(funcArgs));
+			keys = DictImpl$context.keyLookup;
 			arg = $_list_get(funcArgs, 0);
 			argType = Value$arg.type;
 			if (argType == Types.INTEGER || argType == Types.STRING) {
@@ -1583,7 +1673,7 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 				key = $_list_get(t, 2);
 			}
 
-			if (DictImpl$di.keyType != argType) {
+			if (DictImpl$context.keyType != argType) {
 				output = VALUE_FALSE;
 			} else {
 				t = $_dictionary_get(keys, key, null);
@@ -1595,14 +1685,13 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 			}
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%:
-			di = Value$context.internalValue;
-			values = $_dictionary_get_values(DictImpl$di.valueLookup);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary values method", 0, $_list_length(funcArgs));
+			values = $_dictionary_get_values(DictImpl$context.valueLookup);
 			output = new Value(Types.LIST, values);
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%:
-			di = Value$context.internalValue;
-			$_print("I'm getting the keys!");
-			values = $_dictionary_get_values(DictImpl$di.keyLookup);
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary keys method", 0, $_list_length(funcArgs));
+			values = $_dictionary_get_values(DictImpl$context.keyLookup);
 			output = new Value(Types.LIST, values);
 			break;
 		default:
