@@ -5,8 +5,8 @@
 		static void Main(string[] args)
 		{
 #if DEBUG
-			string sourceFolder = @"C:\things\projects\Crayon\Demos\AGameThatInvolvesFire\source";
-			string outputFolder = @"C:\things\projects\Crayon\Demos\AGameThatInvolvesFire\output";
+			string sourceFolder = @"C:\things\projects\Crayon\Demos\Volcano\source";
+			string outputFolder = @"C:\things\projects\Crayon\Demos\Volcano\output";
 			string rawPlatform = "js";
 
 #else

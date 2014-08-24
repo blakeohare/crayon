@@ -1,0 +1,32 @@
+class Tile {
+	constructor(type, rowMapper, playScene) {
+		this.type = type;
+		this.passable = type == 'bg';
+		this.image = null;
+		this.rowMapper = rowMapper;
+		this.playScene = playScene;
+	}
+	
+	function get_y() {
+		return this.rowMapper[0] * 40 + this.playScene.logical_grid_top;
+	}
+	
+	function get_row() {
+		return this.rowMapper[0];
+	}
+	
+	function render(x, y, imgLib) {
+		img = this.image;
+		if (img == null) {
+			t = this.type;
+			if (t == 'bg') {
+				img = imgLib.images['tiles/bg'];
+			} else if (t == 'rock') {
+				img = imgLib.images['tiles/rock'];
+			}
+			this.image = img;
+		}
+		$blit_image(img, x, y);
+		//$draw_rectangle(x, y, 4, 4, 255, 255, 255, 255);
+	}
+}

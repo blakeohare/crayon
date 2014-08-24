@@ -1,0 +1,186 @@
+class PlayScene : SceneBase {
+	constructor() : base() {
+		this.grid = make_grid(20, 20);
+		this.left_pressed = false;
+		this.right_pressed = false;
+		this.jump_pressed = false;
+		this.player = new Sprite('player', 400, 400);
+		this.logical_grid_top = -20 + 15 * 40;
+		this.lava_level = 18 * 40;
+		this.counter = 0;
+		this.sprites = [this.player];
+		this.nextRowId = 20;
+		this.row_mapper = [];
+		this.row_count = 20;
+		
+		this.initialize_grid();
+	}
+	
+	function get_tile(game_x, game_y) { // as opposed to col/row
+		y = game_y - this.logical_grid_top;
+		col = $floor(game_x / 40);
+		row = $floor(y / 40.0);
+		if (col < 0 || col >= 20 || row < 0 || row >= this.grid.length) {
+			return null;
+		}
+		
+		return this.grid[row][col];
+	}
+	
+	function initialize_grid() {
+		
+		for (y = 0; y < 20; ++y) {
+			rowMapEntry = [y];
+			this.row_mapper.add(rowMapEntry);
+			for (x = 0; x < 20; ++x) {
+				is_rock = true;
+				
+				if (is_rock) {
+					this.grid[y][x] = new Tile('rock', rowMapEntry, this);
+				} else {
+					this.grid[y][x] = new Tile('bg', rowMapEntry, this);
+				}
+			}
+			
+		}
+		
+		for (i = 0; i < 15; ++i) {
+			this.create_new_row();
+		}
+	}
+	
+	function process_input(events) {
+		this.jump_pressed = false;
+		for (i = 0; i < events.length; ++i) {
+			ev = events[i];
+			type = ev[0];
+			if (type == 'key') {
+				key = ev[2];
+				if (key == 'left') {
+					this.left_pressed = ev[1];
+				} else if (key == 'right') {
+					this.right_pressed = ev[1];
+				} else if (key == 'space' && ev[1]) {
+					this.jump_pressed = true;
+				}
+			}
+		}
+		
+		if (this.left_pressed) {
+			this.player.dx = -10;
+		} else if (this.right_pressed) {
+			this.player.dx = 10;
+		}
+		
+		if (this.jump_pressed && this.player.ground != null) {
+			this.player.vy = -30;
+		}
+	}
+	
+	function create_new_row() {
+		this.row_mapper = [[0]] + this.row_mapper;
+		realloc = this.row_mapper.length;
+		// this is a little hacky
+		if (realloc > 100) {
+			realloc = 100;
+		}
+		for (i = 0; i < this.row_mapper.length; ++i) {
+			this.row_mapper[i][0] = i;
+		}
+		
+		
+		this.row_count++;
+		
+		row = [];
+		opening = $floor($random() * 15) + 2;
+		
+		for (x = 0; x < 20; ++x) {
+			is_rock = x == 0 || x == 19;
+			if (!is_rock) {
+				if (this.row_count % 5 == 0) {
+					is_rock = true;
+					if (x > opening - 3 && x < opening + 3) {
+						is_rock = false;
+					}
+				}
+			}
+			row.add(new Tile(is_rock ? 'rock' : 'bg', this.row_mapper[0], this));
+		}
+		
+		this.grid = [row] + this.grid;
+		
+		this.logical_grid_top -= 40;
+	}
+	
+	function update() {
+		this.lava_level -= this.counter / 150.0 + 2;
+		this.counter++;
+		
+		if (this.player.y > this.lava_level) {
+			this.next = new LoseScene($floor((400 - this.player.y) / 40.0 / 2));
+		}
+		
+		dy = this.player.y - this.logical_grid_top;
+		if (dy < 400) {
+			while (dy < 400) {
+				this.create_new_row();
+				//$print('wat ' + this.player.y + ', ' + this.logical_grid_top);
+				dy = this.player.y - this.logical_grid_top;
+			}
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			sprite = this.sprites[i];
+			sprite.update(this);
+		}
+		
+	}
+	
+	function render(imgLib) {
+		view_top = $floor(this.player.y - 350);
+		view_bottom = view_top + 600;
+		
+		
+		diff = view_top - this.logical_grid_top;
+		start_row = $floor(diff / 40.0);
+		//$print('start_row: ' + start_row);
+		if (start_row < 0) start_row = 0;
+		
+		draw_at_y = $floor(40 * start_row + this.logical_grid_top - view_top);
+		
+		lava_y = $floor(this.lava_level - view_top);
+		
+		//$print('view top: ' + view_top + ', draw at y: '+ draw_at_y);
+		row_y = start_row;
+		rc = this.counter / 4;
+		for (y = 0; y < 16; ++y) {
+			if (draw_at_y > lava_y) break;
+			for (x = 0; x < 20; ++x) {
+				t = this.grid[y + start_row][x];
+				t.render(x * 40, draw_at_y, imgLib);
+			}
+			draw_at_y += 40;
+			row_y++;
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			this.sprites[i].render(view_top, imgLib.images);
+		}
+		
+		lava_y = this.lava_level - view_top;
+		//$print('lava: ' + lava_y);
+		first_row = true;
+		for (y = lava_y; y < 600; y += 40) {
+			for (x = 0; x < 800; x += 40) {
+				if (first_row) {
+					img = imgLib.images['tiles/lava_upper_' + ((rc % 4) + 1)];
+				} else {
+					img = imgLib.images['tiles/lava_lower'];
+				}
+				
+				$blit_image(img, x, y);
+			}
+			first_row = false;
+		}
+	}
+}
