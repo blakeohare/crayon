@@ -6,20 +6,23 @@ namespace Crayon
 	internal class Packager
 	{
 		private PlatformTarget platform;
+		private Compiler compiler;
 		private string folder;
 		private string targetFolder;
+		private bool minified;
 
-		public Packager(PlatformTarget platform, string rootFolder, string targetFolder)
+		public Packager(PlatformTarget platform, string rootFolder, string targetFolder, bool minified)
 		{
 			this.platform = platform;
 			this.folder = rootFolder;
 			this.targetFolder = targetFolder;
+			this.minified = minified;
+			this.compiler = new Compiler(this.platform, this.minified, this.folder);
 		}
 
 		public void Do()
 		{
-			Compiler compiler = new Compiler(this.platform, false, this.folder);
-			string finalcode = compiler.Compile();
+			string finalcode = this.compiler.Compile();
 
 			if (!System.IO.Directory.Exists(this.targetFolder))
 			{
@@ -72,7 +75,7 @@ namespace Crayon
 
 		private void SerializeJavaScript(string folder, string finalCode, IList<string> filesToCopyOver)
 		{
-			Crayon.Translator.JavaScript.Browser.BrowserImplementation.GenerateHtmlFile(folder);
+			((Crayon.Translator.JavaScript.Browser.BrowserImplementation)this.compiler.PlatformImplementation).GenerateHtmlFile(folder);
 			System.IO.File.WriteAllText(System.IO.Path.Combine(folder, "code.js"), finalCode);
 			this.JustCopyFilesOver(folder, filesToCopyOver);
 		}

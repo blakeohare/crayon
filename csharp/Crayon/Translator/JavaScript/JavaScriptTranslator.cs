@@ -32,7 +32,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add(this.CurrentTabIndention);
 			output.Add("switch(");
 			this.TranslateExpression(output, switchStatement.Condition);
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 			foreach (SwitchStatement.Chunk chunks in switchStatement.Chunks)
 			{
@@ -41,25 +41,25 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.CurrentTabIndention);
 					if (chunks.Cases[0] == null)
 					{
-						output.Add("default:\r\n");
+						output.Add("default:" + this.NL);
 					}
 					else
 					{
 						output.Add("case ");
 						this.TranslateExpression(output, chunks.Cases[0]);
-						output.Add(":\r\n");
+						output.Add(":" + this.NL);
 					}
 				}
 
 				this.CurrentIndention++;
 				this.Translate(output, chunks.Code);
 				output.Add(this.CurrentTabIndention);
-				output.Add("break;\r\n");
+				output.Add("break;" + this.NL);
 				this.CurrentIndention--;
 			}
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
-			output.Add("}\r\n");
+			output.Add("}" + this.NL);
 		}
 
 		protected override void TranslateFloatConstant(List<string> output, FloatConstant floatConstant)
@@ -84,11 +84,11 @@ namespace Crayon.Translator.JavaScript
 			{
 				if (booleanCombination.Ops[i].Value == "&&")
 				{
-					output.Add(" && ");
+					output.Add(this.Shorten(" && "));
 				}
 				else
 				{
-					output.Add(" || ");
+					output.Add(this.Shorten(" || "));
 				}
 
 				output.Add("(");
@@ -138,12 +138,12 @@ namespace Crayon.Translator.JavaScript
 			{
 				output.Add("null");
 			}
-			output.Add(";\r\n");
+			output.Add(";" + this.NL);
 		}
 		protected override void TranslateBreakStatement(List<string> output, BreakStatement breakStatement)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("break;\r\n");
+			output.Add("break;" + this.NL);
 		}
 
 		protected override void TranslateDotStep(List<string> output, DotStep dotStep)
@@ -162,9 +162,9 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("switch (");
+			output.Add(this.Shorten("switch ("));
 			this.TranslateExpression(output, switchStatement.Condition);
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 
 			foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
@@ -174,25 +174,18 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.CurrentTabIndention);
 					if (caseExpr == null)
 					{
-						output.Add("default:\r\n");
+						output.Add("default:" + this.NL);
 					}
 					else
 					{
 						output.Add("case ");
 						TranslateExpression(output, caseExpr);
-						output.Add(":\r\n");
+						output.Add(":" + this.NL);
 					}
 
 					this.CurrentIndention++;
 
 					Translate(output, chunk.Code);
-
-					if (chunk.ContainsFallthrough)
-					{
-						//output.Add(this.CurrentTabIndention);
-						//output.Add("break;\r\n");
-						//output.Add("\r\n");
-					}
 
 					this.CurrentIndention--;
 				}
@@ -200,7 +193,7 @@ namespace Crayon.Translator.JavaScript
 
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
-			output.Add("}\r\n");
+			output.Add("}" + this.NL);
 		}
 
 		protected override void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant)
@@ -211,21 +204,21 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateWhileLoop(List<string> output, WhileLoop whileLoop)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("while (");
+			output.Add(this.Shorten("while ("));
 			this.TranslateExpression(output, whileLoop.Condition);
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 			this.Translate(output, whileLoop.Code);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
-			output.Add("}\r\n");
+			output.Add("}" + this.NL);
 		}
 
 		protected override void TranslateExpressionAsExecutable(List<string> output, ExpressionAsExecutable exprAsExec)
 		{
 			output.Add(this.CurrentTabIndention);
 			TranslateExpression(output, exprAsExec.Expression);
-			output.Add(";\r\n");
+			output.Add(";" + this.NL);
 		}
 
 		protected override void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex)
@@ -242,7 +235,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("(");
 			for (int i = 0; i < functionCall.Args.Length; ++i)
 			{
-				if (i > 0) output.Add(", ");
+				if (i > 0) output.Add(this.Shorten(", "));
 				TranslateExpression(output, functionCall.Args[i]);
 			}
 			output.Add(")");
@@ -258,7 +251,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("[");
 			for (int i = 0; i < listDef.Items.Length; ++i)
 			{
-				if (i > 0) output.Add(", ");
+				if (i > 0) output.Add(this.Shorten(", "));
 				TranslateExpression(output, listDef.Items[i]);
 			}
 			output.Add("]");
@@ -270,12 +263,12 @@ namespace Crayon.Translator.JavaScript
 			output.Add("{");
 			for (int i = 0; i < dictDef.Keys.Length; ++i)
 			{
-				if (i > 0) output.Add(", ");
+				if (i > 0) output.Add(this.Shorten(", "));
 				TranslateExpression(output, dictDef.Keys[i]);
-				output.Add(": ");
+				output.Add(this.Shorten(": "));
 				TranslateExpression(output, dictDef.Values[i]);
 			}
-			output.Add(" }");
+			output.Add(this.Shorten(" }"));
 		}
 
 		protected override void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant)
@@ -296,7 +289,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("[");
 			for (int i = 0; i < structInstance.Args.Length; ++i)
 			{
-				if (i > 0) output.Add(", ");
+				if (i > 0) output.Add(this.Shorten(", "));
 				this.TranslateExpression(output, structInstance.Args[i]);
 			}
 			output.Add("]");
@@ -306,11 +299,11 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add(this.CurrentTabIndention);
 			this.TranslateExpression(output, assignment.Target);
-			output.Add(" ");
+			output.Add(this.Shorten(" "));
 			output.Add(assignment.AssignmentOp);
-			output.Add(" ");
+			output.Add(this.Shorten(" "));
 			this.TranslateExpression(output, assignment.Value);
-			output.Add(";\r\n");
+			output.Add(";" + this.NL);
 		}
 
 		protected override string TabString
@@ -321,9 +314,9 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateIfStatement(List<string> output, IfStatement exec)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("if (");
+			output.Add(this.Shorten("if ("));
 			TranslateExpression(output, exec.Condition);
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 			this.Translate(output, exec.TrueCode);
 			this.CurrentIndention--;
@@ -332,29 +325,29 @@ namespace Crayon.Translator.JavaScript
 			output.Add("}");
 			if (exec.FalseCode.Length > 0)
 			{
-				output.Add(" else {\r\n");
+				output.Add(this.Shorten(" else {") + this.NL);
 				this.CurrentIndention++;
 				this.Translate(output, exec.FalseCode);
 				this.CurrentIndention--;
 				output.Add(this.CurrentTabIndention);
 				output.Add("}");
 			}
-			output.Add("\r\n");
+			output.Add(this.NL);
 		}
 
 		protected override void TranslateForLoop(List<string> output, ForLoop exec)
 		{
 			this.Translate(output, exec.Init);
 			output.Add(this.CurrentTabIndention);
-			output.Add("while (");
+			output.Add(this.Shorten("while ("));
 			this.TranslateExpression(output, exec.Condition);
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 			this.Translate(output, exec.Code);
 			this.Translate(output, exec.Step);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
-			output.Add("}\r\n");
+			output.Add("}" + this.NL);
 		}
 
 		protected override void TranslateBinaryOpChain(List<string> output, BinaryOpChain expr)
@@ -385,14 +378,14 @@ namespace Crayon.Translator.JavaScript
 					case "|":
 					case "^":
 						t.Insert(0, "(");
-						t.Add(" " + op + " ");
+						t.Add(this.Shorten(" " + op + " "));
 						TranslateExpression(t, expr.Expressions[i + 1]);
 						t.Add(")");
 						break;
 
 					case "**":
 						t.Insert(0, "Math.pow(");
-						t.Add(", ");
+						t.Add(this.Shorten(", "));
 						TranslateExpression(t, expr.Expressions[i + 1]);
 						t.Add(")");
 						break;
@@ -412,7 +405,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
 		{
-			output.Add("\r\n");
+			output.Add(this.NL);
 			output.Add(this.CurrentTabIndention);
 			output.Add("function ");
 			output.Add("v_" + functionDef.NameToken.Value);
@@ -420,12 +413,12 @@ namespace Crayon.Translator.JavaScript
 			HashSet<string> dontRedeclareThese = new HashSet<string>();
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
-				if (i > 0) output.Add(", ");
+				if (i > 0) output.Add(this.Shorten(", "));
 				string argName = functionDef.ArgNames[i].Value;
 				output.Add("v_" + argName);
 				dontRedeclareThese.Add(argName);
 			}
-			output.Add(") {\r\n");
+			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 
 			foreach (string varName in functionDef.GetVariableDeclarationList())
@@ -433,14 +426,14 @@ namespace Crayon.Translator.JavaScript
 				if (!dontRedeclareThese.Contains(varName))
 				{
 					output.Add(this.CurrentTabIndention);
-					output.Add("var v_" + varName + " = null;\r\n");
+					output.Add("var v_" + varName + this.Shorten(" = null;") + this.NL);
 				}
 			}
 
 			Translate(output, functionDef.Code);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
-			output.Add("}\r\n");
+			output.Add("}" +this.NL);
 		}
 	}
 }

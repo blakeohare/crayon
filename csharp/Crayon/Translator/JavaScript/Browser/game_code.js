@@ -6,7 +6,7 @@ R.now = function () {
 
 R.get_image_impl = function(key) {
 	return [%%%TYPE_NATIVE_OBJECT%%%, [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, R._global_vars.image_downloads[key]]];
-}
+};
 
 R._global_vars = {
 	'width': 0,
@@ -54,7 +54,7 @@ R.finish_load_image = function(id) {
 	var context = canvas.getContext('2d');
 	context.drawImage(img, 0, 0);
 	R._global_vars.image_downloads[key] = canvas;
-}
+};
 
 R.beginFrame = function() {
 	R._global_vars.last_frame_began = R.now();

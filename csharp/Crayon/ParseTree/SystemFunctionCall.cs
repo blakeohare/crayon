@@ -14,6 +14,10 @@
 
 		public override Expression Resolve(Parser parser)
 		{
+			if (parser.IsMin && this.Name == "$_comment")
+			{
+				return null;
+			}
 			// args have already been resolved.
 			return this;
 		}

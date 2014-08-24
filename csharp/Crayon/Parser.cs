@@ -216,12 +216,14 @@ namespace Crayon
 		}
 
 		private string folder;
+		public bool IsMin { get; private set; }
 
-		public Parser(PlatformTarget mode, string rootFolder)
+		public Parser(PlatformTarget mode, string rootFolder, bool isMin)
 		{
 			this.Mode = mode;
 			this.folder = rootFolder;
 			this.IsInClass = false;
+			this.IsMin = isMin;
 
 			foreach (object name in Enum.GetValues(typeof(FrameworkFunction)))
 			{

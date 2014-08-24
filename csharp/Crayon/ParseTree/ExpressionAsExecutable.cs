@@ -16,6 +16,11 @@ namespace Crayon.ParseTree
 		{
 			this.Expression = this.Expression.Resolve(parser);
 
+			if (this.Expression == null)
+			{
+				return new Executable[0];
+			}
+
 			if (this.Expression is Increment)
 			{
 				Increment inc = (Increment)this.Expression;

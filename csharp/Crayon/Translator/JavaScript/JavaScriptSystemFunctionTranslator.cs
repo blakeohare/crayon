@@ -12,7 +12,7 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateListLastIndex(List<string> output, ParseTree.Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".length - 1");
+			output.Add(this.Shorten(".length - 1"));
 		}
 
 		protected override void TranslateListInsert(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
@@ -20,7 +20,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".splice(");
 			this.Translator.TranslateExpression(output, index);
-			output.Add(", 0, ");
+			output.Add(this.Shorten(", 0, "));
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
 		}
@@ -74,14 +74,14 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, haystack);
 			output.Add(".indexOf(");
 			this.Translator.TranslateExpression(output, needle);
-			output.Add(") != -1)");
+			output.Add(this.Shorten(") != -1)"));
 		}
 
 		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
 		{
 			output.Add("Math.pow(");
 			this.Translator.TranslateExpression(output, baseNum);
-			output.Add(", ");
+			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, powerNum);
 			output.Add(")");
 		}
@@ -108,7 +108,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add("[");
 			this.Translator.TranslateExpression(output, key);
-			output.Add("] !== undefined)");
+			output.Add(this.Shorten("] !== undefined)"));
 		}
 
 		protected override void TranslateDictionarySize(List<string> output, ParseTree.Expression dictionary)
@@ -160,7 +160,7 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateUnsafeFloatDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
 		{
 			this.Translator.TranslateExpression(output, numerator);
-			output.Add(" / ");
+			output.Add(this.Shorten(" / "));
 			this.Translator.TranslateExpression(output, denominator);
 		}
 
@@ -185,7 +185,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, list);
 			output.Add("[");
 			this.Translator.TranslateExpression(output, index);
-			output.Add("] = ");
+			output.Add(this.Shorten("] = "));
 			this.Translator.TranslateExpression(output, value);
 		}
 
@@ -193,7 +193,7 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("Math.floor(");
 			this.Translator.TranslateExpression(output, numerator);
-			output.Add(" / ");
+			output.Add(this.Shorten(" / "));
 			this.Translator.TranslateExpression(output, denominator);
 			output.Add(")");
 		}
@@ -216,7 +216,10 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)
 		{
 #if DEBUG
-			output.Add("// " + ((ParseTree.StringConstant)commentValue).Value);
+			if (!this.IsMin)
+			{
+				output.Add("// " + ((ParseTree.StringConstant)commentValue).Value);
+			}
 #endif
 		}
 
@@ -224,9 +227,9 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("slow_dictionary_get(");
 			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(", ");
+			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
+			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, defaultValue);
 			output.Add(")");
 		}
@@ -249,7 +252,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, dict);
 			output.Add("[");
 			this.Translator.TranslateExpression(output, key);
-			output.Add("] = ");
+			output.Add(this.Shorten("] = "));
 			this.Translator.TranslateExpression(output, value);
 		}
 
@@ -257,7 +260,7 @@ namespace Crayon.Translator.JavaScript
 		{
 			if (strongCast)
 			{
-				output.Add("('' + ");
+				output.Add(this.Shorten("('' + "));
 				this.Translator.TranslateExpression(output, thing);
 				output.Add(")");
 			}
@@ -272,39 +275,39 @@ namespace Crayon.Translator.JavaScript
 			switch (id)
 			{
 				case "ff_arctan2":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", Math.atan2(v_y[1], v_x[1])]");
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.atan2(v_y[1], v_x[1])]"));
 					break;
 
 				case "ff_blit_image":
-					output.Add("R.blit(v_image[1][1], v_x[1], v_y[1])");
+					output.Add(this.Shorten("R.blit(v_image[1][1], v_x[1], v_y[1])"));
 					break;
 
 				case "ff_current_time":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", R.now()]");
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", R.now()]"));
 					break;
 
 				case "ff_download_image":
-					output.Add("R.enqueue_image_download(v_key[1], v_url[1])");
+					output.Add(this.Shorten("R.enqueue_image_download(v_key[1], v_url[1])"));
 					break;
 
 				case "ff_draw_rectangle":
-					output.Add("R.drawRect(v_x[1], v_y[1], v_width[1], v_height[1], v_red[1], v_green[1], v_blue[1])");
+					output.Add(this.Shorten("R.drawRect(v_x[1], v_y[1], v_width[1], v_height[1], v_red[1], v_green[1], v_blue[1])"));
 					break;
 
 				case "ff_fill_screen":
-					output.Add("R.fillScreen(v_red[1], v_green[1], v_blue[1])");
+					output.Add(this.Shorten("R.fillScreen(v_red[1], v_green[1], v_blue[1])"));
 					break;
 
 				case "ff_floor":
-					output.Add("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_value[1])]");
+					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_value[1])]"));
 					break;
 
 				case "ff_get_events":
-					output.Add("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()]");
+					output.Add(this.Shorten("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()]"));
 					break;
 
 				case "ff_get_image":
-					output.Add("v_output = R.get_image_impl(v_key[1])");
+					output.Add(this.Shorten("v_output = R.get_image_impl(v_key[1])"));
 					break;
 
 				case "ff_initialize_game":
@@ -312,16 +315,16 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_initialize_screen":
-					output.Add("R.initializeScreen(v_width[1], v_height[1])");
+					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1])"));
 					break;
 
 				case "ff_is_image_loaded":
-					output.Add("v_output = R.is_image_loaded(v_key[1]) ? v_VALUE_TRUE : v_VALUE_FALSE");
+					output.Add(this.Shorten("v_output = R.is_image_loaded(v_key[1]) ? v_VALUE_TRUE : v_VALUE_FALSE"));
 					break;
 
 				case "ff_parse_int":
 					// TODO: need to throw if not an integer
-					output.Add("v_output = [" + (int)Types.INTEGER + ", parseInt(v_value[1])]");
+					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", parseInt(v_value[1])]"));
 					break;
 
 				case "ff_print":
@@ -329,7 +332,7 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_random":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", Math.random()];");
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.random()];"));
 					break;
 
 				case "ff_set_title":
@@ -354,7 +357,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".splice(");
 			this.Translator.TranslateExpression(output, index);
-			output.Add(", 1)");
+			output.Add(this.Shorten(", 1)"));
 		}
 
 		protected override void TranslateStringLength(List<string> output, ParseTree.Expression stringValue)

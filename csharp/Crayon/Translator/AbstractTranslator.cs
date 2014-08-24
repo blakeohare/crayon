@@ -11,6 +11,12 @@ namespace Crayon.Translator
 		public Parser Parser { get; private set; }
 		private AbstractSystemFunctionTranslator systemFunctionTranslator;
 
+		protected string NL { get { return this.IsMin ? "" : "\r\n"; } }
+		protected string Shorten(string value)
+		{
+			return this.IsMin ? value.Replace(" ", "") : value;
+		}
+
 		public AbstractTranslator(Parser parser, bool min, AbstractSystemFunctionTranslator systemFunctionTranslator)
 		{
 			this.Parser = parser;
@@ -87,7 +93,7 @@ namespace Crayon.Translator
 		protected abstract string TabString { get; }
 
 		private string tabIndention = "";
-		public string CurrentTabIndention { get { return this.tabIndention; } }
+		public string CurrentTabIndention { get { return this.IsMin ? "" : this.tabIndention; } }
 
 		// TODO: Nope. This works for JS and PY but will fail miserable on more structured programming languages that don't just allow you to
 		// stick arbitrary code at the front of a file.

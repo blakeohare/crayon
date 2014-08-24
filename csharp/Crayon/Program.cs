@@ -8,7 +8,7 @@
 			string sourceFolder = @"C:\things\projects\Crayon\Demos\Volcano\source";
 			string outputFolder = @"C:\things\projects\Crayon\Demos\Volcano\output";
 			string rawPlatform = "js";
-
+			bool minified = false;
 #else
 			if (args.Length != 3)
 			{
@@ -49,7 +49,7 @@
 					}
 					return;
 			}
-			Packager pkg = new Packager(platform, sourceFolder, outputFolder);
+			Packager pkg = new Packager(platform, sourceFolder, outputFolder, minified);
 			pkg.Do();
 		}
 

@@ -10,13 +10,17 @@ namespace Crayon
 
 		private Parser parser;
 		private Crayon.Translator.AbstractTranslator platformTranslator;
+		
+		public Crayon.Translator.AbstractPlatformImplementation PlatformImplementation { get; private set; }
 
 		private Parser userParser;
 		private ByteCodeCompiler byteCodeCompiler = new ByteCodeCompiler();
 
+		public Crayon.Translator.AbstractTranslator Translator { get { return this.platformTranslator; } }
+
 		public Compiler(PlatformTarget mode, bool generateMinCode, string rootFolder)
 		{
-			this.parser = new Parser(mode, null);
+			this.parser = new Parser(mode, null, generateMinCode);
 			this.rootFolder = rootFolder;
 
 			Crayon.Translator.AbstractPlatformImplementation platform;
@@ -25,12 +29,12 @@ namespace Crayon
 			switch (mode)
 			{
 				case PlatformTarget.Python_PyGame:
-					platform = new Translator.Python.PyGame.PyGameImplementation();
+					platform = new Translator.Python.PyGame.PyGameImplementation(generateMinCode);
 					translator = new Translator.Python.PythonTranslator(parser, generateMinCode, platform);
 					break;
 
 				case PlatformTarget.JavaScript_Browser:
-					platform = new Translator.JavaScript.Browser.BrowserImplementation();
+					platform = new Translator.JavaScript.Browser.BrowserImplementation(generateMinCode);
 					translator = new Translator.JavaScript.JavaScriptTranslator(parser, generateMinCode, platform);
 					break;
 
@@ -39,8 +43,9 @@ namespace Crayon
 			}
 
 			this.platformTranslator = translator;
+			this.PlatformImplementation = platform;
 
-			this.userParser = new Parser(PlatformTarget.ByteCode, rootFolder);
+			this.userParser = new Parser(PlatformTarget.ByteCode, rootFolder, false);
 		}
 
 		public string Compile()
