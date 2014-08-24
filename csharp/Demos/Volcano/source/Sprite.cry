@@ -10,14 +10,23 @@ class Sprite {
 		this.dy = 0;
 		this.vy = 0;
 		this.ground = null;
+		this.counter = 0;
+		this.lastdir = 'right';
+		this.moving = false;
 	}
 	
 	function update(playScene) {
+		this.counter++;
 		grid = playScene.grid;
 		grid_top = playScene.logical_grid_top;
 		
 		// first, do horizontal movement
 		new_x = this.x + this.dx;
+		this.moving = false;
+		if (this.dx != 0) {
+			this.moving = true;
+			this.lastdir = this.dx < 0 ? 'left' : 'right';
+		}
 		current_tile = playScene.get_tile(this.x, this.y - 1);
 		tile = playScene.get_tile(new_x, this.y - 1);
 		if (tile == null || tile.passable) {
@@ -60,7 +69,14 @@ class Sprite {
 		if (this.type == 'player') {
 			x = $floor(this.x) - 20;
 			y = $floor(this.y - view_top) - 40;
-			$blit_image(images['sprites/player'], x, y);
+			c = (this.counter / 3) % 2 + 1;
+			if (!this.moving) c = 2;
+			if (this.ground == null) c = 'jump';
+			img_path = 'sprites/player_' + this.lastdir + '_' + c;
+			$blit_image(images[img_path], x, y);
+			
+			
+			
 		} else {
 			$print('unknown sprite type: ' + this.type);
 		}

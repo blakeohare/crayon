@@ -4,12 +4,21 @@ class ImageLibrary {
 		this.image_objects = [];
 		
 		keys = 
-			"sprites/player".split(' ') +
+			//"sprites/player".split(' ') +
 			"tiles/bg tiles/rock tiles/lava_lower".split(' ') +
 			"menus/title menus/you_ascended menus/meters".split(' ');
 		for (i = 1; i <= 4; ++i) {
 			keys.add("tiles/lava_upper_" + i);
 		}
+		
+		
+		for (i = 0; i < 2; ++i) {
+			dir = i == 0 ? 'left' : 'right';
+			keys.add('sprites/player_' + dir + '_1');
+			keys.add('sprites/player_' + dir + '_2');
+			keys.add('sprites/player_' + dir + '_jump');
+		}
+		
 		for (i = 0; i < 10; ++i) {
 			keys.add("menus/num" + i);
 		}
