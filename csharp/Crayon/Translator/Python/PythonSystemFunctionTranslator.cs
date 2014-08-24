@@ -263,7 +263,7 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_floor":
-					output.Add("v_output = v_build_integer(int(v_value[1]))");
+					output.Add("v_output = v_build_integer(int(v_value[1]) if (v_value[0] >= 0) else int(math.floor(v_value[1])))");
 					break;
 
 				case "ff_get_events":
