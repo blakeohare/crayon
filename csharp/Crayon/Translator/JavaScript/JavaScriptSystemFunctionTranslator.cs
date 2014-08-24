@@ -9,6 +9,14 @@ namespace Crayon.Translator.JavaScript
 			: base(platform)
 		{ }
 
+		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		{
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, key);
+			output.Add("] = undefined");
+		}
+
 		protected override void TranslateStringReplace(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression findMe, ParseTree.Expression replaceWith)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
@@ -96,6 +104,13 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
 		{
 			output.Add("slow_dictionary_get_keys(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(")");
+		}
+
+		protected override void TranslateDictionaryGetValues(List<string> output, ParseTree.Expression dictionary)
+		{
+			output.Add("slow_dictionary_get_values(");
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(")");
 		}
@@ -214,13 +229,11 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateDictionarySet(List<string> output, ParseTree.Expression dict, ParseTree.Expression key, ParseTree.Expression value)
 		{
-			output.Add("slow_dictionary_set(");
 			this.Translator.TranslateExpression(output, dict);
-			output.Add(", ");
+			output.Add("[");
 			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
+			output.Add("] = ");
 			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
 		}
 
 		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)

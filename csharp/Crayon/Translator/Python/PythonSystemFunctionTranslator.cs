@@ -9,6 +9,14 @@ namespace Crayon.Translator.Python
 			: base(platform)
 		{ }
 
+		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		{
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".pop(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringReplace(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression findMe, ParseTree.Expression replaceWith)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
@@ -97,8 +105,16 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
 		{
+			output.Add("list(");
 			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(".keys()[:]");
+			output.Add(".keys())");
+		}
+
+		protected override void TranslateDictionaryGetValues(List<string> output, ParseTree.Expression dictionary)
+		{
+			output.Add("list(");
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".values())");
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)

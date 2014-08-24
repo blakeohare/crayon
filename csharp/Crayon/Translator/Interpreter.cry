@@ -483,7 +483,8 @@ PRIMITIVE_METHODS = {
 	Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
 	Types.DICTIONARY + "contains": %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%,
 	Types.DICTIONARY + "entries": %%%PRIMITIVE_METHOD_DICTIONARY_ENTRIES%%%,
-	Types.DICTIONARY + "pop": %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%,
+	Types.DICTIONARY + "keys": %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%,
+	Types.DICTIONARY + "remove": %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%,
 	Types.DICTIONARY + "values": %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%,
 };
 
@@ -582,7 +583,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						return killExecution(stack, "Cannot have multiple keys in one dictionary with different types.");
 					}
 					if (!$_dictionary_contains(DictImpl$dictImpl.keyLookup, nativeKey)) {
-						$_dictionary_set(DictImpl$dictImpl.keyLookup, nativeKey, value);
+						$_dictionary_set(DictImpl$dictImpl.keyLookup, nativeKey, index);
 						DictImpl$dictImpl.size += 1;
 						if (!nonEmpty) {
 							DictImpl$dictImpl.keyType = nativeKeyType;
@@ -1235,7 +1236,8 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						// might need to revisit this if other platforms aren't as easy to do a list implementation?
 						len = $_list_length(Value$root.internalValue);
 					} else if (type == Types.DICTIONARY) {
-						return killExecution(stack, "dictionary length not implemented yet.");
+						t = Value$root.internalValue;
+						len = DictImpl$t.size;
 					} else if (type == Types.STRING) {
 						len = $_string_length(Value$root.internalValue);
 					} else {
@@ -1550,6 +1552,25 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 			t = $_string_replace(Value$context.internalValue, Value$a.internalValue, Value$b.internalValue);
 			output = new Value(Types.STRING, t);
 			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%:
+			di = Value$context.internalValue;
+			DictImpl$di.keyLookup = {};
+			DictImpl$di.valueLookup = {};
+			DictImpl$di.size = 0;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%:
+			di = Value$context.internalValue;
+			key = $_list_get(funcArgs, 0);
+			keyType = Value$key.type;
+			if (DictImpl$di.keyType != keyType) return "Key not found.";
+			keyLookup = DictImpl$di.keyLookup;
+			keyValue = Value$key.internalValue;
+			if (keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
+			if ($_dictionary_get(keyLookup, keyValue, null) == null) return "Key not found.";
+			$_dictionary_remove(keyLookup, keyValue);
+			$_dictionary_remove(DictImpl$di.valueLookup, keyValue);
+			DictImpl$di.size -= 1;
+			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
 			di = Value$context.internalValue;
 			keys = DictImpl$di.keyLookup;
@@ -1572,6 +1593,17 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 					output = VALUE_TRUE;
 				}
 			}
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%:
+			di = Value$context.internalValue;
+			values = $_dictionary_get_values(DictImpl$di.valueLookup);
+			output = new Value(Types.LIST, values);
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%:
+			di = Value$context.internalValue;
+			$_print("I'm getting the keys!");
+			values = $_dictionary_get_values(DictImpl$di.keyLookup);
+			output = new Value(Types.LIST, values);
 			break;
 		default:
 			return "Unknown system method";

@@ -27,6 +27,8 @@ namespace Crayon.Translator
 				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get": VerifyCount(functionCall, 3); TranslateDictionaryGet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
+				case "_dictionary_get_values": VerifyCount(functionCall, 1); TranslateDictionaryGetValues(output, args[0]); break;
+				case "_dictionary_remove": VerifyCount(functionCall, 2); TranslateDictionaryRemove(output, args[0], args[1]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
@@ -62,6 +64,8 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
+		protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateStringReverse(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith);
 		protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
