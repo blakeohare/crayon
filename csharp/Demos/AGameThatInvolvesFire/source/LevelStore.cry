@@ -91,6 +91,57 @@ class LevelStore {
 		  "x f x*             2",
 		  "xxxxxxxxxxxxxxxxxxxx"]);
 		
+		this.levels['level-6'] = this.build_level(6, type_mapping, [
+			"xxxxxxxxxxxxxxxxxxxx",
+			"x   x              x",
+			"x x x xxxxxxxxxxxx x",
+			"x x x xfx   x   xx x",
+			"x x   x   x   x xx x",
+			"xfx x xxxxxxxxx xx x",
+			"x x x              x",
+			"x x xxxxxx xxxxxxx x",
+			"x        x      x  x",
+			"x x xxxxxxxxx xxx xx",
+			"x x             x  x",
+			"x xxxxxxxxxxxxxxxx x",
+			"1 x                x",
+			"xxx2ixxxxxxxxxxxxxxx"]);
+		
+		this.levels['level-7'] = this.build_level(7, type_mapping, [
+			"xxx1xxxxxxxxxxxxxxxx",
+			"x                 fx",
+			"xxxxxxxx xxxxxxxxxxx",
+			"xf                 x",
+			"xxxxxxxxxxxxx xxxxxx",
+			"x                  x",
+			"xxxxxx xxxxxxxxxxxxx",
+			"x                  x",
+			"xxxxxxxxxx xxxxxxxxx",
+			"x                  x",
+			"xxxxxxx xxxxxxxxx xx",
+			"x         x        x",
+			"x         x  f     x",
+			"xxxxx2ixxxxxxxxxxxxx"]);
+		
+		this.levels['level-8'] = this.build_level(8, type_mapping, [
+			"xxxxx1xxxxxxxxxxxxxx",
+			"x   x x            x",
+			"x x x x xxxxxxxxxx x",
+			"x x x x x        x x",
+			"x x x x x xxxxxx x x",
+			"x x x x x x    x x x",
+			"x x x x x   xx x x x",
+			"x x x x xxxxxx x x x",
+			"x x x x        x x x",
+			"x x x xxxxxxxxxx x x",
+			"x x x            x x",
+			"x x xxxxxxxxxxxxxx x",
+			"xfx                x",
+			"xxxxxxxxxxxxxxxxx2ix"]);
+	}
+	
+	function level_exists(level) {
+		return this.levels.contains(level);
 	}
 	
 	function get_fresh_grid(level) {

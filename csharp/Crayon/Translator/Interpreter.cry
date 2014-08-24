@@ -479,7 +479,6 @@ PRIMITIVE_METHODS = {
 	Types.LIST + "pop": %%%PRIMITIVE_METHOD_LIST_POP%%%,
 	Types.LIST + "reverse": %%%PRIMITIVE_METHOD_LIST_REVERSE%%%,
 
-	Types.DICTIONARY + "add": %%%PRIMITIVE_METHOD_DICTIONARY_ADD%%%,
 	Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
 	Types.DICTIONARY + "contains": %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%,
 	Types.DICTIONARY + "entries": %%%PRIMITIVE_METHOD_DICTIONARY_ENTRIES%%%,
@@ -1510,12 +1509,36 @@ function callSystemMethod(methodId, context, funcArgs, valueStack, returnValueUs
 				output = VALUE_FALSE;
 			}
 			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
+			di = Value$context.internalValue;
+			keys = DictImpl$di.keyLookup;
+			arg = $_list_get(funcArgs, 0);
+			argType = Value$arg.type;
+			if (argType == Types.INTEGER || argType == Types.STRING) {
+				key = Value$arg.internalValue;
+			} else if (argType == Types.INSTANCE) {
+				t = Value$arg.internalValue;
+				key = $_list_get(t, 2);
+			}
+
+			if (DictImpl$di.keyType != argType) {
+				output = VALUE_FALSE;
+			} else {
+				t = $_dictionary_get(keys, key, null);
+				if (t == null) {
+					output = VALUE_FALSE;
+				} else {
+					output = VALUE_TRUE;
+				}
+			}
+			break;
 		default:
 			return "Unknown system method";
 	}
 	if (returnValueUsed) {
 		$_list_push(valueStack, output);
 	}
+	return null;
 }
 
 function killExecution(stack, message) {

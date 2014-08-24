@@ -8,6 +8,7 @@ import 'Tile.cry';
 import 'Sprite.cry';
 import 'LevelStore.cry';
 import 'StaticImageScene.cry';
+import 'WinScene.cry';
 
 level_store = new LevelStore();
 

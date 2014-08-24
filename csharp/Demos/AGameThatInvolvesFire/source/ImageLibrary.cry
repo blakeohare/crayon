@@ -4,7 +4,7 @@ class ImageLibrary {
 		this.image_objects = [];
 		
 		keys = 
-			"menus/title menus/cursor1 menus/cursor2 menus/instructions menus/credits".split(' ') +
+			"menus/title menus/cursor1 menus/cursor2 menus/instructions menus/credits menus/win".split(' ') +
 			"tiles/walls/wall tiles/entrance tiles/exit".split(' ') +
 			"sprites/player/dead".split(' ');
 		directions = 'n s e w'.split(' ');

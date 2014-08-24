@@ -72,7 +72,11 @@ class PlayScene : SceneBase {
 				this.wincounter = 60;
 			}
 		} else if (this.wincounter == 0) {
-			this.next = new PlayScene(this.level + 1);
+			if (level_store.level_exists('level-' + (this.level + 1))) {
+				this.next = new PlayScene(this.level + 1);
+			} else {
+				this.next = new WinScene();
+			}
 		} else { // if (this.wincounter > 0)
 			return null; // don't do any more updates if the level is won
 		}
