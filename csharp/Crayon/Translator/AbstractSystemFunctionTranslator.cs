@@ -50,6 +50,8 @@ namespace Crayon.Translator
 				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
 				case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
+				case "_string_reverse": VerifyCount(functionCall, 1); TranslateStringReverse(output, args[0]); break;
+				case "_string_replace": VerifyCount(functionCall, 3); TranslateStringReplace(output, args[0], args[1], args[2]); break;
 				case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
 				case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
 				case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
@@ -60,6 +62,8 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateStringReverse(List<string> output, Expression stringValue);
+		protected abstract void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith);
 		protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
