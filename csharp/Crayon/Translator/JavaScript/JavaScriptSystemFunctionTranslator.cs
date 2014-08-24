@@ -27,10 +27,11 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
 		{
+			output.Add("delete ");
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add("[");
 			this.Translator.TranslateExpression(output, key);
-			output.Add("] = undefined");
+			output.Add("]");
 		}
 
 		protected override void TranslateStringReplace(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression findMe, ParseTree.Expression replaceWith)
