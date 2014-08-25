@@ -973,6 +973,14 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						$_insert_platform_code('ff_arctan2');
 						break;
 
+					case %%%FF_ASSERT%%%:
+						msg = $_list_pop(valueStack);
+						value = $_list_pop(valueStack);
+						if (Value$value.type != Types.BOOLEAN || !Value$value.internalValue) {
+							return killExecution(stack, "Assertion failed: " + valueToString(msg));
+						}
+						break;
+
 					case %%%FF_BLIT_IMAGE%%%:
 						y = $_list_pop(valueStack);
 						x = $_list_pop(valueStack);
@@ -1061,6 +1069,25 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 						value = $_list_pop(valueStack);
 						value = valueToString(value);
 						$_insert_platform_code('ff_set_title');
+						break;
+					case %%%FF_TYPEOF%%%:
+						value = $_list_pop(valueStack);
+
+						switch (Value$value.type) {
+							case Types.NULL: t = "null"; break;
+							case Types.INTEGER: t = "integer"; break;
+							case Types.FLOAT: t = "float"; break;
+							case Types.STRING: t = "string"; break;
+							case Types.LIST: t = "list"; break;
+							case Types.DICTIONARY: t = "dictionary"; break;
+							case Types.INSTANCE: t = "instance"; break;
+							case Types.FUNCTION: t = "function"; break;
+							case Types.METHOD: t = "method"; break;
+							case Types.SYS_METHOD: t = "primitive_method"; break;
+							case Types.NATIVE_OBJECT: t = "native_system_object"; break;
+							default: t = "unknown_type"; break;
+						}
+						output = new Value(Types.STRING, t);
 						break;
 					default: 
 						return killExecution(stack, "Invalid framework function: " + $_string_cast_weak(row[0])); 

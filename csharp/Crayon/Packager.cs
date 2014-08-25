@@ -11,13 +11,13 @@ namespace Crayon
 		private string targetFolder;
 		private bool minified;
 
-		public Packager(PlatformTarget platform, string rootFolder, string targetFolder, bool minified)
+		public Packager(PlatformTarget platform, string rootFolder, string targetFolder, bool minified, string jsFolderRoot)
 		{
 			this.platform = platform;
 			this.folder = rootFolder;
 			this.targetFolder = targetFolder;
 			this.minified = minified;
-			this.compiler = new Compiler(this.platform, this.minified, this.folder);
+			this.compiler = new Compiler(this.platform, this.minified, this.folder, jsFolderRoot);
 		}
 
 		public void Do()

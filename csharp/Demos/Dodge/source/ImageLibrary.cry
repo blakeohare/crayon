@@ -6,6 +6,9 @@ class ImageLibrary {
 		keys =
 			"fire1 fire2".split(' ') +
 			"player/dead".split(' ');
+		for (i = 0; i < 10; ++i) {
+			keys.add('numbers/num' + i);
+		}
 		directions = 'n s e w'.split(' ');
 		for (i = 0; i < directions.length; ++i) {
 			for (j = 1; j <= 3; ++j) {

@@ -313,18 +313,18 @@ namespace Crayon
 
 		public Executable[] ParseInternal(string filename, string contents)
 		{
-			Executable[] output = ParseImport(".", filename, contents, new HashSet<string>());
+			Executable[] output = ParseImport(".", filename, contents, new HashSet<string>(), null);
 			return ResolveCode(output);
 		}
 
 		public Executable[] ParseRoot(string rootFolder)
 		{
 			string fileName = "start.cry";
-			Executable[] output = ParseImport(rootFolder, fileName, null, new HashSet<string>());
+			Executable[] output = ParseImport(rootFolder, fileName, null, new HashSet<string>(), null);
 			return ResolveCode(output);
 		}
 
-		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot)
+		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot, ImportStatement importStatement)
 		{
 			if (pathOfFilesRelativeToRoot.Contains(filename))
 			{
@@ -333,7 +333,18 @@ namespace Crayon
 			pathOfFilesRelativeToRoot.Add(filename);
 
 			int fileId = fileIdCounter++;
-			string code = codeOverride ?? Util.ReadFileExternally(System.IO.Path.Combine(rootFolder, filename), true);
+			string code = codeOverride;
+			if (codeOverride == null)
+			{
+				if (importStatement != null && importStatement.IsSystemLibrary)
+				{
+					code = Util.ReadFileInternally("SystemLib/" + importStatement.FileToken.Value + ".cry");
+				}
+				else
+				{
+					code = Util.ReadFileExternally(System.IO.Path.Combine(rootFolder, filename), true);
+				}
+			}
 			this.RegisterFileUsed(filename, code, fileId);
 			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId);
 
@@ -346,9 +357,9 @@ namespace Crayon
 				Executable executable = ExecutableParser.Parse(tokens, false, true, true);
 				if (executable is ImportStatement)
 				{
-					ImportStatement importStatement = (ImportStatement)executable;
-					string filePath = importStatement.FilePath;
-					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot);
+					ImportStatement execAsImportStatement = (ImportStatement)executable;
+					string filePath = execAsImportStatement.FilePath;
+					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot, execAsImportStatement);
 					executables.AddRange(importedCode);
 				}
 				else if (executable is ClassDefinition)

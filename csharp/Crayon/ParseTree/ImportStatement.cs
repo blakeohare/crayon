@@ -8,11 +8,13 @@ namespace Crayon.ParseTree
 	internal class ImportStatement : Executable
 	{
 		public Token FileToken { get; private set; }
+		public bool IsSystemLibrary { get; private set; }
 
-		public ImportStatement(Token importToken, Token fileToken)
+		public ImportStatement(Token importToken, Token fileToken, bool isSystemLibrary)
 			: base(importToken)
 		{
 			this.FileToken = fileToken;
+			this.IsSystemLibrary = isSystemLibrary;
 		}
 
 		public override IList<Executable> Resolve(Parser parser)
@@ -25,6 +27,11 @@ namespace Crayon.ParseTree
 			get
 			{
 				string stringValue = this.FileToken.Value;
+				if (this.IsSystemLibrary)
+				{
+					return stringValue;
+				}
+
 				string output = Util.ConvertStringTokenToValue(stringValue);
 				if (output == null)
 				{

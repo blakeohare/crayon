@@ -8,6 +8,8 @@ namespace Crayon
 	{
 		private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>("= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
+		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>("Game".Split(' '));
+
 		public static Executable Parse(TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot)
 		{
 			string value = tokens.PeekValue();
@@ -45,10 +47,18 @@ namespace Crayon
 					char importPathFirstChar = fileToken.Value[0];
 					if (importPathFirstChar != '\'' && importPathFirstChar != '"')
 					{
-						throw new ParserException(fileToken, "Expected string path to file.");
+						if (SYSTEM_LIBRARIES.Contains(fileToken.Value))
+						{
+							tokens.PopExpected(";");
+							return new ImportStatement(importToken, fileToken, true);
+						}
+						else
+						{
+							throw new ParserException(fileToken, "Expected string path to file or system library name.");
+						}
 					}
 					tokens.PopExpected(";");
-					return new ImportStatement(importToken, fileToken);
+					return new ImportStatement(importToken, fileToken, false);
 				}
 
 				if (value == "enum")

@@ -89,6 +89,7 @@ class PlayScene : SceneBase {
 		this.sprites = [this.player];
 		this.counter = 0;
 		this.reset_counter = -1;
+		this.fires = 0;
 	}
 	
 	function process_input(events) {
@@ -100,7 +101,6 @@ class PlayScene : SceneBase {
 			}
 		}
 	}
-	
 	
 	function update() {
 		this.counter++;
@@ -122,6 +122,9 @@ class PlayScene : SceneBase {
 			fire.targetX = pt[0];
 			fire.targetY = pt[1];
 			this.sprites.add(fire);
+			if (this.reset_counter < 0) {
+				this.fires++;
+			}
 		}
 		
 		px = this.player.x;
@@ -168,6 +171,16 @@ class PlayScene : SceneBase {
 				img = imgLib.images['fire' + ((this.counter / 3) % 2 + 1)];
 			}
 			$blit_image(img, x, y);
+		}
+		
+		num = this.fires + '';
+		x = 10;
+		y = 500;
+		for (i = 0; i < num.length; ++i) {
+			c = num[i];
+			img = imgLib.images['numbers/num' + c];
+			$blit_image(img, x, y);
+			x += 50;
 		}
 	}
 }

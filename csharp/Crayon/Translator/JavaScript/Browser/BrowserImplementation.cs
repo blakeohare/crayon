@@ -4,12 +4,20 @@ namespace Crayon.Translator.JavaScript.Browser
 {
 	internal class BrowserImplementation : AbstractPlatformImplementation
 	{
-		public BrowserImplementation(bool minified) : base(minified) { }
+		private string jsFolderPrefix;
+
+		public BrowserImplementation(bool minified, string jsFolderPrefix)
+			: base(minified)
+		{
+			this.jsFolderPrefix = jsFolderPrefix;
+		}
 
 		public override string SerializeBoilerPlates(Parser parser)
 		{
 			List<string> output = new List<string>();
-			output.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js")));
+			string gameCode = Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js");
+			gameCode = gameCode.Replace("%%%JS_FILE_PREFIX%%%", "'" + this.jsFolderPrefix + "'");
+			output.Add(Minify(gameCode));
 			if (this.IsFull) output.Add("\r\n");
 			output.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js")));
 			if (this.IsFull) output.Add("\r\n");

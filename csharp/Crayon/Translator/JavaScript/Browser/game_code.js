@@ -41,7 +41,7 @@ R.enqueue_image_download = function(key, url) {
 	loader_queue.innerHTML += '<img id="image_loader_img_' + id + '" onload="R.finish_load_image(' + id + ')" crossOrigin="anonymous" />' +
 		'<canvas id="image_loader_canvas_' + id + '" />';
 	var img = document.getElementById('image_loader_img_' + id);
-	img.src = url;
+	img.src = %%%JS_FILE_PREFIX%%% + url;
 
 };
 

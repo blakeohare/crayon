@@ -18,7 +18,7 @@ namespace Crayon
 
 		public Crayon.Translator.AbstractTranslator Translator { get { return this.platformTranslator; } }
 
-		public Compiler(PlatformTarget mode, bool generateMinCode, string rootFolder)
+		public Compiler(PlatformTarget mode, bool generateMinCode, string rootFolder, string jsFolderPrefix)
 		{
 			this.parser = new Parser(mode, null, generateMinCode);
 			this.rootFolder = rootFolder;
@@ -34,7 +34,7 @@ namespace Crayon
 					break;
 
 				case PlatformTarget.JavaScript_Browser:
-					platform = new Translator.JavaScript.Browser.BrowserImplementation(generateMinCode);
+					platform = new Translator.JavaScript.Browser.BrowserImplementation(generateMinCode, jsFolderPrefix);
 					translator = new Translator.JavaScript.JavaScriptTranslator(parser, generateMinCode, platform);
 					break;
 

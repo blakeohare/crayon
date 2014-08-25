@@ -3,6 +3,7 @@
 	internal enum FrameworkFunction
 	{
 		ARCTAN2 = 1,
+		ASSERT,
 		BLIT_IMAGE,
 		CLOCK_TICK,
 		CURRENT_TIME,
@@ -19,5 +20,6 @@
 		PRINT,
 		RANDOM,
 		SET_TITLE,
+		TYPEOF,
 	}
 }
