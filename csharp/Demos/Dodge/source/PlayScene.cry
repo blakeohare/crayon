@@ -96,8 +96,14 @@ class PlayScene : SceneBase {
 		for (i = 0; i < events.length; ++i) {
 			ev = events[i];
 			if (ev[0] == 'mouseleftdown') {
-				this.player.targetX = ev[1];
-				this.player.targetY = ev[2];
+				x = ev[1];
+				y = ev[2];
+				if (x < 20) x = 20;
+				if (x > 780) x = 780;
+				if (y < 20) y = 20;
+				if (y > 580) y = 580;
+				this.player.targetX = x;
+				this.player.targetY = y;
 			}
 		}
 	}
