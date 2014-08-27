@@ -1436,6 +1436,22 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				}
 				break;
 
+			case OpCodes.NEGATIVE_SIGN:
+				$_comment('NEGATIVE_SIGN');
+				value = $_list_pop(valueStack);
+				t = Value$value.type;
+				value = Value$value.internalValue;
+				if (t == Types.INTEGER) {
+					value = build_integer(-value);
+				} else if (t == Types.FLOAT) {
+					value = new Value(Types.FLOAT, -value);
+				} else {
+					return killExecution(stack, "Negative sign can only be applied to numbers. Found " + typeToString(t) + " instead.");
+				}
+
+				$_list_push(valueStack, value);
+				break;
+
 			case OpCodes.POP:
 				$_comment('POP');
 				$_list_pop(valueStack);
@@ -1511,7 +1527,7 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');
-				return killExecution(stack, "Bad op code at: " + $_string_cast_weak(ops[StackFrame$stack.pc]));
+				return killExecution(stack, "Bad op code: " + $_string_cast_weak(ops[StackFrame$stack.pc]));
 		}
 		StackFrame$stack.pc += 1;
 	}
