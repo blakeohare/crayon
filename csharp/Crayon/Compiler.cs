@@ -75,13 +75,11 @@ namespace Crayon
 			// thus reducing the number of dynamic components of the interpreter code to JUST the byte code itself, which opens
 			// up more opportunities, such as putting the code in its own static file. It will also make the interpreter itself 
 			// simpler without having the need of multiple passes and cache builders and such.
-			string tokenTable = string.Join(", ", tokenData.Select<Token, string>(token => token == null ? "null" : ("[" + token.Line + ", " + token.Col + ", " + token.FileID + "]")));
 			string fileTable = "\"" + string.Join("\", \"", this.userParser.GetFilesById().Select<string, string>(contents => contents == null ? "" : contents.Replace("\\", "\\\\").Replace("\n", "\\n").Replace("\t", "\\t").Replace("\"", "\\\""))) + "\"";
 			string switchTables = this.parser.GetSwitchLookupCode();
 
 			interpreter = interpreter.Replace("%%%USER_COMPILED_BYTE_CODE%%%", usercode);
 
-			interpreter = interpreter.Replace("%%%TOKEN_DATA%%%", tokenTable);
 			interpreter = interpreter.Replace("%%%FILE_DATA%%%", fileTable);
 
 			// TODO: once you start adding more platforms, do this in a more reasonable streamlined way. 

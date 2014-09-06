@@ -41,6 +41,8 @@
 		RETURN,
 		RETURN_NULL,
 		THIS, // pushes the current object context onto the stack.
+		TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
+		USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
 		VARIABLE, // 1: id
 		VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
 	}

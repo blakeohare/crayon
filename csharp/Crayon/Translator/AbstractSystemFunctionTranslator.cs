@@ -46,6 +46,7 @@ namespace Crayon.Translator
 				case "_list_join": VerifyCount(functionCall, 1); TranslateListJoin(output, args[0]); break;
 				case "_list_last_index": VerifyCount(functionCall, 1); TranslateListLastIndex(output, args[0]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
+				case "_list_new": VerifyCount(functionCall, 1); TranslateListNew(output, args[0]); break;
 				case "_list_pop": VerifyCount(functionCall, 1); TranslateListPop(output, args[0]); break;
 				case "_list_push": VerifyCount(functionCall, 2); TranslateListPush(output, args[0], args[1]); break;
 				case "_list_remove_at": VerifyCount(functionCall, 2); TranslateListRemoveAt(output, args[0], args[1]); break;
@@ -94,6 +95,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListJoin(List<string> output, Expression list);
 		protected abstract void TranslateListLastIndex(List<string> output, Expression list);
 		protected abstract void TranslateListLength(List<string> output, Expression list);
+		protected abstract void TranslateListNew(List<string> output, Expression length);
 		protected abstract void TranslateListPop(List<string> output, Expression list);
 		protected abstract void TranslateListPush(List<string> output, Expression list, Expression value);
 		protected abstract void TranslateListRemoveAt(List<string> output, Expression list, Expression index);

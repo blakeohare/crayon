@@ -211,6 +211,13 @@ namespace Crayon.Translator.JavaScript
 			output.Add(").length");
 		}
 
+		protected override void TranslateListNew(List<string> output, ParseTree.Expression length)
+		{
+			output.Add("create_list_of_size(");
+			this.Translator.TranslateExpression(output, length);
+			output.Add(")");
+		}
+
 		protected override void TranslateListPop(List<string> output, ParseTree.Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);

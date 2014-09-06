@@ -11,16 +11,71 @@ namespace Crayon
 
 		public void GenerateByteCode(Parser parser, IList<Executable> lines)
 		{
-			ByteBuffer buffer = new ByteBuffer();
+			ByteBuffer userCode = new ByteBuffer();
 
-			this.Compile(parser, buffer, lines);
+			this.Compile(parser, userCode, lines);
+			userCode.Add(null, OpCode.RETURN_NULL);
 
-			buffer.Add(null, OpCode.RETURN_NULL);
+			ByteBuffer literalsTable = parser.LiteralLookup.BuildByteCode();
 
-			ByteBuffer combined = parser.LiteralLookup.BuildByteCode();
-			combined.Concat(buffer);
+			ByteBuffer tokenData = this.BuildTokenData(userCode);
 
-			this.ByteBuffer = combined;
+			ByteBuffer header = new Crayon.ByteBuffer();
+			header.Concat(literalsTable);
+			header.Concat(tokenData);
+
+			ByteBuffer output = new Crayon.ByteBuffer();
+			output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
+			output.Concat(header);
+			output.Concat(userCode);
+
+			this.ByteBuffer = output;
+		}
+
+		private ByteBuffer BuildTokenData(ByteBuffer userCode)
+		{
+			Token[] tokens = userCode.ToTokenList().ToArray();
+			int[][] rows = userCode.ToIntList().ToArray();
+
+			int size = tokens.Length;
+			ByteBuffer output = new ByteBuffer();
+			// TODO: add command line flag for excluding token data. In that case, just return here.
+
+			Token token;
+			int[] row;
+			for (int i = 0; i < size; ++i)
+			{
+				token = tokens[i];
+				row = rows[i];
+
+				if (row[0] == (int)OpCode.VARIABLE_STREAM)
+				{
+					bool toggled = false;
+					for (int j = 1; j < row.Length; ++j)
+					{
+						if (toggled)
+						{
+							int line = row[j];
+							int col = row[j + 1];
+							int file = row[j + 2];
+
+							output.Add(null, OpCode.TOKEN_DATA, i, line, col, file);
+
+							j += 2;
+						}
+						else if (row[j] == -1)
+						{
+							toggled = true;
+						}
+					}
+				}
+				else if (token != null)
+				{
+					output.Add(null, OpCode.TOKEN_DATA, i, token.Line, token.Col, token.FileID);
+				}
+			}
+
+			return output;
 		}
 
 		public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> lines)

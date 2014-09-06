@@ -19,3 +19,9 @@ function slow_dictionary_get_values(dictionary) {
     }
     return output;
 }
+
+function create_list_of_size(n) {
+    var output = [];
+    while (output.length < n) output.push(null);
+    return output;
+}

@@ -210,6 +210,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateListNew(List<string> output, ParseTree.Expression length)
+		{
+			output.Add("([None]" + this.Shorten(" * "));
+			this.Translator.TranslateExpression(output, length);
+			output.Add(")");
+		}
+
 		protected override void TranslateListPop(List<string> output, ParseTree.Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);

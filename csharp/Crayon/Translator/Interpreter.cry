@@ -39,6 +39,8 @@
 	RETURN,
 	RETURN_NULL,
 	THIS, // pushes the current object context onto the stack.
+	TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
+	USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
 	VARIABLE, // 1: id
 	VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
 }
@@ -181,6 +183,8 @@ struct ProgramData {
 	classTable,
 	classMethods,
 	tickerRegistered,
+	tokenData,
+	userCodeStart,
 	globalVarScope
 }
 
@@ -325,7 +329,7 @@ function main() {
 		
 		$_list_push(specialCache, value);
 	}
-	
+
 	stack = new StackFrame(
 		0, // pc
 		{}, // locals
@@ -347,6 +351,8 @@ function main() {
 		classTable,
 		classMethods,
 		false,
+		$_list_new($_list_length(ops)),
+		0,
 		StackFrame$stack.locals);
 
 	pd[0] = p;
@@ -1506,6 +1512,29 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				$_list_push(valueStack, StackFrame$stack.objectContext);
 				break;
 
+			case OpCodes.TOKEN_DATA:
+				$_comment('TOKEN_DATA');
+				p = $_list_get(pd, 0);
+				tokensByPc = ProgramData$p.tokenData;
+				pc = $_list_get(row, 0) + ProgramData$p.userCodeStart;
+				line = $_list_get(row, 1);
+				col = $_list_get(row, 2);
+				file = $_list_get(row, 3);
+				tokens = $_list_get(tokensByPc, pc);
+				if (tokens == null) {
+					tokens = [];
+					$_list_set(tokensByPc, pc, tokens);
+				}
+				$_list_push(tokens, new Token(line, col, file));
+				break;
+
+			case OpCodes.USER_CODE_START:
+				$_comment('USER_CODE_START');
+				value = $_list_get(row, 0);
+				p = $_list_get(pd, 0);
+				ProgramData$p.userCodeStart = value;
+				break;
+
 			case OpCodes.VARIABLE:
 				$_comment('VARIABLE');
 				value = $_dictionary_get(locals, row[0], null);
@@ -1523,6 +1552,7 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 
 			case OpCodes.VARIABLE_STREAM:
 				$_comment('VARIABLE_STREAM');
+				// TODO: trim off the token data from the args now that this is done differently.
 				for (i = 0; $_list_get(row, i) != -1; i += 1) {
 					value = $_dictionary_get(locals, $_list_get(row, i), null);
 					if (value == null) {
@@ -1765,14 +1795,20 @@ function killExecution(stack, message) {
 
 function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 	fullMessage = '';
-	allTokens = rawTokenData();
+	programData = $_list_get(pd, 0);
+	allTokens = ProgramData$programData.tokenData;
 	allFiles = sourceFiles();
 	first = true;
 	while (stack != null) {
 		pc = StackFrame$stack.pc;
 		stack = StackFrame$stack.previous;
-		
-		token = $_list_get(allTokens, pc);
+
+		token = null;
+
+		tokenlist = $_list_get(allTokens, pc);
+		if (tokenlist != null) {
+			token = $_list_get(tokenlist, 0);
+		}
 		if (first && firstTokenOverride != null) {
 			token = firstTokenOverride;
 		}
@@ -1817,7 +1853,10 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 				fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
 			}
 		} else {
-			fullMessage += "[No Stack Info]\n";
+			fullMessage = "[No Stack Info]\n" + fullMessage;
+			if (first) {
+				fullMessage += "[No Stack Info]\n  " + message + "\n";
+			}
 		}
 		first = false;
 		token = null;
@@ -1954,12 +1993,6 @@ function loadByteCode() {
 	}
 	
 	return new Code(ops, iargs, sargs);
-}
-
-function rawTokenData() {
-	return [
-		%%%TOKEN_DATA%%%
-	];
 }
 
 function sourceFiles() {
