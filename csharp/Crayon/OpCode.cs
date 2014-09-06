@@ -38,8 +38,6 @@
 		POP, // no args. pop value from value stack.
 		RETURN,
 		RETURN_NULL,
-		STREAM_LITERALS, // 2n: See detailed comment in the STREAM_LITLERALS implementation in interpreter.cry
-		STREAM_VARIABLES, // n: push all these variable values to the stack. 
 		THIS, // pushes the current object context onto the stack.
 		VARIABLE, // 1: id
 		VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
