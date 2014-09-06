@@ -292,25 +292,7 @@ function main() {
 	for (i = 0; i < $_list_length(ops); i += 1) {
 		op = $_list_get(ops, i);
 		args = $_list_get(opArgs, i);
-		
-		if (op == OpCodes.VARIABLE_STREAM) {
-			value = [];
-			toggled = false;
-			for (j = 0; j < $_list_length(args); j += 1) {
-				id = $_list_get(args, j);
-				if (toggled) {
-					item = [];
-					$_list_push(item, $_list_get(args, j));
-					j += 1;
-					$_list_push(item, $_list_get(args, j));
-					j += 1;
-					$_list_push(item, $_list_get(args, j));
-					$_list_push(value, item);
-				} else if (id == -1) {
-					toggled = true;
-				}
-			}
-		} else if (op == OpCodes.CLASS_DEFINITION) {
+		if (op == OpCodes.CLASS_DEFINITION) {
 			nameId = $_list_get(args, 0);
 			classId = $_dictionary_get(nameToClassId, nameId, 0);
 			lastClassId = classId;
