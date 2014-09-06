@@ -17,7 +17,10 @@ namespace Crayon
 
 			buffer.Add(null, OpCode.RETURN_NULL);
 
-			this.ByteBuffer = buffer;
+			ByteBuffer combined = parser.LiteralLookup.BuildByteCode();
+			combined.Concat(buffer);
+
+			this.ByteBuffer = combined;
 		}
 
 		public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> lines)
@@ -482,14 +485,13 @@ namespace Crayon
 		{
 			if (!outputUsed) throw new ParserException(nullConstant.FirstToken, "This expression doesn't do anything.");
 
-			buffer.Add(nullConstant.FirstToken, OpCode.LITERAL, (int)Types.NULL, 0);
+			buffer.Add(nullConstant.FirstToken, OpCode.LITERAL, parser.GetNullConstant());
 		}
 
 		private void CompileFloatConstant(Parser parser, ByteBuffer buffer, FloatConstant floatConstant, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(floatConstant.FirstToken, "This expression doesn't do anything.");
-			int floatId = parser.GetFloatConstant(floatConstant.Value);
-			buffer.Add(floatConstant.FirstToken, OpCode.LITERAL, (int)Types.FLOAT, floatId);
+			buffer.Add(floatConstant.FirstToken, OpCode.LITERAL, parser.GetFloatConstant(floatConstant.Value));
 		}
 
 		private void CompileIncrement(Parser parser, ByteBuffer buffer, Increment increment, bool outputUsed)
@@ -506,7 +508,7 @@ namespace Crayon
 				this.CompileExpression(parser, buffer, increment.Root, true);
 				if (increment.IsPrefix)
 				{
-					buffer.Add(increment.IncrementToken, OpCode.LITERAL, (int)Types.INTEGER, 1);
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
@@ -514,7 +516,7 @@ namespace Crayon
 				else
 				{
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-					buffer.Add(increment.IncrementToken, OpCode.LITERAL, (int)Types.INTEGER, 1);
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
 				}
@@ -564,7 +566,7 @@ namespace Crayon
 		{
 			if (!outputUsed) throw new ParserException(stringConstant.FirstToken, "This expression does nothing.");
 			int stringId = parser.GetStringConstant(stringConstant.Value);
-			buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, (int)Types.STRING, stringId);
+			buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
 		}
 
 		private void CompileBinaryOpChain(Parser parser, ByteBuffer buffer, BinaryOpChain opChain, bool outputUsed)
@@ -630,7 +632,7 @@ namespace Crayon
 		private void CompileBooleanConstant(Parser parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(boolConstant.FirstToken, "This expression does nothing.");
-			buffer.Add(boolConstant.FirstToken, OpCode.LITERAL, (int)Types.BOOLEAN, boolConstant.Value ? 1 : 0);
+			buffer.Add(boolConstant.FirstToken, OpCode.LITERAL, parser.GetBoolConstant(boolConstant.Value));
 		}
 
 		private void CompileVariable(Parser parser, ByteBuffer buffer, Variable variable, bool outputUsed)
@@ -642,7 +644,7 @@ namespace Crayon
 		private void CompileIntegerConstant(Parser parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(intConst.FirstToken, "This expression does nothing.");
-			buffer.Add(intConst.FirstToken, OpCode.LITERAL, (int)Types.INTEGER, intConst.Value);
+			buffer.Add(intConst.FirstToken, OpCode.LITERAL, parser.GetIntConstant(intConst.Value));
 		}
 
 		private void CompileVariableStream(Parser parser, ByteBuffer buffer, IList<Expression> variables, bool outputUsed)
@@ -684,14 +686,11 @@ namespace Crayon
 					this.CompileExpression(parser, exprBuffer, expression, outputUsed);
 				}
 
-				List<int> byteCodeArgs = new List<int>();
-				foreach (int[] pairs in exprBuffer.ToIntList())
-				{
-					byteCodeArgs.Add(pairs[1]);
-					byteCodeArgs.Add(pairs[2]);
-				}
-
-				buffer.Add(expressions[0].FirstToken, OpCode.LITERAL_STREAM, byteCodeArgs.ToArray());
+				// Add the literal ID arg from the above literals to the arg list of a LITERAL_STREAM
+				buffer.Add(
+					expressions[0].FirstToken, 
+					OpCode.LITERAL_STREAM, 
+					exprBuffer.ToIntList().Reverse<int[]>().Select<int[], int>(args => args[1]).ToArray());
 			}
 		}
 

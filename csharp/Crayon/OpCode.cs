@@ -2,6 +2,8 @@
 {
 	internal enum OpCode
 	{
+		ADD_LITERAL, // 1: type, 2: value (0 or 1 for false/true or an integer. String values are in the string arg. Float values are as well, and are parsed.)
+		ADD_NAME, // name is string arg. ID is the order in which this was encountered.
 		ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
 		ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
 		ASSIGN_INDEX, // no args. value stack: [root, index, value]
@@ -32,7 +34,7 @@
 		JUMP_IF_FALSE_NO_POP,
 		JUMP_IF_TRUE,
 		JUMP_IF_TRUE_NO_POP,
-		LITERAL, // populates the special cache with the entry this refers to. 1: type ID, 2: value ID (value for int, 1/0 for bool, ignored for null, lookup table ID for float/string)
+		LITERAL, // 1: literal ID in the literal table
 		LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
 		NEGATIVE_SIGN, // no args. pop, flip, push.
 		POP, // no args. pop value from value stack.

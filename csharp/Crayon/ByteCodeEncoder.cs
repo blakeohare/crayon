@@ -33,11 +33,11 @@ namespace Crayon
 			return sb.ToString();
 		}
 
-		// If a row begins with a $, %, or @ that means there are 1, 2, or 3 integer args (respectively) followed by a string arg
+		// If a row begins with a !, &, or * that means there are 1, 2, or 3 integer args (respectively) followed by a string arg
 		// Otherwise...
 		// - The first part is an encoded number indicating how many integers there are
 		// - This is followed by that many encoded integers
-		// - If there was a # prefix before the arg, then that means there is a string arg after the integer args.
+		// - If there was a ~ prefix before the arg, then that means there is a string arg after the integer args.
 		private static void EncodeRow(StringBuilder sb, int[] row, string stringArg)
 		{
 			int argCount = row.Length;
@@ -50,13 +50,13 @@ namespace Crayon
 			{
 				if (argCount >= 1 && argCount <= 3)
 				{
-					if (argCount == 1) sb.Append("$");
-					else if (argCount == 2) sb.Append("%");
-					else sb.Append("@");
+					if (argCount == 1) sb.Append("!");
+					else if (argCount == 2) sb.Append("&");
+					else sb.Append("*");
 				}
 				else
 				{
-					sb.Append("#");
+					sb.Append("~");
 					sb.Append(EncodeInteger(argCount));
 				}
 			}

@@ -19,6 +19,15 @@ namespace Crayon
 			return ++intCounter;
 		}
 
+		public LiteralLookup LiteralLookup { get { return this.literalLookup; } }
+		private LiteralLookup literalLookup = new LiteralLookup();
+		public int GetId(string name) { return this.literalLookup.GetNameId(name); }
+		public int GetStringConstant(string value) { return this.literalLookup.GetStringId(value); }
+		public int GetFloatConstant(double value) { return this.literalLookup.GetFloatId(value); }
+		public int GetBoolConstant(bool value) { return this.literalLookup.GetBoolId(value); }
+		public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
+		public int GetNullConstant() { return this.literalLookup.GetNullId(); }
+
 		private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
 		private Dictionary<string, Dictionary<int, int>> intListLookups = new Dictionary<string, Dictionary<int, int>>();
 		private Dictionary<string, int> explicitMaxes = new Dictionary<string, int>();
@@ -34,131 +43,6 @@ namespace Crayon
 		public void RegisterSwitchStringDictLookup(string name, Dictionary<string, int> lookup)
 		{
 			this.stringSwitchLookups[name] = lookup;
-		}
-
-		private Dictionary<string, int> floats = new Dictionary<string, int>();
-		public int GetFloatConstant(double value)
-		{
-			string key = Util.FloatToString(value);
-
-			if (!floats.ContainsKey(key))
-			{
-				floats[key] = floats.Count + 1;
-			}
-			return floats[key];
-		}
-
-		private Dictionary<string, int> strings = new Dictionary<string, int>();
-		public int GetStringConstant(string value)
-		{
-			if (!strings.ContainsKey(value))
-			{
-				strings[value] = strings.Count + 1;
-			}
-
-			return strings[value];
-		}
-
-		public string[] GetFloatsById()
-		{
-			return GetStringsByIdImpl(this.floats);
-		}
-
-		public string[] GetStringsById()
-		{
-			return GetStringsByIdImpl(this.strings);
-		}
-
-		private string[] GetStringsByIdImpl(Dictionary<string, int> lookup)
-		{
-			List<string> output = new List<string>();
-			foreach (string value in lookup.Keys)
-			{
-				int id = lookup[value];
-				while (output.Count <= id)
-				{
-					output.Add(null);
-				}
-				output[id] = value;
-			}
-			return output.ToArray();
-		}
-
-		public string[] GetFloatList()
-		{
-			List<string> output = new List<string>();
-			foreach (string item in this.GetFloatsById())
-			{
-				if (item == null)
-				{
-					output.Add("null");
-				}
-				else
-				{
-					output.Add("new Value(Types.FLOAT, " + item + ")");
-				}
-			}
-			return output.ToArray();
-		}
-
-		public string[] GetEscapedStringList()
-		{
-			List<string> output = new List<string>();
-			foreach (string item in this.GetStringsById())
-			{
-				if (item == null)
-				{
-					output.Add("null");
-				}
-				else
-				{
-					string value = "\"";
-
-					foreach (char c in item)
-					{
-						switch (c)
-						{
-							case '\"': value += "\\\""; break;
-							case '\n': value += "\\n"; break;
-							case '\r': value += "\\r"; break;
-							case '\t': value += "\\t"; break;
-							case '\0': value += "\\0"; break;
-							case '\\': value += "\\\\"; break;
-							default: value += c; break;
-						}
-					}
-
-					value += "\"";
-					output.Add(value);
-				}
-			}
-			return output.ToArray();
-		}
-
-		private Dictionary<string, int> identifiers = new Dictionary<string, int>();
-		public int GetId(string identifier)
-		{
-			if (!this.identifiers.ContainsKey(identifier))
-			{
-				this.identifiers[identifier] = this.identifiers.Count + 1;
-			}
-
-			return this.identifiers[identifier];
-		}
-
-		public string[] GetIdentifierLookup()
-		{
-			List<string> output = new List<string>() { "" };
-			foreach (string key in this.identifiers.Keys)
-			{
-				int index = this.identifiers[key];
-				while (output.Count < index + 1)
-				{
-					output.Add(null);
-				}
-				output[index] = key;
-			}
-			return output.ToArray();
 		}
 
 		internal PlatformTarget Mode { get; private set; }

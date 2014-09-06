@@ -6,6 +6,7 @@ namespace Crayon
 	{
 		private List<int[]> byteCode = new List<int[]>();
 		private List<Token> tokens = new List<Token>();
+		private List<string> stringArgs = new List<string>();
 
 		public ByteBuffer() { }
 
@@ -23,14 +24,21 @@ namespace Crayon
 		{
 			this.byteCode.AddRange(other.byteCode);
 			this.tokens.AddRange(other.tokens);
+			this.stringArgs.AddRange(other.stringArgs);
 		}
 
-		public void Add(Token token, OpCode op, params int[] args)
+		public void Add(Token token, OpCode op, string stringValue, params int[] args)
 		{
 			List<int> nums = new List<int>(args);
 			nums.Insert(0, (int)op);
 			this.byteCode.Add(nums.ToArray());
 			this.tokens.Add(token);
+			this.stringArgs.Add(stringValue);
+		}
+
+		public void Add(Token token, OpCode op, params int[] args)
+		{
+			this.Add(token, op, null, args);
 		}
 
 		public List<int[]> ToIntList()
@@ -40,8 +48,7 @@ namespace Crayon
 
 		public List<string> ToStringList()
 		{
-			// TODO: add implementation of string args
-			return new List<string>(new string[this.Size]);
+			return this.stringArgs;
 		}
 
 		public List<Token> ToTokenList()

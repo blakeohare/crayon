@@ -297,6 +297,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateStringFromCode(List<string> output, ParseTree.Expression characterCode)
+		{
+			output.Add("wrappedChr(");
+			this.Translator.TranslateExpression(output, characterCode);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
@@ -316,6 +323,13 @@ namespace Crayon.Translator.Python
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".lower()");
+		}
+
+		protected override void TranslateStringParseFloat(List<string> output, ParseTree.Expression stringValue)
+		{
+			output.Add("float(");
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringParseInt(List<string> output, ParseTree.Expression value)

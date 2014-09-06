@@ -1,5 +1,7 @@
 ﻿enum OpCodes
 {
+	ADD_LITERAL, // 1: type, 2: value (0 or 1 for false/true or an integer. String values are in the string arg. Float values are as well, and are parsed.)
+	ADD_NAME, // name is string arg. ID is the order in which this was encountered.
 	ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
 	ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
 	ASSIGN_INDEX, // no args. value stack: [root, index, value]
@@ -30,7 +32,7 @@
 	JUMP_IF_FALSE_NO_POP,
 	JUMP_IF_TRUE,
 	JUMP_IF_TRUE_NO_POP,
-	LITERAL, // populates the special cache with the entry this refers to. 1: type ID, 2: value ID (value for int, 1/0 for bool, ignored for null, lookup table ID for float/string)
+	LITERAL, // 1: literal ID in the literal table
 	LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
 	NEGATIVE_SIGN, // no args. pop, flip, push.
 	POP, // no args. pop value from value stack.
@@ -171,11 +173,11 @@ struct ProgramData {
 	stackTop,
 	ops,
 	args,
+	stringArgs,
 	specialCache,
 	identifiers,
 	inv_identifiers,
-	stringTable,
-	floatTable,
+	literalTable,
 	classTable,
 	classMethods,
 	tickerRegistered,
@@ -210,17 +212,9 @@ function copyDictionary(dict) {
 function main() {
 
 	byteCode = loadByteCode();
-	identifiers = rawIdentifiers();
-	stringTable = rawStrings();
-	floatTable = rawFloats();
-	inv_identifiers = {};
-	for (i = 0; i < $_list_length(identifiers); i += 1) {
-		// sequential dictionary adds create slow lookups in some implementations of javascript.
-		// This is okay, since this isn't called very often.
-		$_dictionary_set(inv_identifiers, identifiers[i], i);
-	}
 	ops = Code$byteCode.ops;
 	opArgs = Code$byteCode.args;
+	stringArgs = Code$byteCode.stringArgs;
 
 	nameToClassId = {};
 	classTable = [null]; // class ID 0 is not valid. First entry should be at index 1.
@@ -295,17 +289,7 @@ function main() {
 		op = $_list_get(ops, i);
 		args = $_list_get(opArgs, i);
 		
-		if (op == OpCodes.LITERAL) {
-			value = buildLiteral($_list_get(args, 0), $_list_get(args, 1), floatTable, stringTable);
-		} else if (op == OpCodes.LITERAL_STREAM) {
-			value = [];
-			for (j = 0; j < $_list_length(args); j += 2) {
-				typeId = $_list_get(args, j);
-				valueId = $_list_get(args, j + 1);
-				$_list_push(value, buildLiteral(typeId, valueId, floatTable, stringTable));
-			}
-			$_list_reverse_in_place(value);
-		} else if (op == OpCodes.VARIABLE_STREAM) {
+		if (op == OpCodes.VARIABLE_STREAM) {
 			value = [];
 			toggled = false;
 			for (j = 0; j < $_list_length(args); j += 1) {
@@ -355,11 +339,11 @@ function main() {
 		stack,
 		ops,
 		opArgs,
+		stringArgs,
 		specialCache,
-		identifiers,
-		inv_identifiers,
-		stringTable,
-		floatTable,
+		[], // identifiers
+		{}, // inv_identifiers
+		[], // literal table
 		classTable,
 		classMethods,
 		false,
@@ -385,10 +369,10 @@ function runTick() {
 			ProgramData$p.stackTop,
 			ProgramData$p.ops,
 			ProgramData$p.args,
+			ProgramData$p.stringArgs,
 			ProgramData$p.identifiers,
 			ProgramData$p.inv_identifiers,
-			ProgramData$p.stringTable,
-			ProgramData$p.floatTable,
+			ProgramData$p.literalTable,
 			ProgramData$p.classTable,
 			ProgramData$p.classMethods,
 			ProgramData$p.specialCache,
@@ -410,10 +394,10 @@ function runTick() {
 				ProgramData$p.stackTop,
 				ProgramData$p.ops,
 				ProgramData$p.args,
+				ProgramData$p.stringArgs,
 				ProgramData$p.identifiers,
 				ProgramData$p.inv_identifiers,
-				ProgramData$p.stringTable,
-				ProgramData$p.floatTable,
+				ProgramData$p.literalTable,
 				ProgramData$p.classTable,
 				ProgramData$p.classMethods,
 				ProgramData$p.specialCache,
@@ -514,13 +498,44 @@ function valueToString(value) {
 	return "TODO: toString for " + getTypeFromId(type);
 }
 
-function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, floatTable, classTable, classMethods, specialCache, globals) {
+function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, literalTable, classTable, classMethods, specialCache, globals) {
 	valueStack = StackFrame$stack.valueStack;
 	locals = StackFrame$stack.locals;
 	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
 	while (true) {
 		row = args[StackFrame$stack.pc];
 		switch (ops[StackFrame$stack.pc]) {
+
+			case OpCodes.ADD_LITERAL:
+				$_comment('ADD_LITERAL');
+				type = $_list_get(row, 0);
+				if (type == Types.NULL) {
+					$_list_push(literalTable, VALUE_NULL);
+				} else if (type == Types.BOOLEAN) {
+					if (row[1] == 1) {
+						$_list_push(literalTable, VALUE_TRUE);
+					} else {
+						$_list_push(literalTable, VALUE_FALSE);
+					}
+				} else if (type == Types.INTEGER) {
+					$_list_push(literalTable, build_integer(row[1]));
+				} else if (type == Types.FLOAT) {
+					$_list_push(literalTable, new Value(Types.FLOAT, $_string_parse_float(stringArgs[StackFrame$stack.pc])));
+				} else if (type == Types.STRING) {
+					$_list_push(literalTable, new Value(Types.STRING, stringArgs[StackFrame$stack.pc]));
+				}
+				break;
+
+			case OpCodes.ADD_NAME:
+				$_comment('ADD_NAME');
+				name = $_list_get(stringArgs, StackFrame$stack.pc);
+				id = $_list_length(identifiers);
+				$_dictionary_set(inv_identifiers, name, id);
+				$_list_push(identifiers, name);
+				if (name == 'length') {
+					LENGTH_ID = id;
+				}
+				break;
 
 			case OpCodes.ASSIGN_FUNCTION_ARG:
 				$_comment('ASSIGN_FUNCTION_ARG');
@@ -1424,14 +1439,13 @@ function interpret(stack, ops, args, identifiers, inv_identifiers, stringTable, 
 				
 			case OpCodes.LITERAL:
 				$_comment('LITERAL');
-				$_list_push(valueStack, $_list_get(specialCache, StackFrame$stack.pc));
+				$_list_push(valueStack, $_list_get(literalTable, $_list_get(row, 0)));
 				break;
 
 			case OpCodes.LITERAL_STREAM:
 				$_comment('LITERAL_STREAM');
-				values = $_list_get(specialCache, StackFrame$stack.pc);
-				for (i = $_list_length(values) - 1; i >= 0; i -= 1) {
-					$_list_push(valueStack, $_list_get(values, i));
+				for (i = $_list_length(row) - 1; i >= 0; i -= 1) {
+					$_list_push(valueStack, $_list_get(literalTable, $_list_get(row, i)));
 				}
 				break;
 
@@ -1855,6 +1869,40 @@ function read_integer(pindex, raw, length) {
 	return num;
 }
 
+function read_string(pindex, raw, length) {
+	output = [];
+	cont = true;
+	while (cont) {
+		c = $_string_char_at(raw, $_list_get(pindex, 0));
+		$_list_set(pindex, 0, $_list_get(pindex, 0) + 1);
+		if (c == '@') {
+			repeat = read_integer(pindex, raw, length);
+			last = $_list_get(output, $_list_length(output) - 1);
+			while (repeat > 0) {
+				$_list_push(output, last);
+				repeat -= 1;
+			}
+		} else if (c == '~') {
+			d1 = read_integer(pindex, raw, length);
+			d2 = read_integer(pindex, raw, length);
+			charcode = d1 * 62 + d2;
+			$_list_push(output, $_string_from_code(charcode));
+		} else if (c == '`') {
+			d1 = read_integer(pindex, raw, length);
+			d2 = read_integer(pindex, raw, length);
+			d3 = read_integer(pindex, raw, length);
+			d4 = read_integer(pindex, raw, length);
+			charcode = ((d1 * 62 + d2) * 62 + d3) * 62 + d4;
+			$_list_push(output, $_string_from_code(charcode));
+		} else if (c == '%') {
+			cont = false;
+		} else {
+			$_list_push(output, c);
+		}
+	}
+	return $_list_join(output);
+}
+
 function loadByteCode() {
 	raw = '%%%USER_COMPILED_BYTE_CODE%%%';
 
@@ -1875,15 +1923,14 @@ function loadByteCode() {
 		c = $_string_char_at(raw, index[0]);
 		index[0] += 1;
 		argc = 0;
-		stringPresent = false;
-		if (c == '$') argc = 1;
-		else if (c == '%') argc = 2;
-		else if (c == '@') argc = 3;
+		stringPresent = true;
+		if (c == '!') argc = 1;
+		else if (c == '&') argc = 2;
+		else if (c == '*') argc = 3;
 		else {
-			if (c == '#') {
-				stringPresent = true;
-			} else {
-				index[0] -= 1;
+			if (c != '~') {
+				stringPresent = false;
+				$_list_set(index, 0, $_list_get(index, 0) - 1);
 			}
 			argc = read_integer(index, raw, length);
 		}
@@ -1907,29 +1954,6 @@ function loadByteCode() {
 	}
 	
 	return new Code(ops, iargs, sargs);
-}
-
-function rawIdentifiers() {
-	return [
-		%%%IDENTIFIER_TABLE%%%
-	];
-}
-
-function rawStrings() {
-	rawData = [
-		%%%STRING_TABLE%%%
-	];
-	output = [];
-	for (i = 0; i < $_list_length(rawData); i += 1) {
-		$_list_push(output, new Value(Types.STRING, $_list_get(rawData, i)));
-	}
-	return output;	
-}
-
-function rawFloats() {
-	return [
-		%%%FLOAT_TABLE%%%
-	];
 }
 
 function rawTokenData() {

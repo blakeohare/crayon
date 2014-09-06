@@ -88,3 +88,6 @@ def get_image_impl(key):
 	if surf == None: return None
 	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)]
 
+def wrappedChr(code):
+	if code < 0 or code > 255: return '?'
+	return chr(code)

@@ -51,6 +51,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />
     <Compile Include="ExpressionParser.cs" />
+    <Compile Include="LiteralLookup.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="Packager.cs" />
     <Compile Include="ParserException.cs" />
@@ -73,7 +74,6 @@
     <Compile Include="ExecutableParser.cs" />
     <Compile Include="ParseTree\Expression.cs" />
     <Compile Include="Parser.cs" />
-    <Compile Include="ParserContext.cs" />
     <Compile Include="ParseTree\ExpressionAsExecutable.cs" />
     <Compile Include="ParseTree\FloatConstant.cs" />
     <Compile Include="ParseTree\ForLoop.cs" />

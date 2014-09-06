@@ -300,6 +300,13 @@ namespace Crayon.Translator.JavaScript
 			output.Add(this.Shorten(") != -1)"));
 		}
 
+		protected override void TranslateStringFromCode(List<string> output, ParseTree.Expression characterCode)
+		{
+			output.Add("String.fromCharCode(");
+			this.Translator.TranslateExpression(output, characterCode);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
@@ -318,6 +325,13 @@ namespace Crayon.Translator.JavaScript
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".toLowerCase()");
+		}
+
+		protected override void TranslateStringParseFloat(List<string> output, ParseTree.Expression stringValue)
+		{
+			output.Add("parseFloat(");
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringParseInt(List<string> output, ParseTree.Expression value)
