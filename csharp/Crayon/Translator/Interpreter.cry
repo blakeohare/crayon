@@ -1769,7 +1769,7 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 			line = $_list_get(token, 0);
 			col = $_list_get(token, 1);
 			fileData = $_list_get(allFiles, $_list_get(token, 2));
-			lines = $_list_split(fileData, '\n');
+			lines = $_string_split(fileData, '\n');
 			filename = lines[0];
 			linevalue = lines[line + 1];
 			fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
