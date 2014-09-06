@@ -7,8 +7,7 @@ namespace Crayon
 {
 	internal class ByteCodeCompiler
 	{
-		public int[][] ByteCode { get; private set; }
-		public Token[] TokenData { get; private set; }
+		public ByteBuffer ByteBuffer { get; private set; }
 
 		public void GenerateByteCode(Parser parser, IList<Executable> lines)
 		{
@@ -18,8 +17,7 @@ namespace Crayon
 
 			buffer.Add(null, OpCode.RETURN_NULL);
 
-			this.ByteCode = buffer.ToIntList().ToArray();
-			this.TokenData = buffer.ToTokenList().ToArray();
+			this.ByteBuffer = buffer;
 		}
 
 		public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> lines)

@@ -46,6 +46,7 @@
     <Compile Include="BinaryOps.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="ByteCodeCompiler.cs" />
+    <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />

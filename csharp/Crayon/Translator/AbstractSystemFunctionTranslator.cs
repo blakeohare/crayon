@@ -44,6 +44,7 @@ namespace Crayon.Translator
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
 				case "_list_insert": VerifyCount(functionCall, 3); TranslateListInsert(output, args[0], args[1], args[2]); break;
+				case "_list_join": VerifyCount(functionCall, 1); TranslateListJoin(output, args[0]); break;
 				case "_list_last_index": VerifyCount(functionCall, 1); TranslateListLastIndex(output, args[0]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
 				case "_list_pop": VerifyCount(functionCall, 1); TranslateListPop(output, args[0]); break;
@@ -60,8 +61,10 @@ namespace Crayon.Translator
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
 				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
+				case "_string_index_of": VerifyCount(functionCall, 2); TranslateStringIndexOf(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
 				case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
+				case "_string_parse_int": VerifyCount(functionCall, 1); TranslateStringParseInt(output, args[0]); break;
 				case "_string_reverse": VerifyCount(functionCall, 1); TranslateStringReverse(output, args[0]); break;
 				case "_string_replace": VerifyCount(functionCall, 3); TranslateStringReplace(output, args[0], args[1], args[2]); break;
 				case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
@@ -74,6 +77,9 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle);
+		protected abstract void TranslateStringParseInt(List<string> output, Expression value);
+		protected abstract void TranslateListJoin(List<string> output, Expression list);
 		protected abstract void TranslateListLastIndex(List<string> output, Expression list);
 		protected abstract void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);

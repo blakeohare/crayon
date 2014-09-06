@@ -65,44 +65,16 @@ namespace Crayon
 			ParseTree.Executable[] userCode = this.userParser.ParseRoot(this.rootFolder);
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
 			bcc.GenerateByteCode(this.userParser, userCode);
-			int[][] byteCode = bcc.ByteCode;
-			Token[] tokenData = bcc.TokenData;
+			ByteBuffer byteBuffer = bcc.ByteBuffer;
+			Token[] tokenData = byteBuffer.ToTokenList().ToArray();
 			string[] fileById = this.userParser.GetFilesById();
 
-			List<string> formattedByteCode = new List<string>();
-			List<string> formattedRow = new List<string>();
-			int i;
-			foreach (int[] row in byteCode)
-			{
-				formattedRow.Add("[");
-				for (i = 0; i < row.Length; ++i)
-				{
-					if (i == 0)
-					{
-						formattedRow.Add("OpCodes." + ((OpCode)row[i]).ToString());
-					}
-					else
-					{
-						formattedRow.Add(",");
-						formattedRow.Add(row[i].ToString());
-					}
-				}
-				formattedRow.Add("]");
-				formattedByteCode.Add(string.Join("", formattedRow));
-				formattedRow.Clear();
-			}
+			string usercode = ByteCodeEncoder.Encode(byteBuffer);
 
-			string usercode = string.Join(",\r\n", formattedByteCode);
-
-			System.IO.File.WriteAllText("C:\\users\\blake\\desktop\\debug.txt",
-				usercode
-					.Replace("OpCodes.", "")
-					.Replace("[", "")
-					.Replace("],", "")
-					.Replace(",", "  ")
-					.Replace("]", ""));
-
-			// This of course assumes all programming languages that I port to have the same standard system of escape sequences.
+			// TODO: eventually I am going to replace all these lookup tables with op code commands that generate them instead,
+			// thus reducing the number of dynamic components of the interpreter code to JUST the byte code itself, which opens
+			// up more opportunities, such as putting the code in its own static file. It will also make the interpreter itself 
+			// simpler without having the need of multiple passes and cache builders and such.
 			string identifiers = "'" + string.Join("', '", this.userParser.GetIdentifierLookup()) + "'";
 			string stringTable = string.Join(", ", this.userParser.GetEscapedStringList());
 			string floatTable = string.Join(", ", this.userParser.GetFloatList());

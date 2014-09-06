@@ -38,6 +38,12 @@ namespace Crayon
 			return this.byteCode;
 		}
 
+		public List<string> ToStringList()
+		{
+			// TODO: add implementation of string args
+			return new List<string>(new string[this.Size]);
+		}
+
 		public List<Token> ToTokenList()
 		{
 			return this.tokens;

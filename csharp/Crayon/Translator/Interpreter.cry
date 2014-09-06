@@ -152,7 +152,8 @@ struct StackFrame {
 
 struct Code {
 	ops,
-	args
+	args,
+	stringArgs
 }
 
 struct Token {
@@ -209,15 +210,6 @@ function copyDictionary(dict) {
 }
 
 function main() {
-
-	stack = new StackFrame(
-		0, // pc
-		{}, // locals
-		[], // valueStack
-		[], // args
-		null, // previous
-		false, // returnValueUsed
-		null); // object context
 
 	byteCode = loadByteCode();
 	identifiers = rawIdentifiers();
@@ -351,6 +343,15 @@ function main() {
 		
 		$_list_push(specialCache, value);
 	}
+	
+	stack = new StackFrame(
+		0, // pc
+		{}, // locals
+		[], // valueStack
+		[], // args
+		null, // previous
+		false, // returnValueUsed
+		null); // object context
 
 	p = new ProgramData(
 		stack,
@@ -1812,25 +1813,102 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 	return "Error:\n" + fullMessage;
 }
 
-function loadByteCode() {
-	raw = rawByteCode();
-	
-	ops = [];
-	args = [];
-	for (i = 0; i < $_string_length(raw); i += 1) {
-		row = raw[i];
-		$_list_push(ops, row[0]);
-		$_list_remove_at(row, 0);
-		$_list_push(args, row);
+function read_till(index, raw, length, char) {
+	output = [];
+	ctn = true;
+	while (ctn) {
+		c = $_string_char_at(raw, index[0]);
+		if (c == char) {
+			ctn = false;
+		} else {
+			$_list_push(output, c);
+		}
+		index[0] += 1;
 	}
-	
-	return new Code(ops, args);
+
+	return $_list_join(output);
 }
 
-function rawByteCode() {
-	return [
-		%%%USER_COMPILED_BYTE_CODE%%%
-	];
+alpha_nums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+function read_integer(pindex, raw, length) {
+	c = raw[pindex[0]];
+	pindex[0] += 1;
+	if (c == '%') {
+		value = read_till(pindex, raw, length, '%');
+		num = $_string_parse_int(value);
+	} else if (c == '@') {
+		num = read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+	} else if (c == '#') {
+		num = read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+	} else if (c == '^') {
+		num = -1 * read_integer(pindex, raw, length);
+	} else {
+		num = $_string_index_of(alpha_nums, c);
+		if (num == -1) {
+			// TODO: assert
+		}
+	}
+	return num;
+}
+
+function loadByteCode() {
+	raw = '%%%USER_COMPILED_BYTE_CODE%%%';
+
+	index = [0];
+	length = $_string_length(raw);
+
+	header = read_till(index, raw, length, '@');
+	if (header != 'CRAYON') {
+		// TODO: assert
+	}
+
+	opCount = read_integer(index, raw, length);
+
+	ops = [];
+	iargs = [];
+	sargs = [];
+	for (i = 0; i < opCount; i += 1) {
+		c = $_string_char_at(raw, index[0]);
+		index[0] += 1;
+		argc = 0;
+		stringPresent = false;
+		if (c == '$') argc = 1;
+		else if (c == '%') argc = 2;
+		else if (c == '@') argc = 3;
+		else {
+			if (c == '#') {
+				stringPresent = true;
+			} else {
+				index[0] -= 1;
+			}
+			argc = read_integer(index, raw, length);
+		}
+
+		iarglist = [];
+		for (j = 0; j < argc; j += 1) {
+			iarg = read_integer(index, raw, length);
+			if (j == 0) {
+				$_list_push(ops, iarg);
+			} else {
+				$_list_push(iarglist, iarg);
+			}
+		}
+		$_list_push(iargs, iarglist);
+		if (stringPresent) {
+			stringarg = read_string(index, raw, length);
+		} else {
+			stringarg = null;
+		}
+		$_list_push(sargs, stringarg);
+	}
+	
+	return new Code(ops, iargs, sargs);
 }
 
 function rawIdentifiers() {
