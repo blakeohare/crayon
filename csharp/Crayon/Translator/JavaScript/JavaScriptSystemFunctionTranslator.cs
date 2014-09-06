@@ -166,11 +166,6 @@ namespace Crayon.Translator.JavaScript
 			}
 		}
 
-		protected override void TranslateKillExecution(List<string> output, ParseTree.Expression exceptionMessage)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
 		{
 			this.Translator.TranslateExpression(output, listA);

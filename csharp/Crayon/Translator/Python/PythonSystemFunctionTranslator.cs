@@ -164,13 +164,6 @@ namespace Crayon.Translator.Python
 			}
 		}
 
-		protected override void TranslateKillExecution(List<string> output, ParseTree.Expression exceptionMessage)
-		{
-			output.Add("_kill_execution(");
-			this.Translator.TranslateExpression(output, exceptionMessage);
-			output.Add(")");
-		}
-
 		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
 		{
 			output.Add("(");
