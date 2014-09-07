@@ -23,7 +23,7 @@ class LoadingScene : SceneBase {
 		y = 10;
 		width = 400;
 		height = 20;
-		$draw_rectangle(null, x, y, width, height, 128, 128, 128, 255);
+		$draw_rectangle(x, y, width, height, 128, 128, 128, 255);
 		
 	}
 }

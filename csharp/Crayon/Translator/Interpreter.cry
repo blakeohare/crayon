@@ -967,6 +967,8 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 			case OpCodes.CALL_FRAMEWORK_FUNCTION:
 				$_comment('CALL_FRAMEWORK_FUNCTION');
 				// TODO: the types for these values must be verified.
+				// The arg count is verified to be in the correct range at compile time.
+				// However if there are optional arguments, the number of args used in this call are located in row[2]
 				output = VALUE_NULL;
 				switch (row[0]) {
 					case %%%FF_ARCTAN2%%%:
@@ -1005,6 +1007,31 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						url = $_list_pop(valueStack);
 						key = $_list_pop(valueStack);
 						$_insert_platform_code('ff_download_image');
+						break;
+
+					case %%%FF_DRAW_ELLIPSE%%%:
+						alpha = $_list_pop(valueStack);
+						blue = $_list_pop(valueStack);
+						green = $_list_pop(valueStack);
+						red = $_list_pop(valueStack);
+						height = $_list_pop(valueStack);
+						width = $_list_pop(valueStack);
+						top = $_list_pop(valueStack);
+						left = $_list_pop(valueStack);
+						$_insert_platform_code('ff_draw_ellipse');
+						break;
+
+					case %%%FF_DRAW_LINE%%%:
+						alpha = $_list_pop(valueStack);
+						blue = $_list_pop(valueStack);
+						green = $_list_pop(valueStack);
+						red = $_list_pop(valueStack);
+						width = $_list_pop(valueStack);
+						y2 = $_list_pop(valueStack);
+						x2 = $_list_pop(valueStack);
+						y1 = $_list_pop(valueStack);
+						x1 = $_list_pop(valueStack);
+						$_insert_platform_code('ff_draw_line');
 						break;
 
 					case %%%FF_DRAW_RECTANGLE%%%:

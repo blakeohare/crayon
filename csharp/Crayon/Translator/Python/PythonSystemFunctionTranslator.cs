@@ -110,6 +110,14 @@ namespace Crayon.Translator.Python
 					output.Add("download_image_impl(v_key[1], v_url[1])");
 					break;
 
+				case "ff_draw_ellipse":
+					output.Add("_PDE(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_left[1], v_top[1], v_width[1], v_height[1]))");
+					break;
+
+				case "ff_draw_line":
+					output.Add("_PDL(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), (v_x1[1], v_y1[1]), (v_x2[1], v_y2[1]), v_width[1])");
+					break;
+
 				case "ff_draw_rectangle":
 					// TODO: alpha?
 					output.Add("_PDR(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");

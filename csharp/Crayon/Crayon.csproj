@@ -51,6 +51,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />
     <Compile Include="ExpressionParser.cs" />
+    <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="Packager.cs" />

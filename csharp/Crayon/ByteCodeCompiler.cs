@@ -603,11 +603,11 @@ namespace Crayon
 		private void CompileSystemFunctionCall(Parser parser, ByteBuffer buffer, SystemFunctionCall sysFunc, bool outputUsed)
 		{
 			this.CompileExpressionList(parser, buffer, sysFunc.Args, true);
-
+			int argCount = sysFunc.Args.Length;
 			string frameworkFunctionName = sysFunc.Name.Substring(1);
 			FrameworkFunction ff = parser.GetFrameworkFunction(sysFunc.FirstToken, frameworkFunctionName);
-			buffer.Add(sysFunc.FirstToken, OpCode.CALL_FRAMEWORK_FUNCTION, (int)ff, outputUsed ? 1 : 0);
-
+			FrameworkFunctionUtil.VerifyArgsAsMuchAsPossible(sysFunc.FirstToken, ff, sysFunc.Args);
+			buffer.Add(sysFunc.FirstToken, OpCode.CALL_FRAMEWORK_FUNCTION, (int)ff, outputUsed ? 1 : 0, argCount);
 		}
 
 		private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

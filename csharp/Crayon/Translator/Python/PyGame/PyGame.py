@@ -69,12 +69,10 @@ def _pygame_initialize_screen(width, height):
 	_global_vars['screen'] = screen
 	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_SCREEN%%%, screen)]
 
-
-def _kill_execution(message):
-	raise Exception(message)
-
-_PDR = pygame.draw.rect
+_PDE = pygame.draw.ellipse
 _PDF = pygame.display.flip
+_PDL = pygame.draw.line
+_PDR = pygame.draw.rect
 _PR = pygame.Rect
 
 _images_downloaded = {}

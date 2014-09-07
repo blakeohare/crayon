@@ -280,9 +280,39 @@ R.fillScreen = function (r, g, b) {
 };
 
 R.drawRect = function (x, y, width, height, r, g, b) {
-	var gb = R._global_vars;
-	gb.ctx.fillStyle = R._toHex(r, g, b);
-	gb.ctx.fillRect(x, y, width, height);
+	var ctx = R._global_vars.ctx;
+	ctx.fillStyle = R._toHex(r, g, b);
+	ctx.fillRect(x, y, width, height);
+};
+
+R.drawEllipse = function(centerX, centerY, radiusX, radiusY, r, g, b) {
+	var context = R._global_vars.ctx;
+	radiusX = radiusX * 4 / 3; // no idea...
+	context.beginPath();
+	context.moveTo(centerX, centerY - radiusY);
+	context.bezierCurveTo(
+		centerX + radiusX, centerY - radiusY,
+		centerX + radiusX, centerY + radiusY,
+		centerX, centerY + radiusY);
+	context.bezierCurveTo(
+		centerX - radiusX, centerY + radiusY,
+		centerX - radiusX, centerY - radiusY,
+		centerX, centerY - radiusY);
+	context.fillStyle = R._toHex(r, g, b);
+	context.fill();
+	context.closePath();
+};
+
+R.drawLine = function(startX, startY, endX, endY, width, r, g, b) {
+	var context = R._global_vars.ctx;
+	var offset = ((width % 2) == 0) ? 0 : .5;
+	context.beginPath();
+	context.moveTo(startX + offset, startY + offset);
+	context.lineTo(endX + offset, endY + offset);
+	context.lineWidth = width;
+	context.strokeStyle = R._toHex(r, g, b);
+	context.stroke();
+	context.closePath();
 };
 
 window.addEventListener('keydown', function(e) {

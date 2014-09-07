@@ -112,6 +112,14 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.Shorten("R.enqueue_image_download(v_key[1], v_url[1])"));
 					break;
 
+				case "ff_draw_ellipse":
+					output.Add(this.Shorten("R.drawEllipse(v_left[1] + v_width[1] / 2, v_top[1] + v_height[1] / 2, v_width[1] / 2, v_height[1] / 2, v_red[1], v_green[1], v_blue[1])"));
+					break;
+
+				case "ff_draw_line":
+					output.Add(this.Shorten("R.drawLine(v_x1[1], v_y1[1], v_x2[1], v_y2[1], v_width[1], v_red[1], v_green[1], v_blue[1])"));
+					break;
+
 				case "ff_draw_rectangle":
 					output.Add(this.Shorten("R.drawRect(v_x[1], v_y[1], v_width[1], v_height[1], v_red[1], v_green[1], v_blue[1])"));
 					break;
@@ -268,7 +276,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
-			throw new Exception("This should have been optimized out.");
+			// Nope
 		}
 
 		protected override void TranslateRegisterTimeout(List<string> output)
@@ -386,7 +394,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateUnregisterTicker(List<string> output)
 		{
-			throw new Exception("This should have been optimized out.");
+			// Nope.
 		}
 
 		protected override void TranslateUnsafeFloatDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
