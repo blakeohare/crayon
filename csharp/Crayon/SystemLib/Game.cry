@@ -116,7 +116,6 @@ class Game {
 	}
 
 	function run(starting_scene, files=null, loading_renderer=null) {
-		$print('files: ' + files);
 		active_scene = new CoreLoadingScene(files, loading_renderer, starting_scene);
 		active_scene._core_width = this._core_width;
 		active_scene._core_height = this._core_height;
