@@ -890,7 +890,7 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						// int > float
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('int > float');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
 
 						// float >= float
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
@@ -900,7 +900,7 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						// float > float
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('float > float');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
 
 						// list * int
 						case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
