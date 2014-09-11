@@ -67,20 +67,10 @@ namespace Crayon
 			bcc.GenerateByteCode(this.userParser, userCode);
 			ByteBuffer byteBuffer = bcc.ByteBuffer;
 			Token[] tokenData = byteBuffer.ToTokenList().ToArray();
-			string[] fileById = this.userParser.GetFilesById();
-
+			
 			string usercode = ByteCodeEncoder.Encode(byteBuffer);
 
-			// TODO: eventually I am going to replace all these lookup tables with op code commands that generate them instead,
-			// thus reducing the number of dynamic components of the interpreter code to JUST the byte code itself, which opens
-			// up more opportunities, such as putting the code in its own static file. It will also make the interpreter itself 
-			// simpler without having the need of multiple passes and cache builders and such.
-			string fileTable = "\"" + string.Join("\", \"", this.userParser.GetFilesById().Select<string, string>(contents => contents == null ? "" : contents.Replace("\\", "\\\\").Replace("\n", "\\n").Replace("\t", "\\t").Replace("\"", "\\\""))) + "\"";
 			string switchTables = this.parser.GetSwitchLookupCode();
-
-			interpreter = interpreter.Replace("%%%USER_COMPILED_BYTE_CODE%%%", usercode);
-
-			interpreter = interpreter.Replace("%%%FILE_DATA%%%", fileTable);
 
 			// TODO: once you start adding more platforms, do this in a more reasonable streamlined way. 
 			bool isAsync = this.parser.Mode == PlatformTarget.JavaScript_Browser;
@@ -92,6 +82,9 @@ namespace Crayon
 			{
 				interpreter = interpreter.Replace("%%%PRIMITIVE_METHOD_" + primitiveMethod.ToString() + "%%%", "" + (int)primitiveMethod);
 			}
+
+			// byte code must be added last to make accidental replacements above impossible.
+			interpreter = interpreter.Replace("%%%USER_COMPILED_BYTE_CODE%%%", usercode);
 
 			Crayon.ParseTree.Executable[] lines = this.parser.ParseInternal("interpreter.cry", interpreter);
 			Crayon.ParseTree.Executable[] switchLookups = this.parser.ParseInternal("switch_lookups.cry", this.parser.GetSwitchLookupCode());

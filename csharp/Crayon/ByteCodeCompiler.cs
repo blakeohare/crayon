@@ -20,9 +20,12 @@ namespace Crayon
 
 			ByteBuffer tokenData = this.BuildTokenData(userCode);
 
+			ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
+
 			ByteBuffer header = new Crayon.ByteBuffer();
 			header.Concat(literalsTable);
 			header.Concat(tokenData);
+			header.Concat(fileContent);
 
 			ByteBuffer output = new Crayon.ByteBuffer();
 			output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
@@ -30,6 +33,18 @@ namespace Crayon
 			output.Concat(userCode);
 
 			this.ByteBuffer = output;
+		}
+
+		private ByteBuffer BuildFileContent(string[] filesById)
+		{
+			ByteBuffer output = new ByteBuffer();
+
+			for (int i = 0; i < filesById.Length; ++i)
+			{
+				output.Add(null, OpCode.DEF_ORIGINAL_CODE, filesById[i], i);
+			}
+
+			return output;
 		}
 
 		private ByteBuffer BuildTokenData(ByteBuffer userCode)

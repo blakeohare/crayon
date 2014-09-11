@@ -18,7 +18,7 @@
 	CALL_FUNCTION_ON_VARIABLE, // 1: function ID, 2: num args passed
 	CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
 	CONTINUE, // no ops. This should be resolved into a jump before actually being run.
-	DEF_ORIGINAL_CODE,
+	DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
 	DEF_DICTIONARY, // 1: size
 	DEF_LIST, // 1: size
 	DEREF_DOT, // 1: step ID
@@ -185,7 +185,8 @@ struct ProgramData {
 	tickerRegistered,
 	tokenData,
 	userCodeStart,
-	globalVarScope
+	globalVarScope,
+	sourceCode,
 }
 
 // If I assign to this global directly, the translator will think this is a local variable.
@@ -335,7 +336,9 @@ function main() {
 		false,
 		$_list_new($_list_length(ops)),
 		0,
-		StackFrame$stack.locals);
+		StackFrame$stack.locals,
+		[] // original source code data
+		);
 
 	pd[0] = p;
 	
@@ -1342,6 +1345,17 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				$_list_push(valueStack, new Value(Types.LIST, value));
 				break;
 
+			case OpCodes.DEF_ORIGINAL_CODE:
+				fileId = $_list_get(row, 0);
+				p = pd[0];
+				content = $_list_get(ProgramData$p.stringArgs, StackFrame$stack.pc);
+				codeLookup = ProgramData$p.sourceCode;
+				while ($_list_length(codeLookup) <= fileId) {
+					$_list_push(codeLookup, null);
+				}
+				$_list_set(codeLookup, fileId, content);
+				break;
+
 			case OpCodes.DEREF_DOT:
 				$_comment('DEREF_DOT');
 				// TODO: no caching of methods occur here because ideally, I want to create another op for dotStepInvoke which eliminates the need to instantiate the method in 99.5% of cases.
@@ -1906,7 +1920,7 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 	fullMessage = '';
 	programData = $_list_get(pd, 0);
 	allTokens = ProgramData$programData.tokenData;
-	allFiles = sourceFiles();
+	allFiles = generateSourceFiles();
 	first = true;
 	while (stack != null) {
 		pc = StackFrame$stack.pc;
@@ -1925,48 +1939,57 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 		if (token != null) {
 			line = $_list_get(token, 0);
 			col = $_list_get(token, 1);
-			fileData = $_list_get(allFiles, $_list_get(token, 2));
-			lines = $_string_split(fileData, '\n');
-			filename = lines[0];
-			linevalue = lines[line + 1];
-			fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
-			if (first) {
-				linedisplay = '';
-				arrowdisplay = '';
-				lefttrim = true;
-				for (i = 0; i < $_string_length(linevalue); i += 1) {
-					c = $_string_char_at(linevalue, i);
-					if (lefttrim) {
-						if (c == ' ' || c == '\t' || c == '\r') {
+			fileId = $_list_get(token, 2);
+			if (fileId < $_list_length(allFiles)) {
+				fileData = $_list_get(allFiles, fileId);
+				$_print(fileData);
+				lines = $_string_split(fileData, '\n');
+				filename = lines[0];
+				linevalue = lines[line + 1];
+				fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
+				if (first) {
+					linedisplay = '';
+					arrowdisplay = '';
+					lefttrim = true;
+					for (i = 0; i < $_string_length(linevalue); i += 1) {
+						c = $_string_char_at(linevalue, i);
+						if (lefttrim) {
+							if (c == ' ' || c == '\t' || c == '\r') {
+								col -= 1;
+							} else {
+								lefttrim = false;
+								i -= 1;
+							}
+						} else {
+							if (col == 0) {
+								arrowdisplay += '^';
+								linedisplay += c;
+							} else if (c == '\t') {
+								arrowdisplay += '    ';
+								linedisplay += '    ';
+							} else {
+								arrowdisplay += ' ';
+								linedisplay += c;
+							}
 							col -= 1;
-						} else {
-							lefttrim = false;
-							i -= 1;
 						}
-					} else {
-						if (col == 0) {
-							arrowdisplay += '^';
-							linedisplay += c;
-						} else if (c == '\t') {
-							arrowdisplay += '    ';
-							linedisplay += '    ';
-						} else {
-							arrowdisplay += ' ';
-							linedisplay += c;
-						}
-						col -= 1;
 					}
-				}
-				lineCopy = linevalue;
+					lineCopy = linevalue;
 
-				fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+					fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+				}
+			} else {
+				token = null; // execution killed before file data was loaded
 			}
-		} else {
+		}
+
+		if (token == null) {
 			fullMessage = "[No Stack Info]\n" + fullMessage;
 			if (first) {
 				fullMessage += "[No Stack Info]\n  " + message + "\n";
 			}
 		}
+
 		first = false;
 		token = null;
 	}
@@ -2104,10 +2127,9 @@ function loadByteCode() {
 	return new Code(ops, iargs, sargs);
 }
 
-function sourceFiles() {
-	return [
-		%%%FILE_DATA%%%
-	];
+function generateSourceFiles() {
+	p = pd[0];
+	return ProgramData$p.sourceCode;
 }
 
 if (%%%PLATFORM_IS_AUTOLOAD%%%) {
