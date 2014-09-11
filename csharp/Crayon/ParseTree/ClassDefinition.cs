@@ -56,6 +56,10 @@ namespace Crayon.ParseTree
 			parser.IsInClass = false;
 
 			bool hasABaseClass = this.baseClassInstance != null;
+			if (this.Constructor == null)
+			{
+				throw new ParserException(this.FirstToken, "Class is missing constructor.");
+			}
 			bool callsBaseConstructor = this.Constructor.BaseToken != null;
 			if (hasABaseClass && callsBaseConstructor)
 			{
