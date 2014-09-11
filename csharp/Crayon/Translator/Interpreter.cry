@@ -437,10 +437,12 @@ function build_integer(value) {
 PRIMITIVE_METHODS = {
 	// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
 	Types.STRING + "contains": %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%,
+	Types.STRING + "endsWith": %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%,
 	Types.STRING + "lower": %%%PRIMITIVE_METHOD_STRING_LOWER%%%,
 	Types.STRING + "reverse": %%%PRIMITIVE_METHOD_STRING_REVERSE%%%,
 	Types.STRING + "replace": %%%PRIMITIVE_METHOD_STRING_REPLACE%%%,
 	Types.STRING + "split": %%%PRIMITIVE_METHOD_STRING_SPLIT%%%,
+	Types.STRING + "startsWith": %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%,
 	Types.STRING + "trim": %%%PRIMITIVE_METHOD_STRING_TRIM%%%,
 	Types.STRING + "upper": %%%PRIMITIVE_METHOD_STRING_UPPER%%%,
 
@@ -1035,7 +1037,7 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						image = $_list_pop(valueStack);
 						$_insert_platform_code('ff_blit_image');
 						break;
-
+						
 					case %%%FF_CLOCK_TICK%%%:
 						programdata = pd[0];
 						ProgramData$programdata.stackTop = stack;
@@ -1043,6 +1045,12 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						return null;
 						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
 						break;
+
+					case %%%FF_COS%%%:
+						x = $_list_pop(valueStack);
+						$_insert_platform_code('ff_cos');
+						break;
+
 					case %%%FF_CURRENT_TIME%%%:
 						$_insert_platform_code('ff_current_time');
 						break;
@@ -1096,10 +1104,19 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						red = $_list_pop(valueStack);
 						$_insert_platform_code('ff_fill_screen');
 						break;
+						
+					case %%%FF_FLIP_IMAGE%%%:
+						y = $_list_pop(valueStack);
+						x = $_list_pop(valueStack);
+						img = $_list_pop(valueStack);
+						$_insert_platform_code('ff_flip_image');
+						break;
+
 					case %%%FF_FLOOR%%%:
 						value = $_list_pop(valueStack);
 						$_insert_platform_code('ff_floor');
 						break;
+
 					case %%%FF_GET_EVENTS%%%:
 						$_insert_platform_code('ff_get_events');
 						break;
@@ -1113,11 +1130,19 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						fps = $_list_pop(valueStack);
 						$_insert_platform_code('ff_initialize_game');
 						break;
-
+						
 					case %%%FF_INITIALIZE_SCREEN%%%:
 						height = $_list_pop(valueStack);
 						width = $_list_pop(valueStack);
 						$_insert_platform_code('ff_initialize_screen');
+						break;
+						
+					case %%%FF_INITIALIZE_SCREEN_SCALED%%%:
+						pheight = $_list_pop(valueStack);
+						pwidth = $_list_pop(valueStack);
+						height = $_list_pop(valueStack);
+						width = $_list_pop(valueStack);
+						$_insert_platform_code('ff_initialize_screen_scaled');
 						break;
 						
 					case %%%FF_IS_IMAGE_LOADED%%%:
@@ -1143,6 +1168,13 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 						value = valueToString(value);
 						$_insert_platform_code('ff_set_title');
 						break;
+
+					case %%%FF_SIN%%%:
+						x = $_list_pop(valueStack);
+						$_insert_platform_code('ff_sin');
+						break;
+
+
 					case %%%FF_TYPEOF%%%:
 						value = $_list_pop(valueStack);
 
@@ -1744,6 +1776,30 @@ function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, return
 				return "String contains method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
 			}
 			if ($_string_contains(context, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String endsWith method", 1, $_list_length(funcArgs));
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String endsWith method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_endswith(context, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String startsWith method", 1, $_list_length(funcArgs));
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String startsWith method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_startswith(context, Value$item.internalValue)) {
 				output = VALUE_TRUE;
 			} else {
 				output = VALUE_FALSE;

@@ -107,11 +107,15 @@ class CoreImageLibrary {
 }
 
 class Game {
-	constructor(fps, width, height, allow_direct_quit=true) {
+	constructor(fps, width, height, pixel_width=null, pixel_height=null, allow_direct_quit=true) {
 		this._core_width = width;
 		this._core_height = height;
 		$initialize_game(fps);
-		$initialize_screen(width, height);
+		if (pixel_width == null || pixel_height == null) {
+			$initialize_screen(width, height);
+		} else {
+			$initialize_screen_scaled(width, height, pixel_width, pixel_height);
+		}
 		this._core_allow_direct_quit = allow_direct_quit;
 	}
 

@@ -11,8 +11,12 @@ R.get_image_impl = function(key) {
 R._global_vars = {
 	'width': 0,
 	'height': 0,
+	'pwidth': 0,
+	'pheight': 0,
 	'fps': 60,
-	'canvas': null,
+	'real_canvas': null,
+	'virtual_canvas': null,
+	'scaled_mode': false,
 	'image_loader': null,
 	'image_store': null,
 	'temp_image': null,
@@ -26,13 +30,12 @@ R._global_vars = {
 };
 
 R.blit = function(canvas, x, y) {
-	R._global_vars.ctx.drawImage(canvas, x, y);5
+	R._global_vars.ctx.drawImage(canvas, x, y);
 };
 
 R.is_image_loaded = function(key) {
 	return R._global_vars.image_downloads[key] !== undefined;
 };
-
 
 R.enqueue_image_download = function(key, url) {
 	var id = ++R._global_vars.image_download_counter;
@@ -60,6 +63,16 @@ R.beginFrame = function() {
 	R._global_vars.last_frame_began = R.now();
 };
 
+R.endFrame = function() {
+	var gb = R._global_vars;
+	if (gb.scaled_mode) {
+		var rc = gb.real_canvas;
+		var vc = gb.virtual_canvas;
+		var rctx = rc.getContext('2d');
+		rctx.drawImage(vc, 0, 0);
+	}
+};
+
 R.computeDelayMillis = function () {
 	var ideal = 1.0 / R._global_vars.fps;
 	var diff = R.now() - R._global_vars.last_frame_began;
@@ -80,10 +93,26 @@ R.pump_event_objects = function () {
 
 // TODO: also apply keydown and mousedown handlers
 // TODO: (here and python as well) throw an error if you attempt to call this twice.
-R.initializeScreen = function (width, height) {
+R.initializeScreen = function (width, height, pwidth, pheight) {
+	var scaledMode;
+	var canvasWidth;
+	var canvasHeight;
+	var virtualCanvas = null;
+	if (pwidth === null || pheight === null) {
+		scaledMode = false;
+		canvasWidth = width;
+		canvasHeight = height;
+	} else {
+		scaledMode = true;
+		canvasWidth = pwidth;
+		canvasHeight = pheight;
+		virtualCanvas = document.createElement('canvas');
+		virtualCanvas.width = width;
+		virtualCanvas.height = height;
+	}
 	var canvasHost = document.getElementById('crayon_host');
 	canvasHost.innerHTML =
-		'<canvas id="crayon_screen" width="' + width + '" height="' + height + '"></canvas>' +
+		'<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
 		'<div style="display:none;">' +
 			'<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
 			'<div id="crayon_image_loader_queue"></div>' +
@@ -92,7 +121,9 @@ R.initializeScreen = function (width, height) {
 		'</div>' +
 		'<div style="font-family:&quot;Courier New&quot;; font-size:11px;" id="crayon_print_output"></div>';
 	var canvas = document.getElementById('crayon_screen');
-	R._global_vars['canvas'] = canvas;
+	R._global_vars['scaled_mode'] = scaledMode;
+	R._global_vars['real_canvas'] = canvas;
+	R._global_vars['virtual_canvas'] = scaledMode ? virtualCanvas : canvas;
 	R._global_vars['image_loader'] = document.getElementById('crayon_image_loader');
 	R._global_vars['image_store'] = document.getElementById('crayon_image_store');
 	R._global_vars['temp_image'] = document.getElementById('crayon_temp_image');
@@ -108,6 +139,11 @@ R.initializeScreen = function (width, height) {
 	canvas.addEventListener('mousedown', R._mousedown);
 	canvas.addEventListener('mouseup', R._mouseup);
 	canvas.addEventListener('mousemove', R._mousemove);
+
+	if (scaledMode) {
+		var canvasContext = canvas.getContext('2d');
+		canvasContext.scale(pwidth / width, pheight / height);
+	}
 };
 
 R._mousedown = function(ev) {
@@ -313,6 +349,42 @@ R.drawLine = function(startX, startY, endX, endY, width, r, g, b) {
 	context.strokeStyle = R._toHex(r, g, b);
 	context.stroke();
 	context.closePath();
+};
+
+R.flipImage = function(wrappedImage, flipX, flipY) {
+	if (wrappedImage[0] != %%%TYPE_NATIVE_OBJECT_IMAGE%%%) {
+		return null;
+	}
+
+	var img = wrappedImage[1];
+	var output = document.createElement('canvas');
+
+	output.width = img.width;
+	output.height = img.height;
+
+	var outputContext = output.getContext('2d');
+
+	if (flipX) {
+		outputContext.translate(img.width, 0);
+		outputContext.scale(-1, 1);
+	}
+	if (flipY) {
+		outputContext.translate(0, img.height);
+		outputContext.scale(1, -1);
+	}
+
+	outputContext.drawImage(img, 0, 0);
+
+	if (flipX) {
+		outputContext.scale(-1, 1);
+		outputContext.translate(-img.width, 0);
+	}
+	if (flipY) {
+		outputContext.scale(1, -1);
+		outputContext.translate(0, -img.height);
+	}
+
+	return [%%%TYPE_NATIVE_OBJECT%%%, [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output]];
 };
 
 window.addEventListener('keydown', function(e) {

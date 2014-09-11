@@ -104,6 +104,10 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.Shorten("R.blit(v_image[1][1], v_x[1], v_y[1])"));
 					break;
 
+				case "ff_cos":
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.cos(v_x[1])]"));
+					break;
+
 				case "ff_current_time":
 					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", R.now()]"));
 					break;
@@ -128,6 +132,10 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.Shorten("R.fillScreen(v_red[1], v_green[1], v_blue[1])"));
 					break;
 
+				case "ff_flip_image":
+					output.Add("v_output = R.flipImage(v_img[1], v_x[1], v_y[1])");
+					break;
+
 				case "ff_floor":
 					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_value[1])]"));
 					break;
@@ -145,7 +153,11 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_initialize_screen":
-					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1])"));
+					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1], null, null)"));
+					break;
+
+				case "ff_initialize_screen_scaled":
+					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1], v_pwidth[1], v_pheight[1])"));
 					break;
 
 				case "ff_is_image_loaded":
@@ -169,9 +181,20 @@ namespace Crayon.Translator.JavaScript
 					output.Add("TODO('set title...is this possible?');");
 					break;
 
+				case "ff_sin":
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.sin(v_x[1])]"));
+					break;
+
 				default:
 					throw new NotImplementedException();
 			}
+		}
+
+		protected override void TranslateInt(List<string> output, ParseTree.Expression value)
+		{
+			output.Add("Math.floor(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
@@ -281,6 +304,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateRegisterTimeout(List<string> output)
 		{
+			output.Add("R.endFrame();");
 			output.Add("window.setTimeout(v_runTick, R.computeDelayMillis())");
 		}
 
@@ -313,6 +337,15 @@ namespace Crayon.Translator.JavaScript
 			output.Add(".indexOf(");
 			this.Translator.TranslateExpression(output, needle);
 			output.Add(this.Shorten(") != -1)"));
+		}
+
+		protected override void TranslateStringEndsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		{
+			output.Add("stringEndsWith(");
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringFromCode(List<string> output, ParseTree.Expression characterCode)
@@ -378,6 +411,15 @@ namespace Crayon.Translator.JavaScript
 			output.Add(".split(");
 			this.Translator.TranslateExpression(output, sep);
 			output.Add(")");
+		}
+
+		protected override void TranslateStringStartsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".indexOf(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(this.Shorten(") == 0)"));
 		}
 
 		protected override void TranslateStringTrim(List<string> output, ParseTree.Expression stringValue)

@@ -62,12 +62,19 @@ def platform_begin(fps):
 	pygame.init()
 	_global_vars['fps'] = fps
 
-def _pygame_initialize_screen(width, height):
+def _pygame_initialize_screen(width, height, pixel_dimensions):
 	_global_vars['width'] = width
 	_global_vars['height'] = height
-	screen = pygame.display.set_mode((_global_vars['width'], _global_vars['height']))
-	_global_vars['screen'] = screen
-	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_SCREEN%%%, screen)]
+	scaled_mode = pixel_dimensions != None
+	if scaled_mode:
+		real_screen = pygame.display.set_mode(pixel_dimensions)
+		virtual_screen = pygame.Surface((width, height)).convert()
+	else:
+		virtual_screen = pygame.display.set_mode((_global_vars['width'], _global_vars['height']))
+		real_screen = virtual_screen
+	_global_vars['real_screen'] = real_screen
+	_global_vars['virtual_screen'] = virtual_screen
+	_global_vars['scaled_mode'] = scaled_mode
 
 _PDE = pygame.draw.ellipse
 _PDF = pygame.display.flip
@@ -89,3 +96,19 @@ def get_image_impl(key):
 def wrappedChr(code):
 	if code < 0 or code > 255: return '?'
 	return chr(code)
+
+def _pygame_end_of_frame():
+	if _global_vars['scaled_mode']:
+		vs = _global_vars['virtual_screen']
+		rs = _global_vars['real_screen']
+		pygame.transform.scale(vs, rs.get_size(), rs)
+	pygame.display.flip()
+	_global_vars['clock'].tick(_global_vars['fps'])
+
+def _pygame_flip_image(img, flipx, flipy):
+	if img[0] != %%%TYPE_NATIVE_OBJECT_IMAGE%%%:
+		return None
+	image = img[1]
+	output = pygame.transform.flip(image, flipx == True, flipy == True)
+	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)]
+

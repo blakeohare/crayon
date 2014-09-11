@@ -31,6 +31,10 @@ namespace Crayon
 				case FrameworkFunction.CLOCK_TICK:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
+				case FrameworkFunction.COS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
 				case FrameworkFunction.CURRENT_TIME:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
@@ -54,6 +58,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER");
 					break;
+				case FrameworkFunction.FLIP_IMAGE:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE BOOLEAN BOOLEAN");
+					break;
 				case FrameworkFunction.FLOOR:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
@@ -73,6 +81,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER");
 					break;
+				case FrameworkFunction.INITIALIZE_SCREEN_SCALED:
+					VerifyLength(throwToken, frameworkFunction, 4, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER");
+					break;
 				case FrameworkFunction.IS_IMAGE_LOADED:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
@@ -91,6 +103,10 @@ namespace Crayon
 				case FrameworkFunction.SET_TITLE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.SIN:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
 					break;
 				case FrameworkFunction.TYPEOF:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

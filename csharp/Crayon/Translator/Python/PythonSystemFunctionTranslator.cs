@@ -99,7 +99,11 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_blit_image":
-					output.Add("_global_vars['screen'].blit(v_image[1][1], (v_x[1], v_y[1]))");
+					output.Add("_global_vars['virtual_screen'].blit(v_image[1][1], (v_x[1], v_y[1]))");
+					break;
+
+				case "ff_cos":
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.cos(v_x[1])]");
 					break;
 
 				case "ff_current_time":
@@ -111,20 +115,24 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_draw_ellipse":
-					output.Add("_PDE(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_left[1], v_top[1], v_width[1], v_height[1]))");
+					output.Add("_PDE(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_left[1], v_top[1], v_width[1], v_height[1]))");
 					break;
 
 				case "ff_draw_line":
-					output.Add("_PDL(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), (v_x1[1], v_y1[1]), (v_x2[1], v_y2[1]), v_width[1])");
+					output.Add("_PDL(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), (v_x1[1], v_y1[1]), (v_x2[1], v_y2[1]), v_width[1])");
 					break;
 
 				case "ff_draw_rectangle":
 					// TODO: alpha?
-					output.Add("_PDR(_global_vars['screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
+					output.Add("_PDR(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
 					break;
 
 				case "ff_fill_screen":
-					output.Add("_global_vars['screen'].fill((v_red[1], v_green[1], v_blue[1]))");
+					output.Add("_global_vars['virtual_screen'].fill((v_red[1], v_green[1], v_blue[1]))");
+					break;
+
+				case "ff_flip_image":
+					output.Add("v_output = _pygame_flip_image(v_img[1], v_x[1], v_y[1])");
 					break;
 
 				case "ff_floor":
@@ -144,7 +152,11 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_initialize_screen":
-					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1])");
+					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1], None)");
+					break;
+
+				case "ff_initialize_screen_scaled":
+					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1], (v_pwidth[1], v_pheight[1]))");
 					break;
 
 				case "ff_is_image_loaded":
@@ -167,9 +179,20 @@ namespace Crayon.Translator.Python
 					output.Add("pygame.display.set_caption(v_value)");
 					break;
 
+				case "ff_sin":
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.sin(v_x[1])]");
+					break;
+
 				default:
 					throw new NotImplementedException();
 			}
+		}
+
+		protected override void TranslateInt(List<string> output, ParseTree.Expression value)
+		{
+			output.Add("int(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
@@ -266,9 +289,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
-			output.Add("pygame.display.flip()\r\n");
-			output.Add(this.Translator.CurrentTabIndention);
-			output.Add("_global_vars['clock'].tick(_global_vars['fps'])");
+			output.Add("_pygame_end_of_frame()");
 		}
 
 		protected override void TranslatePrint(List<string> output, ParseTree.Expression message)
@@ -309,6 +330,14 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, needle);
 			output.Add(" in ");
 			this.Translator.TranslateExpression(output, haystack);
+			output.Add(")");
+		}
+
+		protected override void TranslateStringEndsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		{
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".endswith(");
+			this.Translator.TranslateExpression(output, findMe);
 			output.Add(")");
 		}
 
@@ -375,6 +404,14 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, stringExpr);
 			output.Add(".split(");
 			this.Translator.TranslateExpression(output, sep);
+			output.Add(")");
+		}
+
+		protected override void TranslateStringStartsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		{
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".startswith(");
+			this.Translator.TranslateExpression(output, findMe);
 			output.Add(")");
 		}
 
