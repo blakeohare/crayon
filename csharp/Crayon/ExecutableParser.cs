@@ -234,6 +234,10 @@ namespace Crayon
 
 					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(tokens);
 				}
+				else
+				{
+					tokens.PopExpected("}");
+				}
 			}
 
 			if (baseClasses.Count > 1) throw new ParserException(baseClasses[1], "Cannot support interfaces yet.");
