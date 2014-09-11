@@ -880,6 +880,28 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 							$_comment('float > float');
 							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
 
+						// list * int
+						case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
+							$_comment('list * int');
+							t = [];
+							while (right > 0) {
+								$_list_push(t, left);
+								right -= 1;
+							}
+							output = new Value(Types.LIST, t);
+							break;
+							
+						// int * list
+						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.LIST:
+							$_comment('int * list');
+							t = [];
+							while (left > 0) {
+								$_list_push(t, right);
+								left -= 1;
+							}
+							output = new Value(Types.LIST, t);
+							break;
+
 						default:
 							$_comment('unrecognized op');
 							return killExecution(stack, "The '" + getBinaryOpFromId($_list_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftObj.type) + " and " + getTypeFromId(Value$rightObj.type));
