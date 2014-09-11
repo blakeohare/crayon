@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Crayon
 {
@@ -37,7 +38,7 @@ namespace Crayon
 
 			string commentType = null;
 			string stringType = null;
-			string stringToken = null;
+			StringBuilder stringToken = null;
 			string normalToken = null;
 			int stringStart = 0;
 			int normalStart = 0;
@@ -80,18 +81,18 @@ namespace Crayon
 				{
 					if (c == '\\')
 					{
-						stringToken += c2;
+						stringToken.Append(c2);
 						++i;
 					}
 					else if (c == stringType[0])
 					{
-						stringToken += c;
+						stringToken.Append(c);
 						stringType = null;
-						tokens.Add(new Token(stringToken, fileID, filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
+						tokens.Add(new Token(stringToken.ToString(), fileID, filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
 					}
 					else
 					{
-						stringToken += c;
+						stringToken.Append(c);
 					}
 					previousIsWhitespace = false;
 				}
@@ -122,7 +123,7 @@ namespace Crayon
 				else if (c == '"')
 				{
 					stringType = "\"";
-					stringToken = stringType;
+					stringToken = new StringBuilder("" + stringType);
 					stringStart = i;
 					tokenStartHasPreviousWhitespace = previousIsWhitespace;
 					previousIsWhitespace = false;
@@ -130,7 +131,7 @@ namespace Crayon
 				else if (c == '\'')
 				{
 					stringType = "'";
-					stringToken = stringType;
+					stringToken = new StringBuilder("" + stringType);
 					stringStart = i;
 					tokenStartHasPreviousWhitespace = previousIsWhitespace;
 					previousIsWhitespace = false;
