@@ -401,6 +401,7 @@ namespace Crayon
 					if (state != 'O')
 					{
 						cases.Add(null);
+						firstTokens.Add(null);
 						code.Add(new List<Executable>());
 						state = 'O';
 					}
