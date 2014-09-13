@@ -358,6 +358,7 @@ namespace Crayon
 			tokens.PopExpected(")");
 			tokens.PopExpected("{");
 			List<List<Expression>> cases = new List<List<Expression>>();
+			List<Token> firstTokens = new List<Token>();
 			List<List<Executable>> code = new List<List<Executable>>();
 			char state = '?'; // ? - first, O - code, A - case
 			bool defaultEncountered = false;
@@ -370,25 +371,27 @@ namespace Crayon
 						throw new ParserException(tokens.Peek(), "default condition in a switch statement must be the last condition.");
 					}
 
+					Token caseToken = tokens.PopExpected("case");
 					if (state != 'A')
 					{
 						cases.Add(new List<Expression>());
+						firstTokens.Add(caseToken);
 						code.Add(null);
 						state = 'A';
 					}
-					tokens.PopExpected("case");
 					cases[cases.Count - 1].Add(ExpressionParser.Parse(tokens));
 					tokens.PopExpected(":");
 				}
 				else if (tokens.IsNext("default"))
 				{
+					Token defaultToken = tokens.PopExpected("default");
 					if (state != 'A')
 					{
 						cases.Add(new List<Expression>());
+						firstTokens.Add(defaultToken);
 						code.Add(null);
 						state = 'A';
 					}
-					tokens.PopExpected("default");
 					cases[cases.Count - 1].Add(null);
 					tokens.PopExpected(":");
 					defaultEncountered = true;
@@ -405,7 +408,7 @@ namespace Crayon
 				}
 			}
 
-			return new SwitchStatement(switchToken, condition, cases, code, explicitMax, explicitMaxToken);
+			return new SwitchStatement(switchToken, condition, firstTokens, cases, code, explicitMax, explicitMaxToken);
 		}
 
 		private static Executable ParseIf(TokenStream tokens)

@@ -90,13 +90,14 @@ namespace Crayon.ParseTree
 		public override IList<Executable> Resolve(Parser parser)
 		{
 			bool removeBreaks = parser.Mode == PlatformTarget.Python_PyGame;
-			foreach (int key in this.codeMapping.Keys.ToArray()) // ToArray is used otherwise C# considers this modifying the enumerable collection
-			{
-				this.codeMapping[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, this.codeMapping[key]);
-			}
-
+			
 			if (removeBreaks)
 			{
+				foreach (int key in this.codeMapping.Keys.ToArray()) // ToArray is used otherwise C# considers this modifying the enumerable collection
+				{
+					this.codeMapping[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, this.codeMapping[key]);
+				}
+
 				this.LookupTableName = "switch_lookup_" + parser.GetNextInt();
 
 				if (this.UsesStrings)
@@ -120,6 +121,7 @@ namespace Crayon.ParseTree
 					parser.RegisterSwitchIntegerListLookup(this.LookupTableName, lookup, this.UseExplicitMax ? this.ExplicitMax : 0, this.DefaultCaseId);
 				}
 			}
+
 			return Listify(this);
 		}
 

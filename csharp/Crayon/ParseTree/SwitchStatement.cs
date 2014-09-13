@@ -18,18 +18,20 @@ namespace Crayon.ParseTree
 
 		public class Chunk
 		{
-			public Chunk(int id, IList<Expression> cases, IList<Executable> code)
+			public Token CaseOrDefaultToken { get; private set; }
+			public Expression[] Cases { get; set; }
+			public Executable[] Code { get; set; }
+			public bool ContainsFallthrough { get; private set; }
+			public int ID { get; private set; }
+
+			public Chunk(int id, Token firstToken, IList<Expression> cases, IList<Executable> code)
 			{
+				this.CaseOrDefaultToken = firstToken;
 				this.Cases = cases.ToArray();
 				this.Code = code.ToArray();
 				this.ID = id;
 				this.ContainsFallthrough = this.Code.Length == 0 || !this.Code[this.Code.Length - 1].IsTerminator;
 			}
-
-			public Expression[] Cases { get; set; }
-			public Executable[] Code { get; set; }
-			public bool ContainsFallthrough { get; private set; }
-			public int ID { get; private set; }
 		}
 
 		public Expression Condition { get; private set; }
@@ -40,7 +42,7 @@ namespace Crayon.ParseTree
 		private Expression explicitMax;
 		private Token explicitMaxToken;
 
-		public SwitchStatement(Token switchToken, Expression condition, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken)
+		public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken)
 			: base(switchToken)
 		{
 			if (cases.Count == 0) throw new ParserException(switchToken, "Switch statement needs cases.");
@@ -58,7 +60,7 @@ namespace Crayon.ParseTree
 			{
 				if (cases[i] == null) throw new Exception("This should not happen.");
 				if (code[i + 1] == null) throw new Exception("This should not happen.");
-				chunks.Add(new Chunk(counter++, cases[i], code[i + 1]));
+				chunks.Add(new Chunk(counter++, firstTokens[i], cases[i], code[i + 1]));
 			}
 			this.chunks = chunks.ToArray();
 		}
