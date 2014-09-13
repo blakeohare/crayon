@@ -11,6 +11,8 @@
 	BINARY_OP,
 	BOOLEAN_NOT, // no args.
 	BREAK, // no ops. This should be resolved into a jump before actually being run.
+	BUILD_SWITCH_INT, // 2n args: (1: integer key, 2: offset value) <- repeat, the order that these appear indicates the switch ID
+	BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
 	CALL_BASE_CONSTRUCTOR, // 1: num args passed
 	CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 	CALL_FUNCTION, // 1: num args passed
@@ -38,6 +40,8 @@
 	POP, // no args. pop value from value stack.
 	RETURN,
 	RETURN_NULL,
+	SWITCH_INT, // 1: integer switch ID, 2: offset for default case
+	SWITCH_STRING, // 1: string switch ID, 2: offset for default case
 	THIS, // pushes the current object context onto the stack.
 	TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
 	USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
@@ -187,6 +191,8 @@ struct ProgramData {
 	userCodeStart,
 	globalVarScope,
 	sourceCode,
+	integerSwitchLookups,
+	stringSwitchLookups,
 }
 
 // If I assign to this global directly, the translator will think this is a local variable.
@@ -337,7 +343,9 @@ function main() {
 		$_list_new($_list_length(ops)),
 		0,
 		StackFrame$stack.locals,
-		[] // original source code data
+		[], // original source code data
+		[], // integerSwitchLookups
+		[] // stringSwitchLookups
 		);
 
 	pd[0] = p;
@@ -495,6 +503,9 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 	valueStack = StackFrame$stack.valueStack;
 	locals = StackFrame$stack.locals;
 	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
+	p = $_list_get(pd, 0);
+	integerSwitches = ProgramData$p.integerSwitchLookups;
+	stringSwitches = ProgramData$p.stringSwitchLookups;
 	while (true) {
 		row = args[StackFrame$stack.pc];
 		switch (ops[StackFrame$stack.pc]) {
@@ -948,6 +959,28 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				} else {
 					$_list_push(valueStack, VALUE_TRUE);
 				}
+				break;
+
+			case OpCodes.BUILD_SWITCH_INT:
+				$_comment('BUILD_SWITCH_INT');
+				integerSwitchLookup = {};
+				for (i = 0; i < $_list_length(row); i += 2) {
+					$_dictionary_set(integerSwitchLookup, $_list_get(row, i), $_list_get(row, i + 1));
+				}
+				p = $_list_get(pd, 0);
+				$_list_push(ProgramData$p.integerSwitchLookups, integerSwitchLookup);
+				break;
+
+			case OpCodes.BUILD_SWITCH_STRING:
+				$_comment('BUILD_SWITCH_STRING');
+				allLookups = ProgramData$p.stringSwitchLookups;
+				id = $_list_get(row, 0);
+				while ($_list_length(allLookups) <= id) {
+					$_list_push(allLookups, {});
+				}
+				lookup = $_list_get(allLookups, id);
+				key = $_list_get(stringArgs, StackFrame$stack.pc);
+				$_dictionary_set(lookup, key, $_list_get(row, 1));
 				break;
 
 			case OpCodes.CALL_BASE_CONSTRUCTOR:
@@ -1602,6 +1635,30 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				valueStack = StackFrame$stack.valueStack;
 				if (useReturnValue) {
 					$_list_push(valueStack, VALUE_NULL);
+				}
+				break;
+
+			case OpCodes.SWITCH_INT:
+				$_comment('SWITCH_INT');
+				value = $_list_pop(valueStack);
+				if (Value$value.type == Types.INTEGER) {
+					key = Value$value.internalValue;
+					offset = $_dictionary_get($_list_get(integerSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
+					StackFrame$stack.pc += offset;
+				} else {
+					return killExecution(stack, "Switch statement expects an integer.");
+				}
+				break;
+
+			case OpCodes.SWITCH_STRING:
+				$_comment('SWITCH_STRING');
+				value = $_list_pop(valueStack);
+				if (Value$value.type == Types.STRING) {
+					key = Value$value.internalValue;
+					offset = $_dictionary_get($_list_get(stringSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
+					StackFrame$stack.pc += offset;
+				} else {
+					return killExecution(stack, "Switch statement expects a string.");
 				}
 				break;
 

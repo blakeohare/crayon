@@ -150,12 +150,41 @@ namespace Crayon.ParseTree
 			this.IsSafe = !this.ContainsDefault;
 			this.IsContinuous = integers != 0 && largestSpan == 1 && this.IsSafe && this.DetermineContinuousness();
 
-			if (this.IsSafe & this.IsContinuous)
+			if (parser.IsTranslateMode)
 			{
-				return new SwitchStatementContinuousSafe(this).Resolve(parser);
+
+				if (this.IsSafe & this.IsContinuous)
+				{
+					return new SwitchStatementContinuousSafe(this).Resolve(parser);
+				}
+
+				return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax).Resolve(parser);
+			}
+			else
+			{
+				return this.CompilationResolution(parser);
+			}
+		}
+
+		private IList<Executable> CompilationResolution(Parser parser)
+		{
+			Chunk lastChunk = this.chunks[this.chunks.Length - 1];
+			bool lastChunkContainsNull = false;
+			foreach (Expression c in lastChunk.Cases)
+			{
+				if (c == null)
+				{
+					lastChunkContainsNull = true;
+					break;
+				}
 			}
 
-			return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax).Resolve(parser);
+			if (lastChunkContainsNull)
+			{
+				lastChunk.Cases = new Expression[] { null };
+			}
+
+			return Listify(this);
 		}
 
 		private bool DetermineContinuousness()
@@ -196,6 +225,22 @@ namespace Crayon.ParseTree
 				{
 					line.GetAllVariableNames(lookup);
 				}
+			}
+		}
+
+		public override bool IsTerminator
+		{
+			get
+			{
+				foreach (Chunk chunk in this.chunks)
+				{
+					Executable exec = chunk.Code[chunk.Code.Length - 1];
+					if (!exec.IsTerminator || exec is BreakStatement)
+					{
+						return false;
+					}
+				}
+				return true;
 			}
 		}
 	}

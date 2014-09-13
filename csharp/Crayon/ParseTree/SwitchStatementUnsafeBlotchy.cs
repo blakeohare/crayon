@@ -16,6 +16,7 @@ namespace Crayon.ParseTree
 		public bool UseExplicitMax { get; private set; }
 
 		private Dictionary<int, Executable[]> codeMapping;
+		private Dictionary<int, Token> tokenMapping;
 		public Dictionary<string, int> StringUnsafeToSafeMapping;
 		public Dictionary<int, int> IntegerUnsafeToSafeMapping;
 		public bool UsesStrings { get; private set; }
@@ -42,6 +43,7 @@ namespace Crayon.ParseTree
 				this.IntegerUnsafeToSafeMapping = new Dictionary<int, int>();
 			}
 			this.codeMapping = new Dictionary<int, Executable[]>();
+			this.tokenMapping = new Dictionary<int, Token>();
 
 			this.max = switchStatement.Chunks.Length - 1;
 
@@ -49,6 +51,8 @@ namespace Crayon.ParseTree
 			{
 				SwitchStatement.Chunk chunk = switchStatement.Chunks[i];
 				this.codeMapping[i] = chunk.Code;
+				this.tokenMapping[i] = chunk.CaseOrDefaultToken;
+
 				foreach (Expression expression in chunk.Cases)
 				{
 					if (expression == null)

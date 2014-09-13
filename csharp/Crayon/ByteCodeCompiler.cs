@@ -22,10 +22,13 @@ namespace Crayon
 
 			ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
 
+			ByteBuffer switchStatements = this.BuildSwitchStatementTables(parser);
+
 			ByteBuffer header = new Crayon.ByteBuffer();
 			header.Concat(literalsTable);
 			header.Concat(tokenData);
 			header.Concat(fileContent);
+			header.Concat(switchStatements);
 
 			ByteBuffer output = new Crayon.ByteBuffer();
 			output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
@@ -33,6 +36,36 @@ namespace Crayon
 			output.Concat(userCode);
 
 			this.ByteBuffer = output;
+		}
+
+		private ByteBuffer BuildSwitchStatementTables(Parser parser)
+		{
+			ByteBuffer output = new Crayon.ByteBuffer();
+			List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
+			for (int i = 0; i < intSwitches.Count; ++i)
+			{
+				List<int> args = new List<int>();
+				Dictionary<int, int> lookup = intSwitches[i];
+				foreach (int key in lookup.Keys) {
+					int offset = lookup[key];
+					args.Add(key);
+					args.Add(offset);
+				}
+
+				output.Add(null, OpCode.BUILD_SWITCH_INT, args.ToArray());
+			}
+
+			List<Dictionary<string, int>> stringSwitches = parser.GetStringSwitchStatements();
+			for (int i = 0; i < stringSwitches.Count; ++i)
+			{
+				Dictionary<string, int> lookup = stringSwitches[i];
+				foreach (string key in lookup.Keys)
+				{
+					int offset = lookup[key];
+					output.Add(null, OpCode.BUILD_SWITCH_STRING, key, i, offset);
+				}
+			}
+			return output;
 		}
 
 		private ByteBuffer BuildFileContent(string[] filesById)
@@ -113,7 +146,59 @@ namespace Crayon
 			else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
 			else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
 			else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
+			else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
 			else throw new NotImplementedException("Invalid target for byte code compilation");
+		}
+
+		private void CompileSwitchStatement(Parser parser, ByteBuffer buffer, SwitchStatement switchStatement)
+		{
+			this.CompileExpression(parser, buffer, switchStatement.Condition, true);
+
+			ByteBuffer chunkBuffer = new ByteBuffer();
+
+			Dictionary<int, int> chunkIdsToOffsets = new Dictionary<int, int>();
+			Dictionary<int, int> integersToChunkIds = new Dictionary<int,int>();
+			Dictionary<string, int> stringsToChunkIds = new Dictionary<string,int>();
+
+			int defaultChunkId = -1;
+			foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
+			{
+				int chunkId = chunk.ID;
+
+				if (chunk.Cases.Length == 1 && chunk.Cases[0] == null)
+				{
+					defaultChunkId = chunkId;
+				}
+				else
+				{
+					foreach (Expression expression in chunk.Cases)
+					{
+						if (switchStatement.UsesIntegers)
+						{
+							integersToChunkIds[((IntegerConstant)expression).Value] = chunkId;
+						}
+						else
+						{
+							stringsToChunkIds[((StringConstant)expression).Value] = chunkId;
+						}
+					}
+				}
+
+				chunkIdsToOffsets[chunkId] = chunkBuffer.Size;
+
+				this.Compile(parser, chunkBuffer, chunk.Code);
+			}
+
+			chunkBuffer.ResolveBreaks();
+
+			int switchId = parser.RegisterByteCodeSwitch(chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds);
+
+			int defaultOffsetLength = defaultChunkId == -1
+				? chunkBuffer.Size
+				: chunkIdsToOffsets[defaultChunkId];
+
+			buffer.Add(switchStatement.FirstToken, switchStatement.UsesIntegers ? OpCode.SWITCH_INT : OpCode.SWITCH_STRING, switchId, defaultOffsetLength);
+			buffer.Concat(chunkBuffer);
 		}
 
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)

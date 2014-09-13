@@ -45,5 +45,16 @@ namespace Crayon.ParseTree
 				line.GetAllVariableNames(lookup);
 			}
 		}
+
+		public override bool IsTerminator
+		{
+			get
+			{
+				return this.TrueCode.Length > 0 &&
+					this.FalseCode.Length > 0 &&
+					this.TrueCode[this.TrueCode.Length - 1].IsTerminator &&
+					this.FalseCode[this.FalseCode.Length - 1].IsTerminator;
+			}
+		}
 	}
 }

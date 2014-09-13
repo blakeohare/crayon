@@ -33,6 +33,52 @@ namespace Crayon
 		private Dictionary<string, int> explicitMaxes = new Dictionary<string, int>();
 		private Dictionary<string, int> defaultCaseIds = new Dictionary<string, int>();
 
+		// These are the lookup tables for switch statements. The ID of the switch statement is its index in this list.
+		private List<Dictionary<string, int>> byteCodeSwitchStringToOffsets = new List<Dictionary<string, int>>();
+		private List<Dictionary<int, int>> byteCodeSwitchIntegerToOffsets = new List<Dictionary<int, int>>();
+
+		public List<Dictionary<int, int>> GetIntegerSwitchStatements()
+		{
+			return this.byteCodeSwitchIntegerToOffsets;
+		}
+
+		public List<Dictionary<string, int>> GetStringSwitchStatements()
+		{
+			return this.byteCodeSwitchStringToOffsets;
+		}
+
+		public int RegisterByteCodeSwitch(Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds)
+		{
+			int switchId;
+			if (integersToChunkIds.Count > 0 && stringsToChunkIds.Count == 0)
+			{
+				switchId = byteCodeSwitchIntegerToOffsets.Count;
+				Dictionary<int, int> integersToOffsets = new Dictionary<int, int>();
+				foreach (int key in integersToChunkIds.Keys)
+				{
+					int chunkId = integersToChunkIds[key];
+					integersToOffsets[key] = chunkIdsToOffsets[chunkId];
+				}
+				byteCodeSwitchIntegerToOffsets.Add(integersToOffsets);
+			}
+			else if (integersToChunkIds.Count == 0 && stringsToChunkIds.Count > 0)
+			{
+				switchId = byteCodeSwitchStringToOffsets.Count;
+				Dictionary<string, int> stringsToOffsets = new Dictionary<string, int>();
+				foreach (string key in stringsToChunkIds.Keys)
+				{
+					int chunkId = stringsToChunkIds[key];
+					stringsToOffsets[key] = chunkIdsToOffsets[chunkId];
+				}
+				byteCodeSwitchStringToOffsets.Add(stringsToOffsets);
+			}
+			else
+			{
+				throw new Exception("Switch statement with no cases should have been optimized out.");
+			}
+			return switchId;
+		}
+
 		public void RegisterSwitchIntegerListLookup(string name, Dictionary<int, int> lookup, int explicitMax, int defaultCaseId)
 		{
 			this.explicitMaxes[name] = explicitMax;

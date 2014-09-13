@@ -10,5 +10,7 @@ namespace Crayon.ParseTree
 		{
 			return Listify(this);
 		}
+
+		public override bool IsTerminator { get { return true; } }
 	}
 }
