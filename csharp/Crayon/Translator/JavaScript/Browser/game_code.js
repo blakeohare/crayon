@@ -326,7 +326,7 @@ R.fillScreen = function (r, g, b) {
 R.drawRect = function (x, y, width, height, r, g, b) {
 	var ctx = R._global_vars.ctx;
 	ctx.fillStyle = R._toHex(r, g, b);
-	ctx.fillRect(x, y, width, height);
+	ctx.fillRect(x, y, width + .1, height + .1);
 };
 
 R.drawEllipse = function(centerX, centerY, radiusX, radiusY, r, g, b) {
