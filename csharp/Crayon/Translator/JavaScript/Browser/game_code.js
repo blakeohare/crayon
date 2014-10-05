@@ -160,8 +160,16 @@ R._mousemove = function(ev) {
 
 R._mousething = function(ev, click, down) {
 	var pos = R._mouse_get_pos_from_event(ev);
-	var x = Math.floor(pos[0]);
-	var y = Math.floor(pos[1]);
+	var x = pos[0];
+	var y = pos[1];
+	var rwidth = R._global_vars.real_canvas.width;
+	var rheight = R._global_vars.real_canvas.height;
+	var vwidth = R._global_vars.virtual_canvas.width;
+	var vheight = R._global_vars.virtual_canvas.height;
+
+	x = Math.floor(x * vwidth / rwidth);
+	y = Math.floor(y * vheight / rheight);
+
 	var data = [];
 
 	if (click) {
@@ -180,7 +188,7 @@ R._mousething = function(ev, click, down) {
 };
 
 R._mouse_get_pos_from_event = function (ev) {
-	var obj = R._global_vars.canvas;
+	var obj = R._global_vars.real_canvas;
 	var obj_left = 0;
 	var obj_top = 0;
 	var xpos;

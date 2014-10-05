@@ -44,7 +44,7 @@ namespace Crayon.Translator
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
 				case "_list_insert": VerifyCount(functionCall, 3); TranslateListInsert(output, args[0], args[1], args[2]); break;
-				case "_list_join": VerifyCount(functionCall, 1); TranslateListJoin(output, args[0]); break;
+				case "_list_join": VerifyCount(functionCall, 2); TranslateListJoin(output, args[0], args[1]); break;
 				case "_list_last_index": VerifyCount(functionCall, 1); TranslateListLastIndex(output, args[0]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
 				case "_list_new": VerifyCount(functionCall, 1); TranslateListNew(output, args[0]); break;
@@ -53,6 +53,7 @@ namespace Crayon.Translator
 				case "_list_remove_at": VerifyCount(functionCall, 2); TranslateListRemoveAt(output, args[0], args[1]); break;
 				case "_list_reverse_in_place": VerifyCount(functionCall, 1); TranslateListReverseInPlace(output, args[0]); break;
 				case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
+				case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
@@ -96,7 +97,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
 		protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value);
-		protected abstract void TranslateListJoin(List<string> output, Expression list);
+		protected abstract void TranslateListJoin(List<string> output, Expression list, Expression sep);
 		protected abstract void TranslateListLastIndex(List<string> output, Expression list);
 		protected abstract void TranslateListLength(List<string> output, Expression list);
 		protected abstract void TranslateListNew(List<string> output, Expression length);
@@ -105,6 +106,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListRemoveAt(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateListReverseInPlace(List<string> output, Expression listVar);
 		protected abstract void TranslateListSet(List<string> output, Expression list, Expression index, Expression value);
+		protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRegisterTicker(List<string> output);

@@ -36,6 +36,9 @@ def _pygame_pump_events():
 	evs = pygame.event.get()
 	pressed_keys = pygame.key.get_pressed()
 	evlist = []
+	rwidth,rheight = _global_vars['real_screen'].get_size()
+	vwidth,vheight = _global_vars['virtual_screen'].get_size()
+
 	for ev in evs:
 		if ev.type == pygame.KEYDOWN or ev.type == pygame.KEYUP:
 			if KEY_LOOKUP.get(ev.key) != None:
@@ -50,11 +53,11 @@ def _pygame_pump_events():
 			right = ev.button == 3
 			down = ev.type == pygame.MOUSEBUTTONDOWN
 			type = COMMON_STRINGS['mouse' + ('right' if right else 'left') + ('down' if down else 'up')]
-			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x], [%%%TYPE_INTEGER%%%, y]]])
+			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x * vwidth // rwidth], [%%%TYPE_INTEGER%%%, y * vheight // rheight]]])
 		elif ev.type == pygame.MOUSEMOTION:
 			x, y = ev.pos
 			type = COMMON_STRINGS['mousemove']
-			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x], [%%%TYPE_INTEGER%%%, y]]])
+			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x * vwidth // rwidth], [%%%TYPE_INTEGER%%%, y * vheight // rheight]]])
 		
 	return [%%%TYPE_LIST%%%, evlist]
 

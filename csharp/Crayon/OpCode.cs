@@ -31,6 +31,7 @@
 		INDEX,
 		INDEX_INT,
 		INDEX_STRING,
+		ITERATION_STEP, // stack is in the following state: [index, variable ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
 		JUMP,
 		JUMP_IF_FALSE,
 		JUMP_IF_FALSE_NO_POP,
@@ -49,5 +50,6 @@
 		USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
 		VARIABLE, // 1: id
 		VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
+		VERIFY_IS_LIST, // verifies the last item on the stack is a list
 	}
 }

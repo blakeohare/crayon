@@ -77,6 +77,7 @@
     <Compile Include="Parser.cs" />
     <Compile Include="ParseTree\ExpressionAsExecutable.cs" />
     <Compile Include="ParseTree\FloatConstant.cs" />
+    <Compile Include="ParseTree\ForEachLoop.cs" />
     <Compile Include="ParseTree\ForLoop.cs" />
     <Compile Include="FrameworkFunction.cs" />
     <Compile Include="ParseTree\FunctionCall.cs" />

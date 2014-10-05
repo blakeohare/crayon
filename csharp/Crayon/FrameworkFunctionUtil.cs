@@ -16,6 +16,10 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
+				case FrameworkFunction.ABS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
 				case FrameworkFunction.ARCTAN2:
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER NUMBER");
@@ -72,6 +76,14 @@ namespace Crayon
 				case FrameworkFunction.GET_IMAGE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.GET_IMAGE_HEIGHT:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
+					break;
+				case FrameworkFunction.GET_IMAGE_WIDTH:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
 					break;
 				case FrameworkFunction.INITIALIZE_GAME:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

@@ -148,6 +148,14 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.Shorten("v_output = R.get_image_impl(v_key[1])"));
 					break;
 
+				case "ff_get_image_height":
+					output.Add(this.Shorten("v_output = v_build_integer(v_value[1][1].height)"));
+					break;
+
+				case "ff_get_image_width":
+					output.Add(this.Shorten("v_output = v_build_integer(v_value[1][1].width)"));
+					break;
+
 				case "ff_initialize_game":
 					output.Add("R.initializeGame(v_fps[1])");
 					break;
@@ -223,10 +231,12 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list, ParseTree.Expression sep)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".join('')");
+			output.Add(".join(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(")");
 		}
 
 		protected override void TranslateListLastIndex(List<string> output, ParseTree.Expression list)
@@ -284,6 +294,13 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, index);
 			output.Add(this.Shorten("] = "));
 			this.Translator.TranslateExpression(output, value);
+		}
+
+		protected override void TranslateListShuffleInPlace(List<string> output, ParseTree.Expression list)
+		{
+			output.Add("shuffle(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslatePauseForFrame(List<string> output)

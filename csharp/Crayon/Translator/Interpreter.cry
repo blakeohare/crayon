@@ -29,6 +29,7 @@
 	INDEX,
 	INDEX_INT,
 	INDEX_STRING,
+	ITERATION_STEP, // stack is in the following state: [index, variable ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
 	JUMP,
 	JUMP_IF_FALSE,
 	JUMP_IF_FALSE_NO_POP,
@@ -47,6 +48,7 @@
 	USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
 	VARIABLE, // 1: id
 	VARIABLE_STREAM, // first n: id, followed by -1, followed by triplets of token data (line, col, fileID)
+	VERIFY_IS_LIST, // verifies the last item on the stack is a list
 }
 
 // Needs to be in sync with BinaryOps.cs
@@ -461,9 +463,11 @@ PRIMITIVE_METHODS = {
 	Types.LIST + "clear": %%%PRIMITIVE_METHOD_LIST_CLEAR%%%,
 	Types.LIST + "contains": %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%,
 	Types.LIST + "insert": %%%PRIMITIVE_METHOD_LIST_INSERT%%%,
+	Types.LIST + "join": %%%PRIMITIVE_METHOD_LIST_JOIN%%%,
 	Types.LIST + "pop": %%%PRIMITIVE_METHOD_LIST_POP%%%,
 	Types.LIST + "remove": %%%PRIMITIVE_METHOD_LIST_REMOVE%%%,
 	Types.LIST + "reverse": %%%PRIMITIVE_METHOD_LIST_REVERSE%%%,
+	Types.LIST + "shuffle": %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%,
 
 	Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
 	Types.DICTIONARY + "contains": %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%,
@@ -1053,6 +1057,25 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				// However if there are optional arguments, the number of args used in this call are located in row[2]
 				output = VALUE_NULL;
 				switch (row[0]) {
+					case %%%FF_ABS%%%:
+						value = $_list_pop(valueStack);
+						if (Value$value.type == Types.INTEGER) {
+							if (Value$value.internalValue < 0) {
+								output = build_integer(-Value$value.internalValue);
+							} else {
+								output = value;
+							}
+						} else if (Value$value.type == Types.FLOAT) {
+							if (Value$value.internalValue < 0) {
+								output = new Value(Types.FLOAT, -Value$value.internalValue);
+							} else {
+								output = value;
+							}
+						} else {
+							return killExecution(stack, "$abs requires a number as input.");
+						}
+						break;
+
 					case %%%FF_ARCTAN2%%%:
 						x = $_list_pop(valueStack);
 						y = $_list_pop(valueStack);
@@ -1160,6 +1183,16 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 					case %%%FF_GET_IMAGE%%%:
 						key = $_list_pop(valueStack);
 						$_insert_platform_code('ff_get_image');
+						break;
+						
+					case %%%FF_GET_IMAGE_HEIGHT%%%:
+						value = $_list_pop(valueStack);
+						$_insert_platform_code('ff_get_image_height');
+						break;
+
+					case %%%FF_GET_IMAGE_WIDTH%%%:
+						value = $_list_pop(valueStack);
+						$_insert_platform_code('ff_get_image_width');
 						break;
 
 					case %%%FF_INITIALIZE_GAME%%%: 
@@ -1528,6 +1561,25 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				return killExecution(stack, "TODO: index string");
 				break;
 
+			case OpCodes.ITERATION_STEP:
+				$_comment('ITERATION_STEP');
+				stacklen = $_list_length(valueStack);
+				index = $_list_get(valueStack, stacklen - 3);
+				varId = $_list_get(valueStack, stacklen - 2);
+				list = $_list_get(valueStack, stacklen - 1);
+				index = Value$index.internalValue;
+				list = Value$list.internalValue;
+				varId = Value$varId.internalValue;
+				listlen = $_list_length(list);
+				if (index < listlen) {
+					$_dictionary_set(locals, varId, $_list_get(list, index));
+				} else {
+					StackFrame$stack.pc += row[0];
+				}
+				index += 1;
+				$_list_set(valueStack, stacklen - 3, build_integer(index));
+				break;
+
 			case OpCodes.JUMP:
 				$_comment('JUMP');
 				StackFrame$stack.pc += row[0];
@@ -1724,6 +1776,15 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 				}
 				break;
 
+			case OpCodes.VERIFY_IS_LIST:
+				$_comment('VERIFY_IS_LIST');
+				value = $_list_pop(valueStack);
+				if (Value$value.type != Types.LIST) {
+					return killExecution(stack, "Expected a list.");
+				}
+				$_list_push(valueStack, value);
+				break;
+
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');
 				return killExecution(stack, "Bad op code: " + $_string_cast_weak(ops[StackFrame$stack.pc]));
@@ -1809,6 +1870,20 @@ function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, return
 			if (index < 0 || index > $_list_length(context)) return "Index out of bounds.";
 			$_list_insert(context, Value$index.internalValue, value);
 			break;
+		case %%%PRIMITIVE_METHOD_LIST_JOIN%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List join method", 1, $_list_length(funcArgs));
+			sep = $_list_get(funcArgs, 0);
+			// TODO: make first argument optional
+			if (Value$sep.type != Types.STRING) return "Argument of list.join needs to be a string.";
+			sb = [];
+			sepstr = Value$sep.internalValue;
+			len = $_list_length(context);
+			for (i = 0; i < len; i += 1) {
+				$_list_push(sb, valueToString($_list_get(context, i)));
+			}
+			value = $_list_join(sb, sepstr);
+			output = new Value(Types.STRING, value);
+			break;
 		case %%%PRIMITIVE_METHOD_LIST_POP%%%:
 			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List pop method", 0, $_list_length(funcArgs));
 			if ($_list_length(context) == 0) return "Cannot pop from empty list.";
@@ -1826,6 +1901,10 @@ function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, return
 		case %%%PRIMITIVE_METHOD_LIST_REVERSE%%%:
 			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List reverse method", 0, $_list_length(funcArgs));
 			$_list_reverse_in_place(context);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List shuffle method", 0, $_list_length(funcArgs));
+			$_list_shuffle_in_place(context);
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
 			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String split method", 1, $_list_length(funcArgs));
@@ -2066,7 +2145,7 @@ function read_till(index, raw, length, char) {
 		index[0] += 1;
 	}
 
-	return $_list_join(output);
+	return $_list_join(output, '');
 }
 
 alpha_nums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -2128,7 +2207,7 @@ function read_string(pindex, raw, length) {
 			$_list_push(output, c);
 		}
 	}
-	return $_list_join(output);
+	return $_list_join(output, '');
 }
 
 function loadByteCode() {

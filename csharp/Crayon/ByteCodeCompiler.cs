@@ -147,7 +147,34 @@ namespace Crayon
 			else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
 			else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
 			else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
+			else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
 			else throw new NotImplementedException("Invalid target for byte code compilation");
+		}
+
+		private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
+		{
+			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
+			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(parser.GetId(forEachLoop.IterationVariable.Value)));
+			this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
+			buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_IS_LIST);
+
+			ByteBuffer body = new ByteBuffer();
+			ByteBuffer body2 = new Crayon.ByteBuffer();
+
+			this.Compile(parser, body2, forEachLoop.Body);
+
+			body.Add(forEachLoop.FirstToken, OpCode.ITERATION_STEP, body2.Size + 1);
+			
+			body2.Add(null, OpCode.JUMP, -body2.Size - 2);
+			body.Concat(body2);
+
+			body.ResolveBreaks();
+			body.ResolveContinues();
+
+			buffer.Concat(body);
+			buffer.Add(null, OpCode.POP); // list
+			buffer.Add(null, OpCode.POP); // var ID
+			buffer.Add(null, OpCode.POP); // index
 		}
 
 		private void CompileSwitchStatement(Parser parser, ByteBuffer buffer, SwitchStatement switchStatement)
@@ -758,6 +785,9 @@ namespace Crayon
 					case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
 					case "!=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.NOT_EQUALS); break;
 					case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
+					case "|": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_OR); break;
+					case "&": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_AND); break;
+					case "^": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_XOR); break;
 					default: throw new NotImplementedException("Binary op: " + opChain.Ops[i].Value);
 				}
 			}

@@ -29,3 +29,15 @@ function create_list_of_size(n) {
 function stringEndsWith(value, findme) {
 	return value.indexOf(findme, value.length - findme.length) !== -1;
 }
+
+function shuffle(list) {
+	var t;
+	var length = list.length;
+	var tindex;
+	for (i = length - 1; i >= 0; --i) {
+		tindex = Math.floor(Math.random() * length);
+		t = list[tindex];
+		list[tindex] = list[i];
+		list[i] = t;
+	}
+}

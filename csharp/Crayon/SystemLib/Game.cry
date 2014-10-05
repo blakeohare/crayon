@@ -104,6 +104,10 @@ class CoreImageLibrary {
 	function get_image(key) {
 		return this._core_images[key];
 	}
+
+	function get_raw_image_lookup() {
+		return this._core_images;
+	}
 }
 
 class Game {

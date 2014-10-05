@@ -299,24 +299,42 @@ namespace Crayon
 		{
 			Token forToken = tokens.PopExpected("for");
 			tokens.PopExpected("(");
-			List<Executable> init = new List<Executable>();
-			while (!tokens.PopIfPresent(";"))
-			{
-				if (init.Count > 0) tokens.PopExpected(",");
-				init.Add(Parse(tokens, true, false, false));
-			}
-			Expression condition = ExpressionParser.Parse(tokens);
-			tokens.PopExpected(";");
-			List<Executable> step = new List<Executable>();
-			while (!tokens.PopIfPresent(")"))
-			{
-				if (step.Count > 0) tokens.PopExpected(",");
-				step.Add(Parse(tokens, true, false, false));
-			}
 
-			IList<Executable> body = Parser.ParseBlock(tokens, false);
+			if (Parser.IsValidIdentifier(tokens.PeekValue()) && tokens.PeekValue(1) == ":")
+			{
+				Token iteratorToken = tokens.Pop();
+				if (Parser.IsReservedKeyword(iteratorToken.Value))
+				{
+					throw new ParserException(iteratorToken, "Cannot use this name for an iterator.");
+				}
+				tokens.PopExpected(":");
+				Expression iterationExpression = ExpressionParser.Parse(tokens);
+				tokens.PopExpected(")");
+				IList<Executable> body = Parser.ParseBlock(tokens, false);
 
-			return new ForLoop(forToken, init, condition, step, body);
+				return new ForEachLoop(forToken, iteratorToken, iterationExpression, body);
+			}
+			else
+			{
+				List<Executable> init = new List<Executable>();
+				while (!tokens.PopIfPresent(";"))
+				{
+					if (init.Count > 0) tokens.PopExpected(",");
+					init.Add(Parse(tokens, true, false, false));
+				}
+				Expression condition = ExpressionParser.Parse(tokens);
+				tokens.PopExpected(";");
+				List<Executable> step = new List<Executable>();
+				while (!tokens.PopIfPresent(")"))
+				{
+					if (step.Count > 0) tokens.PopExpected(",");
+					step.Add(Parse(tokens, true, false, false));
+				}
+
+				IList<Executable> body = Parser.ParseBlock(tokens, false);
+
+				return new ForLoop(forToken, init, condition, step, body);
+			}
 		}
 
 		private static Executable ParseWhile(TokenStream tokens)

@@ -147,6 +147,14 @@ namespace Crayon.Translator.Python
 					output.Add("v_output = get_image_impl(v_key[1])");
 					break;
 
+				case "ff_get_image_height":
+					output.Add("v_output = v_build_integer(v_value[1][1].get_height())");
+					break;
+
+				case "ff_get_image_width":
+					output.Add("v_output = v_build_integer(v_value[1][1].get_width())");
+					break;
+
 				case "ff_initialize_game":
 					output.Add("platform_begin(v_fps[1])");
 					break;
@@ -222,9 +230,10 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list, ParseTree.Expression sep)
 		{
-			output.Add("''.join(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(".join(");
 			this.Translator.TranslateExpression(output, list);
 			output.Add(")");
 		}
@@ -285,6 +294,13 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, index);
 			output.Add("] = ");
 			this.Translator.TranslateExpression(output, value);
+		}
+
+		protected override void TranslateListShuffleInPlace(List<string> output, ParseTree.Expression list)
+		{
+			output.Add("random.shuffle(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslatePauseForFrame(List<string> output)
