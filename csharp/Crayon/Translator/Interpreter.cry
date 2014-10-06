@@ -2004,7 +2004,7 @@ function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, return
 				valueLookup = DictImpl$context.valueLookup;
 				keyValue = Value$key.internalValue;
 				if (keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
-				value = $_dictionary_get(keyLookup, keyValue, null);
+				value = $_dictionary_get(valueLookup, keyValue, null);
 				if (value == null) {
 					output = defaultValue;
 				} else {
@@ -2097,7 +2097,7 @@ function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
 			fileId = $_list_get(token, 2);
 			if (fileId < $_list_length(allFiles)) {
 				fileData = $_list_get(allFiles, fileId);
-				$_print(fileData);
+				//$_print(fileData);
 				lines = $_string_split(fileData, '\n');
 				filename = lines[0];
 				linevalue = lines[line + 1];
