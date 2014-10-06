@@ -1892,7 +1892,7 @@ function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, return
 			$_list_pop(context);
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_REMOVE%%%:
-			if ($_list_length(funcArgs) != 2) return wrongArgCountError("List remove method", 2, $_list_length(funcArgs));
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List remove method", 1, $_list_length(funcArgs));
 			index = $_list_get(funcArgs, 0);
 			if (Value$index.type != Types.INTEGER) return "First argument of list.remove needs to be an integer.";
 			if (index < 0 || index >= $_list_length(context)) return "Index out of bounds.";
