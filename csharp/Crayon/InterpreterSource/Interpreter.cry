@@ -802,8 +802,6 @@ function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, l
 					valueStack = [];
 					locals = {};
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, returnValueUsed, obj);
-				} else if (funcType == Types.SYS_FUNCTION) {
-					return killExecution(stack, "TODO: invoke system function");
 				} else if (funcType == Types.FUNCTION) {
 					valueStack = [];
 					locals = {};
