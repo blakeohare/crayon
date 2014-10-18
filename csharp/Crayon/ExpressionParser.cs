@@ -97,58 +97,46 @@ namespace Crayon
 			return expr;
 		}
 
+		private static readonly HashSet<string> ADDITION_OPS = new HashSet<string>("+ -".Split(' '));
+		private static readonly HashSet<string> MULTIPLICATION_OPS = new HashSet<string>("* / %".Split(' '));
+		private static readonly HashSet<string> NEGATE_OPS = new HashSet<string>("! -".Split(' '));
+
 		private static Expression ParseAddition(TokenStream tokens)
 		{
 			Expression expr = ParseMultiplication(tokens);
 			string next = tokens.PeekValue();
-			if (next == "+" || next == "-")
+			while (ADDITION_OPS.Contains(next))
 			{
-				List<Expression> expressions = new List<Expression>() { expr };
-				List<Token> ops = new List<Token>();
-				while (next == "+" || next == "-")
-				{
-					ops.Add(tokens.Pop());
-					expressions.Add(ParseMultiplication(tokens));
-					next = tokens.PeekValue();
-				}
-
-				return new BinaryOpChain(expressions, ops);
+				Token op = tokens.Pop();
+				Expression right = ParseMultiplication(tokens);
+				expr = new BinaryOpChain(expr, op, right);
+				next = tokens.PeekValue();
 			}
-
 			return expr;
 		}
 
-		private static readonly HashSet<string> MULTIPLICATION_OPS = new HashSet<string>("* / %".Split(' '));
 		private static Expression ParseMultiplication(TokenStream tokens)
 		{
 			Expression expr = ParseNegate(tokens);
 			string next = tokens.PeekValue();
-			if (MULTIPLICATION_OPS.Contains(next))
+			while (MULTIPLICATION_OPS.Contains(next))
 			{
-				List<Expression> expressions = new List<Expression>() { expr };
-				List<Token> ops = new List<Token>();
-				while (MULTIPLICATION_OPS.Contains(next))
-				{
-					ops.Add(tokens.Pop());
-					expressions.Add(ParseNegate(tokens));
-					next = tokens.PeekValue();
-				}
-
-				return new BinaryOpChain(expressions, ops);
+				Token op = tokens.Pop();
+				Expression right = ParseNegate(tokens);
+				expr = new BinaryOpChain(expr, op, right);
+				next = tokens.PeekValue();
 			}
-
 			return expr;
 		}
 
-		private static readonly HashSet<string> NEGATE_OPS = new HashSet<string>("! -".Split(' '));
 		private static Expression ParseNegate(TokenStream tokens)
 		{
-
 			string next = tokens.PeekValue();
 			if (NEGATE_OPS.Contains(next))
 			{
 				Token negateOp = tokens.Pop();
 				Expression root = ParseNegate(tokens);
+				// TODO: just make a negation parse tree node
 				if (negateOp.Value == "!") return new BooleanNot(negateOp, root);
 				if (negateOp.Value == "-") return new NegativeSign(negateOp, root);
 				throw new Exception("This shouldn't happen.");
@@ -161,20 +149,13 @@ namespace Crayon
 		{
 			Expression expr = ParseIncrement(tokens);
 			string next = tokens.PeekValue();
-			if (next == "**")
+			while (next == "**")
 			{
-				List<Expression> expressions = new List<Expression>() { expr };
-				List<Token> ops = new List<Token>();
-				while (next == "**")
-				{
-					ops.Add(tokens.Pop());
-					expressions.Add(ParseIncrement(tokens));
-					next = tokens.PeekValue();
-				}
-
-				return new BinaryOpChain(expressions, ops);
+				Token op = tokens.Pop();
+				Expression right = ParseIncrement(tokens);
+				expr = new BinaryOpChain(expr, op, right);
+				next = tokens.PeekValue();
 			}
-
 			return expr;
 		}
 

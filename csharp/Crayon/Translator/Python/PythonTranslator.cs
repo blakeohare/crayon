@@ -6,14 +6,19 @@ namespace Crayon.Translator.Python
 {
 	internal class PythonTranslator : AbstractTranslator
 	{
-		public PythonTranslator(Parser parser, bool min, AbstractPlatformImplementation platform)
-			: base(parser, min, new PythonSystemFunctionTranslator(platform))
+		public PythonTranslator()
+			: base()
 		{ }
+
+		protected override void TranslateStructDefinition(List<string> output, StructDefinition structDefinition)
+		{
+			throw new Exception("This should have been resolved away.");
+		}
 
 		protected override void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement)
 		{
 			SwitchStatementContinuousSafe.SearchTree tree = switchStatement.GenerateSearchTree();
-			int switchId = this.Parser.GetNextInt();
+			int switchId = this.GetNextInt();
 			string varName = "switch_key_" + switchId;
 			output.Add(this.CurrentTabIndention);
 			output.Add(varName);
@@ -47,7 +52,7 @@ namespace Crayon.Translator.Python
 		protected override void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement)
 		{
 			string lookupName = switchStatement.LookupTableName;
-			string varName = "switch_key_" + this.Parser.GetNextInt();
+			string varName = "switch_key_" + this.GetNextInt();
 
 			if (switchStatement.UsesStrings)
 			{
@@ -171,7 +176,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
 		{
-			int switchId = this.Parser.GetNextInt();
+			int switchId = this.GetNextInt();
 
 			if (switchStatement.UsesStrings)
 			{
@@ -491,30 +496,9 @@ namespace Crayon.Translator.Python
 			this.CurrentIndention--;
 		}
 
-		protected override void TranslateBinaryOpChain(List<string> output, ParseTree.BinaryOpChain expr)
-		{
-			List<string> t = new List<string>();
-			for (int i = 0; i < expr.Expressions.Length; ++i)
-			{
-				List<string> t2 = new List<string>();
-				TranslateExpression(t2, expr.Expressions[i]);
-				t.Add("(" + string.Join("", t2) + ")");
-			}
-
-			string finalOutput = t[0];
-			for (int i = 0; i < expr.Ops.Length; ++i)
-			{
-				finalOutput = "(" + finalOutput + ") " + expr.Ops[i].Value + " " + t[i + 1];
-			}
-
-			output.Add("(");
-			output.Add(finalOutput);
-			output.Add(")");
-		}
-
 		protected override void TranslateVariable(List<string> output, ParseTree.Variable expr)
 		{
-			output.Add(this.Parser.GetVariableName(expr.Name));
+			output.Add(this.GetVariableName(expr.Name));
 		}
 
 		protected override string TabString { get { return "\t"; } }

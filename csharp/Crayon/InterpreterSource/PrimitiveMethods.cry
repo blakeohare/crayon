@@ -1,0 +1,278 @@
+﻿
+function wrongArgCountError(name, expected, actual) {
+	if (expected == 0) {
+		output = name + " does not accept any arguments.";
+	} else if (expected == 1) {
+		output = name + " accepts exactly 1 argument.";
+	} else {
+		output = name + " requires " + expected + " arguments.";
+	}
+
+	output += " Found: " + actual;
+	return output;
+}
+
+function generatePrimitiveMethodLookupTable() {
+	return {
+		// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
+		Types.STRING + "contains": %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%,
+		Types.STRING + "endsWith": %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%,
+		Types.STRING + "lower": %%%PRIMITIVE_METHOD_STRING_LOWER%%%,
+		Types.STRING + "reverse": %%%PRIMITIVE_METHOD_STRING_REVERSE%%%,
+		Types.STRING + "replace": %%%PRIMITIVE_METHOD_STRING_REPLACE%%%,
+		Types.STRING + "split": %%%PRIMITIVE_METHOD_STRING_SPLIT%%%,
+		Types.STRING + "startsWith": %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%,
+		Types.STRING + "trim": %%%PRIMITIVE_METHOD_STRING_TRIM%%%,
+		Types.STRING + "upper": %%%PRIMITIVE_METHOD_STRING_UPPER%%%,
+
+		Types.LIST + "add": %%%PRIMITIVE_METHOD_LIST_ADD%%%,
+		Types.LIST + "clear": %%%PRIMITIVE_METHOD_LIST_CLEAR%%%,
+		Types.LIST + "contains": %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%,
+		Types.LIST + "insert": %%%PRIMITIVE_METHOD_LIST_INSERT%%%,
+		Types.LIST + "join": %%%PRIMITIVE_METHOD_LIST_JOIN%%%,
+		Types.LIST + "pop": %%%PRIMITIVE_METHOD_LIST_POP%%%,
+		Types.LIST + "remove": %%%PRIMITIVE_METHOD_LIST_REMOVE%%%,
+		Types.LIST + "reverse": %%%PRIMITIVE_METHOD_LIST_REVERSE%%%,
+		Types.LIST + "shuffle": %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%,
+
+		Types.DICTIONARY + "clear": %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%,
+		Types.DICTIONARY + "contains": %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%,
+		Types.DICTIONARY + "entries": %%%PRIMITIVE_METHOD_DICTIONARY_ENTRIES%%%,
+		Types.DICTIONARY + "get": %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%,
+		Types.DICTIONARY + "keys": %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%,
+		Types.DICTIONARY + "remove": %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%,
+		Types.DICTIONARY + "values": %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%,
+	};
+
+}
+
+function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, returnValueUsed) {
+	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
+	output = VALUE_NULL;
+	context = Value$wrappedContext.internalValue;
+	switch (methodId) {
+		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List add method", 1, $_list_length(funcArgs));
+			$_list_push(context, $_list_get(funcArgs, 0));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CLEAR%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List clear method", 0, $_list_length(funcArgs));
+			Value$wrappedContext.internalValue = [];
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List contains method", 1, $_list_length(funcArgs));
+			len = $_list_length(context);
+			target = $_list_get(funcArgs, 0);
+			output = VALUE_FALSE;
+			for (i = 0; i < len; i += 1) {
+				if (doEqualityComparisonAndReturnCode(target, $_list_get(context, i)) == 1) {
+					output = VALUE_TRUE;
+					i += len;
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_INSERT%%%:
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("List insert method", 2, $_list_length(funcArgs));
+			index = $_list_get(funcArgs, 0);
+			value = $_list_get(funcArgs, 1);
+			if (Value$index.type != Types.INTEGER) return "First argument of list.insert needs to be an integer.";
+			index = Value$index.internalValue;
+			if (index < 0 || index > $_list_length(context)) return "Index out of bounds.";
+			$_list_insert(context, Value$index.internalValue, value);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_JOIN%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List join method", 1, $_list_length(funcArgs));
+			sep = $_list_get(funcArgs, 0);
+			// TODO: make first argument optional
+			if (Value$sep.type != Types.STRING) return "Argument of list.join needs to be a string.";
+			sb = [];
+			sepstr = Value$sep.internalValue;
+			len = $_list_length(context);
+			for (i = 0; i < len; i += 1) {
+				$_list_push(sb, valueToString($_list_get(context, i)));
+			}
+			value = $_list_join(sb, sepstr);
+			output = new Value(Types.STRING, value);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_POP%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List pop method", 0, $_list_length(funcArgs));
+			if ($_list_length(context) == 0) return "Cannot pop from empty list.";
+			output = $_list_get(context, $_list_last_index(context));
+			$_list_pop(context);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REMOVE%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List remove method", 1, $_list_length(funcArgs));
+			wrappedIndex = $_list_get(funcArgs, 0);
+			if (Value$wrappedIndex.type != Types.INTEGER) return "First argument of list.remove needs to be an integer.";
+			index = Value$wrappedIndex.internalValue;
+			if (index < 0 || index >= $_list_length(context)) return "Index out of bounds.";
+			output = $_list_get(context, index);
+			$_list_remove_at(context, index);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REVERSE%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List reverse method", 0, $_list_length(funcArgs));
+			$_list_reverse_in_place(context);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List shuffle method", 0, $_list_length(funcArgs));
+			$_list_shuffle_in_place(context);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String split method", 1, $_list_length(funcArgs));
+			sep = $_list_get(funcArgs, 0);
+			if (Value$sep.type != Types.STRING) {
+				return "Split method requires a string. Found a " + typeToString(Value$sep.type) + " instead.";
+			}
+			rawList = $_string_split(context, Value$sep.internalValue);
+			wrappedList = [];
+			for (i = 0; i < $_list_length(rawList); i += 1) {
+				$_list_push(wrappedList, new Value(Types.STRING, $_list_get(rawList, i)));
+			}
+			output = new Value(Types.LIST, wrappedList);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String contains method", 1, $_list_length(funcArgs));
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String contains method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_contains(context, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String endsWith method", 1, $_list_length(funcArgs));
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String endsWith method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_endswith(context, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("String startsWith method", 1, $_list_length(funcArgs));
+			item = $_list_get(funcArgs, 0);
+			if (Value$item.type != Types.STRING) {
+				return "String startsWith method requires a string. Found a " + typeToString(Value$item.type) + " instead.";
+			}
+			if ($_string_startswith(context, Value$item.internalValue)) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_UPPER%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String upper method", 0, $_list_length(funcArgs));
+			t = $_string_upper(context);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String lower method", 0, $_list_length(funcArgs));
+			t = $_string_lower(context);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_TRIM%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String trim method", 0, $_list_length(funcArgs));
+			t = $_string_trim(context);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_REVERSE%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String reverse method", 0, $_list_length(funcArgs));
+			t = $_string_reverse(context);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_REPLACE%%%:
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("String replace method", 2, $_list_length(funcArgs));
+			a = $_list_get(funcArgs, 0);
+			b = $_list_get(funcArgs, 1);
+
+			if (Value$a.type != Types.STRING || Value$b.type != Types.STRING) {
+				return "string replace must take in two strings as arguments.";
+			}
+
+			t = $_string_replace(context, Value$a.internalValue, Value$b.internalValue);
+			output = new Value(Types.STRING, t);
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary clear method", 0, $_list_length(funcArgs));
+			DictImpl$context.keyLookup = {};
+			DictImpl$context.valueLookup = {};
+			DictImpl$context.size = 0;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%:
+			if ($_list_length(funcArgs) != 2) return wrongArgCountError("Dictionary get method", 2, $_list_length(funcArgs));
+			key = $_list_get(funcArgs, 0);
+			defaultValue = $_list_get(funcArgs, 1);
+			if (DictImpl$context.keyType != Value$key.type) {
+				output = defaultValue;
+			} else {
+				valueLookup = DictImpl$context.valueLookup;
+				keyValue = Value$key.internalValue;
+				if (DictImpl$context.keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
+				value = $_dictionary_get(valueLookup, keyValue, null);
+				if (value == null) {
+					output = defaultValue;
+				} else {
+					output = value;
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("Dictionary remove method", 1, $_list_length(funcArgs));
+			key = $_list_get(funcArgs, 0);
+			keyType = Value$key.type;
+			if (DictImpl$context.keyType != keyType) return "Key not found.";
+			keyLookup = DictImpl$context.keyLookup;
+			keyValue = Value$key.internalValue;
+			if (keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
+			if ($_dictionary_get(keyLookup, keyValue, null) == null) return "Key not found.";
+			$_dictionary_remove(keyLookup, keyValue);
+			$_dictionary_remove(DictImpl$context.valueLookup, keyValue);
+			DictImpl$context.size -= 1;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
+			if ($_list_length(funcArgs) != 1) return wrongArgCountError("Dictionary contains method", 1, $_list_length(funcArgs));
+			keys = DictImpl$context.keyLookup;
+			arg = $_list_get(funcArgs, 0);
+			argType = Value$arg.type;
+			if (argType == Types.INTEGER || argType == Types.STRING) {
+				key = Value$arg.internalValue;
+			} else if (argType == Types.INSTANCE) {
+				t = Value$arg.internalValue;
+				key = $_list_get(t, 2);
+			}
+
+			if (DictImpl$context.keyType != argType) {
+				output = VALUE_FALSE;
+			} else {
+				t = $_dictionary_get(keys, key, null);
+				if (t == null) {
+					output = VALUE_FALSE;
+				} else {
+					output = VALUE_TRUE;
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary values method", 0, $_list_length(funcArgs));
+			values = $_dictionary_get_values(DictImpl$context.valueLookup);
+			output = new Value(Types.LIST, values);
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%:
+			if ($_list_length(funcArgs) != 0) return wrongArgCountError("Dictionary keys method", 0, $_list_length(funcArgs));
+			values = $_dictionary_get_values(DictImpl$context.keyLookup);
+			output = new Value(Types.LIST, values);
+			break;
+		default:
+			return "Unknown system method";
+	}
+	if (returnValueUsed) {
+		$_list_push(valueStack, output);
+	}
+	return null;
+}

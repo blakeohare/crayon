@@ -90,10 +90,11 @@ namespace Crayon.ParseTree
 		}
 
 		public string LookupTableName { get; private set; }
+		public string SwitchKeyName { get; private set; }
 
 		public override IList<Executable> Resolve(Parser parser)
 		{
-			bool removeBreaks = parser.Mode == PlatformTarget.Python_PyGame;
+			bool removeBreaks = parser.RemoveBreaksFromSwitch;
 			
 			if (removeBreaks)
 			{
@@ -102,7 +103,12 @@ namespace Crayon.ParseTree
 					this.codeMapping[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, this.codeMapping[key]);
 				}
 
-				this.LookupTableName = "switch_lookup_" + parser.GetNextInt();
+				if (parser.NullablePlatform != null)
+				{
+					int num = parser.NullablePlatform.Translator.GetNextInt();
+					this.LookupTableName = "switch_lookup_" + num;
+					this.SwitchKeyName = "switch_key_" + num;
+				}
 
 				if (this.UsesStrings)
 				{

@@ -12,7 +12,7 @@ namespace Crayon
 			{ "TYPE_NATIVE_OBJECT_IMAGE", 2 },
 		};
 
-		public static string DoReplacements(string text, PlatformTarget platform)
+		public static string DoReplacements(string text)
 		{
 			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
 			{

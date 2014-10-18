@@ -23,8 +23,10 @@ namespace Crayon.ParseTree
 
 		public override IList<Executable> Resolve(Parser parser)
 		{
-			bool removeBreaks = parser.Mode == PlatformTarget.Python_PyGame;
-			foreach (int key in codeByCondition.Keys.ToArray()) // ToArray is used otherwise C# considers this modifying the enumerable collection
+			bool removeBreaks = parser.RemoveBreaksFromSwitch;
+
+			int[] keys = codeByCondition.Keys.ToArray(); // iterate over a copy of keys so you don't modify the enumerable while iterating.
+			foreach (int key in keys)
 			{
 				codeByCondition[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, codeByCondition[key]);
 			}

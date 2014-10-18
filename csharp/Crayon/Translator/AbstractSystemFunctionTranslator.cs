@@ -5,20 +5,16 @@ namespace Crayon.Translator
 {
 	internal abstract class AbstractSystemFunctionTranslator
 	{
-		public AbstractSystemFunctionTranslator(AbstractPlatformImplementation platform)
-		{
-			this.Platform = platform;
-		}
+		public AbstractSystemFunctionTranslator() { }
 
-		internal AbstractPlatformImplementation Platform { get; private set; }
+		public AbstractPlatform Platform { get; set; }
+		public AbstractTranslator Translator { get; set; }
 
-		internal AbstractTranslator Translator { get; set; }
-
-		public bool IsMin { get { return this.Translator.IsMin; } }
-
+		protected bool IsMin { get { return this.Platform.IsMin; } }
+		
 		protected string Shorten(string value)
 		{
-			if (this.IsMin) return value.Replace(" ", "");
+			if (this.Platform.IsMin) return value.Replace(" ", "");
 			return value;
 		}
 
@@ -40,6 +36,8 @@ namespace Crayon.Translator
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
+				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
+				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -58,6 +56,7 @@ namespace Crayon.Translator
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
+				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
@@ -92,6 +91,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dict, Expression key, Expression value);
 		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
+		protected abstract void TranslateGetProgramData(List<string> output);
+		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
 		protected abstract void TranslateInsertFrameworkCode(string tab, List<string> output, string id);
 		protected abstract void TranslateInt(List<string> output, Expression value);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
@@ -111,6 +112,7 @@ namespace Crayon.Translator
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
+		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
 		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);

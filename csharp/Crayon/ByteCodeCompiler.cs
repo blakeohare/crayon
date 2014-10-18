@@ -7,9 +7,7 @@ namespace Crayon
 {
 	internal class ByteCodeCompiler
 	{
-		public ByteBuffer ByteBuffer { get; private set; }
-
-		public void GenerateByteCode(Parser parser, IList<Executable> lines)
+		public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines)
 		{
 			ByteBuffer userCode = new ByteBuffer();
 
@@ -35,7 +33,7 @@ namespace Crayon
 			output.Concat(header);
 			output.Concat(userCode);
 
-			this.ByteBuffer = output;
+			return output;
 		}
 
 		private ByteBuffer BuildSwitchStatementTables(Parser parser)
@@ -755,42 +753,31 @@ namespace Crayon
 		{
 			if (!outputUsed) throw new ParserException(opChain.FirstToken, "This expression isn't valid here.");
 
-			this.CompileExpressionList(parser, buffer, new Expression[] { opChain.Expressions[0], opChain.Expressions[1] }, true);
+			this.CompileExpressionList(parser, buffer, new Expression[] { opChain.Left, opChain.Right }, true);
 
-			bool first = true;
-
-			for (int i = 0; i < opChain.Ops.Length; ++i)
+			Token opToken = opChain.Op;
+			switch (opToken.Value)
 			{
-				if (!first)
-				{
-					this.CompileExpression(parser, buffer, opChain.Expressions[i + 1], true);
-				}
-				else
-				{
-					first = false;
-				}
-
-				Token opToken = opChain.Ops[i];
-				switch (opToken.Value)
-				{
-					case "+": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.ADDITION); break;
-					case "<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN); break;
-					case "==": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EQUALS); break;
-					case "<=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN_OR_EQUAL); break;
-					case ">": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN); break;
-					case ">=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN_OR_EQUAL); break;
-					case "-": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.SUBTRACTION); break;
-					case "*": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MULTIPLICATION); break;
-					case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
-					case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
-					case "!=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.NOT_EQUALS); break;
-					case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
-					case "|": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_OR); break;
-					case "&": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_AND); break;
-					case "^": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_XOR); break;
-					default: throw new NotImplementedException("Binary op: " + opChain.Ops[i].Value);
-				}
+				case "+": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.ADDITION); break;
+				case "<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN); break;
+				case "==": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EQUALS); break;
+				case "<=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN_OR_EQUAL); break;
+				case ">": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN); break;
+				case ">=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN_OR_EQUAL); break;
+				case "-": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.SUBTRACTION); break;
+				case "*": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MULTIPLICATION); break;
+				case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
+				case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
+				case "!=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.NOT_EQUALS); break;
+				case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
+				case "|": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_OR); break;
+				case "&": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_AND); break;
+				case "^": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_XOR); break;
+				case "<<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_LEFT); break;
+				case ">>": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_RIGHT); break;
+				default: throw new NotImplementedException("Binary op: " + opChain.Op.Value);
 			}
+
 			if (!outputUsed)
 			{
 				buffer.Add(null, OpCode.POP);

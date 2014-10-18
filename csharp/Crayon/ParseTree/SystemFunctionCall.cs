@@ -14,7 +14,7 @@
 
 		public override Expression Resolve(Parser parser)
 		{
-			if (parser.IsMin && this.Name == "$_comment")
+			if (this.Name == "$_comment" && !parser.PreserveTranslationComments)
 			{
 				return null;
 			}

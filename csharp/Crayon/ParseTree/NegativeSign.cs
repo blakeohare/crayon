@@ -12,9 +12,6 @@
 
 		public override Expression Resolve(Parser parser)
 		{
-			if (parser.Mode == PlatformTarget.ByteCode)
-			{
-			}
 			this.Root = this.Root.Resolve(parser);
 			if (this.Root is IntegerConstant)
 			{

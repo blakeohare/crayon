@@ -9,19 +9,29 @@
 			string outputFolder = @"C:\things\projects\Crayon\Demos\Volcano\output";
 			string rawPlatform = "js";
 			bool minified = false;
+			string jsFolderRoot = "";
+
 #else
-			if (args.Length != 3)
+			if (args.Length != 3 && args.Length != 4)
 			{
 				System.Console.WriteLine("Usage:");
-				System.Console.WriteLine("  C:\\Things> crayon.exe sourcefolder outputfolder platform");
+				System.Console.WriteLine("  C:\\Things> crayon.exe sourcefolder outputfolder platform [jsfolderroot]");
 				System.Console.WriteLine("Platforms:");
 				foreach (string line in PLATFORM_USAGE)
 				{
 					System.Console.WriteLine(line);
+					return;
 				}
 			}
 			string sourceFolder = args[0];
 			string outputFolder = args[1];
+			string rawPlatform = args[2].ToLowerInvariant();
+			bool minified = false;
+			string jsFolderRoot = "";
+			if (args.Length == 4)
+			{
+				jsFolderRoot = args[3];
+			}
 #endif
 
 			if (!System.IO.Directory.Exists(sourceFolder))
@@ -36,11 +46,12 @@
 				return;
 			}
 
-			PlatformTarget platform;
+			AbstractPlatform platform;
 			switch (rawPlatform.ToLowerInvariant())
 			{
-				case "js": platform = PlatformTarget.JavaScript_Browser; break;
-				case "py": platform = PlatformTarget.Python_PyGame; break;
+				//case "cswin": platform = new Crayon.Translator.CSharp.CSharpPlatform(); break;
+				case "js": platform = new Crayon.Translator.JavaScript.JavaScriptPlatform(minified, jsFolderRoot); break;
+				case "py": platform = new Crayon.Translator.Python.PythonPlatform(); break;
 				default:
 					System.Console.WriteLine("Platform must be one of the following:");
 					foreach (string line in PLATFORM_USAGE)
@@ -49,13 +60,14 @@
 					}
 					return;
 			}
-			Packager pkg = new Packager(platform, sourceFolder, outputFolder, minified);
-			pkg.Do();
+
+			platform.Compile(sourceFolder, outputFolder);
 		}
 
 		private static readonly string[] PLATFORM_USAGE = new string[] {
 			"  js - HTML/JavaScript",
 			"  py - Python (with PyGame)",
+			//"  cswin - C# (for Windows Client App)",
 		};
 	}
 }

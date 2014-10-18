@@ -47,14 +47,15 @@
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="ByteCodeCompiler.cs" />
     <Compile Include="ByteCodeEncoder.cs" />
-    <Compile Include="Compiler.cs" />
+    <Compile Include="CompileContext.cs" />
+    <Compile Include="InterpreterCompiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />
     <Compile Include="ExpressionParser.cs" />
+    <Compile Include="FileOutput.cs" />
     <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="OpCode.cs" />
-    <Compile Include="Packager.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="ParseTree\Assignment.cs" />
     <Compile Include="ParseTree\BinaryOpChain.cs" />
@@ -103,40 +104,62 @@
     <Compile Include="ParseTree\ThisKeyword.cs" />
     <Compile Include="ParseTree\Variable.cs" />
     <Compile Include="ParseTree\WhileLoop.cs" />
-    <Compile Include="PlatformTarget.cs" />
     <Compile Include="PrimitiveMethods.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Tokenizer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenStream.cs" />
-    <Compile Include="Translator\AbstractPlatformImplementation.cs" />
+    <Compile Include="AbstractPlatform.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
-    <Compile Include="Translator\JavaScript\Browser\BrowserImplementation.cs" />
+    <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
+    <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
-    <Compile Include="Translator\Python\PyGame\PyGameImplementation.cs" />
+    <Compile Include="Translator\Python\PythonPlatform.cs" />
     <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Python\PythonTranslator.cs" />
+    <Compile Include="Translator\CurlyBraceImplementation.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host.txt" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host_html.txt" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
-    <EmbeddedResource Include="Translator\Python\PyGame\PyGame.py" />
+    <EmbeddedResource Include="Translator\Python\PyGame\Header.py" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\Interpreter.cry" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFileHeader.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFileFooter.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ProgramCs.txt" />
+    <EmbeddedResource Include="Translator\Python\PyGame\Footer.py" />
+    <EmbeddedResource Include="Translator\CSharp\OpenTK\OpenTK.dll" />
+    <EmbeddedResource Include="InterpreterSource\ByteCodeLoader.cry" />
+    <EmbeddedResource Include="InterpreterSource\Interpreter.cry" />
+    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
+    <EmbeddedResource Include="InterpreterSource\Globals.cry" />
     <Content Include="Translator\OO_readme.txt" />
+    <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="SystemLib\Game.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InterpreterSource\BinaryOpsUtil.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InterpreterSource\Constants.cry" />
+    <EmbeddedResource Include="InterpreterSource\Structs.cry" />
+    <EmbeddedResource Include="InterpreterSource\ValueUtil.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

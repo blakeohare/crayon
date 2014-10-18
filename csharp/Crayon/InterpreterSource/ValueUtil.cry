@@ -1,0 +1,100 @@
+﻿
+function valueToString(value) {
+	type = Value$value.type;
+	value = Value$value.internalValue;
+	if (type == Types.NULL) return "null";
+	if (type == Types.BOOLEAN) {
+		if (value) return "true";
+		return "false";
+	}
+	if (type == Types.INTEGER || type == Types.FLOAT || type == Types.STRING) return $_string_cast_strong(value);
+	if (type == Types.LIST) {
+		// TODO: this will recurse infinitely if the list points to itself somehow.
+		output = "[";
+		for (i = 0; i < $_list_length(value); i += 1) {
+			if (i > 0) output += ", ";
+			output += valueToString($_list_get(value, i));
+		}
+		output += "]";
+		return output;
+	}
+	if (type == Types.INSTANCE) {
+		output = "INSTANCE: " + $_string_cast_strong(value);
+		return output;
+	}
+	return "TODO: toString for " + getTypeFromId(type);
+}
+
+function initialize_constant_values() {
+
+	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
+		$_list_push(INTEGERS_POS, new Value(Types.INTEGER, i));
+	}
+	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
+		$_list_push(INTEGERS_NEG, new Value(Types.INTEGER, -i));
+	}
+}
+
+function build_integer(value) {
+	if (value < 0) {
+		if (value > -INTEGER_NEGATIVE_CACHE) {
+			return INTEGERS_NEG[-value];
+		}
+	} else {
+		if (value < INTEGER_POSITIVE_CACHE) {
+			return INTEGERS_POS[value];
+		}
+	}
+	return new Value(Types.INTEGER, value);
+}
+
+function doEqualityComparisonAndReturnCode(a, b) {
+	leftType = Value$a.type;
+	rightType = Value$b.type;
+	if (leftType == rightType || 
+		(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
+		(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+		output = false;
+		left = Value$a.internalValue;
+		right = Value$b.internalValue;
+		if (leftType < Types.LIST) {
+			if (left == right) {
+				return 1;
+			}
+			return 0;
+		}
+
+		if (leftType == Types.INSTANCE) {
+			if ($_list_get(left, 2) == $_list_get(right, 2)) {
+				return 1;
+			}
+			return 0;
+		}
+
+		// == is not defined for this type. If a user needs to compare two things of one of the remaining types,
+		// they are probably writing bad code.
+		return 2;
+	}
+	return 0;
+}
+
+function buildLiteral(type, value, floatTable, stringTable) {
+	if (type == Types.NULL) return VALUE_NULL;
+	if (type == Types.INTEGER) return build_integer(value);
+	if (type == Types.FLOAT) return $_list_get(floatTable, value);
+	if (type == Types.STRING) return $_list_get(stringTable, value);
+	if (type == Types.BOOLEAN && value == 1) return VALUE_TRUE;
+	if (type == Types.BOOLEAN && value == 0) return VALUE_FALSE;
+	return null;
+}
+
+function copyDictionary(dict) {
+	key_list = $_dictionary_get_keys(dict);
+	output = {};
+	for (i = 0; i < $_list_length(key_list); i += 1) {
+		key = $_list_get(key_list, i);
+		value = $_dictionary_get(dict, key, 0);
+		$_dictionary_set(output, key, value);
+	}
+	return output;
+}

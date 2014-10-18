@@ -1,0 +1,12 @@
+﻿using System;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal class Program
+	{
+		public static void main(string[] args)
+		{
+			System.Console.WriteLine("Hello, World!");
+		}
+	}
+}

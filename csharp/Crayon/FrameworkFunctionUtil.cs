@@ -9,6 +9,18 @@ namespace Crayon
 	internal static class FrameworkFunctionUtil
 	{
 		private static readonly HashSet<string> THESE_MAKE_BOOLEANS = new HashSet<string>("== != >= <= < >".Split(' '));
+		
+		public static readonly Dictionary<string, FrameworkFunction> FF_LOOKUP;
+		static FrameworkFunctionUtil()
+		{
+			Dictionary<string, FrameworkFunction> ffLookup = new Dictionary<string, FrameworkFunction>();
+			foreach (object name in Enum.GetValues(typeof(FrameworkFunction)))
+			{
+				FrameworkFunction ff = (FrameworkFunction)name;
+				ffLookup[ff.ToString().ToLowerInvariant()] = ff;
+			}
+			FF_LOOKUP = ffLookup;
+		}
 
 		// TODO: move this in the resolver
 		public static void VerifyArgsAsMuchAsPossible(Token throwToken, FrameworkFunction frameworkFunction, Expression[] args)
@@ -187,8 +199,7 @@ namespace Crayon
 					else if (expr is BinaryOpChain)
 					{
 						BinaryOpChain chain = (BinaryOpChain)expr;
-						string op = chain.Ops[0].Value;
-						if (chain.Ops.Length == 1 && THESE_MAKE_BOOLEANS.Contains(op))
+						if (THESE_MAKE_BOOLEANS.Contains(chain.Op.Value))
 						{
 							types.Add(Types.BOOLEAN);
 						}

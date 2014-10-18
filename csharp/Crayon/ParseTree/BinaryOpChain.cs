@@ -6,21 +6,44 @@ namespace Crayon.ParseTree
 {
 	internal class BinaryOpChain : Expression
 	{
-		public Expression[] Expressions { get; private set; }
-		public Token[] Ops { get; private set; }
+		public Expression Left { get; private set; }
+		public Expression Right { get; private set; }
+		public Token Op { get; private set; }
 
 		public BinaryOpChain(Expression left, Token op, Expression right)
 			: base(left.FirstToken)
 		{
-			this.Expressions = new Expression[] { left, right };
-			this.Ops = new Token[] { op };
+			this.Left = left;
+			this.Right = right;
+			this.Op = op;
 		}
 
-		public BinaryOpChain(IList<Expression> expressions, IList<Token> ops)
-			: base(expressions[0].FirstToken)
+		public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops)
 		{
-			this.Expressions = expressions.ToArray();
-			this.Ops = ops.ToArray();
+			// TODO: don't pop from the front, you fool. that's silly slow. 
+			List<Expression> mutableList = new List<Expression>(expressions);
+			List<Token> mutableOps = new List<Token>(ops);
+			Expression left = mutableList[0];
+			Expression right = mutableList[1];
+			
+			// Pop! Pop! \o/
+			mutableList.RemoveAt(0);
+			mutableList.RemoveAt(0);
+
+			Token op = mutableOps[0];
+			mutableOps.RemoveAt(0);
+
+			BinaryOpChain boc = new BinaryOpChain(left, op, right);
+			while (mutableList.Count > 0)
+			{
+				right = mutableList[0];
+				mutableList.RemoveAt(0);
+				op = mutableOps[0];
+				mutableOps.RemoveAt(0);
+				boc = new BinaryOpChain(boc, op, right);
+			}
+
+			return boc;
 		}
 
 		private string GetType(Expression expr)
@@ -35,53 +58,21 @@ namespace Crayon.ParseTree
 
 		public override Expression Resolve(Parser parser)
 		{
-			for (int i = 0; i < this.Expressions.Length; ++i)
+			if (this.Left.Resolve(parser) == null)
 			{
-				this.Expressions[i] = this.Expressions[i].Resolve(parser);
+
 			}
-
-			// Note: only consolidate starting from the left because things like a + 1 + 1 can't be converted to a + 2 because a could be a string.
-
-			bool keepGoing = true;
-			while (keepGoing && this.Expressions.Length > 1)
-			{
-				string leftType = this.GetType(this.Expressions[0]);
-				string rightType = this.GetType(this.Expressions[1]);
-				string op = this.Ops[0].Value;
-
-				string expr = leftType + op + rightType;
-
-				// null, bool, int, float, string, other
-
-				Expression newExpression = this.TryConsolidate(this.FirstToken, leftType, this.Ops[0], rightType, this.Expressions[0], this.Expressions[1]);
-				if (newExpression != null)
-				{
-					this.Expressions[1] = newExpression;
-					List<Expression> expressions = new List<Expression>(this.Expressions);
-					expressions.RemoveAt(0);
-					this.Expressions = expressions.ToArray();
-					List<Token> ops = new List<Token>(this.Ops);
-					ops.RemoveAt(0);
-					this.Ops = ops.ToArray();
-				}
-				else
-				{
-					keepGoing = false;
-				}
-			}
-
-			if (this.Expressions.Length == 1)
-			{
-				return this.Expressions[0];
-			}
-
-			return this;
+			this.Left = this.Left.Resolve(parser);
+			this.Right = this.Right.Resolve(parser);
+			string leftType = this.GetType(this.Left);
+			string rightType = this.GetType(this.Right);
+			return this.TryConsolidate(this.Left.FirstToken, leftType, this.Op, rightType, this.Left, this.Right);
 		}
 
 		private Expression TryConsolidate(Token firstToken, string leftType, Token opToken, string rightType, Expression left, Expression right)
 		{
 			// eliminate all non constants
-			if (leftType == "other" || rightType == "other") return null;
+			if (leftType == "other" || rightType == "other") return this;
 			Token tk = firstToken;
 
 			int leftInt, rightInt;
@@ -196,12 +187,11 @@ namespace Crayon.ParseTree
 						return MakeString(tk, output);
 					}
 
-					return null;
+					return this;
 
 				default:
 					throw new ParserException(opToken, "This operator is invalid for types: " + leftType + ", " + rightType + ".");
 			}
-
 		}
 
 		private void CheckZero(Expression expr)

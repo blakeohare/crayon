@@ -6,59 +6,147 @@ namespace Crayon.Translator
 {
 	internal abstract class AbstractTranslator
 	{
-		public bool IsMin { get; private set; }
-		public PlatformTarget Mode { get; private set; }
-		public Parser Parser { get; private set; }
-		private AbstractSystemFunctionTranslator systemFunctionTranslator;
+		public AbstractPlatform Platform { get; set; }
+		protected bool IsMin { get { return this.Platform.IsMin; } }
 
-		protected string NL { get { return this.IsMin ? "" : "\r\n"; } }
-		protected string Shorten(string value)
+		public string NL { get { return this.IsMin ? "" : "\r\n"; } }
+		public string Shorten(string value)
 		{
 			return this.IsMin ? value.Replace(" ", "") : value;
 		}
 
-		public AbstractTranslator(Parser parser, bool min, AbstractSystemFunctionTranslator systemFunctionTranslator)
+		public AbstractTranslator()
 		{
-			this.Parser = parser;
-			this.Mode = parser.Mode;
-			this.IsMin = min;
 			this.CurrentIndention = 0;
-			this.systemFunctionTranslator = systemFunctionTranslator;
-			this.systemFunctionTranslator.Translator = this;
 		}
 
-		protected abstract void TranslateIfStatement(List<string> output, IfStatement ifStatement);
+		public string Translate(Executable[] code)
+		{
+			List<string> output = new List<string>();
+			this.Translate(output, code);
+			return string.Join("", output);
+		}
+
+		public string GetVariableName(string originalName)
+		{
+			return "v_" + originalName;
+		}
+
+		private int intCounter = 0;
+		public int GetNextInt()
+		{
+			return ++intCounter;
+		}
+
+		public void TranslateGlobals(List<string> output, Dictionary<string, Executable[]> code)
+		{
+			this.Translate(output, code["Globals"]);
+		}
+
+		public void TranslateStructs(List<string> output, Dictionary<string, Executable[]> code)
+		{
+			this.Translate(output, code["Structs"]);
+		}
+
+		public void TranslateSwitchLookups(List<string> output, Dictionary<string, Executable[]> code)
+		{
+			this.Translate(output, code["SwitchLookups"]);
+		}
+
+		public void TranslateFunctions(List<string> output, Dictionary<string, Executable[]> code)
+		{
+			foreach (string file in new string[] {
+				"BinaryOpsUtil",
+				"ByteCodeLoader",
+				"Interpreter",
+				"PrimitiveMethods",
+				"Runner",
+				"TypesUtil",
+				"ValueUtil",
+			})
+			{
+				this.Translate(output, code[file]);
+			}
+		}
+
+		protected abstract void TranslateAssignment(List<string> output, Assignment assignment);
+		protected abstract void TranslateBreakStatement(List<string> output, BreakStatement breakStatement);
+		protected abstract void TranslateExpressionAsExecutable(List<string> output, ExpressionAsExecutable exprAsExec);
 		protected abstract void TranslateForLoop(List<string> output, ForLoop forLoop);
 		protected abstract void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef);
-		protected abstract void TranslateAssignment(List<string> output, Assignment assignment);
-		protected abstract void TranslateExpressionAsExecutable(List<string> output, ExpressionAsExecutable exprAsExec);
-		protected abstract void TranslateWhileLoop(List<string> output, WhileLoop whileLoop);
-		protected abstract void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement);
-		protected abstract void TranslateBreakStatement(List<string> output, BreakStatement breakStatement);
+		protected abstract void TranslateIfStatement(List<string> output, IfStatement ifStatement);
 		protected abstract void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement);
+		protected abstract void TranslateStructDefinition(List<string> output, StructDefinition structDefinition);
+		protected abstract void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement);
 		protected abstract void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement);
 		protected abstract void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement);
+		protected abstract void TranslateWhileLoop(List<string> output, WhileLoop whileLoop);
 
-		protected abstract void TranslateBinaryOpChain(List<string> output, BinaryOpChain expr);
-		protected abstract void TranslateVariable(List<string> output, Variable expr);
-		protected abstract void TranslateStructInstance(List<string> output, StructInstance structInstance);
-		protected abstract void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant);
-		protected abstract void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef);
-		protected abstract void TranslateListDefinition(List<string> output, ListDefinition listDef);
-		protected abstract void TranslateNullConstant(List<string> output, NullConstant nullConstant);
-		protected abstract void TranslateFunctionCall(List<string> output, FunctionCall functionCall);
-		protected abstract void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex);
-		protected abstract void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant);
-		protected abstract void TranslateDotStep(List<string> output, DotStep dotStep);
-		protected abstract void TranslateStringConstant(List<string> output, StringConstant stringConstant);
-		protected abstract void TranslateNegativeSign(List<string> output, NegativeSign negativeSign);
 		protected abstract void TranslateBooleanCombination(List<string> output, BooleanCombination booleanCombination);
+		protected abstract void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant);
 		protected abstract void TranslateBooleanNot(List<string> output, BooleanNot booleanNot);
+		protected abstract void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex);
+		protected abstract void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef);
+		protected abstract void TranslateDotStep(List<string> output, DotStep dotStep);
 		protected abstract void TranslateFloatConstant(List<string> output, FloatConstant floatConstant);
+		protected abstract void TranslateFunctionCall(List<string> output, FunctionCall functionCall);
+		protected abstract void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant);
+		protected abstract void TranslateListDefinition(List<string> output, ListDefinition listDef);
+		protected abstract void TranslateNegativeSign(List<string> output, NegativeSign negativeSign);
+		protected abstract void TranslateNullConstant(List<string> output, NullConstant nullConstant);
+		protected abstract void TranslateStringConstant(List<string> output, StringConstant stringConstant);
+		protected abstract void TranslateStructInstance(List<string> output, StructInstance structInstance);
+		protected abstract void TranslateVariable(List<string> output, Variable expr);
+
+		protected void TranslateBinaryOpChain(List<string> output, BinaryOpChain binaryOp)
+		{
+			// TODO: something about the parenthesis epidemic
+			switch (binaryOp.Op.Value)
+			{
+				case "+":
+				case "-":
+				case "*":
+				case "%":
+				case "<<":
+				case ">>":
+				case "<":
+				case ">":
+				case "==":
+				case "!=":
+				case "<=":
+				case ">=":
+				case "&":
+				case "|":
+				case "^":
+					this.TranslateDefaultBinaryOp(output, binaryOp);
+					break;
+
+				case "**":
+					throw new ParserException(binaryOp.Op, "Use a framework function instead to indicate whether you want a float or int output.");
+
+				case "/":
+					throw new ParserException(binaryOp.Op, "Due to varying behavior of / on different languages, please use a framework function instead.");
+
+				default:
+					throw new ParserException(binaryOp.Op, "How did this happen?");
+			}
+		}
+
+		private void TranslateDefaultBinaryOp(List<string> output, BinaryOpChain binOp)
+		{
+			output.Add("(");
+			this.TranslateExpression(output, binOp.Left);
+			output.Add(this.Shorten(" "));
+			output.Add(binOp.Op.Value);
+			output.Add(this.Shorten(" "));
+			this.TranslateExpression(output, binOp.Right);
+			output.Add(")");
+		}
+
 
 		private void TranslateSystemFunctionCall(List<string> output, SystemFunctionCall systemFunctionCall)
 		{
-			this.systemFunctionTranslator.Translate(this.CurrentTabIndention, output, systemFunctionCall);
+			this.Platform.SystemFunctionTranslator.Translate(this.CurrentTabIndention, output, systemFunctionCall);
 		}
 
 		private void TranslateFunctionDefinitionWrapped(List<string> output, FunctionDefinition functionDef)
@@ -94,22 +182,6 @@ namespace Crayon.Translator
 
 		private string tabIndention = "";
 		public string CurrentTabIndention { get { return (this.IsMin && !(this is Python.PythonTranslator)) ? "" : this.tabIndention; } }
-
-		// TODO: Nope. This works for JS and PY but will fail miserable on more structured programming languages that don't just allow you to
-		// stick arbitrary code at the front of a file.
-		public string DoTranslationOfInterpreterClassWithEmbeddedByteCode(Parser parser, Executable[] finalCodeBase)
-		{
-			string prefix = this.systemFunctionTranslator.Platform.SerializeBoilerPlates(parser);
-
-			return BeginTranslation(prefix, finalCodeBase);
-		}
-
-		private string BeginTranslation(string prefix, Executable[] code)
-		{
-			List<string> output = new List<string>() { prefix, "\r\n" };
-			this.Translate(output, code);
-			return string.Join("", output);
-		}
 
 		public void Translate(List<string> output, Executable[] lines)
 		{

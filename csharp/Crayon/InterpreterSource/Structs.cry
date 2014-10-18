@@ -1,0 +1,57 @@
+﻿struct Code {
+	ops,
+	args,
+	stringArgs
+}
+
+// Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
+// Dictionaries can hold any of these, but only hold one type at a time
+struct DictImpl {
+	keyLookup,
+	valueLookup,
+	size,
+	keyType
+}
+
+struct ProgramData {
+	stackTop,
+	ops,
+	args,
+	stringArgs,
+	specialCache,
+	identifiers,
+	inv_identifiers,
+	literalTable,
+	classTable,
+	classMethods,
+	tickerRegistered,
+	tokenData,
+	userCodeStart,
+	globalVarScope,
+	sourceCode,
+	integerSwitchLookups,
+	stringSwitchLookups,
+	primitiveMethodLookup,
+	instanceCounter
+}
+
+struct StackFrame {
+	pc,
+	locals,
+	valueStack,
+	args,
+	previous,
+	returnValueUsed,
+	objectContext
+}
+
+struct Token {
+	lineIndex,
+	colIndex,
+	fileId
+}
+
+struct Value {
+	type,
+	internalValue
+}

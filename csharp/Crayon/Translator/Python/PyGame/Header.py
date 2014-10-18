@@ -115,3 +115,4 @@ def _pygame_flip_image(img, flipx, flipy):
 	output = pygame.transform.flip(image, flipx == True, flipy == True)
 	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)]
 
+program_data = [None]

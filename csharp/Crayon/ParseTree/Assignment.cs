@@ -24,10 +24,6 @@ namespace Crayon.ParseTree
 
 			if (this.Target is Variable)
 			{
-				if (parser.Mode == PlatformTarget.ByteCode)
-				{
-
-				}
 				this.Target = this.Target.Resolve(parser);
 			}
 			else if (this.Target is BracketIndex)

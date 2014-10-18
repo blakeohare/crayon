@@ -5,8 +5,8 @@ namespace Crayon.Translator.JavaScript
 {
 	internal class JavaScriptSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
-		public JavaScriptSystemFunctionTranslator(AbstractPlatformImplementation platform)
-			: base(platform)
+		public JavaScriptSystemFunctionTranslator()
+			: base()
 		{ }
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -90,6 +90,18 @@ namespace Crayon.Translator.JavaScript
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, powerNum);
 			output.Add(")");
+		}
+
+		protected override void TranslateGetProgramData(List<string> output)
+		{
+			output.Add("R.ProgramData");
+		}
+
+		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		{
+			output.Add("\"");
+			output.Add(theString);
+			output.Add("\"");
 		}
 
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
@@ -323,6 +335,12 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("R.endFrame();");
 			output.Add("window.setTimeout(v_runTick, R.computeDelayMillis())");
+		}
+
+		protected override void TranslateSetProgramData(List<string> output, ParseTree.Expression programData)
+		{
+			output.Add("R.ProgramData = ");
+			this.Translator.TranslateExpression(output, programData);
 		}
 
 		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)

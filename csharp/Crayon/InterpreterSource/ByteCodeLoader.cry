@@ -1,0 +1,136 @@
+﻿
+function generateSourceFiles() {
+	p = $_get_program_data();
+	return ProgramData$p.sourceCode;
+}
+
+function read_till(index, raw, length, char) {
+	output = [];
+	ctn = true;
+	while (ctn) {
+		c = $_string_char_at(raw, index[0]);
+		if (c == char) {
+			ctn = false;
+		} else {
+			$_list_push(output, c);
+		}
+		index[0] += 1;
+	}
+
+	return $_list_join(output, '');
+}
+
+alpha_nums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+function read_integer(pindex, raw, length) {
+	c = raw[pindex[0]];
+	pindex[0] += 1;
+	if (c == '%') {
+		value = read_till(pindex, raw, length, '%');
+		num = $_string_parse_int(value);
+	} else if (c == '@') {
+		num = read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+	} else if (c == '#') {
+		num = read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+		num *= 62;
+		num += read_integer(pindex, raw, length);
+	} else if (c == '^') {
+		num = -1 * read_integer(pindex, raw, length);
+	} else {
+		num = $_string_index_of(alpha_nums, c);
+		if (num == -1) {
+			// TODO: assert
+		}
+	}
+	return num;
+}
+
+function read_string(pindex, raw, length) {
+	output = [];
+	cont = true;
+	while (cont) {
+		c = $_string_char_at(raw, $_list_get(pindex, 0));
+		$_list_set(pindex, 0, $_list_get(pindex, 0) + 1);
+		if (c == '@') {
+			repeat = read_integer(pindex, raw, length);
+			last = $_list_get(output, $_list_length(output) - 1);
+			while (repeat > 0) {
+				$_list_push(output, last);
+				repeat -= 1;
+			}
+		} else if (c == '~') {
+			d1 = read_integer(pindex, raw, length);
+			d2 = read_integer(pindex, raw, length);
+			charcode = d1 * 62 + d2;
+			$_list_push(output, $_string_from_code(charcode));
+		} else if (c == '`') {
+			d1 = read_integer(pindex, raw, length);
+			d2 = read_integer(pindex, raw, length);
+			d3 = read_integer(pindex, raw, length);
+			d4 = read_integer(pindex, raw, length);
+			charcode = ((d1 * 62 + d2) * 62 + d3) * 62 + d4;
+			$_list_push(output, $_string_from_code(charcode));
+		} else if (c == '%') {
+			cont = false;
+		} else {
+			$_list_push(output, c);
+		}
+	}
+	return $_list_join(output, '');
+}
+
+function loadByteCode() {
+	raw = $_get_raw_byte_code_string();
+
+	index = [0];
+	length = $_string_length(raw);
+
+	header = read_till(index, raw, length, '@');
+	if (header != 'CRAYON') {
+		// TODO: assert
+	}
+
+	opCount = read_integer(index, raw, length);
+
+	ops = [];
+	iargs = [];
+	sargs = [];
+	for (i = 0; i < opCount; i += 1) {
+		c = $_string_char_at(raw, index[0]);
+		index[0] += 1;
+		argc = 0;
+		stringPresent = true;
+		if (c == '!') argc = 1;
+		else if (c == '&') argc = 2;
+		else if (c == '*') argc = 3;
+		else {
+			if (c != '~') {
+				stringPresent = false;
+				$_list_set(index, 0, $_list_get(index, 0) - 1);
+			}
+			argc = read_integer(index, raw, length);
+		}
+
+		iarglist = [];
+		for (j = 0; j < argc; j += 1) {
+			iarg = read_integer(index, raw, length);
+			if (j == 0) {
+				$_list_push(ops, iarg);
+			} else {
+				$_list_push(iarglist, iarg);
+			}
+		}
+		$_list_push(iargs, iarglist);
+		if (stringPresent) {
+			stringarg = read_string(index, raw, length);
+		} else {
+			stringarg = null;
+		}
+		$_list_push(sargs, stringarg);
+	}
+	
+	return new Code(ops, iargs, sargs);
+}

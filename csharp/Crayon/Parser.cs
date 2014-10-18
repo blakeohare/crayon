@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crayon.ParseTree;
 
 namespace Crayon
 {
 	internal class Parser
 	{
+		public Parser(AbstractPlatform platform)
+		{
+			this.NullablePlatform = platform;
+			this.IsTranslateMode = platform != null;
+			this.IsInClass = false;
+
+		}
+
 		private int fileIdCounter = 0;
-		private int intCounter = 0;
 
 		public bool IsInClass { get; set; }
 
-		// TODO: why isn't this static?
-		private Dictionary<string, FrameworkFunction> ffLookup = new Dictionary<string, FrameworkFunction>();
-
-		public int GetNextInt()
+		public bool PreserveTranslationComments
 		{
-			return ++intCounter;
+			get { return this.NullablePlatform == null ? false : !this.NullablePlatform.IsMin; }
 		}
+
+		public bool RemoveBreaksFromSwitch { get { return this.NullablePlatform == null ? false : this.NullablePlatform.RemoveBreaksFromSwitch; } }
 
 		public LiteralLookup LiteralLookup { get { return this.literalLookup; } }
 		private LiteralLookup literalLookup = new LiteralLookup();
@@ -91,9 +98,8 @@ namespace Crayon
 			this.stringSwitchLookups[name] = lookup;
 		}
 
-		internal PlatformTarget Mode { get; private set; }
-		public bool IsTranslateMode { get { return this.Mode != PlatformTarget.ByteCode; } }
-		public bool IsByteCodeMode { get { return this.Mode == PlatformTarget.ByteCode; } }
+		public bool IsTranslateMode { get; private set; }
+		public bool IsByteCodeMode { get { return !this.IsTranslateMode; } }
 
 		private Dictionary<string, EnumDefinition> enumDefinitions = new Dictionary<string, EnumDefinition>();
 		private Dictionary<string, StructDefinition> structDefinitions = new Dictionary<string, StructDefinition>();
@@ -145,32 +151,17 @@ namespace Crayon
 			return null;
 		}
 
-		private string folder;
-		public bool IsMin { get; private set; }
-
-		public Parser(PlatformTarget mode, string rootFolder, bool isMin)
-		{
-			this.Mode = mode;
-			this.folder = rootFolder;
-			this.IsInClass = false;
-			this.IsMin = isMin;
-
-			foreach (object name in Enum.GetValues(typeof(FrameworkFunction)))
-			{
-				FrameworkFunction ff = (FrameworkFunction)name;
-				this.ffLookup[ff.ToString().ToLowerInvariant()] = ff;
-			}
-		}
+		public AbstractPlatform NullablePlatform { get; private set; }
 
 		public FrameworkFunction GetFrameworkFunction(Token token, string name)
 		{
 			if ((name.StartsWith("_") && this.IsByteCodeMode) ||
-				!this.ffLookup.ContainsKey(name))
+				!FrameworkFunctionUtil.FF_LOOKUP.ContainsKey(name))
 			{
 				throw new ParserException(token, "Framework function by this name was not found.");
 			}
 
-			return this.ffLookup[name];
+			return FrameworkFunctionUtil.FF_LOOKUP[name];
 		}
 
 		public void AddEnumDefinition(EnumDefinition enumDefinition)
@@ -195,6 +186,11 @@ namespace Crayon
 			this.VerifyNameFree(structDefinition.Name);
 
 			this.structDefinitions.Add(structDefinition.Name.Value, structDefinition);
+		}
+
+		public StructDefinition[] GetStructDefinitions()
+		{
+			return this.structDefinitions.Values.ToArray();
 		}
 
 		public StructDefinition GetStructDefinition(string name)
@@ -349,11 +345,7 @@ namespace Crayon
 		}
 
 		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
-		public string GetVariableName(string originalName)
-		{
-			return "v_" + originalName;
-		}
-
+		
 		internal static IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired)
 		{
 			List<Executable> output = new List<Executable>();

@@ -1,0 +1,18 @@
+﻿
+function getTypeFromId(id) {
+	switch (id) {
+		case Types.NULL: return "null";
+		case Types.BOOLEAN: return "boolean";
+		case Types.INTEGER: return "integer";
+		case Types.FLOAT: return "float";
+		case Types.STRING: return "string";
+		case Types.LIST: return "list";
+		case Types.DICTIONARY: return "dictionary";
+		case Types.INSTANCE: return "instance"; // TODO: make this more specific
+		case Types.FUNCTION: return "function";
+		case Types.SYS_FUNCTION: return "system function";
+		case Types.METHOD: return "method";
+		case Types.SYS_METHOD: return "system method";
+		case Types.NATIVE_OBJECT: return "native object"; // TODO: make this more specific
+	}
+}

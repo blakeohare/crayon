@@ -116,5 +116,17 @@ namespace Crayon
 
 			return finalOutput;
 		}
+
+		public static string MassReplacements(string text, Dictionary<string, string> replacements)
+		{
+			if (text.Contains("%%%"))
+			{
+				foreach (string key in replacements.Keys)
+				{
+					text = text.Replace("%%%" + key + "%%%", replacements[key]);
+				}
+			}
+			return text;
+		}
 	}
 }
