@@ -163,10 +163,6 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateDotStep(List<string> output, DotStep dotStep)
 		{
-			// okay, you're going to have to do fancy crap for system dotSteps. Like foo.length where foo is a string. More casting methinks
-			// but that would have to have happened before now. Everything at this point is a true dot step.
-
-			// TODO: determine if the root is atomic. If so, leave off parenthesis.
 			output.Add("(");
 			TranslateExpression(output, dotStep.Root);
 			output.Add(")");
