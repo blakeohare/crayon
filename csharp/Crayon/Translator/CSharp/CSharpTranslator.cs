@@ -30,6 +30,13 @@ namespace Crayon.Translator.CSharp
 			output.Add("{");
 			output.Add(this.NL);
 			this.CurrentIndention++;
+
+			foreach (string varName in functionDef.GetVariableDeclarationList())
+			{
+				output.Add(this.CurrentTabIndention);
+				output.Add("object v_" + varName + this.Shorten(" = null;") + this.NL);
+			}
+
 			this.Translate(output, functionDef.Code);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
@@ -40,7 +47,6 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateAssignment(List<string> output, Assignment assignment)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("object ");
 			this.TranslateExpression(output, assignment.Target);
 			output.Add(" ");
 			output.Add(assignment.AssignmentOp);

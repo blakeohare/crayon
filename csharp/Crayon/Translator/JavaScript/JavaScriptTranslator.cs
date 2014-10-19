@@ -70,24 +70,19 @@ namespace Crayon.Translator.JavaScript
 			output.Add("function ");
 			output.Add("v_" + functionDef.NameToken.Value);
 			output.Add("(");
-			HashSet<string> dontRedeclareThese = new HashSet<string>();
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
 				if (i > 0) output.Add(this.Shorten(", "));
 				string argName = functionDef.ArgNames[i].Value;
 				output.Add("v_" + argName);
-				dontRedeclareThese.Add(argName);
 			}
 			output.Add(this.Shorten(") {") + this.NL);
 			this.CurrentIndention++;
 
 			foreach (string varName in functionDef.GetVariableDeclarationList())
 			{
-				if (!dontRedeclareThese.Contains(varName))
-				{
-					output.Add(this.CurrentTabIndention);
-					output.Add("var v_" + varName + this.Shorten(" = null;") + this.NL);
-				}
+				output.Add(this.CurrentTabIndention);
+				output.Add("var v_" + varName + this.Shorten(" = null;") + this.NL);
 			}
 
 			Translate(output, functionDef.Code);
