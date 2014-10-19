@@ -59,6 +59,7 @@ namespace Crayon.Translator
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
+				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
@@ -117,6 +118,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
+		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
 		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);

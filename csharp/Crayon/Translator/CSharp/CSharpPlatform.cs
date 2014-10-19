@@ -63,6 +63,7 @@ namespace Crayon.Translator.CSharp
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
 					"using System;",
 					"using System.Collections.Generic;",
+					"using System.Linq;",
 					"",
 					"namespace " + projectId,
 					"{",

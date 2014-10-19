@@ -35,7 +35,7 @@ function main() {
 			if (baseClassId == 0) {
 				methodLookup = {};
 			} else {
-				methodLookup = copyDictionary($_list_get(classMethods, baseClassId));
+				methodLookup = copyIntToIntDictionary($_list_get(classMethods, baseClassId));
 			}
 
 			for (@type('int') j = 0; j < methodCount; j += 1) {
@@ -162,8 +162,7 @@ function runTick() {
 			ProgramData$p.classTable,
 			ProgramData$p.classMethods,
 			ProgramData$p.specialCache,
-			ProgramData$p.globalVarScope,
-			ProgramData$p.primitiveMethodLookup);
+			ProgramData$p.globalVarScope);
 		if (error == null) {
 			// do nothing, let the next tick occur
 			$_register_timeout();
@@ -189,8 +188,7 @@ function runTick() {
 				ProgramData$p.classTable,
 				ProgramData$p.classMethods,
 				ProgramData$p.specialCache,
-				ProgramData$p.globalVarScope,
-				ProgramData$p.primitiveMethodLookup);
+				ProgramData$p.globalVarScope);
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {

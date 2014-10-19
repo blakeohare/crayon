@@ -76,7 +76,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef);
 		protected abstract void TranslateIfStatement(List<string> output, IfStatement ifStatement);
 		protected abstract void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement);
-		//protected abstract void TranslateStructDefinition(List<string> output, StructDefinition structDefinition);
 		protected abstract void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement);
 		protected abstract void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement);
 		protected abstract void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement);

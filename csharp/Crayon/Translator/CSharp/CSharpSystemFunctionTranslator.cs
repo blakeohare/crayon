@@ -53,7 +53,7 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(".Keys");
+			output.Add(".Keys.ToArray()");
 		}
 
 		protected override void TranslateDictionaryGetValues(List<string> output, ParseTree.Expression dictionary)
@@ -255,6 +255,23 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)
+		{
+			char c = stringConstant.Value[0];
+			string value;
+			switch (c)
+			{
+				case '\'': value = "'\\''"; break;
+				case '\\': value = "'\\\\'"; break;
+				case '\n': value = "'\\n'"; break;
+				case '\r': value = "'\\r'"; break;
+				case '\0': value = "'\\0'"; break;
+				case '\t': value = "'\\t'"; break;
+				default: value = "'" + c + "'"; break;
+			}
+			output.Add(value);
 		}
 
 		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)

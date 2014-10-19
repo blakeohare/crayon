@@ -356,6 +356,11 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, programData);
 		}
 
+		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)
+		{
+			this.Translator.TranslateExpression(output, stringConstant);
+		}
+
 		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)
 		{
 			if (strongCast)

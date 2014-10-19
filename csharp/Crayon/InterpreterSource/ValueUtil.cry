@@ -26,8 +26,8 @@
 
 function initialize_constant_values() {
 	@type('int') i = 0;
-	@type('List<int>') positive_integers = $_new_array('int', INTEGER_POSITIVE_CACHE);
-	@type('List<int>') negative_integers = $_new_array('int', INTEGER_NEGATIVE_CACHE);
+	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
+	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
 	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
 		$_list_set(positive_integers, i, new Value(Types.INTEGER, i));
 	}
@@ -80,7 +80,7 @@ function doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
 	return 0;
 }
 
-function buildLiteral(@type('int') type, value, @type('Array<double>') floatTable, @type('Array<string>') stringTable) {
+function buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
 	if (type == Types.INTEGER) return build_integer(value);
 	if (type == Types.FLOAT) return $_list_get(floatTable, value);
@@ -90,12 +90,12 @@ function buildLiteral(@type('int') type, value, @type('Array<double>') floatTabl
 	return null;
 }
 
-function copyDictionary(dict) {
-	key_list = $_dictionary_get_keys(dict);
-	output = {};
-	for (i = 0; i < $_list_length(key_list); i += 1) {
-		key = $_list_get(key_list, i);
-		value = $_dictionary_get(dict, key, 0);
+function copyIntToIntDictionary(@type('Dictionary<int, int>') dict) {
+	@type('Array<int>') key_list = $_dictionary_get_keys(dict);
+	@type('Dictionary<int, int>') output = {};
+	for (@type('int') i = 0; i < $_list_length(key_list); i += 1) {
+		@type('int') key = $_list_get(key_list, i);
+		@type('int') value = $_dictionary_get(dict, key, 0);
 		$_dictionary_set(output, key, value);
 	}
 	return output;

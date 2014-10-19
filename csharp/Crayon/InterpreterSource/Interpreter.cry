@@ -10,8 +10,7 @@ function interpret(
 		classTable, 
 		classMethods, 
 		specialCache, 
-		globals, 
-		primitiveMethodLookup) {
+		globals) {
 	@type('Stack<Value>') valueStack = StackFrame$stack.valueStack;
 	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
 	@type('int') LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
