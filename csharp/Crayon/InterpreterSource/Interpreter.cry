@@ -18,13 +18,29 @@ function interpret(
 
 	// declare types...
 	@type('int') type = 0;
-	@type('string') name = null;
+	@type('int') nameId = 0;
+	@type('int') int1 = 0;
+	@type('int') i = 0;
+	@type('Value') value = null;
+
+	// binary op variables...
+	@type('int') op = 0;
+	@type('Value') leftValue = null;
+	@type('Value') rightValue = null;
+	@type('object') left = null;
+	@type('object') right = null;
+	@type('int') leftType = 0;
+	@type('int') rightType = 0;
+
+	@type('string') string1 = null;
+	@type('Array<int>') row = null;
 
 	integerSwitches = ProgramData$p.integerSwitchLookups;
 	stringSwitches = ProgramData$p.stringSwitchLookups;
 	primitiveMethodLookup = ProgramData$p.primitiveMethodLookup;
+
 	while (true) {
-		@type('Array<int>') row = args[StackFrame$stack.pc];
+		row = args[StackFrame$stack.pc];
 		switch (ops[StackFrame$stack.pc]) {
 
 			case OpCodes.ADD_LITERAL:
@@ -49,12 +65,13 @@ function interpret(
 
 			case OpCodes.ADD_NAME:
 				$_comment('ADD_NAME');
-				name = $_list_get(stringArgs, StackFrame$stack.pc);
-				id = $_list_length(identifiers);
-				$_dictionary_set(inv_identifiers, name, id);
-				$_list_push(identifiers, name);
-				if (name == 'length') {
-					LENGTH_ID = id;
+				string1 = $_list_get(stringArgs, StackFrame$stack.pc);
+				// the list length is the ID
+				int1 = $_list_length(identifiers);
+				$_dictionary_set(inv_identifiers, string1, int1);
+				$_list_push(identifiers, string1);
+				if (string1 == 'length') {
+					LENGTH_ID = int1;
 				}
 				break;
 
@@ -156,100 +173,96 @@ function interpret(
 
 			case OpCodes.ASSIGN_VAR:
 				$_comment('ASSIGN_VAR');
-				thing = $_list_pop(valueStack);
-				$_dictionary_set(locals, row[0], thing);
+				value = $_list_pop(valueStack);
+				$_dictionary_set(locals, row[0], value);
 				break;
 
 			case OpCodes.BINARY_OP:
 				$_comment('BINARY_OP');
-				rightObj = $_list_pop(valueStack);
-				leftObj = $_list_pop(valueStack);
+				rightValue = $_list_pop(valueStack);
+				leftValue = $_list_pop(valueStack);
 
-				leftType = Value$leftObj.type;
-				if (rightObj == null) {
-					return killExecution(stack, "WAT: " + valueToString(leftObj));
-				}
-				rightType = Value$rightObj.type;
+				leftType = Value$leftValue.type;
+				rightType = Value$rightValue.type;
 				
-				left = Value$leftObj.internalValue;
-				right = Value$rightObj.internalValue;
+				left = Value$leftValue.internalValue;
+				right = Value$rightValue.internalValue;
 				
 				// TODO: special switch for when left == right
 				op = $_list_get(row, 0);
-				output = null;
+				value = null;
 				if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 					if (leftType == rightType) {
 						if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
 							if (left == right) { // may have to change if a platform doesn't support == for strings
-								output = VALUE_TRUE;
+								value = VALUE_TRUE;
 							} else {
-								output = VALUE_FALSE;
+								value = VALUE_FALSE;
 							}
 						} else if (leftType == Types.INSTANCE) {
 							if ($_list_get(left, 2) == $_list_get(right, 2)) {
-								output = VALUE_TRUE;
+								value = VALUE_TRUE;
 							} else {
-								output = VALUE_FALSE;
+								value = VALUE_FALSE;
 							}
 						}
 					} else {
 						if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 							if (left == right) {
-								output = VALUE_TRUE;
+								value = VALUE_TRUE;
 							} else {
-								output = VALUE_FALSE;
+								value = VALUE_FALSE;
 							}
 						} else {
-							output = VALUE_FALSE;
+							value = VALUE_FALSE;
 						}
 					}
 					
-					if (output != null) {
+					if (value != null) {
 						if (op == BinaryOps.NOT_EQUALS) {
-							if (Value$output.internalValue) {
-								output = VALUE_FALSE;
+							if ($_cast('bool', Value$value.internalValue)) {
+								value = VALUE_FALSE;
 							} else {
-								output = VALUE_TRUE;
+								value = VALUE_TRUE;
 							}
 						}
-						//$_list_push(valueStack, output);
 					} else {
 						return killExecution(stack, "== and != not defined here yet.");
 					}
 				} else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
-					output = new Value(Types.STRING, valueToString(leftObj) + valueToString(rightObj));
+					value = new Value(Types.STRING, valueToString(leftValue) + valueToString(rightValue));
 				} else {
 					switch
 						{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
-						((((Value$leftObj.type * MAX_OP) + op) * MAX_TYPE) + Value$rightObj.type) {
+						((((Value$leftValue.type * MAX_OP) + op) * MAX_TYPE) + Value$rightValue.type) {
 						
 						// int ** int
 						case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 							$_comment('int ** int');
-							if (right == 0) output = INTEGERS_CACHE[0][1];
+							if (right == 0) value = INTEGERS_CACHE[0][1];
 							else if (right > 0)
-								output = build_integer($_int($_exponent(left, right)));
+								value = build_integer($_int($_exponent(left, right)));
 							else
-								output = new Value(Types.FLOAT, $_exponent(left, right));
+								value = new Value(Types.FLOAT, $_exponent(left, right));
 							break;
 
 						// int ** float
 						case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 							$_comment('int ** float');
-							output = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
+							value = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
 							break;
 
 						// float ** int
 						case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 							$_comment('float ** int');
 							// add 0.0 just in case underlying platform likes to fall back to integer when possible
-							output = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
+							value = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
 							break;
 
 						// float ** float
 						case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 							$_comment('float ** float');
-							output = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
+							value = new Value(Types.FLOAT, 0.0 + $_exponent(left, right));
 							break;
 						
 						// float % float
@@ -258,7 +271,7 @@ function interpret(
 							if (right == 0) return killExecution(stack, "Modulo by 0");
 							t = left % right;
 							if (t < 0) t += right;
-							output = new Value(Types.FLOAT, t);
+							value = new Value(Types.FLOAT, t);
 							break;
 
 						// int % int
@@ -267,173 +280,173 @@ function interpret(
 							if (right == 0) return killExecution(stack, "Modulo by 0");
 							t = left % right;
 							if (t < 0) t += right;
-							output = build_integer(t);
+							value = build_integer(t);
 							break;
 
 						// list + list
 						case (Types.LIST * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.LIST:
 							$_comment('list + list');
-							output = new Value(Types.LIST, $_list_concat(left, right)); break;
+							value = new Value(Types.LIST, $_list_concat(left, right)); break;
 
 						// int + int
 						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 							$_comment('int + int');
-							output = build_integer(left + right); break;
+							value = build_integer(left + right); break;
 
 						// float + int
 						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float + int');
-							output = new Value(Types.FLOAT, left + right); break;
+							value = new Value(Types.FLOAT, left + right); break;
 
 						// int + float
 						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int + float');
-							output = new Value(Types.FLOAT, left + right); break;
+							value = new Value(Types.FLOAT, left + right); break;
 
 						// float + float
 						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float + float');
-							output = new Value(Types.FLOAT, left + right); break;
+							value = new Value(Types.FLOAT, left + right); break;
 							
 						// int - int
 						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
 							$_comment('int - int');
-							output = build_integer(left - right); break;
+							value = build_integer(left - right); break;
 							
 						// int - float
 						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int - float');
-							output = new Value(Types.FLOAT, left - right); break;
+							value = new Value(Types.FLOAT, left - right); break;
 							
 						// float - int
 						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float - int');
-							output = new Value(Types.FLOAT, left - right); break;
+							value = new Value(Types.FLOAT, left - right); break;
 							
 						// float - float
 						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float - float');
-							output = new Value(Types.FLOAT, left - right); break;
+							value = new Value(Types.FLOAT, left - right); break;
 
 						// int * int
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 							$_comment('int * int');
-							output = build_integer(left * right); break;
+							value = build_integer(left * right); break;
 
 						// float * int
 						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float * int');
-							output = new Value(Types.FLOAT, left * right); break;
+							value = new Value(Types.FLOAT, left * right); break;
 
 						// int * float
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int * float');
-							output = new Value(Types.FLOAT, left * right); break;
+							value = new Value(Types.FLOAT, left * right); break;
 
 						// float * float
 						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float * float');
-							output = new Value(Types.FLOAT, left * right); break;
+							value = new Value(Types.FLOAT, left * right); break;
 							
 						// int / int
 						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 							$_comment('int / int');
-							if (right == 0) return killExecution(stack, "Division by 0"); output = build_integer($_unsafe_integer_division(left, right)); break;
+							if (right == 0) return killExecution(stack, "Division by 0"); value = build_integer($_unsafe_integer_division(left, right)); break;
 							
 						// int / float
 						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int / float');
-							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+							if (right == 0) return killExecution(stack, "Division by 0"); value = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
 
 						// float / int
 						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float / int');
-							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+							if (right == 0) return killExecution(stack, "Division by 0"); value = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
 
 						// float / float
 						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float / float');
-							if (right == 0) return killExecution(stack, "Division by 0"); output = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
+							if (right == 0) return killExecution(stack, "Division by 0"); value = new Value(Types.FLOAT, $_unsafe_float_division(left, right)); break;
 
 						// int < int
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('int < int');
-							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left < right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int <= int
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 							$_comment('int <= int');
-							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left <= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 							
 						// float < int
 						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('float < int');
-							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left < right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float <= int
 						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 							$_comment('float <= int');
-							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left <= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 							
 						// int < float
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('int < float');
-							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left < right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int <= float
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 							$_comment('int <= float');
-							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left <= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float < float
 						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('float < float');
-							if (left < right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left < right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float <= float
 						case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 							$_comment('float <= float');
-							if (left <= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left <= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int >= int
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 							$_comment('int >= int');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left >= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						//int > int
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('int > int');
-							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float >= int
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 							$_comment('float >= int');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left >= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float > int
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('float > int');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left >= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int >= float
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 							$_comment('int >= float');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left >= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int > float
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('int > float');
-							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float >= float
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 							$_comment('float >= float');
-							if (left >= right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left >= right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// float > float
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 							$_comment('float > float');
-							if (left > right) output = VALUE_TRUE; else output = VALUE_FALSE; break;
+							if (left > right) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// list * int
 						case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
@@ -443,7 +456,7 @@ function interpret(
 								$_list_push(t, left);
 								right -= 1;
 							}
-							output = new Value(Types.LIST, t);
+							value = new Value(Types.LIST, t);
 							break;
 							
 						// int * list
@@ -454,17 +467,17 @@ function interpret(
 								$_list_push(t, right);
 								left -= 1;
 							}
-							output = new Value(Types.LIST, t);
+							value = new Value(Types.LIST, t);
 							break;
 
 						default:
 							$_comment('unrecognized op');
-							return killExecution(stack, "The '" + getBinaryOpFromId($_list_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftObj.type) + " and " + getTypeFromId(Value$rightObj.type));
+							return killExecution(stack, "The '" + getBinaryOpFromId($_list_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftValue.type) + " and " + getTypeFromId(Value$rightValue.type));
 							break;
 					}
 				}
 
-				$_list_push(valueStack, output);
+				$_list_push(valueStack, value);
 				break;
 
 			case OpCodes.BOOLEAN_NOT:

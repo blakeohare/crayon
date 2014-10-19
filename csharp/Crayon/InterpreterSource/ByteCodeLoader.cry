@@ -8,7 +8,7 @@ function generateSourceFiles() {
 }
 
 function read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
-	@type('List<string>') output = [];
+	@type('List<char>') output = [];
 	@type('bool') ctn = true;
 	while (ctn) {
 		@type('char') c = $_string_char_at(raw, index[0]);
@@ -52,7 +52,7 @@ function read_integer(@type('Array<int>') pindex, @type('string') raw, @type('in
 }
 
 function read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
-	@type('List<string>') output = [];
+	@type('List<char>') output = [];
 	@type('bool') cont = true;
 	@type('char') c = ' ';
 	while (cont) {
@@ -90,7 +90,7 @@ function loadByteCode() {
 	@type('string') raw = $_get_raw_byte_code_string();
 
 	@type('Array<int>') index = [0];
-	length = $_string_length(raw);
+	@type('int') length = $_string_length(raw);
 
 	@type('string') header = read_till(index, raw, length, '@');
 	if (header != 'CRAYON') {
@@ -99,11 +99,14 @@ function loadByteCode() {
 
 	@type('int') opCount = read_integer(index, raw, length);
 
-	ops = [];
-	iargs = [];
-	sargs = [];
+	@type('List<int>') ops = [];
+	@type('List<Array<int>>') iargs = [];
+	@type('List<string>') sargs = [];
 	@type('char') c = ' ';
 	@type('int') argc = 0;
+	@type('int') j = 0;
+	@type('string') stringarg = null;
+	@type('bool') stringPresent = false;
 	for (@type('int') i = 0; i < opCount; i += 1) {
 		c = $_string_char_at(raw, index[0]);
 		index[0] += 1;
@@ -120,9 +123,9 @@ function loadByteCode() {
 			argc = read_integer(index, raw, length);
 		}
 
-		iarglist = [];
+		@type('List<int>') iarglist = [];
 		for (j = 0; j < argc; j += 1) {
-			iarg = read_integer(index, raw, length);
+			@type('int') iarg = read_integer(index, raw, length);
 			if (j == 0) {
 				$_list_push(ops, iarg);
 			} else {
