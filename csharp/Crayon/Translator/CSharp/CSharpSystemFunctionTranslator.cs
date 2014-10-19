@@ -133,7 +133,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list, ParseTree.Expression sep)
 		{
-			output.Add("string.join(");
+			output.Add("string.Join(");
 			this.Translator.TranslateExpression(output, sep);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, list);
