@@ -16,7 +16,7 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add(this.CurrentTabIndention);
 			output.Add("public static object ");
-			output.Add(functionDef.NameToken.Value);
+			output.Add("v_" + functionDef.NameToken.Value);
 			output.Add("(");
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
@@ -31,12 +31,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(this.NL);
 			this.CurrentIndention++;
 
-			foreach (string varName in functionDef.GetVariableDeclarationList())
-			{
-				output.Add(this.CurrentTabIndention);
-				output.Add("object v_" + varName + this.Shorten(" = null;") + this.NL);
-			}
-
 			this.Translate(output, functionDef.Code);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
@@ -47,7 +41,16 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateAssignment(List<string> output, Assignment assignment)
 		{
 			output.Add(this.CurrentTabIndention);
-			this.TranslateExpression(output, assignment.Target);
+			Expression target = assignment.Target;
+			if (target.Annotation != null)
+			{
+				Annotation annotation = target.Annotation;
+				CSharpPlatform csharpPlatform = (CSharpPlatform)this.Platform;
+				string csharpType = csharpPlatform.GetTypeStringFromAnnotation(annotation.FirstToken, annotation.GetSingleArgAsString(null));
+				output.Add(csharpType);
+				output.Add(" ");
+			}
+			this.TranslateExpression(output, target);
 			output.Add(" ");
 			output.Add(assignment.AssignmentOp);
 			output.Add(" ");

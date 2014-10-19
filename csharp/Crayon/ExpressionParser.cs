@@ -8,7 +8,10 @@ namespace Crayon
 	{
 		public static Expression Parse(TokenStream tokens)
 		{
-			return ParseTernary(tokens);
+			Annotation annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
+			Expression output = ParseTernary(tokens);
+			output.Annotation = annotation;
+			return output;
 		}
 
 		private static Expression ParseTernary(TokenStream tokens)

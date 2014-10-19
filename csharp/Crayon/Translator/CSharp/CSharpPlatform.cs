@@ -162,5 +162,41 @@ namespace Crayon.Translator.CSharp
 
 			return output;
 		}
+
+		public string GetTypeStringFromAnnotation(Token stringToken, string value)
+		{
+			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1));
+			return GetTypeStringFromAnnotation(type);
+		}
+
+		private string GetTypeStringFromAnnotation(AnnotatedType type)
+		{
+			string output;
+			if (type.Name == "Array")
+			{
+				output = this.GetTypeStringFromAnnotation(type.Generics[0]);
+				output += "[]";
+			}
+			else
+			{
+				output = TypeTranslation(type.Name);
+				if (type.Generics.Length > 0)
+				{
+					output += "<";
+					for (int i = 0; i < type.Generics.Length; ++i)
+					{
+						if (i > 0) output += ", ";
+						output += this.GetTypeStringFromAnnotation(type.Generics[i]);
+					}
+					output += ">";
+				}
+			}
+			return output;
+		}
+
+		public string TypeTranslation(string original)
+		{
+			return original;
+		}
 	}
 }

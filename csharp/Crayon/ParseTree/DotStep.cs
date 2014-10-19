@@ -47,6 +47,8 @@ namespace Crayon.ParseTree
 						StructDefinition structDef = parser.GetStructDefinition(structName);
 						if (structDef.IndexByField.ContainsKey(step))
 						{
+							// TODO: this needs to be converted into a parse node specific to struct
+							// field dereferencing. C# uses classes, not lists.
 							int index = structDef.IndexByField[step];
 							Variable newRoot = new Variable(this.FirstToken, realVarName);
 							BracketIndex bi = new BracketIndex(newRoot, DotToken, new IntegerConstant(this.StepToken, index));

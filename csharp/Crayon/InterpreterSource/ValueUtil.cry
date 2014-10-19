@@ -1,19 +1,19 @@
-﻿
-function valueToString(value) {
-	type = Value$value.type;
-	value = Value$value.internalValue;
+﻿function valueToString(@type('Value') wrappedValue) {
+	@type('int') type = Value$wrappedValue.type;
+	@type('object') value = Value$wrappedValue.internalValue;
 	if (type == Types.NULL) return "null";
 	if (type == Types.BOOLEAN) {
-		if (value) return "true";
+		if ($_cast('bool', value)) return "true";
 		return "false";
 	}
 	if (type == Types.INTEGER || type == Types.FLOAT || type == Types.STRING) return $_string_cast_strong(value);
 	if (type == Types.LIST) {
 		// TODO: this will recurse infinitely if the list points to itself somehow.
-		output = "[";
-		for (i = 0; i < $_list_length(value); i += 1) {
+		@type('List<Value>') internalList = $_cast('List<Value>', value);
+		@type('string') output = "[";
+		for (@type('int') i = 0; i < $_list_length(internalList); i += 1) {
 			if (i > 0) output += ", ";
-			output += valueToString($_list_get(value, i));
+			output += valueToString($_list_get(internalList, i));
 		}
 		output += "]";
 		return output;

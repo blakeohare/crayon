@@ -276,9 +276,12 @@ namespace Crayon
 			tokens.PopExpected("(");
 			List<Token> argNames = new List<Token>();
 			List<Expression> defaultValues = new List<Expression>();
+			List<Annotation> argAnnotations = new List<Annotation>();
 			while (!tokens.PopIfPresent(")"))
 			{
 				if (argNames.Count > 0) tokens.PopExpected(",");
+
+				Annotation annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
 				Token argName = tokens.Pop();
 				Expression defaultValue = null;
 				Parser.VerifyIdentifier(argName);
@@ -286,13 +289,14 @@ namespace Crayon
 				{
 					defaultValue = ExpressionParser.Parse(tokens);
 				}
+				argAnnotations.Add(annotation);
 				argNames.Add(argName);
 				defaultValues.Add(defaultValue);
 			}
 
 			IList<Executable> code = Parser.ParseBlock(tokens, true);
 
-			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, code);
+			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code);
 		}
 
 		private static Executable ParseFor(TokenStream tokens)

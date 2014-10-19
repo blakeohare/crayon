@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crayon.ParseTree;
 using System.Text;
 
 namespace Crayon.Translator.CSharp
@@ -12,6 +13,17 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			// Nope
+		}
+
+		protected override void TranslateCast(List<string> output, ParseTree.Expression typeValue, ParseTree.Expression expression)
+		{
+			CSharpPlatform platform = (CSharpPlatform) this.Platform;
+			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, ((StringConstant)typeValue).Value);
+
+			output.Add("(");
+			output.Add(typeString);
+			output.Add(")");
+			this.Translator.TranslateExpression(output, expression);
 		}
 
 		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)

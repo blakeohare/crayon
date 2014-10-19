@@ -14,6 +14,11 @@ namespace Crayon.Translator.Python
 			throw new Exception("This code path should be optimized out of the python translation.");
 		}
 
+		protected override void TranslateCast(List<string> output, ParseTree.Expression typeValue, ParseTree.Expression expression)
+		{
+			this.Translator.TranslateExpression(output, expression);
+		}
+
 		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)
 		{
 #if DEBUG

@@ -9,13 +9,15 @@ namespace Crayon.ParseTree
 		public Token[] ArgNames { get; private set; }
 		public Expression[] DefaultValues { get; private set; }
 		public Executable[] Code { get; private set; }
+		public Annotation[] Annotations { get; private set; }
 
-		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Executable> code)
+		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code)
 			: base(functionToken)
 		{
 			this.NameToken = nameToken;
 			this.ArgNames = argNames.ToArray();
 			this.DefaultValues = argDefaultValues.ToArray();
+			this.Annotations = argAnnotations.ToArray();
 			this.Code = code.ToArray();
 		}
 
@@ -26,6 +28,12 @@ namespace Crayon.ParseTree
 				if (this.DefaultValues[i] != null)
 				{
 					this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
+				}
+
+				// Annotations not allowed in byte code mode
+				if (parser.NullablePlatform == null && this.Annotations[i] != null)
+				{
+					throw new ParserException(this.Annotations[i].FirstToken, "Unexpected token: '@'");
 				}
 			}
 

@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnnotatedType.cs" />
+    <Compile Include="AnnotationParser.cs" />
     <Compile Include="BinaryOps.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="ByteCodeCompiler.cs" />
@@ -57,6 +59,7 @@
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="ParserException.cs" />
+    <Compile Include="ParseTree\Annotation.cs" />
     <Compile Include="ParseTree\Assignment.cs" />
     <Compile Include="ParseTree\BinaryOpChain.cs" />
     <Compile Include="ParseTree\BooleanCombination.cs" />
