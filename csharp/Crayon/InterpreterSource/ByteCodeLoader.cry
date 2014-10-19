@@ -20,7 +20,6 @@ function read_till(index, raw, length, char) {
 	return $_list_join(output, '');
 }
 
-alpha_nums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 function read_integer(pindex, raw, length) {
 	c = raw[pindex[0]];
 	pindex[0] += 1;
@@ -40,7 +39,7 @@ function read_integer(pindex, raw, length) {
 	} else if (c == '^') {
 		num = -1 * read_integer(pindex, raw, length);
 	} else {
-		num = $_string_index_of(alpha_nums, c);
+		num = $_string_index_of(ALPHA_NUMS, c);
 		if (num == -1) {
 			// TODO: assert
 		}

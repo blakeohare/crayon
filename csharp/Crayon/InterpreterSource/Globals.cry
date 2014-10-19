@@ -4,3 +4,4 @@ VALUE_NULL = new Value(Types.NULL, null);
 VALUE_TRUE = new Value(Types.BOOLEAN, true);
 VALUE_FALSE = new Value(Types.BOOLEAN, false);
 VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
