@@ -3,11 +3,13 @@
 	internal class Variable : Expression
 	{
 		public string Name { get; private set; }
+		public bool IsStatic { get; set; }
 
 		public Variable(Token token, string name)
 			: base(token)
 		{
 			this.Name = name;
+			this.IsStatic = false;
 		}
 
 		public override Expression Resolve(Parser parser)

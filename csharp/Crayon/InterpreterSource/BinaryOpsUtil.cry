@@ -1,5 +1,5 @@
 ﻿
-function getBinaryOpFromId(id) {
+function getBinaryOpFromId(@type('int') id) {
 	switch (id) {
 		case BinaryOps.ADDITION: return '+';
 		case BinaryOps.SUBTRACTION: return '-';

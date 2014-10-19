@@ -218,6 +218,17 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateNewArray(List<string> output, ParseTree.Expression type, ParseTree.Expression size)
+		{
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, ((StringConstant)type).Value);
+			output.Add("new ");
+			output.Add(csharpType);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, size);
+			output.Add("]");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new NotImplementedException();

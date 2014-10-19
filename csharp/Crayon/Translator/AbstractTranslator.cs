@@ -88,6 +88,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex);
 		protected abstract void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef);
 		protected abstract void TranslateDotStep(List<string> output, DotStep dotStep);
+		protected abstract void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct);
 		protected abstract void TranslateFloatConstant(List<string> output, FloatConstant floatConstant);
 		protected abstract void TranslateFunctionCall(List<string> output, FunctionCall functionCall);
 		protected abstract void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant);
@@ -227,6 +228,7 @@ namespace Crayon.Translator
 			else if (expr is BooleanCombination) this.TranslateBooleanCombination(output, (BooleanCombination)expr);
 			else if (expr is BooleanNot) this.TranslateBooleanNot(output, (BooleanNot)expr);
 			else if (expr is FloatConstant) this.TranslateFloatConstant(output, (FloatConstant)expr);
+			else if (expr is DotStepStruct) this.TranslateDotStepStruct(output, (DotStepStruct)expr);
 			else throw new Exception("Expression type not handled: " + expr.GetType());
 		}
 	}

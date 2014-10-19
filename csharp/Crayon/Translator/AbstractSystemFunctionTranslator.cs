@@ -53,6 +53,7 @@ namespace Crayon.Translator
 				case "_list_reverse_in_place": VerifyCount(functionCall, 1); TranslateListReverseInPlace(output, args[0]); break;
 				case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
 				case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
+				case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, args[0], args[1]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
@@ -110,6 +111,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListReverseInPlace(List<string> output, Expression listVar);
 		protected abstract void TranslateListSet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
+		protected abstract void TranslateNewArray(List<string> output, Expression type, Expression size);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRegisterTicker(List<string> output);

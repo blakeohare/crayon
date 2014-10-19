@@ -41,3 +41,9 @@ function shuffle(list) {
 		list[i] = t;
 	}
 }
+
+function create_new_array(size) {
+	var output = [];
+	while (size-- > 0) output.push(null);
+	return output;
+}

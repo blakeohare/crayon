@@ -12,6 +12,15 @@ namespace Crayon.Translator.CSharp
 			: base(false)
 		{ }
 
+		public CSharpPlatform CSharpPlatform { get { return (CSharpPlatform)this.Platform; } }
+
+		protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
+		{
+			output.Add(dotStepStruct.RootVar);
+			output.Add(".");
+			output.Add(dotStepStruct.FieldName);
+		}
+
 		protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
 		{
 			output.Add(this.CurrentTabIndention);
@@ -21,7 +30,17 @@ namespace Crayon.Translator.CSharp
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
 				if (i > 0) output.Add(", ");
-				output.Add("object ");
+				if (functionDef.Annotations[i] == null)
+				{
+					output.Add("object ");
+				}
+				else
+				{
+					string argType = functionDef.Annotations[i].GetSingleArgAsString(null);
+					string type = this.CSharpPlatform.GetTypeStringFromAnnotation(functionDef.Annotations[i].FirstToken, argType);
+					output.Add(type);
+					output.Add(" ");
+				}
 				output.Add("v_" + functionDef.ArgNames[i].Value);
 			}
 			output.Add(")");
@@ -42,6 +61,12 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add(this.CurrentTabIndention);
 			Expression target = assignment.Target;
+
+			if (target is Variable && ((Variable)target).IsStatic)
+			{
+				output.Add("static ");
+			}
+			
 			if (target.Annotation != null)
 			{
 				Annotation annotation = target.Annotation;

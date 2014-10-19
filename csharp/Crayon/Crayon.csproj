@@ -73,6 +73,7 @@
     <Compile Include="ParseTree\ContinueStatement.cs" />
     <Compile Include="ParseTree\DictionaryDefinition.cs" />
     <Compile Include="ParseTree\DotStep.cs" />
+    <Compile Include="ParseTree\DotStepStruct.cs" />
     <Compile Include="ParseTree\DoWhileLoop.cs" />
     <Compile Include="ParseTree\EnumDefinition.cs" />
     <Compile Include="ParseTree\Executable.cs" />
@@ -147,6 +148,7 @@
     <EmbeddedResource Include="InterpreterSource\Interpreter.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
     <EmbeddedResource Include="InterpreterSource\Globals.cry" />
+    <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

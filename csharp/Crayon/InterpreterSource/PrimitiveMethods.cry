@@ -1,5 +1,6 @@
 ﻿
-function wrongArgCountError(name, expected, actual) {
+function wrongArgCountError(@type('string') name, @type('int') expected, @type('int') actual) {
+	@type('string') output = null;
 	if (expected == 0) {
 		output = name + " does not accept any arguments.";
 	} else if (expected == 1) {
@@ -46,7 +47,12 @@ function generatePrimitiveMethodLookupTable() {
 
 }
 
-function callSystemMethod(methodId, wrappedContext, funcArgs, valueStack, returnValueUsed) {
+function callSystemMethod(
+		@type('int') methodId,
+		@type('Value') wrappedContext,
+		@type('Array<Value>') funcArgs,
+		@type('Stack<Value>') valueStack,
+		@type('bool') returnValueUsed) {
 	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
 	output = VALUE_NULL;
 	context = Value$wrappedContext.internalValue;

@@ -320,6 +320,12 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateNewArray(List<string> output, ParseTree.Expression type, ParseTree.Expression size)
+		{
+			output.Add("[None] * ");
+			this.Translator.TranslateExpression(output, size);
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			output.Add("_pygame_end_of_frame()");

@@ -19,14 +19,15 @@
 		return output;
 	}
 	if (type == Types.INSTANCE) {
-		output = "INSTANCE: " + $_string_cast_strong(value);
-		return output;
+		return "INSTANCE: " + $_string_cast_strong(value);
 	}
 	return "TODO: toString for " + getTypeFromId(type);
 }
 
 function initialize_constant_values() {
-
+	@type('int') i = 0;
+	INTEGERS_POS = $_new_array('int', INTEGER_POSITIVE_CACHE);
+	INTEGERS_NEG = $_new_array('int', INTEGER_NEGATIVE_CACHE);
 	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
 		$_list_push(INTEGERS_POS, new Value(Types.INTEGER, i));
 	}

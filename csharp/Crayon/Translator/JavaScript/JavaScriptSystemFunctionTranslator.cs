@@ -320,10 +320,18 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateNewArray(List<string> output, ParseTree.Expression type, ParseTree.Expression size)
+		{
+			output.Add("create_new_array(");
+			this.Translator.TranslateExpression(output, size);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new Exception("This should have been optimized out.");
 		}
+
 		protected override void TranslatePrint(List<string> output, ParseTree.Expression message)
 		{
 			output.Add("window.alert(");

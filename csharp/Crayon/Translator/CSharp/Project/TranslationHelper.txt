@@ -1,0 +1,7 @@
+﻿namespace %%%PROJECT_ID%%%
+{
+	internal static class TranslationHelper
+	{
+		public static ProgramData ProgramData { get; set; }
+	}
+}

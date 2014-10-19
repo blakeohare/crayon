@@ -1,9 +1,21 @@
 ﻿
-function interpret(stack, ops, args, stringArgs, identifiers, inv_identifiers, literalTable, classTable, classMethods, specialCache, globals, primitiveMethodLookup) {
-	valueStack = StackFrame$stack.valueStack;
-	locals = StackFrame$stack.locals;
-	LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
-	p = $_get_program_data();
+function interpret(
+		@type('Stack<StackFrame>') stack,
+		@type('Array<int>') ops,
+		@type('Array<Array<int>>') args,
+		@type('Array<string>') stringArgs, 
+		@type('Array<string>') identifiers, 
+		@type('Dictionary<string, int>') inv_identifiers, 
+		literalTable, 
+		classTable, 
+		classMethods, 
+		specialCache, 
+		globals, 
+		primitiveMethodLookup) {
+	@type('Stack<Value>') valueStack = StackFrame$stack.valueStack;
+	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
+	@type('int') LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
+	@type('ProgramData') p = $_get_program_data();
 	integerSwitches = ProgramData$p.integerSwitchLookups;
 	stringSwitches = ProgramData$p.stringSwitchLookups;
 	primitiveMethodLookup = ProgramData$p.primitiveMethodLookup;

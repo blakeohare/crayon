@@ -1,7 +1,7 @@
-﻿INTEGERS_POS = [];
-INTEGERS_NEG = [];
-VALUE_NULL = new Value(Types.NULL, null);
-VALUE_TRUE = new Value(Types.BOOLEAN, true);
-VALUE_FALSE = new Value(Types.BOOLEAN, false);
-VALUE_EMPTY_STRING = new Value(Types.STRING, "");
-ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+﻿@uncontained @type('Array<int>') INTEGERS_POS = null;
+@uncontained @type('Array<int>') INTEGERS_NEG = null;
+@uncontained @type('Value') VALUE_NULL = new Value(Types.NULL, null);
+@uncontained @type('Value') VALUE_TRUE = new Value(Types.BOOLEAN, true);
+@uncontained @type('Value') VALUE_FALSE = new Value(Types.BOOLEAN, false);
+@uncontained @type('Value') VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+@uncontained @type('string') ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

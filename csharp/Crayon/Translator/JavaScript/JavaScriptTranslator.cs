@@ -11,6 +11,14 @@ namespace Crayon.Translator.JavaScript
 			: base(true)
 		{ }
 
+		protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
+		{
+			output.Add(dotStepStruct.RootVar);
+			output.Add("[");
+			output.Add(dotStepStruct.StructDefinition.IndexByField[dotStepStruct.FieldName].ToString());
+			output.Add("]");
+		}
+
 		protected override void TranslateStructDefinition(List<string> output, StructDefinition structDefinition)
 		{
 			throw new Exception("This should have been resolved away.");

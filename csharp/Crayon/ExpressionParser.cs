@@ -8,9 +8,19 @@ namespace Crayon
 	{
 		public static Expression Parse(TokenStream tokens)
 		{
+			bool isStatic = false;
 			Annotation annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
+			if (annotation != null && annotation.Type == "uncontained")
+			{
+				isStatic = true;
+				annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
+			}
 			Expression output = ParseTernary(tokens);
 			output.Annotation = annotation;
+			if (output is Variable)
+			{
+				((Variable)output).IsStatic = isStatic;
+			}
 			return output;
 		}
 

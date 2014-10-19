@@ -1,14 +1,14 @@
 ﻿
 function generateSourceFiles() {
-	p = $_get_program_data();
+	@type('ProgramData') p = $_get_program_data();
 	return ProgramData$p.sourceCode;
 }
 
-function read_till(index, raw, length, char) {
+function read_till(@type('int') index, @type('string') raw, @type('int') length, @type('char') char) {
 	output = [];
-	ctn = true;
+	@type('bool') ctn = true;
 	while (ctn) {
-		c = $_string_char_at(raw, index[0]);
+		@type('char') c = $_string_char_at(raw, index[0]);
 		if (c == char) {
 			ctn = false;
 		} else {

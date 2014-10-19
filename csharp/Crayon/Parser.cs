@@ -272,7 +272,7 @@ namespace Crayon
 				}
 			}
 			this.RegisterFileUsed(filename, code, fileId);
-			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId);
+			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId, true);
 
 			Dictionary<string, StructDefinition> structureDefinitions = new Dictionary<string, StructDefinition>();
 			Dictionary<string, Expression> constantDefinitions = new Dictionary<string, Expression>();

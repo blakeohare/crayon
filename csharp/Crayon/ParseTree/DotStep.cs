@@ -45,20 +45,11 @@ namespace Crayon.ParseTree
 						string structName = parts[0];
 						string realVarName = parts[1];
 						StructDefinition structDef = parser.GetStructDefinition(structName);
-						if (structDef.IndexByField.ContainsKey(step))
-						{
-							// TODO: this needs to be converted into a parse node specific to struct
-							// field dereferencing. C# uses classes, not lists.
-							int index = structDef.IndexByField[step];
-							Variable newRoot = new Variable(this.FirstToken, realVarName);
-							BracketIndex bi = new BracketIndex(newRoot, DotToken, new IntegerConstant(this.StepToken, index));
-							bi = (BracketIndex)bi.Resolve(parser);
-							return bi;
-						}
-						else
+						if (!structDef.IndexByField.ContainsKey(step))
 						{
 							throw new ParserException(this.StepToken, "The struct '" + structDef.Name.Value + "' does not contain a field called '" + step + "'");
 						}
+						return new DotStepStruct(this.FirstToken, structDef, this);
 					}
 				}
 			}

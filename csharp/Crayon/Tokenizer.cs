@@ -10,7 +10,7 @@ namespace Crayon
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
 		private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
 
-		public static TokenStream Tokenize(string filename, string code, int fileID)
+		public static TokenStream Tokenize(string filename, string code, int fileID, bool useMultiCharTokens)
 		{
 			code += '\n';
 			code += '\0';
@@ -110,7 +110,7 @@ namespace Crayon
 					}
 					previousIsWhitespace = false;
 				}
-				else if (TWO_CHAR_TOKENS.Contains(c2))
+				else if (useMultiCharTokens && TWO_CHAR_TOKENS.Contains(c2))
 				{
 					tokens.Add(new Token(c2, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
 					++i;

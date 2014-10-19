@@ -50,17 +50,33 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
-			string crayonWrapperHeader = string.Join(this.Translator.NL, new string[] {
+			compileTargets.Add("TranslationHelper.cs");
+			output[projectId + "/TranslationHelper.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/TranslationHelper.txt"),
+					replacements)
+
+			};
+
+			string crayonHeader = string.Join(this.Translator.NL, new string[] {
 					"using System;",
 					"using System.Collections.Generic;",
 					"",
 					"namespace " + projectId,
 					"{",
-					"\tinternal partial class CrayonWrapper",
+					""
+				});
+
+			string crayonWrapperHeader = string.Join(this.Translator.NL, new string[] {
+					crayonHeader + "\tinternal partial class CrayonWrapper",
 					"\t{",
 					""
 				});
-			string crayonWrapperFooter = "\t}" + this.Translator.NL + "}" + this.Translator.NL;
+
+			string crayonFooter = "}" + this.Translator.NL;
+			string crayonWrapperFooter = "\t}" + this.Translator.NL + crayonFooter;
 
 			string nl = this.Translator.NL;
 
@@ -70,10 +86,10 @@ namespace Crayon.Translator.CSharp
 				string filename = structName + ".cs";
 				compileTargets.Add(filename);
 				List<string> codeContents = new List<string>();
-				codeContents.Add(crayonWrapperHeader);
-				codeContents.Add("\t\tpublic class " + structName + nl);
-				codeContents.Add("\t\t{" + nl);
-				codeContents.Add("\t\t\tpublic " + structName + "(");
+				codeContents.Add(crayonHeader);
+				codeContents.Add("\tpublic class " + structName + nl);
+				codeContents.Add("\t{" + nl);
+				codeContents.Add("\t\tpublic " + structName + "(");
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
 					if (i > 0) codeContents.Add(", ");
@@ -81,22 +97,22 @@ namespace Crayon.Translator.CSharp
 				}
 				codeContents.Add(")" + nl);
 
-				codeContents.Add("\t\t\t{" + nl);
+				codeContents.Add("\t\t{" + nl);
 
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
-					codeContents.Add("\t\t\t\tthis." + structDefinition.FieldsByIndex[i] + " = v_" + structDefinition.FieldsByIndex[i] + ";" + nl);
+					codeContents.Add("\t\t\tthis." + structDefinition.FieldsByIndex[i] + " = v_" + structDefinition.FieldsByIndex[i] + ";" + nl);
 				}
 
-				codeContents.Add("\t\t\t}" + nl + nl);
+				codeContents.Add("\t\t}" + nl + nl);
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
-					codeContents.Add("\t\t\tpublic object " + structDefinition.FieldsByIndex[i] + ";" + nl);
+					codeContents.Add("\t\tpublic object " + structDefinition.FieldsByIndex[i] + ";" + nl);
 				}
 
-				codeContents.Add("\t\t}" + nl);
+				codeContents.Add("\t}" + nl);
 
-				codeContents.Add(crayonWrapperFooter);
+				codeContents.Add(crayonFooter);
 				output[projectId + "/" + filename] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
@@ -165,7 +181,7 @@ namespace Crayon.Translator.CSharp
 
 		public string GetTypeStringFromAnnotation(Token stringToken, string value)
 		{
-			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1));
+			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1, false));
 			return GetTypeStringFromAnnotation(type);
 		}
 

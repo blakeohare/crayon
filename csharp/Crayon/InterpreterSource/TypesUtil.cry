@@ -1,5 +1,5 @@
 ﻿
-function getTypeFromId(id) {
+function getTypeFromId(@type('int') id) {
 	switch (id) {
 		case Types.NULL: return "null";
 		case Types.BOOLEAN: return "boolean";
