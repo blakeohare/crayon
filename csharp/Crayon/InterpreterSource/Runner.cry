@@ -3,31 +3,33 @@ function main() {
 
 	initialize_constant_values();
 
-	byteCode = loadByteCode();
-	ops = Code$byteCode.ops;
-	opArgs = Code$byteCode.args;
-	stringArgs = Code$byteCode.stringArgs;
+	@type('Code') byteCode = loadByteCode();
+	@type('Array<int>') ops = Code$byteCode.ops;
+	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
+	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
-	nameToClassId = {};
-	classTable = [null]; // class ID 0 is not valid. First entry should be at index 1.
+	@type('Dictionary<int, int>') nameIdToClassId = {};
+	@type('Array<Array<int>>') classTable = [null]; // class ID 0 is not valid. First entry should be at index 1.
 	classMethods = [null]; // same here
 
-	for (i = 0; i < $_list_length(ops); i += 1) {
-		op = $_list_get(ops, i);
-		if (op == OpCodes.CLASS_DEFINITION) {
-			args = $_list_get(opArgs, i);
-			id = $_list_length(classTable);
-			lastClassId = id;
-			nameId = $_list_get(args, 0);
-			$_dictionary_set(nameToClassId, nameId, id);
-			baseClassNameId = $_list_get(args, 1);
-			constructorArgsCount = $_list_get(args, 2); // -1 if no constructor present
-			methodCount = $_list_get(args, 3);
+	@type('int') nameId = 0;
 
-			baseClassId = 0;
+	for (@type('int') i = 0; i < $_list_length(ops); i += 1) {
+		@type('int') op = $_list_get(ops, i);
+		if (op == OpCodes.CLASS_DEFINITION) {
+			@type('Array<int>') args = $_list_get(opArgs, i);
+			@type('int') id = $_list_length(classTable);
+			@type('int') lastClassId = id;
+			nameId = $_list_get(args, 0);
+			$_dictionary_set(nameIdToClassId, nameId, id);
+			@type('int') baseClassNameId = $_list_get(args, 1);
+			@type('int') constructorArgsCount = $_list_get(args, 2); // -1 if no constructor present
+			@type('int') methodCount = $_list_get(args, 3);
+
+			@type('int') baseClassId = 0;
 			if (baseClassNameId > 0) {
 				// base class name not found is a compile time error.
-				baseClassId = $_dictionary_get(nameToClassId, baseClassNameId, 0);
+				baseClassId = $_dictionary_get(nameIdToClassId, baseClassNameId, 0);
 			}
 			
 			if (baseClassId == 0) {
@@ -36,12 +38,12 @@ function main() {
 				methodLookup = copyDictionary($_list_get(classMethods, baseClassId));
 			}
 
-			for (j = 0; j < methodCount; j += 1) {
-				methodNameId = $_list_get(args, (j * 3) + 4);
-				pcOffset = $_list_get(args, (j * 3) + 5);
-				maxArgs = $_list_get(args, (j * 3) + 6);
+			for (@type('int') j = 0; j < methodCount; j += 1) {
+				@type('int') methodNameId = $_list_get(args, (j * 3) + 4);
+				@type('int') pcOffset = $_list_get(args, (j * 3) + 5);
+				@type('int') maxArgs = $_list_get(args, (j * 3) + 6);
 
-				methodData = [
+				@type('Array<int>') methodData = [
 					methodNameId,
 					maxArgs,
 					i + pcOffset
@@ -50,7 +52,7 @@ function main() {
 				$_dictionary_set(methodLookup, methodNameId, methodData);
 			}
 
-			classRow = [
+			@type('Array<int>') classRow = [
 				nameId,
 				0, // PC of constructor (0 if absent, overriden to correct value below)
 				0, // maximum arg count of constructor
@@ -64,7 +66,7 @@ function main() {
 			}
 			
 			if (baseClassId != 0) {
-				baseClassInfo = $_list_get(classTable, baseClassId);
+				@type('Array<int>') baseClassInfo = $_list_get(classTable, baseClassId);
 				if ($_list_get(baseClassInfo, 1) > 0 || $_list_get(baseClassInfo, 4) == 1) {
 					classRow[4] = 1;
 				}
@@ -75,21 +77,21 @@ function main() {
 		}
 	}
 
-	lastClassId = 0;
+	@type('int') lastClassId = 0;
 
 	specialCache = [];
 
 	for (i = 0; i < $_list_length(ops); i += 1) {
-		op = $_list_get(ops, i);
-		args = $_list_get(opArgs, i);
+		@type('int') op = $_list_get(ops, i);
+		@type('Array<int>') args = $_list_get(opArgs, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
 			nameId = $_list_get(args, 0);
-			classId = $_dictionary_get(nameToClassId, nameId, 0);
+			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
 			lastClassId = classId;
 			value = [classId];
 		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
 			nameId = $_list_get(args, 1);
-			classId = $_dictionary_get(nameToClassId, nameId, 0);
+			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
 			value = [classId];
 		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
 			classInfo = classTable[lastClassId];
@@ -139,7 +141,7 @@ function main() {
 }
 
 function runTick() {
-	p = $_get_program_data();
+	@type('ProgramData') p = $_get_program_data();
 
 	if (%%%PLATFORM_IS_ASYNC%%%) {
 		if (!ProgramData$p.tickerRegistered) {
@@ -173,9 +175,10 @@ function runTick() {
 			// execution ended, either with error or gracefully.
 			$_unregister_ticker();
 		}
+		return null;
 	} else {
 		while (true) {
-			error = interpret(
+			@type('string') error = interpret(
 				ProgramData$p.stackTop,
 				ProgramData$p.ops,
 				ProgramData$p.args,
@@ -192,11 +195,11 @@ function runTick() {
 				$_pause_for_frame();
 			} else if (error == '') {
 				// empty string means the execution came to an end.
-				return;
+				return null;
 			} else {
 				// error message and stack trace
 				$_print(error);
-				return;
+				return null;
 			}
 		}
 	}

@@ -9,8 +9,8 @@
 struct DictImpl {
 	keyLookup,
 	valueLookup,
-	size,
-	keyType
+	@type('int') size,
+	@type('int') keyType
 }
 
 struct ProgramData {

@@ -1,7 +1,28 @@
-﻿namespace %%%PROJECT_ID%%%
+﻿using System;
+using System.Collections.Generic;
+
+namespace %%%PROJECT_ID%%%
 {
 	internal static class TranslationHelper
 	{
+		private static readonly Random random = new Random();
+
 		public static ProgramData ProgramData { get; set; }
+		
+		public static void ShuffleInPlace(List<Value> list)
+		{
+			if (list.Count < 2) return;
+
+			int length = list.Count;
+			int tIndex;
+			Value tValue;
+			for (int i = length - 1; i >= 0; --i)
+			{
+				tIndex = random.Next(length);
+				tValue = list[tIndex];
+				list[tIndex] = list[i];
+				list[i] = tValue;
+			}
+		}
 	}
 }

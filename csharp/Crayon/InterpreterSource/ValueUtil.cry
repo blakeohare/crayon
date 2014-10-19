@@ -36,7 +36,7 @@ function initialize_constant_values() {
 	}
 }
 
-function build_integer(value) {
+function build_integer(@type('int') value) {
 	if (value < 0) {
 		if (value > -INTEGER_NEGATIVE_CACHE) {
 			return INTEGERS_NEG[-value];

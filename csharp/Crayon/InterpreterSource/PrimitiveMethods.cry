@@ -54,8 +54,8 @@ function callSystemMethod(
 		@type('Stack<Value>') valueStack,
 		@type('bool') returnValueUsed) {
 	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
-	output = VALUE_NULL;
-	context = Value$wrappedContext.internalValue;
+	@type('Value') output = VALUE_NULL;
+	@type('object') context = Value$wrappedContext.internalValue;
 	switch (methodId) {
 		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
 			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List add method", 1, $_list_length(funcArgs));
