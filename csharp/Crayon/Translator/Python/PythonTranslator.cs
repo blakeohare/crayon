@@ -18,11 +18,6 @@ namespace Crayon.Translator.Python
 			output.Add("]");
 		}
 
-		protected override void TranslateStructDefinition(List<string> output, StructDefinition structDefinition)
-		{
-			throw new Exception("This should have been resolved away.");
-		}
-
 		protected override void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement)
 		{
 			SwitchStatementContinuousSafe.SearchTree tree = switchStatement.GenerateSearchTree();

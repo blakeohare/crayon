@@ -7,8 +7,9 @@ namespace Crayon.ParseTree
 	{
 		public Token Name { get; private set; }
 		public Token[] Fields { get; private set; }
+		public Annotation[] Types { get; private set; }
 
-		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields)
+		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations)
 			: base(structToken)
 		{
 			this.Name = nameToken;
@@ -19,6 +20,8 @@ namespace Crayon.ParseTree
 			{
 				this.IndexByField[this.FieldsByIndex[i]] = i;
 			}
+
+			this.Types = annotations.ToArray();
 		}
 
 		public string[] FieldsByIndex { get; private set; }

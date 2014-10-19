@@ -84,29 +84,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(this.NL);
 		}
 
-		protected override void TranslateStructDefinition(List<string> output, StructDefinition structDefinition)
-		{
-			output.Add(this.CurrentTabIndention);
-			output.Add("internal class ");
-			output.Add(structDefinition.Name.Value);
-			output.Add(this.NL);
-			this.CurrentIndention++;
-			for (int i = 0; i < structDefinition.Fields.Length; ++i)
-			{
-				Token fieldToken = structDefinition.Fields[0];
-				string field = fieldToken.Value;
-				output.Add(this.CurrentTabIndention);
-				output.Add("public object ");
-				output.Add(field);
-				output.Add(";");
-				output.Add(this.NL);
-			}
-			this.CurrentIndention--;
-			output.Add(this.CurrentTabIndention);
-			output.Add("}");
-			output.Add(this.NL);
-		}
-
 		protected override void TranslateStructInstance(List<string> output, ParseTree.StructInstance structInstance)
 		{
 			output.Add("new ");

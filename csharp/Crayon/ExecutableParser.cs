@@ -254,18 +254,22 @@ namespace Crayon
 			tokens.PopExpected("{");
 
 			List<Token> fieldTokens = new List<Token>();
+			List<Annotation> typeAnnotations = new List<Annotation>();
 			bool nextForbidden = false;
 			while (!tokens.PopIfPresent("}"))
 			{
 				if (nextForbidden) tokens.PopExpected("}"); // crash
 
+				Annotation annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
+
 				Token fieldToken = tokens.Pop();
 				Parser.VerifyIdentifier(fieldToken);
 				nextForbidden = !tokens.PopIfPresent(",");
 				fieldTokens.Add(fieldToken);
+				typeAnnotations.Add(annotation);
 			}
 
-			return new StructDefinition(structToken, structNameToken, fieldTokens);
+			return new StructDefinition(structToken, structNameToken, fieldTokens, typeAnnotations);
 		}
 
 		private static Executable ParseFunction(TokenStream tokens)

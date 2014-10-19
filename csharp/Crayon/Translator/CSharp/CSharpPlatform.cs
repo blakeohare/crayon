@@ -90,14 +90,29 @@ namespace Crayon.Translator.CSharp
 				codeContents.Add("\tpublic class " + structName + nl);
 				codeContents.Add("\t{" + nl);
 				codeContents.Add("\t\tpublic " + structName + "(");
+				List<string> types = new List<string>();
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
+					string type;
+					Annotation typeAnnotation = structDefinition.Types[i];
+					if (typeAnnotation == null)
+					{
+						type = "object";
+					}
+					else
+					{
+						type = this.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null));
+					}
+					types.Add(type);
+
 					if (i > 0) codeContents.Add(", ");
-					codeContents.Add("object v_" + structDefinition.FieldsByIndex[i]);
+					codeContents.Add(type);
+					codeContents.Add(" v_" + structDefinition.FieldsByIndex[i]);
 				}
 				codeContents.Add(")" + nl);
 
 				codeContents.Add("\t\t{" + nl);
+
 
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
@@ -107,7 +122,9 @@ namespace Crayon.Translator.CSharp
 				codeContents.Add("\t\t}" + nl + nl);
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
-					codeContents.Add("\t\tpublic object " + structDefinition.FieldsByIndex[i] + ";" + nl);
+					codeContents.Add("\t\tpublic ");
+					codeContents.Add(types[i]);
+					codeContents.Add(" " + structDefinition.FieldsByIndex[i] + ";" + nl);
 				}
 
 				codeContents.Add("\t}" + nl);

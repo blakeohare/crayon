@@ -1,7 +1,7 @@
 ﻿struct Code {
-	ops,
-	args,
-	stringArgs
+	@type('Array<int>') ops,
+	@type('Array<Array<int>>') args,
+	@type('Array<string>') stringArgs
 }
 
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
@@ -36,22 +36,22 @@ struct ProgramData {
 }
 
 struct StackFrame {
-	pc,
-	locals,
-	valueStack,
-	args,
-	previous,
-	returnValueUsed,
-	objectContext
+	@type('int') pc,
+	@type('Dictionary<int, Value>') locals,
+	@type('Stack<Value>') valueStack,
+	@type('Array<Value>') args,
+	@type('StackFrame') previous,
+	@type('bool') returnValueUsed,
+	@type('Value') objectContext
 }
 
 struct Token {
-	lineIndex,
-	colIndex,
-	fileId
+	@type('int') lineIndex,
+	@type('int') colIndex,
+	@type('int') fileId
 }
 
 struct Value {
-	type,
-	internalValue
+	@type('int') type,
+	@type('object') internalValue
 }

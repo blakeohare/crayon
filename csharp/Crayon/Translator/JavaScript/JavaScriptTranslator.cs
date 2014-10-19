@@ -19,11 +19,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add("]");
 		}
 
-		protected override void TranslateStructDefinition(List<string> output, StructDefinition structDefinition)
-		{
-			throw new Exception("This should have been resolved away.");
-		}
-
 		protected override void TranslateListDefinition(List<string> output, ListDefinition listDef)
 		{
 			output.Add("[");
