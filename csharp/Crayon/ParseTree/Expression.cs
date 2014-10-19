@@ -7,17 +7,26 @@ namespace Crayon.ParseTree
 		public Expression(Token firstToken)
 			: base(firstToken)
 		{
-			this.Annotation = null;
+			this.Annotations = null;
 		}
 
 		public abstract Expression Resolve(Parser parser);
 
 		public virtual bool IsLiteral { get { return false; } }
 
-		public Annotation Annotation { get; set; }
+		public Dictionary<string, Annotation> Annotations { get; set; }
 
 		// To be overridden if necessary.
 		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{ }
+
+		public Annotation GetAnnotation(string type)
+		{
+			if (this.Annotations != null && this.Annotations.ContainsKey(type))
+			{
+				return this.Annotations[type];
+			}
+			return null;
+		}
 	}
 }

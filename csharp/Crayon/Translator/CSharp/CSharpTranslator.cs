@@ -66,15 +66,17 @@ namespace Crayon.Translator.CSharp
 			{
 				output.Add("static ");
 			}
+
+			Annotation typeAnnotation = target.GetAnnotation("type");
 			
-			if (target.Annotation != null)
+			if (typeAnnotation != null)
 			{
-				Annotation annotation = target.Annotation;
 				CSharpPlatform csharpPlatform = (CSharpPlatform)this.Platform;
-				string csharpType = csharpPlatform.GetTypeStringFromAnnotation(annotation.FirstToken, annotation.GetSingleArgAsString(null));
+				string csharpType = csharpPlatform.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null));
 				output.Add(csharpType);
 				output.Add(" ");
 			}
+
 			this.TranslateExpression(output, target);
 			output.Add(" ");
 			output.Add(assignment.AssignmentOp);

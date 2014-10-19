@@ -3,13 +3,20 @@
 	internal class Variable : Expression
 	{
 		public string Name { get; private set; }
-		public bool IsStatic { get; set; }
 
 		public Variable(Token token, string name)
 			: base(token)
 		{
 			this.Name = name;
-			this.IsStatic = false;
+		}
+
+		public bool IsStatic
+		{
+			get
+			{
+				return this.Annotations != null &&
+					this.Annotations.ContainsKey("uncontained");
+			}
 		}
 
 		public override Expression Resolve(Parser parser)
@@ -39,7 +46,10 @@
 
 		public override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
 		{
-			lookup[this.Name] = true;
+			if (this.GetAnnotation("global") == null)
+			{
+				lookup[this.Name] = true;
+			}
 		}
 	}
 }

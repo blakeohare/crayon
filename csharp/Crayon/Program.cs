@@ -10,7 +10,7 @@
 			string rawPlatform = "js";
 			bool minified = false;
 			string jsFolderRoot = "";
-
+			string outputReadableByteCode = null;
 #else
 			if (args.Length != 3 && args.Length != 4)
 			{
@@ -26,6 +26,7 @@
 			string sourceFolder = args[0];
 			string outputFolder = args[1];
 			string rawPlatform = args[2].ToLowerInvariant();
+			string outputReadableByteCode = null; // TODO: expose this via a flag
 			bool minified = false;
 			string jsFolderRoot = "";
 			if (args.Length == 4)
@@ -61,7 +62,7 @@
 					return;
 			}
 
-			platform.Compile(sourceFolder, outputFolder);
+			platform.Compile(sourceFolder, outputFolder, outputReadableByteCode);
 		}
 
 		private static readonly string[] PLATFORM_USAGE = new string[] {

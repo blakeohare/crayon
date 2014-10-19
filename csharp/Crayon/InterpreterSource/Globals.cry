@@ -1,5 +1,4 @@
-﻿@uncontained @type('Array<int>') INTEGERS_POS = null;
-@uncontained @type('Array<int>') INTEGERS_NEG = null;
+﻿@uncontained @type('Array<Array<int>>') INTEGERS_CACHE = [null, null];
 @uncontained @type('Value') VALUE_NULL = new Value(Types.NULL, null);
 @uncontained @type('Value') VALUE_TRUE = new Value(Types.BOOLEAN, true);
 @uncontained @type('Value') VALUE_FALSE = new Value(Types.BOOLEAN, false);

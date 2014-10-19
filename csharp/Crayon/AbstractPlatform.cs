@@ -32,18 +32,62 @@ namespace Crayon
 			this.SystemFunctionTranslator.Translator = translator;
 		}
 
-		private string GenerateByteCode(string inputFolder)
+		private ByteBuffer GenerateByteCode(string inputFolder)
 		{
 			Parser userCodeParser = new Parser(null);
 			ParseTree.Executable[] userCode = userCodeParser.ParseRoot(inputFolder);
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
-			ByteBuffer byteBuffer = bcc.GenerateByteCode(userCodeParser, userCode);
-			return ByteCodeEncoder.Encode(byteBuffer);
+			return bcc.GenerateByteCode(userCodeParser, userCode);
 		}
 
-		public void Compile(string inputFolder, string baseOutputFolder)
+		private void GenerateReadableByteCode(string path, ByteBuffer byteCode)
 		{
-			string byteCode = GenerateByteCode(inputFolder);
+			List<string> output = new List<string>();
+			List<int[]> rows = byteCode.ToIntList();
+			List<string> stringArgs = byteCode.ToStringList();
+			int length = rows.Count;
+			int rowLength;
+			int[] row;
+			Dictionary<int, string> opCodes = new Dictionary<int, string>();
+			foreach (OpCode opCode in Enum.GetValues(typeof(OpCode)))
+			{
+				opCodes[(int)opCode] = opCode.ToString();
+			}
+			List<string> rowOutput = new List<string>();
+			for (int i = 0; i < length; ++i)
+			{
+				row = rows[i];
+				rowLength = row.Length;
+				rowOutput.Add(i + "\t");
+				rowOutput.Add(opCodes[row[0]] + ":");
+				for (int j = 1; j < row.Length; ++j)
+				{
+					rowOutput.Add(" " + row[j]);
+				}
+
+				string sArg = stringArgs[i];
+				if (sArg != null)
+				{
+					rowOutput.Add(" " + sArg.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+				}
+
+				output.Add(string.Join("", rowOutput));
+				rowOutput.Clear();
+			}
+
+			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
+		}
+
+		public void Compile(string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
+		{
+			ByteBuffer byteCodeBuffer = GenerateByteCode(inputFolder);
+
+			if (nullableReadableByteCodeOutputPath != null)
+			{
+				this.GenerateReadableByteCode(nullableReadableByteCodeOutputPath, byteCodeBuffer);
+			}
+
+			string byteCode = ByteCodeEncoder.Encode(byteCodeBuffer);
 
 			this.Context.ByteCodeString = byteCode;
 

@@ -196,6 +196,11 @@ namespace Crayon.Translator.CSharp
 			return output;
 		}
 
+		public string GetTypeStringFromAnnotation(Annotation annotation)
+		{
+			return GetTypeStringFromAnnotation(annotation.FirstToken, annotation.GetSingleArgAsString(null));
+		}
+
 		public string GetTypeStringFromAnnotation(Token stringToken, string value)
 		{
 			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1, false));

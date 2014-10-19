@@ -26,36 +26,37 @@
 
 function initialize_constant_values() {
 	@type('int') i = 0;
-	INTEGERS_POS = $_new_array('int', INTEGER_POSITIVE_CACHE);
-	INTEGERS_NEG = $_new_array('int', INTEGER_NEGATIVE_CACHE);
+	@type('List<int>') positive_integers = $_new_array('int', INTEGER_POSITIVE_CACHE);
+	@type('List<int>') negative_integers = $_new_array('int', INTEGER_NEGATIVE_CACHE);
 	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
-		$_list_push(INTEGERS_POS, new Value(Types.INTEGER, i));
+		$_list_set(positive_integers, i, new Value(Types.INTEGER, i));
 	}
 	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
-		$_list_push(INTEGERS_NEG, new Value(Types.INTEGER, -i));
+		$_list_set(negative_integers, i, new Value(Types.INTEGER, -i));
 	}
+	$_list_set(INTEGERS_CACHE, 0, positive_integers);
+	$_list_set(INTEGERS_CACHE, 1, negative_integers);
 }
 
 function build_integer(@type('int') value) {
 	if (value < 0) {
 		if (value > -INTEGER_NEGATIVE_CACHE) {
-			return INTEGERS_NEG[-value];
+			return INTEGERS_CACHE[1][-value];
 		}
 	} else {
 		if (value < INTEGER_POSITIVE_CACHE) {
-			return INTEGERS_POS[value];
+			return INTEGERS_CACHE[0][value];
 		}
 	}
 	return new Value(Types.INTEGER, value);
 }
 
-function doEqualityComparisonAndReturnCode(a, b) {
-	leftType = Value$a.type;
-	rightType = Value$b.type;
+function doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
+	@type('int') leftType = Value$a.type;
+	@type('int') rightType = Value$b.type;
 	if (leftType == rightType || 
 		(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
 		(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
-		output = false;
 		left = Value$a.internalValue;
 		right = Value$b.internalValue;
 		if (leftType < Types.LIST) {
@@ -79,7 +80,7 @@ function doEqualityComparisonAndReturnCode(a, b) {
 	return 0;
 }
 
-function buildLiteral(type, value, floatTable, stringTable) {
+function buildLiteral(@type('int') type, value, @type('Array<double>') floatTable, @type('Array<string>') stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
 	if (type == Types.INTEGER) return build_integer(value);
 	if (type == Types.FLOAT) return $_list_get(floatTable, value);
