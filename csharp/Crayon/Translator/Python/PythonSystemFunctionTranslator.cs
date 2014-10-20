@@ -354,6 +354,20 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, programData);
 		}
 
+		protected override void TranslateStackPop(List<string> output, ParseTree.Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".pop()");
+		}
+
+		protected override void TranslateStackPush(List<string> output, ParseTree.Expression list, ParseTree.Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".append(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)
 		{
 			this.Translator.TranslateExpression(output, stringConstant);

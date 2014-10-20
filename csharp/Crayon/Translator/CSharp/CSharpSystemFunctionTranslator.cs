@@ -173,7 +173,6 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateListPop(List<string> output, ParseTree.Expression list)
 		{
-			// TODO: make some lists stacks
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".RemoveAt(");
 			this.Translator.TranslateExpression(output, list);
@@ -255,6 +254,20 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateStackPop(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".Pop()");
+		}
+
+		protected override void TranslateStackPush(List<string> output, Expression list, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".Push(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)

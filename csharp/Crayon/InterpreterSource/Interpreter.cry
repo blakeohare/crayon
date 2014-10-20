@@ -19,9 +19,12 @@ function interpret(
 	// declare types...
 	@type('int') type = 0;
 	@type('int') nameId = 0;
+	@type('int') len = 0;
 	@type('int') int1 = 0;
 	@type('int') i = 0;
 	@type('Value') value = null;
+	@type('string') string1 = null;
+	@type('Array<int>') row = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -31,9 +34,6 @@ function interpret(
 	@type('object') right = null;
 	@type('int') leftType = 0;
 	@type('int') rightType = 0;
-
-	@type('string') string1 = null;
-	@type('Array<int>') row = null;
 
 	integerSwitches = ProgramData$p.integerSwitchLookups;
 	stringSwitches = ProgramData$p.stringSwitchLookups;
@@ -100,9 +100,9 @@ function interpret(
 
 			case OpCodes.ASSIGN_INDEX:
 				$_comment('ASSIGN_INDEX');
-				value = $_list_pop(valueStack);
-				index = $_list_pop(valueStack);
-				root = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
+				index = $_stack_pop(valueStack);
+				root = $_stack_pop(valueStack);
 				type = Value$root.type;
 				if (type == Types.LIST) {
 					if (Value$index.type == Types.INTEGER) {
@@ -150,8 +150,8 @@ function interpret(
 
 			case OpCodes.ASSIGN_STEP:
 				$_comment('ASSIGN_STEP');
-				value = $_list_pop(valueStack);
-				obj = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
+				obj = $_stack_pop(valueStack);
 				nameId = row[0];
 				if (Value$obj.type == Types.INSTANCE) {
 					dict = $_list_get(Value$obj.internalValue, 1);
@@ -165,7 +165,7 @@ function interpret(
 				$_comment('ASSIGN_THIS_STEP');
 				obj = StackFrame$stack.objectContext; // obj will never be null because that is a compile error.
 				// TODO: prevent assignment to methods
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				nameId = row[0];
 				dict = $_list_get(Value$obj.internalValue, 1);
 				$_dictionary_set(dict, nameId, value);
@@ -173,14 +173,14 @@ function interpret(
 
 			case OpCodes.ASSIGN_VAR:
 				$_comment('ASSIGN_VAR');
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				$_dictionary_set(locals, row[0], value);
 				break;
 
 			case OpCodes.BINARY_OP:
 				$_comment('BINARY_OP');
-				rightValue = $_list_pop(valueStack);
-				leftValue = $_list_pop(valueStack);
+				rightValue = $_stack_pop(valueStack);
+				leftValue = $_stack_pop(valueStack);
 
 				leftType = Value$leftValue.type;
 				rightType = Value$rightValue.type;
@@ -477,17 +477,17 @@ function interpret(
 					}
 				}
 
-				$_list_push(valueStack, value);
+				$_stack_push(valueStack, value);
 				break;
 
 			case OpCodes.BOOLEAN_NOT:
 				$_comment('BOOLEAN_NOT');
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				if (Value$value.type != Types.BOOLEAN) return killExecution(stack, "Boolean expected.");
 				if (Value$value.internalValue) {
-					$_list_push(valueStack, VALUE_FALSE);
+					$_stack_push(valueStack, VALUE_FALSE);
 				} else {
-					$_list_push(valueStack, VALUE_TRUE);
+					$_stack_push(valueStack, VALUE_TRUE);
 				}
 				break;
 
@@ -526,7 +526,7 @@ function interpret(
 				if (pc != 0) {
 					funcArgs = [];
 					while (argCount > 0) {
-						$_list_push(funcArgs, $_list_pop(valueStack));
+						$_list_push(funcArgs, $_stack_pop(valueStack));
 						argCount -= 1;
 					}
 					if ($_list_get(row, 0) > 1) {
@@ -537,7 +537,7 @@ function interpret(
 					locals = {};
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
 				} else {
-					$_list_push(valueStack, value);
+					$_stack_push(valueStack, value);
 				}
 				break;
 
@@ -557,7 +557,7 @@ function interpret(
 					funcArgs = [];
 					returnValueUsed = $_list_get(row, 2) == 1;
 					while (argCount > 0) {
-						$_list_push(funcArgs, $_list_pop(valueStack));
+						$_list_push(funcArgs, $_stack_pop(valueStack));
 						argCount -= 1;
 					}
 					if ($_list_get(row, 0) > 1) {
@@ -565,14 +565,14 @@ function interpret(
 					}
 
 					if (returnValueUsed) {
-						$_list_push(valueStack, value);
+						$_stack_push(valueStack, value);
 					}
 
 					valueStack = [];
 					locals = {};
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
 				} else {
-					$_list_push(valueStack, value);
+					$_stack_push(valueStack, value);
 				}
 				break;
 
@@ -584,7 +584,7 @@ function interpret(
 				output = VALUE_NULL;
 				switch (row[0]) {
 					case %%%FF_ABS%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						if (Value$value.type == Types.INTEGER) {
 							if (Value$value.internalValue < 0) {
 								output = build_integer(-Value$value.internalValue);
@@ -603,23 +603,23 @@ function interpret(
 						break;
 
 					case %%%FF_ARCTAN2%%%:
-						x = $_list_pop(valueStack);
-						y = $_list_pop(valueStack);
+						x = $_stack_pop(valueStack);
+						y = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_arctan2');
 						break;
 
 					case %%%FF_ASSERT%%%:
-						msg = $_list_pop(valueStack);
-						value = $_list_pop(valueStack);
+						msg = $_stack_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						if (Value$value.type != Types.BOOLEAN || !Value$value.internalValue) {
 							return killExecution(stack, "Assertion failed: " + valueToString(msg));
 						}
 						break;
 
 					case %%%FF_BLIT_IMAGE%%%:
-						y = $_list_pop(valueStack);
-						x = $_list_pop(valueStack);
-						image = $_list_pop(valueStack);
+						y = $_stack_pop(valueStack);
+						x = $_stack_pop(valueStack);
+						image = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_blit_image');
 						break;
 						
@@ -631,7 +631,7 @@ function interpret(
 						break;
 
 					case %%%FF_COS%%%:
-						x = $_list_pop(valueStack);
+						x = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_cos');
 						break;
 
@@ -640,64 +640,64 @@ function interpret(
 						break;
 						
 					case %%%FF_DOWNLOAD_IMAGE%%%:
-						url = $_list_pop(valueStack);
-						key = $_list_pop(valueStack);
+						url = $_stack_pop(valueStack);
+						key = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_download_image');
 						break;
 
 					case %%%FF_DRAW_ELLIPSE%%%:
-						alpha = $_list_pop(valueStack);
-						blue = $_list_pop(valueStack);
-						green = $_list_pop(valueStack);
-						red = $_list_pop(valueStack);
-						height = $_list_pop(valueStack);
-						width = $_list_pop(valueStack);
-						top = $_list_pop(valueStack);
-						left = $_list_pop(valueStack);
+						alpha = $_stack_pop(valueStack);
+						blue = $_stack_pop(valueStack);
+						green = $_stack_pop(valueStack);
+						red = $_stack_pop(valueStack);
+						height = $_stack_pop(valueStack);
+						width = $_stack_pop(valueStack);
+						top = $_stack_pop(valueStack);
+						left = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_draw_ellipse');
 						break;
 
 					case %%%FF_DRAW_LINE%%%:
-						alpha = $_list_pop(valueStack);
-						blue = $_list_pop(valueStack);
-						green = $_list_pop(valueStack);
-						red = $_list_pop(valueStack);
-						width = $_list_pop(valueStack);
-						y2 = $_list_pop(valueStack);
-						x2 = $_list_pop(valueStack);
-						y1 = $_list_pop(valueStack);
-						x1 = $_list_pop(valueStack);
+						alpha = $_stack_pop(valueStack);
+						blue = $_stack_pop(valueStack);
+						green = $_stack_pop(valueStack);
+						red = $_stack_pop(valueStack);
+						width = $_stack_pop(valueStack);
+						y2 = $_stack_pop(valueStack);
+						x2 = $_stack_pop(valueStack);
+						y1 = $_stack_pop(valueStack);
+						x1 = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_draw_line');
 						break;
 
 					case %%%FF_DRAW_RECTANGLE%%%:
-						alpha = $_list_pop(valueStack);
-						blue = $_list_pop(valueStack);
-						green = $_list_pop(valueStack);
-						red = $_list_pop(valueStack);
-						height = $_list_pop(valueStack);
-						width = $_list_pop(valueStack);
-						y = $_list_pop(valueStack);
-						x = $_list_pop(valueStack);
+						alpha = $_stack_pop(valueStack);
+						blue = $_stack_pop(valueStack);
+						green = $_stack_pop(valueStack);
+						red = $_stack_pop(valueStack);
+						height = $_stack_pop(valueStack);
+						width = $_stack_pop(valueStack);
+						y = $_stack_pop(valueStack);
+						x = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_draw_rectangle');
 						break;
 
 					case %%%FF_FILL_SCREEN%%%:
-						blue = $_list_pop(valueStack);
-						green = $_list_pop(valueStack);
-						red = $_list_pop(valueStack);
+						blue = $_stack_pop(valueStack);
+						green = $_stack_pop(valueStack);
+						red = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_fill_screen');
 						break;
 						
 					case %%%FF_FLIP_IMAGE%%%:
-						y = $_list_pop(valueStack);
-						x = $_list_pop(valueStack);
-						img = $_list_pop(valueStack);
+						y = $_stack_pop(valueStack);
+						x = $_stack_pop(valueStack);
+						img = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_flip_image');
 						break;
 
 					case %%%FF_FLOOR%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_floor');
 						break;
 
@@ -706,51 +706,51 @@ function interpret(
 						break;
 						
 					case %%%FF_GET_IMAGE%%%:
-						key = $_list_pop(valueStack);
+						key = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_get_image');
 						break;
 						
 					case %%%FF_GET_IMAGE_HEIGHT%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_get_image_height');
 						break;
 
 					case %%%FF_GET_IMAGE_WIDTH%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_get_image_width');
 						break;
 
 					case %%%FF_INITIALIZE_GAME%%%: 
-						fps = $_list_pop(valueStack);
+						fps = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_initialize_game');
 						break;
 						
 					case %%%FF_INITIALIZE_SCREEN%%%:
-						height = $_list_pop(valueStack);
-						width = $_list_pop(valueStack);
+						height = $_stack_pop(valueStack);
+						width = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_initialize_screen');
 						break;
 						
 					case %%%FF_INITIALIZE_SCREEN_SCALED%%%:
-						pheight = $_list_pop(valueStack);
-						pwidth = $_list_pop(valueStack);
-						height = $_list_pop(valueStack);
-						width = $_list_pop(valueStack);
+						pheight = $_stack_pop(valueStack);
+						pwidth = $_stack_pop(valueStack);
+						height = $_stack_pop(valueStack);
+						width = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_initialize_screen_scaled');
 						break;
 						
 					case %%%FF_IS_IMAGE_LOADED%%%:
-						key = $_list_pop(valueStack);
+						key = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_is_image_loaded');
 						break;
 
 					case %%%FF_PARSE_INT%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_parse_int');
 						break;
 
 					case %%%FF_PRINT%%%: 
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						string1 = valueToString(value);
 						$_insert_platform_code('ff_print'); 
 						break;
@@ -758,19 +758,19 @@ function interpret(
 						$_insert_platform_code('ff_random');
 						break;
 					case %%%FF_SET_TITLE%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 						value = valueToString(value);
 						$_insert_platform_code('ff_set_title');
 						break;
 
 					case %%%FF_SIN%%%:
-						x = $_list_pop(valueStack);
+						x = $_stack_pop(valueStack);
 						$_insert_platform_code('ff_sin');
 						break;
 
 
 					case %%%FF_TYPEOF%%%:
-						value = $_list_pop(valueStack);
+						value = $_stack_pop(valueStack);
 
 						switch (Value$value.type) {
 							case Types.NULL: t = "null"; break;
@@ -793,19 +793,19 @@ function interpret(
 						break;
 				}
 				if (row[1] == 1) {
-					$_list_push(valueStack, output);
+					$_stack_push(valueStack, output);
 				}
 				break;
 
 			case OpCodes.CALL_FUNCTION:
 				$_comment('CALL_FUNCTION');
 				// This is mostly replicated below. Be sure to keep changes in sync.
-				func = $_list_pop(valueStack);
+				func = $_stack_pop(valueStack);
 				funcArgs = [];
 				argCount = $_list_get(row, 0);
 				returnValueUsed = $_list_get(row, 1) == 1;
 				while (argCount > 0) {
-					$_list_push(funcArgs, $_list_pop(valueStack));
+					$_list_push(funcArgs, $_stack_pop(valueStack));
 					argCount -= 1;
 				}
 				if ($_list_get(row, 0) > 1) {
@@ -847,7 +847,7 @@ function interpret(
 				argCount = row[1];
 				returnValueUsed = $_list_get(row, 2) == 1;
 				while (argCount > 0) {
-					$_list_push(funcArgs, $_list_pop(valueStack));
+					$_list_push(funcArgs, $_stack_pop(valueStack));
 					argCount -= 1;
 				}
 				if ($_list_get(row, 1) > 1) {
@@ -891,8 +891,8 @@ function interpret(
 				first = true;
 				anticipatedSize = size;
 				while (size > 0) {
-					value = $_list_pop(valueStack);
-					key = $_list_pop(valueStack);
+					value = $_stack_pop(valueStack);
+					key = $_stack_pop(valueStack);
 					keyType = Value$key.type;
 					if (first) prevType = keyType;
 					if (!first && keyType != prevType) return killExecution(stack, "Cannot have multiple key types in one dictionary.");
@@ -919,7 +919,7 @@ function interpret(
 				}
 
 				dict = new Value(Types.DICTIONARY, new DictImpl(dictKeyLookup, dictValueLookup, anticipatedSize, keyType));
-				$_list_push(valueStack, dict);
+				$_stack_push(valueStack, dict);
 				break;
 
 			case OpCodes.DEF_LIST:
@@ -927,11 +927,11 @@ function interpret(
 				value = [];
 				size = row[0];
 				while (size > 0) {
-					$_list_push(value, $_list_pop(valueStack));
+					$_stack_push(value, $_stack_pop(valueStack));
 					size -= 1;
 				}
 				$_list_reverse_in_place(value);
-				$_list_push(valueStack, new Value(Types.LIST, value));
+				$_stack_push(valueStack, new Value(Types.LIST, value));
 				break;
 
 			case OpCodes.DEF_ORIGINAL_CODE:
@@ -947,7 +947,7 @@ function interpret(
 			case OpCodes.DEREF_DOT:
 				$_comment('DEREF_DOT');
 				// TODO: no caching of methods occur here because ideally, I want to create another op for dotStepInvoke which eliminates the need to instantiate the method in 99.5% of cases.
-				root = $_list_pop(valueStack);
+				root = $_stack_pop(valueStack);
 				type = Value$root.type;
 				if (type == Types.INSTANCE) {
 					dict = $_list_get(Value$root.internalValue, 1);
@@ -960,10 +960,10 @@ function interpret(
 						} else {
 							value = new Value(Types.METHOD, [root, method[2], method[1]]); // context, pc, maxArgs
 							$_dictionary_set(dict, row[0], value);
-							$_list_push(valueStack, value);
+							$_stack_push(valueStack, value);
 						}
 					} else {
-						$_list_push(valueStack, value);
+						$_stack_push(valueStack, value);
 					}
 				} else if (row[0] == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
 					len = -1;
@@ -980,9 +980,9 @@ function interpret(
 					}
 
 					if (len < INTEGER_POSITIVE_CACHE) {
-						$_list_push(valueStack, INTEGERS_CACHE[0][len]);
+						$_stack_push(valueStack, INTEGERS_CACHE[0][len]);
 					} else {
-						$_list_push(valueStack, new Value(Types.INTEGER, len));
+						$_stack_push(valueStack, new Value(Types.INTEGER, len));
 					}
 				} else {
 					// Everything else will presumably be hit 99% of the time via the DOT_STEP_INVOKE op instead of here, since they're methods. 
@@ -992,7 +992,7 @@ function interpret(
 					if (primitive_method_id == -1) {
 						return killExecution(stack, getTypeFromId(type) + " type does not have a field called '" + identifiers[row[0]] + "'.");
 					} else {
-						$_list_push(valueStack, new Value(Types.SYS_METHOD, [root, primitive_method_id]));
+						$_stack_push(valueStack, new Value(Types.SYS_METHOD, [root, primitive_method_id]));
 					}
 				}
 				break;
@@ -1000,10 +1000,10 @@ function interpret(
 			case OpCodes.DUPLICATE_STACK_TOP:
 				$_comment('DUPLICATE_STACK_TOP');
 				if (row[0] == 1) {
-					$_list_push(valueStack, $_list_get(valueStack, $_list_length(valueStack) - 1));
+					$_stack_push(valueStack, $_list_get(valueStack, $_list_length(valueStack) - 1));
 				} else {
 					for (i = 0; i < row[0]; i += 1) {
-						$_list_push(valueStack, $_list_get(valueStack, $_list_length(valueStack) - row[0]));
+						$_stack_push(valueStack, $_list_get(valueStack, $_list_length(valueStack) - row[0]));
 					}
 				}
 				break;
@@ -1016,14 +1016,15 @@ function interpret(
 					funcDef = new Value(Types.FUNCTION, 
 						// PC                             Max arg count    Name ID]
 						[StackFrame$stack.pc + row[1],    row[2],          identifiers[row[0]]]);
-					$_list_push(valueStack, funcDef);
+						// TODO: Struct this ^
+					$_stack_push(valueStack, funcDef);
 				}
 				break;
 
 			case OpCodes.INDEX:
 				$_comment('INDEX');
-				index = $_list_pop(valueStack);
-				root = $_list_pop(valueStack);
+				index = $_stack_pop(valueStack);
+				root = $_stack_pop(valueStack);
 				if (Value$root.type == Types.LIST) {
 					if (Value$index.type != Types.INTEGER) {
 						return killExecution(stack, "List index must be an integer.");
@@ -1034,7 +1035,7 @@ function interpret(
 						else if (indexValue >= $_list_length(listValue)) return killExecution(stack, "List index is out of bounds");
 						else {
 							item = $_list_get(listValue, indexValue);
-							$_list_push(valueStack, item);
+							$_stack_push(valueStack, item);
 						}
 					}
 				} else if (Value$root.type == Types.DICTIONARY) {
@@ -1056,7 +1057,7 @@ function interpret(
 						value = $_dictionary_get(DictImpl$dictImpl.valueLookup, nativeKey, null);
 						if (value == null) return killExecution(stack, "Key not found.");
 							
-						$_list_push(valueStack, value);
+						$_stack_push(valueStack, value);
 					}
 				} else if (Value$root.type == Types.STRING) {
 					t = Value$root.internalValue;
@@ -1067,7 +1068,7 @@ function interpret(
 					if (index < 0 || index >= $_string_length(t)) {
 						return killExecution(stack, "String index out of range.");
 					}
-					$_list_push(valueStack, new Value(Types.STRING, $_string_char_at(t, index)));
+					$_stack_push(valueStack, new Value(Types.STRING, $_string_char_at(t, index)));
 				} else {
 					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
 				}
@@ -1096,7 +1097,7 @@ function interpret(
 				if (index < listlen) {
 					$_dictionary_set(locals, varId, $_list_get(list, index));
 				} else {
-					StackFrame$stack.pc += row[0];
+					StackFrame$stack.pc += $_list_get(row, 0);
 				}
 				index += 1;
 				$_list_set(valueStack, stacklen - 3, build_integer(index));
@@ -1104,88 +1105,87 @@ function interpret(
 
 			case OpCodes.JUMP:
 				$_comment('JUMP');
-				StackFrame$stack.pc += row[0];
+				StackFrame$stack.pc += $_list_get(row, 0);
 				break;
 			
 			case OpCodes.JUMP_IF_FALSE:
 				$_comment('JUMP_IF_FALSE');
-				expr = $_list_pop(valueStack);
-				if (Value$expr.type != Types.BOOLEAN) {
+				value = $_stack_pop(valueStack);
+				if (Value$value.type != Types.BOOLEAN) {
 					return killExecution(stack, "Boolean expected.");
-				} else if (!Value$expr.internalValue) {
-					StackFrame$stack.pc += row[0];
+				} else if (!Value$value.internalValue) {
+					StackFrame$stack.pc += $_list_get(row, 0);
 				}
 				break;
 
 			case OpCodes.JUMP_IF_FALSE_NO_POP:
 				$_comment('JUMP_IF_FALSE_NON_POP');
-				expr = $_list_pop(valueStack);
-				if (Value$expr.type != Types.BOOLEAN) {
+				value = $_stack_pop(valueStack);
+				if (Value$value.type != Types.BOOLEAN) {
 					return killExecution(stack, "Boolean expected.");
-				} else if (!Value$expr.internalValue) {
-					StackFrame$stack.pc += row[0];
-					$_list_push(valueStack, VALUE_FALSE);
+				} else if (!Value$value.internalValue) {
+					StackFrame$stack.pc += $_list_get(row, 0);
+					$_stack_push(valueStack, VALUE_FALSE);
 				}
 				break;
 
 			case OpCodes.JUMP_IF_TRUE:
 				$_comment('JUMP_IF_TRUE');
-				expr = $_list_pop(valueStack);
-				if (Value$expr.type != Types.BOOLEAN) {
+				value = $_stack_pop(valueStack);
+				if (Value$value.type != Types.BOOLEAN) {
 					return killExecution(stack, "Boolean expected.");
-				} else if (Value$expr.internalValue) {
-					StackFrame$stack.pc += row[0];
+				} else if (Value$value.internalValue) {
+					StackFrame$stack.pc += $_list_get(row, 0);
 				}
 				break;
 
 			case OpCodes.JUMP_IF_TRUE_NO_POP:
 				$_comment('JUMP_IF_TRUE_NO_POP');
-				expr = $_list_pop(valueStack);
-				if (Value$expr.type != Types.BOOLEAN) {
+				value = $_stack_pop(valueStack);
+				if (Value$value.type != Types.BOOLEAN) {
 					return killExecution(stack, "Boolean expected.");
-				} else if (Value$expr.internalValue) {
-					StackFrame$stack.pc += row[0];
-					$_list_push(valueStack, VALUE_TRUE);
+				} else if (Value$value.internalValue) {
+					StackFrame$stack.pc += $_list_get(row, 0);
+					$_stack_push(valueStack, VALUE_TRUE);
 				}
 				break;
 				
 			case OpCodes.LITERAL:
 				$_comment('LITERAL');
-				$_list_push(valueStack, $_list_get(literalTable, $_list_get(row, 0)));
+				$_stack_push(valueStack, $_list_get(literalTable, $_list_get(row, 0)));
 				break;
 
 			case OpCodes.LITERAL_STREAM:
 				$_comment('LITERAL_STREAM');
 				for (i = $_list_length(row) - 1; i >= 0; i -= 1) {
-					$_list_push(valueStack, $_list_get(literalTable, $_list_get(row, i)));
+					$_stack_push(valueStack, $_list_get(literalTable, $_list_get(row, i)));
 				}
 				break;
 
 			case OpCodes.NEGATIVE_SIGN:
 				$_comment('NEGATIVE_SIGN');
-				value = $_list_pop(valueStack);
-				t = Value$value.type;
-				value = Value$value.internalValue;
-				if (t == Types.INTEGER) {
-					value = build_integer(-value);
-				} else if (t == Types.FLOAT) {
-					value = new Value(Types.FLOAT, -value);
+				value = $_stack_pop(valueStack);
+				type = Value$value.type;
+				if (type == Types.INTEGER) {
+					value = build_integer(-$_cast('int', Value$value.internalValue));
+				} else if (type == Types.FLOAT) {
+					value = new Value(Types.FLOAT, -$_cast('double', Value$value.internalValue));
 				} else {
-					return killExecution(stack, "Negative sign can only be applied to numbers. Found " + typeToString(t) + " instead.");
+					return killExecution(stack, "Negative sign can only be applied to numbers. Found " + typeToString(type) + " instead.");
 				}
 
-				$_list_push(valueStack, value);
+				$_stack_push(valueStack, value);
 				break;
 
 			case OpCodes.POP:
 				$_comment('POP');
-				$_list_pop(valueStack);
+				$_stack_pop(valueStack);
 				break;
 
 			case OpCodes.RETURN:
 				$_comment('RETURN');
-				returnValue = $_list_pop(valueStack);
-				useReturnValue = StackFrame$stack.returnValueUsed;
+				value = $_stack_pop(valueStack);
+				bool1 = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
 				if (stack == null) {
 					StackFrame$stack.pc += 1;
@@ -1193,32 +1193,34 @@ function interpret(
 				}
 				valueStack = StackFrame$stack.valueStack;
 				locals = StackFrame$stack.locals;
-				if (useReturnValue) {
-					$_list_push(valueStack, returnValue);
+				if (bool1) {
+					$_stack_push(valueStack, value);
 				}
 				break;
 			
 			case OpCodes.RETURN_NULL:
 				$_comment('RETURN_NULL');
-				useReturnValue = StackFrame$stack.returnValueUsed;
+				// use return value
+				bool1 = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
 				if (stack == null) {
 					return '';
 				}
 				locals = StackFrame$stack.locals;
 				valueStack = StackFrame$stack.valueStack;
-				if (useReturnValue) {
-					$_list_push(valueStack, VALUE_NULL);
+				if (bool1) {
+					$_stack_push(valueStack, VALUE_NULL);
 				}
 				break;
 
 			case OpCodes.SWITCH_INT:
 				$_comment('SWITCH_INT');
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				if (Value$value.type == Types.INTEGER) {
 					key = Value$value.internalValue;
-					offset = $_dictionary_get($_list_get(integerSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
-					StackFrame$stack.pc += offset;
+					// offset
+					int1 = $_dictionary_get($_list_get(integerSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
+					StackFrame$stack.pc += int1;
 				} else {
 					return killExecution(stack, "Switch statement expects an integer.");
 				}
@@ -1226,11 +1228,12 @@ function interpret(
 
 			case OpCodes.SWITCH_STRING:
 				$_comment('SWITCH_STRING');
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				if (Value$value.type == Types.STRING) {
 					key = Value$value.internalValue;
-					offset = $_dictionary_get($_list_get(stringSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
-					StackFrame$stack.pc += offset;
+					// offset
+					int1 = $_dictionary_get($_list_get(stringSwitches, $_list_get(row, 0)), key, $_list_get(row, 1));
+					StackFrame$stack.pc += int1;
 				} else {
 					return killExecution(stack, "Switch statement expects a string.");
 				}
@@ -1239,7 +1242,7 @@ function interpret(
 			case OpCodes.THIS:
 				$_comment('THIS');
 				// will never be called outside of a method.
-				$_list_push(valueStack, StackFrame$stack.objectContext);
+				$_stack_push(valueStack, StackFrame$stack.objectContext);
 				break;
 
 			case OpCodes.TOKEN_DATA:
@@ -1259,8 +1262,8 @@ function interpret(
 
 			case OpCodes.USER_CODE_START:
 				$_comment('USER_CODE_START');
-				value = $_list_get(row, 0);
-				ProgramData$p.userCodeStart = value;
+				int1 = $_list_get(row, 0);
+				ProgramData$p.userCodeStart = int1;
 				break;
 
 			case OpCodes.VARIABLE:
@@ -1271,10 +1274,10 @@ function interpret(
 					if (value == null) {
 						return killExecution(stack, "Variable not defined: " + identifiers[row[0]]);
 					} else {
-						$_list_push(valueStack, value);
+						$_stack_push(valueStack, value);
 					}
 				} else {
-					$_list_push(valueStack, value);
+					$_stack_push(valueStack, value);
 				}
 				break;
 
@@ -1291,18 +1294,18 @@ function interpret(
 						fakeToken = $_list_get(sc_row, i);
 						return killExecutionWithTokenOverride(stack, fakeToken, "Variable not defined: " + identifiers[$_list_get(row, i)]);
 					} else {
-						$_list_push(valueStack, value);
+						$_stack_push(valueStack, value);
 					}
 				}
 				break;
 
 			case OpCodes.VERIFY_IS_LIST:
 				$_comment('VERIFY_IS_LIST');
-				value = $_list_pop(valueStack);
+				value = $_stack_pop(valueStack);
 				if (Value$value.type != Types.LIST) {
 					return killExecution(stack, "Expected a list.");
 				}
-				$_list_push(valueStack, value);
+				$_stack_push(valueStack, value);
 				break;
 
 			default:
@@ -1313,21 +1316,24 @@ function interpret(
 	}
 }
 
-function killExecution(stack, message) {
+function killExecution(@type('StackFrame') stack, @type('string') message) {
 	return killExecutionWithTokenOverride(stack, null, message);
 }
 
-function killExecutionWithTokenOverride(stack, firstTokenOverride, message) {
-	fullMessage = '';
-	programData = $_get_program_data(); 
+function killExecutionWithTokenOverride(
+		@type('StackFrame') stack, 
+		@type('Token') firstTokenOverride, 
+		@type('string') message) {
+	@type('string') fullMessage = '';
+	@type('ProgramData') programData = $_get_program_data(); 
 	allTokens = ProgramData$programData.tokenData;
 	allFiles = generateSourceFiles();
-	first = true;
+	@type('bool') first = true;
 	while (stack != null) {
-		pc = StackFrame$stack.pc;
-		stack = StackFrame$stack.previous;
+		@type('int') pc = StackFrame$stack.pc;
+		@type('StackFrame') stack = StackFrame$stack.previous;
 
-		token = null;
+		@type('Token') token = null;
 
 		tokenlist = $_list_get(allTokens, pc);
 		if (tokenlist != null) {
