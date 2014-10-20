@@ -106,9 +106,9 @@ function main() {
 
 	stack = new StackFrame(
 		0, // pc
-		{}, // locals
-		[], // valueStack
-		[], // args
+		$_new_dictionary('int', 'Value'), // locals
+		$_new_stack('Value'), // valueStack
+		$_new_list('Value'), // args
 		null, // previous
 		false, // returnValueUsed
 		null); // object context

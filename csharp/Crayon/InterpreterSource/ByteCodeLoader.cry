@@ -8,7 +8,7 @@ function generateSourceFiles() {
 }
 
 function read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
-	@type('List<char>') output = [];
+	@type('List<char>') output = $_new_list('char');
 	@type('bool') ctn = true;
 	while (ctn) {
 		@type('char') c = $_string_char_at(raw, index[0]);
@@ -52,7 +52,7 @@ function read_integer(@type('Array<int>') pindex, @type('string') raw, @type('in
 }
 
 function read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
-	@type('List<char>') output = [];
+	@type('List<char>') output = $_new_list('char');
 	@type('bool') cont = true;
 	@type('char') c = ' ';
 	while (cont) {
@@ -99,9 +99,9 @@ function loadByteCode() {
 
 	@type('int') opCount = read_integer(index, raw, length);
 
-	@type('List<int>') ops = [];
-	@type('List<Array<int>>') iargs = [];
-	@type('List<string>') sargs = [];
+	@type('List<int>') ops = $_new_list('int');
+	@type('List<Array<int>>') iargs = $_new_list('Array<int>');
+	@type('List<string>') sargs = $_new_list('string');
 	@type('char') c = ' ';
 	@type('int') argc = 0;
 	@type('int') j = 0;
@@ -123,7 +123,7 @@ function loadByteCode() {
 			argc = read_integer(index, raw, length);
 		}
 
-		@type('List<int>') iarglist = [];
+		@type('List<int>') iarglist = $_new_list('int');
 		for (j = 0; j < argc; j += 1) {
 			@type('int') iarg = read_integer(index, raw, length);
 			if (j == 0) {

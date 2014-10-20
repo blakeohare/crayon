@@ -63,7 +63,8 @@ function callSystemMethod(
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_CLEAR%%%:
 			if ($_list_length(funcArgs) != 0) return wrongArgCountError("List clear method", 0, $_list_length(funcArgs));
-			Value$wrappedContext.internalValue = [];
+			// TODO: replace with the platform's .clear if convenient
+			Value$wrappedContext.internalValue = $_new_list('Value');
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
 			if ($_list_length(funcArgs) != 1) return wrongArgCountError("List contains method", 1, $_list_length(funcArgs));
@@ -91,7 +92,7 @@ function callSystemMethod(
 			sep = $_list_get(funcArgs, 0);
 			// TODO: make first argument optional
 			if (Value$sep.type != Types.STRING) return "Argument of list.join needs to be a string.";
-			sb = [];
+			@type('List<string>') sb = $_new_list('string');
 			sepstr = Value$sep.internalValue;
 			len = $_list_length(context);
 			for (i = 0; i < len; i += 1) {
@@ -130,7 +131,7 @@ function callSystemMethod(
 				return "Split method requires a string. Found a " + typeToString(Value$sep.type) + " instead.";
 			}
 			rawList = $_string_split(context, Value$sep.internalValue);
-			wrappedList = [];
+			@type('List<Value>') wrappedList = $_new_list('Value');
 			for (i = 0; i < $_list_length(rawList); i += 1) {
 				$_list_push(wrappedList, new Value(Types.STRING, $_list_get(rawList, i)));
 			}

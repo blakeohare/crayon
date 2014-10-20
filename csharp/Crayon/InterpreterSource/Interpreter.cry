@@ -24,6 +24,7 @@ function interpret(
 	@type('int') i = 0;
 	@type('Value') value = null;
 	@type('string') string1 = null;
+	@type('List<Value>') list1 = null;
 	@type('Array<int>') row = null;
 
 	// binary op variables...
@@ -65,7 +66,9 @@ function interpret(
 
 			case OpCodes.ADD_NAME:
 				$_comment('ADD_NAME');
+				
 				string1 = $_list_get(stringArgs, StackFrame$stack.pc);
+				
 				// the list length is the ID
 				int1 = $_list_length(identifiers);
 				$_dictionary_set(inv_identifiers, string1, int1);
@@ -451,23 +454,23 @@ function interpret(
 						// list * int
 						case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 							$_comment('list * int');
-							t = [];
-							while (right > 0) {
-								$_list_push(t, left);
+							list1 = $_new_list('Value');
+							while ($_cast('int', right) > 0) {
+								$_list_push(list1, left);
 								right -= 1;
 							}
-							value = new Value(Types.LIST, t);
+							value = new Value(Types.LIST, list1);
 							break;
 							
 						// int * list
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.LIST:
 							$_comment('int * list');
-							t = [];
+							list1 = $_new_list('Value');
 							while (left > 0) {
-								$_list_push(t, right);
+								$_list_push(list1, right);
 								left -= 1;
 							}
-							value = new Value(Types.LIST, t);
+							value = new Value(Types.LIST, list1);
 							break;
 
 						default:
@@ -497,18 +500,18 @@ function interpret(
 				for (i = 0; i < $_list_length(row); i += 2) {
 					$_dictionary_set(integerSwitchLookup, $_list_get(row, i), $_list_get(row, i + 1));
 				}
-				p = $_get_program_data();
 				$_list_push(ProgramData$p.integerSwitchLookups, integerSwitchLookup);
 				break;
 
 			case OpCodes.BUILD_SWITCH_STRING:
 				$_comment('BUILD_SWITCH_STRING');
 				allLookups = ProgramData$p.stringSwitchLookups;
-				id = $_list_get(row, 0);
-				while ($_list_length(allLookups) <= id) {
+				// int1 is id
+				int1 = $_list_get(row, 0);
+				while ($_list_length(allLookups) <= int1) {
 					$_list_push(allLookups, {});
 				}
-				lookup = $_list_get(allLookups, id);
+				lookup = $_list_get(allLookups, int1);
 				key = $_list_get(stringArgs, StackFrame$stack.pc);
 				$_dictionary_set(lookup, key, $_list_get(row, 1));
 				break;
@@ -524,7 +527,7 @@ function interpret(
 				pc = $_list_get(classData, 1);
 				argCount = $_list_get(row, 0);
 				if (pc != 0) {
-					funcArgs = [];
+					funcArgs = $_new_list('Value');
 					while (argCount > 0) {
 						$_list_push(funcArgs, $_stack_pop(valueStack));
 						argCount -= 1;
@@ -533,8 +536,8 @@ function interpret(
 						$_list_reverse_in_place(funcArgs);
 					}
 
-					valueStack = [];
-					locals = {};
+					valueStack = $_new_stack('Value');
+					locals = $_new_dictionary('int', 'Value');
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
 				} else {
 					$_stack_push(valueStack, value);
@@ -546,7 +549,7 @@ function interpret(
 				sc_row = $_list_get(specialCache, StackFrame$stack.pc);
 				classId = $_list_get(sc_row, 0);
 				ProgramData$p.instanceCounter += 1;
-				value = new Value(Types.INSTANCE, [classId, {}, ProgramData$p.instanceCounter]);
+				value = new Value(Types.INSTANCE, [classId, $_new_dictionary('int', 'Value'), ProgramData$p.instanceCounter]);
 				classData = $_list_get(classTable, classId);
 				if (classData[5] == 0) {
 					return killExecution(stack, "This class has not been defined yet.");
@@ -554,7 +557,7 @@ function interpret(
 				pc = $_list_get(classData, 1);
 				argCount = $_list_get(row, 0);
 				if (pc != 0) {
-					funcArgs = [];
+					funcArgs = $_new_list('Value');
 					returnValueUsed = $_list_get(row, 2) == 1;
 					while (argCount > 0) {
 						$_list_push(funcArgs, $_stack_pop(valueStack));
@@ -568,8 +571,8 @@ function interpret(
 						$_stack_push(valueStack, value);
 					}
 
-					valueStack = [];
-					locals = {};
+					valueStack = $_new_stack('Value');
+					locals = $_new_dictionary('int', 'Value');
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
 				} else {
 					$_stack_push(valueStack, value);
@@ -801,7 +804,7 @@ function interpret(
 				$_comment('CALL_FUNCTION');
 				// This is mostly replicated below. Be sure to keep changes in sync.
 				func = $_stack_pop(valueStack);
-				funcArgs = [];
+				funcArgs = $_new_list('Value');
 				argCount = $_list_get(row, 0);
 				returnValueUsed = $_list_get(row, 1) == 1;
 				while (argCount > 0) {
@@ -828,12 +831,12 @@ function interpret(
 					if (maxArgs < $_list_length(funcArgs)) {
 						return killExecution(stack, "Too many args were passed in.");
 					}
-					valueStack = [];
-					locals = {};
+					valueStack = $_new_stack('Value');
+					locals = $_new_dictionary('int', 'Value');
 					stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, returnValueUsed, obj);
 				} else if (funcType == Types.FUNCTION) {
-					valueStack = [];
-					locals = {};
+					valueStack = $_new_stack('Value');
+					locals = $_new_dictionary('int', 'Value');
 					stack = new StackFrame(Value$func.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed, null);
 				} else {
 					return killExecution(stack, "Cannot invoke " + getTypeFromId(funcType) + " like a function.");
@@ -843,7 +846,7 @@ function interpret(
 			case OpCodes.CALL_FUNCTION_ON_VARIABLE:
 				$_comment('CALL_FUNCTION_ON_VARIABLE');
 				// This is mostly replicated above. Be sure to keep changes in sync.
-				funcArgs = [];
+				funcArgs = $_new_list('Value');
 				argCount = row[1];
 				returnValueUsed = $_list_get(row, 2) == 1;
 				while (argCount > 0) {
@@ -862,8 +865,8 @@ function interpret(
 					
 					type = Value$funcPointer.type;
 					if (type == Types.FUNCTION) {
-						valueStack = [];
-						locals = {};
+						valueStack = $_new_stack('Value');
+						locals = $_new_dictionary('int', 'Value');
 						stack = new StackFrame(Value$funcPointer.internalValue[0], locals, valueStack, funcArgs, stack, returnValueUsed, null);
 					} else {
 						return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
@@ -924,14 +927,14 @@ function interpret(
 
 			case OpCodes.DEF_LIST:
 				$_comment('DEF_LIST');
-				value = [];
-				size = row[0];
+				list1 = $_new_list('Value');
+				size = $_list_get(row, 0);
 				while (size > 0) {
-					$_stack_push(value, $_stack_pop(valueStack));
+					$_stack_push(list1, $_stack_pop(valueStack));
 					size -= 1;
 				}
-				$_list_reverse_in_place(value);
-				$_stack_push(valueStack, new Value(Types.LIST, value));
+				$_list_reverse_in_place(list1);
+				$_stack_push(valueStack, new Value(Types.LIST, list1));
 				break;
 
 			case OpCodes.DEF_ORIGINAL_CODE:
@@ -1254,7 +1257,7 @@ function interpret(
 				file = $_list_get(row, 3);
 				tokens = $_list_get(tokensByPc, pc);
 				if (tokens == null) {
-					tokens = [];
+					tokens = $_new_array('int', 0);
 					$_list_set(tokensByPc, pc, tokens);
 				}
 				$_list_push(tokens, new Token(line, col, file));

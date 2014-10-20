@@ -15,7 +15,7 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslateCast(List<string> output, ParseTree.Expression typeValue, ParseTree.Expression expression)
+		protected override void TranslateCast(List<string> output, Expression typeValue, Expression expression)
 		{
 			CSharpPlatform platform = (CSharpPlatform) this.Platform;
 			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, ((StringConstant)typeValue).Value);
@@ -26,14 +26,14 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, expression);
 		}
 
-		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)
+		protected override void TranslateComment(List<string> output, Expression commentValue)
 		{
 #if DEBUG
-			output.Add("// " + ((ParseTree.StringConstant)commentValue).Value);
+			output.Add("// " + ((StringConstant)commentValue).Value);
 #endif
 		}
 
-		protected override void TranslateDictionaryContains(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".ContainsKey(");
@@ -41,7 +41,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateDictionaryGet(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key, ParseTree.Expression defaultValue)
+		protected override void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add("[");
@@ -50,19 +50,19 @@ namespace Crayon.Translator.CSharp
 			// TODO: audit each usage and see which ones are guaranteed keys and which should have fallbacks
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".Keys.ToArray()");
 		}
 
-		protected override void TranslateDictionaryGetValues(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionaryGetValues(List<string> output, Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".Values");
 		}
 
-		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		protected override void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".Remove(");
@@ -70,7 +70,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateDictionarySet(List<string> output, ParseTree.Expression dict, ParseTree.Expression key, ParseTree.Expression value)
+		protected override void TranslateDictionarySet(List<string> output, Expression dict, Expression key, Expression value)
 		{
 			this.Translator.TranslateExpression(output, dict);
 			output.Add("[");
@@ -79,13 +79,13 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, value);
 		}
 
-		protected override void TranslateDictionarySize(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionarySize(List<string> output, Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".Count");
 		}
 
-		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
+		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("System.Math.Pow(");
 			this.Translator.TranslateExpression(output, baseNum);
@@ -109,14 +109,14 @@ namespace Crayon.Translator.CSharp
 			output.Add("// TODO: Framework code for " + id);
 		}
 
-		protected override void TranslateInt(List<string> output, ParseTree.Expression value)
+		protected override void TranslateInt(List<string> output, Expression value)
 		{
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
 		}
 
-		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
+		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
 		{
 			output.Add("TranslationUtil.ValueListConcat(");
 			this.Translator.TranslateExpression(output, listA);
@@ -125,7 +125,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListGet(List<string> output, ParseTree.Expression list, ParseTree.Expression index)
+		protected override void TranslateListGet(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add("[");
@@ -133,7 +133,7 @@ namespace Crayon.Translator.CSharp
 			output.Add("]");
 		}
 
-		protected override void TranslateListInsert(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
+		protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".Insert(");
@@ -143,7 +143,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list, ParseTree.Expression sep)
+		protected override void TranslateListJoin(List<string> output, Expression list, Expression sep)
 		{
 			output.Add("string.Join(");
 			this.Translator.TranslateExpression(output, sep);
@@ -152,26 +152,26 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListLastIndex(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListLastIndex(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".Count - 1");
 		}
 
-		protected override void TranslateListLength(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListLength(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".Count");
 		}
 
-		protected override void TranslateListNew(List<string> output, ParseTree.Expression length)
+		protected override void TranslateListNew(List<string> output, Expression length)
 		{
 			output.Add("TranslationHelper.NewListOfSize(");
 			this.Translator.TranslateExpression(output, length);
 			output.Add(")");
 		}
 
-		protected override void TranslateListPop(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".RemoveAt(");
@@ -179,7 +179,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(".Count - 1)");
 		}
 
-		protected override void TranslateListPush(List<string> output, ParseTree.Expression list, ParseTree.Expression value)
+		protected override void TranslateListPush(List<string> output, Expression list, Expression value)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".Add(");
@@ -187,7 +187,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListRemoveAt(List<string> output, ParseTree.Expression list, ParseTree.Expression index)
+		protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".RemoveAt(");
@@ -195,13 +195,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListReverseInPlace(List<string> output, ParseTree.Expression listVar)
+		protected override void TranslateListReverseInPlace(List<string> output, Expression listVar)
 		{
 			this.Translator.TranslateExpression(output, listVar);
 			output.Add(".Reverse()");
 		}
 
-		protected override void TranslateListSet(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
+		protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add("[");
@@ -210,17 +210,17 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, value);
 		}
 
-		protected override void TranslateListShuffleInPlace(List<string> output, ParseTree.Expression list)
+		protected override void TranslateListShuffleInPlace(List<string> output, Expression list)
 		{
 			output.Add("TranslationHelper.ShuffleInPlace(");
 			this.Translator.TranslateExpression(output, list);
 			output.Add(")");
 		}
 
-		protected override void TranslateNewArray(List<string> output, ParseTree.Expression type, ParseTree.Expression size)
+		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			CSharpPlatform platform = (CSharpPlatform)this.Platform;
-			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, ((StringConstant)type).Value);
+			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, type.Value);
 			output.Add("new ");
 			output.Add(csharpType);
 			output.Add("[");
@@ -228,12 +228,42 @@ namespace Crayon.Translator.CSharp
 			output.Add("]");
 		}
 
+		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
+		{
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			string csharpKeyType = platform.GetTypeStringFromAnnotation(keyType.FirstToken, keyType.Value);
+			string csharpValueType = platform.GetTypeStringFromAnnotation(valueType.FirstToken, valueType.Value);
+			output.Add("new Dictionary<");
+			output.Add(csharpKeyType);
+			output.Add(", ");
+			output.Add(csharpValueType);
+			output.Add(">()");
+		}
+
+		protected override void TranslateNewList(List<string> output, StringConstant type)
+		{
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, ((StringConstant)type).Value);
+			output.Add("new List<");
+			output.Add(csharpType);
+			output.Add(">()");
+		}
+
+		protected override void TranslateNewStack(List<string> output, StringConstant type)
+		{
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, ((StringConstant)type).Value);
+			output.Add("new Stack<");
+			output.Add(csharpType);
+			output.Add(">()");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslatePrint(List<string> output, ParseTree.Expression message)
+		protected override void TranslatePrint(List<string> output, Expression message)
 		{
 			output.Add("System.Console.WriteLine(");
 			this.Translator.TranslateExpression(output, message);
@@ -250,7 +280,7 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslateSetProgramData(List<string> output, ParseTree.Expression programData)
+		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
@@ -270,7 +300,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)
+		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
 		{
 			char c = stringConstant.Value[0];
 			string value;
@@ -287,7 +317,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(value);
 		}
 
-		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)
+		protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
 		{
 			if (strongCast)
 			{
@@ -301,7 +331,7 @@ namespace Crayon.Translator.CSharp
 			}
 		}
 
-		protected override void TranslateStringCharAt(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression index)
+		protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add("[");
@@ -309,7 +339,7 @@ namespace Crayon.Translator.CSharp
 			output.Add("]");
 		}
 
-		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
 			output.Add(".Contains(");
@@ -317,7 +347,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringEndsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
 		{
 			this.Translator.TranslateExpression(output, stringExpr);
 			output.Add(".EndsWith(");
@@ -325,14 +355,14 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringFromCode(List<string> output, ParseTree.Expression characterCode)
+		protected override void TranslateStringFromCode(List<string> output, Expression characterCode)
 		{
 			output.Add("(\"\" + (char)");
 			this.Translator.TranslateExpression(output, characterCode);
 			output.Add(")");
 		}
 
-		protected override void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
 			output.Add(".indexOf(");
@@ -340,33 +370,33 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringLength(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringLength(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".Length");
 		}
 
-		protected override void TranslateStringLower(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringLower(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".ToLowerInvariant()");
 		}
 
-		protected override void TranslateStringParseFloat(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
 		{
 			output.Add("double.Parse(");
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(")");
 		}
 
-		protected override void TranslateStringParseInt(List<string> output, ParseTree.Expression value)
+		protected override void TranslateStringParseInt(List<string> output, Expression value)
 		{
 			output.Add("int.Parse(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
 		}
 
-		protected override void TranslateStringReplace(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression findMe, ParseTree.Expression replaceWith)
+		protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".Replace(");
@@ -376,14 +406,14 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringReverse(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringReverse(List<string> output, Expression stringValue)
 		{
 			output.Add("TranslationHelper.StringReverse(");
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(")");
 		}
 
-		protected override void TranslateStringSplit(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression sep)
+		protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
 		{
 			this.Translator.TranslateExpression(output, stringExpr);
 			output.Add(".Split(");
@@ -391,7 +421,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringStartsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
 		{
 			this.Translator.TranslateExpression(output, stringExpr);
 			output.Add(".StartsWith(");
@@ -399,13 +429,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringTrim(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringTrim(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".Trim()");
 		}
 
-		protected override void TranslateStringUpper(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringUpper(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".ToUpperInvariant()");
@@ -416,14 +446,14 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslateUnsafeFloatDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
+		protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
 		{
 			this.Translator.TranslateExpression(output, numerator);
 			output.Add(" / ");
 			this.Translator.TranslateExpression(output, denominator);
 		}
 
-		protected override void TranslateUnsafeIntegerDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
+		protected override void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator)
 		{
 			this.Translator.TranslateExpression(output, numerator);
 			output.Add(" / ");
