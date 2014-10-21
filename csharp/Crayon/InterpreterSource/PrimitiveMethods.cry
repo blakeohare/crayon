@@ -1,5 +1,5 @@
 ﻿
-function wrongArgCountError(@type('string') name, @type('int') expected, @type('int') actual) {
+function @type('string') wrongArgCountError(@type('string') name, @type('int') expected, @type('int') actual) {
 	@type('string') output = null;
 	if (expected == 0) {
 		output = name + " does not accept any arguments.";
@@ -13,7 +13,7 @@ function wrongArgCountError(@type('string') name, @type('int') expected, @type('
 	return output;
 }
 
-function generatePrimitiveMethodLookupTable() {
+function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	return {
 		// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
 		Types.STRING + "contains": %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%,

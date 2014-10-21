@@ -9,16 +9,28 @@ namespace Crayon.ParseTree
 		public Token[] ArgNames { get; private set; }
 		public Expression[] DefaultValues { get; private set; }
 		public Executable[] Code { get; private set; }
-		public Annotation[] Annotations { get; private set; }
+		public Annotation[] ArgAnnotations { get; private set; }
+		private Dictionary<string, Annotation> annotations;
 
-		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code)
+		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations)
 			: base(functionToken)
 		{
 			this.NameToken = nameToken;
 			this.ArgNames = argNames.ToArray();
 			this.DefaultValues = argDefaultValues.ToArray();
-			this.Annotations = argAnnotations.ToArray();
+			this.ArgAnnotations = argAnnotations.ToArray();
 			this.Code = code.ToArray();
+			this.annotations = new Dictionary<string, Annotation>();
+			foreach (Annotation annotation in functionAnnotations)
+			{
+				this.annotations[annotation.Type] = annotation;
+			}
+		}
+
+		public Annotation GetAnnotation(string type)
+		{
+			if (this.annotations.ContainsKey(type)) return this.annotations[type];
+			return null;
 		}
 
 		public override IList<Executable> Resolve(Parser parser)
@@ -31,9 +43,9 @@ namespace Crayon.ParseTree
 				}
 
 				// Annotations not allowed in byte code mode
-				if (parser.NullablePlatform == null && this.Annotations[i] != null)
+				if (parser.NullablePlatform == null && this.ArgAnnotations[i] != null)
 				{
-					throw new ParserException(this.Annotations[i].FirstToken, "Unexpected token: '@'");
+					throw new ParserException(this.ArgAnnotations[i].FirstToken, "Unexpected token: '@'");
 				}
 			}
 

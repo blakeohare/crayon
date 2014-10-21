@@ -10,6 +10,13 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		protected override void TranslateArrayLength(List<string> output, Expression list)
+		{
+			output.Add("len(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			throw new Exception("This code path should be optimized out of the python translation.");

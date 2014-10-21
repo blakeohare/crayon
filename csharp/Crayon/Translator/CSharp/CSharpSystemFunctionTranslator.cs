@@ -10,6 +10,12 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateArrayLength(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".Length");
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			// Nope
@@ -118,7 +124,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
 		{
-			output.Add("TranslationUtil.ValueListConcat(");
+			output.Add("TranslationHelper.ValueListConcat(");
 			this.Translator.TranslateExpression(output, listA);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, listB);

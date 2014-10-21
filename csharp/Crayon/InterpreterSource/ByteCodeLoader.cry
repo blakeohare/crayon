@@ -7,7 +7,7 @@ function generateSourceFiles() {
 	return ProgramData$p.sourceCode;
 }
 
-function read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
+function @type('string') read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
 	@type('List<char>') output = $_new_list('char');
 	@type('bool') ctn = true;
 	while (ctn) {
@@ -23,7 +23,7 @@ function read_till(@type('Array<int>') index, @type('string') raw, @type('int') 
 	return $_list_join(output, '');
 }
 
-function read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
+function @type('int') read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
 	@type('char') c = raw[pindex[0]];
 	@type('int') num = 0;
 	pindex[0] += 1;
@@ -51,7 +51,7 @@ function read_integer(@type('Array<int>') pindex, @type('string') raw, @type('in
 	return num;
 }
 
-function read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
+function @type('string') read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
 	@type('List<char>') output = $_new_list('char');
 	@type('bool') cont = true;
 	@type('char') c = ' ';
@@ -86,7 +86,7 @@ function read_string(@type('Array<int>') pindex, @type('string') raw, @type('int
 	return $_list_join(output, '');
 }
 
-function loadByteCode() {
+function @type('Code') loadByteCode() {
 	@type('string') raw = $_get_raw_byte_code_string();
 
 	@type('Array<int>') index = [0];

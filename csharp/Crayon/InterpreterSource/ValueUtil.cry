@@ -1,4 +1,4 @@
-﻿function valueToString(@type('Value') wrappedValue) {
+﻿function @type('string') valueToString(@type('Value') wrappedValue) {
 	@type('int') type = Value$wrappedValue.type;
 	@type('object') value = Value$wrappedValue.internalValue;
 	if (type == Types.NULL) return "null";
@@ -38,20 +38,24 @@ function initialize_constant_values() {
 	$_list_set(INTEGERS_CACHE, 1, negative_integers);
 }
 
-function build_integer(@type('int') value) {
-	if (value < 0) {
-		if (value > -INTEGER_NEGATIVE_CACHE) {
-			return INTEGERS_CACHE[1][-value];
+function @type('Value') build_integer(@type('int') num) {
+	if (num < 0) {
+		if (num > -INTEGER_NEGATIVE_CACHE) {
+			return INTEGERS_CACHE[1][-num];
 		}
 	} else {
-		if (value < INTEGER_POSITIVE_CACHE) {
-			return INTEGERS_CACHE[0][value];
+		if (num < INTEGER_POSITIVE_CACHE) {
+			return INTEGERS_CACHE[0][num];
 		}
 	}
-	return new Value(Types.INTEGER, value);
+	return new Value(Types.INTEGER, num);
 }
 
-function doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
+// This returns a numerical code rather than a boolean
+//  0 = false
+//  1 = true
+//  2 = == operation not defined
+function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
 	@type('int') leftType = Value$a.type;
 	@type('int') rightType = Value$b.type;
 	if (leftType == rightType || 
@@ -80,7 +84,7 @@ function doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
 	return 0;
 }
 
-function buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
+function @type('Value') buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
 	if (type == Types.INTEGER) return build_integer(value);
 	if (type == Types.FLOAT) return $_list_get(floatTable, value);
@@ -90,7 +94,7 @@ function buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>
 	return null;
 }
 
-function copyIntToIntDictionary(@type('Dictionary<int, int>') dict) {
+function @type('Dictionary<int, int>') copyIntToIntDictionary(@type('Dictionary<int, int>') dict) {
 	@type('Array<int>') key_list = $_dictionary_get_keys(dict);
 	@type('Dictionary<int, int>') output = {};
 	for (@type('int') i = 0; i < $_list_length(key_list); i += 1) {

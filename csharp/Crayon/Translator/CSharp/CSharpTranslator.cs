@@ -24,20 +24,30 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add("public static object ");
+			output.Add("public static ");
+
+			string returnType = "object";
+			Annotation returnTypeAnnotation = functionDef.GetAnnotation("type");
+			if (returnTypeAnnotation != null)
+			{
+				returnType = this.CSharpPlatform.GetTypeStringFromAnnotation(returnTypeAnnotation);
+			}
+			output.Add(returnType);
+			output.Add(" ");
+
 			output.Add("v_" + functionDef.NameToken.Value);
 			output.Add("(");
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
 				if (i > 0) output.Add(", ");
-				if (functionDef.Annotations[i] == null)
+				if (functionDef.ArgAnnotations[i] == null)
 				{
 					output.Add("object ");
 				}
 				else
 				{
-					string argType = functionDef.Annotations[i].GetSingleArgAsString(null);
-					string type = this.CSharpPlatform.GetTypeStringFromAnnotation(functionDef.Annotations[i].FirstToken, argType);
+					string argType = functionDef.ArgAnnotations[i].GetSingleArgAsString(null);
+					string type = this.CSharpPlatform.GetTypeStringFromAnnotation(functionDef.ArgAnnotations[i].FirstToken, argType);
 					output.Add(type);
 					output.Add(" ");
 				}

@@ -24,5 +24,13 @@ namespace %%%PROJECT_ID%%%
 				list[i] = tValue;
 			}
 		}
+
+		public static List<Value> ValueListConcat(List<Value> a, List<Value> b)
+		{
+			List<Value> output = new List<Value>(a.Count + b.Count);
+			output.AddRange(a);
+			output.AddRange(b);
+			return output;
+		}
 	}
 }

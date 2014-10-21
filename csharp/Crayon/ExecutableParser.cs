@@ -275,6 +275,13 @@ namespace Crayon
 		private static Executable ParseFunction(TokenStream tokens)
 		{
 			Token functionToken = tokens.PopExpected("function");
+			List<Annotation> functionAnnotations = new List<Annotation>();
+
+			while (tokens.IsNext("@"))
+			{
+				functionAnnotations.Add(AnnotationParser.ParseAnnotation(tokens));
+			}
+
 			Token functionNameToken = tokens.Pop();
 			Parser.VerifyIdentifier(functionNameToken);
 			tokens.PopExpected("(");
@@ -300,7 +307,7 @@ namespace Crayon
 
 			IList<Executable> code = Parser.ParseBlock(tokens, true);
 
-			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code);
+			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code, functionAnnotations);
 		}
 
 		private static Executable ParseFor(TokenStream tokens)

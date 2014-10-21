@@ -1,5 +1,5 @@
 ﻿
-function interpret(
+function @type('string') interpret(
 		@type('StackFrame') stack,
 		@type('Array<int>') ops,
 		@type('Array<Array<int>>') args,
@@ -22,7 +22,10 @@ function interpret(
 	@type('int') len = 0;
 	@type('int') int1 = 0;
 	@type('int') i = 0;
+	@type('double') float1 = 3.14;
 	@type('Value') value = null;
+	@type('Value') root = null;
+	@type('Value') value2 = null;
 	@type('string') string1 = null;
 	@type('List<Value>') list1 = null;
 	@type('Array<int>') row = null;
@@ -80,9 +83,9 @@ function interpret(
 
 			case OpCodes.ASSIGN_FUNCTION_ARG:
 				$_comment('ASSIGN_FUNCTION_ARG');
-				nameId = row[0];
-				index = row[1];
-				if (index >= $_list_length(StackFrame$stack.args)) {
+				nameId = $_list_get(row, 0);
+				i = $_list_get(row, 1);
+				if (i >= $_array_length(StackFrame$stack.args)) {
 					// pass in previous stack so that it's pointing at the spot where you invoke the function.
 					return killExecution(StackFrame$stack.previous, "Not enough arguments supplied.");
 				}
@@ -92,43 +95,43 @@ function interpret(
 
 			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP:
 				$_comment('ASSIGN_FUNCTION_ARG_AND_JUMP');
-				nameId = row[0];
-				index = row[1];
-				if (index < $_list_length(StackFrame$stack.args)) {
-					value = $_list_get(StackFrame$stack.args, index);
+				nameId = $_list_get(row, 0);
+				i = $_list_get(row, 1);
+				if (i < $_array_length(StackFrame$stack.args)) {
+					value = $_list_get(StackFrame$stack.args, i);
 					$_dictionary_set(locals, nameId, value);
-					StackFrame$stack.pc += row[2];
+					StackFrame$stack.pc += $_list_get(row, 2);
 				}
 				break;
 
 			case OpCodes.ASSIGN_INDEX:
 				$_comment('ASSIGN_INDEX');
 				value = $_stack_pop(valueStack);
-				index = $_stack_pop(valueStack);
+				value2 = $_stack_pop(valueStack); // index
 				root = $_stack_pop(valueStack);
 				type = Value$root.type;
 				if (type == Types.LIST) {
-					if (Value$index.type == Types.INTEGER) {
-						index = Value$index.internalValue;
-						list = Value$root.internalValue;
-						if (index < 0) {
+					if (Value$value2.type == Types.INTEGER) {
+						i = $_cast('int', Value$value2.internalValue);
+						list1 = $_cast('List<Value>', Value$root.internalValue);
+						if (i < 0) {
 							return killExecution(stack, "Index must be non-negative.");
-						} else if (index >= $_list_length(list)) {
+						} else if (i >= $_list_length(list1)) {
 							return killExecution(stack, "Index is out of range.");
 						} else {
-							$_list_set(list, index, value);
+							$_list_set(list1, i, value);
 						}
 					} else {
 						return killExecution(stack, "List index must be an integer.");
 					}
 				} else if (type == Types.DICTIONARY) {
-					nativeKeyType = Value$index.type;
+					nativeKeyType = Value$value2.type;
 					if (nativeKeyType == Types.INTEGER) {
-						nativeKey = Value$index.internalValue;
+						nativeKey = Value$value2.internalValue;
 					} else if (nativeKeyType == Types.STRING) {
-						nativeKey = Value$index.internalValue;
+						nativeKey = Value$value2.internalValue;
 					} else if (nativeKeyType == Types.INSTANCE) {
-						nativeKey = $_list_get(Value$index.internalValue, 2); // object ID
+						nativeKey = $_list_get(Value$value2.internalValue, 2); // object ID
 					} else {
 						return killExecution(stack, "Invalid key for a dictionary.");
 					}
@@ -139,7 +142,7 @@ function interpret(
 						return killExecution(stack, "Cannot have multiple keys in one dictionary with different types.");
 					}
 					if (!$_dictionary_contains(DictImpl$dictImpl.keyLookup, nativeKey)) {
-						$_dictionary_set(DictImpl$dictImpl.keyLookup, nativeKey, index);
+						$_dictionary_set(DictImpl$dictImpl.keyLookup, nativeKey, value2);
 						DictImpl$dictImpl.size += 1;
 						if (!nonEmpty) {
 							DictImpl$dictImpl.keyType = nativeKeyType;
@@ -154,10 +157,10 @@ function interpret(
 			case OpCodes.ASSIGN_STEP:
 				$_comment('ASSIGN_STEP');
 				value = $_stack_pop(valueStack);
-				obj = $_stack_pop(valueStack);
-				nameId = row[0];
-				if (Value$obj.type == Types.INSTANCE) {
-					dict = $_list_get(Value$obj.internalValue, 1);
+				value2 = $_stack_pop(valueStack); // target root
+				nameId = $_list_get(row, 0);
+				if (Value$value2.type == Types.INSTANCE) {
+					dict = $_list_get(Value$value2.internalValue, 1);
 					$_dictionary_set(dict, nameId, value);
 				} else {
 					killExecution(stack, "Cannot assign to a field on this type.");
@@ -166,11 +169,11 @@ function interpret(
 				
 			case OpCodes.ASSIGN_THIS_STEP:
 				$_comment('ASSIGN_THIS_STEP');
-				obj = StackFrame$stack.objectContext; // obj will never be null because that is a compile error.
+				value2 = StackFrame$stack.objectContext; // value2 will never be null because that is a compile error.
 				// TODO: prevent assignment to methods
 				value = $_stack_pop(valueStack);
-				nameId = row[0];
-				dict = $_list_get(Value$obj.internalValue, 1);
+				nameId = $_list_get(row, 0);
+				dict = $_list_get(Value$value2.internalValue, 1);
 				$_dictionary_set(dict, nameId, value);
 				break;
 
@@ -271,25 +274,25 @@ function interpret(
 						// float % float
 						case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
 							$_comment('float % float');
-							if (right == 0) return killExecution(stack, "Modulo by 0");
-							t = left % right;
-							if (t < 0) t += right;
-							value = new Value(Types.FLOAT, t);
+							if ($_cast('double', right) == 0) return killExecution(stack, "Modulo by 0");
+							float1 = $_cast('double', left) % $_cast('double', right);
+							if (float1 < 0) float1 += $_cast('double', right);
+							value = new Value(Types.FLOAT, float1);
 							break;
 
 						// int % int
 						case (Types.INTEGER * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.INTEGER:
 							$_comment('int % int');
 							if (right == 0) return killExecution(stack, "Modulo by 0");
-							t = left % right;
-							if (t < 0) t += right;
-							value = build_integer(t);
+							int1 = $_cast('int', left) % $_cast('int', right);
+							if (int1 < 0) int1 += $_cast('int', right);
+							value = build_integer(int1);
 							break;
 
 						// list + list
 						case (Types.LIST * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.LIST:
 							$_comment('list + list');
-							value = new Value(Types.LIST, $_list_concat(left, right)); break;
+							value = new Value(Types.LIST, $_list_concat($_cast('List<Value>', left), $_cast('List<Value>', right))); break;
 
 						// int + int
 						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
@@ -1319,11 +1322,11 @@ function interpret(
 	}
 }
 
-function killExecution(@type('StackFrame') stack, @type('string') message) {
+function @type('string') killExecution(@type('StackFrame') stack, @type('string') message) {
 	return killExecutionWithTokenOverride(stack, null, message);
 }
 
-function killExecutionWithTokenOverride(
+function @type('string') killExecutionWithTokenOverride(
 		@type('StackFrame') stack, 
 		@type('Token') firstTokenOverride, 
 		@type('string') message) {

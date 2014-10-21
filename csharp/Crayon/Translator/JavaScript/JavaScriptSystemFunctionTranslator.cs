@@ -10,6 +10,12 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateArrayLength(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".length");
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			output.Add("R.beginFrame()");

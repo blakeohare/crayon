@@ -1,4 +1,4 @@
-﻿function getTypeFromId(@type('int') id) {
+﻿function @type('string') getTypeFromId(@type('int') id) {
 	switch (id) {
 		case Types.NULL: return "null";
 		case Types.BOOLEAN: return "boolean";
