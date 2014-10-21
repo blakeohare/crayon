@@ -14,7 +14,7 @@ struct DictImpl {
 }
 
 struct ProgramData {
-	stackTop,
+	@type('StackFrame') stackTop,
 	ops,
 	args,
 	stringArgs,
@@ -26,13 +26,13 @@ struct ProgramData {
 	classMethods,
 	tickerRegistered,
 	tokenData,
-	userCodeStart,
-	globalVarScope,
+	@type('int') userCodeStart,
+	@type('Dictionary<int, Value>') globalVarScope,
 	sourceCode,
 	integerSwitchLookups,
 	stringSwitchLookups,
 	primitiveMethodLookup,
-	instanceCounter
+	@type('int') instanceCounter
 }
 
 struct StackFrame {
