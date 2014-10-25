@@ -36,6 +36,7 @@ function @type('string') interpret(
 	@type('MethodDefinition') methodDefinition = null;
 	@type('FunctionDefinition') funcDef = null;
 	@type('ObjectInstance') objInstance = null;
+	@type('ObjectInstance') objInstance2 = null;
 	@type('DictImpl') dictImpl = null;
 	@type('Array<List<Token>>') tokensByPc = null;
 	@type('List<Token>') tokens = null;
@@ -237,7 +238,9 @@ function @type('string') interpret(
 								value = VALUE_FALSE;
 							}
 						} else if (leftType == Types.INSTANCE) {
-							if ($_list_get(left, 2) == $_list_get(right, 2)) {
+							objInstance = $_cast('ObjectInstance', left);
+							objInstance2 = $_cast('ObjectInstance', right);
+							if (ObjectInstance$objInstance.objectId == ObjectInstance$objInstance2.objectId) {
 								value = VALUE_TRUE;
 							} else {
 								value = VALUE_FALSE;
@@ -245,6 +248,8 @@ function @type('string') interpret(
 						}
 					} else {
 						if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+							// does this work on c#? 
+							// (object)0.0 == (object)0
 							if (left == right) {
 								value = VALUE_TRUE;
 							} else {
