@@ -150,6 +150,7 @@
     <EmbeddedResource Include="InterpreterSource\Globals.cry" />
     <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\CrStack.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

@@ -53,6 +53,16 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
+			compileTargets.Add("CrStack.cs");
+			output[projectId + "/CrStack.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/CrStack.txt"),
+					replacements)
+
+			};
+
 			compileTargets.Add("TranslationHelper.cs");
 			output[projectId + "/TranslationHelper.cs"] = new FileOutput()
 			{
@@ -224,6 +234,12 @@ namespace Crayon.Translator.CSharp
 		private string GetTypeStringFromAnnotation(AnnotatedType type)
 		{
 			string output;
+
+			if (type.Name == "Stack")
+			{
+
+			}
+
 			if (type.Name == "Array")
 			{
 				output = this.GetTypeStringFromAnnotation(type.Generics[0]);
@@ -248,6 +264,7 @@ namespace Crayon.Translator.CSharp
 
 		public string TypeTranslation(string original)
 		{
+			if (original == "Stack") return "CrStack";
 			return original;
 		}
 	}

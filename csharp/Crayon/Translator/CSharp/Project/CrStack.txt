@@ -1,0 +1,33 @@
+﻿using System;
+
+namespace %%%PROJECT_ID%%%
+{
+	public class CrStack<T>
+	{
+		public CrStack()
+		{
+			this.Size = 0;
+			this.Items = new T[8];
+		}
+		public int Size;
+		public T[] Items;
+		public void Push(T item)
+		{
+			if (this.Size == this.Items.Length)
+			{
+				T[] newItems = new T[this.Items.Length * 2];
+				for (int i = 0; i < this.Size; ++i)
+				{
+					newItems[i] = this.Items[i];
+				}
+				this.Items = newItems;
+			}
+			this.Items[this.Size++] = item;
+		}
+
+		public T Pop()
+		{
+			return this.Items[--this.Size];
+		}
+	}
+}

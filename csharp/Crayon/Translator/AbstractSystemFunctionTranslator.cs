@@ -71,8 +71,11 @@ namespace Crayon.Translator
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
+				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
+				case "_stack_length": VerifyCount(functionCall, 1); TranslateStackLength(output, args[0]); break;
 				case "_stack_pop": VerifyCount(functionCall, 1); TranslateStackPop(output, args[0]); break;
 				case "_stack_push": VerifyCount(functionCall, 2); TranslateStackPush(output, args[0], args[1]); break;
+				case "_stack_set": VerifyCount(functionCall, 3); TranslateStackSet(output, args[0], args[1], args[2]); break;
 				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
@@ -143,8 +146,11 @@ namespace Crayon.Translator
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
+		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
+		protected abstract void TranslateStackLength(List<string> output, Expression stack);
 		protected abstract void TranslateStackPop(List<string> output, Expression list);
 		protected abstract void TranslateStackPush(List<string> output, Expression list, Expression value);
+		protected abstract void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);

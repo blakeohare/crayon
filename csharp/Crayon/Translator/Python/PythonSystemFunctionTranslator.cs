@@ -427,6 +427,21 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, programData);
 		}
 
+		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
+		{
+			this.Translator.TranslateExpression(output, stack);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
+		}
+
+		protected override void TranslateStackLength(List<string> output, Expression stack)
+		{
+			output.Add("len(");
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(")");
+		}
+
 		protected override void TranslateStackPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -439,6 +454,15 @@ namespace Crayon.Translator.Python
 			output.Add(".append(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, stack);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("] = ");
+			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
