@@ -52,7 +52,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	return lookup;
 }
 
-function callSystemMethod(
+function @type('string') callSystemMethod(
 		@type('int') methodId,
 		@type('Value') wrappedContext,
 		@type('Array<Value>') funcArgs,

@@ -26,7 +26,7 @@ function @type('string') interpret(
 	@type('Array<int>') row = null;
 	@type('int') pc = 0;
 	@type('int') argCount = 0;
-	@type('List<Value>') funcArgs = null;
+	@type('Array<Value>') funcArgs = null;
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
@@ -554,13 +554,21 @@ function @type('string') interpret(
 				pc = ClassInfo$classInfo.constructorPc;
 				argCount = $_list_get(row, 0);
 				if (pc != 0) {
-					funcArgs = $_new_list('Value');
-					while (argCount > 0) {
-						$_list_push(funcArgs, $_stack_pop(valueStack));
-						argCount -= 1;
-					}
-					if ($_list_get(row, 0) > 1) {
-						$_list_reverse_in_place(funcArgs);
+					if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+						funcArgs = $_new_array('Value', argCount);
+						while (argCount > 0) {
+							argCount -= 1;
+							$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+						}
+					} else {
+						funcArgs = $_new_list('Value');
+						while (argCount > 0) {
+							$_list_push(funcArgs, $_stack_pop(valueStack));
+							argCount -= 1;
+						}
+						if ($_list_get(row, 0) > 1) {
+							$_list_reverse_in_place(funcArgs);
+						}
 					}
 
 					valueStack = $_new_stack('Value');
@@ -583,16 +591,23 @@ function @type('string') interpret(
 				pc = ClassInfo$classInfo.constructorPc;
 				argCount = $_list_get(row, 0);
 				if (pc != 0) {
-					funcArgs = $_new_list('Value');
-					returnValueUsed = $_list_get(row, 2) == 1;
-					while (argCount > 0) {
-						$_list_push(funcArgs, $_stack_pop(valueStack));
-						argCount -= 1;
+					if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+						funcArgs = $_new_array('Value', argCount);
+						while (argCount > 0) {
+							argCount -= 1;
+							$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+						}
+					} else {
+						funcArgs = $_new_list('Value');
+						returnValueUsed = $_list_get(row, 2) == 1;
+						while (argCount > 0) {
+							$_list_push(funcArgs, $_stack_pop(valueStack));
+							argCount -= 1;
+						}
+						if ($_list_get(row, 0) > 1) {
+							$_list_reverse_in_place(funcArgs);
+						}
 					}
-					if ($_list_get(row, 0) > 1) {
-						$_list_reverse_in_place(funcArgs);
-					}
-
 					if (returnValueUsed) {
 						$_stack_push(valueStack, value);
 					}
@@ -846,15 +861,23 @@ function @type('string') interpret(
 				$_comment('CALL_FUNCTION');
 				// This is mostly replicated below. Be sure to keep changes in sync.
 				func = $_stack_pop(valueStack);
-				funcArgs = $_new_list('Value');
 				argCount = $_list_get(row, 0);
 				returnValueUsed = $_list_get(row, 1) == 1;
-				while (argCount > 0) {
-					$_list_push(funcArgs, $_stack_pop(valueStack));
-					argCount -= 1;
-				}
-				if ($_list_get(row, 0) > 1) {
-					$_list_reverse_in_place(funcArgs);
+				if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+					funcArgs = $_new_array('Value', argCount);
+					while (argCount > 0) {
+						argCount -= 1;
+						$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+					}
+				} else {
+					funcArgs = $_new_list('Value');
+					while (argCount > 0) {
+						$_list_push(funcArgs, $_stack_pop(valueStack));
+						argCount -= 1;
+					}
+					if ($_list_get(row, 0) > 1) {
+						$_list_reverse_in_place(funcArgs);
+					}
 				}
 				type = Value$func.type;
 				if (type == Types.SYS_METHOD) {
@@ -870,8 +893,14 @@ function @type('string') interpret(
 					}
 				} else if (type == Types.METHOD) {
 					methodInstance = $_cast('MethodInstance', Value$func.internalValue);
-					if (MethodInstance$methodInstance.maxArgs < $_list_length(funcArgs)) {
-						return killExecution(stack, "Too many args were passed in.");
+					if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+						if (MethodInstance$methodInstance.maxArgs < $_array_length(funcArgs)) {
+							return killExecution(stack, "Too many args were passed in.");
+						}
+					} else {
+						if (MethodInstance$methodInstance.maxArgs < $_list_length(funcArgs)) {
+							return killExecution(stack, "Too many args were passed in.");
+						}
 					}
 					valueStack = $_new_stack('Value');
 					locals = $_new_dictionary('int', 'Value');
@@ -896,19 +925,27 @@ function @type('string') interpret(
 			case OpCodes.CALL_FUNCTION_ON_VARIABLE:
 				$_comment('CALL_FUNCTION_ON_VARIABLE');
 				// This is mostly replicated above. Be sure to keep changes in sync.
-				funcArgs = $_new_list('Value');
-				argCount = row[1];
-				returnValueUsed = $_list_get(row, 2) == 1;
-				while (argCount > 0) {
-					$_list_push(funcArgs, $_stack_pop(valueStack));
-					argCount -= 1;
+				argCount = $_array_get(row, 1);
+				returnValueUsed = $_array_get(row, 2) == 1;
+				if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+					funcArgs = $_new_array('Value', argCount);
+					while (argCount > 0) {
+						argCount -= 1;
+						$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+					}
+				} else {
+					funcArgs = $_new_list('Value');
+					while (argCount > 0) {
+						$_list_push(funcArgs, $_stack_pop(valueStack));
+						argCount -= 1;
+					}
+					if ($_list_get(row, 1) > 1) {
+						$_list_reverse_in_place(funcArgs);
+					}
 				}
-				if ($_list_get(row, 1) > 1) {
-					$_list_reverse_in_place(funcArgs);
-				}
-				func = $_dictionary_get(locals, row[0], null);
+				func = $_dictionary_get(locals, $_array_get(row, 0), null);
 				if (func == null) {
-					func = $_dictionary_get(globals, row[0], null);
+					func = $_dictionary_get(globals, $_array_get(row, 0), null);
 				}
 
 				if (func != null) {
@@ -925,7 +962,7 @@ function @type('string') interpret(
 						return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 					}
 				} else {
-					return killExecution(stack, "That function is not defined: '" + identifiers[row[0]] + "'");
+					return killExecution(stack, "That function is not defined: '" + $_array_get(identifiers, $_array_get(row, 0)) + "'");
 				}
 				break;
 
