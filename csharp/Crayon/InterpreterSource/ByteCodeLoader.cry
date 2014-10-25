@@ -2,7 +2,7 @@
 // Many of these read functions take in an integer _pointer_ as an index. This is accomplished
 // by passing in a reference to an integer array of length 1.
 
-function generateSourceFiles() {
+function @type('Array<string>') generateSourceFiles() {
 	@type('ProgramData') p = $_get_program_data();
 	return ProgramData$p.sourceCode;
 }
@@ -28,7 +28,7 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 	@type('int') num = 0;
 	pindex[0] += 1;
 	if (c == $_string_as_char('%')) {
-		@type('string') value = read_till(pindex, raw, length, '%');
+		@type('string') value = read_till(pindex, raw, length, $_string_as_char('%'));
 		num = $_string_parse_int(value);
 	} else if (c == $_string_as_char('@')) {
 		num = read_integer(pindex, raw, length);
@@ -52,9 +52,9 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 }
 
 function @type('string') read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
-	@type('List<char>') output = $_new_list('char');
+	@type('List<string>') output = $_new_list('string');
 	@type('bool') cont = true;
-	@type('char') c = ' ';
+	@type('char') c = $_string_as_char(' ');
 	while (cont) {
 		c = $_string_char_at(raw, $_list_get(pindex, 0));
 		$_list_set(pindex, 0, $_list_get(pindex, 0) + 1);
@@ -80,7 +80,7 @@ function @type('string') read_string(@type('Array<int>') pindex, @type('string')
 		} else if (c == $_string_as_char('%')) {
 			cont = false;
 		} else {
-			$_list_push(output, c);
+			$_list_push(output, $_char_to_string(c));
 		}
 	}
 	return $_list_join(output, '');
@@ -89,10 +89,11 @@ function @type('string') read_string(@type('Array<int>') pindex, @type('string')
 function @type('Code') loadByteCode() {
 	@type('string') raw = $_get_raw_byte_code_string();
 
-	@type('Array<int>') index = [0];
+	@type('Array<int>') index = $_new_array('int', 1);
+	$_array_set(index, 0, 0);
 	@type('int') length = $_string_length(raw);
 
-	@type('string') header = read_till(index, raw, length, '@');
+	@type('string') header = read_till(index, raw, length, $_string_as_char('@'));
 	if (header != 'CRAYON') {
 		// TODO: assert
 	}
@@ -102,7 +103,7 @@ function @type('Code') loadByteCode() {
 	@type('List<int>') ops = $_new_list('int');
 	@type('List<Array<int>>') iargs = $_new_list('Array<int>');
 	@type('List<string>') sargs = $_new_list('string');
-	@type('char') c = ' ';
+	@type('char') c = $_string_as_char(' ');
 	@type('int') argc = 0;
 	@type('int') j = 0;
 	@type('string') stringarg = null;
@@ -132,7 +133,7 @@ function @type('Code') loadByteCode() {
 				$_list_push(iarglist, iarg);
 			}
 		}
-		$_list_push(iargs, iarglist);
+		$_list_push(iargs, $_convert_list_to_array(iarglist));
 		if (stringPresent) {
 			stringarg = read_string(index, raw, length);
 		} else {
@@ -141,5 +142,5 @@ function @type('Code') loadByteCode() {
 		$_list_push(sargs, stringarg);
 	}
 	
-	return new Code(ops, iargs, sargs);
+	return new Code($_convert_list_to_array(ops), $_convert_list_to_array(iargs), $_convert_list_to_array(sargs));
 }

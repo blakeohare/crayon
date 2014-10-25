@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace %%%PROJECT_ID%%%
@@ -31,6 +32,55 @@ namespace %%%PROJECT_ID%%%
 			output.AddRange(a);
 			output.AddRange(b);
 			return output;
+		}
+
+		public static List<Value> MultiplyList(List<Value> items, int times)
+		{
+			List<Value> output = new List<Value>(items.Count * times);
+			while (times-- > 0)
+			{
+				output.AddRange(items);
+			}
+			return output;
+		}
+
+		public static List<T> NewListOfSize<T>(int size)
+		{
+			List<T> output = new List<T>(size);
+			while (size-- > 0)
+			{
+				output.Add(default(T));
+			}
+			return output;
+		}
+		
+		private static readonly string[] SPLIT_SEP = new string[1];
+
+		public static string[] StringSplit(string value, string sep)
+		{
+			if (sep.Length == 1)
+			{
+				return value.Split(sep[0]);
+			}
+
+			if (sep.Length == 0)
+			{
+				return value.ToCharArray().Select<char, string>(c => "" + c).ToArray();
+			}
+
+			SPLIT_SEP[0] = sep;
+			return value.Split(SPLIT_SEP, StringSplitOptions.None);
+		}
+
+		public static string StringReverse(string value)
+		{
+			if (value.Length < 2) return value;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			for (int i = value.Length - 1; i >= 0; --i)
+			{
+				sb.Append(value[i]);
+			}
+			return sb.ToString();
 		}
 	}
 }

@@ -14,6 +14,8 @@ namespace Crayon
 
 		public abstract bool IsAsync { get; }
 		public abstract string OutputFolderName { get; }
+		public abstract bool SupportsListClear { get; }
+		public abstract bool IsStronglyTyped { get; }
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
 		internal CompileContext Context { get; private set; }

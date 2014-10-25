@@ -10,10 +10,27 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
+		}
+
 		protected override void TranslateArrayLength(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".Length");
+		}
+
+		protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(this.Shorten("] = "));
+			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -32,11 +49,23 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, expression);
 		}
 
+		protected override void TranslateCharToString(List<string> output, Expression charValue)
+		{
+			output.Add("\"\" + ");
+			this.Translator.TranslateExpression(output, charValue);
+		}
+
 		protected override void TranslateComment(List<string> output, Expression commentValue)
 		{
 #if DEBUG
 			output.Add("// " + ((StringConstant)commentValue).Value);
 #endif
+		}
+
+		protected override void TranslateConvertListToArray(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".ToArray()");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -91,12 +120,27 @@ namespace Crayon.Translator.CSharp
 			output.Add(".Count");
 		}
 
+		protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
+		{
+			this.Translator.TranslateExpression(output, root);
+			output.Add(".Equals(");
+			this.Translator.TranslateExpression(output, compareTo);
+			output.Add(")");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("System.Math.Pow(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateForceParens(List<string> output, Expression expression)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, expression);
 			output.Add(")");
 		}
 
@@ -120,6 +164,12 @@ namespace Crayon.Translator.CSharp
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateListClear(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".Clear()");
 		}
 
 		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
@@ -170,13 +220,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(".Count");
 		}
 
-		protected override void TranslateListNew(List<string> output, Expression length)
-		{
-			output.Add("TranslationHelper.NewListOfSize(");
-			this.Translator.TranslateExpression(output, length);
-			output.Add(")");
-		}
-
 		protected override void TranslateListPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -223,15 +266,35 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
+		{
+			output.Add("TranslationHelper.MultiplyList(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, num);
+			output.Add(")");
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			CSharpPlatform platform = (CSharpPlatform)this.Platform;
 			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, type.Value);
 			output.Add("new ");
+			// Delightful hack...
+			int padding = 0;
+			while (csharpType.EndsWith("[]"))
+			{
+				padding++;
+				csharpType = csharpType.Substring(0, csharpType.Length - 2);
+			}
 			output.Add(csharpType);
 			output.Add("[");
 			this.Translator.TranslateExpression(output, size);
 			output.Add("]");
+			while (padding-- > 0)
+			{
+				output.Add("[]");
+			}
 		}
 
 		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
@@ -253,6 +316,16 @@ namespace Crayon.Translator.CSharp
 			output.Add("new List<");
 			output.Add(csharpType);
 			output.Add(">()");
+		}
+
+		protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
+		{
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			output.Add("TranslationHelper.NewListOfSize<");
+			output.Add(platform.GetTypeStringFromAnnotation(type.FirstToken, type.Value));
+			output.Add(">(");
+			this.Translator.TranslateExpression(output, length);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewStack(List<string> output, StringConstant type)
@@ -371,7 +444,7 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
-			output.Add(".indexOf(");
+			output.Add(".IndexOf(");
 			this.Translator.TranslateExpression(output, needle);
 			output.Add(")");
 		}
@@ -421,8 +494,9 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
 		{
+			output.Add("TranslationHelper.StringSplit(");
 			this.Translator.TranslateExpression(output, stringExpr);
-			output.Add(".Split(");
+			output.Add(", ");
 			this.Translator.TranslateExpression(output, sep);
 			output.Add(")");
 		}

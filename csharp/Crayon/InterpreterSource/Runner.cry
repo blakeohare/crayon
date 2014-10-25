@@ -8,34 +8,45 @@ function main() {
 	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
 	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
-	@type('Dictionary<int, int>') nameIdToClassId = {};
-	@type('Array<Array<int>>') classTable = [null]; // class ID 0 is not valid. First entry should be at index 1.
-	classMethods = [null]; // same here
+	@type('Dictionary<int, int>') nameIdToClassId = $_new_dictionary('int', 'int');
+	@type('Dictionary<int, MethodDefinition>') methodLookup = null;
+	@type('List<ClassInfo>') classTable = $_new_list('ClassInfo');
+	@type('List<Dictionary<int, MethodDefinition>>') classMethodsBuilder = $_new_list('Dictionary<int, MethodDefinition>');
+
+	// Because these data structures are keyed off the class ID and 0 is invalid, a null entry is added first
+	$_list_push(classTable, null);
+	$_list_push(classMethodsBuilder, null);
 
 	@type('int') nameId = 0;
+	@type('int') id = 0;
+	@type('int') classId = 0;
+	@type('int') baseClassId = 0;
+	@type('int') baseClassNameId = 0;
+	@type('int') lastClassId = 0;
+	@type('ClassInfo') classInfo = null;
 
-	for (@type('int') i = 0; i < $_list_length(ops); i += 1) {
-		@type('int') op = $_list_get(ops, i);
+	for (@type('int') i = 0; i < $_array_length(ops); i += 1) {
+		@type('int') op = $_array_get(ops, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
 			@type('Array<int>') args = $_list_get(opArgs, i);
-			@type('int') id = $_list_length(classTable);
-			@type('int') lastClassId = id;
-			nameId = $_list_get(args, 0);
+			id = $_list_length(classTable);
+			lastClassId = id;
+			nameId = $_array_get(args, 0);
 			$_dictionary_set(nameIdToClassId, nameId, id);
-			@type('int') baseClassNameId = $_list_get(args, 1);
+			baseClassNameId = $_list_get(args, 1);
 			@type('int') constructorArgsCount = $_list_get(args, 2); // -1 if no constructor present
 			@type('int') methodCount = $_list_get(args, 3);
 
-			@type('int') baseClassId = 0;
+			baseClassId = 0;
 			if (baseClassNameId > 0) {
 				// base class name not found is a compile time error.
 				baseClassId = $_dictionary_get(nameIdToClassId, baseClassNameId, 0);
 			}
 			
 			if (baseClassId == 0) {
-				methodLookup = {};
+				methodLookup = $_new_dictionary('int', 'MethodDefinition');
 			} else {
-				methodLookup = copyIntToIntDictionary($_list_get(classMethods, baseClassId));
+				methodLookup = copyMethodLookupDictionary($_list_get(classMethodsBuilder, baseClassId));
 			}
 
 			for (@type('int') j = 0; j < methodCount; j += 1) {
@@ -43,100 +54,103 @@ function main() {
 				@type('int') pcOffset = $_list_get(args, (j * 3) + 5);
 				@type('int') maxArgs = $_list_get(args, (j * 3) + 6);
 
-				@type('Array<int>') methodData = [
+				@type('MethodDefinition') methodData = new MethodDefinition(
 					methodNameId,
 					maxArgs,
-					i + pcOffset
-				];
+					i + pcOffset);
 
 				$_dictionary_set(methodLookup, methodNameId, methodData);
 			}
 
-			@type('Array<int>') classRow = [
+			classInfo = new ClassInfo(
 				nameId,
 				0, // PC of constructor (0 if absent, overriden to correct value below)
 				0, // maximum arg count of constructor
 				baseClassId,
-				0, // do base constructors need to be invoked? (overridden below if yes)
-				0 // Is class usable? This gets changed to 1 when the class definition is encountered.
-			];
+				false, // do base constructors need to be invoked? (overridden below if yes)
+				false); // Is class usable? This gets changed to 1 when the class definition is encountered.
+
 			if (constructorArgsCount >= 0) {
-				classRow[1] = i + 2;
-				classRow[2] = constructorArgsCount;
+				ClassInfo$classInfo.constructorPc = i + 2;
+				ClassInfo$classInfo.constructorMaxArgCount = constructorArgsCount;
 			}
 			
 			if (baseClassId != 0) {
-				@type('Array<int>') baseClassInfo = $_list_get(classTable, baseClassId);
-				if ($_list_get(baseClassInfo, 1) > 0 || $_list_get(baseClassInfo, 4) == 1) {
-					classRow[4] = 1;
+				@type('ClassInfo') baseClassInfo = $_list_get(classTable, baseClassId);
+				if (ClassInfo$baseClassInfo.constructorPc > 0 || ClassInfo$baseClassInfo.baseConstructorRequired) {
+					ClassInfo$classInfo.baseConstructorRequired = true;
 				}
 			}
 
-			$_list_push(classTable, classRow);
-			$_list_push(classMethods, methodLookup);
+			$_list_push(classTable, classInfo);
+			$_list_push(classMethodsBuilder, methodLookup);
 		}
 	}
 
-	@type('int') lastClassId = 0;
-
-	specialCache = [];
-
-	for (i = 0; i < $_list_length(ops); i += 1) {
+	@type('List<Array<int>>') specialCacheBuilder = $_new_list('Array<int>');
+	@type('Array<int>') specialCacheEntry = null;
+	for (i = 0; i < $_array_length(ops); i += 1) {
 		@type('int') op = $_list_get(ops, i);
-		@type('Array<int>') args = $_list_get(opArgs, i);
+		@type('Array<int>') args = $_array_get(opArgs, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
 			nameId = $_list_get(args, 0);
 			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
 			lastClassId = classId;
-			value = [classId];
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
 			nameId = $_list_get(args, 1);
 			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
-			value = [classId];
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
 			classInfo = classTable[lastClassId];
-			baseClassId = classInfo[3];
-			value = [baseClassId];
+			baseClassId = ClassInfo$classInfo.baseClassId;
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, baseClassId);
 		} else {
-			value = null;
+			specialCacheEntry = null;
 		}
 		
-		$_list_push(specialCache, value);
+		$_list_push(specialCacheBuilder, specialCacheEntry);
 	}
 
-	stack = new StackFrame(
+	@type('StackFrame') stack = new StackFrame(
 		0, // pc
 		$_new_dictionary('int', 'Value'), // locals
 		$_new_stack('Value'), // valueStack
-		$_new_list('Value'), // args
+		$_new_array('Value', 0), // args
 		null, // previous
 		false, // returnValueUsed
 		null); // object context
 
-	p = new ProgramData(
+	$_set_program_data(new ProgramData(
 		stack,
 		ops,
 		opArgs,
 		stringArgs,
-		specialCache,
-		[], // identifiers
-		{}, // inv_identifiers
-		[], // literal table
-		classTable,
-		classMethods,
+		$_convert_list_to_array(specialCacheBuilder),
+		null, // identifiers
+		$_new_list('string'), // identifiers builder
+		$_new_dictionary('string', 'int'), // inv_identifiers
+		null, // literal table
+		$_new_list('Value'), // literal table builder
+		$_convert_list_to_array(classTable),
+		$_convert_list_to_array(classMethodsBuilder),
 		false, // ticker registered
-		$_list_new($_list_length(ops)), // token data
+		$_new_array('List<Token>', $_array_length(ops)), // token data
 		0, // user code start
 		StackFrame$stack.locals, // global var scope
-		[], // original source code data
-		[], // integerSwitchLookups
-		[], // stringSwitchLookups
+		null, // original source code data
+		$_new_list('string'), // original source code data builder
+		null, // integer switch lookups
+		$_new_list('Dictionary<int, int>'), // integer switch lookups builder
+		null, // string switch lookups
+		$_new_list('Dictionary<string, int>'), // string switch lookups builder
 		generatePrimitiveMethodLookupTable(),
-		0
-		);
+		0 // instance counter
+		));
 
-	$_set_program_data(p);
-	
 	runTick();
 }
 
@@ -151,7 +165,7 @@ function runTick() {
 
 		$_begin_frame();
 
-		error = interpret(
+		@type('string') error = interpret(
 			ProgramData$p.stackTop,
 			ProgramData$p.ops,
 			ProgramData$p.args,
@@ -201,4 +215,15 @@ function runTick() {
 			}
 		}
 	}
+}
+
+function @type('Dictionary<int, MethodDefinition>') copyMethodLookupDictionary(@type('Dictionary<int, MethodDefinition>') dict) {
+	@type('Array<int>') key_list = $_dictionary_get_keys(dict);
+	@type('Dictionary<int, MethodDefinition>') output = $_new_dictionary('int', 'MethodDefinition');
+	for (@type('int') i = 0; i < $_array_length(key_list); i += 1) {
+		@type('int') key = $_array_get(key_list, i);
+		@type('MethodDefinition') value = $_dictionary_get(dict, key, null);
+		$_dictionary_set(output, key, value);
+	}
+	return output;
 }

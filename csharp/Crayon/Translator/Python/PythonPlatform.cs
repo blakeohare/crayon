@@ -13,6 +13,12 @@ namespace Crayon.Translator.Python
 			: base(false, new PythonTranslator(), new PythonSystemFunctionTranslator())
 		{ }
 
+		public override bool IsAsync { get { return false; } }
+		public override bool RemoveBreaksFromSwitch { get { return true; } }
+		public override bool SupportsListClear { get { return false; } }
+		public override bool IsStronglyTyped { get { return false; } }
+		public override string OutputFolderName { get { return "pygame"; } }
+
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -47,10 +53,6 @@ namespace Crayon.Translator.Python
 
 			return output;
 		}
-
-		public override bool IsAsync { get { return false; } }
-		public override bool RemoveBreaksFromSwitch { get { return true; } }
-		public override string OutputFolderName { get { return "pygame"; } }
 
 		private string GetPyGameCode(string file)
 		{

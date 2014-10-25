@@ -10,11 +10,28 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
+		}
+
 		protected override void TranslateArrayLength(List<string> output, Expression list)
 		{
 			output.Add("len(");
 			this.Translator.TranslateExpression(output, list);
 			output.Add(")");
+		}
+
+		protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(this.Shorten("] = "));
+			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -27,11 +44,21 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, expression);
 		}
 
+		protected override void TranslateCharToString(List<string> output, Expression charValue)
+		{
+			this.Translator.TranslateExpression(output, charValue);
+		}
+
 		protected override void TranslateComment(List<string> output, Expression commentValue)
 		{
 #if DEBUG
 			output.Add("# " + ((StringConstant)commentValue).Value);
 #endif
+		}
+
+		protected override void TranslateConvertListToArray(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
 		}
 
 		// Not safe for dictionaries that can contain a value of None.
@@ -92,12 +119,24 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("float(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(" ** ");
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateForceParens(List<string> output, Expression expression)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, expression);
 			output.Add(")");
 		}
 
@@ -120,15 +159,15 @@ namespace Crayon.Translator.Python
 			switch (id)
 			{
 				case "ff_arctan2":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.atan2(v_y[1], v_x[1])]");
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.atan2(v_arg1[1], v_arg2[1])]");
 					break;
 
 				case "ff_blit_image":
-					output.Add("_global_vars['virtual_screen'].blit(v_image[1][1], (v_x[1], v_y[1]))");
+					output.Add("_global_vars['virtual_screen'].blit(v_arg1[1][1], (v_arg2[1], v_arg3[1]))");
 					break;
 
 				case "ff_cos":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.cos(v_x[1])]");
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.cos(v_arg1[1])]");
 					break;
 
 				case "ff_current_time":
@@ -136,32 +175,31 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_download_image":
-					output.Add("download_image_impl(v_key[1], v_url[1])");
+					output.Add("download_image_impl(v_arg1[1], v_arg2[1])");
 					break;
 
 				case "ff_draw_ellipse":
-					output.Add("_PDE(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_left[1], v_top[1], v_width[1], v_height[1]))");
+					output.Add("_PDE(_global_vars['virtual_screen'], (v_arg5[1], v_arg6[1], v_arg7[1]), _PR(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1]))");
 					break;
 
 				case "ff_draw_line":
-					output.Add("_PDL(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), (v_x1[1], v_y1[1]), (v_x2[1], v_y2[1]), v_width[1])");
+					output.Add("_PDL(_global_vars['virtual_screen'], (v_arg6[1], v_arg7[1], v_arg8[1]), (v_arg1[1], v_arg2[1]), (v_arg3[1], v_arg4[1]), v_arg5[1])");
 					break;
 
 				case "ff_draw_rectangle":
-					// TODO: alpha?
-					output.Add("_PDR(_global_vars['virtual_screen'], (v_red[1], v_green[1], v_blue[1]), _PR(v_x[1], v_y[1], v_width[1], v_height[1]))");
+					output.Add("_PDR(_global_vars['virtual_screen'], (v_arg5[1], v_arg6[1], v_arg7[1]), _PR(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1]))");
 					break;
 
 				case "ff_fill_screen":
-					output.Add("_global_vars['virtual_screen'].fill((v_red[1], v_green[1], v_blue[1]))");
+					output.Add("_global_vars['virtual_screen'].fill((v_arg1[1], v_arg2[1], v_arg3[1]))");
 					break;
 
 				case "ff_flip_image":
-					output.Add("v_output = _pygame_flip_image(v_img[1], v_x[1], v_y[1])");
+					output.Add("v_output = _pygame_flip_image(v_arg1[1], v_arg2[1], v_arg3[1])");
 					break;
 
 				case "ff_floor":
-					output.Add("v_output = v_build_integer(int(v_value[1]) if (v_value[1] >= 0) else int(math.floor(v_value[1])))");
+					output.Add("v_output = v_build_integer(int(v_arg1[1]) if (v_arg1[1] >= 0) else int(math.floor(v_arg1[1])))");
 					break;
 
 				case "ff_get_events":
@@ -169,27 +207,27 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_get_image":
-					output.Add("v_output = get_image_impl(v_key[1])");
+					output.Add("v_output = get_image_impl(v_arg1[1])");
 					break;
 
 				case "ff_get_image_height":
-					output.Add("v_output = v_build_integer(v_value[1][1].get_height())");
+					output.Add("v_output = v_build_integer(v_arg1[1][1].get_height())");
 					break;
 
 				case "ff_get_image_width":
-					output.Add("v_output = v_build_integer(v_value[1][1].get_width())");
+					output.Add("v_output = v_build_integer(v_arg1[1][1].get_width())");
 					break;
 
 				case "ff_initialize_game":
-					output.Add("platform_begin(v_fps[1])");
+					output.Add("platform_begin(v_arg1[1])");
 					break;
 
 				case "ff_initialize_screen":
-					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1], None)");
+					output.Add("v_output = _pygame_initialize_screen(v_arg1[1], v_arg2[1], None)");
 					break;
 
 				case "ff_initialize_screen_scaled":
-					output.Add("v_output = _pygame_initialize_screen(v_width[1], v_height[1], (v_pwidth[1], v_pheight[1]))");
+					output.Add("v_output = _pygame_initialize_screen(v_arg1[1], v_arg2[1], (v_arg3[1], v_arg4[1]))");
 					break;
 
 				case "ff_is_image_loaded":
@@ -197,7 +235,7 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_parse_int":
-					output.Add("v_output = [" + (int)Types.INTEGER + ", int(v_value[1])]");
+					output.Add("v_output = [" + (int)Types.INTEGER + ", int(v_arg1[1])]");
 					break;
 
 				case "ff_print":
@@ -209,11 +247,11 @@ namespace Crayon.Translator.Python
 					break;
 
 				case "ff_set_title":
-					output.Add("pygame.display.set_caption(v_value)");
+					output.Add("pygame.display.set_caption(v_string1)");
 					break;
 
 				case "ff_sin":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.sin(v_x[1])]");
+					output.Add("v_output = [" + (int)Types.FLOAT + ", math.sin(v_arg1[1])]");
 					break;
 
 				default:
@@ -226,6 +264,11 @@ namespace Crayon.Translator.Python
 			output.Add("int(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateListClear(List<string> output, Expression list)
+		{
+			throw new Exception("This should have been optimized out.");
 		}
 
 		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
@@ -275,13 +318,6 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateListNew(List<string> output, Expression length)
-		{
-			output.Add("([None]" + this.Shorten(" * "));
-			this.Translator.TranslateExpression(output, length);
-			output.Add(")");
-		}
-
 		protected override void TranslateListPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -328,6 +364,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(this.Shorten(" * "));
+			this.Translator.TranslateExpression(output, num);
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("[None] * ");
@@ -342,6 +385,13 @@ namespace Crayon.Translator.Python
 		protected override void TranslateNewList(List<string> output, StringConstant type)
 		{
 			output.Add("[]");
+		}
+
+		protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
+		{
+			output.Add("([None]" + this.Shorten(" * "));
+			this.Translator.TranslateExpression(output, length);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewStack(List<string> output, StringConstant type)

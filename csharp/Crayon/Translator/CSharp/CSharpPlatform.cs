@@ -14,6 +14,8 @@ namespace Crayon.Translator.CSharp
 		}
 
 		public override bool IsAsync { get { return true; } }
+		public override bool SupportsListClear { get { return true; } }
+		public override bool IsStronglyTyped { get { return true; } }
 		public override string OutputFolderName { get { return "csharpwindows"; } }
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions)
@@ -56,6 +58,16 @@ namespace Crayon.Translator.CSharp
 				Type = FileOutputType.Text,
 				TextContent = Util.MassReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/TranslationHelper.txt"),
+					replacements)
+
+			};
+
+			compileTargets.Add("ResourceReader.cs");
+			output[projectId + "/ResourceReader.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/ResourceReader.txt"),
 					replacements)
 
 			};

@@ -27,6 +27,7 @@ namespace Crayon
 			header.Concat(tokenData);
 			header.Concat(fileContent);
 			header.Concat(switchStatements);
+			header.Add(null, OpCode.FINALIZE_INITIALIZATION);
 
 			ByteBuffer output = new Crayon.ByteBuffer();
 			output.Add(null, OpCode.USER_CODE_START, header.Size + 1);

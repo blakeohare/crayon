@@ -10,10 +10,27 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
+		}
+
 		protected override void TranslateArrayLength(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".length");
+		}
+
+		protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(this.Shorten("] = "));
+			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -26,6 +43,11 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, expression);
 		}
 
+		protected override void TranslateCharToString(List<string> output, Expression charValue)
+		{
+			this.Translator.TranslateExpression(output, charValue);
+		}
+
 		protected override void TranslateComment(List<string> output, Expression commentValue)
 		{
 #if DEBUG
@@ -34,6 +56,11 @@ namespace Crayon.Translator.JavaScript
 				output.Add("// " + ((StringConstant)commentValue).Value);
 			}
 #endif
+		}
+
+		protected override void TranslateConvertListToArray(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -95,12 +122,24 @@ namespace Crayon.Translator.JavaScript
 			output.Add(").length");
 		}
 
+		protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("Math.pow(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateForceParens(List<string> output, Expression expression)
+		{
+			output.Add("(");
+			this.Translator.TranslateExpression(output, expression);
 			output.Add(")");
 		}
 
@@ -121,15 +160,15 @@ namespace Crayon.Translator.JavaScript
 			switch (id)
 			{
 				case "ff_arctan2":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.atan2(v_y[1], v_x[1])]"));
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.atan2(v_arg1[1], v_arg2[1])]"));
 					break;
 
 				case "ff_blit_image":
-					output.Add(this.Shorten("R.blit(v_image[1][1], v_x[1], v_y[1])"));
+					output.Add(this.Shorten("R.blit(v_arg1[1][1], v_arg2[1], v_arg3[1])"));
 					break;
 
 				case "ff_cos":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.cos(v_x[1])]"));
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.cos(v_arg1[1])]"));
 					break;
 
 				case "ff_current_time":
@@ -137,31 +176,31 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_download_image":
-					output.Add(this.Shorten("R.enqueue_image_download(v_key[1], v_url[1])"));
+					output.Add(this.Shorten("R.enqueue_image_download(v_arg1[1], v_arg2[1])"));
 					break;
 
 				case "ff_draw_ellipse":
-					output.Add(this.Shorten("R.drawEllipse(v_left[1] + v_width[1] / 2, v_top[1] + v_height[1] / 2, v_width[1] / 2, v_height[1] / 2, v_red[1], v_green[1], v_blue[1])"));
+					output.Add(this.Shorten("R.drawEllipse(v_arg1[1] + v_arg3[1] / 2, v_arg2[1] + v_arg4[1] / 2, v_arg3[1] / 2, v_arg4[1] / 2, v_arg5[1], v_arg6[1], v_arg7[1])"));
 					break;
 
 				case "ff_draw_line":
-					output.Add(this.Shorten("R.drawLine(v_x1[1], v_y1[1], v_x2[1], v_y2[1], v_width[1], v_red[1], v_green[1], v_blue[1])"));
+					output.Add(this.Shorten("R.drawLine(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1], v_arg5[1], v_arg6[1], v_arg7[1], v_arg8[1])"));
 					break;
 
 				case "ff_draw_rectangle":
-					output.Add(this.Shorten("R.drawRect(v_x[1], v_y[1], v_width[1], v_height[1], v_red[1], v_green[1], v_blue[1])"));
+					output.Add(this.Shorten("R.drawRect(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1], v_arg5[1], v_arg6[1], v_arg7[1])"));
 					break;
 
 				case "ff_fill_screen":
-					output.Add(this.Shorten("R.fillScreen(v_red[1], v_green[1], v_blue[1])"));
+					output.Add(this.Shorten("R.fillScreen(v_arg1[1], v_arg2[1], v_arg3[1])"));
 					break;
 
 				case "ff_flip_image":
-					output.Add("v_output = R.flipImage(v_img[1], v_x[1], v_y[1])");
+					output.Add("v_output = R.flipImage(v_arg1[1], v_arg2[1], v_arg3[1])");
 					break;
 
 				case "ff_floor":
-					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_value[1])]"));
+					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_arg1[1])]"));
 					break;
 
 				case "ff_get_events":
@@ -169,36 +208,36 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_get_image":
-					output.Add(this.Shorten("v_output = R.get_image_impl(v_key[1])"));
+					output.Add(this.Shorten("v_output = R.get_image_impl(v_arg1[1])"));
 					break;
 
 				case "ff_get_image_height":
-					output.Add(this.Shorten("v_output = v_build_integer(v_value[1][1].height)"));
+					output.Add(this.Shorten("v_output = v_build_integer(v_arg1[1][1].height)"));
 					break;
 
 				case "ff_get_image_width":
-					output.Add(this.Shorten("v_output = v_build_integer(v_value[1][1].width)"));
+					output.Add(this.Shorten("v_output = v_build_integer(v_arg1[1][1].width)"));
 					break;
 
 				case "ff_initialize_game":
-					output.Add("R.initializeGame(v_fps[1])");
+					output.Add("R.initializeGame(v_arg1[1])");
 					break;
 
 				case "ff_initialize_screen":
-					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1], null, null)"));
+					output.Add(this.Shorten("R.initializeScreen(v_arg1[1], v_arg2[1], null, null)"));
 					break;
 
 				case "ff_initialize_screen_scaled":
-					output.Add(this.Shorten("R.initializeScreen(v_width[1], v_height[1], v_pwidth[1], v_pheight[1])"));
+					output.Add(this.Shorten("R.initializeScreen(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1])"));
 					break;
 
 				case "ff_is_image_loaded":
-					output.Add(this.Shorten("v_output = R.is_image_loaded(v_key[1]) ? v_VALUE_TRUE : v_VALUE_FALSE"));
+					output.Add(this.Shorten("v_output = R.is_image_loaded(v_arg1[1]) ? v_VALUE_TRUE : v_VALUE_FALSE"));
 					break;
 
 				case "ff_parse_int":
 					// TODO: need to throw if not an integer
-					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", parseInt(v_value[1])]"));
+					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", parseInt(v_arg1[1])]"));
 					break;
 
 				case "ff_print":
@@ -210,11 +249,11 @@ namespace Crayon.Translator.JavaScript
 					break;
 
 				case "ff_set_title":
-					output.Add("TODO('set title...is this possible?');");
+					output.Add("TODO('set title');");
 					break;
 
 				case "ff_sin":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.sin(v_x[1])]"));
+					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.sin(v_arg1[1])]"));
 					break;
 
 				default:
@@ -227,6 +266,11 @@ namespace Crayon.Translator.JavaScript
 			output.Add("Math.floor(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateListClear(List<string> output, Expression list)
+		{
+			throw new Exception("This should have been optimized out.");
 		}
 
 		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
@@ -276,13 +320,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add(").length");
 		}
 
-		protected override void TranslateListNew(List<string> output, Expression length)
-		{
-			output.Add("create_list_of_size(");
-			this.Translator.TranslateExpression(output, length);
-			output.Add(")");
-		}
-
 		protected override void TranslateListPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -327,6 +364,15 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
+		{
+			output.Add("multiply_list(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, num);
+			output.Add(")");
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("create_new_array(");
@@ -342,6 +388,13 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateNewList(List<string> output, StringConstant type)
 		{
 			output.Add("[]");
+		}
+
+		protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
+		{
+			output.Add("create_list_of_size(");
+			this.Translator.TranslateExpression(output, length);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewStack(List<string> output, StringConstant type)

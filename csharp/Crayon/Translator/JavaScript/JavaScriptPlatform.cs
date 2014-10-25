@@ -16,6 +16,8 @@ namespace Crayon.Translator.JavaScript
 		}
 
 		public override bool IsAsync { get { return true; } }
+		public override bool SupportsListClear { get { return false; } }
+		public override bool IsStronglyTyped { get { return false; } }
 		public override string OutputFolderName { get { return "javascript"; } }
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions)

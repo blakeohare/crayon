@@ -149,6 +149,7 @@
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
     <EmbeddedResource Include="InterpreterSource\Globals.cry" />
     <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
