@@ -7,8 +7,10 @@
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
 // Dictionaries can hold any of these, but only hold one type at a time
 struct DictImpl {
-	keyLookup,
-	valueLookup,
+	@type('Dictionary<int, Value>') keyIntLookup,
+	@type('Dictionary<int, Value>') valueIntLookup,
+	@type('Dictionary<string, Value>') keyStringLookup,
+	@type('Dictionary<string, Value>') valueStringLookup,
 	@type('int') size,
 	@type('int') keyType
 }

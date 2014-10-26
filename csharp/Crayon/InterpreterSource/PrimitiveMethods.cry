@@ -199,7 +199,7 @@ function @type('string') callSystemMethod(
 			output = new Value(Types.STRING, $_string_upper(su_string));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
-			if ($_list_length(funcArgs) != 0) return wrongArgCountError("String lower method", 0, $_list_length(funcArgs));
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError("String lower method", 0, $_array_length(funcArgs));
 			@type('string') sl_string = $_cast('string', context);
 			output = new Value(Types.STRING, $_string_lower(sl_string));
 			break;
@@ -225,78 +225,125 @@ function @type('string') callSystemMethod(
 				$_string_replace(
 					srep_value,
 					$_cast('string', Value$sr_a.internalValue),
-					$_cast('string', Value$srep_b.internalValue)));
+					$_cast('string', Value$sr_b.internalValue)));
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("Dictionary clear method", 0, $_array_length(funcArgs));
-			DictImpl$context.keyLookup = {};
-			DictImpl$context.valueLookup = {};
-			DictImpl$context.size = 0;
+			@type('DictImpl') dclear_dict = $_cast('DictImpl', context);
+			DictImpl$dclear_dict.keyIntLookup = $_new_dictionary('int', 'Value');
+			DictImpl$dclear_dict.valueIntLookup = $_new_dictionary('int', 'Value');
+			DictImpl$dclear_dict.keyStringLookup = $_new_dictionary('string', 'Value');
+			DictImpl$dclear_dict.valueStringLookup = $_new_dictionary('string', 'Value');
+			DictImpl$dclear_dict.size = 0;
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%:
 			if ($_array_length(funcArgs) != 2) return wrongArgCountError("Dictionary get method", 2, $_array_length(funcArgs));
-			key = $_list_get(funcArgs, 0);
-			defaultValue = $_list_get(funcArgs, 1);
-			if (DictImpl$context.keyType != Value$key.type) {
-				output = defaultValue;
+			@type('Value') dg_key = $_array_get(funcArgs, 0);
+			@type('Value') dg_defaultValue = $_list_get(funcArgs, 1);
+			@type('DictImpl') dg_dict = $_cast('DictImpl', context);
+			@type('int') dg_key_type = Value$dg_key.type;
+			if (DictImpl$dg_dict.keyType != dg_key_type) {
+				output = dg_defaultValue;
 			} else {
-				valueLookup = DictImpl$context.valueLookup;
-				keyValue = Value$key.internalValue;
-				if (DictImpl$context.keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
-				value = $_dictionary_get(valueLookup, keyValue, null);
-				if (value == null) {
-					output = defaultValue;
+				if (dg_key_type == Types.STRING) {
+					@type('string') keyValue = $_cast('string', Value$dg_key.internalValue);
+					output = $_dictionary_get(DictImpl$dg_dict.valueStringLookup, keyValue, null);
 				} else {
-					output = value;
+					@type('int') dg_keyValue = 0;
+					if (DictImpl$dg_dict.keyType == Types.INSTANCE) {
+						@type('ObjectInstance') dg_oi = $_cast('ObjectInstance', Value$dg_key.internalValue);
+						dg_keyValue = ObjectInstance$dg_oi.objectId;
+					} else {
+						dg_keyValue = $_cast('int', Value$dg_key.internalValue);
+					}
+					output = $_dictionary_get(DictImpl$dg_dict.valueIntLookup, dg_keyValue, null);
+				}
+				if (output == null) {
+					output = dg_defaultValue;
 				}
 			}
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("Dictionary remove method", 1, $_array_length(funcArgs));
-			key = $_list_get(funcArgs, 0);
-			keyType = Value$key.type;
-			if (DictImpl$context.keyType != keyType) return "Key not found.";
-			keyLookup = DictImpl$context.keyLookup;
-			keyValue = Value$key.internalValue;
-			if (keyType == Types.INSTANCE) keyValue = $_list_get(keyValue, 2);
-			if ($_dictionary_get(keyLookup, keyValue, null) == null) return "Key not found.";
-			$_dictionary_remove(keyLookup, keyValue);
-			$_dictionary_remove(DictImpl$context.valueLookup, keyValue);
-			DictImpl$context.size -= 1;
+			@type('Value') key = $_array_get(funcArgs, 0);
+			@type('int') keyType = Value$key.type;
+			@type('DictImpl') dr_dictImpl = $_cast('DictImpl', context);
+			if (DictImpl$dr_dictImpl.keyType != keyType) return "Key not found.";
+			if (keyType == Types.STRING) {
+				@type('Dictionary<string, Value>') keyLookup = DictImpl$dr_dictImpl.keyStringLookup;
+				@type('string') keyValue = $_cast('string', Value$key.internalValue);
+				if (!$_dictionary_contains(keyLookup, keyValue)) return "Key not found.";
+				$_dictionary_remove(keyLookup, keyValue);
+				$_dictionary_remove(DictImpl$dr_dictImpl.valueStringLookup, keyValue);
+			} else {
+				@type('Dictionary<int, Value>') keyLookup = DictImpl$dr_dictImpl.keyIntLookup;
+				@type('int') keyValue = 0;
+				if (keyType == Types.INSTANCE) {
+					@type('ObjectInstance') dr_objInstance = $_cast('ObjectInstance', Value$key.internalValue);
+					keyValue = ObjectInstance$dr_objInstance.objectId;
+				} else {
+					keyValue = $_cast('int', Value$key.internalValue);
+				}
+				if (!$_dictionary_contains(keyLookup, keyValue)) return "Key not found.";
+				$_dictionary_remove(keyLookup, keyValue);
+				$_dictionary_remove(DictImpl$dr_dictImpl.valueIntLookup, keyValue);
+			}
+			DictImpl$dr_dictImpl.size -= 1;
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("Dictionary contains method", 1, $_array_length(funcArgs));
-			keys = DictImpl$context.keyLookup;
-			arg = $_list_get(funcArgs, 0);
-			argType = Value$arg.type;
-			if (argType == Types.INTEGER || argType == Types.STRING) {
-				key = Value$arg.internalValue;
-			} else if (argType == Types.INSTANCE) {
-				t = Value$arg.internalValue;
-				key = $_list_get(t, 2);
-			}
+			@type('Value') dc_arg = $_array_get(funcArgs, 0);
+			@type('int') dc_argType = Value$dc_arg.type;
+			@type('DictImpl') dc_dictImpl = $_cast('DictImpl', context);
 
-			if (DictImpl$context.keyType != argType) {
+			if (DictImpl$dc_dictImpl.keyType != dc_argType) {
 				output = VALUE_FALSE;
-			} else {
-				t = $_dictionary_get(keys, key, null);
-				if (t == null) {
-					output = VALUE_FALSE;
-				} else {
+			} else if (dc_argType == Types.STRING) {
+				if ($_dictionary_contains(DictImpl$dc_dictImpl.keyStringLookup, $_cast('string', Value$dc_arg.internalValue))) {
 					output = VALUE_TRUE;
+				} else {
+					output = VALUE_FALSE;
+				}
+			} else {
+				@type('int') intKey = 0;
+				if (dc_argType == Types.INTEGER) {
+					intKey = $_cast('int', Value$dc_arg.internalValue);
+				} else {
+					@type('ObjectInstance') dc_obj_instance = $_cast('ObjectInstance', Value$dc_arg.internalValue);
+					intKey = ObjectInstance$dc_obj_instance.objectId;
+				}
+				if ($_dictionary_contains(DictImpl$dc_dictImpl.keyIntLookup, intKey)) {
+					output = VALUE_TRUE;
+				} else {
+					output = VALUE_FALSE;
 				}
 			}
 			break;
+
 		case %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("Dictionary values method", 0, $_array_length(funcArgs));
-			values = $_dictionary_get_values(DictImpl$context.valueLookup);
-			output = new Value(Types.LIST, values);
+			@type('DictImpl') dv_dict = $_cast('DictImpl', context);
+			if (DictImpl$dv_dict.keyType == Types.STRING) {
+				output = new Value(Types.LIST,
+					$_dictionary_get_values(DictImpl$dv_dict.valueStringLookup));
+			} else {
+				output = new Value(Types.LIST, 
+					$_dictionary_get_values(DictImpl$dv_dict.valueIntLookup));
+			}
 			break;
+
 		case %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("Dictionary keys method", 0, $_array_length(funcArgs));
-			values = $_dictionary_get_values(DictImpl$context.keyLookup);
-			output = new Value(Types.LIST, values);
+			@type('DictImpl') dk_dict = $_cast('DictImpl', context);
+			if (DictImpl$dk_dict.keyType == Types.STRING) {
+				output = new Value(Types.LIST,
+					$_dictionary_get_values(DictImpl$dk_dict.keyStringLookup));
+			} else {
+				output = new Value(Types.LIST,
+					$_dictionary_get_values(DictImpl$dk_dict.keyIntLookup));
+			}
 			break;
+
 		default:
 			return "Unknown system method";
 	}

@@ -40,6 +40,14 @@ function @type('string') interpret(
 	@type('DictImpl') dictImpl = null;
 	@type('Array<List<Token>>') tokensByPc = null;
 	@type('List<Token>') tokens = null;
+	@type('int') keyType = 0;
+	@type('int') intKey = 0;
+	@type('string') stringKey = null;
+	@type('Dictionary<int, Value>') dictIntKeyLookup = null;
+	@type('Dictionary<int, Value>') dictIntValueLookup = null;
+	@type('Dictionary<string, Value>') dictStringKeyLookup = null;
+	@type('Dictionary<string, Value>') dictStringValueLookup = null;
+	@type('bool') first = false;
 	
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
@@ -156,30 +164,42 @@ function @type('string') interpret(
 						return killExecution(stack, "List index must be an integer.");
 					}
 				} else if (type == Types.DICTIONARY) {
-					nativeKeyType = Value$value2.type;
-					if (nativeKeyType == Types.INTEGER) {
-						nativeKey = Value$value2.internalValue;
-					} else if (nativeKeyType == Types.STRING) {
-						nativeKey = Value$value2.internalValue;
-					} else if (nativeKeyType == Types.INSTANCE) {
-						nativeKey = $_list_get(Value$value2.internalValue, 2); // object ID
+					keyType = Value$value2.type;
+					if (keyType == Types.INTEGER) {
+						intKey = $_cast('int', Value$value2.internalValue);
+					} else if (keyType == Types.STRING) {
+						stringKey = $_cast('string', Value$value2.internalValue);
+					} else if (keyType == Types.INSTANCE) {
+						objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
+						intKey = ObjectInstance$objInstance.objectId;
 					} else {
 						return killExecution(stack, "Invalid key for a dictionary.");
 					}
 
-					dictImpl = Value$root.internalValue;
-					nonEmpty = DictImpl$dictImpl.size > 0;
-					if (nonEmpty && DictImpl$dictImpl.keyType != nativeKeyType) {
+					dictImpl = $_cast('DictImpl', Value$root.internalValue);
+					bool1 = DictImpl$dictImpl.size > 0; // already contains stuff
+					if (bool1 && DictImpl$dictImpl.keyType != keyType) {
 						return killExecution(stack, "Cannot have multiple keys in one dictionary with different types.");
 					}
-					if (!$_dictionary_contains(DictImpl$dictImpl.keyLookup, nativeKey)) {
-						$_dictionary_set(DictImpl$dictImpl.keyLookup, nativeKey, value2);
-						DictImpl$dictImpl.size += 1;
-						if (!nonEmpty) {
-							DictImpl$dictImpl.keyType = nativeKeyType;
+					if (keyType == Types.STRING) {
+						if (!$_dictionary_contains(DictImpl$dictImpl.keyStringLookup, stringKey)) {
+							$_dictionary_set(DictImpl$dictImpl.keyStringLookup, stringKey, value2);
+							DictImpl$dictImpl.size += 1;
+							if (!bool1) { // is empty?
+								DictImpl$dictImpl.keyType = keyType;
+							}
 						}
+						$_dictionary_set(DictImpl$dictImpl.valueStringLookup, stringKey, value);
+					} else {
+						if (!$_dictionary_contains(DictImpl$dictImpl.keyIntLookup, intKey)) {
+							$_dictionary_set(DictImpl$dictImpl.keyIntLookup, intKey, value2);
+							DictImpl$dictImpl.size += 1;
+							if (!bool1) { // is empty?
+								DictImpl$dictImpl.keyType = keyType;
+							}
+						}
+						$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
 					}
-					$_dictionary_set(DictImpl$dictImpl.valueLookup, nativeKey, value);
 				} else {
 					return killExecution(stack, getTypeFromId(type) + " type does not support indexing");
 				}
@@ -981,43 +1001,64 @@ function @type('string') interpret(
 
 			case OpCodes.DEF_DICTIONARY:
 				$_comment('DEF_DICT');
-				dictKeyLookup = {};
-				dictValueLookup = {};
-				size = row[0];
-				keyType = Types.INTEGER; // always ignored when size is 0
-				prevType = null;
+				dictIntKeyLookup = $_new_dictionary('int', 'Value');
+				dictIntValueLookup = $_new_dictionary('int', 'Value');
+				dictStringKeyLookup = $_new_dictionary('string', 'Value');
+				dictStringValueLookup = $_new_dictionary('string', 'Value');
+				len = $_array_get(row, 0);
+				type = Types.INTEGER; // always ignored when size is 0
 				first = true;
-				anticipatedSize = size;
-				while (size > 0) {
-					value = $_stack_pop(valueStack);
-					key = $_stack_pop(valueStack);
-					keyType = Value$key.type;
-					if (first) prevType = keyType;
-					if (!first && keyType != prevType) return killExecution(stack, "Cannot have multiple key types in one dictionary.");
+				i = len; // size
+				while (i > 0) {
+					value = $_stack_pop(valueStack); // value
+					value2 = $_stack_pop(valueStack); // key
+					if (first) {
+						type = Value$value2.type;
+						first = false;
+					} else if (type != Value$value2.type) {
+						return killExecution(stack, "Cannot have multiple key types in one dictionary.");
+					}
 
-					if (keyType == Types.INTEGER || keyType == Types.STRING) {
-						nativeKey = Value$key.internalValue;
-					} else if (keyType == Types.INSTANCE) {
-						obj = Value$key.internalValue;
-						objId = $_list_get(obj, 2);
-						nativeKey = objId;
+					if (type == Types.INTEGER) {
+						intKey = $_cast('int', Value$value2.internalValue);
+					} else if (type == Types.STRING) {
+						stringKey = $_cast('string', Value$value2.internalValue);
+					} else if (type == Types.INSTANCE) {
+						objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
+						intKey = ObjectInstance$objInstance.objectId;
 					} else {
 						return killExecution(stack, "Only integers, strings, and objects can be used as dictionary keys.");
 					}
 
-					$_dictionary_set(dictKeyLookup, nativeKey, key);
-					$_dictionary_set(dictValueLookup, nativeKey, value);
-
-					first = false;
-					size -= 1;
+					if (type == Types.STRING) {
+						$_dictionary_set(dictStringKeyLookup, stringKey, value2);
+						$_dictionary_set(dictStringValueLookup, stringKey, value);
+					} else {
+						$_dictionary_set(dictIntKeyLookup, intKey, value2);
+						$_dictionary_set(dictIntValueLookup, intKey, value);
+					}
+					i -= 1;
 				}
 
-				if ($_dictionary_size(dictKeyLookup) != anticipatedSize) {
-					return killExecution(stack, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+				if (type == Types.STRING) {
+					if ($_dictionary_size(dictStringKeyLookup) != len) {
+						return killExecution(stack, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+					}
+				} else {
+					if ($_dictionary_size(dictIntKeyLookup) != len) {
+						return killExecution(stack, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+					}
 				}
 
-				dict = new Value(Types.DICTIONARY, new DictImpl(dictKeyLookup, dictValueLookup, anticipatedSize, keyType));
-				$_stack_push(valueStack, dict);
+				value = new Value(Types.DICTIONARY, new DictImpl(
+					dictIntKeyLookup,
+					dictIntValueLookup,
+					dictStringKeyLookup,
+					dictStringValueLookup,
+					len,
+					type));
+
+				$_stack_push(valueStack, value);
 				break;
 
 			case OpCodes.DEF_LIST:
@@ -1165,22 +1206,28 @@ function @type('string') interpret(
 						}
 					}
 				} else if (Value$root.type == Types.DICTIONARY) {
-					dictImpl = Value$root.internalValue;
-					nativeKeyType = Value$value.type;
-					if (nativeKeyType != DictImpl$dictImpl.keyType) {
+					dictImpl = $_cast('DictImpl', Value$root.internalValue);
+					keyType = Value$value.type;
+					if (keyType != DictImpl$dictImpl.keyType) {
 						return killExecution(stack, "Key not found.");
 					} else {
-						if (nativeKeyType == Types.INTEGER) {
-							nativeKey = Value$value.internalValue;
-						} else if (nativeKeyType == Types.STRING) {
-							nativeKey = Value$value.internalValue;
-						} else if (nativeKeyType == Types.INSTANCE) {
-							nativeKey = $_list_get(Value$index.internalValue, 2);
+						if (keyType == Types.INTEGER) {
+							intKey = $_cast('int', Value$value.internalValue);
+						} else if (keyType == Types.STRING) {
+							stringKey = $_cast('string', Value$value.internalValue);
+						} else if (keyType == Types.INSTANCE) {
+							objInstance = $_cast('ObjectInstance', Value$value.internalValue);
+							intKey = ObjectInstance$objInstance.objectId;
 						} else {
 							return killExecution(stack, "Key not found.");
 						}
 
-						output = $_dictionary_get(DictImpl$dictImpl.valueLookup, nativeKey, null);
+						if (keyType == Types.STRING) {
+							output = $_dictionary_get(DictImpl$dictImpl.valueStringLookup, stringKey, null);
+						} else {
+							output = $_dictionary_get(DictImpl$dictImpl.valueIntLookup, intKey, null);
+						}
+
 						if (output == null) return killExecution(stack, "Key not found.");
 							
 						$_stack_push(valueStack, output);
@@ -1419,16 +1466,13 @@ function @type('string') interpret(
 			case OpCodes.VARIABLE_STREAM:
 				$_comment('VARIABLE_STREAM');
 				// TODO: trim off the token data from the args now that this is done differently.
-				for (i = 0; $_list_get(row, i) != -1; i += 1) {
+				for (i = 0; i < $_array_length(row); i += 1) {
 					value = $_dictionary_get(locals, $_list_get(row, i), null);
 					if (value == null) {
 						value = $_dictionary_get(globals, $_list_get(row, i), null);
 					}
 					if (value == null) {
-						return killExecutionWithTokenOverride(
-							stack, 
-							$_list_get($_list_get(specialCache, StackFrame$stack.pc), i), 
-							"Variable not defined: " + $_array_get(identifiers, $_array_get(row, i)));
+						return killExecution(stack, "Variable not defined.");
 					} else {
 						$_stack_push(valueStack, value);
 					}

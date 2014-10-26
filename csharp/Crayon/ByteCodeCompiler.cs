@@ -838,8 +838,10 @@ namespace Crayon
 					tokenData.Add(v.FirstToken.FileID);
 				}
 
+				/*
 				ids.Add(-1);
 				ids.AddRange(tokenData);
+				//*/
 
 				buffer.Add(variables[0].FirstToken, OpCode.VARIABLE_STREAM, ids.ToArray());
 			}
