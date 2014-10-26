@@ -40,7 +40,7 @@ function main() {
 			baseClassId = 0;
 			if (baseClassNameId > 0) {
 				// base class name not found is a compile time error.
-				baseClassId = $_dictionary_get(nameIdToClassId, baseClassNameId, 0);
+				baseClassId = $_dictionary_get_guaranteed(nameIdToClassId, baseClassNameId);
 			}
 			
 			if (baseClassId == 0) {
@@ -94,13 +94,13 @@ function main() {
 		@type('Array<int>') args = $_array_get(opArgs, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
 			nameId = $_list_get(args, 0);
-			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
+			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
 			lastClassId = classId;
 			specialCacheEntry = $_new_array('int', 1);
 			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
 			nameId = $_list_get(args, 1);
-			classId = $_dictionary_get(nameIdToClassId, nameId, 0);
+			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
 			specialCacheEntry = $_new_array('int', 1);
 			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
@@ -222,7 +222,7 @@ function @type('Dictionary<int, MethodDefinition>') copyMethodLookupDictionary(@
 	@type('Dictionary<int, MethodDefinition>') output = $_new_dictionary('int', 'MethodDefinition');
 	for (@type('int') i = 0; i < $_array_length(key_list); i += 1) {
 		@type('int') key = $_array_get(key_list, i);
-		@type('MethodDefinition') value = $_dictionary_get(dict, key, null);
+		@type('MethodDefinition') value = $_dictionary_get_guaranteed(dict, key);
 		$_dictionary_set(output, key, value);
 	}
 	return output;

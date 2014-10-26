@@ -13,7 +13,10 @@ function @type('string') interpret(
 		@type('Dictionary<int, Value>') globals) {
 	@type('Stack<Value>') valueStack = StackFrame$stack.valueStack;
 	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
-	@type('int') LENGTH_ID = $_dictionary_get(inv_identifiers, 'length', -999);
+	@type('int') LENGTH_ID = -999;
+	if ($_dictionary_contains(inv_identifiers, 'length')) {
+		LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
+	}
 	@type('ProgramData') p = $_get_program_data();
 
 	// declare types...
@@ -609,7 +612,7 @@ function @type('string') interpret(
 				$_comment('CALL_CONSTRUCTOR');
 				classId = $_array_get($_array_get(specialCache, StackFrame$stack.pc), 0);
 				ProgramData$p.instanceCounter += 1;
-				value = new Value(Types.INSTANCE, [classId, $_new_dictionary('int', 'Value'), ProgramData$p.instanceCounter]);
+				value = new Value(Types.INSTANCE, new ObjectInstance(classId, $_new_dictionary('int', 'Value'), ProgramData$p.instanceCounter));
 				classInfo = $_list_get(classTable, classId);
 				if (!ClassInfo$classInfo.initialized) {
 					return killExecution(stack, "This class has not been defined yet.");
@@ -1162,17 +1165,22 @@ function @type('string') interpret(
 				ProgramData$p.integerSwitchLookups = $_convert_list_to_array(ProgramData$p.integerSwitchLookupsBuilder);
 				ProgramData$p.stringSwitchLookups = $_convert_list_to_array(ProgramData$p.stringSwitchLookupsBuilder);
 				ProgramData$p.sourceCode = $_convert_list_to_array(ProgramData$p.sourceCodeBuilder);
-				
+
 				ProgramData$p.identifiersBuilder = null;
 				ProgramData$p.literalTableBuilder = null;
 				ProgramData$p.integerSwitchLookupsBuilder = null;
 				ProgramData$p.stringSwitchLookupsBuilder = null;
 				ProgramData$p.sourceCodeBuilder = null;
-				
+
 				identifiers = ProgramData$p.identifiers;
 				literalTable = ProgramData$p.literalTable;
 				integerSwitches = ProgramData$p.integerSwitchLookups;
 				stringSwitches = ProgramData$p.stringSwitchLookups;
+
+				if ($_dictionary_contains(inv_identifiers, 'length')) {
+					LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
+				}
+
 				break;
 
 			case OpCodes.FUNCTION_DEFINITION:

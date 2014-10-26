@@ -36,6 +36,7 @@ namespace Crayon.Translator
 				case "_convert_list_to_array": VerifyCount(functionCall, 1); TranslateConvertListToArray(output, args[0]); break;
 				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get": VerifyCount(functionCall, 3); TranslateDictionaryGet(output, args[0], args[1], args[2]); break;
+				case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
 				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
 				case "_dictionary_get_values": VerifyCount(functionCall, 1); TranslateDictionaryGetValues(output, args[0]); break;
 				case "_dictionary_remove": VerifyCount(functionCall, 2); TranslateDictionaryRemove(output, args[0], args[1]); break;
@@ -111,6 +112,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateConvertListToArray(List<string> output, Expression list);
 		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue);
+		protected abstract void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionaryGetKeys(List<string> output, Expression dictionary);
 		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
 		protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);

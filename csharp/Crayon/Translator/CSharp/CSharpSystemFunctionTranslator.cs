@@ -85,6 +85,14 @@ namespace Crayon.Translator.CSharp
 			// TODO: audit each usage and see which ones are guaranteed keys and which should have fallbacks
 		}
 
+		protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
+		{
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, key);
+			output.Add("]");
+		}
+
 		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
