@@ -74,7 +74,7 @@ namespace Crayon.Translator.CSharp
 
 			if (target is Variable && ((Variable)target).IsStatic)
 			{
-				output.Add("static ");
+				output.Add("public static ");
 			}
 
 			Annotation typeAnnotation = target.GetAnnotation("type");

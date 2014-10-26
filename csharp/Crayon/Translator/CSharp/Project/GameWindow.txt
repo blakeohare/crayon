@@ -5,13 +5,13 @@ namespace %%%PROJECT_ID%%%
 {
 	internal class GameWindow : OpenTK.GameWindow
 	{
-		private const int MOUSE_LEFT_DOWN = 0;
-		private const int MOUSE_LEFT_UP = 1;
-		private const int MOUSE_RIGHT_DOWN = 2;
-		private const int MOUSE_RIGHT_UP = 3;
-		private const int MOUSE_MOVE = 4;
-		private const int KEY_DOWN = 5;
-		private const int KEY_UP = 6;
+		private const int MOUSE_EVENT = 0;
+		private const int KEY_EVENT = 1;
+		private const int EXIT = 2;
+
+		private const int MOUSE_LEFT = 0;
+		private const int MOUSE_RIGHT = 1;
+		private const int MOUSE_MOVE = 2;
 
 		private Queue<int> events = new Queue<int>();
 		private Queue<string> keyEvents = new Queue<string>();
@@ -68,9 +68,10 @@ namespace %%%PROJECT_ID%%%
 
 		private void MouseMove(int x, int y)
 		{
-			events.Enqueue(MOUSE_MOVE);
+			events.Enqueue(MOUSE_EVENT);
 			events.Enqueue(x * this.gameWidth / this.screenWidth);
 			events.Enqueue(y * this.gameHeight / this.screenHeight);
+			events.Enqueue(MOUSE_MOVE);
 		}
 
 		private void MouseButton(OpenTK.Input.MouseButton button, int x, int y, bool down)
@@ -82,13 +83,11 @@ namespace %%%PROJECT_ID%%%
 				return;
 			}
 
-			int eventType;
-			if (left) eventType = down ? MOUSE_LEFT_DOWN : MOUSE_LEFT_UP;
-			else eventType = down ? MOUSE_RIGHT_DOWN : MOUSE_RIGHT_UP;
-
-			events.Enqueue(eventType);
+			events.Enqueue(MOUSE_EVENT);
 			events.Enqueue(x * this.gameWidth / this.screenWidth);
 			events.Enqueue(y * this.gameHeight / this.screenHeight);
+			events.Enqueue(left ? MOUSE_LEFT : MOUSE_RIGHT);
+			events.Enqueue(down ? 1 : 0);
 		}
 
 		private const int KEY_CODE_A = (int)OpenTK.Input.Key.A;
@@ -140,13 +139,98 @@ namespace %%%PROJECT_ID%%%
 				}
 				keyEvents.Enqueue(value);
 			}
-			events.Enqueue(down ? KEY_DOWN : KEY_UP);
+			events.Enqueue(KEY_EVENT);
+			events.Enqueue(down ? 1 : 0);
+		}
+
+		private static Dictionary<string, Value> STRING_CACHE = new Dictionary<string, Value>();
+		private static Value CreateString(string s)
+		{
+			Value output;
+			if (!STRING_CACHE.TryGetValue(s, out output))
+			{
+				output = new Value(%%%TYPE_STRING%%%, s);
+				STRING_CACHE[s] = output;
+			}
+			return output;
+		}
+
+		private static Value CreateInteger(int n)
+		{
+			return CrayonWrapper.v_build_integer(n);
+		}
+
+		private static Value CreateValueList(params Value[] values)
+		{
+			return new Value(%%%TYPE_LIST%%%, new List<Value>(values));
 		}
 
 		public static List<Value> GetEvents()
 		{
-			instance.events.Clear();
-			return new List<Value>();
+			List<Value> output = new List<Value>();
+			Queue<int> events = instance.events;
+			Queue<string> keyEvents = instance.keyEvents;
+			int type;
+			Value x, y;
+			bool down, isLeft;
+			Value keyCode;
+
+			while (events.Count > 0)
+			{
+				switch (events.Dequeue())
+				{
+					case MOUSE_EVENT:
+						x = CreateInteger(events.Dequeue());
+						y = CreateInteger(events.Dequeue());
+						type = events.Dequeue();
+						if (type == MOUSE_MOVE)
+						{
+							output.Add(CreateValueList(CreateString("mousemove"), x, y));
+						}
+						else
+						{
+							isLeft = type == MOUSE_LEFT;
+							down = events.Dequeue() == 1;
+
+							if (down)
+							{
+								if (isLeft)
+								{
+									output.Add(CreateValueList(CreateString("mouseleftdown"), x, y));
+								}
+								else
+								{
+									output.Add(CreateValueList(CreateString("mouserightdown"), x, y));
+								}
+							}
+							else
+							{
+								if (isLeft)
+								{
+									output.Add(CreateValueList(CreateString("mouseleftup"), x, y));
+								}
+								else
+								{
+									output.Add(CreateValueList(CreateString("mouserightup"), x, y));
+								}
+							}
+						}
+						break;
+					case KEY_EVENT:
+						down = events.Dequeue() == 1;
+						keyCode = CreateString(keyEvents.Dequeue());
+						output.Add(CreateValueList(CreateString("key"), down ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE, keyCode));
+						break;
+					case EXIT:
+						type = events.Dequeue();
+						output.Add(CreateValueList(CreateString("exit"), CreateString("general")));
+						break;
+					default:
+						break;
+				}
+			}
+			
+			return output;
 		}
 
 		private void Startup()

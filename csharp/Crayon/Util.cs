@@ -148,6 +148,8 @@ namespace Crayon
 		{
 			if (text.Contains("%%%"))
 			{
+				text = Constants.DoReplacements(text);
+
 				foreach (string key in replacements.Keys)
 				{
 					text = text.Replace("%%%" + key + "%%%", replacements[key]);
