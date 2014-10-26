@@ -24,6 +24,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static double fps = 60;
 		private static GameWindow instance = null;
+		private static string errorMessage = null;
 
 		public static double FPS
 		{
@@ -51,15 +52,16 @@ namespace %%%PROJECT_ID%%%
 			this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
 		}
 
-		public static void InitializeScreen(int gameWidth, int gameHeight)
+		public static bool InitializeScreen(int gameWidth, int gameHeight)
 		{
-			InitializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
+			return InitializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
 		}
 
-		public static void InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
 			GameWindow gw = new GameWindow(GameWindow.FPS, gameWidth, gameHeight, screenWidth, screenHeight);
 			gw.Run(GameWindow.FPS, GameWindow.FPS);
+			return false;
 		}
 
 		private void MouseMove(int x, int y)
@@ -147,7 +149,12 @@ namespace %%%PROJECT_ID%%%
 
 		private void Render(int renderCounter)
 		{
-			CrayonWrapper.v_runTick();
+			bool continueExecution = CrayonWrapper.v_runTick();
+			if (!continueExecution)
+			{
+				errorMessage = "";
+				this.Exit();
+			}
 		}
 	}
 }

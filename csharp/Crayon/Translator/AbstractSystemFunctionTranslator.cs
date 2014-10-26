@@ -31,6 +31,7 @@ namespace Crayon.Translator
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, args[0], args[1]); break;
+				case "_cast_to_list": VerifyCount(functionCall, 1); TranslateCastToList(output, args[0]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, args[0]); break;
 				case "_convert_list_to_array": VerifyCount(functionCall, 1); TranslateConvertListToArray(output, args[0]); break;
@@ -106,6 +107,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateCast(List<string> output, Expression typeValue, Expression expression);
+		protected abstract void TranslateCastToList(List<string> output, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
 		protected abstract void TranslateComment(List<string> output, Expression commentValue);
 		protected abstract void TranslateConvertListToArray(List<string> output, Expression list);

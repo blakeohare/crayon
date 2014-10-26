@@ -154,7 +154,7 @@ function main() {
 	runTick();
 }
 
-function runTick() {
+function @type('bool') runTick() {
 	@type('ProgramData') p = $_get_program_data();
 
 	if (%%%PLATFORM_IS_ASYNC%%%) {
@@ -187,8 +187,9 @@ function runTick() {
 			}
 			// execution ended, either with error or gracefully.
 			$_unregister_ticker();
+			return false;
 		}
-		return null;
+		return true;
 	} else {
 		while (true) {
 			@type('string') error = interpret(
@@ -207,13 +208,14 @@ function runTick() {
 				$_pause_for_frame();
 			} else if (error == '') {
 				// empty string means the execution came to an end.
-				return null;
+				return false;
 			} else {
 				// error message and stack trace
 				$_print(error);
-				return null;
+				return false;
 			}
 		}
+		return false;
 	}
 }
 

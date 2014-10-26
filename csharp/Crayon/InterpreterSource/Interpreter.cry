@@ -621,8 +621,9 @@ function @type('string') interpret(
 					return killExecution(stack, "This class has not been defined yet.");
 				}
 				pc = ClassInfo$classInfo.constructorPc;
-				argCount = $_list_get(row, 0);
+				argCount = $_array_get(row, 0);
 				if (pc != 0) {
+					returnValueUsed = $_array_get(row, 2) == 1;
 					if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 						funcArgs = $_new_array('Value', argCount);
 						while (argCount > 0) {
@@ -631,7 +632,6 @@ function @type('string') interpret(
 						}
 					} else {
 						funcArgs = $_new_list('Value');
-						returnValueUsed = $_list_get(row, 2) == 1;
 						while (argCount > 0) {
 							$_list_push(funcArgs, $_stack_pop(valueStack));
 							argCount -= 1;
@@ -702,8 +702,7 @@ function @type('string') interpret(
 						break;
 						
 					case %%%FF_CLOCK_TICK%%%:
-						ProgramData$p.stackTop = stack;
-						StackFrame$stack.pc += 1;
+						yieldControl(stack);
 						return null;
 						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
 						break;
@@ -1610,4 +1609,14 @@ function @type('string') killExecutionWithTokenOverride(
 		token = null;
 	}
 	return "Error:\n" + fullMessage;
+}
+
+// This saves the state of the interpreter so that it's ready to have
+// interpret() called again. Even though this is only called once directly
+// in the translated crayon interpreter code, certain platforms will need
+// to call this manually.
+function yieldControl(@type('StackFrame') stack) {
+	@type('ProgramData') p = $_get_program_data();
+	ProgramData$p.stackTop = stack;
+	StackFrame$stack.pc += 1;
 }

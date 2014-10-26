@@ -49,6 +49,13 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, expression);
 		}
 
+		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
+		{
+			output.Add("new List<Value>(");
+			this.Translator.TranslateExpression(output, enumerableThing);
+			output.Add(")");
+		}
+
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
 		{
 			output.Add("\"\" + ");
@@ -174,7 +181,7 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_download_image":
-					output.Add("// TODO: download iamge");
+					output.Add("Image.LoadImage((string)v_arg1.internalValue, (string)v_arg2.internalValue)");
 					break;
 
 				case "ff_draw_ellipse":
@@ -198,7 +205,19 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_floor":
-					output.Add("// TODO: floor");
+					string nl = this.Translator.NL;
+					string tab2 = tab + "\t";
+					// TODO: This is silly. returning arg1 when it's an int should be written directly in the interpreter crayon code
+					output.AddRange(new string[] {
+						"if (v_arg1.type == " + (int)Types.INTEGER + ")", nl,
+						tab, "{",nl,
+						tab2, "v_output = v_arg1;", nl,
+						tab, "}", nl,
+						tab, "else", nl,
+						tab, "{", nl,
+						tab2, "v_output = v_build_integer((int)System.Math.Floor((double)v_arg1.internalValue));", nl,
+						tab, "}"
+					});
 					break;
 
 				case "ff_get_events":
@@ -206,15 +225,15 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_get_image":
-					output.Add("// TODO: get image");
+					output.Add("v_output = new Value(" + (int)Types.NATIVE_OBJECT + ", Image.GetImageByKey((string)v_arg1.internalValue))");
 					break;
 
 				case "ff_get_image_height":
-					output.Add("// TODO: get image height");
+					output.Add("v_output = v_build_integer(((Image)v_arg1.internalValue).Height)");
 					break;
 
 				case "ff_get_image_width":
-					output.Add("// TODO: get image width");
+					output.Add("v_output = v_build_integer(((Image)v_arg1.internalValue).Width)");
 					break;
 
 				case "ff_initialize_game":
@@ -222,11 +241,23 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_initialize_screen":
-					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue)");
+					output.Add("v_yieldControl(v_stack);");
+					output.Add(this.Translator.NL);
+					output.Add(tab);
+					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue);");
+					output.Add(this.Translator.NL);
+					output.Add(tab);
+					output.Add("return \"\"");
 					break;
 
 				case "ff_initialize_screen_scaled":
-					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue, (int)v_arg4.internalValue)");
+					output.Add("v_yieldControl(v_stack);");
+					output.Add(this.Translator.NL);
+					output.Add(tab);
+					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue, (int)v_arg4.internalValue);");
+					output.Add(this.Translator.NL);
+					output.Add(tab);
+					output.Add("return \"\"");
 					break;
 
 				case "ff_is_image_loaded":

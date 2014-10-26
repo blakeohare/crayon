@@ -1,25 +1,63 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace %%%PROJECT_ID%%%
 {
 	internal static class ResourceReader
 	{
+		public static string ReadTextFile(string path, bool filePrefix)
+		{
+			IList<byte> bytes = ReadBytes(path, filePrefix);
+			StringBuilder output = new StringBuilder(bytes.Count); 
+			output.Append(ReadBytes(path, filePrefix).Select<byte, char>(b => (char)b).ToArray<char>());
+			return output.ToString();
+		}
+
 		public static string ReadByteCodeFile()
 		{
-			Stream stream = typeof(ResourceReader).Assembly.GetManifestResourceStream("%%%PROJECT_ID%%%.ByteCode.txt");
+			return ReadTextFile("ByteCode.txt", false);
+		}
+
+		public static System.Drawing.Bitmap ReadImageFile(string path)
+		{
+			IList<byte> data = ReadBytes(path, true);
+			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
+		}
+
+		private const int BUFFER_LENGTH = 128;
+		private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
+
+		private static IList<byte> ReadBytes(string path, bool filePrefix)
+		{
+			string canonicalizedPath = path.Replace('/', '.').Replace('\\', '.');
+			string prefix = "%%%PROJECT_ID%%%" + (filePrefix ? ".Files" : "") + (canonicalizedPath.StartsWith(".") ? "" : ".");
+			canonicalizedPath = prefix + canonicalizedPath;
+
+			Stream stream = typeof(ResourceReader).Assembly.GetManifestResourceStream(canonicalizedPath);
 			StringBuilder sb = new StringBuilder();
-			byte[] buffer = new byte[500];
-			while (true)
+			List<byte> output = new List<byte>();
+
+			int bytesRead = 1;
+			while (bytesRead > 0)
 			{
-				int bytesRead = stream.Read(buffer, 0, buffer.Length);
-				if (bytesRead == 0) break;
-				for (int i = 0; i < bytesRead; ++i)
+				bytesRead = stream.Read(BUFFER, 0, BUFFER_LENGTH);
+				if (bytesRead == BUFFER_LENGTH)
 				{
-					sb.Append((char)buffer[i]);
+					output.AddRange(BUFFER);
+				}
+				else
+				{
+					for (int i = 0; i < bytesRead; ++i)
+					{
+						output.Add(BUFFER[i]);
+					}
+					bytesRead = 0;
 				}
 			}
-			return sb.ToString();
+			return output;
 		}
 	}
 }

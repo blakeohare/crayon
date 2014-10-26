@@ -43,6 +43,11 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, expression);
 		}
 
+		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
+		{
+			this.Translator.TranslateExpression(output, enumerableThing);
+		}
+
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
 		{
 			this.Translator.TranslateExpression(output, charValue);

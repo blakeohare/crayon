@@ -152,6 +152,7 @@
     <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\CrStack.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\GameWindow.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\Image.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
