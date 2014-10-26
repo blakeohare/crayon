@@ -72,17 +72,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add(this.Shorten("] !== undefined)"));
 		}
 
-		protected override void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue)
-		{
-			output.Add("slow_dictionary_get(");
-			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, key);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, defaultValue);
-			output.Add(")");
-		}
-
 		protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);

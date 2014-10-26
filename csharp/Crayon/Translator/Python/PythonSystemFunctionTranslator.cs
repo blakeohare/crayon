@@ -71,16 +71,6 @@ namespace Crayon.Translator.Python
 			output.Add(", None) != None)");
 		}
 
-		protected override void TranslateDictionaryGet(List<string> output, Expression dictionary, Expression key, Expression defaultValue)
-		{
-			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(".get(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, defaultValue);
-			output.Add(")");
-		}
-
 		protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);

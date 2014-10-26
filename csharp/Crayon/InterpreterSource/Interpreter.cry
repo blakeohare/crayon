@@ -37,6 +37,7 @@ function @type('string') interpret(
 	@type('string') error = null;
 	@type('MethodInstance') methodInstance = null;
 	@type('MethodDefinition') methodDefinition = null;
+	@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
 	@type('FunctionDefinition') funcDef = null;
 	@type('ObjectInstance') objInstance = null;
 	@type('ObjectInstance') objInstance2 = null;
@@ -87,6 +88,8 @@ function @type('string') interpret(
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<string, int>') primitiveMethodLookup = ProgramData$p.primitiveMethodLookup;
+	@type('Dictionary<int, int>') integerSwitch = null;
+	@type('Dictionary<string, int>') stringSwitch = null;
 
 	while (true) {
 		row = args[StackFrame$stack.pc];
@@ -972,9 +975,14 @@ function @type('string') interpret(
 						$_list_reverse_in_place(funcArgs);
 					}
 				}
-				func = $_dictionary_get(locals, $_array_get(row, 0), null);
-				if (func == null) {
-					func = $_dictionary_get(globals, $_array_get(row, 0), null);
+
+				int1 = $_array_get(row, 0);
+				if ($_dictionary_contains(locals, int1)) {
+					func = $_dictionary_get_guaranteed(locals, int1);
+				} else if ($_dictionary_contains(globals, int1)) {
+					func = $_dictionary_get_guaranteed(globals, int1);
+				} else {
+					func = null;
 				}
 
 				if (func != null) {
@@ -1091,30 +1099,29 @@ function @type('string') interpret(
 				// TODO: no caching of methods occur here because ideally, I want to create another op for dotStepInvoke which eliminates the need to instantiate the method in 99.5% of cases.
 				root = $_stack_pop(valueStack);
 				type = Value$root.type;
+				nameId = $_array_get(row, 0);
 				if (type == Types.INSTANCE) {
 					objInstance = $_cast('ObjectInstance', Value$root.internalValue);
-					value = $_dictionary_get(ObjectInstance$objInstance.fields, $_array_get(row, 0), null);
-					if (value == null) {
+					dictIntValueLookup = $_cast('Dictionary<int, Value>', ObjectInstance$objInstance.fields);
+					if ($_dictionary_contains(dictIntValueLookup, nameId)) {
+						$_stack_push(valueStack, $_dictionary_get_guaranteed(dictIntValueLookup, nameId));
+					} else {
 						classId = ObjectInstance$objInstance.classId;
-						methodDefinition = $_dictionary_get(
-							$_list_get(classMethods, classId), // method lookup
-							$_array_get(row, 0), // method ID
-							null);
-						if (methodDefinition == null) {
-							return killExecution(stack, "Field used before it was defined.");
-						} else {
+						methodDefinitionLookup = $_array_get(classMethods, classId);
+						if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
+							methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
 							value = new Value(Types.METHOD,
 								new MethodInstance(
 									root,
 									MethodDefinition$methodDefinition.pc,
 									MethodDefinition$methodDefinition.maxArgs));
-							$_dictionary_set(ObjectInstance$objInstance.fields, $_array_get(row, 0), value);
+							$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
 							$_stack_push(valueStack, value);
+						} else {
+							return killExecution(stack, "Field used before it was defined.");
 						}
-					} else {
-						$_stack_push(valueStack, value);
 					}
-				} else if (row[0] == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
+				} else if (nameId == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
 					len = -1;
 					if (type == Types.LIST) {
 						// might need to revisit this if other platforms aren't as easy to do a list implementation?
@@ -1139,11 +1146,16 @@ function @type('string') interpret(
 					// Everything else will presumably be hit 99% of the time via the DOT_STEP_INVOKE op instead of here, since they're methods. 
 					// Therefore I'm not particularly concerned about optimizing the rest of this.
 
-					int1 = $_dictionary_get(primitiveMethodLookup, $_string_cast_weak(type) + $_array_get(identifiers, $_array_get(row, 0)), -1); // primitive method ID
-					if (int1 == -1) {
-						return killExecution(stack, getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
+					string1 = $_string_cast_weak(type) + $_array_get(identifiers, nameId);
+					if ($_dictionary_contains(primitiveMethodLookup, string1)) {
+						int1 = $_dictionary_get_guaranteed(primitiveMethodLookup, string1);
+						$_stack_push(
+							valueStack, 
+							new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 					} else {
-						$_stack_push(valueStack, new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
+						return killExecution(
+							stack, 
+							getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
 					}
 				}
 				break;
@@ -1231,9 +1243,19 @@ function @type('string') interpret(
 						}
 
 						if (keyType == Types.STRING) {
-							output = $_dictionary_get(DictImpl$dictImpl.valueStringLookup, stringKey, null);
+							dictStringValueLookup = $_cast('Dictionary<string, Value>', DictImpl$dictImpl.valueStringLookup);
+							if ($_dictionary_contains(dictStringValueLookup, stringKey)) {
+								output = $_dictionary_get_guaranteed(dictStringValueLookup, stringKey);
+							} else {
+								return killExecution(stack, "Key not found.");
+							}
 						} else {
-							output = $_dictionary_get(DictImpl$dictImpl.valueIntLookup, intKey, null);
+							dictIntValueLookup = $_cast('Dictionary<int, Value>', DictImpl$dictImpl.valueIntLookup);
+							if ($_dictionary_contains(dictIntValueLookup, intKey)) {
+								output = $_dictionary_get_guaranteed(dictIntValueLookup, intKey);
+							} else {
+								return killExecution(stack, "Key not found.");
+							}
 						}
 
 						if (output == null) return killExecution(stack, "Key not found.");
@@ -1397,15 +1419,13 @@ function @type('string') interpret(
 				$_comment('SWITCH_INT');
 				value = $_stack_pop(valueStack);
 				if (Value$value.type == Types.INTEGER) {
-					int1 = $_cast('int', Value$value.internalValue);
-					// offset
-					int2 = $_dictionary_get(
-						$_array_get(
-							integerSwitches, 
-							$_array_get(row, 0)), 
-						int1, 
-						$_array_get(row, 1));
-					StackFrame$stack.pc += int2;
+					int1 = $_cast('int', Value$value.internalValue); // switch ID
+					integerSwitch = $_array_get(integerSwitches, $_array_get(row, 0));
+					if ($_dictionary_contains(integerSwitch, int1)) {
+						StackFrame$stack.pc += $_dictionary_get_guaranteed(integerSwitch, int1);
+					} else {
+						StackFrame$stack.pc += $_array_get(row, 1); // default
+					}
 				} else {
 					return killExecution(stack, "Switch statement expects an integer.");
 				}
@@ -1416,14 +1436,12 @@ function @type('string') interpret(
 				value = $_stack_pop(valueStack);
 				if (Value$value.type == Types.STRING) {
 					string1 = $_cast('string', Value$value.internalValue);
-					// offset
-					int1 = $_dictionary_get(
-						$_array_get(
-							stringSwitches, 
-							$_array_get(row, 0)), 
-						string1, 
-						$_array_get(row, 1));
-					StackFrame$stack.pc += int1;
+					stringSwitch = $_array_get(stringSwitches, $_array_get(row, 0));
+					if ($_dictionary_contains(stringSwitch, string1)) {
+						StackFrame$stack.pc += $_dictionary_get_guaranteed(stringSwitch, string1);
+					} else {
+						StackFrame$stack.pc += $_array_get(row, 1); // default
+					}
 				} else {
 					return killExecution(stack, "Switch statement expects a string.");
 				}
@@ -1458,32 +1476,32 @@ function @type('string') interpret(
 
 			case OpCodes.VARIABLE:
 				$_comment('VARIABLE');
-				value = $_dictionary_get(locals, row[0], null);
-				if (value == null) {
-					value = $_dictionary_get(globals, row[0], null);
-					if (value == null) {
-						return killExecution(stack, "Variable not defined: " + identifiers[row[0]]);
-					} else {
-						$_stack_push(valueStack, value);
-					}
+				nameId = $_array_get(row, 0);
+				if ($_dictionary_contains(locals, nameId)) {
+					value = $_dictionary_get_guaranteed(locals, nameId);
+				} else if ($_dictionary_contains(globals, nameId)) {
+					value = $_dictionary_get_guaranteed(globals, nameId);
 				} else {
-					$_stack_push(valueStack, value);
+					return killExecution(stack, "Variable not defined: " + identifiers[nameId]);
 				}
+
+				$_stack_push(valueStack, value);
 				break;
 
 			case OpCodes.VARIABLE_STREAM:
 				$_comment('VARIABLE_STREAM');
-				// TODO: trim off the token data from the args now that this is done differently.
 				for (i = 0; i < $_array_length(row); i += 1) {
-					value = $_dictionary_get(locals, $_list_get(row, i), null);
-					if (value == null) {
-						value = $_dictionary_get(globals, $_list_get(row, i), null);
-					}
-					if (value == null) {
-						return killExecution(stack, "Variable not defined.");
+					nameId = $_array_get(row, i);
+					if ($_dictionary_contains(locals, nameId)) {
+						value = $_dictionary_get_guaranteed(locals, nameId);
+					} else if ($_dictionary_contains(globals, nameId)) {
+						value = $_dictionary_get_guaranteed(globals, nameId);
 					} else {
-						$_stack_push(valueStack, value);
+						// TODO: the token information here is incorrect.
+						return killExecution(stack, "Variable not defined.");
 					}
+
+					$_stack_push(valueStack, value);
 				}
 				break;
 

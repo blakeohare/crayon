@@ -242,12 +242,14 @@ function @type('string') callSystemMethod(
 			@type('Value') dg_defaultValue = $_list_get(funcArgs, 1);
 			@type('DictImpl') dg_dict = $_cast('DictImpl', context);
 			@type('int') dg_key_type = Value$dg_key.type;
-			if (DictImpl$dg_dict.keyType != dg_key_type) {
-				output = dg_defaultValue;
-			} else {
+			output = dg_defaultValue;
+			if (DictImpl$dg_dict.keyType == dg_key_type) {
 				if (dg_key_type == Types.STRING) {
 					@type('string') keyValue = $_cast('string', Value$dg_key.internalValue);
-					output = $_dictionary_get(DictImpl$dg_dict.valueStringLookup, keyValue, null);
+					@type('Dictionary<string, Value>') dg_lookup = $_cast('Dictionary<string, Value>', DictImpl$dg_dict.valueStringLookup);
+					if ($_dictionary_contains(dg_lookup, keyValue)) {
+						output = $_dictionary_get_guaranteed(dg_lookup, keyValue);
+					}
 				} else {
 					@type('int') dg_keyValue = 0;
 					if (DictImpl$dg_dict.keyType == Types.INSTANCE) {
@@ -256,10 +258,10 @@ function @type('string') callSystemMethod(
 					} else {
 						dg_keyValue = $_cast('int', Value$dg_key.internalValue);
 					}
-					output = $_dictionary_get(DictImpl$dg_dict.valueIntLookup, dg_keyValue, null);
-				}
-				if (output == null) {
-					output = dg_defaultValue;
+					@type('Dictionary<int, Value>') dg_lookup = $_cast('Dictionary<int, Value>', DictImpl$dg_dict.valueIntLookup);
+					if ($_dictionary_contains(dg_lookup, dg_keyValue)) {
+						output = $_dictionary_get_guaranteed(dg_lookup, dg_keyValue);
+					}
 				}
 			}
 			break;
