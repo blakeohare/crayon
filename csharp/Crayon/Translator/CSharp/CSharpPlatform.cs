@@ -60,7 +60,6 @@ namespace Crayon.Translator.CSharp
 				TextContent = Util.MassReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/CrStack.txt"),
 					replacements)
-
 			};
 
 			compileTargets.Add("TranslationHelper.cs");
@@ -70,7 +69,6 @@ namespace Crayon.Translator.CSharp
 				TextContent = Util.MassReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/TranslationHelper.txt"),
 					replacements)
-
 			};
 
 			compileTargets.Add("ResourceReader.cs");
@@ -80,7 +78,21 @@ namespace Crayon.Translator.CSharp
 				TextContent = Util.MassReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/ResourceReader.txt"),
 					replacements)
+			};
 
+			compileTargets.Add("GameWindow.cs");
+			output[projectId + "/GameWindow.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/GameWindow.txt"),
+					replacements)
+			};
+
+			output[projectId + "/OpenTK.dll"] = new FileOutput()
+			{
+				Type = FileOutputType.Binary,
+				BinaryContent = Util.ReadBytesInternally("Translator/CSharp/OpenTK/OpenTK.dll")
 			};
 
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
@@ -136,7 +148,6 @@ namespace Crayon.Translator.CSharp
 				codeContents.Add(")" + nl);
 
 				codeContents.Add("\t\t{" + nl);
-
 
 				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
 				{
@@ -205,6 +216,8 @@ namespace Crayon.Translator.CSharp
 			{
 				csprojFile.Add("    <Compile Include=\"" + compileTarget.Replace('/', '\\') + "\" />\r\n");
 			}
+			csprojFile.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
+
 			foreach (string embeddedResource in embeddedResources)
 			{
 				csprojFile.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
@@ -214,7 +227,13 @@ namespace Crayon.Translator.CSharp
 			output[projectId + "/" + projectId + ".csproj"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = string.Join("", csprojFile)
+				TextContent = Util.MassReplacements(string.Join("", csprojFile), replacements)
+			};
+
+			output[projectId + "/ByteCode.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = this.Context.ByteCodeString
 			};
 
 			return output;
@@ -234,11 +253,6 @@ namespace Crayon.Translator.CSharp
 		private string GetTypeStringFromAnnotation(AnnotatedType type)
 		{
 			string output;
-
-			if (type.Name == "Stack")
-			{
-
-			}
 
 			if (type.Name == "Array")
 			{

@@ -6,7 +6,7 @@ namespace %%%PROJECT_ID%%%
 	{
 		public static void Main(string[] args)
 		{
-			System.Console.WriteLine("Hello, World!");
+			CrayonWrapper.v_main();
 		}
 	}
 }

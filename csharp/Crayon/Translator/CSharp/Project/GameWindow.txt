@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal class GameWindow : OpenTK.GameWindow
+	{
+		
+	}
+}

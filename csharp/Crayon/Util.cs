@@ -117,6 +117,22 @@ namespace Crayon
 			return finalOutput;
 		}
 
+		public static byte[] ReadBytesInternally(string path)
+		{
+			System.IO.Stream stream = typeof(Util).Assembly.GetManifestResourceStream("Crayon." + path.Replace('/', '.'));
+			List<byte> output = new List<byte>();
+			int byteRead = -1;
+			do
+			{
+				byteRead = stream.ReadByte();
+				if (byteRead >= 0 && byteRead < 65535)
+				{
+					output.Add((byte)byteRead);
+				}
+			} while (byteRead >= 0 && byteRead < 65535);
+			return output.ToArray();
+		}
+
 		public static string MassReplacements(string text, Dictionary<string, string> replacements)
 		{
 			if (text.Contains("%%%"))
