@@ -169,7 +169,7 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_blit_image":
-					output.Add("// TODO: blit image");
+					output.Add("GameWindow.BlitImage((Image)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue)");
 					break;
 
 				case "ff_cos":

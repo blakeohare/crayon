@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OpenTK.Graphics.OpenGL;
 
 namespace %%%PROJECT_ID%%%
 {
@@ -15,12 +16,10 @@ namespace %%%PROJECT_ID%%%
 		private Queue<int> events = new Queue<int>();
 		private Queue<string> keyEvents = new Queue<string>();
 
-		private int counter = 0;
-
 		private int gameWidth;
 		private int gameHeight;
-		private int pixelWidth;
-		private int pixelHeight;
+		private int screenWidth;
+		private int screenHeight;
 
 		private static double fps = 60;
 		private static GameWindow instance = null;
@@ -32,18 +31,21 @@ namespace %%%PROJECT_ID%%%
 			set { fps = value; }
 		}
 
-		public GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight)
-			: base(pixelWidth, pixelHeight)
+		public GameWindow(double fps, int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+			: base(screenWidth, screenHeight)
 		{
 			GameWindow.instance = this;
 			this.gameWidth = gameWidth;
 			this.gameHeight = gameHeight;
-			this.pixelWidth = pixelWidth;
-			this.pixelHeight = pixelHeight;
+			this.screenWidth = screenWidth;
+			this.screenHeight = screenHeight;
 
 			this.TargetRenderFrequency = fps;
 
-			this.RenderFrame += (sender, e) => this.Render(counter++);
+			this.UpdateFrame += (sender, e) => this.Update();
+			this.RenderFrame += (sender, e) => this.Render();
+			this.Load += (sender, e) => this.Startup();
+			this.Resize += (sender, e) => this.Resizing();
 
 			this.Mouse.Move += (sender, e) => this.MouseMove(e.X, e.Y);
 			this.Mouse.ButtonDown += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, true);
@@ -67,8 +69,8 @@ namespace %%%PROJECT_ID%%%
 		private void MouseMove(int x, int y)
 		{
 			events.Enqueue(MOUSE_MOVE);
-			events.Enqueue(x * this.gameWidth / this.pixelWidth);
-			events.Enqueue(y * this.gameHeight / this.pixelHeight);
+			events.Enqueue(x * this.gameWidth / this.screenWidth);
+			events.Enqueue(y * this.gameHeight / this.screenHeight);
 		}
 
 		private void MouseButton(OpenTK.Input.MouseButton button, int x, int y, bool down)
@@ -85,8 +87,8 @@ namespace %%%PROJECT_ID%%%
 			else eventType = down ? MOUSE_RIGHT_DOWN : MOUSE_RIGHT_UP;
 
 			events.Enqueue(eventType);
-			events.Enqueue(x * this.gameWidth / this.pixelWidth);
-			events.Enqueue(y * this.gameHeight / this.pixelHeight);
+			events.Enqueue(x * this.gameWidth / this.screenWidth);
+			events.Enqueue(y * this.gameHeight / this.screenHeight);
 		}
 
 		private const int KEY_CODE_A = (int)OpenTK.Input.Key.A;
@@ -147,14 +149,134 @@ namespace %%%PROJECT_ID%%%
 			return new List<Value>();
 		}
 
-		private void Render(int renderCounter)
+		private void Startup()
 		{
+			GL.ClearColor(1f, 1f, 1f, 1f);
+			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+			GL.Enable(EnableCap.Blend);
+			GL.Disable(EnableCap.ColorMaterial);
+		}
+
+		private void Resizing()
+		{
+			this.screenWidth = this.Width;
+			this.screenHeight = this.Height;
+
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.LoadIdentity();
+			GL.Ortho(0, this.screenWidth, this.screenHeight, 0, 10000, -10000);
+			GL.Viewport(0, 0, this.screenWidth, this.screenHeight);
+		}
+
+		private void Update()
+		{
+			drawListVirtualLength = 0;
+			imageListVirtualLength = 0;
+
 			bool continueExecution = CrayonWrapper.v_runTick();
+
 			if (!continueExecution)
 			{
 				errorMessage = "";
 				this.Exit();
 			}
+		}
+
+		private void Render()
+		{
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.ClearColor(0f, 0f, 0f, 1f);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
+
+			GameWindow.PerformDraws(this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
+
+			this.SwapBuffers();
+		}
+
+		private static int[] drawList = new int[100];
+		private static int drawListVirtualLength = 0;
+		private static int drawListRealLength = 100;
+
+		private static Image[] imageList = new Image[100];
+		private static int imageListVirtualLength = 0;
+		private static int imageListRealLength = 100;
+
+		private const int DRAW_COMMAND_BLIT = 0;
+
+		private static void PerformDraws(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		{
+			int RW = screenWidth;
+			int RH = screenHeight;
+			int VW = gameWidth;
+			int VH = gameHeight;
+			int left, top, right, bottom;
+			Image image;
+
+			int i = 0;
+			int imageIndex = 0;
+			while (i < drawListVirtualLength)
+			{
+				switch (drawList[i++])
+				{
+					case DRAW_COMMAND_BLIT:
+						image = imageList[imageIndex++];
+						left = drawList[i++];
+						top = drawList[i++];
+						right = left + image.Width;
+						bottom = top + image.Height;
+
+						GL.Enable(EnableCap.Texture2D);
+						GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
+						GL.BindTexture(TextureTarget.Texture2D, image.ImageID);
+						GL.Begin(BeginMode.Quads);
+
+						GL.TexCoord2(0f, 0f);
+						GL.Vertex2(left * RW / VW, top * RH / VH);
+
+						GL.TexCoord2(image.TextureRight, 0f);
+						GL.Vertex2(right * RW / VW, top * RH / VH);
+						
+						GL.TexCoord2(image.TextureRight, image.TextureBottom);
+						GL.Vertex2(right * RW / VW, bottom * RH / VH);
+						
+						GL.TexCoord2(0f, image.TextureBottom);
+						GL.Vertex2(left * RW / VW, bottom * RH / VH);
+						
+						GL.End();
+						break;
+
+					default: throw new System.Exception("Unknown draw command");
+				}
+			}
+		}
+
+		public static void BlitImage(Image image, int x, int y)
+		{
+			if (drawListVirtualLength + 3 >= drawListRealLength)
+			{
+				drawList = DoubleArray<int>(drawList);
+				drawListRealLength = drawList.Length;
+			}
+
+			if (imageListVirtualLength == imageListRealLength)
+			{
+				imageList = DoubleArray<Image>(imageList);
+				imageListRealLength = imageList.Length;
+			}
+
+			drawList[drawListVirtualLength++] = DRAW_COMMAND_BLIT;
+			drawList[drawListVirtualLength++] = x;
+			drawList[drawListVirtualLength++] = y;
+
+			imageList[imageListVirtualLength++] = image;
+		}
+
+		private static T[] DoubleArray<T>(T[] original)
+		{
+			T[] newList = new T[original.Length * 2 + 1];
+			System.Array.Copy(original, newList, original.Length);
+			return newList;
 		}
 	}
 }

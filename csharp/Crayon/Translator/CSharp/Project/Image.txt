@@ -11,15 +11,19 @@ namespace %%%PROJECT_ID%%%
 
 		private static readonly Dictionary<string, Image> IMAGE_LOOKUP = new Dictionary<string, Image>();
 
-		public int ImageID;
-		public int Width;
-		public int Height;
+		public readonly int ImageID;
+		public readonly int Width;
+		public readonly int Height;
+		public readonly float TextureRight;
+		public readonly float TextureBottom;
 
 		public Image(int imageId, int width, int height)
 		{
 			this.ImageID = imageId;
 			this.Width = width;
 			this.Height = height;
+			this.TextureRight = 1F * width / NextPowerOf2(width);
+			this.TextureBottom = 1F * height / NextPowerOf2(height);
 		}
 
 		public static void LoadImage(string key, string path)
@@ -94,7 +98,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static int NextPowerOf2(int value)
 		{
-			if (((value - 1) & value) == 0) return value; // Smile and nod.
+			if (((value - 1) & value) == 0) return value;
 
 			int output = 1;
 			while (output < value)
