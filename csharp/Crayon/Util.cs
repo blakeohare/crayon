@@ -117,19 +117,30 @@ namespace Crayon
 			return finalOutput;
 		}
 
+		private static readonly byte[] BUFFER = new byte[1000];
+
 		public static byte[] ReadBytesInternally(string path)
 		{
 			System.IO.Stream stream = typeof(Util).Assembly.GetManifestResourceStream("Crayon." + path.Replace('/', '.'));
 			List<byte> output = new List<byte>();
-			int byteRead = -1;
-			do
+			int bytesRead = 1;
+			while (bytesRead > 0)
 			{
-				byteRead = stream.ReadByte();
-				if (byteRead >= 0 && byteRead < 65535)
+				bytesRead = stream.Read(BUFFER, 0, BUFFER.Length);
+				if (bytesRead == BUFFER.Length)
 				{
-					output.Add((byte)byteRead);
+					output.AddRange(BUFFER);
 				}
-			} while (byteRead >= 0 && byteRead < 65535);
+				else
+				{
+					for (int i = 0; i < bytesRead; ++i)
+					{
+						output.Add(BUFFER[i]);
+					}
+					bytesRead = 0;
+				}
+			}
+
 			return output.ToArray();
 		}
 

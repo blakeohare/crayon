@@ -1,12 +1,153 @@
-﻿using System;
-using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using System.Collections.Generic;
 
 namespace %%%PROJECT_ID%%%
 {
 	internal class GameWindow : OpenTK.GameWindow
 	{
-		
+		private const int MOUSE_LEFT_DOWN = 0;
+		private const int MOUSE_LEFT_UP = 1;
+		private const int MOUSE_RIGHT_DOWN = 2;
+		private const int MOUSE_RIGHT_UP = 3;
+		private const int MOUSE_MOVE = 4;
+		private const int KEY_DOWN = 5;
+		private const int KEY_UP = 6;
+
+		private Queue<int> events = new Queue<int>();
+		private Queue<string> keyEvents = new Queue<string>();
+
+		private int counter = 0;
+
+		private int gameWidth;
+		private int gameHeight;
+		private int pixelWidth;
+		private int pixelHeight;
+
+		private static double fps = 60;
+		private static GameWindow instance = null;
+
+		public static double FPS
+		{
+			get { return fps; }
+			set { fps = value; }
+		}
+
+		public GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight)
+			: base(pixelWidth, pixelHeight)
+		{
+			GameWindow.instance = this;
+			this.gameWidth = gameWidth;
+			this.gameHeight = gameHeight;
+			this.pixelWidth = pixelWidth;
+			this.pixelHeight = pixelHeight;
+
+			this.TargetRenderFrequency = fps;
+
+			this.RenderFrame += (sender, e) => this.Render(counter++);
+
+			this.Mouse.Move += (sender, e) => this.MouseMove(e.X, e.Y);
+			this.Mouse.ButtonDown += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, true);
+			this.Mouse.ButtonUp += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, false);
+			this.Keyboard.KeyDown += (sender, e) => this.KeyEvent(e.Key, true);
+			this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
+		}
+
+		public static void InitializeScreen(int gameWidth, int gameHeight)
+		{
+			InitializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
+		}
+
+		public static void InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		{
+			GameWindow gw = new GameWindow(GameWindow.FPS, gameWidth, gameHeight, screenWidth, screenHeight);
+			gw.Run(GameWindow.FPS, GameWindow.FPS);
+		}
+
+		private void MouseMove(int x, int y)
+		{
+			events.Enqueue(MOUSE_MOVE);
+			events.Enqueue(x * this.gameWidth / this.pixelWidth);
+			events.Enqueue(y * this.gameHeight / this.pixelHeight);
+		}
+
+		private void MouseButton(OpenTK.Input.MouseButton button, int x, int y, bool down)
+		{
+			// drop events that aren't the left or right buttons. For now.
+			bool left = button == OpenTK.Input.MouseButton.Left;
+			if (!left && button != OpenTK.Input.MouseButton.Right)
+			{
+				return;
+			}
+
+			int eventType;
+			if (left) eventType = down ? MOUSE_LEFT_DOWN : MOUSE_LEFT_UP;
+			else eventType = down ? MOUSE_RIGHT_DOWN : MOUSE_RIGHT_UP;
+
+			events.Enqueue(eventType);
+			events.Enqueue(x * this.gameWidth / this.pixelWidth);
+			events.Enqueue(y * this.gameHeight / this.pixelHeight);
+		}
+
+		private const int KEY_CODE_A = (int)OpenTK.Input.Key.A;
+		private const int KEY_CODE_Z = (int)OpenTK.Input.Key.Z;
+		private const int KEY_CODE_F1 = (int)OpenTK.Input.Key.F1;
+		private const int KEY_CODE_F12 = (int)OpenTK.Input.Key.F12;
+		private const int KEY_CODE_0 = (int)OpenTK.Input.Key.Number0;
+		private const int KEY_CODE_9 = (int)OpenTK.Input.Key.Number9;
+
+		private static readonly string[] LETTERS = "a b c d e f g h i j k l m n o p q r s t u v w x y z".Split(' ');
+		private static readonly string[] F_KEYS = "f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12".Split(' ');
+		private void KeyEvent(OpenTK.Input.Key key, bool down)
+		{
+			int keyCode = (int)key;
+
+			if (keyCode >= KEY_CODE_A && keyCode <= KEY_CODE_Z)
+			{
+				keyEvents.Enqueue(LETTERS[keyCode - KEY_CODE_A]);
+			}
+			else if (keyCode >= KEY_CODE_F1 && keyCode <= KEY_CODE_F12)
+			{
+				keyEvents.Enqueue("f" + (1 + keyCode - KEY_CODE_F1));
+			}
+			else if (keyCode >= KEY_CODE_0 && keyCode <= KEY_CODE_9)
+			{
+				keyEvents.Enqueue("" + (keyCode - KEY_CODE_0));
+			}
+			else
+			{
+				string value;
+				switch (key)
+				{
+					case OpenTK.Input.Key.Space: value = "space"; break;
+					case OpenTK.Input.Key.Enter: value = "enter"; break;
+					case OpenTK.Input.Key.KeypadEnter: value = "enter"; break;
+					case OpenTK.Input.Key.Tab: value = "tab"; break;
+
+					case OpenTK.Input.Key.Left: value = "left"; break;
+					case OpenTK.Input.Key.Right: value = "right"; break;
+					case OpenTK.Input.Key.Up: value = "up"; break;
+					case OpenTK.Input.Key.Down: value = "down"; break;
+
+					default: value = null; break;
+				}
+
+				if (value == null)
+				{
+					return;
+				}
+				keyEvents.Enqueue(value);
+			}
+			events.Enqueue(down ? KEY_DOWN : KEY_UP);
+		}
+
+		public static List<Value> GetEvents()
+		{
+			instance.events.Clear();
+			return new List<Value>();
+		}
+
+		private void Render(int renderCounter)
+		{
+			CrayonWrapper.v_runTick();
+		}
 	}
 }

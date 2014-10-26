@@ -40,7 +40,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateCast(List<string> output, Expression typeValue, Expression expression)
 		{
-			CSharpPlatform platform = (CSharpPlatform) this.Platform;
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
 			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, ((StringConstant)typeValue).Value);
 
 			output.Add("(");
@@ -155,7 +155,107 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
-			output.Add("// TODO: Framework code for " + id);
+			switch (id)
+			{
+				case "ff_arctan2":
+					output.Add("// TODO: arctan2");
+					break;
+
+				case "ff_blit_image":
+					output.Add("// TODO: blit image");
+					break;
+
+				case "ff_cos":
+					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", System.Math.Cos((double)v_arg1.internalValue))");
+					break;
+
+				case "ff_current_time":
+					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", DateTime.Now.Ticks / 10000000.0)");
+					break;
+
+				case "ff_download_image":
+					output.Add("// TODO: download iamge");
+					break;
+
+				case "ff_draw_ellipse":
+					output.Add("// TODO: draw ellipse");
+					break;
+
+				case "ff_draw_line":
+					output.Add("// TODO: draw line");
+					break;
+
+				case "ff_draw_rectangle":
+					output.Add("// TODO: draw rectangle");
+					break;
+
+				case "ff_fill_screen":
+					output.Add("// TODO: fill screen");
+					break;
+
+				case "ff_flip_image":
+					output.Add("// TODO: flip image");
+					break;
+
+				case "ff_floor":
+					output.Add("// TODO: floor");
+					break;
+
+				case "ff_get_events":
+					output.Add("v_output = new Value(" + (int)Types.LIST + ", GameWindow.GetEvents())");
+					break;
+
+				case "ff_get_image":
+					output.Add("// TODO: get image");
+					break;
+
+				case "ff_get_image_height":
+					output.Add("// TODO: get image height");
+					break;
+
+				case "ff_get_image_width":
+					output.Add("// TODO: get image width");
+					break;
+
+				case "ff_initialize_game":
+					output.Add("GameWindow.FPS = v_arg1.type == " + (int)Types.INTEGER + " ? (double)(int)v_arg1.internalValue : (double)v_arg1.internalValue");
+					break;
+
+				case "ff_initialize_screen":
+					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue)");
+					break;
+
+				case "ff_initialize_screen_scaled":
+					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue, (int)v_arg4.internalValue)");
+					break;
+
+				case "ff_is_image_loaded":
+					output.Add("v_output = v_VALUE_TRUE");
+					break;
+
+				case "ff_parse_int":
+					output.Add("// TODO: parse int");
+					break;
+
+				case "ff_print":
+					output.Add("Console.WriteLine(v_valueToString(v_arg1))");
+					break;
+
+				case "ff_random":
+					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", TranslationHelper.GetRandomNumber())");
+					break;
+
+				case "ff_set_title":
+					output.Add("// TODO: set title");
+					break;
+
+				case "ff_sin":
+					output.Add("// TODO: sin");
+					break;
+
+				default:
+					throw new NotImplementedException("No framework code available: " + id);
+			}
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)

@@ -26,6 +26,11 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
+		public static double GetRandomNumber()
+		{
+			return random.NextDouble();
+		}
+
 		public static List<Value> ValueListConcat(List<Value> a, List<Value> b)
 		{
 			List<Value> output = new List<Value>(a.Count + b.Count);
