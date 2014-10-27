@@ -193,7 +193,13 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_draw_rectangle":
-					output.Add("// TODO: draw rectangle");
+					output.Add("GameWindow.DrawRectangle(");
+					for (int i = 1; i <= 8; ++i)
+					{
+						if (i > 1) output.Add(", ");
+						output.Add("(int)v_arg" + i + ".internalValue");
+					}
+					output.Add(")");
 					break;
 
 				case "ff_fill_screen":
@@ -265,7 +271,7 @@ namespace Crayon.Translator.CSharp
 					break;
 
 				case "ff_parse_int":
-					output.Add("// TODO: parse int");
+					output.Add("v_output = TranslationHelper.ParseInt((string)v_arg1.internalValue)");
 					break;
 
 				case "ff_print":

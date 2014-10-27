@@ -255,34 +255,41 @@ function @type('string') interpret(
 				op = $_list_get(row, 0);
 				value = null;
 				if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
-					// TODO: replace this with a platform code import
-					if (leftType == rightType) {
-						if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
-							if (left == right) { // may have to change if a platform doesn't support == for strings
-								value = VALUE_TRUE;
-							} else {
-								value = VALUE_FALSE;
-							}
-						} else if (leftType == Types.INSTANCE) {
-							objInstance = $_cast('ObjectInstance', left);
-							objInstance2 = $_cast('ObjectInstance', right);
-							if (ObjectInstance$objInstance.objectId == ObjectInstance$objInstance2.objectId) {
-								value = VALUE_TRUE;
-							} else {
-								value = VALUE_FALSE;
-							}
-						}
-					} else {
-						if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
-							// does this work on c#? 
-							// (object)0.0 == (object)0
-							if (left == right) {
-								value = VALUE_TRUE;
-							} else {
-								value = VALUE_FALSE;
-							}
+					if (%%%STRONGLY_TYPED%%%) {
+						if (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1) {
+							value = VALUE_TRUE;
 						} else {
 							value = VALUE_FALSE;
+						}
+					} else {
+						if (leftType == rightType) {
+							if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
+								if (left == right) { // may have to change if a platform doesn't support == for strings
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else if (leftType == Types.INSTANCE) {
+								objInstance = $_cast('ObjectInstance', left);
+								objInstance2 = $_cast('ObjectInstance', right);
+								if (ObjectInstance$objInstance.objectId == ObjectInstance$objInstance2.objectId) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							}
+						} else {
+							if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+								// does this work on c#? 
+								// (object)0.0 == (object)0
+								if (left == right) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else {
+								value = VALUE_FALSE;
+							}
 						}
 					}
 					
@@ -1270,7 +1277,7 @@ function @type('string') interpret(
 					if (int1 < 0 || int1 >= $_string_length(string1)) {
 						return killExecution(stack, "String index out of range.");
 					}
-					$_stack_push(valueStack, new Value(Types.STRING, $_string_char_at(string1, int1)));
+					$_stack_push(valueStack, new Value(Types.STRING, $_char_to_string($_string_char_at(string1, int1))));
 				} else {
 					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
 				}

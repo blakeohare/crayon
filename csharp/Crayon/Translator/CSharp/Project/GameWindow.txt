@@ -287,7 +287,8 @@ namespace %%%PROJECT_ID%%%
 		private static int imageListRealLength = 100;
 
 		private const int DRAW_COMMAND_BLIT = 0;
-
+		private const int DRAW_COMMAND_RECTANGLE = 1;
+		
 		private static void PerformDraws(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
 			int RW = screenWidth;
@@ -295,10 +296,13 @@ namespace %%%PROJECT_ID%%%
 			int VW = gameWidth;
 			int VH = gameHeight;
 			int left, top, right, bottom;
+			byte red, green, blue, alpha;
 			Image image;
 
 			int i = 0;
 			int imageIndex = 0;
+			bool texture2dEnabled = false;
+			bool isWhite = false;
 			while (i < drawListVirtualLength)
 			{
 				switch (drawList[i++])
@@ -309,9 +313,16 @@ namespace %%%PROJECT_ID%%%
 						top = drawList[i++];
 						right = left + image.Width;
 						bottom = top + image.Height;
-
-						GL.Enable(EnableCap.Texture2D);
-						GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
+						if (!texture2dEnabled)
+						{
+							GL.Enable(EnableCap.Texture2D);
+							texture2dEnabled = true;
+						}
+						if (!isWhite)
+						{
+							GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
+							isWhite = true;
+						}
 						GL.BindTexture(TextureTarget.Texture2D, image.ImageID);
 						GL.Begin(BeginMode.Quads);
 
@@ -325,6 +336,35 @@ namespace %%%PROJECT_ID%%%
 						GL.Vertex2(right * RW / VW, bottom * RH / VH);
 						
 						GL.TexCoord2(0f, image.TextureBottom);
+						GL.Vertex2(left * RW / VW, bottom * RH / VH);
+						
+						GL.End();
+						break;
+
+					case DRAW_COMMAND_RECTANGLE:
+						left = drawList[i++];
+						top = drawList[i++];
+						right = drawList[i++] + left;
+						bottom = drawList[i++] + top;
+						red = (byte)drawList[i++];
+						green = (byte)drawList[i++];
+						blue = (byte)drawList[i++];
+						alpha = (byte)drawList[i++];
+
+						if (texture2dEnabled)
+						{
+							GL.Disable(EnableCap.Texture2D);
+							texture2dEnabled = false;
+						}
+
+						GL.Color4(red, green, blue, alpha);
+						isWhite = false;
+
+						GL.Begin(BeginMode.Quads);
+
+						GL.Vertex2(left * RW / VW, top * RH / VH);
+						GL.Vertex2(right * RW / VW, top * RH / VH);
+						GL.Vertex2(right * RW / VW, bottom * RH / VH);
 						GL.Vertex2(left * RW / VW, bottom * RH / VH);
 						
 						GL.End();
@@ -354,6 +394,25 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength++] = y;
 
 			imageList[imageListVirtualLength++] = image;
+		}
+		
+		public static void DrawRectangle(int left, int top, int width, int height, int red, int green, int blue, int alpha)
+		{
+			if (drawListVirtualLength + 9 >= drawListRealLength)
+			{
+				drawList = DoubleArray<int>(drawList);
+				drawListRealLength = drawList.Length;
+			}
+
+			drawList[drawListVirtualLength++] = DRAW_COMMAND_RECTANGLE;
+			drawList[drawListVirtualLength++] = left;
+			drawList[drawListVirtualLength++] = top;
+			drawList[drawListVirtualLength++] = width;
+			drawList[drawListVirtualLength++] = height;
+			drawList[drawListVirtualLength++] = red & 255;
+			drawList[drawListVirtualLength++] = green & 255;
+			drawList[drawListVirtualLength++] = blue & 255;
+			drawList[drawListVirtualLength++] = alpha & 255;
 		}
 
 		private static T[] DoubleArray<T>(T[] original)
