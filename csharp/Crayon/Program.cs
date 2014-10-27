@@ -11,6 +11,7 @@
 			bool minified = false;
 			string jsFolderRoot = "";
 			string outputReadableByteCode = null;
+
 #else
 			if (args.Length != 3 && args.Length != 4)
 			{
@@ -50,7 +51,8 @@
 			AbstractPlatform platform;
 			switch (rawPlatform.ToLowerInvariant())
 			{
-				//case "cswin": platform = new Crayon.Translator.CSharp.CSharpPlatform(); break;
+				//case "java": platform = new Crayon.Translator.Java.JavaPlatform(); break;
+				case "cswin": platform = new Crayon.Translator.CSharp.CSharpPlatform(); break;
 				case "js": platform = new Crayon.Translator.JavaScript.JavaScriptPlatform(minified, jsFolderRoot); break;
 				case "py": platform = new Crayon.Translator.Python.PythonPlatform(); break;
 				default:
@@ -66,9 +68,10 @@
 		}
 
 		private static readonly string[] PLATFORM_USAGE = new string[] {
+			"  cswin - C# (for Windows Client App)",
 			"  js - HTML/JavaScript",
+			//"  java - Java (for Desktop)",
 			"  py - Python (with PyGame)",
-			//"  cswin - C# (for Windows Client App)",
 		};
 	}
 }
