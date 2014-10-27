@@ -331,13 +331,13 @@ namespace %%%PROJECT_ID%%%
 
 						GL.TexCoord2(image.TextureRight, 0f);
 						GL.Vertex2(right * RW / VW, top * RH / VH);
-						
+
 						GL.TexCoord2(image.TextureRight, image.TextureBottom);
 						GL.Vertex2(right * RW / VW, bottom * RH / VH);
-						
+
 						GL.TexCoord2(0f, image.TextureBottom);
 						GL.Vertex2(left * RW / VW, bottom * RH / VH);
-						
+
 						GL.End();
 						break;
 
