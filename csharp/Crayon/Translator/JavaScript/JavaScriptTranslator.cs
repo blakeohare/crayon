@@ -19,31 +19,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add("]");
 		}
 
-		protected override void TranslateListDefinition(List<string> output, ListDefinition listDef)
-		{
-			output.Add("[");
-			for (int i = 0; i < listDef.Items.Length; ++i)
-			{
-				if (i > 0) output.Add(this.Shorten(", "));
-				TranslateExpression(output, listDef.Items[i]);
-			}
-			output.Add("]");
-		}
-
-		// This will fail if you put non string expressions in translated dictionaries.
-		protected override void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef)
-		{
-			output.Add("{");
-			for (int i = 0; i < dictDef.Keys.Length; ++i)
-			{
-				if (i > 0) output.Add(this.Shorten(", "));
-				TranslateExpression(output, dictDef.Keys[i]);
-				output.Add(this.Shorten(": "));
-				TranslateExpression(output, dictDef.Values[i]);
-			}
-			output.Add(this.Shorten(" }"));
-		}
-
 		protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
 		{
 			output.Add("[");

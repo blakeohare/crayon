@@ -123,6 +123,9 @@
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
+    <Compile Include="Translator\Java\JavaPlatform.cs" />
+    <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\Java\JavaTranslator.cs" />
     <Compile Include="Translator\Python\PythonPlatform.cs" />
     <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Python\PythonTranslator.cs" />

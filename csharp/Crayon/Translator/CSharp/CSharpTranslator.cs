@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
@@ -78,7 +75,7 @@ namespace Crayon.Translator.CSharp
 			}
 
 			Annotation typeAnnotation = target.GetAnnotation("type");
-			
+
 			if (typeAnnotation != null)
 			{
 				CSharpPlatform csharpPlatform = (CSharpPlatform)this.Platform;
@@ -107,41 +104,6 @@ namespace Crayon.Translator.CSharp
 				this.TranslateExpression(output, structInstance.Args[i]);
 			}
 			output.Add(")");
-		}
-
-		protected override void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef)
-		{
-			output.Add("new Dictionary<object, object>()");
-			int keyCount = dictDef.Keys.Length;
-			if (keyCount > 0)
-			{
-				output.Add(" { ");
-				for (int i = 0; i < keyCount; ++i)
-				{
-					if (i > 0)
-					{
-						output.Add(", ");
-					}
-					output.Add("{ ");
-					this.TranslateExpression(output, dictDef.Keys[i]);
-					output.Add(", ");
-					this.TranslateExpression(output, dictDef.Values[i]);
-					output.Add(" }");
-				}
-				output.Add(" }");
-			}
-		}
-
-		protected override void TranslateListDefinition(List<string> output, ListDefinition listDef)
-		{
-			output.Add("new List<object>() {");
-			for (int i = 0; i < listDef.Items.Length; ++i)
-			{
-				if (i > 0) output.Add(",");
-				output.Add(" ");
-				this.TranslateExpression(output, listDef.Items[i]);
-			}
-			output.Add(" }");
 		}
 	}
 }

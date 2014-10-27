@@ -85,13 +85,11 @@ namespace Crayon.Translator
 		protected abstract void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant);
 		protected abstract void TranslateBooleanNot(List<string> output, BooleanNot booleanNot);
 		protected abstract void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex);
-		protected abstract void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef);
 		protected abstract void TranslateDotStep(List<string> output, DotStep dotStep);
 		protected abstract void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct);
 		protected abstract void TranslateFloatConstant(List<string> output, FloatConstant floatConstant);
 		protected abstract void TranslateFunctionCall(List<string> output, FunctionCall functionCall);
 		protected abstract void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant);
-		protected abstract void TranslateListDefinition(List<string> output, ListDefinition listDef);
 		protected abstract void TranslateNegativeSign(List<string> output, NegativeSign negativeSign);
 		protected abstract void TranslateNullConstant(List<string> output, NullConstant nullConstant);
 		protected abstract void TranslateStringConstant(List<string> output, StringConstant stringConstant);
@@ -213,8 +211,6 @@ namespace Crayon.Translator
 			else if (expr is Variable) this.TranslateVariable(output, (Variable)expr);
 			else if (expr is IntegerConstant) this.TranslateIntegerConstant(output, (IntegerConstant)expr);
 			else if (expr is StructInstance) this.TranslateStructInstance(output, (StructInstance)expr);
-			else if (expr is DictionaryDefinition) this.TranslateDictionaryDefinition(output, (DictionaryDefinition)expr);
-			else if (expr is ListDefinition) this.TranslateListDefinition(output, (ListDefinition)expr);
 			else if (expr is NullConstant) this.TranslateNullConstant(output, (NullConstant)expr);
 			else if (expr is FunctionCall) this.TranslateFunctionCall(output, (FunctionCall)expr);
 			else if (expr is BracketIndex) this.TranslateBracketIndex(output, (BracketIndex)expr);

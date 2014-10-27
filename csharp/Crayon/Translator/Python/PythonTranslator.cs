@@ -396,30 +396,6 @@ namespace Crayon.Translator.Python
 			output.Add("None");
 		}
 
-		protected override void TranslateListDefinition(List<string> output, ListDefinition listDef)
-		{
-			output.Add("[");
-			for (int i = 0; i < listDef.Items.Length; ++i)
-			{
-				if (i > 0) output.Add(", ");
-				TranslateExpression(output, listDef.Items[i]);
-			}
-			output.Add("]");
-		}
-
-		protected override void TranslateDictionaryDefinition(List<string> output, DictionaryDefinition dictDef)
-		{
-			output.Add("{");
-			for (int i = 0; i < dictDef.Keys.Length; ++i)
-			{
-				if (i > 0) output.Add(", ");
-				TranslateExpression(output, dictDef.Keys[i]);
-				output.Add(": ");
-				TranslateExpression(output, dictDef.Values[i]);
-			}
-			output.Add(" }");
-		}
-
 		protected override void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant)
 		{
 			int value = intConstant.Value;

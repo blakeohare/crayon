@@ -705,8 +705,7 @@ function @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER)
-						{
+						if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 							return killExecution(stack, "$blit_image coordinates must be integers.");
 						}
 						$_insert_platform_code('ff_blit_image');
