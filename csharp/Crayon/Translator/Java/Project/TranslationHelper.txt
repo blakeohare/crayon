@@ -1,0 +1,6 @@
+﻿package %%%PACKAGE%%%;
+
+final class TranslationHelper {
+
+    private TranslationHelper() {}
+}

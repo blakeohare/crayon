@@ -133,7 +133,7 @@ function @type('Code') loadByteCode() {
 				$_list_push(iarglist, iarg);
 			}
 		}
-		$_list_push(iargs, $_convert_list_to_array(iarglist));
+		$_list_push(iargs, $_convert_list_to_array('int', iarglist));
 		if (stringPresent) {
 			stringarg = read_string(index, raw, length);
 		} else {
@@ -142,5 +142,5 @@ function @type('Code') loadByteCode() {
 		$_list_push(sargs, stringarg);
 	}
 	
-	return new Code($_convert_list_to_array(ops), $_convert_list_to_array(iargs), $_convert_list_to_array(sargs));
+	return new Code($_convert_list_to_array('int', ops), $_convert_list_to_array('Array<int>', iargs), $_convert_list_to_array('string', sargs));
 }

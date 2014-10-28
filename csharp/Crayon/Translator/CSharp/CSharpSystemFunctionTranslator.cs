@@ -38,7 +38,7 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslateCast(List<string> output, Expression typeValue, Expression expression)
+		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			CSharpPlatform platform = (CSharpPlatform)this.Platform;
 			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, ((StringConstant)typeValue).Value);
@@ -62,14 +62,14 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, charValue);
 		}
 
-		protected override void TranslateComment(List<string> output, Expression commentValue)
+		protected override void TranslateComment(List<string> output, StringConstant commentValue)
 		{
 #if DEBUG
-			output.Add("// " + ((StringConstant)commentValue).Value);
+			output.Add("// " + commentValue.Value);
 #endif
 		}
 
-		protected override void TranslateConvertListToArray(List<string> output, Expression list)
+		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".ToArray()");
@@ -380,9 +380,9 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateListReverseInPlace(List<string> output, Expression listVar)
+		protected override void TranslateListReverseInPlace(List<string> output, Expression list)
 		{
-			this.Translator.TranslateExpression(output, listVar);
+			this.Translator.TranslateExpression(output, list);
 			output.Add(".Reverse()");
 		}
 
@@ -515,15 +515,15 @@ namespace Crayon.Translator.CSharp
 			output.Add(".Size");
 		}
 
-		protected override void TranslateStackPop(List<string> output, Expression list)
+		protected override void TranslateStackPop(List<string> output, Expression stack)
 		{
-			this.Translator.TranslateExpression(output, list);
+			this.Translator.TranslateExpression(output, stack);
 			output.Add(".Pop()");
 		}
 
-		protected override void TranslateStackPush(List<string> output, Expression list, Expression value)
+		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
 		{
-			this.Translator.TranslateExpression(output, list);
+			this.Translator.TranslateExpression(output, stack);
 			output.Add(".Push(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");

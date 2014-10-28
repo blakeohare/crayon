@@ -85,7 +85,7 @@ namespace Crayon
 			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
 		}
 
-		public void Compile(string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
+		public void Compile(string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath, bool wrapOutput)
 		{
 			ByteBuffer byteCodeBuffer = GenerateByteCode(inputFolder);
 
@@ -111,7 +111,9 @@ namespace Crayon
 				filesToCopyOver,
 				structs);
 
-			string outputFolder = System.IO.Path.Combine(baseOutputFolder, this.OutputFolderName);
+			string outputFolder = wrapOutput
+				? System.IO.Path.Combine(baseOutputFolder, this.OutputFolderName)
+				: baseOutputFolder;
 
 			if (!System.IO.Directory.Exists(baseOutputFolder))
 			{
@@ -195,5 +197,10 @@ namespace Crayon
 			Dictionary<string, Executable[]> finalCode, 
 			List<string> filesToCopyOver, 
 			ICollection<StructDefinition> structDefinitions);
+
+		public virtual string TranslateType(string original)
+		{
+			return original;
+		}
 	}
 }

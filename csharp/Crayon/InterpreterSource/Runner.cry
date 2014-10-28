@@ -129,14 +129,14 @@ function main() {
 		ops,
 		opArgs,
 		stringArgs,
-		$_convert_list_to_array(specialCacheBuilder),
+		$_convert_list_to_array('Array<int>', specialCacheBuilder),
 		null, // identifiers
 		$_new_list('string'), // identifiers builder
 		$_new_dictionary('string', 'int'), // inv_identifiers
 		null, // literal table
 		$_new_list('Value'), // literal table builder
-		$_convert_list_to_array(classTable),
-		$_convert_list_to_array(classMethodsBuilder),
+		$_convert_list_to_array('ClassInfo', classTable),
+		$_convert_list_to_array('Dictionary<int, MethodDefinition>', classMethodsBuilder),
 		false, // ticker registered
 		$_new_array('List<Token>', $_array_length(ops)), // token data
 		0, // user code start

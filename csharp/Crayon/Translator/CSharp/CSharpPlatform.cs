@@ -10,8 +10,7 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpPlatform()
 			: base(false, new CSharpTranslator(), new CSharpSystemFunctionTranslator())
-		{
-		}
+		{ }
 
 		public override bool IsAsync { get { return true; } }
 		public override bool SupportsListClear { get { return true; } }

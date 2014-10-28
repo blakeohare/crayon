@@ -2,219 +2,323 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
 	class JavaSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
-		protected override void TranslateArrayGet(List<string> output, ParseTree.Expression list, ParseTree.Expression index)
+		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
+
+		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
 		}
 
-		protected override void TranslateArrayLength(List<string> output, ParseTree.Expression list)
+		protected override void TranslateArrayLength(List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".length");
 		}
 
-		protected override void TranslateArraySet(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
+		protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, list);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("] = ");
+			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
 		{
-			throw new NotImplementedException();
+			// Nope
 		}
 
-		protected override void TranslateCast(List<string> output, ParseTree.Expression typeValue, ParseTree.Expression expression)
+		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, expression);
 		}
 
-		protected override void TranslateCastToList(List<string> output, ParseTree.Expression enumerableThing)
+		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
 		{
-			throw new NotImplementedException();
+			output.Add("new ArrayList<Value>(");
+			this.Translator.TranslateExpression(output, enumerableThing);
+			output.Add(".asList())");
 		}
 
-		protected override void TranslateCharToString(List<string> output, ParseTree.Expression charValue)
+		protected override void TranslateCharToString(List<string> output, Expression charValue)
 		{
-			throw new NotImplementedException();
+			output.Add("\"\" + ");
+			this.Translator.TranslateExpression(output, charValue);
 		}
 
-		protected override void TranslateComment(List<string> output, ParseTree.Expression commentValue)
+		protected override void TranslateComment(List<string> output, StringConstant commentValue)
 		{
-			throw new NotImplementedException();
+#if DEBUG
+			output.Add("// " + commentValue.Value);
+#endif
 		}
 
-		protected override void TranslateConvertListToArray(List<string> output, ParseTree.Expression list)
+		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".toArray(new ");
+			this.JavaPlatform.GetTypeStringFromString(type.Value, false);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".size()])");
 		}
 
-		protected override void TranslateDictionaryContains(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".contains(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
 		}
 
-		protected override void TranslateDictionaryGetGuaranteed(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".get(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".keySet()");
 		}
 
-		protected override void TranslateDictionaryGetValues(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionaryGetValues(List<string> output, Expression dictionary)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".values()");
 		}
 
-		protected override void TranslateDictionaryRemove(List<string> output, ParseTree.Expression dictionary, ParseTree.Expression key)
+		protected override void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".remove(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
 		}
 
-		protected override void TranslateDictionarySet(List<string> output, ParseTree.Expression dict, ParseTree.Expression key, ParseTree.Expression value)
+		protected override void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".put(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
-		protected override void TranslateDictionarySize(List<string> output, ParseTree.Expression dictionary)
+		protected override void TranslateDictionarySize(List<string> output, Expression dictionary)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".size()");
 		}
 
-		protected override void TranslateDotEquals(List<string> output, ParseTree.Expression root, ParseTree.Expression compareTo)
+		protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, root);
+			output.Add(".equals(");
+			this.Translator.TranslateExpression(output, compareTo);
+			output.Add(")");
 		}
 
-		protected override void TranslateExponent(List<string> output, ParseTree.Expression baseNum, ParseTree.Expression powerNum)
+		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
-			throw new NotImplementedException();
+			output.Add("Math.pow(");
+			this.Translator.TranslateExpression(output, baseNum);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
 		}
 
-		protected override void TranslateForceParens(List<string> output, ParseTree.Expression expression)
+		protected override void TranslateForceParens(List<string> output, Expression expression)
 		{
-			throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, expression);
+			output.Add(")");
 		}
 
 		protected override void TranslateGetProgramData(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.getProgramData()");
 		}
 
 		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.getRawByteCodeString()");
 		}
 
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO:(\"refactor the insert framework code stuff\"");
 		}
 
-		protected override void TranslateInt(List<string> output, ParseTree.Expression value)
+		protected override void TranslateInt(List<string> output, Expression value)
+		{
+			output.Add("((int)");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateListClear(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".clear()");
+		}
+
+		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
+		{
+			output.Add("TranslationHelper.concatLists(");
+			this.Translator.TranslateExpression(output, listA);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, listB);
+			output.Add(")");
+		}
+
+		protected override void TranslateListGet(List<string> output, Expression list, Expression index)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".get(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");
+		}
+
+		protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".insert(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");	
+		}
+
+		protected override void TranslateListJoin(List<string> output, Expression list, Expression sep)
+		{
+			output.Add("TranslationHelper.joinList(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
+		protected override void TranslateListLastIndex(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".get(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".length - 1)");
+		}
+
+		protected override void TranslateListLength(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".size()");
+		}
+
+		protected override void TranslateListPop(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".removeAt(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".length - 1)");
+		}
+
+		protected override void TranslateListPush(List<string> output, Expression list, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".add(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".removeAt(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");
+		}
+
+		protected override void TranslateListReverseInPlace(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".reverse()");
+		}
+
+		protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".set(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateListShuffleInPlace(List<string> output, Expression list)
+		{
+			output.Add("TranslationHelper.shuffleInPlace(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
+		protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
+		{
+
+			output.Add("TranslationHelper.multiplyList(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, num);
+			output.Add(")");
+		}
+
+		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
+		{
+			output.Add("new ");
+			this.JavaPlatform.GetTypeStringFromString(type.Value, false);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, size);
+			output.Add("]");
+		}
+
+		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
+		{
+			output.Add("new HashMap<");
+			this.JavaPlatform.GetTypeStringFromString(keyType.Value, true);
+			output.Add(", ");
+			this.JavaPlatform.GetTypeStringFromString(valueType.Value, true);
+			output.Add(">()");
+		}
+
+		protected override void TranslateNewList(List<string> output, StringConstant type)
+		{
+			output.Add("new ArrayList<");
+			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true));
+			output.Add(">()");
+		}
+
+		protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateListClear(List<string> output, ParseTree.Expression list)
+		protected override void TranslateNewStack(List<string> output, StringConstant type)
 		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListConcat(List<string> output, ParseTree.Expression listA, ParseTree.Expression listB)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListGet(List<string> output, ParseTree.Expression list, ParseTree.Expression index)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListInsert(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListJoin(List<string> output, ParseTree.Expression list, ParseTree.Expression sep)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListLastIndex(List<string> output, ParseTree.Expression list)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListLength(List<string> output, ParseTree.Expression list)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListPop(List<string> output, ParseTree.Expression list)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListPush(List<string> output, ParseTree.Expression list, ParseTree.Expression value)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListRemoveAt(List<string> output, ParseTree.Expression list, ParseTree.Expression index)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListReverseInPlace(List<string> output, ParseTree.Expression listVar)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListSet(List<string> output, ParseTree.Expression list, ParseTree.Expression index, ParseTree.Expression value)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateListShuffleInPlace(List<string> output, ParseTree.Expression list)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateMultiplyList(List<string> output, ParseTree.Expression list, ParseTree.Expression num)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateNewArray(List<string> output, ParseTree.StringConstant type, ParseTree.Expression size)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateNewDictionary(List<string> output, ParseTree.StringConstant keyType, ParseTree.StringConstant valueType)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateNewList(List<string> output, ParseTree.StringConstant type)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateNewListOfSize(List<string> output, ParseTree.StringConstant type, ParseTree.Expression length)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateNewStack(List<string> output, ParseTree.StringConstant type)
-		{
-			throw new NotImplementedException();
+			output.Add("new Stack<");
+			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true));
+			output.Add(">()");
 		}
 
 		protected override void TranslatePauseForFrame(List<string> output)
@@ -222,149 +326,225 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslatePrint(List<string> output, ParseTree.Expression message)
+		protected override void TranslatePrint(List<string> output, Expression message)
 		{
-			throw new NotImplementedException();
+			output.Add("System.out.println(");
+			this.Translator.TranslateExpression(output, message);
+			output.Add(")");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
-			throw new NotImplementedException();
+			// Nope
 		}
 
 		protected override void TranslateRegisterTimeout(List<string> output)
 		{
-			throw new NotImplementedException();
+			// Nope
 		}
 
-		protected override void TranslateStackGet(List<string> output, ParseTree.Expression stack, ParseTree.Expression index)
+		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(".get(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");
 		}
 
-		protected override void TranslateStackLength(List<string> output, ParseTree.Expression stack)
+		protected override void TranslateStackLength(List<string> output, Expression stack)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(".size()");
 		}
 
-		protected override void TranslateStackPop(List<string> output, ParseTree.Expression list)
+		protected override void TranslateStackPop(List<string> output, Expression stack)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(".pop()");
 		}
 
-		protected override void TranslateStackPush(List<string> output, ParseTree.Expression list, ParseTree.Expression value)
+		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(".push(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
-		protected override void TranslateStackSet(List<string> output, ParseTree.Expression stack, ParseTree.Expression index, ParseTree.Expression value)
+		protected override void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stack);
+			output.Add(".set(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
-		protected override void TranslateSetProgramData(List<string> output, ParseTree.Expression programData)
+		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.getProgramData(");
+			this.Translator.TranslateExpression(output, programData);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringAsChar(List<string> output, ParseTree.StringConstant stringConstant)
+		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
 		{
-			throw new NotImplementedException();
+			char c = stringConstant.Value[0];
+			string value;
+			switch (c)
+			{
+				case '\'': value = "'\\''"; break;
+				case '\\': value = "'\\\\'"; break;
+				case '\n': value = "'\\n'"; break;
+				case '\r': value = "'\\r'"; break;
+				case '\0': value = "'\\0'"; break;
+				case '\t': value = "'\\t'"; break;
+				default: value = "'" + c + "'"; break;
+			}
+			output.Add(value);
 		}
 
-		protected override void TranslateStringCast(List<string> output, ParseTree.Expression thing, bool strongCast)
+		protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
 		{
-			throw new NotImplementedException();
+			if (strongCast)
+			{
+				output.Add("(\"\" + ");
+				this.Translator.TranslateExpression(output, thing);
+				output.Add(")");
+			}
+			else
+			{
+				this.Translator.TranslateExpression(output, thing);
+			}
 		}
 
-		protected override void TranslateStringCharAt(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression index)
+		protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".charAt(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringContains(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, haystack);
+			output.Add(".contains(");
+			this.Translator.TranslateExpression(output, needle);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringEndsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".endsWith(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringFromCode(List<string> output, ParseTree.Expression characterCode)
+		protected override void TranslateStringFromCode(List<string> output, Expression characterCode)
 		{
-			throw new NotImplementedException();
+			output.Add("Character.toString((char)");
+			this.Translator.TranslateExpression(output, characterCode);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle)
+		protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, haystack);
+			output.Add(".indexOf(");
+			this.Translator.TranslateExpression(output, needle);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringLength(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringLength(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".length()");
 		}
 
-		protected override void TranslateStringLower(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringLower(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".toLower()");
 		}
 
-		protected override void TranslateStringParseFloat(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			output.Add("Double.parseDouble(");
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringParseInt(List<string> output, ParseTree.Expression value)
+		protected override void TranslateStringParseInt(List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Integer.parseInt(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringReplace(List<string> output, ParseTree.Expression stringValue, ParseTree.Expression findMe, ParseTree.Expression replaceWith)
+		protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".replace((CharSequence)");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(", (CharSequence)");
+			this.Translator.TranslateExpression(output, replaceWith);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringReverse(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringReverse(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".reverse()");
 		}
 
-		protected override void TranslateStringSplit(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression sep)
+		protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".split(Pattern.quote(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringStartsWith(List<string> output, ParseTree.Expression stringExpr, ParseTree.Expression findMe)
+		protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".startsWith(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(")");
 		}
 
-		protected override void TranslateStringTrim(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringTrim(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".trim()");
 		}
 
-		protected override void TranslateStringUpper(List<string> output, ParseTree.Expression stringValue)
+		protected override void TranslateStringUpper(List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".toUpper()");
 		}
 
 		protected override void TranslateUnregisterTicker(List<string> output)
 		{
-			throw new NotImplementedException();
+			// Nope
 		}
 
-		protected override void TranslateUnsafeFloatDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
+		protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, numerator);
+			output.Add(" / ");
+			this.Translator.TranslateExpression(output, denominator);
 		}
 
-		protected override void TranslateUnsafeIntegerDivision(List<string> output, ParseTree.Expression numerator, ParseTree.Expression denominator)
+		protected override void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, numerator);
+			output.Add(" / ");
+			this.Translator.TranslateExpression(output, denominator);
 		}
 	}
 }

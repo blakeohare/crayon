@@ -39,7 +39,7 @@ namespace Crayon.Translator.Python
 			throw new Exception("This code path should be optimized out of the python translation.");
 		}
 
-		protected override void TranslateCast(List<string> output, Expression typeValue, Expression expression)
+		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);
 		}
@@ -54,14 +54,14 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, charValue);
 		}
 
-		protected override void TranslateComment(List<string> output, Expression commentValue)
+		protected override void TranslateComment(List<string> output, StringConstant commentValue)
 		{
 #if DEBUG
-			output.Add("# " + ((StringConstant)commentValue).Value);
+			output.Add("# " + commentValue.Value);
 #endif
 		}
 
-		protected override void TranslateConvertListToArray(List<string> output, Expression list)
+		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
 		}
@@ -343,12 +343,10 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateListReverseInPlace(List<string> output, Expression listVar)
+		protected override void TranslateListReverseInPlace(List<string> output, Expression list)
 		{
-			this.Translator.TranslateExpression(output, listVar);
-			output.Add(" = ");
-			this.Translator.TranslateExpression(output, listVar);
-			output.Add("[::-1]");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".reverse()");
 		}
 
 		protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
@@ -445,15 +443,15 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateStackPop(List<string> output, Expression list)
+		protected override void TranslateStackPop(List<string> output, Expression stack)
 		{
-			this.Translator.TranslateExpression(output, list);
+			this.Translator.TranslateExpression(output, stack);
 			output.Add(".pop()");
 		}
 
-		protected override void TranslateStackPush(List<string> output, Expression list, Expression value)
+		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
 		{
-			this.Translator.TranslateExpression(output, list);
+			this.Translator.TranslateExpression(output, stack);
 			output.Add(".append(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
