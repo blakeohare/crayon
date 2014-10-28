@@ -98,7 +98,7 @@ namespace Crayon.Translator.Java
 				string filename = structName + ".java";
 				
 				List<string> codeContents = new List<string>();
-				codeContents.Add(crayonHeader);
+
 				codeContents.Add("class " + structName + " {" + nl);
 				codeContents.Add("    public " + structName + "(");
 				List<string> types = new List<string>();
@@ -137,10 +137,25 @@ namespace Crayon.Translator.Java
 
 				codeContents.Add("}" + nl);
 
+				string fileContents = string.Join("", codeContents);
+				string header = "package " + package + ";" + nl + nl;
+
+				bool useList = fileContents.Contains("ArrayList<");
+				bool useHashMap = fileContents.Contains("HashMap<");
+				bool useStack = fileContents.Contains("Stack<");
+				if (useList || useHashMap || useStack)
+				{
+					if (useList) header += "import java.util.ArrayList;" + nl;
+					if (useHashMap) header += "import java.util.HashMap;" + nl;
+					if (useStack) header += "import java.util.Stack;" + nl;
+					header += nl;
+				}
+				fileContents = header + fileContents;
+				
 				output["src/" + package + "/" + filename] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
-					TextContent = string.Join("", codeContents)
+					TextContent = fileContents
 				};
 			}
 
