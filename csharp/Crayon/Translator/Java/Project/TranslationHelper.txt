@@ -1,6 +1,75 @@
 ﻿package %%%PACKAGE%%%;
 
+import java.util.ArrayList;
+
 final class TranslationHelper {
 
     private TranslationHelper() {}
+
+    private static ProgramData programData = null;
+
+    public static void setProgramData(ProgramData pd) {
+        programData = pd;
+    }
+
+    public static ProgramData getProgramData() {
+        return programData;
+    }
+
+    public static <T> void reverseList(ArrayList<T> list) {
+        int length = list.size();
+        int lengthMinusOne = length - 1;
+        for (int i = length / 2; i >= 0; --i) {
+            T t = list.get(i);
+            int tIndex = lengthMinusOne - i;
+            list.set(i, list.get(tIndex));
+            list.set(tIndex, t);
+        }
+    }
+
+    public static String joinList(String sep, String[] items) {
+        int length = items.length;
+        if (length == 0) return "";
+        boolean useSeparator = sep.length() > 0;
+        StringBuilder sb = new StringBuilder(useSeparator ? (length * 2 - 1) : length);
+        sb.append(items[0]);
+        if (useSeparator) {
+            for (int i = 1; i < length; ++i) {
+                sb.append(sep);
+                sb.append(items[i]);
+            }
+        } else {
+            for (int i = 1; i < length; ++i) {
+                sb.append(items[i]);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String getRawByteCodeString() {
+        return "TODO:this";
+    }
+
+    public static ArrayList<Value> concatLists(ArrayList<Value> listA, ArrayList<Value> listB) {
+        ArrayList<Value> output = new ArrayList<Value>(listA.size() + listB.size());
+        output.addAll(listA);
+        output.addAll(listB);
+        return output;
+    }
+
+    public static ArrayList<Value> multiplyList(ArrayList<Value> list, int num) {
+        ArrayList<Value> output = new ArrayList<Value>(list.size() * num);
+        while (num-- > 0) {
+            output.addAll(list);
+        }
+        return output;
+    }
+
+    public static int[] createIntArray(ArrayList<Integer> nums) {
+        int[] output = new int[nums.size()];
+        for (int i = nums.size() - 1; i >= 0; --i) {
+            output[i] = nums.get(i);
+        }
+        return output;
+    }
 }

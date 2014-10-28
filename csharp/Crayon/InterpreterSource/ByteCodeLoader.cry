@@ -24,7 +24,7 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 }
 
 function @type('int') read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
-	@type('char') c = raw[pindex[0]];
+	@type('char') c = $_string_char_at(raw, $_array_get(pindex, 0));
 	@type('int') num = 0;
 	pindex[0] += 1;
 	if (c == $_string_as_char('%')) {
@@ -56,8 +56,8 @@ function @type('string') read_string(@type('Array<int>') pindex, @type('string')
 	@type('bool') cont = true;
 	@type('char') c = $_string_as_char(' ');
 	while (cont) {
-		c = $_string_char_at(raw, $_list_get(pindex, 0));
-		$_list_set(pindex, 0, $_list_get(pindex, 0) + 1);
+		c = $_string_char_at(raw, $_array_get(pindex, 0));
+		$_array_set(pindex, 0, $_array_get(pindex, 0) + 1);
 		if (c == $_string_as_char('@')) {
 			@type('int') repeat = read_integer(pindex, raw, length);
 			@type('string') last = $_list_get(output, $_list_length(output) - 1);

@@ -40,7 +40,11 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
+			output.Add("((");
+			output.Add(this.JavaPlatform.GetTypeStringFromString(typeValue.Value, false));
+			output.Add(") ");
 			this.Translator.TranslateExpression(output, expression);
+			output.Add(")");
 		}
 
 		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
@@ -65,18 +69,28 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
-			this.Translator.TranslateExpression(output, list);
-			output.Add(".toArray(new ");
-			this.JavaPlatform.GetTypeStringFromString(type.Value, false);
-			output.Add("[");
-			this.Translator.TranslateExpression(output, list);
-			output.Add(".size()])");
+			string typeString = this.JavaPlatform.GetTypeStringFromString(type.Value, false);
+			if (typeString == "int")
+			{
+				output.Add("TranslationHelper.createIntArray(");
+				this.Translator.TranslateExpression(output, list);
+				output.Add(")");
+			}
+			else
+			{
+				this.Translator.TranslateExpression(output, list);
+				output.Add(".toArray(new ");
+				output.Add(typeString);
+				output.Add("[");
+				this.Translator.TranslateExpression(output, list);
+				output.Add(".size()])");
+			}
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(".contains(");
+			output.Add(".containsKey(");
 			this.Translator.TranslateExpression(output, key);
 			output.Add(")");
 		}
@@ -253,8 +267,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateListReverseInPlace(List<string> output, Expression list)
 		{
+			output.Add("TranslationHelper.reverseList(");
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".reverse()");
+			output.Add(")");
 		}
 
 		protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
@@ -276,7 +291,6 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
 		{
-
 			output.Add("TranslationHelper.multiplyList(");
 			this.Translator.TranslateExpression(output, list);
 			output.Add(", ");
@@ -287,7 +301,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("new ");
-			this.JavaPlatform.GetTypeStringFromString(type.Value, false);
+			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, false));
 			output.Add("[");
 			this.Translator.TranslateExpression(output, size);
 			output.Add("]");
@@ -296,9 +310,9 @@ namespace Crayon.Translator.Java
 		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
 		{
 			output.Add("new HashMap<");
-			this.JavaPlatform.GetTypeStringFromString(keyType.Value, true);
+			output.Add(this.JavaPlatform.GetTypeStringFromString(keyType.Value, true));
 			output.Add(", ");
-			this.JavaPlatform.GetTypeStringFromString(valueType.Value, true);
+			output.Add(this.JavaPlatform.GetTypeStringFromString(valueType.Value, true));
 			output.Add(">()");
 		}
 

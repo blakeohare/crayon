@@ -56,6 +56,7 @@ namespace Crayon.Translator.Java
 				"import java.util.ArrayList;",
 				"import java.util.HashMap;",
 				"import java.util.Stack;",
+				"import java.util.regex.Pattern;",
 				"",
 				"final class CrayonWrapper {",
 				"    private CrayonWrapper() {}",
@@ -78,6 +79,71 @@ namespace Crayon.Translator.Java
 				TextContent = Util.MassReplacements(string.Join("", crayonWrapper), replacements)
 			};
 
+			string crayonHeader = string.Join(this.Translator.NL, new string[] {
+					"package " + package + ";",
+					"",
+					"import java.util.ArrayList;",
+					"import java.util.HashMap;",
+					"import java.util.Stack;",
+					"",
+					""
+				});
+
+
+			string nl = this.Translator.NL;
+
+			foreach (StructDefinition structDefinition in structDefinitions)
+			{
+				string structName = structDefinition.Name.Value;
+				string filename = structName + ".java";
+				
+				List<string> codeContents = new List<string>();
+				codeContents.Add(crayonHeader);
+				codeContents.Add("class " + structName + " {" + nl);
+				codeContents.Add("    public " + structName + "(");
+				List<string> types = new List<string>();
+				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
+				{
+					string type;
+					Annotation typeAnnotation = structDefinition.Types[i];
+					if (typeAnnotation == null)
+					{
+						throw new Exception("Are there any of these left?");
+					}
+					else
+					{
+						type = this.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null), false);
+					}
+					types.Add(type);
+
+					if (i > 0) codeContents.Add(", ");
+					codeContents.Add(type);
+					codeContents.Add(" v_" + structDefinition.FieldsByIndex[i]);
+				}
+				codeContents.Add(") {" + nl);
+
+				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
+				{
+					codeContents.Add("        this." + structDefinition.FieldsByIndex[i] + " = v_" + structDefinition.FieldsByIndex[i] + ";" + nl);
+				}
+
+				codeContents.Add("    }" + nl + nl);
+				for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
+				{
+					codeContents.Add("    public ");
+					codeContents.Add(types[i]);
+					codeContents.Add(" " + structDefinition.FieldsByIndex[i] + ";" + nl);
+				}
+
+				codeContents.Add("}" + nl);
+
+				output["src/" + package + "/" + filename] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = string.Join("", codeContents)
+				};
+			}
+
 			return output;
 		}
 
@@ -87,7 +153,8 @@ namespace Crayon.Translator.Java
 				case "string": return "String";
 				case "bool": return wrapped ? "Boolean" : "boolean";
 				case "int": return wrapped ? "Integer" : "int";
-				case "char": return wrapped ? "Char" : "char";
+				case "char": return wrapped ? "Character" : "char";
+				case "object": return "Object";
 				case "List": return "ArrayList";
 				case "Dictionary": return "HashMap";
 				default: return original;
