@@ -1,12 +1,15 @@
 ﻿package %%%PACKAGE%%%;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 final class TranslationHelper {
 
     private TranslationHelper() {}
 
     private static ProgramData programData = null;
+
+    public static Random random = new Random();
 
     public static void setProgramData(ProgramData pd) {
         programData = pd;

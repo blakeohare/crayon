@@ -3,6 +3,9 @@
 	internal enum FrameworkFunction
 	{
 		ABS = 1,
+		ARCCOS,
+		ARCSIN,
+		ARCTAN,
 		ARCTAN2,
 		ASSERT,
 		BLIT_IMAGE,
@@ -29,6 +32,7 @@
 		RANDOM,
 		SET_TITLE,
 		SIN,
+		TAN,
 		TYPEOF,
 	}
 }

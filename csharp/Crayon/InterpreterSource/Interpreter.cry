@@ -684,12 +684,90 @@ function @type('string') interpret(
 							return killExecution(stack, "$abs requires a number as input.");
 						}
 						break;
+						
+					case %%%FF_ARCCOS%%%:
+						// $arccos(theta)
+						arg1 = $_stack_pop(valueStack);
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							if (float < -1 || float1  > 1) {
+								return killExecution(stack, "$arc_cos requires a number in the range of -1 to 1");
+							}
+							output = new Value(Types.FLOAT, $_arc_cos(float1));
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							if (int1 < -1 || int1 > 1) {
+								return killExecution(stack, "$arc_cos requires a number in the range of -1 to 1");
+							}
+							output = new Value(Types.FLOAT, $_arc_cos(int1));
+						} else {
+							return killExecution(stack, "$arccos requires a number as input.");
+						}
+						break;
+
+					case %%%FF_ARCSIN%%%:
+						// $arcsin(theta)
+						arg1 = $_stack_pop(valueStack);
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							if (float < -1 || float1  > 1) {
+								return killExecution(stack, "$arc_sin requires a number in the range of -1 to 1");
+							}
+							output = new Value(Types.FLOAT, $_arc_sin(float1));
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							if (int1 < -1 || int1 > 1) {
+								return killExecution(stack, "$arc_sin requires a number in the range of -1 to 1");
+							}
+							output = new Value(Types.FLOAT, $_arc_sin(int1));
+						} else {
+							return killExecution(stack, "$arcsin requires a number as input.");
+						}
+						break;
+						
+					case %%%FF_ARCTAN%%%:
+						// $arctan(theta)
+						arg1 = $_stack_pop(valueStack);
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_arc_tan(float1, 1.0));
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_arc_tan(int1, 1.0));
+						} else {
+							return killExecution(stack, "$arctan requires a number as input.");
+						}
+						break;
 
 					case %%%FF_ARCTAN2%%%:
 						// $arctan2(y, x)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_arctan2');
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							if (arg2.type == Types.FLOAT) {
+								float2 = $_cast('double', arg2.internalValue);
+								output = new Value(Types.FLOAT, $_arc_tan(float1, float2));
+							} else if (arg2.type == Types.INTEGER) {
+								int2 = $_cast('int', arg2.internalValue);
+								output = new Value(Types.FLOAT, $_arc_tan(float1, int2));
+							} else {
+								return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+							}
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							if (arg2.type == Types.FLOAT) {
+								float2 = $_cast('double', arg2.internalValue);
+								output = new Value(Types.FLOAT, $_arc_tan(int1, float2));
+							} else if (arg2.type == Types.INTEGER) {
+								int2 = $_cast('int', arg2.internalValue);
+								output = new Value(Types.FLOAT, $_arc_tan(int1, int2));
+							} else {
+								return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+							}
+						} else {
+							return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+						}
 						break;
 
 					case %%%FF_ASSERT%%%:
@@ -723,7 +801,7 @@ function @type('string') interpret(
 						break;
 
 					case %%%FF_CURRENT_TIME%%%:
-						$_insert_platform_code('ff_current_time');
+						output = new Value(Types.FLOAT, $_current_time_seconds());
 						break;
 						
 					case %%%FF_DOWNLOAD_IMAGE%%%:
@@ -792,7 +870,22 @@ function @type('string') interpret(
 					case %%%FF_FLOOR%%%:
 						// $floor(number)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_floor');
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							if (%%%INT_IS_FLOOR%%%) {
+								output = build_integer($_int(float1));
+							} else {
+								if (float1 < 0) {
+									output = build_integer(-$_int(-float1));
+								} else {
+									output = build_integer($_int(float1));
+								}
+							}
+						} else if (arg1.type == Types.INTEGER) {
+							output = arg1;
+						} else {
+							return killExecution(stack, "$floor expects a numeric argument.");
+						}
 						break;
 
 					case %%%FF_GET_EVENTS%%%:
@@ -853,20 +946,47 @@ function @type('string') interpret(
 					case %%%FF_PRINT%%%: 
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
-						$_insert_platform_code('ff_print'); 
+						$_print(string1);
 						break;
+
 					case %%%FF_RANDOM%%%:
-						$_insert_platform_code('ff_random');
+						output = new Value(Types.FLOAT, $_random_float());
 						break;
+
 					case %%%FF_SET_TITLE%%%:
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
 						$_insert_platform_code('ff_set_title');
 						break;
-
+						
 					case %%%FF_SIN%%%:
 						arg1 = $_stack_pop(valueStack);
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_sin(float1));
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_sin(int1));
+						} else {
+							return killExecution(stack, "$sin requires a number argument.");
+						}
 						$_insert_platform_code('ff_sin');
+						break;
+
+					case %%%FF_TAN%%%:
+						arg1 = $_stack_pop(valueStack);
+						// I do not check for arg1 == pi/2 because the float arithmetic
+						// never produces a true pi/2. The closest a 64 bit floating point number can get
+						// to pi/2 produces 16331239353195370. 
+						if (arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_tan(float1));
+						} else if (arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', arg1.internalValue);
+							output = new Value(Types.FLOAT, $_tan(int1));
+						} else {
+							return killExecution(stack, "$tan requires a number argument.");
+						}
 						break;
 
 					case %%%FF_TYPEOF%%%:

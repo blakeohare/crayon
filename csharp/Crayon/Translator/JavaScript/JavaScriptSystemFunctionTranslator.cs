@@ -10,6 +10,29 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateArcCos(List<string> output, Expression value)
+		{
+			output.Add("Math.acos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcSin(List<string> output, Expression value)
+		{
+			output.Add("Math.asin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
+		{
+			output.Add("Math.atan2(");
+			this.Translator.TranslateExpression(output, dy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(")");
+		}
+
 		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -66,6 +89,18 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
+		}
+
+		protected override void TranslateCos(List<string> output, Expression value)
+		{
+			output.Add("Math.cos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateCurrentTimeSeconds(List<string> output)
+		{
+			output.Add("R.now()");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -161,20 +196,8 @@ namespace Crayon.Translator.JavaScript
 		{
 			switch (id)
 			{
-				case "ff_arctan2":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.atan2(v_arg1[1], v_arg2[1])]"));
-					break;
-
 				case "ff_blit_image":
 					output.Add(this.Shorten("R.blit(v_arg1[1][1], v_arg2[1], v_arg3[1])"));
-					break;
-
-				case "ff_cos":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.cos(v_arg1[1])]"));
-					break;
-
-				case "ff_current_time":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", R.now()]"));
 					break;
 
 				case "ff_download_image":
@@ -242,20 +265,8 @@ namespace Crayon.Translator.JavaScript
 					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", parseInt(v_arg1[1])]"));
 					break;
 
-				case "ff_print":
-					output.Add("R.print(v_string1)");
-					break;
-
-				case "ff_random":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.random()];"));
-					break;
-
 				case "ff_set_title":
 					output.Add("TODO('set title');");
-					break;
-
-				case "ff_sin":
-					output.Add(this.Shorten("v_output = [" + (int)Types.FLOAT + ", Math.sin(v_arg1[1])]"));
 					break;
 
 				default:
@@ -411,9 +422,14 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslatePrint(List<string> output, Expression message)
 		{
-			output.Add("window.alert(");
+			output.Add("R.print(");
 			this.Translator.TranslateExpression(output, message);
 			output.Add(")");
+		}
+
+		protected override void TranslateRandomFloat(List<string> output)
+		{
+			output.Add("Math.random()");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
@@ -431,6 +447,13 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("R.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateSin(List<string> output, Expression value)
+		{
+			output.Add("Math.sin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
@@ -599,6 +622,13 @@ namespace Crayon.Translator.JavaScript
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".toUpperCase()");
+		}
+
+		protected override void TranslateTan(List<string> output, Expression value)
+		{
+			output.Add("Math.tan(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateUnregisterTicker(List<string> output)

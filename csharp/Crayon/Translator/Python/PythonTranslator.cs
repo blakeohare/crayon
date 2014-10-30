@@ -10,6 +10,21 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		public void TranslateListDefinition(List<string> output, ListDefinition list)
+		{
+			output.Add("[");
+			for (int i = 0; i < list.Items.Length; ++i)
+			{
+				if (i > 0)
+				{
+					output.Add(", ");
+				}
+
+				this.TranslateExpression(output, list.Items[i]);
+			}
+			output.Add("]");
+		}
+
 		protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
 		{
 			output.Add(dotStepStruct.RootVar);

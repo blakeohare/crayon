@@ -10,6 +10,29 @@ namespace Crayon.Translator.Java
 	{
 		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
 
+		protected override void TranslateArcCos(List<string> output, Expression value)
+		{
+			output.Add("Math.acos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcSin(List<string> output, Expression value)
+		{
+			output.Add("Math.asin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
+		{
+			output.Add("Math.atan2(");
+			this.Translator.TranslateExpression(output, dy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(")");
+		}
+
 		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -85,6 +108,18 @@ namespace Crayon.Translator.Java
 				this.Translator.TranslateExpression(output, list);
 				output.Add(".size()])");
 			}
+		}
+
+		protected override void TranslateCos(List<string> output, Expression value)
+		{
+			output.Add("Math.cos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateCurrentTimeSeconds(List<string> output)
+		{
+			output.Add("DateTime.Now.Ticks / 10000000.0");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -347,6 +382,11 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateRandomFloat(List<string> output)
+		{
+			output.Add("TranslationHelper.random.nextDouble()");
+		}
+
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			// Nope
@@ -355,6 +395,20 @@ namespace Crayon.Translator.Java
 		protected override void TranslateRegisterTimeout(List<string> output)
 		{
 			// Nope
+		}
+
+		protected override void TranslateSetProgramData(List<string> output, Expression programData)
+		{
+			output.Add("TranslationHelper.getProgramData(");
+			this.Translator.TranslateExpression(output, programData);
+			output.Add(")");
+		}
+
+		protected override void TranslateSin(List<string> output, Expression value)
+		{
+			output.Add("Math.sin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
@@ -392,13 +446,6 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, index);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
-		protected override void TranslateSetProgramData(List<string> output, Expression programData)
-		{
-			output.Add("TranslationHelper.getProgramData(");
-			this.Translator.TranslateExpression(output, programData);
 			output.Add(")");
 		}
 
@@ -540,6 +587,13 @@ namespace Crayon.Translator.Java
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".toUpper()");
+		}
+
+		protected override void TranslateTan(List<string> output, Expression value)
+		{
+			output.Add("Math.tan(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateUnregisterTicker(List<string> output)

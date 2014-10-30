@@ -10,6 +10,29 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		protected override void TranslateArcCos(List<string> output, Expression value)
+		{
+			output.Add("math.acos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcSin(List<string> output, Expression value)
+		{
+			output.Add("math.asin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
+		{
+			output.Add("math.atan2(");
+			this.Translator.TranslateExpression(output, dy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(")");
+		}
+
 		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -64,6 +87,18 @@ namespace Crayon.Translator.Python
 		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
+		}
+
+		protected override void TranslateCos(List<string> output, Expression value)
+		{
+			output.Add("math.cos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateCurrentTimeSeconds(List<string> output)
+		{
+			output.Add("time.time()");
 		}
 
 		// Not safe for dictionaries that can contain a value of None.
@@ -161,20 +196,8 @@ namespace Crayon.Translator.Python
 		{
 			switch (id)
 			{
-				case "ff_arctan2":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.atan2(v_arg1[1], v_arg2[1])]");
-					break;
-
 				case "ff_blit_image":
 					output.Add("_global_vars['virtual_screen'].blit(v_arg1[1][1], (v_arg2[1], v_arg3[1]))");
-					break;
-
-				case "ff_cos":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.cos(v_arg1[1])]");
-					break;
-
-				case "ff_current_time":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", time.time()]");
 					break;
 
 				case "ff_download_image":
@@ -241,20 +264,8 @@ namespace Crayon.Translator.Python
 					output.Add("v_output = [" + (int)Types.INTEGER + ", int(v_arg1[1])]");
 					break;
 
-				case "ff_print":
-					output.Add("print(v_string1)");
-					break;
-
-				case "ff_random":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", random.random()]");
-					break;
-
 				case "ff_set_title":
 					output.Add("pygame.display.set_caption(v_string1)");
-					break;
-
-				case "ff_sin":
-					output.Add("v_output = [" + (int)Types.FLOAT + ", math.sin(v_arg1[1])]");
 					break;
 
 				default:
@@ -412,6 +423,11 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateRandomFloat(List<string> output)
+		{
+			output.Add("random.random()");
+		}
+
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			throw new Exception("This code path should be optimized out of the python translation.");
@@ -426,6 +442,13 @@ namespace Crayon.Translator.Python
 		{
 			output.Add("program_data[0] = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateSin(List<string> output, Expression value)
+		{
+			output.Add("math.sin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
@@ -587,6 +610,13 @@ namespace Crayon.Translator.Python
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".upper()");
+		}
+
+		protected override void TranslateTan(List<string> output, Expression value)
+		{
+			output.Add("math.tan(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateUnregisterTicker(List<string> output)

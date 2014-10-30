@@ -10,6 +10,29 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateArcCos(List<string> output, Expression value)
+		{
+			output.Add("Math.Acos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcSin(List<string> output, Expression value)
+		{
+			output.Add("Math.Asin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
+		{
+			output.Add("Math.Atan2(");
+			this.Translator.TranslateExpression(output, dy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(")");
+		}
+
 		protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
@@ -73,6 +96,18 @@ namespace Crayon.Translator.CSharp
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".ToArray()");
+		}
+
+		protected override void TranslateCos(List<string> output, Expression value)
+		{
+			output.Add("Math.Cos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateCurrentTimeSeconds(List<string> output)
+		{
+			output.Add("DateTime.Now.Ticks / 10000000.0");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -164,20 +199,8 @@ namespace Crayon.Translator.CSharp
 		{
 			switch (id)
 			{
-				case "ff_arctan2":
-					output.Add("// TODO: arctan2");
-					break;
-
 				case "ff_blit_image":
 					output.Add("GameWindow.BlitImage((Image)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue)");
-					break;
-
-				case "ff_cos":
-					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", System.Math.Cos((double)v_arg1.internalValue))");
-					break;
-
-				case "ff_current_time":
-					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", DateTime.Now.Ticks / 10000000.0)");
 					break;
 
 				case "ff_download_image":
@@ -274,20 +297,8 @@ namespace Crayon.Translator.CSharp
 					output.Add("v_output = TranslationHelper.ParseInt((string)v_arg1.internalValue)");
 					break;
 
-				case "ff_print":
-					output.Add("Console.WriteLine(v_valueToString(v_arg1))");
-					break;
-
-				case "ff_random":
-					output.Add("v_output = new Value(" + (int)Types.FLOAT + ", TranslationHelper.GetRandomNumber())");
-					break;
-
 				case "ff_set_title":
 					output.Add("// TODO: set title");
-					break;
-
-				case "ff_sin":
-					output.Add("// TODO: sin");
 					break;
 
 				default:
@@ -475,7 +486,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
-			throw new NotImplementedException();
+			// Nope
 		}
 
 		protected override void TranslatePrint(List<string> output, Expression message)
@@ -483,6 +494,11 @@ namespace Crayon.Translator.CSharp
 			output.Add("System.Console.WriteLine(");
 			this.Translator.TranslateExpression(output, message);
 			output.Add(")");
+		}
+
+		protected override void TranslateRandomFloat(List<string> output)
+		{
+			output.Add("TranslationHelper.GetRandomNumber()");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
@@ -499,6 +515,13 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateSin(List<string> output, Expression value)
+		{
+			output.Add("Math.Sin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
@@ -678,6 +701,13 @@ namespace Crayon.Translator.CSharp
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".ToUpperInvariant()");
+		}
+
+		protected override void TranslateTan(List<string> output, Expression value)
+		{
+			output.Add("Math.Tan(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateUnregisterTicker(List<string> output)

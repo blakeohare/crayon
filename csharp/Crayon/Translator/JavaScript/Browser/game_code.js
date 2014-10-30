@@ -222,36 +222,40 @@ R.shiftLines = function () {
 };
 
 R.print = function (value) {
-	var line = R.shiftLines();
-	var col = 0;
-	var i;
+	if (R._global_vars.print_output == null) {
+		window.alert(value);
+	} else {
+		var line = R.shiftLines();
+		var col = 0;
+		var i;
 
-	for (i = 0; i < value.length; ++i, ++col) {
-		if (col == 80) {
-			line = R.shiftLines();
-			col = 0;
-		}
-		var c = value.charAt(i);
-		switch (c) {
-			case '<': line.push('&lt;'); break;
-			case '>': line.push('&gt;'); break;
-			case '&': line.push('&amp;'); break;
-			case ' ': line.push('&nbsp;'); break;
-			case '\t': line.push('&nbsp;&nbsp;&nbsp;&nbsp;'); break;
-			case '\n': 
+		for (i = 0; i < value.length; ++i, ++col) {
+			if (col == 80) {
 				line = R.shiftLines();
 				col = 0;
-				break;
-			default: line.push(c); break;
+			}
+			var c = value.charAt(i);
+			switch (c) {
+				case '<': line.push('&lt;'); break;
+				case '>': line.push('&gt;'); break;
+				case '&': line.push('&amp;'); break;
+				case ' ': line.push('&nbsp;'); break;
+				case '\t': line.push('&nbsp;&nbsp;&nbsp;&nbsp;'); break;
+				case '\n': 
+					line = R.shiftLines();
+					col = 0;
+					break;
+				default: line.push(c); break;
+			}
 		}
-	}
 	
-	var lines = R._global_vars.print_lines;
-	var output = [];
-	for (i = 0; i < lines.length; ++i) {
-		output.push(lines[i].join(''));
+		var lines = R._global_vars.print_lines;
+		var output = [];
+		for (i = 0; i < lines.length; ++i) {
+			output.push(lines[i].join(''));
+		}
+		R._global_vars.print_output.innerHTML = output.join('<br />');
 	}
-	R._global_vars.print_output.innerHTML = output.join('<br />');
 };
 
 R._commonStrings = {

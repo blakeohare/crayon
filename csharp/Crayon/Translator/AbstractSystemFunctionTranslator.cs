@@ -26,6 +26,13 @@ namespace Crayon.Translator
 			{
 				case "_insert_platform_code": VerifyCount(functionCall, 1); TranslateInsertFrameworkCode(tab, output, ((StringConstant)args[0]).Value); break;
 
+				case "_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
+				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
+				case "_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
+				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
+				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
+				case "_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
+
 				case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
@@ -35,6 +42,7 @@ namespace Crayon.Translator
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
 				case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
+				case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
 				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
 				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
@@ -69,6 +77,7 @@ namespace Crayon.Translator
 				case "_new_stack": VerifyCount(functionCall, 1); TranslateNewStack(output, (StringConstant)args[0]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
+				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
@@ -102,6 +111,9 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateArcCos(List<string> output, Expression value);
+		protected abstract void TranslateArcSin(List<string> output, Expression value);
+		protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);
 		protected abstract void TranslateArrayGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
@@ -111,6 +123,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
 		protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
 		protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
+		protected abstract void TranslateCos(List<string> output, Expression value);
+		protected abstract void TranslateCurrentTimeSeconds(List<string> output);
 		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionaryGetKeys(List<string> output, Expression dictionary);
@@ -146,14 +160,16 @@ namespace Crayon.Translator
 		protected abstract void TranslateNewStack(List<string> output, StringConstant type);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
+		protected abstract void TranslateRandomFloat(List<string> output);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
+		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
+		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
 		protected abstract void TranslateStackLength(List<string> output, Expression stack);
 		protected abstract void TranslateStackPop(List<string> output, Expression stack);
 		protected abstract void TranslateStackPush(List<string> output, Expression stack, Expression value);
 		protected abstract void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value);
-		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
@@ -171,6 +187,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe);
 		protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
+		protected abstract void TranslateTan(List<string> output, Expression value);
 		protected abstract void TranslateUnregisterTicker(List<string> output);
 		protected abstract void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator);
 		protected abstract void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator);

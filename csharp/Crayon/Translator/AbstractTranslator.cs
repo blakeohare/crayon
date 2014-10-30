@@ -224,6 +224,7 @@ namespace Crayon.Translator
 			else if (expr is BooleanNot) this.TranslateBooleanNot(output, (BooleanNot)expr);
 			else if (expr is FloatConstant) this.TranslateFloatConstant(output, (FloatConstant)expr);
 			else if (expr is DotStepStruct) this.TranslateDotStepStruct(output, (DotStepStruct)expr);
+			else if (expr is ListDefinition) ((Crayon.Translator.Python.PythonTranslator)this).TranslateListDefinition(output, (ListDefinition)expr); // this is used by Python switch code
 			else throw new Exception("Expression type not handled: " + expr.GetType());
 		}
 	}
