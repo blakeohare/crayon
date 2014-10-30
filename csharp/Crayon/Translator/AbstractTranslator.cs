@@ -183,9 +183,16 @@ namespace Crayon.Translator
 
 		public void Translate(List<string> output, Executable[] lines)
 		{
-			foreach (Executable line in lines)
+			for (int i = 0; i < lines.Length; ++i)
 			{
+				Executable line = lines[i];
 				Translate(output, line);
+				if (line is ReturnStatement ||
+					line is BreakStatement ||
+					line is ContinueStatement)
+				{
+					return;
+				}
 			}
 		}
 

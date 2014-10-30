@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
@@ -57,7 +58,15 @@ namespace Crayon.Translator.CSharp
 			output.Add(this.NL);
 			this.CurrentIndention++;
 
-			this.Translate(output, functionDef.Code);
+			Executable[] code = functionDef.Code;
+			if (functionDef.GetAnnotation("omitReturn") != null)
+			{
+				Executable[] newCode = new Executable[code.Length - 1];
+				Array.Copy(code, newCode, newCode.Length);
+				code = newCode;
+			}
+			this.Translate(output, code);
+
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
 			output.Add("}");

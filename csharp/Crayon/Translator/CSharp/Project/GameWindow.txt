@@ -23,7 +23,6 @@ namespace %%%PROJECT_ID%%%
 
 		private static double fps = 60;
 		private static GameWindow instance = null;
-		private static string errorMessage = null;
 
 		public static double FPS
 		{
@@ -261,7 +260,6 @@ namespace %%%PROJECT_ID%%%
 
 			if (!continueExecution)
 			{
-				errorMessage = "";
 				this.Exit();
 			}
 		}

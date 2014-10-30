@@ -1,4 +1,4 @@
-﻿function @type('string') getBinaryOpFromId(@type('int') id) {
+﻿function @omitReturn @type('string') getBinaryOpFromId(@type('int') id) {
 	switch (id) {
 		case BinaryOps.ADDITION: return '+';
 		case BinaryOps.SUBTRACTION: return '-';

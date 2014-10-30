@@ -30,41 +30,6 @@ namespace Crayon.Translator
 		{
 			this.TranslateSwitchStatement(output, switchStatement.OriginalSwitchStatement);
 		}
-		/*
-		private void TranslateSwitchStatementImpl(List<string> output, SwitchStatement switchStatement)
-		{
-			output.Add(this.CurrentTabIndention);
-			output.Add("switch(");
-			this.TranslateExpression(output, switchStatement.Condition);
-			output.Add(this.Shorten(") {") + this.NL);
-			this.CurrentIndention++;
-			foreach (SwitchStatement.Chunk chunks in switchStatement.Chunks)
-			{
-				foreach (Expression caseExpr in chunks.Cases)
-				{
-					output.Add(this.CurrentTabIndention);
-					if (chunks.Cases[0] == null)
-					{
-						output.Add("default:" + this.NL);
-					}
-					else
-					{
-						output.Add("case ");
-						this.TranslateExpression(output, chunks.Cases[0]);
-						output.Add(":" + this.NL);
-					}
-				}
-
-				this.CurrentIndention++;
-				this.Translate(output, chunks.Code);
-				output.Add(this.CurrentTabIndention);
-				output.Add("break;" + this.NL);
-				this.CurrentIndention--;
-			}
-			this.CurrentIndention--;
-			output.Add(this.CurrentTabIndention);
-			output.Add("}" + this.NL);
-		}//*/
 
 		protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
 		{

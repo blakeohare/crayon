@@ -1,5 +1,5 @@
 ﻿
-function @type('string') interpret(
+function @omitReturn @type('string') interpret(
 		@type('StackFrame') stack,
 		@type('Array<int>') ops,
 		@type('Array<Array<int>>') args,
@@ -1527,7 +1527,6 @@ function @type('string') interpret(
 				bool1 = StackFrame$stack.returnValueUsed;
 				stack = StackFrame$stack.previous;
 				if (stack == null) {
-					StackFrame$stack.pc += 1;
 					return '';
 				}
 				valueStack = StackFrame$stack.valueStack;
