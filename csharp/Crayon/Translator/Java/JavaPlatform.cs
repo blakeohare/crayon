@@ -113,7 +113,7 @@ namespace Crayon.Translator.Java
 					}
 					else
 					{
-						type = this.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null), false);
+						type = this.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null), false, false);
 					}
 					types.Add(type);
 
@@ -177,41 +177,41 @@ namespace Crayon.Translator.Java
 			}
 		}
 
-		public string GetTypeStringFromString(string rawValue, bool wrappedContext)
+		public string GetTypeStringFromString(string rawValue, bool wrappedContext, bool dropGenerics)
 		{
-			return this.GetTypeStringFromAnnotation(null, rawValue, wrappedContext);
+			return this.GetTypeStringFromAnnotation(null, rawValue, wrappedContext, dropGenerics);
 		}
 
-		public string GetTypeStringFromAnnotation(Annotation annotation, bool wrappedContext)
+		public string GetTypeStringFromAnnotation(Annotation annotation, bool wrappedContext, bool dropGenerics)
 		{
-			return GetTypeStringFromAnnotation(annotation.FirstToken, annotation.GetSingleArgAsString(null), wrappedContext);
+			return GetTypeStringFromAnnotation(annotation.FirstToken, annotation.GetSingleArgAsString(null), wrappedContext, dropGenerics);
 		}
 
-		public string GetTypeStringFromAnnotation(Token stringToken, string value, bool wrappedContext)
+		public string GetTypeStringFromAnnotation(Token stringToken, string value, bool wrappedContext, bool dropGenerics)
 		{
 			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1, false));
-			return GetTypeStringFromAnnotation(type, wrappedContext);
+			return GetTypeStringFromAnnotation(type, wrappedContext, dropGenerics);
 		}
 
-		private string GetTypeStringFromAnnotation(AnnotatedType type, bool wrappedContext)
+		private string GetTypeStringFromAnnotation(AnnotatedType type, bool wrappedContext, bool dropGenerics)
 		{
 			string output;
 
 			if (type.Name == "Array")
 			{
-				output = this.GetTypeStringFromAnnotation(type.Generics[0], false);
+				output = this.GetTypeStringFromAnnotation(type.Generics[0], false, dropGenerics);
 				output += "[]";
 			}
 			else
 			{
 				output = TranslateType(type.Name, wrappedContext);
-				if (type.Generics.Length > 0)
+				if (type.Generics.Length > 0 && !dropGenerics)
 				{
 					output += "<";
 					for (int i = 0; i < type.Generics.Length; ++i)
 					{
 						if (i > 0) output += ", ";
-						output += this.GetTypeStringFromAnnotation(type.Generics[i], true);
+						output += this.GetTypeStringFromAnnotation(type.Generics[i], true, false);
 					}
 					output += ">";
 				}

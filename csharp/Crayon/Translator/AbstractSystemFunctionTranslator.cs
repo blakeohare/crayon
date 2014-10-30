@@ -32,7 +32,6 @@ namespace Crayon.Translator
 				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
 				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
 				case "_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
-
 				case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
@@ -61,6 +60,7 @@ namespace Crayon.Translator
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
 				case "_list_insert": VerifyCount(functionCall, 3); TranslateListInsert(output, args[0], args[1], args[2]); break;
 				case "_list_join": VerifyCount(functionCall, 2); TranslateListJoin(output, args[0], args[1]); break;
+				case "_list_join_chars": VerifyCount(functionCall, 1); TranslateListJoinChars(output, args[0]); break;
 				case "_list_last_index": VerifyCount(functionCall, 1); TranslateListLastIndex(output, args[0]); break;
 				case "_list_length": VerifyCount(functionCall, 1); TranslateListLength(output, args[0]); break;
 				case "_list_pop": VerifyCount(functionCall, 1); TranslateListPop(output, args[0]); break;
@@ -144,6 +144,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateListJoin(List<string> output, Expression list, Expression sep);
+		protected abstract void TranslateListJoinChars(List<string> output, Expression list);
 		protected abstract void TranslateListLastIndex(List<string> output, Expression list);
 		protected abstract void TranslateListLength(List<string> output, Expression list);
 		protected abstract void TranslateListPop(List<string> output, Expression list);

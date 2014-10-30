@@ -28,14 +28,14 @@ function main() {
 	for (@type('int') i = 0; i < $_array_length(ops); i += 1) {
 		@type('int') op = $_array_get(ops, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
-			@type('Array<int>') args = $_list_get(opArgs, i);
+			@type('Array<int>') args = $_array_get(opArgs, i);
 			id = $_list_length(classTable);
 			lastClassId = id;
 			nameId = $_array_get(args, 0);
 			$_dictionary_set(nameIdToClassId, nameId, id);
-			baseClassNameId = $_list_get(args, 1);
-			@type('int') constructorArgsCount = $_list_get(args, 2); // -1 if no constructor present
-			@type('int') methodCount = $_list_get(args, 3);
+			baseClassNameId = $_array_get(args, 1);
+			@type('int') constructorArgsCount = $_array_get(args, 2); // -1 if no constructor present
+			@type('int') methodCount = $_array_get(args, 3);
 
 			baseClassId = 0;
 			if (baseClassNameId > 0) {
@@ -50,9 +50,9 @@ function main() {
 			}
 
 			for (@type('int') j = 0; j < methodCount; j += 1) {
-				@type('int') methodNameId = $_list_get(args, (j * 3) + 4);
-				@type('int') pcOffset = $_list_get(args, (j * 3) + 5);
-				@type('int') maxArgs = $_list_get(args, (j * 3) + 6);
+				@type('int') methodNameId = $_array_get(args, (j * 3) + 4);
+				@type('int') pcOffset = $_array_get(args, (j * 3) + 5);
+				@type('int') maxArgs = $_array_get(args, (j * 3) + 6);
 
 				@type('MethodDefinition') methodData = new MethodDefinition(
 					methodNameId,
@@ -90,21 +90,21 @@ function main() {
 	@type('List<Array<int>>') specialCacheBuilder = $_new_list('Array<int>');
 	@type('Array<int>') specialCacheEntry = null;
 	for (i = 0; i < $_array_length(ops); i += 1) {
-		@type('int') op = $_list_get(ops, i);
+		@type('int') op = $_array_get(ops, i);
 		@type('Array<int>') args = $_array_get(opArgs, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
-			nameId = $_list_get(args, 0);
+			nameId = $_array_get(args, 0);
 			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
 			lastClassId = classId;
 			specialCacheEntry = $_new_array('int', 1);
 			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
-			nameId = $_list_get(args, 1);
+			nameId = $_array_get(args, 1);
 			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
 			specialCacheEntry = $_new_array('int', 1);
 			$_array_set(specialCacheEntry, 0, classId);
 		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
-			classInfo = classTable[lastClassId];
+			classInfo = $_list_get(classTable, lastClassId);
 			baseClassId = ClassInfo$classInfo.baseClassId;
 			specialCacheEntry = $_new_array('int', 1);
 			$_array_set(specialCacheEntry, 0, baseClassId);

@@ -20,7 +20,7 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 		index[0] += 1;
 	}
 
-	return $_list_join(output, '');
+	return $_list_join_chars(output);
 }
 
 function @type('int') read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
@@ -109,7 +109,7 @@ function @type('Code') loadByteCode() {
 	@type('string') stringarg = null;
 	@type('bool') stringPresent = false;
 	for (@type('int') i = 0; i < opCount; i += 1) {
-		c = $_string_char_at(raw, index[0]);
+		c = $_string_char_at(raw, $_array_get(index, 0));
 		index[0] += 1;
 		argc = 0;
 		stringPresent = true;
@@ -119,7 +119,7 @@ function @type('Code') loadByteCode() {
 		else {
 			if (c != $_string_as_char('~')) {
 				stringPresent = false;
-				$_list_set(index, 0, $_list_get(index, 0) - 1);
+				$_array_set(index, 0, $_array_get(index, 0) - 1);
 			}
 			argc = read_integer(index, raw, length);
 		}

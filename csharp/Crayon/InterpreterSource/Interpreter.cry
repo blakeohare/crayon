@@ -1142,7 +1142,7 @@ function @type('string') interpret(
 
 			case OpCodes.CLASS_DEFINITION:
 				$_comment('CLASS_DEFINITION');
-				classId = $_array_get($_list_get(specialCache, StackFrame$stack.pc), 0);
+				classId = $_array_get($_array_get(specialCache, StackFrame$stack.pc), 0);
 				classInfo = $_array_get(classTable, classId);
 				ClassInfo$classInfo.initialized = true;
 				break;
@@ -1410,7 +1410,7 @@ function @type('string') interpret(
 					}
 					$_stack_push(valueStack, new Value(Types.STRING, $_char_to_string($_string_char_at(string1, int1))));
 				} else {
-					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_list_get(identifiers, args[StackFrame$stack.pc - 2][0]));
+					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_array_get(identifiers, $_array_get($_array_get(args, StackFrame$stack.pc - 2), 0)));
 				}
 				break;
 
@@ -1492,7 +1492,7 @@ function @type('string') interpret(
 				
 			case OpCodes.LITERAL:
 				$_comment('LITERAL');
-				$_stack_push(valueStack, $_list_get(literalTable, $_array_get(row, 0)));
+				$_stack_push(valueStack, $_array_get(literalTable, $_array_get(row, 0)));
 				break;
 
 			case OpCodes.LITERAL_STREAM:
@@ -1684,7 +1684,7 @@ function @type('string') killExecutionWithTokenOverride(
 
 		token = null;
 
-		tokenList = $_list_get(allTokens, pc);
+		tokenList = $_array_get(allTokens, pc);
 		if (tokenList != null) {
 			token = $_list_get(tokenList, 0);
 		}

@@ -64,7 +64,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			output.Add("((");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(typeValue.Value, false));
+			output.Add(this.JavaPlatform.GetTypeStringFromString(typeValue.Value, false, false));
 			output.Add(") ");
 			this.Translator.TranslateExpression(output, expression);
 			output.Add(")");
@@ -74,7 +74,7 @@ namespace Crayon.Translator.Java
 		{
 			output.Add("new ArrayList<Value>(");
 			this.Translator.TranslateExpression(output, enumerableThing);
-			output.Add(".asList())");
+			output.Add(")");
 		}
 
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
@@ -92,7 +92,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
 		{
-			string typeString = this.JavaPlatform.GetTypeStringFromString(type.Value, false);
+			string typeString = this.JavaPlatform.GetTypeStringFromString(type.Value, false, true);
 			if (typeString == "int")
 			{
 				output.Add("TranslationHelper.createIntArray(");
@@ -102,11 +102,13 @@ namespace Crayon.Translator.Java
 			else
 			{
 				this.Translator.TranslateExpression(output, list);
-				output.Add(".toArray(new ");
-				output.Add(typeString);
-				output.Add("[");
-				this.Translator.TranslateExpression(output, list);
-				output.Add(".size()])");
+				output.Add(".toArray(");
+				List<string> sizeValue = new List<string>();
+				this.Translator.TranslateExpression(sizeValue, list);
+				sizeValue.Add(".size()");
+
+				this.CreateNewArrayOfSize(output, typeString, string.Join("", sizeValue));
+				output.Add(")");
 			}
 		}
 
@@ -119,7 +121,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateCurrentTimeSeconds(List<string> output)
 		{
-			output.Add("DateTime.Now.Ticks / 10000000.0");
+			output.Add("System.currentTimeMillis() / 1000.0");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -140,8 +142,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
 		{
+			output.Add("TranslationHelper.convertIntegerSetToIntArray(");
 			this.Translator.TranslateExpression(output, dictionary);
-			output.Add(".keySet()");
+			output.Add(".keySet())");
 		}
 
 		protected override void TranslateDictionaryGetValues(List<string> output, Expression dictionary)
@@ -210,7 +213,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
-			output.Add("TODO:(\"refactor the insert framework code stuff\"");
+			output.Add("// TODO: refactor the insert framework code stuff");
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
@@ -246,10 +249,10 @@ namespace Crayon.Translator.Java
 		protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".insert(");
+			output.Add(".add(");
 			this.Translator.TranslateExpression(output, index);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, index);
+			this.Translator.TranslateExpression(output, value);
 			output.Add(")");	
 		}
 
@@ -262,12 +265,17 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateListJoinChars(List<string> output, Expression list)
+		{
+			output.Add("TranslationHelper.joinChars(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
 		protected override void TranslateListLastIndex(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".get(");
-			this.Translator.TranslateExpression(output, list);
-			output.Add(".length - 1)");
+			output.Add(".size() - 1");
 		}
 
 		protected override void TranslateListLength(List<string> output, Expression list)
@@ -279,9 +287,9 @@ namespace Crayon.Translator.Java
 		protected override void TranslateListPop(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".removeAt(");
+			output.Add(".remove(");
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".length - 1)");
+			output.Add(".size() - 1)");
 		}
 
 		protected override void TranslateListPush(List<string> output, Expression list, Expression value)
@@ -295,7 +303,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)
 		{
 			this.Translator.TranslateExpression(output, list);
-			output.Add(".removeAt(");
+			output.Add(".remove(");
 			this.Translator.TranslateExpression(output, index);
 			output.Add(")");
 		}
@@ -335,26 +343,25 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
-			output.Add("new ");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, false));
-			output.Add("[");
-			this.Translator.TranslateExpression(output, size);
-			output.Add("]");
+			string javaType = this.JavaPlatform.GetTypeStringFromAnnotation(type.FirstToken, type.Value, false, true);
+			List<string> sizeValue = new List<string>();
+			this.Translator.TranslateExpression(sizeValue, size);
+			CreateNewArrayOfSize(output, javaType, string.Join("", sizeValue));
 		}
 
 		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
 		{
 			output.Add("new HashMap<");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(keyType.Value, true));
+			output.Add(this.JavaPlatform.GetTypeStringFromString(keyType.Value, true, false));
 			output.Add(", ");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(valueType.Value, true));
+			output.Add(this.JavaPlatform.GetTypeStringFromString(valueType.Value, true, false));
 			output.Add(">()");
 		}
 
 		protected override void TranslateNewList(List<string> output, StringConstant type)
 		{
 			output.Add("new ArrayList<");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true));
+			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true, false));
 			output.Add(">()");
 		}
 
@@ -366,7 +373,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateNewStack(List<string> output, StringConstant type)
 		{
 			output.Add("new Stack<");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true));
+			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true, false));
 			output.Add(">()");
 		}
 
@@ -399,7 +406,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
-			output.Add("TranslationHelper.getProgramData(");
+			output.Add("TranslationHelper.setProgramData(");
 			this.Translator.TranslateExpression(output, programData);
 			output.Add(")");
 		}
@@ -528,7 +535,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateStringLower(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
-			output.Add(".toLower()");
+			output.Add(".toLowerCase()");
 		}
 
 		protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
@@ -557,8 +564,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateStringReverse(List<string> output, Expression stringValue)
 		{
+			output.Add("TranslationHelper.reverseString(");
 			this.Translator.TranslateExpression(output, stringValue);
-			output.Add(".reverse()");
+			output.Add(")");
 		}
 
 		protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
@@ -566,7 +574,7 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, stringExpr);
 			output.Add(".split(Pattern.quote(");
 			this.Translator.TranslateExpression(output, sep);
-			output.Add(")");
+			output.Add("))");
 		}
 
 		protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
@@ -586,7 +594,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateStringUpper(List<string> output, Expression stringValue)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
-			output.Add(".toUpper()");
+			output.Add(".toUpperCase()");
 		}
 
 		protected override void TranslateTan(List<string> output, Expression value)
@@ -613,6 +621,26 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, numerator);
 			output.Add(" / ");
 			this.Translator.TranslateExpression(output, denominator);
+		}
+
+		private void CreateNewArrayOfSize(List<string> output, string rawType, string size)
+		{
+			output.Add("new ");
+			// Delightful hack...
+			int padding = 0;
+			while (rawType.EndsWith("[]"))
+			{
+				padding++;
+				rawType = rawType.Substring(0, rawType.Length - 2);
+			}
+			output.Add(rawType);
+			output.Add("[");
+			output.Add(size);
+			output.Add("]");
+			while (padding-- > 0)
+			{
+				output.Add("[]");
+			}
 		}
 	}
 }

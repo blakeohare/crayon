@@ -29,13 +29,13 @@ function initialize_constant_values() {
 	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
 	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
 	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
-		$_list_set(positive_integers, i, new Value(Types.INTEGER, i));
+		$_array_set(positive_integers, i, new Value(Types.INTEGER, i));
 	}
 	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
-		$_list_set(negative_integers, i, new Value(Types.INTEGER, -i));
+		$_array_set(negative_integers, i, new Value(Types.INTEGER, -i));
 	}
-	$_list_set(INTEGERS_CACHE, 0, positive_integers);
-	$_list_set(INTEGERS_CACHE, 1, negative_integers);
+	$_array_set(INTEGERS_CACHE, 0, positive_integers);
+	$_array_set(INTEGERS_CACHE, 1, negative_integers);
 }
 
 function @type('Value') build_integer(@type('int') num) {
@@ -127,8 +127,8 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 function @type('Value') buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
 	if (type == Types.INTEGER) return build_integer(value);
-	if (type == Types.FLOAT) return $_list_get(floatTable, value);
-	if (type == Types.STRING) return $_list_get(stringTable, value);
+	if (type == Types.FLOAT) return $_array_get(floatTable, value);
+	if (type == Types.STRING) return $_array_get(stringTable, value);
 	if (type == Types.BOOLEAN && value == 1) return VALUE_TRUE;
 	if (type == Types.BOOLEAN && value == 0) return VALUE_FALSE;
 	return null;

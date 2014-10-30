@@ -320,6 +320,12 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateListJoinChars(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".join('')");
+		}
+
 		protected override void TranslateListLastIndex(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);

@@ -320,6 +320,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateListJoinChars(List<string> output, Expression list)
+		{
+			output.Add("''.join(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
 		protected override void TranslateListLastIndex(List<string> output, Expression list)
 		{
 			output.Add("-1");

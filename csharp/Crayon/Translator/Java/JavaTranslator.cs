@@ -26,7 +26,10 @@ namespace Crayon.Translator.Java
 
 			if (typeAnnotation != null)
 			{
-				string type = this.JavaPlatform.GetTypeStringFromAnnotation(typeAnnotation.FirstToken, typeAnnotation.GetSingleArgAsString(null), false);
+				string type = this.JavaPlatform.GetTypeStringFromAnnotation(
+					typeAnnotation.FirstToken, 
+					typeAnnotation.GetSingleArgAsString(null), 
+					false, false);
 				output.Add(type);
 				output.Add(" ");
 			}
@@ -43,7 +46,7 @@ namespace Crayon.Translator.Java
 		protected override void TranslateFunctionDefinition(List<string> output, ParseTree.FunctionDefinition functionDef)
 		{
 			Annotation returnType = functionDef.GetAnnotation("type");
-			string type = returnType == null ? "Object" : this.JavaPlatform.GetTypeStringFromString(returnType.GetSingleArgAsString(null), false);
+			string type = returnType == null ? "Object" : this.JavaPlatform.GetTypeStringFromString(returnType.GetSingleArgAsString(null), false, false);
 
 			output.Add(this.CurrentTabIndention);
 			output.Add("public static ");
@@ -57,7 +60,7 @@ namespace Crayon.Translator.Java
 					output.Add(", ");
 				}
 				string argType = functionDef.ArgAnnotations[i].GetSingleArgAsString(null);
-				output.Add(this.JavaPlatform.GetTypeStringFromString(argType, false));
+				output.Add(this.JavaPlatform.GetTypeStringFromString(argType, false, false));
 				output.Add(" v_");
 				output.Add(functionDef.ArgNames[i].Value);
 			}
