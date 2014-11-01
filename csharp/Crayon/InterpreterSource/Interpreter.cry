@@ -56,6 +56,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
+	@type('int') int4 = 0;
 	@type('int') i = 0;
 	@type('double') float1 = 3.14;
 	@type('double') float2 = 2.718;
@@ -817,7 +818,10 @@ function @omitReturn @type('string') interpret(
 						// $download_image(key, url)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_download_image');
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$download_image requires two string arguments.");
+						}
+						$_download_image($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
 						break;
 
 					case %%%FF_DRAW_ELLIPSE%%%:
@@ -830,7 +834,25 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_draw_ellipse');
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER ||
+							Value$arg4.type != Types.INTEGER ||
+							Value$arg5.type != Types.INTEGER ||
+							Value$arg6.type != Types.INTEGER ||
+							Value$arg7.type != Types.INTEGER ||
+							Value$arg8.type != Types.INTEGER) {
+							return killExecution(stack, "$draw_ellipse requires 8 integer arguments.");
+						}
+						$_draw_ellipse(
+							$_cast('int', Value$arg1.internalValue),
+							$_cast('int', Value$arg2.internalValue),
+							$_cast('int', Value$arg3.internalValue),
+							$_cast('int', Value$arg4.internalValue),
+							$_cast('int', Value$arg5.internalValue),
+							$_cast('int', Value$arg6.internalValue),
+							$_cast('int', Value$arg7.internalValue),
+							$_cast('int', Value$arg8.internalValue));
 						break;
 
 					case %%%FF_DRAW_LINE%%%:
@@ -844,7 +866,29 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_draw_line');
+						
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER ||
+							Value$arg4.type != Types.INTEGER ||
+							Value$arg5.type != Types.INTEGER ||
+							Value$arg6.type != Types.INTEGER ||
+							Value$arg7.type != Types.INTEGER ||
+							Value$arg8.type != Types.INTEGER ||
+							Value$arg9.type != Types.INTEGER) {
+							return killExecution(stack, "$draw_line requires 9 integer arguments.");
+						}
+
+						$_draw_line(
+							$_cast('int', Value$arg1.internalValue),
+							$_cast('int', Value$arg2.internalValue),
+							$_cast('int', Value$arg3.internalValue),
+							$_cast('int', Value$arg4.internalValue),
+							$_cast('int', Value$arg5.internalValue),
+							$_cast('int', Value$arg6.internalValue),
+							$_cast('int', Value$arg7.internalValue),
+							$_cast('int', Value$arg8.internalValue),
+							$_cast('int', Value$arg9.internalValue));
 						break;
 
 					case %%%FF_DRAW_RECTANGLE%%%:
@@ -857,7 +901,25 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_draw_rectangle');
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER ||
+							Value$arg4.type != Types.INTEGER ||
+							Value$arg5.type != Types.INTEGER ||
+							Value$arg6.type != Types.INTEGER ||
+							Value$arg7.type != Types.INTEGER ||
+							Value$arg8.type != Types.INTEGER) {
+							return killExecution(stack, "$draw_rectangle requires 8 integer arguments.");
+						}
+						$_draw_rectangle(
+							$_cast('int', Value$arg1.internalValue),
+							$_cast('int', Value$arg2.internalValue),
+							$_cast('int', Value$arg3.internalValue),
+							$_cast('int', Value$arg4.internalValue),
+							$_cast('int', Value$arg5.internalValue),
+							$_cast('int', Value$arg6.internalValue),
+							$_cast('int', Value$arg7.internalValue),
+							$_cast('int', Value$arg8.internalValue));
 						break;
 
 					case %%%FF_FILL_SCREEN%%%:
@@ -865,7 +927,12 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_fill_screen');
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER) {
+							return killExecution(stack, "$fill_screen requires 3 integer arguments.");
+						}
+						$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
 						
 					case %%%FF_FLIP_IMAGE%%%:
@@ -873,7 +940,15 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_flip_image');
+
+						// TODO: also check to see arg1 is an image
+						if (Value$arg2.type != Types.BOOLEAN || Value$arg3.type != Types.BOOLEAN) {
+							return killExecution(stack, "$flip_image requires an image and two booleans.");
+						}
+						output = new Value(Types.NATIVE_OBJECT, $_flip_image(
+							Value$arg1.internalValue,
+							$_cast('bool', Value$arg2.internalValue),
+							$_cast('bool', Value$arg3.internalValue)));
 						break;
 
 					case %%%FF_FLOOR%%%:
@@ -905,19 +980,25 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_GET_IMAGE%%%:
 						// $get_image(image_key)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_get_image');
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$get_image requires a string argument.");
+						}
+						// TODO: verify image is valid and loaded.
+						output = new Value(Types.NATIVE_OBJECT, $_get_image($_cast('string', Value$arg1.internalValue)));
 						break;
 						
 					case %%%FF_GET_IMAGE_HEIGHT%%%:
 						// $get_image_height(image)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_get_image_height');
+						int1 = $_get_image_height(Value$arg1.internalValue);
+						output = build_integer(int1);
 						break;
 
 					case %%%FF_GET_IMAGE_WIDTH%%%:
 						// $get_image_width(image)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_get_image_width');
+						int1 = $_get_image_width(Value$arg1.internalValue);
+						output = build_integer(int1);
 						break;
 
 					case %%%FF_INITIALIZE_GAME%%%: 
@@ -941,7 +1022,24 @@ function @omitReturn @type('string') interpret(
 						// $initialize_screen(width, height)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_initialize_screen');
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER) {
+							return killExecution(stack, "$initialize_screen requires two integer arguments.");
+						}
+
+						int1 = $_cast('int', Value$arg1.internalValue);
+						int2 = $_cast('int', Value$arg2.internalValue);
+						if (int1 < 1 || int2 < 1) {
+							return killExecution(stack, "Screen dimensions must be positive.");
+						}
+
+						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+							yieldControl(stack);
+							$_initialize_screen(int1, int2, null, null);
+							return '';
+						} else {
+							$_initialize_screen(int1, int2, null, null);
+						}
 						break;
 						
 					case %%%FF_INITIALIZE_SCREEN_SCALED%%%:
@@ -950,18 +1048,62 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_initialize_screen_scaled');
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER) {
+							return killExecution(stack, "$initialize_screen_scaled requires four integer arguments.");
+						}
+
+						int1 = $_cast('int', Value$arg1.internalValue);
+						int2 = $_cast('int', Value$arg2.internalValue);
+						int3 = $_cast('int', Value$arg3.internalValue);
+						int4 = $_cast('int', Value$arg4.internalValue);
+
+						if (int1 < 1 || int2 < 1 || int3 < 1 || int4 < 1) {
+							return killExecution(stack, "Screen dimensions must be positive.");
+						}
+
+						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+							yieldControl(stack);
+							$_initialize_screen(int1, int2, int3, int4);
+							return '';
+						} else {
+							$_initialize_screen(int1, int2, int3, int4);
+						}
 						break;
 						
 					case %%%FF_IS_IMAGE_LOADED%%%:
 						// $is_image_loaded(image_key)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_is_image_loaded');
+						if (%%%IMAGES_LOAD_INSTANTLY%%%) {
+							output = VALUE_TRUE;
+						} else {
+							// TODO: eventually this should return a numeric code instead so that there will be 3 states:
+							// 0 - not loaded yet
+							// 1 - loaded
+							// 2 - key is unknown -- in this case, throw an error
+							// since there would have to be a system call, this would probably negate the purpose
+							// of the IMAGES_LOAD_INSTANTLY optimization above.
+							if ($_is_image_loaded($_cast('string', Value$arg1.internalValue))) {
+								output = VALUE_TRUE;
+							} else {
+								output = VALUE_FALSE;
+							}
+						}
 						break;
 
 					case %%%FF_PARSE_INT%%%:
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_parse_int');
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$parse_int requires a string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						if ($_is_valid_integer(string1)) {
+							output = build_integer($_parse_int(string1));
+						} else {
+							output = VALUE_NULL;
+						}
 						break;
 
 					case %%%FF_PRINT%%%: 
@@ -977,7 +1119,7 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_SET_TITLE%%%:
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
-						$_insert_platform_code('ff_set_title');
+						$_set_title(string1);
 						break;
 						
 					case %%%FF_SIN%%%:

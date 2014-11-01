@@ -19,6 +19,8 @@ namespace Crayon.Translator.Python
 		public override bool IsStronglyTyped { get { return false; } }
 		public override bool UseFixedListArgConstruction { get { return false; } }
 		public override bool IntIsFloor { get { return false; } }
+		public override bool ImagesLoadInstantly { get { return true; } }
+		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "pygame"; } }
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions)

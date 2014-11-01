@@ -94,11 +94,21 @@ def download_image_impl(key, url):
 def get_image_impl(key):
 	surf = _images_downloaded.get(key, None)
 	if surf == None: return None
-	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)]
+	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)
 
 def wrappedChr(code):
 	if code < 0 or code > 255: return '?'
 	return chr(code)
+
+_NUM_CHARS = {}
+for c in '0123456789':
+	_NUM_CHARS[c] = True
+
+def _is_valid_integer(value):
+	for c in value:
+		if not _NUM_CHARS.get(c, False):
+			return False
+	return True
 
 def _pygame_end_of_frame():
 	if _global_vars['scaled_mode']:
@@ -113,6 +123,6 @@ def _pygame_flip_image(img, flipx, flipy):
 		return None
 	image = img[1]
 	output = pygame.transform.flip(image, flipx == True, flipy == True)
-	return [%%%TYPE_NATIVE_OBJECT%%%, (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)]
+	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)
 
 program_data = [None]

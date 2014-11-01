@@ -173,12 +173,103 @@ namespace Crayon.Translator.Python
 			throw new Exception("This should have been optimized out.");
 		}
 
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
+		{
+			output.Add("download_image_impl(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			// TODO: use alpha
+			output.Add("_PDE(_global_vars['virtual_screen'], (");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add("), _PR(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add("))");
+		}
+
+		protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("_PDL(_global_vars['virtual_screen'], (");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add("), (");
+			this.Translator.TranslateExpression(output, ax);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, ay);
+			output.Add("), (");
+			this.Translator.TranslateExpression(output, bx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, by);
+			output.Add("), ");
+			this.Translator.TranslateExpression(output, lineWidth);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("_PDR(_global_vars['virtual_screen'], (");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add("), _PR(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add("))");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("float(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(" ** ");
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+		{
+			output.Add("_global_vars['virtual_screen'].fill((");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add("))");
+		}
+
+		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("_pygame_flip_image(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
 			output.Add(")");
 		}
 
@@ -192,6 +283,25 @@ namespace Crayon.Translator.Python
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
 			output.Add("_pygame_pump_events()");
+		}
+
+		protected override void TranslateGetImage(List<string> output, Expression imageKey)
+		{
+			output.Add("get_image_impl(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateGetImageHeight(List<string> output, Expression image)
+		{
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1].get_height()");
+		}
+
+		protected override void TranslateGetImageWidth(List<string> output, Expression image)
+		{
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1].get_width()");
 		}
 
 		protected override void TranslateGetProgramData(List<string> output)
@@ -213,77 +323,44 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		// TODO: this is supposed to be in the pygame platform stuff.
-		// Also, implement each switch result as an abstract function
-		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
+		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
 		{
-			switch (id)
+			output.Add("_pygame_initialize_screen(");
+			this.Translator.TranslateExpression(output, gameWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, gameHeight);
+			output.Add(", ");
+			if (screenWidth is NullConstant)
 			{
-				case "ff_download_image":
-					output.Add("download_image_impl(v_arg1[1], v_arg2[1])");
-					break;
-
-				case "ff_draw_ellipse":
-					output.Add("_PDE(_global_vars['virtual_screen'], (v_arg5[1], v_arg6[1], v_arg7[1]), _PR(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1]))");
-					break;
-
-				case "ff_draw_line":
-					output.Add("_PDL(_global_vars['virtual_screen'], (v_arg6[1], v_arg7[1], v_arg8[1]), (v_arg1[1], v_arg2[1]), (v_arg3[1], v_arg4[1]), v_arg5[1])");
-					break;
-
-				case "ff_draw_rectangle":
-					output.Add("_PDR(_global_vars['virtual_screen'], (v_arg5[1], v_arg6[1], v_arg7[1]), _PR(v_arg1[1], v_arg2[1], v_arg3[1], v_arg4[1]))");
-					break;
-
-				case "ff_fill_screen":
-					output.Add("_global_vars['virtual_screen'].fill((v_arg1[1], v_arg2[1], v_arg3[1]))");
-					break;
-
-				case "ff_flip_image":
-					output.Add("v_output = _pygame_flip_image(v_arg1[1], v_arg2[1], v_arg3[1])");
-					break;
-
-				case "ff_get_image":
-					output.Add("v_output = get_image_impl(v_arg1[1])");
-					break;
-
-				case "ff_get_image_height":
-					output.Add("v_output = v_build_integer(v_arg1[1][1].get_height())");
-					break;
-
-				case "ff_get_image_width":
-					output.Add("v_output = v_build_integer(v_arg1[1][1].get_width())");
-					break;
-
-				case "ff_initialize_screen":
-					output.Add("v_output = _pygame_initialize_screen(v_arg1[1], v_arg2[1], None)");
-					break;
-
-				case "ff_initialize_screen_scaled":
-					output.Add("v_output = _pygame_initialize_screen(v_arg1[1], v_arg2[1], (v_arg3[1], v_arg4[1]))");
-					break;
-
-				case "ff_is_image_loaded":
-					output.Add("v_output = v_VALUE_TRUE");
-					break;
-
-				case "ff_parse_int":
-					output.Add("v_output = [" + (int)Types.INTEGER + ", int(v_arg1[1])]");
-					break;
-
-				case "ff_set_title":
-					output.Add("pygame.display.set_caption(v_string1)");
-					break;
-
-				default:
-					throw new NotImplementedException();
+				output.Add("None");
 			}
+			else
+			{
+				output.Add("(");
+				this.Translator.TranslateExpression(output, screenWidth);
+				output.Add(this.Shorten(", "));
+				this.Translator.TranslateExpression(output, screenHeight);
+				output.Add(")");
+			}
+			output.Add(")");
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
 		{
 			output.Add("int(");
 			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateIsImageLoaded(List<string> output, Expression key)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
+		protected override void TranslateIsValidInteger(List<string> output, Expression number)
+		{
+			output.Add("_is_valid_integer(");
+			this.Translator.TranslateExpression(output, number);
 			output.Add(")");
 		}
 
@@ -430,6 +507,13 @@ namespace Crayon.Translator.Python
 			output.Add("_pygame_end_of_frame()");
 		}
 
+		protected override void TranslateParseInt(List<string> output, Expression rawString)
+		{
+			output.Add("int(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePrint(List<string> output, Expression message)
 		{
 			output.Add("print(");
@@ -456,6 +540,13 @@ namespace Crayon.Translator.Python
 		{
 			output.Add("program_data[0] = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateSetTitle(List<string> output, Expression title)
+		{
+			output.Add("pygame.display.set_caption(");
+			this.Translator.TranslateExpression(output, title);
+			output.Add(")");
 		}
 
 		protected override void TranslateSin(List<string> output, Expression value)

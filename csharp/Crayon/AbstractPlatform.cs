@@ -17,6 +17,8 @@ namespace Crayon
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
 		public abstract bool IntIsFloor { get; }
+		public abstract bool ImagesLoadInstantly { get; }
+		public abstract bool ScreenBlocksExecution { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.

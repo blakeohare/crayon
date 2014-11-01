@@ -63,7 +63,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
 		{
-			output.Add("GameWindow.BlitImage((Image)");
+			output.Add("GameWindow.Instance.BlitImage((Image)");
 			this.Translator.TranslateExpression(output, image);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, x);
@@ -180,12 +180,108 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
+		{
+			output.Add("Image.LoadImage(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("GameWindow.Instance.DrawEllipse(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("GameWindow.Instance.DrawLine(");
+			this.Translator.TranslateExpression(output, ax);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, ay);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, bx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, by);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, lineWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("GameWindow.Instance.DrawRectangle(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("System.Math.Pow(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+		{
+			output.Add("GameWindow.Instance.FillScreen(");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(")");
+		}
+
+		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("Image.FlipImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
 			output.Add(")");
 		}
 
@@ -198,7 +294,28 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
-			output.Add("GameWindow.GetEvents()");
+			output.Add("GameWindow.Instance.GetEvents()");
+		}
+
+		protected override void TranslateGetImage(List<string> output, Expression imageKey)
+		{
+			output.Add("Image.GetImageByKey(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateGetImageHeight(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").Height");
+		}
+
+		protected override void TranslateGetImageWidth(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").Width");
 		}
 
 		protected override void TranslateGetProgramData(List<string> output)
@@ -217,87 +334,20 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, fps);
 		}
 
-		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
+		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
 		{
-			switch (id)
+			output.Add("GameWindow.InitializeScreen(");
+			this.Translator.TranslateExpression(output, gameWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, gameHeight);
+			if (!(screenWidth is NullConstant))
 			{
-				case "ff_download_image":
-					output.Add("Image.LoadImage((string)v_arg1.internalValue, (string)v_arg2.internalValue)");
-					break;
-
-				case "ff_draw_ellipse":
-					output.Add("// TODO: draw ellipse");
-					break;
-
-				case "ff_draw_line":
-					output.Add("// TODO: draw line");
-					break;
-
-				case "ff_draw_rectangle":
-					output.Add("GameWindow.DrawRectangle(");
-					for (int i = 1; i <= 8; ++i)
-					{
-						if (i > 1) output.Add(", ");
-						output.Add("(int)v_arg" + i + ".internalValue");
-					}
-					output.Add(")");
-					break;
-
-				case "ff_fill_screen":
-					output.Add("// TODO: fill screen");
-					break;
-
-				case "ff_flip_image":
-					output.Add("// TODO: flip image");
-					break;
-
-				case "ff_get_image":
-					output.Add("v_output = new Value(" + (int)Types.NATIVE_OBJECT + ", Image.GetImageByKey((string)v_arg1.internalValue))");
-					break;
-
-				case "ff_get_image_height":
-					output.Add("v_output = v_build_integer(((Image)v_arg1.internalValue).Height)");
-					break;
-
-				case "ff_get_image_width":
-					output.Add("v_output = v_build_integer(((Image)v_arg1.internalValue).Width)");
-					break;
-
-				case "ff_initialize_screen":
-					output.Add("v_yieldControl(v_stack);");
-					output.Add(this.Translator.NL);
-					output.Add(tab);
-					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue);");
-					output.Add(this.Translator.NL);
-					output.Add(tab);
-					output.Add("return \"\"");
-					break;
-
-				case "ff_initialize_screen_scaled":
-					output.Add("v_yieldControl(v_stack);");
-					output.Add(this.Translator.NL);
-					output.Add(tab);
-					output.Add("GameWindow.InitializeScreen((int)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue, (int)v_arg4.internalValue);");
-					output.Add(this.Translator.NL);
-					output.Add(tab);
-					output.Add("return \"\"");
-					break;
-
-				case "ff_is_image_loaded":
-					output.Add("v_output = v_VALUE_TRUE");
-					break;
-
-				case "ff_parse_int":
-					output.Add("v_output = TranslationHelper.ParseInt((string)v_arg1.internalValue)");
-					break;
-
-				case "ff_set_title":
-					output.Add("// TODO: set title");
-					break;
-
-				default:
-					throw new NotImplementedException("No framework code available: " + id);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, screenWidth);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, screenHeight);
 			}
+			output.Add(")");
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
@@ -305,6 +355,18 @@ namespace Crayon.Translator.CSharp
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateIsImageLoaded(List<string> output, Expression key)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
+		protected override void TranslateIsValidInteger(List<string> output, Expression number)
+		{
+			output.Add("int.TryParse(");
+			this.Translator.TranslateExpression(output, number);
+			output.Add(", out v_int1)"); // meh
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)
@@ -485,6 +547,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(">()");
 		}
 
+		protected override void TranslateParseInt(List<string> output, Expression rawString)
+		{
+			output.Add("int.Parse(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			// Nope
@@ -516,6 +585,13 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
+		}
+
+		protected override void TranslateSetTitle(List<string> output, Expression title)
+		{
+			output.Add("GameWindow.Instance.SetTitle(");
+			this.Translator.TranslateExpression(output, title);
+			output.Add(")");
 		}
 
 		protected override void TranslateSin(List<string> output, Expression value)

@@ -196,12 +196,108 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
+		{
+			output.Add("ImageLibrary.loadImage(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("RenderEngine.drawEllipse(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("RenderEngine.drawLine(");
+			this.Translator.TranslateExpression(output, ax);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, ay);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, bx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, by);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, lineWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
+		protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			output.Add("RenderEngine.drawRectangle(");
+			this.Translator.TranslateExpression(output, left);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, top);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("Math.pow(");
 			this.Translator.TranslateExpression(output, baseNum);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
+		}
+
+		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+		{
+			output.Add("RenderEngine.fillScreen(");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(")");
+		}
+
+		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("ImageLibrary.flipImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
 			output.Add(")");
 		}
 
@@ -215,6 +311,27 @@ namespace Crayon.Translator.Java
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
 			output.Add("GameWindow.pumpEventQueue()");
+		}
+
+		protected override void TranslateGetImage(List<string> output, Expression imageKey)
+		{
+			output.Add("ImageLibrary.getImage(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateGetImageHeight(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").height");
+		}
+
+		protected override void TranslateGetImageWidth(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").width");
 		}
 
 		protected override void TranslateGetProgramData(List<string> output)
@@ -234,9 +351,24 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
+		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
 		{
-			output.Add("System.out.println(\"TODO: refactor " + id + "\")");
+			output.Add("GameWindow.initializeScreen(");
+			this.Translator.TranslateExpression(output, gameWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, gameHeight);
+			if (screenWidth is NullConstant)
+			{
+				output.Add(")");
+			}
+			else
+			{
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, screenWidth);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, screenHeight);
+				output.Add(")");
+			}
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
@@ -244,6 +376,18 @@ namespace Crayon.Translator.Java
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateIsImageLoaded(List<string> output, Expression key)
+		{
+			throw new Exception("This should have been optimized out.");
+		}
+
+		protected override void TranslateIsValidInteger(List<string> output, Expression number)
+		{
+			output.Add("TranslationHelper.isValidInteger(");
+			this.Translator.TranslateExpression(output, number);
+			output.Add(")"); // meh
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)
@@ -400,6 +544,13 @@ namespace Crayon.Translator.Java
 			output.Add(">()");
 		}
 
+		protected override void TranslateParseInt(List<string> output, Expression rawString)
+		{
+			output.Add("Integer.parseInt(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new NotImplementedException();
@@ -431,6 +582,13 @@ namespace Crayon.Translator.Java
 		{
 			output.Add("TranslationHelper.setProgramData(");
 			this.Translator.TranslateExpression(output, programData);
+			output.Add(")");
+		}
+
+		protected override void TranslateSetTitle(List<string> output, Expression title)
+		{
+			output.Add("GameWindow.setTitle(");
+			this.Translator.TranslateExpression(output, title);
 			output.Add(")");
 		}
 

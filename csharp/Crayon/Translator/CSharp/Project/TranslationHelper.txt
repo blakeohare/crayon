@@ -87,15 +87,5 @@ namespace %%%PROJECT_ID%%%
 			}
 			return sb.ToString();
 		}
-
-		public static Value ParseInt(string value)
-		{
-			int output;
-			if (int.TryParse(value, out output))
-			{
-				return CrayonWrapper.v_build_integer(output);
-			}
-			return CrayonWrapper.v_VALUE_NULL;
-		}
 	}
 }

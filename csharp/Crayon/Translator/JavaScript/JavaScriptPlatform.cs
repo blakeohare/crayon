@@ -20,6 +20,8 @@ namespace Crayon.Translator.JavaScript
 		public override bool IsStronglyTyped { get { return false; } }
 		public override bool UseFixedListArgConstruction { get { return false; } }
 		public override bool IntIsFloor { get { return true; } }
+		public override bool ImagesLoadInstantly { get { return false; } }
+		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "javascript"; } }
 		
 

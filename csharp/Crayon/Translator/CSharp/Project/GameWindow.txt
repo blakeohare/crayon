@@ -13,6 +13,11 @@ namespace %%%PROJECT_ID%%%
 		private const int MOUSE_RIGHT = 1;
 		private const int MOUSE_MOVE = 2;
 
+		private const int DRAW_COMMAND_BLIT = 1;
+		private const int DRAW_COMMAND_RECTANGLE = 2;
+		private const int DRAW_COMMAND_ELLIPSE = 3;
+		private const int DRAW_COMMAND_LINE = 4;
+
 		private Queue<int> events = new Queue<int>();
 		private Queue<string> keyEvents = new Queue<string>();
 
@@ -23,6 +28,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static double fps = 60;
 		private static GameWindow instance = null;
+		public static GameWindow Instance { get { return instance; } }
 
 		public static double FPS
 		{
@@ -30,7 +36,7 @@ namespace %%%PROJECT_ID%%%
 			set { fps = value; }
 		}
 
-		public GameWindow(double fps, int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		private GameWindow(double fps, int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 			: base(screenWidth, screenHeight)
 		{
 			GameWindow.instance = this;
@@ -60,7 +66,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
-			GameWindow gw = new GameWindow(GameWindow.FPS, gameWidth, gameHeight, screenWidth, screenHeight);
+			GameWindow gw = new GameWindow(fps, gameWidth, gameHeight, screenWidth, screenHeight);
 			gw.Run(GameWindow.FPS, GameWindow.FPS);
 			return false;
 		}
@@ -164,7 +170,7 @@ namespace %%%PROJECT_ID%%%
 			return new Value(%%%TYPE_LIST%%%, new List<Value>(values));
 		}
 
-		public static List<Value> GetEvents()
+		public List<Value> GetEvents()
 		{
 			List<Value> output = new List<Value>();
 			Queue<int> events = instance.events;
@@ -251,6 +257,11 @@ namespace %%%PROJECT_ID%%%
 			GL.Viewport(0, 0, this.screenWidth, this.screenHeight);
 		}
 
+		public void SetTitle(string value)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		private void Update()
 		{
 			drawListVirtualLength = 0;
@@ -271,29 +282,26 @@ namespace %%%PROJECT_ID%%%
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
 
-			GameWindow.PerformDraws(this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
+			this.PerformDraws(this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
 
 			this.SwapBuffers();
 		}
 
-		private static int[] drawList = new int[100];
-		private static int drawListVirtualLength = 0;
-		private static int drawListRealLength = 100;
+		private int[] drawList = new int[100];
+		private int drawListVirtualLength = 0;
+		private int drawListRealLength = 100;
 
-		private static Image[] imageList = new Image[100];
-		private static int imageListVirtualLength = 0;
-		private static int imageListRealLength = 100;
+		private Image[] imageList = new Image[100];
+		private int imageListVirtualLength = 0;
+		private int imageListRealLength = 100;
 
-		private const int DRAW_COMMAND_BLIT = 0;
-		private const int DRAW_COMMAND_RECTANGLE = 1;
-		
-		private static void PerformDraws(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		private void PerformDraws(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
 			int RW = screenWidth;
 			int RH = screenHeight;
 			int VW = gameWidth;
 			int VH = gameHeight;
-			int left, top, right, bottom;
+			int left, top, right, bottom, startX, startY, endX, endY, lineWidth;
 			byte red, green, blue, alpha;
 			Image image;
 
@@ -368,12 +376,37 @@ namespace %%%PROJECT_ID%%%
 						GL.End();
 						break;
 
+					case DRAW_COMMAND_ELLIPSE:
+						left = drawList[i++];
+						top = drawList[i++];
+						right = drawList[i++] + left;
+						bottom = drawList[i++] + top;
+						red = (byte)drawList[i++];
+						green = (byte)drawList[i++];
+						blue = (byte)drawList[i++];
+						alpha = (byte)drawList[i++];
+
+						throw new System.NotImplementedException("TODO: draw ellipse");
+
+					case DRAW_COMMAND_LINE:
+						startX = drawList[i++];
+						startY = drawList[i++];
+						endX = drawList[i++];
+						endY = drawList[i++];
+						lineWidth = drawList[i++];
+						red = (byte)drawList[i++];
+						green = (byte)drawList[i++];
+						blue = (byte)drawList[i++];
+						alpha = (byte)drawList[i++];
+
+						throw new System.NotImplementedException("TODO: draw line");
+
 					default: throw new System.Exception("Unknown draw command");
 				}
 			}
 		}
 
-		public static void BlitImage(Image image, int x, int y)
+		public void BlitImage(Image image, int x, int y)
 		{
 			if (drawListVirtualLength + 3 >= drawListRealLength)
 			{
@@ -394,7 +427,7 @@ namespace %%%PROJECT_ID%%%
 			imageList[imageListVirtualLength++] = image;
 		}
 		
-		public static void DrawRectangle(int left, int top, int width, int height, int red, int green, int blue, int alpha)
+		public void DrawRectangle(int left, int top, int width, int height, int red, int green, int blue, int alpha)
 		{
 			if (drawListVirtualLength + 9 >= drawListRealLength)
 			{
@@ -411,6 +444,38 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength++] = green & 255;
 			drawList[drawListVirtualLength++] = blue & 255;
 			drawList[drawListVirtualLength++] = alpha & 255;
+		}
+
+		public void DrawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha)
+		{
+			drawList[drawListVirtualLength++] = DRAW_COMMAND_ELLIPSE;
+			drawList[drawListVirtualLength++] = left;
+			drawList[drawListVirtualLength++] = top;
+			drawList[drawListVirtualLength++] = width;
+			drawList[drawListVirtualLength++] = height;
+			drawList[drawListVirtualLength++] = red & 255;
+			drawList[drawListVirtualLength++] = green & 255;
+			drawList[drawListVirtualLength++] = blue & 255;
+			drawList[drawListVirtualLength++] = alpha & 255;
+		}
+
+		public void DrawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha)
+		{
+			drawList[drawListVirtualLength++] = DRAW_COMMAND_LINE;
+			drawList[drawListVirtualLength++] = startX;
+			drawList[drawListVirtualLength++] = startY;
+			drawList[drawListVirtualLength++] = endX;
+			drawList[drawListVirtualLength++] = endY;
+			drawList[drawListVirtualLength++] = lineWidth;
+			drawList[drawListVirtualLength++] = red & 255;
+			drawList[drawListVirtualLength++] = green & 255;
+			drawList[drawListVirtualLength++] = blue & 255;
+			drawList[drawListVirtualLength++] = alpha & 255;
+		}
+
+		public void FillScreen(int red, int green, int blue)
+		{
+			this.DrawRectangle(-1, -1, this.gameWidth + 2, this.gameHeight + 2, red, green, blue, 255);
 		}
 
 		private static T[] DoubleArray<T>(T[] original)

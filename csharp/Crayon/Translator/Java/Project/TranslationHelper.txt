@@ -24,6 +24,15 @@ final class TranslationHelper {
         return programData;
     }
 
+    public static boolean isValidInteger(String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     private static final char[] BUFFER = new char[500]; 
     public static String readFileText(String path) {
         FileReader fileReader;

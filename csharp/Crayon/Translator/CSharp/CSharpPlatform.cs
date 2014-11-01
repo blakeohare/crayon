@@ -17,6 +17,8 @@ namespace Crayon.Translator.CSharp
 		public override bool IsStronglyTyped { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool IntIsFloor { get { return false; } }
+		public override bool ImagesLoadInstantly { get { return true; } }
+		public override bool ScreenBlocksExecution { get { return true; } }
 		public override string OutputFolderName { get { return "csharpwindows"; } }
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions)

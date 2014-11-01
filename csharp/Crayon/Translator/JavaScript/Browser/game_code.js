@@ -5,7 +5,7 @@ R.now = function () {
 };
 
 R.get_image_impl = function(key) {
-	return [%%%TYPE_NATIVE_OBJECT%%%, [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, R._global_vars.image_downloads[key]]];
+	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, R._global_vars.image_downloads[key]];
 };
 
 R._global_vars = {
@@ -258,6 +258,19 @@ R.print = function (value) {
 	}
 };
 
+R.is_valid_integer = function (value) {
+	var test = parseInt(value);
+	// NaN produces a paradocical value that fails the following tests...
+	// TODO: verify this on all browsers
+	if (value < 0) return true;
+	if (value >= 0) return true;
+	return false;
+};
+
+R.setTitle = function (title) {
+	// TODO: set title
+};
+
 R._commonStrings = {
 	s_key: [%%%TYPE_STRING%%%, 'key'],
 	s_mouseleftdown: [%%%TYPE_STRING%%%, 'mouseleftdown'],
@@ -327,13 +340,18 @@ R.fillScreen = function (r, g, b) {
 	gb.ctx.fillRect(0, 0, gb.width, gb.height);
 };
 
-R.drawRect = function (x, y, width, height, r, g, b) {
+R.drawRect = function (x, y, width, height, r, g, b, a) {
 	var ctx = R._global_vars.ctx;
 	ctx.fillStyle = R._toHex(r, g, b);
 	ctx.fillRect(x, y, width + .1, height + .1);
 };
 
-R.drawEllipse = function(centerX, centerY, radiusX, radiusY, r, g, b) {
+R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
+	var radiusX = width / 2;
+	var radiusY = height  2;
+	var centerX = left + radiusX;
+	var centerY = top + radiusY;
+	
 	var context = R._global_vars.ctx;
 	radiusX = radiusX * 4 / 3; // no idea...
 	context.beginPath();
@@ -351,7 +369,8 @@ R.drawEllipse = function(centerX, centerY, radiusX, radiusY, r, g, b) {
 	context.closePath();
 };
 
-R.drawLine = function(startX, startY, endX, endY, width, r, g, b) {
+R.drawLine = function(startX, startY, endX, endY, width, r, g, b, a) {
+	// TODO: alpha
 	var context = R._global_vars.ctx;
 	var offset = ((width % 2) == 0) ? 0 : .5;
 	context.beginPath();
@@ -396,7 +415,7 @@ R.flipImage = function(wrappedImage, flipX, flipY) {
 		outputContext.translate(0, -img.height);
 	}
 
-	return [%%%TYPE_NATIVE_OBJECT%%%, [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output]];
+	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output];
 };
 
 window.addEventListener('keydown', function(e) {
