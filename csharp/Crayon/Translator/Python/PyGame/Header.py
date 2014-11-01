@@ -59,7 +59,7 @@ def _pygame_pump_events():
 			type = COMMON_STRINGS['mousemove']
 			evlist.append([%%%TYPE_LIST%%%, [type, [%%%TYPE_INTEGER%%%, x * vwidth // rwidth], [%%%TYPE_INTEGER%%%, y * vheight // rheight]]])
 		
-	return [%%%TYPE_LIST%%%, evlist]
+	return evlist
 
 def platform_begin(fps):
 	pygame.init()
@@ -105,7 +105,13 @@ for c in '0123456789':
 	_NUM_CHARS[c] = True
 
 def _is_valid_integer(value):
+	first = True
+	if value == '-': return False
 	for c in value:
+		if first:
+			first = False
+			if c == '-':
+				continue
 		if not _NUM_CHARS.get(c, False):
 			return False
 	return True

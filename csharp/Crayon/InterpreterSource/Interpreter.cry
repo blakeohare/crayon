@@ -1098,7 +1098,7 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.STRING) {
 							return killExecution(stack, "$parse_int requires a string argument.");
 						}
-						string1 = $_cast('string', Value$arg1.internalValue);
+						string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
 						if ($_is_valid_integer(string1)) {
 							output = build_integer($_parse_int(string1));
 						} else {

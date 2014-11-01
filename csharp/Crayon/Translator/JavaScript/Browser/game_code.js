@@ -348,7 +348,7 @@ R.drawRect = function (x, y, width, height, r, g, b, a) {
 
 R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
 	var radiusX = width / 2;
-	var radiusY = height  2;
+	var radiusY = height / 2;
 	var centerX = left + radiusX;
 	var centerY = top + radiusY;
 	

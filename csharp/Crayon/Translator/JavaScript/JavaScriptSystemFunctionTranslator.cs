@@ -300,13 +300,13 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateGetImageHeight(List<string> output, Expression image)
 		{
 			this.Translator.TranslateExpression(output, image);
-			output.Add(".height");
+			output.Add("[1].height");
 		}
 
 		protected override void TranslateGetImageWidth(List<string> output, Expression image)
 		{
 			this.Translator.TranslateExpression(output, image);
-			output.Add(".width");
+			output.Add("[1].width");
 		}
 
 		protected override void TranslateGetProgramData(List<string> output)
