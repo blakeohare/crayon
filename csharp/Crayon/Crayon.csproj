@@ -158,6 +158,8 @@
     <EmbeddedResource Include="Translator\CSharp\Project\Image.txt" />
     <EmbeddedResource Include="Translator\Java\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\Java\Project\Start.txt" />
+    <EmbeddedResource Include="Translator\Java\Project\GameWindow.txt" />
+    <EmbeddedResource Include="Translator\Java\Project\RenderEngine.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

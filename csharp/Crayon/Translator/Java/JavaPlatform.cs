@@ -48,6 +48,22 @@ namespace Crayon.Translator.Java
 					replacements)
 			};
 
+			output["src/" + package + "/GameWindow.java"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/Java/Project/GameWindow.txt"),
+					replacements)
+			};
+
+			output["src/" + package + "/RenderEngine.java"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/Java/Project/RenderEngine.txt"),
+					replacements)
+			};
+
 			string[] items = finalCode.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 
 			List<string> crayonWrapper = new List<string>();
@@ -157,6 +173,12 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = fileContents
+				};
+
+				output["data/ByteCode.txt"] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = this.Context.ByteCodeString
 				};
 			}
 

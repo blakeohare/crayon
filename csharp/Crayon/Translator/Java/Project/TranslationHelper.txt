@@ -1,5 +1,9 @@
 ﻿package %%%PACKAGE%%%;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
@@ -20,8 +24,45 @@ final class TranslationHelper {
         return programData;
     }
 
+    private static final char[] BUFFER = new char[500]; 
+    public static String readFileText(String path) {
+        FileReader fileReader;
+        try {
+            fileReader = new FileReader("data/bytecode.txt");
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+        
+        BufferedReader br = new BufferedReader(fileReader);
+        StringBuilder sb = new StringBuilder();
+        int bytesRead = 0;
+        while (bytesRead != -1) {
+            try {
+                bytesRead = br.read(BUFFER);
+            } catch (IOException e) {
+                bytesRead = -1;
+            }
+            
+            if (bytesRead != -1) {
+                sb.append(BUFFER, 0, bytesRead);
+            }
+        }
+        
+        try {
+            br.close();
+        } catch (IOException e) {
+        }
+
+        return sb.toString();
+    }
+
+    public static String getRawByteCodeString() {
+    	return readFileText("data/bytecode.txt");
+    }
+
     public static <T> void reverseList(ArrayList<T> list) {
         int length = list.size();
+        if (length < 2) return;
         int lengthMinusOne = length - 1;
         for (int i = length / 2; i >= 0; --i) {
             T t = list.get(i);
@@ -33,7 +74,10 @@ final class TranslationHelper {
 
     public static String joinList(String sep, ArrayList<String> items) {
         int length = items.size();
-        if (length == 0) return "";
+        if (length < 2) {
+            if (length == 0) return "";
+            return items.get(0);
+        }
         boolean useSeparator = sep.length() > 0;
         StringBuilder sb = new StringBuilder(useSeparator ? (length * 2 - 1) : length);
         sb.append(items.get(0));
@@ -91,10 +135,6 @@ final class TranslationHelper {
             output[i++] = value;
         }
         return output;
-    }
-
-    public static String getRawByteCodeString() {
-        return "TODO:this";
     }
 
     public static ArrayList<Value> concatLists(ArrayList<Value> listA, ArrayList<Value> listB) {

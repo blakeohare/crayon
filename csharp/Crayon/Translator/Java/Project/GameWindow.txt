@@ -17,129 +17,125 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 class GameWindow {
-	private static final int KEY_EVENT = 1;
-	private static final int MOUSE_EVENT = 2;
-	private static final int EXIT_EVENT = 3;
-	
-	private JFrame frame;
-	private BufferStrategy strategy = null;
-	private int gameWidth;
-	private int gameHeight;
-	
-	// TODO: I still have a canvas scaling problem
-	private int pixelWidth;
-	private int pixelHeight;
-	
-	public GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
-		this.gameWidth = gameWidth;
-		this.gameHeight = gameHeight;
-		this.pixelWidth = pixelWidth;
-		this.pixelHeight = pixelHeight;
-		
-		frame = new JFrame("Crayon Window");
-		frame.setSize(pixelWidth, pixelHeight);
-		
-		JPanel panel = (JPanel) frame.getContentPane();
-		panel.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
-		panel.setLayout(null);
-		
-		Canvas canvas = new Canvas();
-		canvas.setBounds(0, 0, gameWidth, gameHeight);
-		canvas.setSize(pixelWidth, pixelHeight);
-		panel.add(canvas);
-		
-		canvas.setIgnoreRepaint(true);
-		
-		frame.pack();
-		frame.setResizable(false);
-		frame.setVisible(true);
-		
-		frame.addWindowListener(new WindowAdapter() { 
-			@Override 
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-		
-		frame.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				handleKeyPress(e.getKeyCode(), true);
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) { 
-				handleKeyPress(e.getKeyCode(), false);
-			}
-		});
-		
-		canvas.requestFocus();
-		canvas.createBufferStrategy(2);
-		strategy = canvas.getBufferStrategy();
-		
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				timerTick();
-			}
-		}, 0, 33);
-	}
-	
-	private int[] eventCodes = new int[100];
-	private String[] eventData = new String[100];
-	private int eventCodesLength = 0;
-	private int eventDataLength = 0;
-	
-	private void handleKeyPress(int keyCode, boolean down) {
-		String key;
-		switch (keyCode) {
-			case KeyEvent.VK_LEFT: key = "left"; break;
-			case KeyEvent.VK_RIGHT: key = "right"; break;
-			case KeyEvent.VK_UP: key = "up"; break;
-			case KeyEvent.VK_DOWN: key = "down"; break;
-			case KeyEvent.VK_SPACE: key = "space"; break;
-			default: key = null; break;
-		}
-		
-		if (key != null) {
-			if (eventCodesLength + 2 >= eventCodes.length) {
-				int[] newEventCodes = new int[eventCodes.length * 2];
-				System.arraycopy(eventCodes, 0, newEventCodes, 0, eventCodes.length);
-				eventCodes = newEventCodes;
-			}
-			
-			if (eventDataLength + 1 >= eventData.length) {
-				String[] newEventData = new String[eventData.length * 2];
-				System.arraycopy(eventData, 0, newEventData, 0, eventData.length);
-				eventData = newEventData;
-			}
-			
-			eventCodes[eventCodesLength++] = KEY_EVENT;
-			eventCodes[eventCodesLength++]  = down ? 1 : 0;
-			eventData[eventDataLength++] = key;
-		}
-	}
-	
-	private void timerTick() {
-		CrayonWrapper.v_runTick();
+    private static final int KEY_EVENT = 1;
+    private static final int MOUSE_EVENT = 2;
+    private static final int EXIT_EVENT = 3;
 
-		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-		RenderEngine.instance.render(g, gameWidth, gameHeight);
-		g.dispose();
-		strategy.show();
-	}
-	
-	private void v_main(int x, int y) {
-		RenderEngine.instance.fillScreen(60, 0, 0);
-		RenderEngine.instance.drawRectangle(x, y, 100, 120, 0, 128, 255, 255);
-	}
-	
-	public void show() {
-		frame.setVisible(true);
-	}
-	
-	public static void main(String[] args) {
-		new GameWindow(30, 400, 300, 1200, 900).show();
-	}
+    private JFrame frame;
+    private BufferStrategy strategy = null;
+    private int gameWidth;
+    private int gameHeight;
+
+    // TODO: I still have a canvas scaling problem
+    private int pixelWidth;
+    private int pixelHeight;
+
+    public GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
+        this.gameWidth = gameWidth;
+        this.gameHeight = gameHeight;
+        this.pixelWidth = pixelWidth;
+        this.pixelHeight = pixelHeight;
+        
+        frame = new JFrame("Crayon Window");
+        frame.setSize(pixelWidth, pixelHeight);
+        
+        JPanel panel = (JPanel) frame.getContentPane();
+        panel.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
+        panel.setLayout(null);
+        
+        Canvas canvas = new Canvas();
+        canvas.setBounds(0, 0, gameWidth, gameHeight);
+        canvas.setSize(pixelWidth, pixelHeight);
+        panel.add(canvas);
+        
+        canvas.setIgnoreRepaint(true);
+        
+        frame.pack();
+        frame.setResizable(false);
+        frame.setVisible(true);
+        
+        frame.addWindowListener(new WindowAdapter() { 
+            @Override 
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleKeyPress(e.getKeyCode(), true);
+            }
+            
+            @Override
+            public void keyReleased(KeyEvent e) { 
+                handleKeyPress(e.getKeyCode(), false);
+            }
+        });
+        
+        canvas.requestFocus();
+        canvas.createBufferStrategy(2);
+        strategy = canvas.getBufferStrategy();
+        
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                timerTick();
+            }
+        }, 0, 33);
+    }
+
+    private int[] eventCodes = new int[100];
+    private String[] eventData = new String[100];
+    private int eventCodesLength = 0;
+    private int eventDataLength = 0;
+
+    private void handleKeyPress(int keyCode, boolean down) {
+        String key;
+        switch (keyCode) {
+            case KeyEvent.VK_LEFT: key = "left"; break;
+            case KeyEvent.VK_RIGHT: key = "right"; break;
+            case KeyEvent.VK_UP: key = "up"; break;
+            case KeyEvent.VK_DOWN: key = "down"; break;
+            case KeyEvent.VK_SPACE: key = "space"; break;
+            default: key = null; break;
+        }
+
+        if (key != null) {
+            if (eventCodesLength + 2 >= eventCodes.length) {
+                int[] newEventCodes = new int[eventCodes.length * 2];
+                System.arraycopy(eventCodes, 0, newEventCodes, 0, eventCodes.length);
+                eventCodes = newEventCodes;
+            }
+            
+            if (eventDataLength + 1 >= eventData.length) {
+                String[] newEventData = new String[eventData.length * 2];
+                System.arraycopy(eventData, 0, newEventData, 0, eventData.length);
+                eventData = newEventData;
+            }
+            
+            eventCodes[eventCodesLength++] = KEY_EVENT;
+            eventCodes[eventCodesLength++]  = down ? 1 : 0;
+            eventData[eventDataLength++] = key;
+        }
+    }
+
+    private void timerTick() {
+        CrayonWrapper.v_runTick();
+
+        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+        RenderEngine.instance.render(g, gameWidth, gameHeight);
+        g.dispose();
+        strategy.show();
+    }
+
+    private void v_main(int x, int y) {
+        RenderEngine.instance.fillScreen(60, 0, 0);
+        RenderEngine.instance.drawRectangle(x, y, 100, 120, 0, 128, 255, 255);
+    }
+
+    public void show() {
+        frame.setVisible(true);
+    }
 }
