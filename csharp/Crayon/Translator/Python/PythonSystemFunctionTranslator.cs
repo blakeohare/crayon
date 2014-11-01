@@ -62,6 +62,17 @@ namespace Crayon.Translator.Python
 			throw new Exception("This code path should be optimized out of the python translation.");
 		}
 
+		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
+		{
+			output.Add("_global_vars['virtual_screen'].blit(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1], (");
+			this.Translator.TranslateExpression(output, x);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, y);
+			output.Add("))");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);
@@ -178,6 +189,11 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateGetEventsRawList(List<string> output)
+		{
+			output.Add("_pygame_pump_events()");
+		}
+
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("program_data[0]");
@@ -190,16 +206,19 @@ namespace Crayon.Translator.Python
 			output.Add("\"");
 		}
 
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("platform_begin(");
+			this.Translator.TranslateExpression(output, fps);
+			output.Add(")");
+		}
+
 		// TODO: this is supposed to be in the pygame platform stuff.
 		// Also, implement each switch result as an abstract function
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
 			switch (id)
 			{
-				case "ff_blit_image":
-					output.Add("_global_vars['virtual_screen'].blit(v_arg1[1][1], (v_arg2[1], v_arg3[1]))");
-					break;
-
 				case "ff_download_image":
 					output.Add("download_image_impl(v_arg1[1], v_arg2[1])");
 					break;
@@ -224,14 +243,6 @@ namespace Crayon.Translator.Python
 					output.Add("v_output = _pygame_flip_image(v_arg1[1], v_arg2[1], v_arg3[1])");
 					break;
 
-				case "ff_floor":
-					output.Add("v_output = v_build_integer(int(v_arg1[1]) if (v_arg1[1] >= 0) else int(math.floor(v_arg1[1])))");
-					break;
-
-				case "ff_get_events":
-					output.Add("v_output = _pygame_pump_events()");
-					break;
-
 				case "ff_get_image":
 					output.Add("v_output = get_image_impl(v_arg1[1])");
 					break;
@@ -242,10 +253,6 @@ namespace Crayon.Translator.Python
 
 				case "ff_get_image_width":
 					output.Add("v_output = v_build_integer(v_arg1[1][1].get_width())");
-					break;
-
-				case "ff_initialize_game":
-					output.Add("platform_begin(v_arg1[1])");
 					break;
 
 				case "ff_initialize_screen":

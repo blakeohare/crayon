@@ -61,6 +61,17 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.beginFrame()");
 		}
 
+		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
+		{
+			output.Add("R.blit(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(this.Shorten("[1], "));
+			this.Translator.TranslateExpression(output, x);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, y);
+			output.Add(")");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);
@@ -180,6 +191,11 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateGetEventsRawList(List<string> output)
+		{
+			output.Add("R.pump_event_objects()");
+		}
+
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("R.ProgramData");
@@ -192,14 +208,17 @@ namespace Crayon.Translator.JavaScript
 			output.Add("\"");
 		}
 
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("R.initializeGame(");
+			this.Translator.TranslateExpression(output, fps);
+			output.Add(")");
+		}
+
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
 			switch (id)
 			{
-				case "ff_blit_image":
-					output.Add(this.Shorten("R.blit(v_arg1[1][1], v_arg2[1], v_arg3[1])"));
-					break;
-
 				case "ff_download_image":
 					output.Add(this.Shorten("R.enqueue_image_download(v_arg1[1], v_arg2[1])"));
 					break;
@@ -224,14 +243,6 @@ namespace Crayon.Translator.JavaScript
 					output.Add("v_output = R.flipImage(v_arg1[1], v_arg2[1], v_arg3[1])");
 					break;
 
-				case "ff_floor":
-					output.Add(this.Shorten("v_output = [" + (int)Types.INTEGER + ", Math.floor(v_arg1[1])]"));
-					break;
-
-				case "ff_get_events":
-					output.Add(this.Shorten("v_output = [" + (int)Types.LIST + ", R.pump_event_objects()]"));
-					break;
-
 				case "ff_get_image":
 					output.Add(this.Shorten("v_output = R.get_image_impl(v_arg1[1])"));
 					break;
@@ -242,10 +253,6 @@ namespace Crayon.Translator.JavaScript
 
 				case "ff_get_image_width":
 					output.Add(this.Shorten("v_output = v_build_integer(v_arg1[1][1].width)"));
-					break;
-
-				case "ff_initialize_game":
-					output.Add("R.initializeGame(v_arg1[1])");
 					break;
 
 				case "ff_initialize_screen":

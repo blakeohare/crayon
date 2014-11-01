@@ -61,6 +61,17 @@ namespace Crayon.Translator.Java
 			// Nope
 		}
 
+		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
+		{
+			output.Add("RenderEngine.blitImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, x);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, y);
+			output.Add(")");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			output.Add("((");
@@ -201,6 +212,11 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateGetEventsRawList(List<string> output)
+		{
+			output.Add("GameWindow.pumpEventQueue()");
+		}
+
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("TranslationHelper.getProgramData()");
@@ -211,9 +227,16 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.getRawByteCodeString()");
 		}
 
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("GameWindow.setFps(");
+			this.Translator.TranslateExpression(output, fps);
+			output.Add(")");
+		}
+
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
-			output.Add("// TODO: refactor the insert framework code stuff");
+			output.Add("System.out.println(\"TODO: refactor " + id + "\")");
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)

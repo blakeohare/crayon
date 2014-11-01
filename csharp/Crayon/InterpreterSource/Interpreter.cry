@@ -787,7 +787,7 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 							return killExecution(stack, "$blit_image coordinates must be integers.");
 						}
-						$_insert_platform_code('ff_blit_image');
+						$_blit_image(Value$arg1.internalValue, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
 						
 					case %%%FF_CLOCK_TICK%%%:
@@ -898,7 +898,8 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_GET_EVENTS%%%:
-						$_insert_platform_code('ff_get_events');
+						list1 = $_get_events_raw_list();
+						output = new Value(Types.LIST, list1);
 						break;
 						
 					case %%%FF_GET_IMAGE%%%:
@@ -922,9 +923,20 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_INITIALIZE_GAME%%%: 
 						// $initialize_game(fps)
 						arg1 = $_stack_pop(valueStack);
-						$_insert_platform_code('ff_initialize_game');
+						if (Value$arg1.type == Types.INTEGER) {
+							float1 = $_cast('int', Value$arg1.internalValue);
+						} else if (Value$arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', Value$arg1.internalValue);
+						} else {
+							return killExecution(stack, "$initialize_game(fps) requiress a numeric argument.");
+						}
+
+						if (float1 <= 0) {
+							return killExecution(stack, "fps must be a positive number.");
+						}
+						$_initialize_game_with_fps(float1);
 						break;
-						
+
 					case %%%FF_INITIALIZE_SCREEN%%%:
 						// $initialize_screen(width, height)
 						arg2 = $_stack_pop(valueStack);

@@ -61,6 +61,17 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
+		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
+		{
+			output.Add("GameWindow.BlitImage((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, x);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, y);
+			output.Add(")");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			CSharpPlatform platform = (CSharpPlatform)this.Platform;
@@ -185,6 +196,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateGetEventsRawList(List<string> output)
+		{
+			output.Add("GameWindow.GetEvents()");
+		}
+
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("TranslationHelper.ProgramData");
@@ -195,14 +211,16 @@ namespace Crayon.Translator.CSharp
 			output.Add("ResourceReader.ReadByteCodeFile()");
 		}
 
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("GameWindow.FPS = ");
+			this.Translator.TranslateExpression(output, fps);
+		}
+
 		protected override void TranslateInsertFrameworkCode(string tab, List<string> output, string id)
 		{
 			switch (id)
 			{
-				case "ff_blit_image":
-					output.Add("GameWindow.BlitImage((Image)v_arg1.internalValue, (int)v_arg2.internalValue, (int)v_arg3.internalValue)");
-					break;
-
 				case "ff_download_image":
 					output.Add("Image.LoadImage((string)v_arg1.internalValue, (string)v_arg2.internalValue)");
 					break;
@@ -233,26 +251,6 @@ namespace Crayon.Translator.CSharp
 					output.Add("// TODO: flip image");
 					break;
 
-				case "ff_floor":
-					string nl = this.Translator.NL;
-					string tab2 = tab + "\t";
-					// TODO: This is silly. returning arg1 when it's an int should be written directly in the interpreter crayon code
-					output.AddRange(new string[] {
-						"if (v_arg1.type == " + (int)Types.INTEGER + ")", nl,
-						tab, "{",nl,
-						tab2, "v_output = v_arg1;", nl,
-						tab, "}", nl,
-						tab, "else", nl,
-						tab, "{", nl,
-						tab2, "v_output = v_build_integer((int)System.Math.Floor((double)v_arg1.internalValue));", nl,
-						tab, "}"
-					});
-					break;
-
-				case "ff_get_events":
-					output.Add("v_output = new Value(" + (int)Types.LIST + ", GameWindow.GetEvents())");
-					break;
-
 				case "ff_get_image":
 					output.Add("v_output = new Value(" + (int)Types.NATIVE_OBJECT + ", Image.GetImageByKey((string)v_arg1.internalValue))");
 					break;
@@ -263,10 +261,6 @@ namespace Crayon.Translator.CSharp
 
 				case "ff_get_image_width":
 					output.Add("v_output = v_build_integer(((Image)v_arg1.internalValue).Width)");
-					break;
-
-				case "ff_initialize_game":
-					output.Add("GameWindow.FPS = v_arg1.type == " + (int)Types.INTEGER + " ? (double)(int)v_arg1.internalValue : (double)v_arg1.internalValue");
 					break;
 
 				case "ff_initialize_screen":

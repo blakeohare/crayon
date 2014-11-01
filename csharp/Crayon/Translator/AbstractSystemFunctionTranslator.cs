@@ -36,6 +36,7 @@ namespace Crayon.Translator
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
+				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 1); TranslateCastToList(output, args[0]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
@@ -52,8 +53,10 @@ namespace Crayon.Translator
 				case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
+				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
+				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
 				case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
@@ -118,6 +121,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateBeginFrame(List<string> output);
+		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
@@ -135,8 +139,10 @@ namespace Crayon.Translator
 		protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateForceParens(List<string> output, Expression expression);
+		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
+		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInsertFrameworkCode(string tab, List<string> output, string id);
 		protected abstract void TranslateInt(List<string> output, Expression value);
 		protected abstract void TranslateListClear(List<string> output, Expression list);
