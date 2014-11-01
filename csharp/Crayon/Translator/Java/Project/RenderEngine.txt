@@ -1,0 +1,79 @@
+﻿package crayonproject;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+public class RenderEngine {
+
+	
+	public static RenderEngine instance = new RenderEngine();
+	
+	private static final int FILL_SCREEN = 0;
+	private static final int DRAW_RECTANGLE = 1;
+	
+	private int[] renderArgs = new int[1000];
+	private int renderArgsVirtualLength = 0;
+	private int renderArgsRealLength = renderArgs.length;
+	
+	public RenderEngine() {
+	}
+	
+	public void fillScreen(int red, int green, int blue) {
+		renderArgsVirtualLength = 0;
+		renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
+		renderArgs[renderArgsVirtualLength++] = red;
+		renderArgs[renderArgsVirtualLength++] = green;
+		renderArgs[renderArgsVirtualLength++] = blue;
+	}
+	
+	public void drawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+		if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
+			int[] newRenderArgs = new int[renderArgsRealLength * 2];
+			System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
+			renderArgs = newRenderArgs;
+			renderArgsRealLength = renderArgs.length;
+		}
+		
+		renderArgs[renderArgsVirtualLength++] = DRAW_RECTANGLE;
+		renderArgs[renderArgsVirtualLength++] = x;
+		renderArgs[renderArgsVirtualLength++] = y;
+		renderArgs[renderArgsVirtualLength++] = width;
+		renderArgs[renderArgsVirtualLength++] = height;
+		renderArgs[renderArgsVirtualLength++] = red;
+		renderArgs[renderArgsVirtualLength++] = green;
+		renderArgs[renderArgsVirtualLength++] = blue;
+		renderArgs[renderArgsVirtualLength++] = alpha;
+	}
+	
+	public void render(Graphics2D g, int canvasWidth, int canvasHeight) {
+		int index = 0;
+		int x, y, width, height, red, green, blue, alpha;
+		while (index < renderArgsVirtualLength) {
+			switch (renderArgs[index++]) {
+				case FILL_SCREEN:
+					red = renderArgs[index++];
+					green = renderArgs[index++];
+					blue = renderArgs[index++];
+					
+					g.setColor(new Color(red, green, blue));
+					g.fillRect(-1, -1, canvasWidth + 2, canvasHeight + 2);
+					break;
+			
+				case DRAW_RECTANGLE:
+					x = renderArgs[index++];
+					y = renderArgs[index++];
+					width = renderArgs[index++];
+					height = renderArgs[index++];
+					red = renderArgs[index++];
+					green = renderArgs[index++];
+					blue = renderArgs[index++];
+					alpha = renderArgs[index++];
+
+					// TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
+					g.setColor(new Color(red, green, blue, alpha));
+					g.fillRect(x, y, width, height);
+					break;
+			}
+		}
+	}
+}
