@@ -64,7 +64,7 @@ class GameWindow {
             }
         });
 
-        frame.addKeyListener(new KeyAdapter() {
+        canvasHost.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 handleKeyPress(e.getKeyCode(), true);
@@ -75,32 +75,30 @@ class GameWindow {
                 handleKeyPress(e.getKeyCode(), false);
             }
         });
-
+        canvasHost.requestFocus();
     }
 
     public void maybeUpdateCanvas() {
-    	
-    	int actualWidth = frame.getWidth();;
-    	int actualHeight = frame.getHeight();
-    	if (actualWidth == screenWidth && actualHeight == screenHeight) {
-    		return;
-    	}
-    	
+        int actualWidth = frame.getWidth();;
+        int actualHeight = frame.getHeight();
+        if (actualWidth == screenWidth && actualHeight == screenHeight) {
+            return;
+        }
+
         canvasHost.removeAll();
         Canvas canvas = new Canvas();
         canvas.setBounds(0, 0, actualWidth, actualHeight);
         canvas.setSize(actualWidth, actualHeight);
         canvasHost.add(canvas);
         canvas.setIgnoreRepaint(true);
-        
-        canvas.requestFocus();
+
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
-        
+
         screenWidth = actualWidth;
         screenHeight = actualHeight;
     }
-    
+
     public static void initializeScreen(int gameWidth, int gameHeight) {
         initializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
     }
@@ -119,16 +117,41 @@ class GameWindow {
     private int eventCodesLength = 0;
     private int eventDataLength = 0;
 
-    private void handleKeyPress(int keyCode, boolean down) {
-        String key;
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT: key = "left"; break;
-            case KeyEvent.VK_RIGHT: key = "right"; break;
-            case KeyEvent.VK_UP: key = "up"; break;
-            case KeyEvent.VK_DOWN: key = "down"; break;
-            case KeyEvent.VK_SPACE: key = "space"; break;
-            default: key = null; break;
+    private static HashMap<Integer, String> keyCodeLookup = null;
+    private HashMap<Integer, String> getKeyCodeLookup() {
+        if (keyCodeLookup == null) {
+            keyCodeLookup = new HashMap<Integer, String>();
+            keyCodeLookup.put(KeyEvent.VK_LEFT, "left");
+            keyCodeLookup.put(KeyEvent.VK_RIGHT, "right");
+            keyCodeLookup.put(KeyEvent.VK_DOWN, "down");
+            keyCodeLookup.put(KeyEvent.VK_UP, "up");
+
+            keyCodeLookup.put(KeyEvent.VK_SPACE, "space");
+            keyCodeLookup.put(KeyEvent.VK_ENTER, "enter");
+            keyCodeLookup.put(KeyEvent.VK_TAB, "tab");
+            keyCodeLookup.put(KeyEvent.VK_ESCAPE, "escape");
+
+            keyCodeLookup.put(KeyEvent.VK_CONTROL, "ctrl");
+            keyCodeLookup.put(KeyEvent.VK_SHIFT, "shift");
+            keyCodeLookup.put(KeyEvent.VK_ALT, "alt");
+
+            for (int i = 0; i < 26; ++i) {
+                keyCodeLookup.put(KeyEvent.VK_A, "" + (char)('a' + i));
+            }
+
+            for (int i = 0; i < 10; ++i) {
+                keyCodeLookup.put(KeyEvent.VK_0, "" + (char)('0' + i));
+            }
+
+            for (int i = 0; i < 12; ++i) {
+                keyCodeLookup.put(KeyEvent.VK_F1, "F" + (i + 1));
+            }
         }
+        return keyCodeLookup;
+    }
+
+    private void handleKeyPress(int keyCode, boolean down) {
+        String key = getKeyCodeLookup().get(keyCode);
 
         if (key != null) {
             if (eventCodesLength + 2 >= eventCodes.length) {
@@ -151,18 +174,20 @@ class GameWindow {
 
     private void timerTick() {
         CrayonWrapper.v_runTick();
-        
+
         maybeUpdateCanvas();
         Graphics2D virtualG = (Graphics2D) virtualScreen.createGraphics();
         RenderEngine.render(virtualG, gameWidth, gameHeight);
-        
+
         Graphics2D realG = (Graphics2D) strategy.getDrawGraphics();
         realG.setRenderingHint(
-        	RenderingHints.KEY_INTERPOLATION, 
-        	RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        realG.drawImage(virtualScreen, 0, 0, screenWidth, screenHeight, 
-        		0, 0, virtualScreen.getWidth(), virtualScreen.getHeight(), null);
-        
+            RenderingHints.KEY_INTERPOLATION, 
+            RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        realG.drawImage(
+            virtualScreen, 0, 0, screenWidth, screenHeight,
+            0, 0, virtualScreen.getWidth(), virtualScreen.getHeight(),
+            null);
+
         realG.dispose();
         strategy.show();
     }
@@ -225,7 +250,7 @@ class GameWindow {
     private Value generateEventItem(Value ... values) {
         ArrayList<Value> output = new ArrayList<Value>(values.length);
         for (int i = 0; i < values.length; ++i) {
-            output.set(i, values[i]);
+            output.add(values[i]);
         }
         return new Value(%%%TYPE_LIST%%%, output);
     }
