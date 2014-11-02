@@ -6,6 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -23,9 +26,6 @@ class GameWindow {
     public static GameWindow INSTANCE = null;
     public static double FPS = 60;
 
-    private static final int KEY_EVENT = 1;
-    private static final int MOUSE_EVENT = 2;
-
     private JFrame frame;
     private BufferStrategy strategy = null;
     private int gameWidth;
@@ -36,6 +36,7 @@ class GameWindow {
     private BufferedImage virtualScreen;
     private JPanel canvasHost;
     private KeyAdapter keyAdapter;
+    private GameWindowMouseListener mouseListener;
 
     private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
 
@@ -76,6 +77,9 @@ class GameWindow {
                 handleKeyPress(e.getKeyCode(), false);
             }
         };
+
+        mouseListener = new GameWindowMouseListener(this);
+
         canvasHost.addKeyListener(keyAdapter);
         canvasHost.requestFocus();
     }
@@ -94,6 +98,8 @@ class GameWindow {
         canvasHost.add(canvas);
         canvas.setIgnoreRepaint(true);
         canvas.addKeyListener(keyAdapter);
+        canvas.addMouseListener(mouseListener);
+        canvas.addMouseMotionListener(mouseListener);
 
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
@@ -115,11 +121,6 @@ class GameWindow {
         throw new RuntimeException("TODO: set title");
     }
 
-    private int[] eventCodes = new int[100];
-    private String[] eventData = new String[100];
-    private int eventCodesLength = 0;
-    private int eventDataLength = 0;
-
     private static HashMap<Integer, String> keyCodeLookup = null;
     private HashMap<Integer, String> getKeyCodeLookup() {
         if (keyCodeLookup == null) {
@@ -139,40 +140,18 @@ class GameWindow {
             keyCodeLookup.put(KeyEvent.VK_ALT, "alt");
 
             for (int i = 0; i < 26; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_A, "" + (char)('a' + i));
+                keyCodeLookup.put(KeyEvent.VK_A + i, "" + (char)('a' + i));
             }
 
             for (int i = 0; i < 10; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_0, "" + (char)('0' + i));
+                keyCodeLookup.put(KeyEvent.VK_0 + i, "" + (char)('0' + i));
             }
 
             for (int i = 0; i < 12; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_F1, "F" + (i + 1));
+                keyCodeLookup.put(KeyEvent.VK_F1 + i, "F" + (i + 1));
             }
         }
         return keyCodeLookup;
-    }
-
-    private void handleKeyPress(int keyCode, boolean down) {
-        String key = getKeyCodeLookup().get(keyCode);
-
-        if (key != null) {
-            if (eventCodesLength + 2 >= eventCodes.length) {
-                int[] newEventCodes = new int[eventCodes.length * 2];
-                System.arraycopy(eventCodes, 0, newEventCodes, 0, eventCodes.length);
-                eventCodes = newEventCodes;
-            }
-
-            if (eventDataLength + 1 >= eventData.length) {
-                String[] newEventData = new String[eventData.length * 2];
-                System.arraycopy(eventData, 0, newEventData, 0, eventData.length);
-                eventData = newEventData;
-            }
-
-            eventCodes[eventCodesLength++] = KEY_EVENT;
-            eventCodes[eventCodesLength++]  = down ? 1 : 0;
-            eventData[eventDataLength++] = key;
-        }
     }
 
     private void timerTick() {
@@ -207,36 +186,20 @@ class GameWindow {
         frame.setVisible(true);
     }
 
-    public ArrayList<Value> pumpEventQueue() {
-        int eventDataIndex = 0;
-        int eventCodeIndex = 0;
-        boolean down;
-        String key;
-        ArrayList<Value> output = new ArrayList<Value>();
-        while (eventCodeIndex < eventCodesLength) {
-            switch (eventCodes[eventCodeIndex++]) {
-                case KEY_EVENT:
-                    down = eventCodes[eventCodeIndex++] == 1;
-                    key = eventData[eventDataIndex++];
-                    output.add(generateEventItem(
-                        getCommonString("key"),
-                        getBoolean(down),
-                        getCommonString(key)));
-                    break;
-                case MOUSE_EVENT:
-                    // TODO: this
-                    break;
-                default: break;
-            }
-        }
-        eventCodesLength = 0;
-        eventDataLength = 0;
+    private ArrayList<Value> eventQueue = new ArrayList<Value>();
 
+    public ArrayList<Value> pumpEventQueue() {
+        ArrayList<Value> output = eventQueue;
+        eventQueue = new ArrayList<Value>();
         return output;
     }
 
     private static Value getBoolean(boolean b) {
         return b ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
+    }
+
+    private static Value getInteger(int x) {
+        return CrayonWrapper.v_build_integer(x);
     }
 
     private static final HashMap<String, Value> STRING_CACHE  = new HashMap<String, Value>();
@@ -249,11 +212,79 @@ class GameWindow {
         return output;
     }
 
+    private void handleKeyPress(int keyCode, boolean down) {
+        String key = getKeyCodeLookup().get(keyCode);
+        if (key != null) {
+            eventQueue.add(generateEventItem(
+                getCommonString("key"),
+                getBoolean(down),
+                getCommonString(key)));
+        }
+    }
+
+    private void handleMouseEvent(boolean isClick, boolean down, boolean isLeft, int x, int y) {
+        int gameX = x * gameWidth / screenWidth;
+        int gameY = y * gameHeight / screenHeight;
+        
+        String eventName;
+        if (isClick) {
+            if (down) {
+                eventName = isLeft ? "mouseleftdown" : "mouserightdown";
+            } else {
+                eventName = isLeft ? "mouseleftup" : "mouserightup";
+            }
+        } else {
+            eventName = "mousemove";
+        }
+
+        eventQueue.add(generateEventItem(
+            getCommonString(eventName),
+            getInteger(gameX),
+            getInteger(gameY)));
+    }
+
     private Value generateEventItem(Value ... values) {
         ArrayList<Value> output = new ArrayList<Value>(values.length);
         for (int i = 0; i < values.length; ++i) {
             output.add(values[i]);
         }
         return new Value(%%%TYPE_LIST%%%, output);
+    }
+
+    private static class GameWindowMouseListener implements MouseListener, MouseMotionListener {
+        private GameWindow gw;
+        GameWindowMouseListener(GameWindow gw) {
+            this.gw = gw;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {}
+        @Override
+        public void mouseEntered(MouseEvent e) {}
+        @Override
+        public void mouseExited(MouseEvent e) {}
+        @Override
+        public void mouseDragged(MouseEvent e) {}
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            int button = e.getButton();
+            if (button == MouseEvent.BUTTON1 || button == MouseEvent.BUTTON3) {
+                gw.handleMouseEvent(true, false, button == MouseEvent.BUTTON1, e.getX(), e.getY());
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            int button = e.getButton();
+            if (button == MouseEvent.BUTTON1 || button == MouseEvent.BUTTON3) {
+                gw.handleMouseEvent(true, true, button == MouseEvent.BUTTON1, e.getX(), e.getY());
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            gw.handleMouseEvent(false, false, false, e.getX(), e.getY());
+        }
     }
 }
