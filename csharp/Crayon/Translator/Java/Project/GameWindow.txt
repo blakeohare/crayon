@@ -155,6 +155,7 @@ class GameWindow {
     }
 
     private void timerTick() {
+        RenderEngine.reset();
         CrayonWrapper.v_runTick();
 
         maybeUpdateCanvas();

@@ -21,8 +21,13 @@ public final class RenderEngine {
     private RenderEngine() {
     }
 
+    public static void reset() {
+        fillScreen(0, 0, 0);
+    }
+
     public static void fillScreen(int red, int green, int blue) {
         renderArgsVirtualLength = 0;
+        imagesVirtualLength = 0;
         renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
         renderArgs[renderArgsVirtualLength++] = red;
         renderArgs[renderArgsVirtualLength++] = green;
