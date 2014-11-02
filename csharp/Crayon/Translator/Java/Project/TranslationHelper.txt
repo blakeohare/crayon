@@ -41,7 +41,7 @@ final class TranslationHelper {
         } catch (FileNotFoundException e) {
             return null;
         }
-        
+
         BufferedReader br = new BufferedReader(fileReader);
         StringBuilder sb = new StringBuilder();
         int bytesRead = 0;
@@ -51,12 +51,12 @@ final class TranslationHelper {
             } catch (IOException e) {
                 bytesRead = -1;
             }
-            
+
             if (bytesRead != -1) {
                 sb.append(BUFFER, 0, bytesRead);
             }
         }
-        
+
         try {
             br.close();
         } catch (IOException e) {
@@ -87,6 +87,7 @@ final class TranslationHelper {
             if (length == 0) return "";
             return items.get(0);
         }
+
         boolean useSeparator = sep.length() > 0;
         StringBuilder sb = new StringBuilder(useSeparator ? (length * 2 - 1) : length);
         sb.append(items.get(0));
@@ -100,6 +101,7 @@ final class TranslationHelper {
                 sb.append(items.get(i));
             }
         }
+
         return sb.toString();
     }
 

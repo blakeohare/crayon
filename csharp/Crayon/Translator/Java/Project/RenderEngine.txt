@@ -1,90 +1,163 @@
-﻿package crayonproject;
+﻿package %%%PACKAGE%%%;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 public final class RenderEngine {
 
-	private static final int FILL_SCREEN = 0;
-	private static final int BLIT_IMAGE = 1;
-	private static final int DRAW_RECTANGLE = 2;
+    private static final int BLIT_IMAGE = 1;
+    private static final int DRAW_ELLIPSE = 2;
+    private static final int DRAW_RECTANGLE = 3;
+    private static final int FILL_SCREEN = 4;
 
-	private static int[] renderArgs = new int[1000];
-	private static int renderArgsVirtualLength = 0;
-	private static int renderArgsRealLength = renderArgs.length;
+    private static int[] renderArgs = new int[1000];
+    private static int renderArgsVirtualLength = 0;
+    private static int renderArgsRealLength = renderArgs.length;
 
-	private RenderEngine() {
-	}
+    private static Image[] images = new Image[100];
+    private static int imagesVirtualLength = 0;
+    private static int imagesRealLength = images.length;
 
-	public static void fillScreen(int red, int green, int blue) {
-		renderArgsVirtualLength = 0;
-		renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
-		renderArgs[renderArgsVirtualLength++] = red;
-		renderArgs[renderArgsVirtualLength++] = green;
-		renderArgs[renderArgsVirtualLength++] = blue;
-	}
-	
-	public static void blitImage(Object imageObject, int x, int y) {
-		renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE;
-		renderArgs[renderArgsVirtualLength++] = 42; // TODO: image ID
-		renderArgs[renderArgsVirtualLength++] = x;
-		renderArgs[renderArgsVirtualLength++] = y;
-	}
+    private RenderEngine() {
+    }
 
-	public static void drawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-		if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
-			int[] newRenderArgs = new int[renderArgsRealLength * 2];
-			System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
-			renderArgs = newRenderArgs;
-			renderArgsRealLength = renderArgs.length;
-		}
-		
-		renderArgs[renderArgsVirtualLength++] = DRAW_RECTANGLE;
-		renderArgs[renderArgsVirtualLength++] = x;
-		renderArgs[renderArgsVirtualLength++] = y;
-		renderArgs[renderArgsVirtualLength++] = width;
-		renderArgs[renderArgsVirtualLength++] = height;
-		renderArgs[renderArgsVirtualLength++] = red;
-		renderArgs[renderArgsVirtualLength++] = green;
-		renderArgs[renderArgsVirtualLength++] = blue;
-		renderArgs[renderArgsVirtualLength++] = alpha;
-	}
-	
-	public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
-		int index = 0;
-		int x, y, width, height, red, green, blue, alpha, imageId;
-		while (index < renderArgsVirtualLength) {
-			switch (renderArgs[index++]) {
-				case FILL_SCREEN:
-					red = renderArgs[index++];
-					green = renderArgs[index++];
-					blue = renderArgs[index++];
-					
-					g.setColor(new Color(red, green, blue));
-					g.fillRect(-1, -1, canvasWidth + 2, canvasHeight + 2);
-					break;
-			
-				case BLIT_IMAGE:
-					imageId = renderArgs[index++];
-					x = renderArgs[index++];
-					y = renderArgs[index++];
-					throw new RuntimeException("Image blitting not implemented yet");
+    public static void fillScreen(int red, int green, int blue) {
+        renderArgsVirtualLength = 0;
+        renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+    }
+    
+    public static void blitImage(Object imageObject, int x, int y) {
+        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
 
-				case DRAW_RECTANGLE:
-					x = renderArgs[index++];
-					y = renderArgs[index++];
-					width = renderArgs[index++];
-					height = renderArgs[index++];
-					red = renderArgs[index++];
-					green = renderArgs[index++];
-					blue = renderArgs[index++];
-					alpha = renderArgs[index++];
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
 
-					// TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
-					g.setColor(new Color(red, green, blue, alpha));
-					g.fillRect(x, y, width, height);
-					break;
-			}
-		}
-	}
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_ELLIPSE;
+        renderArgs[renderArgsVirtualLength++] = left;
+        renderArgs[renderArgsVirtualLength++] = top;
+        renderArgs[renderArgsVirtualLength++] = width;
+        renderArgs[renderArgsVirtualLength++] = height;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void drawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 10 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_ELLIPSE;
+        renderArgs[renderArgsVirtualLength++] = startX;
+        renderArgs[renderArgsVirtualLength++] = startY;
+        renderArgs[renderArgsVirtualLength++] = endX;
+        renderArgs[renderArgsVirtualLength++] = endY;
+        renderArgs[renderArgsVirtualLength++] = lineWidth;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void drawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_RECTANGLE;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+        renderArgs[renderArgsVirtualLength++] = width;
+        renderArgs[renderArgsVirtualLength++] = height;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
+        int index = 0;
+        int imagesIndex = 0;
+        int x, y, width, height, red, green, blue, alpha;
+        Image image;
+        while (index < renderArgsVirtualLength) {
+            switch (renderArgs[index++]) {
+                case FILL_SCREEN:
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    
+                    g.setColor(new Color(red, green, blue));
+                    g.fillRect(-1, -1, canvasWidth + 2, canvasHeight + 2);
+                    break;
+
+                case BLIT_IMAGE:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+
+                    g.drawImage(image.img, x, y, null);
+                    break;
+
+                case DRAW_ELLIPSE:
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    throw new RuntimeException("ellipse drawing not implemented yet.");
+
+                case DRAW_RECTANGLE:
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+
+                    // TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillRect(x, y, width, height);
+                    break;
+            }
+        }
+    }
+
+    private static void expandArgsCapacity() {
+        int[] newRenderArgs = new int[renderArgsRealLength * 2];
+        System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
+        renderArgs = newRenderArgs;
+        renderArgsRealLength = renderArgs.length;
+    }
+
+    private static void expandImagesCapacity() {
+        Image[] newImages = new Image[imagesRealLength * 2];
+        System.arraycopy(images , 0, newImages, 0, imagesVirtualLength);
+        images = newImages;
+        imagesRealLength = images.length;
+    }
 }

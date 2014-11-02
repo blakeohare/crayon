@@ -1,0 +1,34 @@
+﻿package %%%PACKAGE%%%;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.imageio.ImageIO;
+
+class ImageLibrary {
+
+    private static HashMap<String, Image> images = new HashMap<String, Image>();
+
+    private ImageLibrary() {
+    }
+
+    public static void loadImage(String key, String path) {
+        BufferedImage img;
+        try {
+            img = ImageIO.read(new File("resources/" + path));
+        } catch (IOException e) {
+            return;
+        }
+        images.put(key, new Image(img));
+    }
+
+    public static Image getImage(String key) {
+        return images.get(key);
+    }
+
+    public static Image flipImage(Object original, boolean flipX, boolean flipY) {
+        throw new RuntimeException("TODO: flip image");
+    }
+}

@@ -1,4 +1,4 @@
-﻿package crayonproject;
+﻿package %%%PACKAGE%%%;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -17,6 +17,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 class GameWindow {
+
+    public static GameWindow INSTANCE = null;
+    public static double FPS = 60;
+
     private static final int KEY_EVENT = 1;
     private static final int MOUSE_EVENT = 2;
 
@@ -29,7 +33,10 @@ class GameWindow {
     private int pixelWidth;
     private int pixelHeight;
 
-    public GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
+    private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
+
+        INSTANCE = this;
+
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
         this.pixelWidth = pixelWidth;
@@ -75,14 +82,19 @@ class GameWindow {
         canvas.requestFocus();
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
+    }
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                timerTick();
-            }
-        }, 0, 33);
+    public static void initializeScreen(int gameWidth, int gameHeight) {
+        initializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
+    }
+
+    public static void initializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight) {
+        GameWindow window = new GameWindow(FPS, gameWidth, gameHeight, screenWidth, screenHeight);
+        window.show();
+    }
+
+    public void setTitle(String title) {
+        throw new RuntimeException("TODO: set title");
     }
 
     private int[] eventCodes = new int[100];
@@ -129,6 +141,14 @@ class GameWindow {
     }
 
     public void show() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                timerTick();
+            }
+        }, 0, (int)(1000 / FPS));
+
         frame.setVisible(true);
     }
 

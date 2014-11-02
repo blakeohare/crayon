@@ -34,37 +34,23 @@ namespace Crayon.Translator.Java
 				{ "COPYRIGHT", "©" },
 			};
 
-			output["src/" + package + "/TranslationHelper.java"] = new FileOutput()
+			foreach (string basicFile in new string[] { 
+				"TranslationHelper",
+				"Start",
+				"GameWindow",
+				"RenderEngine",
+				"Image",
+				"ImageLibrary"
+			})
 			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/Java/Project/TranslationHelper.txt"),
-					replacements)
-			};
-
-			output["src/" + package + "/Start.java"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/Java/Project/Start.txt"),
-					replacements)
-			};
-
-			output["src/" + package + "/GameWindow.java"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/Java/Project/GameWindow.txt"),
-					replacements)
-			};
-
-			output["src/" + package + "/RenderEngine.java"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/Java/Project/RenderEngine.txt"),
-					replacements)
-			};
+				output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = Util.MassReplacements(
+						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
+						replacements)
+				};
+			}
 
 			string[] items = finalCode.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 
@@ -181,6 +167,15 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = this.Context.ByteCodeString
+				};
+			}
+
+			foreach (string file in filesToCopyOver)
+			{
+				output["resources/" + file] = new FileOutput()
+				{
+					Type = FileOutputType.Copy,
+					RelativeInputPath = file
 				};
 			}
 

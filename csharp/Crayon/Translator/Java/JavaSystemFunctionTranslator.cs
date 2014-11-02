@@ -310,7 +310,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
-			output.Add("GameWindow.pumpEventQueue()");
+			output.Add("GameWindow.INSTANCE.pumpEventQueue()");
 		}
 
 		protected override void TranslateGetImage(List<string> output, Expression imageKey)
@@ -346,9 +346,8 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
-			output.Add("GameWindow.setFps(");
+			output.Add("GameWindow.FPS = ");
 			this.Translator.TranslateExpression(output, fps);
-			output.Add(")");
 		}
 
 		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
@@ -587,7 +586,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateSetTitle(List<string> output, Expression title)
 		{
-			output.Add("GameWindow.setTitle(");
+			output.Add("GameWindow.INSTANCE.setTitle(");
 			this.Translator.TranslateExpression(output, title);
 			output.Add(")");
 		}
