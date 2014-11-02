@@ -3,11 +3,13 @@
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -29,35 +31,30 @@ class GameWindow {
     private int gameWidth;
     private int gameHeight;
 
-    // TODO: I still have a canvas scaling problem
-    private int pixelWidth;
-    private int pixelHeight;
-
+    private int screenWidth;
+    private int screenHeight;
+    private BufferedImage virtualScreen;
+    private JPanel canvasHost;
+    
     private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
 
         INSTANCE = this;
 
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
-        this.pixelWidth = pixelWidth;
-        this.pixelHeight = pixelHeight;
+        this.screenWidth = -1;
+        this.screenHeight = -1;
 
+        virtualScreen = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_ARGB);
+        
         frame = new JFrame("Crayon Window");
         frame.setSize(pixelWidth, pixelHeight);
 
-        JPanel panel = (JPanel) frame.getContentPane();
-        panel.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
-        panel.setLayout(null);
-
-        Canvas canvas = new Canvas();
-        canvas.setBounds(0, 0, gameWidth, gameHeight);
-        canvas.setSize(pixelWidth, pixelHeight);
-        panel.add(canvas);
-
-        canvas.setIgnoreRepaint(true);
+        canvasHost = (JPanel) frame.getContentPane();
+        canvasHost.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
+        canvasHost.setLayout(null);
 
         frame.pack();
-        frame.setResizable(false);
         frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() { 
@@ -79,11 +76,31 @@ class GameWindow {
             }
         });
 
+    }
+
+    public void maybeUpdateCanvas() {
+    	
+    	int actualWidth = frame.getWidth();;
+    	int actualHeight = frame.getHeight();
+    	if (actualWidth == screenWidth && actualHeight == screenHeight) {
+    		return;
+    	}
+    	
+        canvasHost.removeAll();
+        Canvas canvas = new Canvas();
+        canvas.setBounds(0, 0, actualWidth, actualHeight);
+        canvas.setSize(actualWidth, actualHeight);
+        canvasHost.add(canvas);
+        canvas.setIgnoreRepaint(true);
+        
         canvas.requestFocus();
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
+        
+        screenWidth = actualWidth;
+        screenHeight = actualHeight;
     }
-
+    
     public static void initializeScreen(int gameWidth, int gameHeight) {
         initializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
     }
@@ -134,9 +151,19 @@ class GameWindow {
 
     private void timerTick() {
         CrayonWrapper.v_runTick();
-        Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-        RenderEngine.render(g, gameWidth, gameHeight);
-        g.dispose();
+        
+        maybeUpdateCanvas();
+        Graphics2D virtualG = (Graphics2D) virtualScreen.createGraphics();
+        RenderEngine.render(virtualG, gameWidth, gameHeight);
+        
+        Graphics2D realG = (Graphics2D) strategy.getDrawGraphics();
+        realG.setRenderingHint(
+        	RenderingHints.KEY_INTERPOLATION, 
+        	RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        realG.drawImage(virtualScreen, 0, 0, screenWidth, screenHeight, 
+        		0, 0, virtualScreen.getWidth(), virtualScreen.getHeight(), null);
+        
+        realG.dispose();
         strategy.show();
     }
 
