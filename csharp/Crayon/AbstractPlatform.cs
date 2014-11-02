@@ -112,7 +112,8 @@ namespace Crayon
 				"CrayonProject",
 				executablesByFile,
 				filesToCopyOver,
-				structs);
+				structs,
+				inputFolder);
 
 			string outputFolder = wrapOutput
 				? System.IO.Path.Combine(baseOutputFolder, this.OutputFolderName)
@@ -199,7 +200,8 @@ namespace Crayon
 			string projectId, 
 			Dictionary<string, Executable[]> finalCode, 
 			List<string> filesToCopyOver, 
-			ICollection<StructDefinition> structDefinitions);
+			ICollection<StructDefinition> structDefinitions,
+			string fileCopySourceRoot);
 
 		public virtual string TranslateType(string original)
 		{

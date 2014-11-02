@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +51,7 @@
     <Compile Include="ByteCodeCompiler.cs" />
     <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="CompileContext.cs" />
+    <Compile Include="HackUtil.cs" />
     <Compile Include="InterpreterCompiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />

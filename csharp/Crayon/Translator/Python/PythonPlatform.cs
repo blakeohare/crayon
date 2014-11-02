@@ -23,7 +23,7 @@ namespace Crayon.Translator.Python
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "pygame"; } }
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions)
+		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string inputFolder)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> concatenatedCode = new List<string>();

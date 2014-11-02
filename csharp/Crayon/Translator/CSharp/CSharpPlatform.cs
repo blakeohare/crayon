@@ -21,7 +21,7 @@ namespace Crayon.Translator.CSharp
 		public override bool ScreenBlocksExecution { get { return true; } }
 		public override string OutputFolderName { get { return "csharpwindows"; } }
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions)
+		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions, string inputFolder)
 		{
 			string guid = Guid.NewGuid().ToString();
 
