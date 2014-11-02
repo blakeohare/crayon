@@ -35,7 +35,8 @@ class GameWindow {
     private int screenHeight;
     private BufferedImage virtualScreen;
     private JPanel canvasHost;
-    
+    private KeyAdapter keyAdapter;
+
     private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
 
         INSTANCE = this;
@@ -46,7 +47,7 @@ class GameWindow {
         this.screenHeight = -1;
 
         virtualScreen = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_ARGB);
-        
+
         frame = new JFrame("Crayon Window");
         frame.setSize(pixelWidth, pixelHeight);
 
@@ -64,7 +65,7 @@ class GameWindow {
             }
         });
 
-        canvasHost.addKeyListener(new KeyAdapter() {
+        keyAdapter = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 handleKeyPress(e.getKeyCode(), true);
@@ -74,7 +75,8 @@ class GameWindow {
             public void keyReleased(KeyEvent e) { 
                 handleKeyPress(e.getKeyCode(), false);
             }
-        });
+        };
+        canvasHost.addKeyListener(keyAdapter);
         canvasHost.requestFocus();
     }
 
@@ -91,6 +93,7 @@ class GameWindow {
         canvas.setSize(actualWidth, actualHeight);
         canvasHost.add(canvas);
         canvas.setIgnoreRepaint(true);
+        canvas.addKeyListener(keyAdapter);
 
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
@@ -215,15 +218,10 @@ class GameWindow {
                 case KEY_EVENT:
                     down = eventCodes[eventCodeIndex++] == 1;
                     key = eventData[eventDataIndex++];
-                    if (down) {
-                        output.add(generateEventItem(
-                            getCommonString("keydown"),
-                            getCommonString(key)));
-                    } else {
-                        output.add(generateEventItem(
-                            getCommonString("keyup"),
-                            getCommonString(key)));
-                    }
+                    output.add(generateEventItem(
+                        getCommonString("key"),
+                        getBoolean(down),
+                        getCommonString(key)));
                     break;
                 case MOUSE_EVENT:
                     // TODO: this
@@ -235,6 +233,10 @@ class GameWindow {
         eventDataLength = 0;
 
         return output;
+    }
+
+    private static Value getBoolean(boolean b) {
+        return b ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
     }
 
     private static final HashMap<String, Value> STRING_CACHE  = new HashMap<String, Value>();
