@@ -88,8 +88,14 @@ _PR = pygame.Rect
 _images_downloaded = {}
 
 def download_image_impl(key, url):
-	img = pygame.image.load(url.replace('/', os.sep))
-	_images_downloaded[key] = img
+	path = url.replace('/', os.sep);
+	if not os.path.exists(path): return False
+	try:
+		img = pygame.image.load(path)
+		_images_downloaded[key] = img
+	except:
+		return False
+	return True
 
 def get_image_impl(key):
 	surf = _images_downloaded.get(key, None)

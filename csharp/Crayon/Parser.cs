@@ -158,7 +158,7 @@ namespace Crayon
 			if ((name.StartsWith("_") && this.IsByteCodeMode) ||
 				!FrameworkFunctionUtil.FF_LOOKUP.ContainsKey(name))
 			{
-				throw new ParserException(token, "Framework function by this name was not found.");
+				throw new ParserException(token, "Framework function by this name was not found: '$" + name + "'");
 			}
 
 			return FrameworkFunctionUtil.FF_LOOKUP[name];

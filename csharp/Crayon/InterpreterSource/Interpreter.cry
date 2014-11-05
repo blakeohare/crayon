@@ -821,7 +821,11 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
 							return killExecution(stack, "$download_image requires two string arguments.");
 						}
-						$_download_image($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
+						string1 = $_cast('string', Value$arg2.internalValue);
+						bool1 = $_download_image($_cast('string', Value$arg1.internalValue), string1);
+						if (!bool1) {
+							return killExecution(stack, "Image resource does not exist: " + string1);
+						}
 						break;
 
 					case %%%FF_DRAW_ELLIPSE%%%:

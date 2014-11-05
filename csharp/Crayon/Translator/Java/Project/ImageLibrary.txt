@@ -14,14 +14,15 @@ class ImageLibrary {
     private ImageLibrary() {
     }
 
-    public static void loadImage(String key, String path) {
+    public static boolean loadImage(String key, String path) {
         BufferedImage img;
         try {
             img = ImageIO.read(new File("resources/" + path));
         } catch (IOException e) {
-            return;
+            return false;
         }
         images.put(key, new Image(img));
+        return true;
     }
 
     public static Image getImage(String key) {

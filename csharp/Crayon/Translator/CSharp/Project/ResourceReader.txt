@@ -11,6 +11,10 @@ namespace %%%PROJECT_ID%%%
 		public static string ReadTextFile(string path, bool filePrefix)
 		{
 			IList<byte> bytes = ReadBytes(path, filePrefix);
+			if (bytes == null)
+			{
+				return null;
+			}
 			StringBuilder output = new StringBuilder(bytes.Count); 
 			output.Append(ReadBytes(path, filePrefix).Select<byte, char>(b => (char)b).ToArray<char>());
 			return output.ToString();
@@ -24,6 +28,10 @@ namespace %%%PROJECT_ID%%%
 		public static System.Drawing.Bitmap ReadImageFile(string path)
 		{
 			IList<byte> data = ReadBytes(path, true);
+			if (data == null)
+			{
+				return null;
+			}
 			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
 		}
 
@@ -37,6 +45,10 @@ namespace %%%PROJECT_ID%%%
 			canonicalizedPath = prefix + canonicalizedPath;
 
 			Stream stream = typeof(ResourceReader).Assembly.GetManifestResourceStream(canonicalizedPath);
+			if (stream == null)
+			{
+				return null;
+			}
 			StringBuilder sb = new StringBuilder();
 			List<byte> output = new List<byte>();
 

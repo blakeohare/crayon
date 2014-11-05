@@ -26,13 +26,15 @@ namespace %%%PROJECT_ID%%%
 			this.TextureBottom = 1F * height / NextPowerOf2(height);
 		}
 
-		public static void LoadImage(string key, string path)
+		public static bool LoadImage(string key, string path)
 		{
 			Bitmap bmp = ResourceReader.ReadImageFile(path);
+			if (bmp == null) return false;
 			int width = bmp.Width;
 			int height = bmp.Height;
 			int id = ForceLoadTexture(bmp);
 			IMAGE_LOOKUP[key] = new Image(id, width, height);
+			return true;
 		}
 
 		public static Image GetImageByKey(string key)
