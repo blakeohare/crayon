@@ -259,7 +259,7 @@ namespace %%%PROJECT_ID%%%
 
 		public void SetTitle(string value)
 		{
-			throw new System.NotImplementedException();
+			this.Title = value;
 		}
 
 		private void Update()
