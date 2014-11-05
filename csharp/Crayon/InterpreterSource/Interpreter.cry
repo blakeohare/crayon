@@ -41,6 +41,7 @@ function @omitReturn @type('string') interpret(
 	@type('FunctionDefinition') funcDef = null;
 	@type('ObjectInstance') objInstance = null;
 	@type('ObjectInstance') objInstance2 = null;
+	@type('object') object1 = null;
 	@type('DictImpl') dictImpl = null;
 	@type('Array<List<Token>>') tokensByPc = null;
 	@type('List<Token>') tokens = null;
@@ -987,13 +988,20 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.STRING) {
 							return killExecution(stack, "$get_image requires a string argument.");
 						}
-						// TODO: verify image is valid and loaded.
-						output = new Value(Types.NATIVE_OBJECT, $_get_image($_cast('string', Value$arg1.internalValue)));
+						string1 = $_cast('string', Value$arg1.internalValue);
+						object1 = $_get_image(string1);
+						if (object1 == null) {
+							return killExecution(stack, "No image with the key '" + string1 + "' has been loaded.");
+						}
+						output = new Value(Types.NATIVE_OBJECT, object1);
 						break;
 						
 					case %%%FF_GET_IMAGE_HEIGHT%%%:
 						// $get_image_height(image)
 						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.NATIVE_OBJECT) {
+							return killExecution(stack, "$get_image_height requires an image object.");
+						}
 						int1 = $_get_image_height(Value$arg1.internalValue);
 						output = build_integer(int1);
 						break;
@@ -1001,6 +1009,9 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_GET_IMAGE_WIDTH%%%:
 						// $get_image_width(image)
 						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.NATIVE_OBJECT) {
+							return killExecution(stack, "$get_image_width requires an image object.");
+						}
 						int1 = $_get_image_width(Value$arg1.internalValue);
 						output = build_integer(int1);
 						break;
