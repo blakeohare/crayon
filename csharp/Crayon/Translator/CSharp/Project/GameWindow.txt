@@ -307,7 +307,7 @@ namespace %%%PROJECT_ID%%%
 
 			int i = 0;
 			int imageIndex = 0;
-			bool texture2dEnabled = false;
+			int textureCapOn = 0;
 			bool isWhite = false;
 			while (i < drawListVirtualLength)
 			{
@@ -319,10 +319,10 @@ namespace %%%PROJECT_ID%%%
 						top = drawList[i++];
 						right = left + image.Width;
 						bottom = top + image.Height;
-						if (!texture2dEnabled)
+						if (textureCapOn != 1)
 						{
 							GL.Enable(EnableCap.Texture2D);
-							texture2dEnabled = true;
+							textureCapOn = 1;
 						}
 						if (!isWhite)
 						{
@@ -357,10 +357,10 @@ namespace %%%PROJECT_ID%%%
 						blue = (byte)drawList[i++];
 						alpha = (byte)drawList[i++];
 
-						if (texture2dEnabled)
+						if (textureCapOn != -1)
 						{
 							GL.Disable(EnableCap.Texture2D);
-							texture2dEnabled = false;
+							textureCapOn = -1;
 						}
 
 						GL.Color4(red, green, blue, alpha);
