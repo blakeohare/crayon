@@ -92,29 +92,15 @@ namespace Crayon
 
 		public static string ReadFileInternally(string path)
 		{
-			string[] foo = typeof(Util).Assembly.GetManifestResourceNames();
-			System.IO.Stream stream = typeof(Util).Assembly.GetManifestResourceStream("Crayon." + path.Replace('/', '.'));
-			List<string> output = new List<string>();
-			int byteRead = -1;
-			char c;
-			do
-			{
-				byteRead = stream.ReadByte();
-				if (byteRead >= 0 && byteRead < 65535)
-				{
-					c = (char)(byte)byteRead;
-					output.Add("" + c);
-				}
-			} while (byteRead >= 0 && byteRead < 65535);
+			return TrimBomIfPresent(
+				string.Join("", Util.ReadBytesInternally(path).Select<byte, char>(b => (char)b)));
+		}
 
-			string finalOutput = string.Join("", output);
-
-			if (finalOutput.Length >= 3 && finalOutput[0] == 239 && finalOutput[1] == 187 && finalOutput[2] == 191)
-			{
-				finalOutput = finalOutput.Substring(3);
-			}
-
-			return finalOutput;
+		private static string TrimBomIfPresent(string text)
+		{
+			return (text.Length >= 3 && text[0] == 239 && text[1] == 187 && text[2] == 191)
+				? text.Substring(3)
+				: text;
 		}
 
 		private static readonly byte[] BUFFER = new byte[1000];

@@ -554,6 +554,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateParseJson(List<string> output, Expression rawString)
+		{
+			output.Add("JsonParser.ParseJsonIntoValue(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			// Nope

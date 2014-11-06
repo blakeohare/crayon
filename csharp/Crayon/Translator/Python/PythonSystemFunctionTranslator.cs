@@ -514,6 +514,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateParseJson(List<string> output, Expression rawString)
+		{
+			output.Add("_parse_json(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePrint(List<string> output, Expression message)
 		{
 			output.Add("print(");

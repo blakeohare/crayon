@@ -550,6 +550,13 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateParseJson(List<string> output, Expression rawString)
+		{
+			output.Add("JsonParser.parseJsonIntoValue(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new NotImplementedException();

@@ -1124,6 +1124,18 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
+					case %%%FF_PARSE_JSON%%%:
+						// TODO: when you add ability to add optional arguments, add a boolean for failing silently.
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$parse_json requires a string argument.");
+						}
+						output = $_parse_json($_cast('string', Value$arg1.internalValue));
+						if (output == null) {
+							return killExecution(stack, "Attempted to parse an invalid JSON string.");
+						}
+						break;
+
 					case %%%FF_PRINT%%%: 
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);

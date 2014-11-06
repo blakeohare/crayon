@@ -509,6 +509,13 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateParseJson(List<string> output, Expression rawString)
+		{
+			output.Add("R.parseJson(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			throw new Exception("This should have been optimized out.");

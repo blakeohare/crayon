@@ -64,6 +64,15 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
+			compileTargets.Add("JsonParser.cs");
+			output[projectId + "/JsonParser.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/JsonParser.txt"),
+					replacements)
+			};
+
 			compileTargets.Add("TranslationHelper.cs");
 			output[projectId + "/TranslationHelper.cs"] = new FileOutput()
 			{

@@ -117,6 +117,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
+				case FrameworkFunction.PARSE_JSON:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
 				case FrameworkFunction.PRINT:
 					// TODO: allow print to take multiple arguments.
 					VerifyLength(throwToken, frameworkFunction, 1, args);

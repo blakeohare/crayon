@@ -89,6 +89,7 @@ namespace Crayon.Translator
 				case "_new_list_of_size": VerifyCount(functionCall, 2); TranslateNewListOfSize(output, (StringConstant)args[0], args[1]); break;
 				case "_new_stack": VerifyCount(functionCall, 1); TranslateNewStack(output, (StringConstant)args[0]); break;
 				case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
+				case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
@@ -189,6 +190,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length);
 		protected abstract void TranslateNewStack(List<string> output, StringConstant type);
 		protected abstract void TranslateParseInt(List<string> output, Expression rawString);
+		protected abstract void TranslateParseJson(List<string> output, Expression rawString);
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRandomFloat(List<string> output);
