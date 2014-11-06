@@ -95,6 +95,7 @@ namespace Crayon.Translator
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
+				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
 				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
@@ -196,6 +197,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateRandomFloat(List<string> output);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
+		protected abstract void TranslateResourceReadText(List<string> output, Expression path);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
 		protected abstract void TranslateSin(List<string> output, Expression value);

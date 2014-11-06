@@ -8,6 +8,11 @@ namespace %%%PROJECT_ID%%%
 {
 	internal static class ResourceReader
 	{
+		public static string ReadTextResource(string path)
+		{
+			return ReadTextFile(path, true);
+		}
+
 		public static string ReadTextFile(string path, bool filePrefix)
 		{
 			IList<byte> bytes = ReadBytes(path, filePrefix);

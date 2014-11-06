@@ -128,6 +128,9 @@ namespace Crayon
 				case FrameworkFunction.RANDOM:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
+				case FrameworkFunction.RESOURCE_READ_TEXT:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
 				case FrameworkFunction.SET_TITLE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");

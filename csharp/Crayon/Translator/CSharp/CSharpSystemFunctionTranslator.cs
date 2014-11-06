@@ -588,6 +588,14 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
+		protected override void TranslateResourceReadText(List<string> output, Expression path)
+		{
+			// TODO: this
+			output.Add("ResourceReader.ReadTextResource(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
 			output.Add("TranslationHelper.ProgramData = ");

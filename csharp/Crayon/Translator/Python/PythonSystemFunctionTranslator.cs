@@ -543,6 +543,12 @@ namespace Crayon.Translator.Python
 			throw new Exception("This code path should be optimized out of the python translation.");
 		}
 
+		protected override void TranslateResourceReadText(List<string> output, Expression path)
+		{
+			// TODO: this
+			output.Add("None");
+		}
+
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
 			output.Add("program_data[0] = ");

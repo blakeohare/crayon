@@ -544,6 +544,12 @@ namespace Crayon.Translator.JavaScript
 			output.Add("window.setTimeout(v_runTick, R.computeDelayMillis())");
 		}
 
+		protected override void TranslateResourceReadText(List<string> output, Expression path)
+		{
+			// TODO: this
+			output.Add("null");
+		}
+
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
 			output.Add("R.ProgramData = ");
