@@ -776,7 +776,10 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_ASSERT%%%:
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.BOOLEAN || !$_cast('bool', Value$arg1.internalValue)) {
+						if (Value$arg1.type != Types.BOOLEAN) {
+							return killExecution(stack, "Assertion expression must be a boolean.");
+						}
+						if (!$_cast('bool', Value$arg1.internalValue)) {
 							return killExecution(stack, "Assertion failed: " + valueToString(arg2));
 						}
 						break;

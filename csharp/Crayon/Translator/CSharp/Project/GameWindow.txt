@@ -271,6 +271,7 @@ namespace %%%PROJECT_ID%%%
 
 			if (!continueExecution)
 			{
+				this.Close();
 				this.Exit();
 			}
 		}
