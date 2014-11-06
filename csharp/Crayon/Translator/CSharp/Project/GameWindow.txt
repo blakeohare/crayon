@@ -271,8 +271,10 @@ namespace %%%PROJECT_ID%%%
 
 			if (!continueExecution)
 			{
+				// Because sometimes once isn't enough.
 				this.Close();
 				this.Exit();
+				System.Environment.Exit(0);
 			}
 		}
 
