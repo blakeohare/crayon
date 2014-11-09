@@ -968,8 +968,8 @@ function @omitReturn @type('string') interpret(
 							if (%%%INT_IS_FLOOR%%%) {
 								output = build_integer($_int(float1));
 							} else {
-								if (float1 < 0) {
-									output = build_integer(-$_int(-float1));
+								if (float1 < 0 && float1 % 0 != 0) {
+									output = build_integer($_int(float1) - 1);
 								} else {
 									output = build_integer($_int(float1));
 								}
