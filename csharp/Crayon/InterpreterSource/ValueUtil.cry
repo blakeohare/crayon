@@ -6,7 +6,14 @@
 		if ($_cast('bool', value)) return "true";
 		return "false";
 	}
-	if (type == Types.INTEGER || type == Types.FLOAT || type == Types.STRING) return $_string_cast_strong(value);
+	if (type == Types.FLOAT) {
+		@type('string') floatStr = $_string_cast_strong(value);
+		if (!$_string_contains(floatStr, '.')) {
+			floatStr += '.0';
+		}
+		return floatStr;
+	}
+	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(value);
 	if (type == Types.LIST) {
 		// TODO: this will recurse infinitely if the list points to itself somehow.
 		@type('List<Value>') internalList = $_cast('List<Value>', value);
