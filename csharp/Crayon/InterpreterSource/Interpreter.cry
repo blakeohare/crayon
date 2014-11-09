@@ -509,7 +509,7 @@ function @omitReturn @type('string') interpret(
 						// float > int
 						case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('float > int');
-							if ($_cast('double', left) >= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+							if ($_cast('double', left) > $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
 						// int >= float
 						case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
@@ -795,7 +795,38 @@ function @omitReturn @type('string') interpret(
 						}
 						$_blit_image(Value$arg1.internalValue, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
-						
+
+					case %%%FF_BLIT_IMAGE_PARTIAL%%%:
+						// $blit_image(image, targetX, targetY, sourceX, sourceY, width, height)
+						arg7 = $_stack_pop(valueStack);
+						arg6 = $_stack_pop(valueStack);
+						arg5 = $_stack_pop(valueStack);
+						arg4 = $_stack_pop(valueStack);
+						arg3 = $_stack_pop(valueStack);
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.NATIVE_OBJECT) {
+							return killExecution(stack, "$blit_image_partial requires an image object as the first parameter.");
+						}
+
+						if (Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER ||
+							Value$arg4.type != Types.INTEGER ||
+							Value$arg5.type != Types.INTEGER ||
+							Value$arg6.type != Types.INTEGER ||
+							Value$arg7.type != Types.INTEGER) {
+							return killExecution(stack, "$blit_image_partial requires an image object and 6 integer arguments.");
+						}
+						$_blit_image_partial(
+							Value$arg1.internalValue,
+							$_cast('int', Value$arg2.internalValue),
+							$_cast('int', Value$arg3.internalValue),
+							$_cast('int', Value$arg4.internalValue),
+							$_cast('int', Value$arg5.internalValue),
+							$_cast('int', Value$arg6.internalValue),
+							$_cast('int', Value$arg7.internalValue));
+						break;
+
 					case %%%FF_CLOCK_TICK%%%:
 						yieldControl(stack);
 						return null;

@@ -35,6 +35,7 @@ namespace Crayon.Translator
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
+				case "_blit_image_partial": VerifyCount(functionCall, 7); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 1); TranslateCastToList(output, args[0]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
@@ -136,6 +137,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
+		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);

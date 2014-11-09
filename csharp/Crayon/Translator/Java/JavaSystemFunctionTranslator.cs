@@ -72,6 +72,25 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height)
+		{
+			output.Add("RenderEngine.blitImagePartial(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetY);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, sourceX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, sourceY);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(")");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			output.Add("((");

@@ -12,11 +12,12 @@ namespace %%%PROJECT_ID%%%
 		private const int MOUSE_LEFT = 0;
 		private const int MOUSE_RIGHT = 1;
 		private const int MOUSE_MOVE = 2;
-
+		
 		private const int DRAW_COMMAND_BLIT = 1;
-		private const int DRAW_COMMAND_RECTANGLE = 2;
-		private const int DRAW_COMMAND_ELLIPSE = 3;
-		private const int DRAW_COMMAND_LINE = 4;
+		private const int DRAW_COMMAND_BLIT_PARTIAL = 2;
+		private const int DRAW_COMMAND_RECTANGLE = 3;
+		private const int DRAW_COMMAND_ELLIPSE = 4;
+		private const int DRAW_COMMAND_LINE = 5;
 
 		private Queue<int> events = new Queue<int>();
 		private Queue<string> keyEvents = new Queue<string>();
@@ -304,7 +305,9 @@ namespace %%%PROJECT_ID%%%
 			int RH = screenHeight;
 			int VW = gameWidth;
 			int VH = gameHeight;
-			int left, top, right, bottom, startX, startY, endX, endY, lineWidth;
+			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height;
+			float textureWidth, textureHeight;
+			float textureLeft, textureRight, textureTop, textureBottom;
 			byte red, green, blue, alpha;
 			Image image;
 
@@ -345,6 +348,52 @@ namespace %%%PROJECT_ID%%%
 						GL.Vertex2(right * RW / VW, bottom * RH / VH);
 
 						GL.TexCoord2(0f, image.TextureBottom);
+						GL.Vertex2(left * RW / VW, bottom * RH / VH);
+
+						GL.End();
+						break;
+
+					case DRAW_COMMAND_BLIT_PARTIAL:
+						image = imageList[imageIndex++];
+						left = drawList[i++];
+						top = drawList[i++];
+						startX = drawList[i++];
+						startY = drawList[i++];
+						width = drawList[i++];
+						height = drawList[i++];
+						right = left + width;
+						bottom = top + height;
+						textureWidth = image.TextureRight;
+						textureHeight = image.TextureBottom;
+
+						textureLeft = startX * textureWidth / image.Width;
+						textureRight = (startX + width) * textureWidth / image.Width;
+						textureTop = startY * textureHeight / image.Height;
+						textureBottom = (startY + height) * textureHeight / image.Height;
+
+						if (textureCapOn != 1)
+						{
+							GL.Enable(EnableCap.Texture2D);
+							textureCapOn = 1;
+						}
+						if (!isWhite)
+						{
+							GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
+							isWhite = true;
+						}
+						GL.BindTexture(TextureTarget.Texture2D, image.ImageID);
+						GL.Begin(BeginMode.Quads);
+
+						GL.TexCoord2(textureLeft, textureTop);
+						GL.Vertex2(left * RW / VW, top * RH / VH);
+
+						GL.TexCoord2(textureRight, textureTop);
+						GL.Vertex2(right * RW / VW, top * RH / VH);
+
+						GL.TexCoord2(textureRight, textureBottom);
+						GL.Vertex2(right * RW / VW, bottom * RH / VH);
+
+						GL.TexCoord2(textureLeft, textureBottom);
 						GL.Vertex2(left * RW / VW, bottom * RH / VH);
 
 						GL.End();
@@ -429,7 +478,32 @@ namespace %%%PROJECT_ID%%%
 
 			imageList[imageListVirtualLength++] = image;
 		}
-		
+
+		public void BlitImagePartial(Image image, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
+		{
+			if (drawListVirtualLength + 7 >= drawListRealLength)
+			{
+				drawList = DoubleArray<int>(drawList);
+				drawListRealLength = drawList.Length;
+			}
+
+			if (imageListVirtualLength == imageListRealLength)
+			{
+				imageList = DoubleArray<Image>(imageList);
+				imageListRealLength = imageList.Length;
+			}
+
+			drawList[drawListVirtualLength++] = DRAW_COMMAND_BLIT_PARTIAL;
+			drawList[drawListVirtualLength++] = targetX;
+			drawList[drawListVirtualLength++] = targetY;
+			drawList[drawListVirtualLength++] = sourceX;
+			drawList[drawListVirtualLength++] = sourceY;
+			drawList[drawListVirtualLength++] = width;
+			drawList[drawListVirtualLength++] = height;
+
+			imageList[imageListVirtualLength++] = image;
+		}
+
 		public void DrawRectangle(int left, int top, int width, int height, int red, int green, int blue, int alpha)
 		{
 			if (drawListVirtualLength + 9 >= drawListRealLength)

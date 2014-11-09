@@ -73,6 +73,25 @@ namespace Crayon.Translator.Python
 			output.Add("))");
 		}
 
+		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height)
+		{
+			output.Add("_global_vars['virtual_screen'].blit(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1], (");
+			this.Translator.TranslateExpression(output, targetX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetY);
+			output.Add("), _PR(");
+			this.Translator.TranslateExpression(output, sourceX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, sourceY);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add("))");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);

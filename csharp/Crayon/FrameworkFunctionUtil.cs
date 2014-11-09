@@ -44,6 +44,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
 					break;
+				case FrameworkFunction.BLIT_IMAGE_PARTIAL:
+					VerifyLength(throwToken, frameworkFunction, 7, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
 				case FrameworkFunction.CLOCK_TICK:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
