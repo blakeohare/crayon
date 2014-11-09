@@ -53,7 +53,7 @@ function @omitReturn @type('string') interpret(
 	@type('Dictionary<string, Value>') dictStringKeyLookup = null;
 	@type('Dictionary<string, Value>') dictStringValueLookup = null;
 	@type('bool') first = false;
-	
+
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
@@ -65,6 +65,7 @@ function @omitReturn @type('string') interpret(
 	@type('Value') value2 = null;
 	@type('Value') value3 = null;
 	@type('string') string1 = null;
+	@type('string') string2 = null;
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
 
@@ -1151,11 +1152,12 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.STRING) {
 							return killExecution(stack, "$resource_read_text requires a string path parameter.");
 						}
-						string1 = $_resource_read_text_file($_cast('string', Value$arg1.internalValue));
-						if (string1 == null) {
-							return killExecution(stack, "Resource file not found.");
+						string1 = $_cast('string', Value$arg1.internalValue);
+						string2 = $_resource_read_text_file(string1);
+						if (string2 == null) {
+							return killExecution(stack, "Resource file not found: '" + string1 + "'");
 						}
-						output = new Value(Types.STRING, string1);
+						output = new Value(Types.STRING, string2);
 						break;
 
 					case %%%FF_SET_TITLE%%%:
@@ -1830,7 +1832,7 @@ function @omitReturn @type('string') interpret(
 						value = $_dictionary_get_guaranteed(globals, nameId);
 					} else {
 						// TODO: the token information here is incorrect.
-						return killExecution(stack, "Variable not defined.");
+						return killExecution(stack, "Variable not defined: " + identifiers[nameId]);
 					}
 
 					$_stack_push(valueStack, value);
