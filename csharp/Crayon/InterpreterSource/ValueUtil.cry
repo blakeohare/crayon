@@ -140,3 +140,27 @@ function @type('Value') buildLiteral(@type('int') type, @type('int') value, @typ
 	if (type == Types.BOOLEAN && value == 0) return VALUE_FALSE;
 	return null;
 }
+
+function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Array<Value>') values) {
+	@type('Dictionary<string, Value>') keyLookup = $_new_dictionary('string', 'Value');
+	@type('Dictionary<string, Value>') valueLookup = $_new_dictionary('string', 'Value');
+
+	@type('int') i = $_array_length(keys) - 1;
+	@type('string') key = null;
+	@type('Value') keyValue = null;
+	while (i >= 0) {
+		key = $_array_get(keys, i);
+		keyValue = new Value(Types.STRING, key);
+		$_dictionary_set(keyLookup, key, keyValue);
+		$_dictionary_set(valueLookup, key, $_array_get(values, i));
+		i -= 1;
+	}
+
+	return new Value(Types.DICTIONARY, new DictImpl(
+		$_new_dictionary('int', 'Value'),
+		$_new_dictionary('int', 'Value'),
+		keyLookup,
+		valueLookup,
+		$_dictionary_size(keyLookup),
+		Types.STRING));
+}

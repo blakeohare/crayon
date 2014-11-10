@@ -1184,6 +1184,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$resource_read_text requires a string path parameter.");
 						}
 						string1 = $_cast('string', Value$arg1.internalValue);
+						// TODO: verify string1 is a well-formed path without '..'
 						string2 = $_resource_read_text_file(string1);
 						if (string2 == null) {
 							return killExecution(stack, "Resource file not found: '" + string1 + "'");

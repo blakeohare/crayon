@@ -29,7 +29,7 @@ for i in range(12):
 	KEY_LOOKUP[pygame.K_F1 + i] = 'f' + str(i + 1)
 
 COMMON_STRINGS = {}
-for value in KEY_LOOKUP.values() + 'exit closebutton key alt-f4 mousemove mouseleftdown mouseleftup mouserightdown mouserightup'.split(' '):
+for value in list(KEY_LOOKUP.values()) + 'exit closebutton key alt-f4 mousemove mouseleftdown mouseleftup mouserightdown mouserightup'.split(' '):
 	COMMON_STRINGS[value] = [%%%TYPE_STRING%%%, value]
 
 def _pygame_pump_events():
@@ -136,5 +136,47 @@ def _pygame_flip_image(img, flipx, flipy):
 	image = img[1]
 	output = pygame.transform.flip(image, flipx == True, flipy == True)
 	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)
+
+def _read_resource_text(path):
+	if os.path.exists(path):
+		if not os.path.isdir(path):
+			f = open(path, 'rt')
+			text = f.read()
+			f.close()
+			return text
+	return None
+
+def _parse_json(raw):
+	import json
+	try:
+		return _parse_json_thing(json.loads(raw))
+	except:
+		return None
+
+def _parse_json_thing(item):
+	if item == None: return v_VALUE_NULL
+	if item == True: return v_VALUE_TRUE
+	if item == False: return v_VALUE_FALSE
+	if item == "": return v_VALUE_EMPTY_STRING
+	t = str(type(item))
+	if "'int'" in t or "'long'" in t:
+		return v_build_integer(item)
+	if "'float'" in t:
+		return [%%%TYPE_FLOAT%%%, item];
+	if "'string'" in t:
+		return [%%%TYPE_STRING%%%, item]
+	if "'list'" in t:
+		output = []
+		for o in item:
+			output.append(_parse_json_thing(o))
+		return [%%%TYPE_LIST%%%, output]
+	if "'dict'" in t:
+		keys = []
+		values = []
+		for key in item.keys():
+			keys.append(key)
+			values.append(_parse_json_thing(item[key]))
+		return v_buildDictionary(keys, values);
+	return v_VALUE_NULL;
 
 program_data = [None]

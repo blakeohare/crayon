@@ -564,8 +564,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			// TODO: this
-			output.Add("None");
+			output.Add("_read_resource_text(");	
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)

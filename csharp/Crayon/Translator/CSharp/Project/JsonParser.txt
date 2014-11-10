@@ -47,9 +47,9 @@ namespace %%%PROJECT_ID%%%
 			{
 				value = ParseJsonList(rawValue, length, i);
 			}
-			else if (c == '"' || c == '\'')
+			else if (c == '"')
 			{
-				value = ParseJsonString(rawValue, length, i, c);
+				value = ParseJsonString(rawValue, length, i);
 			}
 			else if (c == '.' || (c >= '0' && c <= '9'))
 			{
@@ -114,11 +114,11 @@ namespace %%%PROJECT_ID%%%
 			throw new JsonParserException();
 		}
 
-		private static Value ParseJsonString(char[] rawValue, int length, Index i, char stringType)
+		private static Value ParseJsonString(char[] rawValue, int length, Index i)
 		{
 			i.Value++; // opening quote
 			StringBuilder sb = new StringBuilder();
-			while (i.Value < length && rawValue[i.Value] != stringType)
+			while (i.Value < length && rawValue[i.Value] != '"')
 			{
 				char c = rawValue[i.Value++];
 				if (c == '\\')
