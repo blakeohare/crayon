@@ -163,8 +163,8 @@ def _parse_json_thing(item):
 		return v_build_integer(item)
 	if "'float'" in t:
 		return [%%%TYPE_FLOAT%%%, item];
-	if "'string'" in t:
-		return [%%%TYPE_STRING%%%, item]
+	if "'string'" in t or "'unicode'" in t:
+		return [%%%TYPE_STRING%%%, str(item)]
 	if "'list'" in t:
 		output = []
 		for o in item:
