@@ -45,6 +45,8 @@ namespace %%%PROJECT_ID%%%
 			this.gameHeight = gameHeight;
 			this.screenWidth = screenWidth;
 			this.screenHeight = screenHeight;
+			this.X = 50;
+			this.Y = 50;
 
 			this.TargetRenderFrequency = fps;
 
