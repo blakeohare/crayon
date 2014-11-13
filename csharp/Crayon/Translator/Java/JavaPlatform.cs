@@ -40,7 +40,8 @@ namespace Crayon.Translator.Java
 				"GameWindow",
 				"RenderEngine",
 				"Image",
-				"ImageLibrary"
+				"ImageLibrary",
+				"JsonParser"
 			})
 			{
 				output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()

@@ -165,6 +165,7 @@
     <EmbeddedResource Include="Translator\Java\Project\Image.txt" />
     <EmbeddedResource Include="Translator\Java\Project\ImageLibrary.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\JsonParser.txt" />
+    <EmbeddedResource Include="Translator\Java\Project\JsonParser.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
