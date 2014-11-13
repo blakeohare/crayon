@@ -418,6 +418,68 @@ R.flipImage = function(wrappedImage, flipX, flipY) {
 	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output];
 };
 
+R.readResourceText = function(path) {
+	var output = R.resources[path];
+	if (output === undefined) return null;
+	return output;
+};
+
+R.parseJson = function(rawText) {
+	try {
+		return R.convertJsonThing(JSON.parse(rawText));
+	} catch (e) {
+		return null;
+	}
+};
+
+R.convertJsonThing = function(thing) {
+	var type = R.typeClassify(thing);
+	switch (type) {
+		case 'null': return v_VALUE_NULL;
+		case 'bool': return thing ? v_VALUE_TRUE : v_VALUE_FALSE;
+		case 'string': return thing.length == 0 ? v_VALUE_EMPTY_STRING : [%%%TYPE_STRING%%%, thing];
+		case 'list':
+			var list = [];
+			for (i = 0; i < thing.length; ++i) {
+				list.push(R.convertJsonThing(thing[i]));
+			}
+			return [%%%TYPE_LIST%%%, list];
+		case 'dict':
+			var keys = [];
+			var values = [];
+			for (var rawKey in thing) {
+				keys.push(R.convertJsonThing(rawKey));
+				values.push(R.convertJsonThing(thing[rawKey]));
+			}
+			return v_buildDictionary(keys, values);
+		case 'int':
+			return [%%%TYPE_INTEGER%%%, thing];
+		case 'float':
+			return [%%%TYPE_FLOAT%%%, thing];
+		default:
+			return v_VALUE_NULL;
+	}
+};
+
+R.typeClassify = function(thing) {
+	if (thing === null) return 'null';
+	if (thing === true) return 'bool';
+	if (thing === false) return 'bool';
+	if (typeof thing == "string") return 'string';
+	if (typeof thing == "number") {
+		if (thing % 1 == 0) return 'int';
+		return 'float';
+	}
+	ts = Object.prototype.toString.call(thing);
+	if (ts == '[object Array]') {
+		return 'list';
+	}
+	if (ts == '[object Object]') {
+		return 'dict';
+	}
+	return 'null';
+};
+
 window.addEventListener('keydown', function(e) {
 	if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 		e.preventDefault();

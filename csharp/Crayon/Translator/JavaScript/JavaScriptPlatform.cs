@@ -23,7 +23,6 @@ namespace Crayon.Translator.JavaScript
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "javascript"; } }
-		
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string inputFolder)
 		{
@@ -56,16 +55,72 @@ namespace Crayon.Translator.JavaScript
 				TextContent = codeJsText
 			};
 
+			HashSet<string> binaryFileTypes = new HashSet<string>(
+				"JPG PNG GIF JPEG BMP MP3 OGG".Split(' '));
+
+			Dictionary<string, string> textResources = new Dictionary<string, string>();
+
 			foreach (string file in filesToCopyOver)
 			{
-				output[file] = new FileOutput()
+				string[] parts = file.Split('.');
+				bool isBinary = file.Length > 1 && binaryFileTypes.Contains(parts[parts.Length - 1].ToUpperInvariant());
+
+				if (isBinary)
 				{
-					Type = FileOutputType.Copy,
-					RelativeInputPath = file
+					output[file] = new FileOutput()
+					{
+						Type = FileOutputType.Copy,
+						RelativeInputPath = file
+					};
+					textResources[file] = null;
+				}
+				else
+				{
+					textResources[file] = Util.ReadFileExternally(System.IO.Path.Combine(inputFolder, file), false);
+				}
+			}
+
+			if (textResources.Count > 0)
+			{
+				output["resources.js"] = new FileOutput()
+				{
+					TextContent = BuildTextResourcesCodeFile(textResources),
+					Type = FileOutputType.Text
 				};
 			}
 
 			return output;
+		}
+
+		
+		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
+		{
+			List<string> output = new List<string>();
+			output.Add("R.resources = {\n");
+			string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
+			for (int i = 0; i < keys.Length; ++i)
+			{
+				string filename = keys[i];
+				output.Add("\t\"");
+				output.Add(filename.Replace('\\', '/'));
+				output.Add("\": ");
+
+				if (files[filename] != null)
+				{
+					output.Add(Util.ConvertStringValueToCode(files[filename], true));
+				}
+				else
+				{
+					output.Add("null");
+				}
+				if (i != keys.Length - 1)
+				{
+					output.Add(",");
+				}
+				output.Add("\n");
+			}
+			output.Add("};\n");
+			return string.Join("", output);
 		}
 
 		private string Minify(string data)
@@ -118,6 +173,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("<meta charset=\"utf-8\">");
 			output.Add("<title>Crayon JS output</title>");
 			output.Add("<script type=\"text/javascript\" src=\"code.js\"></script>");
+			output.Add("<script type=\"text/javascript\" src=\"resources.js\"></script>");
 			output.Add("</head>");
 			output.Add("<body onload=\"v_main()\">");
 			output.Add(Util.ReadFileInternally("Translator/JavaScript/Browser/game_host_html.txt"));
