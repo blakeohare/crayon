@@ -6,9 +6,10 @@ import java.awt.Graphics2D;
 public final class RenderEngine {
 
     private static final int BLIT_IMAGE = 1;
-    private static final int DRAW_ELLIPSE = 2;
-    private static final int DRAW_RECTANGLE = 3;
-    private static final int FILL_SCREEN = 4;
+    private static final int BLIT_IMAGE_PARTIAL = 2;
+    private static final int DRAW_ELLIPSE = 3;
+    private static final int DRAW_RECTANGLE = 4;
+    private static final int FILL_SCREEN = 5;
 
     private static int[] renderArgs = new int[1000];
     private static int renderArgsVirtualLength = 0;
@@ -33,7 +34,7 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = green;
         renderArgs[renderArgsVirtualLength++] = blue;
     }
-    
+
     public static void blitImage(Object imageObject, int x, int y) {
         if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
             expandArgsCapacity();
@@ -48,6 +49,26 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = y;
 
         images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void blitImagePartial(Object imageObject, int targetX, int targetY, int sourceX, int sourceY, int width, int height) {
+        if (renderArgsVirtualLength + 7 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_PARTIAL;
+        renderArgs[renderArgsVirtualLength++] = targetX;
+        renderArgs[renderArgsVirtualLength++] = targetY;
+        renderArgs[renderArgsVirtualLength++] = sourceX;
+        renderArgs[renderArgsVirtualLength++] = sourceY;
+        renderArgs[renderArgsVirtualLength++] = width;
+        renderArgs[renderArgsVirtualLength++] = height;
+
+        images[imagesVirtualLength++] = (Image) imageObject;    	
     }
 
     public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
@@ -102,7 +123,7 @@ public final class RenderEngine {
     public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
         int index = 0;
         int imagesIndex = 0;
-        int x, y, width, height, red, green, blue, alpha;
+        int x, y, sx, sy, width, height, red, green, blue, alpha;
         Image image;
         while (index < renderArgsVirtualLength) {
             switch (renderArgs[index++]) {
@@ -122,6 +143,17 @@ public final class RenderEngine {
 
                     g.drawImage(image.img, x, y, null);
                     break;
+
+                case BLIT_IMAGE_PARTIAL:
+                	image = images[imagesIndex++];
+                	x = renderArgs[index++];
+                	y = renderArgs[index++];
+                	sx = renderArgs[index++];
+                	sy = renderArgs[index++];
+                	width = renderArgs[index++];
+                	height = renderArgs[index++];
+                	g.drawImage(image.img, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
+                	break;
 
                 case DRAW_ELLIPSE:
                     x = renderArgs[index++];
