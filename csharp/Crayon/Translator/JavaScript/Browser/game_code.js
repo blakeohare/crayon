@@ -33,6 +33,11 @@ R.blit = function(canvas, x, y) {
 	R._global_vars.ctx.drawImage(canvas, x, y);
 };
 
+R.blitPartial = function(canvas, tx, ty, sx, sy, w, h) {
+	if (w == 0 || h == 0) return;
+	R._global_vars.ctx.drawImage(canvas, sx, sy, w, h, tx, ty, w, h);
+};
+
 R.is_image_loaded = function(key) {
 	return R._global_vars.image_downloads[key] !== undefined;
 };
@@ -268,7 +273,7 @@ R.is_valid_integer = function (value) {
 };
 
 R.setTitle = function (title) {
-	// TODO: set title
+	window.document.title = title;
 };
 
 R._commonStrings = {
@@ -448,7 +453,7 @@ R.convertJsonThing = function(thing) {
 			var keys = [];
 			var values = [];
 			for (var rawKey in thing) {
-				keys.push(R.convertJsonThing(rawKey));
+				keys.push(rawKey);
 				values.push(R.convertJsonThing(thing[rawKey]));
 			}
 			return v_buildDictionary(keys, values);

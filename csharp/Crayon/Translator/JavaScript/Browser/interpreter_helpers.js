@@ -41,3 +41,15 @@ function create_new_array(size) {
 	while (size-- > 0) output.push(null);
 	return output;
 }
+
+function multiply_list(list, size) {
+	var output = [];
+	var length = list.length;
+	var i;
+	while (size-- > 0) {
+		for (i = 0; i < length; ++i) {
+			output.push(list[i]);
+		}
+	}
+	return output;
+}
