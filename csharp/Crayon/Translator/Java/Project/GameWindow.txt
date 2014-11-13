@@ -118,7 +118,7 @@ class GameWindow {
     }
 
     public void setTitle(String title) {
-        throw new RuntimeException("TODO: set title");
+        frame.setTitle(title);
     }
 
     private static HashMap<Integer, String> keyCodeLookup = null;
