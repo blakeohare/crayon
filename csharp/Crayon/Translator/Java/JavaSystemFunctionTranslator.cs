@@ -605,8 +605,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			// TODO: this
-			output.Add("null");
+			output.Add("TranslationHelper.getTextResource(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)

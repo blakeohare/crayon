@@ -37,7 +37,7 @@ final class TranslationHelper {
     public static String readFileText(String path) {
         FileReader fileReader;
         try {
-            fileReader = new FileReader("data/bytecode.txt");
+            fileReader = new FileReader(path);
         } catch (FileNotFoundException e) {
             return null;
         }
@@ -67,6 +67,10 @@ final class TranslationHelper {
 
     public static String getRawByteCodeString() {
         return readFileText("data/bytecode.txt");
+    }
+
+    public static String getTextResource(String path) {
+        return readFileText("resources/" + path);
     }
 
     public static <T> void reverseList(ArrayList<T> list) {
