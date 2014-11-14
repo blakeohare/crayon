@@ -221,8 +221,8 @@ function @omitReturn @type('string') interpret(
 				value2 = $_stack_pop(valueStack); // target root
 				nameId = $_array_get(row, 0);
 				if (Value$value2.type == Types.INSTANCE) {
-					objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
-					$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
+					objInstance2 = $_cast('ObjectInstance', Value$value2.internalValue);
+					$_dictionary_set(ObjectInstance$objInstance2.fields, nameId, value);
 				} else {
 					killExecution(stack, "Cannot assign to a field on this type.");
 				}
