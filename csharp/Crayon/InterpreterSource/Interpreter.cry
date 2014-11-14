@@ -1251,7 +1251,7 @@ function @omitReturn @type('string') interpret(
 						return killExecution(stack, "Invalid framework function: " + $_string_cast_weak($_array_get(row, 0))); 
 						break;
 				}
-				if (row[1] == 1) {
+				if ($_array_get(row, 1) == 1) {
 					$_stack_push(valueStack, output);
 				}
 				break;

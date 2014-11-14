@@ -16,14 +16,16 @@ namespace %%%PROJECT_ID%%%
 		public readonly int Height;
 		public readonly float TextureRight;
 		public readonly float TextureBottom;
+		public readonly Bitmap Pixels;
 
-		public Image(int imageId, int width, int height)
+		public Image(int imageId, int width, int height, Bitmap pixels)
 		{
 			this.ImageID = imageId;
 			this.Width = width;
 			this.Height = height;
 			this.TextureRight = 1F * width / NextPowerOf2(width);
 			this.TextureBottom = 1F * height / NextPowerOf2(height);
+			this.Pixels = pixels;
 		}
 
 		public static bool LoadImage(string key, string path)
@@ -33,7 +35,7 @@ namespace %%%PROJECT_ID%%%
 			int width = bmp.Width;
 			int height = bmp.Height;
 			int id = ForceLoadTexture(bmp);
-			IMAGE_LOOKUP[key] = new Image(id, width, height);
+			IMAGE_LOOKUP[key] = new Image(id, width, height, bmp);
 			return true;
 		}
 
@@ -46,10 +48,27 @@ namespace %%%PROJECT_ID%%%
 			}
 			return null;
 		}
-
+		
 		public static Image FlipImage(object original, bool flipX, bool flipY)
 		{
-			throw new System.NotImplementedException();
+			Image image = (Image)original;
+			// Currently a naive implementation. This could be sped up.
+			Bitmap newBitmap = image.Pixels.Clone(new Rectangle(0, 0, image.Width, image.Height), image.Pixels.PixelFormat);
+			if (flipX && flipY)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+			}
+			else if (flipX)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+			}
+			else if (flipY)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+			}
+
+			int id = ForceLoadTexture(newBitmap);
+			return new Image(id, image.Width, image.Height, newBitmap);
 		}
 
 		private static int ForceLoadTexture(Bitmap bitmap)
