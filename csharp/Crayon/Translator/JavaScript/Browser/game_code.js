@@ -66,6 +66,9 @@ R.finish_load_image = function(id) {
 
 R.beginFrame = function() {
 	R._global_vars.last_frame_began = R.now();
+	if (R._global_vars.ctx) {
+		R.drawRect(0, 0, R._global_vars.width, R._global_vars.height, 0, 0, 0, 255);
+	}
 };
 
 R.endFrame = function() {
@@ -76,6 +79,7 @@ R.endFrame = function() {
 		var rctx = rc.getContext('2d');
 		rctx.drawImage(vc, 0, 0);
 	}
+	window.setTimeout(v_runTick, R.computeDelayMillis());
 };
 
 R.computeDelayMillis = function () {

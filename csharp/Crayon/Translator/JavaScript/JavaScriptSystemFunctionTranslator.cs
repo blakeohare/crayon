@@ -559,8 +559,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateRegisterTimeout(List<string> output)
 		{
-			output.Add("R.endFrame();");
-			output.Add("window.setTimeout(v_runTick, R.computeDelayMillis())");
+			output.Add("R.endFrame()");
 		}
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
