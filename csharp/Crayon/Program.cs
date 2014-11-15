@@ -25,6 +25,7 @@
 					return;
 				}
 			}
+			bool wrapOutput = true; // wrap the output of the project in a folder specific to that platform.
 			string sourceFolder = args[0];
 			string outputFolder = args[1];
 			string rawPlatform = args[2].ToLowerInvariant();
