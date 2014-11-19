@@ -29,10 +29,6 @@ R._global_vars = {
 	'image_keys_by_index': [null]
 };
 
-R.blit = function(canvas, x, y) {
-	R._global_vars.ctx.drawImage(canvas, x, y);
-};
-
 R.blitPartial = function(canvas, tx, ty, sx, sy, w, h) {
 	if (w == 0 || h == 0) return;
 	R._global_vars.ctx.drawImage(canvas, sx, sy, w, h, tx, ty, w, h);
