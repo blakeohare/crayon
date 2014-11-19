@@ -45,7 +45,19 @@ namespace %%%PROJECT_ID%%%
 
 		private static IList<byte> ReadBytes(string path, bool filePrefix)
 		{
-			string canonicalizedPath = path.Replace('/', '.').Replace('\\', '.');
+			// TODO: C# likes to replace non alphanumerics in the path with underscores but 
+			// only in the directories, not in the actual file name. Will need to come up
+			// with some original resource mapping to generated file names.
+			path = path.Replace('\\', '/');
+			string[] parts = path.Split('/');
+			string original_file = parts[parts.Length - 1];
+			List<string> final_file = new List<string>();
+			for (int i = 0; i < parts.Length - 1; ++i)
+			{
+				final_file.Add(parts[i].Replace('-', '_'));
+			}
+			final_file.Add(original_file);
+			string canonicalizedPath = string.Join(".", final_file);
 			string prefix = "%%%PROJECT_ID%%%" + (filePrefix ? ".Files" : "") + (canonicalizedPath.StartsWith(".") ? "" : ".");
 			canonicalizedPath = prefix + canonicalizedPath;
 
