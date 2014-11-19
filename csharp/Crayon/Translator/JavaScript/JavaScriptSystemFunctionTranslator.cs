@@ -63,7 +63,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
 		{
-			output.Add("R.blit(");
+			output.Add("R._global_vars.ctx.drawImage(");
 			this.Translator.TranslateExpression(output, image);
 			output.Add(this.Shorten("[1], "));
 			this.Translator.TranslateExpression(output, x);
