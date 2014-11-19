@@ -313,20 +313,20 @@ namespace %%%PROJECT_ID%%%
 			byte red, green, blue, alpha;
 			Image image;
 
-			int i = 0;
 			int imageIndex = 0;
 			int textureCapOn = 0;
 			bool isWhite = false;
-			while (i < drawListVirtualLength)
+			for (int i = 0; i < drawListVirtualLength; i += 16)
 			{
-				switch (drawList[i++])
+				switch (drawList[i])
 				{
 					case DRAW_COMMAND_BLIT:
 						image = imageList[imageIndex++];
-						left = drawList[i++];
-						top = drawList[i++];
+						left = drawList[i | 1];
+						top = drawList[i | 2];
 						right = left + image.Width;
 						bottom = top + image.Height;
+						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
 						if (textureCapOn != 1)
 						{
 							GL.Enable(EnableCap.Texture2D);
@@ -340,29 +340,46 @@ namespace %%%PROJECT_ID%%%
 						GL.BindTexture(TextureTarget.Texture2D, image.ImageID);
 						GL.Begin(BeginMode.Quads);
 
-						GL.TexCoord2(0f, 0f);
-						GL.Vertex2(left * RW / VW, top * RH / VH);
+						if (RW == VW && RH == VH)
+						{
+							GL.TexCoord2(0f, 0f);
+							GL.Vertex2(left, top);
 
-						GL.TexCoord2(image.TextureRight, 0f);
-						GL.Vertex2(right * RW / VW, top * RH / VH);
+							GL.TexCoord2(image.TextureRight, 0f);
+							GL.Vertex2(right, top);
 
-						GL.TexCoord2(image.TextureRight, image.TextureBottom);
-						GL.Vertex2(right * RW / VW, bottom * RH / VH);
+							GL.TexCoord2(image.TextureRight, image.TextureBottom);
+							GL.Vertex2(right, bottom);
 
-						GL.TexCoord2(0f, image.TextureBottom);
-						GL.Vertex2(left * RW / VW, bottom * RH / VH);
+							GL.TexCoord2(0f, image.TextureBottom);
+							GL.Vertex2(left, bottom);
+						}
+						else
+						{
+							GL.TexCoord2(0f, 0f);
+							GL.Vertex2(left * RW / VW, top * RH / VH);
+
+							GL.TexCoord2(image.TextureRight, 0f);
+							GL.Vertex2(right * RW / VW, top * RH / VH);
+
+							GL.TexCoord2(image.TextureRight, image.TextureBottom);
+							GL.Vertex2(right * RW / VW, bottom * RH / VH);
+
+							GL.TexCoord2(0f, image.TextureBottom);
+							GL.Vertex2(left * RW / VW, bottom * RH / VH);
+						}
 
 						GL.End();
 						break;
 
 					case DRAW_COMMAND_BLIT_PARTIAL:
 						image = imageList[imageIndex++];
-						left = drawList[i++];
-						top = drawList[i++];
-						startX = drawList[i++];
-						startY = drawList[i++];
-						width = drawList[i++];
-						height = drawList[i++];
+						left = drawList[i | 1];
+						top = drawList[i | 2];
+						startX = drawList[i | 3];
+						startY = drawList[i | 4];
+						width = drawList[i | 5];
+						height = drawList[i | 6];
 						right = left + width;
 						bottom = top + height;
 						textureWidth = image.TextureRight;
@@ -402,14 +419,14 @@ namespace %%%PROJECT_ID%%%
 						break;
 
 					case DRAW_COMMAND_RECTANGLE:
-						left = drawList[i++];
-						top = drawList[i++];
-						right = drawList[i++] + left;
-						bottom = drawList[i++] + top;
-						red = (byte)drawList[i++];
-						green = (byte)drawList[i++];
-						blue = (byte)drawList[i++];
-						alpha = (byte)drawList[i++];
+						left = drawList[i | 1];
+						top = drawList[i | 2];
+						right = drawList[i | 3] + left;
+						bottom = drawList[i | 4] + top;
+						red = (byte)drawList[i | 5];
+						green = (byte)drawList[i | 6];
+						blue = (byte)drawList[i | 7];
+						alpha = (byte)drawList[i | 8];
 
 						if (textureCapOn != -1)
 						{
@@ -431,27 +448,27 @@ namespace %%%PROJECT_ID%%%
 						break;
 
 					case DRAW_COMMAND_ELLIPSE:
-						left = drawList[i++];
-						top = drawList[i++];
-						right = drawList[i++] + left;
-						bottom = drawList[i++] + top;
-						red = (byte)drawList[i++];
-						green = (byte)drawList[i++];
-						blue = (byte)drawList[i++];
-						alpha = (byte)drawList[i++];
+						left = drawList[i | 1];
+						top = drawList[i | 2];
+						right = drawList[i | 3] + left;
+						bottom = drawList[i | 4] + top;
+						red = (byte)drawList[i | 5];
+						green = (byte)drawList[i | 6];
+						blue = (byte)drawList[i | 7];
+						alpha = (byte)drawList[i | 8];
 
 						throw new System.NotImplementedException("TODO: draw ellipse");
 
 					case DRAW_COMMAND_LINE:
-						startX = drawList[i++];
-						startY = drawList[i++];
-						endX = drawList[i++];
-						endY = drawList[i++];
-						lineWidth = drawList[i++];
-						red = (byte)drawList[i++];
-						green = (byte)drawList[i++];
-						blue = (byte)drawList[i++];
-						alpha = (byte)drawList[i++];
+						startX = drawList[i | 1];
+						startY = drawList[i | 2];
+						endX = drawList[i | 3];
+						endY = drawList[i | 4];
+						lineWidth = drawList[i | 5];
+						red = (byte)drawList[i | 6];
+						green = (byte)drawList[i | 7];
+						blue = (byte)drawList[i | 8];
+						alpha = (byte)drawList[i | 9];
 
 						throw new System.NotImplementedException("TODO: draw line");
 
@@ -462,7 +479,7 @@ namespace %%%PROJECT_ID%%%
 
 		public void BlitImage(Image image, int x, int y)
 		{
-			if (drawListVirtualLength + 3 >= drawListRealLength)
+			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
 				drawList = DoubleArray<int>(drawList);
 				drawListRealLength = drawList.Length;
@@ -474,16 +491,18 @@ namespace %%%PROJECT_ID%%%
 				imageListRealLength = imageList.Length;
 			}
 
-			drawList[drawListVirtualLength++] = DRAW_COMMAND_BLIT;
-			drawList[drawListVirtualLength++] = x;
-			drawList[drawListVirtualLength++] = y;
+			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT;
+			drawList[drawListVirtualLength | 1] = x;
+			drawList[drawListVirtualLength | 2] = y;
+			
+			drawListVirtualLength += 16;
 
 			imageList[imageListVirtualLength++] = image;
 		}
 
 		public void BlitImagePartial(Image image, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
 		{
-			if (drawListVirtualLength + 7 >= drawListRealLength)
+			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
 				drawList = DoubleArray<int>(drawList);
 				drawListRealLength = drawList.Length;
@@ -495,65 +514,84 @@ namespace %%%PROJECT_ID%%%
 				imageListRealLength = imageList.Length;
 			}
 
-			drawList[drawListVirtualLength++] = DRAW_COMMAND_BLIT_PARTIAL;
-			drawList[drawListVirtualLength++] = targetX;
-			drawList[drawListVirtualLength++] = targetY;
-			drawList[drawListVirtualLength++] = sourceX;
-			drawList[drawListVirtualLength++] = sourceY;
-			drawList[drawListVirtualLength++] = width;
-			drawList[drawListVirtualLength++] = height;
+			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT_PARTIAL;
+			drawList[drawListVirtualLength | 1] = targetX;
+			drawList[drawListVirtualLength | 2] = targetY;
+			drawList[drawListVirtualLength | 3] = sourceX;
+			drawList[drawListVirtualLength | 4] = sourceY;
+			drawList[drawListVirtualLength | 5] = width;
+			drawList[drawListVirtualLength | 6] = height;
+
+			drawListVirtualLength += 16;
 
 			imageList[imageListVirtualLength++] = image;
 		}
 
 		public void DrawRectangle(int left, int top, int width, int height, int red, int green, int blue, int alpha)
 		{
-			if (drawListVirtualLength + 9 >= drawListRealLength)
+			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
 				drawList = DoubleArray<int>(drawList);
 				drawListRealLength = drawList.Length;
 			}
 
-			drawList[drawListVirtualLength++] = DRAW_COMMAND_RECTANGLE;
-			drawList[drawListVirtualLength++] = left;
-			drawList[drawListVirtualLength++] = top;
-			drawList[drawListVirtualLength++] = width;
-			drawList[drawListVirtualLength++] = height;
-			drawList[drawListVirtualLength++] = red & 255;
-			drawList[drawListVirtualLength++] = green & 255;
-			drawList[drawListVirtualLength++] = blue & 255;
-			drawList[drawListVirtualLength++] = alpha & 255;
+			drawList[drawListVirtualLength] = DRAW_COMMAND_RECTANGLE;
+			drawList[drawListVirtualLength | 1] = left;
+			drawList[drawListVirtualLength | 2] = top;
+			drawList[drawListVirtualLength | 3] = width;
+			drawList[drawListVirtualLength | 4] = height;
+			drawList[drawListVirtualLength | 5] = red & 255;
+			drawList[drawListVirtualLength | 6] = green & 255;
+			drawList[drawListVirtualLength | 7] = blue & 255;
+			drawList[drawListVirtualLength | 8] = alpha & 255;
+
+			drawListVirtualLength += 16;
 		}
 
 		public void DrawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha)
 		{
-			drawList[drawListVirtualLength++] = DRAW_COMMAND_ELLIPSE;
-			drawList[drawListVirtualLength++] = left;
-			drawList[drawListVirtualLength++] = top;
-			drawList[drawListVirtualLength++] = width;
-			drawList[drawListVirtualLength++] = height;
-			drawList[drawListVirtualLength++] = red & 255;
-			drawList[drawListVirtualLength++] = green & 255;
-			drawList[drawListVirtualLength++] = blue & 255;
-			drawList[drawListVirtualLength++] = alpha & 255;
+			if (drawListVirtualLength + 16 >= drawListRealLength)
+			{
+				drawList = DoubleArray<int>(drawList);
+				drawListRealLength = drawList.Length;
+			}
+
+			drawList[drawListVirtualLength] = DRAW_COMMAND_ELLIPSE;
+			drawList[drawListVirtualLength | 1] = left;
+			drawList[drawListVirtualLength | 2] = top;
+			drawList[drawListVirtualLength | 3] = width;
+			drawList[drawListVirtualLength | 4] = height;
+			drawList[drawListVirtualLength | 5] = red & 255;
+			drawList[drawListVirtualLength | 6] = green & 255;
+			drawList[drawListVirtualLength | 7] = blue & 255;
+			drawList[drawListVirtualLength | 8] = alpha & 255;
 		}
 
 		public void DrawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha)
 		{
-			drawList[drawListVirtualLength++] = DRAW_COMMAND_LINE;
-			drawList[drawListVirtualLength++] = startX;
-			drawList[drawListVirtualLength++] = startY;
-			drawList[drawListVirtualLength++] = endX;
-			drawList[drawListVirtualLength++] = endY;
-			drawList[drawListVirtualLength++] = lineWidth;
-			drawList[drawListVirtualLength++] = red & 255;
-			drawList[drawListVirtualLength++] = green & 255;
-			drawList[drawListVirtualLength++] = blue & 255;
-			drawList[drawListVirtualLength++] = alpha & 255;
+			if (drawListVirtualLength + 16 >= drawListRealLength)
+			{
+				drawList = DoubleArray<int>(drawList);
+				drawListRealLength = drawList.Length;
+			}
+
+			drawList[drawListVirtualLength] = DRAW_COMMAND_LINE;
+			drawList[drawListVirtualLength | 1] = startX;
+			drawList[drawListVirtualLength | 2] = startY;
+			drawList[drawListVirtualLength | 3] = endX;
+			drawList[drawListVirtualLength | 4] = endY;
+			drawList[drawListVirtualLength | 5] = lineWidth;
+			drawList[drawListVirtualLength | 6] = red & 255;
+			drawList[drawListVirtualLength | 7] = green & 255;
+			drawList[drawListVirtualLength | 8] = blue & 255;
+			drawList[drawListVirtualLength | 9] = alpha & 255;
+
+			drawListVirtualLength += 16;
 		}
 
 		public void FillScreen(int red, int green, int blue)
 		{
+			drawListVirtualLength = 0;
 			this.DrawRectangle(-1, -1, this.gameWidth + 2, this.gameHeight + 2, red, green, blue, 255);
 		}
 
