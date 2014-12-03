@@ -53,8 +53,10 @@
 			AbstractPlatform platform;
 			switch (rawPlatform.ToLowerInvariant())
 			{
+				case "csopengl": platform = new Crayon.Translator.CSharp.CSharpOpenTkPlatform(); break;
+				case "cswinforms": platform = new Crayon.Translator.CSharp.CSharpWinForms(); break;
+				case "cswinphone": platform = new Crayon.Translator.CSharp.CSharpWindowsPhonePlatform(); break;
 				case "java": platform = new Crayon.Translator.Java.JavaPlatform(); break;
-				case "cswin": platform = new Crayon.Translator.CSharp.CSharpPlatform(); break;
 				case "js": platform = new Crayon.Translator.JavaScript.JavaScriptPlatform(minified, jsFolderRoot); break;
 				case "py": platform = new Crayon.Translator.Python.PythonPlatform(); break;
 				default:
@@ -70,7 +72,9 @@
 		}
 
 		private static readonly string[] PLATFORM_USAGE = new string[] {
-			"  cswin - C# (for Windows Client App)",
+			"  csopengl - C# Windows App (using OpenGL)",
+			"  cswinforms - C# Windows App (using WinForms)",
+			"  cswinphone - C# Windows Phone App",
 			"  js - HTML/JavaScript",
 			"  java - Java (for Desktop)",
 			"  py - Python (with PyGame)",

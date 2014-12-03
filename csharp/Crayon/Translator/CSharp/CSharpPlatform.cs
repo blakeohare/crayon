@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
 {
-	class CSharpPlatform : AbstractPlatform
+	abstract class CSharpPlatform : AbstractPlatform
 	{
 		public CSharpPlatform()
 			: base(false, new CSharpTranslator(), new CSharpSystemFunctionTranslator())
@@ -19,7 +18,14 @@ namespace Crayon.Translator.CSharp
 		public override bool IntIsFloor { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
-		public override string OutputFolderName { get { return "csharpwindows"; } }
+
+		public abstract void PlatformSpecificFiles(
+			string projectId,
+			List<string> compileTargets,
+			Dictionary<string, FileOutput> files,
+			Dictionary<string, string> replacements);
+
+		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions, string inputFolder)
 		{
@@ -31,89 +37,34 @@ namespace Crayon.Translator.CSharp
 				{ "PROJECT_ID", projectId },
 				{ "CURRENT_YEAR", DateTime.Now.Year.ToString() },
 				{ "COPYRIGHT", "©" },
+				{ "EXTRA_DLLS", "" },
 			};
+			this.ApplyPlatformSpecificReplacements(replacements);
 
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> compileTargets = new List<string>();
 
-			compileTargets.Add("Program.cs");
-			output[projectId + "/Program.cs"] = new FileOutput()
+			// Get embedded resource list
+			List<string> embeddedResources = this.GetEmbeddedResources(projectId, output, filesToCopyOver);
+
+			// Code files that are templated
+			Dictionary<string, string> directFileCopies = new Dictionary<string, string>()
 			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/ProgramCs.txt"),
-					replacements)
+				{ "SolutionFile.txt", projectId + ".sln" },
+				{ "ProjectFile.txt", projectId + ".csproj" },
+				{ "ProgramCs.txt", "Program.cs" },
+				{ "AssemblyInfo.txt", "Properties/AssemblyInfo.cs" },
+				{ "CrStack.txt", "CrStack.cs" },
+				{ "JsonParser.txt", "JsonParser.cs" },
+				{ "TranslationHelper.txt", "TranslationHelper.cs" },
+				{ "ResourceReader.txt", "ResourceReader.cs" },
 			};
 
-			compileTargets.Add("Properties\\AssemblyInfo.cs");
-
-			output[projectId + "/Properties/AssemblyInfo.cs"] = new FileOutput()
+			// Create a list of compiled C# files
+			foreach (string finalFilePath in directFileCopies.Values.Where<string>(f => f.EndsWith(".cs")))
 			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/AssemblyInfo.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("CrStack.cs");
-			output[projectId + "/CrStack.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/CrStack.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("JsonParser.cs");
-			output[projectId + "/JsonParser.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/JsonParser.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("TranslationHelper.cs");
-			output[projectId + "/TranslationHelper.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/TranslationHelper.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("ResourceReader.cs");
-			output[projectId + "/ResourceReader.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/ResourceReader.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("GameWindow.cs");
-			output[projectId + "/GameWindow.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/GameWindow.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("Image.cs");
-			output[projectId + "/Image.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/Image.txt"),
-					replacements)
-			};
-
-			output[projectId + "/OpenTK.dll"] = new FileOutput()
-			{
-				Type = FileOutputType.Binary,
-				BinaryContent = Util.ReadBytesInternally("Translator/CSharp/OpenTK/OpenTK.dll")
-			};
+				compileTargets.Add(finalFilePath.Replace('/', '\\'));
+			}
 
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
 					"using System;",
@@ -133,6 +84,9 @@ namespace Crayon.Translator.CSharp
 
 			string crayonFooter = "}" + this.Translator.NL;
 			string crayonWrapperFooter = "\t}" + this.Translator.NL + crayonFooter;
+
+			// Add files for specific C# platform
+			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements);
 
 			string nl = this.Translator.NL;
 
@@ -195,7 +149,7 @@ namespace Crayon.Translator.CSharp
 			foreach (string codefile in finalCode.Keys)
 			{
 				List<string> codeContents = new List<string>();
-				
+
 				codeContents.Add(crayonWrapperHeader);
 				this.Translator.CurrentIndention = 2;
 
@@ -212,6 +166,45 @@ namespace Crayon.Translator.CSharp
 				};
 			}
 
+			// Create the actual compile targets in the .csproj file
+			List<string> compileTargetCode = new List<string>();
+			foreach (string compileTarget in compileTargets)
+			{
+				compileTargetCode.Add("    <Compile Include=\"" + compileTarget.Replace('/', '\\') + "\" />\r\n");
+			}
+			compileTargetCode.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
+			foreach (string embeddedResource in embeddedResources)
+			{
+				compileTargetCode.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
+			}
+
+			replacements["COMPILE_TARGETS"] = string.Join("", compileTargetCode);
+
+			// Copy templated files over with proper replacements
+			foreach (string templateFile in directFileCopies.Keys)
+			{
+				string finalFilePath = directFileCopies[templateFile];
+				string outputFilePath = finalFilePath.EndsWith(".sln") ? finalFilePath : (projectId + "/" + finalFilePath);
+				output[outputFilePath] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = Util.MassReplacements(
+						Util.ReadFileInternally("Translator/CSharp/Project/" + templateFile),
+						replacements)
+				};
+			}
+
+			output[projectId + "/ByteCode.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = this.Context.ByteCodeString
+			};
+
+			return output;
+		}
+
+		private List<string> GetEmbeddedResources(string projectId, Dictionary<string, FileOutput> output, List<string> filesToCopyOver)
+		{
 			List<string> embeddedResources = new List<string>();
 			foreach (string file in filesToCopyOver)
 			{
@@ -223,40 +216,7 @@ namespace Crayon.Translator.CSharp
 					RelativeInputPath = file
 				};
 			}
-
-			output[projectId + ".sln"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/SolutionFile.txt")
-			};
-
-			List<string> csprojFile = new List<string>();
-			csprojFile.Add(Util.ReadFileInternally("Translator/CSharp/Project/ProjectFileHeader.txt"));
-			foreach (string compileTarget in compileTargets)
-			{
-				csprojFile.Add("    <Compile Include=\"" + compileTarget.Replace('/', '\\') + "\" />\r\n");
-			}
-			csprojFile.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
-
-			foreach (string embeddedResource in embeddedResources)
-			{
-				csprojFile.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
-			}
-			csprojFile.Add(Util.ReadFileInternally("Translator/CSharp/Project/ProjectFileFooter.txt"));
-
-			output[projectId + "/" + projectId + ".csproj"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(string.Join("", csprojFile), replacements)
-			};
-
-			output[projectId + "/ByteCode.txt"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = this.Context.ByteCodeString
-			};
-
-			return output;
+			return embeddedResources;
 		}
 
 		public string GetTypeStringFromAnnotation(Annotation annotation)

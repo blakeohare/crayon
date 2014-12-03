@@ -708,7 +708,7 @@ namespace Crayon
 			}
 			else if (increment.Root is DotStep)
 			{
-				throw new NotImplementedException("++foo.field and foo.field++ are not implemented yet.");
+				throw new ParserException(increment.IncrementToken, "++foo.field and foo.field++ are not implemented yet.");
 			}
 			else
 			{

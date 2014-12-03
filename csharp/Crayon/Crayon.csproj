@@ -119,9 +119,12 @@
     <Compile Include="AbstractPlatform.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpWindowsPhonePlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpWinForms.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
@@ -142,8 +145,7 @@
     <EmbeddedResource Include="Translator\Python\PyGame\Header.py" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFileHeader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFileFooter.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFile.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ProgramCs.txt" />
@@ -156,8 +158,8 @@
     <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\CrStack.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GameWindow.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\Image.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowOpenTK.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ImageOpenTK.txt" />
     <EmbeddedResource Include="Translator\Java\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\Java\Project\Start.txt" />
     <EmbeddedResource Include="Translator\Java\Project\GameWindow.txt" />
