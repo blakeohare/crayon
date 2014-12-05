@@ -1244,6 +1244,8 @@ function @omitReturn @type('string') interpret(
 							case Types.NATIVE_OBJECT: string1 = "native_system_object"; break;
 							default: string1 = "unknown_type"; break;
 						}
+						// TODO: create an alternate version of buildString called buildCommonString that uses a permanent cache.
+						// Otherwise rapid access of typeof will needlessly create a bunch of objects
 						output = new Value(Types.STRING, string1);
 						break;
 

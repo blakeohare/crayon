@@ -7,8 +7,8 @@ namespace Crayon.Translator.CSharp
 {
 	abstract class CSharpPlatform : AbstractPlatform
 	{
-		public CSharpPlatform()
-			: base(false, new CSharpTranslator(), new CSharpSystemFunctionTranslator())
+		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator)
+			: base(false, new CSharpTranslator(), systemFunctionTranslator)
 		{ }
 
 		public override bool IsAsync { get { return true; } }
@@ -26,13 +26,16 @@ namespace Crayon.Translator.CSharp
 			Dictionary<string, string> replacements);
 
 		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
+		public abstract void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries);
 
 		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions, string inputFolder)
 		{
 			string guid = Guid.NewGuid().ToString();
+			string guid2 = Guid.NewGuid().ToString();
 
 			Dictionary<string, string> replacements = new Dictionary<string, string>() {
 				{ "PROJECT_GUID", guid },
+				{ "ASSEMBLY_GUID", guid2 },
 				{ "PROJECT_TITLE", projectId },
 				{ "PROJECT_ID", projectId },
 				{ "CURRENT_YEAR", DateTime.Now.Year.ToString() },
@@ -40,6 +43,23 @@ namespace Crayon.Translator.CSharp
 				{ "EXTRA_DLLS", "" },
 			};
 			this.ApplyPlatformSpecificReplacements(replacements);
+
+			HashSet<string> systemLibraries = new HashSet<string>(new string[] {
+				"System",
+				"System.Core",
+				"System.Drawing",
+				"System.Xml",
+				"System.Xml.Linq",
+				"Microsoft.CSharp"
+			});
+
+			this.AddPlatformSpecificSystemLibraries(systemLibraries);
+			List<string> systemLibrariesStringBuilder = new List<string>();
+			foreach (string library in systemLibraries.OrderBy<string, string>(s => s.ToLowerInvariant()))
+			{
+				systemLibrariesStringBuilder.Add("    <Reference Include=\"" + library + "\" />");
+			}
+			replacements["SYSTEM_LIBRARIES"] = string.Join("\r\n", systemLibrariesStringBuilder);
 
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> compileTargets = new List<string>();

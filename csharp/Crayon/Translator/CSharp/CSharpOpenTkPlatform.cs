@@ -4,6 +4,10 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpOpenTkPlatform : CSharpPlatform
 	{
+		public CSharpOpenTkPlatform()
+			: base(new CSharpOpenTkSystemFunctionTranslator())
+		{ }
+
 		public override string OutputFolderName { get { return "csopengl"; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
@@ -16,6 +20,8 @@ namespace Crayon.Translator.CSharp
 				"    "
 			});
 		}
+
+		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries) { }
 
 		public override void PlatformSpecificFiles(
 			string projectId,

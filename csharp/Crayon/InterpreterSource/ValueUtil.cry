@@ -58,6 +58,26 @@ function @type('Value') build_integer(@type('int') num) {
 	return new Value(Types.INTEGER, num);
 }
 
+function @type('Value') buildInteger(@type('int') num) {
+	return build_integer(num); // TODO: delete the other method and convert usages to this one.
+}
+
+function @type('Value') buildString(@type('string') s) {
+	if ($_string_length(s) == 0) {
+		return VALUE_EMPTY_STRING;
+	}
+	return new Value(Types.STRING, s);
+}
+
+function @type('Value') buildListByWrappingInput(list) {
+	return new Value(Types.LIST, list);
+}
+
+function @type('Value') buildBoolean(@type('bool') value) {
+	if (value) return VALUE_TRUE;
+	return VALUE_FALSE;
+}
+
 // This returns a numerical code rather than a boolean
 //  0 = false
 //  1 = true

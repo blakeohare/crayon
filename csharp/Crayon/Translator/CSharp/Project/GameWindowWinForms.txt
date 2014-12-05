@@ -1,0 +1,225 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace %%%PROJECT_ID%%%
+{
+	class GameWindow : Form
+	{
+		private PictureBox pb;
+		private System.Drawing.Bitmap screen;
+		private System.Drawing.Graphics g;
+		private int screenWidth;
+		private int screenHeight;
+		private int gameWidth;
+		private int gameHeight;
+		private Renderer renderer;
+
+		public static GameWindow Instance = null;
+
+		private static double fps = 60;
+		public static double FPS {
+			get { return fps; }
+			set
+			{
+				fps = value;
+				fpsInvalidated = true;
+			}
+		}
+
+		private static bool fpsInvalidated = false;
+		private System.Windows.Threading.DispatcherTimer timer = null;
+
+		public GameWindow(int screenWidth, int screenHeight, int gameWidth, int gameHeight)
+		{
+			GameWindow.Instance = this;
+			this.renderer = new Renderer();
+			this.gameWidth = gameWidth;
+			this.gameHeight = gameHeight;
+			this.screenWidth = screenWidth;
+			this.screenHeight = screenHeight;
+
+			this.screen = new System.Drawing.Bitmap(this.gameWidth, this.gameHeight);
+			this.Width = screenWidth;
+			this.Height = screenHeight;
+
+			this.Text = "Crayon Window";
+
+			this.SuspendLayout();
+			this.pb = new System.Windows.Forms.PictureBox()
+			{
+				Left = 0,
+				Top = 0,
+				Width = screenWidth,
+				Height = screenHeight
+			};
+
+			pb.Image = this.screen;
+			pb.SizeMode = PictureBoxSizeMode.StretchImage;
+			this.Controls.Add(pb);
+
+			this.Name = "GameWindow";
+			this.ResumeLayout();
+
+			this.Load += (sender, args) => this.UpdateTimer();
+			this.KeyDown += (sender, args) => this.KeyEvent(true, args.KeyCode);
+			this.KeyUp += (sender, args) => this.KeyEvent(false, args.KeyCode);
+
+			this.g = System.Drawing.Graphics.FromImage(this.screen);
+		}
+
+		private void KeyEvent(bool down, System.Windows.Forms.Keys keyCode)
+		{
+			string key = ConvertKey(keyCode);
+			if (key != null)
+			{
+				this.events.Add(new Event() { Type = "key", Down = down, Arg = key });
+			}
+		}
+
+		private string ConvertKey(System.Windows.Forms.Keys keyCode)
+		{
+			switch (keyCode)
+			{
+				case Keys.Left: return "left";
+				case Keys.Right: return "right";
+				case Keys.Up: return "up";
+				case Keys.Down: return "down";
+
+				case Keys.Enter: return "enter";
+				case Keys.Tab: return "tab";
+				case Keys.Escape: return "escape";
+				case Keys.Space: return "space";
+
+				default: return null;
+			}
+		}
+
+		private void UpdateTimer()
+		{
+			if (this.timer != null)
+			{
+				this.timer.Stop();
+				this.timer = null;
+			}
+
+			this.timer = new System.Windows.Threading.DispatcherTimer();
+			int ms = 1;
+			if (fps > 0)
+			{
+				ms = (int)(1000 / fps);
+			}
+			timer.Interval = new TimeSpan(0, 0, 0, 0, ms);
+			timer.Tick += (sender, e) => this.Tick();
+			timer.Start();
+			fpsInvalidated = false;
+		}
+
+		private int currentWidth= -1;
+		private int currentHeight = -1;
+
+		private void Tick()
+		{
+			if (this.Width != currentWidth || this.Height != currentHeight || this.pb.Width != this.currentWidth || this.pb.Height != this.currentHeight)
+			{
+				this.currentWidth = this.Width;
+				this.currentHeight = this.Height;
+				this.pb.Width = this.currentWidth;
+				this.pb.Height = this.currentHeight;
+			}
+
+			this.renderer.Reset(this.g, this.gameWidth, this.gameHeight);
+			this.renderer.DrawRectangle(0, 0, this.currentWidth, this.currentHeight, 0, 0, 0, 255);
+
+			CrayonWrapper.v_runTick();
+
+			this.renderer.Render(this.g);
+
+			this.g.Flush();
+			this.pb.Refresh();
+			this.pb.Invalidate();
+
+			if (fpsInvalidated)
+			{
+				this.UpdateTimer();
+			}
+		}
+
+		private Dictionary<string, Value> STRING_CACHE = new Dictionary<string, Value>();
+
+		private Value GetString(string s)
+		{
+			Value output;
+			if (STRING_CACHE.TryGetValue(s, out output))
+			{
+				// TODO: need to make translated function so I don't have to hard code this here.
+				output = CrayonWrapper.v_buildString(s);
+				STRING_CACHE[s] = output;
+			}
+			return output;
+		}
+
+		public List<Value> GetEvents()
+		{
+			List<Value> output = new List<Value>(this.events.Count);
+			foreach (Event e in this.events)
+			{
+				List<Value> list = new List<Value>(3);
+				switch (e.Type)
+				{
+					case "key":
+						list.Add(CrayonWrapper.v_buildString("key"));
+						list.Add(CrayonWrapper.v_buildBoolean(e.Down));
+						list.Add(CrayonWrapper.v_buildString(e.Arg));
+						break;
+
+					case "mouse":
+						list.Add(CrayonWrapper.v_buildString(e.Arg));
+						list.Add(CrayonWrapper.v_buildInteger(e.X));
+						list.Add(CrayonWrapper.v_buildInteger(e.Y));
+						break;
+
+					case "exit":
+						list.Add(CrayonWrapper.v_buildString("exit"));
+						list.Add(CrayonWrapper.v_buildString(e.Arg));
+						break;
+
+					default:
+						throw new Exception("Unrecognized input event.");
+				}
+				output.Add(CrayonWrapper.v_buildListByWrappingInput(list));
+			}
+			this.events.Clear();
+			return output;
+		}
+
+		private List<Event> events = new List<Event>();
+
+		private class Event
+		{
+			public string Type { get; set; }
+			public string Arg { get; set; }
+			public bool Down { get; set; }
+			public int X { get; set; }
+			public int Y { get; set; }
+		}
+
+		public void SetTitle(string title)
+		{
+			this.Text = title;
+		}
+
+		public static void InitializeScreen(int width, int height)
+		{
+			InitializeScreen(width, height, width, height);
+		}
+
+		public static void InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		{
+			GameWindow gw = new GameWindow(screenWidth, screenHeight, gameWidth, gameHeight);
+			gw.ShowDialog();
+		}
+	}
+}

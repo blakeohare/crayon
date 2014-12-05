@@ -48,7 +48,7 @@ namespace %%%PROJECT_ID%%%
 			}
 			return null;
 		}
-		
+
 		public static Image FlipImage(object original, bool flipX, bool flipY)
 		{
 			Image image = (Image)original;

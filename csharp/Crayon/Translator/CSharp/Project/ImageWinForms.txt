@@ -1,0 +1,64 @@
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal class Image
+	{
+		private static readonly Dictionary<string, Image> IMAGE_LOOKUP = new Dictionary<string, Image>();
+
+		public readonly int Width;
+		public readonly int Height;
+		public readonly Bitmap Pixels;
+		
+		public Image(int width, int height, Bitmap pixels)
+		{
+			this.Width = width;
+			this.Height = height;
+			this.Pixels = pixels;
+		}
+
+		public static bool LoadImage(string key, string path)
+		{
+			Bitmap bmp = ResourceReader.ReadImageFile(path);
+			if (bmp == null) return false;
+			int width = bmp.Width;
+			int height = bmp.Height;
+			IMAGE_LOOKUP[key] = new Image(width, height, bmp);
+			return true;
+		}
+
+		public static Image GetImageByKey(string key)
+		{
+			Image output;
+			if (IMAGE_LOOKUP.TryGetValue(key, out output))
+			{
+				return output;
+			}
+			return null;
+		}
+
+		public static Image FlipImage(object original, bool flipX, bool flipY)
+		{
+			Image image = (Image)original;
+			// Currently a naive implementation. This could be sped up.
+			Bitmap newBitmap = image.Pixels.Clone(new Rectangle(0, 0, image.Width, image.Height), image.Pixels.PixelFormat);
+			if (flipX && flipY)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+			}
+			else if (flipX)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+			}
+			else if (flipY)
+			{
+				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+			}
+
+			return new Image(image.Width, image.Height, newBitmap);
+		}
+
+	}
+}

@@ -120,11 +120,14 @@
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpWindowsPhonePlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpWinForms.cs" />
+    <Compile Include="Translator\CSharp\CSharpWindowsPhoneSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpWinFormsPlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpWinFormsSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
@@ -168,6 +171,9 @@
     <EmbeddedResource Include="Translator\Java\Project\ImageLibrary.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\JsonParser.txt" />
     <EmbeddedResource Include="Translator\Java\Project\JsonParser.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowWinForms.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

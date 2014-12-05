@@ -112,7 +112,7 @@ function @type('string') callSystemMethod(
 				$_list_push(sb, valueToString($_list_get(list3, i)));
 			}
 			@type('string') string1 = $_list_join(sb, sepstr);
-			output = new Value(Types.STRING, string1);
+			output = buildString(string1);
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_POP%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("List pop method", 0, $_array_length(funcArgs));
@@ -150,7 +150,7 @@ function @type('string') callSystemMethod(
 			@type('List<Value>') ss_wrappedList = $_new_list('Value');
 			@type('int') ss_len = $_array_length(ss_rawList);
 			for (i = 0; i < ss_len; i += 1) {
-				$_list_push(ss_wrappedList, new Value(Types.STRING, $_array_get(ss_rawList, i)));
+				$_list_push(ss_wrappedList, buildString($_array_get(ss_rawList, i)));
 			}
 			output = new Value(Types.LIST, ss_wrappedList);
 			break;
@@ -196,22 +196,22 @@ function @type('string') callSystemMethod(
 		case %%%PRIMITIVE_METHOD_STRING_UPPER%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("String upper method", 0, $_array_length(funcArgs));
 			@type('string') su_string = $_cast('string', context);
-			output = new Value(Types.STRING, $_string_upper(su_string));
+			output = buildString($_string_upper(su_string));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("String lower method", 0, $_array_length(funcArgs));
 			@type('string') sl_string = $_cast('string', context);
-			output = new Value(Types.STRING, $_string_lower(sl_string));
+			output = buildString($_string_lower(sl_string));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_TRIM%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("String trim method", 0, $_array_length(funcArgs));
 			@type('string') st_string = $_cast('string', context);
-			output = new Value(Types.STRING, $_string_trim(st_string));
+			output = buildString($_string_trim(st_string));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_REVERSE%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("String reverse method", 0, $_array_length(funcArgs));
 			@type('string') sr_string = $_cast('string', context);
-			output = new Value(Types.STRING, $_string_reverse(sr_string));
+			output = buildString($_string_reverse(sr_string));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_REPLACE%%%:
 			if ($_array_length(funcArgs) != 2) return wrongArgCountError("String replace method", 2, $_array_length(funcArgs));
@@ -221,8 +221,7 @@ function @type('string') callSystemMethod(
 				return "string replace must take in two strings as arguments.";
 			}
 			@type('string') srep_value = $_cast('string', context);
-			output = new Value(Types.STRING, 
-				$_string_replace(
+			output = buildString($_string_replace(
 					srep_value,
 					$_cast('string', Value$sr_a.internalValue),
 					$_cast('string', Value$sr_b.internalValue)));

@@ -7,11 +7,18 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpWindowsPhonePlatform : CSharpPlatform
 	{
+		public CSharpWindowsPhonePlatform()
+			: base(new CSharpWindowsPhoneSystemFunctionTranslator())
+		{ }
+
 		public override string OutputFolderName { get { return "cswinphone"; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
+		}
 
+		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries)
+		{
 		}
 
 		public override void PlatformSpecificFiles(string projectId, List<string> compileTargets, Dictionary<string, FileOutput> files, Dictionary<string, string> replacements)
