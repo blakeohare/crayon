@@ -38,7 +38,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			SolidBrush brush = new SolidBrush(Color.Black);
 			int lastBrushColor = Color.Black.ToArgb();
-			int color;
+			int color, width, height;
 			Image image;
 			int imageIndex = 0;
 
@@ -53,7 +53,16 @@ namespace %%%PROJECT_ID%%%
 
 					case BLIT_IMAGE_PARTIAL:
 						image = this.images[imageIndex++];
-						g.DrawImageUnscaled(image.Pixels, data[i | 1], data[i | 2]);
+						width = data[i | 5];
+						height = data[i | 6];
+						g.DrawImage(
+							image.Pixels,
+							new Rectangle(data[i | 1], data[i | 2], width, height),
+							data[i | 3],
+							data[i | 4],
+							width,
+							height,
+							GraphicsUnit.Pixel);
 						break;
 
 					case DRAW_RECTANGLE:
@@ -122,6 +131,14 @@ namespace %%%PROJECT_ID%%%
 		
 		public void BlitImage(Image image, int x, int y)
 		{
+			if (x >= this.screenWidth ||
+				y >= this.screenHeight ||
+				x + image.Width < 0 ||
+				y + image.Height < 0)
+			{
+				return;
+			}
+
 			if (this.dataVirtualLength + 16 >= this.dataRealLength)
 			{
 				this.ExpandCapacity();
