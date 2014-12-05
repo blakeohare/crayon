@@ -42,8 +42,7 @@ namespace %%%PROJECT_ID%%%
 			this.screenHeight = screenHeight;
 
 			this.screen = new System.Drawing.Bitmap(this.gameWidth, this.gameHeight);
-			this.Width = screenWidth;
-			this.Height = screenHeight;
+			this.ClientSize = new System.Drawing.Size(screenWidth, screenHeight);
 
 			this.Text = "Crayon Window";
 
@@ -122,10 +121,10 @@ namespace %%%PROJECT_ID%%%
 
 		private void Tick()
 		{
-			if (this.Width != currentWidth || this.Height != currentHeight || this.pb.Width != this.currentWidth || this.pb.Height != this.currentHeight)
+			if (this.ClientSize.Width != currentWidth || this.ClientSize.Height != currentHeight)
 			{
-				this.currentWidth = this.Width;
-				this.currentHeight = this.Height;
+				this.currentWidth = this.ClientSize.Width;
+				this.currentHeight = this.ClientSize.Height;
 				this.pb.Width = this.currentWidth;
 				this.pb.Height = this.currentHeight;
 			}
