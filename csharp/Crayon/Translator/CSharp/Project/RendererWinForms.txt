@@ -48,7 +48,7 @@ namespace %%%PROJECT_ID%%%
 				{
 					case BLIT_IMAGE:
 						image = this.images[imageIndex++];
-						g.DrawImageUnscaled(image.Pixels, data[i | 1], data[i | 2]);
+						g.DrawImage(image.Pixels, data[i | 1], data[i | 2]);
 						break;
 
 					case BLIT_IMAGE_PARTIAL:

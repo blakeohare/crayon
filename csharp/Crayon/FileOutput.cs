@@ -9,7 +9,8 @@ namespace Crayon
 	{
 		Text,
 		Binary,
-		Copy
+		Copy,
+		Image
 	}
 
 	class FileOutput
@@ -19,5 +20,6 @@ namespace Crayon
 		public string RelativeInputPath { get; set; }
 		public string TextContent { get; set; }
 		public byte[] BinaryContent { get; set; }
+		public System.Drawing.Bitmap Bitmap { get; set; }
 	}
 }

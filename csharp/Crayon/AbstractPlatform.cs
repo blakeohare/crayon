@@ -88,8 +88,11 @@ namespace Crayon
 			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
 		}
 
-		public void Compile(string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath, bool wrapOutput)
+		public void Compile(string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
 		{
+			inputFolder = inputFolder.Replace('/', '\\');
+			if (inputFolder.EndsWith("\\")) inputFolder = inputFolder.Substring(0, inputFolder.Length - 1);
+
 			ByteBuffer byteCodeBuffer = GenerateByteCode(inputFolder);
 
 			if (nullableReadableByteCodeOutputPath != null)
@@ -115,20 +118,10 @@ namespace Crayon
 				structs,
 				inputFolder);
 
-			string outputFolder = wrapOutput
-				? System.IO.Path.Combine(baseOutputFolder, this.OutputFolderName)
-				: baseOutputFolder;
+			string outputFolder = baseOutputFolder;
 
-			if (!System.IO.Directory.Exists(baseOutputFolder))
-			{
-				throw new Exception("Target directory does not exist.");
-			}
-
-			if (!System.IO.Directory.Exists(outputFolder))
-			{
-				System.IO.Directory.CreateDirectory(outputFolder);
-			}
-
+			Util.EnsureFolderExists(outputFolder);
+			
 			this.DeleteExistingContents(outputFolder);
 
 			this.GenerateFiles(files, outputFolder, inputFolder);

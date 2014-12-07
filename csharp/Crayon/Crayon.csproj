@@ -47,6 +47,7 @@
     <Compile Include="AnnotatedType.cs" />
     <Compile Include="AnnotationParser.cs" />
     <Compile Include="BinaryOps.cs" />
+    <Compile Include="BuildFile.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="ByteCodeCompiler.cs" />
     <Compile Include="ByteCodeEncoder.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="ParseTree\Variable.cs" />
     <Compile Include="ParseTree\WhileLoop.cs" />
     <Compile Include="PrimitiveMethods.cs" />
+    <Compile Include="SpriteSheetBuilder.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Tokenizer.cs" />
     <Compile Include="Program.cs" />
