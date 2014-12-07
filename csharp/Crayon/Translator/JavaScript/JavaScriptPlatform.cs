@@ -24,7 +24,13 @@ namespace Crayon.Translator.JavaScript
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "javascript"; } }
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string inputFolder)
+		public override Dictionary<string, FileOutput> Package(
+			BuildContext buildContext,
+			string projectId,
+			Dictionary<string, ParseTree.Executable[]> finalCode,
+			List<string> filesToCopyOver,
+			ICollection<ParseTree.StructDefinition> structDefinitions,
+			string inputFolder)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 

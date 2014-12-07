@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Crayon.Translator.Python
 {
-	// TODO: subclass this to PyGamePlatform when other Python based platforms are made.
-
 	class PythonPlatform : AbstractPlatform
 	{
 		public PythonPlatform()
@@ -23,7 +18,13 @@ namespace Crayon.Translator.Python
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "pygame"; } }
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string inputFolder)
+		public override Dictionary<string, FileOutput> Package(
+			BuildContext buildContext,
+			string projectId,
+			Dictionary<string, ParseTree.Executable[]> finalCode,
+			List<string> filesToCopyOver,
+			ICollection<ParseTree.StructDefinition> structDefinitions,
+			string inputFolder)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> concatenatedCode = new List<string>();

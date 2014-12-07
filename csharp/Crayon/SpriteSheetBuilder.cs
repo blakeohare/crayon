@@ -61,7 +61,7 @@ namespace Crayon
 		{
 			public Image(string spriteSheetId, string file, Bitmap bmp)
 			{
-				this.File = file;
+				this.File = file.Replace('\\', '/');
 				this.SheetID = spriteSheetId;
 				this.bitmap = bmp;
 				this.Width = bmp.Width;
@@ -148,7 +148,12 @@ namespace Crayon
 			}
 		}
 
-		public SpriteSheetBuilder() { }
+		private BuildContext buildContext;
+
+		public SpriteSheetBuilder(BuildContext buildContext)
+		{
+			this.buildContext = buildContext;
+		}
 
 		// ID's will be checked in the order that they are initially passed in to this function.
 		public void AddPrefix(string id, string prefix)
@@ -296,34 +301,35 @@ namespace Crayon
 					if (image.TileSpillX)
 					{
 						tileIds.Add(tileId + 1);
-						drawX.Add(-image.TileX);
+						drawX.Add(256 - image.TileX);
 						drawY.Add(image.TileY);
 					}
 					if (image.TileSpillY)
 					{
 						tileIds.Add(tileId + 4);
 						drawX.Add(image.TileX);
-						drawY.Add(-image.TileY);
+						drawY.Add(256 - image.TileY);
 					}
 					if (image.TileSpillX && image.TileSpillY)
 					{
 						tileIds.Add(tileId + 5);
-						drawX.Add(-image.TileX);
-						drawY.Add(-image.TileY);
+						drawX.Add(256 - image.TileX);
+						drawY.Add(256 - image.TileY);
 					}
 
 					for (int i = 0; i < tileIds.Count; ++i)
 					{
 						int id = tileIds[i];
-						
-						if (!tilesById.ContainsKey(tileId))
+
+						if (!tilesById.ContainsKey(id))
 						{
 							tilesById[id] = new Bitmap(256, 256, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+							tilesById[id].SetResolution(96, 96);
 							graphicsById[id] = Graphics.FromImage(tilesById[id]);
 						}
 						graphicsById[id].DrawImageUnscaled(image.Bitmap, drawX[i], drawY[i]);
 					}
-					
+
 					tileIds.Clear();
 					drawX.Clear();
 					drawY.Clear();
@@ -342,23 +348,13 @@ namespace Crayon
 			}
 		}
 
-		private Bitmap GetBitmapFromLookup(Dictionary<int, Bitmap> lookup, int id)
-		{
-			if (!lookup.ContainsKey(id))
-			{
-				lookup[id] = new Bitmap(256, 256, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			}
-
-			return lookup[id];
-		}
-
 		private string GetSpriteSheetIdMatch(string filename)
 		{
 			foreach (string id in this.spriteGroupIds)
 			{
 				foreach (string prefix in this.prefixesForId[id])
 				{
-					if (filename.StartsWith(prefix) || prefix == "*")
+					if (filename.Replace('\\', '/').StartsWith(prefix) || prefix == "*")
 					{
 						return id;
 					}
@@ -384,7 +380,8 @@ namespace Crayon
 						Bitmap bmp = null;
 						try
 						{
-							bmp = new Bitmap(file);
+							bmp = new Bitmap(System.IO.Path.Combine(this.buildContext.SourceFolder, file));
+							bmp.SetResolution(96, 96);
 						}
 						catch (Exception)
 						{
@@ -427,16 +424,20 @@ namespace Crayon
 					x = 0;
 				}
 
-				// does the next row spill into the next sheet?
-				// move the top to the next sheet
+				// does the next image spill into the next sheet?
+				// move to the next spill sheet
 				bottom = y + image.Height;
-				if (bottom % 1024 < y)
+				if (bottom % 1024 < y && bottom % 1024 != 0)
 				{
 					y = bottom / 1024 * 1024;
 					bottom = y + image.Height;
+					x = 0;
+					rowMaxY = bottom;
 				}
 
 				image.SetGlobalPosition(x, y);
+				x += image.Width;
+
 				if (bottom > rowMaxY)
 				{
 					rowMaxY = bottom;

@@ -21,7 +21,13 @@ namespace Crayon.Translator.Java
 			: base(false, new JavaTranslator(), new JavaSystemFunctionTranslator())
 		{ }
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string inputFolder)
+		public override Dictionary<string, FileOutput> Package(
+			BuildContext buildContext,
+			string projectId,
+			Dictionary<string, ParseTree.Executable[]> finalCode,
+			List<string> filesToCopyOver,
+			ICollection<ParseTree.StructDefinition> structDefinitions,
+			string inputFolder)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			string package = projectId.ToLowerInvariant();
@@ -173,18 +179,18 @@ namespace Crayon.Translator.Java
 
 			foreach (string file in filesToCopyOver)
 			{
-				byte[] fileContents = null;
+				System.Drawing.Bitmap bmpHack = null;
 				if (file.ToLowerInvariant().EndsWith(".png"))
 				{
-					fileContents = HackUtil.ReEncodePngImageForJava(System.IO.Path.Combine(inputFolder, file));
+					bmpHack = HackUtil.ReEncodePngImageForJava(System.IO.Path.Combine(inputFolder, file));
 				}
 
-				if (fileContents != null)
+				if (bmpHack != null)
 				{
 					output["resources/" + file] = new FileOutput()
 					{
-						Type = FileOutputType.Binary,
-						BinaryContent = fileContents
+						Type = FileOutputType.Image,
+						Bitmap = bmpHack
 					};
 				}
 				else

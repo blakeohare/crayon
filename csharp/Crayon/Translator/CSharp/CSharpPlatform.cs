@@ -28,7 +28,13 @@ namespace Crayon.Translator.CSharp
 		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
 		public abstract void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries);
 
-		public override Dictionary<string, FileOutput> Package(string projectId, Dictionary<string, Executable[]> finalCode, List<string> filesToCopyOver, ICollection<StructDefinition> structDefinitions, string inputFolder)
+		public override Dictionary<string, FileOutput> Package(
+			BuildContext buildContext,
+			string projectId,
+			Dictionary<string, Executable[]> finalCode,
+			List<string> filesToCopyOver,
+			ICollection<StructDefinition> structDefinitions,
+			string inputFolder)
 		{
 			string guid = Guid.NewGuid().ToString();
 			string guid2 = Guid.NewGuid().ToString();

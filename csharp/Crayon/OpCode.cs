@@ -44,6 +44,7 @@
 		POP, // no args. pop value from value stack.
 		RETURN,
 		RETURN_NULL,
+		SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.
 		SWITCH_INT, // 1: integer switch ID, 2: offset for default case
 		SWITCH_STRING, // 1: string switch ID, 2: offset for default case
 		THIS, // pushes the current object context onto the stack.
