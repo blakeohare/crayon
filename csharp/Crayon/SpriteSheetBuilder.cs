@@ -137,15 +137,6 @@ namespace Crayon
 
 			public int TileX { get { return this.GlobalX % 256; } }
 			public int TileY { get { return this.GlobalY % 256; } }
-
-			public bool TileSpillX
-			{
-				get { return !this.Solitary && (this.TileX + this.Width) % 256 <= this.TileX; }
-			}
-			public bool TileSpillY
-			{
-				get { return !this.Solitary && (this.TileY + this.Height) % 256 <= this.TileY; }
-			}
 		}
 
 		private BuildContext buildContext;
@@ -215,16 +206,16 @@ namespace Crayon
 			// However the interpreter has a sub interpreter for each string command
 			// Commands:
 			//   Sheet declaration:
-			//     0, {sprite sheet ID} string: {sprite sheet name}
+			//     0, {sprite sheet ID}
+			//     string: {sprite sheet name}
+			//
 			//   Tile declaration:
 			//     1, {sprite sheet ID}, {tile ID}, {width}, {height}
 			//     Width and height are optional. If omitted, 256x256 is assumed.
+			//
 			//   Image declaration:
 			//     2, {sprite sheet ID}, {tile ID}, {width}, {height}, {tileX}, {tileY}, {0|1 - solitary bit}
-			//          {tile ID for spill X or 0},
-			//          {tile ID for spill Y or 0},
-			//          {tile ID for spill XY or 0},
-			//          string: {file path}
+			//     string: {file path}
 
 			// Images are saved as the sprite sheet ID (the incrementally allocated one) followed by an underscore followed by Tile ID.
 			// These images are saved in a _crayon_gen_files folder.
@@ -250,8 +241,6 @@ namespace Crayon
 				{
 					stringArgs.Add(image.File);
 					int tileId = image.TileID;
-					bool spillX = image.TileSpillX;
-					bool spillY = image.TileSpillY;
 					intArgs.Add(new int[] { 
 						2,
 						id,
@@ -260,10 +249,7 @@ namespace Crayon
 						image.Height,
 						image.TileX,
 						image.TileY,
-						image.Solitary ? 1 : 0,
-						spillX ? tileId + 1:0,
-						spillY ? tileId + 4 : 0,
-						spillX && spillY ? tileId + 5 : 0
+						image.Solitary ? 1 : 0
 					});
 				}
 
@@ -298,23 +284,23 @@ namespace Crayon
 					tileIds.Add(tileId);
 					drawX.Add(image.TileX);
 					drawY.Add(image.TileY);
-					if (image.TileSpillX)
+
+					int tileColStart = image.SheetX / 256;
+					int tileRowStart = image.SheetY / 256;
+					int tileColEnd = (image.SheetX + image.Width - 1) / 256;
+					int tileRowEnd = (image.SheetY + image.Height - 1) / 256;
+
+					int rowOffset = 0;
+					for (int y = tileRowStart; y <= tileRowEnd; ++y, ++rowOffset)
 					{
-						tileIds.Add(tileId + 1);
-						drawX.Add(256 - image.TileX);
-						drawY.Add(image.TileY);
-					}
-					if (image.TileSpillY)
-					{
-						tileIds.Add(tileId + 4);
-						drawX.Add(image.TileX);
-						drawY.Add(256 - image.TileY);
-					}
-					if (image.TileSpillX && image.TileSpillY)
-					{
-						tileIds.Add(tileId + 5);
-						drawX.Add(256 - image.TileX);
-						drawY.Add(256 - image.TileY);
+						int colOffset = 0;
+						for (int x = tileColStart; x <= tileColEnd; ++x, ++colOffset)
+						{
+							int thisTileId = tileId + rowOffset * 4 + colOffset;
+							tileIds.Add(thisTileId);
+							drawX.Add(image.GlobalX - 256 * x);
+							drawY.Add(image.GlobalY - 256 * y);
+						}
 					}
 
 					for (int i = 0; i < tileIds.Count; ++i)
@@ -341,7 +327,11 @@ namespace Crayon
 			int spillId = maxSpillId + 1;
 			foreach (Image solitaryImage in solitaries)
 			{
-				tilesById[solitaryTileId] = solitaryImage.Bitmap;
+				Bitmap bmp = new Bitmap(solitaryImage.Width, solitaryImage.Height);
+				bmp.SetResolution(96, 96);
+				Graphics g = Graphics.FromImage(bmp);
+				g.DrawImageUnscaled(solitaryImage.Bitmap, 0, 0);
+				tilesById[solitaryTileId] = bmp;
 				solitaryImage.TileID = solitaryTileId;
 				solitaryImage.SpillOverID = spillId++;
 				solitaryTileId++;
@@ -427,9 +417,9 @@ namespace Crayon
 				// does the next image spill into the next sheet?
 				// move to the next spill sheet
 				bottom = y + image.Height;
-				if (bottom % 1024 < y && bottom % 1024 != 0)
+				if (bottom % 1024 < y % 1024 && bottom % 1024 != 0)
 				{
-					y = bottom / 1024 * 1024;
+					y = bottom - bottom % 1024;
 					bottom = y + image.Height;
 					x = 0;
 					rowMaxY = bottom;
