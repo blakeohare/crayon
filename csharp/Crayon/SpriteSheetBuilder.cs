@@ -56,7 +56,8 @@ namespace Crayon
 		// The following mapping can have missing Bitmaps if no image touched that tile.
 		private Dictionary<string, Dictionary<int, Bitmap>> finalTiles = new Dictionary<string, Dictionary<int, Bitmap>>();
 		private Dictionary<string, Image> fileFinalDestination = new Dictionary<string, Image>();
-		
+		private List<string> finalTileImagePaths = new List<string>();
+
 		private class Image
 		{
 			public Image(string spriteSheetId, string file, Bitmap bmp)
@@ -160,7 +161,7 @@ namespace Crayon
 			prefixes.Add(prefix);
 		}
 
-		public void Generate(ICollection<string> allFiles, List<string> outStringArgs, List<int[]> outIntArgs, Dictionary<string, FileOutput> fileOutput)
+		public void Generate(string generatedFilesFolder, ICollection<string> allFiles, List<string> outStringArgs, List<int[]> outIntArgs, Dictionary<string, FileOutput> fileOutput, HashSet<string> outFilesInSpriteSheet)
 		{
 			this.MatchAndCreateFiles(allFiles);
 			this.AssignGlobalPositions();
@@ -179,10 +180,15 @@ namespace Crayon
 
 			Dictionary<string, int> sheetNameToId = this.GenerateManifestAndProduceSheetNameIdMapping(outStringArgs, outIntArgs);
 
-			this.GenerateFiles(sheetNameToId, fileOutput);
+			foreach (string file in this.fileFinalDestination.Keys)
+			{
+				outFilesInSpriteSheet.Add(file);
+			}
+
+			this.GenerateFiles(generatedFilesFolder, sheetNameToId, fileOutput);
 		}
 
-		private void GenerateFiles(Dictionary<string, int> sheetNameToId, Dictionary<string, FileOutput> fileOutput)
+		private void GenerateFiles(string generatedFilesFolder, Dictionary<string, int> sheetNameToId, Dictionary<string, FileOutput> fileOutput)
 		{
 			foreach (string sheetName in sheetNameToId.Keys)
 			{
@@ -190,13 +196,15 @@ namespace Crayon
 				foreach (int tileId in this.finalTiles[sheetName].Keys)
 				{
 					Bitmap bitmap = this.finalTiles[sheetName][tileId];
-					fileOutput["_crayon_gen_files/spritesheets/" + sheetId + "_" + tileId + ".png"] = new FileOutput()
+					fileOutput[generatedFilesFolder + "/spritesheets/" + sheetId + "_" + tileId + ".png"] = new FileOutput()
 					{
 						 Type = FileOutputType.Image,
 						 Bitmap = bitmap
 					};
 				}
 			}
+
+			this.finalTileImagePaths.AddRange(fileOutput.Keys.OrderBy<string, string>(key => key.ToLowerInvariant()));
 		}
 
 		private Dictionary<string, int> GenerateManifestAndProduceSheetNameIdMapping(List<string> stringArgs, List<int[]> intArgs)
@@ -209,6 +217,7 @@ namespace Crayon
 			//     0, {sprite sheet ID}
 			//     string: {sprite sheet name}
 			//
+			// TODO: REMOVE TILE DECLARATION
 			//   Tile declaration:
 			//     1, {sprite sheet ID}, {tile ID}, {width}, {height}
 			//     Width and height are optional. If omitted, 256x256 is assumed.
@@ -229,6 +238,7 @@ namespace Crayon
 				intArgs.Add(new int[] { 0, id });
 				stringArgs.Add(name);
 
+				/*
 				Dictionary<int, Bitmap> tilesById = this.finalTiles[name];
 				foreach (int tileId in tilesById.Keys.OrderBy<int, int>(i => i))
 				{
@@ -236,6 +246,7 @@ namespace Crayon
 					Bitmap bmp = tilesById[tileId];
 					intArgs.Add(new int[] { 1, id, tileId, bmp.Width, bmp.Height });
 				}
+				//*/
 
 				foreach (Image image in this.imagesById[name])
 				{
@@ -433,6 +444,11 @@ namespace Crayon
 					rowMaxY = bottom;
 				}
 			}
+		}
+
+		public string[] FinalPaths
+		{
+			get { return this.finalTileImagePaths.ToArray(); }
 		}
 	}
 }

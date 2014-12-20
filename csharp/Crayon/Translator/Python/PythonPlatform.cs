@@ -17,6 +17,7 @@ namespace Crayon.Translator.Python
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "pygame"; } }
+		protected override string GeneratedFilesFolder { get { return "_generated_files"; } }
 
 		public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
@@ -24,7 +25,8 @@ namespace Crayon.Translator.Python
 			Dictionary<string, ParseTree.Executable[]> finalCode,
 			List<string> filesToCopyOver,
 			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder)
+			string inputFolder,
+			SpriteSheetBuilder spriteSheet)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> concatenatedCode = new List<string>();

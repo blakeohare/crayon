@@ -58,10 +58,6 @@ namespace Crayon
 				case FrameworkFunction.CURRENT_TIME:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.DOWNLOAD_IMAGE:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
-					break;
 				case FrameworkFunction.DRAW_ELLIPSE:
 					VerifyLength(throwToken, frameworkFunction, 8, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
@@ -89,17 +85,30 @@ namespace Crayon
 				case FrameworkFunction.GET_EVENTS:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.GET_IMAGE:
+				case FrameworkFunction.IMAGE_GET:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				case FrameworkFunction.GET_IMAGE_HEIGHT:
+				case FrameworkFunction.IMAGE_HEIGHT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
 					break;
-				case FrameworkFunction.GET_IMAGE_WIDTH:
+				case FrameworkFunction.IMAGE_LOAD_FROM_RESOURCE:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
+					break;
+				case FrameworkFunction.IMAGE_WIDTH:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
+					break;
+				case FrameworkFunction.IMAGE_SHEET_LOAD:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.IMAGE_SHEET_LOAD_PROGRESS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.IMAGE_SHEET_LOADED:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
 				case FrameworkFunction.INITIALIZE_GAME:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

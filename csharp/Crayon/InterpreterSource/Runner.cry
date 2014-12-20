@@ -148,7 +148,13 @@ function main() {
 		null, // string switch lookups
 		$_new_list('Dictionary<string, int>'), // string switch lookups builder
 		generatePrimitiveMethodLookupTable(),
-		0 // instance counter
+		0, // instance counter
+		new SpriteSheetData(
+			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
+			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
+			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
+			$_new_dictionary('string', 'int') // group name --> group ID
+		)
 		));
 
 	runTick();

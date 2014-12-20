@@ -30,9 +30,9 @@ namespace %%%PROJECT_ID%%%
 			return ReadTextFile("ByteCode.txt", false);
 		}
 
-		public static System.Drawing.Bitmap ReadImageFile(string path)
+		public static System.Drawing.Bitmap ReadImageFile(string path, bool generatedImage)
 		{
-			IList<byte> data = ReadBytes(path, true);
+			IList<byte> data = ReadBytes(path, !generatedImage);
 			if (data == null)
 			{
 				return null;

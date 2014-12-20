@@ -169,13 +169,24 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path, bool isLocalResource)
 		{
-			output.Add("Image.LoadImage(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
+			if (isLocalResource)
+			{
+				output.Add("ImageUtil.LoadImageFromEmbeddedResource(");
+				this.Translator.TranslateExpression(output, key);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, path);
+				output.Add(")");
+			}
+			else
+			{
+				output.Add("ImageUtil.DownloadImageFromInternetTubes(");
+				this.Translator.TranslateExpression(output, key);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, path);
+				output.Add(")");
+			}
 		}
 
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
@@ -210,27 +221,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("GameWindow.Instance.GetEvents()");
 		}
 
-		protected override void TranslateGetImage(List<string> output, Expression imageKey)
-		{
-			output.Add("Image.GetImageByKey(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
-		protected override void TranslateGetImageHeight(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").Height");
-		}
-
-		protected override void TranslateGetImageWidth(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").Width");
-		}
-
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("TranslationHelper.ProgramData");
@@ -239,6 +229,90 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
 		{
 			output.Add("ResourceReader.ReadByteCodeFile()");
+		}
+
+		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
+		{
+			output.Add("ImageUtil.GetImageErrorCode(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageGet(List<string> output, Expression imageKey)
+		{
+			output.Add("Image.GetImageByKey(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageHeight(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").Height");
+		}
+
+		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
+		{
+			output.Add("ImageUtil.LoadImageFromUserData(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageLoaded(List<string> output, Expression key)
+		{
+			output.Add("ImageUtil.IsImageLoaded(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
+		{
+			output.Add("ImageUtil.GetNumTilesLoaded(");
+			this.Translator.TranslateExpression(output, groupId);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId)
+		{
+			output.Add("ImageUtil.GetNumTiles(");
+			this.Translator.TranslateExpression(output, groupId);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
+		{
+			output.Add("ImageUtil.GetSheetErrorCode(");
+			this.Translator.TranslateExpression(output, groupId);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetFinalizeData(List<string> output)
+		{
+			output.Add("ImageUtil.Initialize()");
+		}
+
+		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
+		{
+			output.Add("ImageUtil.LoadSheet(");
+			this.Translator.TranslateExpression(output, groupId);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
+		{
+			output.Add("ImageUtil.IsImageSheetLoaded(");
+			this.Translator.TranslateExpression(output, groupId);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageWidth(List<string> output, Expression image)
+		{
+			output.Add("((Image)");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(").Width");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -268,11 +342,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
-		}
-
-		protected override void TranslateIsImageLoaded(List<string> output, Expression key)
-		{
-			throw new Exception("This should have been optimized out.");
 		}
 
 		protected override void TranslateIsValidInteger(List<string> output, Expression number)

@@ -15,6 +15,25 @@ struct DictImpl {
 	@type('int') keyType
 }
 
+struct SpriteSheetItemDescriptor {
+	@type('string') filePath,
+	@type('int') groupId,
+	@type('int') spillId,
+	@type('int') tileId,
+	@type('bool') solitary,
+	@type('int') x,
+	@type('int') y,
+	@type('int') width,
+	@type('int') height
+}
+
+struct SpriteSheetData {
+	@type('Dictionary<string, SpriteSheetItemDescriptor>') files,
+	@type('Dictionary<int, List<string>>') filesByGroupId,
+	@type('Dictionary<int, Dictionary<int, bool>>') tileIdsByGroupId,
+	@type('Dictionary<string, int>') groupIdsByName
+}
+
 struct ProgramData {
 	@type('StackFrame') stackTop,
 	@type('Array<int>') ops,
@@ -39,7 +58,8 @@ struct ProgramData {
 	@type('Array<Dictionary<string, int>>') stringSwitchLookups,
 	@type('List<Dictionary<string, int>>') stringSwitchLookupsBuilder,
 	@type('Dictionary<string, int>') primitiveMethodLookup, // TODO: make this an <int, int> dictionary and use the identifier code and eliminate the rutime string calculation altogether
-	@type('int') instanceCounter
+	@type('int') instanceCounter,
+	@type('SpriteSheetData') spriteSheetData
 }
 
 struct StackFrame {

@@ -194,13 +194,15 @@ namespace Crayon.Translator.JavaScript
 			throw new Exception("This should have been optimized out.");
 		}
 
-		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path, bool isLocalResource)
 		{
+			throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
+			/*
 			output.Add("R.enqueue_image_download(");
 			this.Translator.TranslateExpression(output, key);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
+			output.Add(")"); //*/
 		}
 
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
@@ -309,25 +311,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.pump_event_objects()");
 		}
 
-		protected override void TranslateGetImage(List<string> output, Expression imageKey)
-		{
-			output.Add("R.get_image_impl(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
-		protected override void TranslateGetImageHeight(List<string> output, Expression image)
-		{
-			this.Translator.TranslateExpression(output, image);
-			output.Add("[1].height");
-		}
-
-		protected override void TranslateGetImageWidth(List<string> output, Expression image)
-		{
-			this.Translator.TranslateExpression(output, image);
-			output.Add("[1].width");
-		}
-
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("R.ProgramData");
@@ -338,6 +321,72 @@ namespace Crayon.Translator.JavaScript
 			output.Add("\"");
 			output.Add(theString);
 			output.Add("\"");
+		}
+
+		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageGet(List<string> output, Expression imageKey)
+		{
+			output.Add("R.get_image_impl(");
+			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageHeight(List<string> output, Expression image)
+		{
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1].height");
+		}
+
+		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageLoaded(List<string> output, Expression key)
+		{
+			output.Add("R.is_image_loaded(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetFinalizeData(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageWidth(List<string> output, Expression image)
+		{
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1].width");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -364,13 +413,6 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("Math.floor(");
 			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
-		protected override void TranslateIsImageLoaded(List<string> output, Expression key)
-		{
-			output.Add("R.is_image_loaded(");
-			this.Translator.TranslateExpression(output, key);
 			output.Add(")");
 		}
 

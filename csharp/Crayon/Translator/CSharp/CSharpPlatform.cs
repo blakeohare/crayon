@@ -18,6 +18,7 @@ namespace Crayon.Translator.CSharp
 		public override bool IntIsFloor { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
+		protected override string GeneratedFilesFolder { get { return "%PROJECT_ID%/GeneratedFiles"; } }
 
 		public abstract void PlatformSpecificFiles(
 			string projectId,
@@ -34,7 +35,8 @@ namespace Crayon.Translator.CSharp
 			Dictionary<string, Executable[]> finalCode,
 			List<string> filesToCopyOver,
 			ICollection<StructDefinition> structDefinitions,
-			string inputFolder)
+			string inputFolder,
+			SpriteSheetBuilder spriteSheet)
 		{
 			string guid = Guid.NewGuid().ToString();
 			string guid2 = Guid.NewGuid().ToString();
@@ -84,6 +86,7 @@ namespace Crayon.Translator.CSharp
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
+				{ "ImageUtil.txt", "ImageUtil.cs" },
 			};
 
 			// Create a list of compiled C# files
@@ -202,6 +205,14 @@ namespace Crayon.Translator.CSharp
 			foreach (string embeddedResource in embeddedResources)
 			{
 				compileTargetCode.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
+			}
+
+			foreach (string spriteSheetImage in spriteSheet.FinalPaths)
+			{
+				// TODO: need a better system of putting things in predefined destinations, rather than hacking it between states
+				// in this fashion.
+				string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
+				compileTargetCode.Add("    <EmbeddedResource Include=\"" + path + "\" />\r\n");
 			}
 
 			replacements["COMPILE_TARGETS"] = string.Join("", compileTargetCode);

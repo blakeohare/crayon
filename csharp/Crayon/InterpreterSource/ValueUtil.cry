@@ -184,3 +184,31 @@ function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Arra
 		$_dictionary_size(keyLookup),
 		Types.STRING));
 }
+
+function @type('Array<string>') toStringList(@type('Value') valueStringOrList, @type('Array<string>') maybeReuse) {
+	if (Value$valueStringOrList.type == Types.STRING) {
+		if (maybeReuse == null || $_array_length(maybeReuse) != 1) {
+			maybeReuse = $_new_array('string', 1);
+		}
+		$_array_set(maybeReuse, 0, $_cast('string', Value$valueStringOrList.internalValue));
+		return maybeReuse;
+	}
+
+	if (Value$valueStringOrList.type == Types.LIST) {
+		@type('List<Value>') list = $_cast('List<Value>', Value$valueStringOrList.internalValue);
+		@type('int') length = $_list_length(list);
+		if (maybeReuse == null || $_array_length(maybeReuse) != length) {
+			maybeReuse = $_new_array('string', length);
+		}
+		for (@type('int') i = length - 1; i >= 0; i -= 1) {
+			@type('Value') value = $_list_get(list, i);
+			if (Value$value.type != Types.STRING) {
+				return null;
+			}
+			$_array_set(maybeReuse, i, $_cast('string', Value$value.internalValue));
+		}
+		return maybeReuse;
+	}
+
+	return null;
+}

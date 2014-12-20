@@ -23,6 +23,7 @@ namespace Crayon.Translator.JavaScript
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override string OutputFolderName { get { return "javascript"; } }
+		protected override string GeneratedFilesFolder { get { return "generated_resources"; } }
 
 		public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
@@ -30,7 +31,8 @@ namespace Crayon.Translator.JavaScript
 			Dictionary<string, ParseTree.Executable[]> finalCode,
 			List<string> filesToCopyOver,
 			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder)
+			string inputFolder,
+			SpriteSheetBuilder spriteSheet)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 

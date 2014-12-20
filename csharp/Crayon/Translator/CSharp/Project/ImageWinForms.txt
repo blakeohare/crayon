@@ -21,7 +21,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static bool LoadImage(string key, string path)
 		{
-			Bitmap bmp = ResourceReader.ReadImageFile(path);
+			Bitmap bmp = ResourceReader.ReadImageFile(path, falses);
 			if (bmp == null) return false;
 			int width = bmp.Width;
 			int height = bmp.Height;

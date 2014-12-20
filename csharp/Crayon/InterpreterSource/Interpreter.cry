@@ -30,6 +30,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') pc = 0;
 	@type('int') argCount = 0;
 	@type('Array<Value>') funcArgs = null;
+	@type('Array<string>') stringList = null;
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
@@ -95,6 +96,9 @@ function @omitReturn @type('string') interpret(
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
 
+	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
+
+
 	while (true) {
 		row = args[StackFrame$stack.pc];
 		switch (ops[StackFrame$stack.pc]) {
@@ -115,7 +119,7 @@ function @omitReturn @type('string') interpret(
 				} else if (type == Types.FLOAT) {
 					$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.FLOAT, $_string_parse_float(stringArgs[StackFrame$stack.pc])));
 				} else if (type == Types.STRING) {
-					$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.STRING, stringArgs[StackFrame$stack.pc]));
+					$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.STRING, $_array_get(stringArgs, StackFrame$stack.pc)));
 				}
 				break;
 
@@ -671,6 +675,7 @@ function @omitReturn @type('string') interpret(
 				output = VALUE_NULL;
 				switch (row[0]) {
 					case %%%FF_ABS%%%:
+						$_comment('$abs');
 						value = $_stack_pop(valueStack);
 						if (Value$value.type == Types.INTEGER) {
 							if ($_cast('int', Value$value.internalValue) < 0) {
@@ -690,6 +695,7 @@ function @omitReturn @type('string') interpret(
 						break;
 						
 					case %%%FF_ARCCOS%%%:
+						$_comment('$arccos');
 						// $arccos(theta)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
@@ -710,6 +716,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_ARCSIN%%%:
+						$_comment('$arcsin');
 						// $arcsin(theta)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
@@ -730,6 +737,7 @@ function @omitReturn @type('string') interpret(
 						break;
 						
 					case %%%FF_ARCTAN%%%:
+						$_comment('$arctan');
 						// $arctan(theta)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
@@ -744,6 +752,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_ARCTAN2%%%:
+						$_comment('$arctan2');
 						// $arctan2(y, x)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
@@ -775,6 +784,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_ASSERT%%%:
+						$_comment('$assert');
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.BOOLEAN) {
@@ -786,6 +796,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_BLIT_IMAGE%%%:
+						$_comment('$blit_image');
 						// $blit_image(image, x, y)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -797,6 +808,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_BLIT_IMAGE_PARTIAL%%%:
+						$_comment('$blit_image_partial');
 						// $blit_image(image, targetX, targetY, sourceX, sourceY, width, height)
 						arg7 = $_stack_pop(valueStack);
 						arg6 = $_stack_pop(valueStack);
@@ -828,12 +840,14 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_CLOCK_TICK%%%:
+						$_comment('$clock_tick');
 						yieldControl(stack);
 						return null;
 						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
 						break;
 
 					case %%%FF_COS%%%:
+						$_comment('$cos');
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
@@ -849,22 +863,9 @@ function @omitReturn @type('string') interpret(
 					case %%%FF_CURRENT_TIME%%%:
 						output = new Value(Types.FLOAT, $_current_time_seconds());
 						break;
-						
-					case %%%FF_DOWNLOAD_IMAGE%%%:
-						// $download_image(key, url)
-						arg2 = $_stack_pop(valueStack);
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
-							return killExecution(stack, "$download_image requires two string arguments.");
-						}
-						string1 = $_cast('string', Value$arg2.internalValue);
-						bool1 = $_download_image($_cast('string', Value$arg1.internalValue), string1);
-						if (!bool1) {
-							return killExecution(stack, "Image resource does not exist: " + string1);
-						}
-						break;
 
 					case %%%FF_DRAW_ELLIPSE%%%:
+						$_comment('$draw_ellipse');
 						// $draw_ellipse(left, top, width, height, red, green, blue, alpha)
 						arg8 = $_stack_pop(valueStack);
 						arg7 = $_stack_pop(valueStack);
@@ -896,6 +897,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_DRAW_LINE%%%:
+						$_comment('$draw_line');
 						// $draw_line(Ax, Ay, Bx, By, lineWidth, red, green, blue, alpha)
 						arg9 = $_stack_pop(valueStack);
 						arg8 = $_stack_pop(valueStack);
@@ -932,6 +934,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_DRAW_RECTANGLE%%%:
+						$_comment('$draw_rectangle');
 						// $draw_rectangle(x, y, width, height, red, green, blue, alpha)
 						arg8 = $_stack_pop(valueStack);
 						arg7 = $_stack_pop(valueStack);
@@ -963,6 +966,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_FILL_SCREEN%%%:
+						$_comment('$fill_screen');
 						// $fill_screen(red, green, blue)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -976,6 +980,7 @@ function @omitReturn @type('string') interpret(
 						break;
 						
 					case %%%FF_FLIP_IMAGE%%%:
+						$_comment('$flip_image');
 						// $flip_image(image, shouldFlipX, shouldFlipY)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -992,6 +997,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_FLOOR%%%:
+						$_comment('$floor');
 						// $floor(number)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
@@ -1013,45 +1019,233 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_GET_EVENTS%%%:
+						$_comment('$get_events');
 						list1 = $_get_events_raw_list();
 						output = new Value(Types.LIST, list1);
 						break;
-						
-					case %%%FF_GET_IMAGE%%%:
-						// $get_image(image_key)
+
+					case %%%FF_IMAGE_ERROR_CODE%%%:
+						$_comment('$image_error_code');
+						// $image_error_code(image_key)
+						// Error codes:
+						// 0 - none (success or pending)
+						// 1 - file not found
+						// 2 - timed out
+						// 3 - invalid format
+						// 4 - too big
+						// 5 - sprite sheet image not initialized
+						// 99 - unknown
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.STRING) {
-							return killExecution(stack, "$get_image requires a string argument.");
+							return killExecution(stack, "$image_error_code requires a string argument.");
 						}
 						string1 = $_cast('string', Value$arg1.internalValue);
-						object1 = $_get_image(string1);
+						int1 = $_image_error_code(string1);
+						output = buildInteger(int1);
+						break;
+
+					case %%%FF_IMAGE_GET%%%:
+						$_comment('$image_get');
+						// $image_get(image_key)
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$image_get requires a string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						object1 = $_image_get(string1);
 						if (object1 == null) {
 							return killExecution(stack, "No image with the key '" + string1 + "' has been loaded.");
 						}
 						output = new Value(Types.NATIVE_OBJECT, object1);
 						break;
+
+					case %%%FF_IMAGE_HEIGHT%%%:
+						$_comment('$image_height');
+						// $image_height(image)
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.NATIVE_OBJECT) {
+							return killExecution(stack, "$image_height requires an image object.");
+						}
+						int1 = $_image_height(Value$arg1.internalValue);
+						output = build_integer(int1);
+						break;
+
+					case %%%FF_IMAGE_LOAD_FROM_RESOURCE%%%:
+						$_comment('$image_load_from_resource');
+						// $image_load_from_resource(key, path)
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$image_load_from_resource requires two string arguments.");
+						}
+						string1 = $_cast('string', Value$arg2.internalValue);
+						bool1 = $_download_image($_cast('string', Value$arg1.internalValue), string1, true);
+						if (!bool1) {
+							return killExecution(stack, "Image resource does not exist: " + string1);
+						}
+						break;
+
+					case %%%FF_IMAGE_LOAD_FROM_WEB%%%:
+						$_comment('$image_load_from_web');
+						// $image_load_from_web(key, url)
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$image_load_from_web requires two string arguments.");
+						}
+						string1 = $_cast('string', Value$arg2.internalValue);
+						$_download_image($_cast('string', Value$arg1.internalValue), string1, false);
+						break;
+
+					case %%%FF_IMAGE_LOAD_FROM_USER_DATA%%%:
+						$_comment('$image_load_from_user_data');
+						// $image_load_from_user_data(key, path)
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$image_load_from_user_data requires two string arguments.");
+						}
+						$_image_load_from_user_data($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
+						break;
+
+					case %%%FF_IMAGE_LOADED%%%:
+						$_comment('$image_loaded');
+						// $image_loaded(image_key)
+						arg1 = $_stack_pop(valueStack);
+						int1 = $_image_loaded($_cast('string', Value$arg1.internalValue));
+						if (int1 == 0) {
+							output = VALUE_NULL;
+						} else if (int1 == 1) {
+							output = VALUE_TRUE;
+						} else {
+							output = VALUE_FALSE;
+						}
+						break;
+
+					case %%%FF_IMAGE_SHEET_ERROR_CODE%%%:
+						$_comment('$image_sheet_error_code');
+						// $image_sheet_error_code(idOrIds)
+						// Error codes: same as $image_error_code
+						arg1 = $_stack_pop(valueStack);
+						stringList = toStringList(arg1, stringList);
+						if (stringList == null) {
+							return killExecution(stack, "$image_sheet_error_code argument must either be a string or a list of strings.");
+						}
 						
-					case %%%FF_GET_IMAGE_HEIGHT%%%:
-						// $get_image_height(image)
+						int1 = 0;
+						// take the first non-zero entry you find.
+						for (i = 0; i < $_array_length(stringList); i += 1) {
+							int2 = $_image_sheet_error_code($_array_get(stringList, i));
+							if (int2 > 0) {
+								int1 = int2;
+								i = $_array_length(stringList);
+							}
+						}
+
+						output = buildInteger(int1);
+						break;
+
+					case %%%FF_IMAGE_SHEET_LOAD%%%:
+						$_comment('$image_sheet_load');
+						// $image_sheet_load(idOrIds)
+						arg1 = $_stack_pop(valueStack);
+						stringList = toStringList(arg1, stringList);
+						if (stringList == null) {
+							return killExecution(stack, "$image_sheet_load argument must either be a string or a list of strings.");
+						}
+
+						for (i = 0; i < $_array_length(stringList); i += 1) {
+							string1 = $_array_get(stringList, i);
+							bool1 = $_image_sheet_load(string1);
+							if (!bool1) {
+								return killExecution(stack, "'" + string1 + "' was not declared as an image sheet.");
+							}
+						}
+						break;
+
+					case %%%FF_IMAGE_SHEET_LOAD_PROGRESS%%%:
+						$_comment('$image_sheet_load_progress');
+						// $image_sheet_load_progres(idOrIds)
+						arg1 = $_stack_pop(valueStack);
+						stringList = toStringList(arg1, stringList);
+						if (stringList == null) {
+							return killExecution(stack, "$image_sheet_load_progress argument must either be a string or a list of strings.");
+						}
+
+						int1 = 0; // files loaded
+						int2 = 0; // total files to load
+
+						for (i = 0; i < $_array_length(stringList); i += 1) {
+							string1 = $_array_get(stringList, i);
+							if ($_image_sheet_error_code(string1) > 0) {
+								int2 = 0; // this function should return 1.0
+								i += $_array_length(stringList);
+							} else {
+								int3 = $_image_sheet_count_tiles_loaded(string1);
+								if (int3 == -1) {
+									return killExecution(stack, "'" + string1 + "' is not a valid image sheet.");
+								}
+								int1 += int3;
+								int2 += $_image_sheet_count_tiles_total(string1);
+							}
+						}
+
+						if (int2 == 0) {
+							output = new Value(Types.FLOAT, 1.0);
+						} else {
+							output = new Value(Types.FLOAT, $_unsafe_float_division(1.0 * int1, int2));
+						}
+						break;
+
+					case %%%FF_IMAGE_SHEET_LOADED%%%:
+						$_comment('$image_sheet_loaded');
+						// $image_sheet_loaded(idOrIds)
+						arg1 = $_stack_pop(valueStack);
+						bool1 = false; // type error encountered
+						int1 = 0; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
+						if (Value$arg1.type == Types.LIST) {
+							for (i = 0; i < $_list_length(list1); i += 1) {
+								value = $_list_get(list1, i);
+								if (Value$value.type != Types.STRING) {
+									bool1 = true;
+									i = $_list_length(list1);
+								} else {
+									int1 |= $_image_sheet_loaded($_cast('string', Value$value.internalValue));
+								}
+							}
+						} else if (Value$arg1.type == Types.STRING) {
+							int1 = $_image_sheet_loaded($_cast('string', Value$arg1.internalValue));
+						} else {
+							bool1 = true;
+						}
+
+						if (bool1) {
+							return killExecution(stack, "$image_sheet_load arguments must either be a string or a list of strings.");
+						}
+
+						if (int1 == 0) {
+							output = VALUE_NULL;
+						} else if (int1 == 1) {
+							output = VALUE_TRUE;
+						} else { // int1 == 2 || int1 == 3
+							output = VALUE_FALSE;
+						}
+
+						break;
+
+					case %%%FF_IMAGE_WIDTH%%%:
+						$_comment('$image_width');
+						// $image_width(image)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.NATIVE_OBJECT) {
-							return killExecution(stack, "$get_image_height requires an image object.");
+							return killExecution(stack, "$image_width requires an image object.");
 						}
-						int1 = $_get_image_height(Value$arg1.internalValue);
+						int1 = $_image_width(Value$arg1.internalValue);
 						output = build_integer(int1);
 						break;
 
-					case %%%FF_GET_IMAGE_WIDTH%%%:
-						// $get_image_width(image)
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.NATIVE_OBJECT) {
-							return killExecution(stack, "$get_image_width requires an image object.");
-						}
-						int1 = $_get_image_width(Value$arg1.internalValue);
-						output = build_integer(int1);
-						break;
-
-					case %%%FF_INITIALIZE_GAME%%%: 
+					case %%%FF_INITIALIZE_GAME%%%:
+						$_comment('$initialize_game');
 						// $initialize_game(fps)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.INTEGER) {
@@ -1069,6 +1263,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_INITIALIZE_SCREEN%%%:
+						$_comment('$initialize_screen');
 						// $initialize_screen(width, height)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
@@ -1093,6 +1288,7 @@ function @omitReturn @type('string') interpret(
 						break;
 						
 					case %%%FF_INITIALIZE_SCREEN_SCALED%%%:
+						$_comment('$initialize_screen_scaled');
 						// $initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
 						arg4 = $_stack_pop(valueStack);
 						arg3 = $_stack_pop(valueStack);
@@ -1123,27 +1319,8 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 						
-					case %%%FF_IS_IMAGE_LOADED%%%:
-						// $is_image_loaded(image_key)
-						arg1 = $_stack_pop(valueStack);
-						if (%%%IMAGES_LOAD_INSTANTLY%%%) {
-							output = VALUE_TRUE;
-						} else {
-							// TODO: eventually this should return a numeric code instead so that there will be 3 states:
-							// 0 - not loaded yet
-							// 1 - loaded
-							// 2 - key is unknown -- in this case, throw an error
-							// since there would have to be a system call, this would probably negate the purpose
-							// of the IMAGES_LOAD_INSTANTLY optimization above.
-							if ($_is_image_loaded($_cast('string', Value$arg1.internalValue))) {
-								output = VALUE_TRUE;
-							} else {
-								output = VALUE_FALSE;
-							}
-						}
-						break;
-
 					case %%%FF_PARSE_INT%%%:
+						$_comment('$parse_int');
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.STRING) {
 							return killExecution(stack, "$parse_int requires a string argument.");
@@ -1157,6 +1334,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_PARSE_JSON%%%:
+						$_comment('$parse_json');
 						// TODO: when you add ability to add optional arguments, add a boolean for failing silently.
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.STRING) {
@@ -1168,17 +1346,20 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_PRINT%%%: 
+					case %%%FF_PRINT%%%:
+						$_comment('$print');
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
 						$_print(string1);
 						break;
 
 					case %%%FF_RANDOM%%%:
+						$_comment('$random');
 						output = new Value(Types.FLOAT, $_random_float());
 						break;
 
 					case %%%FF_RESOURCE_READ_TEXT%%%:
+						$_comment('$resource_read_text');
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.STRING) {
 							return killExecution(stack, "$resource_read_text requires a string path parameter.");
@@ -1193,12 +1374,14 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_SET_TITLE%%%:
+						$_comment('$set_title');
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
 						$_set_title(string1);
 						break;
 						
 					case %%%FF_SIN%%%:
+						$_comment('$sin');
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
@@ -1212,6 +1395,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_TAN%%%:
+						$_comment('$tan');
 						arg1 = $_stack_pop(valueStack);
 						// I do not check for arg1 == pi/2 because the float arithmetic
 						// never produces a true pi/2. The closest a 64 bit floating point number can get
@@ -1228,6 +1412,7 @@ function @omitReturn @type('string') interpret(
 						break;
 
 					case %%%FF_TYPEOF%%%:
+						$_comment('$typeof');
 						arg1 = $_stack_pop(valueStack);
 
 						switch (Value$arg1.type) {
@@ -1562,6 +1747,8 @@ function @omitReturn @type('string') interpret(
 					LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
 				}
 
+				$_image_sheet_finalize_data();
+
 				break;
 
 			case OpCodes.FUNCTION_DEFINITION:
@@ -1767,7 +1954,7 @@ function @omitReturn @type('string') interpret(
 					$_stack_push(valueStack, value);
 				}
 				break;
-			
+
 			case OpCodes.RETURN_NULL:
 				$_comment('RETURN_NULL');
 				// use return value
@@ -1780,6 +1967,32 @@ function @omitReturn @type('string') interpret(
 				valueStack = StackFrame$stack.valueStack;
 				if (bool1) {
 					$_stack_push(valueStack, VALUE_NULL);
+				}
+				break;
+
+			case OpCodes.SPRITE_SHEET_BUILDER:
+				$_comment('SPRITE_SHEET_BUILDER');
+				int1 = $_array_get(row, 0);
+
+				if (int1 == 0) { // Sprite sheet declaration
+					int1 = $_array_get(row, 1); // sprite sheet ID#
+					string1 = $_array_get(stringArgs, StackFrame$stack.pc); // sprite sheet name
+
+					$_dictionary_set(SpriteSheetData$spriteSheetData.filesByGroupId, int1, $_new_list('string'));
+					$_dictionary_set(SpriteSheetData$spriteSheetData.tileIdsByGroupId, int1, $_new_dictionary('int', 'bool'));
+					$_dictionary_set(SpriteSheetData$spriteSheetData.groupIdsByName, string1, int1);
+
+				} else {
+					declareSpriteSheetImage(
+						spriteSheetData,
+						$_array_get(row, 1), // group ID
+						$_array_get(stringArgs, StackFrame$stack.pc), // image file path
+						$_array_get(row, 2), // tile ID of top left corner
+						$_array_get(row, 3), // image width
+						$_array_get(row, 4), // image height
+						$_array_get(row, 5), // x coordinate within this tile
+						$_array_get(row, 6), // y coordinate within this tile
+						$_array_get(row, 7) == 1); // solitary image (this tile IS the image, do not do spill calculations)
 				}
 				break;
 
@@ -1888,6 +2101,34 @@ function @omitReturn @type('string') interpret(
 		}
 		StackFrame$stack.pc += 1;
 	}
+}
+
+function @type('int') declareSpriteSheetImage(
+		@type('SpriteSheetData') spriteSheetData,
+		@type('int') groupId,
+		@type('string') imagePath,
+		@type('int') tileId, // top left corner
+		@type('int') width,
+		@type('int') height,
+		@type('int') x,
+		@type('int') y,
+		@type('bool') solitary) {
+
+	@type('SpriteSheetItemDescriptor') ssid = new SpriteSheetItemDescriptor(
+		imagePath,
+		groupId,
+		0, // this may be unncessary
+		tileId,
+		solitary,
+		x,
+		y,
+		width,
+		height);
+
+	$_dictionary_set(SpriteSheetData$spriteSheetData.files, imagePath, ssid);
+	@type('Dictionary<int, bool>') tileIds = $_dictionary_get_guaranteed(SpriteSheetData$spriteSheetData.tileIdsByGroupId, groupId);
+	$_dictionary_set(tileIds, tileId, true);
+	return 0;
 }
 
 function @type('string') killExecution(@type('StackFrame') stack, @type('string') message) {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrayonProject", "CrayonProject\CrayonProject.csproj", "{0E9E243C-312B-4C28-B732-1C76292A40D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "%%%PROJECT_ID%%%", "%%%PROJECT_ID%%%\%%%PROJECT_ID%%%.csproj", "{0E9E243C-312B-4C28-B732-1C76292A40D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

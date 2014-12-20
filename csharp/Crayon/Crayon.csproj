@@ -176,6 +176,7 @@
     <EmbeddedResource Include="Translator\CSharp\Project\GameWindowWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\ImageUtil.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

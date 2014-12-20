@@ -16,6 +16,7 @@ namespace Crayon.Translator.Java
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
+		protected override string GeneratedFilesFolder { get { return "resources/generated"; } }
 
 		public JavaPlatform()
 			: base(false, new JavaTranslator(), new JavaSystemFunctionTranslator())
@@ -27,7 +28,8 @@ namespace Crayon.Translator.Java
 			Dictionary<string, ParseTree.Executable[]> finalCode,
 			List<string> filesToCopyOver,
 			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder)
+			string inputFolder,
+			SpriteSheetBuilder spriteSheet)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			string package = projectId.ToLowerInvariant();
