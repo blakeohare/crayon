@@ -77,7 +77,7 @@ namespace Crayon
 			string readableByteCodeFile = buildContext.ReadableByteCode
 				? "byte_code_dump.txt"
 				: null;
-			platform.Compile(buildContext.SourceFolder, buildContext.OutputFolder, readableByteCodeFile);
+			platform.Compile(buildContext, buildContext.SourceFolder, buildContext.OutputFolder, readableByteCodeFile);
 		}
 
 		private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)
