@@ -217,13 +217,8 @@ namespace Crayon
 			//     0, {sprite sheet ID}
 			//     string: {sprite sheet name}
 			//
-			// TODO: REMOVE TILE DECLARATION
-			//   Tile declaration:
-			//     1, {sprite sheet ID}, {tile ID}, {width}, {height}
-			//     Width and height are optional. If omitted, 256x256 is assumed.
-			//
 			//   Image declaration:
-			//     2, {sprite sheet ID}, {tile ID}, {width}, {height}, {tileX}, {tileY}, {0|1 - solitary bit}
+			//     1, {sprite sheet ID}, {tile ID}, {width}, {height}, {tileX}, {tileY}, {0|1 - solitary bit}
 			//     string: {file path}
 
 			// Images are saved as the sprite sheet ID (the incrementally allocated one) followed by an underscore followed by Tile ID.
@@ -238,22 +233,12 @@ namespace Crayon
 				intArgs.Add(new int[] { 0, id });
 				stringArgs.Add(name);
 
-				/*
-				Dictionary<int, Bitmap> tilesById = this.finalTiles[name];
-				foreach (int tileId in tilesById.Keys.OrderBy<int, int>(i => i))
-				{
-					stringArgs.Add(null);
-					Bitmap bmp = tilesById[tileId];
-					intArgs.Add(new int[] { 1, id, tileId, bmp.Width, bmp.Height });
-				}
-				//*/
-
 				foreach (Image image in this.imagesById[name])
 				{
 					stringArgs.Add(image.File);
 					int tileId = image.TileID;
 					intArgs.Add(new int[] { 
-						2,
+						1,
 						id,
 						tileId,
 						image.Width,
