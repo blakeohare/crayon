@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
-
 
 namespace Crayon.Translator.CSharp
 {
@@ -112,6 +108,13 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, green);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, blue);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageGet(List<string> output, Expression imageKey)
+		{
+			output.Add("GlUtil.GetImageByKeyWrapper(");
+			this.Translator.TranslateExpression(output, imageKey);
 			output.Add(")");
 		}
 	}

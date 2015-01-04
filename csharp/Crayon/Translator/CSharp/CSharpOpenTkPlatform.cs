@@ -38,6 +38,15 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
+			compileTargets.Add("GlUtil.cs");
+			files[projectId + "/GlUtil.cs"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/CSharp/Project/GlUtil.txt"),
+					replacements)
+			};
+
 			compileTargets.Add("Image.cs");
 			files[projectId + "/Image.cs"] = new FileOutput()
 			{

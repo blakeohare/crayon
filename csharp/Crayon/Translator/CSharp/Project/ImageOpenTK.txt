@@ -1,137 +1,64 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using OpenTK.Graphics.OpenGL;
 
 namespace %%%PROJECT_ID%%%
 {
 	internal class Image
 	{
-		private static readonly Point TOP_LEFT = new Point(0, 0);
-
-		private static readonly Dictionary<string, Image> IMAGE_LOOKUP = new Dictionary<string, Image>();
-
-		public readonly int ImageID;
+		public int TextureID;
 		public readonly int Width;
 		public readonly int Height;
+		public readonly int X;
+		public readonly int Y;
+		public readonly float TextureLeft;
+		public readonly float TextureTop;
 		public readonly float TextureRight;
 		public readonly float TextureBottom;
-		public readonly Bitmap Pixels;
+		public readonly Bitmap RawResource;
+		public readonly bool flippedX;
+		public readonly bool flippedY;
 
-		public Image(int imageId, int width, int height, Bitmap pixels)
+		public Image(Bitmap resource, int x, int y, int width, int height, bool flipX, bool flipY)
 		{
-			this.ImageID = imageId;
+			this.RawResource = resource;
+
+			this.X = x;
+			this.Y = y;
 			this.Width = width;
 			this.Height = height;
-			this.TextureRight = 1F * width / NextPowerOf2(width);
-			this.TextureBottom = 1F * height / NextPowerOf2(height);
-			this.Pixels = pixels;
-		}
 
-		public static bool LoadImage(string key, string path)
-		{
-			Bitmap bmp = ResourceReader.ReadImageFile(path, false);
-			if (bmp == null) return false;
-			int width = bmp.Width;
-			int height = bmp.Height;
-			int id = ForceLoadTexture(bmp);
-			IMAGE_LOOKUP[key] = new Image(id, width, height, bmp);
-			return true;
-		}
+			this.TextureLeft = 1F * this.X / resource.Width;
+			this.TextureRight = 1F * (this.X + this.Width) / resource.Width;
+			this.TextureTop = 1F * this.Y / resource.Height;
+			this.TextureBottom = 1F * (this.Y + this.Height) / resource.Height;
 
-		public static Image GetImageByKey(string key)
-		{
-			Image output;
-			if (IMAGE_LOOKUP.TryGetValue(key, out output))
+			this.flippedX = flipX;
+			this.flippedY = flipY;
+
+			if (flipX)
 			{
-				return output;
+				float t = this.TextureLeft;
+				this.TextureLeft = this.TextureRight;
+				this.TextureRight = t;
 			}
-			return null;
+
+			if (flipY)
+			{
+				float t = this.TextureTop;
+				this.TextureTop = this.TextureBottom;
+				this.TextureBottom = t;
+			}
 		}
 
 		public static Image FlipImage(object original, bool flipX, bool flipY)
 		{
 			Image image = (Image)original;
-			// Currently a naive implementation. This could be sped up.
-			Bitmap newBitmap = image.Pixels.Clone(new Rectangle(0, 0, image.Width, image.Height), image.Pixels.PixelFormat);
-			if (flipX && flipY)
-			{
-				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
-			}
-			else if (flipX)
-			{
-				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-			}
-			else if (flipY)
-			{
-				newBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-			}
-
-			int id = ForceLoadTexture(newBitmap);
-			return new Image(id, image.Width, image.Height, newBitmap);
-		}
-
-		private static int ForceLoadTexture(Bitmap bitmap)
-		{
-			bitmap = NormalizeBitmap(bitmap);
-			int width = bitmap.Width;
-			int height = bitmap.Height;
-			int textureId;
-
-			Rectangle rectangle = new System.Drawing.Rectangle(0, 0, width, height);
-			BitmapData bmpData = bitmap.LockBits(
-				rectangle, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-			GL.GenTextures(1, out textureId);
-			GL.BindTexture(TextureTarget.Texture2D, textureId);
-			GL.TexImage2D(
-				TextureTarget.Texture2D,
-				0,
-				PixelInternalFormat.Rgba,
-				width, height, 0,
-				OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte,
-				bmpData.Scan0);
-
-			bitmap.UnlockBits(bmpData);
-
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-			return textureId;
-		}
-
-		private static Bitmap NormalizeBitmap(Bitmap bitmap)
-		{
-			int oldWidth = bitmap.Width;
-			int oldHeight = bitmap.Height;
-
-			int newWidth = NextPowerOf2(oldWidth);
-			int newHeight = NextPowerOf2(oldHeight);
-
-			if (newWidth == oldWidth &&
-				newHeight == oldHeight &&
-				bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-			{
-				return bitmap;
-			}
-
-			Bitmap targetBmp = new Bitmap(newWidth, newHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			targetBmp.SetResolution(bitmap.HorizontalResolution, bitmap.VerticalResolution);
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(targetBmp);
-			g.DrawImage(bitmap, TOP_LEFT);
-			return targetBmp;
-		}
-
-		private static int NextPowerOf2(int value)
-		{
-			if (((value - 1) & value) == 0) return value;
-
-			int output = 1;
-			while (output < value)
-			{
-				output = output << 1;
-			}
-			return output;
+			Image flipped = new Image(image.RawResource,
+				image.X, image.Y, image.Width, image.Height,
+				flipX != image.flippedX, flipY != image.flippedY);
+			flipped.TextureID = image.TextureID;
+			return flipped;
 		}
 	}
 }

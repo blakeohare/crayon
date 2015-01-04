@@ -14,14 +14,28 @@ namespace %%%PROJECT_ID%%%
 		private const int STATUS_NOT_LOADED = 0;
 		private const int STATUS_LOADING = 1;
 		private const int STATUS_LOADED = 2;
-		
+
+		private static object mutex = new object();
+		private static bool isBackgroundLoaderActive = false;
+
+		private static object downloaderMutex = new object();
+		private static Dictionary<string, Bitmap> downloadedImagesByKey = new Dictionary<string, Bitmap>();
+		private static Dictionary<string, int> downloadedImagesErrorCodes = new Dictionary<string, int>();
+
 		private static Dictionary<string, Bitmap> tilesByName = new Dictionary<string, Bitmap>();
 		private static Queue<string[]> tileLoadQueue = new Queue<string[]>();
-		private static Dictionary<int, int[]> tilesPerId = new Dictionary<int,int[]>();
+		private static Dictionary<int, int[]> tilesPerId = new Dictionary<int, int[]>();
 		private static Dictionary<int, int> sheetStatus = new Dictionary<int, int>();
-		private static Dictionary<string, int> groupIdToIntId = new Dictionary<string,int>();
+		private static Dictionary<string, int> groupNameToId = new Dictionary<string, int>();
 		private static Dictionary<string, VirtualizationGrid> virtualizationGrids = new Dictionary<string, VirtualizationGrid>();
 		private static Dictionary<string, VirtualizationGrid> fileToVirtualizationGrid = new Dictionary<string, VirtualizationGrid>();
+		private static Dictionary<int, List<SpriteSheetItemDescriptor>> spriteSheetItemDescriptorsByGroupId = new Dictionary<int, List<SpriteSheetItemDescriptor>>();
+		private static Dictionary<int, string[]> generatedTileNamesByGroupId = new Dictionary<int, string[]>();
+
+		// These 2 lookups are to be treated as one dictionary:
+		// image key => [bitmap, x, y, width, height]
+		private static Dictionary<string, Bitmap> resourceImagesByKeys = new Dictionary<string, Bitmap>();
+		private static Dictionary<string, int[]> texturePartitioningInformation = new Dictionary<string, int[]>();
 
 		private class VirtualizationGrid
 		{
@@ -29,13 +43,14 @@ namespace %%%PROJECT_ID%%%
 			public Dictionary<int, Bitmap> Sheets { get; private set; }
 			public string GroupName { get; private set; }
 			public int GroupId { get; private set; }
+			public string[] Paths { get; private set; }
 
 			public VirtualizationGrid(
 				string groupName,
 				ICollection<SpriteSheetItemDescriptor> spriteSheetItemDescriptors,
 				Dictionary<string, Bitmap> tilesByGeneratedName)
 			{
-				int groupId = groupIdToIntId[groupName];
+				int groupId = groupNameToId[groupName];
 				this.GroupName = groupName;
 				this.GroupId = groupId;
 
@@ -46,12 +61,14 @@ namespace %%%PROJECT_ID%%%
 				// [ tile ID, x, y, width, height ]
 				Dictionary<string, int[]> locations = new Dictionary<string, int[]>();
 
+				List<string> paths = new List<string>();
 				this.ImageLocations = locations;
 				this.Sheets = consolidatedSheets;
 
 				foreach (SpriteSheetItemDescriptor item in spriteSheetItemDescriptors)
 				{
 					string filename = item.filePath;
+					paths.Add(filename);
 					int x = item.x;
 					int y = item.y;
 					int width = item.width;
@@ -69,7 +86,7 @@ namespace %%%PROJECT_ID%%%
 						int roundedId = tileId / 16 * 16;
 						if (!consolidatedSheets.ContainsKey(roundedId))
 						{
-							Bitmap bigSheet = new Bitmap(1024, 1024, PixelFormat.Format32bppArgb);
+							Bitmap bigSheet = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 							bigSheet.SetResolution(96, 96);
 							consolidatedSheets[roundedId] = bigSheet;
 							consolidatedSheetsGraphics[roundedId] = Graphics.FromImage(bigSheet);
@@ -97,6 +114,8 @@ namespace %%%PROJECT_ID%%%
 					}
 				}
 
+				this.Paths = paths.ToArray();
+
 				// TODO: apply further consolidations. Attempt to fit entire sprite sheet into one image  according to 
 				// runtime OpenGL max texture size flags. 
 			}
@@ -110,15 +129,31 @@ namespace %%%PROJECT_ID%%%
 				foreach (string groupId in ssd.groupIdsByName.Keys)
 				{
 					int id = ssd.groupIdsByName[groupId];
-					groupIdToIntId[groupId] = id;
+					groupNameToId[groupId] = id;
 					sheetStatus[id] = STATUS_NOT_LOADED;
 					tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
+				}
+
+				foreach (SpriteSheetItemDescriptor ssid in ssd.files.Values)
+				{
+					List<SpriteSheetItemDescriptor> ssidForGroup;
+					if (!spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
+					{
+						ssidForGroup = new List<SpriteSheetItemDescriptor>();
+						spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
+					}
+					ssidForGroup.Add(ssid);
+				}
+
+				foreach (int groupId in ssd.tileIdsByGroupId.Keys)
+				{
+					generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
+						.Select<int, string>(tileId => groupId + "_" + tileId)
+						.ToArray();
 				}
 			}
 		}
 
-		private static object mutex = new object();
-		private static bool isBackgroundLoaderActive = false;
 		private static void EnsureBackgroundLoaderRunning()
 		{
 			BackgroundWorker bgWorker = null;
@@ -142,7 +177,7 @@ namespace %%%PROJECT_ID%%%
 			while (true)
 			{
 				List<string> images = new List<string>();
-				List<string> groupIdsCompleted = new List<string>();
+				List<string> groupIdCompletionMarker = new List<string>();
 				lock (mutex)
 				{
 					while (tileLoadQueue.Count > 0 && images.Count < TILES_LOADED_PER_FRAME)
@@ -151,23 +186,52 @@ namespace %%%PROJECT_ID%%%
 						string path = parts[0];
 						string groupIdCompleted = parts[1];
 						images.Add(path);
-						groupIdsCompleted.Add(groupIdCompleted);
+						if (groupIdCompletionMarker.Count > 0 && groupIdCompletionMarker[groupIdCompletionMarker.Count - 1] == groupIdCompleted)
+						{
+							groupIdCompletionMarker.Insert(groupIdCompletionMarker.Count - 1, null);
+						}
+						else
+						{
+							// note: if multiple background workers are added, this logic fails as one background worker could encounter 
+							// the marker before another background worker has finished loading some of the tiles for the group
+							groupIdCompletionMarker.Add(groupIdCompleted);
+						}
 					}
 				}
 
+				// TODO: go through and make variable names consistent (groupId vs groupName)
 
 				for (int i = 0; i < images.Count; ++i)
 				{
+					string image = images[i];
+					string groupNameCompleted = groupIdCompletionMarker[i];
+					Bitmap bmp = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + image + ".png", true);
+					lock (mutex)
 					{
-						string image = images[i];
-						string groupIdCompleted = groupIdsCompleted[i];
-						Bitmap bmp = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + image + ".png", true);
-						lock (mutex)
+						tilesByName[image] = bmp;
+						if (groupNameCompleted != null)
 						{
-							tilesByName[image] = bmp;
-							if (groupIdCompleted != null)
+							int groupId = groupNameToId[groupNameCompleted];
+							// filter the tilesByName lookup to just the ones in this group now that it's done loading.
+							string[] genNamesInGroup = generatedTileNamesByGroupId[groupId];
+							Dictionary<string, Bitmap> tilesInGroupByGenName = new Dictionary<string, Bitmap>();
+							foreach (string genName in genNamesInGroup)
 							{
-								
+								tilesInGroupByGenName[genName] = tilesByName[genName];
+							}
+
+							// and create a virtualization grid for this group. 
+							// This is a mapping of image paths to bitmap+location within the bitmap
+							ICollection<SpriteSheetItemDescriptor> sheetMembers = GetSpriteSheetMembers(groupNameCompleted);
+							VirtualizationGrid grid = new VirtualizationGrid(
+									groupNameCompleted,
+									spriteSheetItemDescriptorsByGroupId[groupId],
+									tilesInGroupByGenName);
+							virtualizationGrids.Add(groupNameCompleted, grid);
+
+							foreach (string path in grid.Paths)
+							{
+								fileToVirtualizationGrid[path] = grid;
 							}
 						}
 					}
@@ -188,16 +252,17 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
+		private static ICollection<SpriteSheetItemDescriptor> GetSpriteSheetMembers(string groupName)
+		{
+			int groupId = groupNameToId[groupName];
+			return spriteSheetItemDescriptorsByGroupId[groupId].ToArray();
+		}
+
 		public static int GetImageErrorCode(string key)
 		{
 			throw new NotImplementedException();
 		}
 
-		// this includes references to sheets
-		private static Dictionary<string, Bitmap> resourceImagesByKeys = new Dictionary<string, Bitmap>();
-
-		private static Dictionary<string, int[]> texturePartitioningInformation = new Dictionary<string, int[]>();
-		
 		// will act like the image isn't there if a sprite sheet isn't loaded
 		public static bool LoadImageFromEmbeddedResource(string key, string path)
 		{
@@ -229,10 +294,6 @@ namespace %%%PROJECT_ID%%%
 				return true;
 			}
 		}
-
-		private static object downloaderMutex = new object();
-		private static Dictionary<string, Bitmap> downloadedImagesByKey = new Dictionary<string, Bitmap>();
-		private static Dictionary<string, int> downloadedImagesErrorCodes = new Dictionary<string, int>();
 
 		// TODO: retry counter support
 		public static void DownloadImageFromInternetTubes(string key, string url)
@@ -274,32 +335,36 @@ namespace %%%PROJECT_ID%%%
 			throw new NotImplementedException();
 		}
 
-		public static bool LoadSheet(string groupId)
+		public static bool LoadSheet(string groupName)
 		{
-			bool sheetExists = true;
+			bool sheetExists = false;
+			bool loaderRequired = false;
 			lock (mutex)
 			{
-				if (!groupIdToIntId.ContainsKey(groupId))
+				sheetExists = groupNameToId.ContainsKey(groupName);
+				if (sheetExists)
 				{
-					sheetExists = false;
-				}
-				else
-				{
-					int id = groupIdToIntId[groupId];
-					if (sheetStatus[id] == STATUS_NOT_LOADED)
+					int groupId = groupNameToId[groupName];
+					if (sheetStatus[groupId] == STATUS_NOT_LOADED)
 					{
-						sheetStatus[id] = STATUS_LOADING;
-						int[] tiles = tilesPerId[id];
+						sheetStatus[groupId] = STATUS_LOADING;
+						int[] tiles = tilesPerId[groupId];
 						for (int i = 0; i < tiles.Length; ++i)
 						{
-							int tileId = tilesPerId[id][i];
-							tileLoadQueue.Enqueue(new string[] { id + "_" + tileId, tiles.Length - 1 == i ? groupId : null });
+							int tileId = tilesPerId[groupId][i];
+							tileLoadQueue.Enqueue(new string[] { groupId + "_" + tileId, tiles.Length - 1 == i ? groupName : null });
+						}
+						loaderRequired = tileLoadQueue.Count > 0;
+						if (!loaderRequired)
+						{
+							// This shouldn't really happen
+							sheetStatus[groupId] = STATUS_LOADED;
 						}
 					}
 				}
 			}
 
-			if (sheetExists)
+			if (loaderRequired)
 			{
 				EnsureBackgroundLoaderRunning();
 			}
@@ -334,7 +399,7 @@ namespace %%%PROJECT_ID%%%
 			int id = -1;
 			lock (mutex)
 			{
-				groupIdToIntId.TryGetValue(groupId, out id);
+				groupNameToId.TryGetValue(groupId, out id);
 			}
 
 			int status = 2; // error code
@@ -360,34 +425,34 @@ namespace %%%PROJECT_ID%%%
 			return 0;
 		}
 
-		public static int GetNumTiles(string groupId)
+		public static int GetNumTiles(string groupName)
 		{
 			int tileCount = -1;
 			lock (mutex)
 			{
-				int id;
-				if (groupIdToIntId.TryGetValue(groupId, out id))
+				int groupId;
+				if (groupNameToId.TryGetValue(groupName, out groupId))
 				{
-					tileCount = tilesPerId[id].Length;
+					tileCount = tilesPerId[groupId].Length;
 				}
 			}
 			return tileCount;
 		}
 
-		public static int GetNumTilesLoaded(string groupId)
+		public static int GetNumTilesLoaded(string groupName)
 		{
 			EnsureBackgroundLoaderRunning();
 
 			int tileCount = -1;
 			lock (mutex)
 			{
-				int id;
-				if (groupIdToIntId.TryGetValue(groupId, out id))
+				int groupId;
+				if (groupNameToId.TryGetValue(groupName, out groupId))
 				{
 					tileCount = 0;
-					foreach (int tileId in tilesPerId[id])
+					foreach (int tileId in tilesPerId[groupId])
 					{
-						if (tilesByName.ContainsKey(id + "_" + tileId))
+						if (tilesByName.ContainsKey(groupId + "_" + tileId))
 						{
 							++tileCount;
 						}
@@ -395,6 +460,29 @@ namespace %%%PROJECT_ID%%%
 				}
 			}
 			return tileCount;
+		}
+
+		private static Dictionary<string, Image> loadedImagesByKey = new Dictionary<string, Image>();
+		public static Image GetImageByKey(string key)
+		{
+			if (resourceImagesByKeys.ContainsKey(key))
+			{
+				Bitmap bmp = resourceImagesByKeys[key];
+				int x = 0;
+				int y = 0;
+				int width = bmp.Width;
+				int height = bmp.Height;
+				if (texturePartitioningInformation.ContainsKey(key))
+				{
+					int[] location = texturePartitioningInformation[key];
+					x = location[1];
+					y = location[2];
+					width = location[3];
+					height = location[4];
+				}
+				return new Image(bmp, x, y, width, height, false, false);
+			}
+			return null;
 		}
 	}
 }
