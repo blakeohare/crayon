@@ -308,6 +308,8 @@ namespace %%%PROJECT_ID%%%
 			int VW = gameWidth;
 			int VH = gameHeight;
 			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height;
+			int textureId = -1;
+			int previousTextureId = -1;
 			float textureWidth, textureHeight;
 			float textureLeft, textureRight, textureTop, textureBottom;
 			byte red, green, blue, alpha;
@@ -331,6 +333,7 @@ namespace %%%PROJECT_ID%%%
 						{
 							GL.Enable(EnableCap.Texture2D);
 							textureCapOn = 1;
+							previousTextureId = -1;
 						}
 						if (!isWhite)
 						{
@@ -343,7 +346,12 @@ namespace %%%PROJECT_ID%%%
 							image.RawResource.LoadBitmapTexture();
 						}
 
-						GL.BindTexture(TextureTarget.Texture2D, image.RawResource.OpenGlTextureID);
+						textureId = image.RawResource.OpenGlTextureID;
+						if (textureId != previousTextureId)
+						{
+							previousTextureId = textureId;
+							GL.BindTexture(TextureTarget.Texture2D, textureId);
+						}
 						GL.Begin(BeginMode.Quads);
 
 						if (RW == VW && RH == VH)
@@ -401,6 +409,7 @@ namespace %%%PROJECT_ID%%%
 						{
 							GL.Enable(EnableCap.Texture2D);
 							textureCapOn = 1;
+							previousTextureId = -1;
 						}
 						if (!isWhite)
 						{
@@ -413,7 +422,12 @@ namespace %%%PROJECT_ID%%%
 							image.RawResource.LoadBitmapTexture();
 						}
 
-						GL.BindTexture(TextureTarget.Texture2D, image.RawResource.OpenGlTextureID);
+						textureId = image.RawResource.OpenGlTextureID;
+						if (textureId != previousTextureId)
+						{
+							previousTextureId = textureId;
+							GL.BindTexture(TextureTarget.Texture2D, textureId);
+						}
 						GL.Begin(BeginMode.Quads);
 
 						GL.TexCoord2(textureLeft, textureTop);
