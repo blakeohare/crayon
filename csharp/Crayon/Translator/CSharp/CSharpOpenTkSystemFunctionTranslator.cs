@@ -113,7 +113,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateImageGet(List<string> output, Expression imageKey)
 		{
-			output.Add("GlUtil.GetImageByKeyWrapper(");
+			output.Add("ImageUtil.GetImageByKey(");
 			this.Translator.TranslateExpression(output, imageKey);
 			output.Add(")");
 		}

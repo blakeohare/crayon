@@ -6,7 +6,6 @@ namespace %%%PROJECT_ID%%%
 {
 	internal class Image
 	{
-		public int TextureID;
 		public readonly int Width;
 		public readonly int Height;
 		public readonly int X;
@@ -15,23 +14,25 @@ namespace %%%PROJECT_ID%%%
 		public readonly float TextureTop;
 		public readonly float TextureRight;
 		public readonly float TextureBottom;
-		public readonly Bitmap RawResource;
+		public readonly TrackedBitmap RawResource;
 		public readonly bool flippedX;
 		public readonly bool flippedY;
 
-		public Image(Bitmap resource, int x, int y, int width, int height, bool flipX, bool flipY)
+		public Image(TrackedBitmap resource, int x, int y, int width, int height, bool flipX, bool flipY)
 		{
 			this.RawResource = resource;
+			int resourceWidth = resource.Bitmap.Width;
+			int resourceHeight = resource.Bitmap.Height;
 
 			this.X = x;
 			this.Y = y;
 			this.Width = width;
 			this.Height = height;
 
-			this.TextureLeft = 1F * this.X / resource.Width;
-			this.TextureRight = 1F * (this.X + this.Width) / resource.Width;
-			this.TextureTop = 1F * this.Y / resource.Height;
-			this.TextureBottom = 1F * (this.Y + this.Height) / resource.Height;
+			this.TextureLeft = 1F * this.X / resourceWidth;
+			this.TextureRight = 1F * (this.X + this.Width) / resourceWidth;
+			this.TextureTop = 1F * this.Y / resourceHeight;
+			this.TextureBottom = 1F * (this.Y + this.Height) / resourceHeight;
 
 			this.flippedX = flipX;
 			this.flippedY = flipY;
@@ -57,7 +58,6 @@ namespace %%%PROJECT_ID%%%
 			Image flipped = new Image(image.RawResource,
 				image.X, image.Y, image.Width, image.Height,
 				flipX != image.flippedX, flipY != image.flippedY);
-			flipped.TextureID = image.TextureID;
 			return flipped;
 		}
 	}

@@ -7,6 +7,30 @@ using System.Linq;
 
 namespace %%%PROJECT_ID%%%
 {
+	public class TrackedBitmap
+	{
+		public TrackedBitmap(Bitmap bmp)
+		{
+			this.Bitmap = bmp;
+			this.OpenGlTextureID = -1;
+			this.Loaded = false;
+		}
+
+		public Bitmap Bitmap { get; private set; }
+		public int OpenGlTextureID { get; private set; }
+		public bool Loaded { get; private set; }
+
+		public void LoadBitmapTexture()
+		{
+			if (this.OpenGlTextureID != -1)
+			{
+				throw new Exception("Double loading of texture.");
+			}
+			this.OpenGlTextureID = GlUtil.ForceLoadTexture(this.Bitmap);
+			this.Loaded = true;
+		}
+	}
+
 	internal static class ImageUtil
 	{
 		private const int TILES_LOADED_PER_FRAME = 1;
@@ -34,13 +58,13 @@ namespace %%%PROJECT_ID%%%
 
 		// These 2 lookups are to be treated as one dictionary:
 		// image key => [bitmap, x, y, width, height]
-		private static Dictionary<string, Bitmap> resourceImagesByKeys = new Dictionary<string, Bitmap>();
+		private static Dictionary<string, TrackedBitmap> resourceImagesByKeys = new Dictionary<string, TrackedBitmap>();
 		private static Dictionary<string, int[]> texturePartitioningInformation = new Dictionary<string, int[]>();
 
 		private class VirtualizationGrid
 		{
 			public Dictionary<string, int[]> ImageLocations { get; private set; }
-			public Dictionary<int, Bitmap> Sheets { get; private set; }
+			public Dictionary<int, TrackedBitmap> Sheets { get; private set; }
 			public string GroupName { get; private set; }
 			public int GroupId { get; private set; }
 			public string[] Paths { get; private set; }
@@ -55,7 +79,7 @@ namespace %%%PROJECT_ID%%%
 				this.GroupId = groupId;
 
 				Dictionary<int, Bitmap> tiles = new Dictionary<int, Bitmap>();
-				Dictionary<int, Bitmap> consolidatedSheets = new Dictionary<int, Bitmap>();
+				Dictionary<int, TrackedBitmap> consolidatedSheets = new Dictionary<int, TrackedBitmap>();
 				Dictionary<int, Graphics> consolidatedSheetsGraphics = new Dictionary<int, Graphics>();
 
 				// [ tile ID, x, y, width, height ]
@@ -78,7 +102,7 @@ namespace %%%PROJECT_ID%%%
 
 					if (item.solitary)
 					{
-						consolidatedSheets[tileId] = tilesByGeneratedName[generatedName];
+						consolidatedSheets[tileId] = new TrackedBitmap(tilesByGeneratedName[generatedName]);
 						locations[filename] = new int[] { tileId, 0, 0, item.width, item.height };
 					}
 					else
@@ -88,7 +112,7 @@ namespace %%%PROJECT_ID%%%
 						{
 							Bitmap bigSheet = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 							bigSheet.SetResolution(96, 96);
-							consolidatedSheets[roundedId] = bigSheet;
+							consolidatedSheets[roundedId] = new TrackedBitmap(bigSheet);
 							consolidatedSheetsGraphics[roundedId] = Graphics.FromImage(bigSheet);
 
 							for (int i = 0; i < 16; ++i)
@@ -290,7 +314,7 @@ namespace %%%PROJECT_ID%%%
 				{
 					return false;
 				}
-				resourceImagesByKeys[key] = bmp;
+				resourceImagesByKeys[key] = new TrackedBitmap(bmp);
 				return true;
 			}
 		}
@@ -467,11 +491,11 @@ namespace %%%PROJECT_ID%%%
 		{
 			if (resourceImagesByKeys.ContainsKey(key))
 			{
-				Bitmap bmp = resourceImagesByKeys[key];
+				TrackedBitmap bmp = resourceImagesByKeys[key];
 				int x = 0;
 				int y = 0;
-				int width = bmp.Width;
-				int height = bmp.Height;
+				int width = bmp.Bitmap.Width;
+				int height = bmp.Bitmap.Height;
 				if (texturePartitioningInformation.ContainsKey(key))
 				{
 					int[] location = texturePartitioningInformation[key];

@@ -3,11 +3,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 
-namespace %%%PROJECT_ID%%%
-{
+namespace %%%PROJECT_ID%%%{
 	public static class GlUtil
 	{
-		private static int ForceLoadTexture(Bitmap bitmap)
+		public static int ForceLoadTexture(Bitmap bitmap)
 		{
 			bitmap = NormalizeBitmap(bitmap);
 			int width = bitmap.Width;
@@ -67,16 +66,6 @@ namespace %%%PROJECT_ID%%%
 			while (output < value)
 			{
 				output = output << 1;
-			}
-			return output;
-		}
-
-		internal static Image GetImageByKeyWrapper(string key)
-		{
-			Image output = ImageUtil.GetImageByKey(key);
-			if (output != null)
-			{
-				output.TextureID = ForceLoadTexture(output.RawResource);
 			}
 			return output;
 		}
