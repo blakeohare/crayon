@@ -3,7 +3,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 
-namespace %%%PROJECT_ID%%%{
+namespace %%%PROJECT_ID%%%
+{
 	public static class GlUtil
 	{
 		public static int ForceLoadTexture(Bitmap bitmap)
@@ -58,7 +59,7 @@ namespace %%%PROJECT_ID%%%{
 			return targetBmp;
 		}
 
-		private static int NextPowerOf2(int value)
+		public static int NextPowerOf2(int value)
 		{
 			if (((value - 1) & value) == 0) return value;
 
@@ -68,6 +69,25 @@ namespace %%%PROJECT_ID%%%{
 				output = output << 1;
 			}
 			return output;
+		}
+
+		private static int maxTextureSize = -1;
+		public static int MaxTextureSize
+		{
+			get
+			{
+				if (maxTextureSize == -1)
+				{
+					/*
+					// TODO: figure out why this isn't working...
+					int value;
+					OpenTK.Graphics.OpenGL.GL.GetInteger(OpenTK.Graphics.OpenGL.GetPName.MaxTextureSize, out value);
+					maxTextureSize = value;
+					//*/
+					maxTextureSize = 1024 * 16;
+				}
+				return maxTextureSize;
+			}
 		}
 	}
 }

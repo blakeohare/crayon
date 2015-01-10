@@ -79,16 +79,18 @@ namespace %%%PROJECT_ID%%%
 				this.GroupId = groupId;
 
 				Dictionary<int, Bitmap> tiles = new Dictionary<int, Bitmap>();
-				Dictionary<int, TrackedBitmap> consolidatedSheets = new Dictionary<int, TrackedBitmap>();
-				Dictionary<int, Graphics> consolidatedSheetsGraphics = new Dictionary<int, Graphics>();
+				Dictionary<int, Graphics> sheetGraphics = new Dictionary<int, Graphics>();
 
 				// [ tile ID, x, y, width, height ]
 				Dictionary<string, int[]> locations = new Dictionary<string, int[]>();
 
 				List<string> paths = new List<string>();
 				this.ImageLocations = locations;
-				this.Sheets = consolidatedSheets;
 
+				Dictionary<int, Bitmap> nonSolitarySheets = new Dictionary<int, Bitmap>();
+				Dictionary<int, Bitmap> solitarySheets = new Dictionary<int, Bitmap>();
+
+				int biggestSheetId = 0;
 				foreach (SpriteSheetItemDescriptor item in spriteSheetItemDescriptors)
 				{
 					string filename = item.filePath;
@@ -98,32 +100,37 @@ namespace %%%PROJECT_ID%%%
 					int width = item.width;
 					int height = item.height;
 					int tileId = item.tileId;
+					if (tileId > biggestSheetId)
+					{
+						biggestSheetId = tileId;
+					}
 					string generatedName = groupId + "_" + tileId;
 
 					if (item.solitary)
 					{
-						consolidatedSheets[tileId] = new TrackedBitmap(tilesByGeneratedName[generatedName]);
+						solitarySheets[tileId] = tilesByGeneratedName[generatedName];
 						locations[filename] = new int[] { tileId, 0, 0, item.width, item.height };
 					}
 					else
 					{
+						int col, row;
 						int roundedId = tileId / 16 * 16;
-						if (!consolidatedSheets.ContainsKey(roundedId))
+						if (!nonSolitarySheets.ContainsKey(roundedId))
 						{
 							Bitmap bigSheet = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+							nonSolitarySheets[roundedId] = bigSheet;
 							bigSheet.SetResolution(96, 96);
-							consolidatedSheets[roundedId] = new TrackedBitmap(bigSheet);
-							consolidatedSheetsGraphics[roundedId] = Graphics.FromImage(bigSheet);
+							sheetGraphics[roundedId] = Graphics.FromImage(bigSheet);
 
 							for (int i = 0; i < 16; ++i)
 							{
 								int interiorTileId = roundedId + i;
 								string interiorTileGeneratedName = groupId + "_" + interiorTileId;
-								int col = i % 4;
-								int row = i / 4;
+								col = i % 4;
+								row = i / 4;
 								if (tilesByGeneratedName.ContainsKey(interiorTileGeneratedName))
 								{
-									consolidatedSheetsGraphics[roundedId].DrawImage(
+									sheetGraphics[roundedId].DrawImage(
 										tilesByGeneratedName[interiorTileGeneratedName],
 										col * 256,
 										row * 256);
@@ -131,17 +138,104 @@ namespace %%%PROJECT_ID%%%
 							}
 						}
 
-						int c = (tileId - roundedId) % 4;
-						int r = (tileId - roundedId) / 4;
+						col = (tileId - roundedId) % 4;
+						row = (tileId - roundedId) / 4;
 
-						locations[filename] = new int[] { roundedId, c * 256 + item.x, r * 256 + item.y, item.width, item.height };
+						locations[filename] = new int[] { roundedId, col * 256 + item.x, row * 256 + item.y, item.width, item.height };
 					}
 				}
 
 				this.Paths = paths.ToArray();
 
-				// TODO: apply further consolidations. Attempt to fit entire sprite sheet into one image  according to 
-				// runtime OpenGL max texture size flags. 
+				// Go through and further consolidate things if possible. 
+				if (GlUtil.MaxTextureSize > 1024 && nonSolitarySheets.Count > 1)
+				{
+					int unitLength = GlUtil.MaxTextureSize / 1024;
+					int maxSheetsPerMegaSheet = unitLength * unitLength;
+					int sheetCount = nonSolitarySheets.Count;
+					
+					// Start making a list of ID groupings that don't exceed the maximum capacity of a megasheet.
+					List<List<int>> megaSheetMapping = new List<List<int>>();
+					foreach (int sheetIdToCombine in nonSolitarySheets.Keys.OrderBy<int, int>(i => i))
+					{
+						if (megaSheetMapping.Count == 0 || megaSheetMapping[megaSheetMapping.Count - 1].Count == maxSheetsPerMegaSheet)
+						{
+							megaSheetMapping.Add(new List<int>());
+						}
+						megaSheetMapping[megaSheetMapping.Count - 1].Add(sheetIdToCombine);
+					}
+
+					// now that the members of the mega sheets are fully determined, create the images.
+					int megaSheetId = biggestSheetId;
+					Dictionary<int, Bitmap> megaSheetById = new Dictionary<int, Bitmap>();
+					Dictionary<int, int[]> oldSheetOffsetInformation = new Dictionary<int, int[]>();
+					foreach (List<int> megaSheetMemberSheetIds in megaSheetMapping)
+					{
+						++megaSheetId;
+						int totalMembers = megaSheetMemberSheetIds.Count;
+						int imageUnitWidth = (int)(Math.Sqrt(totalMembers - 1) + 1);
+						int imageWidth = GlUtil.NextPowerOf2(imageUnitWidth * 1024);
+						Bitmap megaSheetBitmap = new Bitmap(imageWidth, imageWidth);
+						megaSheetBitmap.SetResolution(96, 96);
+						megaSheetById[megaSheetId] = megaSheetBitmap;
+						Graphics graphics = Graphics.FromImage(megaSheetBitmap);
+
+						for (int i = 0; i < megaSheetMemberSheetIds.Count; ++i)
+						{
+							int sheetId = megaSheetMemberSheetIds[i];
+							// Allocate the ID's in this compact square pattern:
+							// 0  1  4  9
+							// 3  2  5  10
+							// 8  7  6  11
+							// 15 14 13 12
+							// etc
+							// "gen"eration refers to the layer # of the L shape that the sheet is occupying. 
+							// Arithmetic magic.
+							int gen = (int)Math.Floor(Math.Sqrt(i));
+							int col = gen;
+							int row = i - gen * gen;
+							if (row > gen)
+							{
+								int adj = row - gen;
+								col -= adj;
+								row -= adj;
+							}
+							int x = col * 1024;
+							int y = row * 1024;
+							graphics.DrawImage(nonSolitarySheets[sheetId], x, y);
+							oldSheetOffsetInformation[sheetId] = new int[] { megaSheetId, x, y };
+						}
+
+						graphics.Flush();
+					}
+
+					// now update the location information to reflect the new sheet ID's and locations
+					foreach (int[] locationInfo in locations.Values)
+					{
+						int oldSheetId = locationInfo[0];
+						if (oldSheetOffsetInformation.ContainsKey(oldSheetId))
+						{
+							int[] updatedInfo = oldSheetOffsetInformation[oldSheetId];
+							locationInfo[0] = updatedInfo[0];
+							locationInfo[1] += updatedInfo[1];
+							locationInfo[2] += updatedInfo[2];
+						}
+					}
+					// replace the non solitary sheets with the new mega sheets.
+					nonSolitarySheets = megaSheetById;
+				}
+
+				this.Sheets = new Dictionary<int, TrackedBitmap>();
+				Dictionary<int, Bitmap> allSheets = nonSolitarySheets;
+				foreach (int sheetId in solitarySheets.Keys)
+				{
+					allSheets[sheetId] = nonSolitarySheets[sheetId];
+				}
+
+				foreach (int sheetId in allSheets.Keys)
+				{
+					this.Sheets[sheetId] = new TrackedBitmap(allSheets[sheetId]);
+				}
 			}
 		}
 
