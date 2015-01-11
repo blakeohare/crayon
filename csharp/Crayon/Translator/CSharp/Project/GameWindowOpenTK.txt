@@ -301,6 +301,16 @@ namespace %%%PROJECT_ID%%%
 		private int imageListVirtualLength = 0;
 		private int imageListRealLength = 100;
 
+		private class RenderState
+		{
+			public BeginMode Mode;
+			public int TextureID;
+			public byte R;
+			public byte G;
+			public byte B;
+			public byte A;
+		}
+
 		private void PerformDraws(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
 			int RW = screenWidth;
@@ -309,84 +319,19 @@ namespace %%%PROJECT_ID%%%
 			int VH = gameHeight;
 			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height;
 			int textureId = -1;
-			int previousTextureId = -1;
 			float textureWidth, textureHeight;
 			float textureLeft, textureRight, textureTop, textureBottom;
 			byte red, green, blue, alpha;
 			Image image;
 
+			RenderState state = null;
+
 			int imageIndex = 0;
-			int textureCapOn = 0;
-			bool isWhite = false;
 			for (int i = 0; i < drawListVirtualLength; i += 16)
 			{
 				switch (drawList[i])
 				{
 					case DRAW_COMMAND_BLIT:
-						image = imageList[imageIndex++];
-						left = drawList[i | 1];
-						top = drawList[i | 2];
-						right = left + image.Width;
-						bottom = top + image.Height;
-						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
-						if (textureCapOn != 1)
-						{
-							GL.Enable(EnableCap.Texture2D);
-							textureCapOn = 1;
-							previousTextureId = -1;
-						}
-						if (!isWhite)
-						{
-							GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
-							isWhite = true;
-						}
-
-						if (!image.RawResource.Loaded)
-						{
-							image.RawResource.LoadBitmapTexture();
-						}
-
-						textureId = image.RawResource.OpenGlTextureID;
-						if (textureId != previousTextureId)
-						{
-							previousTextureId = textureId;
-							GL.BindTexture(TextureTarget.Texture2D, textureId);
-						}
-						GL.Begin(BeginMode.Quads);
-
-						if (RW == VW && RH == VH)
-						{
-							GL.TexCoord2(image.TextureLeft, image.TextureTop);
-							GL.Vertex2(left, top);
-
-							GL.TexCoord2(image.TextureRight, image.TextureTop);
-							GL.Vertex2(right, top);
-
-							GL.TexCoord2(image.TextureRight, image.TextureBottom);
-							GL.Vertex2(right, bottom);
-
-							GL.TexCoord2(image.TextureLeft, image.TextureBottom);
-							GL.Vertex2(left, bottom);
-						}
-						else
-						{
-							GL.TexCoord2(image.TextureLeft, image.TextureTop);
-							GL.Vertex2(left * RW / VW, top * RH / VH);
-
-							GL.TexCoord2(image.TextureRight, image.TextureTop);
-							GL.Vertex2(right * RW / VW, top * RH / VH);
-
-							GL.TexCoord2(image.TextureRight, image.TextureBottom);
-							GL.Vertex2(right * RW / VW, bottom * RH / VH);
-
-							GL.TexCoord2(image.TextureLeft, image.TextureBottom);
-							GL.Vertex2(left * RW / VW, bottom * RH / VH);
-						}
-
-						GL.End();
-						break;
-
-					case DRAW_COMMAND_BLIT_PARTIAL:
 						image = imageList[imageIndex++];
 						left = drawList[i | 1];
 						top = drawList[i | 2];
@@ -396,6 +341,7 @@ namespace %%%PROJECT_ID%%%
 						height = drawList[i | 6];
 						right = left + width;
 						bottom = top + height;
+						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
 
 						textureWidth = image.TextureRight - image.TextureLeft;
 						textureHeight = image.TextureBottom - image.TextureTop;
@@ -405,44 +351,67 @@ namespace %%%PROJECT_ID%%%
 						textureRight = textureLeft + (textureWidth * width / image.Width);
 						textureBottom = textureTop + (textureHeight * height / image.Height);
 
-						if (textureCapOn != 1)
-						{
-							GL.Enable(EnableCap.Texture2D);
-							textureCapOn = 1;
-							previousTextureId = -1;
-						}
-						if (!isWhite)
-						{
-							GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
-							isWhite = true;
-						}
-
 						if (!image.RawResource.Loaded)
 						{
-							image.RawResource.LoadBitmapTexture();
+							if (state != null)
+							{
+								state = null;
+								GL.End();
+								image.RawResource.LoadBitmapTexture();
+							}
 						}
-
 						textureId = image.RawResource.OpenGlTextureID;
-						if (textureId != previousTextureId)
+
+						if (state == null ||
+							state.Mode != BeginMode.Quads ||
+							state.TextureID != textureId)
 						{
-							previousTextureId = textureId;
+							if (state == null)
+							{
+								state = new RenderState();
+							}
+							else
+							{
+								GL.End();
+							}
+
+							state.Mode = BeginMode.Quads;
+							state.TextureID = textureId;
+
+							GL.Enable(EnableCap.Texture2D);
+							GL.Color4((byte)255, (byte)255, (byte)255, (byte)255);
 							GL.BindTexture(TextureTarget.Texture2D, textureId);
+							GL.Begin(BeginMode.Quads);
 						}
-						GL.Begin(BeginMode.Quads);
 
-						GL.TexCoord2(textureLeft, textureTop);
-						GL.Vertex2(left * RW / VW, top * RH / VH);
+						if (RW == VW && RH == VH)
+						{
+							GL.TexCoord2(textureLeft, textureTop);
+							GL.Vertex2(left, top);
 
-						GL.TexCoord2(textureRight, textureTop);
-						GL.Vertex2(right * RW / VW, top * RH / VH);
+							GL.TexCoord2(textureRight, textureTop);
+							GL.Vertex2(right, top);
 
-						GL.TexCoord2(textureRight, textureBottom);
-						GL.Vertex2(right * RW / VW, bottom * RH / VH);
+							GL.TexCoord2(textureRight, textureBottom);
+							GL.Vertex2(right, bottom);
 
-						GL.TexCoord2(textureLeft, textureBottom);
-						GL.Vertex2(left * RW / VW, bottom * RH / VH);
+							GL.TexCoord2(textureLeft, textureBottom);
+							GL.Vertex2(left, bottom);
+						}
+						else
+						{
+							GL.TexCoord2(textureLeft, textureTop);
+							GL.Vertex2(left * RW / VW, top * RH / VH);
 
-						GL.End();
+							GL.TexCoord2(textureRight, textureTop);
+							GL.Vertex2(right * RW / VW, top * RH / VH);
+
+							GL.TexCoord2(textureRight, textureBottom);
+							GL.Vertex2(right * RW / VW, bottom * RH / VH);
+
+							GL.TexCoord2(textureLeft, textureBottom);
+							GL.Vertex2(left * RW / VW, bottom * RH / VH);
+						}
 						break;
 
 					case DRAW_COMMAND_RECTANGLE:
@@ -455,23 +424,51 @@ namespace %%%PROJECT_ID%%%
 						blue = (byte)drawList[i | 7];
 						alpha = (byte)drawList[i | 8];
 
-						if (textureCapOn != -1)
+						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
+
+						if (state == null ||
+							state.Mode != BeginMode.Quads ||
+							state.TextureID != 0 ||
+							state.R != red ||
+							state.G != green ||
+							state.B != blue ||
+							state.A != alpha)
 						{
+							if (state == null)
+							{
+								state = new RenderState();
+							}
+							else
+							{
+								GL.End();
+							}
+
+							state.Mode = BeginMode.Quads;
+							state.TextureID = 0;
+							state.R = red;
+							state.G = green;
+							state.B = blue;
+							state.A = alpha;
+
 							GL.Disable(EnableCap.Texture2D);
-							textureCapOn = -1;
+							GL.Color4(red, green, blue, alpha);
+							GL.Begin(BeginMode.Quads);
 						}
 
-						GL.Color4(red, green, blue, alpha);
-						isWhite = false;
-
-						GL.Begin(BeginMode.Quads);
-
-						GL.Vertex2(left * RW / VW, top * RH / VH);
-						GL.Vertex2(right * RW / VW, top * RH / VH);
-						GL.Vertex2(right * RW / VW, bottom * RH / VH);
-						GL.Vertex2(left * RW / VW, bottom * RH / VH);
-						
-						GL.End();
+						if (RW == VW && RH == VH)
+						{
+							GL.Vertex2(left, top);
+							GL.Vertex2(right, top);
+							GL.Vertex2(right, bottom);
+							GL.Vertex2(left, bottom);
+						}
+						else
+						{
+							GL.Vertex2(left * RW / VW, top * RH / VH);
+							GL.Vertex2(right * RW / VW, top * RH / VH);
+							GL.Vertex2(right * RW / VW, bottom * RH / VH);
+							GL.Vertex2(left * RW / VW, bottom * RH / VH);
+						}
 						break;
 
 					case DRAW_COMMAND_ELLIPSE:
@@ -502,6 +499,11 @@ namespace %%%PROJECT_ID%%%
 					default: throw new System.Exception("Unknown draw command");
 				}
 			}
+
+			if (state != null)
+			{
+				GL.End();
+			}
 		}
 
 		public void BlitImage(Image image, int x, int y)
@@ -521,7 +523,11 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT;
 			drawList[drawListVirtualLength | 1] = x;
 			drawList[drawListVirtualLength | 2] = y;
-			
+			drawList[drawListVirtualLength | 3] = 0;
+			drawList[drawListVirtualLength | 4] = 0;
+			drawList[drawListVirtualLength | 5] = image.Width;
+			drawList[drawListVirtualLength | 6] = image.Height;
+
 			drawListVirtualLength += 16;
 
 			imageList[imageListVirtualLength++] = image;
@@ -541,7 +547,7 @@ namespace %%%PROJECT_ID%%%
 				imageListRealLength = imageList.Length;
 			}
 
-			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT_PARTIAL;
+			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT;
 			drawList[drawListVirtualLength | 1] = targetX;
 			drawList[drawListVirtualLength | 2] = targetY;
 			drawList[drawListVirtualLength | 3] = sourceX;
