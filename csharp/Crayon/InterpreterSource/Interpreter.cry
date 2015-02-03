@@ -69,6 +69,7 @@ function @omitReturn @type('string') interpret(
 	@type('string') string2 = null;
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
+	@type('List<int>') intList1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -97,7 +98,6 @@ function @omitReturn @type('string') interpret(
 	@type('Dictionary<string, int>') stringSwitch = null;
 
 	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
-
 
 	while (true) {
 		row = $_array_get(args, StackFrame$stack.pc);
@@ -1120,6 +1120,41 @@ function @omitReturn @type('string') interpret(
 						} else {
 							output = VALUE_FALSE;
 						}
+						break;
+
+					case %%%FF_IMAGE_POP_SCALE%%%:
+						$_comment('$image_pop_scale');
+						// $image_pop_scale()
+						intList1 = ProgramData$p.imageScaleStack;
+						int1 = $_list_length(intList1);
+						if (int1 == 0) {
+							return killExecution(stack, "$image_pop_scale() was called but the image scale stack was empty.");
+						}
+						int2 = $_list_get(intList1, int1 - 1);
+						$_list_pop(intList1);
+						output = build_integer(int2);
+						if (int1 == 1) {
+							int3 = 1;
+						} else {
+							int3 = $_list_get(intList1, int1 - 2);
+						}
+						ProgramData$p.imageScaleStackTop = int3;
+						break;
+
+					case %%%FF_IMAGE_PUSH_SCALE%%%:
+						$_comment('$image_push_scale');
+						// $image_push_scale(scale)
+						intList1 = ProgramData$p.imageScaleStack;
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.INTEGER) {
+							if (Value$arg1.type != Types.FLOAT) {
+								return killExecution(stack, "$image_push_scale must be called with an integer. Floats are not supported at this time.");
+							}
+							return killExecution(stack, "$image_push_scale must be called with an integer.");
+						}
+						int1 = $_cast('int', Value$arg1.internalValue);
+						$_list_push(intList1, int1);
+						ProgramData$p.imageScaleStackTop = int1;
 						break;
 
 					case %%%FF_IMAGE_SHEET_ERROR_CODE%%%:

@@ -317,7 +317,7 @@ namespace %%%PROJECT_ID%%%
 			int RH = screenHeight;
 			int VW = gameWidth;
 			int VH = gameHeight;
-			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height;
+			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height, scale;
 			int textureId = -1;
 			float textureWidth, textureHeight;
 			float textureLeft, textureRight, textureTop, textureBottom;
@@ -339,8 +339,9 @@ namespace %%%PROJECT_ID%%%
 						startY = drawList[i | 4];
 						width = drawList[i | 5];
 						height = drawList[i | 6];
-						right = left + width;
-						bottom = top + height;
+						scale = drawList[i | 7];
+						right = left + width * scale;
+						bottom = top + height * scale;
 						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
 
 						textureWidth = image.TextureRight - image.TextureLeft;
@@ -527,6 +528,7 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 4] = 0;
 			drawList[drawListVirtualLength | 5] = image.Width;
 			drawList[drawListVirtualLength | 6] = image.Height;
+			drawList[drawListVirtualLength | 7] = TranslationHelper.ProgramData.imageScaleStackTop;
 
 			drawListVirtualLength += 16;
 
@@ -554,6 +556,7 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 4] = sourceY;
 			drawList[drawListVirtualLength | 5] = width;
 			drawList[drawListVirtualLength | 6] = height;
+			drawList[drawListVirtualLength | 7] = TranslationHelper.ProgramData.imageScaleStackTop;
 
 			drawListVirtualLength += 16;
 
