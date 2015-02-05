@@ -229,7 +229,7 @@ namespace %%%PROJECT_ID%%%
 				Dictionary<int, Bitmap> allSheets = nonSolitarySheets;
 				foreach (int sheetId in solitarySheets.Keys)
 				{
-					allSheets[sheetId] = nonSolitarySheets[sheetId];
+					allSheets[sheetId] = solitarySheets[sheetId];
 				}
 
 				foreach (int sheetId in allSheets.Keys)
