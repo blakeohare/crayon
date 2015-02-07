@@ -695,6 +695,15 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
+		{
+			// TODO: this may return crazy values, need to normalize to -1, 0, or 1
+			this.Translator.TranslateExpression(output, a);
+			output.Add(".compareTo(");
+			this.Translator.TranslateExpression(output, b);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
 			output.Add("(");

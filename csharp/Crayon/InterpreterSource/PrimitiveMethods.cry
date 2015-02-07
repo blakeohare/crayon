@@ -40,6 +40,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	$_dictionary_set(lookup, Types.LIST + "remove", %%%PRIMITIVE_METHOD_LIST_REMOVE%%%);
 	$_dictionary_set(lookup, Types.LIST + "reverse", %%%PRIMITIVE_METHOD_LIST_REVERSE%%%);
 	$_dictionary_set(lookup, Types.LIST + "shuffle", %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%);
+	$_dictionary_set(lookup, Types.LIST + "sort", %%%PRIMITIVE_METHOD_LIST_SORT%%%);
 
 	$_dictionary_set(lookup, Types.DICTIONARY + "clear", %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "contains", %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%);
@@ -138,6 +139,43 @@ function @type('string') callSystemMethod(
 		case %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%:
 			if ($_array_length(funcArgs) != 0) return wrongArgCountError("List shuffle method", 0, $_array_length(funcArgs));
 			$_list_shuffle_in_place($_force_parens($_cast('List<Value>', context)));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_SORT%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError("List sort method", 0, $_array_length(funcArgs));
+			@type('List<Value>') sortingList = $_cast('List<Value>', context);
+			@type('int') listLength = $_list_length(sortingList);
+			if (listLength > 1) {
+				@type('Value') sortItem = $_list_get(sortingList, 0);
+				@type('bool') is_number = Value$sortItem.type == Types.INTEGER || Value$sortItem.type == Types.FLOAT;
+				@type('bool') is_string = Value$sortItem.type == Types.STRING;
+				i = $_list_length(sortingList) - 1;
+				if (!is_number && !is_string) return "sort method does not support lists of this type.";
+				while (i > 0) {
+					sortItem = $_list_get(sortingList, i);
+					if (is_number) {
+						if (Value$sortItem.type != Types.INTEGER && Value$sortItem.type != Types.FLOAT) {
+							return "Cannot call .sort() on a list with mixed types.";
+						}
+					} else if (is_string) {
+						if (Value$sortItem.type != Types.STRING) {
+							return "Cannot call .sort() on a list with mxied types.";
+						}
+					}
+					i -= 1;
+				}
+
+				// TODO: fall back to native sort implementation if available
+				@type('Array<Value>') sortList1 = $_new_array('Value', listLength);
+				@type('Array<Value>') sortList2 = $_new_array('Value', listLength);
+				@type('Value') item = null;
+				for (i = listLength - 1; i >= 0; i -= 1) {
+					$_array_set(sortList1, i, $_list_get(sortingList, i));
+				}
+				sortValues(sortList1, sortList2, 0, listLength, is_string);
+				for (i = listLength - 1; i >= 0; i -= 1) {
+					$_list_set(sortingList, i, $_array_get(sortList2, i));
+				}
+			}
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("String split method", 1, $_array_length(funcArgs));

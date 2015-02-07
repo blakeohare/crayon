@@ -689,6 +689,15 @@ namespace Crayon.Translator.Python
 			output.Add("]");
 		}
 
+		protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
+		{
+			output.Add("cmp(");
+			this.Translator.TranslateExpression(output, a);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, b);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
 			output.Add("(");

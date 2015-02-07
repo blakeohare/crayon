@@ -674,6 +674,14 @@ namespace Crayon.Translator.CSharp
 			output.Add("]");
 		}
 
+		protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
+		{
+			this.Translator.TranslateExpression(output, a);
+			output.Add(".CompareTo(");
+			this.Translator.TranslateExpression(output, b);
+			output.Add(")");
+		}
+
 		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
