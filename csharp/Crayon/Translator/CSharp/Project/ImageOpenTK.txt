@@ -14,15 +14,15 @@ namespace %%%PROJECT_ID%%%
 		public readonly float TextureTop;
 		public readonly float TextureRight;
 		public readonly float TextureBottom;
-		public readonly TrackedBitmap RawResource;
+		public readonly CompositeImage RawResource;
 		public readonly bool flippedX;
 		public readonly bool flippedY;
 
-		public Image(TrackedBitmap resource, int x, int y, int width, int height, bool flipX, bool flipY)
+		public Image(CompositeImage resource, int x, int y, int width, int height, bool flipX, bool flipY)
 		{
 			this.RawResource = resource;
-			int resourceWidth = resource.Bitmap.Width;
-			int resourceHeight = resource.Bitmap.Height;
+			int resourceWidth = resource.width;
+			int resourceHeight = resource.height;
 
 			this.X = x;
 			this.Y = y;

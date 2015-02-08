@@ -122,3 +122,11 @@ struct ObjectInstance {
 	@type('Dictionary<int, Value>') fields,
 	@type('int') objectId
 }
+
+struct CompositeImage {
+	@type('object') nativeBitmap,
+	@type('int') width,
+	@type('int') height,
+	@type('int') glTextureId,
+	@type('bool') loaded
+}

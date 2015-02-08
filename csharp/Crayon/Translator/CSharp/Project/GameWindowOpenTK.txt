@@ -12,7 +12,7 @@ namespace %%%PROJECT_ID%%%
 		private const int MOUSE_LEFT = 0;
 		private const int MOUSE_RIGHT = 1;
 		private const int MOUSE_MOVE = 2;
-		
+
 		private const int DRAW_COMMAND_BLIT = 1;
 		private const int DRAW_COMMAND_BLIT_PARTIAL = 2;
 		private const int DRAW_COMMAND_RECTANGLE = 3;
@@ -237,7 +237,7 @@ namespace %%%PROJECT_ID%%%
 						break;
 				}
 			}
-			
+
 			return output;
 		}
 
@@ -352,16 +352,16 @@ namespace %%%PROJECT_ID%%%
 						textureRight = textureLeft + (textureWidth * width / image.Width);
 						textureBottom = textureTop + (textureHeight * height / image.Height);
 
-						if (!image.RawResource.Loaded)
+						if (!image.RawResource.loaded)
 						{
 							if (state != null)
 							{
 								state = null;
 								GL.End();
-								image.RawResource.LoadBitmapTexture();
+								TransitionaryCrayonHelper.LoadCompositeImageResource(image.RawResource);
 							}
 						}
-						textureId = image.RawResource.OpenGlTextureID;
+						textureId = image.RawResource.glTextureId;
 
 						if (state == null ||
 							state.Mode != BeginMode.Quads ||

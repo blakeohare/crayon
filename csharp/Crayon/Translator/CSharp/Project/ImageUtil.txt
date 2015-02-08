@@ -7,27 +7,24 @@ using System.Linq;
 
 namespace %%%PROJECT_ID%%%
 {
-	public class TrackedBitmap
+	public static class TransitionaryCrayonHelper
 	{
-		public TrackedBitmap(Bitmap bmp)
+		public static CompositeImage InstantiateCompositeImage(object nativeBitmap)
 		{
-			this.Bitmap = bmp;
-			this.OpenGlTextureID = -1;
-			this.Loaded = false;
+			CompositeImage output = new CompositeImage(
+				nativeBitmap,
+				((Bitmap)nativeBitmap).Width,
+				((Bitmap)nativeBitmap).Height,
+				-1,
+				false);
+			return output;
 		}
 
-		public Bitmap Bitmap { get; private set; }
-		public int OpenGlTextureID { get; private set; }
-		public bool Loaded { get; private set; }
-
-		public void LoadBitmapTexture()
+		public static bool LoadCompositeImageResource(CompositeImage compositeImage)
 		{
-			if (this.OpenGlTextureID != -1)
-			{
-				throw new Exception("Double loading of texture.");
-			}
-			this.OpenGlTextureID = GlUtil.ForceLoadTexture(this.Bitmap);
-			this.Loaded = true;
+			compositeImage.glTextureId = GlUtil.ForceLoadTexture((Bitmap)compositeImage.nativeBitmap);
+			compositeImage.loaded = true;
+			return true;
 		}
 	}
 
@@ -58,13 +55,13 @@ namespace %%%PROJECT_ID%%%
 
 		// These 2 lookups are to be treated as one dictionary:
 		// image key => [bitmap, x, y, width, height]
-		private static Dictionary<string, TrackedBitmap> resourceImagesByKeys = new Dictionary<string, TrackedBitmap>();
+		private static Dictionary<string, CompositeImage> resourceImagesByKeys = new Dictionary<string, CompositeImage>();
 		private static Dictionary<string, int[]> texturePartitioningInformation = new Dictionary<string, int[]>();
 
 		private class VirtualizationGrid
 		{
 			public Dictionary<string, int[]> ImageLocations { get; private set; }
-			public Dictionary<int, TrackedBitmap> Sheets { get; private set; }
+			public Dictionary<int, CompositeImage> Sheets { get; private set; }
 			public string GroupName { get; private set; }
 			public int GroupId { get; private set; }
 			public string[] Paths { get; private set; }
@@ -225,7 +222,7 @@ namespace %%%PROJECT_ID%%%
 					nonSolitarySheets = megaSheetById;
 				}
 
-				this.Sheets = new Dictionary<int, TrackedBitmap>();
+				this.Sheets = new Dictionary<int, CompositeImage>();
 				Dictionary<int, Bitmap> allSheets = nonSolitarySheets;
 				foreach (int sheetId in solitarySheets.Keys)
 				{
@@ -234,7 +231,7 @@ namespace %%%PROJECT_ID%%%
 
 				foreach (int sheetId in allSheets.Keys)
 				{
-					this.Sheets[sheetId] = new TrackedBitmap(allSheets[sheetId]);
+					this.Sheets[sheetId] = TransitionaryCrayonHelper.InstantiateCompositeImage(allSheets[sheetId]);
 				}
 			}
 		}
@@ -408,7 +405,7 @@ namespace %%%PROJECT_ID%%%
 				{
 					return false;
 				}
-				resourceImagesByKeys[key] = new TrackedBitmap(bmp);
+				resourceImagesByKeys[key] = TransitionaryCrayonHelper.InstantiateCompositeImage(bmp);
 				return true;
 			}
 		}
@@ -585,11 +582,11 @@ namespace %%%PROJECT_ID%%%
 		{
 			if (resourceImagesByKeys.ContainsKey(key))
 			{
-				TrackedBitmap bmp = resourceImagesByKeys[key];
+				CompositeImage bmp = resourceImagesByKeys[key];
 				int x = 0;
 				int y = 0;
-				int width = bmp.Bitmap.Width;
-				int height = bmp.Bitmap.Height;
+				int width = bmp.width;
+				int height = bmp.height;
 				if (texturePartitioningInformation.ContainsKey(key))
 				{
 					int[] location = texturePartitioningInformation[key];
