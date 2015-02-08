@@ -158,7 +158,7 @@ function @type('string') callSystemMethod(
 						}
 					} else if (is_string) {
 						if (Value$sortItem.type != Types.STRING) {
-							return "Cannot call .sort() on a list with mxied types.";
+							return "Cannot call .sort() on a list with mixed types.";
 						}
 					}
 					i -= 1;
