@@ -8,49 +8,10 @@ namespace %%%PROJECT_ID%%%
 {
 	internal static class ImageUtil
 	{
-		private const int TILES_LOADED_PER_FRAME = 1;
-
-		private const int STATUS_NOT_LOADED = 0;
-		private const int STATUS_LOADING = 1;
-		private const int STATUS_LOADED = 2;
-
 		private static object mutex = new object();
 		private static object downloaderMutex = new object();
 
 		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
-
-		public static void Initialize()
-		{
-			lock (mutex)
-			{
-				SpriteSheetData ssd = TranslationHelper.ProgramData.spriteSheetData;
-				foreach (string groupId in ssd.groupIdsByName.Keys)
-				{
-					int id = ssd.groupIdsByName[groupId];
-					imageUtil.groupNameToId[groupId] = id;
-					imageUtil.sheetStatus[id] = STATUS_NOT_LOADED;
-					imageUtil.tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
-				}
-
-				foreach (SpriteSheetItemDescriptor ssid in ssd.files.Values)
-				{
-					List<SpriteSheetItemDescriptor> ssidForGroup;
-					if (!imageUtil.spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
-					{
-						ssidForGroup = new List<SpriteSheetItemDescriptor>();
-						imageUtil.spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
-					}
-					ssidForGroup.Add(ssid);
-				}
-
-				foreach (int groupId in ssd.tileIdsByGroupId.Keys)
-				{
-					imageUtil.generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
-						.Select<int, string>(tileId => groupId + "_" + tileId)
-						.ToArray();
-				}
-			}
-		}
 
 		private static void EnsureBackgroundLoaderRunning()
 		{
@@ -78,7 +39,7 @@ namespace %%%PROJECT_ID%%%
 				List<string> groupIdCompletionMarker = new List<string>();
 				lock (mutex)
 				{
-					while (imageUtil.tileLoadQueue.Count > 0 && images.Count < TILES_LOADED_PER_FRAME)
+					while (imageUtil.tileLoadQueue.Count > 0 && images.Count < TransitionaryCrayonHelper.IMAGE_SHEET_TILES_LOADED_PER_FRAME)
 					{
 						string[] parts = imageUtil.tileLoadQueue[0];
 						imageUtil.tileLoadQueue.RemoveAt(0);
@@ -245,9 +206,9 @@ namespace %%%PROJECT_ID%%%
 				if (sheetExists)
 				{
 					int groupId = imageUtil.groupNameToId[groupName];
-					if (imageUtil.sheetStatus[groupId] == STATUS_NOT_LOADED)
+					if (imageUtil.sheetStatus[groupId] == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED)
 					{
-						imageUtil.sheetStatus[groupId] = STATUS_LOADING;
+						imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING;
 						int[] tiles = imageUtil.tilesPerId[groupId];
 						for (int i = 0; i < tiles.Length; ++i)
 						{
@@ -258,7 +219,7 @@ namespace %%%PROJECT_ID%%%
 						if (!loaderRequired)
 						{
 							// This shouldn't really happen
-							imageUtil.sheetStatus[groupId] = STATUS_LOADED;
+							imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
 						}
 					}
 				}
@@ -275,7 +236,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			lock (mutex)
 			{
-				if (imageUtil.sheetStatus[id] == STATUS_LOADING)
+				if (imageUtil.sheetStatus[id] == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING)
 				{
 					bool allLoaded = true;
 					foreach (int tileId in imageUtil.tilesPerId[id])
@@ -288,7 +249,7 @@ namespace %%%PROJECT_ID%%%
 					}
 					if (allLoaded)
 					{
-						imageUtil.sheetStatus[id] = STATUS_LOADED;
+						imageUtil.sheetStatus[id] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
 					}
 				}
 			}
@@ -311,8 +272,8 @@ namespace %%%PROJECT_ID%%%
 				{
 					switch (imageUtil.sheetStatus[id])
 					{
-						case STATUS_LOADED: status = 1; break;
-						case STATUS_LOADING: status = 0; break;
+						case TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED: status = 1; break;
+						case TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING: status = 0; break;
 						default: status = 2; break;
 					}
 				}

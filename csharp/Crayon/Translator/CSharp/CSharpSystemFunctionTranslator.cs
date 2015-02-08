@@ -291,7 +291,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateImageSheetFinalizeData(List<string> output)
 		{
-			output.Add("ImageUtil.Initialize()");
+			output.Add("TransitionaryCrayonHelper.Initialize()");
 		}
 
 		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)

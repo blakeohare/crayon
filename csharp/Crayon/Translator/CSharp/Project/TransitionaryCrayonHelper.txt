@@ -7,6 +7,11 @@ namespace %%%PROJECT_ID%%%
 {
 	public static class TransitionaryCrayonHelper
 	{
+		public const int IMAGE_SHEET_TILES_LOADED_PER_FRAME = 1;
+		public const int IMAGE_SHEET_STATUS_NOT_LOADED = 0;
+		public const int IMAGE_SHEET_STATUS_LOADING = 1;
+		public const int IMAGE_SHEET_STATUS_LOADED = 2;
+
 		public static CompositeImage InstantiateCompositeImage(object nativeBitmap)
 		{
 			CompositeImage output = new CompositeImage(
@@ -197,5 +202,35 @@ namespace %%%PROJECT_ID%%%
 				paths.ToArray());
 		}
 
+		public static void Initialize()
+		{
+			ImageSheetStatus imageUtil = TranslationHelper.ProgramData.imageSheetStatus;
+			SpriteSheetData ssd = TranslationHelper.ProgramData.spriteSheetData;
+			foreach (string groupId in ssd.groupIdsByName.Keys)
+			{
+				int id = ssd.groupIdsByName[groupId];
+				imageUtil.groupNameToId[groupId] = id;
+				imageUtil.sheetStatus[id] = IMAGE_SHEET_STATUS_NOT_LOADED;
+				imageUtil.tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
+			}
+
+			foreach (SpriteSheetItemDescriptor ssid in ssd.files.Values)
+			{
+				List<SpriteSheetItemDescriptor> ssidForGroup;
+				if (!imageUtil.spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
+				{
+					ssidForGroup = new List<SpriteSheetItemDescriptor>();
+					imageUtil.spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
+				}
+				ssidForGroup.Add(ssid);
+			}
+
+			foreach (int groupId in ssd.tileIdsByGroupId.Keys)
+			{
+				imageUtil.generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
+					.Select<int, string>(tileId => groupId + "_" + tileId)
+					.ToArray();
+			}
+		}
 	}
 }
