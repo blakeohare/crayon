@@ -167,7 +167,6 @@ function @type('string') callSystemMethod(
 				// TODO: fall back to native sort implementation if available
 				@type('Array<Value>') sortList1 = $_new_array('Value', listLength);
 				@type('Array<Value>') sortList2 = $_new_array('Value', listLength);
-				@type('Value') item = null;
 				for (i = listLength - 1; i >= 0; i -= 1) {
 					$_array_set(sortList1, i, $_list_get(sortingList, i));
 				}
