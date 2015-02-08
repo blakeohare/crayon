@@ -61,7 +61,8 @@ struct ProgramData {
 	@type('int') instanceCounter,
 	@type('SpriteSheetData') spriteSheetData,
 	@type('List<int>') imageScaleStack,
-	@type('int') imageScaleStackTop
+	@type('int') imageScaleStackTop,
+	@type('ImageSheetStatus') imageSheetStatus,
 }
 
 struct StackFrame {
@@ -153,4 +154,21 @@ struct Image {
 	@type('float') textureTop,
 	@type('float') textureRight,
 	@type('float') textureBottom
+}
+
+struct ImageSheetStatus {
+	@type('Dictionary<string, object>') downloadedImagesByKey,
+	@type('Dictionary<string, int>') downloadedImagesErrorCodes,
+	@type('Dictionary<string, ImageSheetVirtualizationGrid>') fileToVirtualizationGrid,
+	@type('Dictionary<int, Array<string>>') generatedTileNamesByGroupId,
+	@type('Dictionary<string, int>') groupNameToId,
+	@type('bool') isBackgroundLoaderActive,
+	@type('Dictionary<string, CompositeImage>') resourceImagesByKeys,
+	@type('Dictionary<int, int>') sheetStatus,
+	@type('Dictionary<int, List<SpriteSheetItemDescriptor>>') spriteSheetItemDescriptorsByGroupId,
+	@type('Dictionary<string, Array<int>>') texturePartitioningInformation,
+	@type('List<Array<string>>') tileLoadQueue,
+	@type('Dictionary<string, object>') tilesByName,
+	@type('Dictionary<int, Array<int>>') tilesPerId,
+	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
 }

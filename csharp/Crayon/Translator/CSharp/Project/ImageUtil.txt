@@ -6,27 +6,6 @@ using System.Linq;
 
 namespace %%%PROJECT_ID%%%
 {
-	public class ImageSheetStatus
-	{
-		public bool isBackgroundLoaderActive;
-		public Dictionary<string, object> downloadedImagesByKey;
-		public Dictionary<string, int> downloadedImagesErrorCodes;
-		public Dictionary<string, object> tilesByName;
-		public List<string[]> tileLoadQueue;
-		public Dictionary<int, int[]> tilesPerId;
-		public Dictionary<int, int> sheetStatus;
-		public Dictionary<string, int> groupNameToId;
-		public Dictionary<string, ImageSheetVirtualizationGrid> virtualizationGrids;
-		public Dictionary<string, ImageSheetVirtualizationGrid> fileToVirtualizationGrid;
-		public Dictionary<int, List<SpriteSheetItemDescriptor>> spriteSheetItemDescriptorsByGroupId;
-		public Dictionary<int, string[]> generatedTileNamesByGroupId;
-
-		// These 2 lookups are to be treated as one dictionary:
-		// image key => [bitmap, x, y, width, height]
-		public Dictionary<string, CompositeImage> resourceImagesByKeys;
-		public Dictionary<string, int[]> texturePartitioningInformation;
-	}
-
 	internal static class ImageUtil
 	{
 		private const int TILES_LOADED_PER_FRAME = 1;
@@ -38,23 +17,7 @@ namespace %%%PROJECT_ID%%%
 		private static object mutex = new object();
 		private static object downloaderMutex = new object();
 
-		private static ImageSheetStatus imageUtil = new ImageSheetStatus()
-		{
-			downloadedImagesByKey = new Dictionary<string, object>(),
-			downloadedImagesErrorCodes = new Dictionary<string, int>(),
-			fileToVirtualizationGrid = new Dictionary<string, ImageSheetVirtualizationGrid>(),
-			generatedTileNamesByGroupId = new Dictionary<int, string[]>(),
-			groupNameToId = new Dictionary<string, int>(),
-			isBackgroundLoaderActive = false,
-			resourceImagesByKeys = new Dictionary<string, CompositeImage>(),
-			sheetStatus = new Dictionary<int, int>(),
-			spriteSheetItemDescriptorsByGroupId = new Dictionary<int, List<SpriteSheetItemDescriptor>>(),
-			texturePartitioningInformation = new Dictionary<string, int[]>(),
-			tileLoadQueue = new List<string[]>(),
-			tilesByName = new Dictionary<string, object>(),
-			tilesPerId = new Dictionary<int, int[]>(),
-			virtualizationGrids = new Dictionary<string, ImageSheetVirtualizationGrid>(),
-		};
+		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
 
 		public static void Initialize()
 		{
