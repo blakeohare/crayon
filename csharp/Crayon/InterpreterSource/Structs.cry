@@ -130,3 +130,11 @@ struct CompositeImage {
 	@type('int') glTextureId,
 	@type('bool') loaded
 }
+
+struct ImageSheetVirtualizationGrid {
+	@type('Dictionary<string, Array<int>>') imageLocations,
+	@type('Dictionary<int, CompositeImage>') sheets,
+	@type('string') groupName,
+	@type('int') groupId,
+	@type('Array<string>') paths
+}
