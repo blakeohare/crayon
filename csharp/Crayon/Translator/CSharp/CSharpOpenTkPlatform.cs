@@ -47,15 +47,6 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
-			compileTargets.Add("Image.cs");
-			files[projectId + "/Image.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/ImageOpenTK.txt"),
-					replacements)
-			};
-
 			files[projectId + "/OpenTK.dll"] = new FileOutput()
 			{
 				Type = FileOutputType.Binary,

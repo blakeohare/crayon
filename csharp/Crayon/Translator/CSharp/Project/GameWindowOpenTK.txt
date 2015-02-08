@@ -344,24 +344,24 @@ namespace %%%PROJECT_ID%%%
 						bottom = top + height * scale;
 						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
 
-						textureWidth = image.TextureRight - image.TextureLeft;
-						textureHeight = image.TextureBottom - image.TextureTop;
+						textureWidth = image.textureRight - image.textureLeft;
+						textureHeight = image.textureBottom - image.textureTop;
 
-						textureLeft = image.TextureLeft + (textureWidth * startX / image.Width);
-						textureTop = image.TextureTop + (textureHeight * startY / image.Height);
-						textureRight = textureLeft + (textureWidth * width / image.Width);
-						textureBottom = textureTop + (textureHeight * height / image.Height);
+						textureLeft = image.textureLeft + (textureWidth * startX / image.width);
+						textureTop = image.textureTop + (textureHeight * startY / image.height);
+						textureRight = textureLeft + (textureWidth * width / image.width);
+						textureBottom = textureTop + (textureHeight * height / image.height);
 
-						if (!image.RawResource.loaded)
+						if (!image.compositeResource.loaded)
 						{
 							if (state != null)
 							{
 								state = null;
 								GL.End();
-								TransitionaryCrayonHelper.LoadCompositeImageResource(image.RawResource);
+								TransitionaryCrayonHelper.LoadCompositeImageResource(image.compositeResource);
 							}
 						}
-						textureId = image.RawResource.glTextureId;
+						textureId = image.compositeResource.glTextureId;
 
 						if (state == null ||
 							state.Mode != BeginMode.Quads ||
@@ -526,8 +526,8 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 2] = y;
 			drawList[drawListVirtualLength | 3] = 0;
 			drawList[drawListVirtualLength | 4] = 0;
-			drawList[drawListVirtualLength | 5] = image.Width;
-			drawList[drawListVirtualLength | 6] = image.Height;
+			drawList[drawListVirtualLength | 5] = image.width;
+			drawList[drawListVirtualLength | 6] = image.height;
 			drawList[drawListVirtualLength | 7] = TranslationHelper.ProgramData.imageScaleStackTop;
 
 			drawListVirtualLength += 16;

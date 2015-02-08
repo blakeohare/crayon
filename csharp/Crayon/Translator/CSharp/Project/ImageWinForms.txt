@@ -59,6 +59,5 @@ namespace %%%PROJECT_ID%%%
 
 			return new Image(image.Width, image.Height, newBitmap);
 		}
-
 	}
 }

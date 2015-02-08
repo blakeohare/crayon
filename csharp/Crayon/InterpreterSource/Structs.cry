@@ -138,3 +138,19 @@ struct ImageSheetVirtualizationGrid {
 	@type('int') groupId,
 	@type('Array<string>') paths
 }
+
+/*
+ * Either compositeResource or rawResource will be null depending on the platform.
+ */
+struct Image {
+	@type('CompositeImage') compositeResource, // Composite image this image is located in
+	@type('object') rawResource, // native platform bitmap if image compositing is not used
+	@type('int') x,
+	@type('int') y,
+	@type('int') width,
+	@type('int') height,
+	@type('float') textureLeft,
+	@type('float') textureTop,
+	@type('float') textureRight,
+	@type('float') textureBottom
+}

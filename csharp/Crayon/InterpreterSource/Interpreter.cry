@@ -70,6 +70,7 @@ function @omitReturn @type('string') interpret(
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
 	@type('List<int>') intList1 = null;
+	@type('Image') image1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -1066,8 +1067,8 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.NATIVE_OBJECT) {
 							return killExecution(stack, "$image_height requires an image object.");
 						}
-						int1 = $_image_height(Value$arg1.internalValue);
-						output = build_integer(int1);
+						image1 = $_cast('Image', Value$arg1.internalValue);
+						output = build_integer(Image$image1.height);
 						break;
 
 					case %%%FF_IMAGE_LOAD_FROM_RESOURCE%%%:
@@ -1275,8 +1276,8 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.NATIVE_OBJECT) {
 							return killExecution(stack, "$image_width requires an image object.");
 						}
-						int1 = $_image_width(Value$arg1.internalValue);
-						output = build_integer(int1);
+						image1 = $_cast('Image', Value$arg1.internalValue);
+						output = build_integer(Image$image1.width);
 						break;
 
 					case %%%FF_INITIALIZE_GAME%%%:

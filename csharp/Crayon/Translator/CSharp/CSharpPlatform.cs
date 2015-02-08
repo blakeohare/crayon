@@ -87,6 +87,7 @@ namespace Crayon.Translator.CSharp
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
 				{ "ImageUtil.txt", "ImageUtil.cs" },
+				{ "TransitionaryCrayonHelper.txt", "TransitionaryCrayonHelper.cs" },
 			};
 
 			// Create a list of compiled C# files

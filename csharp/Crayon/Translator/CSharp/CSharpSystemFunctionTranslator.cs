@@ -200,7 +200,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
-			output.Add("Image.FlipImage(");
+			output.Add("TransitionaryCrayonHelper.FlipImage(");
 			this.Translator.TranslateExpression(output, image);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, flipX);
