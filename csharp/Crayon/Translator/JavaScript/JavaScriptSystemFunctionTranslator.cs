@@ -383,6 +383,11 @@ namespace Crayon.Translator.JavaScript
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageWidth(List<string> output, Expression image)
 		{
 			this.Translator.TranslateExpression(output, image);

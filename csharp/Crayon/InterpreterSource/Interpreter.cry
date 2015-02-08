@@ -842,6 +842,8 @@ function @omitReturn @type('string') interpret(
 
 					case %%%FF_CLOCK_TICK%%%:
 						$_comment('$clock_tick');
+						// TODO: consider generalizing the work nugget to perform other clean-up tasks as well.
+						$_image_sheet_perform_work_nugget();
 						yieldControl(stack);
 						return null;
 						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.

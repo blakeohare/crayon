@@ -403,6 +403,11 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageWidth(List<string> output, Expression image)
 		{
 			output.Add("((Image)");

@@ -308,6 +308,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
+		{
+			output.Add("ImageUtil.PerformWorkNugget()");
+		}
+
 		protected override void TranslateImageWidth(List<string> output, Expression image)
 		{
 			output.Add("((Image)");

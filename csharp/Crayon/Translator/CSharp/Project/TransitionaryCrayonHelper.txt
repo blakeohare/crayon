@@ -7,7 +7,7 @@ namespace %%%PROJECT_ID%%%
 {
 	public static class TransitionaryCrayonHelper
 	{
-		public const int IMAGE_SHEET_TILES_LOADED_PER_FRAME = 1;
+		public const int IMAGE_SHEET_TILES_LOADED_PER_FRAME = 3;
 		public const int IMAGE_SHEET_STATUS_NOT_LOADED = 0;
 		public const int IMAGE_SHEET_STATUS_LOADING = 1;
 		public const int IMAGE_SHEET_STATUS_LOADED = 2;
