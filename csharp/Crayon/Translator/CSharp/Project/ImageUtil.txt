@@ -6,6 +6,27 @@ using System.Linq;
 
 namespace %%%PROJECT_ID%%%
 {
+	public class ImageSheetStatus
+	{
+		public bool isBackgroundLoaderActive;
+		public Dictionary<string, object> downloadedImagesByKey;
+		public Dictionary<string, int> downloadedImagesErrorCodes;
+		public Dictionary<string, object> tilesByName;
+		public List<string[]> tileLoadQueue;
+		public Dictionary<int, int[]> tilesPerId;
+		public Dictionary<int, int> sheetStatus;
+		public Dictionary<string, int> groupNameToId;
+		public Dictionary<string, ImageSheetVirtualizationGrid> virtualizationGrids;
+		public Dictionary<string, ImageSheetVirtualizationGrid> fileToVirtualizationGrid;
+		public Dictionary<int, List<SpriteSheetItemDescriptor>> spriteSheetItemDescriptorsByGroupId;
+		public Dictionary<int, string[]> generatedTileNamesByGroupId;
+
+		// These 2 lookups are to be treated as one dictionary:
+		// image key => [bitmap, x, y, width, height]
+		public Dictionary<string, CompositeImage> resourceImagesByKeys;
+		public Dictionary<string, int[]> texturePartitioningInformation;
+	}
+
 	internal static class ImageUtil
 	{
 		private const int TILES_LOADED_PER_FRAME = 1;
@@ -15,26 +36,25 @@ namespace %%%PROJECT_ID%%%
 		private const int STATUS_LOADED = 2;
 
 		private static object mutex = new object();
-		private static bool isBackgroundLoaderActive = false;
-
 		private static object downloaderMutex = new object();
-		private static Dictionary<string, Bitmap> downloadedImagesByKey = new Dictionary<string, Bitmap>();
-		private static Dictionary<string, int> downloadedImagesErrorCodes = new Dictionary<string, int>();
 
-		private static Dictionary<string, Bitmap> tilesByName = new Dictionary<string, Bitmap>();
-		private static Queue<string[]> tileLoadQueue = new Queue<string[]>();
-		private static Dictionary<int, int[]> tilesPerId = new Dictionary<int, int[]>();
-		private static Dictionary<int, int> sheetStatus = new Dictionary<int, int>();
-		private static Dictionary<string, int> groupNameToId = new Dictionary<string, int>();
-		private static Dictionary<string, ImageSheetVirtualizationGrid> virtualizationGrids = new Dictionary<string, ImageSheetVirtualizationGrid>();
-		private static Dictionary<string, ImageSheetVirtualizationGrid> fileToVirtualizationGrid = new Dictionary<string, ImageSheetVirtualizationGrid>();
-		private static Dictionary<int, List<SpriteSheetItemDescriptor>> spriteSheetItemDescriptorsByGroupId = new Dictionary<int, List<SpriteSheetItemDescriptor>>();
-		private static Dictionary<int, string[]> generatedTileNamesByGroupId = new Dictionary<int, string[]>();
-
-		// These 2 lookups are to be treated as one dictionary:
-		// image key => [bitmap, x, y, width, height]
-		private static Dictionary<string, CompositeImage> resourceImagesByKeys = new Dictionary<string, CompositeImage>();
-		private static Dictionary<string, int[]> texturePartitioningInformation = new Dictionary<string, int[]>();
+		private static ImageSheetStatus imageUtil = new ImageSheetStatus()
+		{
+			downloadedImagesByKey = new Dictionary<string, object>(),
+			downloadedImagesErrorCodes = new Dictionary<string, int>(),
+			fileToVirtualizationGrid = new Dictionary<string, ImageSheetVirtualizationGrid>(),
+			generatedTileNamesByGroupId = new Dictionary<int, string[]>(),
+			groupNameToId = new Dictionary<string, int>(),
+			isBackgroundLoaderActive = false,
+			resourceImagesByKeys = new Dictionary<string, CompositeImage>(),
+			sheetStatus = new Dictionary<int, int>(),
+			spriteSheetItemDescriptorsByGroupId = new Dictionary<int, List<SpriteSheetItemDescriptor>>(),
+			texturePartitioningInformation = new Dictionary<string, int[]>(),
+			tileLoadQueue = new List<string[]>(),
+			tilesByName = new Dictionary<string, object>(),
+			tilesPerId = new Dictionary<int, int[]>(),
+			virtualizationGrids = new Dictionary<string, ImageSheetVirtualizationGrid>(),
+		};
 
 		public static void Initialize()
 		{
@@ -44,25 +64,25 @@ namespace %%%PROJECT_ID%%%
 				foreach (string groupId in ssd.groupIdsByName.Keys)
 				{
 					int id = ssd.groupIdsByName[groupId];
-					groupNameToId[groupId] = id;
-					sheetStatus[id] = STATUS_NOT_LOADED;
-					tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
+					imageUtil.groupNameToId[groupId] = id;
+					imageUtil.sheetStatus[id] = STATUS_NOT_LOADED;
+					imageUtil.tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
 				}
 
 				foreach (SpriteSheetItemDescriptor ssid in ssd.files.Values)
 				{
 					List<SpriteSheetItemDescriptor> ssidForGroup;
-					if (!spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
+					if (!imageUtil.spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
 					{
 						ssidForGroup = new List<SpriteSheetItemDescriptor>();
-						spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
+						imageUtil.spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
 					}
 					ssidForGroup.Add(ssid);
 				}
 
 				foreach (int groupId in ssd.tileIdsByGroupId.Keys)
 				{
-					generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
+					imageUtil.generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
 						.Select<int, string>(tileId => groupId + "_" + tileId)
 						.ToArray();
 				}
@@ -74,11 +94,11 @@ namespace %%%PROJECT_ID%%%
 			BackgroundWorker bgWorker = null;
 			lock (mutex)
 			{
-				if (!isBackgroundLoaderActive)
+				if (!imageUtil.isBackgroundLoaderActive)
 				{
 					bgWorker = new BackgroundWorker();
 					bgWorker.DoWork += bgWorker_DoWork;
-					isBackgroundLoaderActive = true;
+					imageUtil.isBackgroundLoaderActive = true;
 				}
 			}
 			if (bgWorker != null)
@@ -95,9 +115,10 @@ namespace %%%PROJECT_ID%%%
 				List<string> groupIdCompletionMarker = new List<string>();
 				lock (mutex)
 				{
-					while (tileLoadQueue.Count > 0 && images.Count < TILES_LOADED_PER_FRAME)
+					while (imageUtil.tileLoadQueue.Count > 0 && images.Count < TILES_LOADED_PER_FRAME)
 					{
-						string[] parts = tileLoadQueue.Dequeue();
+						string[] parts = imageUtil.tileLoadQueue[0];
+						imageUtil.tileLoadQueue.RemoveAt(0);
 						string path = parts[0];
 						string groupIdCompleted = parts[1];
 						images.Add(path);
@@ -123,16 +144,16 @@ namespace %%%PROJECT_ID%%%
 					Bitmap bmp = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + image + ".png", true);
 					lock (mutex)
 					{
-						tilesByName[image] = bmp;
+						imageUtil.tilesByName[image] = bmp;
 						if (groupNameCompleted != null)
 						{
-							int groupId = groupNameToId[groupNameCompleted];
+							int groupId = imageUtil.groupNameToId[groupNameCompleted];
 							// filter the tilesByName lookup to just the ones in this group now that it's done loading.
-							string[] genNamesInGroup = generatedTileNamesByGroupId[groupId];
+							string[] genNamesInGroup = imageUtil.generatedTileNamesByGroupId[groupId];
 							Dictionary<string, object> tilesInGroupByGenName = new Dictionary<string, object>();
 							foreach (string genName in genNamesInGroup)
 							{
-								tilesInGroupByGenName[genName] = tilesByName[genName];
+								tilesInGroupByGenName[genName] = imageUtil.tilesByName[genName];
 							}
 
 							// and create a virtualization grid for this group. 
@@ -140,14 +161,14 @@ namespace %%%PROJECT_ID%%%
 							ICollection<SpriteSheetItemDescriptor> sheetMembers = GetSpriteSheetMembers(groupNameCompleted);
 							ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.IntantiateVirtualizationGrid(
 									groupNameCompleted,
-									spriteSheetItemDescriptorsByGroupId[groupId],
+									imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
 									tilesInGroupByGenName,
-									groupNameToId);
-							virtualizationGrids.Add(groupNameCompleted, grid);
+									imageUtil.groupNameToId);
+							imageUtil.virtualizationGrids.Add(groupNameCompleted, grid);
 
 							foreach (string path in grid.paths)
 							{
-								fileToVirtualizationGrid[path] = grid;
+								imageUtil.fileToVirtualizationGrid[path] = grid;
 							}
 						}
 					}
@@ -156,7 +177,7 @@ namespace %%%PROJECT_ID%%%
 				bool stahp = false;
 				lock (mutex)
 				{
-					stahp = tileLoadQueue.Count == 0;
+					stahp = imageUtil.tileLoadQueue.Count == 0;
 				}
 
 				if (stahp) break;
@@ -164,14 +185,14 @@ namespace %%%PROJECT_ID%%%
 
 			lock (mutex)
 			{
-				isBackgroundLoaderActive = false;
+				imageUtil.isBackgroundLoaderActive = false;
 			}
 		}
 
 		private static ICollection<SpriteSheetItemDescriptor> GetSpriteSheetMembers(string groupName)
 		{
-			int groupId = groupNameToId[groupName];
-			return spriteSheetItemDescriptorsByGroupId[groupId].ToArray();
+			int groupId = imageUtil.groupNameToId[groupName];
+			return imageUtil.spriteSheetItemDescriptorsByGroupId[groupId].ToArray();
 		}
 
 		public static int GetImageErrorCode(string key)
@@ -185,13 +206,13 @@ namespace %%%PROJECT_ID%%%
 			bool spriteSheetItem = false;
 			lock (mutex)
 			{
-				if (fileToVirtualizationGrid.ContainsKey(path))
+				if (imageUtil.fileToVirtualizationGrid.ContainsKey(path))
 				{
 					spriteSheetItem = true;
-					ImageSheetVirtualizationGrid grid = fileToVirtualizationGrid[path];
+					ImageSheetVirtualizationGrid grid = imageUtil.fileToVirtualizationGrid[path];
 					int[] location = grid.imageLocations[path];
-					resourceImagesByKeys[key] = grid.sheets[location[0]];
-					texturePartitioningInformation[key] = location;
+					imageUtil.resourceImagesByKeys[key] = grid.sheets[location[0]];
+					imageUtil.texturePartitioningInformation[key] = location;
 				}
 			}
 
@@ -206,7 +227,7 @@ namespace %%%PROJECT_ID%%%
 				{
 					return false;
 				}
-				resourceImagesByKeys[key] = TransitionaryCrayonHelper.InstantiateCompositeImage(bmp);
+				imageUtil.resourceImagesByKeys[key] = TransitionaryCrayonHelper.InstantiateCompositeImage(bmp);
 				return true;
 			}
 		}
@@ -225,8 +246,8 @@ namespace %%%PROJECT_ID%%%
 					bmp.SetResolution(96, 96);
 					lock (downloaderMutex)
 					{
-						downloadedImagesByKey[key] = bmp;
-						downloadedImagesErrorCodes[key] = 1;
+						imageUtil.downloadedImagesByKey[key] = bmp;
+						imageUtil.downloadedImagesErrorCodes[key] = 1;
 					}
 				}
 				catch (Exception)
@@ -234,7 +255,7 @@ namespace %%%PROJECT_ID%%%
 					// TODO: figure out error codes
 					lock (downloaderMutex)
 					{
-						downloadedImagesErrorCodes[key] = 2;
+						imageUtil.downloadedImagesErrorCodes[key] = 2;
 					}
 				}
 			};
@@ -257,24 +278,24 @@ namespace %%%PROJECT_ID%%%
 			bool loaderRequired = false;
 			lock (mutex)
 			{
-				sheetExists = groupNameToId.ContainsKey(groupName);
+				sheetExists = imageUtil.groupNameToId.ContainsKey(groupName);
 				if (sheetExists)
 				{
-					int groupId = groupNameToId[groupName];
-					if (sheetStatus[groupId] == STATUS_NOT_LOADED)
+					int groupId = imageUtil.groupNameToId[groupName];
+					if (imageUtil.sheetStatus[groupId] == STATUS_NOT_LOADED)
 					{
-						sheetStatus[groupId] = STATUS_LOADING;
-						int[] tiles = tilesPerId[groupId];
+						imageUtil.sheetStatus[groupId] = STATUS_LOADING;
+						int[] tiles = imageUtil.tilesPerId[groupId];
 						for (int i = 0; i < tiles.Length; ++i)
 						{
-							int tileId = tilesPerId[groupId][i];
-							tileLoadQueue.Enqueue(new string[] { groupId + "_" + tileId, tiles.Length - 1 == i ? groupName : null });
+							int tileId = imageUtil.tilesPerId[groupId][i];
+							imageUtil.tileLoadQueue.Add(new string[] { groupId + "_" + tileId, tiles.Length - 1 == i ? groupName : null });
 						}
-						loaderRequired = tileLoadQueue.Count > 0;
+						loaderRequired = imageUtil.tileLoadQueue.Count > 0;
 						if (!loaderRequired)
 						{
 							// This shouldn't really happen
-							sheetStatus[groupId] = STATUS_LOADED;
+							imageUtil.sheetStatus[groupId] = STATUS_LOADED;
 						}
 					}
 				}
@@ -291,12 +312,12 @@ namespace %%%PROJECT_ID%%%
 		{
 			lock (mutex)
 			{
-				if (sheetStatus[id] == STATUS_LOADING)
+				if (imageUtil.sheetStatus[id] == STATUS_LOADING)
 				{
 					bool allLoaded = true;
-					foreach (int tileId in tilesPerId[id])
+					foreach (int tileId in imageUtil.tilesPerId[id])
 					{
-						if (!tilesByName.ContainsKey(id + "_" + tileId))
+						if (!imageUtil.tilesByName.ContainsKey(id + "_" + tileId))
 						{
 							allLoaded = false;
 							break;
@@ -304,7 +325,7 @@ namespace %%%PROJECT_ID%%%
 					}
 					if (allLoaded)
 					{
-						sheetStatus[id] = STATUS_LOADED;
+						imageUtil.sheetStatus[id] = STATUS_LOADED;
 					}
 				}
 			}
@@ -315,7 +336,7 @@ namespace %%%PROJECT_ID%%%
 			int id = -1;
 			lock (mutex)
 			{
-				groupNameToId.TryGetValue(groupId, out id);
+				imageUtil.groupNameToId.TryGetValue(groupId, out id);
 			}
 
 			int status = 2; // error code
@@ -325,7 +346,7 @@ namespace %%%PROJECT_ID%%%
 
 				lock (mutex)
 				{
-					switch (sheetStatus[id])
+					switch (imageUtil.sheetStatus[id])
 					{
 						case STATUS_LOADED: status = 1; break;
 						case STATUS_LOADING: status = 0; break;
@@ -347,9 +368,9 @@ namespace %%%PROJECT_ID%%%
 			lock (mutex)
 			{
 				int groupId;
-				if (groupNameToId.TryGetValue(groupName, out groupId))
+				if (imageUtil.groupNameToId.TryGetValue(groupName, out groupId))
 				{
-					tileCount = tilesPerId[groupId].Length;
+					tileCount = imageUtil.tilesPerId[groupId].Length;
 				}
 			}
 			return tileCount;
@@ -363,12 +384,12 @@ namespace %%%PROJECT_ID%%%
 			lock (mutex)
 			{
 				int groupId;
-				if (groupNameToId.TryGetValue(groupName, out groupId))
+				if (imageUtil.groupNameToId.TryGetValue(groupName, out groupId))
 				{
 					tileCount = 0;
-					foreach (int tileId in tilesPerId[groupId])
+					foreach (int tileId in imageUtil.tilesPerId[groupId])
 					{
-						if (tilesByName.ContainsKey(groupId + "_" + tileId))
+						if (imageUtil.tilesByName.ContainsKey(groupId + "_" + tileId))
 						{
 							++tileCount;
 						}
@@ -381,22 +402,22 @@ namespace %%%PROJECT_ID%%%
 		private static Dictionary<string, Image> loadedImagesByKey = new Dictionary<string, Image>();
 		public static Image GetImageByKey(string key)
 		{
-			if (resourceImagesByKeys.ContainsKey(key))
+			if (imageUtil.resourceImagesByKeys.ContainsKey(key))
 			{
-				CompositeImage bmp = resourceImagesByKeys[key];
+				CompositeImage bmp = imageUtil.resourceImagesByKeys[key];
 				int x = 0;
 				int y = 0;
 				int width = bmp.width;
 				int height = bmp.height;
-				if (texturePartitioningInformation.ContainsKey(key))
+				if (imageUtil.texturePartitioningInformation.ContainsKey(key))
 				{
-					int[] location = texturePartitioningInformation[key];
+					int[] location = imageUtil.texturePartitioningInformation[key];
 					x = location[1];
 					y = location[2];
 					width = location[3];
 					height = location[4];
 				}
-				return TransitionaryCrayonHelper.InstantiateImage(bmp, x, y, width, height, false, false);
+				return CrayonWrapper.v_instantiateImage(bmp, x, y, width, height, false, false);
 			}
 			return null;
 		}

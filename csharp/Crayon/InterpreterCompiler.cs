@@ -18,6 +18,7 @@ namespace Crayon
 			// These are just piles of functions so they can be compiled in any order.
 			"BinaryOpsUtil.cry",
 			"ByteCodeLoader.cry",
+			"Graphics.cry",
 			"Interpreter.cry",
 			"PrimitiveMethods.cry",
 			"Runner.cry",

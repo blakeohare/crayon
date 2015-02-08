@@ -1,0 +1,63 @@
+﻿
+function @type('Image') instantiateImage(
+	@type('CompositeImage') resource,
+	@type('int') x,
+	@type('int') y,
+	@type('int') width,
+	@type('int') height,
+	@type('bool') flipX,
+	@type('bool') flipY) {
+
+	@type('int') resourceWidth = CompositeImage$resource.width;
+	@type('int') resourceHeight = CompositeImage$resource.height;
+
+	@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
+	@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
+	@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
+	@type('float') textureBottom = $_cast('float', $_unsafe_float_division(1.0 * (y + height), resourceHeight));
+
+	if (flipX) {
+		@type('float') t = textureLeft;
+		textureLeft = textureRight;
+		textureRight = t;
+	}
+
+	if (flipY) {
+		@type('float') t = textureTop;
+		textureTop = textureBottom;
+		textureBottom = t;
+	}
+
+	return new Image(
+		resource,
+		null,
+		x,
+		y,
+		width,
+		height,
+		textureLeft,
+		textureTop,
+		textureRight,
+		textureBottom);
+}
+
+function @type('Image') flipImage(
+	@type('Image') image,
+	@type('bool') flipX,
+	@type('bool') flipY) {
+	if (Image$image.compositeResource == null) {
+		// TODO: create a flipped copy of the raw resource.
+		return null;
+	}
+
+	@type('bool') flippedX = Image$image.textureLeft > Image$image.textureRight;
+	@type('bool') flippedY = Image$image.textureTop > Image$image.textureBottom;
+	return instantiateImage(
+		Image$image.compositeResource,
+		Image$image.x,
+		Image$image.y,
+		Image$image.width,
+		Image$image.height,
+		flipX != flippedX,
+		flipY != flippedY);
+}

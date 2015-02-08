@@ -992,7 +992,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$flip_image requires an image and two booleans.");
 						}
 						output = new Value(Types.NATIVE_OBJECT, $_flip_image(
-							Value$arg1.internalValue,
+							$_cast('Image', Value$arg1.internalValue),
 							$_cast('bool', Value$arg2.internalValue),
 							$_cast('bool', Value$arg3.internalValue)));
 						break;
