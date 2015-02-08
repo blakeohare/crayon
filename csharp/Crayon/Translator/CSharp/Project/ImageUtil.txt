@@ -9,7 +9,6 @@ namespace %%%PROJECT_ID%%%
 	internal static class ImageUtil
 	{
 		private static object mutex = new object();
-		private static object downloaderMutex = new object();
 
 		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
 
@@ -168,20 +167,19 @@ namespace %%%PROJECT_ID%%%
 					byte[] imageBytes = wc.DownloadData(url);
 					Bitmap bmp = new Bitmap(new System.IO.MemoryStream(imageBytes));
 					bmp.SetResolution(96, 96);
-					lock (downloaderMutex)
-					{
-						imageUtil.downloadedImagesByKey[key] = bmp;
-						imageUtil.downloadedImagesErrorCodes[key] = 1;
-					}
+					args.Result = bmp;
 				}
 				catch (Exception)
 				{
-					// TODO: figure out error codes
-					lock (downloaderMutex)
-					{
-						imageUtil.downloadedImagesErrorCodes[key] = 2;
-					}
+					args.Result = null;
 				}
+			};
+			bgWorker.RunWorkerCompleted += (sender, args) =>
+			{
+				// TODO: more in-depth error codes than "2"
+				object bmp = args.Result;
+				imageUtil.downloadedImagesByKey[key] = args.Result;
+				imageUtil.downloadedImagesErrorCodes[key] = bmp == null ? 2 : 1;
 			};
 			bgWorker.RunWorkerAsync();
 		}
