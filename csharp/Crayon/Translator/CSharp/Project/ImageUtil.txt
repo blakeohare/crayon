@@ -10,11 +10,12 @@ namespace %%%PROJECT_ID%%%
 	{
 		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
 
-		public static void PerformWorkNugget()
+		public static bool PerformWorkNugget()
 		{
-			if (imageUtil.tileLoadQueue.Count == 0) return;
+			if (imageUtil.tileLoadQueue.Count == 0) return false;
 
 			List<string> images = new List<string>();
+			// TODO: need to redo the groupIdCompletionMarker because JavaScript can download images in the wrong order.
 			List<string> groupIdCompletionMarker = new List<string>();
 
 			// Grab N images that need to be loaded.
@@ -37,8 +38,6 @@ namespace %%%PROJECT_ID%%%
 				}
 			}
 
-			// TODO: go through and make variable names consistent (groupId vs groupName)
-
 			for (int i = 0; i < images.Count; ++i)
 			{
 				string image = images[i];
@@ -59,7 +58,7 @@ namespace %%%PROJECT_ID%%%
 
 					// and create a virtualization grid for this group. 
 					// This is a mapping of image paths to bitmap+location within the bitmap
-					ICollection<SpriteSheetItemDescriptor> sheetMembers = GetSpriteSheetMembers(groupNameCompleted);
+					List<SpriteSheetItemDescriptor> sheetMembers = CrayonWrapper.v_getSpriteSheetMembers(imageUtil, groupNameCompleted);
 					ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.IntantiateVirtualizationGrid(
 							groupNameCompleted,
 							imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
@@ -73,12 +72,8 @@ namespace %%%PROJECT_ID%%%
 					}
 				}
 			}
-		}
 
-		private static ICollection<SpriteSheetItemDescriptor> GetSpriteSheetMembers(string groupName)
-		{
-			int groupId = imageUtil.groupNameToId[groupName];
-			return imageUtil.spriteSheetItemDescriptorsByGroupId[groupId].ToArray();
+			return true;
 		}
 
 		public static int GetImageErrorCode(string key)
@@ -201,7 +196,6 @@ namespace %%%PROJECT_ID%%%
 			int id = -1;
 			imageUtil.groupNameToId.TryGetValue(groupId, out id);
 
-
 			int status = 2; // error code
 			if (id != -1)
 			{
@@ -250,27 +244,5 @@ namespace %%%PROJECT_ID%%%
 			return -1;
 		}
 
-		private static Dictionary<string, Image> loadedImagesByKey = new Dictionary<string, Image>();
-		public static Image GetImageByKey(string key)
-		{
-			if (imageUtil.resourceImagesByKeys.ContainsKey(key))
-			{
-				CompositeImage bmp = imageUtil.resourceImagesByKeys[key];
-				int x = 0;
-				int y = 0;
-				int width = bmp.width;
-				int height = bmp.height;
-				if (imageUtil.texturePartitioningInformation.ContainsKey(key))
-				{
-					int[] location = imageUtil.texturePartitioningInformation[key];
-					x = location[1];
-					y = location[2];
-					width = location[3];
-					height = location[4];
-				}
-				return CrayonWrapper.v_instantiateImage(bmp, x, y, width, height, false, false);
-			}
-			return null;
-		}
 	}
 }

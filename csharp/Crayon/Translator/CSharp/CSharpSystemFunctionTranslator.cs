@@ -238,20 +238,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateImageGet(List<string> output, Expression imageKey)
-		{
-			output.Add("Image.GetImageByKey(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageHeight(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").Height");
-		}
-
 		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
 		{
 			output.Add("ImageUtil.LoadImageFromUserData(");
@@ -311,13 +297,6 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
 		{
 			output.Add("ImageUtil.PerformWorkNugget()");
-		}
-
-		protected override void TranslateImageWidth(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").Width");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)

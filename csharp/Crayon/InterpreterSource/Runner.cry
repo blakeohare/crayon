@@ -160,10 +160,12 @@ function main() {
 		new ImageSheetStatus(
 			$_new_dictionary('string', 'object'),
 			$_new_dictionary('string', 'int'),
+			$_new_dictionary('string', 'object'),
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'),
 			$_new_dictionary('int', 'Array<string>'),
 			$_new_dictionary('string', 'int'),
 			false,
+			$_new_dictionary('string', 'Image'),
 			$_new_dictionary('string', 'CompositeImage'),
 			$_new_dictionary('int', 'int'),
 			$_new_dictionary('int', 'List<SpriteSheetItemDescriptor>>'),

@@ -62,8 +62,6 @@ namespace Crayon.Translator
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
 				case "_image_error_code": VerifyCount(functionCall, 1); TranslateImageErrorCode(output, args[0]); break;
-				case "_image_get": VerifyCount(functionCall, 1); TranslateImageGet(output, args[0]); break;
-				case "_image_height": VerifyCount(functionCall, 1); TranslateImageHeight(output, args[0]); break;
 				case "_image_load_from_user_data": VerifyCount(functionCall, 2); TranslateImageLoadFromUserData(output, args[0], args[1]); break;
 				case "_image_loaded": VerifyCount(functionCall, 1); TranslateImageLoaded(output, args[0]); break;
 				case "_image_sheet_count_tiles_loaded": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesLoaded(output, args[0]); break;
@@ -73,7 +71,6 @@ namespace Crayon.Translator
 				case "_image_sheet_load": VerifyCount(functionCall, 1); TranslateImageSheetLoad(output, args[0]); break;
 				case "_image_sheet_loaded": VerifyCount(functionCall, 1); TranslateImageSheetLoaded(output, args[0]); break;
 				case "_image_sheet_perform_work_nugget": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNugget(output); break;
-				case "_image_width": VerifyCount(functionCall, 1); TranslateImageWidth(output, args[0]); break;
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
@@ -175,8 +172,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateGetProgramData(List<string> output);
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
 		protected abstract void TranslateImageErrorCode(List<string> output, Expression imageKey);
-		protected abstract void TranslateImageGet(List<string> output, Expression imageKey);
-		protected abstract void TranslateImageHeight(List<string> output, Expression image);
 		protected abstract void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path);
 		protected abstract void TranslateImageLoaded(List<string> output, Expression key);
 		protected abstract void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId);
@@ -186,7 +181,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageSheetLoad(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetPerformWorkNugget(List<string> output);
-		protected abstract void TranslateImageWidth(List<string> output, Expression image);
 		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
 		protected abstract void TranslateInt(List<string> output, Expression value);

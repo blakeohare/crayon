@@ -349,20 +349,6 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageGet(List<string> output, Expression imageKey)
-		{
-			output.Add("ImageLibrary.getImage(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageHeight(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").height");
-		}
-
 		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
 		{
 			throw new NotImplementedException();
@@ -408,12 +394,6 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageWidth(List<string> output, Expression image)
-		{
-			output.Add("((Image)");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(").width");
-		}
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("GameWindow.FPS = ");

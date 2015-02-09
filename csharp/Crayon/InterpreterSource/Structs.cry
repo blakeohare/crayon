@@ -159,10 +159,12 @@ struct Image {
 struct ImageSheetStatus {
 	@type('Dictionary<string, object>') downloadedImagesByKey,
 	@type('Dictionary<string, int>') downloadedImagesErrorCodes,
+	@type('Dictionary<string, object>') downloadsInFlight, // key is tile generated name, value is the completed image downlad.
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') fileToVirtualizationGrid,
 	@type('Dictionary<int, Array<string>>') generatedTileNamesByGroupId,
 	@type('Dictionary<string, int>') groupNameToId,
 	@type('bool') isBackgroundLoaderActive,
+	@type('Dictionary<string, Image>') loadedImagesByKey,
 	@type('Dictionary<string, CompositeImage>') resourceImagesByKeys,
 	@type('Dictionary<int, int>') sheetStatus,
 	@type('Dictionary<int, List<SpriteSheetItemDescriptor>>') spriteSheetItemDescriptorsByGroupId,

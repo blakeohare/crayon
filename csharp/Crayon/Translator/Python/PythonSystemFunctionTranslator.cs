@@ -323,19 +323,6 @@ namespace Crayon.Translator.Python
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageGet(List<string> output, Expression imageKey)
-		{
-			output.Add("get_image_impl(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageHeight(List<string> output, Expression image)
-		{
-			this.Translator.TranslateExpression(output, image);
-			output.Add("[1].get_height()");
-		}
-
 		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
 		{
 			throw new NotImplementedException();
@@ -379,12 +366,6 @@ namespace Crayon.Translator.Python
 		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
 		{
 			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageWidth(List<string> output, Expression image)
-		{
-			this.Translator.TranslateExpression(output, image);
-			output.Add("[1].get_width()");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)

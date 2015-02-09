@@ -61,3 +61,37 @@ function @type('Image') flipImage(
 		flipX != flippedX,
 		flipY != flippedY);
 }
+
+
+function @type('List<SpriteSheetItemDescriptor>') getSpriteSheetMembers(
+	@type('ImageSheetStatus') sheetStatus, 
+	@type('string') groupName) {
+
+	@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$sheetStatus.groupNameToId, groupName);
+	return $_dictionary_get_guaranteed(ImageSheetStatus$sheetStatus.spriteSheetItemDescriptorsByGroupId, groupId);
+}
+
+function getImageByKey(@type('string') key) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
+	if ($_dictionary_contains(ImageSheetStatus$imageUtil.resourceImagesByKeys, key)) {
+		// TODO: conditional logic for non-GL based platforms
+		// JavaScript uses R.get_image_impl
+		// Java uses ImageLibrary.getImage
+		// Python uses get_image_impl
+		@type('CompositeImage') bmp = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.resourceImagesByKeys, key);
+		@type('int') x = 0;
+		@type('int') y = 0;
+		@type('int') width = CompositeImage$bmp.width;
+		@type('int') height = CompositeImage$bmp.height;
+		if ($_dictionary_contains(ImageSheetStatus$imageUtil.texturePartitioningInformation, key)) {
+			@type('Array<int>') location = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.texturePartitioningInformation, key);
+			x = $_array_get(location, 1);
+			y = $_array_get(location, 2);
+			width = $_array_get(location, 3);
+			height = $_array_get(location, 4);
+		}
+		return instantiateImage(bmp, x, y, width, height, false, false);
+	}
+	return null;
+}
