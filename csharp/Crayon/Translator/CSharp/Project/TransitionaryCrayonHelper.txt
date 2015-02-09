@@ -12,17 +12,6 @@ namespace %%%PROJECT_ID%%%
 		public const int IMAGE_SHEET_STATUS_LOADING = 1;
 		public const int IMAGE_SHEET_STATUS_LOADED = 2;
 
-		public static CompositeImage InstantiateCompositeImage(object nativeBitmap)
-		{
-			CompositeImage output = new CompositeImage(
-				nativeBitmap,
-				((Bitmap)nativeBitmap).Width,
-				((Bitmap)nativeBitmap).Height,
-				-1,
-				false);
-			return output;
-		}
-
 		public static bool LoadCompositeImageResource(CompositeImage compositeImage)
 		{
 			compositeImage.glTextureId = GlUtil.ForceLoadTexture((Bitmap)compositeImage.nativeBitmap);
@@ -191,7 +180,7 @@ namespace %%%PROJECT_ID%%%
 
 			foreach (int sheetId in allSheets.Keys)
 			{
-				sheets[sheetId] = TransitionaryCrayonHelper.InstantiateCompositeImage(allSheets[sheetId]);
+				sheets[sheetId] = CrayonWrapper.v_createCompositeImage(allSheets[sheetId]);
 			}
 
 			return new ImageSheetVirtualizationGrid(
@@ -227,9 +216,13 @@ namespace %%%PROJECT_ID%%%
 
 			foreach (int groupId in ssd.tileIdsByGroupId.Keys)
 			{
-				imageUtil.generatedTileNamesByGroupId[groupId] = ssd.tileIdsByGroupId[groupId].Keys
-					.Select<int, string>(tileId => groupId + "_" + tileId)
-					.ToArray();
+				List<int> keys = new List<int>(ssd.tileIdsByGroupId[groupId].Keys);
+				string[] tileNamesForGroupId = new string[keys.Count];
+				for (int i = 0; i < keys.Count; ++i) {
+					string name = groupId + "_" + keys[i];
+					tileNamesForGroupId[i] = name;
+				}
+				imageUtil.generatedTileNamesByGroupId[groupId] = tileNamesForGroupId.ToArray();
 			}
 		}
 	}

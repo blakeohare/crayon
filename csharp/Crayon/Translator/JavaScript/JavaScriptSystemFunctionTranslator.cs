@@ -340,6 +340,16 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
 		{
 			throw new NotImplementedException();

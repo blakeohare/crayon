@@ -333,6 +333,16 @@ namespace Crayon.Translator.Python
 			throw new Exception("This should have been optimized out.");
 		}
 
+		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
 		{
 			throw new NotImplementedException();

@@ -64,6 +64,8 @@ namespace Crayon.Translator
 				case "_image_error_code": VerifyCount(functionCall, 1); TranslateImageErrorCode(output, args[0]); break;
 				case "_image_load_from_user_data": VerifyCount(functionCall, 2); TranslateImageLoadFromUserData(output, args[0], args[1]); break;
 				case "_image_loaded": VerifyCount(functionCall, 1); TranslateImageLoaded(output, args[0]); break;
+				case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
+				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
 				case "_image_sheet_count_tiles_loaded": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesLoaded(output, args[0]); break;
 				case "_image_sheet_count_tiles_total": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesTotal(output, args[0]); break;
 				case "_image_sheet_error_code": VerifyCount(functionCall, 1); TranslateImageSheetErrorCode(output, args[0]); break;
@@ -174,6 +176,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageErrorCode(List<string> output, Expression imageKey);
 		protected abstract void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path);
 		protected abstract void TranslateImageLoaded(List<string> output, Expression key);
+		protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
+		protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetErrorCode(List<string> output, Expression groupId);

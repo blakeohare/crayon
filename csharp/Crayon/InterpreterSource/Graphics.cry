@@ -95,3 +95,12 @@ function getImageByKey(@type('string') key) {
 	}
 	return null;
 }
+
+function @type('CompositeImage') createCompositeImage(nativeBitmap) {
+	return new CompositeImage(
+		nativeBitmap,
+		$_image_native_bitmap_width(nativeBitmap),
+		$_image_native_bitmap_height(nativeBitmap),
+		-1,
+		false);
+}

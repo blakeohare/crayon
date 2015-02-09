@@ -254,6 +254,20 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
+		{
+			output.Add("((System.Drawing.Bitmap)");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(").Height");
+		}
+
+		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
+		{
+			output.Add("((System.Drawing.Bitmap)");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(").Width");
+		}
+
 		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
 		{
 			output.Add("ImageUtil.GetNumTilesLoaded(");

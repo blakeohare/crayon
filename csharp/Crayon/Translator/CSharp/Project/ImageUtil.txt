@@ -98,7 +98,7 @@ namespace %%%PROJECT_ID%%%
 			{
 				return false;
 			}
-			imageUtil.resourceImagesByKeys[key] = TransitionaryCrayonHelper.InstantiateCompositeImage(bmp);
+			imageUtil.resourceImagesByKeys[key] = CrayonWrapper.v_createCompositeImage(bmp);
 			return true;
 		}
 
