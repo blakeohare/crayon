@@ -156,44 +156,6 @@ namespace %%%PROJECT_ID%%%
 			throw new NotImplementedException();
 		}
 
-		public static bool LoadSheet(string groupName)
-		{
-			bool sheetExists = false;
-
-			sheetExists = imageUtil.groupNameToId.ContainsKey(groupName);
-			if (sheetExists)
-			{
-				int groupId = imageUtil.groupNameToId[groupName];
-				if (imageUtil.sheetStatus[groupId] == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED)
-				{
-					imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING;
-					int[] tiles = imageUtil.tilesPerId[groupId];
-					for (int i = 0; i < tiles.Length; ++i)
-					{
-						int tileId = imageUtil.tilesPerId[groupId][i];
-						string tileGenName = groupId + "_" + tileId;
-						imageUtil.tileLoadQueue.Add(
-							new TileLoadRequest(
-								tileGenName,
-								TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED,
-								groupId,
-								groupName,
-								tileId,
-								null));
-					}
-
-					// If for some reason an empty sheet somehow was present in the metadata, ensure that it doesn't
-					// report that it's loading indefinitely by marking it instantly loaded...
-					if (tiles.Length == 0)
-					{
-						imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
-					}
-				}
-			}
-
-			return sheetExists;
-		}
-
 		private static void EnsureSheetStatusUpToDate(int id)
 		{
 			if (imageUtil.sheetStatus[id] == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING)

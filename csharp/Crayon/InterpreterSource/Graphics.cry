@@ -201,3 +201,56 @@ function @type('int') getNumTiles(@type('string') groupName) {
 	}
 	return -1;
 }
+
+// returns false if the sheet name provided does not exist.
+// This populates the entire loader queue for all the required tiles.
+// This queue is pumped by the performWorkNugget[Pre|Post]Frame methods.
+function @type('bool') loadImageSheet(@type('string') groupName) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') iss = ProgramData$p.imageSheetStatus;
+
+	// This group doesn't exist.
+	if (!$_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		return false;
+	}
+
+	// Determine group ID.
+	@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+
+	// Have you loaded this before? No-op.
+	if ($_dictionary_get_guaranteed(ImageSheetStatus$iss.sheetStatus, groupId) != IMAGE_SHEET_STATUS_NOT_LOADED) {
+		return true;
+	}
+
+	// At this point mark the sheet as being actively loaded.
+	$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADING);
+
+	// Okay, so what do we actually need to load?
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+
+	// Is this group empty? Honestly, that would be really weird. But let's check anyway and exit out if it is.
+	if ($_array_length(tileIds) == 0) {
+		// Mark it as done and exit out. This way it doesn't act like it's loading forever since the image load
+		// handler is the thing that marks it as no longer loading.
+		$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADED);
+		return true;
+	}
+
+	// Go through all the tile IDs and create a loader status object for each.
+	// Add them to a queue.
+	// This queue is pumped by the workNugget methods.
+	for (@type('int') i = 0; i < $_array_length(tileIds); i += 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		@type('string') tileGenName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		$_list_push(ImageSheetStatus$iss.tileLoadQueue,
+			new TileLoadRequest(
+				tileGenName,
+				IMAGE_SHEET_STATUS_NOT_LOADED,
+				groupId,
+				groupName,
+				tileId,
+				null));
+	}
+
+	return true;
+}

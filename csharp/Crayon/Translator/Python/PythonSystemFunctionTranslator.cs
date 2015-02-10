@@ -358,11 +358,6 @@ namespace Crayon.Translator.Python
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
 		{
 			throw new NotImplementedException();

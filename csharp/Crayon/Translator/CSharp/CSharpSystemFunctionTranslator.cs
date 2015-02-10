@@ -302,13 +302,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
-		{
-			output.Add("ImageUtil.LoadSheet(");
-			this.Translator.TranslateExpression(output, groupId);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
 		{
 			output.Add("ImageUtil.IsImageSheetLoaded(");

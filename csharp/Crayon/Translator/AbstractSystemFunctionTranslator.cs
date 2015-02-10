@@ -69,7 +69,6 @@ namespace Crayon.Translator
 				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
 				case "_image_sheet_count_tiles_loaded": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesLoaded(output, args[0]); break;
 				case "_image_sheet_error_code": VerifyCount(functionCall, 1); TranslateImageSheetErrorCode(output, args[0]); break;
-				case "_image_sheet_load": VerifyCount(functionCall, 1); TranslateImageSheetLoad(output, args[0]); break;
 				case "_image_sheet_loaded": VerifyCount(functionCall, 1); TranslateImageSheetLoaded(output, args[0]); break;
 				case "_image_sheet_perform_work_nugget_post_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPostFrame(output); break;
 				case "_image_sheet_perform_work_nugget_pre_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPreFrame(output); break;
@@ -183,7 +182,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetErrorCode(List<string> output, Expression groupId);
-		protected abstract void TranslateImageSheetLoad(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output);
 		protected abstract void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output);
