@@ -72,9 +72,14 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, expression);
 		}
 
-		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
+		protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
 		{
-			output.Add("new List<Value>(");
+			CSharpPlatform platform = (CSharpPlatform)this.Platform;
+			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, ((StringConstant)typeValue).Value);
+
+			output.Add("new List<");
+			output.Add(typeString);
+			output.Add(">(");
 			this.Translator.TranslateExpression(output, enumerableThing);
 			output.Add(")");
 		}
@@ -287,11 +292,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("ImageUtil.GetSheetErrorCode(");
 			this.Translator.TranslateExpression(output, groupId);
 			output.Add(")");
-		}
-
-		protected override void TranslateImageSheetFinalizeData(List<string> output)
-		{
-			output.Add("TransitionaryCrayonHelper.Initialize()");
 		}
 
 		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
@@ -594,6 +594,12 @@ namespace Crayon.Translator.CSharp
 			output.Add("Math.Sin(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
+		{
+			this.Translator.TranslateExpression(output, list);
+			output.Add(".OrderBy<int, int>(k => k).ToArray()");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

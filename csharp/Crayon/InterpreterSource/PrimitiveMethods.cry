@@ -363,10 +363,10 @@ function @type('string') callSystemMethod(
 			@type('DictImpl') dv_dict = $_cast('DictImpl', context);
 			if (DictImpl$dv_dict.keyType == Types.STRING) {
 				output = new Value(Types.LIST,
-					$_cast_to_list($_dictionary_get_values(DictImpl$dv_dict.valueStringLookup)));
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dv_dict.valueStringLookup)));
 			} else {
 				output = new Value(Types.LIST, 
-					$_cast_to_list($_dictionary_get_values(DictImpl$dv_dict.valueIntLookup)));
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dv_dict.valueIntLookup)));
 			}
 			break;
 
@@ -375,10 +375,10 @@ function @type('string') callSystemMethod(
 			@type('DictImpl') dk_dict = $_cast('DictImpl', context);
 			if (DictImpl$dk_dict.keyType == Types.STRING) {
 				output = new Value(Types.LIST,
-					$_cast_to_list($_dictionary_get_values(DictImpl$dk_dict.keyStringLookup)));
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dk_dict.keyStringLookup)));
 			} else {
 				output = new Value(Types.LIST,
-					$_cast_to_list($_dictionary_get_values(DictImpl$dk_dict.keyIntLookup)));
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dk_dict.keyIntLookup)));
 			}
 			break;
 

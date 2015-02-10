@@ -97,7 +97,7 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, expression);
 		}
 
-		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
+		protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
 		{
 			this.Translator.TranslateExpression(output, enumerableThing);
 		}
@@ -354,11 +354,6 @@ namespace Crayon.Translator.Python
 		}
 
 		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageSheetFinalizeData(List<string> output)
 		{
 			throw new NotImplementedException();
 		}
@@ -625,6 +620,11 @@ namespace Crayon.Translator.Python
 			output.Add("math.sin(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

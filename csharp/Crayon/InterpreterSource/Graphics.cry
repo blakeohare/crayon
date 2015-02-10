@@ -104,3 +104,56 @@ function @type('CompositeImage') createCompositeImage(nativeBitmap) {
 		-1,
 		false);
 }
+
+function imageSheetStatusInitialization() {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
+	@type('SpriteSheetData') ssd = ProgramData$p.spriteSheetData;
+	@type('Array<string>') groupNames = $_dictionary_get_keys(SpriteSheetData$ssd.groupIdsByName);
+	@type('int') i = 0;
+	@type('int') id = 0;
+
+	// Create a mapping of group names and group IDs.
+	// Declare that these sheets are not loaded.
+	// Determine which tile IDs are in which groups.
+	for (i = 0; i < $_array_length(groupNames); i += 1) {
+		@type('string') groupName = $_array_get(groupNames, i);
+		id = $_dictionary_get_guaranteed(SpriteSheetData$ssd.groupIdsByName, groupName);
+		$_dictionary_set(ImageSheetStatus$imageUtil.groupNameToId, groupName, id);
+		$_dictionary_set(ImageSheetStatus$imageUtil.sheetStatus, id, IMAGE_SHEET_STATUS_NOT_LOADED);
+		@type('Array<int>') tileIds = $_dictionary_get_keys($_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<int>') tileIdsSorted = $_sorted_copy_of_int_array(tileIds);
+		$_dictionary_set(ImageSheetStatus$imageUtil.tilesPerId, id, tileIdsSorted);
+	}
+
+	// TODO: I should really add comments to the rest of this.
+	@type('Dictionary<string, SpriteSheetItemDescriptor>') filesLookup = SpriteSheetData$ssd.files;
+	@type('List<SpriteSheetItemDescriptor>') ssids = $_cast_to_list('SpriteSheetItemDescriptor', $_dictionary_get_values(filesLookup));
+	for (i = 0; i < $_list_length(ssids); i += 1) {
+		@type('SpriteSheetItemDescriptor') ssid = $_list_get(ssids, i);
+		@type('List<SpriteSheetItemDescriptor>') ssidsForGroup = null;
+		id = SpriteSheetItemDescriptor$ssid.groupId;
+		if ($_dictionary_contains(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id)) {
+			ssidsForGroup = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id);
+		} else {
+			ssidsForGroup = $_new_list('SpriteSheetItemDescriptor');
+			$_dictionary_set(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id, ssidsForGroup);
+		}
+		$_list_push(ssidsForGroup, ssid);
+	}
+
+	@type('Array<int>') groupIds = $_dictionary_get_keys(SpriteSheetData$ssd.tileIdsByGroupId);
+	for (i = 0; i < $_array_length(groupIds); i += 1) {
+		id = $_array_get(groupIds, i);
+		@type('Array<int>') keys = $_dictionary_get_keys($_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<string>') tileNamesForGroupId = $_new_array('string', $_array_length(keys));
+		for (@type('int') j = 0; j < $_array_length(keys); j += 1) {
+			@type('string') name = id + "_" + $_array_get(keys, j);
+			$_array_set(tileNamesForGroupId, j, name);
+		}
+		$_dictionary_set(
+			ImageSheetStatus$imageUtil.generatedTileNamesByGroupId,
+			id,
+			$_convert_list_to_array('string', tileNamesForGroupId));
+	}
+}

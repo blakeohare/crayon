@@ -100,9 +100,11 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateCastToList(List<string> output, Expression enumerableThing)
+		protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
 		{
-			output.Add("new ArrayList<Value>(");
+			output.Add("new ArrayList<");
+			output.Add(this.JavaPlatform.GetTypeStringFromString(typeValue.Value, false, false));
+			output.Add(">(");
 			this.Translator.TranslateExpression(output, enumerableThing);
 			output.Add(")");
 		}
@@ -384,11 +386,6 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageSheetFinalizeData(List<string> output)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateImageSheetLoad(List<string> output, Expression groupId)
 		{
 			throw new NotImplementedException();
@@ -665,6 +662,11 @@ namespace Crayon.Translator.Java
 			output.Add("Math.sin(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

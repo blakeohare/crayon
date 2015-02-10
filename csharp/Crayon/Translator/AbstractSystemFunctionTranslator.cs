@@ -37,7 +37,7 @@ namespace Crayon.Translator
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
 				case "_blit_image_partial": VerifyCount(functionCall, 7); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
-				case "_cast_to_list": VerifyCount(functionCall, 1); TranslateCastToList(output, args[0]); break;
+				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
 				case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
@@ -69,7 +69,6 @@ namespace Crayon.Translator
 				case "_image_sheet_count_tiles_loaded": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesLoaded(output, args[0]); break;
 				case "_image_sheet_count_tiles_total": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesTotal(output, args[0]); break;
 				case "_image_sheet_error_code": VerifyCount(functionCall, 1); TranslateImageSheetErrorCode(output, args[0]); break;
-				case "_image_sheet_finalize_data": VerifyCount(functionCall, 0); TranslateImageSheetFinalizeData(output); break;
 				case "_image_sheet_load": VerifyCount(functionCall, 1); TranslateImageSheetLoad(output, args[0]); break;
 				case "_image_sheet_loaded": VerifyCount(functionCall, 1); TranslateImageSheetLoaded(output, args[0]); break;
 				case "_image_sheet_perform_work_nugget": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNugget(output); break;
@@ -107,6 +106,7 @@ namespace Crayon.Translator
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
+				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
 				case "_stack_length": VerifyCount(functionCall, 1); TranslateStackLength(output, args[0]); break;
 				case "_stack_pop": VerifyCount(functionCall, 1); TranslateStackPop(output, args[0]); break;
@@ -148,7 +148,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
 		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
-		protected abstract void TranslateCastToList(List<string> output, Expression enumerableThing);
+		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
 		protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
 		protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
@@ -181,7 +181,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetErrorCode(List<string> output, Expression groupId);
-		protected abstract void TranslateImageSheetFinalizeData(List<string> output);
 		protected abstract void TranslateImageSheetLoad(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoaded(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetPerformWorkNugget(List<string> output);
@@ -220,6 +219,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
 		protected abstract void TranslateSin(List<string> output, Expression value);
+		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
 		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
 		protected abstract void TranslateStackLength(List<string> output, Expression stack);
 		protected abstract void TranslateStackPop(List<string> output, Expression stack);

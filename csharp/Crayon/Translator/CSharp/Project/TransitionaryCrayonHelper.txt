@@ -191,6 +191,7 @@ namespace %%%PROJECT_ID%%%
 				paths.ToArray());
 		}
 
+		/*
 		public static void Initialize()
 		{
 			ImageSheetStatus imageUtil = TranslationHelper.ProgramData.imageSheetStatus;
@@ -225,5 +226,6 @@ namespace %%%PROJECT_ID%%%
 				imageUtil.generatedTileNamesByGroupId[groupId] = tileNamesForGroupId.ToArray();
 			}
 		}
+		//*/
 	}
 }

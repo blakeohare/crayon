@@ -1806,7 +1806,7 @@ function @omitReturn @type('string') interpret(
 					LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
 				}
 
-				$_image_sheet_finalize_data();
+				imageSheetStatusInitialization();
 
 				break;
 
