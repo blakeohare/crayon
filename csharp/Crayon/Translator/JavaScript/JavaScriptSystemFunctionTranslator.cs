@@ -360,11 +360,6 @@ namespace Crayon.Translator.JavaScript
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
 		{
 			throw new NotImplementedException();
@@ -593,6 +588,11 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("Math.random()");
+		}
+
+		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)

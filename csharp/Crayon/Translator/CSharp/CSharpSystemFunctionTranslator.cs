@@ -295,13 +295,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId)
-		{
-			output.Add("ImageUtil.GetNumTiles(");
-			this.Translator.TranslateExpression(output, groupId);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
 		{
 			output.Add("ImageUtil.GetSheetErrorCode(");
@@ -566,6 +559,13 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("TranslationHelper.GetRandomNumber()");
+		}
+
+		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
+		{
+			output.Add("ResourceReader.ReadImageFile(\"GeneratedFiles/spritesheets/\" + ");
+			this.Translator.TranslateExpression(output, tileGenName);
+			output.Add(" + \".png\", true)");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)

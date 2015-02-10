@@ -162,3 +162,42 @@ function loadCompositeImageResource(@type('CompositeImage') compositeImage) {
 	CompositeImage$compositeImage.glTextureId = $_gl_load_texture(CompositeImage$compositeImage.nativeBitmap);
 	CompositeImage$compositeImage.loaded = true;
 }
+
+function initiateTileLoading(@type('TileLoadRequest') request) {
+	// TODO: conditional logic for aysnchronous downloads that have a handler that basically do the same thing.
+	
+	// In most platforms, this is synchronous...
+	TileLoadRequest$request.nativeResource = $_read_local_tile_resource(TileLoadRequest$request.path);
+
+	// ...and so you immediately want to mark the status as loaded.
+	TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADED;
+}
+
+// once an image is loaded it is added to the tilesByName genName->Bitmap lookup.
+// If all the tile ID's in a particular group ID are represented, then all downloads are complete for this group.
+function @type('bool') areAllTilesLoadedForGroupId(
+	@type('ImageSheetStatus') iss,
+	@type('int') groupId) {
+
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+	@type('Dictionary<string, object>') tilesByName = ImageSheetStatus$iss.tilesByName;
+	for (@type('int') i = $_array_length(tileIds) - 1; i >= 0; i -= 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		@type('string') genName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		if (!$_dictionary_contains(tilesByName, genName)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function @type('int') getNumTiles(@type('string') groupName) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') iss = ProgramData$p.imageSheetStatus;
+	if ($_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+		@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+		return $_array_length(tileIds);
+	}
+	return -1;
+}

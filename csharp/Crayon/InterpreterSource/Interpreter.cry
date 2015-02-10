@@ -1232,7 +1232,7 @@ function @omitReturn @type('string') interpret(
 									return killExecution(stack, "'" + string1 + "' is not a valid image sheet.");
 								}
 								int1 += int3;
-								int2 += $_image_sheet_count_tiles_total(string1);
+								int2 += getNumTiles(string1);
 							}
 						}
 

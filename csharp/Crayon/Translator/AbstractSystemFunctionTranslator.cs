@@ -68,7 +68,6 @@ namespace Crayon.Translator
 				case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
 				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
 				case "_image_sheet_count_tiles_loaded": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesLoaded(output, args[0]); break;
-				case "_image_sheet_count_tiles_total": VerifyCount(functionCall, 1); TranslateImageSheetCountTilesTotal(output, args[0]); break;
 				case "_image_sheet_error_code": VerifyCount(functionCall, 1); TranslateImageSheetErrorCode(output, args[0]); break;
 				case "_image_sheet_load": VerifyCount(functionCall, 1); TranslateImageSheetLoad(output, args[0]); break;
 				case "_image_sheet_loaded": VerifyCount(functionCall, 1); TranslateImageSheetLoaded(output, args[0]); break;
@@ -103,6 +102,7 @@ namespace Crayon.Translator
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
+				case "_read_local_tile_resource": VerifyCount(functionCall, 1); TranslateReadLocalTileResource(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
@@ -182,7 +182,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId);
-		protected abstract void TranslateImageSheetCountTilesTotal(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetErrorCode(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoad(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoaded(List<string> output, Expression groupId);
@@ -217,6 +216,7 @@ namespace Crayon.Translator
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRandomFloat(List<string> output);
+		protected abstract void TranslateReadLocalTileResource(List<string> output, Expression tileGenName);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
 		protected abstract void TranslateResourceReadText(List<string> output, Expression path);

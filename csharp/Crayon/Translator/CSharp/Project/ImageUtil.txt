@@ -26,7 +26,7 @@ namespace %%%PROJECT_ID%%%
 					TileLoadRequest request = queue[i];
 					if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED)
 					{
-						ImageUtil.InitiateTileLoading(request);
+						CrayonWrapper.v_initiateTileLoading(request);
 						activeDownloads++;
 					}
 					else if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED)
@@ -35,31 +35,6 @@ namespace %%%PROJECT_ID%%%
 					}
 				}
 			}
-		}
-
-		public static void InitiateTileLoading(TileLoadRequest request)
-		{
-			// In C#, this is synchronous...
-			request.nativeResource = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + request.path + ".png", true);
-			// ...and so you immediately want to mark the status as loaded.
-			request.status = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
-			// TODO: conditional logic for aysnchronous downloads that have a handler that basically do the same thing.
-		}
-
-		public static bool AreAllTilesLoadedForGroupId(ImageSheetStatus iss, int groupId)
-		{
-			int[] tileIds = iss.tilesPerId[groupId];
-			Dictionary<string, object> tilesByName = iss.tilesByName;
-			for (int i = tileIds.Length - 1; i >= 0; --i)
-			{
-				int tileId = tileIds[i];
-				string genName = groupId + "_" + tileId;
-				if (!tilesByName.ContainsKey(genName))
-				{
-					return false;
-				}
-			}
-			return true;
 		}
 
 		public static void FinalizeGroupLoading(int groupId, string groupName)
@@ -104,7 +79,7 @@ namespace %%%PROJECT_ID%%%
 					// [down]load complete. Add to the ImageSheetStatus and figure out if this was the last one for the group.
 					imageUtil.tilesByName[request.path] = request.nativeResource;
 					int groupId = request.groupId;
-					if (AreAllTilesLoadedForGroupId(imageUtil, groupId))
+					if (CrayonWrapper.v_areAllTilesLoadedForGroupId(imageUtil, groupId))
 					{
 						FinalizeGroupLoading(groupId, request.groupName);
 					}
@@ -262,16 +237,6 @@ namespace %%%PROJECT_ID%%%
 		public static int GetSheetErrorCode(string groupId)
 		{
 			return 0;
-		}
-
-		public static int GetNumTiles(string groupName)
-		{
-			int groupId;
-			if (imageUtil.groupNameToId.TryGetValue(groupName, out groupId))
-			{
-				return imageUtil.tilesPerId[groupId].Length;
-			}
-			return -1;
 		}
 
 		public static int GetNumTilesLoaded(string groupName)
