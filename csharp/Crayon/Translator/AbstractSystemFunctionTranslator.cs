@@ -61,6 +61,7 @@ namespace Crayon.Translator
 				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
+				case "_gl_load_texture": VerifyCount(functionCall, 1); TranslateGlLoadTexture(output, args[0]); break;
 				case "_image_error_code": VerifyCount(functionCall, 1); TranslateImageErrorCode(output, args[0]); break;
 				case "_image_load_from_user_data": VerifyCount(functionCall, 2); TranslateImageLoadFromUserData(output, args[0], args[1]); break;
 				case "_image_loaded": VerifyCount(functionCall, 1); TranslateImageLoaded(output, args[0]); break;
@@ -173,6 +174,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
+		protected abstract void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource);
 		protected abstract void TranslateImageErrorCode(List<string> output, Expression imageKey);
 		protected abstract void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path);
 		protected abstract void TranslateImageLoaded(List<string> output, Expression key);

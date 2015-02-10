@@ -346,6 +346,11 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.getRawByteCodeString()");
 		}
 
+		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
 		{
 			throw new NotImplementedException();

@@ -12,13 +12,6 @@ namespace %%%PROJECT_ID%%%
 		public const int IMAGE_SHEET_STATUS_LOADING = 1;
 		public const int IMAGE_SHEET_STATUS_LOADED = 2;
 
-		public static bool LoadCompositeImageResource(CompositeImage compositeImage)
-		{
-			compositeImage.glTextureId = GlUtil.ForceLoadTexture((Bitmap)compositeImage.nativeBitmap);
-			compositeImage.loaded = true;
-			return true;
-		}
-
 		public static ImageSheetVirtualizationGrid IntantiateVirtualizationGrid(
 			string groupName,
 			List<SpriteSheetItemDescriptor> spriteSheetItemDescriptors,
@@ -190,42 +183,5 @@ namespace %%%PROJECT_ID%%%
 				groupId,
 				paths.ToArray());
 		}
-
-		/*
-		public static void Initialize()
-		{
-			ImageSheetStatus imageUtil = TranslationHelper.ProgramData.imageSheetStatus;
-			SpriteSheetData ssd = TranslationHelper.ProgramData.spriteSheetData;
-			foreach (string groupId in ssd.groupIdsByName.Keys)
-			{
-				int id = ssd.groupIdsByName[groupId];
-				imageUtil.groupNameToId[groupId] = id;
-				imageUtil.sheetStatus[id] = IMAGE_SHEET_STATUS_NOT_LOADED;
-				imageUtil.tilesPerId[id] = ssd.tileIdsByGroupId[id].Keys.OrderBy(k => k).ToArray();
-			}
-
-			foreach (SpriteSheetItemDescriptor ssid in ssd.files.Values)
-			{
-				List<SpriteSheetItemDescriptor> ssidForGroup;
-				if (!imageUtil.spriteSheetItemDescriptorsByGroupId.TryGetValue(ssid.groupId, out ssidForGroup))
-				{
-					ssidForGroup = new List<SpriteSheetItemDescriptor>();
-					imageUtil.spriteSheetItemDescriptorsByGroupId[ssid.groupId] = ssidForGroup;
-				}
-				ssidForGroup.Add(ssid);
-			}
-
-			foreach (int groupId in ssd.tileIdsByGroupId.Keys)
-			{
-				List<int> keys = new List<int>(ssd.tileIdsByGroupId[groupId].Keys);
-				string[] tileNamesForGroupId = new string[keys.Count];
-				for (int i = 0; i < keys.Count; ++i) {
-					string name = groupId + "_" + keys[i];
-					tileNamesForGroupId[i] = name;
-				}
-				imageUtil.generatedTileNamesByGroupId[groupId] = tileNamesForGroupId.ToArray();
-			}
-		}
-		//*/
 	}
 }

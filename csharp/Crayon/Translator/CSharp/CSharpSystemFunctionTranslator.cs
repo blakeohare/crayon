@@ -236,6 +236,11 @@ namespace Crayon.Translator.CSharp
 			output.Add("ResourceReader.ReadByteCodeFile()");
 		}
 
+		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
 		{
 			output.Add("ImageUtil.GetImageErrorCode(");

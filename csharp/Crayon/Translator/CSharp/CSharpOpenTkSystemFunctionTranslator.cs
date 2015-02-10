@@ -111,5 +111,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
+		{
+			output.Add("GlUtil.ForceLoadTexture((System.Drawing.Bitmap)");
+			this.Translator.TranslateExpression(output, platformBitmapResource);
+			output.Add(")");
+		}
 	}
 }

@@ -358,7 +358,7 @@ namespace %%%PROJECT_ID%%%
 							{
 								state = null;
 								GL.End();
-								TransitionaryCrayonHelper.LoadCompositeImageResource(image.compositeResource);
+								CrayonWrapper.v_loadCompositeImageResource(image.compositeResource);
 							}
 						}
 						textureId = image.compositeResource.glTextureId;
