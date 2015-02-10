@@ -2310,9 +2310,9 @@ function yieldControl(@type('StackFrame') stack) {
 // Work nuggets are only performed if the ProgramData.initializationComplete field is set to true
 
 function performWorkNuggetPreFrame() {
-	
+	$_image_sheet_perform_work_nugget_pre_frame();
 }
 
 function performWorkNuggetPostFrame() {
-	$_image_sheet_perform_work_nugget();
+	$_image_sheet_perform_work_nugget_post_frame();
 }

@@ -10,66 +10,106 @@ namespace %%%PROJECT_ID%%%
 	{
 		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
 
-		public static bool PerformWorkNugget()
+		// Fire requests to load tiles
+		public static void PerformWorkNuggetPostFrame()
 		{
-			if (imageUtil.tileLoadQueue.Count == 0) return false;
+			List<TileLoadRequest> queue = imageUtil.tileLoadQueue;
 
-			List<string> images = new List<string>();
-			// TODO: need to redo the groupIdCompletionMarker because JavaScript can download images in the wrong order.
-			List<string> groupIdCompletionMarker = new List<string>();
-
-			// Grab N images that need to be loaded.
-			while (imageUtil.tileLoadQueue.Count > 0 && images.Count < TransitionaryCrayonHelper.IMAGE_SHEET_TILES_LOADED_PER_FRAME)
+			// nothing to do
+			if (queue.Count > 0)
 			{
-				string[] parts = imageUtil.tileLoadQueue[0];
-				imageUtil.tileLoadQueue.RemoveAt(0);
-				string path = parts[0];
-				string groupIdCompleted = parts[1];
-				images.Add(path);
-				if (groupIdCompletionMarker.Count > 0 && groupIdCompletionMarker[groupIdCompletionMarker.Count - 1] == groupIdCompleted)
+				// All requests are populated into the tile load queue when the user invokes the loading of a sheet.
+				// This loop ensures that at least IMAGE_SHEET_TILES_LOADED_PER_FRAME downloads are active during the gap between frames.
+				int activeDownloads = 0;
+				for (int i = 0; i < queue.Count && activeDownloads < TransitionaryCrayonHelper.IMAGE_SHEET_TILES_LOADED_PER_FRAME; ++i)
 				{
-					groupIdCompletionMarker.Insert(groupIdCompletionMarker.Count - 1, null);
-				}
-				else
-				{
-					// note: if multiple background workers are added, this logic fails as one background worker could encounter 
-					// the marker before another background worker has finished loading some of the tiles for the group
-					groupIdCompletionMarker.Add(groupIdCompleted);
+					TileLoadRequest request = queue[i];
+					if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED)
+					{
+						ImageUtil.InitiateTileLoading(request);
+						activeDownloads++;
+					}
+					else if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED)
+					{
+						// should this be an assert?
+					}
 				}
 			}
+		}
 
-			for (int i = 0; i < images.Count; ++i)
+		public static void InitiateTileLoading(TileLoadRequest request)
+		{
+			// In C#, this is synchronous...
+			request.nativeResource = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + request.path + ".png", true);
+			// ...and so you immediately want to mark the status as loaded.
+			request.status = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
+			// TODO: conditional logic for aysnchronous downloads that have a handler that basically do the same thing.
+		}
+
+		public static bool AreAllTilesLoadedForGroupId(ImageSheetStatus iss, int groupId)
+		{
+			int[] tileIds = iss.tilesPerId[groupId];
+			Dictionary<string, object> tilesByName = iss.tilesByName;
+			for (int i = tileIds.Length - 1; i >= 0; --i)
 			{
-				string image = images[i];
-				string groupNameCompleted = groupIdCompletionMarker[i];
-				Bitmap bmp = ResourceReader.ReadImageFile("GeneratedFiles/spritesheets/" + image + ".png", true);
-
-				imageUtil.tilesByName[image] = bmp;
-				if (groupNameCompleted != null)
+				int tileId = tileIds[i];
+				string genName = groupId + "_" + tileId;
+				if (!tilesByName.ContainsKey(genName))
 				{
-					int groupId = imageUtil.groupNameToId[groupNameCompleted];
-					// filter the tilesByName lookup to just the ones in this group now that it's done loading.
-					string[] genNamesInGroup = imageUtil.generatedTileNamesByGroupId[groupId];
-					Dictionary<string, object> tilesInGroupByGenName = new Dictionary<string, object>();
-					foreach (string genName in genNamesInGroup)
-					{
-						tilesInGroupByGenName[genName] = imageUtil.tilesByName[genName];
-					}
+					return false;
+				}
+			}
+			return true;
+		}
 
-					// and create a virtualization grid for this group. 
-					// This is a mapping of image paths to bitmap+location within the bitmap
-					List<SpriteSheetItemDescriptor> sheetMembers = CrayonWrapper.v_getSpriteSheetMembers(imageUtil, groupNameCompleted);
-					ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.IntantiateVirtualizationGrid(
-							groupNameCompleted,
-							imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
-							tilesInGroupByGenName,
-							imageUtil.groupNameToId);
-					imageUtil.virtualizationGrids.Add(groupNameCompleted, grid);
+		public static void FinalizeGroupLoading(int groupId, string groupName)
+		{
+			// filter the tilesByName lookup to just the ones in this group now that it's done loading.
+			string[] genNamesInGroup = imageUtil.generatedTileNamesByGroupId[groupId];
+			Dictionary<string, object> tilesInGroupByGenName = new Dictionary<string, object>();
+			foreach (string genName in genNamesInGroup)
+			{
+				tilesInGroupByGenName[genName] = imageUtil.tilesByName[genName];
+			}
 
-					foreach (string path in grid.paths)
+			// and create a virtualization grid for this group. 
+			// This is a mapping of image paths to bitmap+location within the bitmap
+			List<SpriteSheetItemDescriptor> sheetMembers = CrayonWrapper.v_getSpriteSheetMembers(imageUtil, groupName);
+			ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.IntantiateVirtualizationGrid(
+					groupName,
+					imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
+					tilesInGroupByGenName,
+					imageUtil.groupNameToId);
+			imageUtil.virtualizationGrids.Add(groupName, grid);
+
+			foreach (string path in grid.paths)
+			{
+				imageUtil.fileToVirtualizationGrid[path] = grid;
+			}
+
+			imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
+		}
+
+		// Check to see if any tiles have been loaded
+		public static bool PerformWorkNuggetPreFrame()
+		{
+			List<TileLoadRequest> queue = imageUtil.tileLoadQueue;
+			if (queue.Count == 0) return false;
+
+			for (int i = 0; i < queue.Count; ++i)
+			{
+				TileLoadRequest request = queue[i];
+				if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED)
+				{
+					// [down]load complete. Add to the ImageSheetStatus and figure out if this was the last one for the group.
+					imageUtil.tilesByName[request.path] = request.nativeResource;
+					int groupId = request.groupId;
+					if (AreAllTilesLoadedForGroupId(imageUtil, groupId))
 					{
-						imageUtil.fileToVirtualizationGrid[path] = grid;
+						FinalizeGroupLoading(groupId, request.groupName);
 					}
+					queue.RemoveAt(i);
+					--i;
 				}
 			}
 
@@ -144,7 +184,6 @@ namespace %%%PROJECT_ID%%%
 		public static bool LoadSheet(string groupName)
 		{
 			bool sheetExists = false;
-			bool loaderRequired = false;
 
 			sheetExists = imageUtil.groupNameToId.ContainsKey(groupName);
 			if (sheetExists)
@@ -157,12 +196,21 @@ namespace %%%PROJECT_ID%%%
 					for (int i = 0; i < tiles.Length; ++i)
 					{
 						int tileId = imageUtil.tilesPerId[groupId][i];
-						imageUtil.tileLoadQueue.Add(new string[] { groupId + "_" + tileId, tiles.Length - 1 == i ? groupName : null });
+						string tileGenName = groupId + "_" + tileId;
+						imageUtil.tileLoadQueue.Add(
+							new TileLoadRequest(
+								tileGenName,
+								TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED,
+								groupId,
+								groupName,
+								tileId,
+								null));
 					}
-					loaderRequired = imageUtil.tileLoadQueue.Count > 0;
-					if (!loaderRequired)
+
+					// If for some reason an empty sheet somehow was present in the metadata, ensure that it doesn't
+					// report that it's loading indefinitely by marking it instantly loaded...
+					if (tiles.Length == 0)
 					{
-						// This shouldn't really happen
 						imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
 					}
 				}

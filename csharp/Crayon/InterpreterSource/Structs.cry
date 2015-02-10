@@ -160,7 +160,7 @@ struct Image {
 struct ImageSheetStatus {
 	@type('Dictionary<string, object>') downloadedImagesByKey,
 	@type('Dictionary<string, int>') downloadedImagesErrorCodes,
-	@type('Dictionary<string, object>') downloadsInFlight, // key is tile generated name, value is the completed image downlad.
+	@type('Dictionary<string, TileLoadRequest>') downloadsInFlight, // key is generated tile name
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') fileToVirtualizationGrid,
 	@type('Dictionary<int, Array<string>>') generatedTileNamesByGroupId,
 	@type('Dictionary<string, int>') groupNameToId,
@@ -170,8 +170,17 @@ struct ImageSheetStatus {
 	@type('Dictionary<int, int>') sheetStatus,
 	@type('Dictionary<int, List<SpriteSheetItemDescriptor>>') spriteSheetItemDescriptorsByGroupId,
 	@type('Dictionary<string, Array<int>>') texturePartitioningInformation,
-	@type('List<Array<string>>') tileLoadQueue,
+	@type('List<TileLoadRequest>') tileLoadQueue,
 	@type('Dictionary<string, object>') tilesByName,
 	@type('Dictionary<int, Array<int>>') tilesPerId,
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
+}
+
+struct TileLoadRequest {
+	@type('string') path,
+	@type('int') status,
+	@type('int') groupId,
+	@type('string') groupName,
+	@type('int') tileId,
+	@type('object') nativeResource,
 }

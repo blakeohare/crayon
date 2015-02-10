@@ -160,7 +160,7 @@ function main() {
 		new ImageSheetStatus(
 			$_new_dictionary('string', 'object'),
 			$_new_dictionary('string', 'int'),
-			$_new_dictionary('string', 'object'),
+			$_new_dictionary('string', 'TileLoadRequest'),
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'),
 			$_new_dictionary('int', 'Array<string>'),
 			$_new_dictionary('string', 'int'),
@@ -170,7 +170,7 @@ function main() {
 			$_new_dictionary('int', 'int'),
 			$_new_dictionary('int', 'List<SpriteSheetItemDescriptor>>'),
 			$_new_dictionary('string', 'Array<int>'),
-			$_new_list('Array<string>'),
+			$_new_list('TileLoadRequest'),
 			$_new_dictionary('string', 'object'),
 			$_new_dictionary('int', 'Array<int>'),
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),

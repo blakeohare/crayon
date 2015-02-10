@@ -10,6 +10,16 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output)
+		{
+			output.Add("ImageUtil.PerformWorkNuggetPostFrame()");
+		}
+
+		protected override void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output)
+		{
+			output.Add("ImageUtil.PerformWorkNuggetPreFrame()");
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.Acos(");
@@ -311,11 +321,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("ImageUtil.IsImageSheetLoaded(");
 			this.Translator.TranslateExpression(output, groupId);
 			output.Add(")");
-		}
-
-		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
-		{
-			output.Add("ImageUtil.PerformWorkNugget()");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)

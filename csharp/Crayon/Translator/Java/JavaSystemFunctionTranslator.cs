@@ -401,7 +401,12 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateImageSheetPerformWorkNugget(List<string> output)
+		protected override void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output)
 		{
 			throw new NotImplementedException();
 		}

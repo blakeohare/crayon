@@ -72,7 +72,8 @@ namespace Crayon.Translator
 				case "_image_sheet_error_code": VerifyCount(functionCall, 1); TranslateImageSheetErrorCode(output, args[0]); break;
 				case "_image_sheet_load": VerifyCount(functionCall, 1); TranslateImageSheetLoad(output, args[0]); break;
 				case "_image_sheet_loaded": VerifyCount(functionCall, 1); TranslateImageSheetLoaded(output, args[0]); break;
-				case "_image_sheet_perform_work_nugget": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNugget(output); break;
+				case "_image_sheet_perform_work_nugget_post_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPostFrame(output); break;
+				case "_image_sheet_perform_work_nugget_pre_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPreFrame(output); break;
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
@@ -185,7 +186,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageSheetErrorCode(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoad(List<string> output, Expression groupId);
 		protected abstract void TranslateImageSheetLoaded(List<string> output, Expression groupId);
-		protected abstract void TranslateImageSheetPerformWorkNugget(List<string> output);
+		protected abstract void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output);
+		protected abstract void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output);
 		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
 		protected abstract void TranslateInt(List<string> output, Expression value);
