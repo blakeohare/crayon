@@ -11,6 +11,7 @@ function @omitReturn @type('string') interpret(
 		@type('Array<Dictionary<int, MethodDefinition>>') classMethods,
 		@type('Array<Array<int>>') specialCache,
 		@type('Dictionary<int, Value>') globals) {
+
 	@type('Stack<Value>') valueStack = StackFrame$stack.valueStack;
 	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
 	@type('int') LENGTH_ID = -999;
@@ -18,6 +19,10 @@ function @omitReturn @type('string') interpret(
 		LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
 	}
 	@type('ProgramData') p = $_get_program_data();
+
+	if (ProgramData$p.initializationComplete) {
+		performWorkNuggetPreFrame();
+	}
 
 	// declare types...
 	@type('int') type = 0;
@@ -842,8 +847,11 @@ function @omitReturn @type('string') interpret(
 
 					case %%%FF_CLOCK_TICK%%%:
 						$_comment('$clock_tick');
-						// TODO: consider generalizing the work nugget to perform other clean-up tasks as well.
-						$_image_sheet_perform_work_nugget();
+
+						if (ProgramData$p.initializationComplete) {
+							performWorkNuggetPostFrame();
+						}
+
 						yieldControl(stack);
 						return null;
 						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
@@ -1808,6 +1816,8 @@ function @omitReturn @type('string') interpret(
 
 				imageSheetStatusInitialization();
 
+				ProgramData$p.initializationComplete = true;
+
 				break;
 
 			case OpCodes.FUNCTION_DEFINITION:
@@ -2295,4 +2305,14 @@ function yieldControl(@type('StackFrame') stack) {
 	@type('ProgramData') p = $_get_program_data();
 	ProgramData$p.stackTop = stack;
 	StackFrame$stack.pc += 1;
+}
+
+// Work nuggets are only performed if the ProgramData.initializationComplete field is set to true
+
+function performWorkNuggetPreFrame() {
+	
+}
+
+function performWorkNuggetPostFrame() {
+	$_image_sheet_perform_work_nugget();
 }

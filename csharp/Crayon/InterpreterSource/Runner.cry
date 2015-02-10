@@ -173,7 +173,8 @@ function main() {
 			$_new_list('Array<string>'),
 			$_new_dictionary('string', 'object'),
 			$_new_dictionary('int', 'Array<int>'),
-			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'))
+			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
+		false
 		));
 
 	runTick();
