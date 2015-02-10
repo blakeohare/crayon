@@ -254,3 +254,36 @@ function @type('bool') loadImageSheet(@type('string') groupName) {
 
 	return true;
 }
+
+function @type('ImageSheetStatus') getImageSheetStatus() {
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.imageSheetStatus;
+}
+
+function @type('int') getGroupId(@type('ImageSheetStatus') iss, @type('string') groupName) {
+	if ($_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		return $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+	}
+	return -1;
+}
+
+function @type('int') getNumTilesLoaded(@type('string') groupName) {
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('int') groupId = getGroupId(iss, groupName);
+	if (groupId == -1) return -1;
+
+	@type('int') tileCount = 0;
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+	for (@type('int') i = 0; i < $_array_length(tileIds); i += 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		if ($_dictionary_contains(ImageSheetStatus$iss.tilesByName, $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId))) {
+			tileCount += 1;
+		}
+	}
+	return tileCount;
+}
+
+function @type('int') getSheetErrorCode(@type('string') groupName) {
+	// TODO: this
+	return 0;
+}

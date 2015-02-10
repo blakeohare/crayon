@@ -288,20 +288,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(").Width");
 		}
 
-		protected override void TranslateImageSheetCountTilesLoaded(List<string> output, Expression groupId)
-		{
-			output.Add("ImageUtil.GetNumTilesLoaded(");
-			this.Translator.TranslateExpression(output, groupId);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageSheetErrorCode(List<string> output, Expression groupId)
-		{
-			output.Add("ImageUtil.GetSheetErrorCode(");
-			this.Translator.TranslateExpression(output, groupId);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
 		{
 			output.Add("ImageUtil.IsImageSheetLoaded(");

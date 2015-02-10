@@ -1181,7 +1181,7 @@ function @omitReturn @type('string') interpret(
 						int1 = 0;
 						// take the first non-zero entry you find.
 						for (i = 0; i < $_array_length(stringList); i += 1) {
-							int2 = $_image_sheet_error_code($_array_get(stringList, i));
+							int2 = getSheetErrorCode($_array_get(stringList, i));
 							if (int2 > 0) {
 								int1 = int2;
 								i = $_array_length(stringList);
@@ -1223,11 +1223,11 @@ function @omitReturn @type('string') interpret(
 
 						for (i = 0; i < $_array_length(stringList); i += 1) {
 							string1 = $_array_get(stringList, i);
-							if ($_image_sheet_error_code(string1) > 0) {
+							if (getSheetErrorCode(string1) > 0) {
 								int2 = 0; // this function should return 1.0
 								i += $_array_length(stringList);
 							} else {
-								int3 = $_image_sheet_count_tiles_loaded(string1);
+								int3 = getNumTilesLoaded(string1);
 								if (int3 == -1) {
 									return killExecution(stack, "'" + string1 + "' is not a valid image sheet.");
 								}

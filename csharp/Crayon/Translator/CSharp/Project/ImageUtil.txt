@@ -201,23 +201,5 @@ namespace %%%PROJECT_ID%%%
 			return 0;
 		}
 
-		public static int GetNumTilesLoaded(string groupName)
-		{
-			int groupId;
-			if (imageUtil.groupNameToId.TryGetValue(groupName, out groupId))
-			{
-				int tileCount = 0;
-				foreach (int tileId in imageUtil.tilesPerId[groupId])
-				{
-					if (imageUtil.tilesByName.ContainsKey(groupId + "_" + tileId))
-					{
-						++tileCount;
-					}
-				}
-				return tileCount;
-			}
-			return -1;
-		}
-
 	}
 }
