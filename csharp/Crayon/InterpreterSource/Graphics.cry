@@ -347,3 +347,116 @@ function imagetteBlitFellowImagette(@type('Imagette') target, @type('Imagette') 
 		$_list_push(Imagette$target.ys, $_list_get(Imagette$source.ys, i) + y);
 	}
 }
+
+// Returns biggest sheet ID for reasons.
+function @type('int') virtualizationGridDoBasicConsolidations(
+	@type('int') groupId,
+	@type('List<SpriteSheetItemDescriptor>') spriteSheetItemDescriptors,
+	@type('Dictionary<string, object>') nativeTileBitmapsByGeneratedName,
+
+	// The remaining parameters are actually out parameters and are empty going in.
+	@type('Dictionary<string, Array<int>>') locations,
+	@type('List<string>') paths,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<int, Imagette>') solitarySheets) {
+	
+	@type('int') biggestSheetId = 0;
+	
+	for (@type('int') j = 0; j < $_list_length(spriteSheetItemDescriptors); j += 1) {
+		@type('SpriteSheetItemDescriptor') item = $_list_get(spriteSheetItemDescriptors, j);
+		@type('string') filename = SpriteSheetItemDescriptor$item.filePath;
+		$_list_push(paths, filename);
+		@type('int') x = SpriteSheetItemDescriptor$item.x;
+		@type('int') y = SpriteSheetItemDescriptor$item.y;
+		@type('int') width = SpriteSheetItemDescriptor$item.width;
+		@type('int') height = SpriteSheetItemDescriptor$item.height;
+		@type('int') tileId = SpriteSheetItemDescriptor$item.tileId;
+		if (tileId > biggestSheetId) {
+			biggestSheetId = tileId;
+		}
+		@type('string') generatedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		@type('Array<int>') locationData = null;
+		if (SpriteSheetItemDescriptor$item.solitary) {
+			$_dictionary_set(solitarySheets, tileId, createImagetteFromBitmap($_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, generatedName)));
+			locationData = $_new_array('int', 5);
+			$_array_set(locationData, 0, tileId);
+			$_array_set(locationData, 1, 0);
+			$_array_set(locationData, 2, 0);
+			$_array_set(locationData, 3, SpriteSheetItemDescriptor$item.width);
+			$_array_set(locationData, 4, SpriteSheetItemDescriptor$item.height);
+			$_dictionary_set(locations, filename, locationData);
+		} else {
+			@type('int') col = 0;
+			@type('int') row = 0;
+			@type('int') roundedId = $_unsafe_integer_division(tileId, 16) * 16;
+			if (!$_dictionary_contains(nonSolitarySheets, roundedId)) {
+				$_dictionary_set(nonSolitarySheets, roundedId, createImagetteFromDimensions(1024, 1024));
+
+				for (@type('int') i = 0; i < 16; i += 1) {
+					@type('int') interiorTileId = roundedId + i;
+					@type('string') interiorTileGeneratedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(interiorTileId);
+					col = i % 4;
+					row = $_unsafe_integer_division(i, 4);
+					if ($_dictionary_contains(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName)) {
+						imagetteBlitRaw(
+							$_dictionary_get_guaranteed(nonSolitarySheets, roundedId),
+							$_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName),
+							col * 256,
+							row * 256);
+					}
+				}
+			}
+			col = (tileId - roundedId) % 4;
+			row = $_unsafe_integer_division($_force_parens(tileId - roundedId), 4);
+			locationData = $_new_array('int', 5);
+			$_array_set(locationData, 0, roundedId);
+			$_array_set(locationData, 1, col * 256 + SpriteSheetItemDescriptor$item.x);
+			$_array_set(locationData, 2, row * 256 + SpriteSheetItemDescriptor$item.y);
+			$_array_set(locationData, 3, SpriteSheetItemDescriptor$item.width);
+			$_array_set(locationData, 4, SpriteSheetItemDescriptor$item.height);
+			$_dictionary_set(locations, filename, locationData);
+		}
+	}
+	return biggestSheetId;
+}
+
+function @type('Imagette') virtualizationGridBuildAMegaSheet(
+	@type('int') megaSheetId,
+	@type('List<int>') megaSheetMemberSheetIds,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<int, Array<int>>') oldSheetOffsetInformation) {
+
+	@type('int') totalMembers = $_list_length(megaSheetMemberSheetIds);
+	@type('int') imageUnitWidth = $_int($_exponent($_force_parens(totalMembers - 1), 0.5) + 1);
+	@type('int') imageWidth = nextPowerOf2(imageUnitWidth * 1024);
+	@type('Imagette') megaSheetBitmap = createImagetteFromDimensions(imageWidth, imageWidth);
+
+	for (@type('int') i = 0; i < totalMembers; i += 1) {
+		@type('int') sheetId = $_list_get(megaSheetMemberSheetIds, i);
+		// Allocate the ID's in this compact square pattern:
+		// 0  1  4  9
+		// 3  2  5  10
+		// 8  7  6  11
+		// 15 14 13 12
+		// etc
+		// "gen"eration refers to the layer # of the L shape that the sheet is occupying. You can find it by flooring the square root of the number in that cell.
+		// Arithmetic magic.
+		@type('int') gen = $_int($_exponent(i, 0.5)); // floor(sqrt(i))
+		@type('int') col = gen;
+		@type('int') row = i - gen * gen;
+		if (row > gen) {
+			@type('int') adj = row - gen;
+			col -= adj;
+			row -= adj;
+		}
+		@type('int') x = col * 1024;
+		@type('int') y = row * 1024;
+		imagetteBlitFellowImagette(megaSheetBitmap, $_dictionary_get_guaranteed(nonSolitarySheets, sheetId), x, y);
+		@type('Array<int>') offsetInformation = $_new_array('int', 3);
+		$_array_set(offsetInformation, 0, megaSheetId);
+		$_array_set(offsetInformation, 1, x);
+		$_array_set(offsetInformation, 2, y);
+		$_dictionary_set(oldSheetOffsetInformation, sheetId, offsetInformation);
+	}
+	return megaSheetBitmap;
+}
