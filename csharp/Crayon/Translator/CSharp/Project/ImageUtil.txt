@@ -51,10 +51,10 @@ namespace %%%PROJECT_ID%%%
 			// This is a mapping of image paths to bitmap+location within the bitmap
 			List<SpriteSheetItemDescriptor> sheetMembers = CrayonWrapper.v_getSpriteSheetMembers(imageUtil, groupName);
 			ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.InstantiateVirtualizationGrid(
-					groupName,
-					imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
-					tilesInGroupByGenName,
-					imageUtil.groupNameToId);
+				groupId,
+				groupName,
+				imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
+				tilesInGroupByGenName);
 			imageUtil.virtualizationGrids.Add(groupName, grid);
 
 			foreach (string path in grid.paths)

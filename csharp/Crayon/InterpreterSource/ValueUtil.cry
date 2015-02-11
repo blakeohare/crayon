@@ -304,3 +304,15 @@ function @type('bool') numberCompare(@type('Value') a, @type('Value') b) {
 
 	return aNumber > bNumber;
 }
+
+function @type('int') nextPowerOf2(@type('int') value) {
+	
+	if (((value - 1) & value) == 0) return value;
+
+	@type('int') output = 1;
+	while (output < value)
+	{
+		output *= 2;
+	}
+	return output;
+}

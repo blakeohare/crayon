@@ -42,8 +42,8 @@ namespace %%%PROJECT_ID%%%
 			int oldWidth = bitmap.Width;
 			int oldHeight = bitmap.Height;
 
-			int newWidth = NextPowerOf2(oldWidth);
-			int newHeight = NextPowerOf2(oldHeight);
+			int newWidth = CrayonWrapper.v_nextPowerOf2(oldWidth);
+			int newHeight = CrayonWrapper.v_nextPowerOf2(oldHeight);
 
 			if (newWidth == oldWidth &&
 				newHeight == oldHeight &&
@@ -57,18 +57,6 @@ namespace %%%PROJECT_ID%%%
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(targetBmp);
 			g.DrawImage(bitmap, TOP_LEFT);
 			return targetBmp;
-		}
-
-		public static int NextPowerOf2(int value)
-		{
-			if (((value - 1) & value) == 0) return value;
-
-			int output = 1;
-			while (output < value)
-			{
-				output = output << 1;
-			}
-			return output;
 		}
 
 		private static int maxTextureSize = -1;
