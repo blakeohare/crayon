@@ -184,3 +184,18 @@ struct TileLoadRequest {
 	@type('int') tileId,
 	@type('object') nativeResource,
 }
+
+/*
+ * The imagette is an image that is defined by a width, height, and series of blits of native platform bitmaps.
+ * These are used during the compositing phase of the image sheet tile loading. This allows that guts of the code logic to be written
+ * in Crayon without the extensive use of native methods. The Imagettes, containing straightforward bitmap data, are then flushed to 
+ * native platform bitmaps at the end.
+ */
+struct Imagette {
+	@type('int') width,
+	@type('int') height,
+	@type('List<object>') nativeBitmaps,
+	@type('List<int>') xs,
+	@type('List<int>') ys
+
+}

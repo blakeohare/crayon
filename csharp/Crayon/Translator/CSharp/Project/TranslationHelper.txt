@@ -87,5 +87,21 @@ namespace %%%PROJECT_ID%%%
 			}
 			return sb.ToString();
 		}
+
+		public static object ImagetteFlushToNativeBitmap(Imagette img)
+		{
+			System.Drawing.Bitmap target = new System.Drawing.Bitmap(img.width, img.height);
+			target.SetResolution(96, 96);
+			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
+			for (int i = img.nativeBitmaps.Count - 1; i >= 0; i--)
+			{
+				System.Drawing.Bitmap source = (System.Drawing.Bitmap)img.nativeBitmaps[i];
+				int x = img.xs[i];
+				int y = img.ys[i];
+				g.DrawImage(source, x, y);
+			}
+			g.Flush();
+			return target;
+		}
 	}
 }

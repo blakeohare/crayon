@@ -11,6 +11,44 @@ namespace %%%PROJECT_ID%%%
 		public const int IMAGE_SHEET_STATUS_NOT_LOADED = 0;
 		public const int IMAGE_SHEET_STATUS_LOADING = 1;
 		public const int IMAGE_SHEET_STATUS_LOADED = 2;
+		
+		public static Imagette ImagetteCreateFromBitmap(object nativeBmp)
+		{
+			System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)nativeBmp;
+			return new Imagette(
+				bmp.Width,
+				bmp.Height,
+				new List<object>() { bmp },
+				new List<int>() { 0 },
+				new List<int>() { 0 });
+		}
+
+		public static Imagette ImagetteCreateFromDimensions(int width, int height)
+		{
+			return new Imagette(
+				width,
+				height,
+				new List<object>(),
+				new List<int>(),
+				new List<int>());
+		}
+
+		public static void ImagetteBlitRaw(Imagette target, object rawBitmap, int x, int y)
+		{
+			target.nativeBitmaps.Add(rawBitmap);
+			target.xs.Add(x);
+			target.ys.Add(y);
+		}
+
+		public static void ImageBlitFellowImagette(Imagette target, Imagette source, int x, int y)
+		{
+			for (int i = source.nativeBitmaps.Count - 1; i >= 0; --i)
+			{
+				target.nativeBitmaps.Add(source.nativeBitmaps[i]);
+				target.xs.Add(source.xs[i] + x);
+				target.ys.Add(source.ys[i] + y);
+			}
+		}
 
 		public static ImageSheetVirtualizationGrid IntantiateVirtualizationGrid(
 			string groupName,
@@ -20,16 +58,13 @@ namespace %%%PROJECT_ID%%%
 		{
 			int groupId = groupNameToId[groupName];
 
-			Dictionary<int, Bitmap> tiles = new Dictionary<int, Bitmap>();
-			Dictionary<int, Graphics> sheetGraphics = new Dictionary<int, Graphics>();
-
 			// [ tile ID, x, y, width, height ]
 			Dictionary<string, int[]> locations = new Dictionary<string, int[]>();
 
 			List<string> paths = new List<string>();
 
-			Dictionary<int, Bitmap> nonSolitarySheets = new Dictionary<int, Bitmap>();
-			Dictionary<int, Bitmap> solitarySheets = new Dictionary<int, Bitmap>();
+			Dictionary<int, Imagette> nonSolitarySheets = new Dictionary<int, Imagette>();
+			Dictionary<int, Imagette> solitarySheets = new Dictionary<int, Imagette>();
 
 			int biggestSheetId = 0;
 			foreach (SpriteSheetItemDescriptor item in spriteSheetItemDescriptors)
@@ -49,7 +84,7 @@ namespace %%%PROJECT_ID%%%
 
 				if (item.solitary)
 				{
-					solitarySheets[tileId] = (Bitmap)nativeTileBitmapsByGeneratedName[generatedName];
+					solitarySheets[tileId] = ImagetteCreateFromBitmap(nativeTileBitmapsByGeneratedName[generatedName]);
 					locations[filename] = new int[] { tileId, 0, 0, item.width, item.height };
 				}
 				else
@@ -58,10 +93,7 @@ namespace %%%PROJECT_ID%%%
 					int roundedId = tileId / 16 * 16;
 					if (!nonSolitarySheets.ContainsKey(roundedId))
 					{
-						Bitmap bigSheet = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-						nonSolitarySheets[roundedId] = bigSheet;
-						bigSheet.SetResolution(96, 96);
-						sheetGraphics[roundedId] = Graphics.FromImage(bigSheet);
+						nonSolitarySheets[roundedId] = ImagetteCreateFromDimensions(1024, 1024);
 
 						for (int i = 0; i < 16; ++i)
 						{
@@ -71,8 +103,9 @@ namespace %%%PROJECT_ID%%%
 							row = i / 4;
 							if (nativeTileBitmapsByGeneratedName.ContainsKey(interiorTileGeneratedName))
 							{
-								sheetGraphics[roundedId].DrawImage(
-									(Bitmap)nativeTileBitmapsByGeneratedName[interiorTileGeneratedName],
+								ImagetteBlitRaw(
+									nonSolitarySheets[roundedId],
+									nativeTileBitmapsByGeneratedName[interiorTileGeneratedName],
 									col * 256,
 									row * 256);
 							}
@@ -106,7 +139,7 @@ namespace %%%PROJECT_ID%%%
 
 				// now that the members of the mega sheets are fully determined, create the images.
 				int megaSheetId = biggestSheetId;
-				Dictionary<int, Bitmap> megaSheetById = new Dictionary<int, Bitmap>();
+				Dictionary<int, Imagette> megaSheetById = new Dictionary<int, Imagette>();
 				Dictionary<int, int[]> oldSheetOffsetInformation = new Dictionary<int, int[]>();
 				foreach (List<int> megaSheetMemberSheetIds in megaSheetMapping)
 				{
@@ -114,10 +147,8 @@ namespace %%%PROJECT_ID%%%
 					int totalMembers = megaSheetMemberSheetIds.Count;
 					int imageUnitWidth = (int)(Math.Sqrt(totalMembers - 1) + 1);
 					int imageWidth = GlUtil.NextPowerOf2(imageUnitWidth * 1024);
-					Bitmap megaSheetBitmap = new Bitmap(imageWidth, imageWidth);
-					megaSheetBitmap.SetResolution(96, 96);
+					Imagette megaSheetBitmap = ImagetteCreateFromDimensions(imageWidth, imageWidth);
 					megaSheetById[megaSheetId] = megaSheetBitmap;
-					Graphics graphics = Graphics.FromImage(megaSheetBitmap);
 
 					for (int i = 0; i < megaSheetMemberSheetIds.Count; ++i)
 					{
@@ -141,11 +172,9 @@ namespace %%%PROJECT_ID%%%
 						}
 						int x = col * 1024;
 						int y = row * 1024;
-						graphics.DrawImage(nonSolitarySheets[sheetId], x, y);
+						ImageBlitFellowImagette(megaSheetBitmap, nonSolitarySheets[sheetId], x, y);
 						oldSheetOffsetInformation[sheetId] = new int[] { megaSheetId, x, y };
 					}
-
-					graphics.Flush();
 				}
 
 				// now update the location information to reflect the new sheet ID's and locations
@@ -165,7 +194,7 @@ namespace %%%PROJECT_ID%%%
 			}
 
 			Dictionary<int, CompositeImage> sheets = new Dictionary<int, CompositeImage>();
-			Dictionary<int, Bitmap> allSheets = nonSolitarySheets;
+			Dictionary<int, Imagette> allSheets = nonSolitarySheets;
 			foreach (int sheetId in solitarySheets.Keys)
 			{
 				allSheets[sheetId] = solitarySheets[sheetId];
@@ -173,7 +202,9 @@ namespace %%%PROJECT_ID%%%
 
 			foreach (int sheetId in allSheets.Keys)
 			{
-				sheets[sheetId] = CrayonWrapper.v_createCompositeImage(allSheets[sheetId]);
+				Imagette imagette = allSheets[sheetId];
+				object actualBitmap = TranslationHelper.ImagetteFlushToNativeBitmap(imagette);
+				sheets[sheetId] = CrayonWrapper.v_createCompositeImage(actualBitmap);
 			}
 
 			return new ImageSheetVirtualizationGrid(
