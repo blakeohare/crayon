@@ -155,51 +155,5 @@ namespace %%%PROJECT_ID%%%
 		{
 			throw new NotImplementedException();
 		}
-
-		private static void EnsureSheetStatusUpToDate(int id)
-		{
-			if (imageUtil.sheetStatus[id] == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING)
-			{
-				bool allLoaded = true;
-				foreach (int tileId in imageUtil.tilesPerId[id])
-				{
-					if (!imageUtil.tilesByName.ContainsKey(id + "_" + tileId))
-					{
-						allLoaded = false;
-						break;
-					}
-				}
-				if (allLoaded)
-				{
-					imageUtil.sheetStatus[id] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
-				}
-			}
-		}
-
-		public static int IsImageSheetLoaded(string groupId)
-		{
-			int id = -1;
-			imageUtil.groupNameToId.TryGetValue(groupId, out id);
-
-			int status = 2; // error code
-			if (id != -1)
-			{
-				EnsureSheetStatusUpToDate(id);
-
-				switch (imageUtil.sheetStatus[id])
-				{
-					case TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED: status = 1; break;
-					case TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADING: status = 0; break;
-					default: status = 2; break;
-				}
-			}
-			return status;
-		}
-
-		public static int GetSheetErrorCode(string groupId)
-		{
-			return 0;
-		}
-
 	}
 }

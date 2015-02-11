@@ -1256,11 +1256,11 @@ function @omitReturn @type('string') interpret(
 									bool1 = true;
 									i = $_list_length(list1);
 								} else {
-									int1 |= $_image_sheet_loaded($_cast('string', Value$value.internalValue));
+									int1 |= isImageSheetLoaded($_cast('string', Value$value.internalValue));
 								}
 							}
 						} else if (Value$arg1.type == Types.STRING) {
-							int1 = $_image_sheet_loaded($_cast('string', Value$arg1.internalValue));
+							int1 = isImageSheetLoaded($_cast('string', Value$arg1.internalValue));
 						} else {
 							bool1 = true;
 						}

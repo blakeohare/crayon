@@ -288,13 +288,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(").Width");
 		}
 
-		protected override void TranslateImageSheetLoaded(List<string> output, Expression groupId)
-		{
-			output.Add("ImageUtil.IsImageSheetLoaded(");
-			this.Translator.TranslateExpression(output, groupId);
-			output.Add(")");
-		}
-
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("GameWindow.FPS = ");

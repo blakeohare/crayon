@@ -287,3 +287,24 @@ function @type('int') getSheetErrorCode(@type('string') groupName) {
 	// TODO: this
 	return 0;
 }
+
+// return values:
+// 0 -> no
+// 1 -> yes
+// 2 -> error, not found, or not initialized
+function @type('int') isImageSheetLoaded(@type('string') groupName) {
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('int') groupId = getGroupId(iss, groupName);
+	if (groupId == -1)
+		return 2;
+
+	@type('int') status = $_dictionary_get_guaranteed(ImageSheetStatus$iss.sheetStatus, groupId);
+
+	if (status == IMAGE_SHEET_STATUS_LOADED)
+		return 1;
+
+	if (status == IMAGE_SHEET_STATUS_LOADING)
+		return 0;
+
+	return 2;
+}
