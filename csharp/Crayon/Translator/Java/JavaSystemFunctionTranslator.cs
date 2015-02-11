@@ -351,7 +351,17 @@ namespace Crayon.Translator.Java
 			throw new InvalidOperationException();
 		}
 
+		protected override void TranslateGlMaxTextureSize(List<string> output)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
 			throw new NotImplementedException();
 		}

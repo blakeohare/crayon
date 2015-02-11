@@ -251,10 +251,22 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
+		protected override void TranslateGlMaxTextureSize(List<string> output)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
 		{
 			output.Add("ImageUtil.GetImageErrorCode(");
 			this.Translator.TranslateExpression(output, imageKey);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
+		{
+			output.Add("TranslationHelper.ImagetteFlushToNativeBitmap(");
+			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
 		}
 

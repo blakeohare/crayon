@@ -117,5 +117,10 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, platformBitmapResource);
 			output.Add(")");
 		}
+
+		protected override void TranslateGlMaxTextureSize(List<string> output)
+		{
+			output.Add("GlUtil.MaxTextureSize");
+		}
 	}
 }

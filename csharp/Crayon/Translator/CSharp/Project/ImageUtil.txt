@@ -8,6 +8,11 @@ namespace %%%PROJECT_ID%%%
 {
 	internal static class ImageUtil
 	{
+		public const int IMAGE_SHEET_TILES_LOADED_PER_FRAME = 3;
+		public const int IMAGE_SHEET_STATUS_NOT_LOADED = 0;
+		public const int IMAGE_SHEET_STATUS_LOADING = 1;
+		public const int IMAGE_SHEET_STATUS_LOADED = 2;
+
 		private static ImageSheetStatus imageUtil { get { return TranslationHelper.ProgramData.imageSheetStatus; } }
 
 		// Fire requests to load tiles
@@ -21,15 +26,15 @@ namespace %%%PROJECT_ID%%%
 				// All requests are populated into the tile load queue when the user invokes the loading of a sheet.
 				// This loop ensures that at least IMAGE_SHEET_TILES_LOADED_PER_FRAME downloads are active during the gap between frames.
 				int activeDownloads = 0;
-				for (int i = 0; i < queue.Count && activeDownloads < TransitionaryCrayonHelper.IMAGE_SHEET_TILES_LOADED_PER_FRAME; ++i)
+				for (int i = 0; i < queue.Count && activeDownloads < IMAGE_SHEET_TILES_LOADED_PER_FRAME; ++i)
 				{
 					TileLoadRequest request = queue[i];
-					if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_NOT_LOADED)
+					if (request.status == IMAGE_SHEET_STATUS_NOT_LOADED)
 					{
 						CrayonWrapper.v_initiateTileLoading(request);
 						activeDownloads++;
 					}
-					else if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED)
+					else if (request.status == IMAGE_SHEET_STATUS_LOADED)
 					{
 						// should this be an assert?
 					}
@@ -50,7 +55,7 @@ namespace %%%PROJECT_ID%%%
 			// and create a virtualization grid for this group. 
 			// This is a mapping of image paths to bitmap+location within the bitmap
 			List<SpriteSheetItemDescriptor> sheetMembers = CrayonWrapper.v_getSpriteSheetMembers(imageUtil, groupName);
-			ImageSheetVirtualizationGrid grid = TransitionaryCrayonHelper.InstantiateVirtualizationGrid(
+			ImageSheetVirtualizationGrid grid = CrayonWrapper.v_instantiateVirtualizationGrid(
 				groupId,
 				groupName,
 				imageUtil.spriteSheetItemDescriptorsByGroupId[groupId],
@@ -62,7 +67,7 @@ namespace %%%PROJECT_ID%%%
 				imageUtil.fileToVirtualizationGrid[path] = grid;
 			}
 
-			imageUtil.sheetStatus[groupId] = TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED;
+			imageUtil.sheetStatus[groupId] = IMAGE_SHEET_STATUS_LOADED;
 		}
 
 		// Check to see if any tiles have been loaded
@@ -74,7 +79,7 @@ namespace %%%PROJECT_ID%%%
 			for (int i = 0; i < queue.Count; ++i)
 			{
 				TileLoadRequest request = queue[i];
-				if (request.status == TransitionaryCrayonHelper.IMAGE_SHEET_STATUS_LOADED)
+				if (request.status == IMAGE_SHEET_STATUS_LOADED)
 				{
 					// [down]load complete. Add to the ImageSheetStatus and figure out if this was the last one for the group.
 					imageUtil.tilesByName[request.path] = request.nativeResource;

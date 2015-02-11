@@ -460,3 +460,117 @@ function @type('Imagette') virtualizationGridBuildAMegaSheet(
 	}
 	return megaSheetBitmap;
 }
+
+// The dictionary that is returned by this function should replace the nonSolitarySheets
+// dictionary that is passed in.
+// TODO: why not just modify the contents?
+function @type('Dictionary<int, Imagette>') virtualizationGridDoFurtherConsolidations(
+	@type('int') biggestSheetId,
+	@type('int') maxTextureSize,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<string, Array<int>>') locations) {
+
+	@type('int') unitLength = $_unsafe_integer_division(maxTextureSize, 1024);
+	@type('int') maxSheetsPerMegaSheet = unitLength * unitLength;
+	@type('int') sheetCount = $_dictionary_size(nonSolitarySheets);
+	@type('int') i = 0;
+	// Start making a list of ID groupings that don't exceed the maximum capacity of a megasheet.
+	@type('List<List<int>>') megaSheetMapping = $_new_list('List<int>');
+	@type('Array<int>') listOfSheetIds = $_dictionary_get_keys(nonSolitarySheets);
+	@type('Array<int>') orderedSheetIds = $_sorted_copy_of_int_array(listOfSheetIds); // order the IDs so that the image produce is deterministic. Otherwise the consolidation order will be random based on the platform's natural dictionary key ordering.
+	for (i = 0; i < $_array_length(orderedSheetIds); i += 1) {
+		@type('int') sheetIdToCombine = $_array_get(orderedSheetIds, i);
+		if ($_list_length(megaSheetMapping) == 0 ||
+			$_list_length($_list_get(megaSheetMapping, $_list_length(megaSheetMapping) - 1)) == maxSheetsPerMegaSheet) {
+			$_list_push(megaSheetMapping, $_new_list('int'));
+		}
+		$_list_push($_list_get(megaSheetMapping, $_list_length(megaSheetMapping) - 1), sheetIdToCombine);
+	}
+
+	// now that the members of the mega sheets are fully determined, create the images.
+	@type('int') megaSheetId = biggestSheetId;
+	@type('Dictionary<int, Imagette>') megaSheetById = $_new_dictionary('int', 'Imagette');
+	@type('Dictionary<int, Array<int>>') oldSheetOffsetInformation = $_new_dictionary('int', 'Array<int>');
+	for (i = 0; i < $_list_length(megaSheetMapping); i += 1) {
+		@type('List<int>') megaSheetMemberSheetIds = $_list_get(megaSheetMapping, i);
+		megaSheetId += 1;
+		$_dictionary_set(
+			megaSheetById,
+			megaSheetId,
+			virtualizationGridBuildAMegaSheet(
+				megaSheetId,
+				megaSheetMemberSheetIds,
+				nonSolitarySheets,
+				oldSheetOffsetInformation));
+	}
+
+	// now update the location information to reflect the new sheet ID's and locations.
+	@type('string') locationKey = null;
+	@type('Array<string>') locationKeys = $_dictionary_get_keys(locations);
+	for (i = 0; i < $_array_length(locationKeys); i += 1) {
+		locationKey = $_array_get(locationKeys, i);
+		@type('Array<int>') locationInfo = $_dictionary_get_guaranteed(locations, locationKey);
+		@type('int') oldSheetId = $_array_get(locationInfo, 0);
+		if ($_dictionary_contains(oldSheetOffsetInformation, oldSheetId)) {
+			@type('Array<int>') updatedInfo = $_dictionary_get_guaranteed(oldSheetOffsetInformation, oldSheetId);
+			$_array_set(locationInfo, 0, $_array_get(updatedInfo, 0));
+			$_array_set(locationInfo, 1, $_array_get(locationInfo, 1) + $_array_get(updatedInfo, 1));
+			$_array_set(locationInfo, 2, $_array_get(locationInfo, 2) + $_array_get(updatedInfo, 2));
+		}
+	}
+	return megaSheetById;
+}
+
+function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
+	@type('int') groupId,
+	@type('string') groupName,
+	@type('List<SpriteSheetItemDescriptor>') spriteSheetItemDescriptors,
+	@type('Dictionary<string, object>') nativeTileBitmapsByGeneratedName) {
+
+	@type('Dictionary<string, Array<int>>') locations = $_new_dictionary('string', 'Array<int>'); // [ tile ID, x, y, width, height ]
+	@type('List<string>') paths = $_new_list('string');
+	@type('Dictionary<int, Imagette>') nonSolitarySheets = $_new_dictionary('int', 'Imagette');
+	@type('Dictionary<int, Imagette>') solitarySheets = $_new_dictionary('int', 'Imagette');
+
+	@type('int') biggestSheetId = virtualizationGridDoBasicConsolidations(
+		groupId,
+		spriteSheetItemDescriptors,
+		nativeTileBitmapsByGeneratedName,
+		locations,
+		paths,
+		nonSolitarySheets,
+		solitarySheets);
+
+	@type('int') maxTextureSize = $_gl_max_texture_size();
+
+	// Go through and further consolidate things if possible.
+	if (maxTextureSize > 1024 && $_dictionary_size(nonSolitarySheets) > 1) {
+		// replace the non solitary sheets with the new mega sheets.
+		nonSolitarySheets = virtualizationGridDoFurtherConsolidations(biggestSheetId, maxTextureSize, nonSolitarySheets, locations);
+	}
+
+	@type('int') i = 0;
+	@type('int') sheetId = 0;
+	@type('Dictionary<int, CompositeImage>') sheets = $_new_dictionary('int', 'CompositeImage');
+	@type('Dictionary<int, Imagette>') allSheets = nonSolitarySheets;
+	@type('Array<int>') sheetIds = $_dictionary_get_keys(solitarySheets);
+	for (i = 0; i < $_array_length(sheetIds); i += 1) {
+		sheetId = $_array_get(sheetIds, i);
+		$_dictionary_set(allSheets, sheetId, $_dictionary_get_guaranteed(solitarySheets, sheetId));
+	}
+	
+	sheetIds = $_dictionary_get_keys(allSheets);
+	for (i = 0; i < $_array_length(sheetIds); i += 1) {
+		sheetId = $_array_get(sheetIds, i);
+		@type('Imagette') imagette = $_dictionary_get_guaranteed(allSheets, sheetId);
+		@type('object') actualBitmap = $_image_imagette_flush_to_native_bitmap(imagette);
+		$_dictionary_set(sheets, sheetId, createCompositeImage(actualBitmap));
+	}
+	
+	return new ImageSheetVirtualizationGrid(
+		locations,
+		sheets,
+		groupName,
+		groupId,
+		$_convert_list_to_array('string', paths));
+}

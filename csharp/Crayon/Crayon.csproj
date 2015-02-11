@@ -177,7 +177,6 @@
     <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ImageUtil.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\TransitionaryCrayonHelper.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
