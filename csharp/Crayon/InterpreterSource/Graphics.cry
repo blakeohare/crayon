@@ -308,3 +308,42 @@ function @type('int') isImageSheetLoaded(@type('string') groupName) {
 
 	return 2;
 }
+
+function @type('Imagette') createImagetteFromBitmap(nativeBitmap) {
+	@type('List<object>') images = $_new_list('object');
+	@type('List<int>') xs = $_new_list('int');
+	@type('List<int>') ys = $_new_list('int');
+	$_list_push(images, nativeBitmap);
+	$_list_push(xs, 0);
+	$_list_push(ys, 0);
+
+	return new Imagette(
+		$_image_native_bitmap_width(nativeBitmap),
+		$_image_native_bitmap_height(nativeBitmap),
+		images,
+		xs,
+		ys);
+}
+
+function @type('Imagette') createImagetteFromDimensions(@type('int') width, @type('int') height) {
+	return new Imagette(
+		width,
+		height,
+		$_new_list('object'),
+		$_new_list('int'),
+		$_new_list('int'));
+}
+
+function imagetteBlitRaw(@type('Imagette') target, nativeBitmap, @type('int') x, @type('int') y) {
+	$_list_push(Imagette$target.nativeBitmaps, nativeBitmap);
+	$_list_push(Imagette$target.xs, x);
+	$_list_push(Imagette$target.ys, y);
+}
+
+function imagetteBlitFellowImagette(@type('Imagette') target, @type('Imagette') source, @type('int') x, @type('int') y) {
+	for (@type('int') i = $_list_length(Imagette$source.nativeBitmaps) - 1; i >= 0; i -= 1) {
+		$_list_push(Imagette$target.nativeBitmaps, $_list_get(Imagette$source.nativeBitmaps, i));
+		$_list_push(Imagette$target.xs, $_list_get(Imagette$source.xs, i) + x);
+		$_list_push(Imagette$target.ys, $_list_get(Imagette$source.ys, i) + y);
+	}
+}

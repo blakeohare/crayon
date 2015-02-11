@@ -11,46 +11,8 @@ namespace %%%PROJECT_ID%%%
 		public const int IMAGE_SHEET_STATUS_NOT_LOADED = 0;
 		public const int IMAGE_SHEET_STATUS_LOADING = 1;
 		public const int IMAGE_SHEET_STATUS_LOADED = 2;
-		
-		public static Imagette ImagetteCreateFromBitmap(object nativeBmp)
-		{
-			System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)nativeBmp;
-			return new Imagette(
-				bmp.Width,
-				bmp.Height,
-				new List<object>() { bmp },
-				new List<int>() { 0 },
-				new List<int>() { 0 });
-		}
 
-		public static Imagette ImagetteCreateFromDimensions(int width, int height)
-		{
-			return new Imagette(
-				width,
-				height,
-				new List<object>(),
-				new List<int>(),
-				new List<int>());
-		}
-
-		public static void ImagetteBlitRaw(Imagette target, object rawBitmap, int x, int y)
-		{
-			target.nativeBitmaps.Add(rawBitmap);
-			target.xs.Add(x);
-			target.ys.Add(y);
-		}
-
-		public static void ImageBlitFellowImagette(Imagette target, Imagette source, int x, int y)
-		{
-			for (int i = source.nativeBitmaps.Count - 1; i >= 0; --i)
-			{
-				target.nativeBitmaps.Add(source.nativeBitmaps[i]);
-				target.xs.Add(source.xs[i] + x);
-				target.ys.Add(source.ys[i] + y);
-			}
-		}
-
-		public static ImageSheetVirtualizationGrid IntantiateVirtualizationGrid(
+		public static ImageSheetVirtualizationGrid InstantiateVirtualizationGrid(
 			string groupName,
 			List<SpriteSheetItemDescriptor> spriteSheetItemDescriptors,
 			Dictionary<string, object> nativeTileBitmapsByGeneratedName,
@@ -84,7 +46,7 @@ namespace %%%PROJECT_ID%%%
 
 				if (item.solitary)
 				{
-					solitarySheets[tileId] = ImagetteCreateFromBitmap(nativeTileBitmapsByGeneratedName[generatedName]);
+					solitarySheets[tileId] = CrayonWrapper.v_createImagetteFromBitmap(nativeTileBitmapsByGeneratedName[generatedName]);
 					locations[filename] = new int[] { tileId, 0, 0, item.width, item.height };
 				}
 				else
@@ -93,7 +55,7 @@ namespace %%%PROJECT_ID%%%
 					int roundedId = tileId / 16 * 16;
 					if (!nonSolitarySheets.ContainsKey(roundedId))
 					{
-						nonSolitarySheets[roundedId] = ImagetteCreateFromDimensions(1024, 1024);
+						nonSolitarySheets[roundedId] = CrayonWrapper.v_createImagetteFromDimensions(1024, 1024);
 
 						for (int i = 0; i < 16; ++i)
 						{
@@ -103,7 +65,7 @@ namespace %%%PROJECT_ID%%%
 							row = i / 4;
 							if (nativeTileBitmapsByGeneratedName.ContainsKey(interiorTileGeneratedName))
 							{
-								ImagetteBlitRaw(
+								CrayonWrapper.v_imagetteBlitRaw(
 									nonSolitarySheets[roundedId],
 									nativeTileBitmapsByGeneratedName[interiorTileGeneratedName],
 									col * 256,
@@ -147,7 +109,7 @@ namespace %%%PROJECT_ID%%%
 					int totalMembers = megaSheetMemberSheetIds.Count;
 					int imageUnitWidth = (int)(Math.Sqrt(totalMembers - 1) + 1);
 					int imageWidth = GlUtil.NextPowerOf2(imageUnitWidth * 1024);
-					Imagette megaSheetBitmap = ImagetteCreateFromDimensions(imageWidth, imageWidth);
+					Imagette megaSheetBitmap = CrayonWrapper.v_createImagetteFromDimensions(imageWidth, imageWidth);
 					megaSheetById[megaSheetId] = megaSheetBitmap;
 
 					for (int i = 0; i < megaSheetMemberSheetIds.Count; ++i)
@@ -172,7 +134,7 @@ namespace %%%PROJECT_ID%%%
 						}
 						int x = col * 1024;
 						int y = row * 1024;
-						ImageBlitFellowImagette(megaSheetBitmap, nonSolitarySheets[sheetId], x, y);
+						CrayonWrapper.v_imagetteBlitFellowImagette(megaSheetBitmap, nonSolitarySheets[sheetId], x, y);
 						oldSheetOffsetInformation[sheetId] = new int[] { megaSheetId, x, y };
 					}
 				}
