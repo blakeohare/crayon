@@ -199,13 +199,11 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
-			/*
-			output.Add("download_image_impl(");
+			output.Add("download_image_from_internet(");
 			this.Translator.TranslateExpression(output, key);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, path);
-			output.Add(")");//*/
+			output.Add(")");
 		}
 
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
@@ -344,16 +342,6 @@ namespace Crayon.Translator.Python
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output)
 		{
 			throw new NotImplementedException();
 		}
@@ -572,12 +560,16 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			throw new NotImplementedException();
+			output.Add("load_local_image_resource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			throw new NotImplementedException();
+			output.Add("load_local_tile_resource(");
+			this.Translator.TranslateExpression(output, tileGenName);
+			output.Add(")");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)

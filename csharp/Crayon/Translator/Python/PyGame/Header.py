@@ -87,8 +87,8 @@ _PR = pygame.Rect
 
 _images_downloaded = {}
 
-def download_image_impl(key, url):
-	path = url.replace('/', os.sep);
+def load_local_image_resource(path):
+	path = path.replace('/', os.sep);
 	if not os.path.exists(path): return False
 	try:
 		img = pygame.image.load(path)

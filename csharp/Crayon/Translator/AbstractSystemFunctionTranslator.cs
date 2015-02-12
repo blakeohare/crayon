@@ -67,8 +67,6 @@ namespace Crayon.Translator
 				case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
 				case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
 				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
-				case "_image_sheet_perform_work_nugget_post_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPostFrame(output); break;
-				case "_image_sheet_perform_work_nugget_pre_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPreFrame(output); break;
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
@@ -178,8 +176,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette);
 		protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
-		protected abstract void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output);
-		protected abstract void TranslateImageSheetPerformWorkNuggetPreFrame(List<string> output);
 		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
 		protected abstract void TranslateInt(List<string> output, Expression value);
