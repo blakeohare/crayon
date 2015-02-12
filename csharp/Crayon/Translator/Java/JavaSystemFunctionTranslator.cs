@@ -649,6 +649,15 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString)
+		{
+			output.Add("TranslationHelper.sortPrimitiveValueList(");
+			this.Translator.TranslateExpression(output, valueList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isString);
+			output.Add(")");
+		}
+
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
 			throw new NotImplementedException();

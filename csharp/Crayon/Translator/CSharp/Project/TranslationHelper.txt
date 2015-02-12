@@ -133,5 +133,22 @@ namespace %%%PROJECT_ID%%%
 		{
 			throw new Exception(message);
 		}
+		
+		public static void SortPrimitiveValueList(List<Value> valueList, bool isString)
+		{
+			Value[] orderedList;
+			if (isString)
+			{
+				orderedList = valueList.OrderBy<Value, string>(v => (string)v.internalValue).ToArray();
+			}
+			else
+			{
+				orderedList = valueList.OrderBy<Value, double>(v => v.type == %%%TYPE_INTEGER%%% ? (double)(int)v.internalValue : (double)v.internalValue).ToArray();
+			}
+			for (int i = orderedList.Length - 1; i >= 0; --i)
+			{
+				valueList[i] = orderedList[i];
+			}
+		}
 	}
 }

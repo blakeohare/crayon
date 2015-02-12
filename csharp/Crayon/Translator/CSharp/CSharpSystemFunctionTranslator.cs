@@ -560,6 +560,15 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString)
+		{
+			output.Add("TranslationHelper.SortPrimitiveValueList(");
+			this.Translator.TranslateExpression(output, valueList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isString);
+			output.Add(")");
+		}
+
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);

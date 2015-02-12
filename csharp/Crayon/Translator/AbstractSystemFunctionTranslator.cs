@@ -103,6 +103,7 @@ namespace Crayon.Translator
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
+				case "_sort_primitive_values": VerifyCount(functionCall, 2); TranslateSortPrimitiveValues(output, args[0], args[1]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
 				case "_stack_length": VerifyCount(functionCall, 1); TranslateStackLength(output, args[0]); break;
@@ -213,6 +214,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
 		protected abstract void TranslateSin(List<string> output, Expression value);
+		protected abstract void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
 		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
 		protected abstract void TranslateStackLength(List<string> output, Expression stack);
