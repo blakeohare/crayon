@@ -16,6 +16,8 @@ namespace Crayon.Translator.Java
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
+		public override bool IsOpenGlBased { get { return false; } }
+
 		protected override string GeneratedFilesFolder { get { return "resources/generated"; } }
 
 		public JavaPlatform()

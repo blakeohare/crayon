@@ -22,6 +22,8 @@ namespace Crayon.Translator.JavaScript
 		public override bool IntIsFloor { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
+		public override bool IsOpenGlBased { get { return false; } }
+
 		public override string OutputFolderName { get { return "javascript"; } }
 		protected override string GeneratedFilesFolder { get { return "generated_resources"; } }
 

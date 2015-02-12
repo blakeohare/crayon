@@ -20,6 +20,7 @@ namespace Crayon
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool ScreenBlocksExecution { get; }
 		protected abstract string GeneratedFilesFolder { get; }
+		public abstract bool IsOpenGlBased { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.

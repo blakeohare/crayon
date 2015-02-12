@@ -95,6 +95,7 @@ namespace Crayon
 			replacements.Add("USE_FIXED_LENGTH_ARG_CONSTRUCTION", this.platform.UseFixedListArgConstruction ? "true" : "false");
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("SCREEN_BLOCKS_EXECUTION", this.platform.ScreenBlocksExecution ? "true" : "false");
+			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
 			return replacements;
 		}
 

@@ -8,6 +8,8 @@ namespace Crayon.Translator.CSharp
 			: base(new CSharpOpenTkSystemFunctionTranslator())
 		{ }
 
+		public override bool IsOpenGlBased { get { return true; } }
+
 		public override string OutputFolderName { get { return "csopengl"; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)

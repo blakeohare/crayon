@@ -11,45 +11,66 @@ function @type('Image') instantiateImage(
 	@type('int') resourceWidth = CompositeImage$resource.width;
 	@type('int') resourceHeight = CompositeImage$resource.height;
 
-	@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
-	@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
-	@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
-	@type('float') textureBottom = $_cast('float', $_unsafe_float_division(1.0 * (y + height), resourceHeight));
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		
+		@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
+		@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
+		@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
+		@type('float') textureBottom = $_cast('float', $_unsafe_float_division(1.0 * (y + height), resourceHeight));
 
-	if (flipX) {
-		@type('float') t = textureLeft;
-		textureLeft = textureRight;
-		textureRight = t;
+		if (flipX) {
+			@type('float') t = textureLeft;
+			textureLeft = textureRight;
+			textureRight = t;
+		}
+
+		if (flipY) {
+			@type('float') t = textureTop;
+			textureTop = textureBottom;
+			textureBottom = t;
+		}
+
+		return new Image(
+			resource,
+			null,
+			x,
+			y,
+			width,
+			height,
+			textureLeft,
+			textureTop,
+			textureRight,
+			textureBottom);
+	} else {
+		// TODO: consider using native methods?
+		@type('Imagette') img = createImagetteFromDimensions(width, height);
+
+		if (flipX || flipY) {
+			$_assert("TODO: image flipping");
+		}
+
+		
+		imagetteBlitRaw(img, CompositeImage$resource.nativeBitmap, -x, -y);
+		return new Image(
+			null,
+			$_image_imagette_flush_to_native_bitmap(img),
+			0,
+			0,
+			width,
+			height,
+			0,
+			0,
+			1,
+			1);
 	}
-
-	if (flipY) {
-		@type('float') t = textureTop;
-		textureTop = textureBottom;
-		textureBottom = t;
-	}
-
-	return new Image(
-		resource,
-		null,
-		x,
-		y,
-		width,
-		height,
-		textureLeft,
-		textureTop,
-		textureRight,
-		textureBottom);
 }
 
 function @type('Image') flipImage(
 	@type('Image') image,
 	@type('bool') flipX,
 	@type('bool') flipY) {
-	if (Image$image.compositeResource == null) {
-		// TODO: create a flipped copy of the raw resource.
-		return null;
-	}
-
+	
+	if (%%%IS_OPEN_GL_BASED%%%) {
 	@type('bool') flippedX = Image$image.textureLeft > Image$image.textureRight;
 	@type('bool') flippedY = Image$image.textureTop > Image$image.textureBottom;
 	return instantiateImage(
@@ -60,6 +81,9 @@ function @type('Image') flipImage(
 		Image$image.height,
 		flipX != flippedX,
 		flipY != flippedY);
+	} else {
+		$_assert("TODO: image flipping in blit based platforms");
+	}
 }
 
 

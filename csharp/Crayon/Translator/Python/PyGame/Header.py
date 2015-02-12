@@ -106,9 +106,7 @@ def load_local_image_resource(path):
 	path = path.replace('/', os.sep);
 	if not os.path.exists(path): return None
 	try:
-		img = pygame.image.load(path)
-		_images_downloaded[key] = img
-		return img
+		return pygame.image.load(path)
 	except:
 		return None
 
