@@ -251,13 +251,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
 		{
-			output.Add("_PDR(_global_vars['virtual_screen'], (");
-			this.Translator.TranslateExpression(output, red);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, green);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, blue);
-			output.Add("), _PR(");
+			output.Add("draw_rectangle(");
 			this.Translator.TranslateExpression(output, left);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, top);
@@ -265,7 +259,15 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, width);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, height);
-			output.Add("))");
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
 		}
 
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)

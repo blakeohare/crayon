@@ -197,4 +197,17 @@ def _sort_helper(x):
 def sort_primitive_value_list(values, ignoredType):
 	values.sort(key=_sort_helper)
 
+_TEMP_SURFACE = [None]
+def draw_rectangle(x, y, width, height, r, g, b, a):
+	# Pygame has a bug where it doesn't draw rectangles if the height is 1.
+	if a == 255 and height > 1:
+		_PDR(_global_vars['virtual_screen'], (r, g, b), _PR(x, y, width, height))
+	elif a > 0:
+		ts = _TEMP_SURFACE[0]
+		if ts == None:
+			ts = pygame.Surface(_global_vars['virtual_screen'].get_size()).convert()
+		ts.fill((r, g, b))
+		ts.set_alpha(a)
+		_global_vars['virtual_screen'].blit(ts, (x, y), _PR(0, 0, width, height))
+
 program_data = [None]
