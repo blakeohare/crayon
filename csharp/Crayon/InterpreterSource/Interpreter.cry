@@ -1090,7 +1090,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$image_load_from_resource requires two string arguments.");
 						}
 						string1 = $_cast('string', Value$arg2.internalValue);
-						bool1 = $_download_image($_cast('string', Value$arg1.internalValue), string1, true);
+						bool1 = loadImageFromLocalResources($_cast('string', Value$arg1.internalValue), string1);
 						if (!bool1) {
 							return killExecution(stack, "Image resource does not exist: " + string1);
 						}
@@ -1105,7 +1105,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$image_load_from_web requires two string arguments.");
 						}
 						string1 = $_cast('string', Value$arg2.internalValue);
-						$_download_image($_cast('string', Value$arg1.internalValue), string1, false);
+						$_download_image($_cast('string', Value$arg1.internalValue), string1);
 						break;
 
 					case %%%FF_IMAGE_LOAD_FROM_USER_DATA%%%:

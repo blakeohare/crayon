@@ -184,24 +184,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path, bool isLocalResource)
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			if (isLocalResource)
-			{
-				output.Add("ImageUtil.LoadImageFromEmbeddedResource(");
-				this.Translator.TranslateExpression(output, key);
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, path);
-				output.Add(")");
-			}
-			else
-			{
-				output.Add("ImageUtil.DownloadImageFromInternetTubes(");
-				this.Translator.TranslateExpression(output, key);
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, path);
-				output.Add(")");
-			}
+			output.Add("ImageUtil.DownloadImageFromInternetTubes(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
@@ -543,6 +532,13 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("TranslationHelper.GetRandomNumber()");
+		}
+
+		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
+		{
+			output.Add("ResourceReader.ReadImageFile(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(", false)");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)

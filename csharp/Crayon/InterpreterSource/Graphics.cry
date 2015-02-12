@@ -654,3 +654,48 @@ function imageSheetPerformWorkNuggetPostFrame() {
 		}
 	}
 }
+
+function @type('bool') loadImageFromLocalResources(@type('string') key, @type('string') path) {
+
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	if ($_dictionary_contains(ImageSheetStatus$iss.fileToVirtualizationGrid, path)) {
+		@type('ImageSheetVirtualizationGrid') grid = $_dictionary_get_guaranteed(ImageSheetStatus$iss.fileToVirtualizationGrid, path);
+		@type('Array<int>') location = $_dictionary_get_guaranteed(ImageSheetVirtualizationGrid$grid.imageLocations, path);
+		$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, $_dictionary_get_guaranteed(ImageSheetVirtualizationGrid$grid.sheets, $_array_get(location, 0)));
+		$_dictionary_set(ImageSheetStatus$iss.texturePartitioningInformation, key, location);
+		return true;
+	}
+
+	@type('object') bmp = $_read_local_image_resource(path);
+	if (bmp == null) {
+		return false;
+	}
+
+	$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, createCompositeImage(bmp));
+	return true;
+}
+
+/*
+
+		// will act like the image isn't there if a sprite sheet isn't loaded
+		public static bool LoadImageFromEmbeddedResource(string key, string path)
+		{
+			if (imageUtil.fileToVirtualizationGrid.ContainsKey(path))
+			{
+				ImageSheetVirtualizationGrid grid = imageUtil.fileToVirtualizationGrid[path];
+				int[] location = grid.imageLocations[path];
+				imageUtil.resourceImagesByKeys[key] = grid.sheets[location[0]];
+				imageUtil.texturePartitioningInformation[key] = location;
+				return true;
+			}
+
+			object bmp = ResourceReader.ReadImageFile(path, false);
+			if (bmp == null)
+			{
+				return false;
+			}
+			imageUtil.resourceImagesByKeys[key] = CrayonWrapper.v_createCompositeImage(bmp);
+			return true;
+		}
+
+*/

@@ -194,7 +194,7 @@ namespace Crayon.Translator.JavaScript
 			throw new Exception("This should have been optimized out.");
 		}
 
-		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path, bool isLocalResource)
+		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
 			throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
 			/*
@@ -578,6 +578,11 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("Math.random()");
+		}
+
+		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)

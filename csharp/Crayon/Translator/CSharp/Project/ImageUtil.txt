@@ -20,27 +20,6 @@ namespace %%%PROJECT_ID%%%
 			throw new NotImplementedException();
 		}
 
-		// will act like the image isn't there if a sprite sheet isn't loaded
-		public static bool LoadImageFromEmbeddedResource(string key, string path)
-		{
-			if (imageUtil.fileToVirtualizationGrid.ContainsKey(path))
-			{
-				ImageSheetVirtualizationGrid grid = imageUtil.fileToVirtualizationGrid[path];
-				int[] location = grid.imageLocations[path];
-				imageUtil.resourceImagesByKeys[key] = grid.sheets[location[0]];
-				imageUtil.texturePartitioningInformation[key] = location;
-				return true;
-			}
-
-			Bitmap bmp = ResourceReader.ReadImageFile(path, false);
-			if (bmp == null)
-			{
-				return false;
-			}
-			imageUtil.resourceImagesByKeys[key] = CrayonWrapper.v_createCompositeImage(bmp);
-			return true;
-		}
-
 		// TODO: retry counter support
 		public static void DownloadImageFromInternetTubes(string key, string url)
 		{
@@ -62,12 +41,16 @@ namespace %%%PROJECT_ID%%%
 			};
 			bgWorker.RunWorkerCompleted += (sender, args) =>
 			{
-				// TODO: more in-depth error codes than "2"
-				object bmp = args.Result;
-				imageUtil.downloadedImagesByKey[key] = args.Result;
-				imageUtil.downloadedImagesErrorCodes[key] = bmp == null ? 2 : 1;
+				ImageDownloadCompletionHandler(key, args.Result);
 			};
 			bgWorker.RunWorkerAsync();
+		}
+
+		private static void ImageDownloadCompletionHandler(string key, object bitmap)
+		{
+			// TODO: more in-depth error codes than "2"
+			imageUtil.downloadedImagesByKey[key] = bitmap;
+			imageUtil.downloadedImagesErrorCodes[key] = bitmap == null ? 2 : 1;
 		}
 
 		public static void LoadImageFromUserData(string key, string path)

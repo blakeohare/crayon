@@ -50,7 +50,7 @@ namespace Crayon.Translator
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
-				case "_download_image": VerifyCount(functionCall, 3); TranslateDownloadImage(output, args[0], args[1], ((BooleanConstant)args[2]).Value); break;
+				case "_download_image": VerifyCount(functionCall, 2); TranslateDownloadImage(output, args[0], args[1]); break;
 				case "_draw_ellipse": VerifyCount(functionCall, 8); TranslateDrawEllipse(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
 				case "_draw_line": VerifyCount(functionCall, 9); TranslateDrawLine(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_draw_rectangle": VerifyCount(functionCall, 8); TranslateDrawRectangle(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
@@ -100,6 +100,7 @@ namespace Crayon.Translator
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
+				case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
 				case "_read_local_tile_resource": VerifyCount(functionCall, 1); TranslateReadLocalTileResource(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
@@ -162,7 +163,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);
 		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
-		protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path, bool isLocalResource);
+		protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path);
 		protected abstract void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
@@ -212,6 +213,7 @@ namespace Crayon.Translator
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRandomFloat(List<string> output);
+		protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);
 		protected abstract void TranslateReadLocalTileResource(List<string> output, Expression tileGenName);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
