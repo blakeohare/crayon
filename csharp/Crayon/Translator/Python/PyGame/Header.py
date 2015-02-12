@@ -97,7 +97,7 @@ def create_sorted_copy_of_list(items):
 
 def flush_imagette(imagette):
 	width, height, images, xs, ys = imagette
-	output = pygame.Surface((width, height))
+	output = pygame.Surface((width, height), pygame.SRCALPHA)
 	for i in range(len(images)):
 		output.blit(images[i], (xs[i], ys[i]))
 	return output
