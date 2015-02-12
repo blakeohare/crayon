@@ -87,15 +87,34 @@ _PR = pygame.Rect
 
 _images_downloaded = {}
 
+def create_assertion(message):
+	raise Exception(message)
+
+def create_sorted_copy_of_list(items):
+	items = items[:]
+	items.sort()
+	return items
+
+def flush_imagette(imagette):
+	width, height, images, xs, ys = imagette
+	output = pygame.Surface((width, height))
+	for i in range(len(images)):
+		output.blit(images[i], (xs[i], ys[i]))
+	return output
+
 def load_local_image_resource(path):
 	path = path.replace('/', os.sep);
-	if not os.path.exists(path): return False
+	if not os.path.exists(path): return None
 	try:
 		img = pygame.image.load(path)
 		_images_downloaded[key] = img
+		return img
 	except:
-		return False
-	return True
+		return None
+
+def load_local_tile_resource(genName):
+	return load_local_image_resource(os.path.join('_generated_files', 'spritesheets', genName + '.png'))
+
 
 def get_image_impl(key):
 	surf = _images_downloaded.get(key, None)

@@ -59,7 +59,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateAssert(List<string> output, Expression message)
 		{
-			throw new NotImplementedException();
+			output.Add("create_assertion(");
+			this.Translator.TranslateExpression(output, message);
+			output.Add(")");
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -323,27 +325,32 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
 		{
-			throw new InvalidOperationException();
+			output.Add("0");
 		}
 
 		protected override void TranslateGlMaxTextureSize(List<string> output)
 		{
-			throw new InvalidOperationException();
+			// no use in creating megasheets.
+			output.Add("1024");
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
-			throw new NotImplementedException();
+			output.Add("flush_imagette(");
+			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(".get_height()");
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(".get_width()");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -611,7 +618,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			output.Add("create_sorted_copy_of_list(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

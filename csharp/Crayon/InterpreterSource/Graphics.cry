@@ -148,7 +148,7 @@ function imageSheetStatusInitialization() {
 		@type('Array<int>') keys = $_dictionary_get_keys($_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
 		@type('Array<string>') tileNamesForGroupId = $_new_array('string', $_array_length(keys));
 		for (@type('int') j = 0; j < $_array_length(keys); j += 1) {
-			@type('string') name = id + "_" + $_array_get(keys, j);
+			@type('string') name = $_string_cast_weak(id) + "_" + $_string_cast_weak($_array_get(keys, j));
 			$_array_set(tileNamesForGroupId, j, name);
 		}
 		$_dictionary_set(
