@@ -148,11 +148,7 @@ def _pygame_end_of_frame():
 	_global_vars['clock'].tick(_global_vars['fps'])
 
 def _pygame_flip_image(img, flipx, flipy):
-	if img[0] != %%%TYPE_NATIVE_OBJECT_IMAGE%%%:
-		return None
-	image = img[1]
-	output = pygame.transform.flip(image, flipx == True, flipy == True)
-	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output)
+	return pygame.transform.flip(img, flipx, flipy)
 
 def _read_resource_text(path):
 	if os.path.exists(path):

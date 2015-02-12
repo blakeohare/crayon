@@ -288,17 +288,6 @@ namespace Crayon.Translator.Python
 			output.Add("))");
 		}
 
-		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
-		{
-			output.Add("_pygame_flip_image(");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipX);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipY);
-			output.Add(")");
-		}
-
 		protected override void TranslateForceParens(List<string> output, Expression expression)
 		{
 			output.Add("(");
@@ -332,6 +321,17 @@ namespace Crayon.Translator.Python
 		{
 			// no use in creating megasheets.
 			output.Add("1024");
+		}
+
+		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("_pygame_flip_image(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)

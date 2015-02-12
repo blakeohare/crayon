@@ -293,17 +293,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateFlipImage(List<string> output, Expression image, Expression flipX, Expression flipY)
-		{
-			output.Add("R.flipImage(");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, flipX);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, flipY);
-			output.Add(")");
-		}
-
 		protected override void TranslateForceParens(List<string> output, Expression expression)
 		{
 			output.Add("(");
@@ -336,6 +325,12 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateGlMaxTextureSize(List<string> output)
 		{
 			throw new InvalidOperationException();
+		}
+
+		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			// Note: this is implemented somewhere in JavaScript from the pre-Graphics.cry era.
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)

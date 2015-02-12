@@ -1,6 +1,7 @@
 ﻿
 function @type('Image') instantiateImage(
-	@type('CompositeImage') resource,
+	@type('CompositeImage') resource, // for GL based platforms only
+	@type('object') nativeBitmap, // for blit based platforms only
 	@type('int') x,
 	@type('int') y,
 	@type('int') width,
@@ -8,11 +9,11 @@ function @type('Image') instantiateImage(
 	@type('bool') flipX,
 	@type('bool') flipY) {
 
-	@type('int') resourceWidth = CompositeImage$resource.width;
-	@type('int') resourceHeight = CompositeImage$resource.height;
-
 	if (%%%IS_OPEN_GL_BASED%%%) {
-		
+
+		@type('int') resourceWidth = CompositeImage$resource.width;
+		@type('int') resourceHeight = CompositeImage$resource.height;
+
 		@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
 		@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
 		@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
@@ -42,15 +43,23 @@ function @type('Image') instantiateImage(
 			textureRight,
 			textureBottom);
 	} else {
-		// TODO: consider using native methods?
 		@type('Imagette') img = createImagetteFromDimensions(width, height);
-
-		if (flipX || flipY) {
-			$_assert("TODO: image flipping");
+		// TODO: consider using native methods?
+		if (nativeBitmap == null) {
+			nativeBitmap = CompositeImage$resource.nativeBitmap;
+			if (flipX || flipY) {
+				$_assert("cannot flip image during image sheet composition phase.");
+			}
+		} else {
+			if (x != 0 || y != 0) {
+				$_assert("this should not happen.");
+			}
+			if (flipX || flipY) {
+				nativeBitmap = $_image_create_flipped_copy_of_native_bitmap(nativeBitmap, flipX, flipY);
+			}
 		}
+		imagetteBlitRaw(img, nativeBitmap, -x, -y);
 
-		
-		imagetteBlitRaw(img, CompositeImage$resource.nativeBitmap, -x, -y);
 		return new Image(
 			null,
 			$_image_imagette_flush_to_native_bitmap(img),
@@ -58,6 +67,7 @@ function @type('Image') instantiateImage(
 			0,
 			width,
 			height,
+			// the following are texture mappings and are ignored in blit based platforms...
 			0,
 			0,
 			1,
@@ -70,19 +80,34 @@ function @type('Image') flipImage(
 	@type('bool') flipX,
 	@type('bool') flipY) {
 	
+	if (!flipX && !flipY) {
+		return image;
+	}
+
 	if (%%%IS_OPEN_GL_BASED%%%) {
-	@type('bool') flippedX = Image$image.textureLeft > Image$image.textureRight;
-	@type('bool') flippedY = Image$image.textureTop > Image$image.textureBottom;
-	return instantiateImage(
-		Image$image.compositeResource,
-		Image$image.x,
-		Image$image.y,
-		Image$image.width,
-		Image$image.height,
-		flipX != flippedX,
-		flipY != flippedY);
+		@type('bool') flippedX = Image$image.textureLeft > Image$image.textureRight;
+		@type('bool') flippedY = Image$image.textureTop > Image$image.textureBottom;
+		return instantiateImage(
+			Image$image.compositeResource,
+			null,
+			Image$image.x,
+			Image$image.y,
+			Image$image.width,
+			Image$image.height,
+			flipX != flippedX,
+			flipY != flippedY);
 	} else {
-		$_assert("TODO: image flipping in blit based platforms");
+		@type('object') nativeBitmap = Image$image.rawResource;
+
+		return instantiateImage(
+			null,
+			nativeBitmap,
+			0,
+			0,
+			Image$image.width,
+			Image$image.height,
+			flipX,
+			flipY);
 	}
 }
 
@@ -115,7 +140,7 @@ function getImageByKey(@type('string') key) {
 			width = $_array_get(location, 3);
 			height = $_array_get(location, 4);
 		}
-		return instantiateImage(bmp, x, y, width, height, false, false);
+		return instantiateImage(bmp, null, x, y, width, height, false, false);
 	}
 	return null;
 }
