@@ -33,6 +33,7 @@ namespace Crayon.Translator
 				case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
+				case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
 				case "_blit_image_partial": VerifyCount(functionCall, 7); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]); break;
@@ -63,10 +64,7 @@ namespace Crayon.Translator
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
 				case "_gl_load_texture": VerifyCount(functionCall, 1); TranslateGlLoadTexture(output, args[0]); break;
 				case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); break;
-				case "_image_error_code": VerifyCount(functionCall, 1); TranslateImageErrorCode(output, args[0]); break;
 				case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
-				case "_image_load_from_user_data": VerifyCount(functionCall, 2); TranslateImageLoadFromUserData(output, args[0], args[1]); break;
-				case "_image_loaded": VerifyCount(functionCall, 1); TranslateImageLoaded(output, args[0]); break;
 				case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
 				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
 				case "_image_sheet_perform_work_nugget_post_frame": VerifyCount(functionCall, 0); TranslateImageSheetPerformWorkNuggetPostFrame(output); break;
@@ -145,6 +143,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateArrayGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
+		protected abstract void TranslateAssert(List<string> output, Expression message);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
 		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height);
@@ -176,10 +175,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
 		protected abstract void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource);
 		protected abstract void TranslateGlMaxTextureSize(List<string> output);
-		protected abstract void TranslateImageErrorCode(List<string> output, Expression imageKey);
 		protected abstract void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette);
-		protected abstract void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path);
-		protected abstract void TranslateImageLoaded(List<string> output, Expression key);
 		protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
 		protected abstract void TranslateImageSheetPerformWorkNuggetPostFrame(List<string> output);

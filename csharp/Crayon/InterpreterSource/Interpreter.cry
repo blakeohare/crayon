@@ -1051,7 +1051,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$image_error_code requires a string argument.");
 						}
 						string1 = $_cast('string', Value$arg1.internalValue);
-						int1 = $_image_error_code(string1);
+						int1 = getImageErrorCode(string1);
 						output = buildInteger(int1);
 						break;
 
@@ -1116,14 +1116,14 @@ function @omitReturn @type('string') interpret(
 						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
 							return killExecution(stack, "$image_load_from_user_data requires two string arguments.");
 						}
-						$_image_load_from_user_data($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
+						loadImageFromUserData($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
 						break;
 
 					case %%%FF_IMAGE_LOADED%%%:
 						$_comment('$image_loaded');
 						// $image_loaded(image_key)
 						arg1 = $_stack_pop(valueStack);
-						int1 = $_image_loaded($_cast('string', Value$arg1.internalValue));
+						int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
 						if (int1 == 0) {
 							output = VALUE_NULL;
 						} else if (int1 == 1) {

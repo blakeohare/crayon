@@ -86,7 +86,6 @@ namespace Crayon.Translator.CSharp
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
-				{ "ImageUtil.txt", "ImageUtil.cs" },
 			};
 
 			// Create a list of compiled C# files

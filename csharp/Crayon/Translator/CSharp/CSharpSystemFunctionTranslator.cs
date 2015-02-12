@@ -66,6 +66,13 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, value);
 		}
 
+		protected override void TranslateAssert(List<string> output, Expression message)
+		{
+			output.Add("TranslationHelper.Assertion(");
+			this.Translator.TranslateExpression(output, message);
+			output.Add(")");
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			// Nope
@@ -186,7 +193,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			output.Add("ImageUtil.DownloadImageFromInternetTubes(");
+			output.Add("TranslationHelper.DownloadImageFromInternetTubes(");
 			this.Translator.TranslateExpression(output, key);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, path);
@@ -245,33 +252,10 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
-		{
-			output.Add("ImageUtil.GetImageErrorCode(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
 			output.Add("TranslationHelper.ImagetteFlushToNativeBitmap(");
 			this.Translator.TranslateExpression(output, imagette);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
-		{
-			output.Add("ImageUtil.LoadImageFromUserData(");
-			this.Translator.TranslateExpression(output, imageKey);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageLoaded(List<string> output, Expression key)
-		{
-			output.Add("ImageUtil.IsImageLoaded(");
-			this.Translator.TranslateExpression(output, key);
 			output.Add(")");
 		}
 

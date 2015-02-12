@@ -103,5 +103,35 @@ namespace %%%PROJECT_ID%%%
 			g.Flush();
 			return target;
 		}
+
+		public static void DownloadImageFromInternetTubes(string key, string url)
+		{
+			System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();
+			bgWorker.DoWork += (sender, args) =>
+			{
+				System.Net.WebClient wc = new System.Net.WebClient();
+				try
+				{
+					byte[] imageBytes = wc.DownloadData(url);
+					System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(new System.IO.MemoryStream(imageBytes));
+					bmp.SetResolution(96, 96);
+					args.Result = bmp;
+				}
+				catch (Exception)
+				{
+					args.Result = null;
+				}
+			};
+			bgWorker.RunWorkerCompleted += (sender, args) =>
+			{
+				CrayonWrapper.v_imageDownloadCompletionHandler(key, args.Result);
+			};
+			bgWorker.RunWorkerAsync();
+		}
+
+		public static void Assertion(string message)
+		{
+			throw new Exception(message);
+		}
 	}
 }

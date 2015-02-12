@@ -56,6 +56,11 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, value);
 		}
 
+		protected override void TranslateAssert(List<string> output, Expression message)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			// Nope
@@ -356,24 +361,9 @@ namespace Crayon.Translator.Java
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateImageErrorCode(List<string> output, Expression imageKey)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
 			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageLoadFromUserData(List<string> output, Expression imageKey, Expression path)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageLoaded(List<string> output, Expression key)
-		{
-			throw new Exception("This should have been optimized out.");
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)

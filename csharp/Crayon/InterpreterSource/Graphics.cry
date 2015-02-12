@@ -649,7 +649,7 @@ function imageSheetPerformWorkNuggetPostFrame() {
 				activeDownloads += 1;
 			} else if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_LOADED) {
 				// TODO: remove this once this has been thoroughly debugged
-				// TODO: throw an assertion here.
+				$_assert("should not encounter a loaded image here.");
 			}
 		}
 	}
@@ -675,27 +675,31 @@ function @type('bool') loadImageFromLocalResources(@type('string') key, @type('s
 	return true;
 }
 
-/*
+// TODO: retry counter support
+function imageDownloadCompletionHandler(@type('string') key, bitmap) {
 
-		// will act like the image isn't there if a sprite sheet isn't loaded
-		public static bool LoadImageFromEmbeddedResource(string key, string path)
-		{
-			if (imageUtil.fileToVirtualizationGrid.ContainsKey(path))
-			{
-				ImageSheetVirtualizationGrid grid = imageUtil.fileToVirtualizationGrid[path];
-				int[] location = grid.imageLocations[path];
-				imageUtil.resourceImagesByKeys[key] = grid.sheets[location[0]];
-				imageUtil.texturePartitioningInformation[key] = location;
-				return true;
-			}
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	
+	@type('int') status = 1;
+	if (bitmap == null) {
+		// TODO: more in-depth error codes than "2"
+		status = 2;
+	}
+	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesByKey, key, bitmap);
+	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesErrorCodes, key, status);
+}
 
-			object bmp = ResourceReader.ReadImageFile(path, false);
-			if (bmp == null)
-			{
-				return false;
-			}
-			imageUtil.resourceImagesByKeys[key] = CrayonWrapper.v_createCompositeImage(bmp);
-			return true;
-		}
+function @type('int') getImageErrorCode(@type('string') key) {
+	$_assert("Not implemented.");
+	return 0;
+}
 
-*/
+function loadImageFromUserData(@type('string') key, @type('string') path) {
+	$_assert("Not implemented.");
+}
+
+function @type('int') isImageLoaded(@type('string') key) {
+	// JavaScript is using R.is_image_loaded(key)
+	$_assert("Not implemented.");
+	return 0;
+}
