@@ -704,8 +704,17 @@ function imageSheetPerformWorkNuggetPostFrame() {
 	}
 }
 
+/*
+	Things TODO:
+	- create manifest
+	- manifest must be a lookup of structs with information including whether or not the resource is included in a sprite sheet
+	- change this method to return a status code rather than a boolean so that it can throw specific error messages
+	-   such as attempting to initiate a load of an image that exists in an image sheet that hasn't been initialized yet.
+*/
+
 function @type('bool') loadImageFromLocalResources(@type('string') key, @type('string') path) {
 
+	// If the image sheet is loaded, then you're good too go
 	@type('ImageSheetStatus') iss = getImageSheetStatus();
 	if ($_dictionary_contains(ImageSheetStatus$iss.fileToVirtualizationGrid, path)) {
 		@type('ImageSheetVirtualizationGrid') grid = $_dictionary_get_guaranteed(ImageSheetStatus$iss.fileToVirtualizationGrid, path);
@@ -715,13 +724,19 @@ function @type('bool') loadImageFromLocalResources(@type('string') key, @type('s
 		return true;
 	}
 
-	@type('object') bmp = $_read_local_image_resource(path);
-	if (bmp == null) {
-		return false;
+	// if images load instantly then load it and set the key
+	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
+		@type('object') bmp = $_read_local_image_resource(path);
+		if (bmp != null) {
+			$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, createCompositeImage(bmp));
+			return true;
+		}
+	} else {
+		
+		$_load_resource_image_from_web_with_key(key, path);
+		return true;
 	}
-
-	$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, createCompositeImage(bmp));
-	return true;
+	return false;
 }
 
 // TODO: retry counter support

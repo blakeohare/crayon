@@ -58,7 +58,8 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateAssert(List<string> output, Expression message)
 		{
-			throw new NotImplementedException();
+			output.Add("throw ");
+			this.Translator.TranslateExpression(output, message);
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -319,33 +320,43 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
 		{
-			throw new InvalidOperationException();
+			output.Add("0");
 		}
 
 		protected override void TranslateGlMaxTextureSize(List<string> output)
 		{
-			throw new InvalidOperationException();
+			output.Add("1024");
 		}
 
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
-			// Note: this is implemented somewhere in JavaScript from the pre-Graphics.cry era.
-			throw new NotImplementedException();
+			output.Add("R.flipImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
-			throw new NotImplementedException();
+			output.Add("R.flushImagette(");
+			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
 		}
 
+		// These width and height functions operate on canvas instances.
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(".width");
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(".height");	
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -611,7 +622,9 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			output.Add("R.sortedCopyOfArray(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
