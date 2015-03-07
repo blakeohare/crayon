@@ -177,11 +177,11 @@ namespace Crayon
 			if (tokens.IsNext("++") || tokens.IsNext("--"))
 			{
 				Token incrementToken = tokens.Pop();
-				root = ParseParenthesis(tokens);
+				root = ParseEntity(tokens);
 				return new Increment(incrementToken, incrementToken, incrementToken.Value == "++", true, root);
 			}
 
-			root = ParseParenthesis(tokens);
+			root = ParseEntity(tokens);
 			if (tokens.IsNext("++") || tokens.IsNext("--"))
 			{
 				Token incrementToken = tokens.Pop();
@@ -189,17 +189,6 @@ namespace Crayon
 			}
 
 			return root;
-		}
-
-		private static Expression ParseParenthesis(TokenStream tokens)
-		{
-			if (tokens.PopIfPresent("("))
-			{
-				Expression output = Parse(tokens);
-				tokens.PopExpected(")");
-				return output;
-			}
-			return ParseEntity(tokens);
 		}
 
 		private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
@@ -222,6 +211,58 @@ namespace Crayon
 			}
 
 			return new Instantiate(newToken, classNameToken, args);
+		}
+
+		private static Expression ParseEntity(TokenStream tokens)
+		{
+			Expression root;
+			if (tokens.PopIfPresent("("))
+			{
+				root = Parse(tokens);
+				tokens.PopExpected(")");
+			}
+			else
+			{
+				root = ParseEntityWithoutSuffixChain(tokens);
+			}
+			bool anySuffixes = true;
+			while (anySuffixes)
+			{
+				if (tokens.IsNext("."))
+				{
+					Token dotToken = tokens.Pop();
+					Token stepToken = tokens.Pop();
+					Parser.VerifyIdentifier(stepToken);
+					root = new DotStep(root, dotToken, stepToken);
+				}
+				else if (tokens.IsNext("["))
+				{
+					Token openBracket = tokens.Pop();
+					Expression index = Parse(tokens);
+					tokens.PopExpected("]");
+					root = new BracketIndex(root, openBracket, index);
+				}
+				else if (tokens.IsNext("("))
+				{
+					Token openParen = tokens.Pop();
+					List<Expression> args = new List<Expression>();
+					while (!tokens.PopIfPresent(")"))
+					{
+						if (args.Count > 0)
+						{
+							tokens.PopExpected(",");
+						}
+
+						args.Add(Parse(tokens));
+					}
+					root = new FunctionCall(root, openParen, args);
+				}
+				else
+				{
+					anySuffixes = false;
+				}
+			}
+			return root;
 		}
 
 		private static Expression ParseEntityWithoutSuffixChain(TokenStream tokens)
@@ -331,50 +372,6 @@ namespace Crayon
 			}
 
 			throw new ParserException(tokens.Peek(), "Encountered unexpected token: '" + tokens.PeekValue() + "'");
-		}
-
-		private static Expression ParseEntity(TokenStream tokens)
-		{
-			Expression root = ParseEntityWithoutSuffixChain(tokens);
-
-			bool anySuffixes = true;
-			while (anySuffixes)
-			{
-				if (tokens.IsNext("."))
-				{
-					Token dotToken = tokens.Pop();
-					Token stepToken = tokens.Pop();
-					Parser.VerifyIdentifier(stepToken);
-					root = new DotStep(root, dotToken, stepToken);
-				}
-				else if (tokens.IsNext("["))
-				{
-					Token openBracket = tokens.Pop();
-					Expression index = Parse(tokens);
-					tokens.PopExpected("]");
-					root = new BracketIndex(root, openBracket, index);
-				}
-				else if (tokens.IsNext("("))
-				{
-					Token openParen = tokens.Pop();
-					List<Expression> args = new List<Expression>();
-					while (!tokens.PopIfPresent(")"))
-					{
-						if (args.Count > 0)
-						{
-							tokens.PopExpected(",");
-						}
-
-						args.Add(Parse(tokens));
-					}
-					root = new FunctionCall(root, openParen, args);
-				}
-				else
-				{
-					anySuffixes = false;
-				}
-			}
-			return root;
 		}
 	}
 }
