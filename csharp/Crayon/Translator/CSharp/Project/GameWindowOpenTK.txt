@@ -521,6 +521,12 @@ namespace %%%PROJECT_ID%%%
 				imageListRealLength = imageList.Length;
 			}
 
+			if (!image.compositeResource.loaded)
+			{
+				image.compositeResource.glTextureId = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)image.compositeResource.nativeBitmap);
+				image.compositeResource.loaded = true;
+			}
+
 			drawList[drawListVirtualLength] = DRAW_COMMAND_BLIT;
 			drawList[drawListVirtualLength | 1] = x;
 			drawList[drawListVirtualLength | 2] = y;

@@ -13,11 +13,26 @@ function @type('Image') instantiateImage(
 
 		@type('int') resourceWidth = CompositeImage$resource.width;
 		@type('int') resourceHeight = CompositeImage$resource.height;
-
+		
 		@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
 		@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
 		@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
 		@type('float') textureBottom = $_cast('float', $_unsafe_float_division(1.0 * (y + height), resourceHeight));
+
+		// not an image sheet?
+		if (resourceWidth == width && resourceHeight == height) {
+			// check to see if the width and height are powers of 2
+			if (((width - 1) & width) != 0 || ((height - 1) & height) != 0) {
+				// if they aren't then we need to make sure the texture right and bottom are scaled correctly such that it will reflect
+				// the true bitmap bounds when it is normalized.
+				@type('int') normalizedWidth = nextPowerOf2(width);
+				@type('int') normalizedHeight = nextPowerOf2(height);
+				textureLeft = 0;
+				textureRight = $_cast('float', $_unsafe_float_division(1.0 * width, normalizedWidth));
+				textureTop = 0;
+				textureBottom = $_cast('float', $_unsafe_float_division(1.0 * height, normalizedHeight));
+			}
+		}
 
 		if (flipX) {
 			@type('float') t = textureLeft;
@@ -762,8 +777,18 @@ function loadImageFromUserData(@type('string') key, @type('string') path) {
 	$_assert("Not implemented.");
 }
 
+// 0 - loading not initialized, 1 - loaded, 2 - not finished loading
 function @type('int') isImageLoaded(@type('string') key) {
-	// JavaScript is using R.is_image_loaded(key)
-	$_assert("Not implemented.");
-	return 0;
+	@type('int') status = 0; // not loaded yet
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+
+	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
+		if ($_dictionary_contains(ImageSheetStatus$iss.resourceImagesByKeys, key)) {
+			status = 1; // yes, loaded
+		}
+	} else {
+		// JavaScript is using R.is_image_loaded(key)
+		$_assert("Not implemented.");
+	}
+	return status;
 }

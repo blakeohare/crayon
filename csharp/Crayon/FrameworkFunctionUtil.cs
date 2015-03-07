@@ -93,6 +93,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
 					break;
+				case FrameworkFunction.IMAGE_LOADED:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
 				case FrameworkFunction.IMAGE_LOAD_FROM_RESOURCE:
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
