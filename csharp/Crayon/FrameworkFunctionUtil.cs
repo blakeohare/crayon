@@ -40,17 +40,6 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "BOOLEAN STRING");
 					break;
-				case FrameworkFunction.BLIT_IMAGE:
-					VerifyLength(throwToken, frameworkFunction, 3, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
-					break;
-				case FrameworkFunction.BLIT_IMAGE_PARTIAL:
-					VerifyLength(throwToken, frameworkFunction, 7, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.CLOCK_TICK:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
 				case FrameworkFunction.COS:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
@@ -58,82 +47,97 @@ namespace Crayon
 				case FrameworkFunction.CURRENT_TIME:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.DRAW_ELLIPSE:
-					VerifyLength(throwToken, frameworkFunction, 8, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.DRAW_LINE:
-					VerifyLength(throwToken, frameworkFunction, 9, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.DRAW_RECTANGLE:
-					VerifyLength(throwToken, frameworkFunction, 8, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.FILL_SCREEN:
-					VerifyLength(throwToken, frameworkFunction, 3, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.FLIP_IMAGE:
-					VerifyLength(throwToken, frameworkFunction, 3, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE BOOLEAN BOOLEAN");
-					break;
 				case FrameworkFunction.FLOOR:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
 					break;
-				case FrameworkFunction.GET_EVENTS:
+				case FrameworkFunction.GAME_CLOCK_TICK:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.IMAGE_GET:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
-				case FrameworkFunction.IMAGE_HEIGHT:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
-					break;
-				case FrameworkFunction.IMAGE_LOADED:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
-				case FrameworkFunction.IMAGE_LOAD_FROM_RESOURCE:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
-					break;
-				case FrameworkFunction.IMAGE_WIDTH:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
-					break;
-				case FrameworkFunction.IMAGE_POP_SCALE:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.IMAGE_PUSH_SCALE:
+				case FrameworkFunction.GAME_INITIALIZE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
 					break;
-				case FrameworkFunction.IMAGE_SHEET_LOAD:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.IMAGE_SHEET_LOAD_PROGRESS:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.IMAGE_SHEET_LOADED:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.INITIALIZE_GAME:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
-					break;
-				case FrameworkFunction.INITIALIZE_SCREEN:
+				case FrameworkFunction.GAME_INITIALIZE_SCREEN:
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER");
 					break;
-				case FrameworkFunction.INITIALIZE_SCREEN_SCALED:
+				case FrameworkFunction.GAME_INITIALIZE_SCREEN_SCALED:
 					VerifyLength(throwToken, frameworkFunction, 4, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER");
 					break;
-				case FrameworkFunction.IS_IMAGE_LOADED:
+				case FrameworkFunction.GAME_PUMP_EVENTS:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.GAME_SET_TITLE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.GFX_BLIT_IMAGE:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_BLIT_IMAGE_PARTIAL:
+					VerifyLength(throwToken, frameworkFunction, 7, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_DRAW_ELLIPSE:
+					VerifyLength(throwToken, frameworkFunction, 8, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_DRAW_LINE:
+					VerifyLength(throwToken, frameworkFunction, 9, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_DRAW_RECTANGLE:
+					VerifyLength(throwToken, frameworkFunction, 8, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_FILL_SCREEN:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_FLIP_IMAGE:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE BOOLEAN BOOLEAN");
+					break;
+				case FrameworkFunction.GFX_IMAGE_GET:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.GFX_IMAGE_HEIGHT:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
+					break;
+				case FrameworkFunction.GFX_IMAGE_LOADED:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.GFX_IMAGE_LOAD_FROM_RESOURCE:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
+					break;
+				case FrameworkFunction.GFX_IMAGE_WIDTH:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
+					break;
+				case FrameworkFunction.GFX_IMAGE_POP_SCALE:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.GFX_IMAGE_PUSH_SCALE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
+					break;
+				case FrameworkFunction.GFX_IMAGE_SHEET_LOAD:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.GFX_IMAGE_SHEET_LOAD_PROGRESS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.GFX_IMAGE_SHEET_LOADED:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.GFX_IS_IMAGE_LOADED:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
@@ -154,10 +158,6 @@ namespace Crayon
 					break;
 				case FrameworkFunction.RESOURCE_READ_TEXT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.SET_TITLE:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
 				case FrameworkFunction.SIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

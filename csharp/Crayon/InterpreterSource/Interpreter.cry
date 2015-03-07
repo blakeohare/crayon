@@ -699,7 +699,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$abs requires a number as input.");
 						}
 						break;
-						
+
 					case %%%FF_ARCCOS%%%:
 						$_comment('$arccos');
 						// $arccos(theta)
@@ -801,8 +801,148 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_BLIT_IMAGE%%%:
-						$_comment('$blit_image');
+					case %%%FF_COS%%%:
+						$_comment('$cos');
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', Value$arg1.internalValue);
+							output = new Value(Types.FLOAT, $_cos(float1));
+						} else if (Value$arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', Value$arg1.internalValue);
+							output = new Value(Types.FLOAT, $_cos(int1));
+						} else {
+							return killExecution(stack, "$cos requires a number argument.");
+						}
+						break;
+
+					case %%%FF_CURRENT_TIME%%%:
+						output = new Value(Types.FLOAT, $_current_time_seconds());
+						break;
+
+					case %%%FF_FLOOR%%%:
+						$_comment('$floor');
+						// $floor(number)
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', Value$arg1.internalValue);
+							if (%%%INT_IS_FLOOR%%%) {
+								output = build_integer($_int(float1));
+							} else {
+								if (float1 < 0 && float1 % 1 != 0) {
+									output = build_integer($_int(float1) - 1);
+								} else {
+									output = build_integer($_int(float1));
+								}
+							}
+						} else if (Value$arg1.type == Types.INTEGER) {
+							output = arg1;
+						} else {
+							return killExecution(stack, "$floor expects a numeric argument.");
+						}
+						break;
+
+					case %%%FF_GAME_CLOCK_TICK%%%:
+						$_comment('$game_clock_tick');
+
+						if (ProgramData$p.initializationComplete) {
+							performWorkNuggetPostFrame();
+						}
+
+						yieldControl(stack);
+						return null;
+						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
+						break;
+
+					case %%%FF_GAME_INITIALIZE%%%:
+						$_comment('$game_initialize_game');
+						// $initialize_game(fps)
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type == Types.INTEGER) {
+							float1 = $_cast('int', Value$arg1.internalValue);
+						} else if (Value$arg1.type == Types.FLOAT) {
+							float1 = $_cast('double', Value$arg1.internalValue);
+						} else {
+							return killExecution(stack, "$initialize_game(fps) requiress a numeric argument.");
+						}
+
+						if (float1 <= 0) {
+							return killExecution(stack, "fps must be a positive number.");
+						}
+						$_initialize_game_with_fps(float1);
+						break;
+
+					case %%%FF_GAME_INITIALIZE_SCREEN%%%:
+						$_comment('$game_initialize_screen');
+						// $initialize_screen(width, height)
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER) {
+							return killExecution(stack, "$initialize_screen requires two integer arguments.");
+						}
+
+						int1 = $_cast('int', Value$arg1.internalValue);
+						int2 = $_cast('int', Value$arg2.internalValue);
+						if (int1 < 1 || int2 < 1) {
+							return killExecution(stack, "Screen dimensions must be positive.");
+						}
+
+						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+							yieldControl(stack);
+							$_initialize_screen(int1, int2, null, null);
+							return '';
+						} else {
+							$_initialize_screen(int1, int2, null, null);
+						}
+						break;
+
+					case %%%FF_GAME_INITIALIZE_SCREEN_SCALED%%%:
+						$_comment('$game_initialize_screen_scaled');
+						// $initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
+						arg4 = $_stack_pop(valueStack);
+						arg3 = $_stack_pop(valueStack);
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg2.type != Types.INTEGER) {
+							return killExecution(stack, "$initialize_screen_scaled requires four integer arguments.");
+						}
+
+						int1 = $_cast('int', Value$arg1.internalValue);
+						int2 = $_cast('int', Value$arg2.internalValue);
+						int3 = $_cast('int', Value$arg3.internalValue);
+						int4 = $_cast('int', Value$arg4.internalValue);
+
+						if (int1 < 1 || int2 < 1 || int3 < 1 || int4 < 1) {
+							return killExecution(stack, "Screen dimensions must be positive.");
+						}
+
+						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+							yieldControl(stack);
+							$_initialize_screen(int1, int2, int3, int4);
+							return '';
+						} else {
+							$_initialize_screen(int1, int2, int3, int4);
+						}
+						break;
+
+					case %%%FF_GAME_PUMP_EVENTS%%%:
+						$_comment('$game_pump_events');
+						list1 = $_get_events_raw_list();
+						output = new Value(Types.LIST, list1);
+						break;
+
+					case %%%FF_GAME_SET_TITLE%%%:
+						$_comment('$game_set_title');
+						arg1 = $_stack_pop(valueStack);
+						string1 = valueToString(arg1);
+						$_set_title(string1);
+						break;
+
+					case %%%FF_GFX_BLIT_IMAGE%%%:
+						$_comment('$gfx_blit_image');
 						// $blit_image(image, x, y)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -813,8 +953,8 @@ function @omitReturn @type('string') interpret(
 						$_blit_image(Value$arg1.internalValue, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
 
-					case %%%FF_BLIT_IMAGE_PARTIAL%%%:
-						$_comment('$blit_image_partial');
+					case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%:
+						$_comment('$gfx_blit_image_partial');
 						// $blit_image(image, targetX, targetY, sourceX, sourceY, width, height)
 						arg7 = $_stack_pop(valueStack);
 						arg6 = $_stack_pop(valueStack);
@@ -845,38 +985,8 @@ function @omitReturn @type('string') interpret(
 							$_cast('int', Value$arg7.internalValue));
 						break;
 
-					case %%%FF_CLOCK_TICK%%%:
-						$_comment('$clock_tick');
-
-						if (ProgramData$p.initializationComplete) {
-							performWorkNuggetPostFrame();
-						}
-
-						yieldControl(stack);
-						return null;
-						// this extra break is not a mistake. Python translation will get confused without the break here. Ultimately I plan to make this smart enough that it'll figure it out, but it's not a high priority.
-						break;
-
-					case %%%FF_COS%%%:
-						$_comment('$cos');
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type == Types.FLOAT) {
-							float1 = $_cast('double', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_cos(float1));
-						} else if (Value$arg1.type == Types.INTEGER) {
-							int1 = $_cast('int', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_cos(int1));
-						} else {
-							return killExecution(stack, "$cos requires a number argument.");
-						}
-						break;
-
-					case %%%FF_CURRENT_TIME%%%:
-						output = new Value(Types.FLOAT, $_current_time_seconds());
-						break;
-
-					case %%%FF_DRAW_ELLIPSE%%%:
-						$_comment('$draw_ellipse');
+					case %%%FF_GFX_DRAW_ELLIPSE%%%:
+						$_comment('$gfx_draw_ellipse');
 						// $draw_ellipse(left, top, width, height, red, green, blue, alpha)
 						arg8 = $_stack_pop(valueStack);
 						arg7 = $_stack_pop(valueStack);
@@ -907,8 +1017,8 @@ function @omitReturn @type('string') interpret(
 							$_cast('int', Value$arg8.internalValue));
 						break;
 
-					case %%%FF_DRAW_LINE%%%:
-						$_comment('$draw_line');
+					case %%%FF_GFX_DRAW_LINE%%%:
+						$_comment('$gfx_draw_line');
 						// $draw_line(Ax, Ay, Bx, By, lineWidth, red, green, blue, alpha)
 						arg9 = $_stack_pop(valueStack);
 						arg8 = $_stack_pop(valueStack);
@@ -944,8 +1054,8 @@ function @omitReturn @type('string') interpret(
 							$_cast('int', Value$arg9.internalValue));
 						break;
 
-					case %%%FF_DRAW_RECTANGLE%%%:
-						$_comment('$draw_rectangle');
+					case %%%FF_GFX_DRAW_RECTANGLE%%%:
+						$_comment('$gfx_draw_rectangle');
 						// $draw_rectangle(x, y, width, height, red, green, blue, alpha)
 						arg8 = $_stack_pop(valueStack);
 						arg7 = $_stack_pop(valueStack);
@@ -976,8 +1086,8 @@ function @omitReturn @type('string') interpret(
 							$_cast('int', Value$arg8.internalValue));
 						break;
 
-					case %%%FF_FILL_SCREEN%%%:
-						$_comment('$fill_screen');
+					case %%%FF_GFX_FILL_SCREEN%%%:
+						$_comment('$gfx_fill_screen');
 						// $fill_screen(red, green, blue)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -989,9 +1099,9 @@ function @omitReturn @type('string') interpret(
 						}
 						$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
-						
-					case %%%FF_FLIP_IMAGE%%%:
-						$_comment('$flip_image');
+
+					case %%%FF_GFX_FLIP_IMAGE%%%:
+						$_comment('$gfx_flip_image');
 						// $flip_image(image, shouldFlipX, shouldFlipY)
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
@@ -1008,36 +1118,8 @@ function @omitReturn @type('string') interpret(
 							$_cast('bool', Value$arg3.internalValue)));
 						break;
 
-					case %%%FF_FLOOR%%%:
-						$_comment('$floor');
-						// $floor(number)
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type == Types.FLOAT) {
-							float1 = $_cast('double', Value$arg1.internalValue);
-							if (%%%INT_IS_FLOOR%%%) {
-								output = build_integer($_int(float1));
-							} else {
-								if (float1 < 0 && float1 % 1 != 0) {
-									output = build_integer($_int(float1) - 1);
-								} else {
-									output = build_integer($_int(float1));
-								}
-							}
-						} else if (Value$arg1.type == Types.INTEGER) {
-							output = arg1;
-						} else {
-							return killExecution(stack, "$floor expects a numeric argument.");
-						}
-						break;
-
-					case %%%FF_GET_EVENTS%%%:
-						$_comment('$get_events');
-						list1 = $_get_events_raw_list();
-						output = new Value(Types.LIST, list1);
-						break;
-
-					case %%%FF_IMAGE_ERROR_CODE%%%:
-						$_comment('$image_error_code');
+					case %%%FF_GFX_IMAGE_ERROR_CODE%%%:
+						$_comment('$gfx_image_error_code');
 						// $image_error_code(image_key)
 						// Error codes:
 						// 0 - none (success or pending)
@@ -1056,8 +1138,8 @@ function @omitReturn @type('string') interpret(
 						output = buildInteger(int1);
 						break;
 
-					case %%%FF_IMAGE_GET%%%:
-						$_comment('$image_get');
+					case %%%FF_GFX_IMAGE_GET%%%:
+						$_comment('$gfx_image_get');
 						// $image_get(image_key)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.STRING) {
@@ -1071,8 +1153,8 @@ function @omitReturn @type('string') interpret(
 						output = new Value(Types.NATIVE_OBJECT, object1);
 						break;
 
-					case %%%FF_IMAGE_HEIGHT%%%:
-						$_comment('$image_height');
+					case %%%FF_GFX_IMAGE_HEIGHT%%%:
+						$_comment('$gfx_image_height');
 						// $image_height(image)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.NATIVE_OBJECT) {
@@ -1082,8 +1164,8 @@ function @omitReturn @type('string') interpret(
 						output = build_integer(Image$image1.height);
 						break;
 
-					case %%%FF_IMAGE_LOAD_FROM_RESOURCE%%%:
-						$_comment('$image_load_from_resource');
+					case %%%FF_GFX_IMAGE_LOAD_FROM_RESOURCE%%%:
+						$_comment('$gfx_image_load_from_resource');
 						// $image_load_from_resource(key, path)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
@@ -1097,8 +1179,8 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_IMAGE_LOAD_FROM_WEB%%%:
-						$_comment('$image_load_from_web');
+					case %%%FF_GFX_IMAGE_LOAD_FROM_WEB%%%:
+						$_comment('$gfx_image_load_from_web');
 						// $image_load_from_web(key, url)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
@@ -1109,8 +1191,8 @@ function @omitReturn @type('string') interpret(
 						$_download_image($_cast('string', Value$arg1.internalValue), string1);
 						break;
 
-					case %%%FF_IMAGE_LOAD_FROM_USER_DATA%%%:
-						$_comment('$image_load_from_user_data');
+					case %%%FF_GFX_IMAGE_LOAD_FROM_USER_DATA%%%:
+						$_comment('$gfx_image_load_from_user_data');
 						// $image_load_from_user_data(key, path)
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
@@ -1120,8 +1202,8 @@ function @omitReturn @type('string') interpret(
 						loadImageFromUserData($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
 						break;
 
-					case %%%FF_IMAGE_LOADED%%%:
-						$_comment('$image_loaded');
+					case %%%FF_GFX_IMAGE_LOADED%%%:
+						$_comment('$gfx_image_loaded');
 						// $image_loaded(image_key)
 						arg1 = $_stack_pop(valueStack);
 						int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
@@ -1134,8 +1216,8 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_IMAGE_POP_SCALE%%%:
-						$_comment('$image_pop_scale');
+					case %%%FF_GFX_IMAGE_POP_SCALE%%%:
+						$_comment('$gfx_image_pop_scale');
 						// $image_pop_scale()
 						intList1 = ProgramData$p.imageScaleStack;
 						int1 = $_list_length(intList1);
@@ -1153,8 +1235,8 @@ function @omitReturn @type('string') interpret(
 						ProgramData$p.imageScaleStackTop = int3;
 						break;
 
-					case %%%FF_IMAGE_PUSH_SCALE%%%:
-						$_comment('$image_push_scale');
+					case %%%FF_GFX_IMAGE_PUSH_SCALE%%%:
+						$_comment('$gfx_image_push_scale');
 						// $image_push_scale(scale)
 						intList1 = ProgramData$p.imageScaleStack;
 						arg1 = $_stack_pop(valueStack);
@@ -1169,8 +1251,8 @@ function @omitReturn @type('string') interpret(
 						ProgramData$p.imageScaleStackTop = int1;
 						break;
 
-					case %%%FF_IMAGE_SHEET_ERROR_CODE%%%:
-						$_comment('$image_sheet_error_code');
+					case %%%FF_GFX_IMAGE_SHEET_ERROR_CODE%%%:
+						$_comment('$gfx_image_sheet_error_code');
 						// $image_sheet_error_code(idOrIds)
 						// Error codes: same as $image_error_code
 						arg1 = $_stack_pop(valueStack);
@@ -1192,8 +1274,8 @@ function @omitReturn @type('string') interpret(
 						output = buildInteger(int1);
 						break;
 
-					case %%%FF_IMAGE_SHEET_LOAD%%%:
-						$_comment('$image_sheet_load');
+					case %%%FF_GFX_IMAGE_SHEET_LOAD%%%:
+						$_comment('$gfx_image_sheet_load');
 						// $image_sheet_load(idOrIds)
 						arg1 = $_stack_pop(valueStack);
 						stringList = toStringList(arg1, stringList);
@@ -1210,8 +1292,8 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_IMAGE_SHEET_LOAD_PROGRESS%%%:
-						$_comment('$image_sheet_load_progress');
+					case %%%FF_GFX_IMAGE_SHEET_LOAD_PROGRESS%%%:
+						$_comment('$gfx_image_sheet_load_progress');
 						// $image_sheet_load_progres(idOrIds)
 						arg1 = $_stack_pop(valueStack);
 						stringList = toStringList(arg1, stringList);
@@ -1244,8 +1326,8 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
-					case %%%FF_IMAGE_SHEET_LOADED%%%:
-						$_comment('$image_sheet_loaded');
+					case %%%FF_GFX_IMAGE_SHEET_LOADED%%%:
+						$_comment('$gfx_image_sheet_loaded');
 						// $image_sheet_loaded(idOrIds)
 						arg1 = $_stack_pop(valueStack);
 						bool1 = false; // type error encountered
@@ -1277,11 +1359,10 @@ function @omitReturn @type('string') interpret(
 						} else { // int1 == 2 || int1 == 3
 							output = VALUE_FALSE;
 						}
-
 						break;
 
-					case %%%FF_IMAGE_WIDTH%%%:
-						$_comment('$image_width');
+					case %%%FF_GFX_IMAGE_WIDTH%%%:
+						$_comment('$gfx_image_width');
 						// $image_width(image)
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type != Types.NATIVE_OBJECT) {
@@ -1291,81 +1372,6 @@ function @omitReturn @type('string') interpret(
 						output = build_integer(Image$image1.width);
 						break;
 
-					case %%%FF_INITIALIZE_GAME%%%:
-						$_comment('$initialize_game');
-						// $initialize_game(fps)
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type == Types.INTEGER) {
-							float1 = $_cast('int', Value$arg1.internalValue);
-						} else if (Value$arg1.type == Types.FLOAT) {
-							float1 = $_cast('double', Value$arg1.internalValue);
-						} else {
-							return killExecution(stack, "$initialize_game(fps) requiress a numeric argument.");
-						}
-
-						if (float1 <= 0) {
-							return killExecution(stack, "fps must be a positive number.");
-						}
-						$_initialize_game_with_fps(float1);
-						break;
-
-					case %%%FF_INITIALIZE_SCREEN%%%:
-						$_comment('$initialize_screen');
-						// $initialize_screen(width, height)
-						arg2 = $_stack_pop(valueStack);
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.INTEGER ||
-							Value$arg2.type != Types.INTEGER) {
-							return killExecution(stack, "$initialize_screen requires two integer arguments.");
-						}
-
-						int1 = $_cast('int', Value$arg1.internalValue);
-						int2 = $_cast('int', Value$arg2.internalValue);
-						if (int1 < 1 || int2 < 1) {
-							return killExecution(stack, "Screen dimensions must be positive.");
-						}
-
-						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
-							yieldControl(stack);
-							$_initialize_screen(int1, int2, null, null);
-							return '';
-						} else {
-							$_initialize_screen(int1, int2, null, null);
-						}
-						break;
-						
-					case %%%FF_INITIALIZE_SCREEN_SCALED%%%:
-						$_comment('$initialize_screen_scaled');
-						// $initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
-						arg4 = $_stack_pop(valueStack);
-						arg3 = $_stack_pop(valueStack);
-						arg2 = $_stack_pop(valueStack);
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.INTEGER ||
-							Value$arg2.type != Types.INTEGER ||
-							Value$arg2.type != Types.INTEGER ||
-							Value$arg2.type != Types.INTEGER) {
-							return killExecution(stack, "$initialize_screen_scaled requires four integer arguments.");
-						}
-
-						int1 = $_cast('int', Value$arg1.internalValue);
-						int2 = $_cast('int', Value$arg2.internalValue);
-						int3 = $_cast('int', Value$arg3.internalValue);
-						int4 = $_cast('int', Value$arg4.internalValue);
-
-						if (int1 < 1 || int2 < 1 || int3 < 1 || int4 < 1) {
-							return killExecution(stack, "Screen dimensions must be positive.");
-						}
-
-						if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
-							yieldControl(stack);
-							$_initialize_screen(int1, int2, int3, int4);
-							return '';
-						} else {
-							$_initialize_screen(int1, int2, int3, int4);
-						}
-						break;
-						
 					case %%%FF_PARSE_INT%%%:
 						$_comment('$parse_int');
 						arg1 = $_stack_pop(valueStack);
@@ -1420,13 +1426,6 @@ function @omitReturn @type('string') interpret(
 						output = new Value(Types.STRING, string2);
 						break;
 
-					case %%%FF_SET_TITLE%%%:
-						$_comment('$set_title');
-						arg1 = $_stack_pop(valueStack);
-						string1 = valueToString(arg1);
-						$_set_title(string1);
-						break;
-						
 					case %%%FF_SIN%%%:
 						$_comment('$sin');
 						arg1 = $_stack_pop(valueStack);
