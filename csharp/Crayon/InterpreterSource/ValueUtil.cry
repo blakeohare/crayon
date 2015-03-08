@@ -343,3 +343,13 @@ function @type('Value') buildCommonString(@type('string') s) {
 	}
 	return $_dictionary_get_guaranteed(COMMON_STRINGS, s);
 }
+
+function @type('Image') extractImageFromValue(@type('Value') value) {
+	if (Value$value.type == Types.NATIVE_OBJECT) {
+		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', Value$value.internalValue);
+		if (NativeObjectWrapper$nativeObject.subType == NativeObjectSubType.IMAGE) {
+			return $_cast('Image', NativeObjectWrapper$nativeObject.value);
+		}
+	}
+	return null;
+}

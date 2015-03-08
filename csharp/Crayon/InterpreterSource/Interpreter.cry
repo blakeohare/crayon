@@ -949,10 +949,14 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
+						image1 = extractImageFromValue(arg1);
+						if (image1 == null) {
+							return killExecution(stack, "$blit_image must consume an image as its first argument.");
+						}
 						if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 							return killExecution(stack, "$blit_image coordinates must be integers.");
 						}
-						$_blit_image(Value$arg1.internalValue, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+						$_blit_image(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
 
 					case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%:
@@ -965,11 +969,10 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.NATIVE_OBJECT) {
-							return killExecution(stack, "$blit_image_partial requires an image object as the first parameter.");
-						}
+						image1 = extractImageFromValue(arg1);
 
-						if (Value$arg2.type != Types.INTEGER ||
+						if (image1 == null ||
+							Value$arg2.type != Types.INTEGER ||
 							Value$arg3.type != Types.INTEGER ||
 							Value$arg4.type != Types.INTEGER ||
 							Value$arg5.type != Types.INTEGER ||
@@ -978,7 +981,7 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$blit_image_partial requires an image object and 6 integer arguments.");
 						}
 						$_blit_image_partial(
-							Value$arg1.internalValue,
+							image1,
 							$_cast('int', Value$arg2.internalValue),
 							$_cast('int', Value$arg3.internalValue),
 							$_cast('int', Value$arg4.internalValue),
@@ -1108,16 +1111,17 @@ function @omitReturn @type('string') interpret(
 						arg3 = $_stack_pop(valueStack);
 						arg2 = $_stack_pop(valueStack);
 						arg1 = $_stack_pop(valueStack);
-
-						// TODO: also check to see arg1 is an image
+						image1 = extractImageFromValue(arg1);
+						if (image1 == null) {
+							return killExecution(stack, "$flip_image requires an image as its first argument.");
+						}
 						if (Value$arg2.type != Types.BOOLEAN || Value$arg3.type != Types.BOOLEAN) {
 							return killExecution(stack, "$flip_image requires an image and two booleans.");
 						}
-						image1 = $_cast('Image', Value$arg1.internalValue);
-						output = new Value(Types.NATIVE_OBJECT, flipImage(
+						output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, flipImage(
 							image1,
 							$_cast('bool', Value$arg2.internalValue),
-							$_cast('bool', Value$arg3.internalValue)));
+							$_cast('bool', Value$arg3.internalValue))));
 						break;
 
 					case %%%FF_GFX_IMAGE_ERROR_CODE%%%:
@@ -1152,18 +1156,7 @@ function @omitReturn @type('string') interpret(
 						if (object1 == null) {
 							return killExecution(stack, "No image with the key '" + string1 + "' has been loaded.");
 						}
-						output = new Value(Types.NATIVE_OBJECT, object1);
-						break;
-
-					case %%%FF_GFX_IMAGE_HEIGHT%%%:
-						$_comment('$gfx_image_height');
-						// $image_height(image)
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.NATIVE_OBJECT) {
-							return killExecution(stack, "$image_height requires an image object.");
-						}
-						image1 = $_cast('Image', Value$arg1.internalValue);
-						output = build_integer(Image$image1.height);
+						output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, object1));
 						break;
 
 					case %%%FF_GFX_IMAGE_LOAD_FROM_RESOURCE%%%:
@@ -1347,17 +1340,6 @@ function @omitReturn @type('string') interpret(
 						} else { // int1 == 2 || int1 == 3
 							output = VALUE_FALSE;
 						}
-						break;
-
-					case %%%FF_GFX_IMAGE_WIDTH%%%:
-						$_comment('$gfx_image_width');
-						// $image_width(image)
-						arg1 = $_stack_pop(valueStack);
-						if (Value$arg1.type != Types.NATIVE_OBJECT) {
-							return killExecution(stack, "$image_width requires an image object.");
-						}
-						image1 = $_cast('Image', Value$arg1.internalValue);
-						output = build_integer(Image$image1.width);
 						break;
 
 					case %%%FF_GFX_IS_IMAGE_LOADED%%%:
@@ -1818,6 +1800,18 @@ function @omitReturn @type('string') interpret(
 								return killExecution(stack, "Game Event does not have a field called '" + string1 + "'");
 							}
 							break;
+
+						case NativeObjectSubType.IMAGE:
+							image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
+							if ($_dot_equals("width", string1)) {
+								value = buildInteger(Image$image1.width);
+							} else if ($_dot_equals("height", string1)) {
+								value = buildInteger(Image$image1.height);
+							} else {
+								return killExecution(stack, "Image does not have a field called '" + string1 + "'");
+							}
+							break;
+
 						default:
 							return killExecution(stack, "Unrecognized field.");
 							break;
