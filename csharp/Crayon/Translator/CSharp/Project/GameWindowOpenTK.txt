@@ -179,59 +179,39 @@ namespace %%%PROJECT_ID%%%
 			Queue<int> events = instance.events;
 			Queue<string> keyEvents = instance.keyEvents;
 			int type;
-			Value x, y;
+			int x, y;
 			bool down, isLeft;
-			Value keyCode;
+			string keyCode;
 
 			while (events.Count > 0)
 			{
 				switch (events.Dequeue())
 				{
 					case MOUSE_EVENT:
-						x = CreateInteger(events.Dequeue());
-						y = CreateInteger(events.Dequeue());
+						x = events.Dequeue();
+						y = events.Dequeue();
 						type = events.Dequeue();
 						if (type == MOUSE_MOVE)
 						{
-							output.Add(CreateValueList(CreateString("mousemove"), x, y));
+							output.Add(CrayonWrapper.v_buildGameEvent("mousemove", "mouse", x, y, 0, false, null));
 						}
 						else
 						{
 							isLeft = type == MOUSE_LEFT;
 							down = events.Dequeue() == 1;
-
-							if (down)
-							{
-								if (isLeft)
-								{
-									output.Add(CreateValueList(CreateString("mouseleftdown"), x, y));
-								}
-								else
-								{
-									output.Add(CreateValueList(CreateString("mouserightdown"), x, y));
-								}
-							}
-							else
-							{
-								if (isLeft)
-								{
-									output.Add(CreateValueList(CreateString("mouseleftup"), x, y));
-								}
-								else
-								{
-									output.Add(CreateValueList(CreateString("mouserightup"), x, y));
-								}
-							}
+							string button = type == MOUSE_LEFT ? "left" : "right";
+							output.Add(CrayonWrapper.v_buildGameEvent("mouse" + button + (down ? "down" : "up"), "mouse", x, y, 0, down, button));
 						}
 						break;
 					case KEY_EVENT:
 						down = events.Dequeue() == 1;
-						keyCode = CreateString(keyEvents.Dequeue());
-						output.Add(CreateValueList(CreateString("key"), down ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE, keyCode));
+						keyCode = keyEvents.Dequeue();
+						output.Add(CrayonWrapper.v_buildGameEvent("key" + (down ? "down" : "up"), "key", 0, 0, 0, down, keyCode));
 						break;
 					case EXIT:
 						type = events.Dequeue();
-						output.Add(CreateValueList(CreateString("exit"), CreateString("general")));
+						// TODO: more quit types.
+						output.Add(CrayonWrapper.v_buildGameEvent("quit-x", "quit", 0, 0, 0, false, "x"));
 						break;
 					default:
 						break;

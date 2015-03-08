@@ -316,3 +316,30 @@ function @type('int') nextPowerOf2(@type('int') value) {
 	}
 	return output;
 }
+
+function @type('Value') buildGameEvent(
+	@type('string') specificType,
+	@type('string') vagueType,
+	@type('int') x,
+	@type('int') y,
+	@type('double') amount,
+	@type('bool') down,
+	@type('string') arg) {
+	
+	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
+		specificType,
+		vagueType,
+		x,
+		y,
+		amount,
+		down,
+		arg)));
+}
+
+function @type('Value') buildCommonString(@type('string') s) {
+	if (!$_dictionary_contains(COMMON_STRINGS, s)) {
+		@type('Value') value = buildString(s);
+		$_dictionary_set(COMMON_STRINGS, s, value);
+	}
+	return $_dictionary_get_guaranteed(COMMON_STRINGS, s);
+}

@@ -4,3 +4,4 @@
 @uncontained @type('Value') VALUE_FALSE = new Value(Types.BOOLEAN, false);
 @uncontained @type('Value') VALUE_EMPTY_STRING = new Value(Types.STRING, "");
 @uncontained @type('string') ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+@uncontained @type('Dictionary<string, Value>') COMMON_STRINGS = $_new_dictionary('string', 'Value');

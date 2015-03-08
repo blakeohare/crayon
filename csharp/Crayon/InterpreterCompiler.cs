@@ -83,6 +83,10 @@ namespace Crayon
 			{
 				replacements.Add("TYPE_ID_" + t.ToString(), ((int)t).ToString());
 			}
+			foreach (SubTypes st in Enum.GetValues(typeof(SubTypes)).Cast<SubTypes>())
+			{
+				replacements.Add("SUBTYPE_ID_" + st.ToString(), ((int)st).ToString());
+			}
 			foreach (PrimitiveMethods primitiveMethod in Enum.GetValues(typeof(PrimitiveMethods)).Cast<PrimitiveMethods>())
 			{
 				replacements.Add("PRIMITIVE_METHOD_" + primitiveMethod.ToString(), "" + (int)primitiveMethod);

@@ -75,7 +75,9 @@ function @omitReturn @type('string') interpret(
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
 	@type('List<int>') intList1 = null;
+	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
+	@type('GameEvent') gameEvent = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -1475,9 +1477,7 @@ function @omitReturn @type('string') interpret(
 							case Types.NATIVE_OBJECT: string1 = "native_system_object"; break;
 							default: string1 = "unknown_type"; break;
 						}
-						// TODO: create an alternate version of buildString called buildCommonString that uses a permanent cache.
-						// Otherwise rapid access of typeof will needlessly create a bunch of objects
-						output = new Value(Types.STRING, string1);
+						output = buildCommonString(string1);
 						break;
 
 					default:
@@ -1742,6 +1742,87 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "Field used before it was defined.");
 						}
 					}
+				} else if (type == Types.NATIVE_OBJECT) {
+					nativeObject = $_cast('NativeObjectWrapper', Value$root.internalValue);
+					int1 = NativeObjectWrapper$nativeObject.subType;
+					string1 = $_array_get(identifiers, nameId);
+					value = VALUE_NULL;
+					switch (int1) {
+						case NativeObjectSubType.EVENT:
+							gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+							// This comparison chain is inefficient. :(
+							// Need to support string switch statements in translate mode.
+							// Or convert string1 into a consistent numbering scheme.
+
+							// TODO: this list of fields is not yet complete.
+							if ($_dot_equals("button", string1)) {
+								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+									value = buildCommonString(GameEvent$gameEvent.arg);
+								} else {
+									return killExecution(stack, "Only mouse events have a button field.");
+								}
+							} else if ($_dot_equals("down", string1)) {
+								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType) ||
+									$_dot_equals("key", GameEvent$gameEvent.vagueType)) {
+									if ($_dot_equals("mousemove", GameEvent$gameEvent.specificType)) {
+										return killExecution(stack, "'mousemove' events do not have a 'down' field.");
+									} else {
+										if (GameEvent$gameEvent.down) {
+											value = VALUE_TRUE;
+										} else {
+											value = VALUE_FALSE;	
+										}
+									}
+								} else {
+									return killExecution(stack, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
+								}
+							} else if ($_dot_equals("is_key", string1)) {
+								if ($_dot_equals("key", GameEvent$gameEvent.vagueType)) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else if ($_dot_equals("is_mouse", string1)) {
+								if ($_dot_equals("mouse", string1)) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else if ($_dot_equals("is_quit", string1)) {
+								if ($_dot_equals("quit", GameEvent$gameEvent.vagueType)) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else if ($_dot_equals("key", string1)) {
+								if ($_dot_equals("key", GameEvent$gameEvent.vagueType)) {
+									value = buildCommonString(GameEvent$gameEvent.arg);
+								} else {
+									return killExecution(stack, "Only keyboard events have a key field.");
+								}
+							} else if ($_dot_equals("type", string1)) {
+								value = buildCommonString(GameEvent$gameEvent.specificType);
+							} else if ($_dot_equals("x", string1)) {
+								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+									value = buildInteger(GameEvent$gameEvent.x);
+								} else {
+									return killExecution(stack, "Only mouse events have an x field.");
+								}
+							} else if ($_dot_equals("y", string1)) {
+								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+									value = buildInteger(GameEvent$gameEvent.y);
+								} else {
+									return killExecution(stack, "Only mouse events have a y field.");
+								}
+							} else {
+								return killExecution(stack, "Game Event does not have a field called '" + string1 + "'");
+							}
+							break;
+						default:
+							return killExecution(stack, "Unrecognized field.");
+							break;
+					}
+					$_stack_push(valueStack, value);
 				} else if (nameId == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
 					len = -1;
 					if (type == Types.LIST) {

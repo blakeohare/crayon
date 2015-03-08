@@ -196,6 +196,29 @@ struct Imagette {
 	@type('int') height,
 	@type('List<object>') nativeBitmaps,
 	@type('List<int>') xs,
-	@type('List<int>') ys
+	@type('List<int>') ys,
+}
 
+/*
+ * All native objects have this as an internal value.
+ * The value field here is the actual native object.
+ * This allows the native object to be consistently identified with the subtype marker.
+ */
+struct NativeObjectWrapper {
+	@type('int') subType,
+	@type('object') value,
+}
+
+/*
+ * This is the wrapped native object value used for events.
+ */
+struct GameEvent {
+	@type('string') specificType, // { mouseleftdown | mouserightdown | mouseleftup | mouserightup | mousemove | mousescroll | keydown | keyup | quit-x | quit-altf4 }
+	@type('string') vagueType, // { mouse | key | joystick | quit } <-- technically these are redundant information with above, but allow for quick checks to see if specific fields are valid on the event object.
+	@type('int') x,
+	@type('int') y,
+	@type('double') amount,
+	@type('bool') down,
+	@type('string') arg, // used for keyboard key, mouse button, or quit type
+	// TODO: expand for joystick events
 }
