@@ -117,6 +117,7 @@ namespace Crayon.Translator
 				case "_string_compare": VerifyCount(functionCall, 2); TranslateStringCompare(output, args[0], args[1]); break;
 				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
 				case "_string_endswith": VerifyCount(functionCall, 2); TranslateStringEndsWith(output, args[0], args[1]); break;
+				case "_string_equals": VerifyCount(functionCall, 2); TranslateStringEquals(output, args[0], args[1]); break;
 				case "_string_from_code": VerifyCount(functionCall, 1); TranslateStringFromCode(output, args[0]); break;
 				case "_string_index_of": VerifyCount(functionCall, 2); TranslateStringIndexOf(output, args[0], args[1]); break;
 				case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
@@ -227,6 +228,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateStringCompare(List<string> output, Expression a, Expression b);
 		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);
 		protected abstract void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe);
+		protected abstract void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b);
 		protected abstract void TranslateStringFromCode(List<string> output, Expression characterCode);
 		protected abstract void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle);
 		protected abstract void TranslateStringLength(List<string> output, Expression stringValue);

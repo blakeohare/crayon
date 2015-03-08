@@ -718,6 +718,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
+		{
+			this.Translator.TranslateExpression(output, aNonNull);
+			output.Add(" == ");
+			this.Translator.TranslateExpression(output, b);
+		}
+
 		protected override void TranslateStringFromCode(List<string> output, Expression characterCode)
 		{
 			output.Add("wrappedChr(");

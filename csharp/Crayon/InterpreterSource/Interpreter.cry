@@ -1737,16 +1737,16 @@ function @omitReturn @type('string') interpret(
 							// Or convert string1 into a consistent numbering scheme.
 
 							// TODO: this list of fields is not yet complete.
-							if ($_dot_equals("button", string1)) {
-								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+							if ($_string_equals("button", string1)) {
+								if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 									value = buildCommonString(GameEvent$gameEvent.arg);
 								} else {
 									return killExecution(stack, "Only mouse events have a button field.");
 								}
-							} else if ($_dot_equals("down", string1)) {
-								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType) ||
-									$_dot_equals("key", GameEvent$gameEvent.vagueType)) {
-									if ($_dot_equals("mousemove", GameEvent$gameEvent.specificType)) {
+							} else if ($_string_equals("down", string1)) {
+								if ($_string_equals("mouse", GameEvent$gameEvent.vagueType) ||
+									$_string_equals("key", GameEvent$gameEvent.vagueType)) {
+									if ($_string_equals("mousemove", GameEvent$gameEvent.specificType)) {
 										return killExecution(stack, "'mousemove' events do not have a 'down' field.");
 									} else {
 										if (GameEvent$gameEvent.down) {
@@ -1758,40 +1758,40 @@ function @omitReturn @type('string') interpret(
 								} else {
 									return killExecution(stack, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
 								}
-							} else if ($_dot_equals("is_key", string1)) {
-								if ($_dot_equals("key", GameEvent$gameEvent.vagueType)) {
+							} else if ($_string_equals("is_key", string1)) {
+								if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
 									value = VALUE_TRUE;
 								} else {
 									value = VALUE_FALSE;
 								}
-							} else if ($_dot_equals("is_mouse", string1)) {
-								if ($_dot_equals("mouse", string1)) {
+							} else if ($_string_equals("is_mouse", string1)) {
+								if ($_string_equals("mouse", string1)) {
 									value = VALUE_TRUE;
 								} else {
 									value = VALUE_FALSE;
 								}
-							} else if ($_dot_equals("is_quit", string1)) {
-								if ($_dot_equals("quit", GameEvent$gameEvent.vagueType)) {
+							} else if ($_string_equals("is_quit", string1)) {
+								if ($_string_equals("quit", GameEvent$gameEvent.vagueType)) {
 									value = VALUE_TRUE;
 								} else {
 									value = VALUE_FALSE;
 								}
-							} else if ($_dot_equals("key", string1)) {
-								if ($_dot_equals("key", GameEvent$gameEvent.vagueType)) {
+							} else if ($_string_equals("key", string1)) {
+								if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
 									value = buildCommonString(GameEvent$gameEvent.arg);
 								} else {
 									return killExecution(stack, "Only keyboard events have a key field.");
 								}
-							} else if ($_dot_equals("type", string1)) {
+							} else if ($_string_equals("type", string1)) {
 								value = buildCommonString(GameEvent$gameEvent.specificType);
-							} else if ($_dot_equals("x", string1)) {
-								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+							} else if ($_string_equals("x", string1)) {
+								if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 									value = buildInteger(GameEvent$gameEvent.x);
 								} else {
 									return killExecution(stack, "Only mouse events have an x field.");
 								}
-							} else if ($_dot_equals("y", string1)) {
-								if ($_dot_equals("mouse", GameEvent$gameEvent.vagueType)) {
+							} else if ($_string_equals("y", string1)) {
+								if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 									value = buildInteger(GameEvent$gameEvent.y);
 								} else {
 									return killExecution(stack, "Only mouse events have a y field.");
@@ -1803,9 +1803,9 @@ function @omitReturn @type('string') interpret(
 
 						case NativeObjectSubType.IMAGE:
 							image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
-							if ($_dot_equals("width", string1)) {
+							if ($_string_equals("width", string1)) {
 								value = buildInteger(Image$image1.width);
-							} else if ($_dot_equals("height", string1)) {
+							} else if ($_string_equals("height", string1)) {
 								value = buildInteger(Image$image1.height);
 							} else {
 								return killExecution(stack, "Image does not have a field called '" + string1 + "'");
