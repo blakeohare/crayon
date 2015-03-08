@@ -1204,20 +1204,6 @@ function @omitReturn @type('string') interpret(
 						loadImageFromUserData($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
 						break;
 
-					case %%%FF_GFX_IMAGE_LOADED%%%:
-						$_comment('$gfx_image_loaded');
-						// $image_loaded(image_key)
-						arg1 = $_stack_pop(valueStack);
-						int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
-						if (int1 == 0) {
-							output = VALUE_NULL;
-						} else if (int1 == 1) {
-							output = VALUE_TRUE;
-						} else {
-							output = VALUE_FALSE;
-						}
-						break;
-
 					case %%%FF_GFX_IMAGE_POP_SCALE%%%:
 						$_comment('$gfx_image_pop_scale');
 						// $image_pop_scale()
@@ -1372,6 +1358,20 @@ function @omitReturn @type('string') interpret(
 						}
 						image1 = $_cast('Image', Value$arg1.internalValue);
 						output = build_integer(Image$image1.width);
+						break;
+
+					case %%%FF_GFX_IS_IMAGE_LOADED%%%:
+						$_comment('$gfx_is_image_loaded');
+						// $image_loaded(image_key)
+						arg1 = $_stack_pop(valueStack);
+						int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
+						if (int1 == 0) {
+							output = VALUE_NULL;
+						} else if (int1 == 1) {
+							output = VALUE_TRUE;
+						} else {
+							output = VALUE_FALSE;
+						}
 						break;
 
 					case %%%FF_PARSE_INT%%%:
