@@ -200,7 +200,7 @@ class GameWindow {
     }
 
     private static Value getInteger(int x) {
-        return CrayonWrapper.v_build_integer(x);
+        return CrayonWrapper.v_buildInteger(x);
     }
 
     private static final HashMap<String, Value> STRING_CACHE  = new HashMap<String, Value>();

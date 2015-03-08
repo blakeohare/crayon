@@ -45,7 +45,7 @@ function initialize_constant_values() {
 	$_array_set(INTEGERS_CACHE, 1, negative_integers);
 }
 
-function @type('Value') build_integer(@type('int') num) {
+function @type('Value') buildInteger(@type('int') num) {
 	if (num < 0) {
 		if (num > -INTEGER_NEGATIVE_CACHE) {
 			return INTEGERS_CACHE[1][-num];
@@ -56,10 +56,6 @@ function @type('Value') build_integer(@type('int') num) {
 		}
 	}
 	return new Value(Types.INTEGER, num);
-}
-
-function @type('Value') buildInteger(@type('int') num) {
-	return build_integer(num); // TODO: delete the other method and convert usages to this one.
 }
 
 function @type('Value') buildString(@type('string') s) {
@@ -153,7 +149,7 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 
 function @type('Value') buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
 	if (type == Types.NULL) return VALUE_NULL;
-	if (type == Types.INTEGER) return build_integer(value);
+	if (type == Types.INTEGER) return buildInteger(value);
 	if (type == Types.FLOAT) return $_array_get(floatTable, value);
 	if (type == Types.STRING) return $_array_get(stringTable, value);
 	if (type == Types.BOOLEAN && value == 1) return VALUE_TRUE;

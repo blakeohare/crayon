@@ -205,7 +205,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static Value WrapInteger(int value)
 		{
-			return CrayonWrapper.v_build_integer(value);
+			return CrayonWrapper.v_buildInteger(value);
 		}
 
 		private static Value WrapFloat(double value)

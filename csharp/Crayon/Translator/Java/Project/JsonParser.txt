@@ -166,7 +166,7 @@ class JsonParser {
 	}
 
 	private static Value wrapInteger(int value) {
-		return CrayonWrapper.v_build_integer(value);
+		return CrayonWrapper.v_buildInteger(value);
 	}
 
 	private static Value wrapFloat(double value) {

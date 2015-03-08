@@ -165,7 +165,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static Value CreateInteger(int n)
 		{
-			return CrayonWrapper.v_build_integer(n);
+			return CrayonWrapper.v_buildInteger(n);
 		}
 
 		private static Value CreateValueList(params Value[] values)

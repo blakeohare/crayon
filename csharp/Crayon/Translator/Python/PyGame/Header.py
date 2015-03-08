@@ -173,7 +173,7 @@ def _parse_json_thing(item):
 	if item == "": return v_VALUE_EMPTY_STRING
 	t = str(type(item))
 	if "'int'" in t or "'long'" in t:
-		return v_build_integer(item)
+		return v_buildInteger(item)
 	if "'float'" in t:
 		return [%%%TYPE_FLOAT%%%, item];
 	if "'string'" in t or "'unicode'" in t:
