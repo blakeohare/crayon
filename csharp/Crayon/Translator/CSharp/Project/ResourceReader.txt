@@ -40,10 +40,7 @@ namespace %%%PROJECT_ID%%%
 			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
 		}
 
-		private const int BUFFER_LENGTH = 128;
-		private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
-
-		private static IList<byte> ReadBytes(string path, bool filePrefix)
+		public static System.IO.Stream GetResourceStream(string path, bool useFilePrefix)
 		{
 			// TODO: C# likes to replace non alphanumerics in the path with underscores but 
 			// only in the directories, not in the actual file name. Will need to come up
@@ -58,10 +55,18 @@ namespace %%%PROJECT_ID%%%
 			}
 			final_file.Add(original_file);
 			string canonicalizedPath = string.Join(".", final_file);
-			string prefix = "%%%PROJECT_ID%%%" + (filePrefix ? ".Files" : "") + (canonicalizedPath.StartsWith(".") ? "" : ".");
+			string prefix = "%%%PROJECT_ID%%%" + (useFilePrefix ? ".Files" : "") + (canonicalizedPath.StartsWith(".") ? "" : ".");
 			canonicalizedPath = prefix + canonicalizedPath;
 
-			Stream stream = typeof(ResourceReader).Assembly.GetManifestResourceStream(canonicalizedPath);
+			return typeof(ResourceReader).Assembly.GetManifestResourceStream(canonicalizedPath);
+		}
+
+		private const int BUFFER_LENGTH = 128;
+		private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
+
+		public static IList<byte> ReadBytes(string path, bool filePrefix)
+		{
+			System.IO.Stream stream = GetResourceStream(path, filePrefix);
 			if (stream == null)
 			{
 				return null;

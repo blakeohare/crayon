@@ -78,6 +78,7 @@ function @omitReturn @type('string') interpret(
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
+	@type('SoundInstance') sound1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -1408,6 +1409,70 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "Resource file not found: '" + string1 + "'");
 						}
 						output = new Value(Types.STRING, string2);
+						break;
+
+					case %%%FF_SFX_GET_SOUND%%%:
+						$_comment('$sfx_get_sound');
+						arg1 = $_stack_pop(valueStack); // key
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$sfx_get_sound requires a string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						sound1 = getLoadedSound(string1);
+						if (sound1 == null) {
+							return killExecution(stack, "No sound has been loaded with the key: '" + string1 + "'.");
+						}
+						output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.SOUND, sound1));
+						break;
+
+					case %%%FF_SFX_IS_SOUND_LOADED%%%:
+						$_comment('$sfx_is_sound_loaded');
+						arg1 = $_stack_pop(valueStack); // key
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$sfx_is_sound_loaded requires a string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						int1 = isSoundLoaded(string1);
+						if (int1 == 2) {
+							output = VALUE_TRUE;
+						} else if (int1 == 0) {
+							output = VALUE_FALSE;
+						} else if (int1 == 1) {
+							return killExecution(stack, "$sfx_is_sound_loaded cannot be called on a key that hasn't been initialized.");
+						}
+						break;
+
+					case %%%FF_SFX_LOAD_SOUND_FROM_RESOURCE%%%:
+						$_comment('$sfx_load_sound_from_resource');
+						arg2 = $_stack_pop(valueStack); // path
+						arg1 = $_stack_pop(valueStack); // key
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$sfx_load_sound_from_resource requires two string parameters.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						string2 = $_cast('string', Value$arg2.internalValue);
+						bool1 = loadSoundFromResource(string1, string2); // file exists
+						if (!bool1) {
+							return killExecution(stack, "The file '" + string2 + "' does not exist in the resources.");
+						}
+						break;
+
+					case %%%FF_SFX_PLAY_SOUND%%%:
+						$_comment('$sfx_play_sound');
+						arg1 = $_stack_pop(valueStack); // native sound object.
+						sound1 = null;
+						if (Value$arg1.type == Types.NATIVE_OBJECT) {
+							nativeObject = $_cast('NativeObjectWrapper', Value$arg1.internalValue);
+							if (NativeObjectWrapper$nativeObject.subType == NativeObjectSubType.SOUND) {
+								sound1 = $_cast('SoundInstance', NativeObjectWrapper$nativeObject.value);
+							}
+						}
+
+						if (sound1 == null) {
+							return killExecution(stack, "$sfx_play_sound requires a sound instance as its argument.");
+						}
+
+						playSound(sound1);
 						break;
 
 					case %%%FF_SIN%%%:

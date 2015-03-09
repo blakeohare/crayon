@@ -22,6 +22,7 @@ namespace Crayon
 			"Interpreter.cry",
 			"PrimitiveMethods.cry",
 			"Runner.cry",
+			"SoundManager.cry",
 			"TypesUtil.cry",
 			"ValueUtil.cry",
 		};

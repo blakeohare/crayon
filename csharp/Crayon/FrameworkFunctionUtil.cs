@@ -147,6 +147,22 @@ namespace Crayon
 				case FrameworkFunction.RESOURCE_READ_TEXT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
+				case FrameworkFunction.SFX_GET_SOUND:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.SFX_IS_SOUND_LOADED:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.SFX_LOAD_SOUND_FROM_RESOURCE:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
+					break;
+				case FrameworkFunction.SFX_PLAY_SOUND:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
+					break;
 				case FrameworkFunction.SIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");

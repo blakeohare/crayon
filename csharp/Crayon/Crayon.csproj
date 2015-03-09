@@ -156,7 +156,7 @@
     <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ProgramCs.txt" />
     <EmbeddedResource Include="Translator\Python\PyGame\Footer.py" />
-    <EmbeddedResource Include="Translator\CSharp\OpenTK\OpenTK.dll" />
+    <EmbeddedResource Include="Translator\CSharp\Binaries\OpenTK.dll" />
     <EmbeddedResource Include="InterpreterSource\ByteCodeLoader.cry" />
     <EmbeddedResource Include="InterpreterSource\Interpreter.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
@@ -177,6 +177,8 @@
     <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
+    <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
@@ -196,6 +198,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\Graphics.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

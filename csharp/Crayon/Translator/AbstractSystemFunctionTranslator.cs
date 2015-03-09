@@ -97,6 +97,7 @@ namespace Crayon.Translator
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
 				case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
+				case "_read_local_sound_resource": VerifyCount(functionCall, 1); TranslateReadLocalSoundResource(output, args[0]); break;
 				case "_read_local_tile_resource": VerifyCount(functionCall, 1); TranslateReadLocalTileResource(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
@@ -105,6 +106,7 @@ namespace Crayon.Translator
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
 				case "_sort_primitive_values": VerifyCount(functionCall, 2); TranslateSortPrimitiveValues(output, args[0], args[1]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
+				case "_sound_play": VerifyCount(functionCall, 1); TranslateSoundPlay(output, args[0]); break;
 				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
 				case "_stack_length": VerifyCount(functionCall, 1); TranslateStackLength(output, args[0]); break;
 				case "_stack_pop": VerifyCount(functionCall, 1); TranslateStackPop(output, args[0]); break;
@@ -208,6 +210,7 @@ namespace Crayon.Translator
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRandomFloat(List<string> output);
 		protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);
+		protected abstract void TranslateReadLocalSoundResource(List<string> output, Expression filePath);
 		protected abstract void TranslateReadLocalTileResource(List<string> output, Expression tileGenName);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
@@ -217,6 +220,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
+		protected abstract void TranslateSoundPlay(List<string> output, Expression soundInstance);
 		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
 		protected abstract void TranslateStackLength(List<string> output, Expression stack);
 		protected abstract void TranslateStackPop(List<string> output, Expression stack);

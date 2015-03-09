@@ -510,6 +510,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(", false)");
 		}
 
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+		{
+			output.Add("TranslationHelper.GetSoundInstance(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
+		}
+
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
 			output.Add("ResourceReader.ReadImageFile(\"GeneratedFiles/spritesheets/\" + ");
@@ -568,6 +575,13 @@ namespace Crayon.Translator.CSharp
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".OrderBy<int, int>(k => k).ToArray()");
+		}
+
+		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("TranslationHelper.PlaySoundInstance(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

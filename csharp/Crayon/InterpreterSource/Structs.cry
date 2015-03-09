@@ -63,6 +63,7 @@ struct ProgramData {
 	@type('List<int>') imageScaleStack,
 	@type('int') imageScaleStackTop,
 	@type('ImageSheetStatus') imageSheetStatus,
+	@type('SoundStatus') soundStatus,
 	@type('bool') initializationComplete,
 }
 
@@ -176,6 +177,10 @@ struct ImageSheetStatus {
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
 }
 
+struct SoundStatus {
+	@type('Dictionary<string, SoundInstance>') loadedSoundsByKey
+}
+
 struct TileLoadRequest {
 	@type('string') path,
 	@type('int') status,
@@ -221,4 +226,11 @@ struct GameEvent {
 	@type('bool') down,
 	@type('string') arg, // used for keyboard key, mouse button, or quit type
 	// TODO: expand for joystick events
+}
+
+struct SoundInstance {
+	@type('object') nativeObject,
+	@type('bool') isMusic,
+	@type('int') soundId,
+	@type('double') duration,
 }

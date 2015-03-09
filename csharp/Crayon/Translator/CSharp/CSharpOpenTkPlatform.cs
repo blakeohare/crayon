@@ -15,11 +15,18 @@ namespace Crayon.Translator.CSharp
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
 			replacements["EXTRA_DLLS"] = string.Join("\r\n", new string[] {
-				"<Reference Include=\"OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL\">",
+				"    <Reference Include=\"OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL\">",
 				"      <SpecificVersion>False</SpecificVersion>",
 				"      <HintPath>.\\OpenTK.dll</HintPath>",
 				"    </Reference>",
-				"    "
+				"    <Reference Include=\"SdlDotNet, Version=6.1.0.0, Culture=neutral, PublicKeyToken=26ad4f7e10c61408, processorArchitecture=MSIL\">",
+				"      <SpecificVersion>False</SpecificVersion>",
+				"      <HintPath>.\\SdlDotNet.dll</HintPath>",
+				"    </Reference>",
+				"    <Reference Include=\"Tao.Sdl, Version=1.2.13.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e, processorArchitecture=MSIL\">",
+				"      <SpecificVersion>False</SpecificVersion>",
+				"      <HintPath>.\\Tao.Sdl.dll</HintPath>",
+				"    </Reference>"
 			});
 		}
 
@@ -49,11 +56,15 @@ namespace Crayon.Translator.CSharp
 					replacements)
 			};
 
-			files[projectId + "/OpenTK.dll"] = new FileOutput()
+			// TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
+			foreach (string binary in new string[] { "OpenTK", "SdlDotNet", "Tao.Sdl" })
 			{
-				Type = FileOutputType.Binary,
-				BinaryContent = Util.ReadBytesInternally("Translator/CSharp/OpenTK/OpenTK.dll")
-			};
+				files[projectId + "/" + binary + ".dll"] = new FileOutput()
+				{
+					Type = FileOutputType.Binary,
+					BinaryContent = Util.ReadBytesInternally("Translator/CSharp/Binaries/" + binary + ".dll")
+				};
+			}
 		}
 	}
 }

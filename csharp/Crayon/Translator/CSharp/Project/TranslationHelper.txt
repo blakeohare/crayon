@@ -150,5 +150,20 @@ namespace %%%PROJECT_ID%%%
 				valueList[i] = orderedList[i];
 			}
 		}
+
+		public static SoundInstance GetSoundInstance(string path)
+		{
+			IList<byte> resource = ResourceReader.ReadBytes(path, true);
+			if (resource == null) return null;
+			SdlDotNet.Audio.Sound sdlSound = new SdlDotNet.Audio.Sound(resource.ToArray());
+			// TODO: determine length of sound.
+			return new SoundInstance(sdlSound, false, -1, 0);
+		}
+
+		public static void PlaySoundInstance(SoundInstance sound)
+		{
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)sound.nativeObject;
+			sdlSound.Play();
+		}
 	}
 }

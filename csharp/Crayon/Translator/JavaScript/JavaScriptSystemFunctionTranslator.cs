@@ -10,6 +10,16 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.acos(");
