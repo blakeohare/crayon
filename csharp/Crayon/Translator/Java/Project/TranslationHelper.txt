@@ -174,4 +174,8 @@ final class TranslationHelper {
         }
         return output;
     }
+
+    public static void assertion(String message) {
+        throw new IllegalStateException(message);
+    }
 }

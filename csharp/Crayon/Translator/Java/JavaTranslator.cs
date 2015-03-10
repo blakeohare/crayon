@@ -59,7 +59,8 @@ namespace Crayon.Translator.Java
 				if (i > 0) {
 					output.Add(", ");
 				}
-				string argType = functionDef.ArgAnnotations[i].GetSingleArgAsString(null);
+				Annotation annotation = functionDef.ArgAnnotations[i];
+				string argType = annotation == null ? "Object" : annotation.GetSingleArgAsString(null);
 				output.Add(this.JavaPlatform.GetTypeStringFromString(argType, false, false));
 				output.Add(" v_");
 				output.Add(functionDef.ArgNames[i].Value);

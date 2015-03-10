@@ -10,16 +10,6 @@ namespace Crayon.Translator.Java
 	{
 		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
 
-		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.acos(");
@@ -68,7 +58,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateAssert(List<string> output, Expression message)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.assertion(");
+			this.Translator.TranslateExpression(output, message);
+			output.Add(")");
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -234,7 +226,12 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
+			output.Add("TODO_download_image_see_system_function_translator_source_for_notes(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+			//throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
 			/*
 			output.Add("ImageLibrary.loadImage(");
 			this.Translator.TranslateExpression(output, key);
@@ -357,28 +354,39 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateGlMaxTextureSize(List<string> output)
 		{
-			throw new InvalidOperationException();
+			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
 		}
 
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
-			// Note: this is implemented somewhere in Java from the pre-Graphics.cry era.
-			throw new NotImplementedException();
+			output.Add("TODO_reuse_image_flip_code(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_imagette_flush_to_native_bitmap(");
+			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_native_bitmap_height(");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_native_bitmap_width(");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(")");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -451,7 +459,7 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, index);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, value);
-			output.Add(")");	
+			output.Add(")");
 		}
 
 		protected override void TranslateListJoin(List<string> output, Expression list, Expression sep)
@@ -608,12 +616,23 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_read_local_image_resource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
+		}
+
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+		{
+			output.Add("TODO_read_local_sound_resource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_read_local_tile_resource(");
+			this.Translator.TranslateExpression(output, tileGenName);
+			output.Add(")");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
@@ -665,7 +684,16 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.sortedCopyOfIntArray(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
+		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("TODO_play_sound_impl(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
 		}
 
 		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)

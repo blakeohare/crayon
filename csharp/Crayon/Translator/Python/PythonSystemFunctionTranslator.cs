@@ -10,20 +10,6 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
-		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-		{
-			output.Add("readLocalSoundResource(");
-			this.Translator.TranslateExpression(output, filePath);
-			output.Add(")");
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("playSoundImpl(");
-			this.Translator.TranslateExpression(output, soundInstance);
-			output.Add(")");
-		}
-
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("math.acos(");
@@ -330,7 +316,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
 		{
-			output.Add("0");
+			throw new InvalidOperationException();
 		}
 
 		protected override void TranslateGlMaxTextureSize(List<string> output)
@@ -588,6 +574,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+		{
+			output.Add("readLocalSoundResource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
+		}
+
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
 			output.Add("load_local_tile_resource(");
@@ -607,7 +600,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			output.Add("_read_resource_text(");	
+			output.Add("_read_resource_text(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
@@ -645,6 +638,13 @@ namespace Crayon.Translator.Python
 		{
 			output.Add("create_sorted_copy_of_list(");
 			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
+		}
+
+		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("playSoundImpl(");
+			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 
