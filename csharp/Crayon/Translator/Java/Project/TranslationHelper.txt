@@ -178,4 +178,16 @@ final class TranslationHelper {
     public static void assertion(String message) {
         throw new IllegalStateException(message);
     }
+
+    public static void sortPrimitiveValueList(ArrayList<Value> items, boolean isString) {
+        throw new IllegalStateException("Not implemented yet.");
+    }
+
+    public static int[] sortedCopyOfIntArray(int[] nums) {
+        throw new IllegalStateException("Not implemented yet.");
+    }
+
+    public static Object flushImagetteToBitmap(Imagette imagette) {
+        throw new IllegalStateException("Not implemented yet.");
+    }
 }

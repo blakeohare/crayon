@@ -370,7 +370,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
-			output.Add("TODO_imagette_flush_to_native_bitmap(");
+			output.Add("TranslationHelper.flushImagetteToBitmap(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
 		}

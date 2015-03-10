@@ -68,7 +68,7 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = width;
         renderArgs[renderArgsVirtualLength++] = height;
 
-        images[imagesVirtualLength++] = (Image) imageObject;    	
+        images[imagesVirtualLength++] = (Image) imageObject;
     }
 
     public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
@@ -141,7 +141,7 @@ public final class RenderEngine {
                     x = renderArgs[index++];
                     y = renderArgs[index++];
 
-                    g.drawImage(image.img, x, y, null);
+                    g.drawImage((java.awt.Image) image.compositeResource.nativeBitmap, x, y, null);
                     break;
 
                 case BLIT_IMAGE_PARTIAL:
@@ -152,7 +152,7 @@ public final class RenderEngine {
                 	sy = renderArgs[index++];
                 	width = renderArgs[index++];
                 	height = renderArgs[index++];
-                	g.drawImage(image.img, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
+                	g.drawImage((java.awt.Image) image.compositeResource.nativeBitmap, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
                 	break;
 
                 case DRAW_ELLIPSE:
