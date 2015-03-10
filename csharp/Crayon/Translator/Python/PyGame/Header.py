@@ -210,4 +210,18 @@ def draw_rectangle(x, y, width, height, r, g, b, a):
 		ts.set_alpha(a)
 		_global_vars['virtual_screen'].blit(ts, (x, y), _PR(0, 0, width, height))
 
+def readLocalSoundResource(path):
+	path = path.replace('/', os.sep)
+	if os.path.exists(path):
+		try:
+			snd = pygame.mixer.Sound(path)
+		except:
+			return None
+		return v_instantiateSoundInstance(snd, False, -1)
+	return None
+
+def playSoundImpl(snd):
+	snd[0].play()
+	
+
 program_data = [None]

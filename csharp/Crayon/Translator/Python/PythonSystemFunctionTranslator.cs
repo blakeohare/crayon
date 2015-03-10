@@ -12,12 +12,16 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
-			throw new NotImplementedException();
+			output.Add("readLocalSoundResource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
 		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
 		{
-			throw new NotImplementedException();
+			output.Add("playSoundImpl(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
 		}
 
 		protected override void TranslateArcCos(List<string> output, Expression value)

@@ -62,6 +62,7 @@ namespace Crayon.Translator
 				"Interpreter",
 				"PrimitiveMethods",
 				"Runner",
+				"SoundManager",
 				"TypesUtil",
 				"ValueUtil",
 			})

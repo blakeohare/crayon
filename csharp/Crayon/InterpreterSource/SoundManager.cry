@@ -4,6 +4,13 @@ function @type('SoundStatus') getSoundStatus() {
 	return ProgramData$p.soundStatus;
 }
 
+function @type('SoundInstance') instantiateSoundInstance(
+	@type('object') nativeObject,
+	@type('bool') isMusic,
+	@type('int') soundId) {
+	return new SoundInstance(nativeObject, isMusic, soundId, 0.0);
+}
+
 function @type('bool') loadSoundFromResource(@type('string') key, @type('string') path) {
 	@type('SoundStatus') ss = getSoundStatus();
 	
