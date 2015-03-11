@@ -50,7 +50,8 @@ namespace Crayon.Translator.Java
 				"GameWindow",
 				"RenderEngine",
 				"Image",
-				"ImageLibrary",
+				// TODO: delete Translator/Java/Project/ImageLibrary.txt
+				//"ImageLibrary",
 				"JsonParser"
 			})
 			{

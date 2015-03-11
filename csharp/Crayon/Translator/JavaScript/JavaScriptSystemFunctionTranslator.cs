@@ -166,7 +166,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("]");
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
 		{
 			output.Add("slow_dictionary_get_keys(");
 			this.Translator.TranslateExpression(output, dictionary);

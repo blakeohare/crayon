@@ -248,7 +248,7 @@ function @type('bool') runTick() {
 }
 
 function @type('Dictionary<int, MethodDefinition>') copyMethodLookupDictionary(@type('Dictionary<int, MethodDefinition>') dict) {
-	@type('Array<int>') key_list = $_dictionary_get_keys(dict);
+	@type('Array<int>') key_list = $_dictionary_get_keys('int', dict);
 	@type('Dictionary<int, MethodDefinition>') output = $_new_dictionary('int', 'MethodDefinition');
 	for (@type('int') i = 0; i < $_array_length(key_list); i += 1) {
 		@type('int') key = $_array_get(key_list, i);

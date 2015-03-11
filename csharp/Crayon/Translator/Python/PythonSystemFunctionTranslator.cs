@@ -156,7 +156,7 @@ namespace Crayon.Translator.Python
 			output.Add("]");
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
 		{
 			output.Add("list(");
 			this.Translator.TranslateExpression(output, dictionary);

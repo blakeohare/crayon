@@ -173,7 +173,7 @@ function imageSheetStatusInitialization() {
 	@type('ProgramData') p = $_get_program_data();
 	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
 	@type('SpriteSheetData') ssd = ProgramData$p.spriteSheetData;
-	@type('Array<string>') groupNames = $_dictionary_get_keys(SpriteSheetData$ssd.groupIdsByName);
+	@type('Array<string>') groupNames = $_dictionary_get_keys('string', SpriteSheetData$ssd.groupIdsByName);
 	@type('int') i = 0;
 	@type('int') id = 0;
 
@@ -185,7 +185,7 @@ function imageSheetStatusInitialization() {
 		id = $_dictionary_get_guaranteed(SpriteSheetData$ssd.groupIdsByName, groupName);
 		$_dictionary_set(ImageSheetStatus$imageUtil.groupNameToId, groupName, id);
 		$_dictionary_set(ImageSheetStatus$imageUtil.sheetStatus, id, IMAGE_SHEET_STATUS_NOT_LOADED);
-		@type('Array<int>') tileIds = $_dictionary_get_keys($_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<int>') tileIds = $_dictionary_get_keys('int', $_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
 		@type('Array<int>') tileIdsSorted = $_sorted_copy_of_int_array(tileIds);
 		$_dictionary_set(ImageSheetStatus$imageUtil.tilesPerId, id, tileIdsSorted);
 	}
@@ -206,10 +206,10 @@ function imageSheetStatusInitialization() {
 		$_list_push(ssidsForGroup, ssid);
 	}
 
-	@type('Array<int>') groupIds = $_dictionary_get_keys(SpriteSheetData$ssd.tileIdsByGroupId);
+	@type('Array<int>') groupIds = $_dictionary_get_keys('int', SpriteSheetData$ssd.tileIdsByGroupId);
 	for (i = 0; i < $_array_length(groupIds); i += 1) {
 		id = $_array_get(groupIds, i);
-		@type('Array<int>') keys = $_dictionary_get_keys($_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<int>') keys = $_dictionary_get_keys('int', $_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
 		@type('Array<string>') tileNamesForGroupId = $_new_array('string', $_array_length(keys));
 		for (@type('int') j = 0; j < $_array_length(keys); j += 1) {
 			@type('string') name = $_string_cast_weak(id) + "_" + $_string_cast_weak($_array_get(keys, j));
@@ -218,7 +218,7 @@ function imageSheetStatusInitialization() {
 		$_dictionary_set(
 			ImageSheetStatus$imageUtil.generatedTileNamesByGroupId,
 			id,
-			$_convert_list_to_array('string', tileNamesForGroupId));
+			tileNamesForGroupId);
 	}
 }
 
@@ -543,7 +543,7 @@ function @type('Dictionary<int, Imagette>') virtualizationGridDoFurtherConsolida
 	@type('int') i = 0;
 	// Start making a list of ID groupings that don't exceed the maximum capacity of a megasheet.
 	@type('List<List<int>>') megaSheetMapping = $_new_list('List<int>');
-	@type('Array<int>') listOfSheetIds = $_dictionary_get_keys(nonSolitarySheets);
+	@type('Array<int>') listOfSheetIds = $_dictionary_get_keys('int', nonSolitarySheets);
 	@type('Array<int>') orderedSheetIds = $_sorted_copy_of_int_array(listOfSheetIds); // order the IDs so that the image produce is deterministic. Otherwise the consolidation order will be random based on the platform's natural dictionary key ordering.
 	for (i = 0; i < $_array_length(orderedSheetIds); i += 1) {
 		@type('int') sheetIdToCombine = $_array_get(orderedSheetIds, i);
@@ -573,7 +573,7 @@ function @type('Dictionary<int, Imagette>') virtualizationGridDoFurtherConsolida
 
 	// now update the location information to reflect the new sheet ID's and locations.
 	@type('string') locationKey = null;
-	@type('Array<string>') locationKeys = $_dictionary_get_keys(locations);
+	@type('Array<string>') locationKeys = $_dictionary_get_keys('string', locations);
 	for (i = 0; i < $_array_length(locationKeys); i += 1) {
 		locationKey = $_array_get(locationKeys, i);
 		@type('Array<int>') locationInfo = $_dictionary_get_guaranteed(locations, locationKey);
@@ -620,13 +620,13 @@ function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
 	@type('int') sheetId = 0;
 	@type('Dictionary<int, CompositeImage>') sheets = $_new_dictionary('int', 'CompositeImage');
 	@type('Dictionary<int, Imagette>') allSheets = nonSolitarySheets;
-	@type('Array<int>') sheetIds = $_dictionary_get_keys(solitarySheets);
+	@type('Array<int>') sheetIds = $_dictionary_get_keys('int', solitarySheets);
 	for (i = 0; i < $_array_length(sheetIds); i += 1) {
 		sheetId = $_array_get(sheetIds, i);
 		$_dictionary_set(allSheets, sheetId, $_dictionary_get_guaranteed(solitarySheets, sheetId));
 	}
 	
-	sheetIds = $_dictionary_get_keys(allSheets);
+	sheetIds = $_dictionary_get_keys('int', allSheets);
 	for (i = 0; i < $_array_length(sheetIds); i += 1) {
 		sheetId = $_array_get(sheetIds, i);
 		@type('Imagette') imagette = $_dictionary_get_guaranteed(allSheets, sheetId);
@@ -684,7 +684,7 @@ function imageSheetPerformWorkNuggetPreFrame() {
 	if ($_list_length(queue) > 0) {
 		// check to see if any tiles have been loaded.
 		for (@type('int') i = 0; i < $_list_length(queue); i += 1) {
-			@type('TileLoadRequest') request = $_array_get(queue, i);
+			@type('TileLoadRequest') request = $_list_get(queue, i);
 			if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_LOADED) {
 				// [down]load complete. Add to the ImageSheetStatus and figure out if this was the last one for the group.
 				$_dictionary_set(ImageSheetStatus$iss.tilesByName, TileLoadRequest$request.path, TileLoadRequest$request.nativeResource);

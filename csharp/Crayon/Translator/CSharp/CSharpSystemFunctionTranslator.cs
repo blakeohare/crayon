@@ -138,7 +138,7 @@ namespace Crayon.Translator.CSharp
 			output.Add("]");
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
 		{
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".Keys.ToArray()");

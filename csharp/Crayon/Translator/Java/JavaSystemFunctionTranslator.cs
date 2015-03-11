@@ -179,9 +179,16 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateDictionaryGetKeys(List<string> output, Expression dictionary)
+		protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
 		{
-			output.Add("TranslationHelper.convertIntegerSetToIntArray(");
+			string functionName;
+			switch (keyType)
+			{
+				case "int": functionName = "Integer"; break;
+				case "string": functionName = "String"; break;
+				default: throw new Exception("If you see this exception, you may want to consider a more extensible way of doing this.");
+			}
+			output.Add("TranslationHelper.convert" + functionName + "SetToArray(");
 			this.Translator.TranslateExpression(output, dictionary);
 			output.Add(".keySet())");
 		}

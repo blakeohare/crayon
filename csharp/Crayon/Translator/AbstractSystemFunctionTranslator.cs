@@ -45,7 +45,7 @@ namespace Crayon.Translator
 				case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
 				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
-				case "_dictionary_get_keys": VerifyCount(functionCall, 1); TranslateDictionaryGetKeys(output, args[0]); break;
+				case "_dictionary_get_keys": VerifyCount(functionCall, 2); TranslateDictionaryGetKeys(output, ((StringConstant)args[0]).Value, args[1]); break;
 				case "_dictionary_get_values": VerifyCount(functionCall, 1); TranslateDictionaryGetValues(output, args[0]); break;
 				case "_dictionary_remove": VerifyCount(functionCall, 2); TranslateDictionaryRemove(output, args[0], args[1]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
@@ -158,7 +158,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateCurrentTimeSeconds(List<string> output);
 		protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key);
-		protected abstract void TranslateDictionaryGetKeys(List<string> output, Expression dictionary);
+		protected abstract void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary);
 		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
 		protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);

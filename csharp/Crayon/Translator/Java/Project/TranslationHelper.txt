@@ -143,10 +143,19 @@ final class TranslationHelper {
         }
     }
 
-    public static int[] convertIntegerSetToIntArray(Set<Integer> original) {
+    public static int[] convertIntegerSetToArray(Set<Integer> original) {
         int[] output = new int[original.size()];
         int i = 0;
         for (int value : original) {
+            output[i++] = value;
+        }
+        return output;
+    }
+
+    public static String[] convertStringSetToArray(Set<String> original) {
+        String[] output = new String[original.size()];
+        int i = 0;
+        for (String value : original) {
             output[i++] = value;
         }
         return output;
