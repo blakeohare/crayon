@@ -233,18 +233,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			output.Add("TODO_download_image_see_system_function_translator_source_for_notes(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-			//throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
-			/*
-			output.Add("ImageLibrary.loadImage(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");//*/
+			output.Add("TranslationHelper.assertion(\"Image download from web not implemented.\")");
 		}
 
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
@@ -366,7 +355,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
-			output.Add("TODO_reuse_image_flip_code(");
+			output.Add("TranslationHelper.flipImage(");
 			this.Translator.TranslateExpression(output, image);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, flipX);
@@ -384,16 +373,16 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
-			output.Add("TODO_native_bitmap_height(");
+			output.Add("((java.awt.image.BufferedImage) ");
 			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(")");
+			output.Add(").getHeight()");
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
-			output.Add("TODO_native_bitmap_width(");
+			output.Add("((java.awt.image.BufferedImage) ");
 			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(")");
+			output.Add(").getWidth()");
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
@@ -623,21 +612,21 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			output.Add("TODO_read_local_image_resource(");
+			output.Add("TranslationHelper.loadImageFromLocalFile(");
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
-			output.Add("TODO_read_local_sound_resource(");
+			output.Add("TranslationHelper.readLocalSoundResource(");
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			output.Add("TODO_read_local_tile_resource(");
+			output.Add("TranslationHelper.readLocalTileResource(");
 			this.Translator.TranslateExpression(output, tileGenName);
 			output.Add(")");
 		}
@@ -698,7 +687,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
 		{
-			output.Add("TODO_play_sound_impl(");
+			output.Add("TranslationHelper.playSoundImpl(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
