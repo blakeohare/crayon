@@ -141,19 +141,19 @@ public final class RenderEngine {
                     x = renderArgs[index++];
                     y = renderArgs[index++];
 
-                    g.drawImage((java.awt.Image) image.compositeResource.nativeBitmap, x, y, null);
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
                     break;
 
                 case BLIT_IMAGE_PARTIAL:
-                	image = images[imagesIndex++];
-                	x = renderArgs[index++];
-                	y = renderArgs[index++];
-                	sx = renderArgs[index++];
-                	sy = renderArgs[index++];
-                	width = renderArgs[index++];
-                	height = renderArgs[index++];
-                	g.drawImage((java.awt.Image) image.compositeResource.nativeBitmap, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
-                	break;
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    sx = renderArgs[index++];
+                    sy = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
+                    break;
 
                 case DRAW_ELLIPSE:
                     x = renderArgs[index++];
