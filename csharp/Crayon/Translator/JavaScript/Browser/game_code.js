@@ -232,21 +232,16 @@ R._mousething = function(ev, click, down) {
 	x = Math.floor(x * vwidth / rwidth);
 	y = Math.floor(y * vheight / rheight);
 
-	var data = [];
-
 	if (click) {
 		var rightclick = false;
 		if (!ev) ev = window.event;
 		if (ev.which) rightclick = (ev.which == 3);
 		else if (ev.button) rightclick = (ev.button == 2);
-		data.push(R._commonStrings['s_mouse' + (rightclick ? 'right' : 'left') + (down ? 'down' : 'up')]);
+		var button = rightClick ? 'right' : 'left';
+		R._global_vars.event_queue.push(v_buildGameEvent('mouse' + button + (down ? 'down' : 'up'), 'mouse', x, y, 0, down, button));
 	} else {
-		data.push(R._commonStrings.s_mousemove);
+		R._global_vars.event_queue.push(v_buildGameEvent('mousemove', 'mouse', x, y, 0, false, null));
 	}
-	data.push([%%%TYPE_INTEGER%%%, x]);
-	data.push([%%%TYPE_INTEGER%%%, y]);
-
-	R._global_vars.event_queue.push([%%%TYPE_LIST%%%, data]);
 };
 
 R._mouse_get_pos_from_event = function (ev) {
@@ -333,15 +328,6 @@ R.setTitle = function (title) {
 	window.document.title = title;
 };
 
-R._commonStrings = {
-	s_key: [%%%TYPE_STRING%%%, 'key'],
-	s_mouseleftdown: [%%%TYPE_STRING%%%, 'mouseleftdown'],
-	s_mouseleftup: [%%%TYPE_STRING%%%, 'mouseleftup'],
-	s_mousemove: [%%%TYPE_STRING%%%, 'mousemove'],
-	s_mouserightdown: [%%%TYPE_STRING%%%, 'mouserightdown'],
-	s_mouserightup: [%%%TYPE_STRING%%%, 'mouserightup']
-};
-
 R._keydown = function (ev) {
 	R._keydownup(ev, true);
 };
@@ -353,7 +339,7 @@ R._keyup = function (ev) {
 R._keydownup = function (ev, down) {
 	var keycode = R._getKeyCode(ev);
 	if (keycode != null) {
-		R._global_vars.event_queue.push([%%%TYPE_LIST%%%, [R._commonStrings.s_key, down ? v_VALUE_TRUE : v_VALUE_FALSE, keycode]]);
+		R._global_vars.event_queue.push(v_buildGameEvent('key' + (down ? 'down' : 'up'), 'key', 0, 0, 0, down, keycode));
 	}
 };
 
