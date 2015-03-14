@@ -364,10 +364,6 @@ R._keyCodeLookup = {
 	'k189': '-'
 };
 
-for (var _key in R._keyCodeLookup) {
-	R._keyCodeLookup[_key] = [%%%TYPE_STRING%%%, R._keyCodeLookup[_key]];
-}
-
 R._getKeyCode = function (ev) {
 	var keyCode = ev.which ? ev.which : ev.keyCode;
 	var output = R._keyCodeLookup['k' + keyCode];
