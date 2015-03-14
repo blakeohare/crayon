@@ -354,6 +354,8 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
+			// TODO: I don't feel comfortable passing in the raw struct to the native function. Should pass in each field
+			// individually, despite it creating 5 args. This way list-based struct platforms aren't so brittle to changes.
 			output.Add("R.flushImagette(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");

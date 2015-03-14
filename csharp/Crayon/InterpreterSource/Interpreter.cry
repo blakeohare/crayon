@@ -1349,10 +1349,10 @@ function @omitReturn @type('string') interpret(
 						arg1 = $_stack_pop(valueStack);
 						int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
 						if (int1 == 0) {
-							output = VALUE_NULL;
+							return killExecution(stack, "$gfx_is_image_loaded cannot be called on keys where loading has not been initialized.");
 						} else if (int1 == 1) {
 							output = VALUE_TRUE;
-						} else {
+						} else { // int1 == 2
 							output = VALUE_FALSE;
 						}
 						break;

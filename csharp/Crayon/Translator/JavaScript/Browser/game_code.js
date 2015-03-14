@@ -53,7 +53,7 @@ R.autogenDownloaderKey = 1;
 R.better_enqueue_image_download = function(url) {
 	var key = 'k' + R.autogenDownloaderKey++;
 	var loader_queue = document.getElementById('crayon_image_loader_queue');
-	loader_queue.innerHTML += '<img id="better_downloader_' + key + '" onload="R.better_finish_load_image(' + key + ')" crossOrigin="anonymous" />' +
+	loader_queue.innerHTML += '<img id="better_downloader_' + key + '" onload="R.better_finish_load_image(&quot;' + key + '&quot;)" crossOrigin="anonymous" />' +
 		'<canvas id="better_image_loader_canvas_' + key + '" />';
 	var img = document.getElementById('better_downloader_' + key);
 	img.src = %%%JS_FILE_PREFIX%%% + url;
@@ -89,6 +89,32 @@ R.finish_load_image = function(id) {
 	var context = canvas.getContext('2d');
 	context.drawImage(img, 0, 0);
 	R._global_vars.image_downloads[key] = canvas;
+};
+
+R.flushImagette = function(imagette) {
+	var width = imagette[0];
+	var height = imagette[1];
+	var images = imagette[2];
+	var xs = imagette[3];
+	var ys = imagette[4];
+	var length = images.length;
+	var canvasAndContext = R.createCanvasAndContext(width, height);
+	var canvas = canvasAndContext[0];
+	var context = canvasAndContext[1];
+	for (var i = 0; i < length; ++i) {
+		context.drawImage(images[i], xs[i], ys[i]);
+	}
+	return canvas;
+};
+
+R.createCanvasAndContext = function(width, height) {
+	R._global_vars.temp_image.innerHTML = '<canvas id="temp_image_canvas"></canvas>';
+	var canvas = document.getElementById('temp_image_canvas');
+	canvas.width = width;
+	canvas.height = height;
+	var context = canvas.getContext('2d');
+	R._global_vars.temp_image.innerHTML = '';
+	return [canvas, context];
 };
 
 R.beginFrame = function() {
@@ -456,6 +482,12 @@ R.flipImage = function(wrappedImage, flipX, flipY) {
 
 R.playSound = function(platformSound) {
 	// TODO: playSound
+};
+
+R.sortedCopyOfArray = function(nums) {
+	var newArray = nums.concat([]);
+	newArray.sort();
+	return newArray;
 };
 
 R.readResourceText = function(path) {
