@@ -530,6 +530,20 @@ R.typeClassify = function(thing) {
 	return 'null';
 };
 
+R.sortPrimitiveValuesList = function(list) {
+	var lookup = {};
+	var keys = [];
+	for (var i = 0; i < list.length; ++i) {
+		var key = list[i][1];
+		lookup[key] = list[i];
+		keys.push(key);
+	}
+	keys.sort();
+	for (var i = 0; i < list.length; ++i) {
+		list[i] = lookup[keys[i]];
+	}
+};
+
 window.addEventListener('keydown', function(e) {
 	if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 		e.preventDefault();
