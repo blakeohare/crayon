@@ -325,6 +325,12 @@ namespace Crayon.Translator.Python
 			output.Add("1024");
 		}
 
+		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
+		{
+			// Python loads resources synchronously.
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
 			output.Add("_pygame_flip_image(");
@@ -341,6 +347,12 @@ namespace Crayon.Translator.Python
 			output.Add("flush_imagette(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			// Python loads resources synchronously.
+			throw new InvalidOperationException();
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)

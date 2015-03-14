@@ -231,6 +231,12 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
+		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
+		{
+			// C# loads resources synchronously.
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
 			// This is not used in the OpenTK platform because flipping is simply swapping texture mapping coordinates.
@@ -242,6 +248,12 @@ namespace Crayon.Translator.CSharp
 			output.Add("TranslationHelper.ImagetteFlushToNativeBitmap(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			// C# loads resources synchronously.
+			throw new InvalidOperationException();
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)

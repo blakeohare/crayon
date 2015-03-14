@@ -17,7 +17,9 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
 		{
-			throw new NotImplementedException();
+			output.Add("R.playSound(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
 		}
 
 		protected override void TranslateArcCos(List<string> output, Expression value)
@@ -212,13 +214,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			throw new NotImplementedException("Need to redo this with new isLocalResource parameter.");
-			/*
-			output.Add("R.enqueue_image_download(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")"); //*/
+			TranslateAssert(output, new StringConstant(null, "TODO: web image downloads"));
 		}
 
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
@@ -338,6 +334,13 @@ namespace Crayon.Translator.JavaScript
 			output.Add("1024");
 		}
 
+		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
+		{
+			output.Add("R.get_completed_image_if_downloaded(");
+			this.Translator.TranslateExpression(output, asyncReferenceKey);
+			output.Add(")");
+		}
+
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
 			output.Add("R.flipImage(");
@@ -353,6 +356,14 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("R.flushImagette(");
 			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			// returns the string ID
+			output.Add("R.better_enqueue_image_download(");
+			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
@@ -576,17 +587,17 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			throw new NotImplementedException();
+			throw new Exception("Not supported in JavaScript");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			throw new NotImplementedException();
+			throw new Exception("Not supported in JavaScript");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
-			// Nope
+			// Nope.
 		}
 
 		protected override void TranslateRegisterTimeout(List<string> output)

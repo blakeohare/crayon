@@ -158,6 +158,7 @@ function main() {
 		$_new_list('int'), // image scale stack
 		1, // top of the image scale stack (empty stack implies scale ratio of 1)
 		new ImageSheetStatus(
+			$_new_dictionary('string', 'string'),
 			$_new_dictionary('string', 'object'),
 			$_new_dictionary('string', 'int'),
 			$_new_dictionary('string', 'TileLoadRequest'),

@@ -353,6 +353,12 @@ namespace Crayon.Translator.Java
 			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
 		}
 
+		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
+		{
+			// Java loads resources synchronously.
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
 			output.Add("TranslationHelper.flipImage(");
@@ -369,6 +375,12 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.flushImagetteToBitmap(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			// Java loads resources synchronously.
+			throw new InvalidOperationException();
 		}
 
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)

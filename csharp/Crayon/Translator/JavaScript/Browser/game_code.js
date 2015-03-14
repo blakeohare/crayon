@@ -49,6 +49,37 @@ R.enqueue_image_download = function(key, url) {
 	return true;
 };
 
+R.autogenDownloaderKey = 1;
+R.better_enqueue_image_download = function(url) {
+	var key = 'k' + R.autogenDownloaderKey++;
+	var loader_queue = document.getElementById('crayon_image_loader_queue');
+	loader_queue.innerHTML += '<img id="better_downloader_' + key + '" onload="R.better_finish_load_image(' + key + ')" crossOrigin="anonymous" />' +
+		'<canvas id="better_image_loader_canvas_' + key + '" />';
+	var img = document.getElementById('better_downloader_' + key);
+	img.src = %%%JS_FILE_PREFIX%%% + url;
+	return key;
+};
+
+// TODO: blit to a canvas that isn't in the DOM and then delete the img and canvas when completed.
+// TODO: figure out if there are any in flight downloads, and if not, clear out the load queue DOM.
+R.better_finish_load_image = function(key) {
+	var img = document.getElementById('better_downloader_' + key);
+	var canvas = document.getElementById('better_image_loader_canvas_' + key);
+	canvas.width = img.width;
+	canvas.height = img.height;
+	var context = canvas.getContext('2d');
+	context.drawImage(img, 0, 0);
+	R.better_completed_image_lookup[key] = canvas;
+};
+
+R.get_completed_image_if_downloaded = function(key) {
+	var canvas = R.better_completed_image_lookup[key];
+	if (!!canvas) return canvas;
+	return null;
+};
+
+R.better_completed_image_lookup = {};
+
 R.finish_load_image = function(id) {
 	var key = R._global_vars.image_keys_by_index[id];
 	var img = document.getElementById('image_loader_img_' + id);
@@ -421,6 +452,10 @@ R.flipImage = function(wrappedImage, flipX, flipY) {
 	}
 
 	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output];
+};
+
+R.playSound = function(platformSound) {
+	// TODO: playSound
 };
 
 R.readResourceText = function(path) {
