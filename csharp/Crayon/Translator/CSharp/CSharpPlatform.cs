@@ -18,7 +18,7 @@ namespace Crayon.Translator.CSharp
 		public override bool IntIsFloor { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
-		protected override string GeneratedFilesFolder { get { return "%PROJECT_ID%/GeneratedFiles"; } }
+		public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/GeneratedFiles"; } }
 
 		public abstract void PlatformSpecificFiles(
 			string projectId,
