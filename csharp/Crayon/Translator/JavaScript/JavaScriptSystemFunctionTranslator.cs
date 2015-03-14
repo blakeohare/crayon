@@ -373,13 +373,13 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
 			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(".width");
+			output.Add(".height");
 		}
 
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
 			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(".height");	
+			output.Add(".width");	
 		}
 
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
