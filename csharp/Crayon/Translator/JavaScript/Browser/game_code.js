@@ -203,8 +203,9 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 	canvas.addEventListener('mousemove', R._mousemove);
 
 	if (scaledMode) {
-		var canvasContext = canvas.getContext('2d');
-		canvasContext.scale(pwidth / width, pheight / height);
+		R._global_vars['ctx'].imageSmoothingEnabled = false;
+		R._global_vars['ctx'].mozImageSmoothingEnabled = false;
+		R._global_vars['ctx'].scale(pwidth / width, pheight / height);
 	}
 };
 
@@ -426,40 +427,35 @@ R.drawLine = function(startX, startY, endX, endY, width, r, g, b, a) {
 	context.closePath();
 };
 
-R.flipImage = function(wrappedImage, flipX, flipY) {
-	if (wrappedImage[0] != %%%TYPE_NATIVE_OBJECT_IMAGE%%%) {
-		return null;
-	}
-
-	var img = wrappedImage[1];
+R.flipImage = function(canvas, flipX, flipY) {
 	var output = document.createElement('canvas');
 
-	output.width = img.width;
-	output.height = img.height;
+	output.width = canvas.width;
+	output.height = canvas.height;
 
 	var outputContext = output.getContext('2d');
 
 	if (flipX) {
-		outputContext.translate(img.width, 0);
+		outputContext.translate(canvas.width, 0);
 		outputContext.scale(-1, 1);
 	}
 	if (flipY) {
-		outputContext.translate(0, img.height);
+		outputContext.translate(0, canvas.height);
 		outputContext.scale(1, -1);
 	}
 
-	outputContext.drawImage(img, 0, 0);
+	outputContext.drawImage(canvas, 0, 0);
 
 	if (flipX) {
 		outputContext.scale(-1, 1);
-		outputContext.translate(-img.width, 0);
+		outputContext.translate(-canvas.width, 0);
 	}
 	if (flipY) {
 		outputContext.scale(1, -1);
-		outputContext.translate(0, -img.height);
+		outputContext.translate(0, -canvas.height);
 	}
 
-	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, output];
+	return output;
 };
 
 R.playSound = function(platformSound) {

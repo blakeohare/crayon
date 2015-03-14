@@ -58,7 +58,6 @@ function @type('Image') instantiateImage(
 			textureRight,
 			textureBottom);
 	} else {
-		@type('Imagette') img = createImagetteFromDimensions(width, height);
 		// TODO: consider using native methods?
 		if (nativeBitmap == null) {
 			nativeBitmap = CompositeImage$resource.nativeBitmap;
@@ -73,11 +72,18 @@ function @type('Image') instantiateImage(
 				nativeBitmap = $_image_create_flipped_copy_of_native_bitmap(nativeBitmap, flipX, flipY);
 			}
 		}
-		imagetteBlitRaw(img, nativeBitmap, -x, -y);
+
+		if (x != 0 || y != 0 || width != $_image_native_bitmap_width(nativeBitmap) || height != $_image_native_bitmap_height(nativeBitmap)) {
+			// Crop the image, if necessary.
+			@type('Imagette') img = createImagetteFromDimensions(width, height);
+			imagetteBlitRaw(img, nativeBitmap, -x, -y);
+			
+			nativeBitmap = $_image_imagette_flush_to_native_bitmap(img);
+		}
 
 		return new Image(
 			null,
-			$_image_imagette_flush_to_native_bitmap(img),
+			nativeBitmap,
 			0,
 			0,
 			width,
