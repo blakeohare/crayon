@@ -72,11 +72,10 @@ namespace Crayon.Translator.CSharp
 				};
 			}
 
-
 			files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/Licenses.txt")
+				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/License.txt")
 			};
 		}
 	}
