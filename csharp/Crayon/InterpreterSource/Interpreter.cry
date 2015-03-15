@@ -126,9 +126,9 @@ function @omitReturn @type('string') interpret(
 				} else if (type == Types.INTEGER) {
 					$_list_push(ProgramData$p.literalTableBuilder, buildInteger($_array_get(row, 1)));
 				} else if (type == Types.FLOAT) {
-					$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.FLOAT, $_string_parse_float($_array_get(stringArgs, StackFrame$stack.pc))));
+					$_list_push(ProgramData$p.literalTableBuilder, buildFloat($_string_parse_float($_array_get(stringArgs, StackFrame$stack.pc))));
 				} else if (type == Types.STRING) {
-					$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.STRING, $_array_get(stringArgs, StackFrame$stack.pc)));
+					$_list_push(ProgramData$p.literalTableBuilder, buildCommonString($_array_get(stringArgs, StackFrame$stack.pc)));
 				}
 				break;
 
@@ -335,26 +335,26 @@ function @omitReturn @type('string') interpret(
 							else if ($_cast('int', right) > 0)
 								value = buildInteger($_int($_exponent($_cast('int', left), $_cast('int', right))));
 							else
-								value = new Value(Types.FLOAT, $_exponent($_cast('int', left), $_cast('int', right)));
+								value = buildFloat($_exponent($_cast('int', left), $_cast('int', right)));
 							break;
 
 						// int ** float
 						case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 							$_comment('int ** float');
-							value = new Value(Types.FLOAT, 0.0 + $_exponent($_cast('int', left), $_cast('double', right)));
+							value = buildFloat(0.0 + $_exponent($_cast('int', left), $_cast('double', right)));
 							break;
 
 						// float ** int
 						case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 							$_comment('float ** int');
 							// add 0.0 just in case underlying platform likes to fall back to integer when possible
-							value = new Value(Types.FLOAT, 0.0 + $_exponent($_cast('double', left), $_cast('int', right)));
+							value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('int', right)));
 							break;
 
 						// float ** float
 						case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 							$_comment('float ** float');
-							value = new Value(Types.FLOAT, 0.0 + $_exponent($_cast('double', left), $_cast('double', right)));
+							value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('double', right)));
 							break;
 						
 						// float % float
@@ -363,7 +363,7 @@ function @omitReturn @type('string') interpret(
 							if ($_cast('double', right) == 0) return killExecution(stack, "Modulo by 0");
 							float1 = $_cast('double', left) % $_cast('double', right);
 							if (float1 < 0) float1 += $_cast('double', right);
-							value = new Value(Types.FLOAT, float1);
+							value = buildFloat(float1);
 							break;
 
 						// int % int
@@ -388,17 +388,17 @@ function @omitReturn @type('string') interpret(
 						// float + int
 						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float + int');
-							value = new Value(Types.FLOAT, $_cast('double', left) + $_cast('int', right)); break;
+							value = buildFloat($_cast('double', left) + $_cast('int', right)); break;
 
 						// int + float
 						case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int + float');
-							value = new Value(Types.FLOAT, $_cast('int', left) + $_cast('double', right)); break;
+							value = buildFloat($_cast('int', left) + $_cast('double', right)); break;
 
 						// float + float
 						case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float + float');
-							value = new Value(Types.FLOAT, $_cast('double', left) + $_cast('double', right)); break;
+							value = buildFloat($_cast('double', left) + $_cast('double', right)); break;
 							
 						// int - int
 						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
@@ -408,17 +408,17 @@ function @omitReturn @type('string') interpret(
 						// int - float
 						case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int - float');
-							value = new Value(Types.FLOAT, $_cast('int', left) - $_cast('double', right)); break;
+							value = buildFloat($_cast('int', left) - $_cast('double', right)); break;
 							
 						// float - int
 						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float - int');
-							value = new Value(Types.FLOAT, $_cast('double', left) - $_cast('int', right)); break;
+							value = buildFloat($_cast('double', left) - $_cast('int', right)); break;
 							
 						// float - float
 						case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float - float');
-							value = new Value(Types.FLOAT, $_cast('double', left) - $_cast('double', right)); break;
+							value = buildFloat($_cast('double', left) - $_cast('double', right)); break;
 
 						// int * int
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
@@ -428,17 +428,17 @@ function @omitReturn @type('string') interpret(
 						// float * int
 						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float * int');
-							value = new Value(Types.FLOAT, $_cast('double', left) * $_cast('int', right)); break;
+							value = buildFloat($_cast('double', left) * $_cast('int', right)); break;
 
 						// int * float
 						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int * float');
-							value = new Value(Types.FLOAT, $_cast('int', left) * $_cast('double', right)); break;
+							value = buildFloat($_cast('int', left) * $_cast('double', right)); break;
 
 						// float * float
 						case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float * float');
-							value = new Value(Types.FLOAT, $_cast('double', left) * $_cast('double', right)); break;
+							value = buildFloat($_cast('double', left) * $_cast('double', right)); break;
 							
 						// int / int
 						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
@@ -450,19 +450,19 @@ function @omitReturn @type('string') interpret(
 						case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 							$_comment('int / float');
 							if ($_cast('double', right) == 0) return killExecution(stack, "Division by 0");
-							value = new Value(Types.FLOAT, $_unsafe_float_division($_cast('int', left), $_cast('double', right))); break;
+							value = buildFloat($_unsafe_float_division($_cast('int', left), $_cast('double', right))); break;
 
 						// float / int
 						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 							$_comment('float / int');
 							if ($_cast('int', right) == 0) return killExecution(stack, "Division by 0"); 
-							value = new Value(Types.FLOAT, $_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
+							value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
 
 						// float / float
 						case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 							$_comment('float / float');
 							if ($_cast('double', right) == 0) return killExecution(stack, "Division by 0"); 
-							value = new Value(Types.FLOAT, $_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
+							value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
 
 						// int < int
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
@@ -694,7 +694,7 @@ function @omitReturn @type('string') interpret(
 							}
 						} else if (Value$value.type == Types.FLOAT) {
 							if ($_cast('double', Value$value.internalValue) < 0) {
-								output = new Value(Types.FLOAT, -$_cast('double', Value$value.internalValue));
+								output = buildFloat(-$_cast('double', Value$value.internalValue));
 							} else {
 								output = value;
 							}
@@ -712,13 +712,13 @@ function @omitReturn @type('string') interpret(
 							if (float1 < -1 || float1  > 1) {
 								return killExecution(stack, "$arc_cos requires a number in the range of -1 to 1");
 							}
-							output = new Value(Types.FLOAT, $_arc_cos(float1));
+							output = buildFloat($_arc_cos(float1));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
 							if (int1 < -1 || int1 > 1) {
 								return killExecution(stack, "$arc_cos requires a number in the range of -1 to 1");
 							}
-							output = new Value(Types.FLOAT, $_arc_cos(int1));
+							output = buildFloat($_arc_cos(int1));
 						} else {
 							return killExecution(stack, "$arc_cos requires a number as input.");
 						}
@@ -733,13 +733,13 @@ function @omitReturn @type('string') interpret(
 							if (float1 < -1 || float1  > 1) {
 								return killExecution(stack, "$arc_sin requires a number in the range of -1 to 1");
 							}
-							output = new Value(Types.FLOAT, $_arc_sin(float1));
+							output = buildFloat($_arc_sin(float1));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
 							if (int1 < -1 || int1 > 1) {
 								return killExecution(stack, "$arc_sin requires a number in the range of -1 to 1");
 							}
-							output = new Value(Types.FLOAT, $_arc_sin(int1));
+							output = buildFloat($_arc_sin(int1));
 						} else {
 							return killExecution(stack, "$arc_sin requires a number as input.");
 						}
@@ -751,10 +751,10 @@ function @omitReturn @type('string') interpret(
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_arc_tan(float1, 1.0));
+							output = buildFloat($_arc_tan(float1, 1.0));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_arc_tan(int1, 1.0));
+							output = buildFloat($_arc_tan(int1, 1.0));
 						} else {
 							return killExecution(stack, "$arc_tan requires a number as input.");
 						}
@@ -769,10 +769,10 @@ function @omitReturn @type('string') interpret(
 							float1 = $_cast('double', Value$arg1.internalValue);
 							if (Value$arg2.type == Types.FLOAT) {
 								float2 = $_cast('double', Value$arg2.internalValue);
-								output = new Value(Types.FLOAT, $_arc_tan(float1, float2));
+								output = buildFloat($_arc_tan(float1, float2));
 							} else if (Value$arg2.type == Types.INTEGER) {
 								int2 = $_cast('int', Value$arg2.internalValue);
-								output = new Value(Types.FLOAT, $_arc_tan(float1, int2));
+								output = buildFloat($_arc_tan(float1, int2));
 							} else {
 								return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
 							}
@@ -780,10 +780,10 @@ function @omitReturn @type('string') interpret(
 							int1 = $_cast('int', Value$arg1.internalValue);
 							if (Value$arg2.type == Types.FLOAT) {
 								float2 = $_cast('double', Value$arg2.internalValue);
-								output = new Value(Types.FLOAT, $_arc_tan(int1, float2));
+								output = buildFloat($_arc_tan(int1, float2));
 							} else if (Value$arg2.type == Types.INTEGER) {
 								int2 = $_cast('int', Value$arg2.internalValue);
-								output = new Value(Types.FLOAT, $_arc_tan(int1, int2));
+								output = buildFloat($_arc_tan(int1, int2));
 							} else {
 								return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
 							}
@@ -809,17 +809,17 @@ function @omitReturn @type('string') interpret(
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_cos(float1));
+							output = buildFloat($_cos(float1));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_cos(int1));
+							output = buildFloat($_cos(int1));
 						} else {
 							return killExecution(stack, "$cos requires a number argument.");
 						}
 						break;
 
 					case %%%FF_CURRENT_TIME%%%:
-						output = new Value(Types.FLOAT, $_current_time_seconds());
+						output = buildFloat($_current_time_seconds());
 						break;
 
 					case %%%FF_FLOOR%%%:
@@ -1302,9 +1302,9 @@ function @omitReturn @type('string') interpret(
 						}
 
 						if (int2 == 0) {
-							output = new Value(Types.FLOAT, 1.0);
+							output = VALUE_FLOAT_ONE;
 						} else {
-							output = new Value(Types.FLOAT, $_unsafe_float_division(1.0 * int1, int2));
+							output = buildFloat($_unsafe_float_division(1.0 * int1, int2));
 						}
 						break;
 
@@ -1393,7 +1393,7 @@ function @omitReturn @type('string') interpret(
 
 					case %%%FF_RANDOM%%%:
 						$_comment('$random');
-						output = new Value(Types.FLOAT, $_random_float());
+						output = buildFloat($_random_float());
 						break;
 
 					case %%%FF_RESOURCE_READ_TEXT%%%:
@@ -1480,10 +1480,10 @@ function @omitReturn @type('string') interpret(
 						arg1 = $_stack_pop(valueStack);
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_sin(float1));
+							output = buildFloat($_sin(float1));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_sin(int1));
+							output = buildFloat($_sin(int1));
 						} else {
 							return killExecution(stack, "$sin requires a number argument.");
 						}
@@ -1497,10 +1497,10 @@ function @omitReturn @type('string') interpret(
 						// to pi/2 produces 16331239353195370. 
 						if (Value$arg1.type == Types.FLOAT) {
 							float1 = $_cast('double', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_tan(float1));
+							output = buildFloat($_tan(float1));
 						} else if (Value$arg1.type == Types.INTEGER) {
 							int1 = $_cast('int', Value$arg1.internalValue);
-							output = new Value(Types.FLOAT, $_tan(int1));
+							output = buildFloat($_tan(int1));
 						} else {
 							return killExecution(stack, "$tan requires a number argument.");
 						}
@@ -2137,7 +2137,7 @@ function @omitReturn @type('string') interpret(
 				if (type == Types.INTEGER) {
 					value = buildInteger(-$_cast('int', Value$value.internalValue));
 				} else if (type == Types.FLOAT) {
-					value = new Value(Types.FLOAT, -$_cast('double', Value$value.internalValue));
+					value = buildFloat(-$_cast('double', Value$value.internalValue));
 				} else {
 					return killExecution(stack, "Negative sign can only be applied to numbers. Found " + getTypeFromId(type) + " instead.");
 				}

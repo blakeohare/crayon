@@ -387,7 +387,8 @@ R.fillScreen = function (r, g, b) {
 
 R.drawRect = function (x, y, width, height, r, g, b, a) {
 	var ctx = R._global_vars.ctx;
-	ctx.fillStyle = R._toHex(r, g, b);
+	var color = a == 255 ? R._toHex(r, g, b) : ('rgba(' + r + ',' + g + ',' + b + ',' + a + ')');
+	ctx.fillStyle = color;
 	ctx.fillRect(x, y, width + .1, height + .1);
 };
 
@@ -487,13 +488,13 @@ R.convertJsonThing = function(thing) {
 	switch (type) {
 		case 'null': return v_VALUE_NULL;
 		case 'bool': return thing ? v_VALUE_TRUE : v_VALUE_FALSE;
-		case 'string': return thing.length == 0 ? v_VALUE_EMPTY_STRING : [%%%TYPE_STRING%%%, thing];
+		case 'string': return v_buildString(thing);
 		case 'list':
 			var list = [];
 			for (i = 0; i < thing.length; ++i) {
 				list.push(R.convertJsonThing(thing[i]));
 			}
-			return [%%%TYPE_LIST%%%, list];
+			return v_buildListByWrappingInput(list);
 		case 'dict':
 			var keys = [];
 			var values = [];
@@ -503,9 +504,9 @@ R.convertJsonThing = function(thing) {
 			}
 			return v_buildDictionary(keys, values);
 		case 'int':
-			return [%%%TYPE_INTEGER%%%, thing];
+			return v_buildInteger(thing);
 		case 'float':
-			return [%%%TYPE_FLOAT%%%, thing];
+			return v_buildFloat(thing);
 		default:
 			return v_VALUE_NULL;
 	}

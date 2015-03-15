@@ -74,6 +74,12 @@ function @type('Value') buildBoolean(@type('bool') value) {
 	return VALUE_FALSE;
 }
 
+function @type('Value') buildFloat(@type('double') value) {
+	if (value == 0.0) return VALUE_FLOAT_ZERO;
+	if (value == 1.0) return VALUE_FLOAT_ONE;
+	return new Value(Types.FLOAT, value);
+}
+
 // This returns a numerical code rather than a boolean
 //  0 = false
 //  1 = true
