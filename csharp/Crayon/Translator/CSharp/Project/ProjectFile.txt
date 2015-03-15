@@ -42,5 +42,8 @@
   <ItemGroup>
 %%%COMPILE_TARGETS%%%
   </ItemGroup>
+  <ItemGroup>
+%%%COPY_FILES%%%
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

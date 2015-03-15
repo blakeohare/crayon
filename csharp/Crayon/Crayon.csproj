@@ -178,6 +178,11 @@
     <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
+    <None Include="README.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="LICENSE.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

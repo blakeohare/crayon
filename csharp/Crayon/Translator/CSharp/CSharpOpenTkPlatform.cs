@@ -28,6 +28,12 @@ namespace Crayon.Translator.CSharp
 				"      <HintPath>.\\Tao.Sdl.dll</HintPath>",
 				"    </Reference>"
 			});
+
+			replacements["COPY_FILES"] = string.Join("\r\n", new string[] {
+				"    <None Include=\"DependencyLicenses.txt\">",
+				"      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",
+				"    </None>",
+			});
 		}
 
 		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries) { }
@@ -65,6 +71,13 @@ namespace Crayon.Translator.CSharp
 					BinaryContent = Util.ReadBytesInternally("Translator/CSharp/Binaries/" + binary + ".dll")
 				};
 			}
+
+
+			files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/Licenses.txt")
+			};
 		}
 	}
 }
