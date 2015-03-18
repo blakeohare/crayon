@@ -99,11 +99,14 @@ namespace Crayon
 			this.GetRelativePaths(inputFolder, null, filesToCopyOver);
 
 			SpriteSheetBuilder spriteSheetBuilder = new SpriteSheetBuilder(buildContext);
-			foreach (string spriteSheetId in buildContext.SpriteSheetIds)
+			if (buildContext.SpriteSheetIds != null)
 			{
-				foreach (string fileMatcher in buildContext.SpriteSheetPrefixesById[spriteSheetId])
+				foreach (string spriteSheetId in buildContext.SpriteSheetIds)
 				{
-					spriteSheetBuilder.AddPrefix(spriteSheetId, fileMatcher);
+					foreach (string fileMatcher in buildContext.SpriteSheetPrefixesById[spriteSheetId])
+					{
+						spriteSheetBuilder.AddPrefix(spriteSheetId, fileMatcher);
+					}
 				}
 			}
 			List<string> spriteSheetOpsStringArgs = new List<string>();
