@@ -238,7 +238,7 @@ R._mousething = function(ev, click, down) {
 		if (!ev) ev = window.event;
 		if (ev.which) rightclick = (ev.which == 3);
 		else if (ev.button) rightclick = (ev.button == 2);
-		var button = rightClick ? 'right' : 'left';
+		var button = rightclick ? 'right' : 'left';
 		R._global_vars.event_queue.push(v_buildGameEvent('mouse' + button + (down ? 'down' : 'up'), 'mouse', x, y, 0, down, button));
 	} else {
 		R._global_vars.event_queue.push(v_buildGameEvent('mousemove', 'mouse', x, y, 0, false, null));
