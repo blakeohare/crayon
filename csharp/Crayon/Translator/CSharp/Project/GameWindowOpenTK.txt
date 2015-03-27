@@ -522,11 +522,11 @@ namespace %%%PROJECT_ID%%%
 							endY = j;
 						}
 
-						slope = (1.0 * endY - startY) / (endX - startX);
+						slope = -(1.0 * endY - startY) / (endX - startX);
 						slopeScalingCoefficient = System.Math.Sqrt(1 + 1.0 / (slope * slope));
 
-						offsetXComp = (1.5 + lineWidth) / slopeScalingCoefficient;
-						offsetYComp = (1.5 + lineWidth) / (System.Math.Abs(slope) * slopeScalingCoefficient);
+						offsetXComp = lineWidth / slopeScalingCoefficient / 2;
+						offsetYComp = lineWidth / (2 * System.Math.Abs(slope) * slopeScalingCoefficient);
 
 						ax = startX;
 						ay = startY;
