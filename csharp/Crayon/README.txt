@@ -1,4 +1,4 @@
-﻿Crayon version 0.1.0 (Alpha)
+﻿Crayon version 0.1.1 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -27,4 +27,8 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
 NEW IN THIS RELEASE
 -------------------
-EVERYTHING.
+Bug fixes: 
+- Fix crash for compiling projects that don't have image sheets
+- Fix all 2D geometry drawing for all platforms (rectangle, line, ellipse) x (java, python, javascript, c#)
+- Fix $current_time output on C# to return unix epoch instead of whatever DateTime.Now.Ticks/10000000.0 was returning.
+- Fix mouse events in JavaScript
