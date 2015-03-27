@@ -297,10 +297,11 @@ namespace %%%PROJECT_ID%%%
 			int RH = screenHeight;
 			int VW = gameWidth;
 			int VH = gameHeight;
-			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height, scale;
+			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height, scale, j, ptCount;
 			int textureId = -1;
 			float textureWidth, textureHeight;
 			float textureLeft, textureRight, textureTop, textureBottom;
+			double slope, slopeScalingCoefficient, offsetXComp, offsetYComp, ax, bx, cx, dx, ay, by, cy, dy;
 			byte red, green, blue, alpha;
 			Image image;
 
@@ -462,9 +463,39 @@ namespace %%%PROJECT_ID%%%
 						blue = (byte)drawList[i | 7];
 						alpha = (byte)drawList[i | 8];
 
-						throw new System.NotImplementedException("TODO: draw ellipse");
+						width = right - left;
+						height = bottom - top;
+						startX = left + width / 2;
+						startY = top + height / 2;
+						width = width / 2;
+						height = height / 2;
+
+						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight || width == 0 || height == 0) continue;
+
+						// Since Polygons require a GL.End(), clear the state if one exists and don't set a new one.
+						if (state != null)
+						{
+							GL.End();
+						}
+
+						GL.Disable(EnableCap.Texture2D);
+						GL.Color4(red, green, blue, alpha);
+						GL.Begin(BeginMode.Polygon);
+
+						ptCount = (width + height) / 8;
+						for (j = 0; j < ptCount; ++j)
+						{
+							endX = (int)(System.Math.Cos(-3.14159265358979 * 2 * j / ptCount) * width + startX);
+							endY = (int)(System.Math.Sin(-3.14159265358979 * 2 * j / ptCount) * height + startY);
+							GL.Vertex2(endX * RW / VW, endY * RH / VH);
+						}
+						GL.End();
+						state = null;
+						break;
 
 					case DRAW_COMMAND_LINE:
+						// Horizontal and vertical lines were diverted to the rectangle drawing codepath before this point.
+						// The slope will NEVER be 0.
 						startX = drawList[i | 1];
 						startY = drawList[i | 2];
 						endX = drawList[i | 3];
@@ -475,7 +506,94 @@ namespace %%%PROJECT_ID%%%
 						blue = (byte)drawList[i | 8];
 						alpha = (byte)drawList[i | 9];
 
-						throw new System.NotImplementedException("TODO: draw line");
+						left = System.Math.Min(startX, endX);
+						right = System.Math.Max(startX, endX);
+						top = System.Math.Min(startY, endY);
+						bottom = System.Math.Max(startY, endY);
+
+						// canonicalize coordinates such that the line is drawn to the right.
+						if (startX > endX)
+						{
+							j = startX;
+							startX = endX;
+							endX = j;
+							j = startY;
+							startY = endY;
+							endY = j;
+						}
+
+						slope = (1.0 * endY - startY) / (endX - startX);
+						slopeScalingCoefficient = System.Math.Sqrt(1 + 1.0 / (slope * slope));
+
+						offsetXComp = (1.5 + lineWidth) / slopeScalingCoefficient;
+						offsetYComp = (1.5 + lineWidth) / (System.Math.Abs(slope) * slopeScalingCoefficient);
+
+						ax = startX;
+						ay = startY;
+						bx = endX;
+						by = endY;
+						cx = bx;
+						cy = by;
+						dx = ax;
+						dy = ay;
+
+						if (slope > 0)
+						{
+							ax -= offsetXComp;
+							ay -= offsetYComp;
+							bx -= offsetXComp;
+							by -= offsetYComp;
+							cx += offsetXComp;
+							cy += offsetYComp;
+							dx += offsetXComp;
+							dy += offsetYComp;
+						}
+						else
+						{
+							ax += offsetXComp;
+							ay -= offsetYComp;
+							bx += offsetXComp;
+							by -= offsetYComp;
+							cx -= offsetXComp;
+							cy += offsetYComp;
+							dx -= offsetXComp;
+							dy += offsetYComp;
+						}
+
+						if (state == null ||
+							state.Mode != BeginMode.Quads ||
+							state.TextureID != 0 ||
+							state.R != red ||
+							state.G != green ||
+							state.B != blue ||
+							state.A != alpha)
+						{
+							if (state == null)
+							{
+								state = new RenderState();
+							}
+							else
+							{
+								GL.End();
+							}
+
+							state.Mode = BeginMode.Quads;
+							state.TextureID = 0;
+							state.R = red;
+							state.G = green;
+							state.B = blue;
+							state.A = alpha;
+
+							GL.Disable(EnableCap.Texture2D);
+							GL.Color4(red, green, blue, alpha);
+							GL.Begin(BeginMode.Quads);
+						}
+
+						GL.Vertex2(ax * RW / VW, ay * RH / VH);
+						GL.Vertex2(bx * RW / VW, by * RH / VH);
+						GL.Vertex2(cx * RW / VW, cy * RH / VH);
+						GL.Vertex2(dx * RW / VW, dy * RH / VH);
+						break;
 
 					default: throw new System.Exception("Unknown draw command");
 				}
@@ -572,6 +690,12 @@ namespace %%%PROJECT_ID%%%
 
 		public void DrawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha)
 		{
+			if (width <= 2 || height <= 2)
+			{
+				DrawRectangle(left, top, width, height, red, green, blue, alpha);
+				return;
+			}
+
 			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
 				drawList = DoubleArray<int>(drawList);
@@ -587,10 +711,52 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 6] = green & 255;
 			drawList[drawListVirtualLength | 7] = blue & 255;
 			drawList[drawListVirtualLength | 8] = alpha & 255;
+
+			drawListVirtualLength += 16;
 		}
 
 		public void DrawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha)
 		{
+			// perfectly horizontal and vertical should use the rectangle logic.
+			if (startX == endX || startY == endY)
+			{
+				int left, right, top, bottom, width, height;
+
+				if (startX == endX)
+				{
+					left = startX - lineWidth / 2;
+					width = lineWidth;
+					if (startY < endY)
+					{
+						top = startY;
+						height = endY - startY + 1;
+					}
+					else
+					{
+						top = endY;
+						height = startY - endY + 1;
+					}
+				}
+				else
+				{
+					top = startY - lineWidth / 2;
+					height = lineWidth;
+					if (startX < endX)
+					{
+						left = startX;
+						width = endX - startX + 1;
+					}
+					else
+					{
+						left = endX;
+						width = startX - endX + 1;
+					}
+				}
+
+				DrawRectangle(left, top, width, height, red, green, blue, alpha);
+				return;
+			}
+
 			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
 				drawList = DoubleArray<int>(drawList);
