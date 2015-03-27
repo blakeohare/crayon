@@ -119,7 +119,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateCurrentTimeSeconds(List<string> output)
 		{
-			output.Add("DateTime.Now.Ticks / 10000000.0");
+			output.Add("(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds");
 		}
 
 		protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
