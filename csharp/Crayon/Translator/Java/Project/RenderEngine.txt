@@ -8,8 +8,9 @@ public final class RenderEngine {
     private static final int BLIT_IMAGE = 1;
     private static final int BLIT_IMAGE_PARTIAL = 2;
     private static final int DRAW_ELLIPSE = 3;
-    private static final int DRAW_RECTANGLE = 4;
-    private static final int FILL_SCREEN = 5;
+    private static final int DRAW_LINE = 4;
+    private static final int DRAW_RECTANGLE = 5;
+    private static final int FILL_SCREEN = 6;
 
     private static int[] renderArgs = new int[1000];
     private static int renderArgsVirtualLength = 0;
@@ -92,7 +93,7 @@ public final class RenderEngine {
             expandArgsCapacity();
         }
 
-        renderArgs[renderArgsVirtualLength++] = DRAW_ELLIPSE;
+        renderArgs[renderArgsVirtualLength++] = DRAW_LINE;
         renderArgs[renderArgsVirtualLength++] = startX;
         renderArgs[renderArgsVirtualLength++] = startY;
         renderArgs[renderArgsVirtualLength++] = endX;
@@ -164,7 +165,24 @@ public final class RenderEngine {
                     green = renderArgs[index++];
                     blue = renderArgs[index++];
                     alpha = renderArgs[index++];
-                    throw new RuntimeException("ellipse drawing not implemented yet.");
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillOval(x, y, width, height);
+                    break;
+
+                case DRAW_LINE:
+                    sx = renderArgs[index++];
+                    sy = renderArgs[index++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.setStroke(new java.awt.BasicStroke(width));
+                    g.drawLine(x, y, sx, sy);
+                    break;
 
                 case DRAW_RECTANGLE:
                     x = renderArgs[index++];

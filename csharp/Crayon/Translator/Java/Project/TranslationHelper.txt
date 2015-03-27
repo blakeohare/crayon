@@ -136,7 +136,6 @@ final class TranslationHelper {
         int length = output.length;
         int lengthMinusOne = length - 1;
         char c;
-        int tIndex;
         for (int i = length / 2 - 1; i >= 0; --i) {
             c = output[i];
             output[i] = output[lengthMinusOne - i];
