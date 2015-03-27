@@ -240,7 +240,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
 		{
-			output.Add("R.drawEllipse(");
+			output.Add("R.drawLine(");
 			this.Translator.TranslateExpression(output, ax);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, ay);
@@ -248,6 +248,8 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, bx);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, by);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, lineWidth);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, red);
 			output.Add(this.Shorten(", "));
