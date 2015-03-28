@@ -195,31 +195,17 @@ class GameWindow {
         return output;
     }
 
-    private static Value getBoolean(boolean b) {
-        return b ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
-    }
-
-    private static Value getInteger(int x) {
-        return CrayonWrapper.v_buildInteger(x);
-    }
-
-    private static final HashMap<String, Value> STRING_CACHE  = new HashMap<String, Value>();
-    private Value getCommonString(String str) {
-        Value output = STRING_CACHE.get(str);
-        if (output == null) {
-            output = new Value(%%%TYPE_STRING%%%, str);
-            STRING_CACHE.put(str, output);
-        }
-        return output;
-    }
-
     private void handleKeyPress(int keyCode, boolean down) {
         String key = getKeyCodeLookup().get(keyCode);
         if (key != null) {
-            eventQueue.add(generateEventItem(
-                getCommonString("key"),
-                getBoolean(down),
-                getCommonString(key)));
+            eventQueue.add(CrayonWrapper.v_buildGameEvent(
+                down ? "keydown" : "keyup",
+                "key",
+                0,
+                0,
+                0,
+                down,
+                key));
         }
     }
 
@@ -238,18 +224,7 @@ class GameWindow {
             eventName = "mousemove";
         }
 
-        eventQueue.add(generateEventItem(
-            getCommonString(eventName),
-            getInteger(gameX),
-            getInteger(gameY)));
-    }
-
-    private Value generateEventItem(Value ... values) {
-        ArrayList<Value> output = new ArrayList<Value>(values.length);
-        for (int i = 0; i < values.length; ++i) {
-            output.add(values[i]);
-        }
-        return new Value(%%%TYPE_LIST%%%, output);
+        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, "mouse", gameX, gameY, 0, false, null));
     }
 
     private static class GameWindowMouseListener implements MouseListener, MouseMotionListener {
