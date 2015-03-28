@@ -1,6 +1,8 @@
 ﻿package %%%PACKAGE%%%;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -229,7 +231,16 @@ final class TranslationHelper {
 
     public static BufferedImage flipImage(Object original, boolean flipX, boolean flipY) {
         BufferedImage originalImage = (BufferedImage) original;
-        throw new IllegalStateException("TODO: image flipping.");
+        if (!flipX && !flipY) return originalImage;
+        BufferedImage flippedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = flippedImage.createGraphics();
+        AffineTransform at = new AffineTransform();
+        at.concatenate(AffineTransform.getScaleInstance(flipX ? -1 : 1, flipY ? -1 : 1));
+        at.concatenate(AffineTransform.getTranslateInstance(flipX ? originalImage.getWidth() : 0, flipY ? originalImage.getHeight() : 0));
+        g.transform(at);
+        g.drawImage(originalImage, 0, 0, null);
+        g.dispose();
+        return flippedImage;
     }
 
     public static BufferedImage loadImageFromLocalFile(String path) {
