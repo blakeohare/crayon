@@ -297,6 +297,6 @@ final class TranslationHelper {
     }
 
     public static BufferedImage readLocalTileResource(String generatedTileId) {
-        throw new IllegalStateException("Not implemented.");
+        return loadImageFromLocalFile("generated/spritesheets/" + generatedTileId + ".png");
     }
 }
