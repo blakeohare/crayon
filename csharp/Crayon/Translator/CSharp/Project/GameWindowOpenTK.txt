@@ -698,7 +698,7 @@ namespace %%%PROJECT_ID%%%
 			// perfectly horizontal and vertical should use the rectangle logic.
 			if (startX == endX || startY == endY)
 			{
-				int left, right, top, bottom, width, height;
+				int left, top, width, height;
 
 				if (startX == endX)
 				{
