@@ -1,29 +1,34 @@
 class LoadingScene : SceneBase {
-	constructor(imageLibrary) : base() {
-		this.imageLibrary = imageLibrary;
+	constructor() : base() {
+		this.phase = 'start';
 		this.progress = 0.0;
 	}
 	
 	function process_input(events) {
-		
+		// can't do anything.
 	}
 	
 	function update() {
-		this.imageLibrary.update();
-		if (this.imageLibrary.done) {
-			this.next = new PlayScene();
-			this.imageLibrary.finalize();
+		if (this.phase == 'start') {
+			this.phase = 'wait';
+			$gfx_image_sheet_load('everything');
+		} else if (this.phase == 'wait') {
+			this.progress = $gfx_image_sheet_load_progress('everything');
+			if ($gfx_image_sheet_loaded('everything')) {
+				this.phase = 'done';
+				this.progress = 1.0;
+				imageLibrary = new ImageLibrary();
+				this.next = new PlayScene(imageLibrary);
+			}
 		}
 	}
 	
-	// because this scene is shown while initializing the 
-	// image library, it can't be used here.
-	function render(imageLib) {
+	function render() {
 		x = 10;
 		y = 10;
 		width = 400;
 		height = 20;
-		$draw_rectangle(x, y, width, height, 128, 128, 128, 255);
-		
+		$gfx_draw_rectangle(x - 1, y - 1, width + 2, height + 2, 128, 128, 128, 255);
+		$gfx_draw_rectangle(x, y, $floor(width * this.progress), height, 0, 128, 255, 255);
 	}
 }

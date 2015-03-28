@@ -84,7 +84,8 @@ class Sprite {
 }
 
 class PlayScene : SceneBase {
-	constructor() : base() {
+	constructor(imageLibrary) : base() {
+		this.imageLibrary = imageLibrary;
 		this.player = new Sprite('player', 400, 300);
 		this.sprites = [this.player];
 		this.counter = 0;
@@ -93,11 +94,10 @@ class PlayScene : SceneBase {
 	}
 	
 	function process_input(events) {
-		for (i = 0; i < events.length; ++i) {
-			ev = events[i];
-			if (ev[0] == 'mouseleftdown') {
-				x = ev[1];
-				y = ev[2];
+		for (e : events) {
+			if (e.type == 'mouseleftdown') {
+				x = e.x;
+				y = e.y;
 				if (x < 20) x = 20;
 				if (x > 780) x = 780;
 				if (y < 20) y = 20;
@@ -113,7 +113,7 @@ class PlayScene : SceneBase {
 		this.reset_counter--;
 		
 		if (this.reset_counter == 0) {
-			this.next = new PlayScene();
+			this.next = new PlayScene(this.imageLibrary);
 		}
 		
 		if (this.player.dead && this.reset_counter < 0) {
@@ -156,7 +156,8 @@ class PlayScene : SceneBase {
 		
 	}
 	
-	function render(imgLib) {
+	function render() {
+		imgLib = this.imageLibrary;
 		for (i = 0; i < this.sprites.length; ++i) {
 			sprite = this.sprites[i];
 			x = $floor(sprite.x) - 20;
@@ -176,7 +177,7 @@ class PlayScene : SceneBase {
 			} else {
 				img = imgLib.images['fire' + ((this.counter / 3) % 2 + 1)];
 			}
-			$blit_image(img, x, y);
+			$gfx_blit_image(img, x, y);
 		}
 		
 		num = this.fires + '';
@@ -185,7 +186,7 @@ class PlayScene : SceneBase {
 		for (i = 0; i < num.length; ++i) {
 			c = num[i];
 			img = imgLib.images['numbers/num' + c];
-			$blit_image(img, x, y);
+			$gfx_blit_image(img, x, y);
 			x += 50;
 		}
 	}

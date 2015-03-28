@@ -4,26 +4,25 @@ import 'LoadingScene.cry';
 import 'PlayScene.cry';
 
 function main() {
-	$initialize_game(30);
-	$initialize_screen(800, 600);
-	image_library = new ImageLibrary();
-	active_scene = new LoadingScene(image_library);
+	$game_initialize(30);
+	$game_initialize_screen(800, 600);
+	$game_set_title("Fire Dodge Game");
+	active_scene = new LoadingScene();
 	
 	while (active_scene != null) {
 		
-		events = $get_events();
-		for (i = 0; i < events.length; ++i) {
-			ev = events[i];
-			if (ev[0] == 'exit') return;
+		events = $game_pump_events();
+		for (e : events) {
+			if (e.is_quit) return;
 		}
 		active_scene.process_input(events);
 		active_scene.update();
-		$fill_screen(0, 0, 0);
-		active_scene.render(image_library);
+		$gfx_fill_screen(0, 0, 0);
+		active_scene.render();
 		
 		active_scene = active_scene.next;
 		
-		$clock_tick();
+		$game_clock_tick();
 	}
 }
 

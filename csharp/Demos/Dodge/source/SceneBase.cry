@@ -2,4 +2,16 @@ class SceneBase {
 	constructor() {
 		this.next = this;
 	}
+	
+	function process_input(events) {
+		$assert(false, "Override required.");
+	}
+	
+	function update() {
+		$assert(false, "Override required.");
+	}
+	
+	function render() {
+		$assert(false, "Override required.");
+	}
 }

@@ -1,55 +1,31 @@
 class ImageLibrary {
 	constructor() {
-		this.image_keys = [];
-		this.image_objects = [];
+		paths = this.get_list_of_all_image_paths();
 		
-		keys =
-			"fire1 fire2".split(' ') +
-			"player/dead".split(' ');
-		for (i = 0; i < 10; ++i) {
-			keys.add('numbers/num' + i);
-		}
-		directions = 'n s e w'.split(' ');
-		for (i = 0; i < directions.length; ++i) {
-			for (j = 1; j <= 3; ++j) {
-				keys.add('player/' + directions[i] + j);
-			}
+		images = {};
+		for (path : paths) {
+			// because these are pre-loaded in an image sheet, they load synchronously.
+			$gfx_image_load_from_resource('t', 'images/' + path);
+			key = path.split('.')[0]; // trim off .png
+			images[key] = $gfx_image_get('t');
 		}
 		
-		for (i = 0; i < keys.length; ++i) {
-			key = keys[i];
-			this.image_keys.add(key);
-			this.image_objects.add(null);
-			$download_image(key, 'images/' + key + '.png');
-		}
-		
-		this.downloaded = 0;
-		this.size = keys.length;
-		this.done = false;
+		this.images = images;
 	}
 	
-	function update() {
-		for (i = 0; i < this.size; ++i) {
-			if (this.image_objects[i] == null) {
-				key = this.image_keys[i];
-				if ($is_image_loaded(key)) {
-					this.image_objects[i] = $get_image(key);
-					this.downloaded++;
-				}
+	function get_list_of_all_image_paths() {
+		paths = [];
+		for (i = 0; i <= 9; ++i) {
+			paths.add('numbers/num' + i + '.png');
+		}
+		paths.add('fire1.png');
+		paths.add('fire2.png');
+		paths.add('player/dead.png');
+		for (dir : 'n s e w'.split(' ')) {
+			for (i = 1; i <= 3; ++i) {
+				paths.add('player/' + dir + i + '.png');
 			}
 		}
-		
-		if (this.downloaded == this.size) {
-			this.done = true;
-		}
-	}
-	
-	function finalize() {
-		this.images = {};
-		for (i = 0; i < this.size; ++i) {
-			key = this.image_keys[i];
-			img = this.image_objects[i];
-			this.images[key] = img;
-		}
+		return paths;
 	}
 }
