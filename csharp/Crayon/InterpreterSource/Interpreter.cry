@@ -1321,7 +1321,12 @@ function @omitReturn @type('string') interpret(
 									bool1 = true;
 									i = $_list_length(list1);
 								} else {
-									int1 |= isImageSheetLoaded($_cast('string', Value$value.internalValue));
+									int2 = isImageSheetLoaded($_cast('string', Value$value.internalValue));
+									if (int2 == 2) {
+										return killExecution(stack, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
+									}
+
+									int1 |= int2;
 								}
 							}
 						} else if (Value$arg1.type == Types.STRING) {
@@ -1335,11 +1340,11 @@ function @omitReturn @type('string') interpret(
 						}
 
 						if (int1 == 0) {
-							output = VALUE_NULL;
+							output = VALUE_FALSE;
 						} else if (int1 == 1) {
 							output = VALUE_TRUE;
 						} else { // int1 == 2 || int1 == 3
-							output = VALUE_FALSE;
+							return killExecution(stack, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
 						}
 						break;
 
