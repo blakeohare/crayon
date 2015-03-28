@@ -1795,6 +1795,21 @@ function @omitReturn @type('string') interpret(
 					string1 = $_array_get(identifiers, nameId);
 					value = VALUE_NULL;
 					switch (int1) {
+						/*
+							vague type | specific type
+							-----------+---------------
+							key        | keydown
+							key        | keyup
+							mouse      | mousemove
+							mouse      | mouseleftdown
+							mouse      | mouseleftup
+							mouse      | mouserightdown
+							mouse      | mouserightup
+							quit       | quit-altf4
+							quit       | quit-closebutton
+							quit       | quit-context      // context switch on a mobile device, e.g. pressing home on a mobile device
+							quit       | quit-back         // back button on an android device
+						*/
 						case NativeObjectSubType.EVENT:
 							gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
 							// This comparison chain is inefficient. :(

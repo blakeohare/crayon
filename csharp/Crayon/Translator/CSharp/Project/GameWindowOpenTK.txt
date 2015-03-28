@@ -151,28 +151,6 @@ namespace %%%PROJECT_ID%%%
 			events.Enqueue(down ? 1 : 0);
 		}
 
-		private static Dictionary<string, Value> STRING_CACHE = new Dictionary<string, Value>();
-		private static Value CreateString(string s)
-		{
-			Value output;
-			if (!STRING_CACHE.TryGetValue(s, out output))
-			{
-				output = new Value(%%%TYPE_STRING%%%, s);
-				STRING_CACHE[s] = output;
-			}
-			return output;
-		}
-
-		private static Value CreateInteger(int n)
-		{
-			return CrayonWrapper.v_buildInteger(n);
-		}
-
-		private static Value CreateValueList(params Value[] values)
-		{
-			return new Value(%%%TYPE_LIST%%%, new List<Value>(values));
-		}
-
 		public List<Value> GetEvents()
 		{
 			List<Value> output = new List<Value>();
@@ -206,12 +184,12 @@ namespace %%%PROJECT_ID%%%
 					case KEY_EVENT:
 						down = events.Dequeue() == 1;
 						keyCode = keyEvents.Dequeue();
+						// TODO: intercept alt-f4
 						output.Add(CrayonWrapper.v_buildGameEvent("key" + (down ? "down" : "up"), "key", 0, 0, 0, down, keyCode));
 						break;
 					case EXIT:
 						type = events.Dequeue();
-						// TODO: more quit types.
-						output.Add(CrayonWrapper.v_buildGameEvent("quit-x", "quit", 0, 0, 0, false, "x"));
+						output.Add(CrayonWrapper.v_buildGameEvent("quit-closebutton", "quit", 0, 0, 0, false, null));
 						break;
 					default:
 						break;
