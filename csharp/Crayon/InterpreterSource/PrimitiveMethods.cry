@@ -44,7 +44,6 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 
 	$_dictionary_set(lookup, Types.DICTIONARY + "clear", %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "contains", %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "entries", %%%PRIMITIVE_METHOD_DICTIONARY_ENTRIES%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "get", %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "keys", %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "remove", %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%);
