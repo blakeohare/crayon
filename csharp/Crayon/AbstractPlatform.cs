@@ -90,8 +90,33 @@ namespace Crayon
 			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
 		}
 
+		private static readonly string PROJECT_ID_VERIFICATION_ERROR = "Project ID can only contain alphanumerics and cannot start with a number.";
+		private void VerifyProjectId(string projectId)
+		{
+			if (projectId.Length == 0)
+			{
+				throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+			}
+			foreach (char c in projectId)
+			{
+				if (!(c >= 'a' && c <= 'z') &&
+					!(c >= 'A' && c <= 'Z') &&
+					!(c >= '0' && c <= '9'))
+				{
+					throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+				}
+			}
+
+			if (projectId[0] >= '0' && projectId[0] <= '9')
+			{
+				throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+			}
+		}
+
 		public void Compile(BuildContext buildContext, string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
 		{
+			this.VerifyProjectId(buildContext.ProjectID);
+
 			inputFolder = inputFolder.Replace('/', '\\');
 			if (inputFolder.EndsWith("\\")) inputFolder = inputFolder.Substring(0, inputFolder.Length - 1);
 
