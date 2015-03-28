@@ -1,4 +1,4 @@
-﻿Crayon version 0.1.1 (Alpha)
+﻿Crayon version 0.1.2 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -17,7 +17,7 @@ See the LICENSE.txt file included with this release for further information.
 REPORTING BUGS
 --------------
 Please report any issues you may find to the GitHub issue tracker located at https://github.com/blakeohare/crayon/issues
-It may be helpful to check the IRC channel first to make sure any issue you find is actually a bug.
+It may be helpful to check the IRC channel first to make sure any issue you find is actually a bug or for workarounds.
 
 COMMUNITY
 ---------
@@ -27,8 +27,9 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
 NEW IN THIS RELEASE
 -------------------
-Bug fixes: 
-- Fix crash for compiling projects that don't have image sheets
-- Fix all 2D geometry drawing for all platforms (rectangle, line, ellipse) x (java, python, javascript, c#)
-- Fix $current_time output on C# to return unix epoch instead of whatever DateTime.Now.Ticks/10000000.0 was returning.
-- Fix mouse events in JavaScript
+Changes since 0.1.1:
+* Fix bug loading image sheets in Java
+* Fix bug where Java and Python were returning old-style event objects
+* Add implementation of flipImage for Java
+* Add verification for invalid project ID names
+* $gfx_image_sheet_loaded was not throwing an error when invoked on image sheet ID's where loading hasn't been initialized.
