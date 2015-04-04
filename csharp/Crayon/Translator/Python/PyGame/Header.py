@@ -43,9 +43,9 @@ def _pygame_pump_events():
 				evlist.append(v_buildGameEvent('keydown' if down else 'keyup', 'key', 0, 0, 0, down, keycode))
 			if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F4:
 				if pressed_keys[pygame.K_LALT] or pressed_keys[pygame.K_RALT]:
-					evlist.append(v_buildGameEvent('quit-altf4', 'quit', 0, 0, 0, false, None))
+					evlist.append(v_buildGameEvent('quit-altf4', 'quit', 0, 0, 0, False, None))
 		elif ev.type == pygame.QUIT:
-			evlist.append(v_buildGameEvent('quit-closebutton', 'quit', 0, 0, 0, false, None))
+			evlist.append(v_buildGameEvent('quit-closebutton', 'quit', 0, 0, 0, False, None))
 		elif ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
 			x, y = ev.pos
 			x = x * vwidth // rwidth
