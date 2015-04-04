@@ -268,7 +268,15 @@ namespace Crayon
 				}
 				else
 				{
-					code = Util.ReadFileExternally(System.IO.Path.Combine(rootFolder, filename), true);
+					string fullpath = System.IO.Path.Combine(rootFolder, filename);
+					if (System.IO.File.Exists(fullpath))
+					{
+						code = Util.ReadFileExternally(fullpath, true);
+					}
+					else
+					{
+						throw new ParserException(importStatement.FirstToken, "File does not exist or is misspelled: '" + filename + "'");
+					}
 				}
 			}
 			this.RegisterFileUsed(filename, code, fileId);
