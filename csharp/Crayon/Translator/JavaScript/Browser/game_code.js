@@ -386,10 +386,16 @@ R.fillScreen = function (r, g, b) {
 };
 
 R.drawRect = function (x, y, width, height, r, g, b, a) {
+	if (a == 0) return;
 	var ctx = R._global_vars.ctx;
-	var color = a == 255 ? R._toHex(r, g, b) : ('rgba(' + r + ',' + g + ',' + b + ',' + a + ')');
-	ctx.fillStyle = color;
-	ctx.fillRect(x, y, width + .1, height + .1);
+	ctx.fillStyle = R._toHex(r, g, b);
+	if (a != 255) {
+		ctx.globalAlpha = a / 255;
+		ctx.fillRect(x, y, width + .1, height + .1);
+		ctx.globalAlpha = 1;
+	} else {
+		ctx.fillRect(x, y, width + .1, height + .1);
+	}
 };
 
 R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
@@ -411,21 +417,35 @@ R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
 		centerX - radiusX, centerY - radiusY,
 		centerX, centerY - radiusY);
 	context.fillStyle = R._toHex(r, g, b);
-	context.fill();
-	context.closePath();
+	if (a != 255) {
+		context.globalAlpha = a / 255;
+		context.fill();
+		context.closePath();
+		context.globalAlpha = 1;
+	} else {
+		context.fill();
+		context.closePath();
+	}
 };
 
 R.drawLine = function(startX, startY, endX, endY, width, r, g, b, a) {
-	// TODO: alpha
 	var context = R._global_vars.ctx;
 	var offset = ((width % 2) == 0) ? 0 : .5;
 	context.beginPath();
 	context.moveTo(startX + offset, startY + offset);
 	context.lineTo(endX + offset, endY + offset);
 	context.lineWidth = width;
-	context.strokeStyle = R._toHex(r, g, b);
-	context.stroke();
-	context.closePath();
+	if (a != 255) {
+		context.globalAlpha = a / 255;
+		context.strokeStyle = R._toHex(r, g, b);
+		context.stroke();
+		context.closePath();
+		context.globalAlpha = 1;
+	} else {
+		context.strokeStyle = R._toHex(r, g, b);
+		context.stroke();
+		context.closePath();
+	}
 };
 
 R.flipImage = function(canvas, flipX, flipY) {
