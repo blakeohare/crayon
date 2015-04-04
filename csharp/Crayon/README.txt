@@ -1,4 +1,4 @@
-﻿Crayon version 0.1.2 (Alpha)
+﻿Crayon version 0.1.3 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -27,9 +27,8 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
 NEW IN THIS RELEASE
 -------------------
-Changes since 0.1.1:
-* Fix bug loading image sheets in Java
-* Fix bug where Java and Python were returning old-style event objects
-* Add implementation of flipImage for Java
-* Add verification for invalid project ID names
-* $gfx_image_sheet_loaded was not throwing an error when invoked on image sheet ID's where loading hasn't been initialized.
+Changes since 0.1.2:
+* Fix string.split method in Java where some results were inconsistent with other platforms, despite regex escaping.
+* Show a compile error instead of crashing the compiler when an import statement references a missing file. 
+* JavaScript drawing functions now support alpha values.
+* Fix event.is_mouse readonly field on game event objects which was previously returning false, always.
