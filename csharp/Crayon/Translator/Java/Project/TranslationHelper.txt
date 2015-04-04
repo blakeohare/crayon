@@ -310,4 +310,42 @@ final class TranslationHelper {
     public static BufferedImage readLocalTileResource(String generatedTileId) {
         return loadImageFromLocalFile("generated/spritesheets/" + generatedTileId + ".png");
     }
+	
+    public static String[] literalStringSplit(String original, String sep) {
+        ArrayList<String> output = new ArrayList<>();
+        ArrayList<String> currentPiece = new ArrayList<>();
+        int length = original.length();
+        int sepLength = sep.length();
+        char firstSepChar = sep.charAt(0);
+        char c;
+        int j;
+        boolean match;
+        for (int i = 0; i < length; ++i) {
+            c = original.charAt(i);
+            match = false;
+            if (c == firstSepChar) {
+                match = true;
+                for (j = 1; j < sepLength; ++j) {
+                    if (i + j < length ) {
+                        if (sep.charAt(j) != original.charAt(i + j)) {
+                            match = false;
+                            break;
+                        }
+                    } else {
+                        match = false;
+                    }
+                }
+            }
+
+            if (match) {
+                output.add(String.join("", currentPiece));
+                currentPiece.clear();
+                i += sepLength - 1;
+            } else {
+                currentPiece.add("" + c);
+            }
+        }
+        output.add(String.join("", currentPiece));
+        return output.toArray(new String[output.size()]);
+    }
 }

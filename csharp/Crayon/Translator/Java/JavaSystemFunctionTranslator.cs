@@ -873,10 +873,11 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
 		{
+			output.Add("TranslationHelper.literalStringSplit(");
 			this.Translator.TranslateExpression(output, stringExpr);
-			output.Add(".split(Pattern.quote(");
+			output.Add(", ");
 			this.Translator.TranslateExpression(output, sep);
-			output.Add("))");
+			output.Add(")");
 		}
 
 		protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
