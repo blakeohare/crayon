@@ -1850,7 +1850,7 @@ function @omitReturn @type('string') interpret(
 									value = VALUE_FALSE;
 								}
 							} else if ($_string_equals("is_mouse", string1)) {
-								if ($_string_equals("mouse", string1)) {
+								if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 									value = VALUE_TRUE;
 								} else {
 									value = VALUE_FALSE;
