@@ -29,9 +29,10 @@ R._global_vars = {
 	'image_keys_by_index': [null]
 };
 
-R.blitPartial = function(canvas, tx, ty, sx, sy, w, h) {
-	if (w == 0 || h == 0) return;
-	R._global_vars.ctx.drawImage(canvas, sx, sy, w, h, tx, ty, w, h);
+R.blitPartial = function(canvas, tx, ty, tw, th, sx, sy, sw, sh) {
+	if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
+
+	R._global_vars.ctx.drawImage(canvas, sx, sy, sw, sh, tx, ty, tw, th);
 };
 
 R.is_image_loaded = function(key) {
@@ -202,9 +203,12 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 	canvas.addEventListener('mouseup', R._mouseup);
 	canvas.addEventListener('mousemove', R._mousemove);
 
+	R._global_vars['ctx'].imageSmoothingEnabled = false;
+	R._global_vars['ctx'].mozImageSmoothingEnabled = false; 
+	R._global_vars['ctx'].msImageSmoothingEnabled = false;
+	R._global_vars['ctx'].webkitImageSmoothingEnabled = false;
+
 	if (scaledMode) {
-		R._global_vars['ctx'].imageSmoothingEnabled = false;
-		R._global_vars['ctx'].mozImageSmoothingEnabled = false;
 		R._global_vars['ctx'].scale(pwidth / width, pheight / height);
 	}
 };
