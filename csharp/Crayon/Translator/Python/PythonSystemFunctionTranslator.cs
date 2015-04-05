@@ -82,14 +82,17 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
-			// TODO: just make a helper function
-			output.Add("_global_vars['virtual_screen'].blit(");
+			output.Add("blit_partial(");
 			this.Translator.TranslateExpression(output, image);
-			output.Add("[1], (");
+			output.Add("[1], ");
 			this.Translator.TranslateExpression(output, targetX);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, targetY);
-			output.Add("), _PR(");
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetHeight);
+			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceX);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceY);
@@ -97,7 +100,7 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, sourceWidth);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceHeight);
-			output.Add("))");
+			output.Add(")");
 		}
 
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)

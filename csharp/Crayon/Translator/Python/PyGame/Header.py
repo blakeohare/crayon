@@ -123,11 +123,35 @@ def load_local_image_resource(path):
 def load_local_tile_resource(genName):
 	return load_local_image_resource(os.path.join('_generated_files', 'spritesheets', genName + '.png'))
 
-
 def get_image_impl(key):
 	surf = _images_downloaded.get(key, None)
 	if surf == None: return None
 	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)
+
+def blit_partial(surface, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight):
+	if sourceWidth == targetWidth and sourceHeight == targetHeight:
+		_global_vars['virtual_screen'].blit(surface, (targetX, targetY), _PR(sourceX, sourceY, sourceWidth, sourceHeight))
+	else:
+		# PyGame makes me sad.
+		scale_x = 1.0 * targetWidth / sourceWidth
+		scale_y = 1.0 * targetHeight / sourceHeight
+		original_width, original_height = surface.get_size()
+		calculated_full_width = int(original_width * scale_x)
+		calculated_full_height = int(original_height * scale_y)
+		t_surf = get_temporary_image(calculated_full_width, calculated_full_height)
+		pygame.transform.scale(surface, (calculated_full_width, calculated_full_height), t_surf)
+		source_x_scaled = int(sourceX * scale_x)
+		source_y_scaled = int(sourceY * scale_y)
+		_global_vars['virtual_screen'].blit(t_surf, (targetX, targetY), _PR(source_x_scaled, source_y_scaled, targetWidth, targetHeight))
+
+_temp_image_cache = {}
+def get_temporary_image(width, height):
+	key = width * 1000000000 + height
+	img = _temp_image_cache.get(key, None)
+	if img == None:
+		img = pygame.Surface((width, height)).convert_alpha()
+		_temp_image_cache[key] = img
+	return img
 
 def wrappedChr(code):
 	if code < 0 or code > 255: return '?'
