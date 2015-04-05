@@ -16,7 +16,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height)
+		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
 			output.Add("GameWindow.Instance.BlitImagePartial((Image)");
 			this.Translator.TranslateExpression(output, image);
@@ -25,13 +25,17 @@ namespace Crayon.Translator.CSharp
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, targetY);
 			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, targetHeight);
+			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceX);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceY);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, width);
+			this.Translator.TranslateExpression(output, sourceWidth);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, height);
+			this.Translator.TranslateExpression(output, sourceHeight);
 			output.Add(")");
 		}
 

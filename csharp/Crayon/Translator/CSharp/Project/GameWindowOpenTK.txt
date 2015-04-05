@@ -281,6 +281,7 @@ namespace %%%PROJECT_ID%%%
 			float textureLeft, textureRight, textureTop, textureBottom;
 			double slope, slopeScalingCoefficient, offsetXComp, offsetYComp, ax, bx, cx, dx, ay, by, cy, dy;
 			byte red, green, blue, alpha;
+			bool includeOptions;
 			Image image;
 
 			RenderState state = null;
@@ -292,15 +293,25 @@ namespace %%%PROJECT_ID%%%
 				{
 					case DRAW_COMMAND_BLIT:
 						image = imageList[imageIndex++];
+
 						left = drawList[i | 1];
 						top = drawList[i | 2];
 						startX = drawList[i | 3];
 						startY = drawList[i | 4];
-						width = drawList[i | 5];
-						height = drawList[i | 6];
-						scale = drawList[i | 7];
-						right = left + width * scale;
-						bottom = top + height * scale;
+						width = drawList[i | 5]; // source width
+						height = drawList[i | 6]; // source height
+
+						if (drawList[i | 7] == 1)
+						{
+							right = left + drawList[i | 8]; // target width
+							bottom = top + drawList[i | 9]; // target height
+						}
+						else
+						{
+							right = left + width;
+							bottom = top + height;
+						}
+
 						if (right < 0 || left >= gameWidth || bottom < 0 || top >= gameHeight) continue;
 
 						textureWidth = image.textureRight - image.textureLeft;
@@ -317,8 +328,8 @@ namespace %%%PROJECT_ID%%%
 							{
 								state = null;
 								GL.End();
-								CrayonWrapper.v_loadCompositeImageResource(image.compositeResource);
 							}
+							CrayonWrapper.v_loadCompositeImageResource(image.compositeResource);
 						}
 						textureId = image.compositeResource.glTextureId;
 
@@ -610,14 +621,19 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 4] = 0;
 			drawList[drawListVirtualLength | 5] = image.width;
 			drawList[drawListVirtualLength | 6] = image.height;
-			drawList[drawListVirtualLength | 7] = TranslationHelper.ProgramData.imageScaleStackTop;
+			drawList[drawListVirtualLength | 7] = 0;
 
 			drawListVirtualLength += 16;
 
 			imageList[imageListVirtualLength++] = image;
 		}
 
-		public void BlitImagePartial(Image image, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
+		public void BlitImagePartial(
+			Image image,
+			int targetX, int targetY,
+			int targetWidth, int targetHeight,
+			int sourceX, int sourceY,
+			int sourceWidth, int sourceHeight)
 		{
 			if (drawListVirtualLength + 16 >= drawListRealLength)
 			{
@@ -636,9 +652,19 @@ namespace %%%PROJECT_ID%%%
 			drawList[drawListVirtualLength | 2] = targetY;
 			drawList[drawListVirtualLength | 3] = sourceX;
 			drawList[drawListVirtualLength | 4] = sourceY;
-			drawList[drawListVirtualLength | 5] = width;
-			drawList[drawListVirtualLength | 6] = height;
-			drawList[drawListVirtualLength | 7] = TranslationHelper.ProgramData.imageScaleStackTop;
+			drawList[drawListVirtualLength | 5] = sourceWidth;
+			drawList[drawListVirtualLength | 6] = sourceHeight;
+
+			if (targetWidth == sourceWidth && targetHeight == sourceHeight)
+			{
+				drawList[drawListVirtualLength | 7] = 0;
+			}
+			else
+			{
+				drawList[drawListVirtualLength | 7] = 1;
+				drawList[drawListVirtualLength | 8] = targetWidth;
+				drawList[drawListVirtualLength | 9] = targetHeight;
+			}
 
 			drawListVirtualLength += 16;
 

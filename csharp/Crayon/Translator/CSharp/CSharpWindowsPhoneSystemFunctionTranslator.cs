@@ -12,7 +12,7 @@ namespace Crayon.Translator.CSharp
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateBlitImagePartial(List<string> output, ParseTree.Expression image, ParseTree.Expression targetX, ParseTree.Expression targetY, ParseTree.Expression sourceX, ParseTree.Expression sourceY, ParseTree.Expression width, ParseTree.Expression height)
+		protected override void TranslateBlitImagePartial(List<string> output, ParseTree.Expression image, ParseTree.Expression targetX, ParseTree.Expression targetY, ParseTree.Expression targetWidth, ParseTree.Expression targetHeight, ParseTree.Expression sourceX, ParseTree.Expression sourceY, ParseTree.Expression sourceWidth, ParseTree.Expression sourceHeight)
 		{
 			throw new NotImplementedException();
 		}

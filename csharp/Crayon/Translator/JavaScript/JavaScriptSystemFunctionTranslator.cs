@@ -90,22 +90,27 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height)
+		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
 			output.Add("R.blitPartial(");
 			this.Translator.TranslateExpression(output, image);
+			// TODO: make this next line not silly
 			output.Add(this.Shorten("[1], "));
 			this.Translator.TranslateExpression(output, targetX);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, targetY);
 			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, targetWidth);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, targetHeight);
+			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, sourceX);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, sourceY);
 			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, width);
+			this.Translator.TranslateExpression(output, sourceWidth);
 			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, height);
+			this.Translator.TranslateExpression(output, sourceHeight);
 			output.Add(")");
 		}
 

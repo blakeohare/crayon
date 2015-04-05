@@ -80,8 +80,9 @@ namespace Crayon.Translator.Python
 			output.Add("))");
 		}
 
-		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height)
+		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
+			// TODO: just make a helper function
 			output.Add("_global_vars['virtual_screen'].blit(");
 			this.Translator.TranslateExpression(output, image);
 			output.Add("[1], (");
@@ -93,9 +94,9 @@ namespace Crayon.Translator.Python
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, sourceY);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, width);
+			this.Translator.TranslateExpression(output, sourceWidth);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, height);
+			this.Translator.TranslateExpression(output, sourceHeight);
 			output.Add("))");
 		}
 

@@ -36,7 +36,7 @@ namespace Crayon.Translator
 				case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
-				case "_blit_image_partial": VerifyCount(functionCall, 7); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]); break;
+				case "_blit_image_partial": VerifyCount(functionCall, 9); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
@@ -150,7 +150,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateAssert(List<string> output, Expression message);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
-		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression sourceX, Expression sourceY, Expression width, Expression height);
+		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);

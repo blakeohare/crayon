@@ -955,14 +955,14 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$blit_image must consume an image as its first argument.");
 						}
 						if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
-							return killExecution(stack, "$blit_image coordinates must be integers.");
+							return killExecution(stack, "$gfx_blit_image coordinates must be integers.");
 						}
 						$_blit_image(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 						break;
 
 					case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%:
 						$_comment('$gfx_blit_image_partial');
-						// $blit_image(image, targetX, targetY, sourceX, sourceY, width, height)
+						// $gfx_blit_image_partial(image, targetX, targetY, sourceX, sourceY, width, height)
 						arg7 = $_stack_pop(valueStack);
 						arg6 = $_stack_pop(valueStack);
 						arg5 = $_stack_pop(valueStack);
@@ -979,7 +979,44 @@ function @omitReturn @type('string') interpret(
 							Value$arg5.type != Types.INTEGER ||
 							Value$arg6.type != Types.INTEGER ||
 							Value$arg7.type != Types.INTEGER) {
-							return killExecution(stack, "$blit_image_partial requires an image object and 6 integer arguments.");
+							return killExecution(stack, "$gfx_blit_image_partial requires an image object and 6 integer arguments.");
+						}
+						$_blit_image_partial(
+							image1,
+							$_cast('int', Value$arg2.internalValue),
+							$_cast('int', Value$arg3.internalValue),
+							$_cast('int', Value$arg6.internalValue), // w
+							$_cast('int', Value$arg7.internalValue), // h
+							$_cast('int', Value$arg4.internalValue),
+							$_cast('int', Value$arg5.internalValue),
+							$_cast('int', Value$arg6.internalValue), // w
+							$_cast('int', Value$arg7.internalValue)); // h
+						break;
+
+					case %%%FF_GFX_BLIT_IMAGE_PARTIAL_AT_SCALE%%%:
+						$_comment('$gfx_blit_image_partial_at_scale');
+						// $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
+						arg9 = $_stack_pop(valueStack);
+						arg8 = $_stack_pop(valueStack);
+						arg7 = $_stack_pop(valueStack);
+						arg6 = $_stack_pop(valueStack);
+						arg5 = $_stack_pop(valueStack);
+						arg4 = $_stack_pop(valueStack);
+						arg3 = $_stack_pop(valueStack);
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						image1 = extractImageFromValue(arg1);
+						
+						if (image1 == null ||
+							Value$arg2.type != Types.INTEGER ||
+							Value$arg3.type != Types.INTEGER ||
+							Value$arg4.type != Types.INTEGER ||
+							Value$arg5.type != Types.INTEGER ||
+							Value$arg6.type != Types.INTEGER ||
+							Value$arg7.type != Types.INTEGER ||
+							Value$arg8.type != Types.INTEGER ||
+							Value$arg9.type != Types.INTEGER) {
+							return killExecution(stack, "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.");
 						}
 						$_blit_image_partial(
 							image1,
@@ -988,12 +1025,14 @@ function @omitReturn @type('string') interpret(
 							$_cast('int', Value$arg4.internalValue),
 							$_cast('int', Value$arg5.internalValue),
 							$_cast('int', Value$arg6.internalValue),
-							$_cast('int', Value$arg7.internalValue));
+							$_cast('int', Value$arg7.internalValue),
+							$_cast('int', Value$arg8.internalValue),
+							$_cast('int', Value$arg9.internalValue));
 						break;
 
 					case %%%FF_GFX_DRAW_ELLIPSE%%%:
 						$_comment('$gfx_draw_ellipse');
-						// $draw_ellipse(left, top, width, height, red, green, blue, alpha)
+						// $gfx_draw_ellipse(left, top, width, height, red, green, blue, alpha)
 						arg8 = $_stack_pop(valueStack);
 						arg7 = $_stack_pop(valueStack);
 						arg6 = $_stack_pop(valueStack);
