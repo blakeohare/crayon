@@ -44,9 +44,9 @@ namespace Crayon
 			this.SystemFunctionTranslator.Translator = translator;
 		}
 
-		private ByteBuffer GenerateByteCode(string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
+		private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
 		{
-			Parser userCodeParser = new Parser(null);
+			Parser userCodeParser = new Parser(null, buildContext);
 			ParseTree.Executable[] userCode = userCodeParser.ParseRoot(inputFolder);
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
 			return bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
@@ -140,7 +140,7 @@ namespace Crayon
 			HashSet<string> filesAccountedForInSpriteSheet = new HashSet<string>();
 			spriteSheetBuilder.Generate(this.GeneratedFilesFolder, filesToCopyOver, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs, spriteSheetFiles, filesAccountedForInSpriteSheet);
 
-			ByteBuffer byteCodeBuffer = GenerateByteCode(inputFolder, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
+			ByteBuffer byteCodeBuffer = GenerateByteCode(buildContext, inputFolder, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 
 			if (nullableReadableByteCodeOutputPath != null)
 			{

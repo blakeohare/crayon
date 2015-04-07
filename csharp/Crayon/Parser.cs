@@ -7,17 +7,19 @@ namespace Crayon
 {
 	internal class Parser
 	{
-		public Parser(AbstractPlatform platform)
+		public Parser(AbstractPlatform platform, BuildContext buildContext)
 		{
 			this.NullablePlatform = platform;
 			this.IsTranslateMode = platform != null;
 			this.IsInClass = false;
-
+			this.BuildContext = buildContext;
 		}
 
 		private int fileIdCounter = 0;
 
 		public bool IsInClass { get; set; }
+
+		public BuildContext BuildContext { get; private set; }
 
 		public bool PreserveTranslationComments
 		{

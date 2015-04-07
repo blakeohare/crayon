@@ -593,7 +593,17 @@ namespace Crayon
 			else if (expr is BooleanCombination) this.CompileBooleanCombination(parser, buffer, (BooleanCombination)expr, outputUsed);
 			else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
 			else if (expr is Ternary) this.CompileTernary(parser, buffer, (Ternary)expr, outputUsed);
+			else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
 			else throw new NotImplementedException();
+		}
+
+		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)
+		{
+			if (compileTimeDictionary.Type == "var")
+			{
+				throw new ParserException(compileTimeDictionary.FirstToken, "$var is a compile-time dictionary and must be dereferenced with a hardcoded string constant.");
+			}
+			throw new Exception(); // should not happen.
 		}
 
 		private void CompileTernary(Parser parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)

@@ -71,6 +71,7 @@
     <Compile Include="ParseTree\BracketIndex.cs" />
     <Compile Include="ParseTree\BreakStatement.cs" />
     <Compile Include="ParseTree\ClassDefinition.cs" />
+    <Compile Include="ParseTree\CompileTimeDictionary.cs" />
     <Compile Include="ParseTree\ConstructorDefinition.cs" />
     <Compile Include="ParseTree\ConstStatement.cs" />
     <Compile Include="ParseTree\ContinueStatement.cs" />

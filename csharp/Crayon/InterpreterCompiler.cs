@@ -33,7 +33,7 @@ namespace Crayon
 		public InterpreterCompiler(AbstractPlatform platform)
 		{
 			this.platform = platform;
-			this.interpreterParser = new Parser(platform);
+			this.interpreterParser = new Parser(platform, null);
 		}
 
 		public Dictionary<string, Executable[]> Compile()

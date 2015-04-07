@@ -204,7 +204,7 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 	canvas.addEventListener('mousemove', R._mousemove);
 
 	R._global_vars['ctx'].imageSmoothingEnabled = false;
-	R._global_vars['ctx'].mozImageSmoothingEnabled = false; 
+	R._global_vars['ctx'].mozImageSmoothingEnabled = false;
 	R._global_vars['ctx'].msImageSmoothingEnabled = false;
 	R._global_vars['ctx'].webkitImageSmoothingEnabled = false;
 

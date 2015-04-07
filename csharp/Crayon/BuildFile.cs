@@ -13,11 +13,30 @@ namespace Crayon
 		public string OutputFolder { get; set; }
 		public string SourceFolder { get; set; }
 		public Dictionary<string, string[]> SpriteSheetPrefixesById { get; set; }
+		public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; private set; }
 		public string[] SpriteSheetIds { get; set; }
 		public string JsFilePrefix { get; set; }
 		public string Platform { get; set; }
 		public bool Minified { get; set; }
 		public bool ReadableByteCode { get; set; }
+
+		public enum VarType
+		{
+			BOOLEAN,
+			INT,
+			FLOAT,
+			STRING
+		}
+
+		public class BuildVarCanonicalized
+		{
+			public string ID { get; set; }
+			public VarType Type { get; set; }
+			public string StringValue { get; set; }
+			public int IntValue { get; set; }
+			public bool BoolValue { get; set; }
+			public double FloatValue { get; set; }
+		}
 
 		public abstract class BuildItem
 		{
@@ -43,7 +62,11 @@ namespace Crayon
 			[XmlElement("readablebytecode")]
 			public string ExportDebugByteCodeRaw { get; set; }
 
-			private bool TranslateStringToBoolean(string value) {
+			[XmlElement("var")]
+			public BuildVar[] Var { get; set; }
+
+			private bool TranslateStringToBoolean(string value)
+			{
 				if (value == null) return false;
 				value = value.ToLowerInvariant();
 				return value == "1" || value == "t" || value == "y" || value == "true" || value == "yes";
@@ -77,6 +100,21 @@ namespace Crayon
 			public string Platform { get; set; }
 		}
 
+		public class BuildVar
+		{
+			[XmlElement("id")]
+			public string Id { get; set; }
+
+			[XmlAttribute("type")]
+			public string Type { get; set; }
+
+			[XmlElement("value")]
+			public string Value { get; set; }
+
+			[XmlElement("env")]
+			public string EnvironmentVarValue { get; set; }
+		}
+
 		public class SpriteSheet
 		{
 			[XmlAttribute("id")]
@@ -88,7 +126,6 @@ namespace Crayon
 
 		public static BuildContext Parse(string buildFile, string targetName)
 		{
-			
 			System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Build));
 			Build buildInput;
 			try
@@ -135,6 +172,8 @@ namespace Crayon
 				throw new InvalidOperationException("Build target does not exist in build file: '" + targetName + "'.");
 			}
 
+			Dictionary<string, BuildVarCanonicalized> varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
+
 			flattened.Output = DoReplacement(targetName, desiredTarget.Output ?? flattened.Output);
 			flattened.Source = DoReplacement(targetName, desiredTarget.Source ?? flattened.Source);
 			flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
@@ -153,7 +192,8 @@ namespace Crayon
 				SpriteSheetPrefixesById = flattened.SpriteSheets.ToDictionary<SpriteSheet, string, string[]>(s => s.Id, s => s.Prefixes),
 				SpriteSheetIds = flattened.SpriteSheets.Select<SpriteSheet, string>(s => s.Id).ToArray(),
 				Minified = flattened.Minified,
-				ReadableByteCode = flattened.ExportDebugByteCode
+				ReadableByteCode = flattened.ExportDebugByteCode,
+				BuildVariableLookup = varLookup
 			};
 		}
 
@@ -162,6 +202,139 @@ namespace Crayon
 			return value != null && value.Contains("%TARGET_NAME%")
 				? value.Replace("%TARGET_NAME%", target)
 				: value;
+		}
+
+		private static Dictionary<string, BuildVarCanonicalized> GenerateBuildVars(BuildItem root, BuildItem target, string targetName)
+		{
+
+			Dictionary<string, BuildVar> firstPass = new Dictionary<string, BuildVar>();
+
+			if (root.Var != null)
+			{
+				foreach (BuildVar rootVar in root.Var)
+				{
+					if (rootVar.Id == null)
+					{
+						throw new InvalidOperationException("Build file contains a <var> without an id attribute.");
+					}
+					firstPass.Add(rootVar.Id, rootVar);
+				}
+			}
+
+			if (target.Var != null)
+			{
+				foreach (BuildVar targetVar in target.Var)
+				{
+					if (targetVar.Id == null)
+					{
+						throw new InvalidOperationException("Build file target contains a <var> without an id attribute.");
+					}
+					firstPass.Add(targetVar.Id, targetVar);
+				}
+			}
+
+			Dictionary<string, BuildVarCanonicalized> output = new Dictionary<string, BuildVarCanonicalized>();
+
+			foreach (BuildVar rawElement in firstPass.Values)
+			{
+				string id = rawElement.Id;
+				string value = rawElement.Value;
+				int intValue = 0;
+				double floatValue = 0;
+				bool boolValue = false;
+				VarType type = VarType.BOOLEAN;
+				switch ((rawElement.Type ?? "string").ToLowerInvariant())
+				{
+					case "int":
+					case "integer":
+						type = VarType.INT;
+						break;
+					case "float":
+					case "double":
+						type = VarType.FLOAT;
+						break;
+					case "bool":
+					case "boolean":
+						type = VarType.BOOLEAN;
+						break;
+					case "string":
+						type = VarType.STRING;
+						break;
+					default:
+						throw new InvalidOperationException("Build file variable '" + id + "' contains an unrecognized type: '" + rawElement.Type + "'. Types must be 'string', 'integer', 'boolean', or 'float'.");
+				}
+
+				int score = (rawElement.EnvironmentVarValue != null ? 1 : 0)
+					+ (rawElement.Value != null ? 1 : 0);
+
+				if (score != 1)
+				{
+					throw new InvalidOperationException("Build file variable '" + id + "' must contain either a <value> or a <env> content element but not both.");
+				}
+
+				if (value == null)
+				{
+					value = System.Environment.GetEnvironmentVariable(rawElement.EnvironmentVarValue);
+					if (value == null)
+					{
+						throw new InvalidOperationException("Build file varaible '" + id + "' references an environment variable that is not set: '" + rawElement.EnvironmentVarValue + "'");
+					}
+					value = DoReplacement(targetName, value.Trim());
+				}
+
+				switch (type)
+				{
+					case VarType.INT:
+						if (!int.TryParse(value, out intValue))
+						{
+							throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid integer value.");
+						}
+						break;
+					case VarType.FLOAT:
+						if (!double.TryParse(value, out floatValue))
+						{
+							throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid float value.");
+						}
+						break;
+					case VarType.BOOLEAN:
+						switch (value.ToLowerInvariant())
+						{
+							case "0":
+							case "no":
+							case "false":
+							case "f":
+							case "n":
+								boolValue = false;
+								break;
+							case "1":
+							case "true":
+							case "t":
+							case "yes":
+							case "y":
+								boolValue = true;
+								break;
+							default:
+								throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid boolean valud.");
+						}
+						break;
+					case VarType.STRING:
+						break;
+
+					default:
+						break;
+				}
+				output[id] = new BuildVarCanonicalized()
+				{
+					ID = id,
+					Type = type,
+					StringValue = value,
+					IntValue = intValue,
+					FloatValue = floatValue,
+					BoolValue = boolValue
+				};
+			}
+
+			return output;
 		}
 
 		private static SpriteSheet[] MergeSpriteSheets(SpriteSheet[] originalSheets, SpriteSheet[] newSheets)
@@ -189,8 +362,9 @@ namespace Crayon
 
 			return order
 				.Select<string, SpriteSheet>(
-					id => new SpriteSheet() { 
-						Id = id, 
+					id => new SpriteSheet()
+					{
+						Id = id,
 						Prefixes = prefixDirectLookup[id].ToArray()
 					})
 				.ToArray();

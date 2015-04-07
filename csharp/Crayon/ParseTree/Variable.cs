@@ -21,6 +21,11 @@
 
 		public override Expression Resolve(Parser parser)
 		{
+			if (this.Name == "$var")
+			{
+				return new CompileTimeDictionary(this.FirstToken, "var");
+			}
+
 			if (this.Name == "this")
 			{
 				if (parser.IsInClass)
