@@ -179,6 +179,7 @@
     <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
+    <EmbeddedResource Include="InterpreterSource\IOManager.cry" />
     <None Include="README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

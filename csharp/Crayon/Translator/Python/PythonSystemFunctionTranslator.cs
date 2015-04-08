@@ -407,11 +407,53 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateIoCurrentDirectory(List<string> output)
+		{
+			output.Add("io_helper_current_directory()");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		{
+			output.Add("io_helper_check_path(");
+			this.Translator.TranslateExpression(output, canonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, directoriesOnly);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, performCaseCheck);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		{
+			output.Add("io_helper_read_text(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		{
+			output.Add("os.listdir('.')");
+		}
+
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		{
+			output.Add("io_helper_write_text(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, content);
+			output.Add(")");
+		}
+
 		protected override void TranslateIsValidInteger(List<string> output, Expression number)
 		{
 			output.Add("_is_valid_integer(");
 			this.Translator.TranslateExpression(output, number);
 			output.Add(")");
+		}
+
+		protected override void TranslateIsWindowsProgram(List<string> output)
+		{
+			output.Add("(sys.platform == 'win32')");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)

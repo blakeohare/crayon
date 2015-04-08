@@ -434,11 +434,55 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateIoCurrentDirectory(List<string> output)
+		{
+			output.Add("System.getProperty(\"user.dir\")");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		{
+			output.Add("TranslationHelper.checkPathExistence(");
+			this.Translator.TranslateExpression(output, canonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, directoriesOnly);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, performCaseCheck);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		{
+			output.Add("TranslationHelper.readFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		{
+			output.Add("TranslationHelper.directoryListing(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		{
+			output.Add("TranslationHelper.writeFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, content);
+			output.Add(")");
+		}
+
 		protected override void TranslateIsValidInteger(List<string> output, Expression number)
 		{
 			output.Add("TranslationHelper.isValidInteger(");
 			this.Translator.TranslateExpression(output, number);
 			output.Add(")"); // meh
+		}
+
+		protected override void TranslateIsWindowsProgram(List<string> output)
+		{
+			output.Add("TranslationHelper.isWindows()");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)

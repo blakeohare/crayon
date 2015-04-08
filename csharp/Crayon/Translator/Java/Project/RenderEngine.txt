@@ -52,7 +52,7 @@ public final class RenderEngine {
         images[imagesVirtualLength++] = (Image) imageObject;
     }
 
-    public static void blitImagePartial(Object imageObject, int targetX, int targetY, int sourceX, int sourceY, int width, int height) {
+    public static void blitImagePartial(Object imageObject, int targetX, int targetY, int targetWidth, int targetHeight, int sourceX, int sourceY, int sourceWidth, int sourceHeight) {
         if (renderArgsVirtualLength + 7 >= renderArgsRealLength) {
             expandArgsCapacity();
         }
@@ -66,8 +66,8 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = targetY;
         renderArgs[renderArgsVirtualLength++] = sourceX;
         renderArgs[renderArgsVirtualLength++] = sourceY;
-        renderArgs[renderArgsVirtualLength++] = width;
-        renderArgs[renderArgsVirtualLength++] = height;
+        renderArgs[renderArgsVirtualLength++] = sourceWidth;
+        renderArgs[renderArgsVirtualLength++] = sourceHeight;
 
         images[imagesVirtualLength++] = (Image) imageObject;
     }

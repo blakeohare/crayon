@@ -3,6 +3,7 @@ import os
 import math
 import time
 import random
+import sys
 
 _global_vars = {
 	'width': 400,
@@ -256,6 +257,33 @@ def readLocalSoundResource(path):
 
 def playSoundImpl(snd):
 	snd[0].play()
-	
+
+def io_helper_check_path(path, isDirCheck, checkCase):
+	# TODO: check case.
+	if os.path.exists(path):
+		return (not isDirCheck) or os.path.isdir(path)
+	return False
+
+def io_helper_write_text(path, contents):
+	try:
+		c = open(path, 'wt')
+		c.write(contents)
+		c.close()
+		return 0
+	except:
+		# TODO: more specific error cases
+		return 4
+
+def io_helper_read_text(path):
+	try:
+		c = open(path, 'rt')
+		output = c.read()
+		c.close()
+		return output
+	except:
+		return None
+
+def io_helper_current_directory():
+	return os.path.dirname(os.path.realpath(__file__))
 
 program_data = [None]

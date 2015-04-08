@@ -72,6 +72,7 @@ function @omitReturn @type('string') interpret(
 	@type('Value') value3 = null;
 	@type('string') string1 = null;
 	@type('string') string2 = null;
+	@type('string') string3 = null;
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
 	@type('List<int>') intList1 = null;
@@ -1399,6 +1400,132 @@ function @omitReturn @type('string') interpret(
 						} else { // int1 == 2
 							output = VALUE_FALSE;
 						}
+						break;
+
+					case %%%FF_IO_CURRENT_DIRECTORY%%%:
+						$_comment('$io_current_directory');
+						output = buildString($_io_current_directory());
+						break;
+
+					case %%%FF_IO_DIRECTORY_LISTING%%%:
+						$_comment('$io_directory_list');
+						// $io_directory_list(path)
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$io_directory_list requires a string argument.");
+						}
+						output = ioDirectoryList($_cast('string', Value$arg1.internalValue));
+						if (Value$output.type == Types.STRING) {
+							return killExecution(stack, $_cast('string', Value$output.internalValue));
+						}
+						break;
+
+					case %%%FF_IO_FILE_READ_TEXT%%%:
+						$_comment('$io_file_read_text');
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$io_file_read_text requires 1 string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue); // path
+						string2 = ioCheckPathStatus(string1, false, false); // canonicalize the file path if it exists.
+						if (string2 == null) {
+							return killExecution(stack, "$io_file_read_text failed: File does not exist.");
+						}
+						string1 = $_io_file_read_text(string2);
+						if (string1 == null) {
+							return killExecution(stack, "$io_file_read_text failed: unable to read file.");
+						}
+						output = buildString(string1);
+						break;
+
+					case %%%FF_IO_FILE_WRITE_TEXT%%%:
+						$_comment('$io_file_write_text');
+						arg2 = $_stack_pop(valueStack);
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							return killExecution(stack, "$io_file_write_text requires 2 string arguments.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue); // path
+						string2 = $_cast('string', Value$arg2.internalValue); // contents
+						string3 = ioCheckPathStatus(string1, true, true); // canonicalize the parent folder if it exists
+						if (string3 == null) {
+							return killExecution(stack, "Invalid path. Parent directory does not exist.");
+						}
+						string3 = canonicalizePath(string1, false); // parent exists. now canonicalize the full path.
+						int1 = $_io_file_write_text(string3, string2); // int1 is error code
+						if (int1 != 0) {
+							string1 = "$io_file_write_text failed: ";
+							if (int1 == 1) string1 += " Disk is readonly.";
+							if (int1 == 2) string1 += " Path is too long.";
+							if (int1 == 3) string1 += " IO error.";
+							if (int1 == 4) string1 += " Unknown error.";
+						}
+						break;
+
+					case %%%FF_IO_IS_PATH_DIRECTORY%%%:
+						$_comment('$io_is_path_directory');
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$io_is_path_directory requires a string argument.");
+						}
+						string1 = ioIsPathDirectory($_cast('string', Value$arg1.internalValue));
+						if (string1 == null) {
+							output = VALUE_FALSE;
+						} else {
+							output = VALUE_TRUE;
+						}
+						break;
+
+					case %%%FF_IO_PATH_EXISTS%%%:
+						$_comment('$io_path_exists');
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$io_path_exists requires a string argument.");
+						}
+						string1 = ioDoesPathExist($_cast('string', Value$arg1.internalValue));
+						if (string1 == null) {
+							output = VALUE_FALSE;
+						} else {
+							output = VALUE_TRUE;
+						}
+						break;
+
+					case %%%FF_IO_PATH_JOIN%%%:
+						$_comment('$io_path_join');
+						arg1 = $_stack_pop(valueStack);
+						bool1 = true;
+						list1 = null;
+						// generally the number of string components in a path join command are < 5
+						// and most commonly just 2. Just iteratively concatenate a string for conciseness.
+						// It's okay.
+						string1 = ""; 
+						// TODO: accept a variable number of string args.
+						if (Value$arg1.type != Types.LIST) {
+							bool1 = false;
+						} else {
+							list1 = $_cast('List<Value>', Value$arg1.internalValue);
+							string2 = "/";
+							if ($_is_windows_program()) {
+								string2 = "\\";
+							}
+							for (i = 0; i < $_list_length(list1); i += 1) {
+								value = $_list_get(list1, i);
+								if (Value$value.type != Types.STRING) {
+									bool1 = false;
+									/* break; */ i = $_list_length(list1); // break isn't supported in translate mode.
+								} else {
+									if (i == 0) {
+										string1 += $_cast('string', Value$value.internalValue);
+									} else {
+										string1 += string2 + $_cast('string', Value$value.internalValue);
+									}
+								}
+							}
+						}
+						if (!bool1) {
+							return killExecution(stack, "$io_path_join requires a list of strings as input.");
+						}
+						output = buildString(string1);
 						break;
 
 					case %%%FF_PARSE_INT%%%:

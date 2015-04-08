@@ -9,9 +9,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -310,7 +314,7 @@ final class TranslationHelper {
     public static BufferedImage readLocalTileResource(String generatedTileId) {
         return loadImageFromLocalFile("generated/spritesheets/" + generatedTileId + ".png");
     }
-	
+    
     public static String[] literalStringSplit(String original, String sep) {
         ArrayList<String> output = new ArrayList<>();
         ArrayList<String> currentPiece = new ArrayList<>();
@@ -347,5 +351,46 @@ final class TranslationHelper {
         }
         output.add(String.join("", currentPiece));
         return output.toArray(new String[output.size()]);
+    }
+
+    public static String[] directoryListing(String path) {
+        File folder = new File(path);
+        ArrayList<String> output = new ArrayList<>();
+        for (File file : folder.listFiles()) {
+            output.add(file.getName());
+        }
+        return output.toArray(new String[output.size()]);
+    }
+
+    private static boolean isWindowsCached = System.getProperty("os.name").startsWith("Windows");
+    public static boolean isWindows() {
+        return isWindowsCached;
+    }
+
+    public static String readFile(String path) {
+        try {
+            byte[] bytes = Files.readAllBytes(Paths.get(path));
+            return new String(bytes);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static int writeFile(String path, String contents) {
+        byte[] bytes = contents.getBytes();
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            fos.write(bytes);
+            fos.close();
+            return 0;
+        } catch (IOException e) {
+            // TODO: test with errors 1-3
+            return 4;
+        }
+    }
+
+    public static boolean checkPathExistence(String path, boolean dirOnly, boolean checkCase) {
+        Path p = Paths.get(path);
+        return dirOnly ? Files.isDirectory(p) : Files.exists(p);
     }
 }

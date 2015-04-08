@@ -72,7 +72,6 @@ namespace Crayon.Translator.Java
 				"import java.util.ArrayList;",
 				"import java.util.HashMap;",
 				"import java.util.Stack;",
-				"import java.util.regex.Pattern;",
 				"",
 				"final class CrayonWrapper {",
 				"    private CrayonWrapper() {}",

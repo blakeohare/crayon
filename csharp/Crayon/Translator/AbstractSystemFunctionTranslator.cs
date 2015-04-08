@@ -72,7 +72,13 @@ namespace Crayon.Translator
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
+				case "_io_current_directory": VerifyCount(functionCall, 0); TranslateIoCurrentDirectory(output); break;
+				case "_io_does_path_exist": VerifyCount(functionCall, 3); TranslateIoDoesPathExist(output, args[0], args[1], args[2]); break;
+				case "_io_file_read_text": VerifyCount(functionCall, 1); TranslateIoFileReadText(output, args[0]); break;
+				case "_io_files_in_directory": VerifyCount(functionCall, 1); TranslateIoFilesInDirectory(output, args[0]); break;
+				case "_io_file_write_text": VerifyCount(functionCall, 2); TranslateIoFileWriteText(output, args[0], args[1]); break;
 				case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
+				case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
 				case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -187,7 +193,13 @@ namespace Crayon.Translator
 		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
 		protected abstract void TranslateInt(List<string> output, Expression value);
+		protected abstract void TranslateIoCurrentDirectory(List<string> output);
+		protected abstract void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck);
+		protected abstract void TranslateIoFileReadText(List<string> output, Expression path);
+		protected abstract void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath);
+		protected abstract void TranslateIoFileWriteText(List<string> output, Expression path, Expression content);
 		protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
+		protected abstract void TranslateIsWindowsProgram(List<string> output);
 		protected abstract void TranslateListClear(List<string> output, Expression list);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
 		protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);

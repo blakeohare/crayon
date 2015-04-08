@@ -212,7 +212,7 @@ class GameWindow {
     private void handleMouseEvent(boolean isClick, boolean down, boolean isLeft, int x, int y) {
         int gameX = x * gameWidth / screenWidth;
         int gameY = y * gameHeight / screenHeight;
-        
+
         String eventName;
         if (isClick) {
             if (down) {

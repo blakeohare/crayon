@@ -9,7 +9,13 @@ namespace %%%PROJECT_ID%%%
 		private static readonly Random random = new Random();
 
 		public static ProgramData ProgramData { get; set; }
-		
+
+		public static readonly bool IsWindows = 
+			Environment.OSVersion.Platform == PlatformID.Win32NT ||
+			Environment.OSVersion.Platform == PlatformID.Win32S ||
+			Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+			Environment.OSVersion.Platform == PlatformID.WinCE;
+
 		public static void ShuffleInPlace(List<Value> list)
 		{
 			if (list.Count < 2) return;
@@ -164,6 +170,72 @@ namespace %%%PROJECT_ID%%%
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)sound.nativeObject;
 			sdlSound.Play();
+		}
+
+		public static bool DoesPathExist(string path, bool directoriesOnly, bool checkCase)
+		{
+			// TODO: check the case.
+			if (System.IO.Directory.Exists(path))
+			{
+				return true;
+			}
+
+			if (!directoriesOnly && System.IO.File.Exists(path))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public static string[] FilesInDirectory(string path)
+		{
+			if (!path.Contains("\\") && path.Contains(":"))
+			{
+				path += "\\";
+			}
+			List<string> files = new List<string>();
+			files.AddRange(System.IO.Directory.GetFiles(path));
+			files.AddRange(System.IO.Directory.GetDirectories(path));
+			HashSet<string> output = new HashSet<string>(files);
+			return output.Select<string, string>(s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length)).OrderBy(s => s).ToArray();
+		}
+
+		public static int WriteFile(string path, string contents)
+		{
+			try
+			{
+				System.IO.File.WriteAllText(path, contents);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return 1;
+			}
+			catch (System.IO.PathTooLongException)
+			{
+				return 2;
+			}
+			catch (System.IO.IOException)
+			{
+				return 3;
+			}
+			catch (Exception)
+			{
+				return 4;
+			}
+			return 0;
+		}
+
+		public static string ReadFile(string path)
+		{
+			try
+			{
+				return System.IO.File.ReadAllText(path);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 	}
 }

@@ -60,6 +60,7 @@ namespace Crayon.Translator
 				"ByteCodeLoader",
 				"Graphics",
 				"Interpreter",
+				"IOManager",
 				"PrimitiveMethods",
 				"Runner",
 				"SoundManager",

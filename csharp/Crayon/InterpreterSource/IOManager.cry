@@ -1,0 +1,89 @@
+﻿// ALL FILE PATHS ARE CASE SENSITIVE ON ALL PLATFORMS!!!!
+// (Yes, even on Windows. It's magic.)
+
+/** 
+ * Returns a value which is either:
+ * - a list of Values (strings)
+ * - a string (error message to display)
+ */
+function @type('Value') ioDirectoryList(@type('string') rawpath) {
+	
+	@type('string') path = ioIsPathDirectory(rawpath);
+	if (path == null) {
+		return buildString("The directory '" + rawpath + "' does not exist.");
+	}
+
+	@type('Array<string>') members = $_io_files_in_directory(path);
+	@type('List<Value>') output = $_new_list('Value');
+	for (@type('int') i = 0; i < $_array_length(members); i += 1) {
+		// full path, ., and .. entries should be trimmed before now.
+		// results should be sorted.
+		$_list_push(output, buildString($_array_get(members, i)));
+	}
+	return buildListByWrappingInput(output);
+}
+
+/* returns null if does not exist, canonicalized path otherwise */
+function @type('string') ioDoesPathExist(@type('string') rawpath) {
+	return ioCheckPathStatus(rawpath, false, false);
+}
+
+/* returns null if does not exist or is not directory, canonicalized path otherwise */
+function @type('string') ioIsPathDirectory(@type('string') rawpath) {
+	return ioCheckPathStatus(rawpath, true, false);
+}
+
+/** 
+ * Check the status of a path.
+ * This canonicalizes a path into the correct platform delimiters.
+ * This will fail if the casing is wrong on Windows.
+ * isDirCheck will return null if the path is a file, not a directory.
+ * parentCheck will return a canonicalized path that points to the parent of what you passed in.
+ */
+function @type('string') ioCheckPathStatus(@type('string') rawpath, @type('bool') isDirCheck, @type('bool') parentCheck) {
+	@type('string') path = canonicalizePath(rawpath, parentCheck);
+	@type('bool') checkCase = !ioIsOsFileCaseSensitive();
+	if (!$_io_does_path_exist(path, isDirCheck /* only check folders */, checkCase)) {
+		return null;
+	}
+	return path;
+}
+
+function @type('string') canonicalizePath(@type('string') path, @type('bool') getParent) {
+	@type('bool') useBackslash = $_is_windows_program();
+	if (useBackslash) {
+		path = $_string_replace(path, "\\", "/");
+	}
+
+	@type('Array<string>') parts = $_string_split(path, '/');
+	@type('List<string>') partsBuilder = $_new_list('string');
+	for (@type('int') i = 0; i < $_array_length(parts); i += 1) {
+		@type('string') part = $_array_get(parts, i);
+		if ($_string_equals("..", part) && $_list_length(partsBuilder) > 0) {
+			$_list_pop(partsBuilder);
+		} else if ($_string_equals(".", part)) {
+			// do nothing
+		} else {
+			$_list_push(partsBuilder, part);
+		}
+	}
+
+	if (getParent) {
+		if ($_list_length(partsBuilder) > 0) {
+			$_list_pop(partsBuilder);
+		} else {
+			$_list_push(partsBuilder, "..");
+		}
+	}
+
+	@type('string') sep = '/';
+	if (useBackslash) sep = '\\';
+
+	path = $_list_join(partsBuilder, sep);
+
+	return path;
+}
+
+function @type('bool') ioIsOsFileCaseSensitive() {
+	return $_is_windows_program();
+}

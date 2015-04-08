@@ -416,11 +416,55 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateIoCurrentDirectory(List<string> output)
+		{
+			output.Add("'~'");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		{
+			output.Add("R.IO.checkPath(");
+			this.Translator.TranslateExpression(output, canonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, directoriesOnly);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		{
+			output.Add("R.IO.readFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		{
+			output.Add("R.IO.listFiles(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		{
+			output.Add("R.IO.writeFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, content);
+			output.Add(")");
+		}
+
 		protected override void TranslateIsValidInteger(List<string> output, Expression number)
 		{
 			output.Add("R.is_valid_integer(");
 			this.Translator.TranslateExpression(output, number);
 			output.Add(")");
+		}
+
+		protected override void TranslateIsWindowsProgram(List<string> output)
+		{
+			// TODO: make platforms that have a constant value for this also have a 
+			// %%% platform parameter that can be used to short circuit interpreter code.
+			output.Add("false");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)

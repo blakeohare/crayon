@@ -275,13 +275,12 @@ namespace %%%PROJECT_ID%%%
 			int RH = screenHeight;
 			int VW = gameWidth;
 			int VH = gameHeight;
-			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height, scale, j, ptCount;
+			int left, top, right, bottom, startX, startY, endX, endY, lineWidth, width, height, j, ptCount;
 			int textureId = -1;
 			float textureWidth, textureHeight;
 			float textureLeft, textureRight, textureTop, textureBottom;
 			double slope, slopeScalingCoefficient, offsetXComp, offsetYComp, ax, bx, cx, dx, ay, by, cy, dy;
 			byte red, green, blue, alpha;
-			bool includeOptions;
 			Image image;
 
 			RenderState state = null;

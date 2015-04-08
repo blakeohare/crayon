@@ -20,6 +20,7 @@ namespace Crayon
 			"ByteCodeLoader.cry",
 			"Graphics.cry",
 			"Interpreter.cry",
+			"IOManager.cry",
 			"PrimitiveMethods.cry",
 			"Runner.cry",
 			"SoundManager.cry",

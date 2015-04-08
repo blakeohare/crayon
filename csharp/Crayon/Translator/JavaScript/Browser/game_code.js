@@ -569,6 +569,26 @@ R.sortPrimitiveValuesList = function(list) {
 	}
 };
 
+R.IO = {};
+
+R.IO.virtualDisk = {};
+
+R.IO.checkPath = function(path, isDir) {
+	return false;
+};
+
+R.IO.listFiles = function(path) {
+	return [];
+};
+
+R.IO.readFile = function(path) {
+	return null;
+};
+
+R.IO.writeFile = function(path, content) {
+	return 4;
+};
+
 window.addEventListener('keydown', function(e) {
 	if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 		e.preventDefault();

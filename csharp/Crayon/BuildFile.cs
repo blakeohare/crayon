@@ -229,7 +229,7 @@ namespace Crayon
 					{
 						throw new InvalidOperationException("Build file target contains a <var> without an id attribute.");
 					}
-					firstPass.Add(targetVar.Id, targetVar);
+					firstPass[targetVar.Id] = targetVar;
 				}
 			}
 
