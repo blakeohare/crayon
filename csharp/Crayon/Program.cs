@@ -124,7 +124,7 @@ namespace Crayon
 
 				if (!System.IO.File.Exists(buildFile))
 				{
-					throw new InvalidOperationException("Build file does not exist.");
+					throw new InvalidOperationException("Build file does not exist: " + buildFile);
 				}
 
 				buildContext = BuildContext.Parse(System.IO.File.ReadAllText(buildFile), target);
