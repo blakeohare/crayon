@@ -2198,7 +2198,7 @@ function @omitReturn @type('string') interpret(
 							if ($_dictionary_contains(dictStringValueLookup, stringKey)) {
 								output = $_dictionary_get_guaranteed(dictStringValueLookup, stringKey);
 							} else {
-								return killExecution(stack, "Key not found.");
+								return killExecution(stack, "Key not found: '" + stringKey + "'");
 							}
 						} else {
 							dictIntValueLookup = $_cast('Dictionary<int, Value>', DictImpl$dictImpl.valueIntLookup);
