@@ -110,6 +110,16 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 				}
 				return 0;
 			}
+
+			if (leftType == Types.INSTANCE) {
+				@type('ObjectInstance') obj1 = $_cast('ObjectInstance', Value$a.internalValue);
+				@type('ObjectInstance') obj2 = $_cast('ObjectInstance', Value$b.internalValue);
+				if (ObjectInstance$obj1.objectId == ObjectInstance$obj2.objectId) {
+					return 1;
+				}
+				return 0;
+			}
+
 			return 2;
 		} else if (leftType == Types.INTEGER || leftType == Types.FLOAT) {
 			if (rightType == Types.FLOAT) {
