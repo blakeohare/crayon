@@ -132,11 +132,33 @@ namespace %%%PROJECT_ID%%%
 					case OpenTK.Input.Key.Enter: value = "enter"; break;
 					case OpenTK.Input.Key.KeypadEnter: value = "enter"; break;
 					case OpenTK.Input.Key.Tab: value = "tab"; break;
+					case OpenTK.Input.Key.Escape: value = "escape"; break;
 
 					case OpenTK.Input.Key.Left: value = "left"; break;
 					case OpenTK.Input.Key.Right: value = "right"; break;
 					case OpenTK.Input.Key.Up: value = "up"; break;
 					case OpenTK.Input.Key.Down: value = "down"; break;
+
+					case OpenTK.Input.Key.Comma: value = "comma"; break;
+					case OpenTK.Input.Key.Period: value = "period"; break;
+					case OpenTK.Input.Key.Semicolon: value = "semicolon"; break;
+					case OpenTK.Input.Key.Slash: value = "slash"; break;
+					case OpenTK.Input.Key.BackSlash: value = "backslash"; break;
+					case OpenTK.Input.Key.BracketLeft: value = "openbracket"; break;
+					case OpenTK.Input.Key.BracketRight: value = "closebracket"; break;
+					case OpenTK.Input.Key.ControlLeft: value = "ctrl"; break;
+					case OpenTK.Input.Key.ControlRight: value = "ctrl"; break;
+					case OpenTK.Input.Key.ShiftLeft: value = "shift"; break;
+					case OpenTK.Input.Key.ShiftRight: value = "shift"; break;
+					case OpenTK.Input.Key.AltLeft: value = "alt"; break;
+					case OpenTK.Input.Key.AltRight: value = "alt"; break;
+
+					case OpenTK.Input.Key.PageUp: value = "pageup"; break;
+					case OpenTK.Input.Key.PageDown: value = "pagedown"; break;
+					case OpenTK.Input.Key.Home: value = "home"; break;
+					case OpenTK.Input.Key.End: value = "end"; break;
+					case OpenTK.Input.Key.Delete: value = "delete"; break;
+					case OpenTK.Input.Key.Insert: value = "insert"; break;
 
 					default: value = null; break;
 				}

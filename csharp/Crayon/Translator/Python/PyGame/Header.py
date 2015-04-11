@@ -19,7 +19,29 @@ KEY_LOOKUP = {
 	pygame.K_DOWN: 'down',
 	pygame.K_SPACE: 'space',
 	pygame.K_RETURN: 'enter',
+	pygame.K_ESCAPE: 'escape',
 	pygame.K_TAB: 'tab',
+	pygame.K_PAGEUP: 'pageup',
+	pygame.K_PAGEDOWN: 'pagedown',
+	pygame.K_HOME: 'home',
+	pygame.K_END: 'end',
+	pygame.K_DELETE: 'delete',
+	pygame.K_INSERT: 'insert',
+	pygame.K_COMMA: 'comma',
+	pygame.K_PERIOD: 'period',
+	pygame.K_SEMICOLON: 'semicolon'
+	pygame.K_SLASH: 'slash',
+	pygame.K_QUOTE: 'apostrophe',
+	pygame.K_BACKSPACE: 'backspace',
+	pygame.K_BACKSLASH: 'backslash',
+	pygame.K_LEFTBRACKET: 'openbracket',
+	pygame.K_RIGHTBRACKET: 'closebracket',
+	pygame.K_LCTRL: 'ctrl',
+	pygame.K_RCTRL: 'ctrl',
+	pygame.K_LSHIFT: 'shift',
+	pygame.K_RSHIFT: 'shift',
+	pygame.K_LALT: 'alt',
+	pygame.K_RALT: 'alt'
 }
 
 for i in range(26):
