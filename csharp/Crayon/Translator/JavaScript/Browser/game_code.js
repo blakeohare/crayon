@@ -350,9 +350,15 @@ R._keydownup = function (ev, down) {
 
 R._keyCodeLookup = {
 	'k13': 'enter',
+	'k9': 'tab',
+	'k27': 'escape',
 	'k16': 'shift', 'k17': 'ctrl', 'k18': 'alt',
 	'k32': 'space',
-	
+	'k33': 'pageup', 'k34': 'pagedown',
+	'k35': 'end', 'k36': 'home',
+	'k45': 'insert', 'k46': 'delete',
+	'k8': 'backspace',
+
 	'k48': '0', 'k49': '1', 'k50': '2', 'k51': '3', 'k52': '4',
 	'k53': '5', 'k54': '6', 'k55': '7', 'k56': '8', 'k57': '9',
 	
@@ -365,8 +371,17 @@ R._keyCodeLookup = {
 	
 	'k37': 'left', 'k38': 'up', 'k39': 'right', 'k40': 'down',
 	
-	'k187': '=',
-	'k189': '-'
+	'k187': 'equals',
+	'k188': 'comma',
+	'k189': 'hyphen',
+	'k190': 'period',
+	'k191': 'slash',
+	'k192': 'backtick',
+	'k219': 'openbracket',
+	'k220': 'backslash',
+	'k221': 'closebracket',
+	'k222': 'apostrophe'
+
 };
 
 R._getKeyCode = function (ev) {
