@@ -1209,9 +1209,13 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$image_load_from_resource requires two string arguments.");
 						}
 						string1 = $_cast('string', Value$arg2.internalValue);
-						bool1 = loadImageFromLocalResources($_cast('string', Value$arg1.internalValue), string1);
-						if (!bool1) {
-							return killExecution(stack, "Image resource does not exist: " + string1);
+						int1 = loadImageFromLocalResources($_cast('string', Value$arg1.internalValue), string1);
+						if (int1 != 1) {
+							if (int1 == 0) {
+								return killExecution(stack, "Image resource does not exist: " + string1);
+							} else if (int1 == 2) {
+								return killExecution(stack, "Image resource was loaded, but it was accessed from an image sheet that was not checked for load completion. Use $gfx_image_sheet_loaded on all image sheets before accessing files from them.");
+							}
 						}
 						break;
 
@@ -1353,7 +1357,7 @@ function @omitReturn @type('string') interpret(
 						// $image_sheet_loaded(idOrIds)
 						arg1 = $_stack_pop(valueStack);
 						bool1 = false; // type error encountered
-						int1 = 0; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
+						int1 = 1; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
 						if (Value$arg1.type == Types.LIST) {
 							for (i = 0; i < $_list_length(list1); i += 1) {
 								value = $_list_get(list1, i);
@@ -1366,7 +1370,7 @@ function @omitReturn @type('string') interpret(
 										return killExecution(stack, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
 									}
 
-									int1 |= int2;
+									int1 &= int2;
 								}
 							}
 						} else if (Value$arg1.type == Types.STRING) {
