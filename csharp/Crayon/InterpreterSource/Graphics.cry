@@ -473,11 +473,14 @@ function @type('int') virtualizationGridDoBasicConsolidations(
 					col = i % 4;
 					row = $_unsafe_integer_division(i, 4);
 					if ($_dictionary_contains(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName)) {
+						@type('object') tileBmp = $_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName);
+						if (tileBmp != null) {
 						imagetteBlitRaw(
 							$_dictionary_get_guaranteed(nonSolitarySheets, roundedId),
-							$_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName),
+							tileBmp,
 							col * 256,
 							row * 256);
+						}
 					}
 				}
 			}
