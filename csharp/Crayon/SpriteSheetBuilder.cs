@@ -294,8 +294,8 @@ namespace Crayon
 						{
 							int thisTileId = tileId + rowOffset * 4 + colOffset;
 							tileIds.Add(thisTileId);
-							drawX.Add(image.GlobalX - 256 * x);
-							drawY.Add(image.GlobalY - 256 * y);
+							drawX.Add(image.SheetX - 256 * x);
+							drawY.Add(image.SheetY - 256 * y);
 						}
 					}
 
