@@ -33,6 +33,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 
 	$_dictionary_set(lookup, Types.LIST + "add", %%%PRIMITIVE_METHOD_LIST_ADD%%%);
 	$_dictionary_set(lookup, Types.LIST + "clear", %%%PRIMITIVE_METHOD_LIST_CLEAR%%%);
+	$_dictionary_set(lookup, Types.LIST + "clone", %%%PRIMITIVE_METHOD_LIST_CLONE%%%);
 	$_dictionary_set(lookup, Types.LIST + "contains", %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%);
 	$_dictionary_set(lookup, Types.LIST + "insert", %%%PRIMITIVE_METHOD_LIST_INSERT%%%);
 	$_dictionary_set(lookup, Types.LIST + "join", %%%PRIMITIVE_METHOD_LIST_JOIN%%%);
@@ -75,6 +76,17 @@ function @type('string') callSystemMethod(
 			} else {
 				Value$wrappedContext.internalValue = $_new_list('Value');
 			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CLONE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError("List clone method", 0, $_array_length(funcArgs));
+			@type('List<Value>') list4 = $_cast('List<Value>', context);
+			@type('List<Value>') lc_wrappedList = $_new_list('Value');
+			@type('int') len3 = $_list_length(list4);
+			// TODO: use native clone if convenient (e.g. newlist = list + [], list.clone(), list[:], etc)
+			for (i = 0; i < len3; i += 1) {
+				$_list_push(lc_wrappedList, $_list_get(list4, i));
+			}
+			output = new Value(Types.LIST, lc_wrappedList);
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("List contains method", 1, $_array_length(funcArgs));
