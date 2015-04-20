@@ -23,6 +23,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	$_dictionary_set(lookup, Types.STRING + "contains", %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%);
 	
 	$_dictionary_set(lookup, Types.STRING + "endsWith", %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%);
+	$_dictionary_set(lookup, Types.STRING + "indexOf", %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%);
 	$_dictionary_set(lookup, Types.STRING + "lower", %%%PRIMITIVE_METHOD_STRING_LOWER%%%);
 	$_dictionary_set(lookup, Types.STRING + "reverse", %%%PRIMITIVE_METHOD_STRING_REVERSE%%%);
 	$_dictionary_set(lookup, Types.STRING + "replace", %%%PRIMITIVE_METHOD_STRING_REPLACE%%%);
@@ -218,6 +219,15 @@ function @type('string') callSystemMethod(
 			} else {
 				output = VALUE_FALSE;
 			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError("String indexOf method", 1, $_array_length(funcArgs));
+			@type('Value') sio_item = $_array_get(funcArgs, 0);
+			@type('string') sio_string = $_cast('string', context);
+			if (Value$sio_item.type != Types.STRING) {
+				return "String indexOf method requires a string. Found a " + getTypeFromId(Value$sio_item.type) + " instead.";
+			}
+			output = buildInteger($_string_index_of(sio_string, $_cast('string', Value$sio_item.internalValue)));
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("String startsWith method", 1, $_array_length(funcArgs));
