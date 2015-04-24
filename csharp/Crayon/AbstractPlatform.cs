@@ -48,6 +48,12 @@ namespace Crayon
 		{
 			Parser userCodeParser = new Parser(null, buildContext);
 			ParseTree.Executable[] userCode = userCodeParser.ParseRoot(inputFolder);
+			
+			foreach (Executable ex in userCode)
+			{
+				ex.AssignVariablesToIds(userCodeParser.VariableIds);
+			}
+			
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
 			return bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 		}

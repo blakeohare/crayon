@@ -11,6 +11,7 @@ namespace Crayon.ParseTree
 		public Executable[] Code { get; private set; }
 		public Annotation[] ArgAnnotations { get; private set; }
 		private Dictionary<string, Annotation> annotations;
+		public VariableIdAllocator VariableIds { get; private set; }
 
 		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations)
 			: base(functionToken)
@@ -25,6 +26,7 @@ namespace Crayon.ParseTree
 			{
 				this.annotations[annotation.Type] = annotation;
 			}
+			this.VariableIds = new VariableIdAllocator();
 		}
 
 		public Annotation GetAnnotation(string type)
@@ -58,7 +60,22 @@ namespace Crayon.ParseTree
 				this.Code = newCode.ToArray();
 			}
 
+			foreach (Token arg in this.ArgNames)
+			{
+				this.VariableIds.RegisterVariable(arg.Value);
+			}
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.AssignVariablesToIds(this.VariableIds);
+			}
+
 			return Listify(this);
+		}
+
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			varIds.RegisterVariable(this.NameToken.Value);
 		}
 
 		public override void GetAllVariableNames(Dictionary<string, bool> lookup)

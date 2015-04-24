@@ -56,5 +56,10 @@
 				lookup[this.Name] = true;
 			}
 		}
+
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			varIds.RegisterVariable(this.Name);
+		}
 	}
 }

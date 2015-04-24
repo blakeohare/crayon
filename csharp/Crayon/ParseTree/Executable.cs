@@ -62,5 +62,10 @@ namespace Crayon.ParseTree
 		// To be overridden if necessary.
 		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{ }
+
+		public virtual void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			// Override me!
+		}
 	}
 }

@@ -33,7 +33,7 @@ namespace Crayon
 			header.Add(null, OpCode.FINALIZE_INITIALIZATION);
 
 			ByteBuffer output = new Crayon.ByteBuffer();
-			output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
+			output.Add(null, OpCode.USER_CODE_START, header.Size + 1, parser.VariableIds.Size);
 			output.Concat(header);
 			output.Concat(userCode);
 

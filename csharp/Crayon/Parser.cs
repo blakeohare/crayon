@@ -13,9 +13,12 @@ namespace Crayon
 			this.IsTranslateMode = platform != null;
 			this.IsInClass = false;
 			this.BuildContext = buildContext;
+			this.VariableIds = new VariableIdAllocator();
 		}
 
 		private int fileIdCounter = 0;
+
+		public VariableIdAllocator VariableIds { get; private set; }
 
 		public bool IsInClass { get; set; }
 
@@ -249,7 +252,8 @@ namespace Crayon
 		{
 			string fileName = "start.cry";
 			Executable[] output = ParseImport(rootFolder, fileName, null, new HashSet<string>(), null);
-			return ResolveCode(output);
+			output = ResolveCode(output);
+			return output;
 		}
 
 		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot, ImportStatement importStatement)
@@ -355,7 +359,7 @@ namespace Crayon
 		}
 
 		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
-		
+
 		internal static IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired)
 		{
 			List<Executable> output = new List<Executable>();

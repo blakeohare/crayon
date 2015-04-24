@@ -56,5 +56,13 @@ namespace Crayon.ParseTree
 					this.FalseCode[this.FalseCode.Length - 1].IsTerminator;
 			}
 		}
+
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			foreach (Executable ex in this.TrueCode.Concat<Executable>(this.FalseCode))
+			{
+				ex.AssignVariablesToIds(varIds);
+			}
+		}
 	}
 }

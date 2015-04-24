@@ -25,5 +25,16 @@ namespace Crayon.ParseTree
 			this.Body = Resolve(parser, this.Body).ToArray();
 			return Listify(this);
 		}
+
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			string iterator = this.IterationVariable.Value;
+			varIds.RegisterVariable(iterator);
+
+			foreach (Executable ex in this.Body)
+			{
+				ex.AssignVariablesToIds(varIds);
+			}
+		}
 	}
 }

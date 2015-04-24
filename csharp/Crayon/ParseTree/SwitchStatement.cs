@@ -166,6 +166,17 @@ namespace Crayon.ParseTree
 			}
 		}
 
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			foreach (Chunk chunk in this.Chunks)
+			{
+				foreach (Executable ex in chunk.Code)
+				{
+					ex.AssignVariablesToIds(varIds);
+				}
+			}
+		}
+
 		private IList<Executable> CompilationResolution(Parser parser)
 		{
 			Chunk lastChunk = this.chunks[this.chunks.Length - 1];

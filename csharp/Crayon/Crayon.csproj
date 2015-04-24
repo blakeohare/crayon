@@ -123,6 +123,9 @@
     <Compile Include="AbstractPlatform.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
+    <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
+    <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\COpenGL\CTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="Translator\CurlyBraceImplementation.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="VariableIdAllocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
@@ -187,6 +191,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
+    <EmbeddedResource Include="Translator\COpenGL\Project\Header.c" />
+    <EmbeddedResource Include="Translator\COpenGL\Project\Footer.c" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

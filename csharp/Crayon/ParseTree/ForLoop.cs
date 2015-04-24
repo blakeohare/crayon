@@ -46,5 +46,13 @@ namespace Crayon.ParseTree
 				line.GetAllVariableNames(lookup);
 			}
 		}
+
+		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		{
+			foreach (Executable ex in this.Init.Concat<Executable>(this.Step).Concat<Executable>(this.Code))
+			{
+				ex.AssignVariablesToIds(varIds);
+			}
+		}
 	}
 }
