@@ -2226,20 +2226,11 @@ function @omitReturn @type('string') interpret(
 					if (int1 < 0 || int1 >= $_string_length(string1)) {
 						return killExecution(stack, "String index out of range.");
 					}
-					$_stack_push(valueStack, new Value(Types.STRING, $_char_to_string($_string_char_at(string1, int1))));
+					// Single char strings are common.
+					$_stack_push(valueStack, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
 				} else {
 					return killExecution(stack, "Cannot index into this type: " + getTypeFromId(Value$root.type));
 				}
-				break;
-
-			case OpCodes.INDEX_INT:
-				$_comment('INDEX_INT');
-				return killExecution(stack, "TODO: index int");
-				break;
-
-			case OpCodes.INDEX_STRING:
-				$_comment('INDEX_STRING');
-				return killExecution(stack, "TODO: index string");
 				break;
 
 			case OpCodes.ITERATION_STEP:
@@ -2263,7 +2254,8 @@ function @omitReturn @type('string') interpret(
 					if (bool1) {
 						$_dictionary_set(locals, nameId, $_list_get(list1, i));
 					} else {
-						value = buildString($_string_cast_strong($_string_char_at(string1, i)));
+						// Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
+						value = buildCommonString($_char_to_string($_string_char_at(string1, i)));
 						$_dictionary_set(locals, nameId, value);
 					}
 				} else {

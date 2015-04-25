@@ -30,8 +30,6 @@
 		FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
 		FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
 		INDEX,
-		INDEX_INT,
-		INDEX_STRING,
 		ITERATION_STEP, // stack is in the following state: [index, variable ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
 		JUMP,
 		JUMP_IF_FALSE,
