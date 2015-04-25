@@ -169,7 +169,7 @@ namespace Crayon
 			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
 			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(parser.GetId(forEachLoop.IterationVariable.Value)));
 			this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
-			buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_IS_LIST);
+			buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_TYPE_IS_ITERABLE);
 
 			ByteBuffer body = new ByteBuffer();
 			ByteBuffer body2 = new Crayon.ByteBuffer();

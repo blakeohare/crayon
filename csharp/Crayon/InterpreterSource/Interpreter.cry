@@ -2249,11 +2249,23 @@ function @omitReturn @type('string') interpret(
 				value2 = $_stack_get(valueStack, int1 - 2); // name ID of iterating variable
 				value = $_stack_get(valueStack, int1 - 1); // list
 				i = $_cast('int', Value$value3.internalValue); // iterator index
-				list1 = $_cast('List<Value>', Value$value.internalValue); // the actual list
 				nameId = $_cast('int', Value$value2.internalValue); // iterating variable name ID
-				len = $_list_length(list1);
+				if (Value$value.type == Types.LIST) {
+					list1 = $_cast('List<Value>', Value$value.internalValue); // the actual list
+					len = $_list_length(list1);
+					bool1 = true;
+				} else {
+					string1 = $_cast('string', Value$value.internalValue); // the actual string
+					len = $_string_length(string1);
+					bool1 = false;
+				}
 				if (i < len) {
-					$_dictionary_set(locals, nameId, $_list_get(list1, i));
+					if (bool1) {
+						$_dictionary_set(locals, nameId, $_list_get(list1, i));
+					} else {
+						value = buildString($_string_cast_strong($_string_char_at(string1, i)));
+						$_dictionary_set(locals, nameId, value);
+					}
 				} else {
 					StackFrame$stack.pc += $_array_get(row, 0);
 				}
@@ -2485,11 +2497,11 @@ function @omitReturn @type('string') interpret(
 				}
 				break;
 
-			case OpCodes.VERIFY_IS_LIST:
-				$_comment('VERIFY_IS_LIST');
+			case OpCodes.VERIFY_TYPE_IS_ITERABLE:
+				$_comment('VERIFY_TYPE_IS_ITERABLE');
 				value = $_stack_pop(valueStack);
-				if (Value$value.type != Types.LIST) {
-					return killExecution(stack, "Expected a list.");
+				if (Value$value.type != Types.LIST && Value$value.type != Types.STRING) {
+					return killExecution(stack, "Expected an iterable type, such as a list or string.");
 				}
 				$_stack_push(valueStack, value);
 				break;
