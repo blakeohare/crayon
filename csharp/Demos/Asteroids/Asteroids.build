@@ -16,7 +16,7 @@
 	
 	<target name="js_remote">
 		<platform>js</platform>
-		<jsfileprefix>/projects/polarity/</jsfileprefix>
+		<jsfileprefix>/demos/asteroids/</jsfileprefix>
 	</target>
 	
 	<target name="windows">
