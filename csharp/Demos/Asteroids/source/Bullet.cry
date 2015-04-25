@@ -1,0 +1,25 @@
+BULLET_VELOCITY = 4;
+BULLET_RADIUS = 4;
+
+class Bullet {
+	constructor(x, y, angle) {
+		this.x = x;
+		this.y = y;
+		this.vx = BULLET_VELOCITY * $cos(angle);
+		this.vy = BULLET_VELOCITY * $sin(angle);
+		this.dead = false;
+	}
+	
+	function update() {
+		this.x += this.vx;
+		this.y += this.vy;
+		
+		if (this.x < 0 || this.y < 0 || this.x > GAME_WIDTH || this.y > GAME_HEIGHT) {
+			this.dead = true;
+		}
+	}
+	
+	function render() {
+		$gfx_draw_rectangle($floor(this.x - BULLET_RADIUS), $floor(this.y - BULLET_RADIUS), BULLET_RADIUS * 2, BULLET_RADIUS * 2, 0, 255, 0, 255);
+	}
+}
