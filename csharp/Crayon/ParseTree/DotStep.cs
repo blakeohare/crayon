@@ -54,6 +54,24 @@ namespace Crayon.ParseTree
 				}
 			}
 
+			if (this.Root is StringConstant)
+			{
+				if (step == "join")
+				{
+					throw new ParserException(this.StepToken,
+						"There is no join method on strings, you silly Python user. Did you mean to do list.join(string) instead?");
+				}
+				else if (step == "size")
+				{
+					throw new ParserException(this.StepToken, "String size is indicated by string.length.");
+				}
+				else if (step == "length")
+				{
+					int length = ((StringConstant)this.Root).Value.Length;
+					return new IntegerConstant(this.FirstToken, length);
+				}
+			}
+
 			return this;
 		}
 	}
