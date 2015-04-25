@@ -93,6 +93,8 @@ namespace Crayon
 			return output;
 		}
 
+		// Build the lookup table that maps PC's to tokens. There can be multiple tokens per PC, but it's up to the Op
+		// to have a consistent convention to figure out the context of those tokens.
 		private ByteBuffer BuildTokenData(ByteBuffer userCode)
 		{
 			Token[] tokens = userCode.ToTokenList().ToArray();
@@ -109,28 +111,7 @@ namespace Crayon
 				token = tokens[i];
 				row = rows[i];
 
-				if (row[0] == (int)OpCode.VARIABLE_STREAM)
-				{
-					bool toggled = false;
-					for (int j = 1; j < row.Length; ++j)
-					{
-						if (toggled)
-						{
-							int line = row[j];
-							int col = row[j + 1];
-							int file = row[j + 2];
-
-							output.Add(null, OpCode.TOKEN_DATA, i, line, col, file);
-
-							j += 2;
-						}
-						else if (row[j] == -1)
-						{
-							toggled = true;
-						}
-					}
-				}
-				else if (token != null)
+				if (token != null)
 				{
 					output.Add(null, OpCode.TOKEN_DATA, i, token.Line, token.Col, token.FileID);
 				}
@@ -862,12 +843,12 @@ namespace Crayon
 					tokenData.Add(v.FirstToken.FileID);
 				}
 
-				/*
-				ids.Add(-1);
-				ids.AddRange(tokenData);
-				//*/
+				List<int> finalRow = new List<int>(ids.Count * 4 + 1);
+				finalRow.Add(ids.Count);
+				finalRow.AddRange(ids);
+				finalRow.AddRange(tokenData);
 
-				buffer.Add(variables[0].FirstToken, OpCode.VARIABLE_STREAM, ids.ToArray());
+				buffer.Add(null, OpCode.VARIABLE_STREAM, finalRow.ToArray());
 			}
 		}
 
