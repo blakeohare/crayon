@@ -29,7 +29,7 @@ KEY_LOOKUP = {
 	pygame.K_INSERT: 'insert',
 	pygame.K_COMMA: 'comma',
 	pygame.K_PERIOD: 'period',
-	pygame.K_SEMICOLON: 'semicolon'
+	pygame.K_SEMICOLON: 'semicolon',
 	pygame.K_SLASH: 'slash',
 	pygame.K_QUOTE: 'apostrophe',
 	pygame.K_BACKSPACE: 'backspace',
