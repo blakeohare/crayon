@@ -2228,7 +2228,7 @@ function @omitReturn @type('string') interpret(
 					}
 					$_stack_push(valueStack, new Value(Types.STRING, $_char_to_string($_string_char_at(string1, int1))));
 				} else {
-					return killExecution(stack, "Cannot index into this type: " + $_string_cast_weak(Value$root.type) + ", " + $_array_get(identifiers, $_array_get($_array_get(args, StackFrame$stack.pc - 2), 0)));
+					return killExecution(stack, "Cannot index into this type: " + getTypeFromId(Value$root.type));
 				}
 				break;
 
