@@ -1,4 +1,4 @@
-﻿Crayon version 0.1.3 (Alpha)
+﻿Crayon version 0.1.4 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -27,8 +27,20 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
 NEW IN THIS RELEASE
 -------------------
-Changes since 0.1.2:
-* Fix string.split method in Java where some results were inconsistent with other platforms, despite regex escaping.
-* Show a compile error instead of crashing the compiler when an import statement references a missing file. 
-* JavaScript drawing functions now support alpha values.
-* Fix event.is_mouse readonly field on game event objects which was previously returning false, always.
+Changes since 0.1.3:
+* Fix bug where stack info sometimes doesn't show in crashes.
+* Fix bug where int % float and float % int weren't implemented in the op table.
+* Strings are now allowed as iterable collections for foreach loops. 
+* Fix error message wording that appears when you index into an unindexable type and it showed the type's enum value instead of the human-readable name.
+* Catch common string method errors at compile time instead of runtime. Such as string.join(list). 
+* Add string.indexOf(string) method.
+* Add list.clone() method.
+* Fix key bindings in all languages.
+* Fix bug where you could read from image sheets if you hadn't checked to see if it was loaded yet. This created cross-platform problems in JavaScript.
+* Fix egregious error where images didn't get populated into the image sheets correctly if they were above a certain size. 
+* Fix == operator on objects.
+* Key not found error message now shows the string value of the key.
+* Add simple File IO system functions for C#, Java, and Python. 
+* Introduce build file variables. 
+* Implement an image blit function that supports scaling and cropping. 
+* Fix typo in Python that was using "false" instead of "False" and causing an undeclared variable error.
