@@ -65,6 +65,7 @@ struct ProgramData {
 	@type('ImageSheetStatus') imageSheetStatus,
 	@type('SoundStatus') soundStatus,
 	@type('bool') initializationComplete,
+	@type('GamepadStatus') gamepadStatus,
 }
 
 struct StackFrame {
@@ -236,4 +237,49 @@ struct SoundInstance {
 	@type('bool') isMusic,
 	@type('int') soundId,
 	@type('double') duration,
+}
+
+struct GamepadDevice {
+	@type('object') nativeDevice,
+	@type('string') name,
+	@type('int') deviceIndex,
+	@type('bool') enabled,
+	@type('int') buttonCount,
+	@type('int') axisCount,
+	@type('int') hatCount,
+	@type('int') buttonsLength,
+	@type('Array<GamepadButton>') buttons,
+}
+
+// Every single button and axis/hat direction is treated as an individual button.
+struct GamepadButton {
+	@type('object') nativeDevice,
+	@type('GamepadDevice') device,
+	@type('int') type, // { 0 = Unknown, 1 = Button, 2 = Hat, 3 = Axis } This list can expand as more interesting hardware platforms are introduced and more info is needed to query the hardware.
+	@type('int') reportedId, 
+	@type('int') hardwareId,
+	@type('bool') isPositive, // -1 or 1, hats and axes only
+	@type('bool') isX, // hats only
+}
+
+struct GamepadStatus {
+	@type('int') presentDevicesLength, // length is -1 if gamepads haven't been initialized
+	@type('Array<object>') nativeDevices, // null when uninitialized, list of raw framework objects
+	@type('Array<GamepadDevice>') presentDevices, // null when uninitialized, list of devices present (presumably at startup).
+	@type('Array<Value>') wrappedDevices, // Mirrors previous array. Used to make == always return correct value between devices.
+
+	// The following 3 arrays are basically a single array where each item is composed of a lookup key, a button, and an event value.
+	// A lookup key is used to quickly figure out which index a button is located at, primarily for guarding against double-registrations.
+	// It is comprised of the following strings delimited by a '^' character:
+	// - device index
+	// - type { button | hatX+ | hatX- | hatY+ | hatY- | axis+ | axis- }
+	// - button Index
+	//
+	// e.g. "0^hatY-^2"
+	@type('Array<string>') registeredButtonKeys,
+	@type('Array<GamepadButton>') registeredButtons,
+	@type('Array<Value>') registeredButtonNames, // registered button names are always ints or strings, therefore permanent references are not hard on the GC.
+
+	// This is the index in the above arrays that a particular registered key can be found.
+	@type('Dictionary<string, int>') registeredButtonKeyToIndex,
 }

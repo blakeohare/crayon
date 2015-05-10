@@ -177,7 +177,16 @@ function main() {
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
 		new SoundStatus(
 			$_new_dictionary('string', 'SoundInstance')),
-		false
+		false,
+		new GamepadStatus(
+			-1, // device array length
+			null, // native device array
+			null, // device array
+			null, // wrapped device array
+			null, // registered buttons: keys
+			null, // registered buttons: button descriptors
+			null, // registered buttons: custom event ID
+			null) // registered button key-to-index mapping
 		));
 
 	runTick();

@@ -14,6 +14,7 @@ namespace Crayon.Translator.CSharp
 		public override string OutputFolderName { get { return "cswinphone"; } }
 
 		public override bool IsOpenGlBased { get { return false; } }
+		public override bool SupportsGamePad { get { return false; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{

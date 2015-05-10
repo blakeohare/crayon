@@ -1,0 +1,198 @@
+﻿
+function @type('GamepadStatus') getGamepadStatus() {
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.gamepadStatus;
+}
+
+// All gamepad functionality requires a reference to a gamepad device object at some point, therefore 
+// the getGamepadDevices is the point of entry for everything and initializes all the devices and buttons.
+
+function @type('List<Value>') getGamepadDevices() {
+	@type('GamepadStatus') gps = getGamepadStatus();
+	@type('int') devicesLength = GamepadStatus$gps.presentDevicesLength;
+	@type('Array<Value>') wrappedDevices = GamepadStatus$gps.wrappedDevices;
+	if (devicesLength == -1) {
+		devicesLength = $_gamepad_get_device_count();
+		@type('Array<object>') nativeDevices = $_new_array('object', devicesLength);
+		@type('Array<GamepadDevice>') devices = $_new_array('GamepadDevice', devicesLength);
+		wrappedDevices = $_new_array('Value', devicesLength);
+		for (@type('int') i = 0; i < devicesLength; i += 1) {
+			@type('GamepadDevice') device = createGamepadDeivce(i);
+			@type('object') nativeDevice = GamepadDevice$device.nativeDevice;
+			@type('Value') value = new Value(
+				Types.NATIVE_OBJECT,
+				new NativeObjectWrapper(
+					NativeObjectSubType.GAMEPAD_DEVICE,
+					device));
+			$_array_set(nativeDevices, i, nativeDevice);
+			$_array_set(devices, i, device);
+			$_array_set(wrappedDevices, i, value);
+		}
+		GamepadStatus$gps.presentDevicesLength = devicesLength;
+		GamepadStatus$gps.nativeDevices = nativeDevices;
+		GamepadStatus$gps.presentDevices = devices;
+		GamepadStatus$gps.wrappedDevices = wrappedDevices;
+	}
+
+	@type('List<Value>') output = $_new_list('Value');
+	for (@type('int') j = 0; j < devicesLength; j += 1) {
+		$_list_push(output, $_array_get(wrappedDevices, j));
+	}
+
+	return output;
+}
+
+function @type('GamepadDevice') createGamepadDeivce(@type('int') index) {
+	@type('object') rawPlatformDevice = $_gamepad_get_raw_device(index);
+	@type('string') name = $_gamepad_get_device_name(rawPlatformDevice);
+	return new GamepadDevice(rawPlatformDevice, name, index, false, 0, 0, 0, 0, null);
+}
+
+function @type('bool') enableDevice(@type('GamepadDevice') device) {
+	@type('object') nativeDevice = GamepadDevice$device.nativeDevice;
+	$_gamepad_enable_device(nativeDevice);
+	@type('int') buttonCount = $_gamepad_get_button_count(nativeDevice);
+	@type('int') axisCount = $_gamepad_get_axis_count(nativeDevice);
+	@type('int') hatCount = $_gamepad_get_hat_count(nativeDevice);
+
+	@type('Array<GamepadButton>') logicalButtons = $_new_array('GamepadButton', buttonCount + axisCount * 2 + hatCount * 4);
+	@type('GamepadButton') button = null;
+	@type('int') i = 0;
+	@type('int') index = 0;
+	
+	for (i = 0; i < buttonCount; i += 1) {
+		button = new GamepadButton(nativeDevice, device, 1 /* button */, $_array_length(logicalButtons), i, false, false);
+		$_array_set(logicalButtons, index, button);
+		index += 1;
+	}
+
+	for (i = 0; i < axisCount; i += 1) {
+		button = new GamepadButton(nativeDevice, device, 3 /* axis */, $_array_length(logicalButtons), i, true /* positive */, false);
+		$_array_set(logicalButtons, index, button);
+		button = new GamepadButton(nativeDevice, device, 3 /* axis */, $_array_length(logicalButtons), i, false /* negative */, false);
+		$_array_set(logicalButtons, index + 1, button);
+		index += 2;
+	}
+
+	for (i = 0; i < hatCount; i += 1) {
+		button = new GamepadButton(nativeDevice, device, 2 /* hat */, $_array_length(logicalButtons), i, true /* positive */, true /* x */);
+		$_array_set(logicalButtons, index, button);
+		button = new GamepadButton(nativeDevice, device, 2 /* hat */, $_array_length(logicalButtons), i, false /* negative */, true /* x */);
+		$_array_set(logicalButtons, index + 1, button);
+		button = new GamepadButton(nativeDevice, device, 2 /* hat */, $_array_length(logicalButtons), i, true /* positive */, false /* y */);
+		$_array_set(logicalButtons, index + 2, button);
+		button = new GamepadButton(nativeDevice, device, 2 /* hat */, $_array_length(logicalButtons), i, false /* negative */, false /* y */);
+		$_array_set(logicalButtons, index + 3, button);
+		index += 4;
+	}
+
+	GamepadDevice$device.enabled = true;
+	GamepadDevice$device.buttonCount = buttonCount;
+	GamepadDevice$device.axisCount = axisCount;
+	GamepadDevice$device.hatCount = hatCount;
+	GamepadDevice$device.buttonsLength = index;
+	GamepadDevice$device.buttons = logicalButtons;
+
+	return true;
+}
+
+
+function @type('string') gamepadVerifyBindArgs(
+	@type('Value') buttonArg,
+	@type('Value') customId) {
+	
+	@type('GamepadButton') gamepadButton = getGamepadButtonFromValue(buttonArg);
+	
+	if (gamepadButton == null) {
+		return "First argument must be a gamepad button object.";
+	}
+
+	if (Value$customId.type != Types.INTEGER &&
+		Value$customId.type != Types.STRING) {
+		return "Second argument must be an integer, string, or enum value.";
+	}
+
+	return null;
+}
+
+function @type('GamepadButton') getGamepadButtonFromValue(@type('Value') buttonArg) {
+	if (Value$buttonArg.type == Types.NATIVE_OBJECT) {
+		@type('NativeObjectWrapper') button = $_cast('NativeObjectWrapper', Value$buttonArg.internalValue);
+		if (NativeObjectWrapper$button.subType == NativeObjectSubType.GAMEPAD_BUTTON) {
+			return $_cast('GamepadButton', NativeObjectWrapper$button.value);
+		}
+	}
+	return null;
+}
+
+function @type('bool') gamepadBindAnalogAxis(
+	@type('Value') buttonValue,
+	@type('Value') customId) {
+
+	// TODO: this
+	return false;
+}
+
+function @type('List<Value>') gamepadBuildButtonActivityList(@type('GamepadDevice') gamepad) {
+	@type('List<Value>') output = $_new_list('Value');
+	@type('int') length = GamepadDevice$gamepad.buttonCount;
+	for (@type('int') i = 0; i < length; i += 1) {
+		if ($_gamepad_is_button_pushed(GamepadDevice$gamepad.nativeDevice, i)) {
+			$_list_push(output, VALUE_TRUE);
+		} else {
+			$_list_push(output, VALUE_FALSE);
+		}
+	}
+	return output;
+}
+
+
+// All axes and hats are returned as a set of floats from 0.0 to 1.0 (as opposed to -1.0 to 1.0 for axes and a unit vector for hats)
+// Hats are listed first as a series of groups of four 0's and 1's in left-up-right-down order followed by a list of groups of 2 0.0-1.0 floats for 
+// axes in positive-then-negative order.
+// e.g.
+// Suppose there are 2 hats and 2 axes and hat 1 is pressed in the down-right direction and axis 0 is pulled about half way back (negative direction)
+// output:
+// [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.510578392]
+//  ^Hat0               ^Hat1               ^Axis0    ^Axis1
+function @type('List<Value>') gamepadBuildAxisActivityList(@type('GamepadDevice') gamepad) {
+	@type('List<Value>') output = $_new_list('Value');
+	@type('Value') one = VALUE_FLOAT_ONE;
+	@type('Value') zero = VALUE_FLOAT_ZERO;
+	@type('Value') value = null;
+
+	@type('int') length = GamepadDevice$gamepad.hatCount;
+	for (@type('int') i = 0; i < length; i += 1) {
+		// TODO: this
+		$_list_push(output, VALUE_FLOAT_ZERO);
+		$_list_push(output, VALUE_FLOAT_ZERO);
+		$_list_push(output, VALUE_FLOAT_ZERO);
+		$_list_push(output, VALUE_FLOAT_ZERO);
+	}
+
+	length = GamepadDevice$gamepad.axisCount;
+	for (i = 0; i < length; i += 1) {
+		@type('double') realValue = $_gamepad_get_axis_value(GamepadDevice$gamepad.nativeDevice, i);
+		if (realValue > 0) {
+			if (realValue > .999) {
+				value = VALUE_FLOAT_ONE;
+			} else {
+				value = buildFloat(realValue);
+			}
+		} else {
+			value = VALUE_FLOAT_ZERO;
+		}
+		$_list_push(output, value);
+
+		if (realValue < 0) {
+			if (realValue < -.999) {
+				value = VALUE_FLOAT_ONE;
+			} else {
+				value = buildFloat(-1 * realValue);
+			}
+		} else {
+			value = VALUE_FLOAT_ZERO;
+		}
+	}
+	return output;
+}

@@ -80,6 +80,7 @@ function @omitReturn @type('string') interpret(
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
 	@type('SoundInstance') sound1 = null;
+	@type('GamepadDevice') gamepad1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -961,6 +962,49 @@ function @omitReturn @type('string') interpret(
 						arg1 = $_stack_pop(valueStack);
 						string1 = valueToString(arg1);
 						$_set_title(string1);
+						break;
+
+					case %%%FF_GAMEPAD_BIND_ANALOG_AXIS%%%:
+						$_comment('$gamepad_bind_analog_axis');
+						arg2 = $_stack_pop(valueStack); // custom id
+						arg1 = $_stack_pop(valueStack); // button item
+						string1 = gamepadVerifyBindArgs(arg1, arg2);
+						if (string1 != null) {
+							return killExecution(stack, string1);
+						}
+						gamepadBindAnalogAxis(arg1, arg2);
+						break;
+
+					case %%%FF_GAMEPAD_BIND_BUTTON%%%:
+						$_comment('$gamepad_bind_button');
+						arg2 = $_stack_pop(valueStack); // custom id
+						arg1 = $_stack_pop(valueStack); // button item
+						break;
+
+					case %%%FF_GAMEPAD_BIND_DIGITAL_AXIS%%%:
+						$_comment('$gamepad_bind_digital_axis');
+						arg2 = $_stack_pop(valueStack); // custom id
+						arg1 = $_stack_pop(valueStack); // button item
+						break;
+
+					case %%%FF_GAMEPAD_DISABLE_DEVICE%%%:
+						$_comment('$gamepad_disable_device');
+						arg1 = $_stack_pop(valueStack); // device item
+						break;
+
+					case %%%FF_GAMEPAD_ENABLE_DEVICE%%%:
+						$_comment('$gamepad_enable_device');
+						arg1 = $_stack_pop(valueStack); // device item
+						break;
+
+					case %%%FF_GAMEPAD_GET_DEVICES%%%:
+						$_comment('$gamepad_get_devices');
+						output = buildListByWrappingInput(getGamepadDevices());
+						break;
+
+					case %%%FF_GAMEPAD_GET_PUSHED_BUTTONS%%%:
+						$_comment('$gamepad_get_pushed_buttons');
+						arg1 = null;
 						break;
 
 					case %%%FF_GFX_BLIT_IMAGE%%%:
@@ -2085,6 +2129,31 @@ function @omitReturn @type('string') interpret(
 							}
 							break;
 
+						case NativeObjectSubType.GAMEPAD_DEVICE:
+							gamepad1 = $_cast('GamepadDevice', NativeObjectWrapper$nativeObject.value);
+							if ($_string_equals('name', string1)) {
+								value = buildCommonString(GamepadDevice$gamepad1.name);
+							} else if ($_string_equals('enabled', string1)) {
+								if (GamepadDevice$gamepad1.enabled) {
+									value = VALUE_TRUE;
+								} else {
+									value = VALUE_FALSE;
+								}
+							} else if ($_string_equals('buttons', string1)) {
+								if (!GamepadDevice$gamepad1.enabled) {
+									return killExecution(stack, "Cannot access button states until gamepad is initialized.");
+								}
+								value = buildListByWrappingInput(gamepadBuildButtonActivityList(gamepad1));
+							} else if ($_string_equals('axes', string1)) {
+								if (!GamepadDevice$gamepad1.enabled) {
+									return killExecution(stack, "Cannot access axes states until gamepad is initialized.");
+								}
+								value = buildListByWrappingInput(gamepadBuildAxisActivityList(gamepad1));
+							} else {
+								return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+							}
+							break;
+
 						default:
 							return killExecution(stack, "Unrecognized field.");
 							break;
@@ -2506,7 +2575,7 @@ function @omitReturn @type('string') interpret(
 							$_array_get(row, int2),
 							$_array_get(row, int2 + 1),
 							$_array_get(row, int2 + 2)));
-						$_array_set(tokensByPc, StackFrame$stack.pc, tokens);
+						$_array_set(ProgramData$p.tokenData, StackFrame$stack.pc, tokens);
 							
 						return killExecution(stack, "Variable not defined: " + $_array_get(identifiers, nameId));
 					}

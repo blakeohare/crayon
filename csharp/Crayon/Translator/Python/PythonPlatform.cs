@@ -17,6 +17,7 @@ namespace Crayon.Translator.Python
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override bool IsOpenGlBased { get { return false; } }
+		public override bool SupportsGamePad { get { return true; } }
 
 		public override string OutputFolderName { get { return "pygame"; } }
 		public override string GeneratedFilesFolder { get { return "_generated_files"; } }

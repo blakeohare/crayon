@@ -22,6 +22,7 @@ namespace Crayon.Translator.COpenGL
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override string GeneratedFilesFolder { get { return "generated_files"; } }
 		public override string OutputFolderName { get { return "copengl"; } }
+		public override bool SupportsGamePad { get { return false; } }
 
 		public override Dictionary<string, FileOutput> Package(BuildContext buildContext, string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string fileCopySourceRoot, SpriteSheetBuilder spriteSheet)
 		{

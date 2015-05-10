@@ -814,5 +814,50 @@ namespace %%%PROJECT_ID%%%
 			System.Array.Copy(original, newList, original.Length);
 			return newList;
 		}
+
+		internal int GetGamepadCount()
+		{
+			return this.Joysticks.Count;
+		}
+
+		internal object GetGamepadRawDevice(int index)
+		{
+			return this.Joysticks[index];
+		}
+
+		internal void GamepadEnableDevice(OpenTK.Input.JoystickDevice device)
+		{
+			// automatically enabled on OpenTK.
+		}
+		
+		internal int GetGamepadAxisCount(OpenTK.Input.JoystickDevice device)
+		{
+			return device.Axis.Count;
+		}
+
+		internal int GetGamepadButtonCount(OpenTK.Input.JoystickDevice device)
+		{
+			return device.Button.Count;
+		}
+
+		internal int GetGamepadHatCount(OpenTK.Input.JoystickDevice device)
+		{
+			return 0;
+		}
+
+		internal string GetGamepadDeviceName(OpenTK.Input.JoystickDevice device)
+		{
+			return device.Description;
+		}
+
+		internal bool IsGamepadButtonPushed(OpenTK.Input.JoystickDevice device, int buttonIndex)
+		{
+			return device.Button[buttonIndex];
+		}
+
+		internal double GetGamepadAxisValue(OpenTK.Input.JoystickDevice device, int axisIndex)
+		{
+			return device.Axis[axisIndex];
+		}
 	}
 }

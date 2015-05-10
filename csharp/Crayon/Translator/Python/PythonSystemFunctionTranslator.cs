@@ -301,6 +301,71 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateGamepadEnableDevice(List<string> output, Expression device)
+		{
+			output.Add("_gamepad_enable_device(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetAxisCount(List<string> output, Expression device)
+		{
+			output.Add("_gamepad_axis_count(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex)
+		{
+			output.Add("_gamepad_axis_value(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, axisIndex);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetButtonCount(List<string> output, Expression device)
+		{
+			output.Add("_gamepad_button_count(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetDeviceCount(List<string> output)
+		{
+			output.Add("_get_gamepad_count()");
+		}
+
+		protected override void TranslateGamepadGetDeviceName(List<string> output, Expression device)
+		{
+			output.Add("_get_gamepad_name(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetHatCount(List<string> output, Expression device)
+		{
+			output.Add("_game_gamepad_hat_count(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadGetRawDevice(List<string> output, Expression index)
+		{
+			output.Add("_get_gamepad_device(");
+			this.Translator.TranslateExpression(output, index);
+			output.Add(")");
+		}
+
+		protected override void TranslateGamepadIsButtonPressed(List<string> output, Expression device, Expression buttonIndex)
+		{
+			output.Add("_gamepad_is_button_pressed(");
+			this.Translator.TranslateExpression(output, device);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, buttonIndex);
+			output.Add(")");
+		}
+
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
 			output.Add("_pygame_pump_events()");

@@ -9,6 +9,7 @@ namespace Crayon.Translator.CSharp
 		{ }
 
 		public override bool IsOpenGlBased { get { return true; } }
+		public override bool SupportsGamePad { get { return true; } }
 
 		public override string OutputFolderName { get { return "csopengl"; } }
 

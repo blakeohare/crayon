@@ -105,6 +105,9 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE BOOLEAN BOOLEAN");
 					break;
+				case FrameworkFunction.GAMEPAD_GET_DEVICES:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
 				case FrameworkFunction.GFX_IMAGE_GET:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
