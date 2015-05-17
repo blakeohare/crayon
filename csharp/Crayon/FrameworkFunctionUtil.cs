@@ -136,6 +136,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
+				case FrameworkFunction.HTTP_REQUEST:
+					VerifyLength(throwToken, frameworkFunction, 4, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING DICTIONARY? STRING?");
+					break;
 				case FrameworkFunction.IO_CURRENT_DIRECTORY:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
@@ -229,6 +233,13 @@ namespace Crayon
 				Types argType = argTypes[i];
 				Token token = arg.FirstToken;
 				string type = types[i];
+				bool nullable = false;
+				if (type.EndsWith("?"))
+				{
+					type = type.Substring(0, type.Length - 1);
+					nullable = true;
+				}
+				if (argType == Types.NULL && nullable) continue;
 				if (type == "OBJECT") continue;
 				if (argType == Types.NATIVE_OBJECT) continue;
 				if (type == "NUMBER" && (argType == Types.INTEGER || argType == Types.FLOAT)) continue;

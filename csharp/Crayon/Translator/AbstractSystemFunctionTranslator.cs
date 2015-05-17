@@ -72,6 +72,7 @@ namespace Crayon.Translator
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
 				case "_gl_load_texture": VerifyCount(functionCall, 1); TranslateGlLoadTexture(output, args[0]); break;
 				case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); break;
+				case "_http_request": VerifyCount(functionCall, 5); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4]); break;
 				case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
 				case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
 				case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
@@ -202,6 +203,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
 		protected abstract void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource);
 		protected abstract void TranslateGlMaxTextureSize(List<string> output);
+		protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers);
 		protected abstract void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey);
 		protected abstract void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY);
 		protected abstract void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette);

@@ -231,6 +231,21 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		{
+			output.Add("TranslationHelper.MakeHttpRequestWithHandler(");
+			this.Translator.TranslateExpression(output, httpRequest);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, method);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, body);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headers);
+			output.Add(")");
+		}
+
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			// C# loads resources synchronously.

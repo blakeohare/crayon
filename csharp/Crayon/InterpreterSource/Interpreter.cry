@@ -81,6 +81,7 @@ function @omitReturn @type('string') interpret(
 	@type('GameEvent') gameEvent = null;
 	@type('SoundInstance') sound1 = null;
 	@type('GamepadDevice') gamepad1 = null;
+	@type('HttpRequest') httpRequest1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -1468,6 +1469,35 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
+					case %%%FF_HTTP_REQUEST%%%:
+						$_comment('$http_request');
+						arg4 = $_stack_pop(valueStack); // body
+						arg3 = $_stack_pop(valueStack); // http headers
+						arg2 = $_stack_pop(valueStack); // URL
+						arg1 = $_stack_pop(valueStack); // Method
+						bool1 = true;
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+							bool1 = false;
+						} else if (Value$arg3.type != Types.DICTIONARY && Value$arg3.type != Types.NULL) {
+							bool1 = false;
+						} else if (Value$arg4.type != Types.STRING && Value$arg4.type != Types.NULL) {
+							bool1 = false;
+						}
+
+						if (Value$arg3.type == Types.DICTIONARY) {
+							// TODO: iterate through dictionary and verify string contents
+							return killExecution(stack, "Setting HTTP headers is not supported yet.");
+						}
+						if (!bool1) {
+							return killExecution(stack, "Invalid arguments. $http_request's arguments require 2 strings, a dictionary, and a string.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue); // method
+						string2 = $_cast('string', Value$arg2.internalValue); // url
+						string3 = $_cast('string', Value$arg4.internalValue); // body
+
+						output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.HTTP_REQUEST, makeHttpRequest(string1, string2, string3, null)));
+						break;
+
 					case %%%FF_IO_CURRENT_DIRECTORY%%%:
 						$_comment('$io_current_directory');
 						output = buildString($_io_current_directory());
@@ -2118,17 +2148,6 @@ function @omitReturn @type('string') interpret(
 							}
 							break;
 
-						case NativeObjectSubType.IMAGE:
-							image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
-							if ($_string_equals("width", string1)) {
-								value = buildInteger(Image$image1.width);
-							} else if ($_string_equals("height", string1)) {
-								value = buildInteger(Image$image1.height);
-							} else {
-								return killExecution(stack, "Image does not have a field called '" + string1 + "'");
-							}
-							break;
-
 						case NativeObjectSubType.GAMEPAD_DEVICE:
 							gamepad1 = $_cast('GamepadDevice', NativeObjectWrapper$nativeObject.value);
 							if ($_string_equals('name', string1)) {
@@ -2151,6 +2170,42 @@ function @omitReturn @type('string') interpret(
 								value = buildListByWrappingInput(gamepadBuildAxisActivityList(gamepad1));
 							} else {
 								return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+							}
+							break;
+
+						case NativeObjectSubType.HTTP_REQUEST:
+							httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
+							int1 = HttpRequest$httpRequest1.statusCode;
+							if ($_string_equals("completed", string1)) {
+								if (int1 == 0) {
+									value = VALUE_FALSE;
+								} else {
+									value = VALUE_TRUE;
+								}
+							} else if (int1 == 0) {
+								// TODO: may reconsider adding an HttpRequest native object field that gets set to true once .completed is called 
+								// and returns true so that there won't be any race conditions.
+								return killExecution(stack, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+							} else if ($_string_equals("content", string1)) {
+								string2 = HttpRequest$httpRequest1.body;
+								if (string2 == null) {
+									value = VALUE_NULL;
+								} else {
+									value = buildString(string2);
+								}
+							} else if ($_string_equals("code", string1)) {
+								value = buildInteger(int1);
+							}
+							break;
+
+						case NativeObjectSubType.IMAGE:
+							image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
+							if ($_string_equals("width", string1)) {
+								value = buildInteger(Image$image1.width);
+							} else if ($_string_equals("height", string1)) {
+								value = buildInteger(Image$image1.height);
+							} else {
+								return killExecution(stack, "Image does not have a field called '" + string1 + "'");
 							}
 							break;
 

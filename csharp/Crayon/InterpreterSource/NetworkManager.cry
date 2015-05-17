@@ -1,0 +1,27 @@
+﻿function @type('HttpRequest') makeHttpRequest(
+	@type('string') method,
+	@type('string') url,
+	@type('string') body,
+	@type('object') headers) {
+	
+	@type('HttpRequest') request = new HttpRequest(0, null, null, null);
+	@type('Dictionary<string, List<string>>') headersCopied = $_new_dictionary('string', 'List<string>');
+	// TODO: copy headers
+	$_http_request(request, method, url, body, headersCopied);
+	return request;
+}
+
+function @type('bool') handleHttpResponse(
+	@type('HttpRequest') request, 
+	@type('int') statusCode, 
+	@type('string') status,
+	@type('string') body, 
+	@type('Dictionary<string, Array<string>>') headers) {
+
+	HttpRequest$request.statusCode = statusCode;
+	HttpRequest$request.status = status;
+	HttpRequest$request.headers = headers;
+	HttpRequest$request.body = body;
+
+	return false;
+}

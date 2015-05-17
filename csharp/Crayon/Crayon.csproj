@@ -185,6 +185,7 @@
     <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
     <EmbeddedResource Include="InterpreterSource\IOManager.cry" />
     <EmbeddedResource Include="InterpreterSource\GamepadManager.cry" />
+    <EmbeddedResource Include="InterpreterSource\NetworkManager.cry" />
     <None Include="README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

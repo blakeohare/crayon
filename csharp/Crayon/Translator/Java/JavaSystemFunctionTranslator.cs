@@ -402,6 +402,11 @@ namespace Crayon.Translator.Java
 			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
 		}
 
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			// Java loads resources synchronously.

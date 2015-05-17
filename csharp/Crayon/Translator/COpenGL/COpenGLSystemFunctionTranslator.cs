@@ -239,6 +239,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			throw new NotImplementedException();

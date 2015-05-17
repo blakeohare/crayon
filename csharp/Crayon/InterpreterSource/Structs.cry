@@ -283,3 +283,10 @@ struct GamepadStatus {
 	// This is the index in the above arrays that a particular registered key can be found.
 	@type('Dictionary<string, int>') registeredButtonKeyToIndex,
 }
+
+struct HttpRequest {
+	@type('int') statusCode,
+	@type('string') status,
+	@type('Dictionary<string, Array<string>>') headers,
+	@type('string') body,
+}

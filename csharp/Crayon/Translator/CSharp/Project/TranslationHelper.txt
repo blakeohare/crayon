@@ -237,5 +237,49 @@ namespace %%%PROJECT_ID%%%
 				return null;
 			}
 		}
+
+		public static void MakeHttpRequestWithHandler(HttpRequest httpRequest, string method, string url, string body, Dictionary<string, List<string>> headers)
+		{
+			System.ComponentModel.BackgroundWorker bgRequest = new System.ComponentModel.BackgroundWorker();
+			bgRequest.DoWork += (sender, e) =>
+			{
+				string userAgent = "Crayon/0.1.4, Have a nice day.";
+				System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
+				request.Method = method;
+				request.UserAgent = userAgent;
+				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse) request.GetResponse();
+				int statusCode = (int)response.StatusCode;
+				string status = statusCode + " " + response.StatusDescription;
+				
+				byte[] buffer = new byte[1000];
+				System.IO.Stream stream = response.GetResponseStream();
+				List<char> responseBodyBuilder = new List<char>();
+				while (true)
+				{
+					int bytesRead = stream.Read(buffer, 0, buffer.Length);
+					if (bytesRead > 0)
+					{
+						responseBodyBuilder.AddRange(buffer.Take<byte>(bytesRead).Select<byte, char>(b => (char) b));
+					}
+					else
+					{
+						break;
+					}
+				}
+				string responseBody = new String(responseBodyBuilder.ToArray());
+
+				e.Result = new object[] { statusCode, status, responseBody, null };
+			};
+			bgRequest.RunWorkerCompleted += (sender, e) =>
+			{
+				object[] result = (object[])e.Result;
+				int statusCode = (int)result[0];
+				string status = (string)result[1];
+				string bodyResponse = (string)result[2];
+				Dictionary<string, string[]> responseHeaders = (Dictionary<string, string[]>)result[3];
+				CrayonWrapper.v_handleHttpResponse(httpRequest, statusCode, status, bodyResponse, responseHeaders);
+			};
+			bgRequest.RunWorkerAsync();
+		}
 	}
 }
