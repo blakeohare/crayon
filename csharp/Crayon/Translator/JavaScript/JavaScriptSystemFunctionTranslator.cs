@@ -10,6 +10,11 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateAsyncMessageQueuePump(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
 			throw new NotImplementedException();
@@ -127,6 +132,11 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
 		{
 			this.Translator.TranslateExpression(output, charValue);
+		}
+
+		protected override void TranslateChr(List<string> output, Expression asciiValue)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -655,6 +665,16 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateNewStack(List<string> output, StringConstant type)
 		{
 			output.Add("[]");
+		}
+
+		protected override void TranslateOrd(List<string> output, Expression character)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)

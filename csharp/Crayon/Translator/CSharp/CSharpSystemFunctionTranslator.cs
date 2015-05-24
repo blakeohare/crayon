@@ -10,6 +10,11 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateAsyncMessageQueuePump(List<string> output)
+		{
+			output.Add("AsyncMessageQueue.PumpMessages()");
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.Acos(");
@@ -95,6 +100,13 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("\"\" + ");
 			this.Translator.TranslateExpression(output, charValue);
+		}
+
+		protected override void TranslateChr(List<string> output, Expression asciiValue)
+		{
+			output.Add("((char)");
+			this.Translator.TranslateExpression(output, asciiValue);
+			output.Add(").ToString()");
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -541,6 +553,22 @@ namespace Crayon.Translator.CSharp
 			output.Add("new CrStack<");
 			output.Add(csharpType);
 			output.Add(">()");
+		}
+
+		protected override void TranslateOrd(List<string> output, Expression character)
+		{
+			output.Add("((int)");
+			this.Translator.TranslateExpression(output, character);
+			output.Add("[0])");
+		}
+
+		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
+		{
+			output.Add("TranslationHelper.ParseFloatOrReturnNull(");
+			this.Translator.TranslateExpression(output, outParam);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)

@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace %%%PROJECT_ID%%%
+{
+	public static class AsyncMessageQueue
+	{
+		private enum MessageType
+		{
+			HTTP_REQUEST,
+		}
+
+		public static readonly object MUTEX = new object();
+
+		private static readonly List<object[]> messages = new List<object[]>();
+
+		public static void HandlHttpRequest(HttpRequest httpRequest, int statusCode, string status, string responseBody, Dictionary<string, string[]> headers)
+		{
+			object[] data = new object[] {
+				MessageType.HTTP_REQUEST,
+				httpRequest,
+				statusCode,
+				status,
+				responseBody,
+				headers
+			};
+
+			lock (MUTEX)
+			{
+				messages.Add(data);
+			}
+		}
+
+		public static void PumpMessages()
+		{
+			object[][] messagesCopy = null;
+			lock (MUTEX)
+			{
+				messagesCopy = messages.ToArray();
+				messages.Clear();
+			}
+
+			if (messagesCopy.Length > 0)
+			{
+				foreach (object[] message in messagesCopy)
+				{
+					switch ((MessageType)message[0])
+					{
+						case MessageType.HTTP_REQUEST:
+							HttpRequest httpRequest = (HttpRequest)message[1];
+							int statusCode = (int)message[2];
+							string status = (string)message[3];
+							string content = (string)message[4];
+							Dictionary<string, string[]> responseHeaders = (Dictionary<string, string[]>)message[5];
+							CrayonWrapper.v_handleHttpResponse(httpRequest, statusCode, status, content, responseHeaders);
+							break;
+					}
+				}
+			}
+		}
+	}
+}

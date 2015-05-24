@@ -10,6 +10,11 @@ namespace Crayon.Translator.Java
 	{
 		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
 
+		protected override void TranslateAsyncMessageQueuePump(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.acos(");
@@ -124,6 +129,11 @@ namespace Crayon.Translator.Java
 		{
 			output.Add("\"\" + ");
 			this.Translator.TranslateExpression(output, charValue);
+		}
+
+		protected override void TranslateChr(List<string> output, Expression asciiValue)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -687,6 +697,16 @@ namespace Crayon.Translator.Java
 			output.Add("new Stack<");
 			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true, false));
 			output.Add(">()");
+		}
+
+		protected override void TranslateOrd(List<string> output, Expression character)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)

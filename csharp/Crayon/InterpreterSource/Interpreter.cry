@@ -82,6 +82,7 @@ function @omitReturn @type('string') interpret(
 	@type('SoundInstance') sound1 = null;
 	@type('GamepadDevice') gamepad1 = null;
 	@type('HttpRequest') httpRequest1 = null;
+	@type('Array<double>') floatList1 = $_new_array('double', 2);
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -822,6 +823,21 @@ function @omitReturn @type('string') interpret(
 						}
 						if (!$_cast('bool', Value$arg1.internalValue)) {
 							return killExecution(stack, "Assertion failed: " + valueToString(arg2));
+						}
+						break;
+
+					case %%%FF_CHR%%%:
+						$_comment('$chr');
+						arg1 = $_stack_pop(valueStack);
+						output = null;
+						if (Value$arg1.type == Types.INTEGER) {
+							int1 = $_cast('int', Value$arg1.internalValue);
+							if (int1 >= 0 && int1 < 256) {
+								output = buildCommonString($_chr(int1));
+							}
+						}
+						if (output == null) {
+							return killExecution(stack, "$chr requires an integer between 0 and 255");
 						}
 						break;
 
@@ -1622,6 +1638,36 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$io_path_join requires a list of strings as input.");
 						}
 						output = buildString(string1);
+						break;
+
+					case %%%FF_ORD%%%:
+						$_comment('$ord');
+						arg1 = $_stack_pop(valueStack);
+						output = null;
+						if (Value$arg1.type == Types.STRING) {
+							string1 = $_cast('string', Value$arg1.internalValue);
+							if ($_string_length(string1) == 1) {
+								output = buildInteger($_ord(string1));
+							}
+						}
+						if (output == null) {
+							return killExecution(stack, "$ord requires a 1 character string.");
+						}
+						break;
+
+					case %%%FF_PARSE_FLOAT%%%:
+						$_comment('$parse_float');
+						arg1 = $_stack_pop(valueStack);
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$parse_float requires a string argument.");
+						}
+						string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
+						$_parse_float(floatList1, string1);
+						if ($_array_get(floatList1, 0) < 0) {
+							output = VALUE_NULL;
+						} else {
+							output = buildFloat($_array_get(floatList1, 1));
+						}
 						break;
 
 					case %%%FF_PARSE_INT%%%:
@@ -2803,4 +2849,5 @@ function performWorkNuggetPreFrame() {
 
 function performWorkNuggetPostFrame() {
 	imageSheetPerformWorkNuggetPostFrame();
+	$_async_message_queue_pump();
 }

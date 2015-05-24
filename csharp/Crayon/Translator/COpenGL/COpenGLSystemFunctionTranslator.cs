@@ -8,6 +8,11 @@ namespace Crayon.Translator.COpenGL
 {
 	class COpenGLSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
+		protected override void TranslateAsyncMessageQueuePump(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			throw new NotImplementedException();
@@ -69,6 +74,11 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateChr(List<string> output, Expression asciiValue)
 		{
 			throw new NotImplementedException();
 		}
@@ -182,10 +192,9 @@ namespace Crayon.Translator.COpenGL
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		protected override void TranslateGamepadGetButtonCount(List<string> output, Expression device)
 		{
-			
 			throw new NotImplementedException();
 		}
 
@@ -203,7 +212,7 @@ namespace Crayon.Translator.COpenGL
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		protected override void TranslateGamepadGetRawDevice(List<string> output, Expression index)
 		{
 			throw new NotImplementedException();
@@ -420,6 +429,16 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateNewStack(List<string> output, StringConstant type)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateOrd(List<string> output, Expression character)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
 		{
 			throw new NotImplementedException();
 		}

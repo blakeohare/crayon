@@ -195,6 +195,7 @@
     <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
     <EmbeddedResource Include="Translator\COpenGL\Project\Header.c" />
     <EmbeddedResource Include="Translator\COpenGL\Project\Footer.c" />
+    <EmbeddedResource Include="Translator\CSharp\Project\AsyncMessageQueue.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>

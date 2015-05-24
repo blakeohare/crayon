@@ -10,6 +10,11 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		protected override void TranslateAsyncMessageQueuePump(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("math.acos(");
@@ -116,6 +121,11 @@ namespace Crayon.Translator.Python
 		protected override void TranslateCharToString(List<string> output, Expression charValue)
 		{
 			this.Translator.TranslateExpression(output, charValue);
+		}
+
+		protected override void TranslateChr(List<string> output, Expression asciiValue)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -664,9 +674,19 @@ namespace Crayon.Translator.Python
 			output.Add("[]");
 		}
 
+		protected override void TranslateOrd(List<string> output, Expression character)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslatePauseForFrame(List<string> output)
 		{
 			output.Add("_pygame_end_of_frame()");
+		}
+
+		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)

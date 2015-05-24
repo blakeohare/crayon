@@ -24,9 +24,7 @@ namespace Crayon.Translator
 			string name = functionCall.Name.Substring(1);
 			switch (name)
 			{
-				case "_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
-				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
-				case "_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
+				case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
 				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
 				case "_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
@@ -40,8 +38,10 @@ namespace Crayon.Translator
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
+				case "_chr": VerifyCount(functionCall, 1); TranslateChr(output, args[0]); break;
 				case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
 				case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
+				case "_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
 				case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
 				case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
 				case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
@@ -109,6 +109,8 @@ namespace Crayon.Translator
 				case "_new_list": VerifyCount(functionCall, 1); TranslateNewList(output, (StringConstant)args[0]); break;
 				case "_new_list_of_size": VerifyCount(functionCall, 2); TranslateNewListOfSize(output, (StringConstant)args[0], args[1]); break;
 				case "_new_stack": VerifyCount(functionCall, 1); TranslateNewStack(output, (StringConstant)args[0]); break;
+				case "_ord": VerifyCount(functionCall, 1); TranslateOrd(output, args[0]); break;
+				case "_parse_float": VerifyCount(functionCall, 2); TranslateParseFloat(output, args[0], args[1]); break;
 				case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
 				case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
@@ -122,6 +124,7 @@ namespace Crayon.Translator
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
+				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
 				case "_sort_primitive_values": VerifyCount(functionCall, 2); TranslateSortPrimitiveValues(output, args[0], args[1]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_sound_play": VerifyCount(functionCall, 1); TranslateSoundPlay(output, args[0]); break;
@@ -150,6 +153,7 @@ namespace Crayon.Translator
 				case "_string_startswith": VerifyCount(functionCall, 2); TranslateStringStartsWith(output, args[0], args[1]); break;
 				case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
 				case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
+				case "_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
 				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
 				case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
 				case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
@@ -157,6 +161,7 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateAsyncMessageQueuePump(List<string> output);
 		protected abstract void TranslateArcCos(List<string> output, Expression value);
 		protected abstract void TranslateArcSin(List<string> output, Expression value);
 		protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);
@@ -170,6 +175,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
+		protected abstract void TranslateChr(List<string> output, Expression asciiValue);
 		protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
 		protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
 		protected abstract void TranslateCos(List<string> output, Expression value);
@@ -240,6 +246,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateNewList(List<string> output, StringConstant type);
 		protected abstract void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length);
 		protected abstract void TranslateNewStack(List<string> output, StringConstant type);
+		protected abstract void TranslateOrd(List<string> output, Expression character);
+		protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
 		protected abstract void TranslateParseInt(List<string> output, Expression rawString);
 		protected abstract void TranslateParseJson(List<string> output, Expression rawString);
 		protected abstract void TranslatePauseForFrame(List<string> output);
