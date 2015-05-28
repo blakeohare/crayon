@@ -104,6 +104,7 @@ namespace Crayon
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("SCREEN_BLOCKS_EXECUTION", this.platform.ScreenBlocksExecution ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
+			replacements.Add("IS_GAMEPAD_SUPPORTED", this.platform.SupportsGamePad ? "true" : "false");
 			replacements.Add("GENERATED_TILE_DIRECTORY", this.platform.GeneratedFilesFolder + "/spritesheets");
 			return replacements;
 		}

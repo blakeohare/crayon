@@ -12,7 +12,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("R.pumpAsyncMessageQueue()");
 		}
 
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
@@ -136,7 +136,9 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateChr(List<string> output, Expression asciiValue)
 		{
-			throw new NotImplementedException();
+			output.Add("String.fromCharCode(");
+			this.Translator.TranslateExpression(output, asciiValue);
+			output.Add(")");
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -398,7 +400,17 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
 		{
-			throw new NotImplementedException();
+			output.Add("R.makeHttpRequest(");
+			this.Translator.TranslateExpression(output, httpRequest);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, method);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, body);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headers);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
@@ -669,12 +681,17 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateOrd(List<string> output, Expression character)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, character);
+			output.Add(".charCodeAt(0)");
 		}
 
 		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
 		{
-			throw new NotImplementedException();
+			output.Add("R.floatParseHelper(");
+			this.Translator.TranslateExpression(output, outParam);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)

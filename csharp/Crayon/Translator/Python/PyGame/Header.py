@@ -308,4 +308,7 @@ def io_helper_read_text(path):
 def io_helper_current_directory():
 	return os.path.dirname(os.path.realpath(__file__))
 
+def _pump_async_message_queue():
+	pass
+
 program_data = [None]
