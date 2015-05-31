@@ -311,4 +311,19 @@ def io_helper_current_directory():
 def _pump_async_message_queue():
 	pass
 
+def _http_request_impl(request_object, method, url, body, headers):
+	print 'req', request_object
+	print 'method', method
+	print 'url', url
+	print 'body', body
+	print 'headers', headers
+
+	request = HttpAsyncRequest(url)
+	request.set_method(method)
+	if body != None:
+		request.set_content(body)
+	# TODO: headers
+
+	request.send()
+
 program_data = [None]

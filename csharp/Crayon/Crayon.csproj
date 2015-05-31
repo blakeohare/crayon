@@ -156,6 +156,7 @@
     <EmbeddedResource Include="Translator\Python\PyGame\Header.py" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Translator\Python\PyGame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="Translator\CSharp\Project\ProjectFile.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />

@@ -36,13 +36,14 @@ namespace Crayon.Translator.Python
 
 			concatenatedCode.Add(this.GetPyGameCode("Header.py"));
 			concatenatedCode.Add(this.Translator.NL);
+			concatenatedCode.Add(this.GetPyGameCode("AsyncHttpFetcher.py"));
+			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateGlobals(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateFunctions(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
-
 			concatenatedCode.Add(this.GetPyGameCode("Footer.py"));
 			concatenatedCode.Add(this.Translator.NL);
 
