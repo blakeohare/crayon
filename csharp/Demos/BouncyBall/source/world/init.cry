@@ -1,0 +1,6 @@
+import 'world/Map.cry';
+import 'world/PlayScene.cry';
+import 'world/Sprite.cry';
+import 'world/Tile.cry';
+import 'world/TileStore.cry';
+import 'world/TileTemplate.cry';
