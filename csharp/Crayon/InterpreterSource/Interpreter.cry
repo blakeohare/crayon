@@ -2372,6 +2372,9 @@ function @omitReturn @type('string') interpret(
 					dictImpl = $_cast('DictImpl', Value$root.internalValue);
 					keyType = Value$value.type;
 					if (keyType != DictImpl$dictImpl.keyType) {
+						if (DictImpl$dictImpl.size == 0) {
+							return killExecution(stack, "Key not found. Dictionary is empty.");
+						}
 						return killExecution(stack, "Incorrect key type. This dictionary contains " + getTypeFromId(DictImpl$dictImpl.keyType) + " keys. Provided key is a " + getTypeFromId(keyType) + ".");
 					} else {
 						if (keyType == Types.INTEGER) {
@@ -2382,6 +2385,9 @@ function @omitReturn @type('string') interpret(
 							objInstance = $_cast('ObjectInstance', Value$value.internalValue);
 							intKey = ObjectInstance$objInstance.objectId;
 						} else {
+							if (DictImpl$dictImpl.size == 0) {
+								return killExecution(stack, "Key not found. Dictionary is empty.");
+							}
 							return killExecution(stack, "Key not found.");
 						}
 
