@@ -2372,7 +2372,7 @@ function @omitReturn @type('string') interpret(
 					dictImpl = $_cast('DictImpl', Value$root.internalValue);
 					keyType = Value$value.type;
 					if (keyType != DictImpl$dictImpl.keyType) {
-						return killExecution(stack, "Key not found.");
+						return killExecution(stack, "Incorrect key type. This dictionary contains " + getTypeFromId(DictImpl$dictImpl.keyType) + " keys. Provided key is a " + getTypeFromId(keyType) + ".");
 					} else {
 						if (keyType == Types.INTEGER) {
 							intKey = $_cast('int', Value$value.internalValue);
