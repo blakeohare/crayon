@@ -493,6 +493,12 @@ namespace %%%PROJECT_ID%%%
 						GL.Begin(BeginMode.Polygon);
 
 						ptCount = (width + height) / 8;
+
+						if (ptCount < 16)
+						{
+							ptCount = 16;
+						}
+
 						for (j = 0; j < ptCount; ++j)
 						{
 							endX = (int)(System.Math.Cos(-3.14159265358979 * 2 * j / ptCount) * width + startX);
