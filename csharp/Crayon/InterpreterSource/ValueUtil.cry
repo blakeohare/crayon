@@ -1,4 +1,8 @@
-﻿function @type('string') valueToString(@type('Value') wrappedValue) {
+﻿
+// These are prone to infinite recursion.
+// The problem is that not all platforms have a way to check for reference equality for things
+// like dictionaries or lists.
+function @type('string') valueToString(@type('Value') wrappedValue) {
 	@type('int') type = Value$wrappedValue.type;
 	@type('object') value = Value$wrappedValue.internalValue;
 	if (type == Types.NULL) return "null";
@@ -15,7 +19,6 @@
 	}
 	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(value);
 	if (type == Types.LIST) {
-		// TODO: this will recurse infinitely if the list points to itself somehow.
 		@type('List<Value>') internalList = $_cast('List<Value>', value);
 		@type('string') output = "[";
 		for (@type('int') i = 0; i < $_list_length(internalList); i += 1) {
@@ -27,6 +30,35 @@
 	}
 	if (type == Types.INSTANCE) {
 		return "INSTANCE: " + $_string_cast_strong(value);
+	}
+	if (type == Types.DICTIONARY) {
+		// This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
+		// Therefore this is also prone to infinite recursion.
+		@type('DictImpl') internalDict = $_cast('DictImpl', value);
+		@type('int') size = DictImpl$internalDict.size;
+		if (size == 0) return "{}";
+		@type('string') output = "{";
+		if (DictImpl$internalDict.keyType == Types.INTEGER) {
+			@type('Array<int>') intKeys = $_dictionary_get_keys('int', DictImpl$internalDict.keyIntLookup);
+			@type('int') intKey = 0;
+			for (@type('int') i = 0; i < size; i += 1) {
+				if (i > 0) output += ', ';
+				else output += ' ';
+				intKey = $_array_get(intKeys, i);
+				output += $_string_cast_weak(intKey) + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey));
+			}
+		} else {
+			@type('Array<string>') stringKeys = $_dictionary_get_keys('string', DictImpl$internalDict.keyStringLookup);
+			@type('string') stringKey = '';
+			for (@type('int') i = 0; i < size; i += 1) {
+				if (i > 0) output += ', ';
+				else output += ' ';
+				stringKey = $_array_get(stringKeys, i);
+				output += stringKey + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey));
+			}
+		}
+		output += ' }';
+		return output;
 	}
 	return "TODO: toString for " + getTypeFromId(type);
 }
