@@ -31,6 +31,7 @@ namespace Crayon.ParseTree
 						case 'r': sb.Append('\r'); break;
 						case '0': sb.Append('\0'); break;
 						case 't': sb.Append('\t'); break;
+						case 'b': sb.Append('\b'); break;
 						case '\'': sb.Append("'"); break;
 						case '"': sb.Append("\""); break;
 						case '\\': sb.Append("\\"); break;
