@@ -365,3 +365,20 @@ function @type('Image') extractImageFromValue(@type('Value') value) {
 	}
 	return null;
 }
+
+function @type('Value') multiplyString(@type('Value') strValue, @type('string') str, @type('int') n) {
+	if (n <= 2) {
+		if (n == 1) return strValue;
+		if (n == 2) return buildString(str + str);
+		return VALUE_EMPTY_STRING;
+	}
+
+	@type('List<string>') builder = $_new_list('string');
+	while (n > 0) {
+		n -= 1;
+		$_list_push(builder, str);
+	}
+
+	str = $_list_join(builder, '');
+	return buildString(str);
+}

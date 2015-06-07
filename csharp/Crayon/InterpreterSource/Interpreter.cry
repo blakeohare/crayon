@@ -566,6 +566,16 @@ function @omitReturn @type('string') interpret(
 							$_comment('float > float');
 							if ($_cast('double', left) > $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
 
+						// string * int
+						case (Types.STRING * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
+							$_comment('string * int');
+							value = multiplyString(leftValue, $_cast('string', left), $_cast('int', right)); break;
+
+						// int * string
+						case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.STRING:
+							$_comment('int * string');
+							value = multiplyString(rightValue, $_cast('string', right), $_cast('int', left)); break;
+
 						// list * int
 						case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 							$_comment('list * int');
