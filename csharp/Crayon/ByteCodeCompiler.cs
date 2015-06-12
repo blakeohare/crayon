@@ -356,6 +356,7 @@ namespace Crayon
 
 			ByteBuffer codeBuffer = new ByteBuffer();
 			this.Compile(parser, codeBuffer, forLoop.Code);
+			codeBuffer.ResolveContinues(true); // resolve continues as jump-to-end before you add the step instructions.
 			this.Compile(parser, codeBuffer, forLoop.Step);
 
 			ByteBuffer forBuffer = new ByteBuffer();
@@ -366,7 +367,6 @@ namespace Crayon
 			forBuffer.Add(null, OpCode.JUMP, -forBuffer.Size - 1);
 
 			forBuffer.ResolveBreaks();
-			forBuffer.ResolveContinues();
 
 			buffer.Concat(forBuffer);
 		}

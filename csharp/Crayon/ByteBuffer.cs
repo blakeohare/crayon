@@ -58,11 +58,18 @@ namespace Crayon
 
 		public void ResolveContinues()
 		{
+			this.ResolveContinues(false);
+		}
+
+		public void ResolveContinues(bool resolveAsJumpToEnd)
+		{
 			for (int i = 0; i < this.byteCode.Count; ++i)
 			{
 				if (this.byteCode[i][0] == (int)OpCode.CONTINUE)
 				{
-					this.byteCode[i] = new int[] { (int)OpCode.JUMP, -i - 1 };
+					this.byteCode[i] = resolveAsJumpToEnd
+						? new int[] { (int)OpCode.JUMP, this.byteCode.Count - i - 1 }
+						: new int[] { (int)OpCode.JUMP, -i - 1 };
 				}
 			}
 		}
