@@ -75,6 +75,7 @@ function @omitReturn @type('string') interpret(
 	@type('string') string3 = null;
 	@type('List<Value>') list1 = null;
 	@type('bool') bool1 = false;
+	@type('bool') bool2 = false;
 	@type('List<int>') intList1 = null;
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
@@ -176,6 +177,7 @@ function @omitReturn @type('string') interpret(
 				value2 = $_stack_pop(valueStack); // index
 				root = $_stack_pop(valueStack);
 				type = Value$root.type;
+				bool1 = row[0] == 1; // re-push this onto the stack once it is assigned
 				if (type == Types.LIST) {
 					if (Value$value2.type == Types.INTEGER) {
 						i = $_cast('int', Value$value2.internalValue);
@@ -204,15 +206,15 @@ function @omitReturn @type('string') interpret(
 					}
 
 					dictImpl = $_cast('DictImpl', Value$root.internalValue);
-					bool1 = DictImpl$dictImpl.size > 0; // already contains stuff
-					if (bool1 && DictImpl$dictImpl.keyType != keyType) {
+					bool2 = DictImpl$dictImpl.size > 0; // already contains stuff
+					if (bool2 && DictImpl$dictImpl.keyType != keyType) {
 						return killExecution(stack, "Cannot have multiple keys in one dictionary with different types.");
 					}
 					if (keyType == Types.STRING) {
 						if (!$_dictionary_contains(DictImpl$dictImpl.keyStringLookup, stringKey)) {
 							$_dictionary_set(DictImpl$dictImpl.keyStringLookup, stringKey, value2);
 							DictImpl$dictImpl.size += 1;
-							if (!bool1) { // is empty?
+							if (!bool2) { // is empty?
 								DictImpl$dictImpl.keyType = keyType;
 							}
 						}
@@ -221,7 +223,7 @@ function @omitReturn @type('string') interpret(
 						if (!$_dictionary_contains(DictImpl$dictImpl.keyIntLookup, intKey)) {
 							$_dictionary_set(DictImpl$dictImpl.keyIntLookup, intKey, value2);
 							DictImpl$dictImpl.size += 1;
-							if (!bool1) { // is empty?
+							if (!bool2) { // is empty?
 								DictImpl$dictImpl.keyType = keyType;
 							}
 						}
@@ -230,6 +232,11 @@ function @omitReturn @type('string') interpret(
 				} else {
 					return killExecution(stack, getTypeFromId(type) + " type does not support indexing");
 				}
+
+				if (bool1) {
+					$_stack_push(valueStack, value);
+				}
+
 				break;
 
 			case OpCodes.ASSIGN_STEP:
@@ -2601,6 +2608,17 @@ function @omitReturn @type('string') interpret(
 						$_array_get(row, 6), // y coordinate within this tile
 						$_array_get(row, 7) == 1); // solitary image (this tile IS the image, do not do spill calculations)
 				}
+				break;
+
+			case OpCodes.STACK_INSERTION_FOR_INCREMENT:
+				$_comment('STACK_INSERTION_FOR_INCREMENT');
+				value = $_stack_pop(valueStack);
+				value2 = $_stack_pop(valueStack);
+				value3 = $_stack_pop(valueStack);
+				$_stack_push(valueStack, value);
+				$_stack_push(valueStack, value3);
+				$_stack_push(valueStack, value2);
+				$_stack_push(valueStack, value);
 				break;
 
 			case OpCodes.SWITCH_INT:

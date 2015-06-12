@@ -6,7 +6,7 @@
 		ADD_NAME, // name is string arg. ID is the order in which this was encountered.
 		ASSIGN_FUNCTION_ARG, // 1: variable name ID, 2: function arg value index to assign to variable
 		ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: variable name ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
-		ASSIGN_INDEX, // no args. value stack: [root, index, value]
+		ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
 		ASSIGN_STEP, // name ID of step. value stack: [root, value]
 		ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
 		ASSIGN_VAR, // 1: variable name ID
@@ -43,6 +43,7 @@
 		RETURN,
 		RETURN_NULL,
 		SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.
+		STACK_INSERTION_FOR_INCREMENT, // duplicates the top element of the stack but pushes it 3 spots back. [..., a, b, c] --> [..., c, a, b, c]
 		SWITCH_INT, // 1: integer switch ID, 2: offset for default case
 		SWITCH_STRING, // 1: string switch ID, 2: offset for default case
 		THIS, // pushes the current object context onto the stack.

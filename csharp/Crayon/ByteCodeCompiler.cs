@@ -426,7 +426,7 @@ namespace Crayon
 					this.CompileExpression(parser, buffer, bi.Root, true);
 					this.CompileExpression(parser, buffer, bi.Index, true);
 					this.CompileExpression(parser, buffer, assignment.Value, true);
-					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
 				}
 				else if (assignment.Target is DotStep)
 				{
@@ -489,7 +489,7 @@ namespace Crayon
 					buffer.Add(indexExpr.BracketToken, OpCode.INDEX);
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
 				}
 				else
 				{
@@ -709,7 +709,24 @@ namespace Crayon
 			}
 			else if (increment.Root is BracketIndex)
 			{
-				throw new NotImplementedException("++foo[key] and foo[key]++ are not implemented yet.");
+				BracketIndex bracketIndex = (BracketIndex)increment.Root;
+				this.CompileExpression(parser, buffer, bracketIndex.Root, true);
+				this.CompileExpression(parser, buffer, bracketIndex.Index, true);
+				buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
+				buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
+				if (increment.IsPrefix)
+				{
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+					buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 1);
+				}
+				else
+				{
+					buffer.Add(increment.IncrementToken, OpCode.STACK_INSERTION_FOR_INCREMENT);
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+					buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 0);
+				}
 			}
 			else if (increment.Root is DotStep)
 			{
