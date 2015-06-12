@@ -101,7 +101,7 @@ namespace Crayon
 #if DEBUG
 			if (args.Length == 0)
 			{
-				args = @"C:\Things\Crayon\Demos\Volcano\Volcano.build -target python".Split(' ');
+				args = @"C:\Things\Projects\Crayon\Demos\UnitTests\UnitTests.build -target windows".Split(' ');
 			}
 #endif
 

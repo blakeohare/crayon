@@ -1,0 +1,43 @@
+class LangIncrementTest {
+	constructor() {
+		this.num = 0;
+	}
+}
+
+function lang_increment() {
+	obj = new LangIncrementTest();
+	
+	$print("lang_increment - ++ with variable");
+	x = 100;
+	x++;
+	$assert(x == 101, "lang_increment - ++ with variable");
+	++x;
+	$assert(x == 102, "lang_increment - ++ with variable");
+	y = ++x;
+	$assert(x == 103 && y == 103, "lang_increment - ++ with variable");
+	y = x++;
+	$assert(x == 104 && y == 103, "lang_increment - ++ with variable");
+	
+	$print("lang_increment - ++ with list index");
+	x = [100];
+	x[0]++;
+	$assert(x[0] == 101, "lang_increment - ++ with list index");
+	++x[0];
+	$assert(x[0] == 102, "lang_increment - ++ with list index");
+	y = ++x[0];
+	$assert(x[0] == 103 && y == 103, "lang_increment - ++ with list index");
+	y = x[0]++;
+	$assert(x[0] == 104 && y == 103, "lang_increment - ++ with list index");
+	
+	$print("lang_increment - ++ with object field");
+	obj = new LangIncrementTest();
+	obj.num = 100;
+	obj.num++;
+	$assert(obj.num == 101, "lang_increment - ++ with list index");
+	++obj.num;
+	$assert(obj.num == 102, "lang_increment - ++ with list index");
+	y = ++obj.num;
+	$assert(obj.num == 103 && y == 103, "lang_increment - ++ with list index");
+	y = obj.num++;
+	$assert(obj.num == 104 && y == 103, "lang_increment - ++ with list index");
+}

@@ -440,7 +440,7 @@ namespace Crayon
 					{
 						this.CompileExpression(parser, buffer, dotStep.Root, true);
 						this.CompileExpression(parser, buffer, assignment.Value, true);
-						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value));
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
 					}
 				}
 				else
@@ -477,7 +477,7 @@ namespace Crayon
 					}
 					else
 					{
-						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId);
+						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId, 0);
 					}
 				}
 				else if (assignment.Target is BracketIndex)
@@ -730,7 +730,24 @@ namespace Crayon
 			}
 			else if (increment.Root is DotStep)
 			{
-				throw new ParserException(increment.IncrementToken, "++foo.field and foo.field++ are not implemented yet.");
+				DotStep dotStep = (DotStep)increment.Root;
+				this.CompileExpression(parser, buffer, dotStep.Root, true);
+				buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
+				buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value));
+				if (increment.IsPrefix)
+				{
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+					buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 1);
+				}
+				else
+				{
+					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+					buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
+					buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
+				}
 			}
 			else
 			{

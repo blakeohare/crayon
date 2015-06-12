@@ -44,6 +44,7 @@
 		RETURN_NULL,
 		SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.
 		STACK_INSERTION_FOR_INCREMENT, // duplicates the top element of the stack but pushes it 3 spots back. [..., a, b, c] --> [..., c, a, b, c]
+		STACK_SWAP_POP, // swaps the last 2 items on the stack and then pops the (new) last one.
 		SWITCH_INT, // 1: integer switch ID, 2: offset for default case
 		SWITCH_STRING, // 1: string switch ID, 2: offset for default case
 		THIS, // pushes the current object context onto the stack.

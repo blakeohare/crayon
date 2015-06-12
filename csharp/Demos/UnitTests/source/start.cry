@@ -1,0 +1,9 @@
+import 'lang.cry';
+
+function main() {
+	lang();
+}
+
+main();
+
+$print("=== All tests passed! ===");
