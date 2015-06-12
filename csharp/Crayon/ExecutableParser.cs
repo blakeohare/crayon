@@ -337,8 +337,12 @@ namespace Crayon
 					if (init.Count > 0) tokens.PopExpected(",");
 					init.Add(Parse(tokens, true, false, false));
 				}
-				Expression condition = ExpressionParser.Parse(tokens);
-				tokens.PopExpected(";");
+				Expression condition = null;
+				if (!tokens.PopIfPresent(";"))
+				{
+					condition = ExpressionParser.Parse(tokens);
+					tokens.PopExpected(";");
+				}
 				List<Executable> step = new List<Executable>();
 				while (!tokens.PopIfPresent(")"))
 				{

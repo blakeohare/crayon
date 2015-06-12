@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 			: base(forToken)
 		{
 			this.Init = init.ToArray();
-			this.Condition = condition;
+			this.Condition = condition ?? new BooleanConstant(forToken, true);
 			this.Step = step.ToArray();
 			this.Code = code.ToArray();
 		}
