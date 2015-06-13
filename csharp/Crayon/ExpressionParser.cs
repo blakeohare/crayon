@@ -238,9 +238,42 @@ namespace Crayon
 				else if (tokens.IsNext("["))
 				{
 					Token openBracket = tokens.Pop();
-					Expression index = Parse(tokens);
+					List<Expression> sliceComponents = new List<Expression>();
+					if (tokens.IsNext(":"))
+					{
+						sliceComponents.Add(null);
+					}
+					else
+					{
+						sliceComponents.Add(Parse(tokens));
+					}
+
+					for (int i = 0; i < 2; ++i)
+					{
+						if (tokens.PopIfPresent(":"))
+						{
+							if (tokens.IsNext(":") || tokens.IsNext("]"))
+							{
+								sliceComponents.Add(null);
+							}
+							else
+							{
+								sliceComponents.Add(Parse(tokens));
+							}
+						}
+					}
+
 					tokens.PopExpected("]");
-					root = new BracketIndex(root, openBracket, index);
+
+					if (sliceComponents.Count == 1)
+					{
+						Expression index = sliceComponents[0];
+						root = new BracketIndex(root, openBracket, index);
+					}
+					else
+					{
+						root = new ListSlice(root, sliceComponents, openBracket);
+					}
 				}
 				else if (tokens.IsNext("("))
 				{

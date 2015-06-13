@@ -97,6 +97,7 @@
     <Compile Include="ParseTree\Instantiate.cs" />
     <Compile Include="ParseTree\IntegerConstant.cs" />
     <Compile Include="ParseTree\ListDefinition.cs" />
+    <Compile Include="ParseTree\ListSlice.cs" />
     <Compile Include="ParseTree\NegativeSign.cs" />
     <Compile Include="ParseTree\Node.cs" />
     <Compile Include="ParseTree\NullConstant.cs" />

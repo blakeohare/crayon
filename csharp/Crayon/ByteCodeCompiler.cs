@@ -575,7 +575,16 @@ namespace Crayon
 			else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
 			else if (expr is Ternary) this.CompileTernary(parser, buffer, (Ternary)expr, outputUsed);
 			else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
+			else if (expr is ListSlice) this.CompileListSlice(parser, buffer, (ListSlice)expr, outputUsed);
 			else throw new NotImplementedException();
+		}
+
+		private static void EnsureUsed(Token token, bool outputUsed)
+		{
+			if (!outputUsed)
+			{
+				throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
+			}
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)
@@ -587,9 +596,33 @@ namespace Crayon
 			throw new Exception(); // should not happen.
 		}
 
+		private void CompileListSlice(Parser parser, ByteBuffer buffer, ListSlice listSlice, bool outputUsed)
+		{
+			EnsureUsed(listSlice.FirstToken, outputUsed);
+			this.CompileExpression(parser, buffer, listSlice.Root, true);
+
+			Expression step = listSlice.Items[2];
+			bool isStep1 = step is IntegerConstant && ((IntegerConstant)step).Value == 1;
+
+			int serializeThese = isStep1 ? 2 : 3;
+			for (int i = 0; i < serializeThese; ++i)
+			{
+				Expression item = listSlice.Items[i];
+				if (item != null)
+				{
+					this.CompileExpression(parser, buffer, item, true);
+				}
+			}
+
+			bool firstIsPresent = listSlice.Items[0] != null;
+			bool secondIsPresent = listSlice.Items[1] != null;
+
+			buffer.Add(listSlice.BracketToken, OpCode.LIST_SLICE, new int[] { firstIsPresent ? 1 : 0, secondIsPresent ? 1 : 0, isStep1 ? 0 : 1 });
+		}
+
 		private void CompileTernary(Parser parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)
 		{
-			if (!outputUsed) throw new ParserException(ternary.FirstToken, "Cannot have this expression here.");
+			EnsureUsed(ternary.FirstToken, outputUsed);
 
 			this.CompileExpression(parser, buffer, ternary.Condition, true);
 			ByteBuffer trueBuffer = new ByteBuffer();

@@ -36,6 +36,7 @@
 		JUMP_IF_FALSE_NO_POP,
 		JUMP_IF_TRUE,
 		JUMP_IF_TRUE_NO_POP,
+		LIST_SLICE, // 1: begin slice index is present, 2: end slice index is present, 3: step is present
 		LITERAL, // 1: literal ID in the literal table
 		LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
 		NEGATIVE_SIGN, // no args. pop, flip, push.

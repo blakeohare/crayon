@@ -64,6 +64,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
 	@type('int') int4 = 0;
+	@type('int') int5 = 0;
 	@type('int') i = 0;
 	@type('double') float1 = 3.14;
 	@type('double') float2 = 2.718;
@@ -74,6 +75,8 @@ function @omitReturn @type('string') interpret(
 	@type('string') string2 = null;
 	@type('string') string3 = null;
 	@type('List<Value>') list1 = null;
+	@type('List<Value>') list2 = null;
+	@type('List<string>') stringList1 = null;
 	@type('bool') bool1 = false;
 	@type('bool') bool2 = false;
 	@type('List<int>') intList1 = null;
@@ -110,6 +113,10 @@ function @omitReturn @type('string') interpret(
 	@type('Dictionary<string, int>') primitiveMethodLookup = ProgramData$p.primitiveMethodLookup;
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
+
+	// Uses:
+	// - list/string slice values canonicalizer
+	@type('Array<int>') reusableOutParam = $_new_array('int', 4);
 
 	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
 
@@ -2528,6 +2535,163 @@ function @omitReturn @type('string') interpret(
 				}
 				break;
 				
+			case OpCodes.LIST_SLICE:
+				$_comment('LIST_SLICE');
+
+				// int1 --> begin
+				// int2 --> end
+				// int3 --> step
+				// int4 --> length of the list or string
+				// int5 --> status: 0 -> OK, 1 -> the result is empty, 2 -> ERROR:step is 0, 3 -> ERROR: bad types
+				// bool1 --> slice is forwards (step is positive)
+				// bool2 --> slice is a string
+
+				int5 = 0;
+				if ($_array_get(row, 2) == 1) {
+					arg3 = $_stack_pop(valueStack);
+					if (Value$arg3.type == Types.INTEGER) {
+						int3 = $_cast('int', Value$arg3.internalValue);
+						if (int3 == 0) int5 = 2;
+					} else {
+						int5 = 3;
+						int3 = 1;
+					}
+				} else {
+					int3 = 1;
+				}
+				bool1 = int3 > 0;
+
+				if ($_array_get(row, 1) == 1) {
+					arg2 = $_stack_pop(valueStack);
+					if (Value$arg2.type == Types.INTEGER) {
+						int2 = $_cast('int', Value$arg2.internalValue);
+					} else {
+						int5 = 3;
+					}
+				} else {
+					arg2 = null;
+				}
+
+				if ($_array_get(row, 0) == 1) {
+					arg1 = $_stack_pop(valueStack);
+					if (Value$arg1.type == Types.INTEGER) {
+						int1 = $_cast('int', Value$arg1.internalValue);
+					} else {
+						int5 = 3;
+					}
+				} else {
+					arg1 = null;
+				}
+
+				value =  $_stack_pop(valueStack);
+				if (Value$value.type == Types.STRING) {
+					bool2 = true;
+					string1 = $_cast('string', Value$value.internalValue);
+					int4 = $_string_length(string1);
+				} else if (Value$value.type == Types.LIST) {
+					bool2 = false;
+					list1 = $_cast('List<Value>', Value$value.internalValue);
+					int4 = $_list_length(list1);
+				} else {
+					return killExecution(stack, "Cannot apply slicing to " + getTypeFromId(Value$value.type) + ". Must be string or list.");
+				}
+
+				// Something is wrong. But we want to display an error of the first item that is wrong (stack is backwards) so go through
+				// each argument in order and find it.
+				if (int5 >= 2) {
+					if (bool2) {
+						string1 = "String";
+					} else {
+						string1 = "List";
+					}
+					if (int5 == 3) {
+						string1 += "slice indexes must be integers. Found ";
+						if (arg1 != null && Value$arg1.type != Types.INTEGER) return killExecution(stack, string1 + getTypeFromId(Value$arg1.type) + " for begin index.");
+						if (arg2 != null && Value$arg2.type != Types.INTEGER) return killExecution(stack, string1 + getTypeFromId(Value$arg2.type) + " for end index.");
+						if (arg3 != null && Value$arg3.type != Types.INTEGER) return killExecution(stack, string1 + getTypeFromId(Value$arg3.type) + " for step amount.");
+						return killExecution(stack, "Invalid slice arguments."); // this shouldn't happen.
+					} else { // int5 == 2
+						return killExecution(stack, string1 + " slice step cannot be 0.");
+					}
+				}
+
+				// returns a status code.
+				int5 = canonicalizeListSliceArgs(reusableOutParam, arg1, arg2, int1, int2, int3, int4, bool1);
+				if (int5 == 1) {
+					int1 = $_array_get(reusableOutParam, 0);
+					int2 = $_array_get(reusableOutParam, 1);
+					if (bool2) {
+						// String slice
+						stringList1 = $_new_list('string');
+						if (bool1) {
+							// forward
+							while (int1 < int2) {
+								$_list_push(stringList1, $_char_to_string($_string_char_at(string1, int1)));
+								int1 += int3;
+							}
+						} else {
+							// backward
+							while (int1 > int2) {
+								$_list_push(stringList1, $_char_to_string($_string_char_at(string1, int1)));
+								int1 += int3;
+							}
+						}
+						value = buildString($_list_join(stringList1, ""));
+					} else {
+						// List slice
+						list2 = $_new_list('Value');
+						if (bool1) {
+							// forward
+							while (int1 < int2) {
+								$_list_push(list2, $_list_get(list1, int1));
+								int1 += int3;
+							}
+						} else {
+							// backward
+							while (int1 > int2) {
+								$_list_push(list2, $_list_get(list1, int1));
+								int1 += int3;
+							}
+						}
+						value = new Value(Types.LIST, list2);
+					}
+				} else if (int5 == 0) {
+					if (bool2) {
+						value = VALUE_EMPTY_STRING;
+					} else {
+						value = new Value(Types.LIST, $_new_list('Value'));
+					}
+				} else if (int5 == 2) {
+					// list is a simple clone
+					// for strings, just leave it as-is since the root value is already stored in the return value variable.
+					if (!bool2) {
+						list2 = $_new_list('Value');
+						for (i = 0; i < int4; i += 1) {
+							$_list_push(list2, $_list_get(list1, i));
+						}
+						value = new Value(Types.LIST, list2);
+					}
+				} else {
+					if (bool2) {
+						string1 = "String";
+					} else {
+						string1 = "List";
+					}
+					if (int5 == 3) {
+						string1 += " slice begin index is out of range.";
+					} else { // int5 == 4
+						if (bool1) {
+							string1 += " slice begin index must occur before the end index when step is positive.";
+						} else {
+							string1 += " slice begin index must occur after the end index when the step is negative.";
+						}
+						return killExecution(stack, string1);
+					}
+				}
+
+				$_stack_push(valueStack, value);
+				break;
+
 			case OpCodes.LITERAL:
 				$_comment('LITERAL');
 				$_stack_push(valueStack, $_array_get(literalTable, $_array_get(row, 0)));
@@ -2785,6 +2949,49 @@ function @type('int') declareSpriteSheetImage(
 		}
 	}
 	return 0;
+}
+
+// returns a status code:
+// 0 - list is empty
+// 1 - list has contents
+// 2 - start index is out of bounds
+// 3 - start index occurs after begin index (relative to direction)
+function @type('int') canonicalizeListSliceArgs(
+	@type('Array<int>') outParams, 
+	@type('Value') beginValue,
+	@type('Value') endValue,
+	@type('int') beginIndex,
+	@type('int') endIndex,
+	@type('int') stepAmount,
+	@type('int') length,
+	@type('bool') isForward) {
+
+	if (beginValue == null) {
+		if (isForward) beginIndex = 0;
+		else beginIndex = length - 1;
+	}
+	if (endValue == null) {
+		if (isForward) endIndex = length;
+		else endIndex = -1 - length; // if it were -1, it'll get canonicalized into length - 1.
+	}
+
+	if (beginIndex < 0) beginIndex += length;
+	if (endIndex < 0) endIndex += length;
+
+	if (isForward) {
+		if (beginIndex >= length || beginIndex < 0) return 2;
+		if (endIndex < beginIndex) return 3;
+		if (beginIndex == endIndex) return 0;
+		if (endIndex > length) endIndex = length;
+	} else {
+		if (beginIndex < 0 || beginIndex >= length) return 2;
+		if (endIndex > beginIndex) return 3;
+		if (beginIndex == endIndex) return 0;
+		if (endIndex < -1) endIndex = -1;
+	}
+	$_array_set(outParams, 0, beginIndex);
+	$_array_set(outParams, 1, endIndex);
+	return 1;
 }
 
 function @type('string') killExecution(@type('StackFrame') stack, @type('string') message) {
