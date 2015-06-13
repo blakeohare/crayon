@@ -20,3 +20,7 @@ function range(a, b=null, c=null) {
 	}
 	return output;
 }
+
+function str(value) {
+	return '' + value;
+}
