@@ -12,7 +12,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("throw new RuntimeException(\"TODO: implement this?\")");
 		}
 
 		protected override void TranslateArcCos(List<string> output, Expression value)
@@ -133,7 +133,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateChr(List<string> output, Expression asciiValue)
 		{
-			throw new NotImplementedException();
+			output.Add("Character.toString((char) ");
+			this.Translator.TranslateExpression(output, asciiValue);
+			output.Add(")");
 		}
 
 		protected override void TranslateComment(List<string> output, StringConstant commentValue)
@@ -414,7 +416,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.makeHttpRequest()");
 		}
 
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
@@ -701,12 +703,14 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateOrd(List<string> output, Expression character)
 		{
-			throw new NotImplementedException();
+			output.Add("((int) ");
+			this.Translator.TranslateExpression(output, character);
+			output.Add(".charAt(0))");
 		}
 
 		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.parseFloat()");
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)
