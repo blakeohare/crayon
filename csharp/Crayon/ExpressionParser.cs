@@ -161,12 +161,11 @@ namespace Crayon
 		{
 			Expression expr = ParseIncrement(tokens);
 			string next = tokens.PeekValue();
-			while (next == "**")
+			if (next == "**")
 			{
 				Token op = tokens.Pop();
-				Expression right = ParseIncrement(tokens);
+				Expression right = ParseNegate(tokens);
 				expr = new BinaryOpChain(expr, op, right);
-				next = tokens.PeekValue();
 			}
 			return expr;
 		}

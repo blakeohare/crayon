@@ -1,0 +1,25 @@
+// The compiler will optimize constants. That is why everything is listed twice. Once
+// for the runtime interpreter and once for the compile time interpreter.
+
+function lang_ops() {
+	// Many of these convert to string before verifying. This is to verify the type (int vs float).
+	
+	$print('lang_ops - basic arithmetic');
+	
+	x = 4 ** 2;
+	$assert(x + '' == '16', 'lang_ops - exponent');
+	$assert((4 ** 2) + '' == '16', 'lang_ops - exponent');
+	
+	x = 4 ** 2.0;
+	$assert(x + '' == '16.0', 'lang_ops - exponent');
+	$print((4 ** 2.0) + '');
+	$assert((4 ** 2.0) + '' == '16.0', 'lang_ops - exponent');
+	
+	x = 4 ** -1;
+	$assert(x + '' == '0.25', 'lang_ops - exponent');
+	$assert((4 ** -1) + '' == '0.25', 'lang_ops - exponent');
+	
+	x = 4.0 ** -1;
+	$assert(x + '' == '0.25', 'lang_ops - exponent');
+	$assert((4.0 ** -1) + '' == '0.25', 'lang_ops - exponent');
+}

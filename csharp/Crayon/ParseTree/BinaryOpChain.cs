@@ -162,11 +162,11 @@ namespace Crayon.ParseTree
 
 				case "bool + string": return MakeString(tk, GetBool(left).ToString() + GetString(right));
 				case "int + string": return MakeString(tk, GetInt(left).ToString() + GetString(right));
-				case "float + string": return MakeString(tk, GetFloat(left).ToString() + GetString(right));
+				case "float + string": return MakeString(tk, GetFloatAsString(left) + GetString(right));
 
 				case "string + bool": return MakeString(tk, GetString(left) + GetBool(right).ToString());
 				case "string + int": return MakeString(tk, GetString(left) + GetInt(right).ToString());
-				case "string + float": return MakeString(tk, GetString(left) + GetFloat(right).ToString());
+				case "string + float": return MakeString(tk, GetString(left) + GetFloatAsString(right));
 
 				case "string + string": return MakeString(tk, GetString(left) + GetString(right));
 
@@ -188,6 +188,9 @@ namespace Crayon.ParseTree
 					}
 
 					return this;
+
+				case "string == string": return MakeBool(tk, GetString(left) == GetString(right));
+				case "string != string": return MakeBool(tk, GetString(left) != GetString(right));
 
 				default:
 					throw new ParserException(opToken, "This operator is invalid for types: " + leftType + ", " + rightType + ".");
@@ -239,6 +242,16 @@ namespace Crayon.ParseTree
 		private double GetFloat(Expression expr)
 		{
 			return ((FloatConstant)expr).Value;
+		}
+
+		private string GetFloatAsString(Expression expr)
+		{
+			string value = ((FloatConstant)expr).Value.ToString();
+			if (!value.Contains('.'))
+			{
+				value += ".0";
+			}
+			return value;
 		}
 
 		private string GetString(Expression expr)
