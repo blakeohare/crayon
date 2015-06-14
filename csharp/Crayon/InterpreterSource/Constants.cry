@@ -112,6 +112,10 @@ enum NativeObjectSubType {
 
 const MAX_TYPE = Types.NATIVE_OBJECT + 1;
 
+enum AsyncMessageType {
+	HTTP_RESPONSE = %%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
+}
+
 const INTEGER_POSITIVE_CACHE = 1000;
 const INTEGER_NEGATIVE_CACHE = 100;
 

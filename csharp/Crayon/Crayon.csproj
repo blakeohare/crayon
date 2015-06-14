@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AnnotatedType.cs" />
     <Compile Include="AnnotationParser.cs" />
+    <Compile Include="AsyncMessageType.cs" />
     <Compile Include="BinaryOps.cs" />
     <Compile Include="BuildFile.cs" />
     <Compile Include="ByteBuffer.cs" />

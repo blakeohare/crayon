@@ -52,6 +52,12 @@ namespace Crayon.Translator.CSharp
 			};
 			this.ApplyPlatformSpecificReplacements(replacements);
 
+			// TODO: figure out if I had a good reason not to put all the enums in the replacmenet lookup.
+			foreach (AsyncMessageType messageType in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
+			{
+				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
+			}
+
 			HashSet<string> systemLibraries = new HashSet<string>(new string[] {
 				"System",
 				"System.Core",

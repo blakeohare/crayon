@@ -95,6 +95,10 @@ namespace Crayon
 			{
 				replacements.Add("PRIMITIVE_METHOD_" + primitiveMethod.ToString(), "" + (int)primitiveMethod);
 			}
+			foreach (AsyncMessageType messageType in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
+			{
+				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
+			}
 
 			replacements.Add("PLATFORM_IS_ASYNC", this.platform.IsAsync ? "true" : "false");
 			replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");

@@ -3096,11 +3096,43 @@ function yieldControl(@type('StackFrame') stack) {
 
 // Work nuggets are only performed if the ProgramData.initializationComplete field is set to true
 
+// TODO: move the image sheet work nuggest stuff into the generic thread safe message pump system.
+// change $_async_message_queue_pump() to take in a boolean indicating whether it should fetch pre or post frame work nuggets.
+
 function performWorkNuggetPreFrame() {
 	imageSheetPerformWorkNuggetPreFrame();
 }
 
 function performWorkNuggetPostFrame() {
+	
 	imageSheetPerformWorkNuggetPostFrame();
-	$_async_message_queue_pump();
+
+	/*
+		This array contains multiple messages in one flat array.
+		The first item in the array is an integer indicating the number of total messages.
+		Each message type has a set number of values. The first value is always the AsyncMessageType enum value.
+	*/
+	@type('Array<object>') messages = $_async_message_queue_pump();
+
+	if (messages != null) {
+		@type('int') index = 1;
+		@type('int') messageCount = $_cast('int', $_array_get(messages, 0));
+		for (@type('int') i = 0; i < messageCount; i += 1) {
+			@type('int') messageType = $_cast('int', $_array_get(messages, index));
+			switch (messageType) {
+				case AsyncMessageType.HTTP_RESPONSE:
+					handleHttpResponse(
+						$_cast('HttpRequest', $_array_get(messages, index + 1)), // request object
+						$_cast('int', $_array_get(messages, index + 2)), // status code
+						$_cast('string', $_array_get(messages, index + 3)), // status
+						$_cast('string', $_array_get(messages, index + 4)), // content
+						$_cast('Dictionary<string, Array<string>>', $_array_get(messages, index + 5))); // headers
+					index += 6;
+					break;
+				default:
+					// this should not happen.
+					break;
+			}
+		}
+	}
 }

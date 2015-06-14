@@ -271,7 +271,13 @@ namespace %%%PROJECT_ID%%%
 				// Request is not necessarily executed in the main UI thread in all exported C# platforms, and so 
 				// BackgroundWorker's RunWorkerCompleted event may not get fired. This is why this AsyncMessageQueue
 				// thingamajigger is used instead.
-				AsyncMessageQueue.HandlHttpRequest(httpRequest, statusCode, status, responseBody, null);
+				AsyncMessageQueue.PushMessage(
+					%%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
+					httpRequest,
+					statusCode,
+					status,
+					responseBody,
+					null);
 			};
 			bgRequest.RunWorkerAsync();
 		}
