@@ -393,4 +393,13 @@ final class TranslationHelper {
         Path p = Paths.get(path);
         return dirOnly ? Files.isDirectory(p) : Files.exists(p);
     }
+
+    public static void parseFloatOrReturnNull(double[] outParam, String rawValue) {
+        try {
+            outParam[1] = Double.parseDouble(rawValue);
+            outParam[0] = 1;
+        } catch (NumberFormatException nfe) {
+            outParam[0] = -1;
+        }
+    }
 }

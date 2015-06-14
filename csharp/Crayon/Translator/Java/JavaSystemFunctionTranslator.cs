@@ -710,7 +710,11 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
 		{
-			output.Add("TranslationHelper.parseFloat()");
+			output.Add("TranslationHelper.parseFloatOrReturnNull(");
+			this.Translator.TranslateExpression(output, outParam);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
 		}
 
 		protected override void TranslateParseInt(List<string> output, Expression rawString)
