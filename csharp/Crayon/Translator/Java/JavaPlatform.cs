@@ -207,6 +207,14 @@ namespace Crayon.Translator.Java
 				}
 			}
 
+			output["build.xml"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = Util.MassReplacements(
+					Util.ReadFileInternally("Translator/Java/Project/BuildXml.txt"),
+					replacements)
+			};
+
 			return output;
 		}
 
