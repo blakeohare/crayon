@@ -183,6 +183,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("<head>");
 			output.Add("<meta charset=\"utf-8\">");
 			output.Add("<title>Crayon JS output</title>");
+			output.Add("<style type=\"text/css\"> body { background-color:#000; text-align:center; }</style>");
 			output.Add("<script type=\"text/javascript\" src=\"code.js\"></script>");
 			output.Add("<script type=\"text/javascript\" src=\"resources.js\"></script>");
 			output.Add("</head>");
