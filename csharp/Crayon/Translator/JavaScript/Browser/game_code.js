@@ -607,6 +607,40 @@ R.IO.writeFile = function(path, content) {
 	return 4;
 };
 
+R.makeHttpRequest = function(requestObj, method, url, body, headers) {
+	var requestSender = null;
+	if (window.ActiveXObject) {
+		requestSender = new ActiveXObject("Microsoft.XMLHTTP");
+	} else if (window.XMLHttpRequest) {
+		requestSender = new XMLHttpRequest({mozSystem: true});
+	}
+
+	if (requestSender != null) {
+		requestSender.open(method, url, true);
+		requestSender.onreadystatechange = function() {
+			if (requestSender.readyState == 4) {
+				var code = requestSender.status;
+				var status = requestSender.statusText;
+				var content = requestSender.responseText;
+				v_handleHttpResponse(requestObj, code, status, content, {});
+			}
+		};
+
+		if (body != null) {
+			requestSender.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			requestSender.setRequestHeader("Content-Length", body.length);
+			requestSender.setRequestHeader("Connection", "close");
+			requestSender.send(body);
+		} else {
+			requestSender.send(null);
+		}
+	}
+};
+
+R.pumpAsyncMessageQueue = function() {
+	return null;
+};
+
 window.addEventListener('keydown', function(e) {
 	if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 		e.preventDefault();
