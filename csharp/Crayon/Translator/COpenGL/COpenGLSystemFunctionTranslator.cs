@@ -8,6 +8,11 @@ namespace Crayon.Translator.COpenGL
 {
 	class COpenGLSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
+		protected override void TranslateAppDataRoot(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			throw new NotImplementedException();
@@ -294,6 +299,11 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
 			throw new NotImplementedException();
 		}

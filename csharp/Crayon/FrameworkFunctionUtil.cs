@@ -220,6 +220,26 @@ namespace Crayon
 				case FrameworkFunction.TYPEOF:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
+				case FrameworkFunction.USER_DATA_DIRECTORY_LISTING:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.USER_DATA_FILE_READ_TEXT:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.USER_DATA_FILE_WRITE_TEXT:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
+					break;
+				case FrameworkFunction.USER_DATA_IS_PATH_DIRECTORY:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.USER_DATA_PATH_EXISTS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
 				default: 
 					throw new NotImplementedException("Implement arg check for " + frameworkFunction);
 			}

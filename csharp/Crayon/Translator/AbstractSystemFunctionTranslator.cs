@@ -24,6 +24,7 @@ namespace Crayon.Translator
 			string name = functionCall.Name.Substring(1);
 			switch (name)
 			{
+				case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
 				case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
 				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
@@ -82,6 +83,7 @@ namespace Crayon.Translator
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
+				case "_io_create_directory": VerifyCount(functionCall, 1); TranslateIoCreateDirectory(output, args[0]); break;
 				case "_io_current_directory": VerifyCount(functionCall, 0); TranslateIoCurrentDirectory(output); break;
 				case "_io_does_path_exist": VerifyCount(functionCall, 3); TranslateIoDoesPathExist(output, args[0], args[1], args[2]); break;
 				case "_io_file_read_text": VerifyCount(functionCall, 1); TranslateIoFileReadText(output, args[0]); break;
@@ -161,6 +163,7 @@ namespace Crayon.Translator
 			}
 		}
 
+		protected abstract void TranslateAppDataRoot(List<string> output);
 		protected abstract void TranslateAsyncMessageQueuePump(List<string> output);
 		protected abstract void TranslateArcCos(List<string> output, Expression value);
 		protected abstract void TranslateArcSin(List<string> output, Expression value);
@@ -219,6 +222,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
 		protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
 		protected abstract void TranslateInt(List<string> output, Expression value);
+		protected abstract void TranslateIoCreateDirectory(List<string> output, Expression path);
 		protected abstract void TranslateIoCurrentDirectory(List<string> output);
 		protected abstract void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck);
 		protected abstract void TranslateIoFileReadText(List<string> output, Expression path);

@@ -60,6 +60,7 @@
     <Compile Include="ExpressionParser.cs" />
     <Compile Include="FileOutput.cs" />
     <Compile Include="FrameworkFunctionUtil.cs" />
+    <Compile Include="IOErrors.cs" />
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="ParserException.cs" />

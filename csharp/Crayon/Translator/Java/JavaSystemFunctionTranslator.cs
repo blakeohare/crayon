@@ -10,6 +10,11 @@ namespace Crayon.Translator.Java
 	{
 		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
 
+		protected override void TranslateAppDataRoot(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			output.Add("throw new RuntimeException(\"TODO: implement this?\")");
@@ -494,6 +499,11 @@ namespace Crayon.Translator.Java
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)

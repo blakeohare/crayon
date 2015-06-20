@@ -10,6 +10,11 @@ namespace Crayon.Translator.JavaScript
 			: base()
 		{ }
 
+		protected override void TranslateAppDataRoot(List<string> output)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			output.Add("R.pumpAsyncMessageQueue()");
@@ -486,6 +491,11 @@ namespace Crayon.Translator.JavaScript
 			output.Add("Math.floor(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)

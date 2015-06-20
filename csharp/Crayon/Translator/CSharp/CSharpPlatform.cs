@@ -57,6 +57,10 @@ namespace Crayon.Translator.CSharp
 			{
 				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
 			}
+			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
+			{
+				replacements.Add("IO_ERROR_" + errorType.ToString(), "" + (int)errorType);
+			}
 
 			HashSet<string> systemLibraries = new HashSet<string>(new string[] {
 				"System",

@@ -99,6 +99,10 @@ namespace Crayon
 			{
 				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
 			}
+			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
+			{
+				replacements.Add("IO_ERROR_" + errorType.ToString(), "" + (int)errorType);
+			}
 
 			replacements.Add("PLATFORM_IS_ASYNC", this.platform.IsAsync ? "true" : "false");
 			replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");

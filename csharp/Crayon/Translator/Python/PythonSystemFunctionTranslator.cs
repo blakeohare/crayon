@@ -10,6 +10,11 @@ namespace Crayon.Translator.Python
 			: base()
 		{ }
 
+		protected override void TranslateAppDataRoot(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			output.Add("_pump_async_message_queue()");
@@ -497,6 +502,11 @@ namespace Crayon.Translator.Python
 			output.Add("int(");
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
+		}
+
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)

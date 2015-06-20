@@ -10,11 +10,25 @@ namespace %%%PROJECT_ID%%%
 
 		public static ProgramData ProgramData { get; set; }
 
-		public static readonly bool IsWindows = 
+		public static readonly bool IsWindows =
 			Environment.OSVersion.Platform == PlatformID.Win32NT ||
 			Environment.OSVersion.Platform == PlatformID.Win32S ||
 			Environment.OSVersion.Platform == PlatformID.Win32Windows ||
 			Environment.OSVersion.Platform == PlatformID.WinCE;
+
+		private static string appDataRoot = null;
+		public static string AppDataRoot
+		{
+			get
+			{
+				if (appDataRoot == null)
+				{
+					// TODO: test with Mono
+					appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "%%%PROJECT_ID%%%");
+				}
+				return appDataRoot;
+			}
+		}
 
 		public static void ShuffleInPlace(List<Value> list)
 		{
@@ -64,7 +78,7 @@ namespace %%%PROJECT_ID%%%
 			}
 			return output;
 		}
-		
+
 		private static readonly string[] SPLIT_SEP = new string[1];
 
 		public static string[] StringSplit(string value, string sep)
@@ -139,7 +153,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			throw new Exception(message);
 		}
-		
+
 		public static void SortPrimitiveValueList(List<Value> valueList, bool isString)
 		{
 			Value[] orderedList;
@@ -247,10 +261,10 @@ namespace %%%PROJECT_ID%%%
 				System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
 				request.Method = method;
 				request.UserAgent = userAgent;
-				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse) request.GetResponse();
+				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
 				int statusCode = (int)response.StatusCode;
 				string status = statusCode + " " + response.StatusDescription;
-				
+
 				byte[] buffer = new byte[1000];
 				System.IO.Stream stream = response.GetResponseStream();
 				List<char> responseBodyBuilder = new List<char>();
@@ -259,7 +273,7 @@ namespace %%%PROJECT_ID%%%
 					int bytesRead = stream.Read(buffer, 0, buffer.Length);
 					if (bytesRead > 0)
 					{
-						responseBodyBuilder.AddRange(buffer.Take<byte>(bytesRead).Select<byte, char>(b => (char) b));
+						responseBodyBuilder.AddRange(buffer.Take<byte>(bytesRead).Select<byte, char>(b => (char)b));
 					}
 					else
 					{
@@ -294,6 +308,19 @@ namespace %%%PROJECT_ID%%%
 			{
 				outParam[0] = -1;
 			}
+		}
+
+		public static int CreateDirectory(string path)
+		{
+			try
+			{
+				System.IO.Directory.CreateDirectory(path);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
 		}
 	}
 }

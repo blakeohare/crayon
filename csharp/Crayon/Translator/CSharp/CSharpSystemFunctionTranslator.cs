@@ -10,6 +10,11 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
+		protected override void TranslateAppDataRoot(List<string> output)
+		{
+			output.Add("TranslationHelper.AppDataRoot");
+		}
+
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			output.Add("AsyncMessageQueue.PumpMessages()");
@@ -323,6 +328,13 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
+		{
+			output.Add("TranslationHelper.CreateDirectory(");
+			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
