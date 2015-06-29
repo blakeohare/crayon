@@ -261,26 +261,23 @@ namespace %%%PROJECT_ID%%%
 				System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
 				request.Method = method;
 				request.UserAgent = userAgent;
+				if (body != null)
+				{
+					request.ContentLength = body.Length;
+				}
+
+				System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
+				streamWriter.Write(body);
+				streamWriter.Flush();
+				streamWriter.Close();
+
 				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
 				int statusCode = (int)response.StatusCode;
 				string status = statusCode + " " + response.StatusDescription;
 
-				byte[] buffer = new byte[1000];
-				System.IO.Stream stream = response.GetResponseStream();
-				List<char> responseBodyBuilder = new List<char>();
-				while (true)
-				{
-					int bytesRead = stream.Read(buffer, 0, buffer.Length);
-					if (bytesRead > 0)
-					{
-						responseBodyBuilder.AddRange(buffer.Take<byte>(bytesRead).Select<byte, char>(b => (char)b));
-					}
-					else
-					{
-						break;
-					}
-				}
-				string responseBody = new String(responseBodyBuilder.ToArray());
+				System.IO.StreamReader streamReader = new System.IO.StreamReader(response.GetResponseStream());
+				string responseBody = streamReader.ReadToEnd();
+				streamReader.Close();
 
 				// Request is not necessarily executed in the main UI thread in all exported C# platforms, and so 
 				// BackgroundWorker's RunWorkerCompleted event may not get fired. This is why this AsyncMessageQueue
