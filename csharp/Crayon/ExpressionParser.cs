@@ -100,7 +100,7 @@ namespace Crayon
 		{
 			Expression expr = ParseAddition(tokens);
 			string next = tokens.PeekValue();
-			if (next == "<" || next == ">" || next == "<=" || next == ">=")
+			if (next == "<<" || next == ">>")
 			{
 				Token opToken = tokens.Pop();
 				Expression rightExpr = ParseBitShift(tokens);

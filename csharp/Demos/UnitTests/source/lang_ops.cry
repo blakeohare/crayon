@@ -26,6 +26,8 @@ function lang_ops() {
 	four_f = 4.0;
 	neg_one = -1;
 	neg_one_f = -1.0;
+	neg_four = -4;
+	neg_four_f = -4.0;
 	
 	$print('lang_ops - basic arithmetic');
 	
@@ -52,4 +54,22 @@ function lang_ops() {
 	
 	$assert((4.0 ** -1) + '' == '0.25', 'lang_ops - exponent');
 	$assert(four_f ** neg_one_f + '' == '0.25', 'lang_ops - exponent');
+	
+	$assert((3 & 2) + '' == '2', 'lang_ops - bitwise and');
+	$assert((three & two) + '' == '2', 'lang_ops - bitwise and');
+	
+	$assert((4 | 1) + '' == '5', 'lang_ops - bitwise or');
+	$assert((four | one) + '' == '5', 'lang_ops - bitwise or');
+	
+	$assert((3 ^ 1) + '' == '2', 'lang_ops - bitwise xor');
+	$assert((three ^ one) + '' == '2', 'lang_ops - bitwise xor');
+	
+	$assert((3 << 3) + '' == '24', 'lang_ops - bitshift left');
+	$assert((three << three) + '' == '24', 'lang_ops - bitshift left');
+	
+	$assert((4 >> 1) + '' == '2', 'lang_ops - bitshift right');
+	$assert((four >> one) + '' == '2', 'lang_ops - bitshift right');
+	
+	$assert(((-4) >> 1) + '' == '-2', 'lang_ops - bitshift_right (negative)');
+	$assert((neg_four >> one) + '' == '-2', 'lang_ops - bitshift_right (negative)');
 }

@@ -100,14 +100,21 @@ namespace Crayon.ParseTree
 				case "int & int": return MakeInt(tk, GetInt(left) & GetInt(right));
 				case "int | int": return MakeInt(tk, GetInt(left) | GetInt(right));
 				case "int ^ int": return MakeInt(tk, GetInt(left) ^ GetInt(right));
-				case "int << int": return MakeInt(tk, GetInt(left) << GetInt(right));
-				case "int >> int": return MakeInt(tk, GetInt(left) >> GetInt(right));
 				case "int <= int": return MakeBool(tk, GetInt(left) <= GetInt(right));
 				case "int >= int": return MakeBool(tk, GetInt(left) >= GetInt(right));
 				case "int < int": return MakeBool(tk, GetInt(left) < GetInt(right));
 				case "int > int": return MakeBool(tk, GetInt(left) > GetInt(right));
 				case "int == int": return MakeBool(tk, GetInt(left) == GetInt(right));
 				case "int != int": return MakeBool(tk, GetInt(left) != GetInt(right));
+
+				case "int << int":
+					rightInt = GetInt(right);
+					if (rightInt < 0) throw new ParserException(tk, "Cannot bit shift by a negative number.");
+					return MakeInt(tk, GetInt(left) << rightInt);
+				case "int >> int":
+					rightInt = GetInt(right);
+					if (rightInt < 0) throw new ParserException(tk, "Cannot bit shift by a negative number.");
+					return MakeInt(tk, GetInt(left) >> rightInt);
 
 				case "int + float": return MakeFloat(tk, GetInt(left) + GetFloat(right));
 				case "int - float": return MakeFloat(tk, GetInt(left) - GetFloat(right));

@@ -504,6 +504,35 @@ function @omitReturn @type('string') interpret(
 							if ($_cast('double', right) == 0) return killExecution(stack, "Division by 0"); 
 							value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
 
+						// int & int
+						case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_AND) * MAX_TYPE + Types.INTEGER:
+							$_comment('int & int');
+							value = buildInteger($_cast('int', left) & $_cast('int', right)); break;
+
+						// int | int
+						case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_OR) * MAX_TYPE + Types.INTEGER:
+							$_comment('int & int');
+							value = buildInteger($_cast('int', left) | $_cast('int', right)); break;
+
+						// int ^ int
+						case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_XOR) * MAX_TYPE + Types.INTEGER:
+							$_comment('int & int');
+							value = buildInteger($_cast('int', left) ^ $_cast('int', right)); break;
+
+						// int << int
+						case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE + Types.INTEGER:
+							$_comment('int << int');
+							int1 = $_cast('int', right);
+							if (int1 < 0) return killExecution(stack, "Cannot bit shift by a negative number.");
+							value = buildInteger($_cast('int', left) << int1); break;
+
+						// int >> int
+						case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE + Types.INTEGER:
+							$_comment('int >> int');
+							int1 = $_cast('int', right);
+							if (int1 < 0) return killExecution(stack, "Cannot bit shift by a negative number.");
+							value = buildInteger($_cast('int', left) >> int1); break;
+
 						// int < int
 						case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 							$_comment('int < int');
