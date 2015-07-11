@@ -201,6 +201,7 @@
     <EmbeddedResource Include="Translator\COpenGL\Project\Footer.c" />
     <EmbeddedResource Include="Translator\CSharp\Project\AsyncMessageQueue.txt" />
     <EmbeddedResource Include="Translator\Java\Project\BuildXml.txt" />
+    <Content Include="Translator\JavaScript\Browser\fakedisk.js" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
   </ItemGroup>
