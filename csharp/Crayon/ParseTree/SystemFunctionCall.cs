@@ -18,6 +18,13 @@
 			{
 				return null;
 			}
+
+			if (this.Name == "$_is_javascript")
+			{
+				bool isJavaScript = parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.JavaScript.JavaScriptPlatform));
+				return new BooleanConstant(this.FirstToken, isJavaScript);
+			}
+
 			// args have already been resolved.
 			return this;
 		}

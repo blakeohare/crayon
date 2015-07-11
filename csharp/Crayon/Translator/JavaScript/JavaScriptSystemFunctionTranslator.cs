@@ -495,7 +495,9 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("R.IO.createDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)

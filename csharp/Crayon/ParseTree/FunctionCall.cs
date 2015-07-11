@@ -32,8 +32,7 @@ namespace Crayon.ParseTree
 				if (varName.StartsWith("$"))
 				{
 					SystemFunctionCall sfc = new SystemFunctionCall(this.Root.FirstToken, this.Args);
-					sfc = (SystemFunctionCall)sfc.Resolve(parser);
-					return sfc;
+					return sfc.Resolve(parser);
 				}
 			}
 
