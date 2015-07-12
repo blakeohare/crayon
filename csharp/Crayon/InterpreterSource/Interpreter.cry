@@ -236,7 +236,7 @@ function @omitReturn @type('string') interpret(
 						$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
 					}
 				} else {
-					return killExecution(stack, getTypeFromId(type) + " type does not support indexing");
+					return killExecution(stack, getTypeFromId(type) + " type does not support assigning to an index.");
 				}
 
 				if (bool1) {
@@ -2460,6 +2460,9 @@ function @omitReturn @type('string') interpret(
 							valueStack, 
 							new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 					} else {
+						if (type == Types.NULL) {
+							return killExecution(stack, "Null value cannot have fields.");
+						}
 						return killExecution(
 							stack, 
 							getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
