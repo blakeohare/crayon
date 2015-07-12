@@ -220,6 +220,14 @@ namespace Crayon
 				case FrameworkFunction.TYPEOF:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
+				case FrameworkFunction.USER_DATA_DELETE_DIRECTORY:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING BOOLEAN");
+					break;
+				case FrameworkFunction.USER_DATA_DELETE_FILE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
 				case FrameworkFunction.USER_DATA_DIRECTORY_LISTING:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");

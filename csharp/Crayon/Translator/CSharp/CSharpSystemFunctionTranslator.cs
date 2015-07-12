@@ -343,6 +343,22 @@ namespace Crayon.Translator.CSharp
 			output.Add("System.IO.Directory.GetCurrentDirectory()");
 		}
 
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			output.Add("TranslationHelper.DeleteDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			output.Add("TranslationHelper.DeleteFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
 		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
 		{
 			output.Add("TranslationHelper.DoesPathExist(");

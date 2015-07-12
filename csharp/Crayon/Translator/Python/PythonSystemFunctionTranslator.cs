@@ -514,6 +514,16 @@ namespace Crayon.Translator.Python
 			output.Add("io_helper_current_directory()");
 		}
 
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
 		{
 			output.Add("io_helper_check_path(");
