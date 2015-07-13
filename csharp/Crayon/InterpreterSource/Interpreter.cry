@@ -1994,6 +1994,39 @@ function @omitReturn @type('string') interpret(
 						}
 						break;
 
+					case %%%FF_USER_DATA_MAKE_DIRECTORY%%%:
+						$_comment('$user_data_make_directory');
+						arg1 = $_stack_pop(valueStack); // path
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$user_data_make_directory requires 1 string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						if (!$_io_does_path_exist($_app_data_root(), true, true)) {
+							int1 = $_io_create_directory($_app_data_root());
+							if (int1 != IOErrors.NONE) {
+								return killExecution(stack, "Could not create user data folder: " + ioErrorToString(int1));
+							}
+						}
+						int1 = ioPathFixer(
+							string1, // path
+							stringOutParam,
+							true, // valid char check
+							true, // is user data
+							false, // require full path to exist
+							true, // require parent path to exist
+							true, // ensure parent path exists
+							true); // enforce case sensitivity
+						
+						string1 = $_array_get(stringOutParam, 0);
+						if ($_is_windows_program()) {
+							string1 = $_string_replace(string1, '/', '\\');
+						}
+						int1 = $_io_create_directory(string1);
+						if (int1 != IOErrors.NONE) {
+							return killExecution(stack, "$user_data_make_directory: " + ioErrorToString(int1));
+						}
+						break;
+
 					case %%%FF_USER_DATA_PATH_EXISTS%%%:
 						$_comment('$user_data_path_exists');
 						arg1 = $_stack_pop(valueStack); // path
@@ -2461,7 +2494,7 @@ function @omitReturn @type('string') interpret(
 							new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 					} else {
 						if (type == Types.NULL) {
-							return killExecution(stack, "Null value cannot have fields.");
+							return killExecution(stack, "Null reference error.");
 						}
 						return killExecution(
 							stack, 
