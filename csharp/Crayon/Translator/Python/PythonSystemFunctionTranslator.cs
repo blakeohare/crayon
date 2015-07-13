@@ -554,7 +554,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
 		{
-			output.Add("os.listdir('.')");
+			output.Add("os.listdir(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)

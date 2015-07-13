@@ -206,7 +206,6 @@ def _pygame_end_of_frame():
 		pygame.display.flip()
 		_global_vars['real_screen'].fill((0, 0, 0))
 	_global_vars['clock'].tick(_global_vars['fps'])
-	
 
 def _pygame_flip_image(img, flipx, flipy):
 	return pygame.transform.flip(img, flipx, flipy)
@@ -312,6 +311,26 @@ def io_helper_read_text(path):
 def io_helper_current_directory():
 	return os.path.dirname(os.path.realpath(__file__))
 
+def io_create_directory(d):
+	try:
+		os.mkdir(d)
+		return %%%IO_ERROR_NONE%%%
+	except OSError:
+		return %%%IO_ERROR_UNKNOWN_ERROR%%%
+
+def io_delete_directory(d, recurse):
+	if recurse:
+		try:
+			shutil.rmtree(d)
+		except:
+			return %%%IO_ERROR_UNKNOWN_ERROR%%%
+	else:
+		try:
+			os.rmdir(d)
+		except:
+			return %%%IO_ERROR_UNKNOWN_ERROR%%%
+	return %%%IO_ERROR_NONE%%%
+
 def _pump_async_message_queue():
 	pass
 
@@ -329,5 +348,16 @@ def _http_request_impl(request_object, method, url, body, headers):
 	# TODO: headers
 
 	request.send()
+
+_app_data_root = [None]
+def get_app_data_root():
+	adr = _app_data_root[0]
+	if adr == None:
+		if os.name == 'nt':
+			adr = os.environ['APPDATA'].replace('\\', '/') + '/' + '%%%PROJECT_ID%%%'
+		else:
+			adr = '~/.' + '%%%PROJECT_ID%%%'
+		_app_data_root[0] = adr
+	return adr
 
 program_data = [None]

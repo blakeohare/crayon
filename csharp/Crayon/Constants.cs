@@ -12,7 +12,7 @@ namespace Crayon
 			{ "TYPE_NATIVE_OBJECT_IMAGE", 2 },
 		};
 
-		public static string DoReplacements(string text)
+		public static string DoReplacements(string text, Dictionary<string, string> replacements)
 		{
 			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
 			{
@@ -22,6 +22,16 @@ namespace Crayon
 			foreach (string key in values.Keys)
 			{
 				text = text.Replace("%%%" + key + "%%%", values[key].ToString());
+			}
+
+			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
+			{
+				text = text.Replace("%%%IO_ERROR_" + errorType.ToString() + "%%%", "" + (int)errorType);
+			}
+
+			foreach (string key in replacements.Keys)
+			{
+				text = text.Replace("%%%" + key + "%%%", replacements[key]);
 			}
 			return text;
 		}
