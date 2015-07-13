@@ -52,6 +52,37 @@ function @type('int') ioListDir(
 	return IOErrors.NONE;
 }
 
+function @type('int') ioDeleteFile(
+	@type('string') path,
+	@type('bool') strictPath,
+	@type('bool') isUserData,
+	@type('Array<string>') stringOutParam
+) {
+	@type('int') status = ioPathFixer(path, stringOutParam, true, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(stringOutParam, 0);
+	// path could either be a directory or file.
+	@type('bool') directoryExists = $_io_does_path_exist(path, true, true);
+	if (directoryExists) {
+		return IOErrors.CANNOT_DELETE_DIRECTORY;
+	}
+
+	return $_io_delete_file(path, isUserData);
+}
+
+function @type('int') ioDeleteDirectory(
+	@type('string') path,
+	@type('bool') strictPath,
+	@type('bool') isUserData,
+	@type('bool') recursive,
+	@type('Array<string>') stringOutParam
+) {
+	@type('int') status = ioPathFixer(path, stringOutParam, true, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(stringOutParam, 0);
+	return $_io_delete_directory(path, recursive);
+}
+
 function @type('bool') ioCheckPathExistence(@type('string') path, @type('bool') strictPath, @type('bool') isUserData, @type('bool') dirOnly, @type('Array<string>') stringOutParam) {
 	@type('int') status = ioPathFixer(path, stringOutParam, strictPath, isUserData, true, true, false, true);
 	if (status != IOErrors.NONE) return false;
@@ -150,18 +181,12 @@ function @type('int') ioPathFixer(
 		isRoot = $_list_length(pathBuilder) == 0;
 	}
 
-	// Get the proper file system separator.
-	@type('string') sep = '/';
-	if (isWindows) {
-		sep = '\\';
-	}
-
 	// Get the finalized strings for the full path and the parent path (the latter can be null if full path is root)
-	@type('string') fullPath = $_list_join(pathBuilder, sep);
+	@type('string') fullPath = $_list_join(pathBuilder, '/');
 	@type('string') parentPath = null;
 	if (!isRoot) {
 		$_list_pop(pathBuilder);
-		parentPath = $_list_join(pathBuilder, sep);
+		parentPath = $_list_join(pathBuilder, '/');
 	}
 
 	// If the path was intended to be a user data path (.e.g something in %appdata% or ~/.appname folders) then
@@ -196,7 +221,7 @@ function @type('int') ioPathFixer(
 	}
 
 	if (ensureParentPathExists) {
-		@type('int') code = ioEnsurePathPartsExist(pathBuilder, isWindows, sep);
+		@type('int') code = ioEnsurePathPartsExist(pathBuilder, isWindows);
 		if (code != IOErrors.NONE) {
 			return code;
 		}
@@ -209,7 +234,9 @@ function @type('int') ioPathFixer(
 
 // Ensures that the given folder path exists. Path is always absolute.
 // Returns an IOErrors value.
-function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, @type('bool') isWindows, @type('string') sep) {
+function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, @type('bool') isWindows) {
+	@type('string') sep = '/';
+	if (isWindows) sep = '\\';
 	@type('string') path = $_list_join(pathBuilder, sep);
 	if ($_io_does_path_exist(path, true, false)) {
 		return IOErrors.NONE;
@@ -224,7 +251,7 @@ function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, 
 	}
 	@type('string') current = $_list_get(pathBuilder, $_list_length(pathBuilder) - 1);
 	$_list_pop(pathBuilder);
-	@type('int') recurseCode = ioEnsurePathPartsExist(pathBuilder, isWindows, sep);
+	@type('int') recurseCode = ioEnsurePathPartsExist(pathBuilder, isWindows);
 	$_list_push(pathBuilder, current);
 	if (recurseCode != 0) return recurseCode;
 	return $_io_create_directory(path); // return status

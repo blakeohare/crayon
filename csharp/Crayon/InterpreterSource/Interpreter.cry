@@ -236,7 +236,7 @@ function @omitReturn @type('string') interpret(
 						$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
 					}
 				} else {
-					return killExecution(stack, getTypeFromId(type) + " type does not support indexing");
+					return killExecution(stack, getTypeFromId(type) + " type does not support assigning to an index.");
 				}
 
 				if (bool1) {
@@ -1893,6 +1893,40 @@ function @omitReturn @type('string') interpret(
 						output = buildCommonString(string1);
 						break;
 
+					case %%%FF_USER_DATA_DELETE_DIRECTORY%%%:
+						$_comment('$user_data_delete_directory');
+						arg2 = $_stack_pop(valueStack); // recursive delete (folder is non-empty)
+						arg1 = $_stack_pop(valueStack); // path
+						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.BOOLEAN) {
+							return killExecution(stack, "$user_data_delete_directory requires a string and a bool argument.");
+						}
+
+						int1 = ioDeleteDirectory(
+							$_cast('string', Value$arg1.internalValue),
+							true, // strict path
+							true,
+							$_cast('bool', Value$arg2.internalValue),
+							stringOutParam);
+
+						if (int1 != IOErrors.NONE) {
+							return killExecution(stack, "$user_data_delete_directory: " + ioErrorToString(int1));
+						}
+
+						break;
+
+					case %%%FF_USER_DATA_DELETE_FILE%%%:
+						$_comment('$user_data_delete_file');
+						arg1 = $_stack_pop(valueStack); // path
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$user_data_delete_file requires a string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						int1 = ioDeleteFile(string1, true, true, stringOutParam);
+						if (int1 != IOErrors.NONE) {
+							return killExecution(stack, "$user_data_delete_file: " + ioErrorToString(int1));
+						}
+						break;
+
 					case %%%FF_USER_DATA_DIRECTORY_LISTING%%%:
 						$_comment('$user_data_directory_listing');
 						arg1 = $_stack_pop(valueStack);
@@ -1900,9 +1934,19 @@ function @omitReturn @type('string') interpret(
 							return killExecution(stack, "$user_data_directory_listing requires a string argument.");
 						}
 						list1 = $_new_list('Value');
-						int1 = ioListDir($_cast('string', Value$arg1.internalValue), false, true, list1, stringOutParam);
+						string1 = $_cast('string', Value$arg1.internalValue);
+						int1 = ioListDir(string1, false, true, list1, stringOutParam);
 						if (int1 != IOErrors.NONE) {
-							return killExecution(stack, "$user_data_directory_listing: " + ioErrorToString(int1));
+							bool1 = true;
+							if (int1 == IOErrors.DOES_NOT_EXIST) {
+								int1 = ioPathFixer(string1, stringOutParam, false, true, false, true, false, true);
+								if ($_string_equals($_app_data_root(), $_array_get(stringOutParam, 0))) {
+									bool1 = false;
+								}
+							}
+							if (bool1) {
+								return killExecution(stack, "$user_data_directory_listing: " + ioErrorToString(int1));
+							}
 						}
 						output = buildListByWrappingInput(list1);
 						break;
@@ -1947,6 +1991,39 @@ function @omitReturn @type('string') interpret(
 							output = VALUE_TRUE;
 						} else {
 							output = VALUE_FALSE;
+						}
+						break;
+
+					case %%%FF_USER_DATA_MAKE_DIRECTORY%%%:
+						$_comment('$user_data_make_directory');
+						arg1 = $_stack_pop(valueStack); // path
+						if (Value$arg1.type != Types.STRING) {
+							return killExecution(stack, "$user_data_make_directory requires 1 string argument.");
+						}
+						string1 = $_cast('string', Value$arg1.internalValue);
+						if (!$_io_does_path_exist($_app_data_root(), true, true)) {
+							int1 = $_io_create_directory($_app_data_root());
+							if (int1 != IOErrors.NONE) {
+								return killExecution(stack, "Could not create user data folder: " + ioErrorToString(int1));
+							}
+						}
+						int1 = ioPathFixer(
+							string1, // path
+							stringOutParam,
+							true, // valid char check
+							true, // is user data
+							false, // require full path to exist
+							true, // require parent path to exist
+							true, // ensure parent path exists
+							true); // enforce case sensitivity
+						
+						string1 = $_array_get(stringOutParam, 0);
+						if ($_is_windows_program()) {
+							string1 = $_string_replace(string1, '/', '\\');
+						}
+						int1 = $_io_create_directory(string1);
+						if (int1 != IOErrors.NONE) {
+							return killExecution(stack, "$user_data_make_directory: " + ioErrorToString(int1));
 						}
 						break;
 
@@ -2416,6 +2493,9 @@ function @omitReturn @type('string') interpret(
 							valueStack, 
 							new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 					} else {
+						if (type == Types.NULL) {
+							return killExecution(stack, "Null reference error.");
+						}
 						return killExecution(
 							stack, 
 							getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
@@ -3225,7 +3305,7 @@ function performWorkNuggetPostFrame() {
 					index += 6;
 					break;
 				default:
-					// this should not happen.
+					$_assert("bad message type");
 					break;
 			}
 		}

@@ -188,12 +188,12 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateGamepadGetAxisCount(List<string> output, Expression device)
+		protected override void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex)
+		protected override void TranslateGamepadGetAxisCount(List<string> output, Expression device)
 		{
 			throw new NotImplementedException();
 		}
@@ -309,6 +309,11 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}
@@ -674,6 +679,11 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
 		{
 			throw new NotImplementedException();
 		}

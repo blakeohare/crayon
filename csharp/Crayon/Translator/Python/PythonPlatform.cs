@@ -33,10 +33,14 @@ namespace Crayon.Translator.Python
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> concatenatedCode = new List<string>();
+			Dictionary<string, string> replacements = new Dictionary<string, string>()
+			{
+				{ "PROJECT_ID", projectId },
+			};
 
-			concatenatedCode.Add(this.GetPyGameCode("Header.py"));
+			concatenatedCode.Add(this.GetPyGameCode("Header.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
-			concatenatedCode.Add(this.GetPyGameCode("AsyncHttpFetcher.py"));
+			concatenatedCode.Add(this.GetPyGameCode("AsyncHttpFetcher.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateGlobals(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
@@ -44,7 +48,7 @@ namespace Crayon.Translator.Python
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateFunctions(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
-			concatenatedCode.Add(this.GetPyGameCode("Footer.py"));
+			concatenatedCode.Add(this.GetPyGameCode("Footer.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
 
 			output["game.py"] = new FileOutput()
@@ -65,10 +69,10 @@ namespace Crayon.Translator.Python
 			return output;
 		}
 
-		private string GetPyGameCode(string file)
+		private string GetPyGameCode(string file, Dictionary<string, string> replacements)
 		{
 			string pygameCode = Util.ReadFileInternally("Translator/Python/PyGame/" + file);
-			pygameCode = Constants.DoReplacements(pygameCode);
+			pygameCode = Constants.DoReplacements(pygameCode, replacements);
 			return pygameCode;
 		}
 	}

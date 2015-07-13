@@ -25,6 +25,7 @@ namespace %%%PROJECT_ID%%%
 				{
 					// TODO: test with Mono
 					appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "%%%PROJECT_ID%%%");
+					appDataRoot = appDataRoot.Replace('\\', '/');
 				}
 				return appDataRoot;
 			}
@@ -317,6 +318,35 @@ namespace %%%PROJECT_ID%%%
 			catch (UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
 			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
 			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+
+		public static int DeleteDirectory(string path, bool recursive)
+		{
+			try
+			{
+				System.IO.Directory.Delete(path, recursive);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (System.ArgumentException) { return %%%IO_ERROR_INVALID_PATH%%%; } // invalid path characters
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+
+		public static int DeleteFile(string path)
+		{
+			try
+			{
+				System.IO.File.Delete(path);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (System.ArgumentException) { return %%%IO_ERROR_INVALID_PATH%%%; } // invalid path characters
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.FileNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
 			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
 		}
 	}

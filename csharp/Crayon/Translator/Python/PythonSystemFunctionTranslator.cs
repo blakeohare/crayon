@@ -12,7 +12,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("get_app_data_root()");
 		}
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
@@ -506,12 +506,30 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("io_create_directory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)
 		{
 			output.Add("io_helper_current_directory()");
+		}
+
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			output.Add("io_delete_directory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			output.Add("io_delete_file(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
@@ -534,7 +552,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
 		{
-			output.Add("os.listdir('.')");
+			output.Add("os.listdir(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)

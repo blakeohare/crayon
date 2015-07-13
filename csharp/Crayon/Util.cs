@@ -160,7 +160,7 @@ namespace Crayon
 		{
 			if (text.Contains("%%%"))
 			{
-				text = Constants.DoReplacements(text);
+				text = Constants.DoReplacements(text, replacements);
 
 				foreach (string key in replacements.Keys)
 				{
