@@ -1,6 +1,24 @@
 ﻿<project default="compile">
+    <target name="clean">
+        <delete dir="bin"/>
+        <delete dir="jar"/>
+    </target>
+
     <target name="compile">
         <mkdir dir="bin"/>
         <javac srcdir="src" destdir="bin"/>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="jar"/>
+        <jar destfile="jar/%%%PROJECT_ID%%%.jar" basedir="bin/%%%PROJECT_ID%%%">
+            <manifest>
+                <attribute name="Main-Class" value="%%%PACKAGE%%%.Start"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="jar/%%%PROJECT_ID%%%.jar" fork="true"/>
     </target>
 </project>

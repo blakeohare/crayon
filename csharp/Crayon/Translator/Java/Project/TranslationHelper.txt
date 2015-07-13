@@ -402,4 +402,24 @@ final class TranslationHelper {
             outParam[0] = -1;
         }
     }
+
+    public static int createDirectory(String path) {
+        throw new RuntimeException("TODO: implement createDirectory");
+    }
+
+    public static String getAppDataRoot() {
+        throw new RuntimeException("TODO: implement getAppDataRoot");
+    }
+
+    public static void makeHttpRequest() {
+        throw new RuntimeException("TODO: implement makeHttpRequest");
+    }
+
+    public static int ioDeleteDirectory(String path, boolean recursive) {
+        throw new RuntimeException("TODO: implement ioDeleteDirectory");
+    }
+
+    public static int ioDeleteFile(String path) {
+        throw new RuntimeException("TODO: implement ioDeleteFile");
+    }
 }
