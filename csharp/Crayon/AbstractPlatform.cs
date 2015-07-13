@@ -11,6 +11,7 @@ namespace Crayon
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
+		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public abstract bool IsAsync { get; }
 		public abstract string OutputFolderName { get; }
@@ -43,6 +44,7 @@ namespace Crayon
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
+			this.InterpreterCompiler = new InterpreterCompiler(this);
 		}
 
 		private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
@@ -122,6 +124,8 @@ namespace Crayon
 
 		public void Compile(BuildContext buildContext, string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
 		{
+			Parser.IsTranslateMode_STATIC_HACK = false;
+
 			this.VerifyProjectId(buildContext.ProjectID);
 
 			inputFolder = inputFolder.Replace('/', '\\');
@@ -157,11 +161,11 @@ namespace Crayon
 			string byteCode = ByteCodeEncoder.Encode(byteCodeBuffer);
 
 			this.Context.ByteCodeString = byteCode;
+			Parser.IsTranslateMode_STATIC_HACK = true;
+			Dictionary<string, Executable[]> executablesByFile = this.InterpreterCompiler.Compile();
+			Parser.IsTranslateMode_STATIC_HACK = false;
 
-			InterpreterCompiler interpreterCompiler = new InterpreterCompiler(this);
-			Dictionary<string, Executable[]> executablesByFile = interpreterCompiler.Compile();
-
-			StructDefinition[] structs = interpreterCompiler.GetStructDefinitions();
+			StructDefinition[] structs = this.InterpreterCompiler.GetStructDefinitions();
 
 			HashSet<string> filesToCopyOverTemporary = new HashSet<string>(filesToCopyOver);
 			foreach (string fileInSpriteSheet in filesAccountedForInSpriteSheet)

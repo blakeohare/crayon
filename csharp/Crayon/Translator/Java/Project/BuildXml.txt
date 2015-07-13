@@ -1,4 +1,4 @@
-﻿<project name="%%%PROJECT_ID%%%" basedir="." default="compile">
+﻿<project name="%%%PROJECT_ID%%%" basedir="." default="main">
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="bin"/>
     <property name="classes.dir" value="${build.dir}/classes"/>

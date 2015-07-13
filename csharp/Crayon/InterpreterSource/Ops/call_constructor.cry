@@ -1,0 +1,38 @@
+﻿
+classId = $_array_get($_array_get(specialCache, StackFrame$stack.pc), 0);
+ProgramData$p.instanceCounter += 1;
+value = new Value(Types.INSTANCE, new ObjectInstance(classId, $_new_dictionary('int', 'Value'), ProgramData$p.instanceCounter));
+classInfo = $_array_get(classTable, classId);
+if (!ClassInfo$classInfo.initialized) {
+	return killExecution(stack, "This class has not been defined yet.");
+}
+pc = ClassInfo$classInfo.constructorPc;
+argCount = $_array_get(row, 0);
+if (pc != 0) {
+	returnValueUsed = $_array_get(row, 2) == 1;
+	if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+		funcArgs = $_new_array('Value', argCount);
+		while (argCount > 0) {
+			argCount -= 1;
+			$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+		}
+	} else {
+		funcArgs = $_new_list('Value');
+		while (argCount > 0) {
+			$_list_push(funcArgs, $_stack_pop(valueStack));
+			argCount -= 1;
+		}
+		if ($_array_get(row, 0) > 1) {
+			$_list_reverse_in_place(funcArgs);
+		}
+	}
+	if (returnValueUsed) {
+		$_stack_push(valueStack, value);
+	}
+
+	valueStack = $_new_stack('Value');
+	locals = $_new_dictionary('int', 'Value');
+	stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
+} else {
+	$_stack_push(valueStack, value);
+}

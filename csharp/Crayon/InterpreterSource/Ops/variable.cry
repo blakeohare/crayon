@@ -1,0 +1,11 @@
+﻿
+nameId = $_array_get(row, 0);
+if ($_dictionary_contains(locals, nameId)) {
+	value = $_dictionary_get_guaranteed(locals, nameId);
+} else if ($_dictionary_contains(globals, nameId)) {
+	value = $_dictionary_get_guaranteed(globals, nameId);
+} else {
+	return killExecution(stack, "Variable not defined: " + $_array_get(identifiers, nameId));
+}
+
+$_stack_push(valueStack, value);

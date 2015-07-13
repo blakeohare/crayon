@@ -1,0 +1,11 @@
+﻿
+bool1 = StackFrame$stack.returnValueUsed; // use return value
+stack = StackFrame$stack.previous;
+if (stack == null) {
+	return '';
+}
+locals = StackFrame$stack.locals;
+valueStack = StackFrame$stack.valueStack;
+if (bool1) {
+	$_stack_push(valueStack, VALUE_NULL);
+}

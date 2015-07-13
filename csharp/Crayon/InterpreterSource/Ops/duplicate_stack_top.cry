@@ -1,0 +1,8 @@
+﻿
+if ($_array_get(row, 0) == 1) {
+	$_stack_push(valueStack, $_stack_get(valueStack, $_stack_length(valueStack) - 1));
+} else {
+	for (i = 0; i < $_array_get(row, 0); i += 1) {
+		$_stack_push(valueStack, $_stack_get(valueStack, $_stack_length(valueStack) - $_array_get(row, 0)));
+	}
+}

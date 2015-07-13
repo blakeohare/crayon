@@ -99,5 +99,15 @@ namespace Crayon
 				return false;
 			}
 		}
+
+		// For inline imports
+		public void InsertTokens(TokenStream tokens)
+		{
+			Token[] otherTokens = tokens.tokens;
+			List<Token> theseTokens = new List<Token>(this.tokens);
+			theseTokens.InsertRange(this.index, otherTokens);
+			this.tokens = theseTokens.ToArray();
+			this.length = this.tokens.Length;
+		}
 	}
 }

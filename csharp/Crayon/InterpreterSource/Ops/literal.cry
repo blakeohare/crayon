@@ -1,0 +1,2 @@
+﻿
+$_stack_push(valueStack, $_array_get(literalTable, $_array_get(row, 0)));

@@ -1,0 +1,8 @@
+﻿
+value = $_stack_pop(valueStack);
+if (Value$value.type != Types.BOOLEAN) return killExecution(stack, "Boolean expected.");
+if ($_cast('bool', Value$value.internalValue)) {
+	$_stack_push(valueStack, VALUE_FALSE);
+} else {
+	$_stack_push(valueStack, VALUE_TRUE);
+}

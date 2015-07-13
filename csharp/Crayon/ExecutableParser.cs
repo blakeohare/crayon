@@ -10,7 +10,7 @@ namespace Crayon
 
 		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>("Game".Split(' '));
 
-		public static Executable Parse(TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot)
+		public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot)
 		{
 			string value = tokens.PeekValue();
 
@@ -37,14 +37,17 @@ namespace Crayon
 
 				if (value == "import")
 				{
-					if (!isRoot)
+					Token importToken = tokens.PopExpected("import");
+
+					bool inline = Parser.IsTranslateMode_STATIC_HACK && tokens.PopIfPresent("inline");
+					if (!isRoot && !inline)
 					{
 						throw new ParserException(tokens.Peek(), "File imports can only be made from the root of a file and cannot be nested inside functions/loops/etc.");
 					}
 
-					Token importToken = tokens.PopExpected("import");
 					Token fileToken = tokens.Pop();
 					char importPathFirstChar = fileToken.Value[0];
+					
 					if (importPathFirstChar != '\'' && importPathFirstChar != '"')
 					{
 						if (SYSTEM_LIBRARIES.Contains(fileToken.Value))
@@ -58,7 +61,25 @@ namespace Crayon
 						}
 					}
 					tokens.PopExpected(";");
-					return new ImportStatement(importToken, fileToken, false);
+
+					if (inline)
+					{
+						string inlineImportFileName = fileToken.Value.Substring(1, fileToken.Value.Length - 2);
+						string inlineImportFileContents = Util.ReadFileInternally(inlineImportFileName);
+						// TODO: Anti-pattern alert. Clean this up.
+						if (inlineImportFileContents.Contains("%%%"))
+						{
+							Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
+							inlineImportFileContents = Util.MassReplacements(inlineImportFileContents, replacements);
+						}
+						TokenStream inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
+						tokens.InsertTokens(inlineTokens);
+						return ExecutableParser.Parse(parser, tokens, simpleOnly, semicolonPresent, isRoot); // start exectuable parser anew.
+					}
+					else
+					{
+						return new ImportStatement(importToken, fileToken, false);
+					}
 				}
 
 				if (value == "enum")
@@ -73,20 +94,20 @@ namespace Crayon
 
 				switch (value)
 				{
-					case "function": return ParseFunction(tokens);
-					case "class": return ParseClassDefinition(tokens);
+					case "function": return ParseFunction(parser, tokens);
+					case "class": return ParseClassDefinition(parser, tokens);
 					case "enum": return ParseEnumDefinition(tokens);
-					case "for": return ParseFor(tokens);
-					case "while": return ParseWhile(tokens);
-					case "do": return ParseDoWhile(tokens);
-					case "switch": return ParseSwitch(tokens);
-					case "if": return ParseIf(tokens);
-					case "try": return ParseTry(tokens);
+					case "for": return ParseFor(parser, tokens);
+					case "while": return ParseWhile(parser, tokens);
+					case "do": return ParseDoWhile(parser, tokens);
+					case "switch": return ParseSwitch(parser, tokens);
+					case "if": return ParseIf(parser, tokens);
+					case "try": return ParseTry(parser, tokens);
 					case "return": return ParseReturn(tokens);
 					case "break": return ParseBreak(tokens);
 					case "continue": return ParseContinue(tokens);
 					case "const": return ParseConst(tokens);
-					case "constructor": return ParseConstructor(tokens);
+					case "constructor": return ParseConstructor(parser, tokens);
 					default: break;
 				}
 			}
@@ -109,7 +130,7 @@ namespace Crayon
 			return new ExpressionAsExecutable(expr);
 		}
 
-		private static Executable ParseConstructor(TokenStream tokens)
+		private static Executable ParseConstructor(Parser parser, TokenStream tokens)
 		{
 			Token constructorToken = tokens.PopExpected("constructor");
 			tokens.PopExpected("(");
@@ -151,7 +172,7 @@ namespace Crayon
 				}
 			}
 
-			IList<Executable> code = Parser.ParseBlock(tokens, true);
+			IList<Executable> code = Parser.ParseBlock(parser, tokens, true);
 
 			return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken);
 		}
@@ -199,7 +220,7 @@ namespace Crayon
 			return new EnumDefinition(enumToken, nameToken, items, values);
 		}
 
-		private static Executable ParseClassDefinition(TokenStream tokens)
+		private static Executable ParseClassDefinition(Parser parser, TokenStream tokens)
 		{
 			Token classToken = tokens.PopExpected("class");
 			Token classNameToken = tokens.Pop();
@@ -223,7 +244,7 @@ namespace Crayon
 			{
 				if (tokens.IsNext("function"))
 				{
-					methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(tokens));
+					methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(parser, tokens));
 				}
 				else if (tokens.IsNext("constructor"))
 				{
@@ -232,7 +253,7 @@ namespace Crayon
 						throw new ParserException(tokens.Pop(), "Multiple constructors are not allowed. Use optional arguments.");
 					}
 
-					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(tokens);
+					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(parser, tokens);
 				}
 				else
 				{
@@ -272,7 +293,7 @@ namespace Crayon
 			return new StructDefinition(structToken, structNameToken, fieldTokens, typeAnnotations);
 		}
 
-		private static Executable ParseFunction(TokenStream tokens)
+		private static Executable ParseFunction(Parser parser, TokenStream tokens)
 		{
 			Token functionToken = tokens.PopExpected("function");
 			List<Annotation> functionAnnotations = new List<Annotation>();
@@ -305,12 +326,12 @@ namespace Crayon
 				defaultValues.Add(defaultValue);
 			}
 
-			IList<Executable> code = Parser.ParseBlock(tokens, true);
+			IList<Executable> code = Parser.ParseBlock(parser, tokens, true);
 
 			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code, functionAnnotations);
 		}
 
-		private static Executable ParseFor(TokenStream tokens)
+		private static Executable ParseFor(Parser parser, TokenStream tokens)
 		{
 			Token forToken = tokens.PopExpected("for");
 			tokens.PopExpected("(");
@@ -325,7 +346,7 @@ namespace Crayon
 				tokens.PopExpected(":");
 				Expression iterationExpression = ExpressionParser.Parse(tokens);
 				tokens.PopExpected(")");
-				IList<Executable> body = Parser.ParseBlock(tokens, false);
+				IList<Executable> body = Parser.ParseBlock(parser, tokens, false);
 
 				return new ForEachLoop(forToken, iteratorToken, iterationExpression, body);
 			}
@@ -335,7 +356,7 @@ namespace Crayon
 				while (!tokens.PopIfPresent(";"))
 				{
 					if (init.Count > 0) tokens.PopExpected(",");
-					init.Add(Parse(tokens, true, false, false));
+					init.Add(Parse(parser, tokens, true, false, false));
 				}
 				Expression condition = null;
 				if (!tokens.PopIfPresent(";"))
@@ -347,29 +368,29 @@ namespace Crayon
 				while (!tokens.PopIfPresent(")"))
 				{
 					if (step.Count > 0) tokens.PopExpected(",");
-					step.Add(Parse(tokens, true, false, false));
+					step.Add(Parse(parser, tokens, true, false, false));
 				}
 
-				IList<Executable> body = Parser.ParseBlock(tokens, false);
+				IList<Executable> body = Parser.ParseBlock(parser, tokens, false);
 
 				return new ForLoop(forToken, init, condition, step, body);
 			}
 		}
 
-		private static Executable ParseWhile(TokenStream tokens)
+		private static Executable ParseWhile(Parser parser, TokenStream tokens)
 		{
 			Token whileToken = tokens.PopExpected("while");
 			tokens.PopExpected("(");
 			Expression condition = ExpressionParser.Parse(tokens);
 			tokens.PopExpected(")");
-			IList<Executable> body = Parser.ParseBlock(tokens, false);
+			IList<Executable> body = Parser.ParseBlock(parser, tokens, false);
 			return new WhileLoop(whileToken, condition, body);
 		}
 
-		private static Executable ParseDoWhile(TokenStream tokens)
+		private static Executable ParseDoWhile(Parser parser, TokenStream tokens)
 		{
 			Token doToken = tokens.PopExpected("do");
-			IList<Executable> body = Parser.ParseBlock(tokens, true);
+			IList<Executable> body = Parser.ParseBlock(parser, tokens, true);
 			tokens.PopExpected("(");
 			Expression condition = ExpressionParser.Parse(tokens);
 			tokens.PopExpected(")");
@@ -377,7 +398,7 @@ namespace Crayon
 			return new DoWhileLoop(doToken, body, condition);
 		}
 
-		private static Executable ParseSwitch(TokenStream tokens)
+		private static Executable ParseSwitch(Parser parser, TokenStream tokens)
 		{
 			Token switchToken = tokens.PopExpected("switch");
 
@@ -442,24 +463,24 @@ namespace Crayon
 						code.Add(new List<Executable>());
 						state = 'O';
 					}
-					code[code.Count - 1].Add(ExecutableParser.Parse(tokens, false, true, false));
+					code[code.Count - 1].Add(ExecutableParser.Parse(parser, tokens, false, true, false));
 				}
 			}
 
 			return new SwitchStatement(switchToken, condition, firstTokens, cases, code, explicitMax, explicitMaxToken);
 		}
 
-		private static Executable ParseIf(TokenStream tokens)
+		private static Executable ParseIf(Parser parser, TokenStream tokens)
 		{
 			Token ifToken = tokens.PopExpected("if");
 			tokens.PopExpected("(");
 			Expression condition = ExpressionParser.Parse(tokens);
 			tokens.PopExpected(")");
-			IList<Executable> body = Parser.ParseBlock(tokens, false);
+			IList<Executable> body = Parser.ParseBlock(parser, tokens, false);
 			IList<Executable> elseBody;
 			if (tokens.PopIfPresent("else"))
 			{
-				elseBody = Parser.ParseBlock(tokens, false);
+				elseBody = Parser.ParseBlock(parser, tokens, false);
 			}
 			else
 			{
@@ -468,7 +489,7 @@ namespace Crayon
 			return new IfStatement(ifToken, condition, body, elseBody);
 		}
 
-		private static Executable ParseTry(TokenStream tokens)
+		private static Executable ParseTry(Parser parser, TokenStream tokens)
 		{
 			Token tryToken = tokens.PopExpected("try");
 			throw new NotImplementedException();
