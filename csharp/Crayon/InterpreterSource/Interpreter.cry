@@ -3305,7 +3305,7 @@ function performWorkNuggetPostFrame() {
 					index += 6;
 					break;
 				default:
-					// this should not happen.
+					$_assert("bad message type");
 					break;
 			}
 		}
