@@ -1,6 +1,12 @@
 ﻿
 // This is mostly replicated in CALL_FUNCTION_ON_VARIABLE. Be sure to keep changes in sync.
-// TODO: just use another strategically-placed inline import
+
+// TODO: remove CALL_FUNCTION_ON_VARIABLE
+// Instead, add a VARIABLE_FOR_INVOCATION op that does what variable does but caches the value
+// into a local Value instance rather than allocating a new instance and pushing it on the stack.
+// Repeat this same behavior for DEREF_DOT by adding an extra bit to the DEREF_DOT args.
+// This will eliminate a ton of garbage churn and code duplication.
+
 func = $_stack_pop(valueStack);
 argCount = $_array_get(row, 0);
 returnValueUsed = $_array_get(row, 1) == 1;

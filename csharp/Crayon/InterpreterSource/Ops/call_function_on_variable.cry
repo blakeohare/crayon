@@ -1,5 +1,5 @@
 ﻿
-// This is mostly replicated above. Be sure to keep changes in sync.
+// This is mostly replicated in CALL_FUNCTION. Be sure to keep changes in sync.
 argCount = $_array_get(row, 1);
 returnValueUsed = $_array_get(row, 2) == 1;
 if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
