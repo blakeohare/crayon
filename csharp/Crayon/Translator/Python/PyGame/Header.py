@@ -113,7 +113,6 @@ def _pygame_initialize_screen(width, height, pixel_dimensions):
 	_global_vars['scaled_mode'] = scaled_mode
 
 _PDE = pygame.draw.ellipse
-_PDF = pygame.display.flip
 _PDL = pygame.draw.line
 _PDR = pygame.draw.rect
 _PR = pygame.Rect
@@ -201,8 +200,13 @@ def _pygame_end_of_frame():
 		vs = _global_vars['virtual_screen']
 		rs = _global_vars['real_screen']
 		pygame.transform.scale(vs, rs.get_size(), rs)
-	pygame.display.flip()
+		pygame.display.flip()
+		vs.fill((0, 0, 0))
+	else:
+		pygame.display.flip()
+		_global_vars['real_screen'].fill((0, 0, 0))
 	_global_vars['clock'].tick(_global_vars['fps'])
+	
 
 def _pygame_flip_image(img, flipx, flipy):
 	return pygame.transform.flip(img, flipx, flipy)
