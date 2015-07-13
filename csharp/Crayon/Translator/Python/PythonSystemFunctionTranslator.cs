@@ -529,8 +529,6 @@ namespace Crayon.Translator.Python
 		{
 			output.Add("io_delete_file(");
 			this.Translator.TranslateExpression(output, path);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, isUserData);
 			output.Add(")");
 		}
 

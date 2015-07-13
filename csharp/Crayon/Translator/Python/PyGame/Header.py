@@ -4,6 +4,7 @@ import math
 import time
 import random
 import sys
+import shutil
 
 _global_vars = {
 	'width': 400,
@@ -316,6 +317,13 @@ def io_create_directory(d):
 		os.mkdir(d)
 		return %%%IO_ERROR_NONE%%%
 	except OSError:
+		return %%%IO_ERROR_UNKNOWN_ERROR%%%
+
+def io_delete_file(path):
+	try:
+		os.remove(path)
+		return %%%IO_ERROR_NONE%%%
+	except:
 		return %%%IO_ERROR_UNKNOWN_ERROR%%%
 
 def io_delete_directory(d, recurse):

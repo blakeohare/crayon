@@ -1898,7 +1898,7 @@ function @omitReturn @type('string') interpret(
 						arg2 = $_stack_pop(valueStack); // recursive delete (folder is non-empty)
 						arg1 = $_stack_pop(valueStack); // path
 						if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.BOOLEAN) {
-							return killExecution(stack, "$user_data_delete_file requires a string and a bool argument.");
+							return killExecution(stack, "$user_data_delete_directory requires a string and a bool argument.");
 						}
 
 						int1 = ioDeleteDirectory(
