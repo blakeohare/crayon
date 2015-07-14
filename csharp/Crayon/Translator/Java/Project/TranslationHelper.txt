@@ -390,7 +390,12 @@ final class TranslationHelper {
     }
 
     public static boolean checkPathExistence(String path, boolean dirOnly, boolean checkCase) {
-        Path p = Paths.get(path);
+        Path p;
+        try {
+            p = Paths.get(path);
+        } catch (java.nio.file.InvalidPathException ipe) {
+            return false;
+        }
         return dirOnly ? Files.isDirectory(p) : Files.exists(p);
     }
 
@@ -407,8 +412,18 @@ final class TranslationHelper {
         throw new RuntimeException("TODO: implement createDirectory");
     }
 
+    private static String appDataRoot = null;
     public static String getAppDataRoot() {
-        throw new RuntimeException("TODO: implement getAppDataRoot");
+        if (appDataRoot == null) {
+            if (isWindows()) {
+                String appData = System.getenv().get("APPDATA");
+                if (appData == null) throw new IllegalStateException("%APPDATA% not set on Windows. How strange is that.");
+                appDataRoot = appData.replace('\\', '/') + "/%%%PROJECT_ID%%%";
+            } else {
+                appDataRoot = "~/.%%%PROJECT_ID%%%";
+            }
+        }
+        return appDataRoot;
     }
 
     public static void makeHttpRequest() {
