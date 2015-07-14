@@ -17,7 +17,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
-			output.Add("new Object[0]");
+			output.Add("AsyncMessageQueue.pumpMessages()");
 		}
 
 		protected override void TranslateArcCos(List<string> output, Expression value)

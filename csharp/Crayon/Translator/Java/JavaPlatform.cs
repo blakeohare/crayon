@@ -45,6 +45,7 @@ namespace Crayon.Translator.Java
 			};
 
 			foreach (string basicFile in new string[] { 
+				"AsyncMessageQueue",
 				"TranslationHelper",
 				"Start",
 				"GameWindow",
