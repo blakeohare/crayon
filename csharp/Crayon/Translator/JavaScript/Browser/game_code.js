@@ -602,12 +602,12 @@ R.IO.get_disk = function(isUserData) {
 					R.IO.userData = createFakeDisk(localStorage);
 				}
 			} catch (e) {}
-			if (R.IO.userData == null) R.IO.userData = createFakeDisk({});
+			if (R.IO.userData == null) R.IO.userData = createFakeDisk(null);
 		}
 		return R.IO.userData;
 	} else {
 		if (R.IO.virtualDisk === null) {
-			R.IO.virtualDisk = createFakeDisk({});
+			R.IO.virtualDisk = createFakeDisk(null);
 		}
 		return R.IO.virtualDisk;
 	}
@@ -616,16 +616,16 @@ R.IO.get_disk = function(isUserData) {
 R.IO.checkPath = function(path, isDir, isUserData) {
 	disk = R.IO.get_disk(isUserData);
 	if (isDir) {
-		disk.is_directory(path);
+		return disk.is_directory(path);
 	} else {
-		disk.path_exists(path);
+		return disk.path_exists(path);
 	}
 	return false;
 };
 
 R.IO.listFiles = function(path, isUserData) {
 	disk = R.IO.get_disk(isUserData);
-	return disk.listFiles(path);
+	return disk.list_dir(path);
 };
 
 R.IO.readFile = function(path, isUserData) {
@@ -633,8 +633,9 @@ R.IO.readFile = function(path, isUserData) {
 	return disk.read_file(path);
 };
 
-R.IO.writeFile = function(path, content) {
-	return 4;
+R.IO.writeFile = function(path, content, isUserData) {
+	disk = R.IO.get_disk(isUserData);
+	return disk.write_text(path, content);
 };
 
 R.makeHttpRequest = function(requestObj, method, url, body, headers) {

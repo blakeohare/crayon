@@ -552,12 +552,14 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			output.Add("R.IO.writeFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, content);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
 			output.Add(")");
 		}
 

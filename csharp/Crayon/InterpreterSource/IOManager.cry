@@ -31,7 +31,7 @@ function @type('int') ioWriteFileText(@type('string') path, @type('string') cont
 	@type('int') status = ioPathFixer(path, outParam, strictPath, isUserData, false, !isUserData, isUserData, true);
 	if (status != IOErrors.NONE) return status;
 	path = $_array_get(outParam, 0);
-	return $_io_file_write_text(path, content);
+	return $_io_file_write_text(path, content, isUserData);
 }
 
 function @type('int') ioListDir(
@@ -256,7 +256,11 @@ function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, 
 			return IOErrors.NONEXISTENT_DRIVE; 
 		}
 	} else if ($_list_length(pathBuilder) == 0) {
-		return IOErrors.IMPOSSIBLE_STATE; // linux root doesn't exist? what?
+		if ($_is_javascript()) {
+			return IOErrors.NONE;
+		} else {
+			return IOErrors.IMPOSSIBLE_STATE; // linux root doesn't exist? what?
+		}
 	}
 	@type('string') current = $_list_get(pathBuilder, $_list_length(pathBuilder) - 1);
 	$_list_pop(pathBuilder);

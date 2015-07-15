@@ -90,7 +90,7 @@ namespace Crayon.Translator
 				case "_io_does_path_exist": VerifyCount(functionCall, 4); TranslateIoDoesPathExist(output, args[0], args[1], args[2], args[3]); break;
 				case "_io_file_read_text": VerifyCount(functionCall, 2); TranslateIoFileReadText(output, args[0], args[1]); break;
 				case "_io_files_in_directory": VerifyCount(functionCall, 2); TranslateIoFilesInDirectory(output, args[0], args[1]); break;
-				case "_io_file_write_text": VerifyCount(functionCall, 2); TranslateIoFileWriteText(output, args[0], args[1]); break;
+				case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
 				case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
 				case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
 				case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
@@ -231,7 +231,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData);
 		protected abstract void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData);
 		protected abstract void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData);
-		protected abstract void TranslateIoFileWriteText(List<string> output, Expression path, Expression content);
+		protected abstract void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData);
 		protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
 		protected abstract void TranslateIsWindowsProgram(List<string> output);
 		protected abstract void TranslateListClear(List<string> output, Expression list);

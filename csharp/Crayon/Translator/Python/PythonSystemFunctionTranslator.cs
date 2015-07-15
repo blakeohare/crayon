@@ -557,7 +557,7 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			output.Add("io_helper_write_text(");
 			this.Translator.TranslateExpression(output, path);

@@ -333,7 +333,7 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}
