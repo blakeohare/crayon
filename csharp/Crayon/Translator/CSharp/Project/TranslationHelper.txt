@@ -213,7 +213,11 @@ namespace %%%PROJECT_ID%%%
 			files.AddRange(System.IO.Directory.GetFiles(path));
 			files.AddRange(System.IO.Directory.GetDirectories(path));
 			HashSet<string> output = new HashSet<string>(files);
-			return output.Select<string, string>(s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length)).OrderBy(s => s).ToArray();
+			return output
+				.Select<string, string>(
+					s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length))
+				.OrderBy(s => s)
+				.ToArray();
 		}
 
 		public static int WriteFile(string path, string contents)

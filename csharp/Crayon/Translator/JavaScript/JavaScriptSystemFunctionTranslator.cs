@@ -12,7 +12,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			throw new InvalidOperationException();
+			output.Add("'/'");
 		}
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
@@ -507,34 +507,48 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
 		{
-			throw new NotImplementedException();
+			output.Add("R.IO.deleteDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
 		{
-			throw new NotImplementedException();
+			output.Add("R.IO.deleteFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
 			output.Add("R.IO.checkPath(");
 			this.Translator.TranslateExpression(output, canonicalizedPath);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, directoriesOnly);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
 			output.Add("R.IO.readFile(");
 			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
 			output.Add("R.IO.listFiles(");
 			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
 			output.Add(")");
 		}
 

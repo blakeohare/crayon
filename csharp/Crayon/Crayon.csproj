@@ -251,7 +251,7 @@
     <EmbeddedResource Include="Translator\Java\Project\BuildXml.txt" />
     <EmbeddedResource Include="InterpreterSource\Ops\jump.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_this_step.cry" />
-    <Content Include="Translator\JavaScript\Browser\fakedisk.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
     <EmbeddedResource Include="Translator\Java\Project\AsyncMessageQueue.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />

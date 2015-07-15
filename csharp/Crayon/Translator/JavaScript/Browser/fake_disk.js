@@ -45,6 +45,9 @@ function createFakeDisk(dictionary) {
 	}
 
 	var canonicalize_path = function (path) {
+		if (path === null) {
+			window.alert("Pause me");
+		}
 		path = path.replace('\\', '/');
 		if (path == '/' || path.length == 0) return '/';
 		if (path[0] != '/') path = '/' + path;
@@ -106,7 +109,7 @@ function createFakeDisk(dictionary) {
 
 	fakeDisk.path_exists = function (path) {
 		var node = get_node(path);
-		return node != nulll;
+		return node != null;
 	};
 
 	fakeDisk.is_directory = function (path) {

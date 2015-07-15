@@ -181,8 +181,8 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 			'<div id="crayon_image_loader_queue"></div>' +
 			'<div id="crayon_image_store"></div>' +
 			'<div id="crayon_temp_image"></div>' +
-		'</div>' +
-		'<div style="font-family:&quot;Courier New&quot;; font-size:11px;" id="crayon_print_output"></div>';
+		'</div>';// +
+		//'<div style="font-family:&quot;Courier New&quot;; font-size:11px;" id="crayon_print_output"></div>';
 	var canvas = document.getElementById('crayon_screen');
 	R._global_vars['scaled_mode'] = scaledMode;
 	R._global_vars['real_canvas'] = canvas;
@@ -284,6 +284,7 @@ R.shiftLines = function () {
 };
 
 R.print = function (value) {
+	/*
 	if (R._global_vars.print_output == null) {
 		window.alert(value);
 	} else {
@@ -310,14 +311,15 @@ R.print = function (value) {
 				default: line.push(c); break;
 			}
 		}
-	
+
 		var lines = R._global_vars.print_lines;
 		var output = [];
 		for (i = 0; i < lines.length; ++i) {
 			output.push(lines[i].join(''));
 		}
 		R._global_vars.print_output.innerHTML = output.join('<br />');
-	}
+	}//*/
+	console.log(value);
 };
 
 R.is_valid_integer = function (value) {
@@ -439,8 +441,8 @@ R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
 		centerX - radiusX, centerY - radiusY,
 		centerX, centerY - radiusY);
 	context.fillStyle = R._toHex(r, g, b);
-	if (a != 255) {
-		context.globalAlpha = a / 255;
+	if (alpha != 255) {
+		context.globalAlpha = alpha / 255;
 		context.fill();
 		context.closePath();
 		context.globalAlpha = 1;
@@ -576,31 +578,59 @@ R.typeClassify = function(thing) {
 R.sortPrimitiveValuesList = function(list) {
 	var lookup = {};
 	var keys = [];
-	for (var i = 0; i < list.length; ++i) {
+	var i;
+	for (i = 0; i < list.length; ++i) {
 		var key = list[i][1];
 		lookup[key] = list[i];
 		keys.push(key);
 	}
 	keys.sort();
-	for (var i = 0; i < list.length; ++i) {
+	for (i = 0; i < list.length; ++i) {
 		list[i] = lookup[keys[i]];
 	}
 };
 
 R.IO = {};
 
-R.IO.virtualDisk = {};
+R.IO.virtualDisk = null;
+R.IO.userData = null;
+R.IO.get_disk = function(isUserData) {
+	if (isUserData) {
+		if (R.IO.userData === null) {
+			try {
+				if ('localStorage' in window && window['localStorage'] !== null) {
+					R.IO.userData = createFakeDisk(localStorage);
+				}
+			} catch (e) {}
+			if (R.IO.userData == null) R.IO.userData = createFakeDisk({});
+		}
+		return R.IO.userData;
+	} else {
+		if (R.IO.virtualDisk === null) {
+			R.IO.virtualDisk = createFakeDisk({});
+		}
+		return R.IO.virtualDisk;
+	}
+}
 
-R.IO.checkPath = function(path, isDir) {
+R.IO.checkPath = function(path, isDir, isUserData) {
+	disk = R.IO.get_disk(isUserData);
+	if (isDir) {
+		disk.is_directory(path);
+	} else {
+		disk.path_exists(path);
+	}
 	return false;
 };
 
-R.IO.listFiles = function(path) {
-	return [];
+R.IO.listFiles = function(path, isUserData) {
+	disk = R.IO.get_disk(isUserData);
+	return disk.listFiles(path);
 };
 
-R.IO.readFile = function(path) {
-	return null;
+R.IO.readFile = function(path, isUserData) {
+	disk = R.IO.get_disk(isUserData);
+	return disk.read_file(path);
 };
 
 R.IO.writeFile = function(path, content) {
