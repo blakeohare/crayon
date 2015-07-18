@@ -269,12 +269,11 @@ namespace %%%PROJECT_ID%%%
 				if (body != null)
 				{
 					request.ContentLength = body.Length;
+					System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
+					streamWriter.Write(body);
+					streamWriter.Flush();
+					streamWriter.Close();
 				}
-
-				System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
-				streamWriter.Write(body);
-				streamWriter.Flush();
-				streamWriter.Close();
 
 				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
 				int statusCode = (int)response.StatusCode;
