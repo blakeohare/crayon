@@ -25,7 +25,7 @@ def encode_url_value(value):
 	else:
 		return _urllib_parse.quote(value)
 
-def _send_impl(req_obj, method, url, headers, content):
+def _send_impl(crayon_obj, req_obj, method, url, headers, content):
 	if _is_old:
 		opener = _urllib2.build_opener(_urllib2.HTTPHandler)
 		if content == None:
@@ -49,9 +49,16 @@ def _send_impl(req_obj, method, url, headers, content):
 	response_message = output.msg
 	response_code = output.code
 	req_obj._set_result(response_code, response_message, content, headers)
+	_push_async_message_queue([%%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
+					crayon_obj,
+					response_code,
+					response_message,
+					content,
+					None]) # headers string-string dictionary
 
 class HttpAsyncRequest:
-	def __init__(self, url):
+	def __init__(self, crayon_obj, url):
+		self.crayon_obj = crayon_obj
 		bad_format = False
 		try:
 			if _is_old:
@@ -126,7 +133,7 @@ class HttpAsyncRequest:
 				headers.append((f_key, value))
 		
 		
-		thread = _threading.Thread(target = _send_impl, args = (self, self.method, url, headers, self.content))
+		thread = _threading.Thread(target = _send_impl, args = (self.crayon_obj, self, self.method, url, headers, self.content))
 		thread.daemon = True
 		thread.start()
 		
@@ -144,7 +151,7 @@ class HttpAsyncRequest:
 				self.response_headers_formatting[ckey] = key
 		finally:
 			self.mutex.release()
-	
+
 	def is_complete(self):
 		self.mutex.acquire()
 		try:
