@@ -638,7 +638,7 @@ R.IO.writeFile = function(path, content, isUserData) {
 	return disk.write_text(path, content);
 };
 
-R.makeHttpRequest = function(requestObj, method, url, body, headers) {
+R.makeHttpRequest = function(requestObj, method, url, body, userAgent, contentType, contentLength, headerNames, headerValues) {
 	var requestSender = null;
 	if (window.ActiveXObject) {
 		requestSender = new ActiveXObject("Microsoft.XMLHTTP");
@@ -656,11 +656,16 @@ R.makeHttpRequest = function(requestObj, method, url, body, headers) {
 				v_handleHttpResponse(requestObj, code, status, content, {});
 			}
 		};
+		
+		var headersSet = {};
+		for (var i = 0; i < headerNames.length; ++i) {
+			var canonicalName = headerNames[i].toUpperCase();
+			requestSender.setRequestHeader(headerNames[i], headerValues[i]);
+			headersSet[canonicalName] = true;
+		}
 
 		if (body != null) {
 			requestSender.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			requestSender.setRequestHeader("Content-Length", body.length);
-			requestSender.setRequestHeader("Connection", "close");
 			requestSender.send(body);
 		} else {
 			requestSender.send(null);

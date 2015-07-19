@@ -367,12 +367,15 @@ def _pump_async_message_queue():
 	finally:
 		_async_message_queue_mutex.release()
 
-def _http_request_impl(request_object, method, url, body, headers):
+def _http_request_impl(request_object, method, url, body, userAgent, contentType, contentLength, headerNames, headerValues):
 	request = HttpAsyncRequest(request_object, url)
 	request.set_method(method)
+	request.set_header('User-Agent', userAgent)
 	if body != None:
 		request.set_content(body)
-	# TODO: headers
+		request.set_header('Content-Type', contentType)
+	for i in range(len(headerNames)):
+		request.add_header(headerNames[i], headerValues[i])
 
 	request.send()
 

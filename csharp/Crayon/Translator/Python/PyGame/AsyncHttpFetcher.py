@@ -85,7 +85,6 @@ class HttpAsyncRequest:
 		self.header_formatting = {} # preserves the formatting of the header key
 		self.header_values = {} # canonical key of header with list of values of that header
 		self.content = None
-		self.set_header('User-Agent', 'Crayon/0.1.4, Have a nice day.')
 		self.done = False
 		self.response_code = -1
 		self.response_message = None
@@ -189,7 +188,6 @@ class HttpAsyncRequest:
 		else:
 			return output
 	
-	
 	def set_header(self, key, value):
 		self.header_formatting[key.lower()] = key
 		self.header_values[key.lower()] = [value]
@@ -200,7 +198,8 @@ class HttpAsyncRequest:
 		if existing_headers == None:
 			self.set_header(key, value)
 		else:
-			existing_headers.append(value)
+			self.header_values[key.lower()][0] += "\r\n" + key + ": " + value # I am a terrible person. So very terrible.
+			#existing_headers.append(value)
 	
 	def clear_header(self, key):
 		canonical_key = key.lower()

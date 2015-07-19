@@ -403,7 +403,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("1024");
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("R.makeHttpRequest(");
 			this.Translator.TranslateExpression(output, httpRequest);
@@ -414,7 +414,15 @@ namespace Crayon.Translator.JavaScript
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, body);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, headers);
+			this.Translator.TranslateExpression(output, userAgent);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentType);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentLength);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerNameList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerValueList);
 			output.Add(")");
 		}
 

@@ -419,7 +419,7 @@ namespace Crayon.Translator.Java
 			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("TranslationHelper.makeHttpRequest()");
 		}
