@@ -1,4 +1,4 @@
-﻿Crayon version 0.1.4 (Alpha)
+﻿Crayon version 0.1.5 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -27,20 +27,25 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
 NEW IN THIS RELEASE
 -------------------
-Changes since 0.1.3:
-* Fix bug where stack info sometimes doesn't show in crashes.
-* Fix bug where int % float and float % int weren't implemented in the op table.
-* Strings are now allowed as iterable collections for foreach loops. 
-* Fix error message wording that appears when you index into an unindexable type and it showed the type's enum value instead of the human-readable name.
-* Catch common string method errors at compile time instead of runtime. Such as string.join(list). 
-* Add string.indexOf(string) method.
-* Add list.clone() method.
-* Fix key bindings in all languages.
-* Fix bug where you could read from image sheets if you hadn't checked to see if it was loaded yet. This created cross-platform problems in JavaScript.
-* Fix egregious error where images didn't get populated into the image sheets correctly if they were above a certain size. 
-* Fix == operator on objects.
-* Key not found error message now shows the string value of the key.
-* Add simple File IO system functions for C#, Java, and Python. 
-* Introduce build file variables. 
-* Implement an image blit function that supports scaling and cropping. 
-* Fix typo in Python that was using "false" instead of "False" and causing an undeclared variable error.
+Changes since 0.1.4:
+
+Major features:
+* Added ability to make HTTP requests. See $http_request in documentation for details.
+* Implement some File IO. Including ability to write to the default user data folder:
+  - Windows: %APPDATA%\Project
+  - Linux/Mac: ~/.Project
+  - JavaScript: virtualized disk backed by localStorage
+* Added list and string slicing, using the Python syntax e.g. list[start:end], list[start:end:step].
+* $ord and $chr to convert to and from ASCII values and characters.
+* $parse_float has been added.
+* Added Ant build.xml file to Java output.
+* Added support for multiplying strings by integers.
+
+Improvements and Fixes:
+* Improved ellipse rendering
+* Fix bug so that ++ and -- can be used on indexed expressions.
+* Fix bug where continue statements in for loops would skip the increment/step code.
+* Change JavaScript output to use a black background instead of white.
+* Fix bug where bit operators were not working (& | ^ << and >>)
+* Added some basic unit testing.
+* Fixed various compiler bugs and quirks (see commit history for details)
