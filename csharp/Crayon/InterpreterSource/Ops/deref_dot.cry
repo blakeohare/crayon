@@ -1,0 +1,228 @@
+﻿
+root = $_stack_pop(valueStack);
+type = Value$root.type;
+nameId = $_array_get(row, 0);
+if (type == Types.INSTANCE) {
+	objInstance = $_cast('ObjectInstance', Value$root.internalValue);
+	dictIntValueLookup = $_cast('Dictionary<int, Value>', ObjectInstance$objInstance.fields);
+	if ($_dictionary_contains(dictIntValueLookup, nameId)) {
+		$_stack_push(valueStack, $_dictionary_get_guaranteed(dictIntValueLookup, nameId));
+	} else {
+		classId = ObjectInstance$objInstance.classId;
+		methodDefinitionLookup = $_array_get(classMethods, classId);
+		if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
+			methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
+			value = new Value(Types.METHOD,
+				new MethodInstance(
+					root,
+					MethodDefinition$methodDefinition.pc,
+					MethodDefinition$methodDefinition.maxArgs));
+			$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
+			$_stack_push(valueStack, value);
+		} else {
+			return killExecution(stack, "Field used before it was defined.");
+		}
+	}
+} else if (type == Types.NATIVE_OBJECT) {
+	/*
+		TODO:
+		This lookup system is terribly inefficient in its current form.
+		Create an enum that lists all fields for all native object types and assigns them a unique ID. 
+		(e.g. is_key = 42)
+		Whenever a .field occurs, put this ID# in the byte code row if it is present. Use 0 if it is not.
+		When the root happens to be a native object, multiply the field ID by the max native 
+		object type ID + 1 and add the native object type. Use this value in a massive switch statement
+		to instantly jump to any field of any type without checking both individually or sequentially
+		doing a string equals. This also will eliminate the LENGTH_ID hack.
+	*/
+
+	nativeObject = $_cast('NativeObjectWrapper', Value$root.internalValue);
+	int1 = NativeObjectWrapper$nativeObject.subType;
+	string1 = $_array_get(identifiers, nameId);
+	value = VALUE_NULL;
+	switch (int1) {
+		/*
+			vague type | specific type
+			-----------+---------------
+			key        | keydown
+			key        | keyup
+			mouse      | mousemove
+			mouse      | mouseleftdown
+			mouse      | mouseleftup
+			mouse      | mouserightdown
+			mouse      | mouserightup
+			quit       | quit-altf4
+			quit       | quit-closebutton
+			quit       | quit-context      // context switch on a mobile device, e.g. pressing home on a mobile device
+			quit       | quit-back         // back button on an android device
+		*/
+		case NativeObjectSubType.EVENT:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			// TODO: this list of fields is not yet complete.
+			if ($_string_equals("button", string1)) {
+				if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+					value = buildCommonString(GameEvent$gameEvent.arg);
+				} else {
+					return killExecution(stack, "Only mouse events have a button field.");
+				}
+			} else if ($_string_equals("down", string1)) {
+				if ($_string_equals("mouse", GameEvent$gameEvent.vagueType) ||
+					$_string_equals("key", GameEvent$gameEvent.vagueType)) {
+					if ($_string_equals("mousemove", GameEvent$gameEvent.specificType)) {
+						return killExecution(stack, "'mousemove' events do not have a 'down' field.");
+					} else {
+						if (GameEvent$gameEvent.down) {
+							value = VALUE_TRUE;
+						} else {
+							value = VALUE_FALSE;	
+						}
+					}
+				} else {
+					return killExecution(stack, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
+				}
+			} else if ($_string_equals("is_key", string1)) {
+				if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else if ($_string_equals("is_mouse", string1)) {
+				if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else if ($_string_equals("is_quit", string1)) {
+				if ($_string_equals("quit", GameEvent$gameEvent.vagueType)) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else if ($_string_equals("key", string1)) {
+				if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
+					value = buildCommonString(GameEvent$gameEvent.arg);
+				} else {
+					return killExecution(stack, "Only keyboard events have a key field.");
+				}
+			} else if ($_string_equals("type", string1)) {
+				value = buildCommonString(GameEvent$gameEvent.specificType);
+			} else if ($_string_equals("x", string1)) {
+				if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+					value = buildInteger(GameEvent$gameEvent.x);
+				} else {
+					return killExecution(stack, "Only mouse events have an x field.");
+				}
+			} else if ($_string_equals("y", string1)) {
+				if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+					value = buildInteger(GameEvent$gameEvent.y);
+				} else {
+					return killExecution(stack, "Only mouse events have a y field.");
+				}
+			} else {
+				return killExecution(stack, "Game Event does not have a field called '" + string1 + "'");
+			}
+			break;
+
+		case NativeObjectSubType.GAMEPAD_DEVICE:
+			gamepad1 = $_cast('GamepadDevice', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals('name', string1)) {
+				value = buildCommonString(GamepadDevice$gamepad1.name);
+			} else if ($_string_equals('enabled', string1)) {
+				if (GamepadDevice$gamepad1.enabled) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else if ($_string_equals('buttons', string1)) {
+				if (!GamepadDevice$gamepad1.enabled) {
+					return killExecution(stack, "Cannot access button states until gamepad is initialized.");
+				}
+				value = buildListByWrappingInput(gamepadBuildButtonActivityList(gamepad1));
+			} else if ($_string_equals('axes', string1)) {
+				if (!GamepadDevice$gamepad1.enabled) {
+					return killExecution(stack, "Cannot access axes states until gamepad is initialized.");
+				}
+				value = buildListByWrappingInput(gamepadBuildAxisActivityList(gamepad1));
+			} else {
+				return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+			}
+			break;
+
+		case NativeObjectSubType.HTTP_REQUEST:
+			httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
+			int1 = HttpRequest$httpRequest1.statusCode;
+			if ($_string_equals("completed", string1)) {
+				if (int1 == 0) {
+					value = VALUE_FALSE;
+				} else {
+					value = VALUE_TRUE;
+				}
+			} else if (int1 == 0) {
+				// TODO: may reconsider adding an HttpRequest native object field that gets set to true once .completed is called 
+				// and returns true so that there won't be any race conditions.
+				return killExecution(stack, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+			} else if ($_string_equals("content", string1)) {
+				string2 = HttpRequest$httpRequest1.body;
+				if (string2 == null) {
+					value = VALUE_NULL;
+				} else {
+					value = buildString(string2);
+				}
+			} else if ($_string_equals("code", string1)) {
+				value = buildInteger(int1);
+			}
+			break;
+
+		case NativeObjectSubType.IMAGE:
+			image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("width", string1)) {
+				value = buildInteger(Image$image1.width);
+			} else if ($_string_equals("height", string1)) {
+				value = buildInteger(Image$image1.height);
+			} else {
+				return killExecution(stack, "Image does not have a field called '" + string1 + "'");
+			}
+			break;
+
+		default:
+			return killExecution(stack, "Unrecognized field.");
+			break;
+	}
+	$_stack_push(valueStack, value);
+} else if (nameId == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
+	len = -1;
+	if (type == Types.LIST) {
+		// might need to revisit this if other platforms aren't as easy to do a list implementation?
+		list1 = $_cast('List<Value>', Value$root.internalValue);
+		len = $_list_length(list1);
+	} else if (type == Types.DICTIONARY) {
+		dictImpl = $_cast('DictImpl', Value$root.internalValue);
+		len = DictImpl$dictImpl.size;
+	} else if (type == Types.STRING) {
+		string1 = $_cast('string', Value$root.internalValue);
+		len = $_string_length(string1);
+	} else {
+		return killExecution(stack, getTypeFromId(type) + " does not have a length property.");
+	}
+
+	if (len < INTEGER_POSITIVE_CACHE) {
+		$_stack_push(valueStack, $_array_get($_array_get(INTEGERS_CACHE, 0), len));
+	} else {
+		$_stack_push(valueStack, new Value(Types.INTEGER, len));
+	}
+} else {
+	string1 = $_string_cast_weak(type) + $_array_get(identifiers, nameId);
+	if ($_dictionary_contains(primitiveMethodLookup, string1)) {
+		int1 = $_dictionary_get_guaranteed(primitiveMethodLookup, string1);
+		$_stack_push(
+			valueStack, 
+			new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
+	} else {
+		if (type == Types.NULL) {
+			return killExecution(stack, "Null reference error.");
+		}
+		return killExecution(
+			stack, 
+			getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
+	}
+}

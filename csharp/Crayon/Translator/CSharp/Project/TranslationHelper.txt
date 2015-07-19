@@ -213,7 +213,11 @@ namespace %%%PROJECT_ID%%%
 			files.AddRange(System.IO.Directory.GetFiles(path));
 			files.AddRange(System.IO.Directory.GetDirectories(path));
 			HashSet<string> output = new HashSet<string>(files);
-			return output.Select<string, string>(s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length)).OrderBy(s => s).ToArray();
+			return output
+				.Select<string, string>(
+					s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length))
+				.OrderBy(s => s)
+				.ToArray();
 		}
 
 		public static int WriteFile(string path, string contents)
@@ -253,24 +257,31 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
-		public static void MakeHttpRequestWithHandler(HttpRequest httpRequest, string method, string url, string body, Dictionary<string, List<string>> headers)
+		public static void MakeHttpRequestWithHandler(HttpRequest httpRequest, string method, string url, string body, string userAgent, string contentType, string contentLength, List<string> headerNames, List<string> headerValues)
 		{
 			System.ComponentModel.BackgroundWorker bgRequest = new System.ComponentModel.BackgroundWorker();
 			bgRequest.DoWork += (sender, e) =>
 			{
-				string userAgent = "Crayon/0.1.4, Have a nice day.";
 				System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
 				request.Method = method;
 				request.UserAgent = userAgent;
-				if (body != null)
+				for (int i = 0; i < headerNames.Count; ++i)
 				{
-					request.ContentLength = body.Length;
+					request.Headers.Add(headerNames[i], headerValues[i]);
 				}
 
-				System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
-				streamWriter.Write(body);
-				streamWriter.Flush();
-				streamWriter.Close();
+				if (body != null)
+				{
+					request.ContentLength = Convert.ToInt64(contentLength);
+					if (contentType != null)
+					{
+						request.ContentType = contentType;
+					}
+					System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
+					streamWriter.Write(body);
+					streamWriter.Flush();
+					streamWriter.Close();
+				}
 
 				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
 				int statusCode = (int)response.StatusCode;

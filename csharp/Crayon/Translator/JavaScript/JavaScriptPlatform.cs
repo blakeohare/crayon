@@ -55,6 +55,8 @@ namespace Crayon.Translator.JavaScript
 
 			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js")));
 			codeJs.Add(this.Translator.NL);
+			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/fake_disk.js")));
+			codeJs.Add(this.Translator.NL);
 			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js")));
 			codeJs.Add(this.Translator.NL);
 

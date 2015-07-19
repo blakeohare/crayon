@@ -18,6 +18,12 @@ namespace Crayon
 
 		private int fileIdCounter = 0;
 
+		// HACK ALERT - Forgive me father for I have sinned.
+		// I need an access-anywhere boolean flag to determine if the parser is running in translate mode.
+		// Syntax parsing is currently stateless. Which is nice. In an ideal world.
+		// One day I will undo this for a more reasonable solution.
+		public static bool IsTranslateMode_STATIC_HACK { get; set; }
+
 		public VariableIdAllocator VariableIds { get; private set; }
 
 		public bool IsInClass { get; set; }
@@ -294,7 +300,7 @@ namespace Crayon
 			List<Executable> executables = new List<Executable>();
 			while (tokens.HasMore)
 			{
-				Executable executable = ExecutableParser.Parse(tokens, false, true, true);
+				Executable executable = ExecutableParser.Parse(this, tokens, false, true, true);
 				if (executable is ImportStatement)
 				{
 					ImportStatement execAsImportStatement = (ImportStatement)executable;
@@ -360,7 +366,7 @@ namespace Crayon
 
 		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
 
-		internal static IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired)
+		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired)
 		{
 			List<Executable> output = new List<Executable>();
 
@@ -368,7 +374,7 @@ namespace Crayon
 			{
 				while (!tokens.PopIfPresent("}"))
 				{
-					output.Add(ExecutableParser.Parse(tokens, false, true, false));
+					output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
 				}
 			}
 			else
@@ -383,7 +389,7 @@ namespace Crayon
 					return output;
 				}
 
-				output.Add(ExecutableParser.Parse(tokens, false, true, false));
+				output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
 			}
 			return output;
 		}

@@ -5,6 +5,7 @@ import time
 import random
 import sys
 import shutil
+import threading
 
 _global_vars = {
 	'width': 400,
@@ -339,21 +340,42 @@ def io_delete_directory(d, recurse):
 			return %%%IO_ERROR_UNKNOWN_ERROR%%%
 	return %%%IO_ERROR_NONE%%%
 
+_async_message_queue_mutex = threading.Lock()
+_async_message_queue = []
+_async_message_queue_count = 0
+
+def _push_async_message_queue(object_array):
+	global _async_message_queue_count, _async_message_queue
+	try:
+		_async_message_queue_mutex.acquire()
+		_async_message_queue_count += 1
+		# Using += to append. Most frames will have 0 or 1 async messages, so this is generally optimal.
+		_async_message_queue += object_array
+	finally:
+		_async_message_queue_mutex.release()
+
+_list_of_zero = [0]
 def _pump_async_message_queue():
-	pass
+	global _async_message_queue_count, _async_message_queue
+	try:
+		_async_message_queue_mutex.acquire()
+		if _async_message_queue_count == 0: return _list_of_zero
+		output = [_async_message_queue_count] + _async_message_queue
+		_async_message_queue = []
+		_async_message_queue_count = 0
+		return output
+	finally:
+		_async_message_queue_mutex.release()
 
-def _http_request_impl(request_object, method, url, body, headers):
-	print 'req', request_object
-	print 'method', method
-	print 'url', url
-	print 'body', body
-	print 'headers', headers
-
-	request = HttpAsyncRequest(url)
+def _http_request_impl(request_object, method, url, body, userAgent, contentType, contentLength, headerNames, headerValues):
+	request = HttpAsyncRequest(request_object, url)
 	request.set_method(method)
+	request.set_header('User-Agent', userAgent)
 	if body != None:
 		request.set_content(body)
-	# TODO: headers
+		request.set_header('Content-Type', contentType)
+	for i in range(len(headerNames)):
+		request.add_header(headerNames[i], headerValues[i])
 
 	request.send()
 

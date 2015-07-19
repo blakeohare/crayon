@@ -253,7 +253,7 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			throw new NotImplementedException();
 		}
@@ -318,22 +318,22 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			throw new NotImplementedException();
 		}

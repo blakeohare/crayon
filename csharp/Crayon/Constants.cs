@@ -33,6 +33,11 @@ namespace Crayon
 			{
 				text = text.Replace("%%%" + key + "%%%", replacements[key]);
 			}
+
+			foreach (AsyncMessageType type in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
+			{
+				text = text.Replace("%%%ASYNC_MESSAGE_TYPE_" + type + "%%%", ((int)type).ToString());
+			}
 			return text;
 		}
 	}

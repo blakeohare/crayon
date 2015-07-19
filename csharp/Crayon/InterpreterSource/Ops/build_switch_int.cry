@@ -1,0 +1,6 @@
+﻿
+@type('Dictionary<int, int>') integerSwitchLookup = $_new_dictionary('int', 'int');
+for (i = 0; i < $_array_length(row); i += 2) {
+	$_dictionary_set(integerSwitchLookup, $_array_get(row, i), $_array_get(row, i + 1));
+}
+$_list_push(ProgramData$p.integerSwitchLookupsBuilder, integerSwitchLookup);

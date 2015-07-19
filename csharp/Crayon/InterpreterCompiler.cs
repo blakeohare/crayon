@@ -75,7 +75,7 @@ namespace Crayon
 			return output;
 		}
 
-		private Dictionary<string, string> BuildReplacementsDictionary()
+		public Dictionary<string, string> BuildReplacementsDictionary()
 		{
 			Dictionary<string, string> replacements = new Dictionary<string, string>();
 

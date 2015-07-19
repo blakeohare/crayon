@@ -1,0 +1,29 @@
+﻿
+int1 = $_stack_length(valueStack); // current stack length
+value3 = $_stack_get(valueStack, int1 - 3);
+value2 = $_stack_get(valueStack, int1 - 2); // name ID of iterating variable
+value = $_stack_get(valueStack, int1 - 1); // list
+i = $_cast('int', Value$value3.internalValue); // iterator index
+nameId = $_cast('int', Value$value2.internalValue); // iterating variable name ID
+if (Value$value.type == Types.LIST) {
+	list1 = $_cast('List<Value>', Value$value.internalValue); // the actual list
+	len = $_list_length(list1);
+	bool1 = true;
+} else {
+	string1 = $_cast('string', Value$value.internalValue); // the actual string
+	len = $_string_length(string1);
+	bool1 = false;
+}
+if (i < len) {
+	if (bool1) {
+		$_dictionary_set(locals, nameId, $_list_get(list1, i));
+	} else {
+		// Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
+		value = buildCommonString($_char_to_string($_string_char_at(string1, i)));
+		$_dictionary_set(locals, nameId, value);
+	}
+} else {
+	StackFrame$stack.pc += $_array_get(row, 0);
+}
+i += 1;
+$_stack_set(valueStack, int1 - 3, buildInteger(i));

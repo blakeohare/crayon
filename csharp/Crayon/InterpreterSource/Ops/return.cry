@@ -1,0 +1,12 @@
+﻿
+value = $_stack_pop(valueStack);
+bool1 = StackFrame$stack.returnValueUsed;
+stack = StackFrame$stack.previous;
+if (stack == null) {
+	return '';
+}
+valueStack = StackFrame$stack.valueStack;
+locals = StackFrame$stack.locals;
+if (bool1) {
+	$_stack_push(valueStack, value);
+}

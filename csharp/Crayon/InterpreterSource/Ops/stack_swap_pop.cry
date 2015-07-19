@@ -1,0 +1,4 @@
+﻿
+value = $_stack_pop(valueStack);
+$_stack_pop(valueStack);
+$_stack_push(valueStack, value);

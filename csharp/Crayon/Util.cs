@@ -162,6 +162,8 @@ namespace Crayon
 			{
 				text = Constants.DoReplacements(text, replacements);
 
+				// TODO: split the string on %%% and calculate replacements by looking up each chunk in the dictionary.
+				// That'll be O(size of text) as opposed to O(size of text * replacements.Count)
 				foreach (string key in replacements.Keys)
 				{
 					text = text.Replace("%%%" + key + "%%%", replacements[key]);

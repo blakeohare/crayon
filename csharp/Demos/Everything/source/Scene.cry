@@ -1,0 +1,14 @@
+class Scene {
+	constructor() {
+		this.next = null;
+		this.end_game = false;
+	}
+	
+	function update() {
+		$assert(false, "Override me!");
+	}
+	
+	function render() {
+		$assert(false, "Override me!");
+	}
+}
