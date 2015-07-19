@@ -29,7 +29,7 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
   * Windows: %APPDATA%\Project
   * Linux/Mac: ~/.Project
   * JavaScript: virtualized disk backed by localStorage
-* Added list and string slicing, using the Python syntax e.g. list[start:end], list[start:end:step].
+* Added list and string slicing, using the Python syntax e.g. list[start : end], list[start : end : step].
 * $ord and $chr to convert to and from ASCII values and characters.
 * $parse_float has been added.
 * Added Ant build.xml file to Java output.
