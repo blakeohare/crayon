@@ -30,4 +30,8 @@
 	<target name="python">
 		<platform>python</platform>
 	</target>
+	
+	<target name="android">
+		<platform>android</platform>
+	</target>
 </build>

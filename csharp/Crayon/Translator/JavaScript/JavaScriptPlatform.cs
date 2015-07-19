@@ -25,7 +25,6 @@ namespace Crayon.Translator.JavaScript
 		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 
-		public override string OutputFolderName { get { return "javascript"; } }
 		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
 
 		public override Dictionary<string, FileOutput> Package(

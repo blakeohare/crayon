@@ -19,7 +19,6 @@ namespace Crayon.Translator.Python
 		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return true; } }
 
-		public override string OutputFolderName { get { return "pygame"; } }
 		public override string GeneratedFilesFolder { get { return "_generated_files"; } }
 
 		public override Dictionary<string, FileOutput> Package(

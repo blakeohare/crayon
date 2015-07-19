@@ -6,22 +6,20 @@ using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
-	internal class JavaPlatform : AbstractPlatform
+	internal abstract class JavaPlatform : AbstractPlatform
 	{
 		public override bool IsAsync { get { return true; } }
-		public override string OutputFolderName { get { return "java"; } }
 		public override bool SupportsListClear { get { return true; } }
 		public override bool IsStronglyTyped { get { return true; } }
 		public override bool IntIsFloor { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 		public override string GeneratedFilesFolder { get { return "resources/generated"; } }
 
-		public JavaPlatform()
-			: base(false, new JavaTranslator(), new JavaSystemFunctionTranslator())
+		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator)
+			: base(false, new JavaTranslator(), systemFunctionTranslator)
 		{ }
 
 		public override Dictionary<string, FileOutput> Package(

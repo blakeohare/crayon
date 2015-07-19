@@ -14,7 +14,6 @@ namespace Crayon
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public abstract bool IsAsync { get; }
-		public abstract string OutputFolderName { get; }
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
 		public abstract bool IntIsFloor { get; }

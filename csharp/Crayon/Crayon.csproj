@@ -141,6 +141,10 @@
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
+    <Compile Include="Translator\Java\JavaAndroidPlatform.cs" />
+    <Compile Include="Translator\Java\JavaAndroidSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\Java\JavaAwtPlatform.cs" />
+    <Compile Include="Translator\Java\JavaAwtSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaPlatform.cs" />
     <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaTranslator.cs" />

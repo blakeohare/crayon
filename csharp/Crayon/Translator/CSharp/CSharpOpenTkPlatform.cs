@@ -11,8 +11,6 @@ namespace Crayon.Translator.CSharp
 		public override bool IsOpenGlBased { get { return true; } }
 		public override bool SupportsGamePad { get { return true; } }
 
-		public override string OutputFolderName { get { return "csopengl"; } }
-
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
 			replacements["EXTRA_DLLS"] = string.Join("\r\n", new string[] {
