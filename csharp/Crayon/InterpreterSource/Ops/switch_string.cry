@@ -1,0 +1,13 @@
+﻿
+value = $_stack_pop(valueStack);
+if (Value$value.type == Types.STRING) {
+	string1 = $_cast('string', Value$value.internalValue);
+	stringSwitch = $_array_get(stringSwitches, $_array_get(row, 0));
+	if ($_dictionary_contains(stringSwitch, string1)) {
+		StackFrame$stack.pc += $_dictionary_get_guaranteed(stringSwitch, string1);
+	} else {
+		StackFrame$stack.pc += $_array_get(row, 1); // default
+	}
+} else {
+	return killExecution(stack, "Switch statement expects a string.");
+}

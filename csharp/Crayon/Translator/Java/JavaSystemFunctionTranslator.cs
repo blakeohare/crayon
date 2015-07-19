@@ -12,12 +12,12 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.getAppDataRoot()");
 		}
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
-			output.Add("throw new RuntimeException(\"TODO: implement this?\")");
+			output.Add("AsyncMessageQueue.pumpMessages()");
 		}
 
 		protected override void TranslateArcCos(List<string> output, Expression value)
@@ -419,7 +419,7 @@ namespace Crayon.Translator.Java
 			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("TranslationHelper.makeHttpRequest()");
 		}
@@ -503,7 +503,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.createDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)
@@ -511,7 +513,23 @@ namespace Crayon.Translator.Java
 			output.Add("System.getProperty(\"user.dir\")");
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			output.Add("TranslationHelper.ioDeleteDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			output.Add("TranslationHelper.ioDeleteFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
 			output.Add("TranslationHelper.checkPathExistence(");
 			this.Translator.TranslateExpression(output, canonicalizedPath);
@@ -522,21 +540,21 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
 			output.Add("TranslationHelper.readFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
 			output.Add("TranslationHelper.directoryListing(");
 			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			output.Add("TranslationHelper.writeFile(");
 			this.Translator.TranslateExpression(output, path);

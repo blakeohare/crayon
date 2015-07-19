@@ -39,6 +39,12 @@ namespace Crayon.Translator.JavaScript
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
+			Dictionary<string, string> replacements = new Dictionary<string, string>()
+			{
+				{ "JS_FILE_PREFIX", "'" + this.jsFolderPrefix + "'" },
+				{ "PROJECT_ID", projectId },
+			};
+
 			output["index.html"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
@@ -49,6 +55,8 @@ namespace Crayon.Translator.JavaScript
 
 			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js")));
 			codeJs.Add(this.Translator.NL);
+			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/fake_disk.js")));
+			codeJs.Add(this.Translator.NL);
 			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js")));
 			codeJs.Add(this.Translator.NL);
 
@@ -58,7 +66,7 @@ namespace Crayon.Translator.JavaScript
 				codeJs.Add(this.Translator.NL);
 			}
 
-			string codeJsText = Constants.DoReplacements(string.Join("", codeJs).Replace("%%%JS_FILE_PREFIX%%%", "'" + this.jsFolderPrefix + "'"));
+			string codeJsText = Constants.DoReplacements(string.Join("", codeJs), replacements);
 
 			output["code.js"] = new FileOutput()
 			{

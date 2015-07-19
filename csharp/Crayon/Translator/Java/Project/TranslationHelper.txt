@@ -390,7 +390,12 @@ final class TranslationHelper {
     }
 
     public static boolean checkPathExistence(String path, boolean dirOnly, boolean checkCase) {
-        Path p = Paths.get(path);
+        Path p;
+        try {
+            p = Paths.get(path);
+        } catch (java.nio.file.InvalidPathException ipe) {
+            return false;
+        }
         return dirOnly ? Files.isDirectory(p) : Files.exists(p);
     }
 
@@ -401,5 +406,68 @@ final class TranslationHelper {
         } catch (NumberFormatException nfe) {
             outParam[0] = -1;
         }
+    }
+
+    public static int createDirectory(String path) {
+        try {
+            new File(path).mkdir();
+            return %%%IO_ERROR_NONE%%%;
+        } catch (Exception e) {
+            return %%%IO_ERROR_UNKNOWN_ERROR%%%;
+        }
+    }
+
+    private static String appDataRoot = null;
+    public static String getAppDataRoot() {
+        if (appDataRoot == null) {
+            if (isWindows()) {
+                String appData = System.getenv().get("APPDATA");
+                if (appData == null) throw new IllegalStateException("%APPDATA% not set on Windows. How strange is that.");
+                appDataRoot = appData.replace('\\', '/') + "/%%%PROJECT_ID%%%";
+            } else {
+                appDataRoot = "~/.%%%PROJECT_ID%%%";
+            }
+        }
+        return appDataRoot;
+    }
+
+    public static void makeHttpRequest() {
+        throw new RuntimeException("TODO: implement makeHttpRequest");
+    }
+
+    public static int ioDeleteDirectory(String path, boolean recursive) {
+        try {
+            File file = new File(path);
+            if (recursive) {
+                ioDeleteDirectoryRecursive(file);
+            } else {
+                if (!file.delete()) {
+                    return %%%IO_ERROR_UNKNOWN_ERROR%%%;
+                }
+            }
+        } catch (Exception e) {
+            return %%%IO_ERROR_UNKNOWN_ERROR%%%;
+        }
+        return %%%IO_ERROR_NONE%%%;
+    }
+
+    private static void ioDeleteDirectoryRecursive(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                ioDeleteDirectoryRecursive(child);
+            }
+        }
+
+        if (!file.delete()) {
+            throw new RuntimeException("Cannot delete file.");
+        }
+    }
+
+    public static int ioDeleteFile(String path) {
+        File file = new File(path);
+        if (!file.delete()) {
+            return %%%IO_ERROR_UNKNOWN_ERROR%%%;
+        }
+        return %%%IO_ERROR_NONE%%%;
     }
 }

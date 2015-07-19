@@ -1,0 +1,12 @@
+﻿
+tokensByPc = ProgramData$p.tokenData;
+i = $_array_get(row, 0) + ProgramData$p.userCodeStart; // PC
+int1 = $_array_get(row, 1); // Line
+int2 = $_array_get(row, 2); // Col
+int3 = $_array_get(row, 3); // File ID
+tokens = $_array_get(tokensByPc, i);
+if (tokens == null) {
+	tokens = $_new_list('Token');
+	$_array_set(tokensByPc, i, tokens);
+}
+$_list_push(tokens, new Token(int1, int2, int3));

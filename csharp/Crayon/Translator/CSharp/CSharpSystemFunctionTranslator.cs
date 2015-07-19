@@ -248,7 +248,7 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("TranslationHelper.MakeHttpRequestWithHandler(");
 			this.Translator.TranslateExpression(output, httpRequest);
@@ -259,7 +259,15 @@ namespace Crayon.Translator.CSharp
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, body);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, headers);
+			this.Translator.TranslateExpression(output, userAgent);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentType);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentLength);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerNameList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerValueList);
 			output.Add(")");
 		}
 
@@ -343,7 +351,23 @@ namespace Crayon.Translator.CSharp
 			output.Add("System.IO.Directory.GetCurrentDirectory()");
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			output.Add("TranslationHelper.DeleteDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			output.Add("TranslationHelper.DeleteFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
 			output.Add("TranslationHelper.DoesPathExist(");
 			this.Translator.TranslateExpression(output, canonicalizedPath);
@@ -354,21 +378,21 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
 			output.Add("TranslationHelper.ReadFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
 			output.Add("TranslationHelper.FilesInDirectory(");
 			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			output.Add("TranslationHelper.WriteFile(");
 			this.Translator.TranslateExpression(output, path);

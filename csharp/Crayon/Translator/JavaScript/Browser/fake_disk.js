@@ -7,40 +7,136 @@ The root node ID is always an empty string.
 Nodes are the following list:
 for directories: [true, dictionary of children (strings) to node ID's (strings)]
 for files: [false, is_binary, size, contents]
-	
+
 additionally there is a crayondisk_next_id key that is an integer that returns the next integer 
 available for use as a node ID.
-*/
-function createFakeDisk(dictionary) {
-	var fakeDisk = {};
 
+When persisted to local storage (saved as a flat string), it takes the following formats:
+crayondisk_next_id: just the integer as a decimal string
+directories: '1' followed by a list of each key followed by its decimal node ID value all delimited by /'s
+e.g. "1/My Documents/42/My Photos/20"
+files: '0' followed by '1' or '0' for whether it is binary, followed by 12 characters that indicate the file size.
+The format is the decimal length of the file followed by a '@' character followed by ignored characters until 12 digits are used.
+The rest of the string is the raw content.
+e.g. "0113@*********Hello, World!"
+
+*/
+function createFakeDisk(persistentStorage /* localStorage or null */) {
+	var fakeDisk = {};
+	
 	// illegal characters behave like Windows.
 	var t = ':*?\\/|><"';
 	var illegal_chars = {};
 	for (var i = 0; i < t.length; ++i) {
 		illegal_chars[t[i]] = true;
 	}
+	var permanent = persistentStorage;
+	var isLocalStorage = persistentStorage !== null;
+	var disk = {};
 
-	fakeDisk.disk = dictionary;
-	if (fakeDisk.disk['crayondisk:0'] === undefined) fakeDisk.disk['crayondisk:0'] = [true, {}];
-	if (fakeDisk.disk['crayondisk_next_id'] === undefined) fakeDisk.disk['crayondisk_next_id'] = 1;
-
-	var allocate_id = function () {
-		// TODO: does ++ work on local storage?
-		return fakeDisk.disk['crayondisk_next_id']++;
+	var clearCorruptedDisk = function() {
+		if (!isLocalStorage) return;
+		for (var key in permanent) {
+			if (key.indexOf('crayondisk') === 0) {
+				permanent[key] = undefined;
+			}
+		}
 	}
 
-	fakeDisk.cache = { '/': 0 }; // populate with root
+	var read_permanent_value = function (key) {
+		var value = permanent[key];
+		if (value !== undefined && value.length > 0) {
+			if (key === 'crayondisk_next_id') {
+				return parseInt(value);
+			} else if (value.charAt(0) == '1') { // is directory
+				var files_to_nodes_list = value.split('/');
+				var lookup = {};
+				for (var i = 1; i < files_to_nodes_list.length; i += 2) {
+					var filename = files_to_nodes_list[i];
+					var nodeId = parseInt(files_to_nodes_list[i + 1]);
+					lookup[filename] = nodeId;
+				}
+				return [true, lookup];
+			} else if (value.charAt(0) == '0' && value.length >= 14) { // is file
+				var isBinary = value.charAt(1) == '1';
+				var fileSize = 0;
+				for (var i = 2; i < 14; ++i) {
+					if (value.charAt(i) == '@') break;
+					fileSize = fileSize * 10 + parseInt(value.charAt(i));
+				}
+				var content = value.substring(14);
+				return [false, isBinary, fileSize, content];
+			}
+		}
+		return null;
+	};
+
+	var read_value = function(key) {
+		var value = disk[key];
+		if (value === undefined) {
+			if (isLocalStorage) {
+				value = read_permanent_value(key);
+				if (value !== null) {
+					disk[key] = value;
+					return value;
+				}
+			}
+			return null;
+		}
+		return value;
+	}
+
+	var save_value = function (key, value) {
+		disk[key] = value;
+		if (key == 'crayondisk_next_id') permanent[key] = '' + value;
+		else if (value[0]) { // directory
+			var files = value[1];
+			if (files.length == 0) permanent[key] = '1/';
+			var output = ['1'];
+			for (var filename in files) {
+				var nodeId = files[filename];
+				output.push(filename);
+				output.push(nodeId + '');
+			}
+			permanent[key] = output.join('/');
+		} else { // files
+			var header = '0' + // 0 indicates files
+				(value[1] ? '1' : '0') + // is binary
+				value[2] + '@'; // file size
+			while (header.length < 14) { // pad to 14 characters
+				header += '*';
+			}
+			permanent[key] = header + value[3];
+		}
+	};
+
+	var nextId = read_value('crayondisk_next_id');
+	var rootDisk = read_value('crayondisk:0');
+	if (rootDisk == null || nextId === null) {
+		clearCorruptedDisk();
+		save_value('crayondisk_next_id', 1);
+		save_value('crayondisk:0', [true, {}]);
+		
+	}
+
+	var allocate_id = function () {
+		var next_id = read_value('crayondisk_next_id');
+		save_value('crayondisk_next_id', next_id + 1);
+		return next_id;
+	}
+
+	// Simple cache to convert paths into node IDs. Do not persist. Clear liberally on state changes.
+	var cache = { '/': 0 };
 
 	var create_file_node = function (content) {
 		var id = allocate_id();
-		fakeDisk.disk['crayondisk:' + id] = [false, false, content.length, content];
+		save_value('crayondisk:' + id, [false, false, content.length, content]);
 		return id;
 	}
 
 	var create_folder_node = function () {
 		var id = allocate_id();
-		fakeDisk.disk['crayondisk:' + id] = [true, {}];
+		save_value('crayondisk:' + id, [true, {}]);
 		return id;
 	}
 
@@ -60,25 +156,34 @@ function createFakeDisk(dictionary) {
 	}
 
 	var convert_path_to_node_id_impl = function (path) {
-		if (path.length < 2) return 0; // could be empty from level_ups, otherwise we know the first char is / so <2 is always root.
-		var node_id = fakeDisk.cache[path];
+		
+		var node_id = cache[path];
 		if (node_id) return node_id;
+		
+		if (path.length < 2) {
+			cache[path] = 0;
+			return 0; // could be empty from level_ups, otherwise we know the first char is / so <2 is always root.
+		}
 
 		var t = get_parent_and_file(path);
 		var level_up = t[0];
 		var this_file = t[1];
 		var parent_id = convert_path_to_node_id_impl(level_up);
 
-		if (parent_id === null) return null;
+		if (parent_id === null) {
+			cache[path] = null;
+			return null;
+		}
 
-		var directory = fakeDisk.disk['crayondisk:' + parent_id];
+		var directory = read_value('crayondisk:' + parent_id);
 		if (!directory[0]) {
+			cache[path] = null;
 			return null;
 		}
 
 		var child_id = directory[1][this_file];
 		if (child_id !== undefined) {
-			fakeDisk.cache[path] = child_id;
+			cache[path] = child_id;
 			return child_id;
 		}
 
@@ -86,15 +191,20 @@ function createFakeDisk(dictionary) {
 	}
 
 	var convert_path_to_node_id = function (path) {
-		path = canonicalize_path(path);
-		if (path == '/') return 0;
-		return convert_path_to_node_id_impl(path);
+		var id = cache[path];
+		if (id === undefined) {
+			cpath = canonicalize_path(path);
+			id = convert_path_to_node_id_impl(cpath);
+			cache[path] = id;
+			cache[cpath] = id;
+		}
+		return id;
 	};
 
 	var get_node = function (path) {
 		var node_id = convert_path_to_node_id(path);
 		if (node_id == null) return null;
-		return fakeDisk.disk['crayondisk:' + node_id];
+		return read_value('crayondisk:' + node_id);
 	};
 
 	var contains_illegal_chars = function (string) {
@@ -106,7 +216,7 @@ function createFakeDisk(dictionary) {
 
 	fakeDisk.path_exists = function (path) {
 		var node = get_node(path);
-		return node != nulll;
+		return node != null;
 	};
 
 	fakeDisk.is_directory = function (path) {
@@ -158,20 +268,22 @@ function createFakeDisk(dictionary) {
 		var file = t[1];
 		if (contains_illegal_chars(file)) return 5;
 		node = get_node(dir);
+		var parent_node_id = cache[dir];
 		if (node == null) return 1; // parent path doesn't exist.
 		if (!node[0]) return 1; // parent path is a file.
 		var existing_id = node[1][file];
 		if (existing_id === undefined) {
 			existing_id = create_file_node(text);
 			node[1][file] = existing_id;
+			save_value('crayondisk:' + parent_node_id, node);
 			return 0;
 		} else {
-			var existing_node = fakeDisk.disk['crayondisk:' + existing_id];
+			var existing_node = read_value('crayondisk:' + existing_id);
 			if (existing_node) {
 				if (existing_node[0]) return 3;
 				existing_node[2] = text.length;
 				existing_node[3] = text;
-				fakeDisk.disk['crayondisk:' + existing_id] = existing_node;
+				save_value('crayondisk:' + existing_id, existing_node);
 				return 0;
 			} else {
 				// corrupted disk. hopefully this never happens.

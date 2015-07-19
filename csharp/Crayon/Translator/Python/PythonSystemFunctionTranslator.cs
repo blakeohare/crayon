@@ -12,7 +12,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("get_app_data_root()");
 		}
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
@@ -411,7 +411,7 @@ namespace Crayon.Translator.Python
 			output.Add("1024");
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression headers)
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("_http_request_impl(");
 			this.Translator.TranslateExpression(output, httpRequest);
@@ -422,7 +422,15 @@ namespace Crayon.Translator.Python
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, body);
 			output.Add(", ");
-			this.Translator.TranslateExpression(output, headers);
+			this.Translator.TranslateExpression(output, userAgent);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentType);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentLength);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerNameList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerValueList);
 			output.Add(")");
 		}
 
@@ -506,7 +514,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("io_create_directory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)
@@ -514,7 +524,23 @@ namespace Crayon.Translator.Python
 			output.Add("io_helper_current_directory()");
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck)
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
+		{
+			output.Add("io_delete_directory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
+		{
+			output.Add("io_delete_file(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
 			output.Add("io_helper_check_path(");
 			this.Translator.TranslateExpression(output, canonicalizedPath);
@@ -525,19 +551,21 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, Expression path)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
 			output.Add("io_helper_read_text(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
-			output.Add("os.listdir('.')");
+			output.Add("os.listdir(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
 			output.Add("io_helper_write_text(");
 			this.Translator.TranslateExpression(output, path);

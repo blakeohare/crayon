@@ -1,0 +1,73 @@
+﻿
+value = $_stack_pop(valueStack);
+root = $_stack_pop(valueStack);
+if (Value$root.type == Types.LIST) {
+	if (Value$value.type != Types.INTEGER) {
+		return killExecution(stack, "List index must be an integer.");
+	} else {
+		i = $_cast('int', Value$value.internalValue);
+		list1 = $_cast('List<Value>', Value$root.internalValue);
+		if (i < 0) return killExecution(stack, "List index cannot be negative.");
+		else if (i >= $_list_length(list1)) return killExecution(stack, "List index is out of bounds");
+		else {
+			output = $_list_get(list1, i);
+			$_stack_push(valueStack, output);
+		}
+	}
+} else if (Value$root.type == Types.DICTIONARY) {
+	dictImpl = $_cast('DictImpl', Value$root.internalValue);
+	keyType = Value$value.type;
+	if (keyType != DictImpl$dictImpl.keyType) {
+		if (DictImpl$dictImpl.size == 0) {
+			return killExecution(stack, "Key not found. Dictionary is empty.");
+		}
+		return killExecution(stack, "Incorrect key type. This dictionary contains " + getTypeFromId(DictImpl$dictImpl.keyType) + " keys. Provided key is a " + getTypeFromId(keyType) + ".");
+	} else {
+		if (keyType == Types.INTEGER) {
+			intKey = $_cast('int', Value$value.internalValue);
+		} else if (keyType == Types.STRING) {
+			stringKey = $_cast('string', Value$value.internalValue);
+		} else if (keyType == Types.INSTANCE) {
+			objInstance = $_cast('ObjectInstance', Value$value.internalValue);
+			intKey = ObjectInstance$objInstance.objectId;
+		} else {
+			if (DictImpl$dictImpl.size == 0) {
+				return killExecution(stack, "Key not found. Dictionary is empty.");
+			}
+			return killExecution(stack, "Key not found.");
+		}
+
+		if (keyType == Types.STRING) {
+			dictStringValueLookup = $_cast('Dictionary<string, Value>', DictImpl$dictImpl.valueStringLookup);
+			if ($_dictionary_contains(dictStringValueLookup, stringKey)) {
+				output = $_dictionary_get_guaranteed(dictStringValueLookup, stringKey);
+			} else {
+				return killExecution(stack, "Key not found: '" + stringKey + "'");
+			}
+		} else {
+			dictIntValueLookup = $_cast('Dictionary<int, Value>', DictImpl$dictImpl.valueIntLookup);
+			if ($_dictionary_contains(dictIntValueLookup, intKey)) {
+				output = $_dictionary_get_guaranteed(dictIntValueLookup, intKey);
+			} else {
+				return killExecution(stack, "Key not found.");
+			}
+		}
+
+		if (output == null) return killExecution(stack, "Key not found.");
+
+		$_stack_push(valueStack, output);
+	}
+} else if (Value$root.type == Types.STRING) {
+	string1 = $_cast('string', Value$root.internalValue);
+	if (Value$value.type != Types.INTEGER) {
+		return killExecution(stack, "indexes into strings must be integers.");
+	}
+	int1 = $_cast('int', Value$value.internalValue);
+	if (int1 < 0 || int1 >= $_string_length(string1)) {
+		return killExecution(stack, "String index out of range.");
+	}
+	// Single char strings are common.
+	$_stack_push(valueStack, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
+} else {
+	return killExecution(stack, "Cannot index into this type: " + getTypeFromId(Value$root.type));
+}

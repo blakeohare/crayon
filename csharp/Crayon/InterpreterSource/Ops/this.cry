@@ -1,0 +1,3 @@
+﻿
+// will never be called outside of a method.
+$_stack_push(valueStack, StackFrame$stack.objectContext);
