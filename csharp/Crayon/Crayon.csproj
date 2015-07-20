@@ -62,6 +62,7 @@
     <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="IOErrors.cs" />
     <Compile Include="LiteralLookup.cs" />
+    <Compile Include="NativeObjectTypes.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="ParseTree\Annotation.cs" />

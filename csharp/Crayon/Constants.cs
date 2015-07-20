@@ -10,25 +10,26 @@ namespace Crayon
 
 		static Constants()
 		{
-			Dictionary<string, string> constants = new Dictionary<string, string>()
+			Dictionary<string, string> constants = new Dictionary<string, string>();
+
+			Dictionary<string, Type> enumReplacementsByPrefix = new Dictionary<string, Type>()
 			{
-				{ "TYPE_NATIVE_OBJECT_SCREEN", "1" },
-				{ "TYPE_NATIVE_OBJECT_IMAGE", "2" },
+				{ "ASYNC_MESSAGE_TYPE", typeof(AsyncMessageType) },
+				{ "FF", typeof(FrameworkFunction) },
+				{ "IO_ERROR", typeof(IOErrors) },
+				{ "TYPE_NATIVE_OBJECT", typeof(NativeObjectTypes) },
+				{ "PRIMITIVE_METHOD", typeof(PrimitiveMethods) },
+				{ "SUBTYPE_ID", typeof(SubTypes) },
+				{ "TYPE_ID", typeof(Types) }, // TODO: remove this in favor of the TYPE_ standalone prefix below.
+				{ "TYPE", typeof(Types) },
 			};
 
-			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
+			foreach (string key in enumReplacementsByPrefix.Keys)
 			{
-				constants["TYPE_" + t.ToString()] = ((int)t).ToString();
-			}
-
-			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
-			{
-				constants["TYPE_" + errorType.ToString()] = ((int)errorType).ToString();
-			}
-
-			foreach (AsyncMessageType type in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
-			{
-				constants["ASYNC_MESSAGE_TYPE_" + type] = ((int)type).ToString();
+				foreach (object enumValue in Enum.GetValues(enumReplacementsByPrefix[key]))
+				{
+					constants.Add(key + "_" + enumValue.ToString(), ((int)enumValue).ToString());
+				}
 			}
 
 			CONSTANT_REPLACEMENTS = constants;

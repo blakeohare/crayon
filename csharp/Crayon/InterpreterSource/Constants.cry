@@ -80,7 +80,8 @@ enum BinaryOps
 const MAX_OP = BinaryOps.GREATER_THAN_OR_EQUAL + 1;
 
 enum NativeObjectTypes {
-	SCREEN = 1,
+	SCREEN = %%%TYPE_NATIVE_OBJECT_SCREEN%%%,
+	IMAGE = %%%TYPE_NATIVE_OBJECT_IMAGE%%%,
 }
 
 enum Types {
