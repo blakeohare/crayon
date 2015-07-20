@@ -31,7 +31,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GameWindow.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GameWindowWinForms.txt"),
 					replacements)
 			};
@@ -40,7 +40,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/Renderer.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/RendererWinForms.txt"),
 					replacements)
 			};
@@ -49,7 +49,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/Image.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/ImageWinForms.txt"),
 					replacements)
 			};

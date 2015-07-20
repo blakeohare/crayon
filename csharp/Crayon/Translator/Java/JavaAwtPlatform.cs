@@ -49,7 +49,7 @@ namespace Crayon.Translator.Java
 				output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
-					TextContent = Util.MassReplacements(
+					TextContent = Constants.DoReplacements(
 						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
 						replacements)
 				};
@@ -83,7 +83,7 @@ namespace Crayon.Translator.Java
 			output["src/" + package + "/CrayonWrapper.java"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(string.Join("", crayonWrapper), replacements)
+				TextContent = Constants.DoReplacements(string.Join("", crayonWrapper), replacements)
 			};
 
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
@@ -201,7 +201,7 @@ namespace Crayon.Translator.Java
 			output["build.xml"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/Java/Project/BuildXml.txt"),
 					replacements)
 			};

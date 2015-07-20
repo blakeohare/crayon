@@ -235,7 +235,7 @@ namespace Crayon.Translator.CSharp
 				output[outputFilePath] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
-					TextContent = Util.MassReplacements(
+					TextContent = Constants.DoReplacements(
 						Util.ReadFileInternally("Translator/CSharp/Project/" + templateFile),
 						replacements)
 				};

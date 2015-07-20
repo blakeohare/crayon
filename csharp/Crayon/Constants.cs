@@ -29,15 +29,16 @@ namespace Crayon
 				text = text.Replace("%%%IO_ERROR_" + errorType.ToString() + "%%%", "" + (int)errorType);
 			}
 
+			foreach (AsyncMessageType type in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
+			{
+				text = text.Replace("%%%ASYNC_MESSAGE_TYPE_" + type + "%%%", ((int)type).ToString());
+			}
+
 			foreach (string key in replacements.Keys)
 			{
 				text = text.Replace("%%%" + key + "%%%", replacements[key]);
 			}
 
-			foreach (AsyncMessageType type in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
-			{
-				text = text.Replace("%%%ASYNC_MESSAGE_TYPE_" + type + "%%%", ((int)type).ToString());
-			}
 			return text;
 		}
 	}

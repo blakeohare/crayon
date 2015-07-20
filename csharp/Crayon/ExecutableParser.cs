@@ -70,7 +70,7 @@ namespace Crayon
 						if (inlineImportFileContents.Contains("%%%"))
 						{
 							Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
-							inlineImportFileContents = Util.MassReplacements(inlineImportFileContents, replacements);
+							inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
 						}
 						TokenStream inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
 						tokens.InsertTokens(inlineTokens);

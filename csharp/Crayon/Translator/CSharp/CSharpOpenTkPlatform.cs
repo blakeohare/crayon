@@ -47,7 +47,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GameWindow.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GameWindowOpenTK.txt"),
 					replacements)
 			};
@@ -56,7 +56,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GlUtil.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GlUtil.txt"),
 					replacements)
 			};

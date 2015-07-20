@@ -37,32 +37,42 @@ namespace Crayon.Translator.Java
 			};
 
 			foreach (string simpleCopyText in new string[] {
-				"build.gradle|BuildGradle.txt",
-				"gradle.properties|GradleProperties.txt",
-				"gradlew|Gradlew.txt",
-				"gradlew.bat|GradlewBat.txt",
-				projectId + ".iml|ProjectIml.txt",
-				"settings.gradle|SettingsGradle.txt",
-				"gradle/wrapper/gradle-wrapper.jar|GradleWrapperJar",
-				"gradle/wrapper/gradle-wrapper.properties|GradleWrapperProperties.txt",
-				"app/app.iml|AppIml.txt",
-				"app/build.gradle|AppBuildGradle.txt",
-				"app/src/main/res/layout/activity_game.xml|ResLayoutActivityGameXml.txt",
-				"app/src/main/res/values/attrs.xml|ResValuesAttrsXml.txt",
-				"app/src/main/res/values/colors.xml|ResValuesColorsXml.txt",
-				"app/src/main/res/values/strings.xml|ResValuesStringsXml.txt",
-				"app/src/main/res/values/styles.xml|ResValuesStylesXml.txt",
-				"app/src/main/res/values-v11/styles.xml|ResValuesV11StylesXml.txt",
-				"app/src/main/res/drawable-hdpi/ic_launcher.png|ResDrawableHdpiIcLauncher.png",
-				"app/src/main/res/drawable-mdpi/ic_launcher.png|ResDrawableMdpiIcLauncher.png",
-				"app/src/main/res/drawable-xhdpi/ic_launcher.png|ResDrawableXhdpiIcLauncher.png",
-				"app/src/main/res/drawable-xxhdpi/ic_launcher.png|ResDrawableXxhdpiIcLauncher.png",
-				pathToJavaCode + "/GameActivity.java|JavaGameActivity.txt",
-				pathToJavaCode + "/util/SystemUiHider.java|JavaUtilSystemUiHider.txt",
-				pathToJavaCode + "/util/SystemUiHiderBase.java|JavaUtilSystemUiHiderBase.txt",
-				pathToJavaCode + "/util/SystemUiHiderHoneycomb.java|JavaUtilSystemUiHiderHoneycomb.txt",
-				"app/src/main/AndroidManifest.xml|AndroidManifestXml.txt",
-				"app/src/main/ic_launcher-web.png|IcLauncherWeb.png",
+				// Boilerplate Android project stuff
+				"build.gradle|AndroidProject/Boilerplate/BuildGradle.txt",
+				"gradle.properties|AndroidProject/Boilerplate/GradleProperties.txt",
+				"gradlew|AndroidProject/Boilerplate/Gradlew.txt",
+				"gradlew.bat|AndroidProject/Boilerplate/GradlewBat.txt",
+				projectId + ".iml|AndroidProject/Boilerplate/ProjectIml.txt",
+				"settings.gradle|AndroidProject/Boilerplate/SettingsGradle.txt",
+				"gradle/wrapper/gradle-wrapper.jar|AndroidProject/Boilerplate/GradleWrapperJar",
+				"gradle/wrapper/gradle-wrapper.properties|AndroidProject/Boilerplate/GradleWrapperProperties.txt",
+				"app/app.iml|AndroidProject/Boilerplate/AppIml.txt",
+				"app/build.gradle|AndroidProject/Boilerplate/AppBuildGradle.txt",
+				"app/src/main/res/layout/activity_game.xml|AndroidProject/Boilerplate/ResLayoutActivityGameXml.txt",
+				"app/src/main/res/values/attrs.xml|AndroidProject/Boilerplate/ResValuesAttrsXml.txt",
+				"app/src/main/res/values/colors.xml|AndroidProject/Boilerplate/ResValuesColorsXml.txt",
+				"app/src/main/res/values/strings.xml|AndroidProject/Boilerplate/ResValuesStringsXml.txt",
+				"app/src/main/res/values/styles.xml|AndroidProject/Boilerplate/ResValuesStylesXml.txt",
+				"app/src/main/res/values-v11/styles.xml|AndroidProject/Boilerplate/ResValuesV11StylesXml.txt",
+				"app/src/main/res/drawable-hdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableHdpiIcLauncher.png",
+				"app/src/main/res/drawable-mdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableMdpiIcLauncher.png",
+				"app/src/main/res/drawable-xhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXhdpiIcLauncher.png",
+				"app/src/main/res/drawable-xxhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXxhdpiIcLauncher.png",
+				pathToJavaCode + "/GameActivity.java|AndroidProject/Boilerplate/JavaGameActivity.txt",
+				pathToJavaCode + "/util/SystemUiHider.java|AndroidProject/Boilerplate/JavaUtilSystemUiHider.txt",
+				pathToJavaCode + "/util/SystemUiHiderBase.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderBase.txt",
+				pathToJavaCode + "/util/SystemUiHiderHoneycomb.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderHoneycomb.txt",
+				"app/src/main/AndroidManifest.xml|AndroidProject/Boilerplate/AndroidManifestXml.txt",
+				"app/src/main/ic_launcher-web.png|AndroidProject/Boilerplate/IcLauncherWeb.png",
+
+				// Crayon Android stuff
+				pathToJavaCode + "/OpenGlRenderer.java|AndroidProject/OpenGlRenderer.txt",
+
+				// Generic Crayon Java stuuff
+				pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
+				pathToJavaCode + "/TranslationHelper.java|Project/TranslationHelper.txt",
+				pathToJavaCode + "/Image.java|Project/Image.txt",
+				pathToJavaCode + "/JsonParser.java|Project/JsonParser.txt",
 			}) {
 				string[] parts = simpleCopyText.Split('|');
 				string target = parts[0];
@@ -73,12 +83,12 @@ namespace Crayon.Translator.Java
 					output[target] = new FileOutput()
 					{
 						Type = FileOutputType.Binary,
-						BinaryContent = Util.ReadBytesInternally("Translator/Java/AndroidProject/" + source)
+						BinaryContent = Util.ReadBytesInternally("Translator/Java/" + source)
 					};
 				}
 				else
 				{
-					string text = Util.ReadFileInternally("Translator/Java/AndroidProject/" + source);
+					string text = Util.ReadFileInternally("Translator/Java/" + source);
 					output[target] = new FileOutput()
 					{
 						Type = FileOutputType.Text,
@@ -90,9 +100,9 @@ namespace Crayon.Translator.Java
 			foreach (string basicFile in new string[] { 
 				"AsyncMessageQueue",
 				"TranslationHelper",
-				"Start",
-				"GameWindow",
-				"RenderEngine",
+				//"Start",
+				//"GameWindow",
+				//"RenderEngine",
 				"Image",
 				"JsonParser"
 			})
@@ -100,7 +110,7 @@ namespace Crayon.Translator.Java
 				output[pathToJavaCode + "/" + basicFile + ".java"] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
-					TextContent = Util.MassReplacements(
+					TextContent = Constants.DoReplacements(
 						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
 						replacements)
 				};
@@ -134,7 +144,7 @@ namespace Crayon.Translator.Java
 			output[pathToJavaCode + "/CrayonWrapper.java"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(string.Join("", crayonWrapper), replacements)
+				TextContent = Constants.DoReplacements(string.Join("", crayonWrapper), replacements)
 			};
 
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
