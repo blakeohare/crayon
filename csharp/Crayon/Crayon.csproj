@@ -254,8 +254,34 @@
     <EmbeddedResource Include="InterpreterSource\Ops\assign_this_step.cry" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
     <EmbeddedResource Include="Translator\Java\Project\AsyncMessageQueue.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\BuildGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GradleProperties.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Gradlew.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GradlewBat.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ProjectIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\SettingsGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GradleWrapperJar" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\AppBuildGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\AppIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResDrawableHdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResDrawableMdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResDrawableXhdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResDrawableXxhdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResLayoutActivityGameXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResValuesAttrsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResValuesColorsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResValuesStringsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResValuesStylesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\ResValuesV11StylesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\JavaGameActivity.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\JavaUtilSystemUiHiderBase.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\JavaUtilSystemUiHiderHoneycomb.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\JavaUtilSystemUiHider.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\IcLauncherWeb.png" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GradleWrapperProperties.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemLib\Game.cry" />
@@ -277,6 +303,7 @@
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
