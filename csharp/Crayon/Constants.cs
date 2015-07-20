@@ -17,11 +17,10 @@ namespace Crayon
 				{ "ASYNC_MESSAGE_TYPE", typeof(AsyncMessageType) },
 				{ "FF", typeof(FrameworkFunction) },
 				{ "IO_ERROR", typeof(IOErrors) },
-				{ "TYPE_NATIVE_OBJECT", typeof(NativeObjectTypes) },
 				{ "PRIMITIVE_METHOD", typeof(PrimitiveMethods) },
 				{ "SUBTYPE_ID", typeof(SubTypes) },
-				{ "TYPE_ID", typeof(Types) }, // TODO: remove this in favor of the TYPE_ standalone prefix below.
-				{ "TYPE", typeof(Types) },
+				{ "TYPE_ID", typeof(Types) },
+				{ "TYPE_NATIVE_OBJECT", typeof(NativeObjectTypes) },
 			};
 
 			foreach (string key in enumReplacementsByPrefix.Keys)

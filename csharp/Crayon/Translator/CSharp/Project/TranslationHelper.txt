@@ -164,7 +164,7 @@ namespace %%%PROJECT_ID%%%
 			}
 			else
 			{
-				orderedList = valueList.OrderBy<Value, double>(v => v.type == %%%TYPE_INTEGER%%% ? (double)(int)v.internalValue : (double)v.internalValue).ToArray();
+				orderedList = valueList.OrderBy<Value, double>(v => v.type == %%%TYPE_ID_INTEGER%%% ? (double)(int)v.internalValue : (double)v.internalValue).ToArray();
 			}
 			for (int i = orderedList.Length - 1; i >= 0; --i)
 			{
