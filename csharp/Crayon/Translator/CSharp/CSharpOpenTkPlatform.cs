@@ -5,7 +5,7 @@ namespace Crayon.Translator.CSharp
 	class CSharpOpenTkPlatform : CSharpPlatform
 	{
 		public CSharpOpenTkPlatform()
-			: base(new CSharpOpenTkSystemFunctionTranslator())
+			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
 		{ }
 
 		public override bool IsOpenGlBased { get { return true; } }

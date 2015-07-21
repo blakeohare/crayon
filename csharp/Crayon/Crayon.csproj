@@ -125,11 +125,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenStream.cs" />
     <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="Translator\AbstractOpenGlTranslator.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
+    <Compile Include="Translator\COpenGL\COpenGlOpenGlTranslator.cs" />
     <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
     <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
     <Compile Include="Translator\COpenGL\CTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpOpenTkOpenGlTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
@@ -243,6 +246,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\variable.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_stream.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
+    <None Include="InterpreterSource\OpenGlPipeline.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

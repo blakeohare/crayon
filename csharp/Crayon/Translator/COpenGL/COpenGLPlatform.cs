@@ -9,7 +9,7 @@ namespace Crayon.Translator.COpenGL
 	class COpenGLPlatform : AbstractPlatform
 	{
 		public COpenGLPlatform()
-			: base(false, new CTranslator(), new COpenGLSystemFunctionTranslator())
+			: base(false, new CTranslator(), new COpenGLSystemFunctionTranslator(), new COpenGlOpenGlTranslator())
 		{ }
 
 		public override bool IsAsync { get { return false; } }

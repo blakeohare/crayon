@@ -18,7 +18,7 @@ namespace Crayon.Translator.Java
 		public override bool SupportsGamePad { get { return false; } }
 
 		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator)
-			: base(false, new JavaTranslator(), systemFunctionTranslator)
+			: base(false, new JavaTranslator(), systemFunctionTranslator, null)
 		{ }
 
 		public string TranslateType(string original, bool wrapped)

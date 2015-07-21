@@ -11,6 +11,7 @@ namespace Crayon
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
+		public AbstractOpenGlTranslator OpenGlTranslator { get; private set; } // null if IsOpenGlBased is false
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public abstract bool IsAsync { get; }
@@ -34,12 +35,14 @@ namespace Crayon
 		public AbstractPlatform(
 			bool isMin,
 			AbstractTranslator translator,
-			AbstractSystemFunctionTranslator systemFunctionTranslator)
+			AbstractSystemFunctionTranslator systemFunctionTranslator,
+			AbstractOpenGlTranslator nullableOpenGlTranslator)
 		{
 			this.Context = new CompileContext();
 			this.IsMin = isMin;
 			this.Translator = translator;
 			this.SystemFunctionTranslator = systemFunctionTranslator;
+			this.OpenGlTranslator = nullableOpenGlTranslator;
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;

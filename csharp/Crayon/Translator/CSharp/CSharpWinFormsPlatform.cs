@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
 	class CSharpWinFormsPlatform : CSharpPlatform
 	{
 		public CSharpWinFormsPlatform()
-			: base(new CSharpWinFormsSystemFunctionTranslator())
+			: base(new CSharpWinFormsSystemFunctionTranslator(), null)
 		{ }
 
 		public override bool IsOpenGlBased { get { return false; } }

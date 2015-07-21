@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
 	class CSharpWindowsPhonePlatform : CSharpPlatform
 	{
 		public CSharpWindowsPhonePlatform()
-			: base(new CSharpWindowsPhoneSystemFunctionTranslator())
+			: base(new CSharpWindowsPhoneSystemFunctionTranslator(), null)
 		{ }
 
 		public override bool IsOpenGlBased { get { return false; } }
