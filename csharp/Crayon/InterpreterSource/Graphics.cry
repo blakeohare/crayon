@@ -622,7 +622,10 @@ function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
 		nonSolitarySheets,
 		solitarySheets);
 
-	@type('int') maxTextureSize = $_gl_max_texture_size();
+	@type('int') maxTextureSize = 1024;
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		maxTextureSize = $_gl_max_texture_size();
+	}
 
 	// Go through and further consolidate things if possible.
 	if (maxTextureSize > 1024 && $_dictionary_size(nonSolitarySheets) > 1) {
