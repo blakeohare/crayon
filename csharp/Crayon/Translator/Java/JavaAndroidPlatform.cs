@@ -63,6 +63,17 @@ namespace Crayon.Translator.Java
 				pathToJavaCode + "/util/SystemUiHiderHoneycomb.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderHoneycomb.txt",
 				"app/src/main/AndroidManifest.xml|AndroidProject/Boilerplate/AndroidManifestXml.txt",
 				"app/src/main/ic_launcher-web.png|AndroidProject/Boilerplate/IcLauncherWeb.png",
+				".idea/copyright/profiles_settings.xml|AndroidProject/Boilerplate/Idea/CopyrightProfilesSettingsXml.txt",
+				".idea/libraries/support_v4_18_0_0.xml|AndroidProject/Boilerplate/Idea/LibrariesSupportXml.txt",
+				".idea/scopes/scope_settings.xml|AndroidProject/Boilerplate/Idea/ScopeSettingsXml.txt",
+				".idea/.name|AndroidProject/Boilerplate/Idea/DotName.txt",
+				".idea/compiler.xml|AndroidProject/Boilerplate/Idea/CompilerXml.txt",
+				".idea/encodings.xml|AndroidProject/Boilerplate/Idea/EncodingsXml.txt",
+				".idea/gradle.xml|AndroidProject/Boilerplate/Idea/GradleXml.txt",
+				".idea/misc.xml|AndroidProject/Boilerplate/Idea/MiscXml.txt",
+				".idea/modules.xml|AndroidProject/Boilerplate/Idea/ModulesXml.txt",
+				".idea/vcs.xml|AndroidProject/Boilerplate/Idea/VcsXml.txt",
+				".idea/workspace.xml|AndroidProject/Boilerplate/Idea/WorkspaceXml.txt",
 
 				// Crayon Android stuff
 				pathToJavaCode + "/OpenGlRenderer.java|AndroidProject/OpenGlRenderer.txt",

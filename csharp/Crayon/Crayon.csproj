@@ -286,6 +286,17 @@
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidManifestXml.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\IcLauncherWeb.png" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\OpenGlRenderer.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CompilerXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CopyrightProfilesSettingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\DotName.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\EncodingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\GradleXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\LibrariesSupportXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\MiscXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ModulesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ScopeSettingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\VcsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\WorkspaceXml.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
