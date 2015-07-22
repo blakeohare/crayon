@@ -9,11 +9,10 @@ namespace Crayon.Translator.Java
 	internal class JavaAwtPlatform : JavaPlatform
 	{
 		public JavaAwtPlatform()
-			: base(new JavaAwtSystemFunctionTranslator())
+			: base(new JavaAwtSystemFunctionTranslator(), null)
 		{
 		}
 
-		public override bool IsOpenGlBased { get { return false; } }
 		public override string GeneratedFilesFolder { get { return "resources/generated"; } }
 
 		public override Dictionary<string, FileOutput> Package(

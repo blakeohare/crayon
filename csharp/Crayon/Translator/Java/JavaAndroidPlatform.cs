@@ -8,11 +8,10 @@ namespace Crayon.Translator.Java
 	internal class JavaAndroidPlatform : JavaPlatform
 	{
 		public JavaAndroidPlatform()
-			: base(new JavaAndroidSystemFunctionTranslator())
+			: base(new JavaAndroidSystemFunctionTranslator(), new JavaAndroidOpenGlEsTranslator())
 		{
 		}
 
-		public override bool IsOpenGlBased { get { return true; } }
 		public override string GeneratedFilesFolder { get { return "app/src/main/res/generated"; } }
 
 		public override Dictionary<string, FileOutput> Package(

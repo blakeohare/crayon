@@ -11,7 +11,6 @@ namespace Crayon.Translator.CSharp
 			: base(new CSharpWindowsPhoneSystemFunctionTranslator(), null)
 		{ }
 
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)

@@ -17,8 +17,8 @@ namespace Crayon.Translator.Java
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool SupportsGamePad { get { return false; } }
 
-		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator)
-			: base(false, new JavaTranslator(), systemFunctionTranslator, null)
+		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator, AbstractOpenGlTranslator openGlTranslator)
+			: base(false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator)
 		{ }
 
 		public string TranslateType(string original, bool wrapped)

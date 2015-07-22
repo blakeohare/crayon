@@ -21,12 +21,13 @@ namespace Crayon
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool ScreenBlocksExecution { get; }
 		public abstract string GeneratedFilesFolder { get; }
-		public abstract bool IsOpenGlBased { get; }
 		public abstract bool SupportsGamePad { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.
 		public abstract bool UseFixedListArgConstruction { get; }
+
+		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
 
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 

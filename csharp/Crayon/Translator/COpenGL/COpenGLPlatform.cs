@@ -18,7 +18,6 @@ namespace Crayon.Translator.COpenGL
 		public override bool IntIsFloor { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
-		public override bool IsOpenGlBased { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override string GeneratedFilesFolder { get { return "generated_files"; } }
 		public override bool SupportsGamePad { get { return false; } }

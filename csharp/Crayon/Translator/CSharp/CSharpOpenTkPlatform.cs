@@ -8,7 +8,6 @@ namespace Crayon.Translator.CSharp
 			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
 		{ }
 
-		public override bool IsOpenGlBased { get { return true; } }
 		public override bool SupportsGamePad { get { return true; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
