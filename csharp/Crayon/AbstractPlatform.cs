@@ -46,6 +46,13 @@ namespace Crayon
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
+
+			if (this.OpenGlTranslator != null)
+			{
+				this.OpenGlTranslator.Platform = this;
+				this.OpenGlTranslator.Translator = this.Translator;
+			}
+
 			this.InterpreterCompiler = new InterpreterCompiler(this);
 		}
 

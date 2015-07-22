@@ -397,11 +397,6 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.getRawByteCodeString()");
 		}
 
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			output.Add("TODO_translateGlLoadTExture()");
-		}
-
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("TranslationHelper.makeHttpRequest()");

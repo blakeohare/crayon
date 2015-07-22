@@ -23,6 +23,7 @@ namespace Crayon
 			"Interpreter.cry",
 			"IOManager.cry",
 			"NetworkManager.cry",
+			"OpenGlPipeline.cry", // conditionally excluded below based on platform.
 			"PrimitiveMethods.cry",
 			"Runner.cry",
 			"SoundManager.cry",
@@ -48,6 +49,11 @@ namespace Crayon
 			foreach (string file in FILES)
 			{
 				string fileId = file.Split('.')[0];
+
+				if (fileId.StartsWith("OpenGl") && !this.platform.IsOpenGlBased)
+				{
+					continue;
+				}
 
 				string code = Util.ReadFileInternally("InterpreterSource/" + file);
 

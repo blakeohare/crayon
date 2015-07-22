@@ -243,16 +243,6 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			throw new NotImplementedException();

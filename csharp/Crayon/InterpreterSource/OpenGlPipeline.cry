@@ -1,27 +1,363 @@
 ﻿
 
-function @type('bool') render() {
+function @type('bool') glRender(
+	@type('int') VW, // virtual width
+	@type('int') VH, // virtual height
+	@type('int') RW, // real width
+	@type('int') RH // real height
+) {
+	@type('bool') scaled = VW != RW || VH != RH;
+
 	@type('int') i = 0;
+	@type('int') image_i = 0;
 	@type('int') length = GL_VIRTUAL_SIZE;
+
+	@type('int') width = 0;
+	@type('int') height = 0;
+	@type('int') left = 0;
+	@type('int') right = 0;
+	@type('int') top = 0;
+	@type('int') bottom = 0;
+
+	@type('int') lineWidth = 0;
+	@type('int') j = 0;
+	@type('int') ptCount = 0;
+
+	@type('int') startX = 0;
+	@type('int') startY = 0;
+	@type('int') endX = 0;
+	@type('int') endY = 0;
+
+	@type('double') textureWidth = 0.0;
+	@type('double') textureHeight = 0.0;
+	@type('double') textureLeft = 0.0;
+	@type('double') textureRight = 0.0;
+	@type('double') textureTop = 0.0;
+	@type('double') textureBottom = 0.0;
+
+	@type('double') slope = 0.0;
+	@type('double') slopeScalingCoefficient = 0.0;
+	@type('double') offsetXComp = 0.0;
+	@type('double') offsetYComp = 0.0;
+	@type('double') ax = 0.0;
+	@type('double') ay = 0.0;
+	@type('double') bx = 0.0;
+	@type('double') by = 0.0;
+	@type('double') cx = 0.0;
+	@type('double') cy = 0.0;
+	@type('double') dx = 0.0;
+	@type('double') dy = 0.0;
+
+	@type('int') red = 0;
+	@type('int') green = 0;
+	@type('int') blue = 0;
+	@type('int') alpha = 0;
+	@type('int') textureId = -1;
+
+	@type('Image') image = null;
+	@type('CompositeImage') compositeImage = null;
+	@type('GlRenderState') state = null;
+
 	while (i < length) {
 		switch ($_array_get(GL_DATA, i)) {
 			case OpenGlAction.DRAW_RECTANGLE:
+				left = $_array_get(GL_DATA, i | 1);
+				top = $_array_get(GL_DATA, i | 2);
+				right = $_array_get(GL_DATA, i | 3) + left;
+				bottom = $_array_get(GL_DATA, i | 4) + top;
+				red = $_array_get(GL_DATA, i | 5);
+				green = $_array_get(GL_DATA, i | 6);
+				blue = $_array_get(GL_DATA, i | 7);
+				alpha = $_array_get(GL_DATA, i | 8);
+				if (right >= 0 && left < VW && bottom > 0 && top < VH) {
+					if (state == null ||
+						GlRenderState$state.mode != OpenGlMode.QUADS ||
+						GlRenderState$state.textureId != 0 ||
+						GlRenderState$state.r != red ||
+						GlRenderState$state.g != green ||
+						GlRenderState$state.b != blue ||
+						GlRenderState$state.a != alpha) {
+						if (state == null) {
+							state = new GlRenderState(0, 0, 0, 0, 0, 0);
+						} else {
+							$_gl_end();
+						}
+
+						GlRenderState$state.mode = OpenGlMode.QUADS;
+						GlRenderState$state.textureId = 0;
+						GlRenderState$state.r = red;
+						GlRenderState$state.g = green;
+						GlRenderState$state.b = blue;
+						GlRenderState$state.a = alpha;
+
+						$_gl_disable_texture_2d();
+						$_gl_color_4(red, green, blue, alpha);
+						$_gl_begin_quads();
+					}
+
+					if (scaled) {
+						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(top * RH, VH));
+						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(top * RH, VH));
+						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+					} else {
+						$_gl_vertex_2(left, top);
+						$_gl_vertex_2(right, top);
+						$_gl_vertex_2(right, bottom);
+						$_gl_vertex_2(left, bottom);
+					}
+				}
 				break;
+
 			case OpenGlAction.DRAW_ELLIPSE:
+				
+				left = $_array_get(GL_DATA, i | 1);
+				top = $_array_get(GL_DATA, i | 2);
+				right = $_array_get(GL_DATA, i | 3) + left;
+				bottom = $_array_get(GL_DATA, i | 4) + top;
+				red = $_array_get(GL_DATA, i | 5);
+				green = $_array_get(GL_DATA, i | 6);
+				blue = $_array_get(GL_DATA, i | 7);
+				alpha = $_array_get(GL_DATA, i | 8);
+
+				width = right - left;
+				height = bottom - top;
+				startX = left + $_unsafe_integer_division(width, 2);
+				startY = top + $_unsafe_integer_division(height, 2);
+				width = $_unsafe_integer_division(width, 2);
+				height = $_unsafe_integer_division(height, 2);
+
+				if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0) {
+					// Since Polygons require a GL.End(), clear the state if one exists and don't set a new one.
+					if (state != null) {
+						$_gl_end();
+						state = null;
+					}
+
+					$_gl_disable_texture_2d();
+					$_gl_color_4(red, green, blue, alpha);
+					$_gl_begin_polygon();
+
+					ptCount = $_unsafe_integer_division(width + height, 8);
+					if (ptCount < 16) ptCount = 16;
+
+					for (j = 0; j < ptCount; j += 1) {
+						endX = $_cast('int', $_cos($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * width + startX);
+						endY = $_cast('int', $_sin($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * height + startY);
+						if (scaled) {
+							$_gl_vertex_2($_unsafe_integer_division(endX * RW, VW), $_unsafe_integer_division(endY * RH, VH));
+						} else {
+							$_gl_vertex_2(endX, endY);
+						}
+					}
+					$_gl_end();
+				}
 				break;
+
 			case OpenGlAction.DRAW_LINE:
+				
+				// Horizontal and vertical lines were diverted to the rectangle drawing codepath before this point.
+				// The slope will NEVER be 0.
+				startX = $_array_get(GL_DATA, i | 1);
+				startY = $_array_get(GL_DATA, i | 2);
+				endX = $_array_get(GL_DATA, i | 3);
+				endY = $_array_get(GL_DATA, i | 4);
+				lineWidth = $_array_get(GL_DATA, i | 5);
+				red = $_array_get(GL_DATA, i | 6);
+				green = $_array_get(GL_DATA, i | 7);
+				blue = $_array_get(GL_DATA, i | 8);
+				alpha = $_array_get(GL_DATA, i | 9);
+
+				left = startX;
+				right = startX;
+				if (startX > endX) left = endX;
+				else right = endX;
+
+				top = startY;
+				bottom = startY;
+				if (startY > endY) top = endY;
+				else bottom = endY;
+
+				// canonicalize coordinates such that the line is drawn to the right.
+				if (startX > endX) {
+					// j is a swap variable
+					j = startX;
+					startX = endX;
+					endX = j;
+					j = startY;
+					startY = endY;
+					endY = j;
+				}
+
+				slope = -$_unsafe_float_division(1.0 * endY - startY, (endX - startX));
+				textureRight = slope; // hijacking textureRight as abs(slope)
+				if (textureRight < 0) textureRight = -textureRight;
+
+				slopeScalingCoefficient = $_exponent(1 + $_unsafe_float_division(1.0, (slope * slope)), 0.5);
+
+				offsetXComp = $_unsafe_float_division($_unsafe_float_division(lineWidth, slopeScalingCoefficient), 2);
+				offsetYComp = $_unsafe_float_division(lineWidth, (2 * textureRight * slopeScalingCoefficient));
+
+				ax = startX;
+				ay = startY;
+				bx = endX;
+				by = endY;
+				cx = bx;
+				cy = by;
+				dx = ax;
+				dy = ay;
+
+				if (slope > 0) {
+					ax -= offsetXComp;
+					ay -= offsetYComp;
+					bx -= offsetXComp;
+					by -= offsetYComp;
+					cx += offsetXComp;
+					cy += offsetYComp;
+					dx += offsetXComp;
+					dy += offsetYComp;
+				} else {
+					ax += offsetXComp;
+					ay -= offsetYComp;
+					bx += offsetXComp;
+					by -= offsetYComp;
+					cx -= offsetXComp;
+					cy += offsetYComp;
+					dx -= offsetXComp;
+					dy += offsetYComp;
+				}
+
+				if (state == null ||
+					GlRenderState$state.mode != OpenGlMode.QUADS ||
+					GlRenderState$state.textureId != 0 ||
+					GlRenderState$state.r != red ||
+					GlRenderState$state.g != green ||
+					GlRenderState$state.b != blue ||
+					GlRenderState$state.a != alpha) {
+					if (state == null) {
+						state = new GlRenderState(0, 0, 0, 0, 0, 0);
+					} else {
+						$_gl_end();
+					}
+
+					GlRenderState$state.mode = OpenGlMode.QUADS;
+					GlRenderState$state.textureId = 0;
+					GlRenderState$state.r = red;
+					GlRenderState$state.g = green;
+					GlRenderState$state.b = blue;
+					GlRenderState$state.a = alpha;
+
+					$_gl_disable_texture_2d();
+					$_gl_color_4(red, green, blue, alpha);
+					$_gl_begin_quads();
+				}
+
+				if (scaled) {
+					$_gl_vertex_2($_unsafe_integer_division(ax * RW, VW), $_unsafe_integer_division(ay * RH, VH));
+					$_gl_vertex_2($_unsafe_integer_division(bx * RW, VW), $_unsafe_integer_division(by * RH, VH));
+					$_gl_vertex_2($_unsafe_integer_division(cx * RW, VW), $_unsafe_integer_division(cy * RH, VH));
+					$_gl_vertex_2($_unsafe_integer_division(dx * RW, VW), $_unsafe_integer_division(dy * RH, VH));
+				} else {
+					$_gl_vertex_2(ax, ay);
+					$_gl_vertex_2(bx, by);
+					$_gl_vertex_2(cx, cy);
+					$_gl_vertex_2(dx, dy);
+				}
 				break;
+
 			case OpenGlAction.DRAW_IMAGE:
+				image = $_array_get(GL_IMAGES, image_i);
+				image_i += 1;
+
+				left = $_array_get(GL_DATA, i | 1); // target X
+				top = $_array_get(GL_DATA, i | 2); // target Y
+				right = $_array_get(GL_DATA, i | 3) + left; // target width
+				bottom = $_array_get(GL_DATA, i | 4) + top; // target height
+				startX = $_array_get(GL_DATA, i | 5); // source X
+				startY = $_array_get(GL_DATA, i | 6); // source Y
+				width = $_array_get(GL_DATA, i | 7); // source width
+				height = $_array_get(GL_DATA, i | 8); // source height
+
+				if (right >= 0 && left < VW && bottom >= 0 && top < VH) {
+					textureWidth = Image$image.textureRight - Image$image.textureLeft;
+					textureHeight = Image$image.textureBottom - Image$image.textureTop;
+
+					textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * startX, Image$image.width);
+					textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * startY, Image$image.height);
+					textureRight = textureLeft + $_unsafe_integer_division(textureWidth * width, Image$image.width);
+					textureBottom = textureTop + $_unsafe_integer_division(textureHeight * height, Image$image.height);
+					compositeImage = Image$image.compositeResource;
+					if (!CompositeImage$compositeImage.loaded) {
+						if (state != null)
+						{
+							state = null;
+							$_gl_end();
+						}
+						loadCompositeImageResource(compositeImage);
+					}
+					textureId = CompositeImage$compositeImage.glTextureId;
+
+					if (state == null ||
+						GlRenderState$state.mode != OpenGlMode.QUADS ||
+						GlRenderState$state.textureId != textureId) {
+						if (state == null) {
+							state = new GlRenderState(0, 0, 0, 0, 0, 0);
+						} else {
+							$_gl_end();
+						}
+
+						GlRenderState$state.mode = OpenGlMode.QUADS;
+						GlRenderState$state.textureId = textureId;
+
+						$_gl_enable_texture_2d();
+						$_gl_color_4(255, 255, 255, 255);
+						$_gl_bind_texture(textureId);
+						$_gl_begin_quads();
+					}
+
+					if (scaled)
+					{
+						$_gl_tex_coord_2(textureLeft, textureTop);
+						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(top * RH, VH));
+						
+						$_gl_tex_coord_2(textureRight, textureTop);
+						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(top * RH, VH));
+
+						$_gl_tex_coord_2(textureRight, textureBottom);
+						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+
+						$_gl_tex_coord_2(textureLeft, textureBottom);
+						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+					} else {
+						$_gl_tex_coord_2(textureLeft, textureTop);
+						$_gl_vertex_2(left, top);
+
+						$_gl_tex_coord_2(textureRight, textureTop);
+						$_gl_vertex_2(right, top);
+
+						$_gl_tex_coord_2(textureRight, textureBottom);
+						$_gl_vertex_2(right, bottom);
+
+						$_gl_tex_coord_2(textureLeft, textureBottom);
+						$_gl_vertex_2(left, bottom);
+					}
+				}
 				break;
+
 			default:
 				return false;
 		}
 		i += 16;
 	}
+
+	if (state != null) {
+		$_gl_end();
+	}
+
 	return true;
 }
 
-function @type('boolean') glDrawRectangle(
+function @type('bool') glDrawRectangle(
 	@type('int') left,
 	@type('int') top,
 	@type('int') width,
@@ -32,7 +368,7 @@ function @type('boolean') glDrawRectangle(
 	@type('int') alpha) {
 
 	if (GL_VIRTUAL_SIZE == GL_REAL_SIZE) glIncreaseDataCapacity();
-	$_array_set(GL_DATA, GL_VIRTUAL_SIZE, OpenGlAction.DRAW_RECTANGLE;
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE, OpenGlAction.DRAW_RECTANGLE);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 1, left);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 2, top);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 3, width);
@@ -41,11 +377,11 @@ function @type('boolean') glDrawRectangle(
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, green & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, blue & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, alpha & 255);
-	GL_DATA_VIRTUAL_SIZE += 16;
+	GL_VIRTUAL_SIZE += 16;
 	return true;
 }
 
-function @type('boolean') glDrawEllipse(
+function @type('bool') glDrawEllipse(
 	@type('int') left,
 	@type('int') top,
 	@type('int') width,
@@ -68,11 +404,11 @@ function @type('boolean') glDrawEllipse(
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, green & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, blue & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, alpha & 255);
-	GL_DATA_VIRTUAL_SIZE += 16;
+	GL_VIRTUAL_SIZE += 16;
 	return true;
 }
 
-function @type('boolean') glDrawLine(
+function @type('bool') glDrawLine(
 	@type('int') startX,
 	@type('int') startY,
 	@type('int') endX,
@@ -93,7 +429,7 @@ function @type('boolean') glDrawLine(
 
 		if (startX == endX)
 		{
-			left = startX - lineWidth / 2;
+			left = startX - $_unsafe_integer_division(lineWidth, 2);
 			width = lineWidth;
 			if (startY < endY) {
 				height = endY - startY + 1;
@@ -104,7 +440,7 @@ function @type('boolean') glDrawLine(
 		}
 		else
 		{
-			top = startY - lineWidth / 2;
+			top = startY - $_unsafe_integer_division(lineWidth, 2);
 			height = lineWidth;
 			if (startX < endX) {
 				width = endX - startX + 1;
@@ -128,28 +464,80 @@ function @type('boolean') glDrawLine(
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, green & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, blue & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 9, alpha & 255);
+	GL_VIRTUAL_SIZE += 16;
 	return true;
 }
 
-function glDrawImageDirect() {
+// Draws an image on the screen at the coordinates.
+function glDrawImageSimple(@type('Image') image, @type('int') x, @type('int') y) {
+	@type('int') width = Image$image.width;
+	@type('int') height = Image$image.height;
 	
+	// TODO: just do this inline or possibly create a separate render action.
+	glDrawImageAdvanced(image, x, y, width, height, 0, 0, width, height);
 }
 
-function glDrawImageAdvanced() {
+// Draws a part of an image on a part of the screen. Stretching and cropping.
+function glDrawImageAdvanced(
+	@type('Image') image,
+	@type('int') targetX,
+	@type('int') targetY,
+	@type('int') targetWidth,
+	@type('int') targetHeight,
+	@type('int') sourceX,
+	@type('int') sourceY,
+	@type('int') sourceWidth,
+	@type('int') sourceHeight) {
 	
+	if (GL_VIRTUAL_SIZE == GL_REAL_SIZE) glIncreaseDataCapacity();
+	if (GL_IMAGES_VIRTUAL_SIZE == GL_IMAGES_REAL_SIZE) glIncreaseImageListCapacity();
+	
+	@type('CompositeImage') compositeResource = Image$image.compositeResource;
+	if (!CompositeImage$compositeResource.loaded) {
+		CompositeImage$compositeResource.glTextureId = $_gl_load_texture(CompositeImage$compositeResource.nativeBitmap);
+		CompositeImage$compositeResource.loaded = true;
+	}
+
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE, OpenGlAction.DRAW_IMAGE);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 1, targetX);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 2, targetY);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 3, targetWidth);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 4, targetHeight);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 5, sourceX);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, sourceY);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, sourceWidth);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, sourceHeight);
+	GL_VIRTUAL_SIZE += 16;
+
+	$_array_set(GL_IMAGES, GL_IMAGES_VIRTUAL_SIZE, image);
+	GL_IMAGES_VIRTUAL_SIZE += 1;
 }
 
 // size must ALWAYS be divisible by 16
 function glIncreaseDataCapacity() {
-	if (GL_VIRTUAL_SIZE == 0) {
-		GL_DATA = $_new_array('int', 16 * 50);
-	} else {
-		@type('int') capacity = GL_REAL_SIZE * 2;
-		@type('Array<int>') newGlData = $_new_array('int', capacity);
-		for (@type('int') i = 0; i < GL_VIRTUAL_SIZE; i += 1) {
-			$_array_set(newGlData, i, $_array_get(GL_DATA, i));
-		}
-		GL_DATA = newGlData;
+	@type('int') capacity = GL_REAL_SIZE * 2;
+	if (capacity == 0) capacity = 16 * 50;
+	@type('Array<int>') newGlData = $_new_array('int', capacity);
+	for (@type('int') i = 0; i < GL_VIRTUAL_SIZE; i += 1) {
+		$_array_set(newGlData, i, $_array_get(GL_DATA, i));
 	}
+	GL_DATA = newGlData;
 	GL_REAL_SIZE = $_array_length(GL_DATA);
+}
+
+// no size restrictions.
+function glIncreaseImageListCapacity() {
+	@type('int') capacity = GL_IMAGES_REAL_SIZE * 2;
+	if (capacity == 0) capacity = 50;
+	@type('Array<Image>') newGlImages = $_new_array('Image', capacity);
+	for (@type('int') i = 0; i < GL_IMAGES_VIRTUAL_SIZE; i += 1) {
+		$_array_set(newGlImages, i, $_array_get(GL_IMAGES, i));
+	}
+	GL_IMAGES = newGlImages;
+	GL_IMAGES_REAL_SIZE = $_array_length(GL_IMAGES);
+}
+
+function glResetDrawBuffer() {
+	GL_VIRTUAL_SIZE = 0;
+	GL_IMAGES_VIRTUAL_SIZE = 0;
 }

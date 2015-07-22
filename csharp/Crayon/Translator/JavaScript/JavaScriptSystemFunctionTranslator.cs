@@ -393,16 +393,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add("\"");
 		}
 
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			output.Add("0");
-		}
-
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			output.Add("1024");
-		}
-
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("R.makeHttpRequest(");

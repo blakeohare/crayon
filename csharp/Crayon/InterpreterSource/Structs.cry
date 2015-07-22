@@ -290,3 +290,12 @@ struct HttpRequest {
 	@type('Dictionary<string, Array<string>>') headers,
 	@type('string') body,
 }
+
+struct GlRenderState {
+	@type('int') mode,
+	@type('int') textureId,
+	@type('int') r,
+	@type('int') g,
+	@type('int') b,
+	@type('int') a
+}

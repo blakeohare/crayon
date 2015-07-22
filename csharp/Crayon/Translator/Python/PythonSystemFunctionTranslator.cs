@@ -400,17 +400,6 @@ namespace Crayon.Translator.Python
 			output.Add("\"");
 		}
 
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			// no use in creating megasheets.
-			output.Add("1024");
-		}
-
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("_http_request_impl(");

@@ -15,11 +15,6 @@ namespace Crayon.Translator.Java
 			output.Add("GameWindow.INSTANCE.pumpEventQueue()");
 		}
 
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
-		}
-
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
 			output.Add("((java.awt.image.BufferedImage) ");

@@ -246,7 +246,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\variable.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_stream.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
-    <None Include="InterpreterSource\OpenGlPipeline.cry" />
+    <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

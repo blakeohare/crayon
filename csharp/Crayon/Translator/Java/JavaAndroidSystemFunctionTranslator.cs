@@ -17,11 +17,6 @@ namespace Crayon.Translator.Java
 			output.Add("TODO_translateGetEventsRawList()");
 		}
 
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			output.Add("TODO_translateGlMaxTextureSize()");
-		}
-
 		protected override void TranslateImageNativeBitmapHeight(List<string> output, ParseTree.Expression bitmap)
 		{
 			output.Add("TODO_translateImageNativeBitmapHeight()");

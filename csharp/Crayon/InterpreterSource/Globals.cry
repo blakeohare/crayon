@@ -14,4 +14,4 @@
 @uncontained @type('int') GL_REAL_SIZE  = 0;
 @uncontained @type('Array<Image>') GL_IMAGES = $_new_array('Image', 0);
 @uncontained @type('int') GL_IMAGES_VIRTUAL_SIZE = 0;
-@unctonained @type('int') GL_IMAGES_REAL_SIZE = 0;
+@uncontained @type('int') GL_IMAGES_REAL_SIZE = 0;
