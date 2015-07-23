@@ -74,4 +74,3 @@
     <orderEntry type="library" exported="" name="appcompat-v7-19.0.1" level="project" />
   </component>
 </module>
-

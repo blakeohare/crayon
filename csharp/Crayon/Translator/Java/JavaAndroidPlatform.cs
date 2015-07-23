@@ -42,6 +42,7 @@ namespace Crayon.Translator.Java
 				"gradlew|AndroidProject/Boilerplate/Gradlew.txt",
 				"gradlew.bat|AndroidProject/Boilerplate/GradlewBat.txt",
 				projectId + ".iml|AndroidProject/Boilerplate/ProjectIml.txt",
+				"android.iml|AndroidProject/Boilerplate/AndroidIml.txt",
 				"settings.gradle|AndroidProject/Boilerplate/SettingsGradle.txt",
 				"gradle/wrapper/gradle-wrapper.jar|AndroidProject/Boilerplate/GradleWrapperJar",
 				"gradle/wrapper/gradle-wrapper.properties|AndroidProject/Boilerplate/GradleWrapperProperties.txt",
@@ -57,7 +58,7 @@ namespace Crayon.Translator.Java
 				"app/src/main/res/drawable-mdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableMdpiIcLauncher.png",
 				"app/src/main/res/drawable-xhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXhdpiIcLauncher.png",
 				"app/src/main/res/drawable-xxhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXxhdpiIcLauncher.png",
-				pathToJavaCode + "/GameActivity.java|AndroidProject/Boilerplate/JavaGameActivity.txt",
+				pathToJavaCode + "/GameActivity.java|AndroidProject/JavaGameActivity.txt",
 				pathToJavaCode + "/util/SystemUiHider.java|AndroidProject/Boilerplate/JavaUtilSystemUiHider.txt",
 				pathToJavaCode + "/util/SystemUiHiderBase.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderBase.txt",
 				pathToJavaCode + "/util/SystemUiHiderHoneycomb.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderHoneycomb.txt",
@@ -78,7 +79,7 @@ namespace Crayon.Translator.Java
 				// Crayon Android stuff
 				pathToJavaCode + "/OpenGlRenderer.java|AndroidProject/OpenGlRenderer.txt",
 
-				// Generic Crayon Java stuuff
+				// Generic Crayon Java stuff
 				pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
 				pathToJavaCode + "/TranslationHelper.java|Project/TranslationHelper.txt",
 				pathToJavaCode + "/Image.java|Project/Image.txt",

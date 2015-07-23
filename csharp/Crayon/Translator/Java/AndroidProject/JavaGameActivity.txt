@@ -156,4 +156,14 @@ public class GameActivity extends Activity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    @Override
+    protected void onResume() {
+        CrayonWrapper.v_main();
+    }
+
+    @Override
+    protected void onPause() {
+        // TODO: save state
+    }
 }
