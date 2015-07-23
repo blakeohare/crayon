@@ -2,109 +2,236 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
 	internal class JavaAndroidSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
+		{
+			output.Add("AndroidTranslationHelper.makeHttpRequest(");
+			this.Translator.TranslateExpression(output, method);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, body);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, userAgent);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentType);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentLength);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerNameList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerValueList);
+			output.Add(")");
+		}
+
+		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+		{
+			output.Add("AndroidTranslationHelper.fillScreen(");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(")");
+		}
+
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("AndroidTranslationHelper.initializeGame(");
+			this.Translator.TranslateExpression(output, fps);
+			output.Add(")");
+		}
+
+		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		{
+			output.Add("AndroidTranslationHelper.getRawByteCodeString()");
+		}
+
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			output.Add("TODO_translateAppDataRoot()");
+			output.Add("AndroidTranslationHelper.getAppDataRoot()");
 		}
 
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
-			output.Add("TODO_translateGetEventsRawList()");
+			output.Add("AndroidTranslationHelper.getEventsRawList()");
 		}
 
-		protected override void TranslateImageNativeBitmapHeight(List<string> output, ParseTree.Expression bitmap)
+		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
 		{
-			output.Add("TODO_translateImageNativeBitmapHeight()");
+			output.Add("((android.graphics.Bitmap)");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(").getHeight()");
 		}
 
-		protected override void TranslateImageNativeBitmapWidth(List<string> output, ParseTree.Expression bitmap)
+		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
-			output.Add("TODO_translateImageNativeBitmapWidth()");
+			output.Add("((android.graphics.Bitmap)");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(").getWidth()");
 		}
 
-		protected override void TranslateInitializeScreen(List<string> output, ParseTree.Expression gameWidth, ParseTree.Expression gameHeight, ParseTree.Expression screenWidth, ParseTree.Expression screenHeight)
+		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
 		{
-			output.Add("TODO_translateInitializeScreen()");
+			output.Add("AndroidTranslationHelper.initializeScreen(");
+			this.Translator.TranslateExpression(output, gameWidth);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, gameHeight);
+			output.Add(", ");
+			if (screenWidth is NullConstant)
+			{
+				// TODO: this is silly and now duplicated in JavaAwt. refactor this.
+				this.Translator.TranslateExpression(output, gameWidth);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, gameHeight);
+			}
+			else
+			{
+				this.Translator.TranslateExpression(output, screenWidth);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, screenHeight);
+			}
+			output.Add(")");
 		}
 
-		protected override void TranslateIoCreateDirectory(List<string> output, ParseTree.Expression path)
+		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			output.Add("TODO_translateIoCreateDirectory()");
+			output.Add("AndroidTranslationHelper.ioCreateDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateIoCurrentDirectory(List<string> output)
 		{
-			output.Add("TODO_translateIoCurrentDirectory()");
+			output.Add("AndroidTranslationHelper.ioCurrentDirectory()");
 		}
 
-		protected override void TranslateIoDeleteDirectory(List<string> output, ParseTree.Expression path, ParseTree.Expression isRecursive)
+		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
 		{
-			output.Add("TODO_translateIoDeleteDirectory()");
+			output.Add("AndroidTranslationHelper.ioDeleteDirectory(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isRecursive);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoDeleteFile(List<string> output, ParseTree.Expression path, ParseTree.Expression isUserData)
+		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
 		{
-			output.Add("TODO_translateIoDeleteFile()");
+			output.Add("AndroidTranslationHelper.ioDeleteFile(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoDoesPathExist(List<string> output, ParseTree.Expression canonicalizedPath, ParseTree.Expression directoriesOnly, ParseTree.Expression performCaseCheck, ParseTree.Expression isUserData)
+		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
-			output.Add("TODO_translateIoDoesPathExist()");
+			output.Add("AndroidTranslationHelper.ioDoesPathExist(");
+			this.Translator.TranslateExpression(output, canonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, directoriesOnly);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, performCaseCheck);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoFileReadText(List<string> output, ParseTree.Expression path, ParseTree.Expression isUserData)
+		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
-			output.Add("TODO_translateIoFileReadText()");
+			output.Add("AndroidTranslationHelper.ioFileReadText(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoFilesInDirectory(List<string> output, ParseTree.Expression verifiedCanonicalizedPath, ParseTree.Expression isUserData)
+		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
-			output.Add("TODO_translateIoFilesInDirectory()");
+			output.Add("AndroidTranslationHelper.ioFilesInDirectory(");
+			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslateIoFileWriteText(List<string> output, ParseTree.Expression path, ParseTree.Expression content, ParseTree.Expression isUserData)
+		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
-			output.Add("TODO_translateIoFileWriteText()");
+			output.Add("AndroidTranslationHelper.ioFileWriteText(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, content);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isUserData);
+			output.Add(")");
 		}
 
-		protected override void TranslatePrint(List<string> output, ParseTree.Expression message)
+		protected override void TranslatePrint(List<string> output, Expression message)
 		{
-			output.Add("TODO_translatePrint()");
+			output.Add("android.util.Log.d(\"\", ");
+			this.Translator.TranslateExpression(output, message);
+			output.Add(")");
 		}
 
-		protected override void TranslateReadLocalImageResource(List<string> output, ParseTree.Expression filePath)
+		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			output.Add("TODO_translateReadLocalImageResource()");
+			output.Add("AndroidTranslationHelper.readLocalImageResource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
-		protected override void TranslateReadLocalSoundResource(List<string> output, ParseTree.Expression filePath)
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
-			output.Add("TODO_translateReadLocalSoundResource()");
+			output.Add("AndroidTranslationHelper.readLocalSoundResource(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
-		protected override void TranslateReadLocalTileResource(List<string> output, ParseTree.Expression tileGenName)
+		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			output.Add("TODO_translateReadLocalTileResource()");
+			output.Add("AndroidTranslationHelper.readLocalTileResource(");
+			this.Translator.TranslateExpression(output, tileGenName);
+			output.Add(")");
 		}
 
-		protected override void TranslateResourceReadText(List<string> output, ParseTree.Expression path)
+		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			output.Add("TODO_translateResourceReadText()");
+			output.Add("AndroidTranslationHelper.resourceReadText(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
-		protected override void TranslateSetTitle(List<string> output, ParseTree.Expression title)
+		protected override void TranslateSetTitle(List<string> output, Expression title)
 		{
-			output.Add("TODO_translateSetTitle()");
+			output.Add("AndroidTranslationHelper.setTitle(");
+			this.Translator.TranslateExpression(output, title);
+			output.Add(")");
 		}
 
-		protected override void TranslateSoundPlay(List<string> output, ParseTree.Expression soundInstance)
+		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
 		{
-			output.Add("TODO_translateSoundPlay()");
+			output.Add("AndroidTranslationHelper.playSound(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
+		{
+			output.Add("AndroidTranslationHelper.flushImagetteToBitmap(");
+			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			output.Add("AndroidTranslationHelper.imageInitializeAsyncDownloadOfResource(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 	}
 }

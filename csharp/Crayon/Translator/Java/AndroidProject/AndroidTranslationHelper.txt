@@ -1,0 +1,128 @@
+﻿package %%%PACKAGE%%%;
+
+import java.util.ArrayList;
+
+class AndroidTranslationHelper {
+    private AndroidTranslationHelper() {}
+
+    private static void TODO() {
+        throw new RuntimeException("TODO");
+    }
+    
+    private static void TODO(String message) {
+        throw new RuntimeException("TODO. " + message);
+    }
+
+    public static int[] initializeScreen(
+        int gameWidth,
+        int gameHeight,
+        int screenWidth,
+        int screenHeight) {
+        TODO();
+        return new int[] { -1, -1 };
+    }
+
+    public static void playSound(Object soundInstance) {
+        TODO("Also use a more specific type.");
+    }
+
+    public static String getRawByteCodeString() {
+        TODO();
+        return "";
+    }
+
+    public static String getAppDataRoot() {
+        TODO();
+        return "";
+    }
+
+    public static ArrayList<Value> getEventsRawList() {
+        TODO();
+        return null;
+    }
+
+    public static int ioCreateDirectory(String path) {
+        TODO();
+        return 0;
+    }
+
+    public static String ioCurrentDirectory() {
+        TODO();
+        return "";
+    }
+
+    public static boolean ioDoesPathExist(String path, boolean directoriesOnly, boolean performCaseCheck, boolean isUserData) {
+        TODO();
+        return false;
+    }
+
+    public static int ioDeleteFile(String path, boolean isUserData) {
+        TODO();
+        return 0;
+    }
+
+    public static int ioDeleteDirectory(String path, boolean recursive) {
+        TODO();
+        return 0;
+    }
+
+    public static android.graphics.Bitmap readLocalTileResource(String path) {
+        TODO();
+        return null;
+    }
+
+    public static android.graphics.Bitmap flushImagetteToBitmap(Imagette imagette) {
+        TODO();
+        return null;
+    }
+
+    public static void initializeGame(double fps) {
+        TODO();
+    }
+
+    public static android.graphics.Bitmap readLocalImageResource(String path) {
+        TODO();
+        return null;
+    }
+
+    public static void setTitle(String title) {
+        TODO();
+    }
+
+    public static String resourceReadText(String path) {
+        TODO();
+        return null;
+    }
+
+    public static boolean isWindows() {
+        return false;
+    }
+
+    public static void fillScreen(int red, int green, int blue) {
+        TODO();
+    }
+
+    public static String ioFileReadText(String path, boolean isUserData) {
+        TODO();
+        return "";
+    }
+
+    public static int ioFileWriteText(String path, String contents, boolean isUserData) {
+        TODO();
+        return 0;
+    }
+
+    public static String[] ioFilesInDirectory(String path, boolean isUserData) {
+        TODO();
+        return null;
+    }
+
+    public static void makeHttpRequest(String method, String url, String body, String userAgent, String contentType, String contentLength, ArrayList<String> headerNameList, ArrayList<String> headerNameValues) {
+        throw new RuntimeException("TODO: implement makeHttpRequest");
+    }
+
+	public static SoundInstance readLocalSoundResource(String path) {
+		TODO();
+		return null;
+	}
+}

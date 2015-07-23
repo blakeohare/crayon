@@ -1,13 +1,70 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
 	internal class JavaAwtSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
+		{
+			output.Add("AwtTranslationHelper.makeHttpRequest(");
+			this.Translator.TranslateExpression(output, method);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, body);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, userAgent);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentType);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, contentLength);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerNameList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, headerValueList);
+			output.Add(")");
+		}
+
+		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+		{
+			output.Add("RenderEngine.fillScreen(");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(")");
+		}
+
+		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
+		{
+			output.Add("GameWindow.FPS = ");
+			this.Translator.TranslateExpression(output, fps);
+		}
+
+		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		{
+			output.Add("TranslationHelper.getRawByteCodeString()");
+		}
+
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
 			output.Add("TranslationHelper.getAppDataRoot()");
+		}
+
+		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
+		{
+			output.Add("TranslationHelper.flushImagetteToBitmap(");
+			this.Translator.TranslateExpression(output, imagette);
+			output.Add(")");
+		}
+
+		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
+		{
+			// Client-side Java loads resources synchronously.
+			throw new InvalidOperationException();
 		}
 
 		protected override void TranslateGetEventsRawList(List<string> output)

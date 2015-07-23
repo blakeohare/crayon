@@ -298,6 +298,9 @@
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\VcsXml.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\WorkspaceXml.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GlUtil.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />

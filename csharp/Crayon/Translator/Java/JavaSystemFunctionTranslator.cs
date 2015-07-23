@@ -324,17 +324,6 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-		{
-			output.Add("RenderEngine.fillScreen(");
-			this.Translator.TranslateExpression(output, red);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, green);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, blue);
-			output.Add(")");
-		}
-
 		protected override void TranslateForceParens(List<string> output, Expression expression)
 		{
 			output.Add("(");
@@ -392,16 +381,6 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.getProgramData()");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
-		{
-			output.Add("TranslationHelper.getRawByteCodeString()");
-		}
-
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
-		{
-			output.Add("TranslationHelper.makeHttpRequest()");
-		}
-
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			// Java loads resources synchronously.
@@ -417,25 +396,6 @@ namespace Crayon.Translator.Java
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, flipY);
 			output.Add(")");
-		}
-
-		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-		{
-			output.Add("TranslationHelper.flushImagetteToBitmap(");
-			this.Translator.TranslateExpression(output, imagette);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-		{
-			// Java loads resources synchronously.
-			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-		{
-			output.Add("GameWindow.FPS = ");
-			this.Translator.TranslateExpression(output, fps);
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
@@ -454,7 +414,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIsWindowsProgram(List<string> output)
 		{
-			output.Add("TranslationHelper.isWindows()");
+			output.Add("AndroidTranslationHelper.isWindows()");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)

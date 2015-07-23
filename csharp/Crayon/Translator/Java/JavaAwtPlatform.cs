@@ -35,8 +35,22 @@ namespace Crayon.Translator.Java
 				{ "COPYRIGHT", "©" },
 			};
 
+			foreach (string awtFile in new string[] { 
+				"AwtTranslationHelper",
+			})
+			{
+				output["src/" + package + "/" + awtFile + ".java"] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = Constants.DoReplacements(
+						Util.ReadFileInternally("Translator/Java/AwtProject/" + awtFile + ".txt"),
+						replacements)
+				};
+			}
+
 			foreach (string basicFile in new string[] { 
 				"AsyncMessageQueue",
+				"AwtTranslationHelper",
 				"TranslationHelper",
 				"Start",
 				"GameWindow",

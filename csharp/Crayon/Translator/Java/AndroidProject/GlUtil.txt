@@ -1,0 +1,51 @@
+﻿package %%%PACKAGE%%%;
+
+import android.graphics.Bitmap;
+
+final class GlUtil {
+	private GlUtil() {}
+
+	public static int forceLoadTexture(Bitmap bitmap) {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void beginPolygon() {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void beginQuads() {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void glBindTexture(int textureId) {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void color4(int r, int g, int b, int a) {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void glDisableTexture2D() {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void glEnableTexture2D() {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void glEnd() {
+		throw new RuntimeException("TODO");
+	}
+
+	public static int getMaxTextureSize() {
+		return 1024; // need to change this. Probably safe to hardcode to 2048?
+	}
+
+	public static void glTexCoord2(double x, double y) {
+		throw new RuntimeException("TODO");
+	}
+
+	public static void glVertex2(double x, double y) {
+		throw new RuntimeException("TODO");
+	}
+}
