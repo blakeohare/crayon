@@ -3,3 +3,4 @@ bin
 obj
 /csharp/Demos/Asteroids/output
 /csharp/Demos/Everything/output
+/csharp/Demos/Dodge/output/android
