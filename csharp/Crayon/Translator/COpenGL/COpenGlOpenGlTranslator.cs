@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Crayon.ParseTree;
 
 namespace Crayon.Translator.COpenGL
 {
 	internal class COpenGlOpenGlTranslator : AbstractOpenGlTranslator
 	{
+		public override bool IsNewStyle { get { return true; } }
+
 		public override void TranslateGlBeginPolygon(List<string> output)
 		{
 			throw new NotImplementedException();
@@ -15,12 +18,12 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlBindTexture(List<string> output, ParseTree.Expression textureId)
+		public override void TranslateGlBindTexture(List<string> output, Expression textureId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlColor4(List<string> output, ParseTree.Expression r, ParseTree.Expression g, ParseTree.Expression b, ParseTree.Expression a)
+		public override void TranslateGlColor4(List<string> output, Expression r, Expression g, Expression b, Expression a)
 		{
 			throw new NotImplementedException();
 		}
@@ -40,7 +43,7 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlLoadTexture(List<string> output, ParseTree.Expression platformBitmapResource)
+		public override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
 		{
 			throw new NotImplementedException();
 		}
@@ -50,12 +53,17 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlTexCoord2(List<string> output, ParseTree.Expression x, ParseTree.Expression y)
+		public override void TranslateGlTexCoord2(List<string> output, Expression x, Expression y)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlVertex2(List<string> output, ParseTree.Expression x, ParseTree.Expression y)
+		public override void TranslateGlVertex2(List<string> output, Expression x, Expression y)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression glReference)
 		{
 			throw new NotImplementedException();
 		}

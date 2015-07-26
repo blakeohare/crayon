@@ -18,17 +18,21 @@ class AndroidTranslationHelper {
         int gameHeight,
         int screenWidth,
         int screenHeight) {
-        TODO();
-        return new int[] { -1, -1 };
+        CrayonGlRenderer.initializeScreen(gameWidth, gameHeight);
+		return null;
     }
 
     public static void playSound(Object soundInstance) {
         TODO("Also use a more specific type.");
     }
 
+    private static String rawByteCodeString = null;
     public static String getRawByteCodeString() {
-        TODO();
-        return "";
+        return rawByteCodeString;
+    }
+
+    public static void setRawByteCodeString(String value) {
+        rawByteCodeString = value;
     }
 
     public static String getAppDataRoot() {
@@ -37,8 +41,7 @@ class AndroidTranslationHelper {
     }
 
     public static ArrayList<Value> getEventsRawList() {
-        TODO();
-        return null;
+        return new ArrayList<>();
     }
 
     public static int ioCreateDirectory(String path) {
@@ -67,7 +70,7 @@ class AndroidTranslationHelper {
     }
 
     public static android.graphics.Bitmap readLocalTileResource(String path) {
-        TODO();
+        
         return null;
     }
 
@@ -76,8 +79,9 @@ class AndroidTranslationHelper {
         return null;
     }
 
+	// TODO: delete this and call CrayonGlRenderer's implementation directly.
     public static void initializeGame(double fps) {
-        TODO();
+        CrayonGlRenderer.initializeGame(fps);
     }
 
     public static android.graphics.Bitmap readLocalImageResource(String path) {
@@ -86,7 +90,7 @@ class AndroidTranslationHelper {
     }
 
     public static void setTitle(String title) {
-        TODO();
+        // There's really not much title to set.
     }
 
     public static String resourceReadText(String path) {
@@ -99,7 +103,7 @@ class AndroidTranslationHelper {
     }
 
     public static void fillScreen(int red, int green, int blue) {
-        TODO();
+        CrayonWrapper.v_glFillScreen(red, green, blue);
     }
 
     public static String ioFileReadText(String path, boolean isUserData) {

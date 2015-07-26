@@ -8,6 +8,8 @@ namespace Crayon.Translator
 		public AbstractPlatform Platform { get; set; }
 		public AbstractTranslator Translator { get; set; }
 
+		public abstract bool IsNewStyle { get; }
+
 		public abstract void TranslateGlBeginPolygon(List<string> output);
 		public abstract void TranslateGlBeginQuads(List<string> output);
 		public abstract void TranslateGlBindTexture(List<string> output, Expression textureId);
@@ -17,6 +19,7 @@ namespace Crayon.Translator
 		public abstract void TranslateGlEnd(List<string> output);
 		public abstract void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource);
 		public abstract void TranslateGlMaxTextureSize(List<string> output);
+		public abstract void TranslateGlPrepareDrawPipeline(List<string> output, Expression glReference);
 		public abstract void TranslateGlTexCoord2(List<string> output, Expression x, Expression y);
 		public abstract void TranslateGlVertex2(List<string> output, Expression x, Expression y);
 	}

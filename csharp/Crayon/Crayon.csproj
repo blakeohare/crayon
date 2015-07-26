@@ -279,7 +279,7 @@
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStringsXml.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStylesXml.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesV11StylesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\JavaGameActivity.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GameActivity.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderBase.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHider.txt" />
@@ -301,6 +301,8 @@
     <EmbeddedResource Include="Translator\Java\AndroidProject\GlUtil.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidTranslationHelper.txt" />
     <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlRenderer.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />

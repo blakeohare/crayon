@@ -1,0 +1,17 @@
+﻿package %%%PACKAGE%%%;
+
+import android.content.Context;
+import android.opengl.GLSurfaceView;
+
+public class CrayonGlSurfaceView extends GLSurfaceView {
+
+    private CrayonGlRenderer renderer;
+
+    public CrayonGlSurfaceView(Context context) {
+        super(context);
+        setEGLContextClientVersion(1);
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        renderer = new CrayonGlRenderer(this);
+        setRenderer(renderer);
+    }
+}

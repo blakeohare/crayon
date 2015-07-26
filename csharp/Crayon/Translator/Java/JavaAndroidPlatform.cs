@@ -58,9 +58,6 @@ namespace Crayon.Translator.Java
 				"app/src/main/res/drawable-mdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableMdpiIcLauncher.png",
 				"app/src/main/res/drawable-xhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXhdpiIcLauncher.png",
 				"app/src/main/res/drawable-xxhdpi/ic_launcher.png|AndroidProject/Boilerplate/ResDrawableXxhdpiIcLauncher.png",
-				pathToJavaCode + "/AndroidTranslationHelper.java|AndroidProject/AndroidTranslationHelper.txt",
-				pathToJavaCode + "/GameActivity.java|AndroidProject/JavaGameActivity.txt",
-				pathToJavaCode + "/GlUtil.java|AndroidProject/GlUtil.txt",
 				pathToJavaCode + "/util/SystemUiHider.java|AndroidProject/Boilerplate/JavaUtilSystemUiHider.txt",
 				pathToJavaCode + "/util/SystemUiHiderBase.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderBase.txt",
 				pathToJavaCode + "/util/SystemUiHiderHoneycomb.java|AndroidProject/Boilerplate/JavaUtilSystemUiHiderHoneycomb.txt",
@@ -79,7 +76,12 @@ namespace Crayon.Translator.Java
 				".idea/workspace.xml|AndroidProject/Boilerplate/Idea/WorkspaceXml.txt",
 
 				// Crayon Android stuff
+				pathToJavaCode + "/AndroidTranslationHelper.java|AndroidProject/AndroidTranslationHelper.txt",
+				pathToJavaCode + "/GlUtil.java|AndroidProject/GlUtil.txt",
+				pathToJavaCode + "/GameActivity.java|AndroidProject/GameActivity.txt",
 				pathToJavaCode + "/OpenGlRenderer.java|AndroidProject/OpenGlRenderer.txt",
+				pathToJavaCode + "/CrayonGlRenderer.java|AndroidProject/CrayonGlRenderer.txt",
+				pathToJavaCode + "/CrayonGlSurfaceView.java|AndroidProject/CrayonGlSurfaceView.txt",
 
 				// Generic Crayon Java stuff
 				pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
@@ -271,6 +273,12 @@ namespace Crayon.Translator.Java
 					};
 				}
 			}
+
+			output["app/src/main/res/raw/bytes.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = this.Context.ByteCodeString
+			};
 
 			return output;
 		}

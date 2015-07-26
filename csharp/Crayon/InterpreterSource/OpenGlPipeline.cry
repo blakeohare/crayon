@@ -1,6 +1,7 @@
 ﻿
 
 function @type('bool') glRender(
+	@type('object') gl,
 	@type('int') VW, // virtual width
 	@type('int') VH, // virtual height
 	@type('int') RW, // real width
@@ -58,6 +59,8 @@ function @type('bool') glRender(
 	@type('CompositeImage') compositeImage = null;
 	@type('GlRenderState') state = null;
 
+	$_gl_prepare_draw_pipeline(gl);
+
 	while (i < length) {
 		switch ($_array_get(GL_DATA, i)) {
 			case OpenGlAction.DRAW_RECTANGLE:
@@ -69,6 +72,7 @@ function @type('bool') glRender(
 				green = $_array_get(GL_DATA, i | 6);
 				blue = $_array_get(GL_DATA, i | 7);
 				alpha = $_array_get(GL_DATA, i | 8);
+				
 				if (right >= 0 && left < VW && bottom > 0 && top < VH) {
 					if (state == null ||
 						GlRenderState$state.mode != OpenGlMode.QUADS ||
@@ -90,9 +94,13 @@ function @type('bool') glRender(
 						GlRenderState$state.b = blue;
 						GlRenderState$state.a = alpha;
 
-						$_gl_disable_texture_2d();
-						$_gl_color_4(red, green, blue, alpha);
-						$_gl_begin_quads();
+						if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
+							$_gl_load_identity();
+						} else {
+							$_gl_disable_texture_2d();
+							$_gl_color_4(red, green, blue, alpha);
+							$_gl_begin_quads();
+						}
 					}
 
 					if (scaled) {
@@ -133,24 +141,28 @@ function @type('bool') glRender(
 						$_gl_end();
 						state = null;
 					}
+					
+					if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
 
-					$_gl_disable_texture_2d();
-					$_gl_color_4(red, green, blue, alpha);
-					$_gl_begin_polygon();
+					} else {
+						$_gl_disable_texture_2d();
+						$_gl_color_4(red, green, blue, alpha);
+						$_gl_begin_polygon();
 
-					ptCount = $_unsafe_integer_division(width + height, 8);
-					if (ptCount < 16) ptCount = 16;
+						ptCount = $_unsafe_integer_division(width + height, 8);
+						if (ptCount < 16) ptCount = 16;
 
-					for (j = 0; j < ptCount; j += 1) {
-						endX = $_cast('int', $_cos($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * width + startX);
-						endY = $_cast('int', $_sin($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * height + startY);
-						if (scaled) {
-							$_gl_vertex_2($_unsafe_integer_division(endX * RW, VW), $_unsafe_integer_division(endY * RH, VH));
-						} else {
-							$_gl_vertex_2(endX, endY);
+						for (j = 0; j < ptCount; j += 1) {
+							endX = $_cast('int', $_cos($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * width + startX);
+							endY = $_cast('int', $_sin($_unsafe_float_division(-3.14159265358979 * 2 * j, ptCount)) * height + startY);
+							if (scaled) {
+								$_gl_vertex_2($_unsafe_integer_division(endX * RW, VW), $_unsafe_integer_division(endY * RH, VH));
+							} else {
+								$_gl_vertex_2(endX, endY);
+							}
 						}
+						$_gl_end();
 					}
-					$_gl_end();
 				}
 				break;
 
@@ -354,6 +366,16 @@ function @type('bool') glRender(
 		$_gl_end();
 	}
 
+	return true;
+}
+
+function @type('bool') glFillScreen(
+	@type('int') red,
+	@type('int') green,
+	@type('int') blue) {
+	glResetDrawBuffer();
+	// TODO: get the real values
+	glDrawRectangle(0, 0, 9999, 9999, red, green, blue, 255);
 	return true;
 }
 

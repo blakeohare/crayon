@@ -9,6 +9,8 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAndroidOpenGlEsTranslator : AbstractOpenGlTranslator
 	{
+		public override bool IsNewStyle { get { return false; } }
+
 		public override void TranslateGlBeginPolygon(List<string> output)
 		{
 			output.Add("GlUtil.beginPolygon()");
@@ -81,6 +83,13 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, x);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, y);
+			output.Add(")");
+		}
+
+		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression glReferenceIfAvailable)
+		{
+			output.Add("GlUtil.prepareDrawPipeline(");
+			this.Translator.TranslateExpression(output, glReferenceIfAvailable);
 			output.Add(")");
 		}
 	}

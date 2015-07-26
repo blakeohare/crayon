@@ -177,13 +177,13 @@ namespace Crayon.Translator.Java
 					Type = FileOutputType.Text,
 					TextContent = fileContents
 				};
-
-				output["data/ByteCode.txt"] = new FileOutput()
-				{
-					Type = FileOutputType.Text,
-					TextContent = this.Context.ByteCodeString
-				};
 			}
+
+			output["data/ByteCode.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = this.Context.ByteCodeString
+			};
 
 			foreach (string file in filesToCopyOver)
 			{

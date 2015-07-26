@@ -7,6 +7,8 @@ namespace Crayon.Translator.CSharp
 {
 	internal class CSharpOpenTkOpenGlTranslator : AbstractOpenGlTranslator
 	{
+		public override bool IsNewStyle { get { return false; } }
+
 		public override void TranslateGlBeginPolygon(List<string> output)
 		{
 			output.Add("GL.Begin(BeginMode.Polygon)");
@@ -81,6 +83,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, y);
 			output.Add(")");
+		}
+
+		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression glReference)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
