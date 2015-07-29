@@ -5,6 +5,12 @@ import java.util.ArrayList;
 class AndroidTranslationHelper {
     private AndroidTranslationHelper() {}
 
+    private static GameActivity context = null;
+
+    public static void setContext(GameActivity context) {
+        AndroidTranslationHelper.context = context;
+    }
+
     private static void TODO() {
         throw new RuntimeException("TODO");
     }
@@ -70,8 +76,7 @@ class AndroidTranslationHelper {
     }
 
     public static android.graphics.Bitmap readLocalTileResource(String path) {
-        
-        return null;
+        return context.loadBitmap("spritesheets/" + path + ".png");
     }
 
     public static android.graphics.Bitmap flushImagetteToBitmap(Imagette imagette) {

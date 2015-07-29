@@ -3,6 +3,7 @@
 import com.firedodge.app.util.SystemUiHider;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -36,11 +37,22 @@ public class GameActivity extends Activity {
         return outStream.toString();
     }
 
+    public android.graphics.Bitmap loadBitmap(String path) {
+        try {
+            InputStream is = getResources().getAssets().open("generated/" + path);
+            return BitmapFactory.decodeStream(is);
+        } catch (IOException ioe) {
+            return null;
+        }
+    }
+
     private CrayonGlSurfaceView glSurfaceView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AndroidTranslationHelper.setContext(this);
 
         if (AndroidTranslationHelper.getRawByteCodeString() == null) {
             String byteCode = readStream(getResources().openRawResource(R.raw.bytes));

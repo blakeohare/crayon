@@ -12,7 +12,7 @@ namespace Crayon.Translator.Java
 		{
 		}
 
-		public override string GeneratedFilesFolder { get { return "app/src/main/res/generated"; } }
+		public override string GeneratedFilesFolder { get { return "app/src/main/assets/generated"; } }
 
 		public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
