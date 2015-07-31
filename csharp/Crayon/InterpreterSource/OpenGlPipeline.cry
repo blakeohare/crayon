@@ -49,6 +49,14 @@ function @type('bool') glRender(
 	@type('double') dx = 0.0;
 	@type('double') dy = 0.0;
 
+	if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
+		@type('float') newXFloat = 0;
+		@type('float') newYFloat = 0;
+		@type('float') newWidthFloat = 0;
+		@type('float') newHeightFloat = 0;
+		@type('float') twoF = 2;
+	}
+
 	@type('int') red = 0;
 	@type('int') green = 0;
 	@type('int') blue = 0;
@@ -83,7 +91,7 @@ function @type('bool') glRender(
 						GlRenderState$state.a != alpha) {
 						if (state == null) {
 							state = new GlRenderState(0, 0, 0, 0, 0, 0);
-						} else {
+						} else if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
 							$_gl_end();
 						}
 
@@ -95,24 +103,39 @@ function @type('bool') glRender(
 						GlRenderState$state.a = alpha;
 
 						if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
-							$_gl_load_identity();
+							$_gl_disable_texture_2d();
 						} else {
 							$_gl_disable_texture_2d();
 							$_gl_color_4(red, green, blue, alpha);
 							$_gl_begin_quads();
 						}
 					}
+					
+					if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
 
-					if (scaled) {
-						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(top * RH, VH));
-						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(top * RH, VH));
-						$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
-						$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+						newXFloat = $_unsafe_integer_division(twoF * left, VW) - 1;
+						newYFloat = $_unsafe_integer_division(twoF * top, VH) - 1;
+						newWidthFloat = $_unsafe_integer_division(twoF * (right - left), VW);
+						newHeightFloat = $_unsafe_integer_division(twoF * (bottom - top), VH);
+
+						$_gl_load_identity();
+						$_gl_translate(newXFloat, newYFloat);
+						$_gl_scale(newWidthFloat, newHeightFloat);
+						$_gl_enable_vertex_array();
+						$_gl_color_4(red, green, blue, alpha);
+
 					} else {
-						$_gl_vertex_2(left, top);
-						$_gl_vertex_2(right, top);
-						$_gl_vertex_2(right, bottom);
-						$_gl_vertex_2(left, bottom);
+						if (scaled) {
+							$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(top * RH, VH));
+							$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(top * RH, VH));
+							$_gl_vertex_2($_unsafe_integer_division(right * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+							$_gl_vertex_2($_unsafe_integer_division(left * RW, VW), $_unsafe_integer_division(bottom * RH, VH));
+						} else {
+							$_gl_vertex_2(left, top);
+							$_gl_vertex_2(right, top);
+							$_gl_vertex_2(right, bottom);
+							$_gl_vertex_2(left, bottom);
+						}
 					}
 				}
 				break;
@@ -138,11 +161,28 @@ function @type('bool') glRender(
 				if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0) {
 					// Since Polygons require a GL.End(), clear the state if one exists and don't set a new one.
 					if (state != null) {
-						$_gl_end();
+						if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
+							$_gl_end();
+						}
 						state = null;
 					}
 					
 					if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
+						top = RH - top - height;
+						newXFloat = $_unsafe_float_division(twoF * left, RW) - 1;
+						newYFloat = $_unsafe_float_division(twoF * top, RH) - 1;
+						newWidthFloat = $_unsafe_float_division(twoF * width, RW);
+						newHeightFloat = $_unsafe_float_division(twoF * height, RH);
+
+						$_gl_load_identity();
+						$_gl_translate(newXFloat, newYFloat);
+						$_gl_scale(newWidthFloat, newHeightFloat);
+						$_gl_enable_vertex_array();
+
+						$_gl_color_4(red, green, blue, alpha);
+						$_gl_draw_ellipse_vertices();
+						$_gl_disable_vertex_array();
+
 
 					} else {
 						$_gl_disable_texture_2d();
@@ -161,7 +201,9 @@ function @type('bool') glRender(
 								$_gl_vertex_2(endX, endY);
 							}
 						}
-						$_gl_end();
+						if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
+							$_gl_end();
+						}
 					}
 				}
 				break;
@@ -249,7 +291,9 @@ function @type('bool') glRender(
 					if (state == null) {
 						state = new GlRenderState(0, 0, 0, 0, 0, 0);
 					} else {
-						$_gl_end();
+						if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
+							$_gl_end();
+						}
 					}
 
 					GlRenderState$state.mode = OpenGlMode.QUADS;
@@ -303,7 +347,10 @@ function @type('bool') glRender(
 						if (state != null)
 						{
 							state = null;
-							$_gl_end();
+							
+							if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
+								$_gl_end();
+							}
 						}
 						loadCompositeImageResource(compositeImage);
 					}
@@ -314,7 +361,7 @@ function @type('bool') glRender(
 						GlRenderState$state.textureId != textureId) {
 						if (state == null) {
 							state = new GlRenderState(0, 0, 0, 0, 0, 0);
-						} else {
+						} else if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
 							$_gl_end();
 						}
 
@@ -362,8 +409,10 @@ function @type('bool') glRender(
 		i += 16;
 	}
 
-	if (state != null) {
-		$_gl_end();
+	if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
+		if (state != null) {
+			$_gl_end();
+		}
 	}
 
 	return true;

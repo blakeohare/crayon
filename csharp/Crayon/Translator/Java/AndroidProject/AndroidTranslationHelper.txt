@@ -1,5 +1,8 @@
 ﻿package %%%PACKAGE%%%;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import java.util.ArrayList;
 
 class AndroidTranslationHelper {
@@ -80,8 +83,23 @@ class AndroidTranslationHelper {
     }
 
     public static android.graphics.Bitmap flushImagetteToBitmap(Imagette imagette) {
-        TODO();
-        return null;
+        int width = imagette.width;
+        int height = imagette.height;
+        Bitmap finalImage = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas g = new Canvas(finalImage);
+        int length = imagette.nativeBitmaps.size();
+        for (int i = 0; i < length; ++i) {
+            Bitmap img = (Bitmap) imagette.nativeBitmaps.get(i);
+            int x = imagette.xs.get(i);
+            int y = imagette.ys.get(i);
+            int w = img.getWidth();
+            int h = img.getHeight();
+            Rect src = new Rect(0, 0, w, h);
+            Rect dst = new Rect(x, y, w, h);
+            g.drawBitmap(img, src, dst, null);
+        }
+        g.save();
+        return finalImage;
     }
 
 	// TODO: delete this and call CrayonGlRenderer's implementation directly.

@@ -28,7 +28,6 @@ namespace Crayon.Translator.CSharp
 
 		public override void TranslateGlColor4(List<string> output, Expression r, Expression g, Expression b, Expression a)
 		{
-			
 			output.Add("GL.Color4((byte)(");
 			this.Translator.TranslateExpression(output, r);
 			output.Add("), (byte)(");
@@ -40,19 +39,39 @@ namespace Crayon.Translator.CSharp
 			output.Add("))");
 		}
 
-		public override void TranslateGlEnableTexture2D(List<string> output)
-		{
-			output.Add("GL.Enable(EnableCap.Texture2D)");
-		}
-
 		public override void TranslateGlDisableTexture2D(List<string> output)
 		{
 			output.Add("GL.Disable(EnableCap.Texture2D)");
 		}
 
+		public override void TranslateGlDisableVertexArray(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlDrawEllipseVertices(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlEnableTexture2D(List<string> output)
+		{
+			output.Add("GL.Enable(EnableCap.Texture2D)");
+		}
+
+		public override void TranslateGlEnableVertexArray(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void TranslateGlEnd(List<string> output)
 		{
 			output.Add("GL.End()");
+		}
+
+		public override void TranslateGlLoadIdentity(List<string> output)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
@@ -67,6 +86,11 @@ namespace Crayon.Translator.CSharp
 			output.Add("GlUtil.MaxTextureSize");
 		}
 
+		public override void TranslateGlScale(List<string> output, Expression xratio, Expression yratio)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void TranslateGlTexCoord2(List<string> output, Expression x, Expression y)
 		{
 			output.Add("GL.TexCoord2(");
@@ -74,6 +98,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, y);
 			output.Add(")");
+		}
+
+		public override void TranslateGlTranslate(List<string> output, Expression dx, Expression dy)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override void TranslateGlVertex2(List<string> output, Expression x, Expression y)

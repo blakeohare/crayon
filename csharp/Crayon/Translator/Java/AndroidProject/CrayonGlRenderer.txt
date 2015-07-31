@@ -22,6 +22,8 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
     private static boolean isFpsInitialized = false;
 
     private FloatBuffer quadVertexBuffer;
+    private FloatBuffer ellipseVertexBuffer;
+
     private float[] quadVertices = new float[] {
         0.0f, 0.0f, 1.0f,
         0.0f, 1.0f, 1.0f,
@@ -29,7 +31,6 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
         1.0f, 1.0f, 1.0f,
     };
 
-    private FloatBuffer ellipseVertexBuffer;
     private float[] ellipseVertices = allocateEllipse();
 
     public CrayonGlRenderer(CrayonGlSurfaceView surfaceView) {
@@ -144,6 +145,7 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
         // the draw buffer from previously executed frames will be shown.
         update();
 
+		GlUtil.setGl(gl);
         render(gl);
     }
 

@@ -33,12 +33,32 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		public override void TranslateGlDisableVertexArray(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlDrawEllipseVertices(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void TranslateGlEnableTexture2D(List<string> output)
 		{
 			throw new NotImplementedException();
 		}
 
+		public override void TranslateGlEnableVertexArray(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void TranslateGlEnd(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlLoadIdentity(List<string> output)
 		{
 			throw new NotImplementedException();
 		}
@@ -53,7 +73,17 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		public override void TranslateGlScale(List<string> output, Expression xratio, Expression yratio)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void TranslateGlTexCoord2(List<string> output, Expression x, Expression y)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlTranslate(List<string> output, Expression dx, Expression dy)
 		{
 			throw new NotImplementedException();
 		}

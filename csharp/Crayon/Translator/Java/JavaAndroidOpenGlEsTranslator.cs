@@ -9,7 +9,7 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAndroidOpenGlEsTranslator : AbstractOpenGlTranslator
 	{
-		public override bool IsNewStyle { get { return false; } }
+		public override bool IsNewStyle { get { return true; } }
 
 		public override void TranslateGlBeginPolygon(List<string> output)
 		{
@@ -46,14 +46,34 @@ namespace Crayon.Translator.Java
 			output.Add("GlUtil.glDisableTexture2D()");
 		}
 
+		public override void TranslateGlDisableVertexArray(List<string> output)
+		{
+			output.Add("GlUtil.glDisableVertexArray()");
+		}
+
+		public override void TranslateGlDrawEllipseVertices(List<string> output)
+		{
+			output.Add("GlUtil.glDrawEllipseVertices()");
+		}
+
 		public override void TranslateGlEnableTexture2D(List<string> output)
 		{
 			output.Add("GlUtil.glEnableTexture2D()");
 		}
 
+		public override void TranslateGlEnableVertexArray(List<string> output)
+		{
+			output.Add("GlUtil.glEnableVertexArray()");
+		}
+
 		public override void TranslateGlEnd(List<string> output)
 		{
 			output.Add("GlUtil.glEnd()");
+		}
+
+		public override void TranslateGlLoadIdentity(List<string> output)
+		{
+			output.Add("GlUtil.glLoadIdentity()");
 		}
 
 		public override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
@@ -68,12 +88,30 @@ namespace Crayon.Translator.Java
 			output.Add("GlUtil.getMaxTextureSize()");
 		}
 
+		public override void TranslateGlScale(List<string> output, Expression xratio, Expression yratio)
+		{
+			output.Add("GlUtil.glScalef(");
+			this.Translator.TranslateExpression(output, xratio);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, yratio);
+			output.Add(")");
+		}
+
 		public override void TranslateGlTexCoord2(List<string> output, Expression x, Expression y)
 		{
 			output.Add("GlUtil.glTexCoord2(");
 			this.Translator.TranslateExpression(output, x);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, y);
+			output.Add(")");
+		}
+
+		public override void TranslateGlTranslate(List<string> output, Expression dx, Expression dy)
+		{
+			output.Add("GlUtil.glTranslatef(");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dy);
 			output.Add(")");
 		}
 
