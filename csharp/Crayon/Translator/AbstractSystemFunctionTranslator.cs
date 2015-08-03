@@ -27,24 +27,32 @@ namespace Crayon.Translator
 				AbstractOpenGlTranslator gl = this.Platform.OpenGlTranslator;
 				switch (name)
 				{
-					case "_gl_begin_quads": VerifyCount(functionCall, 0); gl.TranslateGlBeginQuads(output); return;
-					case "_gl_begin_polygon": VerifyCount(functionCall, 0); gl.TranslateGlBeginPolygon(output); return;
-					case "_gl_bind_texture": VerifyCount(functionCall, 1); gl.TranslateGlBindTexture(output, args[0]); return;
-					case "_gl_color_4": VerifyCount(functionCall, 4); gl.TranslateGlColor4(output, args[0], args[1], args[2], args[3]); return;
-					case "_gl_disable_texture_2d": VerifyCount(functionCall, 0); gl.TranslateGlDisableTexture2D(output); return;
-					case "_gl_disable_vertex_array": VerifyCount(functionCall, 0); gl.TranslateGlDisableVertexArray(output); return;
-					case "_gl_draw_ellipse_vertices": VerifyCount(functionCall, 0); gl.TranslateGlDrawEllipseVertices(output); return;
-					case "_gl_enable_texture_2d": VerifyCount(functionCall, 0); gl.TranslateGlEnableTexture2D(output); return;
-					case "_gl_enable_vertex_array": VerifyCount(functionCall, 0); gl.TranslateGlEnableVertexArray(output); return;
-					case "_gl_end": VerifyCount(functionCall, 0); gl.TranslateGlEnd(output); return;
-					case "_gl_load_identity": VerifyCount(functionCall, 0); gl.TranslateGlLoadIdentity(output); return;
-					case "_gl_load_texture": VerifyCount(functionCall, 1); gl.TranslateGlLoadTexture(output, args[0]); return;
+					case "_gl_begin_quads": VerifyCount(functionCall, 1); gl.TranslateGlBeginQuads(output, args[0]); return;
+					case "_gl_begin_polygon": VerifyCount(functionCall, 1); gl.TranslateGlBeginPolygon(output, args[0]); return;
+					case "_gl_bind_texture": VerifyCount(functionCall, 2); gl.TranslateGlBindTexture(output, args[0], args[1]); return;
+					case "_gl_color_4": VerifyCount(functionCall, 5); gl.TranslateGlColor4(output, args[0], args[1], args[2], args[3], args[4]); return;
+					case "_gl_disable_texture_2d": VerifyCount(functionCall, 1); gl.TranslateGlDisableTexture2D(output, args[0]); return;
+					case "_gl_disable_tex_coord_array": VerifyCount(functionCall, 1); gl.TranslateGlDisableTexCoordArray(output, args[0]); return;
+					case "_gl_disable_vertex_array": VerifyCount(functionCall, 1); gl.TranslateGlDisableVertexArray(output, args[0]); return;
+					case "_gl_draw_arrays": VerifyCount(functionCall, 2); gl.TranslateGlDrawArrays(output, args[0], args[1]); return;
+					case "_gl_draw_ellipse_vertices": VerifyCount(functionCall, 1); gl.TranslateGlDrawEllipseVertices(output, args[0]); return;
+					case "_gl_enable_texture_2d": VerifyCount(functionCall, 1); gl.TranslateGlEnableTexture2D(output, args[0]); return;
+					case "_gl_enable_texture_coord_array": VerifyCount(functionCall, 1); gl.TranslateGlEnableTextureCoordArray(output, args[0]); return;
+					case "_gl_enable_vertex_array": VerifyCount(functionCall, 1); gl.TranslateGlEnableVertexArray(output, args[0]); return;
+					case "_gl_end": VerifyCount(functionCall, 1); gl.TranslateGlEnd(output, args[0]); return;
+					case "_gl_front_face_cw": VerifyCount(functionCall, 1); gl.TranslateGlFrontFaceCw(output, args[0]); return;
+					case "_gl_get_quad_texture_vbo": VerifyCount(functionCall, 1); gl.TranslateGlGetQuadTextureVbo(output, args[0]); return;
+					case "_gl_get_quad_vbo": VerifyCount(functionCall, 1); gl.TranslateGlGetQuadVbo(output, args[0]); return;
+					case "_gl_load_identity": VerifyCount(functionCall, 1); gl.TranslateGlLoadIdentity(output, args[0]); return;
+					case "_gl_load_texture": VerifyCount(functionCall, 2); gl.TranslateGlLoadTexture(output, args[0], args[1]); return;
 					case "_gl_max_texture_size": VerifyCount(functionCall, 0); gl.TranslateGlMaxTextureSize(output); return;
-					case "_gl_prepare_draw_pipeline": VerifyCount(functionCall, 1); gl.TranslateGlPrepareDrawPipeline(output, args[0]); return;
-					case "_gl_scale": VerifyCount(functionCall, 2); gl.TranslateGlScale(output, args[0], args[1]); return;
-					case "_gl_tex_coord_2": VerifyCount(functionCall, 2); gl.TranslateGlTexCoord2(output, args[0], args[1]); return;
-					case "_gl_translate": VerifyCount(functionCall, 2); gl.TranslateGlTranslate(output, args[0], args[1]); return;
-					case "_gl_vertex_2": VerifyCount(functionCall, 2); gl.TranslateGlVertex2(output, args[0], args[1]); return;
+					case "_gl_prepare_draw_pipeline": VerifyCount(functionCall, 2); gl.TranslateGlPrepareDrawPipeline(output, args[0]); return;
+					case "_gl_scale": VerifyCount(functionCall, 3); gl.TranslateGlScale(output, args[0], args[1], args[2]); return;
+					case "_gl_tex_coord_2": VerifyCount(functionCall, 3); gl.TranslateGlTexCoord2(output, args[0], args[1], args[2]); return;
+					case "_gl_tex_coord_pointer": VerifyCount(functionCall, 2); gl.TranslateGlTexCoordPointer(output, args[0], args[1]); return;
+					case "_gl_translate": VerifyCount(functionCall, 3); gl.TranslateGlTranslate(output, args[0], args[1], args[2]); return;
+					case "_gl_vertex_2": VerifyCount(functionCall, 3); gl.TranslateGlVertex2(output, args[0], args[1], args[2]); return;
+					case "_gl_vertex_pointer": VerifyCount(functionCall, 2); gl.TranslateGlVertexPointer(output, args[0], args[1]); return;
 					default: break; // default to the error in the switch statement below.
 				}
 			}

@@ -224,14 +224,6 @@ function imageSheetStatusInitialization() {
 	}
 }
 
-function @type('bool') loadCompositeImageResource(@type('CompositeImage') compositeImage) {
-	if (%%%IS_OPEN_GL_BASED%%%) {
-		CompositeImage$compositeImage.glTextureId = $_gl_load_texture(CompositeImage$compositeImage.nativeBitmap);
-		CompositeImage$compositeImage.loaded = true;
-	}
-	return true;
-}
-
 function @type('bool') initiateTileLoading(@type('TileLoadRequest') request) {
 	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
 		// In most platforms, this is synchronous...

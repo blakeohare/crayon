@@ -10,7 +10,10 @@ namespace Crayon
 
 		static Constants()
 		{
-			Dictionary<string, string> constants = new Dictionary<string, string>();
+			Dictionary<string, string> constants = new Dictionary<string, string>()
+			{
+				{ "OPEN_GL_ELLIPSE_POINT_COUNT", "60" },
+			};
 
 			Dictionary<string, Type> enumReplacementsByPrefix = new Dictionary<string, Type>()
 			{

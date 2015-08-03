@@ -9,24 +9,24 @@ namespace Crayon.Translator.CSharp
 	{
 		public override bool IsNewStyle { get { return false; } }
 
-		public override void TranslateGlBeginPolygon(List<string> output)
+		public override void TranslateGlBeginPolygon(List<string> output, Expression gl)
 		{
 			output.Add("GL.Begin(BeginMode.Polygon)");
 		}
 
-		public override void TranslateGlBeginQuads(List<string> output)
+		public override void TranslateGlBeginQuads(List<string> output, Expression gl)
 		{
 			output.Add("GL.Begin(BeginMode.Quads)");
 		}
 
-		public override void TranslateGlBindTexture(List<string> output, Expression textureId)
+		public override void TranslateGlBindTexture(List<string> output, Expression gl, Expression textureId)
 		{
 			output.Add("GL.BindTexture(TextureTarget.Texture2D, ");
 			this.Translator.TranslateExpression(output, textureId);
 			output.Add(")");
 		}
 
-		public override void TranslateGlColor4(List<string> output, Expression r, Expression g, Expression b, Expression a)
+		public override void TranslateGlColor4(List<string> output, Expression gl, Expression r, Expression g, Expression b, Expression a)
 		{
 			output.Add("GL.Color4((byte)(");
 			this.Translator.TranslateExpression(output, r);
@@ -39,42 +39,72 @@ namespace Crayon.Translator.CSharp
 			output.Add("))");
 		}
 
-		public override void TranslateGlDisableTexture2D(List<string> output)
+		public override void TranslateGlDisableTexture2D(List<string> output, Expression gl)
 		{
 			output.Add("GL.Disable(EnableCap.Texture2D)");
 		}
 
-		public override void TranslateGlDisableVertexArray(List<string> output)
+		public override void TranslateGlDisableTexCoordArray(List<string> output, Expression gl)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlDrawEllipseVertices(List<string> output)
+		public override void TranslateGlDisableVertexArray(List<string> output, Expression gl)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlEnableTexture2D(List<string> output)
+		public override void TranslateGlDrawArrays(List<string> output, Expression gl, Expression vertexCount)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlDrawEllipseVertices(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlEnableTexture2D(List<string> output, Expression gl)
 		{
 			output.Add("GL.Enable(EnableCap.Texture2D)");
 		}
 
-		public override void TranslateGlEnableVertexArray(List<string> output)
+		public override void TranslateGlEnableTextureCoordArray(List<string> output, Expression glReference)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlEnd(List<string> output)
+		public override void TranslateGlEnableVertexArray(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlEnd(List<string> output, Expression gl)
 		{
 			output.Add("GL.End()");
 		}
 
-		public override void TranslateGlLoadIdentity(List<string> output)
+		public override void TranslateGlFrontFaceCw(List<string> output, Expression gl)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
+		public override void TranslateGlGetQuadTextureVbo(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlGetQuadVbo(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlLoadIdentity(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlLoadTexture(List<string> output, Expression gl, Expression platformBitmapResource)
 		{
 			output.Add("GlUtil.ForceLoadTexture((System.Drawing.Bitmap)");
 			this.Translator.TranslateExpression(output, platformBitmapResource);
@@ -86,12 +116,12 @@ namespace Crayon.Translator.CSharp
 			output.Add("GlUtil.MaxTextureSize");
 		}
 
-		public override void TranslateGlScale(List<string> output, Expression xratio, Expression yratio)
+		public override void TranslateGlScale(List<string> output, Expression gl, Expression xratio, Expression yratio)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlTexCoord2(List<string> output, Expression x, Expression y)
+		public override void TranslateGlTexCoord2(List<string> output, Expression gl, Expression x, Expression y)
 		{
 			output.Add("GL.TexCoord2(");
 			this.Translator.TranslateExpression(output, x);
@@ -100,12 +130,17 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		public override void TranslateGlTranslate(List<string> output, Expression dx, Expression dy)
+		public override void TranslateGlTexCoordPointer(List<string> output, Expression gl, Expression textureBuffer)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void TranslateGlVertex2(List<string> output, Expression x, Expression y)
+		public override void TranslateGlTranslate(List<string> output, Expression gl, Expression dx, Expression dy)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlVertex2(List<string> output, Expression gl, Expression x, Expression y)
 		{
 			output.Add("GL.Vertex2(");
 			this.Translator.TranslateExpression(output, x);
@@ -114,7 +149,12 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression glReference)
+		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression gl)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void TranslateGlVertexPointer(List<string> output, Expression glReference, Expression vertexBuffer)
 		{
 			throw new NotImplementedException();
 		}
