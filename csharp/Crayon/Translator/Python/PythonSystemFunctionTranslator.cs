@@ -575,6 +575,13 @@ namespace Crayon.Translator.Python
 			output.Add("(sys.platform == 'win32')");
 		}
 
+		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
+		{
+			output.Add("_launch_browser(");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(")");
+		}
+
 		protected override void TranslateListClear(List<string> output, Expression list)
 		{
 			throw new Exception("This should have been optimized out.");

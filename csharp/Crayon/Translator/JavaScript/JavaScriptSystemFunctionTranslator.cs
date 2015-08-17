@@ -575,6 +575,13 @@ namespace Crayon.Translator.JavaScript
 			output.Add("false");
 		}
 
+		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
+		{
+			output.Add("window.open(");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(")");
+		}
+
 		protected override void TranslateListClear(List<string> output, Expression list)
 		{
 			throw new Exception("This should have been optimized out.");

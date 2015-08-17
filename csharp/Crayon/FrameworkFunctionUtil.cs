@@ -171,6 +171,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "LIST");
 					break;
+				case FrameworkFunction.LAUNCH_BROWSER:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
 				case FrameworkFunction.ORD:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");

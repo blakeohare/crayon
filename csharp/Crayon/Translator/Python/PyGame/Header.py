@@ -388,6 +388,10 @@ def _http_request_impl(request_object, method, url, body, userAgent, contentType
 
 	request.send()
 
+def _launch_browser(url):
+	import webbrowser
+	webbrowser.open(url, new = 2)
+
 _app_data_root = [None]
 def get_app_data_root():
 	adr = _app_data_root[0]

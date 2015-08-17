@@ -338,6 +338,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateListClear(List<string> output, Expression list)
 		{
 			throw new NotImplementedException();

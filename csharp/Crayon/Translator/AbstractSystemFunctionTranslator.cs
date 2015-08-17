@@ -126,6 +126,7 @@ namespace Crayon.Translator
 				case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
 				case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
 				case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
+				case "_launch_browser": VerifyCount(functionCall, 1); TranslateLaunchBrowser(output, args[0]); break;
 				case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -265,6 +266,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData);
 		protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
 		protected abstract void TranslateIsWindowsProgram(List<string> output);
+		protected abstract void TranslateLaunchBrowser(List<string> output, Expression url);
 		protected abstract void TranslateListClear(List<string> output, Expression list);
 		protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
 		protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);

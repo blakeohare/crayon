@@ -34,6 +34,11 @@ namespace Crayon.Translator.Java
 			output.Add("AndroidTranslationHelper.isWindows()");
 		}
 
+		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
 		{
 			output.Add("AndroidTranslationHelper.flipImage(");

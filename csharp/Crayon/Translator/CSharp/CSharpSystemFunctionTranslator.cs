@@ -403,6 +403,14 @@ namespace Crayon.Translator.CSharp
 			output.Add("TranslationHelper.IsWindows");
 		}
 
+		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
+		{
+
+			output.Add("System.Diagnostics.Process.Start(");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(")");
+		}
+
 		protected override void TranslateListClear(List<string> output, Expression list)
 		{
 			this.Translator.TranslateExpression(output, list);
