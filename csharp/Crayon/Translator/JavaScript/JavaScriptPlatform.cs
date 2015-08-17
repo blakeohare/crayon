@@ -109,7 +109,20 @@ namespace Crayon.Translator.JavaScript
 			return output;
 		}
 
-		
+
+		private static readonly HashSet<string> KNOWN_BINARY_FILES = new HashSet<string>()
+		{
+			"MP3",
+			"WAV",
+			"OGG",
+			"BMP",
+			"GIF",
+			"PNG",
+			"TIFF",
+			"JPEG",
+			"JPG"
+		};
+
 		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
 		{
 			List<string> output = new List<string>();
@@ -118,6 +131,12 @@ namespace Crayon.Translator.JavaScript
 			for (int i = 0; i < keys.Length; ++i)
 			{
 				string filename = keys[i];
+				string[] filenamePieces = filename.Split('.');
+				string extension = filenamePieces[filenamePieces.Length - 1].ToUpperInvariant();
+				if (KNOWN_BINARY_FILES.Contains(extension))
+				{
+					continue;
+				}
 				output.Add("\t\"");
 				output.Add(filename.Replace('\\', '/'));
 				output.Add("\": ");

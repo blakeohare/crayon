@@ -29,6 +29,22 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateIsWindowsProgram(List<string> output)
+		{
+			output.Add("AndroidTranslationHelper.isWindows()");
+		}
+
+		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("AndroidTranslationHelper.flipImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
+			output.Add(")");
+		}
+
 		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
 		{
 			output.Add("AndroidTranslationHelper.fillScreen(");

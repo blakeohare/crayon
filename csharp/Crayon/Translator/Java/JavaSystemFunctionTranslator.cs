@@ -387,17 +387,6 @@ namespace Crayon.Translator.Java
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-		{
-			output.Add("TranslationHelper.flipImage(");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipX);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipY);
-			output.Add(")");
-		}
-
 		protected override void TranslateInt(List<string> output, Expression value)
 		{
 			output.Add("((int)");
@@ -410,11 +399,6 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.isValidInteger(");
 			this.Translator.TranslateExpression(output, number);
 			output.Add(")"); // meh
-		}
-
-		protected override void TranslateIsWindowsProgram(List<string> output)
-		{
-			output.Add("AndroidTranslationHelper.isWindows()");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)

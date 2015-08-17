@@ -50,7 +50,6 @@ namespace Crayon.Translator.Java
 
 			foreach (string basicFile in new string[] { 
 				"AsyncMessageQueue",
-				"AwtTranslationHelper",
 				"TranslationHelper",
 				"Start",
 				"GameWindow",
@@ -64,6 +63,19 @@ namespace Crayon.Translator.Java
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
 						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
+						replacements)
+				};
+			}
+
+			foreach (string basicFile in new string[] { 
+				"AwtTranslationHelper",
+			})
+			{
+				output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
+				{
+					Type = FileOutputType.Text,
+					TextContent = Constants.DoReplacements(
+						Util.ReadFileInternally("Translator/Java/AwtProject/" + basicFile + ".txt"),
 						replacements)
 				};
 			}

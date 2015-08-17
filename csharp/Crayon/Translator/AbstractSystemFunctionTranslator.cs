@@ -46,7 +46,7 @@ namespace Crayon.Translator
 					case "_gl_load_identity": VerifyCount(functionCall, 1); gl.TranslateGlLoadIdentity(output, args[0]); return;
 					case "_gl_load_texture": VerifyCount(functionCall, 2); gl.TranslateGlLoadTexture(output, args[0], args[1]); return;
 					case "_gl_max_texture_size": VerifyCount(functionCall, 0); gl.TranslateGlMaxTextureSize(output); return;
-					case "_gl_prepare_draw_pipeline": VerifyCount(functionCall, 2); gl.TranslateGlPrepareDrawPipeline(output, args[0]); return;
+					case "_gl_prepare_draw_pipeline": VerifyCount(functionCall, 1); gl.TranslateGlPrepareDrawPipeline(output, args[0]); return;
 					case "_gl_scale": VerifyCount(functionCall, 3); gl.TranslateGlScale(output, args[0], args[1], args[2]); return;
 					case "_gl_tex_coord_2": VerifyCount(functionCall, 3); gl.TranslateGlTexCoord2(output, args[0], args[1], args[2]); return;
 					case "_gl_tex_coord_pointer": VerifyCount(functionCall, 2); gl.TranslateGlTexCoordPointer(output, args[0], args[1]); return;

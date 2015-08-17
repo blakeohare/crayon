@@ -238,7 +238,7 @@ function @type('bool') glRenderOld(
 		@type('GlRenderState') state = null;
 		@type('Array<int>') textureArray = $_new_array('int', 1);
 
-		$_gl_prepare_draw_pipeline(gl);
+		//$_gl_prepare_draw_pipeline(gl);
 
 		while (i < length) {
 			switch ($_array_get(GL_DATA, i)) {
@@ -263,7 +263,7 @@ function @type('bool') glRenderOld(
 							if (state == null) {
 								state = new GlRenderState(0, 0, 0, 0, 0, 0);
 							} else if (!%%%IS_OPEN_GL_NEW_STYLE%%%) {
-								$_gl_end();
+								$_gl_end(gl);
 							}
 
 							GlRenderState$state.mode = OpenGlMode.QUADS;
@@ -314,7 +314,7 @@ function @type('bool') glRenderOld(
 					if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0) {
 						// Since Polygons require a GL.End(), clear the state if one exists and don't set a new one.
 						if (state != null) {
-							$_gl_end();
+							$_gl_end(gl);
 							state = null;
 						}
 					
@@ -421,7 +421,7 @@ function @type('bool') glRenderOld(
 						if (state == null) {
 							state = new GlRenderState(0, 0, 0, 0, 0, 0);
 						} else {
-							$_gl_end();
+							$_gl_end(gl);
 						}
 
 						GlRenderState$state.mode = OpenGlMode.QUADS;

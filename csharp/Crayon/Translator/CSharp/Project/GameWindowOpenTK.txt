@@ -262,6 +262,11 @@ namespace %%%PROJECT_ID%%%
 
 		private void Render()
 		{
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.ClearColor(0f, 0f, 0f, 1f);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
+
 			CrayonWrapper.v_glRender(null, this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
 
 			this.SwapBuffers();

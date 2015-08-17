@@ -27,6 +27,22 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateIsWindowsProgram(List<string> output)
+		{
+			output.Add("AwtTranslationHelper.isWindows()");
+		}
+
+		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
+		{
+			output.Add("AwtTranslationHelper.flipImage(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, flipY);
+			output.Add(")");
+		}
+
 		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
 		{
 			output.Add("RenderEngine.fillScreen(");
@@ -46,17 +62,17 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
 		{
-			output.Add("TranslationHelper.getRawByteCodeString()");
+			output.Add("AwtTranslationHelper.getRawByteCodeString()");
 		}
 
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
-			output.Add("TranslationHelper.getAppDataRoot()");
+			output.Add("AwtTranslationHelper.getAppDataRoot()");
 		}
 
 		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
 		{
-			output.Add("TranslationHelper.flushImagetteToBitmap(");
+			output.Add("AwtTranslationHelper.flushImagetteToBitmap(");
 			this.Translator.TranslateExpression(output, imagette);
 			output.Add(")");
 		}
@@ -108,7 +124,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
 		{
-			output.Add("TranslationHelper.createDirectory(");
+			output.Add("AwtTranslationHelper.createDirectory(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
@@ -120,7 +136,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
 		{
-			output.Add("TranslationHelper.ioDeleteDirectory(");
+			output.Add("AwtTranslationHelper.ioDeleteDirectory(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isRecursive);
@@ -129,14 +145,14 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
 		{
-			output.Add("TranslationHelper.ioDeleteFile(");
+			output.Add("AwtTranslationHelper.ioDeleteFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
 		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
 		{
-			output.Add("TranslationHelper.checkPathExistence(");
+			output.Add("AwtTranslationHelper.checkPathExistence(");
 			this.Translator.TranslateExpression(output, canonicalizedPath);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, directoriesOnly);
@@ -147,21 +163,21 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
 		{
-			output.Add("TranslationHelper.readFile(");
+			output.Add("AwtTranslationHelper.readFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
 
 		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
 		{
-			output.Add("TranslationHelper.directoryListing(");
+			output.Add("AwtTranslationHelper.directoryListing(");
 			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
 			output.Add(")");
 		}
 
 		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
 		{
-			output.Add("TranslationHelper.writeFile(");
+			output.Add("AwtTranslationHelper.writeFile(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, content);
@@ -177,28 +193,28 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
-			output.Add("TranslationHelper.loadImageFromLocalFile(");
+			output.Add("AwtTranslationHelper.loadImageFromLocalFile(");
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
-			output.Add("TranslationHelper.readLocalSoundResource(");
+			output.Add("AwtTranslationHelper.readLocalSoundResource(");
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
-			output.Add("TranslationHelper.readLocalTileResource(");
+			output.Add("AwtTranslationHelper.readLocalTileResource(");
 			this.Translator.TranslateExpression(output, tileGenName);
 			output.Add(")");
 		}
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			output.Add("TranslationHelper.getTextResource(");
+			output.Add("AwtTranslationHelper.getTextResource(");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
@@ -212,7 +228,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
 		{
-			output.Add("TranslationHelper.playSoundImpl(");
+			output.Add("AwtTranslationHelper.playSoundImpl(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
