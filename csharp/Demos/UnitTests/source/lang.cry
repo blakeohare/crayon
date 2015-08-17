@@ -1,6 +1,7 @@
 import 'lang_for.cry';
 import 'lang_foreach.cry';
 import 'lang_increment.cry';
+import 'lang_obj_ref.cry';
 import 'lang_ops.cry';
 import 'lang_string_slicing.cry';
 
@@ -8,6 +9,7 @@ function lang() {
 	lang_for();
 	lang_foreach();
 	lang_increment();
+	lang_obj_ref();
 	lang_ops();
 	lang_string_slicing();
 }
