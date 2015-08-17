@@ -174,7 +174,7 @@ class GameWindow {
             }
 
             for (int i = 0; i < 12; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_F1 + i, "F" + (i + 1));
+                keyCodeLookup.put(KeyEvent.VK_F1 + i, "f" + (i + 1));
             }
         }
         return keyCodeLookup;
