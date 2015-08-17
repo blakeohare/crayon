@@ -103,7 +103,9 @@ namespace Crayon
 #if DEBUG
 			if (args.Length == 0)
 			{
-				args = @"C:\Things\Projects\Crayon\Demos\UnitTests\UnitTests.build -target windows".Split(' ');
+				string command = @"C:\Things\Projects\Crayon\Demos\UnitTests\UnitTests.build -target windows";
+
+				args = command.Split(' ');
 			}
 #endif
 
