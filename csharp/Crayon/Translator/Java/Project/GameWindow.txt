@@ -81,6 +81,7 @@ class GameWindow {
         mouseListener = new GameWindowMouseListener(this);
 
         canvasHost.addKeyListener(keyAdapter);
+        canvasHost.setFocusTraversalKeysEnabled(false);
         canvasHost.requestFocus();
     }
 
@@ -125,6 +126,7 @@ class GameWindow {
     private HashMap<Integer, String> getKeyCodeLookup() {
         if (keyCodeLookup == null) {
             keyCodeLookup = new HashMap<Integer, String>();
+
             keyCodeLookup.put(KeyEvent.VK_LEFT, "left");
             keyCodeLookup.put(KeyEvent.VK_RIGHT, "right");
             keyCodeLookup.put(KeyEvent.VK_DOWN, "down");
@@ -134,6 +136,30 @@ class GameWindow {
             keyCodeLookup.put(KeyEvent.VK_ENTER, "enter");
             keyCodeLookup.put(KeyEvent.VK_TAB, "tab");
             keyCodeLookup.put(KeyEvent.VK_ESCAPE, "escape");
+            keyCodeLookup.put(KeyEvent.VK_BACK_SPACE, "backspace");
+            keyCodeLookup.put(KeyEvent.VK_PRINTSCREEN, "printscreen");
+            keyCodeLookup.put(KeyEvent.VK_HOME, "home");
+            keyCodeLookup.put(KeyEvent.VK_END, "end");
+            keyCodeLookup.put(KeyEvent.VK_PAGE_UP, "pageup");
+            keyCodeLookup.put(KeyEvent.VK_PAGE_DOWN, "pagedown");
+            keyCodeLookup.put(KeyEvent.VK_INSERT, "insert");
+            keyCodeLookup.put(KeyEvent.VK_DELETE, "delete");
+            keyCodeLookup.put(KeyEvent.VK_PAUSE, "pause");
+            
+            keyCodeLookup.put(KeyEvent.VK_NUM_LOCK, "numlock");
+            keyCodeLookup.put(KeyEvent.VK_CAPS_LOCK, "capslock");
+            keyCodeLookup.put(KeyEvent.VK_SCROLL_LOCK, "scrolllock");
+
+            keyCodeLookup.put(KeyEvent.VK_SEMICOLON, "semicolon");
+            keyCodeLookup.put(KeyEvent.VK_QUOTE, "apostrophe");
+            keyCodeLookup.put(KeyEvent.VK_PERIOD, "period");
+            keyCodeLookup.put(KeyEvent.VK_COMMA, "comma");
+            keyCodeLookup.put(KeyEvent.VK_SLASH, "slash");
+            keyCodeLookup.put(KeyEvent.VK_OPEN_BRACKET, "openbracket");
+            keyCodeLookup.put(KeyEvent.VK_CLOSE_BRACKET, "closebracket");
+            keyCodeLookup.put(KeyEvent.VK_BACK_SLASH, "backslash");
+            keyCodeLookup.put(KeyEvent.VK_MINUS, "hyphen");
+            keyCodeLookup.put(KeyEvent.VK_EQUALS, "equals");
 
             keyCodeLookup.put(KeyEvent.VK_CONTROL, "ctrl");
             keyCodeLookup.put(KeyEvent.VK_SHIFT, "shift");
@@ -195,8 +221,21 @@ class GameWindow {
         return output;
     }
 
+    private String convertKeyCode(int keyCode) {
+        String value = getKeyCodeLookup().get(keyCode);
+        if (value == null) {
+            switch (keyCode) {
+                case 3: return "break";
+                case 192: return "tilde";
+                case 525: return "menu";
+                default: return null;
+            }
+        }
+        return value;
+    }
+
     private void handleKeyPress(int keyCode, boolean down) {
-        String key = getKeyCodeLookup().get(keyCode);
+        String key = convertKeyCode(keyCode);
         if (key != null) {
             eventQueue.add(CrayonWrapper.v_buildGameEvent(
                 down ? "keydown" : "keyup",
