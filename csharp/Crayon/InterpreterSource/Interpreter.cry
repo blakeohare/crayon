@@ -247,12 +247,14 @@ function @type('int') canonicalizeListSliceArgs(
 	if (endIndex < 0) endIndex += length;
 
 	if (isForward) {
-		if (beginIndex >= length || beginIndex < 0) return 2;
+		if (beginIndex >= length) return 0;
+		if (beginIndex < 0) return 2;
 		if (endIndex < beginIndex) return 3;
 		if (beginIndex == endIndex) return 0;
 		if (endIndex > length) endIndex = length;
 	} else {
-		if (beginIndex < 0 || beginIndex >= length) return 2;
+		if (beginIndex < 0) return 0;
+		if (beginIndex >= length) return 2;
 		if (endIndex > beginIndex) return 3;
 		if (beginIndex == endIndex) return 0;
 		if (endIndex < -1) endIndex = -1;
