@@ -527,6 +527,16 @@ R.readResourceText = function(path) {
 	return output;
 };
 
+R.floatParseHelper = function(floatOut, text) {
+	var output = parseFloat(text);
+	if (output + '' == 'NaN') {
+		floatOut[0] = -1;
+		return;
+	}
+	floatOut[0] = 1;
+	floatOut[1] = output;
+};
+
 R.parseJson = function(rawText) {
 	try {
 		return R.convertJsonThing(JSON.parse(rawText));

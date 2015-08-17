@@ -1,0 +1,7 @@
+import 'library_parse_int.cry';
+import 'library_parse_float.cry';
+
+function library() {
+	library_parse_int();
+	library_parse_float();
+}

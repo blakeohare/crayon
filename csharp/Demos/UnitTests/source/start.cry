@@ -1,9 +1,11 @@
 import 'util.cry';
 
 import 'lang.cry';
+import 'library.cry';
 
 function main() {
 	lang();
+	library();
 }
 
 main();
