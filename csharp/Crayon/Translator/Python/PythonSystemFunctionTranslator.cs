@@ -727,7 +727,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
 		{
-			output.Add("_parse_float_or_give_null(");
+			output.Add("_parse_float_helper(");
 			this.Translator.TranslateExpression(output, outParam);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, rawString);

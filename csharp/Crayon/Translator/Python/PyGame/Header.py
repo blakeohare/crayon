@@ -399,4 +399,12 @@ def get_app_data_root():
 		_app_data_root[0] = adr
 	return adr
 
+def _parse_float_helper(f_out, value):
+	try:
+		output = float(value)
+		f_out[0] = 1
+		f_out[1] = output
+	except:
+		f_out[0] = -1
+
 program_data = [None]
