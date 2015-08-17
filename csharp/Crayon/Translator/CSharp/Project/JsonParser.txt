@@ -181,7 +181,7 @@ namespace %%%PROJECT_ID%%%
 				}
 
 				Value key = ParseJsonThing(rawValue, length, i);
-				if (key.type != %%%TYPE_STRING%%%) throw new JsonParserException();
+				if (key.type != %%%TYPE_ID_STRING%%%) throw new JsonParserException();
 				SkipWhitespace(rawValue, length, i);
 				PopExpected(rawValue, length, i, ":");
 				SkipWhitespace(rawValue, length, i);
@@ -210,7 +210,7 @@ namespace %%%PROJECT_ID%%%
 
 		private static Value WrapFloat(double value)
 		{
-			return new Value(%%%TYPE_FLOAT%%%, value);
+			return new Value(%%%TYPE_ID_FLOAT%%%, value);
 		}
 
 		private static void PopExpected(char[] rawValue, int length, Index index, string value)
@@ -260,12 +260,12 @@ namespace %%%PROJECT_ID%%%
 
 		private static Value WrapString(string value)
 		{
-			return value.Length == 0 ? CrayonWrapper.v_VALUE_EMPTY_STRING : new Value(%%%TYPE_STRING%%%, value);
+			return value.Length == 0 ? CrayonWrapper.v_VALUE_EMPTY_STRING : new Value(%%%TYPE_ID_STRING%%%, value);
 		}
 
 		private static Value WrapList(List<Value> items)
 		{
-			return new Value(%%%TYPE_LIST%%%, new List<Value>(items));
+			return new Value(%%%TYPE_ID_LIST%%%, new List<Value>(items));
 		}
 
 		private static Value WrapDictionary(List<Value> keys, List<Value> values)
@@ -285,8 +285,8 @@ namespace %%%PROJECT_ID%%%
 				new Dictionary<int, Value>(),
 				dictKeyLookup,
 				dictValueLookup,
-				dictKeyLookup.Count, %%%TYPE_STRING%%%);
-			return new Value(%%%TYPE_DICTIONARY%%%, dictionary);
+				dictKeyLookup.Count, %%%TYPE_ID_STRING%%%);
+			return new Value(%%%TYPE_ID_DICTIONARY%%%, dictionary);
 		}
 	}
 }

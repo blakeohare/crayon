@@ -1,0 +1,83 @@
+﻿package %%%PACKAGE%%%;
+
+import com.firedodge.app.util.SystemUiHider;
+
+import android.app.Activity;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * An example full-screen activity that shows and hides the system UI (i.e.
+ * status bar and navigation/system bar) with user interaction.
+ *
+ * @see SystemUiHider
+ */
+public class GameActivity extends Activity {
+
+    private static String readStream(InputStream stream) {
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+        try {
+            byte[] buffer = new byte[100];
+            int bytesRead = stream.read(buffer, 0, buffer.length);
+            while (bytesRead > 0) {
+                outStream.write(buffer, 0, bytesRead);
+                bytesRead = stream.read(buffer, 0, buffer.length);
+            }
+        } catch (IOException ioe) {
+            return null;
+        }
+        return outStream.toString();
+    }
+
+    public android.graphics.Bitmap loadBitmap(String path) {
+        try {
+            InputStream is = getResources().getAssets().open("generated/" + path);
+            return BitmapFactory.decodeStream(is);
+        } catch (IOException ioe) {
+            return null;
+        }
+    }
+
+    private CrayonGlSurfaceView glSurfaceView = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        AndroidTranslationHelper.setContext(this);
+
+        if (AndroidTranslationHelper.getRawByteCodeString() == null) {
+            String byteCode = readStream(getResources().openRawResource(R.raw.bytes));
+            AndroidTranslationHelper.setRawByteCodeString(byteCode);
+        }
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        glSurfaceView = new CrayonGlSurfaceView(this);
+        setContentView(glSurfaceView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        glSurfaceView.onResume();
+
+        CrayonWrapper.v_main();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        glSurfaceView.onPause();
+
+        // TODO: save interpreter state
+    }
+}

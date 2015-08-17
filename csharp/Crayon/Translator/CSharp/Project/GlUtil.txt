@@ -7,6 +7,13 @@ namespace %%%PROJECT_ID%%%
 {
 	public static class GlUtil
 	{
+		public static void PrepareRenderPipeline() {
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.ClearColor(0f, 0f, 0f, 1f);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
+		}
+
 		public static int ForceLoadTexture(Bitmap bitmap)
 		{
 			bitmap = NormalizeBitmap(bitmap);

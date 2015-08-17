@@ -45,6 +45,10 @@ namespace Crayon.ParseTree
 						string structName = parts[0];
 						string realVarName = parts[1];
 						StructDefinition structDef = parser.GetStructDefinition(structName);
+						if (structDef == null)
+						{
+							throw new ParserException(this.Root.FirstToken, "The struct '" + structName + "' does not exist.");
+						}
 						if (!structDef.IndexByField.ContainsKey(step))
 						{
 							throw new ParserException(this.StepToken, "The struct '" + structDef.Name.Value + "' does not contain a field called '" + step + "'");

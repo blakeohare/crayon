@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
-	class JavaSystemFunctionTranslator : AbstractSystemFunctionTranslator
+	internal abstract class JavaSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
 		public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
-
-		protected override void TranslateAppDataRoot(List<string> output)
-		{
-			output.Add("TranslationHelper.getAppDataRoot()");
-		}
 
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
@@ -331,17 +324,6 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-		{
-			output.Add("RenderEngine.fillScreen(");
-			this.Translator.TranslateExpression(output, red);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, green);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, blue);
-			output.Add(")");
-		}
-
 		protected override void TranslateForceParens(List<string> output, Expression expression)
 		{
 			output.Add("(");
@@ -394,104 +376,15 @@ namespace Crayon.Translator.Java
 			throw new InvalidOperationException("Gamepad not supported.");
 		}
 
-		protected override void TranslateGetEventsRawList(List<string> output)
-		{
-			output.Add("GameWindow.INSTANCE.pumpEventQueue()");
-		}
-
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("TranslationHelper.getProgramData()");
-		}
-
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
-		{
-			output.Add("TranslationHelper.getRawByteCodeString()");
-		}
-
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			output.Add("1024"); // Not OpenGL based, so don't create megasheets.
-		}
-
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
-		{
-			output.Add("TranslationHelper.makeHttpRequest()");
 		}
 
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			// Java loads resources synchronously.
 			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-		{
-			output.Add("TranslationHelper.flipImage(");
-			this.Translator.TranslateExpression(output, image);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipX);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, flipY);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-		{
-			output.Add("TranslationHelper.flushImagetteToBitmap(");
-			this.Translator.TranslateExpression(output, imagette);
-			output.Add(")");
-		}
-
-		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-		{
-			// Java loads resources synchronously.
-			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-		{
-			output.Add("((java.awt.image.BufferedImage) ");
-			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(").getHeight()");
-		}
-
-		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-		{
-			output.Add("((java.awt.image.BufferedImage) ");
-			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(").getWidth()");
-		}
-
-		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-		{
-			output.Add("GameWindow.FPS = ");
-			this.Translator.TranslateExpression(output, fps);
-		}
-
-		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-		{
-			output.Add("GameWindow.initializeScreen(");
-			this.Translator.TranslateExpression(output, gameWidth);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, gameHeight);
-			if (screenWidth is NullConstant)
-			{
-				output.Add(")");
-			}
-			else
-			{
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, screenWidth);
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, screenHeight);
-				output.Add(")");
-			}
 		}
 
 		protected override void TranslateInt(List<string> output, Expression value)
@@ -501,78 +394,11 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
-		{
-			output.Add("TranslationHelper.createDirectory(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoCurrentDirectory(List<string> output)
-		{
-			output.Add("System.getProperty(\"user.dir\")");
-		}
-
-		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
-		{
-			output.Add("TranslationHelper.ioDeleteDirectory(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, isRecursive);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
-		{
-			output.Add("TranslationHelper.ioDeleteFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
-		{
-			output.Add("TranslationHelper.checkPathExistence(");
-			this.Translator.TranslateExpression(output, canonicalizedPath);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, directoriesOnly);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, performCaseCheck);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
-		{
-			output.Add("TranslationHelper.readFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
-		{
-			output.Add("TranslationHelper.directoryListing(");
-			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
-		{
-			output.Add("TranslationHelper.writeFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, content);
-			output.Add(")");
-		}
-
 		protected override void TranslateIsValidInteger(List<string> output, Expression number)
 		{
 			output.Add("TranslationHelper.isValidInteger(");
 			this.Translator.TranslateExpression(output, number);
 			output.Add(")"); // meh
-		}
-
-		protected override void TranslateIsWindowsProgram(List<string> output)
-		{
-			output.Add("TranslationHelper.isWindows()");
 		}
 
 		protected override void TranslateListClear(List<string> output, Expression list)
@@ -764,37 +590,9 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("System.out.println(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("TranslationHelper.random.nextDouble()");
-		}
-
-		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-		{
-			output.Add("TranslationHelper.loadImageFromLocalFile(");
-			this.Translator.TranslateExpression(output, filePath);
-			output.Add(")");
-		}
-
-		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-		{
-			output.Add("TranslationHelper.readLocalSoundResource(");
-			this.Translator.TranslateExpression(output, filePath);
-			output.Add(")");
-		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("TranslationHelper.readLocalTileResource(");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(")");
 		}
 
 		protected override void TranslateRegisterTicker(List<string> output)
@@ -807,24 +605,10 @@ namespace Crayon.Translator.Java
 			// Nope
 		}
 
-		protected override void TranslateResourceReadText(List<string> output, Expression path)
-		{
-			output.Add("TranslationHelper.getTextResource(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
 		protected override void TranslateSetProgramData(List<string> output, Expression programData)
 		{
 			output.Add("TranslationHelper.setProgramData(");
 			this.Translator.TranslateExpression(output, programData);
-			output.Add(")");
-		}
-
-		protected override void TranslateSetTitle(List<string> output, Expression title)
-		{
-			output.Add("GameWindow.INSTANCE.setTitle(");
-			this.Translator.TranslateExpression(output, title);
 			output.Add(")");
 		}
 
@@ -848,13 +632,6 @@ namespace Crayon.Translator.Java
 		{
 			output.Add("TranslationHelper.sortedCopyOfIntArray(");
 			this.Translator.TranslateExpression(output, list);
-			output.Add(")");
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("TranslationHelper.playSoundImpl(");
-			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 

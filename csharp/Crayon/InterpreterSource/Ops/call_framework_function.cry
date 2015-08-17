@@ -337,7 +337,11 @@ switch ($_array_get(row, 0)) {
 		if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 			return killExecution(stack, "$gfx_blit_image coordinates must be integers.");
 		}
-		$_blit_image(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawImageSimple(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+		} else {
+			$_blit_image(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%:
@@ -361,16 +365,29 @@ switch ($_array_get(row, 0)) {
 			Value$arg7.type != Types.INTEGER) {
 			return killExecution(stack, "$gfx_blit_image_partial requires an image object and 6 integer arguments.");
 		}
-		$_blit_image_partial(
-			image1,
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			$_cast('int', Value$arg6.internalValue), // w
-			$_cast('int', Value$arg7.internalValue), // h
-			$_cast('int', Value$arg4.internalValue),
-			$_cast('int', Value$arg5.internalValue),
-			$_cast('int', Value$arg6.internalValue), // w
-			$_cast('int', Value$arg7.internalValue)); // h
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawImageAdvanced(
+				image1,
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg6.internalValue), // w
+				$_cast('int', Value$arg7.internalValue), // h
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue), // w
+				$_cast('int', Value$arg7.internalValue)); // h
+		} else {
+			$_blit_image_partial(
+				image1,
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg6.internalValue), // w
+				$_cast('int', Value$arg7.internalValue), // h
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue), // w
+				$_cast('int', Value$arg7.internalValue)); // h
+		}
 		break;
 
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL_AT_SCALE%%%:
@@ -398,16 +415,29 @@ switch ($_array_get(row, 0)) {
 			Value$arg9.type != Types.INTEGER) {
 			return killExecution(stack, "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.");
 		}
-		$_blit_image_partial(
-			image1,
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			$_cast('int', Value$arg4.internalValue),
-			$_cast('int', Value$arg5.internalValue),
-			$_cast('int', Value$arg6.internalValue),
-			$_cast('int', Value$arg7.internalValue),
-			$_cast('int', Value$arg8.internalValue),
-			$_cast('int', Value$arg9.internalValue));
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawImageAdvanced(
+				image1,
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue),
+				$_cast('int', Value$arg9.internalValue));
+		} else {
+			$_blit_image_partial(
+				image1,
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue),
+				$_cast('int', Value$arg9.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_DRAW_ELLIPSE%%%:
@@ -431,15 +461,27 @@ switch ($_array_get(row, 0)) {
 			Value$arg8.type != Types.INTEGER) {
 			return killExecution(stack, "$draw_ellipse requires 8 integer arguments.");
 		}
-		$_draw_ellipse(
-			$_cast('int', Value$arg1.internalValue),
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			$_cast('int', Value$arg4.internalValue),
-			$_cast('int', Value$arg5.internalValue),
-			$_cast('int', Value$arg6.internalValue),
-			$_cast('int', Value$arg7.internalValue),
-			$_cast('int', Value$arg8.internalValue));
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawEllipse(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue));
+		} else {
+			$_draw_ellipse(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_DRAW_LINE%%%:
@@ -467,16 +509,29 @@ switch ($_array_get(row, 0)) {
 			return killExecution(stack, "$draw_line requires 9 integer arguments.");
 		}
 
-		$_draw_line(
-			$_cast('int', Value$arg1.internalValue),
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			$_cast('int', Value$arg4.internalValue),
-			$_cast('int', Value$arg5.internalValue),
-			$_cast('int', Value$arg6.internalValue),
-			$_cast('int', Value$arg7.internalValue),
-			$_cast('int', Value$arg8.internalValue),
-			$_cast('int', Value$arg9.internalValue));
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawLine(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue),
+				$_cast('int', Value$arg9.internalValue));
+		} else {
+			$_draw_line(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue),
+				$_cast('int', Value$arg9.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_DRAW_RECTANGLE%%%:
@@ -500,15 +555,27 @@ switch ($_array_get(row, 0)) {
 			Value$arg8.type != Types.INTEGER) {
 			return killExecution(stack, "$draw_rectangle requires 8 integer arguments.");
 		}
-		$_draw_rectangle(
-			$_cast('int', Value$arg1.internalValue),
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			$_cast('int', Value$arg4.internalValue),
-			$_cast('int', Value$arg5.internalValue),
-			$_cast('int', Value$arg6.internalValue),
-			$_cast('int', Value$arg7.internalValue),
-			$_cast('int', Value$arg8.internalValue));
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glDrawRectangle(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue));
+		} else {
+			$_draw_rectangle(
+				$_cast('int', Value$arg1.internalValue),
+				$_cast('int', Value$arg2.internalValue),
+				$_cast('int', Value$arg3.internalValue),
+				$_cast('int', Value$arg4.internalValue),
+				$_cast('int', Value$arg5.internalValue),
+				$_cast('int', Value$arg6.internalValue),
+				$_cast('int', Value$arg7.internalValue),
+				$_cast('int', Value$arg8.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_FILL_SCREEN%%%:

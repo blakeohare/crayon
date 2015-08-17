@@ -7,8 +7,8 @@ namespace Crayon.Translator.CSharp
 {
 	abstract class CSharpPlatform : AbstractPlatform
 	{
-		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator)
-			: base(false, new CSharpTranslator(), systemFunctionTranslator)
+		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, Crayon.Translator.AbstractOpenGlTranslator openGlTranslator)
+			: base(false, new CSharpTranslator(), systemFunctionTranslator, openGlTranslator)
 		{ }
 
 		public override bool IsAsync { get { return true; } }
@@ -51,16 +51,6 @@ namespace Crayon.Translator.CSharp
 				{ "EXTRA_DLLS", "" },
 			};
 			this.ApplyPlatformSpecificReplacements(replacements);
-
-			// TODO: figure out if I had a good reason not to put all the enums in the replacmenet lookup.
-			foreach (AsyncMessageType messageType in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
-			{
-				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
-			}
-			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
-			{
-				replacements.Add("IO_ERROR_" + errorType.ToString(), "" + (int)errorType);
-			}
 
 			HashSet<string> systemLibraries = new HashSet<string>(new string[] {
 				"System",
@@ -109,6 +99,7 @@ namespace Crayon.Translator.CSharp
 					"using System;",
 					"using System.Collections.Generic;",
 					"using System.Linq;",
+					"using OpenTK.Graphics.OpenGL;",
 					"",
 					"namespace " + projectId,
 					"{",
@@ -235,7 +226,7 @@ namespace Crayon.Translator.CSharp
 				output[outputFilePath] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
-					TextContent = Util.MassReplacements(
+					TextContent = Constants.DoReplacements(
 						Util.ReadFileInternally("Translator/CSharp/Project/" + templateFile),
 						replacements)
 				};

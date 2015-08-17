@@ -6,37 +6,76 @@ namespace Crayon
 {
 	internal class Constants
 	{
-		private static readonly Dictionary<string, int> values = new Dictionary<string, int>()
+		private static readonly Dictionary<string, string> CONSTANT_REPLACEMENTS;
+
+		static Constants()
 		{
-			{ "TYPE_NATIVE_OBJECT_SCREEN", 1 },
-			{ "TYPE_NATIVE_OBJECT_IMAGE", 2 },
-		};
+			Dictionary<string, string> constants = new Dictionary<string, string>()
+			{
+				{ "OPEN_GL_ELLIPSE_POINT_COUNT", "60" },
+			};
+
+			Dictionary<string, Type> enumReplacementsByPrefix = new Dictionary<string, Type>()
+			{
+				{ "ASYNC_MESSAGE_TYPE", typeof(AsyncMessageType) },
+				{ "FF", typeof(FrameworkFunction) },
+				{ "IO_ERROR", typeof(IOErrors) },
+				{ "PRIMITIVE_METHOD", typeof(PrimitiveMethods) },
+				{ "SUBTYPE_ID", typeof(SubTypes) },
+				{ "TYPE_ID", typeof(Types) },
+				{ "TYPE_NATIVE_OBJECT", typeof(NativeObjectTypes) },
+			};
+
+			foreach (string key in enumReplacementsByPrefix.Keys)
+			{
+				foreach (object enumValue in Enum.GetValues(enumReplacementsByPrefix[key]))
+				{
+					constants.Add(key + "_" + enumValue.ToString(), ((int)enumValue).ToString());
+				}
+			}
+
+			CONSTANT_REPLACEMENTS = constants;
+		}
 
 		public static string DoReplacements(string text, Dictionary<string, string> replacements)
 		{
-			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
+			if (text.Contains("%%%"))
 			{
-				text = text.Replace("%%%TYPE_" + t.ToString() + "%%%", ((int)t).ToString());
-			}
+				string[] parts = text.Split(new string[] { "%%%" }, StringSplitOptions.None);
+				bool lastWasReplacement = false;
 
-			foreach (string key in values.Keys)
-			{
-				text = text.Replace("%%%" + key + "%%%", values[key].ToString());
-			}
+				List<string> replaced = new List<string>() { parts[0] };
+				int i = 1;
+				for (; i < parts.Length - 1; ++i)
+				{
+					string key = parts[i];
+					if (CONSTANT_REPLACEMENTS.ContainsKey(key))
+					{
+						replaced.Add(CONSTANT_REPLACEMENTS[key]);
+						replaced.Add(parts[++i]);
+						lastWasReplacement = true;
+					}
+					else if (replacements.ContainsKey(key))
+					{
+						replaced.Add(replacements[key]);
+						replaced.Add(parts[++i]);
+						lastWasReplacement = true;
+					}
+					else
+					{
+						replaced.Add("%%%");
+						replaced.Add(key);
+						lastWasReplacement = false;
+					}
+				}
 
-			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
-			{
-				text = text.Replace("%%%IO_ERROR_" + errorType.ToString() + "%%%", "" + (int)errorType);
-			}
+				if (!lastWasReplacement)
+				{
+					replaced.Add("%%%");
+					replaced.Add(parts[parts.Length - 1]);
+				}
 
-			foreach (string key in replacements.Keys)
-			{
-				text = text.Replace("%%%" + key + "%%%", replacements[key]);
-			}
-
-			foreach (AsyncMessageType type in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
-			{
-				text = text.Replace("%%%ASYNC_MESSAGE_TYPE_" + type + "%%%", ((int)type).ToString());
+				return string.Join("", replaced);
 			}
 			return text;
 		}

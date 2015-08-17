@@ -224,14 +224,6 @@ function imageSheetStatusInitialization() {
 	}
 }
 
-function @type('bool') loadCompositeImageResource(@type('CompositeImage') compositeImage) {
-	if (%%%IS_OPEN_GL_BASED%%%) {
-		CompositeImage$compositeImage.glTextureId = $_gl_load_texture(CompositeImage$compositeImage.nativeBitmap);
-		CompositeImage$compositeImage.loaded = true;
-	}
-	return true;
-}
-
 function @type('bool') initiateTileLoading(@type('TileLoadRequest') request) {
 	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
 		// In most platforms, this is synchronous...
@@ -622,7 +614,10 @@ function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
 		nonSolitarySheets,
 		solitarySheets);
 
-	@type('int') maxTextureSize = $_gl_max_texture_size();
+	@type('int') maxTextureSize = 1024;
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		maxTextureSize = $_gl_max_texture_size();
+	}
 
 	// Go through and further consolidate things if possible.
 	if (maxTextureSize > 1024 && $_dictionary_size(nonSolitarySheets) > 1) {

@@ -23,6 +23,7 @@ namespace Crayon
 			"Interpreter.cry",
 			"IOManager.cry",
 			"NetworkManager.cry",
+			"OpenGlPipeline.cry", // conditionally excluded below based on platform.
 			"PrimitiveMethods.cry",
 			"Runner.cry",
 			"SoundManager.cry",
@@ -49,15 +50,14 @@ namespace Crayon
 			{
 				string fileId = file.Split('.')[0];
 
+				if (fileId.StartsWith("OpenGl") && !this.platform.IsOpenGlBased)
+				{
+					continue;
+				}
+
 				string code = Util.ReadFileInternally("InterpreterSource/" + file);
 
-				if (code.Contains("%%%"))
-				{
-					foreach (string key in replacements.Keys)
-					{
-						code = code.Replace("%%%" + key + "%%%", replacements[key]);
-					}
-				}
+				code = Constants.DoReplacements(code, replacements);
 
 				Executable[] lines = this.interpreterParser.ParseInternal(file, code);
 				if (lines.Length > 0)
@@ -78,32 +78,6 @@ namespace Crayon
 		public Dictionary<string, string> BuildReplacementsDictionary()
 		{
 			Dictionary<string, string> replacements = new Dictionary<string, string>();
-
-			foreach (FrameworkFunction ff in Enum.GetValues(typeof(FrameworkFunction)).Cast<FrameworkFunction>())
-			{
-				replacements.Add("FF_" + ff.ToString(), ((int)ff).ToString());
-			}
-			foreach (Types t in Enum.GetValues(typeof(Types)).Cast<Types>())
-			{
-				replacements.Add("TYPE_ID_" + t.ToString(), ((int)t).ToString());
-			}
-			foreach (SubTypes st in Enum.GetValues(typeof(SubTypes)).Cast<SubTypes>())
-			{
-				replacements.Add("SUBTYPE_ID_" + st.ToString(), ((int)st).ToString());
-			}
-			foreach (PrimitiveMethods primitiveMethod in Enum.GetValues(typeof(PrimitiveMethods)).Cast<PrimitiveMethods>())
-			{
-				replacements.Add("PRIMITIVE_METHOD_" + primitiveMethod.ToString(), "" + (int)primitiveMethod);
-			}
-			foreach (AsyncMessageType messageType in Enum.GetValues(typeof(AsyncMessageType)).Cast<AsyncMessageType>())
-			{
-				replacements.Add("ASYNC_MESSAGE_TYPE_" + messageType.ToString(), "" + (int)messageType);
-			}
-			foreach (IOErrors errorType in Enum.GetValues(typeof(IOErrors)).Cast<IOErrors>())
-			{
-				replacements.Add("IO_ERROR_" + errorType.ToString(), "" + (int)errorType);
-			}
-
 			replacements.Add("PLATFORM_IS_ASYNC", this.platform.IsAsync ? "true" : "false");
 			replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
 			replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
@@ -112,6 +86,7 @@ namespace Crayon
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("SCREEN_BLOCKS_EXECUTION", this.platform.ScreenBlocksExecution ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
+			replacements.Add("IS_OPEN_GL_NEW_STYLE", (this.platform.IsOpenGlBased && this.platform.OpenGlTranslator.IsNewStyle) ? "true" : "false");
 			replacements.Add("IS_GAMEPAD_SUPPORTED", this.platform.SupportsGamePad ? "true" : "false");
 			replacements.Add("GENERATED_TILE_DIRECTORY", this.platform.GeneratedFilesFolder + "/spritesheets");
 			return replacements;

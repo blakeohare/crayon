@@ -11,22 +11,23 @@ namespace Crayon
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
+		public AbstractOpenGlTranslator OpenGlTranslator { get; private set; } // null if IsOpenGlBased is false
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public abstract bool IsAsync { get; }
-		public abstract string OutputFolderName { get; }
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
 		public abstract bool IntIsFloor { get; }
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool ScreenBlocksExecution { get; }
 		public abstract string GeneratedFilesFolder { get; }
-		public abstract bool IsOpenGlBased { get; }
 		public abstract bool SupportsGamePad { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.
 		public abstract bool UseFixedListArgConstruction { get; }
+
+		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
 
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
@@ -35,15 +36,24 @@ namespace Crayon
 		public AbstractPlatform(
 			bool isMin,
 			AbstractTranslator translator,
-			AbstractSystemFunctionTranslator systemFunctionTranslator)
+			AbstractSystemFunctionTranslator systemFunctionTranslator,
+			AbstractOpenGlTranslator nullableOpenGlTranslator)
 		{
 			this.Context = new CompileContext();
 			this.IsMin = isMin;
 			this.Translator = translator;
 			this.SystemFunctionTranslator = systemFunctionTranslator;
+			this.OpenGlTranslator = nullableOpenGlTranslator;
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
+
+			if (this.OpenGlTranslator != null)
+			{
+				this.OpenGlTranslator.Platform = this;
+				this.OpenGlTranslator.Translator = this.Translator;
+			}
+
 			this.InterpreterCompiler = new InterpreterCompiler(this);
 		}
 

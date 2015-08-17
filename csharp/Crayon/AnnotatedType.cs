@@ -31,6 +31,12 @@ namespace Crayon
 
 			this.Name = token.Value;
 
+			while (proxyTokenStream.PopIfPresent("."))
+			{
+				this.Name += ".";
+				this.Name += proxyTokenStream.PopValue();
+			}
+
 			List<AnnotatedType> generics = new List<AnnotatedType>();
 			if (proxyTokenStream.PopIfPresent("<"))
 			{

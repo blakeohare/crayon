@@ -62,6 +62,7 @@
     <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="IOErrors.cs" />
     <Compile Include="LiteralLookup.cs" />
+    <Compile Include="NativeObjectTypes.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="ParseTree\Annotation.cs" />
@@ -124,11 +125,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenStream.cs" />
     <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="Translator\AbstractOpenGlTranslator.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
+    <Compile Include="Translator\COpenGL\COpenGlOpenGlTranslator.cs" />
     <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
     <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
     <Compile Include="Translator\COpenGL\CTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpOpenTkOpenGlTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
@@ -141,6 +145,11 @@
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
+    <Compile Include="Translator\Java\JavaAndroidOpenGlEsTranslator.cs" />
+    <Compile Include="Translator\Java\JavaAndroidPlatform.cs" />
+    <Compile Include="Translator\Java\JavaAndroidSystemFunctionTranslator.cs" />
+    <Compile Include="Translator\Java\JavaAwtPlatform.cs" />
+    <Compile Include="Translator\Java\JavaAwtSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaPlatform.cs" />
     <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaTranslator.cs" />
@@ -238,6 +247,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\variable.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_stream.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
+    <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -250,8 +260,52 @@
     <EmbeddedResource Include="InterpreterSource\Ops\assign_this_step.cry" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
     <EmbeddedResource Include="Translator\Java\Project\AsyncMessageQueue.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\BuildGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleProperties.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Gradlew.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradlewBat.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ProjectIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\SettingsGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperJar" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppBuildGradle.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableHdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableMdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXhdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXxhdpiIcLauncher.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResLayoutActivityGameXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesAttrsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesColorsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStringsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStylesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesV11StylesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GameActivity.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderBase.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHider.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\IcLauncherWeb.png" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\OpenGlRenderer.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CompilerXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CopyrightProfilesSettingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\DotName.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\EncodingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\GradleXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\LibrariesSupportXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\MiscXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ModulesXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ScopeSettingsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\VcsXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\WorkspaceXml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidIml.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\GlUtil.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlRenderer.txt" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
+    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SystemLib\Game.cry" />
@@ -273,6 +327,7 @@
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -5,7 +5,7 @@ namespace Crayon.Translator.Python
 	class PythonPlatform : AbstractPlatform
 	{
 		public PythonPlatform()
-			: base(false, new PythonTranslator(), new PythonSystemFunctionTranslator())
+			: base(false, new PythonTranslator(), new PythonSystemFunctionTranslator(), null)
 		{ }
 
 		public override bool IsAsync { get { return false; } }
@@ -16,10 +16,8 @@ namespace Crayon.Translator.Python
 		public override bool IntIsFloor { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return true; } }
 
-		public override string OutputFolderName { get { return "pygame"; } }
 		public override string GeneratedFilesFolder { get { return "_generated_files"; } }
 
 		public override Dictionary<string, FileOutput> Package(

@@ -8,12 +8,9 @@ namespace Crayon.Translator.CSharp
 	class CSharpWindowsPhonePlatform : CSharpPlatform
 	{
 		public CSharpWindowsPhonePlatform()
-			: base(new CSharpWindowsPhoneSystemFunctionTranslator())
+			: base(new CSharpWindowsPhoneSystemFunctionTranslator(), null)
 		{ }
 
-		public override string OutputFolderName { get { return "cswinphone"; } }
-
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)

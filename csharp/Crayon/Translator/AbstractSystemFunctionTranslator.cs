@@ -22,6 +22,41 @@ namespace Crayon.Translator
 		{
 			Expression[] args = functionCall.Args;
 			string name = functionCall.Name.Substring(1);
+			if (name.StartsWith("_gl_") && this.Platform.OpenGlTranslator != null)
+			{
+				AbstractOpenGlTranslator gl = this.Platform.OpenGlTranslator;
+				switch (name)
+				{
+					case "_gl_begin_quads": VerifyCount(functionCall, 1); gl.TranslateGlBeginQuads(output, args[0]); return;
+					case "_gl_begin_polygon": VerifyCount(functionCall, 1); gl.TranslateGlBeginPolygon(output, args[0]); return;
+					case "_gl_bind_texture": VerifyCount(functionCall, 2); gl.TranslateGlBindTexture(output, args[0], args[1]); return;
+					case "_gl_color_4": VerifyCount(functionCall, 5); gl.TranslateGlColor4(output, args[0], args[1], args[2], args[3], args[4]); return;
+					case "_gl_disable_texture_2d": VerifyCount(functionCall, 1); gl.TranslateGlDisableTexture2D(output, args[0]); return;
+					case "_gl_disable_tex_coord_array": VerifyCount(functionCall, 1); gl.TranslateGlDisableTexCoordArray(output, args[0]); return;
+					case "_gl_disable_vertex_array": VerifyCount(functionCall, 1); gl.TranslateGlDisableVertexArray(output, args[0]); return;
+					case "_gl_draw_arrays": VerifyCount(functionCall, 2); gl.TranslateGlDrawArrays(output, args[0], args[1]); return;
+					case "_gl_draw_ellipse_vertices": VerifyCount(functionCall, 1); gl.TranslateGlDrawEllipseVertices(output, args[0]); return;
+					case "_gl_enable_texture_2d": VerifyCount(functionCall, 1); gl.TranslateGlEnableTexture2D(output, args[0]); return;
+					case "_gl_enable_texture_coord_array": VerifyCount(functionCall, 1); gl.TranslateGlEnableTextureCoordArray(output, args[0]); return;
+					case "_gl_enable_vertex_array": VerifyCount(functionCall, 1); gl.TranslateGlEnableVertexArray(output, args[0]); return;
+					case "_gl_end": VerifyCount(functionCall, 1); gl.TranslateGlEnd(output, args[0]); return;
+					case "_gl_front_face_cw": VerifyCount(functionCall, 1); gl.TranslateGlFrontFaceCw(output, args[0]); return;
+					case "_gl_get_quad_texture_vbo": VerifyCount(functionCall, 1); gl.TranslateGlGetQuadTextureVbo(output, args[0]); return;
+					case "_gl_get_quad_vbo": VerifyCount(functionCall, 1); gl.TranslateGlGetQuadVbo(output, args[0]); return;
+					case "_gl_load_identity": VerifyCount(functionCall, 1); gl.TranslateGlLoadIdentity(output, args[0]); return;
+					case "_gl_load_texture": VerifyCount(functionCall, 2); gl.TranslateGlLoadTexture(output, args[0], args[1]); return;
+					case "_gl_max_texture_size": VerifyCount(functionCall, 0); gl.TranslateGlMaxTextureSize(output); return;
+					case "_gl_prepare_draw_pipeline": VerifyCount(functionCall, 1); gl.TranslateGlPrepareDrawPipeline(output, args[0]); return;
+					case "_gl_scale": VerifyCount(functionCall, 3); gl.TranslateGlScale(output, args[0], args[1], args[2]); return;
+					case "_gl_tex_coord_2": VerifyCount(functionCall, 3); gl.TranslateGlTexCoord2(output, args[0], args[1], args[2]); return;
+					case "_gl_tex_coord_pointer": VerifyCount(functionCall, 2); gl.TranslateGlTexCoordPointer(output, args[0], args[1]); return;
+					case "_gl_translate": VerifyCount(functionCall, 3); gl.TranslateGlTranslate(output, args[0], args[1], args[2]); return;
+					case "_gl_vertex_2": VerifyCount(functionCall, 3); gl.TranslateGlVertex2(output, args[0], args[1], args[2]); return;
+					case "_gl_vertex_pointer": VerifyCount(functionCall, 2); gl.TranslateGlVertexPointer(output, args[0], args[1]); return;
+					default: break; // default to the error in the switch statement below.
+				}
+			}
+
 			switch (name)
 			{
 				case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
@@ -71,8 +106,6 @@ namespace Crayon.Translator
 				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
-				case "_gl_load_texture": VerifyCount(functionCall, 1); TranslateGlLoadTexture(output, args[0]); break;
-				case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); break;
 				case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
 				case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
@@ -212,8 +245,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
-		protected abstract void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource);
-		protected abstract void TranslateGlMaxTextureSize(List<string> output);
 		protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList);
 		protected abstract void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey);
 		protected abstract void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY);

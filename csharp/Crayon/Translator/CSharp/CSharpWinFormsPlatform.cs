@@ -8,12 +8,9 @@ namespace Crayon.Translator.CSharp
 	class CSharpWinFormsPlatform : CSharpPlatform
 	{
 		public CSharpWinFormsPlatform()
-			: base(new CSharpWinFormsSystemFunctionTranslator())
+			: base(new CSharpWinFormsSystemFunctionTranslator(), null)
 		{ }
 
-		public override string OutputFolderName { get { return "cswinforms"; } }
-
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
@@ -33,7 +30,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GameWindow.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GameWindowWinForms.txt"),
 					replacements)
 			};
@@ -42,7 +39,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/Renderer.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/RendererWinForms.txt"),
 					replacements)
 			};
@@ -51,7 +48,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/Image.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/ImageWinForms.txt"),
 					replacements)
 			};

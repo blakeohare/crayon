@@ -85,7 +85,7 @@ class GameWindow {
     }
 
     public void maybeUpdateCanvas() {
-        int actualWidth = canvasHost.getWidth();;
+        int actualWidth = canvasHost.getWidth();
         int actualHeight = canvasHost.getHeight();
         if (actualWidth == screenWidth && actualHeight == screenHeight) {
             return;

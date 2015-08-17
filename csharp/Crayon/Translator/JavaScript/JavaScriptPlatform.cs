@@ -10,7 +10,7 @@ namespace Crayon.Translator.JavaScript
 		private string jsFolderPrefix;
 
 		public JavaScriptPlatform(bool isMin, string jsFolderPrefix)
-			: base(isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator())
+			: base(isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null)
 		{
 			this.jsFolderPrefix = jsFolderPrefix;
 		}
@@ -22,10 +22,8 @@ namespace Crayon.Translator.JavaScript
 		public override bool IntIsFloor { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
-		public override bool IsOpenGlBased { get { return false; } }
 		public override bool SupportsGamePad { get { return false; } }
 
-		public override string OutputFolderName { get { return "javascript"; } }
 		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
 
 		public override Dictionary<string, FileOutput> Package(
@@ -111,7 +109,20 @@ namespace Crayon.Translator.JavaScript
 			return output;
 		}
 
-		
+
+		private static readonly HashSet<string> KNOWN_BINARY_FILES = new HashSet<string>()
+		{
+			"MP3",
+			"WAV",
+			"OGG",
+			"BMP",
+			"GIF",
+			"PNG",
+			"TIFF",
+			"JPEG",
+			"JPG"
+		};
+
 		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
 		{
 			List<string> output = new List<string>();
@@ -120,6 +131,12 @@ namespace Crayon.Translator.JavaScript
 			for (int i = 0; i < keys.Length; ++i)
 			{
 				string filename = keys[i];
+				string[] filenamePieces = filename.Split('.');
+				string extension = filenamePieces[filenamePieces.Length - 1].ToUpperInvariant();
+				if (KNOWN_BINARY_FILES.Contains(extension))
+				{
+					continue;
+				}
 				output.Add("\t\"");
 				output.Add(filename.Replace('\\', '/'));
 				output.Add("\": ");

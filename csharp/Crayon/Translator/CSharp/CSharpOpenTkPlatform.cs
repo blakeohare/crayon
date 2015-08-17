@@ -5,13 +5,10 @@ namespace Crayon.Translator.CSharp
 	class CSharpOpenTkPlatform : CSharpPlatform
 	{
 		public CSharpOpenTkPlatform()
-			: base(new CSharpOpenTkSystemFunctionTranslator())
+			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
 		{ }
 
-		public override bool IsOpenGlBased { get { return true; } }
 		public override bool SupportsGamePad { get { return true; } }
-
-		public override string OutputFolderName { get { return "csopengl"; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
@@ -49,7 +46,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GameWindow.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GameWindowOpenTK.txt"),
 					replacements)
 			};
@@ -58,7 +55,7 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/GlUtil.cs"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.MassReplacements(
+				TextContent = Constants.DoReplacements(
 					Util.ReadFileInternally("Translator/CSharp/Project/GlUtil.txt"),
 					replacements)
 			};

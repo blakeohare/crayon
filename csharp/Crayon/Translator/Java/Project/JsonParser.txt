@@ -146,7 +146,7 @@ class JsonParser {
 			}
 
 			Value key = parseJsonThing(rawValue, length, i);
-			if (key.type != %%%TYPE_STRING%%%) throw new JsonParserException();
+			if (key.type != %%%TYPE_ID_STRING%%%) throw new JsonParserException();
 			skipWhitespace(rawValue, length, i);
 			popExpected(rawValue, length, i, ":");
 			skipWhitespace(rawValue, length, i);
@@ -170,7 +170,7 @@ class JsonParser {
 	}
 
 	private static Value wrapFloat(double value) {
-		return new Value(%%%TYPE_FLOAT%%%, value);
+		return new Value(%%%TYPE_ID_FLOAT%%%, value);
 	}
 
 	private static void popExpected(char[] rawValue, int length, Index index, String value) {
@@ -218,11 +218,11 @@ class JsonParser {
 	}
 
 	private static Value wrapString(String value) {
-		return value.length() == 0 ? CrayonWrapper.v_VALUE_EMPTY_STRING : new Value(%%%TYPE_STRING%%%, value);
+		return value.length() == 0 ? CrayonWrapper.v_VALUE_EMPTY_STRING : new Value(%%%TYPE_ID_STRING%%%, value);
 	}
 
 	private static Value wrapList(ArrayList<Value> items) {
-		return new Value(%%%TYPE_LIST%%%, new ArrayList<Value>(items));
+		return new Value(%%%TYPE_ID_LIST%%%, new ArrayList<Value>(items));
 	}
 
 	private static Value wrapDictionary(ArrayList<Value> keys, ArrayList<Value> values) {
@@ -240,7 +240,7 @@ class JsonParser {
 			new HashMap<Integer, Value>(),
 			dictKeyLookup,
 			dictValueLookup,
-			dictKeyLookup.size(), %%%TYPE_STRING%%%);
-		return new Value(%%%TYPE_DICTIONARY%%%, dictionary);
+			dictKeyLookup.size(), %%%TYPE_ID_STRING%%%);
+		return new Value(%%%TYPE_ID_DICTIONARY%%%, dictionary);
 	}
 }

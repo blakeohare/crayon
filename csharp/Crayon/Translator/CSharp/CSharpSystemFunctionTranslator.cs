@@ -238,16 +238,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("ResourceReader.ReadByteCodeFile()");
 		}
 
-		protected override void TranslateGlLoadTexture(List<string> output, Expression platformBitmapResource)
-		{
-			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateGlMaxTextureSize(List<string> output)
-		{
-			throw new InvalidOperationException();
-		}
-
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("TranslationHelper.MakeHttpRequestWithHandler(");
