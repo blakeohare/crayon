@@ -96,7 +96,7 @@ def _pygame_pump_events():
 					type = 'mouserightup'
 				else:
 					type = 'mouseleftup'
-			evlist.append(v_buildGameEvent(type, 'mouse', x, y, 0, False, None))
+			evlist.append(v_buildGameEvent(type, 'mouse', x, y, 0, False, "right" if right else "left"))
 		elif ev.type == pygame.MOUSEMOTION:
 			x, y = ev.pos
 			x = x * vwidth // rwidth
