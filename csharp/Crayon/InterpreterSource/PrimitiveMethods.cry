@@ -35,6 +35,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	$_dictionary_set(lookup, Types.LIST + "add", %%%PRIMITIVE_METHOD_LIST_ADD%%%);
 	$_dictionary_set(lookup, Types.LIST + "clear", %%%PRIMITIVE_METHOD_LIST_CLEAR%%%);
 	$_dictionary_set(lookup, Types.LIST + "clone", %%%PRIMITIVE_METHOD_LIST_CLONE%%%);
+	$_dictionary_set(lookup, Types.LIST + "concat", %%%PRIMITIVE_METHOD_LIST_CONCAT%%%);
 	$_dictionary_set(lookup, Types.LIST + "contains", %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%);
 	$_dictionary_set(lookup, Types.LIST + "insert", %%%PRIMITIVE_METHOD_LIST_INSERT%%%);
 	$_dictionary_set(lookup, Types.LIST + "join", %%%PRIMITIVE_METHOD_LIST_JOIN%%%);
@@ -88,6 +89,18 @@ function @type('string') callSystemMethod(
 				$_list_push(lc_wrappedList, $_list_get(list4, i));
 			}
 			output = new Value(Types.LIST, lc_wrappedList);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CONCAT%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError("List concat method", 1, $_array_length(funcArgs));
+			@type('List<Value>') list5 = $_cast('List<Value>', context);
+			@type('Value') concatList = $_array_get(funcArgs, 0);
+			if (Value$concatList.type != Types.LIST) return "Argument of list.concat must be another list.";
+			@type('List<Value>') list6 = $_cast('List<Value>', Value$concatList.internalValue);
+			@type('int') concatlength = $_list_length(list6);
+			// TODO: do a check to see if the platform supports natively-implemented list concatenation.
+			for (@type('int') concati = 0; concati < concatlength; concati += 1) {
+				$_list_push(list5, $_list_get(list6, concati));
+			}
 			break;
 		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
 			if ($_array_length(funcArgs) != 1) return wrongArgCountError("List contains method", 1, $_array_length(funcArgs));

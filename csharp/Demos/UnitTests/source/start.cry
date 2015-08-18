@@ -2,10 +2,12 @@ import 'util.cry';
 
 import 'lang.cry';
 import 'library.cry';
+import 'methods.cry';
 
 function main() {
 	lang();
 	library();
+	methods();
 }
 
 main();
