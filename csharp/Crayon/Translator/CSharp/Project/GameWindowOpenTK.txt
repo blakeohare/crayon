@@ -19,8 +19,12 @@ namespace %%%PROJECT_ID%%%
 		private const int DRAW_COMMAND_ELLIPSE = 4;
 		private const int DRAW_COMMAND_LINE = 5;
 
+		private const int EXIT_ALT_F4 = 1;
+		private const int EXIT_CLOSE_BUTTON = 2;
+
 		private Queue<int> events = new Queue<int>();
 		private Queue<string> keyEvents = new Queue<string>();
+		private bool altPressed = false;
 
 		private int gameWidth;
 		private int gameHeight;
@@ -117,6 +121,12 @@ namespace %%%PROJECT_ID%%%
 			}
 			else if (keyCode >= KEY_CODE_F1 && keyCode <= KEY_CODE_F12)
 			{
+				if (this.altPressed && keyCode == KEY_CODE_F1 + 3)
+				{
+					events.Enqueue(EXIT);
+					events.Enqueue(EXIT_ALT_F4);
+				}
+
 				keyEvents.Enqueue("f" + (1 + keyCode - KEY_CODE_F1));
 			}
 			else if (keyCode >= KEY_CODE_0 && keyCode <= KEY_CODE_9)
@@ -179,6 +189,12 @@ namespace %%%PROJECT_ID%%%
 				{
 					return;
 				}
+
+				if (value == "alt")
+				{
+					this.altPressed = down;
+				}
+
 				keyEvents.Enqueue(value);
 			}
 			events.Enqueue(KEY_EVENT);
@@ -223,7 +239,8 @@ namespace %%%PROJECT_ID%%%
 						break;
 					case EXIT:
 						type = events.Dequeue();
-						output.Add(CrayonWrapper.v_buildGameEvent("quit-closebutton", "quit", 0, 0, 0, false, null));
+						string quitCode = type == EXIT_ALT_F4 ? "quit-altf4" : "quit-closebutton";
+						output.Add(CrayonWrapper.v_buildGameEvent(quitCode, "quit", 0, 0, 0, false, null));
 						break;
 					default:
 						break;
@@ -250,6 +267,14 @@ namespace %%%PROJECT_ID%%%
 			GL.LoadIdentity();
 			GL.Ortho(0, this.screenWidth, this.screenHeight, 0, 10000, -10000);
 			GL.Viewport(0, 0, this.screenWidth, this.screenHeight);
+		}
+
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			e.Cancel = true;
+			events.Enqueue(EXIT);
+			events.Enqueue(EXIT_CLOSE_BUTTON);
+			base.OnClosing(e);
 		}
 
 		public void SetTitle(string value)
