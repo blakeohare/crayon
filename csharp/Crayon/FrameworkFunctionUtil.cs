@@ -175,6 +175,51 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
+				case FrameworkFunction.MUSIC_GET_CURRENT:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.MUSIC_GET_MASTER_VOLUME:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.MUSIC_GET_POSITION:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.MUSIC_LOAD_FROM_FILE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.MUSIC_LOAD_FROM_RESOURCE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.MUSIC_LOAD_FROM_USER_DATA:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.MUSIC_LOAD_FROM_WEB:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.MUSIC_PAUSE:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.MUSIC_PLAY:
+					VerifyLength(throwToken, frameworkFunction, 5, args);
+					break;
+				case FrameworkFunction.MUSIC_SET_MASTER_VOLUME:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
+				case FrameworkFunction.MUSIC_SET_POSITION:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
+				case FrameworkFunction.MUSIC_SET_VOLUME:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					break;
+				case FrameworkFunction.MUSIC_STOP:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
 				case FrameworkFunction.ORD:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
@@ -201,21 +246,40 @@ namespace Crayon
 				case FrameworkFunction.RESOURCE_READ_TEXT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
-				case FrameworkFunction.SFX_GET_SOUND:
+				case FrameworkFunction.SFX_GET_MASTER_VOLUME:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.SFX_LOAD_FROM_FILE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				case FrameworkFunction.SFX_IS_SOUND_LOADED:
+				case FrameworkFunction.SFX_LOAD_FROM_RESOURCE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				case FrameworkFunction.SFX_LOAD_SOUND_FROM_RESOURCE:
+				case FrameworkFunction.SFX_LOAD_FROM_USER_DATA:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.SFX_LOAD_FROM_WEB:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
+					break;
+				case FrameworkFunction.SFX_PAUSE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.SFX_PLAY:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.SFX_SET_MASTER_VOLUME:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
+				case FrameworkFunction.SFX_SET_VOLUME:
 					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
 					break;
-				case FrameworkFunction.SFX_PLAY_SOUND:
+				case FrameworkFunction.SFX_STOP:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE");
 					break;
 				case FrameworkFunction.SIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
@@ -256,7 +320,7 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				default: 
+				default:
 					throw new NotImplementedException("Implement arg check for " + frameworkFunction);
 			}
 		}
