@@ -589,7 +589,12 @@ switch ($_array_get(row, 0)) {
 			Value$arg3.type != Types.INTEGER) {
 			return killExecution(stack, "$fill_screen requires 3 integer arguments.");
 		}
-		$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+
+		if (%%%IS_OPEN_GL_BASED%%%) {
+			glFillScreen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+		} else {
+			$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+		}
 		break;
 
 	case %%%FF_GFX_FLIP_IMAGE%%%:
