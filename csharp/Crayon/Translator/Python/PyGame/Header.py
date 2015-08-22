@@ -411,4 +411,12 @@ def _parse_float_helper(f_out, value):
 	except:
 		f_out[0] = -1
 
+def _music_load(filepath, intout, isResource):
+	intout[0] = 0
+	return v_instantiateMusicInstance(filepath, None, filepath, True);
+
+def _music_play_now(music, loop):
+	pygame.mixer.music.load(music)
+	pygame.mixer.music.play(-1 if loop else 1)
+
 program_data = [None]

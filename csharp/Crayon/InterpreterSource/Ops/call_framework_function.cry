@@ -1102,19 +1102,23 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_GET_POSITION%%%:
 		$_comment('$music_get_position');
 		// no args, always refers to currently playing song
+		int1 = 0;
 		break;
 
 	case %%%FF_MUSIC_GET_CURRENT%%%:
 		$_comment('$music_get_current');
+		int1 = 0;
 		break;
 
 	case %%%FF_MUSIC_GET_MASTER_VOLUME%%%:
 		$_comment('$music_get_master_volume');
+		int1 = 0;
 		break;
 
 	case %%%FF_MUSIC_PAUSE%%%:
 		$_comment('$music_pause');
 		// no args, always refers to currently playing song
+		int1 = 0;
 		break;
 
 	case %%%FF_MUSIC_PLAY%%%:
@@ -1167,6 +1171,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_STOP%%%:
 		$_comment('$music_stop');
 		// no args, refers to currently playing song.
+		int1 = 0;
 		break;
 
 	case %%%FF_ORD%%%:
@@ -1262,6 +1267,7 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_SFX_GET_MASTER_VOLUME%%%:
 		$_comment('$sfx_get_master_volume');
+		int1 = 0;
 		break;
 
 	case %%%FF_SFX_LOAD_FROM_FILE%%%:

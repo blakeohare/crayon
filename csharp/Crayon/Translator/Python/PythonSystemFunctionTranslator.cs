@@ -694,12 +694,20 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
-			throw new NotImplementedException();
+			output.Add("_music_load(");
+			this.Translator.TranslateExpression(output, filename);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, intOutStatus);
+			output.Add(", True)");
 		}
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			throw new NotImplementedException();
+			output.Add("_music_play_now(");
+			this.Translator.TranslateExpression(output, musicRealPath);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLooping);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
