@@ -191,6 +191,16 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslatePrint(List<string> output, Expression message)
 		{
 			output.Add("System.out.println(");

@@ -180,5 +180,22 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		{
+			output.Add("TranslationHelper.MusicLoad(");
+			this.Translator.TranslateExpression(output, filename);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, intOutStatus);
+			output.Add(", true)");
+		}
+
+		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
+		{
+			output.Add("TranslationHelper.MusicPlayNow(");
+			this.Translator.TranslateExpression(output, musicNativeObject);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLooping);
+			output.Add(")");
+		}
 	}
 }

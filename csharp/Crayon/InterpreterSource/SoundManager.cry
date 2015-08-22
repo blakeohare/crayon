@@ -4,58 +4,54 @@ function @type('SoundStatus') getSoundStatus() {
 	return ProgramData$p.soundStatus;
 }
 
-function @type('SoundInstance') instantiateSoundInstance(
-	@type('object') nativeObject,
-	@type('bool') isMusic,
-	@type('int') soundId) {
-	return new SoundInstance(nativeObject, isMusic, soundId, 0.0);
-}
-
-function @type('bool') loadSoundFromResource(@type('string') key, @type('string') path) {
-	@type('SoundStatus') ss = getSoundStatus();
-	
-	// TODO: rename this to FILES_LOAD_INSTANTLY
-	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
-		@type('SoundInstance') si = $_read_local_sound_resource(path);
-		if (si == null) {
-			return false;
+function @type('bool') soundManagerUpdate() {
+	@type('SoundStatus') soundStatus = getSoundStatus();
+	@type('List<SoundEvent>') eventQueue = SoundStatus$soundStatus.soundEventQueue;
+	if ($_list_length(eventQueue) > 0) {
+		@type('List<SoundEvent>') newQueue = $_new_list('SoundEvent');
+		for (@type('int') i = 0; i < $_list_length(eventQueue); i += 1) {
+			@type('SoundEvent') ev = $_list_get(eventQueue, i);
+			if (SoundEvent$ev.type == SoundEventType.FADE_MUSIC) {
+				
+			} else if (SoundEvent$ev.type == SoundEventType.PLAY_MUSIC) {
+				@type('MusicInstance') music = SoundEvent$ev.music;
+				$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, true);
+				SoundStatus$soundStatus.currentMusic = music;
+			} else if (SoundEvent$ev.type == SoundEventType.PLAY_SOUND) {
+				
+			}
 		}
-		$_dictionary_set(SoundStatus$ss.loadedSoundsByKey, key, si);
-		return true;
-	} else {
-		// TODO: JavaScript
-		return false;
+		SoundStatus$soundStatus.soundEventQueue = newQueue;
 	}
-}
-
-/** 0 - not loaded, 1 - load not attempted, 2 - yes, loaded */
-function @type('int') isSoundLoaded(@type('string') key) {
-	@type('SoundStatus') ss = getSoundStatus();
-
-	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
-		if ($_dictionary_contains(SoundStatus$ss.loadedSoundsByKey, key)) {
-			return 2;
-		}
-		return 1;
-	} else {
-		// TODO: JavaScript
-		return 0;
-	}
-}
-
-function @type('SoundInstance') getLoadedSound(@type('string') key) {
-	@type('SoundStatus') ss = getSoundStatus();
-
-	if ($_dictionary_contains(SoundStatus$ss.loadedSoundsByKey, key)) {
-		return $_dictionary_get_guaranteed(SoundStatus$ss.loadedSoundsByKey, key);
-	}
-
-	return null;
-}
-
-// TODO: determine if this function is necessary. 
-// If there's no interesting bookkeeping to do on other platforms, then cut this.
-function @type('bool') playSound(@type('SoundInstance') snd) {
-	$_sound_play(snd); 
 	return true;
+}
+
+function @type('SoundInstance') instantiateSoundInstance(
+	@type('string') userpath,
+	@type('object') nativeObject,
+	@type('string') realpath,
+	@type('bool') isLoaded) {
+	return new SoundInstance(userpath, nativeObject, realpath, 1.0, isLoaded);
+}
+
+function @type('MusicInstance') instantiateMusicInstance(
+	@type('string') userpath,
+	@type('object') nativeObject,
+	@type('string') realpath,
+	@type('bool') isLoaded) {
+	return new MusicInstance(userpath, nativeObject, realpath, 1.0, isLoaded);
+}
+
+function @type('int') soundManagerPlayMusic(
+	@type('MusicInstance') music,
+	@type('bool') loop,
+	@type('double') startTime,
+	@type('double') fadeIn,
+	@type('double') fadeOut
+) {
+	// TODO: apply inputs.
+	@type('SoundStatus') soundStatus = getSoundStatus();
+	@type('List<SoundEvent>') eventQueue = SoundStatus$soundStatus.soundEventQueue;
+	$_list_push(eventQueue, new SoundEvent(SoundEventType.PLAY_MUSIC, null, music, false, 0, 0, 0, 0, 0));
+	return 0;
 }

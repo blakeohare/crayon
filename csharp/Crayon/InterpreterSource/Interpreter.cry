@@ -68,6 +68,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') i = 0;
 	@type('double') float1 = 3.14;
 	@type('double') float2 = 2.718;
+	@type('double') float3 = 1.618;
 	@type('Value') value = null;
 	@type('Value') value2 = null;
 	@type('Value') value3 = null;
@@ -84,6 +85,7 @@ function @omitReturn @type('string') interpret(
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
 	@type('SoundInstance') sound1 = null;
+	@type('MusicInstance') music1 = null;
 	@type('GamepadDevice') gamepad1 = null;
 	@type('HttpRequest') httpRequest1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
@@ -405,4 +407,6 @@ function performWorkNuggetPostFrame() {
 			}
 		}
 	}
+
+	soundManagerUpdate();
 }

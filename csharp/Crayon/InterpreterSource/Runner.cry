@@ -176,7 +176,10 @@ function main() {
 			$_new_dictionary('int', 'Array<int>'),
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
 		new SoundStatus(
-			$_new_dictionary('string', 'SoundInstance')),
+			$_new_list('SoundEvent'), // sound event queue
+			null, // currently playing music instance
+			1.0, // sound master volume
+			1.0), // music master volume
 		false,
 		new GamepadStatus(
 			-1, // device array length

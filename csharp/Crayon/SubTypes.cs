@@ -9,7 +9,7 @@
 		IMAGE = 5,
 		IMAGE_LOADER = 6,
 		SOUND = 7,
-		SOUND_LOADER = 8,
+		MUSIC = 8,
 		TEXT_LOADER = 9,
 	}
 }

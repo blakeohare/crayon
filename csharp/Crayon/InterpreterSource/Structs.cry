@@ -180,8 +180,48 @@ struct ImageSheetStatus {
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
 }
 
+struct SoundInstance {
+	@type('string') userFilePath, // path in the original project (consistent across platforms)
+	@type('object') nativeObject, // native sound object.
+	@type('string') realFilePath, // path on the actual disk
+	@type('double') volume, // volume for this particular music instance (combined with master volume)
+	@type('bool') isLoaded, // true if the music is loaded and ready to play
+}
+
+struct MusicInstance {
+	@type('string') userFilePath, // path in the original project (consistent across platforms)
+	@type('object') nativeObject, // native sound object, if necessary (SDL platforms use file paths directly, so this will be null)
+	@type('string') realFilePath, // path on the actual disk
+	@type('double') volume, // volume for this particular music instance (combined with master volume)
+	@type('bool') isLoaded, // true if the music is loaded and ready to play (for SDL, this is unknown and is assumed to be true despite the fact that it may take a few ticks to start playing)
+}
+
+// Enqueued in the SoundStatus.soundEventQueue
+// Dequeued by the work unit pump
+// If the sound or music for an event isn't loaded, it'll 
+struct SoundEvent {
+	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PLAY_SOUND
+	@type('SoundInstance') sound, 
+	@type('MusicInstance') music,
+	@type('bool') useFade,
+
+	// These are set when the event is created. These are in seconds.
+	@type('double') fadeInDuration,
+	@type('double') fadeOutDuration, 
+
+	// These are all blank when the event is created. 
+	// When the music has loaded, these are set to the relative timestamps from the current time using the
+	// durations listed above. These are all 1970 epoch timestamps.
+	@type('double') startFade,
+	@type('double') fadeMiddle,
+	@type('double') endFade,
+}
+
 struct SoundStatus {
-	@type('Dictionary<string, SoundInstance>') loadedSoundsByKey
+	@type('List<SoundEvent>') soundEventQueue,
+	@type('MusicInstance') currentMusic,
+	@type('double') masterSoundVolume,
+	@type('double') masterMusicVolume,
 }
 
 struct TileLoadRequest {
@@ -230,13 +270,6 @@ struct GameEvent {
 	@type('bool') down,
 	@type('string') arg, // used for keyboard key, mouse button, or quit type
 	// TODO: expand for joystick events
-}
-
-struct SoundInstance {
-	@type('object') nativeObject,
-	@type('bool') isMusic,
-	@type('int') soundId,
-	@type('double') duration,
 }
 
 struct GamepadDevice {

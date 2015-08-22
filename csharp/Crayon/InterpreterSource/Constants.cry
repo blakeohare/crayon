@@ -107,7 +107,7 @@ enum NativeObjectSubType {
 	IMAGE = %%%SUBTYPE_ID_IMAGE%%%,
 	IMAGE_LOADER = %%%SUBTYPE_ID_IMAGE_LOADER%%%,
 	SOUND = %%%SUBTYPE_ID_SOUND%%%,
-	SOUND_LOADER = %%%SUBTYPE_ID_SOUND_LOADER%%%,
+	MUSIC = %%%SUBTYPE_ID_MUSIC%%%,
 	TEXT_LOADER = %%%SUBTYPE_ID_TEXT_LOADER%%%,
 }
 
@@ -152,4 +152,10 @@ enum OpenGlAction {
 
 enum OpenGlMode {
 	QUADS = 1,
+}
+
+enum SoundEventType {
+	FADE_MUSIC = 1,
+	PLAY_MUSIC = 2,
+	PLAY_SOUND = 3,
 }

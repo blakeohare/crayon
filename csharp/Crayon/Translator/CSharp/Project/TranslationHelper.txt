@@ -172,13 +172,40 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
-		public static SoundInstance GetSoundInstance(string path)
+		public static MusicInstance MusicLoad(string path, int[] statusOut, bool isResource)
 		{
-			IList<byte> resource = ResourceReader.ReadBytes(path, true);
-			if (resource == null) return null;
-			SdlDotNet.Audio.Sound sdlSound = new SdlDotNet.Audio.Sound(resource.ToArray());
-			// TODO: determine length of sound.
-			return new SoundInstance(sdlSound, false, -1, 0);
+			statusOut[0] = 0;
+			SdlDotNet.Audio.Music music = null;
+			if (isResource)
+			{
+				byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
+				music = new SdlDotNet.Audio.Music(musicData);
+			}
+			else
+			{
+				if (System.IO.File.Exists(path))
+				{
+					music = new SdlDotNet.Audio.Music(path);
+				}
+				statusOut[0] = 1;
+				return null;
+			}
+
+			return CrayonWrapper.v_instantiateMusicInstance(path, music, null, true);
+		}
+
+		public static int MusicPlayNow(object nativeMusicObject, bool loop)
+		{
+			SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
+			if (loop)
+			{
+				music.Play(loop);
+			}
+			else
+			{
+				music.Play(1);
+			}
+			return 0;
 		}
 
 		public static void PlaySoundInstance(SoundInstance sound)

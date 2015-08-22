@@ -692,6 +692,16 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, num);
 		}
 
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("[None] * ");

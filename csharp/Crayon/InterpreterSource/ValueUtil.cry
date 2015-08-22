@@ -414,3 +414,10 @@ function @type('Value') multiplyString(@type('Value') strValue, @type('string') 
 	str = $_list_join(builder, '');
 	return buildString(str);
 }
+
+function @type('object') extractNativeObjectOfType(@type('Value') value, @type('int') subType) {
+	if (Value$value.type != Types.NATIVE_OBJECT) return null;
+	@type('NativeObjectWrapper') now = $_cast('NativeObjectWrapper', Value$value.internalValue);
+	if (NativeObjectWrapper$now.subType != subType) return null;
+	return NativeObjectWrapper$now.value;
+}

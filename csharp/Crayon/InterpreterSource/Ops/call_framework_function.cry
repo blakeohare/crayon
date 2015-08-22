@@ -1066,11 +1066,27 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_LOAD_FROM_FILE%%%:
 		$_comment('$music_load_from_file');
 		arg1 = $_stack_pop(valueStack); // path
+		
 		break;
 
 	case %%%FF_MUSIC_LOAD_FROM_RESOURCE%%%:
 		$_comment('$music_load_from_resource');
 		arg1 = $_stack_pop(valueStack); // path
+
+		if (Value$arg1.type != Types.STRING) {
+			return killExecution(stack, "$music_load_from_resource requires a string argument.");
+		}
+		string1 = $_cast('string', Value$arg1.internalValue);
+		music1 = $_music_load_from_resource(string1, intOutParam);
+		int1 = $_array_get(intOutParam, 0);
+		
+		if (int1 != 0) {
+			if (int1 == 1) return killExecution(stack, "The resource could not be found.");
+			if (int1 == 2) return killExecution(stack, "The provided resource is not a recognized format.");
+			return killExecution(stack, "An unknown error occurred while loading the music resource.");
+		}
+
+		output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.MUSIC, music1));
 		break;
 
 	case %%%FF_MUSIC_LOAD_FROM_USER_DATA%%%:
@@ -1103,11 +1119,33 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_MUSIC_PLAY%%%:
 		$_comment('$music_play');
-		arg1 = $_stack_pop(valueStack); // music instance
-		arg2 = $_stack_pop(valueStack); // true to loop
-		arg3 = $_stack_pop(valueStack); // start time (seconds)
-		arg4 = $_stack_pop(valueStack); // fade out current music duration (seconds)
 		arg5 = $_stack_pop(valueStack); // fade in this music duration (seconds)
+		arg4 = $_stack_pop(valueStack); // fade out current music duration (seconds)
+		arg3 = $_stack_pop(valueStack); // start time (seconds)
+		arg2 = $_stack_pop(valueStack); // true to loop
+		arg1 = $_stack_pop(valueStack); // music instance
+		
+		music1 = $_cast('MusicInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.MUSIC));
+		if (music1 == null) {
+			return killExecution(stack, "Invalid music instance.");
+		}
+
+		if (Value$arg2.type != Types.BOOLEAN) return killExecution(stack, "2nd arg must be a boolean for looping.");
+		
+		if (Value$arg3.type != Types.FLOAT && Value$arg3.type != Types.INTEGER) return killExecution(stack, "3rd arg must be a number.");
+		if (Value$arg4.type != Types.FLOAT && Value$arg4.type != Types.INTEGER) return killExecution(stack, "4th arg must be a number.");
+		if (Value$arg5.type != Types.FLOAT && Value$arg5.type != Types.INTEGER) return killExecution(stack, "4th arg must be a number.");
+		
+		bool1 = $_cast('bool', Value$arg2.internalValue);
+		if (Value$arg3.type == Types.FLOAT) float1 = $_cast('double', Value$arg3.internalValue);
+		else float1 = $_cast('double', $_cast('int', Value$arg3.internalValue));
+		if (Value$arg4.type == Types.FLOAT) float2 = $_cast('double', Value$arg4.internalValue);
+		else float2 = $_cast('double', $_cast('int', Value$arg4.internalValue));
+		if (Value$arg5.type == Types.FLOAT) float3 = $_cast('double', Value$arg5.internalValue);
+		else float3 = $_cast('double', $_cast('int', Value$arg5.internalValue));
+
+		int1 = soundManagerPlayMusic(music1, bool1, float1, float2, float3);
+
 		break;
 
 	case %%%FF_MUSIC_SET_MASTER_VOLUME%%%:

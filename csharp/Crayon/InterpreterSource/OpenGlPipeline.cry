@@ -548,7 +548,7 @@ function @type('bool') glFillScreen(
 	@type('int') blue) {
 	glResetDrawBuffer();
 	// TODO: get the real values
-	glDrawRectangle(0, 0, 9999, 9999, red, green, blue, 255);
+	glDrawRectangle(0, 0, 1000, 1000, red, green, blue, 255);
 	return true;
 }
 
