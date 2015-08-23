@@ -703,6 +703,11 @@ namespace Crayon.Translator.JavaScript
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("create_new_array(");

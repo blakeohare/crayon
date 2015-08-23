@@ -203,18 +203,18 @@ struct SoundEvent {
 	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PLAY_SOUND
 	@type('SoundInstance') sound, 
 	@type('MusicInstance') music,
-	@type('bool') useFade,
+	@type('bool') fadeOutEstablished, // set to true once the endFade timestamp is established.
+	@type('bool') musicLoops, // true if the music should loop.
 
 	// These are set when the event is created. These are in seconds.
-	@type('double') fadeInDuration,
 	@type('double') fadeOutDuration, 
 
 	// These are all blank when the event is created. 
 	// When the music has loaded, these are set to the relative timestamps from the current time using the
 	// durations listed above. These are all 1970 epoch timestamps.
-	@type('double') startFade,
+	@type('double') fadeStart,
 	@type('double') fadeMiddle,
-	@type('double') endFade,
+	@type('double') fadeEnd,
 }
 
 struct SoundStatus {
@@ -222,6 +222,9 @@ struct SoundStatus {
 	@type('MusicInstance') currentMusic,
 	@type('double') masterSoundVolume,
 	@type('double') masterMusicVolume,
+	@type('double') fadeVolumeRatio,
+	@type('double') lastSetMusicVolume,
+	@type('bool') forceVolumeSet,
 }
 
 struct TileLoadRequest {

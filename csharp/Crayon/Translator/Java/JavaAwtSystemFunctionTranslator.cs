@@ -201,6 +201,11 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslatePrint(List<string> output, Expression message)
 		{
 			output.Add("System.out.println(");

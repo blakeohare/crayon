@@ -197,5 +197,12 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, isLooping);
 			output.Add(")");
 		}
+
+		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		{
+			output.Add("TranslationHelper.MusicSetVolume(");
+			this.Translator.TranslateExpression(output, ratio);
+			output.Add(")");
+		}
 	}
 }

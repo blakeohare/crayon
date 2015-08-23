@@ -692,5 +692,10 @@ namespace Crayon.Translator.COpenGL
 		{
 			throw new NotImplementedException();
 		}
+
+		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

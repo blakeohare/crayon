@@ -12,17 +12,79 @@ function @type('bool') soundManagerUpdate() {
 		for (@type('int') i = 0; i < $_list_length(eventQueue); i += 1) {
 			@type('SoundEvent') ev = $_list_get(eventQueue, i);
 			if (SoundEvent$ev.type == SoundEventType.FADE_MUSIC) {
+				@type('MusicInstance') music = SoundEvent$ev.music;
+				@type('double') currentTime = $_current_time_seconds();
+				@type('double') fadeOutDuration = SoundEvent$ev.fadeOutDuration;
+				@type('double') fadeInDuration = SoundEvent$ev.fadeMiddle - SoundEvent$ev.fadeStart;
+				if (currentTime < SoundEvent$ev.fadeMiddle) {
+					if (fadeInDuration > 0) {
+						@type('double') progress = $_unsafe_float_division(currentTime - SoundEvent$ev.fadeStart,  fadeInDuration);
+						if (progress < 0) progress = 0.0;
+						else if (progress > 1) progress = 1.0;
+						SoundStatus$soundStatus.fadeVolumeRatio = 1.0 - progress;
+					}
+					$_list_push(newQueue, ev);
+				} else if (!SoundEvent$ev.fadeOutEstablished && currentTime >= SoundEvent$ev.fadeMiddle) {
+					// music has just surpassed the midpoint. Next song must be started
+					if (music == null) {
+						soundManagerStopMusic();
+						SoundStatus$soundStatus.fadeVolumeRatio = 1.0;
+						SoundStatus$soundStatus.currentMusic = null;
+					} else {
+						$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, SoundEvent$ev.musicLoops);
+						SoundStatus$soundStatus.forceVolumeSet = true;
+						SoundStatus$soundStatus.currentMusic = music;
+						if (fadeOutDuration != 0) {
+							SoundEvent$ev.fadeOutEstablished = true;
+							SoundEvent$ev.fadeMiddle = currentTime;
+							SoundEvent$ev.fadeEnd = currentTime + fadeOutDuration;
+							SoundStatus$soundStatus.fadeVolumeRatio = 0.0;
+							$_list_push(newQueue, ev);
+						} else {
+							SoundStatus$soundStatus.fadeVolumeRatio = 1.0;
+						}
+					}
+				} else if (SoundEvent$ev.fadeOutEstablished) {
+					@type('double') progress = $_unsafe_float_division(currentTime - SoundEvent$ev.fadeMiddle, fadeOutDuration);
+					if (currentTime >= SoundEvent$ev.fadeEnd) {
+						SoundStatus$soundStatus.fadeVolumeRatio = 1.0;
+					} else {
+						if (progress < 0) progress = 0.0;
+						else if (progress > 1) progress = 1.0;
+						SoundStatus$soundStatus.fadeVolumeRatio = progress;
+						$_list_push(newQueue, ev);
+					}
+				}
 				
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_MUSIC) {
 				@type('MusicInstance') music = SoundEvent$ev.music;
-				$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, true);
+				$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, SoundEvent$ev.musicLoops);
 				SoundStatus$soundStatus.currentMusic = music;
+				SoundStatus$soundStatus.fadeVolumeRatio = 1.0;
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_SOUND) {
 				
 			}
 		}
 		SoundStatus$soundStatus.soundEventQueue = newQueue;
 	}
+
+	if (SoundStatus$soundStatus.currentMusic != null || SoundStatus$soundStatus.forceVolumeSet) {
+		@type('double') musicVolume = 1.0 * SoundStatus$soundStatus.fadeVolumeRatio * SoundStatus$soundStatus.masterMusicVolume;
+		@type('double') musicVolumeDiff = musicVolume - SoundStatus$soundStatus.lastSetMusicVolume;
+		if (musicVolumeDiff < 0) musicVolumeDiff *= -1;
+		if (musicVolumeDiff > .001 || SoundStatus$soundStatus.forceVolumeSet) {
+			
+			@type('MusicInstance') music = SoundStatus$soundStatus.currentMusic;
+			@type('object') musicNativeObject = null;
+			if (music != null) {
+				musicNativeObject = MusicInstance$music.nativeObject;
+			}
+			$_music_set_volume(musicNativeObject, musicVolume);
+			SoundStatus$soundStatus.lastSetMusicVolume = musicVolume;
+			SoundStatus$soundStatus.forceVolumeSet = false;
+		}
+	}
+
 	return true;
 }
 
@@ -52,6 +114,39 @@ function @type('int') soundManagerPlayMusic(
 	// TODO: apply inputs.
 	@type('SoundStatus') soundStatus = getSoundStatus();
 	@type('List<SoundEvent>') eventQueue = SoundStatus$soundStatus.soundEventQueue;
-	$_list_push(eventQueue, new SoundEvent(SoundEventType.PLAY_MUSIC, null, music, false, 0, 0, 0, 0, 0));
+	
+	if (fadeIn > 0 || fadeOut > 0) {
+		// TODO: there is a bug here where if a fade out begins before a fade in has finished, it'll bump it to
+		// max volume. Must eventually offset the current time such that the fade duration will reflect a starting
+		// point that is the current volume.
+		@type('double') currentTime = $_current_time_seconds();
+		@type('double') fadeMiddle = currentTime + fadeIn;
+		
+		$_list_push(eventQueue, new SoundEvent(
+			SoundEventType.FADE_MUSIC, 
+			null,
+			music,
+			false,
+			loop,
+			fadeOut,
+			currentTime,
+			fadeMiddle,
+			0));
+	} else {
+		$_list_push(eventQueue, new SoundEvent(
+			SoundEventType.PLAY_MUSIC,
+			null,
+			music,
+			false,
+			loop,
+			0,
+			0,
+			0,
+			0));
+	}
 	return 0;
+}
+
+function @type('bool') soundManagerStopMusic() {
+	return true;
 }

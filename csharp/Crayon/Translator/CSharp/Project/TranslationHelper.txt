@@ -208,6 +208,12 @@ namespace %%%PROJECT_ID%%%
 			return 0;
 		}
 
+		public static bool MusicSetVolume(double ratio)
+		{
+			SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
+			return true;
+		}
+
 		public static void PlaySoundInstance(SoundInstance sound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)sound.nativeObject;

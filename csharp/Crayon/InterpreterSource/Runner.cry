@@ -179,7 +179,11 @@ function main() {
 			$_new_list('SoundEvent'), // sound event queue
 			null, // currently playing music instance
 			1.0, // sound master volume
-			1.0), // music master volume
+			1.0, // music master volume
+			1.0, // fade volume ratio
+			1.0, // last set music volume
+			true // force set music volume (go ahead and do a force set first in case default is something weird like 0.7)
+		), 
 		false,
 		new GamepadStatus(
 			-1, // device array length

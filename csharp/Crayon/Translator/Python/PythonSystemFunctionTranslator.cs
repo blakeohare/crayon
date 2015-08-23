@@ -710,6 +710,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		{
+			output.Add("_music_set_volume(");
+			this.Translator.TranslateExpression(output, ratio);
+			output.Add(")");
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
 			output.Add("[None] * ");
