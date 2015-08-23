@@ -182,7 +182,11 @@ class GameWindow {
 
     private void timerTick() {
         RenderEngine.reset();
-        CrayonWrapper.v_runTick();
+        boolean continueExecution = CrayonWrapper.v_runTick();
+        if (!continueExecution) {
+            frame.setVisible(false);
+            System.exit(0);
+        }
 
         maybeUpdateCanvas();
         Graphics2D virtualG = (Graphics2D) virtualScreen.createGraphics();
