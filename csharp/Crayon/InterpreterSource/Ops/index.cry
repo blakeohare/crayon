@@ -7,8 +7,8 @@ if (Value$root.type == Types.LIST) {
 	} else {
 		i = $_cast('int', Value$value.internalValue);
 		list1 = $_cast('List<Value>', Value$root.internalValue);
-		if (i < 0) return killExecution(stack, "List index cannot be negative.");
-		else if (i >= $_list_length(list1)) return killExecution(stack, "List index is out of bounds");
+		if (i < 0) i += $_list_length(list1);
+		if (i < 0 || i >= $_list_length(list1)) return killExecution(stack, "List index is out of bounds");
 		else {
 			output = $_list_get(list1, i);
 			$_stack_push(valueStack, output);
@@ -63,6 +63,7 @@ if (Value$root.type == Types.LIST) {
 		return killExecution(stack, "indexes into strings must be integers.");
 	}
 	int1 = $_cast('int', Value$value.internalValue);
+	if (int1 < 0) int1 += $_string_length(string1);
 	if (int1 < 0 || int1 >= $_string_length(string1)) {
 		return killExecution(stack, "String index out of range.");
 	}
