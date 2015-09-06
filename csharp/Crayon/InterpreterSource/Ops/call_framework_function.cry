@@ -1353,6 +1353,7 @@ switch ($_array_get(row, 0)) {
 
 		switch (Value$arg1.type) {
 			case Types.NULL: string1 = "null"; break;
+			case Types.BOOLEAN: string1 = "boolean"; break;
 			case Types.INTEGER: string1 = "integer"; break;
 			case Types.FLOAT: string1 = "float"; break;
 			case Types.STRING: string1 = "string"; break;
