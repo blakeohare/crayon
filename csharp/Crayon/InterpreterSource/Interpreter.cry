@@ -207,8 +207,8 @@ function @type('int') declareSpriteSheetImage(
 	$_dictionary_set(SpriteSheetData$spriteSheetData.files, imagePath, ssid);
 
 	@type('Dictionary<int, bool>') tileIds = $_dictionary_get_guaranteed(SpriteSheetData$spriteSheetData.tileIdsByGroupId, groupId);
-	@type('int') colSpan = $_int($_unsafe_integer_division(x % 256 + width, 256)) + 1;
-	@type('int') rowSpan = $_int($_unsafe_integer_division(y % 256 + height, 256)) + 1;
+	@type('int') colSpan = $_int($_unsafe_integer_division(x % 256 + width - 1, 256)) + 1;
+	@type('int') rowSpan = $_int($_unsafe_integer_division(y % 256 + height - 1, 256)) + 1;
 	if (solitary) {
 		colSpan = 1;
 		rowSpan = 1;
