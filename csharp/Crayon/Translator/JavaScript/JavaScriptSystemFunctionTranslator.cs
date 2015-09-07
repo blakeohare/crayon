@@ -695,17 +695,17 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
-			throw new NotImplementedException();
+			output.Add("R.musicLoadFromResource()");
 		}
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			throw new NotImplementedException();
+			output.Add("R.musicPlayNow()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
 		{
-			throw new NotImplementedException();
+			output.Add("R.musicSetVolume()");
 		}
 
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)

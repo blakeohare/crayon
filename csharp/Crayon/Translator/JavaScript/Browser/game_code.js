@@ -691,6 +691,11 @@ R.makeHttpRequest = function(requestObj, method, url, body, userAgent, contentTy
 	}
 };
 
+R.musicSetVolume = function() {};
+R.musicPlayNow = function() {};
+R.musicLoadFromResource = function() {};
+
+
 R.pumpAsyncMessageQueue = function() {
 	return null;
 };
