@@ -46,6 +46,7 @@ function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
 	$_dictionary_set(lookup, Types.LIST + "sort", %%%PRIMITIVE_METHOD_LIST_SORT%%%);
 
 	$_dictionary_set(lookup, Types.DICTIONARY + "clear", %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%);
+	$_dictionary_set(lookup, Types.DICTIONARY + "clone", %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "contains", %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "get", %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%);
 	$_dictionary_set(lookup, Types.DICTIONARY + "keys", %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%);
@@ -296,6 +297,38 @@ function @type('string') callSystemMethod(
 			DictImpl$dclear_dict.keyStringLookup = $_new_dictionary('string', 'Value');
 			DictImpl$dclear_dict.valueStringLookup = $_new_dictionary('string', 'Value');
 			DictImpl$dclear_dict.size = 0;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError("Dictionary clone method", 0, $_array_length(funcArgs));
+			@type('DictImpl') dclone_dict = $_cast('DictImpl', context);
+			@type('Dictionary<int, Value>') keyIntLookup_clone = $_new_dictionary('int', 'Value');
+			@type('Dictionary<int, Value>') valueIntLookup_clone = $_new_dictionary('int', 'Value');
+			@type('Dictionary<string, Value>') keyStringLookup_clone = $_new_dictionary('string', 'Value');
+			@type('Dictionary<string, Value>') valueStringLookup_clone = $_new_dictionary('string', 'Value');
+
+			@type('DictImpl') dclone_dict_new = new DictImpl(
+				keyIntLookup_clone,
+				valueIntLookup_clone,
+				keyStringLookup_clone,
+				valueStringLookup_clone,
+				DictImpl$dclone_dict.size,
+				DictImpl$dclone_dict.keyType);
+			@type('int') clone_i = 0;
+			@type('int') clone_int_key = 0;
+			@type('string') clone_string_key = null;
+			@type('Array<int>') clone_int_keys = $_dictionary_get_keys('int', DictImpl$dclone_dict.keyIntLookup);
+			@type('Array<string>') clone_string_keys = $_dictionary_get_keys('string', DictImpl$dclone_dict.keyStringLookup);
+			for (clone_i = $_array_length(clone_int_keys) - 1; clone_i >= 0; clone_i -= 1) {
+				clone_int_key = $_array_get(clone_int_keys, clone_i);
+				$_dictionary_set(keyIntLookup_clone, clone_int_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.keyIntLookup, clone_int_key));
+				$_dictionary_set(valueIntLookup_clone, clone_int_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.valueIntLookup, clone_int_key));
+			}
+			for (clone_i = $_array_length(clone_string_keys) - 1; clone_i >= 0; clone_i -= 1) {
+				clone_string_key = $_array_get(clone_string_keys, clone_i);
+				$_dictionary_set(keyStringLookup_clone, clone_string_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.keyStringLookup, clone_string_key));
+				$_dictionary_set(valueStringLookup_clone, clone_string_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.valueStringLookup, clone_string_key));
+			}
+			output = new Value(Types.DICTIONARY, dclone_dict_new);
 			break;
 		case %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%:
 			if ($_array_length(funcArgs) != 2) return wrongArgCountError("Dictionary get method", 2, $_array_length(funcArgs));
