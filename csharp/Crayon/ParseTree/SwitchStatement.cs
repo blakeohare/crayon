@@ -123,7 +123,19 @@ namespace Crayon.ParseTree
 
 						if (chunk.Cases[i] is IntegerConstant) integers++;
 						else if (chunk.Cases[i] is StringConstant) strings++;
-						else throw new ParserException(chunk.Cases[i].FirstToken, "Only strings and integers can be used in a switch statement.");
+						else
+						{
+							if (chunk.Cases[i] is DotStep)
+							{
+								string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
+								if (field.ToUpperInvariant() == field)
+								{
+									throw new ParserException(chunk.Cases[i].FirstToken, 
+										"Only strings, integers, and enums can be used in a switch statement. It looks like this is probably supposed to be an enum. Make sure that it is spelled correctly.");
+								}
+							}
+							throw new ParserException(chunk.Cases[i].FirstToken, "Only strings, integers, and enums can be used in a switch statement.");
+						}
 					}
 				}
 
