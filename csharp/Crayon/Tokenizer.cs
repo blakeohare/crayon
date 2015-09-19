@@ -57,7 +57,29 @@ namespace Crayon
 				{
 					// Indicates the end of the stream. Throw an exception in cases where you left something lingering.
 					if (commentType == "*") throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), "This file contains an unclosed comment somewhere.");
-					if (stringType != null) throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), "This file contains an unclosed string somewhere.");
+					if (stringType != null)
+					{
+						Token suspiciousToken = null;
+						foreach (Token suspiciousCheck in tokens)
+						{
+							c = suspiciousCheck.Value[0];
+							if (c == '"' || c == '\'')
+							{
+								if (suspiciousCheck.Value.Contains("\n"))
+								{
+									suspiciousToken = suspiciousCheck;
+									break;
+								}
+							}
+						}
+
+						string unclosedStringError = "This file contains an unclosed string somewhere.";
+						if (suspiciousToken != null)
+						{
+							unclosedStringError += " Line " + (suspiciousToken.Line + 1) + " is suspicious.";
+						}
+						throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), unclosedStringError);
+					}
 				}
 
 				if (commentType == "/")
