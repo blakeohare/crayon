@@ -576,6 +576,7 @@ namespace Crayon
 			else if (expr is Ternary) this.CompileTernary(parser, buffer, (Ternary)expr, outputUsed);
 			else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
 			else if (expr is ListSlice) this.CompileListSlice(parser, buffer, (ListSlice)expr, outputUsed);
+			else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -633,6 +634,17 @@ namespace Crayon
 			buffer.Add(ternary.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueBuffer.Size);
 			buffer.Concat(trueBuffer);
 			buffer.Concat(falseBuffer);
+		}
+
+		private void CompileNullCoalescer(Parser parser, ByteBuffer buffer, NullCoalescer nullCoalescer, bool outputUsed)
+		{
+			EnsureUsed(nullCoalescer.FirstToken, outputUsed);
+
+			this.CompileExpression(parser, buffer, nullCoalescer.PrimaryExpression, true);
+			ByteBuffer secondaryExpression = new ByteBuffer();
+			this.CompileExpression(parser, secondaryExpression, nullCoalescer.SecondaryExpression, true);
+			buffer.Add(nullCoalescer.FirstToken, OpCode.POP_IF_NULL_OR_JUMP, secondaryExpression.Size);
+			buffer.Concat(secondaryExpression);
 		}
 
 		private void CompileBooleanNot(Parser parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)

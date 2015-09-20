@@ -103,6 +103,7 @@
     <Compile Include="ParseTree\ListSlice.cs" />
     <Compile Include="ParseTree\NegativeSign.cs" />
     <Compile Include="ParseTree\Node.cs" />
+    <Compile Include="ParseTree\NullCoalescer.cs" />
     <Compile Include="ParseTree\NullConstant.cs" />
     <Compile Include="ParseTree\ReturnStatement.cs" />
     <Compile Include="ParseTree\StringConstant.cs" />
@@ -248,6 +249,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\variable_stream.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

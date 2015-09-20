@@ -1,0 +1,6 @@
+﻿
+value = $_stack_pop(valueStack);
+if (Value$value.type != Types.NULL) {
+	$_stack_push(valueStack, value);
+	StackFrame$stack.pc += $_array_get(row, 0);
+}

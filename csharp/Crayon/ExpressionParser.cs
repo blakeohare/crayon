@@ -25,7 +25,7 @@ namespace Crayon
 
 		private static Expression ParseTernary(TokenStream tokens)
 		{
-			Expression root = ParseBooleanCombination(tokens);
+			Expression root = ParseNullCoalescing(tokens);
 			if (tokens.PopIfPresent("?"))
 			{
 				Expression trueExpr = ParseTernary(tokens);
@@ -33,6 +33,17 @@ namespace Crayon
 				Expression falseExpr = ParseTernary(tokens);
 
 				return new Ternary(root, trueExpr, falseExpr);
+			}
+			return root;
+		}
+
+		private static Expression ParseNullCoalescing(TokenStream tokens)
+		{
+			Expression root = ParseBooleanCombination(tokens);
+			if (tokens.PopIfPresent("??"))
+			{
+				Expression secondaryExpression = ParseNullCoalescing(tokens);
+				return new NullCoalescer(root, secondaryExpression);
 			}
 			return root;
 		}

@@ -39,6 +39,7 @@
 	LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
 	NEGATIVE_SIGN, // no args. pop, flip, push.
 	POP, // no args. pop value from value stack.
+	POP_IF_NULL_OR_JUMP, // if the last item on the value stack is null, pop it. If it isn't, then jump. 1: jump distance.
 	RETURN,
 	RETURN_NULL,
 	SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.

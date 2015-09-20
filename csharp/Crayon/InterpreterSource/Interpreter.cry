@@ -161,6 +161,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.LITERAL_STREAM: $_comment('LITERAL_STREAM'); import inline 'InterpreterSource/Ops/literal_stream.cry'; break;
 			case OpCodes.NEGATIVE_SIGN: $_comment('NEGATIVE_SIGN'); import inline 'InterpreterSource/Ops/negative_sign.cry'; break;
 			case OpCodes.POP: $_comment('POP'); import inline 'InterpreterSource/Ops/pop.cry'; break;
+			case OpCodes.POP_IF_NULL_OR_JUMP: $_comment('POP_IF_NULL_OR_JUMP'); import inline 'InterpreterSource/Ops/pop_if_null_or_jump.cry'; break;
 			case OpCodes.RETURN: $_comment('RETURN'); import inline 'InterpreterSource/Ops/return.cry'; break;
 			case OpCodes.RETURN_NULL: $_comment('RETURN_NULL'); import inline 'InterpreterSource/Ops/return_null.cry'; break;
 			case OpCodes.SPRITE_SHEET_BUILDER: $_comment('SPRITE_SHEET_BUILDER'); import inline 'InterpreterSource/Ops/sprite_sheet_builder.cry'; break;
