@@ -92,6 +92,18 @@ R.finish_load_image = function(id) {
 	R._global_vars.image_downloads[key] = canvas;
 };
 
+R.scaleImage = function(originalCanvas, width, height) {
+	var output = document.createElement('canvas');
+	var context = output.getContext('2d');
+	output.width = width;
+	output.height = height;
+	context.drawImage(
+		originalCanvas,
+		0, 0, originalCanvas.width, originalCanvas.height,
+		0, 0, width, height);
+	return output;
+};
+
 R.flushImagette = function(imagette) {
 	var width = imagette[0];
 	var height = imagette[1];

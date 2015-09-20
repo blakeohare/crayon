@@ -278,6 +278,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			throw new NotImplementedException();

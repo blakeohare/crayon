@@ -155,8 +155,6 @@ function main() {
 			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
 			$_new_dictionary('string', 'int') // group name --> group ID
 		),
-		$_new_list('int'), // image scale stack
-		1, // top of the image scale stack (empty stack implies scale ratio of 1)
 		new ImageSheetStatus(
 			$_new_dictionary('string', 'string'),
 			$_new_dictionary('string', 'object'),

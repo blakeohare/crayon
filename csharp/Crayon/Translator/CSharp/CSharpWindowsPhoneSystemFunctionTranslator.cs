@@ -83,6 +83,11 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException("Gamepad not supported.");
 		}
 
+		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+		{
+			throw new InvalidOperationException();
+		}
+
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
 			throw new NotImplementedException();

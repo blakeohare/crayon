@@ -60,8 +60,6 @@ struct ProgramData {
 	@type('Dictionary<string, int>') primitiveMethodLookup, // TODO: make this an <int, int> dictionary and use the identifier code and eliminate the rutime string calculation altogether
 	@type('int') instanceCounter,
 	@type('SpriteSheetData') spriteSheetData,
-	@type('List<int>') imageScaleStack,
-	@type('int') imageScaleStackTop,
 	@type('ImageSheetStatus') imageSheetStatus,
 	@type('SoundStatus') soundStatus,
 	@type('bool') initializationComplete,
@@ -150,8 +148,10 @@ struct ImageSheetVirtualizationGrid {
 struct Image {
 	@type('CompositeImage') compositeResource, // Composite image this image is located in
 	@type('object') rawResource, // native platform bitmap if image compositing is not used
-	@type('int') x,
-	@type('int') y,
+	@type('int') sourceX,
+	@type('int') sourceY,
+	@type('int') sourceWidth,
+	@type('int') sourceHeight,
 	@type('int') width,
 	@type('int') height,
 	@type('float') textureLeft,

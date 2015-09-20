@@ -72,10 +72,10 @@ function @type('bool') glRenderNew(
 					textureWidth = Image$image.textureRight - Image$image.textureLeft;
 					textureHeight = Image$image.textureBottom - Image$image.textureTop;
 
-					textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * sourceLeft, Image$image.width);
-					textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * sourceTop, Image$image.height);
-					textureRight = textureLeft + $_unsafe_integer_division(textureWidth * sourceWidth, Image$image.width);
-					textureBottom = textureTop + $_unsafe_integer_division(textureHeight * sourceHeight, Image$image.height);
+					textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * sourceLeft, Image$image.sourceWidth);
+					textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * sourceTop, Image$image.sourceHeight);
+					textureRight = textureLeft + $_unsafe_integer_division(textureWidth * sourceWidth, Image$image.sourceWidth);
+					textureBottom = textureTop + $_unsafe_integer_division(textureHeight * sourceHeight, Image$image.sourceHeight);
 
 					compositeImage = Image$image.compositeResource;
 					if (!CompositeImage$compositeImage.loaded) {
@@ -466,10 +466,10 @@ function @type('bool') glRenderOld(
 						textureWidth = Image$image.textureRight - Image$image.textureLeft;
 						textureHeight = Image$image.textureBottom - Image$image.textureTop;
 
-						textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * startX, Image$image.width);
-						textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * startY, Image$image.height);
-						textureRight = textureLeft + $_unsafe_integer_division(textureWidth * width, Image$image.width);
-						textureBottom = textureTop + $_unsafe_integer_division(textureHeight * height, Image$image.height);
+						textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * startX, Image$image.sourceWidth);
+						textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * startY, Image$image.sourceHeight);
+						textureRight = textureLeft + $_unsafe_integer_division(textureWidth * width, Image$image.sourceWidth);
+						textureBottom = textureTop + $_unsafe_integer_division(textureHeight * height, Image$image.sourceHeight);
 						compositeImage = Image$image.compositeResource;
 						if (!CompositeImage$compositeImage.loaded) {
 							if (state != null)
@@ -665,11 +665,8 @@ function @type('bool') glDrawLine(
 
 // Draws an image on the screen at the coordinates.
 function glDrawImageSimple(@type('Image') image, @type('int') x, @type('int') y) {
-	@type('int') width = Image$image.width;
-	@type('int') height = Image$image.height;
-	
 	// TODO: just do this inline or possibly create a separate render action.
-	glDrawImageAdvanced(image, x, y, width, height, 0, 0, width, height);
+	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.sourceWidth, Image$image.sourceHeight);
 }
 
 // Draws a part of an image on a part of the screen. Stretching and cropping.

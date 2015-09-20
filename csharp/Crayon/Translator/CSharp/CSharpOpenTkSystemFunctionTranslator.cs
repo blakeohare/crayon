@@ -180,6 +180,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+		{
+			throw new System.InvalidOperationException();
+		}
+
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
 			output.Add("TranslationHelper.MusicLoad(");

@@ -464,6 +464,17 @@ namespace Crayon.Translator.JavaScript
 			output.Add(".width");	
 		}
 
+		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+		{
+			output.Add("R.scaleImage(");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(")");
+		}
+
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("R.initializeGame(");

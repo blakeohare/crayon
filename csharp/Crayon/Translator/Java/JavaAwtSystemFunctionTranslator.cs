@@ -109,6 +109,11 @@ namespace Crayon.Translator.Java
 			output.Add(").getWidth()");
 		}
 
+		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
 		{
 			output.Add("GameWindow.initializeScreen(");

@@ -120,12 +120,9 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
 					break;
-				case FrameworkFunction.GFX_IMAGE_POP_SCALE:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GFX_IMAGE_PUSH_SCALE:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
+				case FrameworkFunction.GFX_IMAGE_SCALE:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
 					break;
 				case FrameworkFunction.GFX_IMAGE_SHEET_LOAD:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

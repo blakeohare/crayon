@@ -195,14 +195,14 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_GAME_INITIALIZE%%%:
 		$_comment('$game_initialize');
-		// $initialize_game(fps)
+		// $game_initialize(fps)
 		arg1 = $_stack_pop(valueStack);
 		if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else if (Value$arg1.type == Types.FLOAT) {
 			float1 = $_cast('double', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, "$initialize_game(fps) requiress a numeric argument.");
+			return killExecution(stack, "$game_initialize(fps) requiress a numeric argument.");
 		}
 
 		if (float1 <= 0) {
@@ -213,12 +213,12 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_GAME_INITIALIZE_SCREEN%%%:
 		$_comment('$game_initialize_screen');
-		// $initialize_screen(width, height)
+		// $game_initialize_screen(width, height)
 		arg2 = $_stack_pop(valueStack);
 		arg1 = $_stack_pop(valueStack);
 		if (Value$arg1.type != Types.INTEGER ||
 			Value$arg2.type != Types.INTEGER) {
-			return killExecution(stack, "$initialize_screen requires two integer arguments.");
+			return killExecution(stack, "$game_initialize_screen requires two integer arguments.");
 		}
 
 		int1 = $_cast('int', Value$arg1.internalValue);
@@ -238,7 +238,7 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_GAME_INITIALIZE_SCREEN_SCALED%%%:
 		$_comment('$game_initialize_screen_scaled');
-		// $initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
+		// $game_initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
 		arg4 = $_stack_pop(valueStack);
 		arg3 = $_stack_pop(valueStack);
 		arg2 = $_stack_pop(valueStack);
@@ -247,7 +247,7 @@ switch ($_array_get(row, 0)) {
 			Value$arg2.type != Types.INTEGER ||
 			Value$arg2.type != Types.INTEGER ||
 			Value$arg2.type != Types.INTEGER) {
-			return killExecution(stack, "$initialize_screen_scaled requires four integer arguments.");
+			return killExecution(stack, "$game_initialize_screen_scaled requires four integer arguments.");
 		}
 
 		int1 = $_cast('int', Value$arg1.internalValue);
@@ -332,7 +332,7 @@ switch ($_array_get(row, 0)) {
 		arg1 = $_stack_pop(valueStack);
 		image1 = extractImageFromValue(arg1);
 		if (image1 == null) {
-			return killExecution(stack, "$blit_image must consume an image as its first argument.");
+			return killExecution(stack, "$gfx_blit_image must consume an image as its first argument.");
 		}
 		if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 			return killExecution(stack, "$gfx_blit_image coordinates must be integers.");
@@ -459,7 +459,7 @@ switch ($_array_get(row, 0)) {
 			Value$arg6.type != Types.INTEGER ||
 			Value$arg7.type != Types.INTEGER ||
 			Value$arg8.type != Types.INTEGER) {
-			return killExecution(stack, "$draw_ellipse requires 8 integer arguments.");
+			return killExecution(stack, "$gfx_draw_ellipse requires 8 integer arguments.");
 		}
 		if (%%%IS_OPEN_GL_BASED%%%) {
 			glDrawEllipse(
@@ -506,7 +506,7 @@ switch ($_array_get(row, 0)) {
 			Value$arg7.type != Types.INTEGER ||
 			Value$arg8.type != Types.INTEGER ||
 			Value$arg9.type != Types.INTEGER) {
-			return killExecution(stack, "$draw_line requires 9 integer arguments.");
+			return killExecution(stack, "$gfx_draw_line requires 9 integer arguments.");
 		}
 
 		if (%%%IS_OPEN_GL_BASED%%%) {
@@ -553,7 +553,7 @@ switch ($_array_get(row, 0)) {
 			Value$arg6.type != Types.INTEGER ||
 			Value$arg7.type != Types.INTEGER ||
 			Value$arg8.type != Types.INTEGER) {
-			return killExecution(stack, "$draw_rectangle requires 8 integer arguments.");
+			return killExecution(stack, "$gfx_draw_rectangle requires 8 integer arguments.");
 		}
 		if (%%%IS_OPEN_GL_BASED%%%) {
 			glDrawRectangle(
@@ -587,7 +587,7 @@ switch ($_array_get(row, 0)) {
 		if (Value$arg1.type != Types.INTEGER ||
 			Value$arg2.type != Types.INTEGER ||
 			Value$arg3.type != Types.INTEGER) {
-			return killExecution(stack, "$fill_screen requires 3 integer arguments.");
+			return killExecution(stack, "$gfx_fill_screen requires 3 integer arguments.");
 		}
 
 		if (%%%IS_OPEN_GL_BASED%%%) {
@@ -599,16 +599,16 @@ switch ($_array_get(row, 0)) {
 
 	case %%%FF_GFX_FLIP_IMAGE%%%:
 		$_comment('$gfx_flip_image');
-		// $flip_image(image, shouldFlipX, shouldFlipY)
+		// $gfx_flip_image(image, shouldFlipX, shouldFlipY)
 		arg3 = $_stack_pop(valueStack);
 		arg2 = $_stack_pop(valueStack);
 		arg1 = $_stack_pop(valueStack);
 		image1 = extractImageFromValue(arg1);
 		if (image1 == null) {
-			return killExecution(stack, "$flip_image requires an image as its first argument.");
+			return killExecution(stack, "$gfx_flip_image requires an image as its first argument.");
 		}
 		if (Value$arg2.type != Types.BOOLEAN || Value$arg3.type != Types.BOOLEAN) {
-			return killExecution(stack, "$flip_image requires an image and two booleans.");
+			return killExecution(stack, "$gfx_flip_image requires an image and two booleans.");
 		}
 		output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, flipImage(
 			image1,
@@ -693,41 +693,6 @@ switch ($_array_get(row, 0)) {
 		loadImageFromUserData($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));
 		break;
 
-	case %%%FF_GFX_IMAGE_POP_SCALE%%%:
-		$_comment('$gfx_image_pop_scale');
-		// $image_pop_scale()
-		intList1 = ProgramData$p.imageScaleStack;
-		int1 = $_list_length(intList1);
-		if (int1 == 0) {
-			return killExecution(stack, "$image_pop_scale() was called but the image scale stack was empty.");
-		}
-		int2 = $_list_get(intList1, int1 - 1);
-		$_list_pop(intList1);
-		output = buildInteger(int2);
-		if (int1 == 1) {
-			int3 = 1;
-		} else {
-			int3 = $_list_get(intList1, int1 - 2);
-		}
-		ProgramData$p.imageScaleStackTop = int3;
-		break;
-
-	case %%%FF_GFX_IMAGE_PUSH_SCALE%%%:
-		$_comment('$gfx_image_push_scale');
-		// $image_push_scale(scale)
-		intList1 = ProgramData$p.imageScaleStack;
-		arg1 = $_stack_pop(valueStack);
-		if (Value$arg1.type != Types.INTEGER) {
-			if (Value$arg1.type != Types.FLOAT) {
-				return killExecution(stack, "$image_push_scale must be called with an integer. Floats are not supported at this time.");
-			}
-			return killExecution(stack, "$image_push_scale must be called with an integer.");
-		}
-		int1 = $_cast('int', Value$arg1.internalValue);
-		$_list_push(intList1, int1);
-		ProgramData$p.imageScaleStackTop = int1;
-		break;
-
 	case %%%FF_GFX_IMAGE_SHEET_ERROR_CODE%%%:
 		$_comment('$gfx_image_sheet_error_code');
 		// $image_sheet_error_code(idOrIds)
@@ -749,6 +714,25 @@ switch ($_array_get(row, 0)) {
 		}
 
 		output = buildInteger(int1);
+		break;
+
+	case %%%FF_GFX_IMAGE_SCALE%%%:
+		$_comment('$gfx_image_scale');
+		// $gfx_image_scale(image, newWidth, newHeight)
+		arg3 = $_stack_pop(valueStack);
+		arg2 = $_stack_pop(valueStack);
+		arg1 = $_stack_pop(valueStack);
+		image1 = extractImageFromValue(arg1);
+		if (image1 == null) {
+			return killExecution(stack, "$gfx_image_scale requires an image as its first argument.");
+		}
+		if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+			return killExecution(stack, "$gfx_image_scale requires an image and two integers.");
+		}
+		output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, scaleImage(
+			image1,
+			$_cast('int', Value$arg2.internalValue),
+			$_cast('int', Value$arg3.internalValue))));
 		break;
 
 	case %%%FF_GFX_IMAGE_SHEET_LOAD%%%:

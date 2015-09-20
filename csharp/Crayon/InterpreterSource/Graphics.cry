@@ -53,6 +53,8 @@ function @type('Image') instantiateImage(
 			y,
 			width,
 			height,
+			width,
+			height,
 			textureLeft,
 			textureTop,
 			textureRight,
@@ -88,7 +90,51 @@ function @type('Image') instantiateImage(
 			0,
 			width,
 			height,
+			width,
+			height,
 			// the following are texture mappings and are ignored in blit based platforms...
+			0,
+			0,
+			1,
+			1);
+	}
+}
+
+function @type('Image') scaleImage(
+	@type('Image') image,
+	@type('int') newWidth,
+	@type('int') newHeight) {
+	
+	if (Image$image.width == newWidth && Image$image.height == newHeight) {
+		return image;
+	}
+
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		return new Image(
+			Image$image.compositeResource,
+			Image$image.rawResource,
+			Image$image.sourceX,
+			Image$image.sourceY,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
+			newWidth,
+			newHeight,
+			Image$image.textureLeft,
+			Image$image.textureTop,
+			Image$image.textureRight,
+			Image$image.textureBottom
+			);
+	} else {
+		newRawResource = $_image_scale_native_resource(Image$image.rawResource, newWidth, newHeight);
+		return new Image(
+			null,
+			newRawResource,
+			0,
+			0,
+			newWidth,
+			newHeight,
+			newWidth,
+			newHeight,
 			0,
 			0,
 			1,
@@ -106,17 +152,37 @@ function @type('Image') flipImage(
 	}
 
 	if (%%%IS_OPEN_GL_BASED%%%) {
-		@type('bool') flippedX = Image$image.textureLeft > Image$image.textureRight;
-		@type('bool') flippedY = Image$image.textureTop > Image$image.textureBottom;
-		return instantiateImage(
+		@type('float') tleft = Image$image.textureLeft;
+		@type('float') tright = Image$image.textureRight;
+		@type('float') ttop = Image$image.textureTop;
+		@type('float') tbottom = Image$image.textureBottom;
+		@type('float') t = 0;
+
+		if (flipX) {
+			t = tleft;
+			tleft = tright;
+			tright = t;
+		}
+
+		if (flipY) {
+			t = ttop;
+			ttop = tbottom;
+			tbottom = t;
+		}
+
+		return new Image(
 			Image$image.compositeResource,
-			null,
-			Image$image.x,
-			Image$image.y,
+			Image$image.rawResource,
+			Image$image.sourceX,
+			Image$image.sourceY,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
 			Image$image.width,
 			Image$image.height,
-			flipX != flippedX,
-			flipY != flippedY);
+			tleft,
+			ttop,
+			tright,
+			tbottom);
 	} else {
 		@type('object') nativeBitmap = Image$image.rawResource;
 
@@ -125,8 +191,8 @@ function @type('Image') flipImage(
 			nativeBitmap,
 			0,
 			0,
-			Image$image.width,
-			Image$image.height,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
 			flipX,
 			flipY);
 	}
