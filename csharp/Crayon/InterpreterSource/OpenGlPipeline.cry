@@ -466,10 +466,10 @@ function @type('bool') glRenderOld(
 						textureWidth = Image$image.textureRight - Image$image.textureLeft;
 						textureHeight = Image$image.textureBottom - Image$image.textureTop;
 
-						textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * startX, Image$image.sourceWidth);
-						textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * startY, Image$image.sourceHeight);
-						textureRight = textureLeft + $_unsafe_integer_division(textureWidth * width, Image$image.sourceWidth);
-						textureBottom = textureTop + $_unsafe_integer_division(textureHeight * height, Image$image.sourceHeight);
+						textureLeft = Image$image.textureLeft + $_unsafe_integer_division(textureWidth * startX, Image$image.width);
+						textureTop = Image$image.textureTop + $_unsafe_integer_division(textureHeight * startY, Image$image.height);
+						textureRight = textureLeft + $_unsafe_integer_division(textureWidth * width, Image$image.width);
+						textureBottom = textureTop + $_unsafe_integer_division(textureHeight * height, Image$image.height);
 						compositeImage = Image$image.compositeResource;
 						if (!CompositeImage$compositeImage.loaded) {
 							if (state != null)
