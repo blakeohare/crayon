@@ -32,6 +32,9 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 	}
 	var permanent = persistentStorage;
 	var isLocalStorage = persistentStorage !== null;
+	if (!isLocalStorage) {
+		permanent = {};
+	}
 	var disk = {};
 
 	var clearCorruptedDisk = function() {
