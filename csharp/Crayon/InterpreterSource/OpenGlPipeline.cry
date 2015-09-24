@@ -666,7 +666,7 @@ function @type('bool') glDrawLine(
 // Draws an image on the screen at the coordinates.
 function glDrawImageSimple(@type('Image') image, @type('int') x, @type('int') y) {
 	// TODO: just do this inline or possibly create a separate render action.
-	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.sourceWidth, Image$image.sourceHeight);
+	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.width, Image$image.height);
 }
 
 // Draws a part of an image on a part of the screen. Stretching and cropping.
