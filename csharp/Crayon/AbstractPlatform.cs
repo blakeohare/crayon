@@ -109,12 +109,13 @@ namespace Crayon
 			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
 		}
 
+		private static readonly string PROJECT_ID_VERIFICATION_ERROR_EMPTY = "Project ID is blank or missing.";
 		private static readonly string PROJECT_ID_VERIFICATION_ERROR = "Project ID can only contain alphanumerics and cannot start with a number.";
 		private void VerifyProjectId(string projectId)
 		{
 			if (projectId.Length == 0)
 			{
-				throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+				throw new InvalidOperationException(PROJECT_ID_VERIFICATION_ERROR_EMPTY);
 			}
 			foreach (char c in projectId)
 			{
@@ -122,13 +123,13 @@ namespace Crayon
 					!(c >= 'A' && c <= 'Z') &&
 					!(c >= '0' && c <= '9'))
 				{
-					throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+					throw new InvalidOperationException(PROJECT_ID_VERIFICATION_ERROR);
 				}
 			}
 
 			if (projectId[0] >= '0' && projectId[0] <= '9')
 			{
-				throw new Exception(PROJECT_ID_VERIFICATION_ERROR);
+				throw new InvalidOperationException(PROJECT_ID_VERIFICATION_ERROR);
 			}
 		}
 
