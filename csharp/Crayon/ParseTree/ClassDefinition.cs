@@ -93,6 +93,11 @@ namespace Crayon.ParseTree
 				// yeah, that's fine.
 			}
 
+			if (this.baseClassInstance != null)
+			{
+				parser.VerifySubclassDeclarationOrder(this, this.baseClassInstance);
+			}
+
 
 			return Listify(this);
 		}
