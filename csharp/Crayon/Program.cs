@@ -188,9 +188,6 @@ namespace Crayon
 					". See usage.");
 			}
 
-			buildContext.SourceFolder = System.IO.Path.Combine(workingDirectory, buildContext.SourceFolder).Replace('/', '\\');
-			buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
-
 			if (buildContext.Platform == null)
 				throw new InvalidOperationException("No platform specified. See usage.");
 
@@ -199,6 +196,9 @@ namespace Crayon
 
 			if (buildContext.OutputFolder == null)
 				throw new InvalidOperationException("No output folder specified. See usage.");
+
+			buildContext.SourceFolder = System.IO.Path.Combine(workingDirectory, buildContext.SourceFolder).Replace('/', '\\');
+			buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
 
 			if (!System.IO.Directory.Exists(buildContext.SourceFolder))
 				throw new InvalidOperationException("Source folder does not exist.");
