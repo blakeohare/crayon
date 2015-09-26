@@ -7,7 +7,7 @@ objInstance = $_cast('ObjectInstance', Value$root.internalValue);
 
 classId = ObjectInstance$objInstance.classId;
 classInfo = $_array_get(classTable, classId);
-classId = $_array_get(classInfo, 3); // base class ID
+classId = ClassInfo$classInfo.baseClassId;
 methodDefinitionLookup = $_array_get(classMethods, classId);
 if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
 	methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
