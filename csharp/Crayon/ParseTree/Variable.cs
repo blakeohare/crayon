@@ -26,14 +26,21 @@
 				return new CompileTimeDictionary(this.FirstToken, "var");
 			}
 
-			if (this.Name == "this")
+			if (this.Name == "this" || this.Name == "base")
 			{
 				if (parser.IsInClass)
 				{
-					return new ThisKeyword(this.FirstToken).Resolve(parser);
+					if (this.Name == "this")
+					{
+						return new ThisKeyword(this.FirstToken).Resolve(parser);
+					}
+					else
+					{
+						return new BaseKeyword(this.FirstToken).Resolve(parser);
+					}
 				}
 
-				throw new ParserException(this.FirstToken, "'this' keyword is only allowed inside classes.");
+				throw new ParserException(this.FirstToken, "'" + this.Name + "' keyword is only allowed inside classes.");
 			}
 
 			if (Parser.IsReservedKeyword(this.Name))

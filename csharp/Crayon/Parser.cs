@@ -11,7 +11,7 @@ namespace Crayon
 		{
 			this.NullablePlatform = platform;
 			this.IsTranslateMode = platform != null;
-			this.IsInClass = false;
+			this.CurrentClass = null;
 			this.BuildContext = buildContext;
 			this.VariableIds = new VariableIdAllocator();
 		}
@@ -26,7 +26,9 @@ namespace Crayon
 
 		public VariableIdAllocator VariableIds { get; private set; }
 
-		public bool IsInClass { get; set; }
+		public ClassDefinition CurrentClass { get; set; }
+
+		public bool IsInClass { get { return this.CurrentClass != null; } }
 
 		public BuildContext BuildContext { get; private set; }
 

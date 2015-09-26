@@ -58,6 +58,11 @@ namespace Crayon.ParseTree
 				}
 			}
 
+			if (this.Root is BaseKeyword)
+			{
+				return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken).Resolve(parser);
+			}
+
 			if (this.Root is StringConstant)
 			{
 				if (step == "join")

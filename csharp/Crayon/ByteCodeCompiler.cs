@@ -577,6 +577,8 @@ namespace Crayon
 			else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
 			else if (expr is ListSlice) this.CompileListSlice(parser, buffer, (ListSlice)expr, outputUsed);
 			else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
+			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
+			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -586,6 +588,17 @@ namespace Crayon
 			{
 				throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
 			}
+		}
+
+		private void CompileBaseKeyword(Parser parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
+		{
+			throw new ParserException(baseKeyword.FirstToken, "Cannot have a reference to 'base' without invoking a field.");
+		}
+
+		private void CompileBaseMethodReference(Parser parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
+		{
+			EnsureUsed(baseMethodReference.FirstToken, outputUsed);
+			buffer.Add(baseMethodReference.DotToken, OpCode.DEREF_DOT_ON_BASE, parser.GetId(baseMethodReference.StepToken.Value));
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)

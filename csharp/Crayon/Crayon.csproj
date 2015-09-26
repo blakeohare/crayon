@@ -67,6 +67,8 @@
     <Compile Include="ParserException.cs" />
     <Compile Include="ParseTree\Annotation.cs" />
     <Compile Include="ParseTree\Assignment.cs" />
+    <Compile Include="ParseTree\BaseKeyword.cs" />
+    <Compile Include="ParseTree\BaseMethodReference.cs" />
     <Compile Include="ParseTree\BinaryOpChain.cs" />
     <Compile Include="ParseTree\BooleanCombination.cs" />
     <Compile Include="ParseTree\BooleanConstant.cs" />
@@ -250,6 +252,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\deref_dot_on_base.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

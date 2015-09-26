@@ -24,6 +24,7 @@
 	DEF_DICTIONARY, // 1: size
 	DEF_LIST, // 1: size
 	DEREF_DOT, // 1: step ID
+	DEREF_DOT_ON_BASE, // 1: step ID
 	DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 	FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
 	FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
@@ -99,6 +100,7 @@ enum Types {
 	SYS_METHOD = %%%TYPE_ID_SYS_METHOD%%%,
 	NATIVE_OBJECT = %%%TYPE_ID_NATIVE_OBJECT%%%,
 }
+const MAX_TYPE = Types.NATIVE_OBJECT + 1;
 
 enum NativeObjectSubType {
 	EVENT = %%%SUBTYPE_ID_EVENT%%%,
@@ -111,8 +113,6 @@ enum NativeObjectSubType {
 	MUSIC = %%%SUBTYPE_ID_MUSIC%%%,
 	TEXT_LOADER = %%%SUBTYPE_ID_TEXT_LOADER%%%,
 }
-
-const MAX_TYPE = Types.NATIVE_OBJECT + 1;
 
 enum AsyncMessageType {
 	HTTP_RESPONSE = %%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,

@@ -1,0 +1,22 @@
+﻿
+root = StackFrame$stack.objectContext;
+classId = ObjectInstance$objInstance.classId;
+nameId = $_array_get(row, 0);
+
+objInstance = $_cast('ObjectInstance', Value$root.internalValue);
+
+classId = ObjectInstance$objInstance.classId;
+classInfo = $_array_get(classTable, classId);
+classId = $_array_get(classInfo, 3); // base class ID
+methodDefinitionLookup = $_array_get(classMethods, classId);
+if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
+	methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
+	value = new Value(Types.METHOD,
+		new MethodInstance(
+			root,
+			MethodDefinition$methodDefinition.pc,
+			MethodDefinition$methodDefinition.maxArgs));
+	$_stack_push(valueStack, value);
+} else {
+	return killExecution(stack, "Base class did not have a method by this name.");
+}

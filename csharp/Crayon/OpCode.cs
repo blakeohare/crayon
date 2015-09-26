@@ -26,6 +26,7 @@
 		DEF_DICTIONARY, // 1: size
 		DEF_LIST, // 1: size
 		DEREF_DOT, // 1: step ID
+		DEREF_DOT_ON_BASE, // 1: step ID
 		DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 		FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
 		FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded

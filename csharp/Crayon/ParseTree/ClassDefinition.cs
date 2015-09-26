@@ -43,7 +43,7 @@ namespace Crayon.ParseTree
 				this.baseClassInstance = baseClassDef;
 			}
 
-			parser.IsInClass = true;
+			parser.CurrentClass = this;
 			for (int i = 0; i < this.Methods.Length; ++i)
 			{
 				this.Methods[i] = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
@@ -53,7 +53,7 @@ namespace Crayon.ParseTree
 			{
 				this.Constructor.Resolve(parser);
 			}
-			parser.IsInClass = false;
+			parser.CurrentClass = null;
 
 			bool hasABaseClass = this.baseClassInstance != null;
 			if (this.Constructor == null)
