@@ -91,6 +91,7 @@ namespace Crayon.Translator
 				case "_draw_ellipse": VerifyCount(functionCall, 8); TranslateDrawEllipse(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
 				case "_draw_line": VerifyCount(functionCall, 9); TranslateDrawLine(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_draw_rectangle": VerifyCount(functionCall, 8); TranslateDrawRectangle(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
+				case "_draw_triangle": VerifyCount(functionCall, 10); TranslateDrawTriangle(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_fill_screen": VerifyCount(functionCall, 3); TranslateFillScreen(output, args[0], args[1], args[2]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
@@ -235,6 +236,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
+		protected abstract void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue);
 		protected abstract void TranslateForceParens(List<string> output, Expression expression);

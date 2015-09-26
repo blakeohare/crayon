@@ -109,6 +109,7 @@ function @omitReturn @type('string') interpret(
 	@type('Value') arg7 = null;
 	@type('Value') arg8 = null;
 	@type('Value') arg9 = null;
+	@type('Value') arg10 = null;
 
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;

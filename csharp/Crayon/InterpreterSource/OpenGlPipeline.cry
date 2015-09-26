@@ -293,6 +293,45 @@ function @type('bool') glRenderOld(
 					}
 					break;
 
+				case OpenGlAction.DRAW_TRIANGLE:
+					ax = $_array_get(GL_DATA, i | 1);
+					ay = $_array_get(GL_DATA, i | 2);
+					bx = $_array_get(GL_DATA, i | 3);
+					by= $_array_get(GL_DATA, i | 4);
+					cx = $_array_get(GL_DATA, i | 5);
+					cy= $_array_get(GL_DATA, i | 6);
+					red = $_array_get(GL_DATA, i | 7);
+					green = $_array_get(GL_DATA, i | 8);
+					blue = $_array_get(GL_DATA, i | 9);
+					alpha = $_array_get(GL_DATA, i | 10);
+					
+					// Polygons require GL.end() so clear the state.
+					// This should use a regular triangle but since all this is to be overhauled later anyway,
+					// this is easier and quicker. Will fix if there's any pressing performance demand.
+					if (state != null) {
+						$_gl_end(gl);
+						state = null;
+					}
+					
+					$_gl_disable_texture_2d(gl);
+					$_gl_color_4(gl, red, green, blue, alpha);
+					$_gl_begin_polygon(gl);
+
+					ptCount = $_unsafe_integer_division(width + height, 8);
+					if (ptCount < 16) ptCount = 16;
+					
+					if (scaled) {
+						$_gl_vertex_2(gl, $_unsafe_integer_division(ax * RW, VW), $_unsafe_integer_division(ay * RH, VH));
+						$_gl_vertex_2(gl, $_unsafe_integer_division(bx * RW, VW), $_unsafe_integer_division(by * RH, VH));
+						$_gl_vertex_2(gl, $_unsafe_integer_division(cx * RW, VW), $_unsafe_integer_division(cy * RH, VH));
+					} else {
+						$_gl_vertex_2(gl, ax, ay);
+						$_gl_vertex_2(gl, bx, by);
+						$_gl_vertex_2(gl, cx, cy);
+					}
+					$_gl_end(gl);
+					break;
+
 				case OpenGlAction.DRAW_ELLIPSE:
 				
 					left = $_array_get(GL_DATA, i | 1);
@@ -317,7 +356,7 @@ function @type('bool') glRenderOld(
 							$_gl_end(gl);
 							state = null;
 						}
-					
+						
 						$_gl_disable_texture_2d(gl);
 						$_gl_color_4(gl, red, green, blue, alpha);
 						$_gl_begin_polygon(gl);
@@ -599,6 +638,34 @@ function @type('bool') glDrawEllipse(
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, green & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, blue & 255);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, alpha & 255);
+	GL_VIRTUAL_SIZE += 16;
+	return true;
+}
+
+function @type('bool') glDrawTriangle(
+	@type('int') x1,
+	@type('int') y1,
+	@type('int') x2,
+	@type('int') y2,
+	@type('int') x3,
+	@type('int') y3,
+	@type('int') red,
+	@type('int') green,
+	@type('int') blue,
+	@type('int') alpha) {
+
+	if (GL_VIRTUAL_SIZE == GL_REAL_SIZE) glIncreaseDataCapacity();
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE, OpenGlAction.DRAW_TRIANGLE);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 1, x1);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 2, y1);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 3, x2);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 4, y2);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 5, x3);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, y3);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, red & 255);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, green & 255);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 9, blue & 255);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 10, alpha & 255);
 	GL_VIRTUAL_SIZE += 16;
 	return true;
 }

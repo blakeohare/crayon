@@ -101,6 +101,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 8, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
 					break;
+				case FrameworkFunction.GFX_DRAW_TRIANGLE:
+					VerifyLength(throwToken, frameworkFunction, 10, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
+					break;
 				case FrameworkFunction.GFX_FILL_SCREEN:
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER");

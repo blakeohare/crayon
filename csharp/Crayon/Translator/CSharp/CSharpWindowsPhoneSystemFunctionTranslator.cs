@@ -33,6 +33,11 @@ namespace Crayon.Translator.CSharp
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
 		{
 			throw new NotImplementedException();

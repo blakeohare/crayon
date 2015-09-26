@@ -168,6 +168,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			throw new NotImplementedException();

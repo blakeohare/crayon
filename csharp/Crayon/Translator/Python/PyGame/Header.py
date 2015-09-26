@@ -281,6 +281,54 @@ def draw_rectangle(x, y, width, height, r, g, b, a):
 		ts.set_alpha(a)
 		_global_vars['virtual_screen'].blit(ts, (x, y), _PR(0, 0, width, height))
 
+_POLYGON_SURFACE = [None]
+_POLYGON_BG = (123, 249, 19)
+_POLYGON_BG_ALT = (122, 249, 19)
+def draw_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a):
+	if a >= 255:
+		pygame.draw.polygon(_global_vars['virtual_screen'], (r, g, b), ((x1, y1), (x2, y2), (x3, y3)))
+	elif a > 0:
+		bounds = [x1, y1, x1, y1]
+		if x2 < x1: bounds[0] = x2
+		else: bounds[2] = x2
+
+		if y2 < y1:  bounds[1] = y2
+		else: bounds[3] = y2
+
+		if x3 < bounds[0]: bounds[0] = x3
+		elif x3 > bounds[2]: bounds[2] = x3
+
+		if y3 < bounds[1]: bounds[1] = y3
+		elif y3 > bounds[3]: bounds[3] = y3
+		
+		w = bounds[2] - bounds[0]
+		h = bounds[3] - bounds[1]
+
+		if w == 0 or h == 0: return
+
+		ts = _POLYGON_SURFACE[0]
+		
+		if ts == None:
+			ts = pygame.Surface((w, h)).convert()
+			_POLYGON_SURFACE[0] = ts
+
+		tw, th = ts.get_size()
+		if tw < w or th < h:
+			nw = max(tw, w)
+			nh = max(th, h)
+			ts = pygame.Surface((nw, nh)).convert()
+
+		bg = _POLYGON_BG # just some random uncommon color
+		if r == bg[0] and g == bg[1] and b == bg[2]:
+			bg = _POLYGON_BG_ALT
+		ts.fill(bg)
+		ts.set_colorkey(bg)
+		left = bounds[0]
+		top = bounds[1]
+		pygame.draw.polygon(ts, (r, g, b), ((x1 - left, y1 - top), (x2 - left, y2 - top), (x3 - left, y3 - top)))
+		ts.set_alpha(a)
+		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, w, h))
+
 def readLocalSoundResource(path):
 	path = path.replace('/', os.sep)
 	if os.path.exists(path):

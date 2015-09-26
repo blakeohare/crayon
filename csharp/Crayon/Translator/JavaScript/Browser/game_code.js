@@ -442,6 +442,25 @@ R.drawRect = function (x, y, width, height, r, g, b, a) {
 	}
 };
 
+R.drawTriangle = function(ax, ay, bx, by, cx, cy, r, g, b, a) {
+	if (a == 0) return;
+	var ctx = R._global_vars.ctx;
+	
+	var tpath = new Path2D();
+	tpath.moveTo(ax, ay);
+	tpath.lineTo(bx, by);
+	tpath.lineTo(cx, cy);
+
+	ctx.fillStyle = R._toHex(r, g, b);
+	if (a != 255) {
+		ctx.globalAlpha = a / 255;
+		ctx.fill(tpath);
+		ctx.globalAlpha = 1;
+	} else {
+		ctx.fill(tpath);
+	}
+};
+
 R.drawEllipse = function(left, top, width, height, r, g, b, alpha) {
 	var radiusX = width / 2;
 	var radiusY = height / 2;
