@@ -29,7 +29,14 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		return output;
 	}
 	if (type == Types.INSTANCE) {
-		return "INSTANCE: " + $_string_cast_strong(value);
+		@type('ObjectInstance') objInstance = $_cast('ObjectInstance', value);
+		@type('int') classId = ObjectInstance$objInstance.classId;
+		@type('int') ptr = ObjectInstance$objInstance.objectId;
+		@type('ProgramData') pd = $_get_program_data();
+		@type('ClassInfo') classInfo = $_array_get(ProgramData$pd.classTable, classId);
+		@type('int') nameId = ClassInfo$classInfo.nameId;
+		@type('string') className = $_array_get(ProgramData$pd.identifiers, nameId);
+		return "Instance<" + className + "#" + $_string_cast_strong(ptr) + ">";
 	}
 	if (type == Types.DICTIONARY) {
 		// This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
