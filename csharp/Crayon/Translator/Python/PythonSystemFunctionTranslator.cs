@@ -728,10 +728,36 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		private void TranslateNewPythonList(List<string> output, Expression size)
+		{
+			if (size is IntegerConstant)
+			{
+				int length = ((IntegerConstant)size).Value;
+				if (length == 0)
+				{
+					output.Add("[]");
+				}
+				else if (length == 1)
+				{
+					output.Add("[None]");
+				}
+				else
+				{
+					output.Add("[None]");
+					output.Add(this.Shorten(" * "));
+					output.Add("" + length);
+				}
+			}
+			else
+			{
+				output.Add("[None] * ");
+				this.Translator.TranslateExpression(output, size);
+			}
+		}
+
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
 		{
-			output.Add("[None] * ");
-			this.Translator.TranslateExpression(output, size);
+			this.TranslateNewPythonList(output, size);
 		}
 
 		protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
@@ -746,9 +772,7 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
 		{
-			output.Add("([None]" + this.Shorten(" * "));
-			this.Translator.TranslateExpression(output, length);
-			output.Add(")");
+			this.TranslateNewPythonList(output, length);
 		}
 
 		protected override void TranslateNewStack(List<string> output, StringConstant type)
