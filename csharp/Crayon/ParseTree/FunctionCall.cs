@@ -34,6 +34,11 @@ namespace Crayon.ParseTree
 					SystemFunctionCall sfc = new SystemFunctionCall(this.Root.FirstToken, this.Args);
 					return sfc.Resolve(parser);
 				}
+
+				if (parser.GetClass(varName) != null)
+				{
+					throw new ParserException(this.ParenToken, "Cannot invoke a class like a function. To construct a new class, the \"new\" keyword must be used.");
+				}
 			}
 
 			this.Root = this.Root.Resolve(parser);
