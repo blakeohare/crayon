@@ -169,6 +169,10 @@ namespace Crayon
 			foreach (string id in this.spriteGroupIds)
 			{
 				List<Image> images = this.imagesById[id];
+				if (images.Count == 0)
+				{
+					throw new InvalidOperationException("Sprite sheet '" + id + "' had no file matches. Please make sure the sheet prefixes do not contain any typos and point to directories that contain images.");
+				}
 				Dictionary<int, Bitmap> tiles = new Dictionary<int, Bitmap>();
 				this.finalTiles[id] = tiles;
 				foreach (Image image in images)
