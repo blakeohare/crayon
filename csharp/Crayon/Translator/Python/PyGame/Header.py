@@ -123,7 +123,6 @@ def _pygame_initialize_screen(width, height, pixel_dimensions):
 	_global_vars['virtual_screen'] = virtual_screen
 	_global_vars['scaled_mode'] = scaled_mode
 
-_PDE = pygame.draw.ellipse
 _PDL = pygame.draw.line
 _PDR = pygame.draw.rect
 _PR = pygame.Rect
@@ -317,6 +316,7 @@ def draw_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a):
 			nw = max(tw, w)
 			nh = max(th, h)
 			ts = pygame.Surface((nw, nh)).convert()
+			_POLYGON_SURFACE[0] = ts
 
 		bg = _POLYGON_BG # just some random uncommon color
 		if r == bg[0] and g == bg[1] and b == bg[2]:
@@ -328,6 +328,34 @@ def draw_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a):
 		pygame.draw.polygon(ts, (r, g, b), ((x1 - left, y1 - top), (x2 - left, y2 - top), (x3 - left, y3 - top)))
 		ts.set_alpha(a)
 		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, w, h))
+
+def draw_ellipse(left, top, width, height, r, g, b, a):
+	
+	if a >= 255:
+		pygame.draw.ellipse(_global_vars['virtual_screen'], (r, g, b), pygame.Rect(left, top, width, height))
+	elif a > 0:
+		if width == 0 or height == 0: return
+		ts = _POLYGON_SURFACE[0]
+		if ts == None:
+			ts = pygame.Surface((width, height)).convert()
+			_POLYGON_SURFACE[0] = ts
+
+		tw, th = ts.get_size()
+		if tw < width or th < height:
+			nw = max(tw, width)
+			nh = max(th, height)
+			ts = pygame.Surface((nw, nh)).convert()
+			_POLYGON_SURFACE[0] = ts
+
+		bg = _POLYGON_BG
+		if r == bg[0] and g == bg[1] and b == bg[2]:
+			bg = _POLYGON_BG_ALT
+		ts.fill(bg)
+		ts.set_colorkey(bg)
+		pygame.draw.ellipse(ts, (r, g, b), pygame.Rect(0, 0, width, height))
+		ts.set_alpha(a)
+		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, width, height))
+
 
 def readLocalSoundResource(path):
 	path = path.replace('/', os.sep)
