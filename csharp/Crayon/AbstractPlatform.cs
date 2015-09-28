@@ -238,7 +238,21 @@ namespace Crayon
 
 					case FileOutputType.Copy:
 						string absolutePath = System.IO.Path.Combine(inputDirectory, file.RelativeInputPath);
-						System.IO.File.Copy(absolutePath, fullOutputPath, true);
+						try
+						{
+							System.IO.File.Copy(absolutePath, fullOutputPath, true);
+						}
+						catch (System.IO.IOException ioe)
+						{
+							if (ioe.Message.Contains("it is being used by another process"))
+							{
+								throw new InvalidOperationException("The file '" + file.RelativeInputPath + "' appears to be in use. Please stop playing your game and try again.");
+							}
+							else
+							{
+								throw new InvalidOperationException("The file '" + file.RelativeInputPath + "' could not be copied to the output directory.");
+							}
+						}
 						break;
 
 					case FileOutputType.Image:
