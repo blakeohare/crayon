@@ -1,0 +1,3 @@
+﻿
+list1 = $_get_events_raw_list();
+output = new Value(Types.LIST, list1);

@@ -1,0 +1,16 @@
+﻿
+// $image_load_from_resource(key, path)
+arg2 = $_stack_pop(valueStack);
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	return killExecution(stack, "$image_load_from_resource requires two string arguments.");
+}
+string1 = $_cast('string', Value$arg2.internalValue);
+int1 = loadImageFromLocalResources($_cast('string', Value$arg1.internalValue), string1);
+if (int1 != 1) {
+	if (int1 == 0) {
+		return killExecution(stack, "Image resource does not exist: " + string1);
+	} else if (int1 == 2) {
+		return killExecution(stack, "Image resource was loaded, but it was accessed from an image sheet that was not checked for load completion. Use $gfx_image_sheet_loaded on all image sheets before accessing files from them.");
+	}
+}

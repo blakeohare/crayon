@@ -1,0 +1,16 @@
+﻿
+// $fill_screen(red, green, blue)
+arg3 = $_stack_pop(valueStack);
+arg2 = $_stack_pop(valueStack);
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg3.type != Types.INTEGER) {
+	return killExecution(stack, "$gfx_fill_screen requires 3 integer arguments.");
+}
+
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glFillScreen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+} else {
+	$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+}

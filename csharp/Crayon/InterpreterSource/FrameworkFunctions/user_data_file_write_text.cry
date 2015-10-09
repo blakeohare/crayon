@@ -1,0 +1,12 @@
+﻿
+arg2 = $_stack_pop(valueStack); // content
+arg1 = $_stack_pop(valueStack); // path
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	return killExecution(stack, "$user_data_file_write_text requires 2 string arguments.");
+}
+int1 = ioWriteFileText(
+	$_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue),
+	true, false, stringOutParam);
+if (int1 != IOErrors.NONE) {
+	return killExecution(stack, "$user_data_file_write_text: " + ioErrorToString(int1));
+}

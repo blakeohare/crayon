@@ -1,0 +1,2 @@
+﻿arg3 = $_stack_pop(valueStack);
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";

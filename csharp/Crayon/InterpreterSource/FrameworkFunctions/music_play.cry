@@ -1,0 +1,27 @@
+﻿
+arg5 = $_stack_pop(valueStack); // fade in this music duration (seconds)
+arg4 = $_stack_pop(valueStack); // fade out current music duration (seconds)
+arg3 = $_stack_pop(valueStack); // start time (seconds)
+arg2 = $_stack_pop(valueStack); // true to loop
+arg1 = $_stack_pop(valueStack); // music instance
+		
+music1 = $_cast('MusicInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.MUSIC));
+if (music1 == null) {
+	return killExecution(stack, "Invalid music instance.");
+}
+
+if (Value$arg2.type != Types.BOOLEAN) return killExecution(stack, "2nd arg must be a boolean for looping.");
+		
+if (Value$arg3.type != Types.FLOAT && Value$arg3.type != Types.INTEGER) return killExecution(stack, "3rd arg must be a number.");
+if (Value$arg4.type != Types.FLOAT && Value$arg4.type != Types.INTEGER) return killExecution(stack, "4th arg must be a number.");
+if (Value$arg5.type != Types.FLOAT && Value$arg5.type != Types.INTEGER) return killExecution(stack, "4th arg must be a number.");
+		
+bool1 = $_cast('bool', Value$arg2.internalValue);
+if (Value$arg3.type == Types.FLOAT) float1 = $_cast('double', Value$arg3.internalValue);
+else float1 = $_cast('double', $_cast('int', Value$arg3.internalValue));
+if (Value$arg4.type == Types.FLOAT) float2 = $_cast('double', Value$arg4.internalValue);
+else float2 = $_cast('double', $_cast('int', Value$arg4.internalValue));
+if (Value$arg5.type == Types.FLOAT) float3 = $_cast('double', Value$arg5.internalValue);
+else float3 = $_cast('double', $_cast('int', Value$arg5.internalValue));
+
+int1 = soundManagerPlayMusic(music1, bool1, float1, float2, float3);

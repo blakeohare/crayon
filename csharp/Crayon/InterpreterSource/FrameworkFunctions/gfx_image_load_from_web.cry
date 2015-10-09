@@ -1,0 +1,9 @@
+﻿
+// $image_load_from_web(key, url)
+arg2 = $_stack_pop(valueStack);
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	return killExecution(stack, "$image_load_from_web requires two string arguments.");
+}
+string1 = $_cast('string', Value$arg2.internalValue);
+$_download_image($_cast('string', Value$arg1.internalValue), string1);

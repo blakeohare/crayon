@@ -1,0 +1,7 @@
+﻿
+if (ProgramData$p.initializationComplete) {
+	performWorkNuggetPostFrame();
+}
+
+yieldControl(stack);
+return null;

@@ -1,0 +1,2 @@
+﻿
+output = buildString($_io_current_directory());

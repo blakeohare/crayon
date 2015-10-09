@@ -1,0 +1,2 @@
+﻿
+arg1 = $_stack_pop(valueStack); // ratio

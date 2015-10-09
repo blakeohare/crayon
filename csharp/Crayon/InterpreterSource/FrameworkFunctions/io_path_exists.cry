@@ -1,0 +1,11 @@
+﻿
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, "$io_path_exists requires a string argument.");
+}
+bool1 = ioCheckPathExistence($_cast('string', Value$arg1.internalValue), false, false, false, stringOutParam);
+if (bool1) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

@@ -1,0 +1,11 @@
+﻿
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, "$io_directory_list requires a string argument.");
+}
+list1 = $_new_list('Value');
+int1 = ioListDir($_cast('string', Value$arg1.internalValue), false, false, list1, stringOutParam);
+if (int1 != IOErrors.NONE) {
+	return killExecution(stack, "$io_directory_list: " + ioErrorToString(int1));
+}
+output = buildListByWrappingInput(list1);

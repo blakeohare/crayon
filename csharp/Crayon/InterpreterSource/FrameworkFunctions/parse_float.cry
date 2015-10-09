@@ -1,0 +1,12 @@
+﻿
+arg1 = $_stack_pop(valueStack);
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, "$parse_float requires a string argument.");
+}
+string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
+$_parse_float(floatList1, string1);
+if ($_array_get(floatList1, 0) < 0) {
+	output = VALUE_NULL;
+} else {
+	output = buildFloat($_array_get(floatList1, 1));
+}

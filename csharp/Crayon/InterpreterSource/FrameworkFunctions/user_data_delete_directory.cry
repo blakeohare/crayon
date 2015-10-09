@@ -1,0 +1,17 @@
+﻿
+arg2 = $_stack_pop(valueStack); // recursive delete (folder is non-empty)
+arg1 = $_stack_pop(valueStack); // path
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.BOOLEAN) {
+	return killExecution(stack, "$user_data_delete_directory requires a string and a bool argument.");
+}
+
+int1 = ioDeleteDirectory(
+	$_cast('string', Value$arg1.internalValue),
+	true, // strict path
+	true,
+	$_cast('bool', Value$arg2.internalValue),
+	stringOutParam);
+
+if (int1 != IOErrors.NONE) {
+	return killExecution(stack, "$user_data_delete_directory: " + ioErrorToString(int1));
+}

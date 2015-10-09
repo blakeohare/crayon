@@ -1,0 +1,4 @@
+﻿
+arg1 = $_stack_pop(valueStack);
+string1 = valueToString(arg1);
+$_print(string1);

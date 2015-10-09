@@ -1,0 +1,1 @@
+﻿arg1 = $_stack_pop(valueStack); // position (float, seconds) always refers to currently playing song
