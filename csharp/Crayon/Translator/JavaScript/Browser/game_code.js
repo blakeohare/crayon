@@ -723,10 +723,34 @@ R.makeHttpRequest = function(requestObj, method, url, body, userAgent, contentTy
 };
 
 R.musicSetVolume = function() {};
-R.musicPlayNow = function() {};
-R.musicPause = function() {};
-R.musicResume = function() {};
-R.musicLoadFromResource = function() {};
+
+R.musicPlayNow = function(audioObject, loop) {
+	audioObject.currentTime = 0;
+	if (loop) {
+		
+	}
+	audioObject.play();
+	R.currentlyPlayingMusic = audioObject;
+};
+
+R.musicPause = function() {
+	if (R.currentlyPlayingMusic != null) {
+		R.currentlyPlayingMusic.pause();
+	}
+};
+
+R.musicResume = function() {
+	if (R.currentlyPlayingMusic != null) {
+		R.currentlyPlayingMusic.play();
+	}
+};
+
+R.currentlyPlayingMusic = null;
+
+R.musicLoadFromResource = function(filepath, statusOut) {
+	statusOut[0] = 0;
+	return v_instantiateMusicInstance(filepath, new Audio(filepath), filepath, true);
+};
 
 
 R.pumpAsyncMessageQueue = function() {

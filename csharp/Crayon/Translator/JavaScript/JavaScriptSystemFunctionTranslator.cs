@@ -731,7 +731,11 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
-			output.Add("R.musicLoadFromResource()");
+			output.Add("R.musicLoadFromResource(");
+			this.Translator.TranslateExpression(output, filename);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, intOutStatus);
+			output.Add(")");
 		}
 
 		protected override void TranslateMusicPause(List<string> output)
@@ -741,7 +745,11 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			output.Add("R.musicPlayNow()");
+			output.Add("R.musicPlayNow(");
+			this.Translator.TranslateExpression(output, musicNativeObject);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, isLooping);
+			output.Add(")");
 		}
 
 		protected override void TranslateMusicResume(List<string> output)
