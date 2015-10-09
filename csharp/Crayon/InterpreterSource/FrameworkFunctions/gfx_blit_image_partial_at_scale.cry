@@ -1,16 +1,8 @@
-﻿
-// $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
-arg9 = $_stack_pop(valueStack);
-arg8 = $_stack_pop(valueStack);
-arg7 = $_stack_pop(valueStack);
-arg6 = $_stack_pop(valueStack);
-arg5 = $_stack_pop(valueStack);
-arg4 = $_stack_pop(valueStack);
-arg3 = $_stack_pop(valueStack);
-arg2 = $_stack_pop(valueStack);
-arg1 = $_stack_pop(valueStack);
+﻿// $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
+import inline "InterpreterSource/FrameworkFunctions/9_arg.cry";
+
 image1 = extractImageFromValue(arg1);
-						
+
 if (image1 == null ||
 	Value$arg2.type != Types.INTEGER ||
 	Value$arg3.type != Types.INTEGER ||

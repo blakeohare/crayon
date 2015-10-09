@@ -1,5 +1,6 @@
-﻿
-arg1 = $_stack_pop(valueStack);
+﻿// $io_path_join(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 bool1 = true;
 list1 = null;
 // generally the number of string components in a path join command are < 5

@@ -1,13 +1,7 @@
 ﻿
 // $draw_rectangle(x, y, width, height, red, green, blue, alpha)
-arg8 = $_stack_pop(valueStack);
-arg7 = $_stack_pop(valueStack);
-arg6 = $_stack_pop(valueStack);
-arg5 = $_stack_pop(valueStack);
-arg4 = $_stack_pop(valueStack);
-arg3 = $_stack_pop(valueStack);
-arg2 = $_stack_pop(valueStack);
-arg1 = $_stack_pop(valueStack);
+import inline "InterpreterSource/FrameworkFunctions/8_arg.cry";
+
 if (Value$arg1.type != Types.INTEGER ||
 	Value$arg2.type != Types.INTEGER ||
 	Value$arg3.type != Types.INTEGER ||

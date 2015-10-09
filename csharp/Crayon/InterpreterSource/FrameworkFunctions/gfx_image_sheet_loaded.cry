@@ -1,6 +1,6 @@
-﻿
-// $image_sheet_loaded(idOrIds)
-arg1 = $_stack_pop(valueStack);
+﻿// $gfx_image_sheet_loaded(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 bool1 = false; // type error encountered
 int1 = 1; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
 if (Value$arg1.type == Types.LIST) {

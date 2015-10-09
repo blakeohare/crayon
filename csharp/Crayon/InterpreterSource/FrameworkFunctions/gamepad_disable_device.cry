@@ -1,2 +1,2 @@
-﻿
-arg1 = $_stack_pop(valueStack); // device item
+﻿// $gamepad_disable_device(device_item);
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

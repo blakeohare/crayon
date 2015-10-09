@@ -1,6 +1,6 @@
-﻿
-// $image_sheet_load(idOrIds)
-arg1 = $_stack_pop(valueStack);
+﻿// $gfx_image_sheet_load(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 stringList = toStringList(arg1, stringList);
 if (stringList == null) {
 	return killExecution(stack, "$image_sheet_load argument must either be a string or a list of strings.");

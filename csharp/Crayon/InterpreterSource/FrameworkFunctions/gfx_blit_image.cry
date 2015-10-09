@@ -1,8 +1,6 @@
-﻿
-// $blit_image(image, x, y)
-arg3 = $_stack_pop(valueStack);
-arg2 = $_stack_pop(valueStack);
-arg1 = $_stack_pop(valueStack);
+﻿// $gfx_blit_image(image, x, y);
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
 image1 = extractImageFromValue(arg1);
 if (image1 == null) {
 	return killExecution(stack, "$gfx_blit_image must consume an image as its first argument.");

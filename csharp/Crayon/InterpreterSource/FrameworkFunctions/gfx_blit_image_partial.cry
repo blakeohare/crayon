@@ -1,12 +1,6 @@
-﻿
-// $gfx_blit_image_partial(image, targetX, targetY, sourceX, sourceY, width, height)
-arg7 = $_stack_pop(valueStack);
-arg6 = $_stack_pop(valueStack);
-arg5 = $_stack_pop(valueStack);
-arg4 = $_stack_pop(valueStack);
-arg3 = $_stack_pop(valueStack);
-arg2 = $_stack_pop(valueStack);
-arg1 = $_stack_pop(valueStack);
+﻿// $gfx_blit_image_partial(image, targetX, targetY, sourceX, sourceY, width, height)
+import inline "InterpreterSource/FrameworkFunctions/7_arg.cry";
+
 image1 = extractImageFromValue(arg1);
 
 if (image1 == null ||

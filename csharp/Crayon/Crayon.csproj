@@ -350,6 +350,11 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_is_path_directory.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_make_directory.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_path_exists.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\5_arg.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\6_arg.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\7_arg.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\8_arg.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

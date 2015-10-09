@@ -1,12 +1,13 @@
-﻿
-// $image_sheet_error_code(idOrIds)
+﻿// $gfx_image_sheet_error_code(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 // Error codes: same as $image_error_code
-arg1 = $_stack_pop(valueStack);
+
 stringList = toStringList(arg1, stringList);
 if (stringList == null) {
 	return killExecution(stack, "$image_sheet_error_code argument must either be a string or a list of strings.");
 }
-						
+
 int1 = 0;
 // take the first non-zero entry you find.
 for (i = 0; i < $_array_length(stringList); i += 1) {

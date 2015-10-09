@@ -1,5 +1,6 @@
-﻿
-arg1 = $_stack_pop(valueStack);
+﻿// $launch_browser(url)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type != Types.STRING) {
 	return killExecution(stack, "$launch_browser requires a string argument.");
 }

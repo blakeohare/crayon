@@ -1,5 +1,6 @@
-﻿
-arg1 = $_stack_pop(valueStack);
+﻿// $io_is_path_directory(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type != Types.STRING) {
 	return killExecution(stack, "$io_is_path_directory requires a string argument.");
 }
