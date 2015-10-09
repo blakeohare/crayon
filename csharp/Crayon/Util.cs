@@ -134,6 +134,10 @@ namespace Crayon
 		public static byte[] ReadBytesInternally(string path)
 		{
 			System.IO.Stream stream = typeof(Util).Assembly.GetManifestResourceStream("Crayon." + path.Replace('/', '.'));
+			if (stream == null)
+			{
+				throw new System.Exception(path + " not marked as an embedded resource.");
+			}
 			List<byte> output = new List<byte>();
 			int bytesRead = 1;
 			while (bytesRead > 0)

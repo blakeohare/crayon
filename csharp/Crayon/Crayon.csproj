@@ -308,6 +308,8 @@
     <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlRenderer.txt" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
+    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
