@@ -726,6 +726,9 @@ R.musicSetVolume = function() {};
 
 R.musicShouldLoopByFilename = {};
 R.musicPlayNow = function(audioPath, audioObject, loop) {
+	if (R.currentlyPlayingMusic != null) {
+		R.currentlyPlayingMusic.pause();
+	}
 	audioObject.currentTime = 0;
 	R.musicShouldLoopByFilename[audioPath] = loop;
 	R.currentlyPlayingMusic = audioObject;
