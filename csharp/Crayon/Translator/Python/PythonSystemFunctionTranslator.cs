@@ -739,6 +739,11 @@ namespace Crayon.Translator.Python
 			output.Add(", True)");
 		}
 
+		protected override void TranslateMusicPause(List<string> output)
+		{
+			output.Add("_music_pause()");
+		}
+
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
 			output.Add("_music_play_now(");
@@ -746,6 +751,11 @@ namespace Crayon.Translator.Python
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isLooping);
 			output.Add(")");
+		}
+
+		protected override void TranslateMusicResume(List<string> output)
+		{
+			output.Add("_music_resume()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)

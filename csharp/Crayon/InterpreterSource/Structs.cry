@@ -200,7 +200,7 @@ struct MusicInstance {
 // Dequeued by the work unit pump
 // If the sound or music for an event isn't loaded, it'll 
 struct SoundEvent {
-	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PLAY_SOUND
+	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PAUSE_MUSIC, PLAY_SOUND
 	@type('SoundInstance') sound, 
 	@type('MusicInstance') music,
 	@type('bool') fadeOutEstablished, // set to true once the endFade timestamp is established.

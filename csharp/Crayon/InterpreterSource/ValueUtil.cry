@@ -67,6 +67,23 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		output += ' }';
 		return output;
 	}
+
+	if (type == Types.NATIVE_OBJECT) {
+		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', value);
+		switch (NativeObjectWrapper$nativeObject.subType) {
+			case NativeObjectSubType.EVENT: return "NativeObject:Event";
+			case NativeObjectSubType.GAMEPAD_BUTTON: return "NativeObject:GamepadButton";
+			case NativeObjectSubType.GAMEPAD_DEVICE: return "NativeObject:GamepadDevice";
+			case NativeObjectSubType.HTTP_REQUEST: return "NativeObject:HttpRequest";
+			case NativeObjectSubType.IMAGE: return "NativeObject:Image";
+			case NativeObjectSubType.IMAGE_LOADER: return "NativeObject:ImageLoader";
+			case NativeObjectSubType.SOUND: return "NativeObject:Sound";
+			case NativeObjectSubType.MUSIC: return "NativeObject:Music";
+			case NativeObjectSubType.TEXT_LOADER: return "NativeObject:TextLoader";
+			default: return "NativeObject:Unknown";
+		}
+	}
+
 	return "TODO: toString for " + getTypeFromId(type);
 }
 

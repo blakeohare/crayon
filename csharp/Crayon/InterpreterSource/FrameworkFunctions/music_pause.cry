@@ -1,3 +1,4 @@
-﻿
-// no args, always refers to currently playing song
-int1 = 0;
+﻿// $music_pause()
+// Pauses current music. No-op if no music is playing.
+
+soundManagerPauseMusic(true);

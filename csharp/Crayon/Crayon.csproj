@@ -356,6 +356,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\8_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_resume.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

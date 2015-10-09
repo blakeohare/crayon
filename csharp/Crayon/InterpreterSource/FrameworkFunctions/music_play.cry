@@ -1,10 +1,6 @@
-﻿
-arg5 = $_stack_pop(valueStack); // fade in this music duration (seconds)
-arg4 = $_stack_pop(valueStack); // fade out current music duration (seconds)
-arg3 = $_stack_pop(valueStack); // start time (seconds)
-arg2 = $_stack_pop(valueStack); // true to loop
-arg1 = $_stack_pop(valueStack); // music instance
-		
+﻿// $music_play(song, is_looping, start_time, fade_out_duration, fade_in_duration)
+import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+
 music1 = $_cast('MusicInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.MUSIC));
 if (music1 == null) {
 	return killExecution(stack, "Invalid music instance.");

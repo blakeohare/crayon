@@ -208,6 +208,16 @@ namespace %%%PROJECT_ID%%%
 			return 0;
 		}
 
+		public static void MusicPause()
+		{
+			SdlDotNet.Audio.MusicPlayer.Pause();
+		}
+
+		public static void MusicResume()
+		{
+			SdlDotNet.Audio.MusicPlayer.Resume();
+		}
+
 		public static bool MusicSetVolume(double ratio)
 		{
 			SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);

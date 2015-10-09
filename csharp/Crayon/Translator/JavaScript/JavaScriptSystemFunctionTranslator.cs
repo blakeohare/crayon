@@ -734,9 +734,19 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.musicLoadFromResource()");
 		}
 
+		protected override void TranslateMusicPause(List<string> output)
+		{
+			output.Add("R.musicPause()");
+		}
+
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
 			output.Add("R.musicPlayNow()");
+		}
+
+		protected override void TranslateMusicResume(List<string> output)
+		{
+			output.Add("R.musicResume()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)

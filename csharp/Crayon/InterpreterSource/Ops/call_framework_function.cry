@@ -65,6 +65,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_LOAD_FROM_WEB%%%: $_comment('$music_load_from_web'); import inline "InterpreterSource/FrameworkFunctions/music_load_from_web.cry"; break;
 	case %%%FF_MUSIC_PAUSE%%%: $_comment('$music_pause'); import inline "InterpreterSource/FrameworkFunctions/music_pause.cry"; break;
 	case %%%FF_MUSIC_PLAY%%%: $_comment('$music_play'); import inline "InterpreterSource/FrameworkFunctions/music_play.cry"; break;
+	case %%%FF_MUSIC_RESUME%%%: $_comment('$music_resume'); import inline "InterpreterSource/FrameworkFunctions/music_resume.cry"; break;
 	case %%%FF_MUSIC_SET_MASTER_VOLUME%%%: $_comment('$music_set_master_volume'); import inline "InterpreterSource/FrameworkFunctions/music_set_master_volume.cry"; break;
 	case %%%FF_MUSIC_SET_POSITION%%%: $_comment('$music_set_position'); import inline "InterpreterSource/FrameworkFunctions/music_set_position.cry"; break;
 	case %%%FF_MUSIC_SET_VOLUME%%%: $_comment('$music_set_volume'); import inline "InterpreterSource/FrameworkFunctions/music_set_volume.cry"; break;

@@ -724,6 +724,8 @@ R.makeHttpRequest = function(requestObj, method, url, body, userAgent, contentTy
 
 R.musicSetVolume = function() {};
 R.musicPlayNow = function() {};
+R.musicPause = function() {};
+R.musicResume = function() {};
 R.musicLoadFromResource = function() {};
 
 

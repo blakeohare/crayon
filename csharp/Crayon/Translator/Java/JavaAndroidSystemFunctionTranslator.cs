@@ -202,7 +202,17 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateMusicPause(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateMusicResume(List<string> output)
 		{
 			throw new NotImplementedException();
 		}

@@ -495,6 +495,12 @@ def _music_play_now(music, loop):
 	pygame.mixer.music.load(music)
 	pygame.mixer.music.play(-1 if loop else 1)
 
+def _music_pause():
+	pygame.mixer.music.pause()
+
+def _music_resume():
+	pygame.mixer.music.unpause()
+
 def _music_set_volume(ratio):
 	pygame.mixer.music.set_volume(ratio)
 

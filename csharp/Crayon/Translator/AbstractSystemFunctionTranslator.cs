@@ -145,7 +145,9 @@ namespace Crayon.Translator
 				case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
 				case "_multiply_list": VerifyCount(functionCall, 2); TranslateMultiplyList(output, args[0], args[1]); break;
 				case "_music_load_from_resource": VerifyCount(functionCall, 2); TranslateMusicLoadFromResource(output, args[0], args[1]); break;
+				case "_music_pause": VerifyCount(functionCall, 0); TranslateMusicPause(output); break;
 				case "_music_play_now": VerifyCount(functionCall, 3); TranslateMusicPlayNow(output, args[0], args[1], args[2]); break;
+				case "_music_resume": VerifyCount(functionCall, 0); TranslateMusicResume(output); break;
 				case "_music_set_volume": VerifyCount(functionCall, 2); TranslateMusicSetVolume(output, args[0], args[1]); break;
 				case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, (StringConstant)args[0], args[1]); break;
 				case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
@@ -290,7 +292,9 @@ namespace Crayon.Translator
 		protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
 		protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
 		protected abstract void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus);
+		protected abstract void TranslateMusicPause(List<string> output);
 		protected abstract void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping);
+		protected abstract void TranslateMusicResume(List<string> output);
 		protected abstract void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio);
 		protected abstract void TranslateNewArray(List<string> output, StringConstant type, Expression size);
 		protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);

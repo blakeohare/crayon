@@ -119,6 +119,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(", true)");
 		}
 
+		protected override void TranslateMusicPause(List<string> output)
+		{
+			output.Add("TranslationHelper.MusicPause()");
+		}
+
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
 			output.Add("TranslationHelper.MusicPlayNow(");
@@ -126,6 +131,11 @@ namespace Crayon.Translator.CSharp
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isLooping);
 			output.Add(")");
+		}
+
+		protected override void TranslateMusicResume(List<string> output)
+		{
+			output.Add("TranslationHelper.MusicResume()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)

@@ -207,6 +207,9 @@ namespace Crayon
 				case FrameworkFunction.MUSIC_PLAY:
 					VerifyLength(throwToken, frameworkFunction, 5, args);
 					break;
+				case FrameworkFunction.MUSIC_RESUME:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
 				case FrameworkFunction.MUSIC_SET_MASTER_VOLUME:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");

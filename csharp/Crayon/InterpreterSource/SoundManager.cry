@@ -61,6 +61,10 @@ function @type('bool') soundManagerUpdate() {
 				$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, SoundEvent$ev.musicLoops);
 				SoundStatus$soundStatus.currentMusic = music;
 				SoundStatus$soundStatus.fadeVolumeRatio = 1.0;
+			} else if (SoundEvent$ev.type == SoundEventType.PAUSE_MUSIC) {
+				$_music_pause();
+			} else if (SoundEvent$ev.type == SoundEventType.RESUME_MUSIC) {
+				$_music_resume();
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_SOUND) {
 				
 			}
@@ -102,6 +106,28 @@ function @type('MusicInstance') instantiateMusicInstance(
 	@type('string') realpath,
 	@type('bool') isLoaded) {
 	return new MusicInstance(userpath, nativeObject, realpath, 1.0, isLoaded);
+}
+
+function @type('bool') soundManagerPauseMusic(@type('bool') isPause) { // true for pause, false for resume
+	@type('SoundStatus') soundStatus = getSoundStatus();
+	@type('List<SoundEvent>') eventQueue = SoundStatus$soundStatus.soundEventQueue;
+	
+	@type('int') ev = SoundEventType.RESUME_MUSIC;
+	if (isPause) {
+		ev = SoundEventType.PAUSE_MUSIC;
+	}
+
+	$_list_push(eventQueue, new SoundEvent(
+		ev,
+		null,
+		null,
+		false,
+		false,
+		0,
+		0,
+		0,
+		0));
+	return true;
 }
 
 function @type('int') soundManagerPlayMusic(
