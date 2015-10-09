@@ -746,6 +746,8 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
 			output.Add("R.musicPlayNow(");
+			this.Translator.TranslateExpression(output, musicRealPath);
+			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, musicNativeObject);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, isLooping);

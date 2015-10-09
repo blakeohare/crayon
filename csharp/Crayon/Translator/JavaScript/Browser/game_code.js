@@ -724,13 +724,12 @@ R.makeHttpRequest = function(requestObj, method, url, body, userAgent, contentTy
 
 R.musicSetVolume = function() {};
 
-R.musicPlayNow = function(audioObject, loop) {
+R.musicShouldLoopByFilename = {};
+R.musicPlayNow = function(audioPath, audioObject, loop) {
 	audioObject.currentTime = 0;
-	if (loop) {
-		
-	}
-	audioObject.play();
+	R.musicShouldLoopByFilename[audioPath] = loop;
 	R.currentlyPlayingMusic = audioObject;
+	audioObject.play();
 };
 
 R.musicPause = function() {
@@ -749,7 +748,15 @@ R.currentlyPlayingMusic = null;
 
 R.musicLoadFromResource = function(filepath, statusOut) {
 	statusOut[0] = 0;
-	return v_instantiateMusicInstance(filepath, new Audio(filepath), filepath, true);
+	var audioObject = new Audio(filepath);
+	R.musicShouldLoopByFilename[filepath] = false;
+	audioObject.addEventListener('ended', function() {
+		if (R.musicShouldLoopByFilename[filepath]) {
+			this.currentTime = 0;
+			this.play();
+		}
+	}, false);
+	return v_instantiateMusicInstance(filepath, audioObject, filepath, true);
 };
 
 
