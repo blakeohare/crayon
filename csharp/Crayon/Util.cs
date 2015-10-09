@@ -7,11 +7,15 @@ namespace Crayon
 	{
 		public static void EnsureFolderExists(string path)
 		{
-			string folder = System.IO.Path.GetDirectoryName(path);
-			if (!System.IO.Directory.Exists(folder))
+			path = path.Trim();
+			if (path.Length > 0)
 			{
-				Util.EnsureFolderExists(folder);
-				System.IO.Directory.CreateDirectory(folder);
+				string folder = System.IO.Path.GetDirectoryName(path);
+				if (folder.Length > 0 && !System.IO.Directory.Exists(folder))
+				{
+					Util.EnsureFolderExists(folder);
+					System.IO.Directory.CreateDirectory(folder);
+				}
 			}
 		}
 
