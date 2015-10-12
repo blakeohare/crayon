@@ -9,6 +9,10 @@ final class TranslationHelper {
 
     private TranslationHelper() {}
 
+    public static int Noop() {
+        return 0;
+    }
+
     private static ProgramData programData = null;
 
     public static Random random = new Random();

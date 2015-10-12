@@ -10,7 +10,8 @@ public final class RenderEngine {
     private static final int DRAW_ELLIPSE = 3;
     private static final int DRAW_LINE = 4;
     private static final int DRAW_RECTANGLE = 5;
-    private static final int FILL_SCREEN = 6;
+    private static final int DRAW_TRIANGLE = 6;
+    private static final int FILL_SCREEN = 7;
 
     private static int[] renderArgs = new int[1000];
     private static int renderArgsVirtualLength = 0;
@@ -121,10 +122,33 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = alpha;
     }
 
+    public static void drawTriangle(int ax, int ay, int bx, int by, int cx, int cy, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 11 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_TRIANGLE;
+        renderArgs[renderArgsVirtualLength++] = ax;
+        renderArgs[renderArgsVirtualLength++] = ay;
+        renderArgs[renderArgsVirtualLength++] = bx;
+        renderArgs[renderArgsVirtualLength++] = by;
+        renderArgs[renderArgsVirtualLength++] = cx;
+        renderArgs[renderArgsVirtualLength++] = cy;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+
+
     public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
         int index = 0;
         int imagesIndex = 0;
         int x, y, sx, sy, width, height, red, green, blue, alpha;
+        int ax, ay, bx, by, cx, cy;
+        int[] xs = new int[3];
+        int[] ys = new int[3];
         Image image;
         while (index < renderArgsVirtualLength) {
             switch (renderArgs[index++]) {
@@ -197,6 +221,22 @@ public final class RenderEngine {
                     // TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
                     g.setColor(new Color(red, green, blue, alpha));
                     g.fillRect(x, y, width, height);
+                    break;
+
+                case DRAW_TRIANGLE:
+                    xs[0] = renderArgs[index++];
+                    ys[0] = renderArgs[index++];
+                    xs[1] = renderArgs[index++];
+                    ys[1] = renderArgs[index++];
+                    xs[2] = renderArgs[index++];
+                    ys[2] = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillPolygon(xs, ys, 3);
                     break;
             }
         }

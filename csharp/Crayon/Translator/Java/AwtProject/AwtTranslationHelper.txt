@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.RenderingHints;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -159,11 +160,7 @@ class AwtTranslationHelper {
     }
 
     public static SoundInstance readLocalSoundResource(String path) {
-        byte[] snd = readLocalResource(path);
-        if (snd == null) {
-            return null;
-        }
-        return new SoundInstance(snd, false, -1, 0.0);
+        return null;
     }
 
     public static BufferedImage readLocalTileResource(String generatedTileId) {
@@ -288,5 +285,18 @@ class AwtTranslationHelper {
                 // Not today.
             }
         }
+    }
+
+    public static MusicInstance loadMusicFromResource() {
+        return null;
+    }
+
+    public static BufferedImage scaleImage(BufferedImage image, int width, int height) {
+        BufferedImage newImage = new BufferedImage(width, height, image.getType());
+        Graphics2D g = newImage.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g.drawImage(image, 0, 0, width, height, 0, 0, image.getWidth(), image.getHeight(), null);
+        g.dispose();
+        return newImage;
     }
 }

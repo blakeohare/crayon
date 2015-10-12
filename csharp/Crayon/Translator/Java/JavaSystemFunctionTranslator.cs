@@ -317,7 +317,27 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
 		{
-			throw new NotImplementedException();
+			output.Add("RenderEngine.drawTriangle(");
+			this.Translator.TranslateExpression(output, ax);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, ay);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, bx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, by);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, cx);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, cy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, red);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, green);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, blue);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
 		}
 
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)

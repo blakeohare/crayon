@@ -125,10 +125,9 @@ function @type('Image') scaleImage(
 			Image$image.textureBottom
 			);
 	} else {
-		newRawResource = $_image_scale_native_resource(Image$image.rawResource, newWidth, newHeight);
 		return new Image(
 			null,
-			newRawResource,
+			$_image_scale_native_resource(Image$image.rawResource, newWidth, newHeight),
 			0,
 			0,
 			newWidth,

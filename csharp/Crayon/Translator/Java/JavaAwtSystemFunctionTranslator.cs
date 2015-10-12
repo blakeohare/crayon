@@ -111,7 +111,13 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
 		{
-			throw new NotImplementedException();
+			output.Add("AwtTranslationHelper.scaleImage((java.awt.image.BufferedImage) ");
+			this.Translator.TranslateExpression(output, bitmap);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, width);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, height);
+			output.Add(")");
 		}
 
 		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
@@ -198,27 +204,27 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
-			throw new NotImplementedException();
+			output.Add("AwtTranslationHelper.loadMusicFromResource()");
 		}
 
 		protected override void TranslateMusicPause(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.Noop()");
 		}
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.Noop()");
 		}
 
 		protected override void TranslateMusicResume(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.Noop()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
 		{
-			throw new NotImplementedException();
+			output.Add("TranslationHelper.Noop()");
 		}
 
 		protected override void TranslatePrint(List<string> output, Expression message)
