@@ -281,10 +281,6 @@ namespace Crayon
 					if (tileId > maxTileId) maxTileId = tileId;
 					if (image.SpillOverID > maxSpillId) maxSpillId = image.SpillOverID;
 
-					tileIds.Add(tileId);
-					drawX.Add(image.TileX);
-					drawY.Add(image.TileY);
-
 					int tileColStart = image.SheetX / 256;
 					int tileRowStart = image.SheetY / 256;
 					int tileColEnd = (image.SheetX + image.Width - 1) / 256;
