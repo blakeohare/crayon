@@ -25,10 +25,10 @@ namespace Crayon
 			"",
 			"  -platform          Platform to compile to.",
 			"     Platform choices:",
-			"        android          Java Project for Android",
+			//"        android          Java Project for Android",
 			"        csopengl         C# Project for Desktop (uses OpenTK)",
-			"        cswindowsphone   C# Project for Windows Phone",
-			"        cswinforms       C# Project for Desktop (uses WinForms)",
+			//"        cswindowsphone   C# Project for Windows Phone",
+			//"        cswinforms       C# Project for Desktop (uses WinForms)",
 			"        java             Java Project for Desktop (uses AWT)",
 			"        js               JavaScript project",
 			"        python           Python project (uses PyGame)",
@@ -49,7 +49,7 @@ namespace Crayon
 			Program.Compile(args);
 #else
 
-			if (args.Length== 0)
+			if (args.Length == 0)
 			{
 				System.Console.WriteLine(USAGE);
 			}
