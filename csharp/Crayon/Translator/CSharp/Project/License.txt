@@ -1,3 +1,8 @@
 ﻿The following licenses apply to the bundled libraries:
 OpenTK.dll: http://www.opentk.com/project/license
 SdlDotNet.dll/Tao.Sdl.dll: https://www.gnu.org/licenses/lgpl-2.0.html
+
+SDL.dll and SDL_mixer.dll are distributed under the terms of the GNU LGPL license:
+http://www.gnu.org/copyleft/lesser.html
+SDL source is available from the libraries page at the SDL website:
+http://www.libsdl.org/
