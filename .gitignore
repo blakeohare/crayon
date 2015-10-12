@@ -1,8 +1,9 @@
 *.suo
 bin
 obj
-/csharp/Demos/Asteroids/output
-/csharp/Demos/Everything/output
-/csharp/Demos/Dodge/output/android
-/csharp/Demos/Dodge/output/python
-/csharp/Demos/Dodge/output/windows
+/csharp/Demos/*/output/android
+/csharp/Demos/*/output/javaawt
+/csharp/Demos/*/output/js_local
+/csharp/Demos/*/output/js_remote
+/csharp/Demos/*/output/python
+/csharp/Demos/*/output/windows
