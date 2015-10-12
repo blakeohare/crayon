@@ -1,4 +1,4 @@
-﻿# Crayon version 0.1.5 (Alpha)
+﻿# Crayon version 0.1.6 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -21,25 +21,36 @@ The official Crayon IRC channel is #crayon on irc.esper.net. Feel free to ask an
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
-# New in 0.1.5
+# New in 0.1.6
 
 ## Major features:
-* Added ability to make HTTP requests. See $http_request in documentation for details.
-* Implement some File IO. Including ability to write to the default user data folder:
-  * Windows: %APPDATA%\Project
-  * Linux/Mac: ~/.Project
-  * JavaScript: virtualized disk backed by localStorage
-* Added list and string slicing, using the Python syntax e.g. list[start : end], list[start : end : step].
-* $ord and $chr to convert to and from ASCII values and characters.
-* $parse_float has been added.
-* Added Ant build.xml file to Java output.
-* Added support for multiplying strings by integers.
+* Limited music support in Python, JavaScript, and C# projects.
+* Image scaling support.
+* Added support for drawing arbitrary triangles.
+* Fixed inconsistencies with keycodes across all platforms. 
+* Added a null coallescing operator (C# style).
+* Added a $launch_browser function.
+* Added a primitive method to concatenate one list to the end of another.
+* Negative indexes are valid in lists and strings (Python style).
+* Added a .clone() method for dictionaries.
+* Added default toString behavior for user object instances.
+* Empty sprite sheets are no longer valid.
 
-## Improvements and Fixes:
-* Improved ellipse rendering
-* Fix bug so that ++ and -- can be used on indexed expressions.
-* Fix bug where continue statements in for loops would skip the increment/step code.
-* Change JavaScript output to use a black background instead of white.
-* Fix bug where bit operators were not working (& | ^ << and >>)
-* Added some basic unit testing.
-* Fixed various compiler bugs and quirks (see commit history for details)
+## Improvements and Bug Fixes:
+* event.button field was causing crashes on Python and JavaScript platforms.
+* Fixed bug where list slicing would return full list if start index was after end of the list.
+* OpenTK projects were not sending close button and Alt-F4 quit events.
+* Fixed bug where $gfx_fill_screen wasn't working on OpenGL based platforms.
+* Fixed bug where the window would not close on Java projects that experience user-fault crashes.
+* Fixed bug where $typeof was returning 'unknown_type' for booleans.
+* Fixed sprite sheet bug that would create invalid sheets if an image touched exactly the edge of a y coordinate that was a multiple of 256.
+* Fixed crash in JavaScript that occurred while writing to the mock disk.
+* Fixed compiler crash if the source or output folder was missing.
+* Fixed compiler crash if compiling while a file is in use by the OS.
+* Fixed compiler crash when project ID was missing.
+* Throw a compile error if subclass was referenced before it was declared (as opposed to VM runtime crash)
+* Fixed base.method() support. Invoke the implementation in the subclass as one would expect.
+* Fixed bug where alpha value was being ignored when drawing ellipses in Python.
+* Added SDL.dll and SDL_mixer.dll to C# project output as this is required to play music.
+* Fix bug where images in sprite sheets were getting drawn twice into the top left tile that they occupy, which is noticeable for images that have opacity.
+* Fixed missing $parse_float implementation in JavaScript and Python.
