@@ -59,7 +59,9 @@ class MainMenu : Scene {
 		this.counter++;
 		new_xy = null;
 		for (event : $game_pump_events()) {
-			if (event.is_mouse) {
+			if (event.is_quit) {
+				this.end_game = true;
+			} else if (event.is_mouse) {
 				if (event.type == 'mousemove') {
 					new_xy = [event.x, event.y];
 				} else if (event.type == 'mouseleftdown') {

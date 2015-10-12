@@ -3,12 +3,6 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
-	<spritesheets>
-		<sheet id="everything">
-			<prefix>*</prefix>
-		</sheet>
-	</spritesheets>
-	
 	<!-- Targets -->
 	<target name="js_local">
 		<platform>js</platform>

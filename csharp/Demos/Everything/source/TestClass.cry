@@ -35,6 +35,12 @@ class TestClass : Scene {
 	
 	function update() {
 		
+		for (ev : $game_pump_events()) {
+			if (ev.is_quit) {
+				this.end_game = true;
+			}
+		}
+		
 		if (this.counter < this.tests.length) {
 			test = this.tests[this.counter];
 			
