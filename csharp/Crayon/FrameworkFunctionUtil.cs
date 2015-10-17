@@ -32,6 +32,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
 					break;
+				case FrameworkFunction.ARCTAN:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
 				case FrameworkFunction.ARCTAN2:
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER NUMBER");
