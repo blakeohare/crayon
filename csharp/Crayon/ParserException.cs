@@ -10,6 +10,7 @@ namespace Crayon
 
 		private static string InterpretToken(Token token)
 		{
+			if (token == null) return "";
 			return token.FileName + ", Line: " + (token.Line + 1) + ", Col: " + (token.Col + 1) + ", ";
 		}
 	}
