@@ -6,10 +6,10 @@ function @type('string') wrongArgCountError(@type('string') name, @type('int') e
 	} else if (expected == 1) {
 		output = name + " accepts exactly 1 argument.";
 	} else {
-		output = name + " requires " + expected + " arguments.";
+		output = name + " requires " + $_string_cast_weak(expected) + " arguments.";
 	}
 
-	output += " Found: " + actual;
+	output += " Found: " + $_string_cast_weak(actual);
 	return output;
 }
 
