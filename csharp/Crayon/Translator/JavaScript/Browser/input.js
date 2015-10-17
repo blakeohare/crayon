@@ -73,6 +73,13 @@ R._pressed_keys = {};
 R._keydownup = function (ev, down) {
 	var keycode = R._getKeyCode(ev);
 	if (keycode != null) {
+		if (down) {
+			if (R._pressed_keys[ev]) {
+				// do not allow key repeats.
+				return;
+			}
+		}
+		R._pressed_keys[ev] = down;
 		R._global_vars.event_queue.push(v_buildGameEvent('key' + (down ? 'down' : 'up'), 'key', 0, 0, 0, down, keycode));
 	}
 };
