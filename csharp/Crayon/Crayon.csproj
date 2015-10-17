@@ -414,6 +414,11 @@
     <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\drawing.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\file_io.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />

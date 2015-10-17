@@ -51,12 +51,20 @@ namespace Crayon.Translator.JavaScript
 
 			List<string> codeJs = new List<string>();
 
-			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/game_code.js")));
-			codeJs.Add(this.Translator.NL);
-			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/fake_disk.js")));
-			codeJs.Add(this.Translator.NL);
-			codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/interpreter_helpers.js")));
-			codeJs.Add(this.Translator.NL);
+			foreach (string jsFile in new string[] {
+				"game_code.js",
+				"input.js",
+				"drawing.js",
+				"sound.js",
+				"file_io.js",
+				"fake_disk.js",
+				"http.js",
+				"interpreter_helpers.js",
+			})
+			{
+				codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/" + jsFile)));
+				codeJs.Add(this.Translator.NL);
+			}
 
 			foreach (string component in finalCode.Keys)
 			{
