@@ -8,10 +8,8 @@ namespace Crayon.Translator.CSharp
 	class CSharpWinFormsPlatform : CSharpPlatform
 	{
 		public CSharpWinFormsPlatform()
-			: base(new CSharpWinFormsSystemFunctionTranslator(), null)
+			: base(new CSharpWinFormsSystemFunctionTranslator(), null, null)
 		{ }
-
-		public override bool SupportsGamePad { get { return false; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{

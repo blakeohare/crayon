@@ -1,0 +1,20 @@
+﻿namespace %%%PROJECT_ID%%%
+{
+	internal static class GamepadTranslationHelper
+	{
+		public static int GetDeviceCount()
+		{
+			return GameWindow.Instance.Joysticks.Count;
+		}
+
+		public static string GetDeviceName(object nativeDevice)
+		{
+			return ((OpenTK.Input.JoystickDevice)nativeDevice).Description;
+		}
+
+		public static object GetDevice(int index)
+		{
+			return GameWindow.Instance.Joysticks[index];
+		}
+	}
+}

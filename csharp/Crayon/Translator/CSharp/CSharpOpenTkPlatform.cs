@@ -5,10 +5,8 @@ namespace Crayon.Translator.CSharp
 	class CSharpOpenTkPlatform : CSharpPlatform
 	{
 		public CSharpOpenTkPlatform()
-			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
+			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator(), new CSharpOpenTkGamepadTranslator())
 		{ }
-
-		public override bool SupportsGamePad { get { return true; } }
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{

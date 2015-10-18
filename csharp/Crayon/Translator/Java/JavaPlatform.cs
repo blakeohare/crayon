@@ -15,10 +15,9 @@ namespace Crayon.Translator.Java
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool ScreenBlocksExecution { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
-		public override bool SupportsGamePad { get { return false; } }
 
 		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator, AbstractOpenGlTranslator openGlTranslator)
-			: base(false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator)
+			: base(false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator, null)
 		{ }
 
 		public string TranslateType(string original, bool wrapped)

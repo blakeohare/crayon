@@ -128,6 +128,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenStream.cs" />
     <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="Translator\AbstractGamepadTranslator.cs" />
     <Compile Include="Translator\AbstractOpenGlTranslator.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
     <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
     <Compile Include="Translator\COpenGL\CTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpOpenTkGamepadTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkOpenGlTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
@@ -156,6 +158,7 @@
     <Compile Include="Translator\Java\JavaPlatform.cs" />
     <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaTranslator.cs" />
+    <Compile Include="Translator\Python\PyGameGamepadTranslator.cs" />
     <Compile Include="Translator\Python\PythonPlatform.cs" />
     <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Python\PythonTranslator.cs" />
@@ -357,6 +360,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_resume.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\initialize_gamepad.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -419,6 +423,7 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
+    <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />

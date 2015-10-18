@@ -124,28 +124,7 @@ if (type == Types.INSTANCE) {
 			break;
 
 		case NativeObjectSubType.GAMEPAD_DEVICE:
-			gamepad1 = $_cast('GamepadDevice', NativeObjectWrapper$nativeObject.value);
-			if ($_string_equals('name', string1)) {
-				value = buildCommonString(GamepadDevice$gamepad1.name);
-			} else if ($_string_equals('enabled', string1)) {
-				if (GamepadDevice$gamepad1.enabled) {
-					value = VALUE_TRUE;
-				} else {
-					value = VALUE_FALSE;
-				}
-			} else if ($_string_equals('buttons', string1)) {
-				if (!GamepadDevice$gamepad1.enabled) {
-					return killExecution(stack, "Cannot access button states until gamepad is initialized.");
-				}
-				value = buildListByWrappingInput(gamepadBuildButtonActivityList(gamepad1));
-			} else if ($_string_equals('axes', string1)) {
-				if (!GamepadDevice$gamepad1.enabled) {
-					return killExecution(stack, "Cannot access axes states until gamepad is initialized.");
-				}
-				value = buildListByWrappingInput(gamepadBuildAxisActivityList(gamepad1));
-			} else {
-				return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
-			}
+			return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
 			break;
 
 		case NativeObjectSubType.HTTP_REQUEST:

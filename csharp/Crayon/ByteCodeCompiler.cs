@@ -831,6 +831,11 @@ namespace Crayon
 			FrameworkFunction ff = parser.GetFrameworkFunction(sysFunc.FirstToken, frameworkFunctionName);
 			FrameworkFunctionUtil.VerifyArgsAsMuchAsPossible(sysFunc.FirstToken, ff, sysFunc.Args);
 			buffer.Add(sysFunc.FirstToken, OpCode.CALL_FRAMEWORK_FUNCTION, (int)ff, outputUsed ? 1 : 0, argCount);
+			if (ff == FrameworkFunction.GAME_INITIALIZE_SCREEN ||
+				ff == FrameworkFunction.GAME_INITIALIZE_SCREEN_SCALED)
+			{
+				buffer.Add(sysFunc.FirstToken, OpCode.INITIALIZE_GAMEPAD);
+			}
 		}
 
 		private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

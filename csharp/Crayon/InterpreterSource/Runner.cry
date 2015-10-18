@@ -183,15 +183,7 @@ function main() {
 			true // force set music volume (go ahead and do a force set first in case default is something weird like 0.7)
 		), 
 		false,
-		new GamepadStatus(
-			-1, // device array length
-			null, // native device array
-			null, // device array
-			null, // wrapped device array
-			null, // registered buttons: keys
-			null, // registered buttons: button descriptors
-			null, // registered buttons: custom event ID
-			null) // registered button key-to-index mapping
+		new GamepadStatus(false, $_new_list('GamepadDeviceInfo'), $_new_list('GamepadPushyInfo'))
 		));
 
 	runTick();

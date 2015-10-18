@@ -275,49 +275,93 @@ struct GameEvent {
 	// TODO: expand for joystick events
 }
 
-struct GamepadDevice {
+struct GamepadStatus {
+	// Whether the gamepad list has been populated...which happens on $game_initialize_screen
+	@type('bool') isInitialized,
+
+	// List of all the gamepads that are available on startup, regardless of whether they are enabled.
+	// This list does not change.
+	@type('List<GamepadDeviceInfo>') deviceList,
+
+	// An empty list of pushy info. These get populated as the devices are enabled.
+	@type('List<GamepadPushyInfo>') pushyInfoList,
+}
+
+struct GamepadDeviceInfo {
 	@type('object') nativeDevice,
 	@type('string') name,
 	@type('int') deviceIndex,
 	@type('bool') enabled,
-	@type('int') buttonCount,
 	@type('int') axisCount,
 	@type('int') hatCount,
-	@type('int') buttonsLength,
-	@type('Array<GamepadButton>') buttons,
+	@type('int') buttonCount,
+	@type('int') pushyStartIndex,
+	@type('int') pushyCount,
+	@type('bool') supportsVibrate, // always false for now
+	@type('int') registered, // 0 - no, 1 - yes w/ integer player ID, 2 - yes w/ string player ID
+	@type('int') intPlayerId,
+	@type('string') stringPlayerId,
 }
 
-// Every single button and axis/hat direction is treated as an individual button.
-struct GamepadButton {
-	@type('object') nativeDevice,
-	@type('GamepadDevice') device,
-	@type('int') type, // { 0 = Unknown, 1 = Button, 2 = Hat, 3 = Axis } This list can expand as more interesting hardware platforms are introduced and more info is needed to query the hardware.
-	@type('int') reportedId, 
-	@type('int') hardwareId,
+// A "pushy" is a term I made up because there are hats, axes, and buttons, but if I use the term "button" it's ambiguous.
+// A pushy refers to all 3 of these.
+// A button is one digital pushy.
+// An axis is defined as 2 pushies, one in each direction.
+// A hat is actually defined as 4 pushies, two for each direction, two for each orientation.
+// This term is not surfaced in the API.
+struct GamepadPushyInfo {
+	@type('int') deviceIndex,
+	@type('int') pushyIndex,
+	@type('int') hardwareIndexWithinType,
+
+	// registrtion info
+	@type('int') isRegistered, // 0 - no, 1 - yes w/ integer pushyId, 2 - yes w/ string pushyId
+	@type('int') intPushyId,
+	@type('string') stringPushyId,
+	@type('bool') isRegistrationDigital, // report as float or bool?
+
+	/* Aggregate registration info
+		this indicates that the pushy is registered as part of a 
+		aggregated button. For example, a user can register 4 buttons as "direction" but have aggregate definitions
+		for each of the buttons and it will get returned as one item in the event queue as either a float from -1 to 1 or
+		a list vector of two such float values.
+
+		this value indicates the following:
+		0 - not an aggregate registration
+		
+		one dimensional aggregate button:
+		1 - positive axis
+		2 - negative axis
+
+		two dimensional aggregate button:
+		3 - positive X axis
+		4 - negative X axis
+		5 - positive Y axis
+		6 - negative Y axis
+
+		(pushy ID, aggregateRegistrationId) must be unique.
+		Registering a new value knocks a previous value to 0
+		All pushies that use the same pushy ID must have the same type of
+		aggregate ID e.g. (1 and 2) OR (3, 4, 5, and 6)
+	*/
+	@type('int') aggregateRegistrationId,
+
+	// what kind of pushy is this?
+	@type('bool') isButton,
+	@type('bool') isAxis,
+	@type('bool') isHat,
 	@type('bool') isPositive, // -1 or 1, hats and axes only
 	@type('bool') isX, // hats only
-}
 
-struct GamepadStatus {
-	@type('int') presentDevicesLength, // length is -1 if gamepads haven't been initialized
-	@type('Array<object>') nativeDevices, // null when uninitialized, list of raw framework objects
-	@type('Array<GamepadDevice>') presentDevices, // null when uninitialized, list of devices present (presumably at startup).
-	@type('Array<Value>') wrappedDevices, // Mirrors previous array. Used to make == always return correct value between devices.
+	@type('double') floatCurrentState,
+	@type('bool') boolCurrentState,
 
-	// The following 3 arrays are basically a single array where each item is composed of a lookup key, a button, and an event value.
-	// A lookup key is used to quickly figure out which index a button is located at, primarily for guarding against double-registrations.
-	// It is comprised of the following strings delimited by a '^' character:
-	// - device index
-	// - type { button | hatX+ | hatX- | hatY+ | hatY- | axis+ | axis- }
-	// - button Index
-	//
-	// e.g. "0^hatY-^2"
-	@type('Array<string>') registeredButtonKeys,
-	@type('Array<GamepadButton>') registeredButtons,
-	@type('Array<Value>') registeredButtonNames, // registered button names are always ints or strings, therefore permanent references are not hard on the GC.
+	@type('double') floatLastReportedState,
+	@type('bool') boolLastReportedState,
+	@type('int') lastReportedFrameCounter, // frame counter at the last time an event was fired
 
-	// This is the index in the above arrays that a particular registered key can be found.
-	@type('Dictionary<string, int>') registeredButtonKeyToIndex,
+	// Do not push events if the current real value is too close to the last reported value, according to this threshold
+	@type('double') reportThreshold,
 }
 
 struct HttpRequest {

@@ -12,6 +12,7 @@ namespace Crayon
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
 		public AbstractOpenGlTranslator OpenGlTranslator { get; private set; } // null if IsOpenGlBased is false
+		public AbstractGamepadTranslator GamepadTranslator { get; private set; } // null if Gamepad not supported.
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public abstract bool IsAsync { get; }
@@ -21,13 +22,13 @@ namespace Crayon
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool ScreenBlocksExecution { get; }
 		public abstract string GeneratedFilesFolder { get; }
-		public abstract bool SupportsGamePad { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.
 		public abstract bool UseFixedListArgConstruction { get; }
 
 		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
+		public bool IsGamepadSupported { get { return this.GamepadTranslator != null; } }
 
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
@@ -37,16 +38,24 @@ namespace Crayon
 			bool isMin,
 			AbstractTranslator translator,
 			AbstractSystemFunctionTranslator systemFunctionTranslator,
-			AbstractOpenGlTranslator nullableOpenGlTranslator)
+			AbstractOpenGlTranslator nullableOpenGlTranslator,
+			AbstractGamepadTranslator nullableGamepadTranslator)
 		{
 			this.Context = new CompileContext();
 			this.IsMin = isMin;
 			this.Translator = translator;
 			this.SystemFunctionTranslator = systemFunctionTranslator;
 			this.OpenGlTranslator = nullableOpenGlTranslator;
+			this.GamepadTranslator = nullableGamepadTranslator;
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
+
+			if (this.GamepadTranslator != null)
+			{
+				this.GamepadTranslator.Platform = this;
+				this.GamepadTranslator.Translator= translator;
+			}
 
 			if (this.OpenGlTranslator != null)
 			{

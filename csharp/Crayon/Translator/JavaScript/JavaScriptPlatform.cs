@@ -10,7 +10,7 @@ namespace Crayon.Translator.JavaScript
 		private string jsFolderPrefix;
 
 		public JavaScriptPlatform(bool isMin, string jsFolderPrefix)
-			: base(isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null)
+			: base(isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null, null)
 		{
 			this.jsFolderPrefix = jsFolderPrefix;
 		}
@@ -22,7 +22,6 @@ namespace Crayon.Translator.JavaScript
 		public override bool IntIsFloor { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
-		public override bool SupportsGamePad { get { return false; } }
 
 		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
 

@@ -57,6 +57,18 @@ namespace Crayon.Translator
 				}
 			}
 
+			if (name.StartsWith("_gamepad_") && this.Platform.GamepadTranslator != null)
+			{
+				AbstractGamepadTranslator gpt = this.Platform.GamepadTranslator;
+				switch (name)
+				{
+					case "_gamepad_get_device": VerifyCount(functionCall, 1); gpt.TranslateGetDevice(output, args[0]); return;
+					case "_gamepad_get_device_count": VerifyCount(functionCall, 0); gpt.TranslateGetDeviceCount(output); return;
+					case "_gamepad_get_device_name": VerifyCount(functionCall, 2); gpt.TranslateGetDeviceName(output, args[0], args[1]); return;
+					default: break; // default to the error in the switch statement below.
+				}
+			}
+
 			switch (name)
 			{
 				case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
@@ -95,15 +107,6 @@ namespace Crayon.Translator
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_fill_screen": VerifyCount(functionCall, 3); TranslateFillScreen(output, args[0], args[1], args[2]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
-				case "_gamepad_enable_device": VerifyCount(functionCall, 1); TranslateGamepadEnableDevice(output, args[0]); break;
-				case "_gamepad_get_axis_count": VerifyCount(functionCall, 1); TranslateGamepadGetAxisCount(output, args[0]); break;
-				case "_gamepad_get_axis_value": VerifyCount(functionCall, 2); TranslateGamepadGetAxisValue(output, args[0], args[1]); break;
-				case "_gamepad_get_button_count": VerifyCount(functionCall, 1); TranslateGamepadGetButtonCount(output, args[0]); break;
-				case "_gamepad_get_device_count": VerifyCount(functionCall, 0); TranslateGamepadGetDeviceCount(output); break;
-				case "_gamepad_get_device_name": VerifyCount(functionCall, 1); TranslateGamepadGetDeviceName(output, args[0]); break;
-				case "_gamepad_get_hat_count": VerifyCount(functionCall, 1); TranslateGamepadGetHatCount(output, args[0]); break;
-				case "_gamepad_get_raw_device": VerifyCount(functionCall, 1); TranslateGamepadGetRawDevice(output, args[0]); break;
-				case "_gamepad_is_button_pushed": VerifyCount(functionCall, 2); TranslateGamepadIsButtonPressed(output, args[0], args[1]); break;
 				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
