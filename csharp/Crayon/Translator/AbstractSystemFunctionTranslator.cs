@@ -62,9 +62,17 @@ namespace Crayon.Translator
 				AbstractGamepadTranslator gpt = this.Platform.GamepadTranslator;
 				switch (name)
 				{
+					case "_gamepad_get_2d_digital_axis_count": VerifyCount(functionCall, 2); gpt.TranslateGet2dDigitalAxisCount(output, args[0], args[1]); return;
+					case "_gamepad_get_2d_digital_axis_value": VerifyCount(functionCall, 2); gpt.TranslateGet2dDigitalAxisValue(output, args[0], args[1]); return;
+					case "_gamepad_get_analog_axis_count": VerifyCount(functionCall, 2); gpt.TranslateGetAnalogAxisCount(output, args[0], args[1]); return;
+					case "_gamepad_get_analog_axis_value": VerifyCount(functionCall, 2); gpt.TranslateGetAnalogAxisValue(output, args[0], args[1]); return;
+					case "_gamepad_get_button_count": VerifyCount(functionCall, 2); gpt.TranslateGetButtonCount(output, args[0], args[1]); return;
+					case "_gamepad_get_button_value": VerifyCount(functionCall, 2); gpt.TranslateGetButtonValue(output, args[0], args[1]); return;
 					case "_gamepad_get_device": VerifyCount(functionCall, 1); gpt.TranslateGetDevice(output, args[0]); return;
 					case "_gamepad_get_device_count": VerifyCount(functionCall, 0); gpt.TranslateGetDeviceCount(output); return;
 					case "_gamepad_get_device_name": VerifyCount(functionCall, 2); gpt.TranslateGetDeviceName(output, args[0], args[1]); return;
+					case "_gamepad_initialize": VerifyCount(functionCall, 2); gpt.TranslateInitialize(output, args[0], args[1]); return;
+					case "_gamepad_poll": VerifyCount(functionCall, 0); gpt.TranslatePoll(output); return;
 					default: break; // default to the error in the switch statement below.
 				}
 			}

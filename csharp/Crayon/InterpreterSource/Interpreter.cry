@@ -19,6 +19,7 @@ function @omitReturn @type('string') interpret(
 		LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
 	}
 	@type('ProgramData') p = $_get_program_data();
+	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
 	if (ProgramData$p.initializationComplete) {
 		performWorkNuggetPreFrame();
@@ -84,9 +85,9 @@ function @omitReturn @type('string') interpret(
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
-	@type('SoundInstance') sound1 = null;
 	@type('MusicInstance') music1 = null;
 	@type('HttpRequest') httpRequest1 = null;
+	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 
 	// binary op variables...
@@ -376,6 +377,7 @@ function yieldControl(@type('StackFrame') stack) {
 
 function performWorkNuggetPreFrame() {
 	imageSheetPerformWorkNuggetPreFrame();
+	gamepadPollBeginFrame();
 }
 
 function performWorkNuggetPostFrame() {

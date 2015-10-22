@@ -3,13 +3,12 @@
 	public enum SubTypes
 	{
 		EVENT = 1,
-		GAMEPAD_BUTTON = 2,
-		GAMEPAD_DEVICE = 3,
-		HTTP_REQUEST = 4,
-		IMAGE = 5,
-		IMAGE_LOADER = 6,
-		SOUND = 7,
-		MUSIC = 8,
-		TEXT_LOADER = 9,
+		GAMEPAD_DEVICE = 2,
+		HTTP_REQUEST = 3,
+		IMAGE = 4,
+		IMAGE_LOADER = 5,
+		SOUND = 6,
+		MUSIC = 7,
+		TEXT_LOADER = 8,
 	}
 }

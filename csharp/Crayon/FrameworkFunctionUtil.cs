@@ -81,6 +81,50 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
+				case FrameworkFunction.GAMEPAD_BIND_ANALOG:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT");
+					break;
+				case FrameworkFunction.GAMEPAD_BIND_ANALOG_1D:
+					VerifyLength(throwToken, frameworkFunction, 4, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN");
+					break;
+				case FrameworkFunction.GAMEPAD_BIND_ANALOG_2D:
+					VerifyLength(throwToken, frameworkFunction, 5, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
+					break;
+				case FrameworkFunction.GAMEPAD_BIND_DIGITAL:
+					VerifyLength(throwToken, frameworkFunction, 3, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT");
+					break;
+				case FrameworkFunction.GAMEPAD_BIND_DIGITAL_1D:
+					VerifyLength(throwToken, frameworkFunction, 4, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN");
+					break;
+				case FrameworkFunction.GAMEPAD_BIND_DIGITAL_2D:
+					VerifyLength(throwToken, frameworkFunction, 5, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
+					break;
+				case FrameworkFunction.GAMEPAD_CLEAR_IDS:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.GAMEPAD_COUNT:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.GAMEPAD_ENABLE_RECENT:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					break;
+				case FrameworkFunction.GAMEPAD_GET_DEVICE:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
+					break;
+				case FrameworkFunction.GAMEPAD_SAVE_CONFIG:
+					VerifyLength(throwToken, frameworkFunction, 0, args);
+					break;
+				case FrameworkFunction.GAMEPAD_SET_ID:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
+					break;
 				case FrameworkFunction.GFX_BLIT_IMAGE:
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");

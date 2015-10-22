@@ -1,3 +1,0 @@
-﻿
-// $gamepad_bind_digital_axis(custom_id, button_item);
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";

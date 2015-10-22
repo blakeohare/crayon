@@ -248,7 +248,8 @@ class GameWindow {
                 0,
                 0,
                 down,
-                key));
+                key,
+                null));
         }
     }
 
@@ -267,7 +268,7 @@ class GameWindow {
             eventName = "mousemove";
         }
 
-        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, "mouse", gameX, gameY, 0, false, isLeft ? "left" : "right"));
+        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, "mouse", gameX, gameY, 0, false, isLeft ? "left" : "right", null));
     }
 
     private static class GameWindowMouseListener implements MouseListener, MouseMotionListener {

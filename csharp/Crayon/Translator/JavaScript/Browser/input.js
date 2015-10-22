@@ -29,9 +29,9 @@ R._mousething = function (ev, click, down) {
 		if (ev.which) rightclick = (ev.which == 3);
 		else if (ev.button) rightclick = (ev.button == 2);
 		var button = rightclick ? 'right' : 'left';
-		R._global_vars.event_queue.push(v_buildGameEvent('mouse' + button + (down ? 'down' : 'up'), 'mouse', x, y, 0, down, button));
+		R._global_vars.event_queue.push(v_buildGameEvent('mouse' + button + (down ? 'down' : 'up'), 'mouse', x, y, 0, down, button, null));
 	} else {
-		R._global_vars.event_queue.push(v_buildGameEvent('mousemove', 'mouse', x, y, 0, false, null));
+		R._global_vars.event_queue.push(v_buildGameEvent('mousemove', 'mouse', x, y, 0, false, null, null));
 	}
 };
 
@@ -78,7 +78,7 @@ R._keydownup = function (ev, down) {
 			return;
 		}
 		R._pressed_keys[keycode] = down;
-		R._global_vars.event_queue.push(v_buildGameEvent('key' + (down ? 'down' : 'up'), 'key', 0, 0, 0, down, keycode));
+		R._global_vars.event_queue.push(v_buildGameEvent('key' + (down ? 'down' : 'up'), 'key', 0, 0, 0, down, keycode, null));
 	}
 };
 

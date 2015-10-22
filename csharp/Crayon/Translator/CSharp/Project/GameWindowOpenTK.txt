@@ -215,26 +215,26 @@ namespace %%%PROJECT_ID%%%
 						type = events.Dequeue();
 						if (type == MOUSE_MOVE)
 						{
-							output.Add(CrayonWrapper.v_buildGameEvent("mousemove", "mouse", x, y, 0, false, null));
+							output.Add(CrayonWrapper.v_buildGameEvent("mousemove", "mouse", x, y, 0, false, null, null));
 						}
 						else
 						{
 							isLeft = type == MOUSE_LEFT;
 							down = events.Dequeue() == 1;
 							string button = type == MOUSE_LEFT ? "left" : "right";
-							output.Add(CrayonWrapper.v_buildGameEvent("mouse" + button + (down ? "down" : "up"), "mouse", x, y, 0, down, button));
+							output.Add(CrayonWrapper.v_buildGameEvent("mouse" + button + (down ? "down" : "up"), "mouse", x, y, 0, down, button, null));
 						}
 						break;
 					case KEY_EVENT:
 						down = events.Dequeue() == 1;
 						keyCode = keyEvents.Dequeue();
 						// TODO: intercept alt-f4
-						output.Add(CrayonWrapper.v_buildGameEvent("key" + (down ? "down" : "up"), "key", 0, 0, 0, down, keyCode));
+						output.Add(CrayonWrapper.v_buildGameEvent("key" + (down ? "down" : "up"), "key", 0, 0, 0, down, keyCode, null));
 						break;
 					case EXIT:
 						type = events.Dequeue();
 						string quitCode = type == EXIT_ALT_F4 ? "quit-altf4" : "quit-closebutton";
-						output.Add(CrayonWrapper.v_buildGameEvent(quitCode, "quit", 0, 0, 0, false, null));
+						output.Add(CrayonWrapper.v_buildGameEvent(quitCode, "quit", 0, 0, 0, false, null, null));
 						break;
 					default:
 						break;

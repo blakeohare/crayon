@@ -64,6 +64,7 @@ struct ProgramData {
 	@type('SoundStatus') soundStatus,
 	@type('bool') initializationComplete,
 	@type('GamepadStatus') gamepadStatus,
+	@type('int') gameCounter,
 }
 
 struct StackFrame {
@@ -266,13 +267,15 @@ struct NativeObjectWrapper {
  */
 struct GameEvent {
 	@type('string') specificType, // { mouseleftdown | mouserightdown | mouseleftup | mouserightup | mousemove | mousescroll | keydown | keyup | quit-x | quit-altf4 }
-	@type('string') vagueType, // { mouse | key | joystick | quit } <-- technically these are redundant information with above, but allow for quick checks to see if specific fields are valid on the event object.
-	@type('int') x,
-	@type('int') y,
+	@type('string') vagueType, // { mouse | key | hardware | quit } <-- technically these are redundant information with above, but allow for quick checks to see if specific fields are valid on the event object.
+	@type('int') x, // re-used by hardware events for device index
+	@type('int') y, // re-used by hardware events for 1 or 0 for is_significant
 	@type('double') amount,
 	@type('bool') down,
 	@type('string') arg, // used for keyboard key, mouse button, or quit type
-	// TODO: expand for joystick events
+	@type('Value') argValue, // used for player ID for gamepad hardware events
+	@type('Value') argValue2, // used for axis or button value in gamepad events
+	@type('Value') argValue3, // used for button alias in gamepad events
 }
 
 struct GamepadStatus {
@@ -281,87 +284,124 @@ struct GamepadStatus {
 
 	// List of all the gamepads that are available on startup, regardless of whether they are enabled.
 	// This list does not change.
-	@type('List<GamepadDeviceInfo>') deviceList,
+	@type('List<GamepadDeviceInfo>') devices,
+	@type('List<Value>') deviceValues, // parallel list to above, wrapped as NativeObject Values.
+	@type('List<GamepadHardwarePushy>') hardwarePushies,
+	@type('List<GamepadAtomicPushy>') atomicPushies,
 
-	// An empty list of pushy info. These get populated as the devices are enabled.
-	@type('List<GamepadPushyInfo>') pushyInfoList,
+	// Objects to be added to the event queue.
+	@type('List<Value>') hardwareEvents,
+	@type('List<Value>') virtualEvents,
 }
 
 struct GamepadDeviceInfo {
+	// Basic info
+	@type('int') deviceIndex,
 	@type('object') nativeDevice,
 	@type('string') name,
-	@type('int') deviceIndex,
-	@type('bool') enabled,
+	@type('string') configFingerprint,
+
+	// player ID and enabled state
+	@type('Value') playerId, // null indicates the gamepad is not enabled.
+
+	// some hardware information to identify this
 	@type('int') axisCount,
 	@type('int') hatCount,
 	@type('int') buttonCount,
-	@type('int') pushyStartIndex,
-	@type('int') pushyCount,
-	@type('bool') supportsVibrate, // always false for now
-	@type('int') registered, // 0 - no, 1 - yes w/ integer player ID, 2 - yes w/ string player ID
-	@type('int') intPlayerId,
-	@type('string') stringPlayerId,
+
+	// where are the pushies defined in the lists?
+	@type('int') hardwarePushyStartIndex,
+	@type('int') hardwarePushyCount,
+	@type('int') atomicPushyStartIndex,
+	@type('int') atomicPushyCount,
+
+	// a lookup of pushies by their user defined ID
+	@type('Dictionary<string, GamepadVirtualPushy>') stringVirtualPushies,
+	@type('Dictionary<int, GamepadVirtualPushy>') intVirtualPushies,
+	// the order in which virtual pushies were declared
+	@type('List<string>') stringVirtualPushyIds,
+	@type('List<int>') intVirtualPushyIds,
 }
 
-// A "pushy" is a term I made up because there are hats, axes, and buttons, but if I use the term "button" it's ambiguous.
-// A pushy refers to all 3 of these.
-// A button is one digital pushy.
-// An axis is defined as 2 pushies, one in each direction.
-// A hat is actually defined as 4 pushies, two for each direction, two for each orientation.
-// This term is not surfaced in the API.
-struct GamepadPushyInfo {
+/*
+	The term "pushy" is used instead of "button" because it refers to buttons, axes, and hats, as 
+	opposed to just boolean buttons.
+	There are 3 kinds of pushies described here:
+	- Hardware pushy: an actual button, axis, or hat as described by the hardware driver. i.e. axis #3.
+	- Atomic pushy: one specific subcomponent of a hardware pushy that can be identified as one action
+	  examples:
+		button #4
+		hat #2 in the negative X direction
+		axis #1 in the positive direction
+	- Virtual pushy: a 0, 1, or 2 dimensional description of a collection of pushies that has been given
+	  an alias by the user code.
+	  examples:
+		"jump" -> button #2
+		"move" --> X+: Axis #0 in positive direction, X-: Axis #0 in negative direction, Y+: Axis #1 in negative direction, Y-: Axis #1 in positive direction
+		"throttle" --> Positive: Hat #0 in positive X direction, Negative: Hat #0 in negative X direction
+	
+	All pushy types are saved in the GamepadState struct. At the end of each frame, the gamepad update phase occurs.
+	
+	Pass 1:
+	During the update phase, a pass is made over all enabled joysticks which goes through and updates the individual
+	hardware pushies. If the value is different, then the hardware pushy is updated to reflect this. Also the clock 
+	counter is applied to the hardware pushy to indicate that it has been updated this frame.
+
+	Pass 2:
+	After the hardware pushies have been updated, a pass is made over all the atomic pushies. The atomic pushy is checked
+	against its hardware pushy counterpart. If the value has changed, a hardware event is added to the next event queue to fire. 
+	
+	Pass 3:
+	A pass is made across all virtual pushies. If any of the constituent atomic pushies that make up the virtual pushy has
+	been updated this frame, then a user gamepad event is also added to the event queue.
+*/
+struct GamepadHardwarePushy {
 	@type('int') deviceIndex,
-	@type('int') pushyIndex,
-	@type('int') hardwareIndexWithinType,
+	@type('int') type, // { 0 - button, 1 - axis, 2 - hat }
+	@type('int') hardwareIndex, // the 4 in "axis #4"
+	@type('bool') buttonValue,
+	@type('double') axisValue,
+	@type('int') hatXValue,
+	@type('int') hatYValue,
+	@type('int') buttonGameCounter,
+	@type('int') axisPositiveGameCounter,
+	@type('int') axisNegativeGameCounter,
+	@type('int') hatXPositiveGameCounter,
+	@type('int') hatYPositiveGameCounter,
+	@type('int') hatXNegativeGameCounter,
+	@type('int') hatYNegativeGameCounter,
+}
 
-	// registrtion info
-	@type('int') isRegistered, // 0 - no, 1 - yes w/ integer pushyId, 2 - yes w/ string pushyId
-	@type('int') intPushyId,
-	@type('string') stringPushyId,
-	@type('bool') isRegistrationDigital, // report as float or bool?
+struct GamepadAtomicPushy {
+	@type('int') hardwarePushyIndex,
+	@type('int') subtype, // {0 - button, 1 - axis+, 2 - axis-, 3 - hat X+, 4 - hat X-, 5 - hat Y+, 6 - hat Y-
+	@type('bool') value,
+	@type('double') valueF,
+	@type('int') gameCounter,
+	@type('string') descriptorId, // a string that uniquely identifies the hardware profile of this.
+	@type('bool') isConfigured, // true if this is used as a virtual configuration
+}
 
-	/* Aggregate registration info
-		this indicates that the pushy is registered as part of a 
-		aggregated button. For example, a user can register 4 buttons as "direction" but have aggregate definitions
-		for each of the buttons and it will get returned as one item in the event queue as either a float from -1 to 1 or
-		a list vector of two such float values.
+/*
+	Virtual Buttons registered as digital will return:
+	dim 0 - boolean
+	dim 1 - -1, 0, or 1
+	dim 2 - a list of size 2 of -1, 0, or 1
 
-		this value indicates the following:
-		0 - not an aggregate registration
-		
-		one dimensional aggregate button:
-		1 - positive axis
-		2 - negative axis
-
-		two dimensional aggregate button:
-		3 - positive X axis
-		4 - negative X axis
-		5 - positive Y axis
-		6 - negative Y axis
-
-		(pushy ID, aggregateRegistrationId) must be unique.
-		Registering a new value knocks a previous value to 0
-		All pushies that use the same pushy ID must have the same type of
-		aggregate ID e.g. (1 and 2) OR (3, 4, 5, and 6)
-	*/
-	@type('int') aggregateRegistrationId,
-
-	// what kind of pushy is this?
-	@type('bool') isButton,
-	@type('bool') isAxis,
-	@type('bool') isHat,
-	@type('bool') isPositive, // -1 or 1, hats and axes only
-	@type('bool') isX, // hats only
-
-	@type('double') floatCurrentState,
-	@type('bool') boolCurrentState,
-
-	@type('double') floatLastReportedState,
-	@type('bool') boolLastReportedState,
-	@type('int') lastReportedFrameCounter, // frame counter at the last time an event was fired
-
-	// Do not push events if the current real value is too close to the last reported value, according to this threshold
-	@type('double') reportThreshold,
+	Virtual buttons registered as analog will always return
+	dim 0 - float from 0 to 1
+	dim 1 - float from -1 to 1
+	dim 2 - a list of 2 floats from -1 to 1
+*/
+struct GamepadVirtualPushy {
+	@type('Value') alias, // user-defined int or string denoting this event type
+	@type('int') dimensionality, // 0, 1, or 2
+	@type('bool') isDigital, // true if this should fire digital events
+	@type('int') atomicIndex1, // button, or 1D positive, or 2D X+
+	@type('int') atomicIndex2, // 1D negative or 2D X-
+	@type('int') atomicIndex3, // 2D Y+
+	@type('int') atomicIndex4, // 2D Y-
+	@type('int') gameCounter, // most recent game counter of constituents
 }
 
 struct HttpRequest {

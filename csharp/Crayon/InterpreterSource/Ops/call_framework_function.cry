@@ -20,15 +20,18 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_GAME_INITIALIZE_SCREEN_SCALED%%%: $_comment('$game_initialize_screen_scaled'); import inline "InterpreterSource/FrameworkFunctions/game_initialize_screen_scaled.cry"; break;
 	case %%%FF_GAME_PUMP_EVENTS%%%: $_comment('$game_pump_events'); import inline "InterpreterSource/FrameworkFunctions/game_pump_events.cry"; break;
 	case %%%FF_GAME_SET_TITLE%%%: $_comment('$game_set_title'); import inline "InterpreterSource/FrameworkFunctions/game_set_title.cry"; break;
-	/*
-	case %%%FF_GAMEPAD_BIND_ANALOG_AXIS%%%: $_comment('$gamepad_bind_analog_axis'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog_axis.cry"; break;
-	case %%%FF_GAMEPAD_BIND_BUTTON%%%: $_comment('$gamepad_bind_button'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_button.cry"; break;
-	case %%%FF_GAMEPAD_BIND_DIGITAL_AXIS%%%: $_comment('$gamepad_bind_digital_axis'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_digital_axis.cry"; break;
-	case %%%FF_GAMEPAD_DISABLE_DEVICE%%%: $_comment('$gamepad_disable_device'); import inline "InterpreterSource/FrameworkFunctions/gamepad_disable_device.cry"; break;
-	case %%%FF_GAMEPAD_ENABLE_DEVICE%%%: $_comment('$gamepad_enable_device'); import inline "InterpreterSource/FrameworkFunctions/gamepad_enable_device.cry"; break;
-	case %%%FF_GAMEPAD_GET_DEVICES%%%: $_comment('$gamepad_get_devices'); import inline "InterpreterSource/FrameworkFunctions/gamepad_get_devices.cry"; break;
-	case %%%FF_GAMEPAD_GET_PUSHED_BUTTONS%%%: $_comment('$gamepad_get_pushed_buttons'); import inline "InterpreterSource/FrameworkFunctions/gamepad_get_pushed_buttons.cry"; break;
-	//*/
+	case %%%FF_GAMEPAD_BIND_ANALOG%%%: $_comment('$gamepad_bind_analog'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog.cry"; break;
+	case %%%FF_GAMEPAD_BIND_ANALOG_1D%%%: $_comment('$gamepad_bind_analog_1d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog_1d.cry"; break;
+	case %%%FF_GAMEPAD_BIND_ANALOG_2D%%%: $_comment('$gamepad_bind_analog_2d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog_2d.cry"; break;
+	case %%%FF_GAMEPAD_BIND_DIGITAL%%%: $_comment('$gamepad_bind_digital'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_digital.cry"; break;
+	case %%%FF_GAMEPAD_BIND_DIGITAL_1D%%%: $_comment('$gamepad_bind_digital_1d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_digital_1d.cry"; break;
+	case %%%FF_GAMEPAD_BIND_DIGITAL_2D%%%: $_comment('$gamepad_bind_digital_2d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_digital_2d.cry"; break;
+	case %%%FF_GAMEPAD_CLEAR_IDS%%%: $_comment('$gamepad_clear_ids'); import inline "InterpreterSource/FrameworkFunctions/gamepad_clear_ids.cry"; break;
+	case %%%FF_GAMEPAD_COUNT%%%: $_comment('$gamepad_count'); import inline "InterpreterSource/FrameworkFunctions/gamepad_count.cry"; break;
+	case %%%FF_GAMEPAD_ENABLE_RECENT%%%: $_comment('$gamepad_enable_recent'); import inline "InterpreterSource/FrameworkFunctions/gamepad_enable_recent.cry"; break;
+	case %%%FF_GAMEPAD_GET_DEVICE%%%: $_comment('$gamepad_get_device'); import inline "InterpreterSource/FrameworkFunctions/gamepad_get_device.cry"; break;
+	case %%%FF_GAMEPAD_SAVE_CONFIG%%%: $_comment('$gamepad_save_config'); import inline "InterpreterSource/FrameworkFunctions/gamepad_save_config.cry"; break;
+	case %%%FF_GAMEPAD_SET_ID%%%: $_comment('$gamepad_set_id'); import inline "InterpreterSource/FrameworkFunctions/gamepad_set_id.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE%%%: $_comment('$gfx_blit_image'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%: $_comment('$gfx_blit_image_partial'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL_AT_SCALE%%%: $_comment('$gfx_blit_image_partial_at_scale'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial_at_scale.cry"; break;

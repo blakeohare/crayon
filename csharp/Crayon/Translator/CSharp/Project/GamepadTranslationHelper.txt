@@ -1,20 +1,85 @@
-﻿namespace %%%PROJECT_ID%%%
+﻿using OpenTK.Input;
+using System;
+using System.Linq;
+
+namespace %%%PROJECT_ID%%%
 {
 	internal static class GamepadTranslationHelper
 	{
+		private static bool isInitialized = false;
+		private static JoystickDevice[] joysticks = null;
+
+		private static void InitializeJoysticks()
+		{
+			if (!isInitialized)
+			{
+				joysticks = GameWindow.Instance.Joysticks.ToArray();
+			}
+		}
+
+		public static void Initialize(object nativeDevice)
+		{
+			// no initialization necessary
+		}
+		
+		public static void Poll()
+		{
+#pragma warning disable 612,618
+			GameWindow.Instance.InputDriver.Poll();
+#pragma warning restore 612,618
+		}
+
 		public static int GetDeviceCount()
 		{
-			return GameWindow.Instance.Joysticks.Count;
+			InitializeJoysticks();
+
+			return joysticks.Length;
 		}
 
 		public static string GetDeviceName(object nativeDevice)
 		{
-			return ((OpenTK.Input.JoystickDevice)nativeDevice).Description;
+			string rawDescription = ((JoystickDevice)nativeDevice).Description;
+			// TODO: strip out ordinate prefix.
+			return rawDescription;
 		}
 
 		public static object GetDevice(int index)
 		{
-			return GameWindow.Instance.Joysticks[index];
+			InitializeJoysticks();
+
+			return joysticks[index];
+		}
+
+		public static int GetButtonCount(object nativeDevice)
+		{
+			return ((JoystickDevice)nativeDevice).Button.Count;
+		}
+
+		public static bool GetButtonValue(object nativeDevice, int buttonIndex)
+		{
+			return ((JoystickDevice)nativeDevice).Button[buttonIndex];
+		}
+
+		public static int GetAnalogAxisCount(object nativeDevice)
+		{
+			return ((JoystickDevice)nativeDevice).Axis.Count;
+		}
+
+		public static double GetAnalogAxis(object nativeDevice, int axisIndex)
+		{
+			return ((JoystickDevice)nativeDevice).Axis[axisIndex];
+		}
+
+		public static int GetDigitalAxisCount(object nativeDevice)
+		{
+			return 0;
+		}
+
+		private static int[] DIGITAL_VECTOR_REUSABLE = new int[2];
+
+		public static int[] GetDigitalAxis(object nativeDevice, int axisIndex)
+		{
+			return DIGITAL_VECTOR_REUSABLE;
 		}
 	}
 }

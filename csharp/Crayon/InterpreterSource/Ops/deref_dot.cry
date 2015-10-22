@@ -98,6 +98,18 @@ if (type == Types.INSTANCE) {
 				} else {
 					value = VALUE_FALSE;
 				}
+			} else if ($_string_equals("is_gamepad", string1)) {
+				if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else if ($_string_equals("is_hardware", string1)) {
+				if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
 			} else if ($_string_equals("key", string1)) {
 				if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
 					value = buildCommonString(GameEvent$gameEvent.arg);
@@ -118,13 +130,64 @@ if (type == Types.INSTANCE) {
 				} else {
 					return killExecution(stack, "Only mouse events have a y field.");
 				}
+			} else if ($_string_equals("player", string1)) {
+				if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+					value = GameEvent$gameEvent.argValue;
+				} else {
+					return killExecution(stack, "Only gamepad events have a player field.");
+				}
+			} else if ($_string_equals("name", string1)) {
+				if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+					value = GameEvent$gameEvent.argValue3;
+				} else {
+					return killExecution(stack, "Only gamepad events have a namefield.");
+				}
+			} else if ($_string_equals("value", string1)) {
+				if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+					value = GameEvent$gameEvent.argValue2;
+				} else {
+					return killExecution(stack, "Only gamepad events have a value field.");
+				}
+			} else if ($_string_equals("device", string1)) {
+				if ($_string_equals("hardware", GameEvent$gameEvent.vagueType) || 
+					$_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+					value = $_list_get(GamepadStatus$gamepadStatus.deviceValues, GameEvent$gameEvent.x);
+				} else {
+					return killExecution(stack, "Only hardware/gamepad events have a device field.");
+				}
+			} else if ($_string_equals("is_significant", string1)) {
+				if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+					if (GameEvent$gameEvent.y == 1) {
+						value = VALUE_TRUE;
+					} else {
+						value = VALUE_FALSE;
+					}
+				} else {
+					return killExecution(stack, "Only hardware events have an is_significant field.");
+				}
+			} else if ($_string_equals("descriptor", string1)) {
+				if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+					value = buildCommonString(GameEvent$gameEvent.arg);
+				} else {
+					return killExecution(stack, "Only hardware events have a descriptor field.");
+				}
 			} else {
 				return killExecution(stack, "Game Event does not have a field called '" + string1 + "'");
 			}
 			break;
 
 		case NativeObjectSubType.GAMEPAD_DEVICE:
-			return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+			gamepadDeviceInfo1 = $_cast('GamepadDeviceInfo', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("id", string1)) {
+				value = GamepadDeviceInfo$gamepadDeviceInfo1.playerId;
+				if (value == null) {
+					value = VALUE_NULL;
+				}
+			} else if ($_string_equals("name", string1)) {
+				value = buildCommonString(GamepadDeviceInfo$gamepadDeviceInfo1.name);
+			} else {
+				return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+			}
 			break;
 
 		case NativeObjectSubType.HTTP_REQUEST:

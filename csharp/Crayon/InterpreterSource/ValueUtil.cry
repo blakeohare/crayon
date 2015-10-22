@@ -72,7 +72,6 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', value);
 		switch (NativeObjectWrapper$nativeObject.subType) {
 			case NativeObjectSubType.EVENT: return "NativeObject:Event";
-			case NativeObjectSubType.GAMEPAD_BUTTON: return "NativeObject:GamepadButton";
 			case NativeObjectSubType.GAMEPAD_DEVICE: return "NativeObject:GamepadDevice";
 			case NativeObjectSubType.HTTP_REQUEST: return "NativeObject:HttpRequest";
 			case NativeObjectSubType.IMAGE: return "NativeObject:Image";
@@ -122,6 +121,13 @@ function @type('Value') buildString(@type('string') s) {
 }
 
 function @type('Value') buildListByWrappingInput(list) {
+	return new Value(Types.LIST, list);
+}
+
+function @type('Value') buildList2(@type('Value') value1, @type('Value') value2) {
+	@type('List<Value>') list = $_new_list('Value');
+	$_list_push(list, value1);
+	$_list_push(list, value2);
 	return new Value(Types.LIST, list);
 }
 
@@ -392,7 +398,8 @@ function @type('Value') buildGameEvent(
 	@type('int') y,
 	@type('double') amount,
 	@type('bool') down,
-	@type('string') arg) {
+	@type('string') arg,
+	@type('Value') argValue) {
 	
 	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
 		specificType,
@@ -401,7 +408,35 @@ function @type('Value') buildGameEvent(
 		y,
 		amount,
 		down,
-		arg)));
+		arg,
+		argValue,
+		null,
+		null)));
+}
+
+function @type('Value') buildGameEventWithExtraArg(
+	@type('string') specificType,
+	@type('string') vagueType,
+	@type('int') x,
+	@type('int') y,
+	@type('double') amount,
+	@type('bool') down,
+	@type('string') arg,
+	@type('Value') argValue,
+	@type('Value') argValue2,
+	@type('Value') argValue3) {
+	
+	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
+		specificType,
+		vagueType,
+		x,
+		y,
+		amount,
+		down,
+		arg,
+		argValue,
+		argValue2,
+		argValue3)));
 }
 
 function @type('Value') buildCommonString(@type('string') s) {
