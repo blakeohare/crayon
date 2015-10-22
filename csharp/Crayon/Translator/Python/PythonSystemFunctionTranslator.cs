@@ -622,7 +622,9 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateListClear(List<string> output, Expression list)
 		{
-			throw new Exception("This should have been optimized out.");
+			output.Add("_clear_list(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)

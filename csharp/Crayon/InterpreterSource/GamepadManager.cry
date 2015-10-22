@@ -107,7 +107,7 @@ function @type('bool') gamepadInitializeState() {
 				index = $_list_length(hardwarePushies);
 				$_list_push(hardwarePushies, hardwarePushy);
 		
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 0, false, 0.0, 0, "B:" + i, false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 0, false, 0.0, 0, "B:" + $_string_cast_weak(i), false));
 			}
 
 			for (i = 0; i < analogAxisCount; i += 1) {
@@ -120,8 +120,8 @@ function @type('bool') gamepadInitializeState() {
 		
 				index = $_list_length(hardwarePushies);
 				$_list_push(hardwarePushies, hardwarePushy);
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 1, false, 0.0, 0, "A:" + i + ":1", false));
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 2, false, 0.0, 0, "A:" + i + ":0", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 1, false, 0.0, 0, "A:" + $_string_cast_weak(i) + ":1", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 2, false, 0.0, 0, "A:" + $_string_cast_weak(i) + ":0", false));
 			}
 	
 			for (i = 0; i < digital2dAxisCount; i += 1) {
@@ -134,10 +134,10 @@ function @type('bool') gamepadInitializeState() {
 		
 				index = $_list_length(hardwarePushies);
 				$_list_push(hardwarePushies, hardwarePushy);
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 3, false, 0.0, 0, "D:" + i + ":X:1", false));
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 4, false, 0.0, 0, "D:" + i + ":X:0", false));
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 5, false, 0.0, 0, "D:" + i + ":Y:1", false));
-				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 6, false, 0.0, 0, "D:" + i + ":Y:0", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 3, false, 0.0, 0, "D:" + $_string_cast_weak(i) + ":X:1", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 4, false, 0.0, 0, "D:" + $_string_cast_weak(i) + ":X:0", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 5, false, 0.0, 0, "D:" + $_string_cast_weak(i) + ":Y:1", false));
+				$_list_push(atomicPushies, new GamepadAtomicPushy(index, 6, false, 0.0, 0, "D:" + $_string_cast_weak(i) + ":Y:0", false));
 			}
 	
 			@type('int') hardwarePushyEndLength = $_list_length(hardwarePushies);

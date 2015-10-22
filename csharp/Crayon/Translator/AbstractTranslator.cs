@@ -58,6 +58,7 @@ namespace Crayon.Translator
 			foreach (string file in new string[] {
 				"BinaryOpsUtil",
 				"ByteCodeLoader",
+				"GamepadManager",
 				"Graphics",
 				"Interpreter",
 				"IOManager",

@@ -132,6 +132,10 @@ _images_downloaded = {}
 def create_assertion(message):
 	raise Exception(message)
 
+def _clear_list(list):
+	while len(list) > 0:
+		list.pop()
+
 def create_sorted_copy_of_list(items):
 	items = items[:]
 	items.sort()
