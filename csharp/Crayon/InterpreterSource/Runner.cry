@@ -5,6 +5,7 @@ function main() {
 
 	@type('Code') byteCode = loadByteCode();
 	@type('Array<int>') ops = Code$byteCode.ops;
+	@type('int') opsLength = $_array_length(ops);
 	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
 	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
@@ -25,7 +26,7 @@ function main() {
 	@type('int') lastClassId = 0;
 	@type('ClassInfo') classInfo = null;
 
-	for (@type('int') i = 0; i < $_array_length(ops); i += 1) {
+	for (@type('int') i = 0; i < opsLength; i += 1) {
 		@type('int') op = $_array_get(ops, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
 			@type('Array<int>') args = $_array_get(opArgs, i);
@@ -87,9 +88,9 @@ function main() {
 		}
 	}
 
-	@type('List<Array<int>>') specialCacheBuilder = $_new_list('Array<int>');
+	@type('Array<Array<int>>') specialCache = $_new_array('Array<int>', opsLength);
 	@type('Array<int>') specialCacheEntry = null;
-	for (i = 0; i < $_array_length(ops); i += 1) {
+	for (i = 0; i < opsLength; i += 1) {
 		@type('int') op = $_array_get(ops, i);
 		@type('Array<int>') args = $_array_get(opArgs, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
@@ -112,7 +113,7 @@ function main() {
 			specialCacheEntry = null;
 		}
 		
-		$_list_push(specialCacheBuilder, specialCacheEntry);
+		$_array_set(specialCache, i, specialCacheEntry);
 	}
 
 	@type('StackFrame') stack = new StackFrame(
@@ -129,7 +130,7 @@ function main() {
 		ops,
 		opArgs,
 		stringArgs,
-		$_convert_list_to_array('Array<int>', specialCacheBuilder),
+		specialCache,
 		null, // identifiers
 		$_new_list('string'), // identifiers builder
 		$_new_dictionary('string', 'int'), // inv_identifiers
