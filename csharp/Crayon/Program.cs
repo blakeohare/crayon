@@ -86,7 +86,7 @@ namespace Crayon
 			switch (buildContext.Platform.ToLowerInvariant())
 			{
 				case "android": return new Crayon.Translator.Java.JavaAndroidPlatform();
-				case "copengl": return new Crayon.Translator.COpenGL.COpenGLPlatform();
+				case "cwin": return new Crayon.Translator.COpenGL.COpenGLPlatform();
 				case "csopengl": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
 				case "cswindowsphone": return new Crayon.Translator.CSharp.CSharpWindowsPhonePlatform();
 				case "cswinforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
