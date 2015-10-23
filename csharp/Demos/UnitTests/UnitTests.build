@@ -23,4 +23,8 @@
 	<target name="python">
 		<platform>python</platform>
 	</target>
+	
+	<target name="cwin">
+		<platform>cwin</platform>
+	</target>
 </build>

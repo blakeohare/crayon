@@ -32,7 +32,7 @@ namespace Crayon.Translator.COpenGL
 			foreach (StructDefinition structDefinition in structDefinitions)
 			{
 				string name = structDefinition.Name.Value;
-				structSection.Add("typedef _" + name + " struct {");
+				structSection.Add("typedef struct " + name + " {");
 				for (int i = 0; i < structDefinition.Fields.Length; ++i)
 				{
 					string fieldName = structDefinition.FieldsByIndex[i];
