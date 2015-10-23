@@ -88,6 +88,7 @@ namespace Crayon
 			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_NEW_STYLE", (this.platform.IsOpenGlBased && this.platform.OpenGlTranslator.IsNewStyle) ? "true" : "false");
 			replacements.Add("IS_GAMEPAD_SUPPORTED", this.platform.IsGamepadSupported ? "true" : "false");
+			replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
 			replacements.Add("GENERATED_TILE_DIRECTORY", this.platform.GeneratedFilesFolder + "/spritesheets");
 			return replacements;
 		}

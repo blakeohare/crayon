@@ -10,8 +10,9 @@ function @type('Array<string>') generateSourceFiles() {
 function @type('string') read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
 	@type('List<char>') output = $_new_list('char');
 	@type('bool') ctn = true;
+	@type('char') c = $_string_as_char('\0');
 	while (ctn) {
-		@type('char') c = $_string_char_at(raw, index[0]);
+		c = $_string_char_at(raw, index[0]);
 		if (c == char) {
 			ctn = false;
 		} else {
@@ -100,14 +101,17 @@ function @type('Code') loadByteCode() {
 
 	@type('int') opCount = read_integer(index, raw, length);
 
-	@type('List<int>') ops = $_new_list('int');
-	@type('List<Array<int>>') iargs = $_new_list('Array<int>');
-	@type('List<string>') sargs = $_new_list('string');
+	@type('Array<int>') ops = $_new_array('int', opCount);
+	@type('Array<Array<int>>') iargs = $_new_array('Array<int>', opCount);
+	@type('Array<string>') sargs = $_new_array('string', opCount);
 	@type('char') c = $_string_as_char(' ');
 	@type('int') argc = 0;
 	@type('int') j = 0;
 	@type('string') stringarg = null;
 	@type('bool') stringPresent = false;
+	@type('int') iarg = 0;
+	@type('Array<int>') iarglist = null;
+
 	for (@type('int') i = 0; i < opCount; i += 1) {
 		c = $_string_char_at(raw, $_array_get(index, 0));
 		index[0] += 1;
@@ -124,23 +128,23 @@ function @type('Code') loadByteCode() {
 			argc = read_integer(index, raw, length);
 		}
 
-		@type('List<int>') iarglist = $_new_list('int');
+		iarglist = $_new_array('int', argc - 1);
 		for (j = 0; j < argc; j += 1) {
-			@type('int') iarg = read_integer(index, raw, length);
+			iarg = read_integer(index, raw, length);
 			if (j == 0) {
-				$_list_push(ops, iarg);
+				$_array_set(ops, i, iarg);
 			} else {
-				$_list_push(iarglist, iarg);
+				$_array_set(iarglist, j - 1, iarg);
 			}
 		}
-		$_list_push(iargs, $_convert_list_to_array('int', iarglist));
+		$_array_set(iargs, i, iarglist);
 		if (stringPresent) {
 			stringarg = read_string(index, raw, length);
 		} else {
 			stringarg = null;
 		}
-		$_list_push(sargs, stringarg);
+		$_array_set(sargs, i, stringarg);
 	}
 	
-	return new Code($_convert_list_to_array('int', ops), $_convert_list_to_array('Array<int>', iargs), $_convert_list_to_array('string', sargs));
+	return new Code(ops, iargs, $_convert_list_to_array('string', sargs));
 }
