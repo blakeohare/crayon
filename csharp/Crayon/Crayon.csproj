@@ -143,10 +143,6 @@
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpWindowsPhonePlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpWindowsPhoneSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpWinFormsPlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpWinFormsSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
