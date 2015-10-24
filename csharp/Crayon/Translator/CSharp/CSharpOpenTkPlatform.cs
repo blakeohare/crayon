@@ -8,6 +8,8 @@ namespace Crayon.Translator.CSharp
 			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator(), new CSharpOpenTkGamepadTranslator())
 		{ }
 
+		public override string PlatformShortId { get { return "csotk"; } }
+
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
 			replacements["EXTRA_DLLS"] = string.Join("\r\n", new string[] {

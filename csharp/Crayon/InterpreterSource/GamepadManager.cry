@@ -10,17 +10,10 @@ function @type('string') gamepadGenerateFingerprint(
 		@type('int') digital2dAxisCount,
 		@type('int') buttonCount) {
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		deviceName = $_string_trim(deviceName);
-		@type('string') output = ""; // happens once on relatively small strings so string-build-by-concatenation is ok.
-		@type('string') hex = '0123456789ABCDEF';
-		for (@type('int') i = 0; i < $_string_length(deviceName); i += 1) {
-			@type('int') byte = $_ord($_force_parens("" + $_string_char_at(deviceName, i)));
-			@type('int') a = (byte >> 4) & 15;
-			@type('int') b = byte & 15;
-			output += $_string_char_at(hex, a) + $_string_char_at(hex, b);
-		}
-		output += "-" + $_string_cast_weak(analogAxisCount) + "-" + $_string_cast_weak(digital2dAxisCount) + "-" + $_string_cast_weak(buttonCount);
-		return output;
+		return stringToHex($_string_trim(deviceName)) + "-" +
+			$_string_cast_weak(analogAxisCount) + "-" +
+			$_string_cast_weak(digital2dAxisCount) + "-" +
+			$_string_cast_weak(buttonCount);
 	} else {
 		return "";
 	}
@@ -208,6 +201,7 @@ function @type('bool') gamepadClearIds() {
 	}
 
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		// Note that clearing the player ID should NOT clear the virtual bindings, though.
 		@type('List<GamepadDeviceInfo>') devices = GamepadStatus$status.devices;
 		for (@type('int') i = 0; i < $_list_length(devices); i += 1) {
 			@type('GamepadDeviceInfo') device = $_list_get(devices, i);
@@ -817,9 +811,142 @@ function @type('int') gamepadGetDeviceCount() {
 	}
 }
 
-function @type('int') gamepadSaveConfig() {
-	// TODO: this
+/*
+	Gamepad config file format
+	filename: .crayon-gamepad-csotk.config { csotk, pygame, js }
+	CONFIG_FINGERPRINT,pushy1,pushy2,...
+	individual pushy configs are a | delimited list of the following:
+	- 0 or 1 for int or string ID
+	- the ID value (for strings, hex encoded)
+	- dimensionality
+	- 0 or 1 for isDigital
+	- a list of the atomic pushy configuration ID's OR an empty string
+
+	The save config builds a list of these configurations per gamepad. 
+	When it encounters a configuration it saves its config fingerprint in a set (dictionary of string to ignored-bool)
+	After looping through current devices, it loads the config file and appends all configs that aren't currently set to the end of the list
+	It resaves the list (\n delimited) to the file again.
+*/
+function @type('int') gamepadSaveConfig(
+		@type('Array<string>') stringOutParam) { // outParam used internally by the io stuff.
+	@type('GamepadStatus') status = gamepadGetGlobalStatus();
+	if (!GamepadStatus$status.isInitialized) {
+		return 1;
+	}
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('Dictionary<string, bool>') gamepadsConfigured = $_new_dictionary('string', 'bool');
+		@type('List<GamepadDeviceInfo>') gamepads = GamepadStatus$status.devices;
+		@type('List<GamepadAtomicPushy>') atomicPushies = GamepadStatus$status.atomicPushies;
+		@type('List<string>') fileBuilder = $_new_list('string');
+		@type('int') j = 0;
+		for (@type('int') i = 0; i < $_list_length(gamepads); i += 1) {
+			@type('GamepadDeviceInfo') gamepad = $_list_get(gamepads, i);
+			@type('string') gamepadId = GamepadDeviceInfo$gamepad.configFingerprint;
+			@type('List<GamepadVirtualPushy>') virtualPushies = $_new_list('GamepadVirtualPushy');
+			for (j = 0; j < $_list_length(GamepadDeviceInfo$gamepad.stringVirtualPushyIds); j += 1) {
+				@type('string') sPushyId = $_list_get(GamepadDeviceInfo$gamepad.stringVirtualPushyIds, j);
+				$_list_push(virtualPushies, $_dictionary_get_guaranteed(GamepadDeviceInfo$gamepad.stringVirtualPushies, sPushyId));
+			}
+			for (j = 0; j < $_list_length(GamepadDeviceInfo$gamepad.intVirtualPushyIds); j += 1) {
+				@type('int') iPushyId = $_list_get(GamepadDeviceInfo$gamepad.intVirtualPushyIds, j);
+				$_list_push(virtualPushies, $_dictionary_get_guaranteed(GamepadDeviceInfo$gamepad.intVirtualPushies, iPushyId));
+			}
+
+			if ($_list_length(virtualPushies) > 0) {
+				// gamepad fingerprint (constant value generated from the reported name of the gamepad and its pushy type counts)
+				$_list_push(fileBuilder, gamepadId);
+				$_dictionary_set(gamepadsConfigured, gamepadId, true);
+				for (j = 0; j < $_list_length(virtualPushies); j += 1) {
+					@type('GamepadVirtualPushy') virtualPushy = $_list_get(virtualPushies, j);
+					@type('Value') alias = GamepadVirtualPushy$virtualPushy.alias;
+					@type('int') dimensionality = GamepadVirtualPushy$virtualPushy.dimensionality;
+					@type('bool') isDigital = GamepadVirtualPushy$virtualPushy.isDigital;
+
+					$_list_push(fileBuilder, ",");
+					if (Value$alias.type == Types.INTEGER) {
+						$_list_push(fileBuilder, "0|");
+						$_list_push(fileBuilder, $_string_cast_strong($_cast('int', Value$alias.internalValue)));
+					} else {
+						$_list_push(fileBuilder, "1|");
+						$_list_push(fileBuilder, stringToHex($_cast('string', Value$alias.internalValue)));
+					}
+					$_list_push(fileBuilder, "|");
+					$_list_push(fileBuilder, $_string_cast_strong(dimensionality));
+					if (isDigital) {
+						$_list_push(fileBuilder, "|1");
+					} else {
+						$_list_push(fileBuilder, "|0");
+					}
+					
+					@type('GamepadAtomicPushy') ap1 = null;
+					@type('GamepadAtomicPushy') ap2 = null;
+					@type('GamepadAtomicPushy') ap3 = null;
+					@type('GamepadAtomicPushy') ap4 = null;
+					if (GamepadVirtualPushy$virtualPushy.atomicIndex1 != -1) ap1 = $_list_get(atomicPushies, GamepadVirtualPushy$virtualPushy.atomicIndex1);
+					if (GamepadVirtualPushy$virtualPushy.atomicIndex2 != -1) ap2 = $_list_get(atomicPushies, GamepadVirtualPushy$virtualPushy.atomicIndex2);
+					if (GamepadVirtualPushy$virtualPushy.atomicIndex3 != -1) ap3 = $_list_get(atomicPushies, GamepadVirtualPushy$virtualPushy.atomicIndex3);
+					if (GamepadVirtualPushy$virtualPushy.atomicIndex4 != -1) ap4 = $_list_get(atomicPushies, GamepadVirtualPushy$virtualPushy.atomicIndex4);
+					
+					$_list_push(fileBuilder, "|");
+					if (ap1 != null) {
+						$_list_push(fileBuilder, GamepadAtomicPushy$ap1.descriptorId);
+					}
+
+					if (dimensionality > 0) {
+						$_list_push(fileBuilder, "|");
+						if (ap2 != null) {
+							$_list_push(fileBuilder, GamepadAtomicPushy$ap2.descriptorId);
+						}
+						
+						if (dimensionality > 1) {
+							$_list_push(fileBuilder, "|");
+							if (ap3 != null) {
+								$_list_push(fileBuilder, GamepadAtomicPushy$ap3.descriptorId);
+							}
+							$_list_push(fileBuilder, "|");
+							if (ap4 != null) {
+								$_list_push(fileBuilder, GamepadAtomicPushy$ap4.descriptorId);
+							}
+						}
+					}
+				}
+				$_list_push(fileBuilder, "\n");
+			}
+		}
+
+		if ($_list_length(fileBuilder) > 0) {
+			@type('string') filepath = gamepadGetConfigFile();
+			@type('int') fileReadStatus = ioReadFileText(filepath, true, false, stringOutParam);
+			if (fileReadStatus == 0) {
+				// not found not triggered.
+				@type('string') content = $_array_get(stringOutParam, 0);
+				@type('Array<string>') lines = $_string_split(content, "\n");
+				for (i = 0; i < $_array_length(lines); i += 1) {
+					@type('string') line = $_array_get(lines, i);
+					line = $_string_trim(line);
+					if ($_string_length(line) > 0) {
+						@type('Array<string>') parts = $_string_split(line, ",");
+						if ($_array_length(parts) > 1) {
+							@type('string') existingGamepadId = $_array_get(parts, 0);
+							if (!$_dictionary_contains(gamepadsConfigured, existingGamepadId)) {
+								$_list_push(fileBuilder, line);
+								$_list_push(fileBuilder, "\n");
+								$_dictionary_set(gamepadsConfigured, existingGamepadId, true);
+							}
+						}
+					}
+				}
+			}
+			
+			// Ignore error code. If this fails, it should do so silently.
+			ioWriteFileText(filepath, $_list_join(fileBuilder, ""), true, false, stringOutParam);
+		}
+	}
 	return 0;
+}
+
+function @type('string') gamepadGetConfigFile() {
+	return ".crayon-gamepad-%%%PLATFORM_SHORT_ID%%%.config";
 }
 
 /* 

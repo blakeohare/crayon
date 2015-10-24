@@ -23,6 +23,7 @@ namespace Crayon.Translator.JavaScript
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool ScreenBlocksExecution { get { return false; } }
 		public override bool IsArraySameAsList { get { return true; } }
+		public override string PlatformShortId { get { return "javascript"; } }
 
 		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
 

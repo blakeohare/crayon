@@ -23,6 +23,7 @@ namespace Crayon
 		public abstract bool ScreenBlocksExecution { get; }
 		public abstract string GeneratedFilesFolder { get; }
 		public abstract bool IsArraySameAsList { get; }
+		public abstract string PlatformShortId { get; }
 
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.

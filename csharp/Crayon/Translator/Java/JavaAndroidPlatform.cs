@@ -13,6 +13,7 @@ namespace Crayon.Translator.Java
 		}
 
 		public override string GeneratedFilesFolder { get { return "app/src/main/assets/generated"; } }
+		public override string PlatformShortId { get { return "javaandroid"; } }
 
 		public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,

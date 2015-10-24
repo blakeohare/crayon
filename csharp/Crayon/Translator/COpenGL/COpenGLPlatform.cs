@@ -21,6 +21,7 @@ namespace Crayon.Translator.COpenGL
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool IsArraySameAsList { get { return false; } }
 		public override string GeneratedFilesFolder { get { return "generated_files"; } }
+		public override string PlatformShortId { get { return "copengl"; } }
 
 		public override Dictionary<string, FileOutput> Package(BuildContext buildContext, string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string fileCopySourceRoot, SpriteSheetBuilder spriteSheet)
 		{
