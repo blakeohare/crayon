@@ -834,13 +834,31 @@ function @type('int') gamepadSaveConfig(
 		return 1;
 	}
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('int') j = 0;
+		@type('int') i = 0;
 		@type('Dictionary<string, bool>') gamepadsConfigured = $_new_dictionary('string', 'bool');
 		@type('List<GamepadDeviceInfo>') gamepads = GamepadStatus$status.devices;
+		@type('List<GamepadDeviceInfo>') registeredGamepads = $_new_list('GamepadDeviceInfo');
+		@type('List<GamepadDeviceInfo>') unregisteredGamepads = $_new_list('GamepadDeviceInfo');
+		@type('GamepadDeviceInfo') gamepad = null;
+		for (i = 0; i < $_list_length(gamepads); i += 1) {
+			gamepad = $_list_get(gamepads, i);
+			if (GamepadDeviceInfo$gamepad.playerId != null) {
+				$_list_push(registeredGamepads, gamepad);
+			} else {
+				$_list_push(unregisteredGamepads, gamepad);
+			}
+		}
+
+		gamepads = registeredGamepads;
+		for (i = 0; i < $_list_length(unregisteredGamepads); i += 1) {
+			$_list_push(gamepads, $_list_get(unregisteredGamepads, i));
+		}
+
 		@type('List<GamepadAtomicPushy>') atomicPushies = GamepadStatus$status.atomicPushies;
 		@type('List<string>') fileBuilder = $_new_list('string');
-		@type('int') j = 0;
-		for (@type('int') i = 0; i < $_list_length(gamepads); i += 1) {
-			@type('GamepadDeviceInfo') gamepad = $_list_get(gamepads, i);
+		for (i = 0; i < $_list_length(gamepads); i += 1) {
+			gamepad = $_list_get(gamepads, i);
 			@type('string') gamepadId = GamepadDeviceInfo$gamepad.configFingerprint;
 			@type('List<GamepadVirtualPushy>') virtualPushies = $_new_list('GamepadVirtualPushy');
 			for (j = 0; j < $_list_length(GamepadDeviceInfo$gamepad.stringVirtualPushyIds); j += 1) {
