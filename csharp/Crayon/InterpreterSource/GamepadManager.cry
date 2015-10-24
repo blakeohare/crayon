@@ -1011,8 +1011,9 @@ function @type('Value') gamepadGetDevice(@type('Value') indexValue, @type('Array
 	Error codes:
 	0 - no error
 	1 - called too early
+	2 - idOrList was invalid
 */
-function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<int>') intOutParam) {
+function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<int>') intOutParam, @type('Array<string>') stringOutParam) {
 	
 	@type('GamepadStatus') status = gamepadGetGlobalStatus();
 	if (!GamepadStatus$status.isInitialized) {
@@ -1021,7 +1022,114 @@ function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<
 	}
 
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		// TODO: this
+		
+		@type('string') filepath = gamepadGetConfigFile();
+		@type('int') fileReadStatus = ioReadFileText(filepath, true, false, stringOutParam);
+		if (fileReadStatus == 0) {
+			@type('int') i = 0;
+			@type('int') j = 0;
+			@type('int') gamepadsLoaded = 0;
+			@type('List<Value>') idList = null;
+			@type('Value') idValue = null;
+			@type('Value') aliasValue = null;
+			if (Value$idOrList.type == Types.INTEGER || Value$idOrList.type == Types.STRING) {
+				idList = $_new_list('Value');
+				$_list_push(idList, idOrList);
+			} else if (Value$idOrList.type == Types.LIST) {
+				idList = $_cast('List<Value>', Value$idOrList.internalValue);
+				for (i = 0; i < $_list_length(idList); i += 1) {
+					idValue = $_list_get(idList, i);
+					if (Value$idValue.type != Types.INTEGER && Value$idValue.type != Types.STRING) {
+						$_array_set(intOutParam, 0, 2);
+						return 0;
+					}
+				}
+			} else {
+				$_array_set(intOutParam, 0, 2);
+				return 0;
+			}
+			// not found not triggered.
+			@type('List<GamepadDeviceInfo>') devices = GamepadStatus$status.devices;
+			@type('string') content = $_array_get(stringOutParam, 0);
+			@type('Array<string>') lines = $_string_split(content, "\n");
+			for (i = 0; i < $_array_length(lines); i += 1) {
+				@type('string') line = $_array_get(lines, i);
+				@type('Array<string>') parts = $_string_split(line, ",");
+				@type('string') deviceId = $_array_get(parts, 0);
+				@type('GamepadDeviceInfo') gamepad = null;
+				@type('Value') gamepadAsValue = null;
+				// yup, this is quadratic. If a gamepad device ID is common to multiple gamepads, initialize them all with the same config.
+				for (j = 0; j < $_list_length(devices); j += 1) {
+					gamepad = $_list_get(devices, j);
+					if ($_string_equals(GamepadDeviceInfo$gamepad.configFingerprint, deviceId)) {
+						gamepadAsValue = $_list_get(GamepadStatus$status.deviceValues, j);
+						/*
+							Gamepad config file format (COPIED FROM SAVE CONFIG IMPLEMENTATION)
+							filename: .crayon-gamepad-csotk.config { csotk, pygame, js }
+							CONFIG_FINGERPRINT,pushy1,pushy2,...
+							individual pushy configs are a | delimited list of the following:
+							- 0 or 1 for int or string ID
+							- the ID value (for strings, hex encoded)
+							- dimensionality
+							- 0 or 1 for isDigital
+							- a list of the atomic pushy configuration ID's OR an empty string
+						*/
+						if (gamepadsLoaded < $_list_length(idList)) {
+							gamepadSetId(gamepadAsValue, $_list_get(idList, gamepadsLoaded));
+							gamepadsLoaded += 1;
+						}
+						// even if a gamepad does not have an ID set, you should still initialize the buttons.
+
+						for (j = 1; j < $_array_length(parts); j += 1) {
+							@type('Array<string>') pushyConfigParts = $_string_split($_array_get(parts, j), "|");
+							if ($_array_length(pushyConfigParts) > 2) {
+								@type('bool') isPushyString = $_string_equals($_array_get(pushyConfigParts, 0), "1");
+								@type('string') rawPushyAlias = stringFromHex($_array_get(pushyConfigParts, 1));
+								aliasValue = null;
+								if (isPushyString) {
+									if (rawPushyAlias != null) aliasValue = buildCommonString(rawPushyAlias);
+								} else {
+									@type('int') t = parsePosDecInt(rawPushyAlias);
+									if (t != -1) aliasValue = buildInteger(t);
+								}
+								@type('int') dimensionality = parsePosDecInt($_array_get(pushyConfigParts, 2));
+								@type('bool') isDigital = $_string_equals($_array_get(pushyConfigParts, 3), "1");
+								if (aliasValue != null) {
+									if ((dimensionality == 0 && $_array_length(pushyConfigParts) == 5) ||
+										(dimensionality == 1 && $_array_length(pushyConfigParts) == 6) ||
+										(dimensionality == 2 && $_array_length(pushyConfigParts) == 8)) {
+									
+										for (@type('int') k = 4; k < $_array_length(pushyConfigParts); k += 1) {
+											@type('string') pushyConfigDescriptor = $_array_get(pushyConfigParts, k);
+											if ($_string_length(pushyConfigDescriptor) > 0) {
+												@type('Value') isXValue = null;
+												@type('Value') isPos = null;
+												if (dimensionality > 1) {
+													if (k < 7) isXValue = VALUE_TRUE;
+													else isXValue = VALUE_FALSE;
+												}
+												if (dimensionality > 0) {
+													if (k == 5 || k == 7) isPos = VALUE_TRUE;
+													isPos = VALUE_FALSE;
+												}
+												gamepadBind(
+													gamepadAsValue,
+													buildString(pushyConfigDescriptor),
+													aliasValue,
+													dimensionality,
+													isXValue,
+													isPos,
+													isDigital);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	$_array_set(intOutParam, 0, 0);
 	return 0;
