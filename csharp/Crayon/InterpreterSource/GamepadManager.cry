@@ -567,7 +567,7 @@ function @type('bool') gamepadPollBeginFrame() {
 					atomicPushyIndex = GamepadVirtualPushy$virtualPushy.atomicIndex1;
 					if (atomicPushyIndex != -1) {
 						ap1 = $_list_get(atomicPushies, atomicPushyIndex);
-						if (GamepadAtomicPushy$atomicPushy.gameCounter == gameCounter) {
+						if (GamepadAtomicPushy$ap1.gameCounter == gameCounter) {
 							needsFiring = true;
 						}
 					} else {
@@ -579,7 +579,7 @@ function @type('bool') gamepadPollBeginFrame() {
 						atomicPushyIndex = GamepadVirtualPushy$virtualPushy.atomicIndex2;
 						if (atomicPushyIndex != -1) {
 							ap2 = $_list_get(atomicPushies, atomicPushyIndex);
-							if (GamepadAtomicPushy$atomicPushy.gameCounter == gameCounter) {
+							if (GamepadAtomicPushy$ap2.gameCounter == gameCounter) {
 								needsFiring = true;
 							}
 						} else {
@@ -592,7 +592,7 @@ function @type('bool') gamepadPollBeginFrame() {
 								atomicPushyIndex = GamepadVirtualPushy$virtualPushy.atomicIndex3;
 								if (atomicPushyIndex != -1) {
 									ap3 = $_list_get(atomicPushies, atomicPushyIndex);
-									if (GamepadAtomicPushy$atomicPushy.gameCounter == gameCounter) {
+									if (GamepadAtomicPushy$ap3.gameCounter == gameCounter) {
 										needsFiring = true;
 									}
 								} else {
@@ -605,7 +605,7 @@ function @type('bool') gamepadPollBeginFrame() {
 								atomicPushyIndex = GamepadVirtualPushy$virtualPushy.atomicIndex4;
 								if (atomicPushyIndex != -1) {
 									ap4 = $_list_get(atomicPushies, atomicPushyIndex);
-									if (GamepadAtomicPushy$atomicPushy.gameCounter == gameCounter) {
+									if (GamepadAtomicPushy$ap4.gameCounter == gameCounter) {
 										needsFiring = true;
 									}
 								} else {
