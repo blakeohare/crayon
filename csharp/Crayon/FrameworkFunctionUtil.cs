@@ -105,6 +105,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 5, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
 					break;
+				case FrameworkFunction.GAMEPAD_CLEAR_BINDINGS:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT");
+					break;
 				case FrameworkFunction.GAMEPAD_CLEAR_IDS:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;

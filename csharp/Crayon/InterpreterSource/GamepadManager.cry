@@ -881,3 +881,26 @@ function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<
 	$_array_set(intOutParam, 0, 0);
 	return 0;
 }
+
+function @type('bool') gamepadClearBindings(@type('Value') wrappedGamepad) {
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('GamepadDeviceInfo') gamepad = $_cast('GamepadDeviceInfo', extractNativeObjectOfType(wrappedGamepad, NativeObjectSubType.GAMEPAD_DEVICE));
+		if (gamepad != null) {
+			@type('GamepadStatus') status = gamepadGetGlobalStatus();
+			@type('List<GamepadAtomicPushy>') atomicPushies = GamepadStatus$status.atomicPushies;
+			@type('int') apStart = GamepadDeviceInfo$gamepad.atomicPushyStartIndex;
+			@type('int') apEnd = GamepadDeviceInfo$gamepad.atomicPushyCount + apStart;
+			for (@type('int') i = apStart; i < apEnd; i += 1) {
+				@type('GamepadAtomicPushy') ap = $_list_get(atomicPushies, i);
+				GamepadAtomicPushy$ap.isConfigured = false;
+			}
+
+			GamepadDeviceInfo$gamepad.stringVirtualPushies = $_new_dictionary('string', 'GamepadVirtualPushy');
+			GamepadDeviceInfo$gamepad.intVirtualPushies = $_new_dictionary('int', 'GamepadVirtualPushy');
+			$_list_clear(GamepadDeviceInfo$gamepad.stringVirtualPushyIds);
+			$_list_clear(GamepadDeviceInfo$gamepad.intVirtualPushyIds);
+			return true;
+		}
+	}
+	return false;
+}
