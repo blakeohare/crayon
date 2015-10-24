@@ -108,5 +108,7 @@ switch ($_array_get(row, 0)) {
 		break;
 }
 if ($_array_get(row, 1) == 1) {
-	$_stack_push(valueStack, output);
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, output);
+	valueStackSize += 1;
 }

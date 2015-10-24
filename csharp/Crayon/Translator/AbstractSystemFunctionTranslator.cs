@@ -164,7 +164,6 @@ namespace Crayon.Translator
 				case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
 				case "_new_list": VerifyCount(functionCall, 1); TranslateNewList(output, (StringConstant)args[0]); break;
 				case "_new_list_of_size": VerifyCount(functionCall, 2); TranslateNewListOfSize(output, (StringConstant)args[0], args[1]); break;
-				case "_new_stack": VerifyCount(functionCall, 1); TranslateNewStack(output, (StringConstant)args[0]); break;
 				case "_ord": VerifyCount(functionCall, 1); TranslateOrd(output, args[0]); break;
 				case "_parse_float": VerifyCount(functionCall, 2); TranslateParseFloat(output, args[0], args[1]); break;
 				case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
@@ -184,11 +183,6 @@ namespace Crayon.Translator
 				case "_sort_primitive_values": VerifyCount(functionCall, 2); TranslateSortPrimitiveValues(output, args[0], args[1]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_sound_play": VerifyCount(functionCall, 1); TranslateSoundPlay(output, args[0]); break;
-				case "_stack_get": VerifyCount(functionCall, 2); TranslateStackGet(output, args[0], args[1]); break;
-				case "_stack_length": VerifyCount(functionCall, 1); TranslateStackLength(output, args[0]); break;
-				case "_stack_pop": VerifyCount(functionCall, 1); TranslateStackPop(output, args[0]); break;
-				case "_stack_push": VerifyCount(functionCall, 2); TranslateStackPush(output, args[0], args[1]); break;
-				case "_stack_set": VerifyCount(functionCall, 3); TranslateStackSet(output, args[0], args[1], args[2]); break;
 				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
@@ -311,7 +305,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);
 		protected abstract void TranslateNewList(List<string> output, StringConstant type);
 		protected abstract void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length);
-		protected abstract void TranslateNewStack(List<string> output, StringConstant type);
 		protected abstract void TranslateOrd(List<string> output, Expression character);
 		protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
 		protected abstract void TranslateParseInt(List<string> output, Expression rawString);
@@ -331,11 +324,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
 		protected abstract void TranslateSoundPlay(List<string> output, Expression soundInstance);
-		protected abstract void TranslateStackGet(List<string> output, Expression stack, Expression index);
-		protected abstract void TranslateStackLength(List<string> output, Expression stack);
-		protected abstract void TranslateStackPop(List<string> output, Expression stack);
-		protected abstract void TranslateStackPush(List<string> output, Expression stack, Expression value);
-		protected abstract void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);

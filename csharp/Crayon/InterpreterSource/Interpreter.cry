@@ -12,13 +12,17 @@ function @omitReturn @type('string') interpret(
 		@type('Array<Array<int>>') specialCache,
 		@type('Dictionary<int, Value>') globals) {
 
-	@type('Stack<Value>') valueStack = StackFrame$stack.valueStack;
 	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
 	@type('int') LENGTH_ID = -999;
 	if ($_dictionary_contains(inv_identifiers, 'length')) {
 		LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
 	}
 	@type('ProgramData') p = $_get_program_data();
+
+	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
+	@type('int') valueStackSize = ProgramData$p.valueStackSize;
+	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
+
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
 	if (ProgramData$p.initializationComplete) {
@@ -41,7 +45,6 @@ function @omitReturn @type('string') interpret(
 	@type('Value') output = null;
 	@type('Value') func = null;
 	@type('SystemMethod') sysMethod = null;
-	@type('string') error = null;
 	@type('MethodInstance') methodInstance = null;
 	@type('MethodDefinition') methodDefinition = null;
 	@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
@@ -364,9 +367,10 @@ function @type('string') killExecutionWithTokenOverride(
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function yieldControl(@type('StackFrame') stack) {
+function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	@type('ProgramData') p = $_get_program_data();
 	ProgramData$p.stackTop = stack;
+	ProgramData$p.valueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
 }
 
@@ -414,4 +418,19 @@ function performWorkNuggetPostFrame() {
 	}
 
 	soundManagerUpdate();
+}
+
+
+function valueStackIncreaseCapacity() {
+	@type('ProgramData') p = $_get_program_data();
+	@type('int') oldCapacity = ProgramData$p.valueStackCapacity;
+	@type('Array<Value>') stack = ProgramData$p.valueStack;
+	@type('int') newCapacity = oldCapacity * 2;
+	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
+	// TODO: fast array copy, although it's not too important since this doen't happen very often.
+	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
+		$_array_set(newStack, i, $_array_get(stack, i));
+	}
+	ProgramData$p.valueStackCapacity = newCapacity;
+	ProgramData$p.valueStack = newStack;
 }

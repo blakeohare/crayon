@@ -1,7 +1,10 @@
-﻿
+﻿// TODO: prevent assignment to methods
+
 value2 = StackFrame$stack.objectContext; // value2 will never be null because that is a compile error.
-// TODO: prevent assignment to methods
-value = $_stack_pop(valueStack);
+
+valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
+
 nameId = $_array_get(row, 0);
 objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
 $_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);

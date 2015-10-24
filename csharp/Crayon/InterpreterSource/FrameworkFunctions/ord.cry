@@ -1,5 +1,7 @@
 ﻿
-arg1 = $_stack_pop(valueStack);
+// $ord(character)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 output = null;
 if (Value$arg1.type == Types.STRING) {
 	string1 = $_cast('string', Value$arg1.internalValue);

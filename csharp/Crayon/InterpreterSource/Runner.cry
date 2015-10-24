@@ -119,11 +119,11 @@ function main() {
 	@type('StackFrame') stack = new StackFrame(
 		0, // pc
 		$_new_dictionary('int', 'Value'), // locals
-		$_new_stack('Value'), // valueStack
 		$_new_array('Value', 0), // args
 		null, // previous
 		false, // returnValueUsed
-		null); // object context
+		null, // object context
+		0); // valueStackSize
 
 	$_set_program_data(new ProgramData(
 		stack,
@@ -185,7 +185,12 @@ function main() {
 		),
 		false,
 		new GamepadStatus(false, $_new_list('GamepadDeviceInfo'), $_new_list('Value'), $_new_list('GamepadHardwarePushy'), $_new_list('GamepadAtomicPushy'), $_new_list('Value'), $_new_list('Value')),
-		0 // gameCounter (incremented on $game_clock_tick())
+		0, // gameCounter (incremented on $game_clock_tick())
+
+		// The value stack:
+		0, // size
+		100, // capacity
+		$_new_array('Value', 100) // array
 		));
 
 	runTick();

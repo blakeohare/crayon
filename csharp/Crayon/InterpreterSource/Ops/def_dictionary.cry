@@ -8,8 +8,9 @@ type = Types.INTEGER; // always ignored when size is 0
 first = true;
 i = len; // size
 while (i > 0) {
-	value = $_stack_pop(valueStack); // value
-	value2 = $_stack_pop(valueStack); // key
+	valueStackSize -= 2;
+	value = $_array_get(valueStack, valueStackSize + 1); // value
+	value2 = $_array_get(valueStack, valueStackSize); // key
 	if (first) {
 		type = Value$value2.type;
 		first = false;
@@ -56,4 +57,6 @@ value = new Value(Types.DICTIONARY, new DictImpl(
 	len,
 	type));
 
-$_stack_push(valueStack, value);
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

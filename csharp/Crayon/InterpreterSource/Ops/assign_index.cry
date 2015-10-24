@@ -1,7 +1,9 @@
 ﻿
-value = $_stack_pop(valueStack);
-value2 = $_stack_pop(valueStack); // index
-root = $_stack_pop(valueStack);
+valueStackSize -= 3;
+value = $_array_get(valueStack, valueStackSize + 2);
+value2 = $_array_get(valueStack, valueStackSize + 1); // index
+root = $_array_get(valueStack, valueStackSize);
+
 type = Value$root.type;
 bool1 = row[0] == 1; // re-push this onto the stack once it is assigned
 if (type == Types.LIST) {
@@ -60,5 +62,7 @@ if (type == Types.LIST) {
 }
 
 if (bool1) {
-	$_stack_push(valueStack, value);
+	// No capacity check necessary. Things were already popped off.
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
 }

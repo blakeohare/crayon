@@ -1,2 +1,3 @@
 ﻿
-arg1 = $_stack_pop(valueStack); // sound instance
+// $sfx_pause(sound_instance)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

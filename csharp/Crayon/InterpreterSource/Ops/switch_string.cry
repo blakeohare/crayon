@@ -1,5 +1,6 @@
 ﻿
-value = $_stack_pop(valueStack);
+valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
 if (Value$value.type == Types.STRING) {
 	string1 = $_cast('string', Value$value.internalValue);
 	stringSwitch = $_array_get(stringSwitches, $_array_get(row, 0));

@@ -580,15 +580,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateNewStack(List<string> output, StringConstant type)
-		{
-			CSharpPlatform platform = (CSharpPlatform)this.Platform;
-			string csharpType = platform.GetTypeStringFromAnnotation(type.FirstToken, ((StringConstant)type).Value);
-			output.Add("new CrStack<");
-			output.Add(csharpType);
-			output.Add(">()");
-		}
-
 		protected override void TranslateOrd(List<string> output, Expression character)
 		{
 			output.Add("((int)");
@@ -715,43 +706,6 @@ namespace Crayon.Translator.CSharp
 			output.Add("TranslationHelper.PlaySoundInstance(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
-		}
-
-		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".Items[");
-			this.Translator.TranslateExpression(output, index);
-			output.Add("]");
-		}
-
-		protected override void TranslateStackLength(List<string> output, Expression stack)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".Size");
-		}
-
-		protected override void TranslateStackPop(List<string> output, Expression stack)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".Pop()");
-		}
-
-		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".Push(");
-			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
-		protected override void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".Items[");
-			this.Translator.TranslateExpression(output, index);
-			output.Add("] = ");
-			this.Translator.TranslateExpression(output, value);
 		}
 
 		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)

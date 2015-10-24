@@ -573,13 +573,6 @@ namespace Crayon.Translator.Java
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateNewStack(List<string> output, StringConstant type)
-		{
-			output.Add("new Stack<");
-			output.Add(this.JavaPlatform.GetTypeStringFromString(type.Value, true, false));
-			output.Add(">()");
-		}
-
 		protected override void TranslateOrd(List<string> output, Expression character)
 		{
 			output.Add("((int) ");
@@ -659,45 +652,6 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, list);
 			output.Add(")");
 		}
-
-		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".get(");
-			this.Translator.TranslateExpression(output, index);
-			output.Add(")");
-		}
-
-		protected override void TranslateStackLength(List<string> output, Expression stack)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".size()");
-		}
-
-		protected override void TranslateStackPop(List<string> output, Expression stack)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".pop()");
-		}
-
-		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".push(");
-			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
-		protected override void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value)
-		{
-			this.Translator.TranslateExpression(output, stack);
-			output.Add(".set(");
-			this.Translator.TranslateExpression(output, index);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
 		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
 		{
 			char c = stringConstant.Value[0];

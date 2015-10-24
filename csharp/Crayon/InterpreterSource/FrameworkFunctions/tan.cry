@@ -1,5 +1,7 @@
 ﻿
-arg1 = $_stack_pop(valueStack);
+// $tan(theta)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 // I do not check for arg1 == pi/2 because the float arithmetic
 // never produces a true pi/2. The closest a 64 bit floating point number can get
 // to pi/2 produces 16331239353195370. 

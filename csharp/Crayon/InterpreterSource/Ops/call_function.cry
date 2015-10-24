@@ -7,19 +7,22 @@
 // Repeat this same behavior for DEREF_DOT by adding an extra bit to the DEREF_DOT args.
 // This will eliminate a ton of garbage churn and code duplication.
 
-func = $_stack_pop(valueStack);
+valueStackSize -= 1;
+func = $_array_get(valueStack, valueStackSize);
 argCount = $_array_get(row, 0);
 returnValueUsed = $_array_get(row, 1) == 1;
 if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 	funcArgs = $_new_array('Value', argCount);
 	while (argCount > 0) {
 		argCount -= 1;
-		$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+		valueStackSize -= 1;
+		$_array_set(funcArgs, argCount, $_array_get(valueStack, valueStackSize));
 	}
 } else {
 	funcArgs = $_new_list('Value');
 	while (argCount > 0) {
-		$_list_push(funcArgs, $_stack_pop(valueStack));
+		valueStackSize -= 1;
+		$_list_push(funcArgs, $_array_get(valueStack, valueStackSize));
 		argCount -= 1;
 	}
 	if ($_array_get(row, 0) > 1) {
@@ -29,14 +32,17 @@ if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 type = Value$func.type;
 if (type == Types.SYS_METHOD) {
 	sysMethod = $_cast('SystemMethod', Value$func.internalValue);
-	error = callSystemMethod(
+	value = callSystemMethod(
 		SystemMethod$sysMethod.id, 
 		SystemMethod$sysMethod.context, 
 		funcArgs, 
-		valueStack, 
-		returnValueUsed);
-	if (error != null) {
-		return killExecution(stack, error);
+		stringOutParam);
+	if ($_array_get(stringOutParam, 0) != null) {
+		return killExecution(stack, $_array_get(stringOutParam, 0));
+	}
+	if (returnValueUsed) {
+		$_array_set(valueStack, valueStackSize, value);
+		valueStackSize += 1;
 	}
 } else if (type == Types.METHOD) {
 	methodInstance = $_cast('MethodInstance', Value$func.internalValue);
@@ -49,21 +55,19 @@ if (type == Types.SYS_METHOD) {
 			return killExecution(stack, "Too many args were passed in.");
 		}
 	}
-	valueStack = $_new_stack('Value');
 	locals = $_new_dictionary('int', 'Value');
 	stack = new StackFrame(
 		MethodInstance$methodInstance.pc - 1,
 		locals,
-		valueStack,
 		funcArgs,
 		stack,
 		returnValueUsed,
-		MethodInstance$methodInstance.context);
+		MethodInstance$methodInstance.context,
+		valueStackSize);
 } else if (type == Types.FUNCTION) {
-	valueStack = $_new_stack('Value');
 	locals = $_new_dictionary('int', 'Value');
 	funcDef = $_cast('FunctionDefinition', Value$func.internalValue);
-	stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, valueStack, funcArgs, stack, returnValueUsed, null);
+	stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
 } else {
 	return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " like a function.");
 }

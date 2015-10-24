@@ -1,11 +1,7 @@
 ﻿
 function @type('GamepadStatus') gamepadGetGlobalStatus() {
-	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		@type('ProgramData') p = $_get_program_data();
-		return ProgramData$p.gamepadStatus;
-	} else {
-		return null;
-	}
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.gamepadStatus;
 }
 
 function @type('string') gamepadGenerateFingerprint(

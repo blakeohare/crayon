@@ -65,16 +65,20 @@ struct ProgramData {
 	@type('bool') initializationComplete,
 	@type('GamepadStatus') gamepadStatus,
 	@type('int') gameCounter,
+
+	@type('int') valueStackSize,
+	@type('int') valueStackCapacity,
+	@type('Array<Value>') valueStack,
 }
 
 struct StackFrame {
 	@type('int') pc,
 	@type('Dictionary<int, Value>') locals,
-	@type('Stack<Value>') valueStack,
 	@type('Array<Value>') args,
 	@type('StackFrame') previous,
 	@type('bool') returnValueUsed,
-	@type('Value') objectContext
+	@type('Value') objectContext,
+	@type('int') valueStackSize,
 }
 
 struct Token {

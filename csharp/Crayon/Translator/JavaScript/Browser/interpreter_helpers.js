@@ -53,3 +53,7 @@ function multiply_list(list, size) {
 	}
 	return output;
 }
+
+function clear_list(list) {
+	list.length = 0;
+}

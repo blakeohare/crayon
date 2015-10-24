@@ -1,4 +1,2 @@
-﻿
-value = $_stack_pop(valueStack);
-$_stack_pop(valueStack);
-$_stack_push(valueStack, value);
+﻿valueStackSize -= 1;
+$_array_set(valueStack, valueStackSize - 1, $_array_get(valueStack, valueStackSize));

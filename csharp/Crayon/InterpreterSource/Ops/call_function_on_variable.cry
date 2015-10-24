@@ -6,12 +6,14 @@ if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 	funcArgs = $_new_array('Value', argCount);
 	while (argCount > 0) {
 		argCount -= 1;
-		$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+		valueStackSize -= 1;
+		$_array_set(funcArgs, argCount, $_array_get(valueStack, valueStackSize));
 	}
 } else {
 	funcArgs = $_new_list('Value');
 	while (argCount > 0) {
-		$_list_push(funcArgs, $_stack_pop(valueStack));
+		valueStackSize -= 1;
+		$_list_push(funcArgs, $_array_get(valueStack, valueStackSize));
 		argCount -= 1;
 	}
 	if ($_array_get(row, 1) > 1) {
@@ -31,13 +33,12 @@ if ($_dictionary_contains(locals, int1)) {
 if (func != null) {
 	type = Value$func.type;
 	if (type == Types.FUNCTION) {
-		valueStack = $_new_stack('Value');
 		locals = $_new_dictionary('int', 'Value');
 		funcDef = $_cast('FunctionDefinition', Value$func.internalValue);
 		if (argCount > FunctionDefinition$funcDef.maxArgCount) {
 			return killExecution(stack, "Too many args passed to " + FunctionDefinition$funcDef.name);
 		}
-		stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, valueStack, funcArgs, stack, returnValueUsed, null);
+		stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
 	} else if (type == Types.METHOD) {
 		methodInstance = $_cast('MethodInstance', Value$func.internalValue);
 		if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
@@ -49,16 +50,15 @@ if (func != null) {
 				return killExecution(stack, "Too many args were passed in.");
 			}
 		}
-		valueStack = $_new_stack('Value');
 		locals = $_new_dictionary('int', 'Value');
 		stack = new StackFrame(
 			MethodInstance$methodInstance.pc - 1,
 			locals,
-			valueStack,
 			funcArgs,
 			stack,
 			returnValueUsed,
-			MethodInstance$methodInstance.context);
+			MethodInstance$methodInstance.context,
+			valueStackSize);
 	} else {
 		return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 	}

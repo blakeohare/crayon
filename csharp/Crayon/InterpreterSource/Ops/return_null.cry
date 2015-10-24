@@ -1,11 +1,14 @@
 ﻿
-bool1 = StackFrame$stack.returnValueUsed; // use return value
+valueStackSize = StackFrame$stack.valueStackSize;
+
+if (StackFrame$stack.returnValueUsed) {
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, VALUE_NULL);
+	valueStackSize += 1;
+}
+
 stack = StackFrame$stack.previous;
 if (stack == null) {
 	return '';
 }
 locals = StackFrame$stack.locals;
-valueStack = StackFrame$stack.valueStack;
-if (bool1) {
-	$_stack_push(valueStack, VALUE_NULL);
-}
