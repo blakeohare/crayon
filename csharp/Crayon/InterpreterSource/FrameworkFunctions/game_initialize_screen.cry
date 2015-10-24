@@ -13,7 +13,7 @@ if (int1 < 1 || int2 < 1) {
 }
 
 if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
-	yieldControl(stack);
+	yieldControl(stack, valueStackSize);
 	$_initialize_screen(int1, int2, null, null);
 	return '';
 } else {

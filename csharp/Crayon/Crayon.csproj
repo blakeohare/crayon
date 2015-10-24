@@ -183,7 +183,6 @@
     <EmbeddedResource Include="InterpreterSource\Globals.cry" />
     <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\CrStack.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\GameWindowOpenTK.txt" />
     <EmbeddedResource Include="Translator\Java\Project\TranslationHelper.txt" />
     <EmbeddedResource Include="Translator\Java\Project\Start.txt" />
@@ -362,6 +361,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog_1d.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog_2d.cry" />
+    <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -8,4 +8,7 @@ if ($_dictionary_contains(locals, nameId)) {
 	return killExecution(stack, "Variable not defined: " + $_array_get(identifiers, nameId));
 }
 
-$_stack_push(valueStack, value);
+
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

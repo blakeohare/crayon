@@ -1,5 +1,7 @@
 ﻿
-arg1 = $_stack_pop(valueStack);
+// $user_data_directory_listing(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type != Types.STRING) {
 	return killExecution(stack, "$user_data_directory_listing requires a string argument.");
 }

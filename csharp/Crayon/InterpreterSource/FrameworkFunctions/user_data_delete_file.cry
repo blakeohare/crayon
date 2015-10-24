@@ -1,5 +1,7 @@
 ﻿
-arg1 = $_stack_pop(valueStack); // path
+// $user_data_delete_file(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type != Types.STRING) {
 	return killExecution(stack, "$user_data_delete_file requires a string argument.");
 }

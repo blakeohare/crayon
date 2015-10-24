@@ -448,11 +448,6 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateNewStack(List<string> output, StringConstant type)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateOrd(List<string> output, Expression character)
 		{
 			throw new NotImplementedException();
@@ -544,31 +539,6 @@ namespace Crayon.Translator.COpenGL
 		}
 
 		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateStackGet(List<string> output, Expression stack, Expression index)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateStackLength(List<string> output, Expression stack)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateStackPop(List<string> output, Expression stack)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateStackPush(List<string> output, Expression stack, Expression value)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateStackSet(List<string> output, Expression stack, Expression index, Expression value)
 		{
 			throw new NotImplementedException();
 		}

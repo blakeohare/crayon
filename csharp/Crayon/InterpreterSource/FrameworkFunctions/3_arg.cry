@@ -1,2 +1,5 @@
-﻿arg3 = $_stack_pop(valueStack);
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+﻿
+valueStackSize -= 3;
+arg3 = $_array_get(valueStack, valueStackSize + 2);
+arg2 = $_array_get(valueStack, valueStackSize + 1);
+arg1 = $_array_get(valueStack, valueStackSize);

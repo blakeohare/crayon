@@ -14,25 +14,33 @@ if (pc != 0) {
 		funcArgs = $_new_array('Value', argCount);
 		while (argCount > 0) {
 			argCount -= 1;
-			$_array_set(funcArgs, argCount, $_stack_pop(valueStack));
+			valueStackSize -= 1;
+			$_array_set(funcArgs, argCount, $_array_get(valueStack, valueStackSize));
 		}
 	} else {
 		funcArgs = $_new_list('Value');
 		while (argCount > 0) {
-			$_list_push(funcArgs, $_stack_pop(valueStack));
+			valueStackSize -= 1;
+			$_list_push(funcArgs, $_array_get(valueStack, valueStackSize));
 			argCount -= 1;
 		}
 		if ($_array_get(row, 0) > 1) {
 			$_list_reverse_in_place(funcArgs);
 		}
 	}
+
+	locals = $_new_dictionary('int', 'Value');
+
 	if (returnValueUsed) {
-		$_stack_push(valueStack, value);
+		import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+		$_array_set(valueStack, valueStackSize, value);
+		valueStackSize += 1;
 	}
 
-	valueStack = $_new_stack('Value');
-	locals = $_new_dictionary('int', 'Value');
-	stack = new StackFrame(pc - 1, locals, valueStack, funcArgs, stack, false, value);
+	stack = new StackFrame(pc - 1, locals, funcArgs, stack, false, value, valueStackSize);
 } else {
-	$_stack_push(valueStack, value);
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
 }
+

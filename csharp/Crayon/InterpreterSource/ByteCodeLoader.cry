@@ -145,6 +145,6 @@ function @type('Code') loadByteCode() {
 		}
 		$_array_set(sargs, i, stringarg);
 	}
-	
-	return new Code(ops, iargs, $_convert_list_to_array('string', sargs));
+
+	return new Code(ops, iargs, sargs);
 }

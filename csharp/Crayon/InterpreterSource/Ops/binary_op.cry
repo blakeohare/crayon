@@ -1,6 +1,7 @@
 ﻿
-rightValue = $_stack_pop(valueStack);
-leftValue = $_stack_pop(valueStack);
+valueStackSize -= 2;
+rightValue = $_array_get(valueStack, valueStackSize + 1);
+leftValue = $_array_get(valueStack, valueStackSize);
 
 leftType = Value$leftValue.type;
 rightType = Value$rightValue.type;
@@ -361,4 +362,6 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	}
 }
 
-$_stack_push(valueStack, value);
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

@@ -1,5 +1,5 @@
-﻿
-value = $_stack_pop(valueStack);
+﻿valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
 if (Value$value.type == Types.INTEGER) {
 	int1 = $_cast('int', Value$value.internalValue); // switch ID
 	integerSwitch = $_array_get(integerSwitches, $_array_get(row, 0));

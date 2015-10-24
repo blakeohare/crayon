@@ -1,12 +1,12 @@
 ﻿
-root = $_stack_pop(valueStack);
+root = $_array_get(valueStack, valueStackSize - 1);
 type = Value$root.type;
 nameId = $_array_get(row, 0);
 if (type == Types.INSTANCE) {
 	objInstance = $_cast('ObjectInstance', Value$root.internalValue);
 	dictIntValueLookup = $_cast('Dictionary<int, Value>', ObjectInstance$objInstance.fields);
 	if ($_dictionary_contains(dictIntValueLookup, nameId)) {
-		$_stack_push(valueStack, $_dictionary_get_guaranteed(dictIntValueLookup, nameId));
+		$_array_set(valueStack, valueStackSize - 1, $_dictionary_get_guaranteed(dictIntValueLookup, nameId));
 	} else {
 		classId = ObjectInstance$objInstance.classId;
 		methodDefinitionLookup = $_array_get(classMethods, classId);
@@ -18,7 +18,7 @@ if (type == Types.INSTANCE) {
 					MethodDefinition$methodDefinition.pc,
 					MethodDefinition$methodDefinition.maxArgs));
 			$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
-			$_stack_push(valueStack, value);
+			$_array_set(valueStack, valueStackSize - 1, value);
 		} else {
 			return killExecution(stack, "Field used before it was defined.");
 		}
@@ -230,11 +230,10 @@ if (type == Types.INSTANCE) {
 			return killExecution(stack, "Unrecognized field.");
 			break;
 	}
-	$_stack_push(valueStack, value);
+	$_array_set(valueStack, valueStackSize - 1, value);
 } else if (nameId == LENGTH_ID) { // Length is a field. All other primitive type stuff is not.
 	len = -1;
 	if (type == Types.LIST) {
-		// might need to revisit this if other platforms aren't as easy to do a list implementation?
 		list1 = $_cast('List<Value>', Value$root.internalValue);
 		len = $_list_length(list1);
 	} else if (type == Types.DICTIONARY) {
@@ -248,17 +247,15 @@ if (type == Types.INSTANCE) {
 	}
 
 	if (len < INTEGER_POSITIVE_CACHE) {
-		$_stack_push(valueStack, $_array_get($_array_get(INTEGERS_CACHE, 0), len));
+		$_array_set(valueStack, valueStackSize - 1, $_array_get($_array_get(INTEGERS_CACHE, 0), len));
 	} else {
-		$_stack_push(valueStack, new Value(Types.INTEGER, len));
+		$_array_set(valueStack, valueStackSize - 1, new Value(Types.INTEGER, len));
 	}
 } else {
 	string1 = $_string_cast_weak(type) + $_array_get(identifiers, nameId);
 	if ($_dictionary_contains(primitiveMethodLookup, string1)) {
 		int1 = $_dictionary_get_guaranteed(primitiveMethodLookup, string1);
-		$_stack_push(
-			valueStack, 
-			new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
+		$_array_set(valueStack, valueStackSize - 1, new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 	} else {
 		if (type == Types.NULL) {
 			return killExecution(stack, "Null reference error.");

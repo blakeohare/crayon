@@ -6,5 +6,9 @@ if ($_array_get(row, 3) == 1) {
 		StackFrame$stack.pc + $_array_get(row, 1), // PC
 		$_array_get(row, 2), // max arg count
 		$_array_get(identifiers, $_array_get(row, 0))); // name
-	$_stack_push(valueStack, new Value(Types.FUNCTION, funcDef));
+	
+	
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, new Value(Types.FUNCTION, funcDef));
+	valueStackSize += 1;
 }

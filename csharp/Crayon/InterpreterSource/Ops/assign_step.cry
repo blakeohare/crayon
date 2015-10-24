@@ -1,15 +1,18 @@
 ﻿
-value = $_stack_pop(valueStack);
-value2 = $_stack_pop(valueStack); // target root
+valueStackSize -= 2;
+value = $_array_get(valueStack, valueStackSize + 1);
+value2 = $_array_get(valueStack, valueStackSize); // target root
+
 nameId = $_array_get(row, 0);
 bool1 = $_array_get(row, 1) == 1;
 if (Value$value2.type == Types.INSTANCE) {
 	objInstance2 = $_cast('ObjectInstance', Value$value2.internalValue);
 	$_dictionary_set(ObjectInstance$objInstance2.fields, nameId, value);
 } else {
-	killExecution(stack, "Cannot assign to a field on this type.");
+	return killExecution(stack, "Cannot assign to a field on this type.");
 }
 
 if (bool1) {
-	$_stack_push(valueStack, value);
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
 }

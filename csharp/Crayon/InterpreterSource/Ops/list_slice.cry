@@ -9,7 +9,8 @@
 
 int5 = 0;
 if ($_array_get(row, 2) == 1) {
-	arg3 = $_stack_pop(valueStack);
+	valueStackSize -= 1;
+	arg3 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg3.type == Types.INTEGER) {
 		int3 = $_cast('int', Value$arg3.internalValue);
 		if (int3 == 0) int5 = 2;
@@ -23,7 +24,8 @@ if ($_array_get(row, 2) == 1) {
 bool1 = int3 > 0;
 
 if ($_array_get(row, 1) == 1) {
-	arg2 = $_stack_pop(valueStack);
+	valueStackSize -= 1;
+	arg2 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg2.type == Types.INTEGER) {
 		int2 = $_cast('int', Value$arg2.internalValue);
 	} else {
@@ -34,7 +36,8 @@ if ($_array_get(row, 1) == 1) {
 }
 
 if ($_array_get(row, 0) == 1) {
-	arg1 = $_stack_pop(valueStack);
+	valueStackSize -= 1;
+	arg1 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg1.type == Types.INTEGER) {
 		int1 = $_cast('int', Value$arg1.internalValue);
 	} else {
@@ -44,7 +47,8 @@ if ($_array_get(row, 0) == 1) {
 	arg1 = null;
 }
 
-value =  $_stack_pop(valueStack);
+value = $_array_get(valueStack, valueStackSize - 1);
+
 if (Value$value.type == Types.STRING) {
 	bool2 = true;
 	string1 = $_cast('string', Value$value.internalValue);
@@ -150,4 +154,4 @@ if (int5 == 1) {
 	}
 }
 
-$_stack_push(valueStack, value);
+$_array_set(valueStack, valueStackSize - 1, value);

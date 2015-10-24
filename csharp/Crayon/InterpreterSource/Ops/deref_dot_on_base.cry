@@ -16,7 +16,10 @@ if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
 			root,
 			MethodDefinition$methodDefinition.pc,
 			MethodDefinition$methodDefinition.maxArgs));
-	$_stack_push(valueStack, value);
+
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
 } else {
 	return killExecution(stack, "Base class did not have a method by this name.");
 }

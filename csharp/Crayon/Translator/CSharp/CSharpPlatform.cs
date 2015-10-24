@@ -83,7 +83,6 @@ namespace Crayon.Translator.CSharp
 				{ "ProjectFile.txt", projectId + ".csproj" },
 				{ "ProgramCs.txt", "Program.cs" },
 				{ "AssemblyInfo.txt", "Properties/AssemblyInfo.cs" },
-				{ "CrStack.txt", "CrStack.cs" },
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
 				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
@@ -281,7 +280,7 @@ namespace Crayon.Translator.CSharp
 			}
 			else
 			{
-				output = TypeTranslation(type.Name);
+				output = type.Name;
 				if (type.Generics.Length > 0)
 				{
 					output += "<";
@@ -294,12 +293,6 @@ namespace Crayon.Translator.CSharp
 				}
 			}
 			return output;
-		}
-
-		public string TypeTranslation(string original)
-		{
-			if (original == "Stack") return "CrStack";
-			return original;
 		}
 	}
 }

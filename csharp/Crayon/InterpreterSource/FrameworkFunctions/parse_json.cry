@@ -1,6 +1,9 @@
 ﻿
 // TODO: when you add ability to add optional arguments, add a boolean for failing silently.
-arg1 = $_stack_pop(valueStack);
+
+// $parse_json(string)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type != Types.STRING) {
 	return killExecution(stack, "$parse_json requires a string argument.");
 }

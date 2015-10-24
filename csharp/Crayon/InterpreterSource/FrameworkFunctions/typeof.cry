@@ -1,5 +1,6 @@
 ﻿
-arg1 = $_stack_pop(valueStack);
+// $typeof(value)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 switch (Value$arg1.type) {
 	case Types.NULL: string1 = "null"; break;
