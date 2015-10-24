@@ -641,7 +641,7 @@ function @type('bool') gamepadFireVirtualEvent(
 		@type('Value') value = null;
 		if (dimensionality == 0) {
 			@type('int') ap1type = GamepadAtomicPushy$ap1.subtype;
-			if (ap1type == 1) {
+			if (ap1type == 1 || ap1type == 2) {
 				if (isDigital) {
 					if (GamepadAtomicPushy$ap1.valueF > .5) {
 						value = VALUE_TRUE;
