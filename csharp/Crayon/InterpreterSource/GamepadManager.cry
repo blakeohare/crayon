@@ -197,7 +197,7 @@ function @type('bool') gamepadClearIds() {
 	@type('GamepadStatus') status = gamepadGetGlobalStatus();
 	@type('bool') isInitialized = GamepadStatus$status.isInitialized;
 	if (!isInitialized) {
-		return false;
+		return true;
 	}
 
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
@@ -209,7 +209,7 @@ function @type('bool') gamepadClearIds() {
 		}
 	}
 
-	return true;
+	return false;
 }
 
 /*
