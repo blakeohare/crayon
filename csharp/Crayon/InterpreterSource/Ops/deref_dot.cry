@@ -185,6 +185,13 @@ if (type == Types.INSTANCE) {
 				}
 			} else if ($_string_equals("name", string1)) {
 				value = buildCommonString(GamepadDeviceInfo$gamepadDeviceInfo1.name);
+			} else if ($_string_equals("has_configuration", string1)) {
+				if ($_list_length(GamepadDeviceInfo$gamepadDeviceInfo1.stringVirtualPushyIds) == 0 &&
+					$_list_length(GamepadDeviceInfo$gamepadDeviceInfo1.stringVirtualPushyIds) == 0) {
+					value = VALUE_FALSE;
+				} else {
+					value = VALUE_TRUE;
+				}
 			} else {
 				return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
 			}
@@ -212,6 +219,9 @@ if (type == Types.INSTANCE) {
 				}
 			} else if ($_string_equals("code", string1)) {
 				value = buildInteger(int1);
+			} else {
+				// TODO: refactor this such that this error has priority over the completion check.
+				return killExecution(stack, "HTTP requests do not have a field called '" + string1 + "'");
 			}
 			break;
 
