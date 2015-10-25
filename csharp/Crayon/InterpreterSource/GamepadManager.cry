@@ -423,14 +423,30 @@ function @type('bool') gamepadPollBeginFrame() {
 						if (axisDiff < 0) axisDiff *= -1;
 
 						if (axisDiff >= 0.001) {
-							if ((oldAxis < 0) != (newAxis < 0)) {
-								// negative axis changed
+
+							// determine sign changes
+							if (oldAxis < 0) oldX = -1;
+							else if (oldAxis > 0) oldX = 1;
+							else oldX = 0;
+
+							if (newAxis < 0) newX = -1;
+							else if (newAxis > 0) newX = 1;
+							else newX = 0;
+
+							if (oldX == 0) {
+								// Went from 0 to something else. Only fire a notification for the new axis sign.
+								if (newX > 0) GamepadHardwarePushy$hardwarePushy.axisPositiveGameCounter = gameCounter;
+								else GamepadHardwarePushy$hardwarePushy.axisNegativeGameCounter = gameCounter;
+							} else if (newX == 0 || newX == oldX) {
+								// Went from something to 0 OR sign didn't change. Only fire notification for the old axis sign.
+								if (oldX > 0) GamepadHardwarePushy$hardwarePushy.axisPositiveGameCounter = gameCounter;
+								else GamepadHardwarePushy$hardwarePushy.axisNegativeGameCounter = gameCounter;
+							} else {
+								// sign changed. Fire notification for both signs. 
+								GamepadHardwarePushy$hardwarePushy.axisPositiveGameCounter = gameCounter;
 								GamepadHardwarePushy$hardwarePushy.axisNegativeGameCounter = gameCounter;
 							}
-							if ((oldAxis > 0) != (newAxis > 0)) {
-								// positive axis changed
-								GamepadHardwarePushy$hardwarePushy.axisPositiveGameCounter = gameCounter;
-							}
+
 							GamepadHardwarePushy$hardwarePushy.axisValue = newAxis;
 						}
 					} else if (pushyType == 2) {
