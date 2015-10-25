@@ -519,18 +519,9 @@ function @type('string') stringFromHex(@type('string') encoded) {
 }
 
 function @type('int') parsePosDecInt(@type('string') original) {
-	@type('int') z = $_cast('int', $_string_as_char('0'));
-	@type('int') length = $_string_length(original);
-	if (length == 0) return -1;
-	@type('int') output = 0;
-	for (@type('int') i = 0; i < length; i += 1) {
-		@type('int') d = $_cast('int', $_string_char_at(original, i)) - z;
-		if (d >= 0 && d < 10) {
-			output = 10 * output + d;
-		} else {
-			return -1;
-		}
-		
+	@type('int') int1 = 0; // $_is_valid_integer is implemented with int.TryParse(value, int1) where int1 is hardcoded.
+	if ($_is_valid_integer(original)) {
+		return $_parse_int(original);
 	}
-	return output;
+	return -1;
 }
