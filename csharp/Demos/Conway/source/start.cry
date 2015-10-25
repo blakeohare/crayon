@@ -7,21 +7,17 @@ SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 FRAMES_PER_UPDATE = 5;
 
 function make_grid(width, height) {
-	cols = [];
-	for (x = 0; x < width; ++x) {
-		col = [];
-		for (y = 0; y < height; ++y) {
-			col.add(null);
-		}
-		cols.add(col);
+	grid = [];
+	while (width-- > 0) {
+		grid.add([null] * height);
 	}
-	return cols;
+	return grid;
 }
 
 function get_random_blue() {
 	r = $floor($random() * 40);
-	g = $floor($random() * 100 + 100);
-	b = $floor($random() * 80 + 170);
+	g = $floor($random() * 100) + 100;
+	b = $floor($random() * 80) + 170;
 	return [r, g, b];
 }
 
@@ -34,12 +30,26 @@ function main() {
 	
 	grid = make_grid(WIDTH, HEIGHT);
 	buffer = make_grid(WIDTH, HEIGHT);
+	neighbors_fast_lookup = make_grid(WIDTH, HEIGHT);
+	blues = make_grid(WIDTH, HEIGHT);
 	
 	for (y = 0; y < HEIGHT; ++y) {
 		for (x = 0; x < WIDTH; ++x) {
-			grid[x][y] = ($random() < .5)
-				? get_random_blue()
-				: null;
+			grid[x][y] = $random() < .5;
+			blues[x][y] = get_random_blue();
+			neighbors = [];
+			for (dx = -1; dx <= 1; dx++) {
+				for (dy = -1; dy <= 1; dy++) {
+					if (dx != 0 || dy != 0) {
+						nx = x + dx;
+						ny = y + dy;
+						if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
+							neighbors.add([nx, ny]);
+						}
+					}
+				}
+			}
+			neighbors_fast_lookup[x][y] = neighbors;
 		}
 	}
 	
@@ -50,15 +60,17 @@ function main() {
 	while (true) {
 		events = $game_pump_events();
 		for (event : events) {
-			if (event.type == 'mousemove') {
-				last_col = event.x / CELL_SIZE;
-				last_row = event.y / CELL_SIZE;
-			} else if (event.type == 'mouseleftdown') {
-				mouse_pressed = true;
-			} else if (event.type == 'mouseleftup') {
-				mouse_pressed = false;
-			} else if (event.type == 'quit') {
+			if (event.is_quit) {
 				return;
+			} else if (event.is_mouse) {
+				if (event.type == 'mousemove') {
+					last_col = event.x / CELL_SIZE;
+					last_row = event.y / CELL_SIZE;
+				} else if (event.type == 'mouseleftdown') {
+					mouse_pressed = true;
+				} else if (event.type == 'mouseleftup') {
+					mouse_pressed = false;
+				}
 			}
 		}
 		
@@ -67,7 +79,7 @@ function main() {
 				last_row >= 0 &&
 				last_col < WIDTH && 
 				last_row < HEIGHT) {
-				grid[last_col][last_row] = get_random_blue();
+				grid[last_col][last_row] = true;
 			}
 		}
 		
@@ -78,22 +90,14 @@ function main() {
 			for (y = 0; y < HEIGHT; ++y) {
 				for (x = 0; x < WIDTH; ++x) {
 					neighbors = 0;
-					for (dy = -1; dy <= 1; ++dy) {
-						for (dx = -1; dx <= 1; ++dx) {
-							if (dx != 0 || dy != 0) {
-								nx = x + dx;
-								ny = y + dy;
-								if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
-									if (grid[nx][ny] != null) {
-										neighbors++;
-									}
-								}
-							}
+					for (neighbor : neighbors_fast_lookup[x][y]) {
+						if (grid[neighbor[0]][neighbor[1]]) {
+							neighbors++;
 						}
 					}
 					current_state = grid[x][y];
-					new_state = current_state != null;
-					if (current_state != null) {
+					new_state = current_state;
+					if (current_state) {
 						if (neighbors < 2) {
 							new_state = false; // die from loneliness
 						} else if (neighbors > 3) {
@@ -105,12 +109,12 @@ function main() {
 						}
 					}
 					
-					if ((current_state != null) == new_state) {
+					if (current_state == new_state) {
 						buffer[x][y] = current_state;
 					} else if (new_state) {
-						buffer[x][y] = get_random_blue();
+						buffer[x][y] = true;
 					} else {
-						buffer[x][y] = null;
+						buffer[x][y] = false;
 					}
 				}
 			}
@@ -125,16 +129,11 @@ function main() {
 		$gfx_draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 255);
 		for (y = 0; y < HEIGHT; ++y) {
 			for (x = 0; x < WIDTH; ++x) {
-				cell = grid[x][y];
-				if (x == last_col && y == last_row) {
+				if (grid[x][y]) {
+					rgb = blues[x][y];
+					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, rgb[0], rgb[1], rgb[2], 255);
+				} else if (x == last_col && y == last_row) {
 					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 128, 128, 128, 128);
-				}
-				
-				if (cell != null) {
-					r = cell[0];
-					g = cell[1];
-					b = cell[2];
-					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, r, g, b, 255);
 				}
 			}
 		}
