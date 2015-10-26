@@ -235,8 +235,8 @@ function @type('int') gamepadBind(
 	@type('Value') descriptorValue,
 	@type('Value') alias,
 	@type('int') dimensionality,
-	@type('Value') isXValue,
 	@type('Value') isPositiveValue,
+	@type('Value') isXValue,
 	@type('bool') isDigital) {
 	
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
@@ -703,30 +703,53 @@ function @type('bool') gamepadFireVirtualEvent(
 
 function @type('Value') gamepadBuildVirtualAxisDigitalValue(@type('GamepadAtomicPushy') apPos, @type('GamepadAtomicPushy') apNeg) {
 	@type('bool') set = false;
-	if (GamepadAtomicPushy$apPos.subtype == 1) {
-		if (GamepadAtomicPushy$apPos.valueF > .5) {
-			set = true;
+	if (apPos != null) {
+		if (GamepadAtomicPushy$apPos.subtype == 1) {
+			if (GamepadAtomicPushy$apPos.valueF > .5) {
+				set = true;
+			}
+		} else {
+			set = GamepadAtomicPushy$apPos.value;
 		}
-	} else {
-		set = GamepadAtomicPushy$apPos.value;
-	}
-	if (set) return INTEGERS_CACHE[0][1];
-	
-	if (GamepadAtomicPushy$apNeg.valueF > .5) {
-		if (GamepadAtomicPushy$apNeg.valueF > .5) {
-			set = true;
-		}
-	} else {
-		set = GamepadAtomicPushy$apNeg.value;
+		if (set) return INTEGERS_CACHE[0][1];
 	}
 
-	if (set) return INTEGERS_CACHE[1][1];
+	if (apNeg != null) {
+		if (GamepadAtomicPushy$apNeg.valueF > .5) {
+			if (GamepadAtomicPushy$apNeg.valueF > .5) {
+				set = true;
+			}
+		} else {
+			set = GamepadAtomicPushy$apNeg.value;
+		}
+		if (set) return INTEGERS_CACHE[1][1];
+	}
 
 	return INTEGERS_CACHE[0][0];
 }
 
 function @type('Value') gamepadBuildVirtualAxisAnalogValue(@type('GamepadAtomicPushy') apPos, @type('GamepadAtomicPushy') apNeg) {
-	if (GamepadAtomicPushy$apPos.subtype == 1 && GamepadAtomicPushy$apNeg.subtype == 1) {
+	if (apPos == null || apNeg == null) {
+		if (apNeg != null) {
+			if (GamepadAtomicPushy$apNeg.subtype == 1 || GamepadAtomicPushy$apNeg.subtype == 2) {
+				return buildFloat(-GamepadAtomicPushy$apNeg.valueF);
+			}
+			if (GamepadAtomicPushy$apNeg.value) {
+				return VALUE_FLOAT_NEGATIVE_ONE;
+			}
+		} else if (apPos != null) {
+			if (GamepadAtomicPushy$apPos.subtype == 1 || GamepadAtomicPushy$apPos.subtype == 2) {
+				return buildFloat(-GamepadAtomicPushy$apPos.valueF);
+			}
+			if (GamepadAtomicPushy$apPos.value) {
+				return VALUE_FLOAT_NEGATIVE_ONE;
+			}
+		}
+		return VALUE_FLOAT_ZERO;
+	}
+
+	if ((GamepadAtomicPushy$apPos.subtype == 1 || GamepadAtomicPushy$apPos.subtype == 2) && 
+		(GamepadAtomicPushy$apNeg.subtype == 1 || GamepadAtomicPushy$apNeg.subtype == 2)) {
 		// First check if both axes are analog and if so, use the one that has the strongest value as the other could
 		// possibly be non-zero noise.
 		if (GamepadAtomicPushy$apPos.valueF > GamepadAtomicPushy$apNeg.valueF) {
@@ -735,7 +758,7 @@ function @type('Value') gamepadBuildVirtualAxisAnalogValue(@type('GamepadAtomicP
 		return buildFloat(-GamepadAtomicPushy$apNeg.valueF);
 	}
 
-	if (GamepadAtomicPushy$apPos.subtype == 1) {
+	if (GamepadAtomicPushy$apPos.subtype == 1 || GamepadAtomicPushy$apPos.subtype == 2) {
 		// positive is analog and negative is not. If negative axis is pressed, return that, otherwise, return the positive axis as-is.
 		if (GamepadAtomicPushy$apNeg.value) {
 			return VALUE_FLOAT_NEGATIVE_ONE;
@@ -744,7 +767,7 @@ function @type('Value') gamepadBuildVirtualAxisAnalogValue(@type('GamepadAtomicP
 		return buildFloat(GamepadAtomicPushy$apPos.valueF);
 	}
 
-	if (GamepadAtomicPushy$apNeg.subtype == 1) {
+	if ((GamepadAtomicPushy$apNeg.subtype == 1 || GamepadAtomicPushy$apNeg.subtype == 1)) {
 		// negative is analog and positive is not. If positive axis is pressed, return that, otherwise, return the negative axis as-is.
 		if (GamepadAtomicPushy$apPos.value) {
 			return VALUE_FLOAT_ONE;
