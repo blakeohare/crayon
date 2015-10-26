@@ -627,7 +627,7 @@ function @type('bool') gamepadPollBeginFrame() {
 
 					if (needsFiring) {
 						// TODO (bug) analog values bound as digital events will needlessly fire as the analog value changes without crossing the firing threshold.
-						gamepadFireVirtualEvent(status, i, GamepadVirtualPushy$virtualPushy.alias, dimensionality, GamepadVirtualPushy$virtualPushy.isDigital, ap1, ap2, ap3, ap4);
+						gamepadFireVirtualEvent(virtualPushy, gameCounter, status, i, GamepadVirtualPushy$virtualPushy.alias, dimensionality, GamepadVirtualPushy$virtualPushy.isDigital, ap1, ap2, ap3, ap4);
 					}
 				}
 			}
@@ -636,17 +636,38 @@ function @type('bool') gamepadPollBeginFrame() {
 	return true;
 }
 
-function @type('bool') gamepadFireVirtualEvent(
-		@type('GamepadStatus') status,
-		@type('int') deviceIndex,
-		@type('Value') alias,
+function @type('Value') gamepadGetVirtualPushyValueWithIndex(
+		@type('int') dimensionality,
+		@type('bool') isDigital,
+		@type('int') ap1,
+		@type('int') ap2,
+		@type('int') ap3,
+		@type('int') ap4) {
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('GamepadStatus') gamepadStatus = gamepadGetGlobalStatus();
+		@type('List<GamepadAtomicPushy>') atomicPushies = GamepadStatus$gamepadStatus.atomicPushies;
+		@type('GamepadAtomicPushy') ap1Inst = null;
+		@type('GamepadAtomicPushy') ap2Inst = null;
+		@type('GamepadAtomicPushy') ap3Inst = null;
+		@type('GamepadAtomicPushy') ap4Inst = null;
+		if (ap1 != -1) ap1Inst = $_list_get(atomicPushies, ap1);
+		if (ap2 != -1) ap2Inst = $_list_get(atomicPushies, ap2);
+		if (ap3 != -1) ap3Inst = $_list_get(atomicPushies, ap3);
+		if (ap4 != -1) ap4Inst = $_list_get(atomicPushies, ap4);
+		return gamepadGetVirtualPushyValue(dimensionality, isDigital, ap1Inst, ap2Inst, ap3Inst, ap4Inst);
+	} else {
+		return null;
+	}
+}
+
+function @type('Value') gamepadGetVirtualPushyValue(
 		@type('int') dimensionality,
 		@type('bool') isDigital,
 		@type('GamepadAtomicPushy') ap1,
 		@type('GamepadAtomicPushy') ap2,
 		@type('GamepadAtomicPushy') ap3,
 		@type('GamepadAtomicPushy') ap4) {
-	
+
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
 		@type('Value') value = null;
 		if (dimensionality == 0) {
@@ -691,12 +712,33 @@ function @type('bool') gamepadFireVirtualEvent(
 				}
 			}
 		}
+		return value;
+	} else {
+		return null;
+	}
+}
 
+function @type('bool') gamepadFireVirtualEvent(
+		@type('GamepadVirtualPushy') virtualPushy,
+		@type('int') gameCounter,
+		@type('GamepadStatus') status,
+		@type('int') deviceIndex,
+		@type('Value') alias,
+		@type('int') dimensionality,
+		@type('bool') isDigital,
+		@type('GamepadAtomicPushy') ap1,
+		@type('GamepadAtomicPushy') ap2,
+		@type('GamepadAtomicPushy') ap3,
+		@type('GamepadAtomicPushy') ap4) {
+	
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('Value') value = gamepadGetVirtualPushyValue(dimensionality, isDigital, ap1, ap2, ap3, ap4);
 		@type('GamepadDeviceInfo') device = $_list_get(GamepadStatus$status.devices, deviceIndex);
 		@type('Value') playerId = GamepadDeviceInfo$device.playerId;
 		if (playerId == null) return true; // sanity check, but this should never happen.
 		value = buildGameEventWithExtraArg('gamepad', 'gamepad', deviceIndex, 0, 0.0, false, null, playerId, value, alias);
 		$_list_push(GamepadStatus$status.virtualEvents, value);
+		GamepadVirtualPushy$virtualPushy.gameCounter = gameCounter;
 	}
 	return true;
 }
@@ -1193,6 +1235,107 @@ function @type('bool') gamepadClearBindings(@type('Value') wrappedGamepad) {
 			$_list_clear(GamepadDeviceInfo$gamepad.intVirtualPushyIds);
 			return true;
 		}
+	}
+	return false;
+}
+
+/*
+	status codes:
+	- 0 - OK
+	- 1 - too early
+	- 2 - bad device arg (not a device or string or int)
+	- 3 - bad alias arg (not a string or int
+*/
+function @type('GamepadVirtualPushy') gamepadGetVirtualPushy(@type('Value') deviceOrPlayerValue, @type('Value') aliasValue, @type('Array<int>') intOutParam) {
+	@type('GamepadStatus') status = gamepadGetGlobalStatus();
+	if (!GamepadStatus$status.isInitialized) {
+		$_array_set(intOutParam, 0, 1);
+		return null;
+	}
+
+	$_array_set(intOutParam, 0, 0);
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		
+		@type('int') i = 0; 
+		@type('GamepadDeviceInfo') device = null;
+		if (Value$deviceOrPlayerValue.type == Types.NATIVE_OBJECT) {
+			device = $_cast('GamepadDeviceInfo', extractNativeObjectOfType(deviceOrPlayerValue, NativeObjectSubType.GAMEPAD_DEVICE));
+			if (device == null) {
+				$_array_set(intOutParam, 0, 2);
+				return null;
+			}
+		} else if (Value$deviceOrPlayerValue.type == Types.INTEGER || Value$deviceOrPlayerValue.type == Types.STRING) {
+			@type('List<GamepadDeviceInfo>') devices = GamepadStatus$status.devices;
+			@type('GamepadDeviceInfo') deviceIterator = null;
+			@type('Value') deviceIdValue = null;
+			for (i = 0; i < $_list_length(devices); i += 1) {
+				deviceIterator = $_list_get(devices, i);
+				deviceIdValue = GamepadDeviceInfo$deviceIterator.playerId;
+				if (Value$deviceIdValue.type == Value$deviceOrPlayerValue.type) {
+					if (Value$deviceOrPlayerValue.type == Types.INTEGER) {
+						if ($_cast('int', Value$deviceOrPlayerValue.internalValue) == $_cast('int', Value$deviceIdValue.internalValue)) {
+							device = deviceIterator;
+							i += 9999;
+						}
+					} else {
+						if ($_string_equals($_cast('string', Value$deviceOrPlayerValue.internalValue), $_cast('string', Value$deviceIdValue.internalValue))) {
+							device = deviceIterator;
+							i += 9999;
+						}
+					}
+				}
+			}
+		} else {
+			$_array_set(intOutParam, 0, 2);
+			return null;
+		}
+
+		// even if the device is null, run through the following logic with device != null checks to give the 
+		// arg checker a chance to throw an error rather than fail silently.
+
+		if (Value$aliasValue.type == Types.INTEGER) {
+			i = $_cast('int', Value$aliasValue.internalValue);
+			if (device != null && $_dictionary_contains(GamepadDeviceInfo$device.intVirtualPushies, i)) {
+				return $_dictionary_get_guaranteed(GamepadDeviceInfo$device.intVirtualPushies, i);
+			}
+		} else if (Value$aliasValue.type == Types.STRING) {
+			@type('string') s = $_cast('string', Value$aliasValue.internalValue);
+			if (device != null && $_dictionary_contains(GamepadDeviceInfo$device.stringVirtualPushies, s)) {
+				return $_dictionary_get_guaranteed(GamepadDeviceInfo$device.stringVirtualPushies, s);
+			}
+		} else {
+			$_array_set(intOutParam, 0, 3);
+		}
+
+		return null;
+	}
+	$_array_set(intOutParam, 0, 1);
+	return null;
+}
+
+// gamepadGetVirtualPushy status codes are intenionally relayed back to framework function call.
+function @type('Value') gamepadGetPushyState(@type('Value') deviceOrPlayerValue, @type('Value') aliasValue, @type('Array<int>') intOutParam) {
+
+	@type('GamepadVirtualPushy') virtualPushy = gamepadGetVirtualPushy(deviceOrPlayerValue, aliasValue, intOutParam);
+
+	if (virtualPushy != null) {
+		return gamepadGetVirtualPushyValueWithIndex(
+			GamepadVirtualPushy$virtualPushy.dimensionality,
+			GamepadVirtualPushy$virtualPushy.isDigital,
+			GamepadVirtualPushy$virtualPushy.atomicIndex1,
+			GamepadVirtualPushy$virtualPushy.atomicIndex2,
+			GamepadVirtualPushy$virtualPushy.atomicIndex3,
+			GamepadVirtualPushy$virtualPushy.atomicIndex4);
+	}
+	return VALUE_NULL;
+}
+
+function @type('bool') gamepadIsPushyChangedRecently(@type('Value') deviceOrPlayerValue, @type('Value') aliasValue, @type('Array<int>') intOutParam, @type('int') gameCounter) {
+	
+	@type('GamepadVirtualPushy') virtualPushy = gamepadGetVirtualPushy(deviceOrPlayerValue, aliasValue, intOutParam);
+
+	if (virtualPushy != null) {
+		return GamepadVirtualPushy$virtualPushy.gameCounter == gameCounter;
 	}
 	return false;
 }

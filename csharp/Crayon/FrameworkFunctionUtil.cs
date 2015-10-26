@@ -105,6 +105,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 5, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
 					break;
+				case FrameworkFunction.GAMEPAD_CHANGED_RECENTLY:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
+					break;
 				case FrameworkFunction.GAMEPAD_CLEAR_BINDINGS:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT");
@@ -121,6 +125,10 @@ namespace Crayon
 				case FrameworkFunction.GAMEPAD_GET_DEVICE:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
+					break;
+				case FrameworkFunction.GAMEPAD_GET_STATE:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
 					break;
 				case FrameworkFunction.GAMEPAD_SAVE_CONFIG:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
