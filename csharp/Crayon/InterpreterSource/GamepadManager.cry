@@ -415,9 +415,9 @@ function @type('bool') gamepadPollBeginFrame() {
 						// 1D Analog Axis
 						oldAxis = GamepadHardwarePushy$hardwarePushy.axisValue;
 						newAxis = $_gamepad_get_analog_axis_value(GamepadDeviceInfo$device.nativeDevice, hardwareIndex);
-						if (newAxis < -.999) newAxis = -1.0;
-						else if (newAxis > .999) newAxis = 1.0;
-						else if (newAxis < .001 && newAxis > -.001) newAxis = 0.0;
+						if (newAxis < -.99) newAxis = -1.0;
+						else if (newAxis > .99) newAxis = 1.0;
+						else if (newAxis < .01 && newAxis > -.01) newAxis = 0.0;
 
 						axisDiff = newAxis - oldAxis;
 						if (axisDiff < 0) axisDiff *= -1;
