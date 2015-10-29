@@ -149,6 +149,10 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 9, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");
 					break;
+				case FrameworkFunction.GFX_BLIT_IMAGE_WITH_ALPHA:
+					VerifyLength(throwToken, frameworkFunction, 4, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER INTEGER");
+					break;
 				case FrameworkFunction.GFX_DRAW_ELLIPSE:
 					VerifyLength(throwToken, frameworkFunction, 8, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER");

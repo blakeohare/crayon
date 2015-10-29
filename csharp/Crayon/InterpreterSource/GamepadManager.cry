@@ -1186,20 +1186,20 @@ function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<
 												@type('Value') isXValue = null;
 												@type('Value') isPos = null;
 												if (dimensionality > 1) {
-													if (k < 7) isXValue = VALUE_TRUE;
+													if (k < 6) isXValue = VALUE_TRUE;
 													else isXValue = VALUE_FALSE;
 												}
 												if (dimensionality > 0) {
-													if (k == 5 || k == 7) isPos = VALUE_TRUE;
-													isPos = VALUE_FALSE;
+													if (k == 4 || k == 6) isPos = VALUE_TRUE;
+													else isPos = VALUE_FALSE;
 												}
 												gamepadBind(
 													gamepadAsValue,
 													buildString(pushyConfigDescriptor),
 													aliasValue,
 													dimensionality,
-													isXValue,
 													isPos,
+													isXValue,
 													isDigital);
 											}
 										}
@@ -1271,7 +1271,7 @@ function @type('GamepadVirtualPushy') gamepadGetVirtualPushy(@type('Value') devi
 			for (i = 0; i < $_list_length(devices); i += 1) {
 				deviceIterator = $_list_get(devices, i);
 				deviceIdValue = GamepadDeviceInfo$deviceIterator.playerId;
-				if (Value$deviceIdValue.type == Value$deviceOrPlayerValue.type) {
+				if (deviceIdValue != null && Value$deviceIdValue.type == Value$deviceOrPlayerValue.type) {
 					if (Value$deviceOrPlayerValue.type == Types.INTEGER) {
 						if ($_cast('int', Value$deviceOrPlayerValue.internalValue) == $_cast('int', Value$deviceIdValue.internalValue)) {
 							device = deviceIterator;

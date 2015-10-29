@@ -500,6 +500,7 @@ function @type('bool') glRenderOld(
 					startY = $_array_get(GL_DATA, i | 6); // source Y
 					width = $_array_get(GL_DATA, i | 7); // source width
 					height = $_array_get(GL_DATA, i | 8); // source height
+					alpha = $_array_get(GL_DATA, i | 9); // alpha
 
 					if (right >= 0 && left < VW && bottom >= 0 && top < VH) {
 						textureWidth = Image$image.textureRight - Image$image.textureLeft;
@@ -523,6 +524,7 @@ function @type('bool') glRenderOld(
 
 						if (state == null ||
 							GlRenderState$state.mode != OpenGlMode.QUADS ||
+							GlRenderState$state.a != alpha ||
 							GlRenderState$state.textureId != textureId) {
 							if (state == null) {
 								state = new GlRenderState(0, 0, 0, 0, 0, 0);
@@ -532,9 +534,10 @@ function @type('bool') glRenderOld(
 
 							GlRenderState$state.mode = OpenGlMode.QUADS;
 							GlRenderState$state.textureId = textureId;
-						
+							GlRenderState$state.a = alpha;
+
 							$_gl_enable_texture_2d(gl);
-							$_gl_color_4(gl, 255, 255, 255, 255);
+							$_gl_color_4(gl, 255, 255, 255, alpha);
 							$_gl_bind_texture(gl, textureId);
 							$_gl_begin_quads(gl);
 						}
@@ -733,7 +736,11 @@ function @type('bool') glDrawLine(
 // Draws an image on the screen at the coordinates.
 function glDrawImageSimple(@type('Image') image, @type('int') x, @type('int') y) {
 	// TODO: just do this inline or possibly create a separate render action.
-	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.width, Image$image.height);
+	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.width, Image$image.height, 255);
+}
+
+function glDrawImageWithAlpha(@type('Image') image, @type('int') x, @type('int') y, @type('int') alpha) {
+	glDrawImageAdvanced(image, x, y, Image$image.width, Image$image.height, 0, 0, Image$image.width, Image$image.height, alpha);
 }
 
 // Draws a part of an image on a part of the screen. Stretching and cropping.
@@ -746,8 +753,10 @@ function glDrawImageAdvanced(
 	@type('int') sourceX,
 	@type('int') sourceY,
 	@type('int') sourceWidth,
-	@type('int') sourceHeight) {
+	@type('int') sourceHeight,
+	@type('int') alpha) {
 	
+	if (alpha == 0) return null;
 	if (GL_VIRTUAL_SIZE == GL_REAL_SIZE) glIncreaseDataCapacity();
 	if (GL_IMAGES_VIRTUAL_SIZE == GL_IMAGES_REAL_SIZE) glIncreaseImageListCapacity();
 	
@@ -768,6 +777,7 @@ function glDrawImageAdvanced(
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 6, sourceY);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 7, sourceWidth);
 	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 8, sourceHeight);
+	$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 9, alpha);
 	GL_VIRTUAL_SIZE += 16;
 
 	$_array_set(GL_IMAGES, GL_IMAGES_VIRTUAL_SIZE, image);

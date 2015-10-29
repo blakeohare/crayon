@@ -24,7 +24,8 @@ if (%%%IS_OPEN_GL_BASED%%%) {
 		$_cast('int', Value$arg6.internalValue),
 		$_cast('int', Value$arg7.internalValue),
 		$_cast('int', Value$arg8.internalValue),
-		$_cast('int', Value$arg9.internalValue));
+		$_cast('int', Value$arg9.internalValue),
+		255);
 } else {
 	$_blit_image_partial(
 		image1,
