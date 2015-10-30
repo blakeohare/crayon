@@ -598,7 +598,8 @@ namespace Crayon
 		private void CompileBaseMethodReference(Parser parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
 		{
 			EnsureUsed(baseMethodReference.FirstToken, outputUsed);
-			buffer.Add(baseMethodReference.DotToken, OpCode.DEREF_DOT_ON_BASE, parser.GetId(baseMethodReference.StepToken.Value));
+			int baseClassId = parser.GetClass(baseMethodReference.ClassToWhichThisMethodRefers).ClassID;
+			buffer.Add(baseMethodReference.DotToken, OpCode.DEREF_DOT_ON_BASE, parser.GetId(baseMethodReference.StepToken.Value), baseClassId);
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)

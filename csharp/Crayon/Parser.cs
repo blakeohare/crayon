@@ -18,6 +18,9 @@ namespace Crayon
 
 		private int fileIdCounter = 0;
 
+		private int classIds = 0;
+		private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
+
 		// HACK ALERT - Forgive me father for I have sinned.
 		// I need an access-anywhere boolean flag to determine if the parser is running in translate mode.
 		// Syntax parsing is currently stateless. Which is nice. In an ideal world.
@@ -109,6 +112,17 @@ namespace Crayon
 		public void RegisterSwitchStringDictLookup(string name, Dictionary<string, int> lookup)
 		{
 			this.stringSwitchLookups[name] = lookup;
+		}
+
+		public int GetClassId(ClassDefinition cls)
+		{
+			int id;
+			if (!this.classIdsByInstance.TryGetValue(cls, out id))
+			{
+				id = classIdsByInstance.Count + 1;
+				classIdsByInstance[cls] = id;
+			}
+			return id;
 		}
 
 		public bool IsTranslateMode { get; private set; }

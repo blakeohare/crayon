@@ -5,6 +5,7 @@ namespace Crayon.ParseTree
 {
 	internal class ClassDefinition : Executable
 	{
+		public int ClassID { get; private set; }
 		public Token NameToken { get; private set; }
 		public Token[] SubClasses { get; private set; }
 		public FunctionDefinition[] Methods { get; private set; }
@@ -23,6 +24,8 @@ namespace Crayon.ParseTree
 
 		public override IList<Executable> Resolve(Parser parser)
 		{
+			this.ClassID = parser.GetClassId(this);
+
 			if (parser.IsInClass)
 			{
 				throw new ParserException(this.FirstToken, "Nested classes aren't a thing, yet.");
