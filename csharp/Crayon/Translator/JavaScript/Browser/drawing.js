@@ -5,6 +5,18 @@ R.blitPartial = function (canvas, tx, ty, tw, th, sx, sy, sw, sh) {
 	R._global_vars.ctx.drawImage(canvas, sx, sy, sw, sh, tx, ty, tw, th);
 };
 
+R.drawImageWithAlpha = function (canvas, x, y, a) {
+	if (a == 0) return;
+	var ctx = R._global_vars.ctx;
+	if (a != 255) {
+		ctx.globalAlpha = a / 255;
+		ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
+		ctx.globalAlpha = 1;
+	} else {
+		ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
+	}
+};
+
 R._toHex = function (r, g, b) {
 	var hd = '0123456789abcdef';
 	return '#'

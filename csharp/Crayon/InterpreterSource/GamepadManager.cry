@@ -1306,10 +1306,7 @@ function @type('GamepadVirtualPushy') gamepadGetVirtualPushy(@type('Value') devi
 		} else {
 			$_array_set(intOutParam, 0, 3);
 		}
-
-		return null;
 	}
-	$_array_set(intOutParam, 0, 1);
 	return null;
 }
 
