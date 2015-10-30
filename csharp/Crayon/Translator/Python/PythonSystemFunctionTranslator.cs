@@ -90,6 +90,19 @@ namespace Crayon.Translator.Python
 			output.Add("))");
 		}
 
+		protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
+		{
+			output.Add("_blit_image_with_alpha(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add("[1], ");
+			this.Translator.TranslateExpression(output, x);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, y);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, alpha);
+			output.Add(")");
+		}
+
 		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
 			output.Add("blit_partial(");

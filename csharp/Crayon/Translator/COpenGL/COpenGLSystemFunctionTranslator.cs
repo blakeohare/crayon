@@ -63,6 +63,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
 		{
 			throw new NotImplementedException();

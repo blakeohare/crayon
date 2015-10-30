@@ -127,6 +127,28 @@ _PDL = pygame.draw.line
 _PDR = pygame.draw.rect
 _PR = pygame.Rect
 
+_temp_image = [None]
+
+def _blit_image_with_alpha(surface, x, y, alpha):
+	scr = _global_vars['virtual_screen']
+	if alpha > 0:
+		if alpha >= 255:
+			scr.blit(surface, (x, y))
+		else:
+			# TODO: there must be a better way
+			temp = _temp_image[0]
+			if temp == None:
+				w = surface.get_width()
+				h = surface.get_height()
+				if w < 100: w = 100
+				if h < 100: h = 100
+				temp = pygame.Surface((w, h)).convert()
+				_temp_image[0] = temp
+			temp.blit(scr, (-x, -y))
+			temp.blit(surface, (0, 0))
+			temp.set_alpha(alpha)
+			scr.blit(temp, (x, y), surface.get_rect())
+
 _images_downloaded = {}
 
 def create_assertion(message):

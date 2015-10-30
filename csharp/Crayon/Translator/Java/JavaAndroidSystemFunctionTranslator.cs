@@ -8,6 +8,11 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAndroidSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("AndroidTranslationHelper.makeHttpRequest(");
