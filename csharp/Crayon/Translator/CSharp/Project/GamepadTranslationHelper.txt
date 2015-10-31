@@ -45,7 +45,7 @@ namespace %%%PROJECT_ID%%%
 				string newDescription = rawDescription.Substring(ignoreThrough + 2).Trim();
 				if (newDescription.Length != 0)
 				{
-					rawDescription = newDescription;
+					rawDescription = "Joystick " + newDescription;
 				}
 			}
 			return rawDescription;
