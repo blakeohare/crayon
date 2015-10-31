@@ -39,7 +39,15 @@ namespace %%%PROJECT_ID%%%
 		public static string GetDeviceName(object nativeDevice)
 		{
 			string rawDescription = ((JoystickDevice)nativeDevice).Description;
-			// TODO: strip out ordinate prefix.
+			int ignoreThrough = rawDescription.IndexOf('#');
+			if (ignoreThrough != -1)
+			{
+				string newDescription = rawDescription.Substring(ignoreThrough + 2).Trim();
+				if (newDescription.Length != 0)
+				{
+					rawDescription = newDescription;
+				}
+			}
 			return rawDescription;
 		}
 
