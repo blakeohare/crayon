@@ -201,7 +201,7 @@ namespace Crayon.Translator
 			}
 			else
 			{
-				output.Add("null");
+				this.TranslateNullConstant(output, null);
 			}
 			output.Add(";" + this.NL);
 		}

@@ -53,12 +53,17 @@ namespace Crayon.Translator.COpenGL
 			List<string> mainC = new List<string>();
 			mainC.Add(Util.ReadFileInternally("Translator/COpenGL/Project/Header.c"));
 			mainC.Add(mainFile["structs"]);
+			mainC.Add(this.Translator.NL);
+			this.Translator.TranslateGlobals(mainC, finalCode);
+			mainC.Add(this.Translator.NL);
+			this.Translator.TranslateFunctions(mainC, finalCode);
+			mainC.Add(this.Translator.NL);
 			mainC.Add(Util.ReadFileInternally("Translator/COpenGL/Project/Footer.c"));
 
 			output["main.c"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = string.Join("\n", mainC)
+				TextContent = string.Join("", mainC)
 			};
 
 			return output;
@@ -70,7 +75,7 @@ namespace Crayon.Translator.COpenGL
 			return GetTypeStringFromAnnotation(type, wrappedContext, dropGenerics);
 		}
 		
-		private string GetTypeStringFromAnnotation(AnnotatedType type, bool wrappedContext, bool dropGenerics)
+		public string GetTypeStringFromAnnotation(AnnotatedType type, bool wrappedContext, bool dropGenerics)
 		{
 			string output;
 

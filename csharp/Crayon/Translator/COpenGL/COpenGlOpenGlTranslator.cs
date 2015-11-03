@@ -100,7 +100,7 @@ namespace Crayon.Translator.COpenGL
 
 		public override void TranslateGlMaxTextureSize(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("TODO_gl_max_texture_size()");
 		}
 
 		public override void TranslateGlPrepareDrawPipeline(List<string> output, Expression gl)
