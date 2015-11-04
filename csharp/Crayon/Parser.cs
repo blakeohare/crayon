@@ -18,7 +18,6 @@ namespace Crayon
 
 		private int fileIdCounter = 0;
 
-		private int classIds = 0;
 		private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
 		// HACK ALERT - Forgive me father for I have sinned.

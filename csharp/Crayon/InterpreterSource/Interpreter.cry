@@ -13,10 +13,6 @@ function @omitReturn @type('string') interpret(
 		@type('Dictionary<int, Value>') globals) {
 
 	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
-	@type('int') LENGTH_ID = -999;
-	if ($_dictionary_contains(inv_identifiers, 'length')) {
-		LENGTH_ID = $_dictionary_get_guaranteed(inv_identifiers, 'length');
-	}
 	@type('ProgramData') p = $_get_program_data();
 
 	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
@@ -114,9 +110,9 @@ function @omitReturn @type('string') interpret(
 	@type('Value') arg9 = null;
 	@type('Value') arg10 = null;
 
+	@type('Array<int>') primitiveMethodIdLookup = ProgramData$p.primitiveMethodIdLookup;
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
-	@type('Dictionary<string, int>') primitiveMethodLookup = ProgramData$p.primitiveMethodLookup;
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
 

@@ -57,7 +57,7 @@ struct ProgramData {
 	@type('List<Dictionary<int, int>>') integerSwitchLookupsBuilder,
 	@type('Array<Dictionary<string, int>>') stringSwitchLookups,
 	@type('List<Dictionary<string, int>>') stringSwitchLookupsBuilder,
-	@type('Dictionary<string, int>') primitiveMethodLookup, // TODO: make this an <int, int> dictionary and use the identifier code and eliminate the rutime string calculation altogether
+	@type('Array<int>') primitiveMethodIdLookup,
 	@type('int') instanceCounter,
 	@type('SpriteSheetData') spriteSheetData,
 	@type('ImageSheetStatus') imageSheetStatus,

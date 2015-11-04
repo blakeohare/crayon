@@ -8,6 +8,8 @@ namespace Crayon
 	{
 		private static readonly Dictionary<string, string> CONSTANT_REPLACEMENTS;
 
+		private static readonly Dictionary<string, int> PRIMITIVE_FIELD_IDS;
+
 		static Constants()
 		{
 			Dictionary<string, string> constants = new Dictionary<string, string>()
@@ -34,7 +36,57 @@ namespace Crayon
 				}
 			}
 
+			Dictionary<string, int> primitiveFieldIds = new Dictionary<string, int>();
+			List<string> fields = new List<string>() { "length" };
+
+			foreach (PrimitiveMethods primitiveMethod in PrimitiveMethodsUtil.GetAllMethods())
+			{
+				string name = PrimitiveMethodsUtil.GetMethodName(primitiveMethod);
+				if (name != null)
+				{
+					fields.Add(name);
+				}
+			}
+
+			fields.AddRange(new string[] {
+				// events
+				"button", "down", "key", "type", "x", "y", "player", "name", "value", "device", "is_significant", "descriptor", 
+				"is_key", "is_mouse", "is_quit", "is_gamepad", "is_hardware",
+
+				// gamepad
+				"id", "name", "has_configuration", 
+
+				// http request
+				"completed", "content", "code",
+
+				// image
+				"width", "height",
+			});
+
+			constants.Add("PREDEFINED_FIELD_COUNT", "" + (fields.Count + 1));
+
+			foreach (string field in fields)
+			{
+				if (field == "count") throw new Exception(); // name collision with %%%PREDEFINED_FIELD_COUNT%%%
+
+				if (!primitiveFieldIds.ContainsKey(field))
+				{
+					int id = primitiveFieldIds.Count + 1;
+					primitiveFieldIds.Add(field, id);
+					constants.Add("PREDEFINED_FIELD_" + field.ToUpperInvariant(), "" + id);
+				}
+			}
+
+			PRIMITIVE_FIELD_IDS = primitiveFieldIds;
+
 			CONSTANT_REPLACEMENTS = constants;
+		}
+
+		public static int GetPrimitiveFieldId(string name)
+		{
+			int id = 0;
+			PRIMITIVE_FIELD_IDS.TryGetValue(name, out id);
+			return id;
 		}
 
 		public static string DoReplacements(string text, Dictionary<string, string> replacements)

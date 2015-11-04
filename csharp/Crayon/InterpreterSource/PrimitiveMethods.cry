@@ -19,49 +19,6 @@ function @type('Value') primitiveMethodError(@type('Array<string>') stringOutPar
 	return null;
 }
 
-function @type('Dictionary<string, int>') generatePrimitiveMethodLookupTable() {
-
-	// TODO: eventually take in the dictionary of inv_identifiers and build an int->int lookup
-	// where the keys are the method name ID * MAX_TYPE + type ID
-
-	@type('Dictionary<string, int>') lookup = $_new_dictionary('string', 'int');
-	// no need to weakly cast ints to strings, since the optimizer will consolidate everything into inline strings
-	$_dictionary_set(lookup, Types.STRING + "contains", %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%);
-	
-	$_dictionary_set(lookup, Types.STRING + "endsWith", %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%);
-	$_dictionary_set(lookup, Types.STRING + "indexOf", %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%);
-	$_dictionary_set(lookup, Types.STRING + "lower", %%%PRIMITIVE_METHOD_STRING_LOWER%%%);
-	$_dictionary_set(lookup, Types.STRING + "reverse", %%%PRIMITIVE_METHOD_STRING_REVERSE%%%);
-	$_dictionary_set(lookup, Types.STRING + "replace", %%%PRIMITIVE_METHOD_STRING_REPLACE%%%);
-	$_dictionary_set(lookup, Types.STRING + "split", %%%PRIMITIVE_METHOD_STRING_SPLIT%%%);
-	$_dictionary_set(lookup, Types.STRING + "startsWith", %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%);
-	$_dictionary_set(lookup, Types.STRING + "trim", %%%PRIMITIVE_METHOD_STRING_TRIM%%%);
-	$_dictionary_set(lookup, Types.STRING + "upper", %%%PRIMITIVE_METHOD_STRING_UPPER%%%);
-
-	$_dictionary_set(lookup, Types.LIST + "add", %%%PRIMITIVE_METHOD_LIST_ADD%%%);
-	$_dictionary_set(lookup, Types.LIST + "clear", %%%PRIMITIVE_METHOD_LIST_CLEAR%%%);
-	$_dictionary_set(lookup, Types.LIST + "clone", %%%PRIMITIVE_METHOD_LIST_CLONE%%%);
-	$_dictionary_set(lookup, Types.LIST + "concat", %%%PRIMITIVE_METHOD_LIST_CONCAT%%%);
-	$_dictionary_set(lookup, Types.LIST + "contains", %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%);
-	$_dictionary_set(lookup, Types.LIST + "insert", %%%PRIMITIVE_METHOD_LIST_INSERT%%%);
-	$_dictionary_set(lookup, Types.LIST + "join", %%%PRIMITIVE_METHOD_LIST_JOIN%%%);
-	$_dictionary_set(lookup, Types.LIST + "pop", %%%PRIMITIVE_METHOD_LIST_POP%%%);
-	$_dictionary_set(lookup, Types.LIST + "remove", %%%PRIMITIVE_METHOD_LIST_REMOVE%%%);
-	$_dictionary_set(lookup, Types.LIST + "reverse", %%%PRIMITIVE_METHOD_LIST_REVERSE%%%);
-	$_dictionary_set(lookup, Types.LIST + "shuffle", %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%);
-	$_dictionary_set(lookup, Types.LIST + "sort", %%%PRIMITIVE_METHOD_LIST_SORT%%%);
-
-	$_dictionary_set(lookup, Types.DICTIONARY + "clear", %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "clone", %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "contains", %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "get", %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "keys", %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "remove", %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%);
-	$_dictionary_set(lookup, Types.DICTIONARY + "values", %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%);
-
-	return lookup;
-}
-
 function @type('Value') callSystemMethod(
 		@type('int') methodId,
 		@type('Value') wrappedContext,

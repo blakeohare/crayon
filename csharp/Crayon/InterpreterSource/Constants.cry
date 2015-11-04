@@ -113,6 +113,7 @@ enum NativeObjectSubType {
 	MUSIC = %%%SUBTYPE_ID_MUSIC%%%,
 	TEXT_LOADER = %%%SUBTYPE_ID_TEXT_LOADER%%%,
 }
+const MAX_SUBTYPE = NativeObjectSubType.TEXT_LOADER + 1;
 
 enum AsyncMessageType {
 	HTTP_RESPONSE = %%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
