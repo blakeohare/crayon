@@ -4,6 +4,7 @@ import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 bool1 = false; // type error encountered
 int1 = 1; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
 if (Value$arg1.type == Types.LIST) {
+	list1 = $_cast('List<Value>', Value$arg1.internalValue);
 	for (i = 0; i < $_list_length(list1); i += 1) {
 		value = $_list_get(list1, i);
 		if (Value$value.type != Types.STRING) {

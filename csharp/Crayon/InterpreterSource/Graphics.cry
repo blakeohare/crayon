@@ -840,7 +840,7 @@ function imageSheetPerformWorkNuggetPostFrame() {
 // 0 - nope, not loaded
 // 1 - yup, it's loaded
 // 2 - yup, it's loaded. But you didn't check to see if the sheet it came from was done loading so it could have totally not 
-//     been, whih means this is an unsafe access so we're going to crash anyway because shame on you for accessing without 
+//     been, which means this is an unsafe access so we're going to crash anyway because shame on you for accessing without 
 //     checking.
 function @type('int') loadImageFromLocalResources(@type('string') key, @type('string') path) {
 
