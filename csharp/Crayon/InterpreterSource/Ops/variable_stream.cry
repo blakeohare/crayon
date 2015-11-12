@@ -9,16 +9,15 @@ if (valueStackSize + int1 >= valueStackCapacity) {
 	}
 }
 
-// TODO: change this to i = 0; i < int1 when I'm doing less risky systemic modifications.
-for (i = 1; i <= int1; i += 1) {
-	nameId = $_array_get(row, i);
+for (i = 0; i < int1; i += 1) {
+	nameId = $_array_get(row, i + 1);
 	if ($_dictionary_contains(locals, nameId)) {
 		value = $_dictionary_get_guaranteed(locals, nameId);
 	} else if ($_dictionary_contains(globals, nameId)) {
 		value = $_dictionary_get_guaranteed(globals, nameId);
 	} else {
 		tokens = $_new_list('Token');
-		int2 = (i - 1) * 3 + int1 + 1;
+		int2 = i * 3 + int1 + 1;
 		$_list_push(tokens, new Token(
 			$_array_get(row, int2),
 			$_array_get(row, int2 + 1),
@@ -27,7 +26,7 @@ for (i = 1; i <= int1; i += 1) {
 							
 		return killExecution(stack, "Variable not defined: " + $_array_get(identifiers, nameId));
 	}
-	$_array_set(valueStack, valueStackSize + i - 1, value);
+	$_array_set(valueStack, valueStackSize + i, value);
 }
 
 valueStackSize += int1;
