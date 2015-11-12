@@ -26,7 +26,7 @@ R.IO.get_disk = function (isUserData) {
 		}
 		return R.IO.virtualDisk;
 	}
-}
+};
 
 R.IO.checkPath = function (path, isDir, isUserData) {
 	disk = R.IO.get_disk(isUserData);

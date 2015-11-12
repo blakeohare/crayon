@@ -75,10 +75,29 @@ namespace Crayon.Translator.JavaScript
 
 			string codeJsText = Constants.DoReplacements(string.Join("", codeJs), replacements);
 
+			if (this.IsMin)
+			{
+				codeJsText = JavaScriptMinifier.Minify(codeJsText);
+			}
+
 			output["code.js"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
 				TextContent = codeJsText
+			};
+
+
+
+			output["bytecode.js"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = string.Join("\n", new string[] {
+					"var CRAYON = {};",
+					"CRAYON.getByteCode = function() {",
+					"\treturn \"" + this.Context.ByteCodeString + "\";",
+					"};",
+					""
+				})
 			};
 
 			HashSet<string> binaryFileTypes = new HashSet<string>(
@@ -218,6 +237,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("<meta charset=\"utf-8\">");
 			output.Add("<title>Crayon JS output</title>");
 			output.Add("<style type=\"text/css\"> body { background-color:#000; text-align:center; }</style>");
+			output.Add("<script type=\"text/javascript\" src=\"bytecode.js\"></script>");
 			output.Add("<script type=\"text/javascript\" src=\"code.js\"></script>");
 			output.Add("<script type=\"text/javascript\" src=\"resources.js\"></script>");
 			output.Add("</head>");

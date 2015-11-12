@@ -21,9 +21,9 @@ The rest of the string is the raw content.
 e.g. "0113@*********Hello, World!"
 
 */
-function createFakeDisk(persistentStorage /* localStorage or null */) {
+var createFakeDisk = function (persistentStorage /* localStorage or null */) {
 	var fakeDisk = {};
-	
+
 	// illegal characters behave like Windows.
 	var t = ':*?\\/|><"';
 	var illegal_chars = {};
@@ -37,14 +37,14 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 	}
 	var disk = {};
 
-	var clearCorruptedDisk = function() {
+	var clearCorruptedDisk = function () {
 		if (!isLocalStorage) return;
 		for (var key in permanent) {
 			if (key.indexOf('crayondisk') === 0) {
 				permanent[key] = undefined;
 			}
 		}
-	}
+	};
 
 	var read_permanent_value = function (key) {
 		var value = permanent[key];
@@ -74,7 +74,7 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 		return null;
 	};
 
-	var read_value = function(key) {
+	var read_value = function (key) {
 		var value = disk[key];
 		if (value === undefined) {
 			if (isLocalStorage) {
@@ -87,7 +87,7 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 			return null;
 		}
 		return value;
-	}
+	};
 
 	var save_value = function (key, value) {
 		disk[key] = value;
@@ -119,14 +119,14 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 		clearCorruptedDisk();
 		save_value('crayondisk_next_id', 1);
 		save_value('crayondisk:0', [true, {}]);
-		
+
 	}
 
 	var allocate_id = function () {
 		var next_id = read_value('crayondisk_next_id');
 		save_value('crayondisk_next_id', next_id + 1);
 		return next_id;
-	}
+	};
 
 	// Simple cache to convert paths into node IDs. Do not persist. Clear liberally on state changes.
 	var cache = { '/': 0 };
@@ -135,13 +135,13 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 		var id = allocate_id();
 		save_value('crayondisk:' + id, [false, false, content.length, content]);
 		return id;
-	}
+	};
 
 	var create_folder_node = function () {
 		var id = allocate_id();
 		save_value('crayondisk:' + id, [true, {}]);
 		return id;
-	}
+	};
 
 	var canonicalize_path = function (path) {
 		path = path.replace('\\', '/');
@@ -149,20 +149,20 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 		if (path[0] != '/') path = '/' + path;
 		if (path[path.length - 1] == '/') path = path.substr(0, path.length - 1);
 		return path;
-	}
+	};
 
 	var get_parent_and_file = function (path) {
 		if (path.length < 2) return null;
 		var lastSlash = path.lastIndexOf('/');
 		if (lastSlash == 0) return ['/', path.substr(1)];
 		return [path.substr(0, lastSlash), path.substr(lastSlash + 1)];
-	}
+	};
 
 	var convert_path_to_node_id_impl = function (path) {
-		
+
 		var node_id = cache[path];
 		if (node_id) return node_id;
-		
+
 		if (path.length < 2) {
 			cache[path] = 0;
 			return 0; // could be empty from level_ups, otherwise we know the first char is / so <2 is always root.
@@ -191,7 +191,7 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 		}
 
 		return null;
-	}
+	};
 
 	var convert_path_to_node_id = function (path) {
 		var id = cache[path];
@@ -320,7 +320,7 @@ function createFakeDisk(persistentStorage /* localStorage or null */) {
 			return 0;
 		}
 		return 1;
-	}
+	};
 
 	return fakeDisk;
-}
+};

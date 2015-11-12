@@ -426,9 +426,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
 		{
-			output.Add("\"");
-			output.Add(theString);
-			output.Add("\"");
+			output.Add("CRAYON.getByteCode()");
 		}
 
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
