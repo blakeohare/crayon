@@ -33,9 +33,9 @@ namespace Crayon
 			"        js               JavaScript project",
 			"        python           Python project (uses PyGame)",
 			"",
-			"  -readablebytecode  Output a file of the final byte code in a semi-readable",
-			"                     fashion for debugging purposes.",
-			"",
+			//"  -readablebytecode  Output a file of the final byte code in a semi-readable",
+			//"                     fashion for debugging purposes.",
+			//"",
 			"  -source            Source directory. Must contain a start.cry file.",
 			"",
 			"  -target            When a build file is specified, selects the target within",
@@ -101,7 +101,9 @@ namespace Crayon
 #if DEBUG
 			if (args.Length == 0)
 			{
-				string command = @"C:\Things\Projects\Crayon\Demos\UnitTests\UnitTests.build -target windows";
+				string command;
+
+				command = @"C:\Things\Projects\Crayon\Demos\UnitTests\UnitTests.build -target windows";
 
 				args = command.Split(' ');
 			}
@@ -143,11 +145,13 @@ namespace Crayon
 				argLookup.Remove("min");
 			}
 
+			/*
 			if (argLookup.ContainsKey("readablebytecode"))
 			{
 				buildContext.ReadableByteCode = true;
 				argLookup.Remove("readablebytecode");
 			}
+			*/
 
 			if (argLookup.ContainsKey("source"))
 			{
