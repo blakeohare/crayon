@@ -11,7 +11,9 @@ _global_vars = {
 	'width': 400,
 	'height': 300,
 	'fps': 60,
-	'clock': pygame.time.Clock()
+	'clock': pygame.time.Clock(),
+	'old_events': [],
+	'pumped': False,
 }
 
 KEY_LOOKUP = {
@@ -64,6 +66,10 @@ for i in range(12):
 
 def _pygame_pump_events():
 	evs = pygame.event.get()
+	if len(_global_vars['old_events']) > 0:
+		evs += _global_vars['old_events']
+		_global_vars['old_events'] = []
+	_global_vars['pumped'] = True
 	pressed_keys = pygame.key.get_pressed()
 	evlist = []
 	rwidth,rheight = _global_vars['real_screen'].get_size()
@@ -242,6 +248,10 @@ def _pygame_end_of_frame():
 		pygame.display.flip()
 		_global_vars['real_screen'].fill((0, 0, 0))
 	_global_vars['clock'].tick(_global_vars['fps'])
+	if not _global_vars['pumped']:
+		_global_vars['old_events'] += pygame.event.get()
+	else:
+		_global_vars['pumped'] = False
 
 def _pygame_flip_image(img, flipx, flipy):
 	return pygame.transform.flip(img, flipx, flipy)
