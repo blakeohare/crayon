@@ -149,6 +149,10 @@ R.scaleImage = function (originalCanvas, width, height) {
 	var context = output.getContext('2d');
 	output.width = width;
 	output.height = height;
+	context.webkitImageSmoothingEnabled = false;
+	context.mozImageSmoothingEnabled = false;
+	context.msImageSmoothingEnabled = false;
+	context.imageSmoothingEnabled = false;
 	context.drawImage(
 		originalCanvas,
 		0, 0, originalCanvas.width, originalCanvas.height,
