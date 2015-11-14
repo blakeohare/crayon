@@ -17,24 +17,24 @@ R.drawImageWithAlpha = function (canvas, x, y, a) {
 	}
 };
 
-R._toHex = function (r, g, b) {
-	var hd = '0123456789abcdef';
-	return '#'
-		+ hd[r >> 4] + hd[r & 15]
-		+ hd[g >> 4] + hd[g & 15]
-		+ hd[b >> 4] + hd[b & 15];
-};
+var HEX = [];
+var HEXR = [];
+for (var i = 0; i < 256; ++i) {
+	var t = i.toString(16);
+	if (i < 16) t = '0' + t;
+	HEX.push(t);
+	HEXR.push('#' + t);
+}
 
 R.fillScreen = function (r, g, b) {
 	var gb = R._global_vars;
-	gb.ctx.fillStyle = R._toHex(r, g, b);
+	gb.ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
 	gb.ctx.fillRect(0, 0, gb.width, gb.height);
 };
 
 R.drawRect = function (x, y, width, height, r, g, b, a) {
-	if (a == 0) return;
 	var ctx = R._global_vars.ctx;
-	ctx.fillStyle = R._toHex(r, g, b);
+	ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
 	if (a != 255) {
 		ctx.globalAlpha = a / 255;
 		ctx.fillRect(x, y, width + .1, height + .1);
@@ -53,7 +53,7 @@ R.drawTriangle = function (ax, ay, bx, by, cx, cy, r, g, b, a) {
 	tpath.lineTo(bx, by);
 	tpath.lineTo(cx, cy);
 
-	ctx.fillStyle = R._toHex(r, g, b);
+	ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
 	if (a != 255) {
 		ctx.globalAlpha = a / 255;
 		ctx.fill(tpath);
@@ -81,7 +81,7 @@ R.drawEllipse = function (left, top, width, height, r, g, b, alpha) {
 		centerX - radiusX, centerY + radiusY,
 		centerX - radiusX, centerY - radiusY,
 		centerX, centerY - radiusY);
-	context.fillStyle = R._toHex(r, g, b);
+	context.fillStyle = HEXR[r] + HEX[g] + HEX[b];
 	if (alpha != 255) {
 		context.globalAlpha = alpha / 255;
 		context.fill();
@@ -102,12 +102,12 @@ R.drawLine = function (startX, startY, endX, endY, width, r, g, b, a) {
 	context.lineWidth = width;
 	if (a != 255) {
 		context.globalAlpha = a / 255;
-		context.strokeStyle = R._toHex(r, g, b);
+		context.strokeStyle = HEXR[r] + HEX[g] + HEX[b];
 		context.stroke();
 		context.closePath();
 		context.globalAlpha = 1;
 	} else {
-		context.strokeStyle = R._toHex(r, g, b);
+		context.strokeStyle = HEXR[r] + HEX[g] + HEX[b];
 		context.stroke();
 		context.closePath();
 	}
