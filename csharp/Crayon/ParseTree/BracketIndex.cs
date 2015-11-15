@@ -58,5 +58,17 @@
 
 			return this;
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Root.VariableUsagePass(parser);
+			this.Index.VariableUsagePass(parser);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Root.VariableIdAssignmentPass(parser);
+			this.Index.VariableIdAssignmentPass(parser);
+		}
 	}
 }

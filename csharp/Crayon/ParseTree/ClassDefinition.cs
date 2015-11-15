@@ -104,5 +104,31 @@ namespace Crayon.ParseTree
 
 			return Listify(this);
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			if (this.Constructor != null)
+			{
+				this.Constructor.VariableUsagePass(parser);
+			}
+
+			foreach (FunctionDefinition func in this.Methods)
+			{
+				func.VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			if (this.Constructor != null)
+			{
+				this.Constructor.VariableIdAssignmentPass(parser);
+			}
+
+			foreach (FunctionDefinition func in this.Methods)
+			{
+				func.VariableIdAssignmentPass(parser);
+			}
+		}
 	}
 }

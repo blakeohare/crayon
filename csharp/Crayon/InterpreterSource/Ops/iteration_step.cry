@@ -1,6 +1,6 @@
 ﻿
 value3 = $_array_get(valueStack, valueStackSize - 3); // iterating index wrapped value
-value2 = $_array_get(valueStack, valueStackSize - 2); // name ID of iterating variable
+value2 = $_array_get(valueStack, valueStackSize - 2); // local scope ID of iterating variable
 value = $_array_get(valueStack, valueStackSize - 1); // list
 int1 = $_cast('int', Value$value3.internalValue); // iterator index
 nameId = $_cast('int', Value$value2.internalValue); // iterating variable name ID

@@ -30,5 +30,15 @@ namespace Crayon.ParseTree
 
 			return Listify(this);
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Expression.VariableUsagePass(parser);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Expression.VariableIdAssignmentPass(parser);
+		}
 	}
 }

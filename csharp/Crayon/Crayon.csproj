@@ -231,7 +231,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\call_framework_function.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\stack_insertion_for_increment.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_function.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_function_on_variable.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\call_function_on_global.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\class_definition.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\def_dictionary.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\def_list.cry" />
@@ -248,7 +248,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\token_data.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\user_code_start.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\variable_stream.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
@@ -368,6 +367,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_changed_recently.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_get_state.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_with_alpha.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

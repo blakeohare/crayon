@@ -28,5 +28,20 @@
 			// args have already been resolved.
 			return this;
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			for (int i = 0; i < this.Args.Length; ++i)
+			{
+				this.Args[i].VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			for (int i = 0; i < this.Args.Length; ++i) {
+				this.Args[i].VariableIdAssignmentPass(parser);
+			}
+		}
 	}
 }

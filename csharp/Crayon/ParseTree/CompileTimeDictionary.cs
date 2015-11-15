@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Crayon.ParseTree
 {
-	class CompileTimeDictionary:Expression
+	class CompileTimeDictionary : Expression
 	{
 		public string Type { get; private set; }
 
@@ -17,8 +17,15 @@ namespace Crayon.ParseTree
 
 		public override Expression Resolve(Parser parser)
 		{
-			// parent expression will do the resolving.
 			return this;
+		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
 		}
 	}
 }

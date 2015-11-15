@@ -270,5 +270,17 @@ namespace Crayon.ParseTree
 		{
 			return new BooleanConstant(firstToken, value);
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Left.VariableUsagePass(parser);
+			this.Right.VariableUsagePass(parser);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Left.VariableIdAssignmentPass(parser);
+			this.Right.VariableIdAssignmentPass(parser);
+		}
 	}
 }

@@ -50,6 +50,109 @@ namespace Crayon
 		public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
 		public int GetNullConstant() { return this.literalLookup.GetNullId(); }
 
+		private class VarScope
+		{
+			private VarScope fallback;
+			private Dictionary<string, int> ids;
+			private Dictionary<string, Token> firstUsage;
+			private HashSet<string> usedButNotAssigned;
+
+			public VarScope(VarScope globalFallback) {
+				this.fallback = globalFallback;
+				this.ids = new Dictionary<string,int>();
+				this.firstUsage = new Dictionary<string, Token>();
+				this.usedButNotAssigned = new HashSet<string>();
+			}
+
+			public void NoteUsage(string name, Token token, bool isAssignment)
+			{
+				if (!this.firstUsage.ContainsKey(name))
+				{
+					this.firstUsage[name] = token;
+				}
+
+				if (isAssignment)
+				{
+					if (this.usedButNotAssigned.Contains(name))
+					{
+						this.usedButNotAssigned.Remove(name);
+						this.ids[name] = this.ids.Count;
+					}
+					else if (!this.ids.ContainsKey(name))
+					{
+						this.ids[name] = this.ids.Count;
+					}
+				}
+				else
+				{
+					if (!this.ids.ContainsKey(name) && !this.usedButNotAssigned.Contains(name))
+					{
+						this.usedButNotAssigned.Add(name);
+					}
+				}
+			}
+
+			private static int[] REUSABLE_OUTPUT_LOCAL_AND_GLOBAL = new int[2];
+
+			public int[] GetId(string name)
+			{
+				return this.GetId(name, true);
+			}
+
+			public int[] GetId(string name, bool requireUsage)
+			{
+				int localId = -1;
+				int globalId = -1;
+				
+				if (this.fallback == null)
+				{
+					if (this.ids.ContainsKey(name))
+					{
+						globalId = this.ids[name];
+					}
+				}
+				else
+				{
+					if (this.ids.ContainsKey(name))
+					{
+						localId = this.ids[name];
+					}
+
+					this.fallback.GetId(name, false);
+					globalId = REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[1];
+				}
+
+				if (requireUsage && localId == -1 && globalId == -1)
+				{
+					// TODO: It would be amazing to include spelling suggestions here if the levenshtein distance from other local+global scope variables or enums is less than 3.
+					throw new ParserException(this.firstUsage[name], "The variable '" + name + "' is used but never assigned to.");
+				}
+
+				REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[0] = localId;
+				REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[1] = globalId;
+				return REUSABLE_OUTPUT_LOCAL_AND_GLOBAL;
+			}
+		}
+
+		private VarScope globalScope = new VarScope(null);
+		private VarScope localScope = null;
+
+		public void ResetLocalScope()
+		{
+			this.localScope = new VarScope(this.globalScope);
+		}
+
+		public void VariableRegister(string variableName, bool isAssignment, Token token)
+		{
+			VarScope scope = localScope ?? globalScope;
+			scope.NoteUsage(variableName, token, isAssignment);
+		}
+
+		public int[] VariableGetLocalAndGlobalIds(string variableName)
+		{
+			return (localScope ?? globalScope).GetId(variableName);
+		}
+
 		private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
 		private Dictionary<string, Dictionary<int, int>> intListLookups = new Dictionary<string, Dictionary<int, int>>();
 		private Dictionary<string, int> explicitMaxes = new Dictionary<string, int>();
@@ -279,6 +382,61 @@ namespace Crayon
 			{
 				output.AddRange(line.Resolve(this));
 			}
+
+			if (!this.IsTranslateMode)
+			{
+				// These track all possible places where variables can be declared outside of the global scope.
+				List<FunctionDefinition> functions = new List<FunctionDefinition>();
+				List<ClassDefinition> classes = new List<ClassDefinition>();
+				List<ConstructorDefinition> constructors = new List<ConstructorDefinition>();
+
+				List<Executable> codeContainers = new List<Executable>();
+
+				// Assign all ID's to variables.
+				foreach (Executable executable in output)
+				{
+					if (executable is FunctionDefinition)
+					{
+						FunctionDefinition funcDef = (FunctionDefinition)executable;
+						this.VariableRegister(funcDef.NameToken.Value, true, funcDef.NameToken);
+						codeContainers.Add(executable);
+					}
+					else if (executable is ClassDefinition)
+					{
+						codeContainers.Add(executable);
+					}
+					else
+					{
+						executable.VariableUsagePass(this);
+					}
+				}
+
+				foreach (Executable executable in output)
+				{
+					if (executable is FunctionDefinition)
+					{
+						// Code containers' usage/id pass methods are meant for doing ID allocation for the code in them.
+						FunctionDefinition funcDef = (FunctionDefinition)executable;
+						funcDef.NameGlobalID = this.globalScope.GetId(funcDef.NameToken.Value)[1];
+					}
+					else if (executable is ClassDefinition)
+					{
+						// Do nothing.
+					}
+					else
+					{
+						executable.VariableIdAssignmentPass(this);
+					}
+				}
+
+				foreach (Executable functionOrClass in codeContainers)
+				{
+					this.ResetLocalScope();
+					functionOrClass.VariableUsagePass(this);
+					functionOrClass.VariableIdAssignmentPass(this);
+				}
+			}
+
 			return output.ToArray();
 		}
 

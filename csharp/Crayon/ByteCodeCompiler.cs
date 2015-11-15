@@ -148,14 +148,14 @@ namespace Crayon
 		private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
 		{
 			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
-			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(parser.GetId(forEachLoop.IterationVariable.Value)));
+			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId));
 			this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
 			buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_TYPE_IS_ITERABLE);
 
 			ByteBuffer body = new ByteBuffer();
 			ByteBuffer body2 = new Crayon.ByteBuffer();
 
-			this.Compile(parser, body2, forEachLoop.Body);
+			this.Compile(parser, body2, forEachLoop.Code);
 
 			body.Add(forEachLoop.FirstToken, OpCode.ITERATION_STEP, body2.Size + 1);
 			
@@ -289,7 +289,7 @@ namespace Crayon
 		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
 		{
 			// TODO: throw parser exception in the resolver if a return appears with any value
-			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues);
+			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs);
 
 			if (constructor.BaseToken != null)
 			{
@@ -416,7 +416,8 @@ namespace Crayon
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					this.CompileExpression(parser, buffer, assignment.Value, true);
-					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_VAR, parser.GetId(varTarget.Name));
+					int scopeId = varTarget.LocalScopeId == -1 ? varTarget.GlobalScopeId : varTarget.LocalScopeId;
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_VAR, scopeId);
 				}
 				else if (assignment.Target is BracketIndex)
 				{
@@ -454,10 +455,19 @@ namespace Crayon
 				if (assignment.Target is Variable)
 				{
 					Variable varTarget = (Variable)assignment.Target;
-					buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name));
+					int scopeId = varTarget.LocalScopeId;
+					if (scopeId != -1)
+					{
+						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name), scopeId);
+					}
+					else // it's in the global scope
+					{
+						scopeId = varTarget.GlobalScopeId;
+						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE_GLOBAL, parser.GetId(varTarget.Name), scopeId);
+					}
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(varTarget.Name));
+					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_VAR, scopeId);
 				}
 				else if (assignment.Target is DotStep)
 				{
@@ -498,24 +508,25 @@ namespace Crayon
 			}
 		}
 
-		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues)
+		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, IList<int> argVarIds)
 		{
 			for (int i = 0; i < argNames.Count; ++i)
 			{
 				string argName = argNames[i].Value;
 				Expression defaultValue = argValues[i];
+				int localVarId = argVarIds[i];
 				if (defaultValue == null)
 				{
-					buffer.Add(argNames[i], OpCode.ASSIGN_FUNCTION_ARG, parser.GetId(argName), i);
+					buffer.Add(argNames[i], OpCode.ASSIGN_FUNCTION_ARG, localVarId, i);
 				}
 				else
 				{
 					ByteBuffer defaultValueCode = new ByteBuffer();
 
 					this.CompileExpression(parser, defaultValueCode, defaultValue, true);
-					defaultValueCode.Add(argNames[i], OpCode.ASSIGN_VAR, parser.GetId(argName));
+					defaultValueCode.Add(argNames[i], OpCode.ASSIGN_VAR, localVarId);
 
-					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, parser.GetId(argName), i, defaultValueCode.Size);
+					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, localVarId, i, defaultValueCode.Size);
 					buffer.Concat(defaultValueCode);
 				}
 			}
@@ -525,7 +536,7 @@ namespace Crayon
 		{
 			ByteBuffer tBuffer = new ByteBuffer();
 
-			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues);
+			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, funDef.ArgVarIDs);
 
 			Compile(parser, tBuffer, funDef.Code);
 
@@ -540,7 +551,7 @@ namespace Crayon
 				isMethod ? 1 : 0); // is a method
 			if (!isMethod)
 			{
-				buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(funDef.NameToken.Value));
+				buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, funDef.NameGlobalID);
 				buffer.Add(null, OpCode.JUMP, offset);
 			}
 
@@ -750,20 +761,21 @@ namespace Crayon
 			if (increment.Root is Variable)
 			{
 				Variable variable = (Variable)increment.Root;
+				int scopeId = variable.LocalScopeId == -1 ? variable.GlobalScopeId : variable.LocalScopeId;
 				this.CompileExpression(parser, buffer, increment.Root, true);
 				if (increment.IsPrefix)
 				{
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
 				}
 				else
 				{
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, parser.GetId(variable.Name));
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
 				}
 			}
 			else if (increment.Root is BracketIndex)
@@ -835,6 +847,9 @@ namespace Crayon
 			if (ff == FrameworkFunction.GAME_INITIALIZE_SCREEN ||
 				ff == FrameworkFunction.GAME_INITIALIZE_SCREEN_SCALED)
 			{
+				// This is a little tacky, but on some platforms, creation of the window is blocking, and a new
+				// invocation into interpreter is required for the VM to continue and so simply calling gamepad
+				// initialization synchronously with window initialization doesn't work.
 				buffer.Add(sysFunc.FirstToken, OpCode.INITIALIZE_GAMEPAD);
 			}
 		}
@@ -915,40 +930,26 @@ namespace Crayon
 		private void CompileVariable(Parser parser, ByteBuffer buffer, Variable variable, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(variable.FirstToken, "This expression does nothing.");
-			buffer.Add(variable.FirstToken, OpCode.VARIABLE, parser.GetId(variable.Name));
+			int nameId = parser.GetId(variable.Name);
+			Token token = variable.FirstToken;
+			if (variable.LocalScopeId == -1)
+			{
+				buffer.Add(token, OpCode.VARIABLE_GLOBAL, nameId, variable.GlobalScopeId);
+			}
+			else if (variable.GlobalScopeId == -1)
+			{
+				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId);
+			}
+			else
+			{
+				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId, variable.GlobalScopeId);
+			}
 		}
 
 		private void CompileIntegerConstant(Parser parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(intConst.FirstToken, "This expression does nothing.");
 			buffer.Add(intConst.FirstToken, OpCode.LITERAL, parser.GetIntConstant(intConst.Value));
-		}
-
-		private void CompileVariableStream(Parser parser, ByteBuffer buffer, IList<Expression> variables, bool outputUsed)
-		{
-			if (variables.Count == 1)
-			{
-				this.CompileExpression(parser, buffer, variables[0], outputUsed);
-			}
-			else
-			{
-				List<int> ids = new List<int>();
-				List<int> tokenData = new List<int>();
-				foreach (Variable v in variables.Cast<Variable>())
-				{
-					ids.Add(parser.GetId(v.Name));
-					tokenData.Add(v.FirstToken.Line);
-					tokenData.Add(v.FirstToken.Col);
-					tokenData.Add(v.FirstToken.FileID);
-				}
-
-				List<int> finalRow = new List<int>(ids.Count * 4 + 1);
-				finalRow.Add(ids.Count);
-				finalRow.AddRange(ids);
-				finalRow.AddRange(tokenData);
-
-				buffer.Add(null, OpCode.VARIABLE_STREAM, finalRow.ToArray());
-			}
 		}
 
 		private void CompileLiteralStream(Parser parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
@@ -975,7 +976,6 @@ namespace Crayon
 
 		private const int EXPR_STREAM_OTHER = 1;
 		private const int EXPR_STREAM_LITERAL = 2;
-		private const int EXPR_STREAM_VARIABLE = 3;
 
 		public void CompileExpressionList(Parser parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
 		{
@@ -987,7 +987,6 @@ namespace Crayon
 			}
 
 			List<Expression> literals = new List<Expression>();
-			List<Expression> variables = new List<Expression>();
 			int mode = EXPR_STREAM_OTHER;
 
 			for (int i = 0; i < expressions.Count; ++i)
@@ -1003,19 +1002,6 @@ namespace Crayon
 					else
 					{
 						mode = EXPR_STREAM_LITERAL;
-						modeChange = true;
-						--i;
-					}
-				}
-				else if (expr is Variable)
-				{
-					if (mode == EXPR_STREAM_VARIABLE)
-					{
-						variables.Add(expr);
-					}
-					else
-					{
-						mode = EXPR_STREAM_VARIABLE;
 						modeChange = true;
 						--i;
 					}
@@ -1041,11 +1027,6 @@ namespace Crayon
 						this.CompileLiteralStream(parser, buffer, literals, true);
 						literals.Clear();
 					}
-					else if (variables.Count > 0)
-					{
-						this.CompileVariableStream(parser, buffer, variables, true);
-						variables.Clear();
-					}
 				}
 			}
 
@@ -1053,11 +1034,6 @@ namespace Crayon
 			{
 				this.CompileLiteralStream(parser, buffer, literals, true);
 				literals.Clear();
-			}
-			else if (variables.Count > 0)
-			{
-				this.CompileVariableStream(parser, buffer, variables, true);
-				variables.Clear();
 			}
 		}
 
@@ -1067,10 +1043,10 @@ namespace Crayon
 
 			Expression root = funCall.Root;
 			Variable rootVar = root as Variable;
-			if (rootVar != null)
+			if (rootVar != null && rootVar.LocalScopeId == -1)
 			{
 				string functionName = rootVar.Name;
-				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION_ON_VARIABLE, parser.GetId(functionName), funCall.Args.Length, outputUsed ? 1 : 0);
+				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION_ON_GLOBAL, rootVar.GlobalScopeId, funCall.Args.Length, outputUsed ? 1 : 0);
 			}
 			else
 			{

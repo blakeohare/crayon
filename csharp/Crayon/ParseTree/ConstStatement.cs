@@ -35,5 +35,13 @@ namespace Crayon.ParseTree
 			parser.RegisterConst(this.NameToken, this.Expression);
 			return new Executable[0];
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

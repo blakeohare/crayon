@@ -33,5 +33,17 @@
 
 			return this;
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.PrimaryExpression.VariableUsagePass(parser);
+			this.SecondaryExpression.VariableUsagePass(parser);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.PrimaryExpression.VariableIdAssignmentPass(parser);
+			this.SecondaryExpression.VariableIdAssignmentPass(parser);
+		}
 	}
 }

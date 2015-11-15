@@ -84,5 +84,13 @@ namespace Crayon.ParseTree
 		{
 			this.OriginalSwitchStatement.GetAllVariableNames(lookup);
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

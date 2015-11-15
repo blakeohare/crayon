@@ -22,5 +22,21 @@ namespace Crayon.ParseTree
 		}
 
 		public override bool IsTerminator { get { return true; } }
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			if (this.Expression != null)
+			{
+				this.Expression.VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			if (this.Expression != null)
+			{
+				this.Expression.VariableIdAssignmentPass(parser);
+			}
+		}
 	}
 }

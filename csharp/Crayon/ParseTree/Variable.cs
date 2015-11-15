@@ -4,6 +4,9 @@
 	{
 		public string Name { get; private set; }
 
+		public int LocalScopeId { get; set; }
+		public int GlobalScopeId { get; set; }
+
 		public Variable(Token token, string name)
 			: base(token)
 		{
@@ -67,6 +70,20 @@
 		public override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			varIds.RegisterVariable(this.Name);
+		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			// Assignments require context of the parent element and should handle this and bypass calling this function.
+			// Therefore all invocations of this will assume usage as opposed to assignment.
+			parser.VariableRegister(this.Name, false, this.FirstToken);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			int[] ids = parser.VariableGetLocalAndGlobalIds(this.Name);
+			this.LocalScopeId = ids[0];
+			this.GlobalScopeId = ids[1];
 		}
 	}
 }

@@ -76,7 +76,15 @@ namespace Crayon.ParseTree
 
 			parser.AddEnumDefinition(this);
 
-			return new Executable[0];
+			return Executable.EMPTY_ARRAY;
+		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
 		}
 	}
 }

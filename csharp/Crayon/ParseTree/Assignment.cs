@@ -8,6 +8,7 @@ namespace Crayon.ParseTree
 		public Expression Value { get; private set; }
 		public Token AssignmentOpToken { get; private set; }
 		public string AssignmentOp { get; private set; }
+		public Variable TargetAsVariable { get { return this.Target as Variable; } }
 
 		public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue)
 			: base(target.FirstToken)
@@ -51,6 +52,42 @@ namespace Crayon.ParseTree
 		public override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			this.Target.AssignVariablesToIds(varIds);
+		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Value.VariableUsagePass(parser);
+
+			Variable variable = this.TargetAsVariable;
+
+			// Note that things like += do not declare a new variable name and so they don't count as assignment
+			// in this context. foo += value should NEVER take a global scope value and assign it to a local scope value.
+			// Globals cannot be assigned to from outside the global scope.
+			if (variable != null && 
+				this.AssignmentOpToken.Value == "=")
+			{
+				parser.VariableRegister(variable.Name, true, this.Target.FirstToken);
+			}
+			else
+			{
+				this.Target.VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Value.VariableIdAssignmentPass(parser);
+			Variable variable = this.TargetAsVariable;
+			if (variable != null)
+			{
+				int[] ids = parser.VariableGetLocalAndGlobalIds(variable.Name);
+				variable.LocalScopeId = ids[0];
+				variable.GlobalScopeId = ids[1];
+			}
+			else
+			{
+				this.Target.VariableIdAssignmentPass(parser);
+			}
 		}
 	}
 }

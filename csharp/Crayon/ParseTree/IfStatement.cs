@@ -64,5 +64,31 @@ namespace Crayon.ParseTree
 				ex.AssignVariablesToIds(varIds);
 			}
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Condition.VariableUsagePass(parser);
+			for (int i = 0; i < this.TrueCode.Length; ++i)
+			{
+				this.TrueCode[i].VariableUsagePass(parser);
+			}
+			for (int i = 0; i < this.FalseCode.Length; ++i)
+			{
+				this.FalseCode[i].VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Condition.VariableIdAssignmentPass(parser);
+			for (int i = 0; i < this.TrueCode.Length; ++i)
+			{
+				this.TrueCode[i].VariableIdAssignmentPass(parser);
+			}
+			for (int i = 0; i < this.FalseCode.Length; ++i)
+			{
+				this.FalseCode[i].VariableIdAssignmentPass(parser);
+			}
+		}
 	}
 }

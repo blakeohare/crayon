@@ -38,5 +38,13 @@ namespace Crayon.ParseTree
 
 			return new Executable[0];
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

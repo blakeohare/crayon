@@ -12,5 +12,13 @@ namespace Crayon.ParseTree
 		}
 
 		public override bool IsTerminator { get { return true; } }
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

@@ -6,6 +6,8 @@ namespace Crayon.ParseTree
 {
 	internal abstract class Executable : Node
 	{
+		public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
+
 		public Executable(Token firstToken)
 			: base(firstToken)
 		{ }

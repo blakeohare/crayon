@@ -16,5 +16,13 @@
 
 			throw new ParserException(this.FirstToken, "Reference to base keyword in a class that does not have any base classes.");
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

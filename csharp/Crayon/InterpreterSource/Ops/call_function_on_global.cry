@@ -22,9 +22,7 @@ if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 }
 
 int1 = $_array_get(row, 0);
-if ($_dictionary_contains(locals, int1)) {
-	func = $_dictionary_get_guaranteed(locals, int1);
-} else if ($_dictionary_contains(globals, int1)) {
+if ($_dictionary_contains(globals, int1)) {
 	func = $_dictionary_get_guaranteed(globals, int1);
 } else {
 	func = null;

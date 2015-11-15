@@ -28,5 +28,19 @@
 
 			return this;
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			this.Condition.VariableUsagePass(parser);
+			this.TrueValue.VariableUsagePass(parser);
+			this.FalseValue.VariableUsagePass(parser);
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			this.Condition.VariableIdAssignmentPass(parser);
+			this.TrueValue.VariableIdAssignmentPass(parser);
+			this.FalseValue.VariableIdAssignmentPass(parser);
+		}
 	}
 }

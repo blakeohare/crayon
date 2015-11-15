@@ -18,5 +18,13 @@
 			this.ClassToWhichThisMethodRefers = parser.CurrentClass.SubClasses[0].Value;
 			return this;
 		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+		}
 	}
 }

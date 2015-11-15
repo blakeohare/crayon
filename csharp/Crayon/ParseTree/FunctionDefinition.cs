@@ -8,16 +8,19 @@ namespace Crayon.ParseTree
 		public Token NameToken { get; private set; }
 		public Token[] ArgNames { get; private set; }
 		public Expression[] DefaultValues { get; private set; }
+		public int[] ArgVarIDs { get; private set; }
 		public Executable[] Code { get; private set; }
 		public Annotation[] ArgAnnotations { get; private set; }
 		private Dictionary<string, Annotation> annotations;
 		public VariableIdAllocator VariableIds { get; private set; }
+		public int NameGlobalID { get; set; }
 
 		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations)
 			: base(functionToken)
 		{
 			this.NameToken = nameToken;
 			this.ArgNames = argNames.ToArray();
+			this.ArgVarIDs = new int[this.ArgNames.Length];
 			this.DefaultValues = argDefaultValues.ToArray();
 			this.ArgAnnotations = argAnnotations.ToArray();
 			this.Code = code.ToArray();
@@ -105,6 +108,42 @@ namespace Crayon.ParseTree
 			}
 
 			return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
+		}
+
+		public override void VariableUsagePass(Parser parser)
+		{
+			for (int i = 0; i < this.ArgNames.Length; ++i)
+			{
+				Token arg = this.ArgNames[i];
+				parser.VariableRegister(arg.Value, true, arg);
+				Expression defaultValue = this.DefaultValues[i];
+				if (defaultValue != null)
+				{
+					defaultValue.VariableUsagePass(parser);
+				}
+			}
+
+			for (int i = 0; i < this.Code.Length; ++i)
+			{
+				this.Code[i].VariableUsagePass(parser);
+			}
+		}
+
+		public override void VariableIdAssignmentPass(Parser parser)
+		{
+			for (int i = 0; i < this.ArgNames.Length; ++i)
+			{
+				this.ArgVarIDs[i] = parser.VariableGetLocalAndGlobalIds(this.ArgNames[i].Value)[0];
+				if (this.DefaultValues[i] != null)
+				{
+					this.DefaultValues[i].VariableIdAssignmentPass(parser);
+				}
+			}
+
+			for (int i = 0; i < this.Code.Length; ++i)
+			{
+				this.Code[i].VariableIdAssignmentPass(parser);
+			}
 		}
 	}
 }
