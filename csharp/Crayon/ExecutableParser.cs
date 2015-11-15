@@ -391,6 +391,7 @@ namespace Crayon
 		{
 			Token doToken = tokens.PopExpected("do");
 			IList<Executable> body = Parser.ParseBlock(parser, tokens, true);
+			tokens.PopExpected("while");
 			tokens.PopExpected("(");
 			Expression condition = ExpressionParser.Parse(tokens);
 			tokens.PopExpected(")");

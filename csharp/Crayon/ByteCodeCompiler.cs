@@ -142,6 +142,7 @@ namespace Crayon
 			else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
 			else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
 			else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
+			else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
 			else throw new NotImplementedException("Invalid target for byte code compilation");
 		}
 
@@ -386,6 +387,21 @@ namespace Crayon
 			condition.ResolveContinues();
 
 			buffer.Concat(condition);
+		}
+
+		private void CompileDoWhileLoop(Parser parser, ByteBuffer buffer, DoWhileLoop doWhileLoop)
+		{
+			ByteBuffer loopBody = new ByteBuffer();
+			this.Compile(parser, loopBody, doWhileLoop.Code);
+			loopBody.ResolveContinues(true); // continues should jump to the condition, hence the true.
+
+			ByteBuffer condition = new ByteBuffer();
+			this.CompileExpression(parser, condition, doWhileLoop.Condition, true);
+			loopBody.Concat(condition);
+			loopBody.Add(doWhileLoop.Condition.FirstToken, OpCode.JUMP_IF_TRUE, -loopBody.Size - 1);
+			loopBody.ResolveBreaks();
+
+			buffer.Concat(loopBody);
 		}
 
 		private BinaryOps ConvertOpString(Token token)

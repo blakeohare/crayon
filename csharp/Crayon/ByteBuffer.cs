@@ -61,6 +61,9 @@ namespace Crayon
 			this.ResolveContinues(false);
 		}
 
+		// Continues should be resolved into JUMPs that go to the beginning of the current byte code buffer
+		// If resolveAsJumpToEnd is true, it'll do the opposite. This hack is used by for loop, where the 
+		// step condition must be run before returning to the top.
 		public void ResolveContinues(bool resolveAsJumpToEnd)
 		{
 			for (int i = 0; i < this.byteCode.Count; ++i)
@@ -74,6 +77,7 @@ namespace Crayon
 			}
 		}
 
+		// Breaks should be resolved into JUMPS that go to the end of the current byte code buffer.
 		public void ResolveBreaks()
 		{
 			for (int i = 0; i < this.byteCode.Count; ++i)
