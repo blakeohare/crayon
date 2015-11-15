@@ -60,7 +60,12 @@ namespace Crayon.ParseTree
 			{
 				if (cases[i] == null) throw new Exception("This should not happen.");
 				if (code[i + 1] == null) throw new Exception("This should not happen.");
-				chunks.Add(new Chunk(counter++, firstTokens[i], cases[i], code[i + 1]));
+				Chunk chunk = new Chunk(counter++, firstTokens[i], cases[i], code[i + 1]);
+				if (chunk.Code.Length > 0 && chunk.ContainsFallthrough)
+				{
+					throw new ParserException(firstTokens[i], "This switch statement case contains code, but falls through to the next case. Cases that contain code must end with a return or break statement.");
+				}
+				chunks.Add(chunk);
 			}
 			this.chunks = chunks.ToArray();
 		}
