@@ -172,10 +172,10 @@ namespace Crayon
 			return this.byteCodeSwitchStringToOffsets;
 		}
 
-		public int RegisterByteCodeSwitch(Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds)
+		public int RegisterByteCodeSwitch(Token switchToken, Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds, bool isIntegerSwitch)
 		{
 			int switchId;
-			if (integersToChunkIds.Count > 0 && stringsToChunkIds.Count == 0)
+			if (isIntegerSwitch)
 			{
 				switchId = byteCodeSwitchIntegerToOffsets.Count;
 				Dictionary<int, int> integersToOffsets = new Dictionary<int, int>();
@@ -186,7 +186,7 @@ namespace Crayon
 				}
 				byteCodeSwitchIntegerToOffsets.Add(integersToOffsets);
 			}
-			else if (integersToChunkIds.Count == 0 && stringsToChunkIds.Count > 0)
+			else
 			{
 				switchId = byteCodeSwitchStringToOffsets.Count;
 				Dictionary<string, int> stringsToOffsets = new Dictionary<string, int>();
@@ -196,10 +196,6 @@ namespace Crayon
 					stringsToOffsets[key] = chunkIdsToOffsets[chunkId];
 				}
 				byteCodeSwitchStringToOffsets.Add(stringsToOffsets);
-			}
-			else
-			{
-				throw new Exception("Switch statement with no cases should have been optimized out.");
 			}
 			return switchId;
 		}

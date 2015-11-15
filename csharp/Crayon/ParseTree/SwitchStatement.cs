@@ -68,6 +68,11 @@ namespace Crayon.ParseTree
 				chunks.Add(chunk);
 			}
 			this.chunks = chunks.ToArray();
+
+			if (this.chunks.Length == 1 && this.chunks[0].Cases.Length == 1 && this.chunks[0].Cases[0] == null)
+			{
+				throw new ParserException(switchToken, "Switches need at least 1 case to indicate type.");
+			}
 		}
 
 		// TODO: in the resolve be sure to make fallthroughs an error. 
@@ -149,7 +154,7 @@ namespace Crayon.ParseTree
 
 			if (integers != 0 && strings != 0)
 			{
-				throw new ParserException(this.FirstToken, "Cannot mix and match strings and integers in a switch statement.");
+				throw new ParserException(this.FirstToken, "Cannot mix string and integer cases in a single switch statement.");
 			}
 
 			if (integers == 0 && strings == 0)

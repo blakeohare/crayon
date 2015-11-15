@@ -213,7 +213,7 @@ namespace Crayon
 
 			chunkBuffer.ResolveBreaks();
 
-			int switchId = parser.RegisterByteCodeSwitch(chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds);
+			int switchId = parser.RegisterByteCodeSwitch(switchStatement.FirstToken, chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds, switchStatement.UsesIntegers);
 
 			int defaultOffsetLength = defaultChunkId == -1
 				? chunkBuffer.Size
