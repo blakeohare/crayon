@@ -6,5 +6,5 @@ if (type == Types.INTEGER) {
 } else if (type == Types.FLOAT) {
 	$_array_set(valueStack, valueStackSize - 1, buildFloat(-$_cast('double', Value$value.internalValue)));
 } else {
-	return killExecution(stack, "Negative sign can only be applied to numbers. Found " + getTypeFromId(type) + " instead.");
+	return killExecution(stack, pc, "Negative sign can only be applied to numbers. Found " + getTypeFromId(type) + " instead.");
 }

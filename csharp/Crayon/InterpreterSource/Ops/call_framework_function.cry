@@ -108,7 +108,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_USER_DATA_MAKE_DIRECTORY%%%: $_comment('$user_data_make_directory'); import inline "InterpreterSource/FrameworkFunctions/user_data_make_directory.cry"; break;
 	case %%%FF_USER_DATA_PATH_EXISTS%%%: $_comment('$user_data_path_exists'); import inline "InterpreterSource/FrameworkFunctions/user_data_path_exists.cry"; break;
 	default:
-		return killExecution(stack, "Invalid framework function: " + $_string_cast_weak($_array_get(row, 0))); 
+		return killExecution(stack, pc, "Invalid framework function: " + $_string_cast_weak($_array_get(row, 0))); 
 		break;
 }
 if ($_array_get(row, 1) == 1) {

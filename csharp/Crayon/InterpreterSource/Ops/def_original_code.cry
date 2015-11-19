@@ -1,6 +1,6 @@
 ﻿
 int1 = $_array_get(row, 0); // file ID
-string1 = $_array_get(ProgramData$p.stringArgs, StackFrame$stack.pc); // file contents
+string1 = $_array_get(ProgramData$p.stringArgs, pc); // file contents
 @type('List<string>') codeLookup = ProgramData$p.sourceCodeBuilder;
 while ($_list_length(codeLookup) <= int1) {
 	$_list_push(codeLookup, null);

@@ -8,5 +8,5 @@ if (Value$arg1.type == Types.FLOAT) {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	output = buildFloat($_arc_tan(int1, 1.0));
 } else {
-	return killExecution(stack, "$arc_tan requires a number as input.");
+	return killExecution(stack, pc, "$arc_tan requires a number as input.");
 }

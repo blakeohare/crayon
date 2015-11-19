@@ -12,7 +12,7 @@ if ($_dictionary_contains(locals, int1)) {
 	// that has the same name as a global variable and are actually expecting the global value.
 	value = $_dictionary_get_guaranteed(globals, $_array_get(row, 2));
 } else {
-	return killExecution(stack, "Variable not defined: " + $_array_get(identifiers, $_array_get(row, 0)));
+	return killExecution(stack, pc, "Variable not defined: " + $_array_get(identifiers, $_array_get(row, 0)));
 }
 
 import inline "InterpreterSource/ValueStackCapacityCheck.cry";

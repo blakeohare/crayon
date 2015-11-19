@@ -8,5 +8,5 @@ if (Value$arg1.type == Types.INTEGER) {
 	}
 }
 if (output == null) {
-	return killExecution(stack, "$chr requires an integer between 0 and 255");
+	return killExecution(stack, pc, "$chr requires an integer between 0 and 255");
 }

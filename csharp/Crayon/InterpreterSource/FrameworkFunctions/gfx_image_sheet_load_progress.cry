@@ -3,7 +3,7 @@ import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 stringList = toStringList(arg1, stringList);
 if (stringList == null) {
-	return killExecution(stack, "$image_sheet_load_progress argument must either be a string or a list of strings.");
+	return killExecution(stack, pc, "$image_sheet_load_progress argument must either be a string or a list of strings.");
 }
 
 int1 = 0; // files loaded
@@ -17,7 +17,7 @@ for (i = 0; i < $_array_length(stringList); i += 1) {
 	} else {
 		int3 = getNumTilesLoaded(string1);
 		if (int3 == -1) {
-			return killExecution(stack, "'" + string1 + "' is not a valid image sheet.");
+			return killExecution(stack, pc, "'" + string1 + "' is not a valid image sheet.");
 		}
 		int1 += int3;
 		int2 += getNumTiles(string1);

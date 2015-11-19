@@ -60,7 +60,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			}
 		}
 	} else {
-		return killExecution(stack, "== and != not defined here yet.");
+		return killExecution(stack, pc, "== and != not defined here yet.");
 	}
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, valueToString(leftValue) + valueToString(rightValue));
@@ -101,7 +101,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// float % float
 		case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
 			$_comment('float % float');
-			if ($_cast('double', right) == 0) return killExecution(stack, "Modulo by 0");
+			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float1 = $_cast('double', left) % $_cast('double', right);
 			if (float1 < 0) float1 += $_cast('double', right);
 			value = buildFloat(float1);
@@ -110,7 +110,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// float % int
 		case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.INTEGER:
 			$_comment('float % int');
-			if ($_cast('int', right) == 0) return killExecution(stack, "Modulo by 0");
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float1 = $_cast('double', left) % $_cast('int', right);
 			if (float1 < 0) float1 += $_cast('int', right);
 			value = buildFloat(float1);
@@ -119,7 +119,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// int % float
 		case (Types.INTEGER * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
 			$_comment('int % float');
-			if ($_cast('double', right) == 0) return killExecution(stack, "Modulo by 0");
+			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float1 = $_cast('int', left) % $_cast('double', right);
 			if (float1 < 0) float1 += $_cast('double', right);
 			value = buildFloat(float1);
@@ -128,7 +128,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// int % int
 		case (Types.INTEGER * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.INTEGER:
 			$_comment('int % int');
-			if ($_cast('int', right) == 0) return killExecution(stack, "Modulo by 0");
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			int1 = $_cast('int', left) % $_cast('int', right);
 			if (int1 < 0) int1 += $_cast('int', right);
 			value = buildInteger(int1);
@@ -202,25 +202,25 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// int / int
 		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 			$_comment('int / int');
-			if ($_cast('int', right) == 0) return killExecution(stack, "Division by 0");
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0");
 			value = buildInteger($_unsafe_integer_division($_cast('int', left), $_cast('int', right))); break;
 							
 		// int / float
 		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int / float');
-			if ($_cast('double', right) == 0) return killExecution(stack, "Division by 0");
+			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0");
 			value = buildFloat($_unsafe_float_division($_cast('int', left), $_cast('double', right))); break;
 
 		// float / int
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float / int');
-			if ($_cast('int', right) == 0) return killExecution(stack, "Division by 0"); 
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0"); 
 			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
 
 		// float / float
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float / float');
-			if ($_cast('double', right) == 0) return killExecution(stack, "Division by 0"); 
+			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0"); 
 			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
 
 		// int & int
@@ -242,14 +242,14 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int << int');
 			int1 = $_cast('int', right);
-			if (int1 < 0) return killExecution(stack, "Cannot bit shift by a negative number.");
+			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
 			value = buildInteger($_cast('int', left) << int1); break;
 
 		// int >> int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int >> int');
 			int1 = $_cast('int', right);
-			if (int1 < 0) return killExecution(stack, "Cannot bit shift by a negative number.");
+			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
 			value = buildInteger($_cast('int', left) >> int1); break;
 
 		// int < int
@@ -357,7 +357,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 
 		default:
 			$_comment('unrecognized op');
-			return killExecution(stack, "The '" + getBinaryOpFromId($_array_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftValue.type) + " and " + getTypeFromId(Value$rightValue.type));
+			return killExecution(stack, pc, "The '" + getBinaryOpFromId($_array_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftValue.type) + " and " + getTypeFromId(Value$rightValue.type));
 			break;
 	}
 }

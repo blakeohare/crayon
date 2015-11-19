@@ -31,6 +31,6 @@ if (Value$arg1.type != Types.LIST) {
 	}
 }
 if (!bool1) {
-	return killExecution(stack, "$io_path_join requires a list of strings as input.");
+	return killExecution(stack, pc, "$io_path_join requires a list of strings as input.");
 }
 output = buildString(string1);

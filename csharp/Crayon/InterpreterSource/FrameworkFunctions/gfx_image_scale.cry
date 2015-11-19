@@ -3,10 +3,10 @@ import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
 
 image1 = extractImageFromValue(arg1);
 if (image1 == null) {
-	return killExecution(stack, "$gfx_image_scale requires an image as its first argument.");
+	return killExecution(stack, pc, "$gfx_image_scale requires an image as its first argument.");
 }
 if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
-	return killExecution(stack, "$gfx_image_scale requires an image and two integers.");
+	return killExecution(stack, pc, "$gfx_image_scale requires an image and two integers.");
 }
 output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, scaleImage(
 	image1,

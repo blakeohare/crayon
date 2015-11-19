@@ -20,7 +20,7 @@ if (type == Types.INSTANCE) {
 			$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
 			$_array_set(valueStack, valueStackSize - 1, value);
 		} else {
-			return killExecution(stack, "Field used before it was defined.");
+			return killExecution(stack, pc, "Field used before it was defined.");
 		}
 	}
 } else if (type == Types.NATIVE_OBJECT) {
@@ -36,7 +36,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) { // TODO: replace vague type with an enum.
 				value = buildCommonString(GameEvent$gameEvent.arg);
 			} else {
-				return killExecution(stack, "Only mouse events have a button field.");
+				return killExecution(stack, pc, "Only mouse events have a button field.");
 			}
 			break;
 
@@ -45,7 +45,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType) ||
 				$_string_equals("key", GameEvent$gameEvent.vagueType)) {
 				if ($_string_equals("mousemove", GameEvent$gameEvent.specificType)) {
-					return killExecution(stack, "'mousemove' events do not have a 'down' field.");
+					return killExecution(stack, pc, "'mousemove' events do not have a 'down' field.");
 				} else {
 					if (GameEvent$gameEvent.down) {
 						value = VALUE_TRUE;
@@ -54,7 +54,7 @@ if (type == Types.INSTANCE) {
 					}
 				}
 			} else {
-				return killExecution(stack, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
+				return killExecution(stack, pc, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
 			}
 			break;
 
@@ -109,7 +109,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
 				value = buildCommonString(GameEvent$gameEvent.arg);
 			} else {
-				return killExecution(stack, "Only keyboard events have a key field.");
+				return killExecution(stack, pc, "Only keyboard events have a key field.");
 			}
 			break;
 
@@ -123,7 +123,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 				value = buildInteger(GameEvent$gameEvent.x);
 			} else {
-				return killExecution(stack, "Only mouse events have an x field.");
+				return killExecution(stack, pc, "Only mouse events have an x field.");
 			}
 			break;
 
@@ -132,7 +132,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
 				value = buildInteger(GameEvent$gameEvent.y);
 			} else {
-				return killExecution(stack, "Only mouse events have a y field.");
+				return killExecution(stack, pc, "Only mouse events have a y field.");
 			}
 			break;
 
@@ -141,7 +141,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
 				value = GameEvent$gameEvent.argValue;
 			} else {
-				return killExecution(stack, "Only gamepad events have a player field.");
+				return killExecution(stack, pc, "Only gamepad events have a player field.");
 			}
 			break;
 
@@ -150,7 +150,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
 				value = GameEvent$gameEvent.argValue3;
 			} else {
-				return killExecution(stack, "Only gamepad events have a namefield.");
+				return killExecution(stack, pc, "Only gamepad events have a namefield.");
 			}
 			break;
 
@@ -159,7 +159,7 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
 				value = GameEvent$gameEvent.argValue2;
 			} else {
-				return killExecution(stack, "Only gamepad events have a value field.");
+				return killExecution(stack, pc, "Only gamepad events have a value field.");
 			}
 			break;
 
@@ -169,7 +169,7 @@ if (type == Types.INSTANCE) {
 				$_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
 				value = $_list_get(GamepadStatus$gamepadStatus.deviceValues, GameEvent$gameEvent.x);
 			} else {
-				return killExecution(stack, "Only hardware/gamepad events have a device field.");
+				return killExecution(stack, pc, "Only hardware/gamepad events have a device field.");
 			}
 			break;
 
@@ -182,7 +182,7 @@ if (type == Types.INSTANCE) {
 					value = VALUE_FALSE;
 				}
 			} else {
-				return killExecution(stack, "Only hardware events have an is_significant field.");
+				return killExecution(stack, pc, "Only hardware events have an is_significant field.");
 			}
 			break;
 
@@ -191,13 +191,13 @@ if (type == Types.INSTANCE) {
 			if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
 				value = buildCommonString(GameEvent$gameEvent.arg);
 			} else {
-				return killExecution(stack, "Only hardware events have a descriptor field.");
+				return killExecution(stack, pc, "Only hardware events have a descriptor field.");
 			}
 			break;
 
 		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%%:
 			string1 = $_array_get(identifiers, nameId);
-			return killExecution(stack, "Game Event does not have a field called '" + string1 + "'");
+			return killExecution(stack, pc, "Game Event does not have a field called '" + string1 + "'");
 			break;
 
 		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ID%%%:
@@ -225,7 +225,7 @@ if (type == Types.INSTANCE) {
 
 		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%%:
 			string1 = $_array_get(identifiers, nameId);
-			return killExecution(stack, "Gamepad does not have a field called '" + string1 + "'");
+			return killExecution(stack, pc, "Gamepad does not have a field called '" + string1 + "'");
 			break;
 
 		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_COMPLETED%%%:
@@ -244,7 +244,7 @@ if (type == Types.INSTANCE) {
 			if (int1 == 0) {
 				// TODO: may reconsider adding an HttpRequest native object field that gets set to true once .completed is called 
 				// and returns true so that there won't be any race conditions.
-				return killExecution(stack, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+				return killExecution(stack, pc, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
 			}
 			string2 = HttpRequest$httpRequest1.body;
 			if (string2 == null) {
@@ -258,14 +258,14 @@ if (type == Types.INSTANCE) {
 			httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
 			int1 = HttpRequest$httpRequest1.statusCode;
 			if (int1 == 0) {
-				return killExecution(stack, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+				return killExecution(stack, pc, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
 			}
 			value = buildInteger(int1);
 			break;
 
 		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%%:
 			string1 = $_array_get(identifiers, nameId);
-			return killExecution(stack, "HTTP requests do not have a field called '" + string1 + "'");
+			return killExecution(stack, pc, "HTTP requests do not have a field called '" + string1 + "'");
 			break;
 			
 		case NativeObjectSubType.IMAGE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_WIDTH%%%:
@@ -280,12 +280,12 @@ if (type == Types.INSTANCE) {
 			
 		case NativeObjectSubType.IMAGE * %%%PREDEFINED_FIELD_COUNT%%%:
 			string1 = $_array_get(identifiers, nameId);
-			return killExecution(stack, "Image does not have a field called '" + string1 + "'");
+			return killExecution(stack, pc, "Image does not have a field called '" + string1 + "'");
 			break;
 
 		default:
 			// Generally this won't happen.
-			return killExecution(stack, "Unrecognized field.");
+			return killExecution(stack, pc, "Unrecognized field.");
 			break;
 	}
 	$_array_set(valueStack, valueStackSize - 1, value);
@@ -307,7 +307,7 @@ if (type == Types.INSTANCE) {
 			dictImpl = $_cast('DictImpl', Value$root.internalValue);
 			len = DictImpl$dictImpl.size;
 		} else {
-			return killExecution(stack, getTypeFromId(type) + " does not have a length property.");
+			return killExecution(stack, pc, getTypeFromId(type) + " does not have a length property.");
 		}
 
 		if (len < INTEGER_POSITIVE_CACHE) {
@@ -319,10 +319,11 @@ if (type == Types.INSTANCE) {
 		int1 = $_array_get(primitiveMethodIdLookup, type * %%%PREDEFINED_FIELD_COUNT%%% + int2);
 		if (int1 == 0) {
 			if (type == Types.NULL) {
-				return killExecution(stack, "Null reference error.");
+				return killExecution(stack, pc, "Null reference error.");
 			}
 			return killExecution(
-				stack, 
+				stack,
+				pc,
 				getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
 		}
 		$_array_set(valueStack, valueStackSize - 1, new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));

@@ -1,4 +1,5 @@
-﻿
+﻿// #functioncall
+
 // This is mostly replicated in CALL_FUNCTION_ON_GLOBAL. Be sure to keep changes in sync.
 
 valueStackSize -= 1;
@@ -32,7 +33,7 @@ if (type == Types.SYS_METHOD) {
 		funcArgs, 
 		stringOutParam);
 	if ($_array_get(stringOutParam, 0) != null) {
-		return killExecution(stack, $_array_get(stringOutParam, 0));
+		return killExecution(stack, pc, $_array_get(stringOutParam, 0));
 	}
 	if (returnValueUsed) {
 		$_array_set(valueStack, valueStackSize, value);
@@ -42,16 +43,18 @@ if (type == Types.SYS_METHOD) {
 	methodInstance = $_cast('MethodInstance', Value$func.internalValue);
 	if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 		if (MethodInstance$methodInstance.maxArgs < $_array_length(funcArgs)) {
-			return killExecution(stack, "Too many args were passed in.");
+			return killExecution(stack, pc, "Too many args were passed in.");
 		}
 	} else {
 		if (MethodInstance$methodInstance.maxArgs < $_list_length(funcArgs)) {
-			return killExecution(stack, "Too many args were passed in.");
+			return killExecution(stack, pc, "Too many args were passed in.");
 		}
 	}
+	StackFrame$stack.pc = pc;
 	locals = $_new_dictionary('int', 'Value');
+	pc = MethodInstance$methodInstance.pc - 1;
 	stack = new StackFrame(
-		MethodInstance$methodInstance.pc - 1,
+		pc,
 		locals,
 		funcArgs,
 		stack,
@@ -61,7 +64,9 @@ if (type == Types.SYS_METHOD) {
 } else if (type == Types.FUNCTION) {
 	locals = $_new_dictionary('int', 'Value');
 	funcDef = $_cast('FunctionDefinition', Value$func.internalValue);
-	stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
+	StackFrame$stack.pc = pc;
+	pc = FunctionDefinition$funcDef.pc;
+	stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
 } else {
-	return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " like a function.");
+	return killExecution(stack, pc, "Cannot invoke " + getTypeFromId(type) + " like a function.");
 }

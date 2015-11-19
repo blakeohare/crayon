@@ -22,7 +22,7 @@ if (int1 < len) {
 		$_dictionary_set(locals, nameId, value);
 	}
 } else {
-	StackFrame$stack.pc += $_array_get(row, 0);
+	pc += $_array_get(row, 0);
 }
 
 $_array_set(valueStack, valueStackSize - 3, buildInteger(int1 + 1));

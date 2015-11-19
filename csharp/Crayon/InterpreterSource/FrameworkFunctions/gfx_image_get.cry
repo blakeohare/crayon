@@ -2,13 +2,13 @@
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type != Types.STRING) {
-	return killExecution(stack, "$image_get requires a string argument.");
+	return killExecution(stack, pc, "$image_get requires a string argument.");
 }
 
 string1 = $_cast('string', Value$arg1.internalValue);
 object1 = getImageByKey(string1);
 if (object1 == null) {
-	return killExecution(stack, "No image with the key '" + string1 + "' has been loaded.");
+	return killExecution(stack, pc, "No image with the key '" + string1 + "' has been loaded.");
 }
 
 output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, object1));

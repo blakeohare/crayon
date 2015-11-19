@@ -15,7 +15,7 @@ while (i > 0) {
 		type = Value$value2.type;
 		first = false;
 	} else if (type != Value$value2.type) {
-		return killExecution(stack, "Cannot have multiple key types in one dictionary.");
+		return killExecution(stack, pc, "Cannot have multiple key types in one dictionary.");
 	}
 
 	if (type == Types.INTEGER) {
@@ -26,7 +26,7 @@ while (i > 0) {
 		objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
 		intKey = ObjectInstance$objInstance.objectId;
 	} else {
-		return killExecution(stack, "Only integers, strings, and objects can be used as dictionary keys.");
+		return killExecution(stack, pc, "Only integers, strings, and objects can be used as dictionary keys.");
 	}
 
 	if (type == Types.STRING) {
@@ -41,11 +41,11 @@ while (i > 0) {
 
 if (type == Types.STRING) {
 	if ($_dictionary_size(dictStringKeyLookup) != len) {
-		return killExecution(stack, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+		return killExecution(stack, pc, "Key collision"); // TODO: do a better job of figuring out where this collision is.
 	}
 } else {
 	if ($_dictionary_size(dictIntKeyLookup) != len) {
-		return killExecution(stack, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+		return killExecution(stack, pc, "Key collision"); // TODO: do a better job of figuring out where this collision is.
 	}
 }
 

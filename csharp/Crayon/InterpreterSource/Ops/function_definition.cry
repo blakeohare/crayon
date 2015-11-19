@@ -3,7 +3,7 @@ if ($_array_get(row, 3) == 1) {
 	// TODO: figure out why I put this if statement here.
 } else {
 	funcDef = new FunctionDefinition(
-		StackFrame$stack.pc + $_array_get(row, 1), // PC
+		pc + $_array_get(row, 1), // PC
 		$_array_get(row, 2), // max arg count
 		$_array_get(identifiers, $_array_get(row, 0))); // name
 	

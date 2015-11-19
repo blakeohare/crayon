@@ -12,5 +12,5 @@ if (Value$arg1.type == Types.FLOAT) {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	output = buildFloat($_tan(int1));
 } else {
-	return killExecution(stack, "$tan requires a number argument.");
+	return killExecution(stack, pc, "$tan requires a number argument.");
 }

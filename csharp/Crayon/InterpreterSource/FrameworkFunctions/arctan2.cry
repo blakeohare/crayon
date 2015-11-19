@@ -10,7 +10,7 @@ if (Value$arg1.type == Types.FLOAT) {
 		int2 = $_cast('int', Value$arg2.internalValue);
 		output = buildFloat($_arc_tan(float1, int2));
 	} else {
-		return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+		return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
 	}
 } else if (Value$arg1.type == Types.INTEGER) {
 	int1 = $_cast('int', Value$arg1.internalValue);
@@ -21,8 +21,8 @@ if (Value$arg1.type == Types.FLOAT) {
 		int2 = $_cast('int', Value$arg2.internalValue);
 		output = buildFloat($_arc_tan(int1, int2));
 	} else {
-		return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+		return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
 	}
 } else {
-	return killExecution(stack, "$arctan2 requires 2 numeric arguments.");
+	return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
 }

@@ -11,4 +11,5 @@ stack = StackFrame$stack.previous;
 if (stack == null) {
 	return '';
 }
+pc = StackFrame$stack.pc;
 locals = StackFrame$stack.locals;

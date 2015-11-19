@@ -12,7 +12,7 @@ if (image1 == null ||
 	Value$arg7.type != Types.INTEGER ||
 	Value$arg8.type != Types.INTEGER ||
 	Value$arg9.type != Types.INTEGER) {
-	return killExecution(stack, "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.");
+	return killExecution(stack, pc, "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.");
 }
 if (%%%IS_OPEN_GL_BASED%%%) {
 	glDrawImageAdvanced(

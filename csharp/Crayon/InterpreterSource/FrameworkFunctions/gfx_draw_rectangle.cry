@@ -10,7 +10,7 @@ if (Value$arg1.type != Types.INTEGER ||
 	Value$arg6.type != Types.INTEGER ||
 	Value$arg7.type != Types.INTEGER ||
 	Value$arg8.type != Types.INTEGER) {
-	return killExecution(stack, "$gfx_draw_rectangle requires 8 integer arguments.");
+	return killExecution(stack, pc, "$gfx_draw_rectangle requires 8 integer arguments.");
 }
 // check if alpha, width, or height are 0 and bypass drawing altogether.
 int1 = $_cast('int', Value$arg8.internalValue);

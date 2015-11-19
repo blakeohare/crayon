@@ -15,5 +15,5 @@ if (Value$arg1.type == Types.FLOAT) {
 } else if (Value$arg1.type == Types.INTEGER) {
 	output = arg1;
 } else {
-	return killExecution(stack, "$floor expects a numeric argument.");
+	return killExecution(stack, pc, "$floor expects a numeric argument.");
 }

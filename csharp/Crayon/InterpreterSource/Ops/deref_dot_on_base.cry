@@ -15,5 +15,5 @@ if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 } else {
-	return killExecution(stack, "Base class did not have a method by this name.");
+	return killExecution(stack, pc, "Base class did not have a method by this name.");
 }

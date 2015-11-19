@@ -5,7 +5,7 @@ import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 stringList = toStringList(arg1, stringList);
 if (stringList == null) {
-	return killExecution(stack, "$image_sheet_error_code argument must either be a string or a list of strings.");
+	return killExecution(stack, pc, "$image_sheet_error_code argument must either be a string or a list of strings.");
 }
 
 int1 = 0;

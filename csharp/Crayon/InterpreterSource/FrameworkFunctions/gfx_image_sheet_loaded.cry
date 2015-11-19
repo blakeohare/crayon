@@ -13,7 +13,7 @@ if (Value$arg1.type == Types.LIST) {
 		} else {
 			int2 = isImageSheetLoaded($_cast('string', Value$value.internalValue));
 			if (int2 == 2) {
-				return killExecution(stack, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
+				return killExecution(stack, pc, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
 			}
 
 			int1 &= int2;
@@ -26,7 +26,7 @@ if (Value$arg1.type == Types.LIST) {
 }
 
 if (bool1) {
-	return killExecution(stack, "$image_sheet_load arguments must either be a string or a list of strings.");
+	return killExecution(stack, pc, "$image_sheet_load arguments must either be a string or a list of strings.");
 }
 
 if (int1 == 0) {
@@ -34,5 +34,5 @@ if (int1 == 0) {
 } else if (int1 == 1) {
 	output = VALUE_TRUE;
 } else { // int1 == 2 || int1 == 3
-	return killExecution(stack, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
+	return killExecution(stack, pc, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
 }

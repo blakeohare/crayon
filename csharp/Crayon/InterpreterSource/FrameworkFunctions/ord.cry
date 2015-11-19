@@ -10,5 +10,5 @@ if (Value$arg1.type == Types.STRING) {
 	}
 }
 if (output == null) {
-	return killExecution(stack, "$ord requires a 1 character string.");
+	return killExecution(stack, pc, "$ord requires a 1 character string.");
 }

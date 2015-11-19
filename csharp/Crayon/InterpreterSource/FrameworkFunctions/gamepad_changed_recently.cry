@@ -14,7 +14,7 @@ if (int1 != 0) {
 	else if (int1 == 2) string1 = "$gamepad_get_state requires a gamepad device reference or a player ID (int or string) as its first argument.";
 	else if (int1 == 3) string1 = "$gamepad_get_state requires an event alias as its second argument (int or string).";
 	else string1 = "$gamepad_get_state encountered an unknown error.";
-	return killExecution(stack, string1);
+	return killExecution(stack, pc, string1);
 }
 
 if (bool1) {

@@ -22,4 +22,5 @@ if (StackFrame$stack.returnValueUsed) {
 }
 
 stack = StackFrame$stack.previous;
+pc = StackFrame$stack.pc;
 locals = StackFrame$stack.locals;

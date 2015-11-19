@@ -121,9 +121,11 @@ function @omitReturn @type('string') interpret(
 
 	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
 
+	pc = StackFrame$stack.pc;
+
 	while (true) {
-		row = $_array_get(args, StackFrame$stack.pc);
-		switch ($_array_get(ops, StackFrame$stack.pc)) {
+		row = $_array_get(args, pc);
+		switch ($_array_get(ops, pc)) {
 			case OpCodes.ADD_LITERAL: $_comment('ADD_LITERAL'); import inline 'InterpreterSource/Ops/add_literal.cry'; break;
 			case OpCodes.ADD_NAME: $_comment('ADD_NAME'); import inline 'InterpreterSource/Ops/add_name.cry'; break;
 			case OpCodes.ASSIGN_FUNCTION_ARG: $_comment('ASSIGN_FUNCTION_ARG'); import inline 'InterpreterSource/Ops/assign_function_arg.cry'; break;
@@ -179,9 +181,9 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.VERIFY_TYPE_IS_ITERABLE: $_comment('VERIFY_TYPE_IS_ITERABLE'); import inline 'InterpreterSource/Ops/verify_type_is_iterable.cry'; break;
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');
-				return killExecution(stack, "Bad op code: " + $_string_cast_weak($_array_get(ops, StackFrame$stack.pc)));
+				return killExecution(stack, pc, "Bad op code: " + $_string_cast_weak($_array_get(ops, pc)));
 		}
-		StackFrame$stack.pc += 1;
+		pc += 1;
 	}
 }
 
@@ -269,12 +271,13 @@ function @type('int') canonicalizeListSliceArgs(
 	return 1;
 }
 
-function @type('string') killExecution(@type('StackFrame') stack, @type('string') message) {
-	return killExecutionWithTokenOverride(stack, null, message);
+function @type('string') killExecution(@type('StackFrame') stack, @type('int') pc, @type('string') message) {
+	return killExecutionWithTokenOverride(stack, pc, null, message);
 }
 
 function @type('string') killExecutionWithTokenOverride(
-		@type('StackFrame') stack, 
+		@type('StackFrame') stack,
+		@type('int') pc,
 		@type('Token') firstTokenOverride, 
 		@type('string') message) {
 	@type('string') fullMessage = '';
@@ -288,8 +291,10 @@ function @type('string') killExecutionWithTokenOverride(
 	@type('int') col = 0;
 	@type('int') fileId = 0;
 
+	StackFrame$stack.pc = pc;
+
 	while (stack != null) {
-		@type('int') pc = StackFrame$stack.pc;
+		pc = StackFrame$stack.pc;
 		stack = StackFrame$stack.previous;
 
 		token = null;

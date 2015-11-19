@@ -3,5 +3,5 @@ value = $_array_get(valueStack, valueStackSize - 1);
 if (Value$value.type == Types.NULL) {
 	valueStackSize -= 1;
 } else {
-	StackFrame$stack.pc += $_array_get(row, 0);
+	pc += $_array_get(row, 0);
 }

@@ -33,7 +33,7 @@ if (Value$arg3.type == Types.DICTIONARY) {
 	dictImpl = $_cast('DictImpl', Value$arg3.internalValue);
 	if (DictImpl$dictImpl.size > 0) {
 		if (DictImpl$dictImpl.keyType != Types.STRING) {
-			return killExecution(stack, "HTTP Headers must be a dictionary keyed from strings");
+			return killExecution(stack, pc, "HTTP Headers must be a dictionary keyed from strings");
 		}
 		stringList = $_dictionary_get_keys('string', DictImpl$dictImpl.valueStringLookup);
 		for (int1 = 0; int1 < $_array_length(stringList); int1 += 1) {
@@ -51,14 +51,14 @@ if (Value$arg3.type == Types.DICTIONARY) {
 					$_list_push(stringList1, $_cast('string', Value$value2.internalValue));
 				}
 			} else {
-				return killExecution(stack, "The values of an HTTP headers dictionary must be strings or, for repeated headers, a list of strings");
+				return killExecution(stack, pc, "The values of an HTTP headers dictionary must be strings or, for repeated headers, a list of strings");
 			}
 		}
 	}
 }
 
 if (!bool1) {
-	return killExecution(stack, "Invalid arguments. $http_request's arguments require 2 strings, a dictionary, and a string.");
+	return killExecution(stack, pc, "Invalid arguments. $http_request's arguments require 2 strings, a dictionary, and a string.");
 }
 string1 = $_cast('string', Value$arg1.internalValue); // method
 string2 = $_cast('string', Value$arg2.internalValue); // url
@@ -67,5 +67,5 @@ string3 = $_cast('string', Value$arg4.internalValue); // body
 output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.HTTP_REQUEST, makeHttpRequest(string1, string2, string3, intList1, stringList1, stringOutParam)));
 
 if ($_array_get(stringOutParam, 0) != null) {
-	return killExecution(stack, "Error while making HTTP request: " + $_array_get(stringOutParam, 0));
+	return killExecution(stack, pc, "Error while making HTTP request: " + $_array_get(stringOutParam, 0));
 }

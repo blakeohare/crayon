@@ -9,7 +9,7 @@ if (Value$value2.type == Types.INSTANCE) {
 	objInstance2 = $_cast('ObjectInstance', Value$value2.internalValue);
 	$_dictionary_set(ObjectInstance$objInstance2.fields, nameId, value);
 } else {
-	return killExecution(stack, "Cannot assign to a field on this type.");
+	return killExecution(stack, pc, "Cannot assign to a field on this type.");
 }
 
 if (bool1) {

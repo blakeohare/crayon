@@ -34,23 +34,27 @@ if (func != null) {
 		locals = $_new_dictionary('int', 'Value');
 		funcDef = $_cast('FunctionDefinition', Value$func.internalValue);
 		if (argCount > FunctionDefinition$funcDef.maxArgCount) {
-			return killExecution(stack, "Too many args passed to " + FunctionDefinition$funcDef.name);
+			return killExecution(stack, pc, "Too many args passed to " + FunctionDefinition$funcDef.name);
 		}
-		stack = new StackFrame(FunctionDefinition$funcDef.pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
+		StackFrame$stack.pc = pc;
+		pc = FunctionDefinition$funcDef.pc;
+		stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
 	} else if (type == Types.METHOD) {
 		methodInstance = $_cast('MethodInstance', Value$func.internalValue);
 		if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 			if (MethodInstance$methodInstance.maxArgs < $_array_length(funcArgs)) {
-				return killExecution(stack, "Too many args were passed in.");
+				return killExecution(stack, pc, "Too many args were passed in.");
 			}
 		} else {
 			if (MethodInstance$methodInstance.maxArgs < $_list_length(funcArgs)) {
-				return killExecution(stack, "Too many args were passed in.");
+				return killExecution(stack, pc, "Too many args were passed in.");
 			}
 		}
 		locals = $_new_dictionary('int', 'Value');
+		StackFrame$stack.pc = pc;
+		pc = MethodInstance$methodInstance.pc - 1;
 		stack = new StackFrame(
-			MethodInstance$methodInstance.pc - 1,
+			pc,
 			locals,
 			funcArgs,
 			stack,
@@ -58,8 +62,8 @@ if (func != null) {
 			MethodInstance$methodInstance.context,
 			valueStackSize);
 	} else {
-		return killExecution(stack, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
+		return killExecution(stack, pc, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 	}
 } else {
-	return killExecution(stack, "That function is not defined: '" + $_array_get(identifiers, $_array_get(row, 0)) + "'");
+	return killExecution(stack, pc, "That function is not defined: '" + $_array_get(identifiers, $_array_get(row, 0)) + "'");
 }

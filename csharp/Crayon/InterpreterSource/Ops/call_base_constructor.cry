@@ -1,12 +1,13 @@
-﻿
-classId = $_array_get($_array_get(specialCache, StackFrame$stack.pc), 0);
+﻿// #functioncall
+
+classId = $_array_get($_array_get(specialCache, pc), 0);
 classInfo = $_array_get(classTable, classId);
 value = StackFrame$stack.objectContext;
 
 // This is copied identically in CALL_CONSTRUCTOR
-pc = ClassInfo$classInfo.constructorPc;
+int1 = ClassInfo$classInfo.constructorPc;
 argCount = $_array_get(row, 0);
-if (pc != 0) {
+if (int1 != 0) {
 	if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 		funcArgs = $_new_array('Value', argCount);
 		while (argCount > 0) {
@@ -27,7 +28,9 @@ if (pc != 0) {
 	}
 
 	locals = $_new_dictionary('int', 'Value');
-	stack = new StackFrame(pc - 1, locals, funcArgs, stack, false, value, valueStackSize);
+	StackFrame$stack.pc = pc;
+	pc = int1 - 1;
+	stack = new StackFrame(pc, locals, funcArgs, stack, false, value, valueStackSize);
 } else {
 	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, value);

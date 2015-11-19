@@ -3,7 +3,7 @@
 import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
 
 if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.BOOLEAN) {
-	return killExecution(stack, "$user_data_delete_directory requires a string and a bool argument.");
+	return killExecution(stack, pc, "$user_data_delete_directory requires a string and a bool argument.");
 }
 
 int1 = ioDeleteDirectory(
@@ -14,5 +14,5 @@ int1 = ioDeleteDirectory(
 	stringOutParam);
 
 if (int1 != IOErrors.NONE) {
-	return killExecution(stack, "$user_data_delete_directory: " + ioErrorToString(int1));
+	return killExecution(stack, pc, "$user_data_delete_directory: " + ioErrorToString(int1));
 }
