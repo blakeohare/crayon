@@ -149,5 +149,12 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, ratio);
 			output.Add(")");
 		}
+
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("TranslationHelper.SfxPlay(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
 	}
 }

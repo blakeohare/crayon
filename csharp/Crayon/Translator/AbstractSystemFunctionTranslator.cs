@@ -180,10 +180,10 @@ namespace Crayon.Translator
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
+				case "_sfx_play": VerifyCount(functionCall, 1); TranslateSfxPlay(output, args[0]); break;
 				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
 				case "_sort_primitive_values": VerifyCount(functionCall, 2); TranslateSortPrimitiveValues(output, args[0], args[1]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
-				case "_sound_play": VerifyCount(functionCall, 1); TranslateSoundPlay(output, args[0]); break;
 				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
@@ -322,10 +322,10 @@ namespace Crayon.Translator
 		protected abstract void TranslateResourceReadText(List<string> output, Expression path);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
+		protected abstract void TranslateSfxPlay(List<string> output, Expression soundInstance);
 		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
-		protected abstract void TranslateSoundPlay(List<string> output, Expression soundInstance);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
 		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);

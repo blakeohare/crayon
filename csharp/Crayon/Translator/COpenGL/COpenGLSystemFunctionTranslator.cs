@@ -742,6 +742,13 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("TODO_sfx_play(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
 		protected override void TranslateSin(List<string> output, Expression value)
 		{
 			output.Add("TODO_sin(");
@@ -763,11 +770,6 @@ namespace Crayon.Translator.COpenGL
 			output.Add("TODO_sorted_copy_of_int_array(");
 			this.Translator.TranslateExpression(output, list);
 			output.Add(")");
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			throw new NotImplementedException();
 		}
 
 		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)

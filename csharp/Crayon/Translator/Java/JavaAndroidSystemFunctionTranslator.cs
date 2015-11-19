@@ -269,7 +269,7 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
 		{
 			output.Add("AndroidTranslationHelper.playSound(");
 			this.Translator.TranslateExpression(output, soundInstance);

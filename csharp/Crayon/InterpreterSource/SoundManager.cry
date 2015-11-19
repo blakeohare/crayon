@@ -55,7 +55,6 @@ function @type('bool') soundManagerUpdate() {
 						$_list_push(newQueue, ev);
 					}
 				}
-				
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_MUSIC) {
 				@type('MusicInstance') music = SoundEvent$ev.music;
 				$_music_play_now(MusicInstance$music.nativeObject, MusicInstance$music.realFilePath, SoundEvent$ev.musicLoops);
@@ -66,7 +65,7 @@ function @type('bool') soundManagerUpdate() {
 			} else if (SoundEvent$ev.type == SoundEventType.RESUME_MUSIC) {
 				$_music_resume();
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_SOUND) {
-				
+				$_sfx_play(SoundEvent$ev.sound);
 			}
 		}
 		SoundStatus$soundStatus.soundEventQueue = newQueue;
@@ -92,6 +91,16 @@ function @type('bool') soundManagerUpdate() {
 	return true;
 }
 
+function @type('Value') loadSoundFromResource(@type('string') path) {
+	@type('object') nativeSound = $_read_local_sound_resource(path);
+	if (nativeSound == null) {
+		return null;
+	}
+	@type('SoundInstance') snd = instantiateSoundInstance(path, nativeSound, null, true);
+
+	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.SOUND, snd));
+}
+
 function @type('SoundInstance') instantiateSoundInstance(
 	@type('string') userpath,
 	@type('object') nativeObject,
@@ -106,6 +115,14 @@ function @type('MusicInstance') instantiateMusicInstance(
 	@type('string') realpath,
 	@type('bool') isLoaded) {
 	return new MusicInstance(userpath, nativeObject, realpath, 1.0, isLoaded);
+}
+
+function @type('bool') soundManagerPlaySound(@type('SoundInstance') snd) {
+	@type('SoundStatus') soundStatus = getSoundStatus();
+	@type('List<SoundEvent>') eventQueue = SoundStatus$soundStatus.soundEventQueue;
+	$_list_push(eventQueue, new SoundEvent(
+		SoundEventType.PLAY_SOUND, snd, null, false, false, 0.0, 0.0, 0.0, 0.0));
+	return true;
 }
 
 function @type('bool') soundManagerPauseMusic(@type('bool') isPause) { // true for pause, false for resume

@@ -224,7 +224,13 @@ namespace %%%PROJECT_ID%%%
 			return true;
 		}
 
-		public static void PlaySoundInstance(SoundInstance sound)
+		public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
+		{
+			byte[] soundBytes = ResourceReader.ReadBytes(path, true).ToArray();
+			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
+		}
+
+		public static void SfxPlay(SoundInstance sound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)sound.nativeObject;
 			sdlSound.Play();

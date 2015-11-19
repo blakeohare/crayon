@@ -25,13 +25,6 @@ namespace Crayon.Translator.JavaScript
 			throw new NotImplementedException();
 		}
 
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("R.playSound(");
-			this.Translator.TranslateExpression(output, soundInstance);
-			output.Add(")");
-		}
-
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.acos(");
@@ -884,6 +877,13 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("R.setTitle(");
 			this.Translator.TranslateExpression(output, title);
+			output.Add(")");
+		}
+
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("R.playSound(");
+			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 

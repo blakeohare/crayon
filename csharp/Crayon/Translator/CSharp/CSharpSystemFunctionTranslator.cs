@@ -679,6 +679,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("TranslationHelper.SfxPlay(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
 		protected override void TranslateSin(List<string> output, Expression value)
 		{
 			output.Add("Math.Sin(");
@@ -699,13 +706,6 @@ namespace Crayon.Translator.CSharp
 		{
 			this.Translator.TranslateExpression(output, list);
 			output.Add(".OrderBy<int, int>(k => k).ToArray()");
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("TranslationHelper.PlaySoundInstance(");
-			this.Translator.TranslateExpression(output, soundInstance);
-			output.Add(")");
 		}
 
 		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)

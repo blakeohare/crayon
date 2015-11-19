@@ -925,6 +925,13 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		{
+			output.Add("playSoundImpl(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
 		protected override void TranslateSin(List<string> output, Expression value)
 		{
 			output.Add("math.sin(");
@@ -945,13 +952,6 @@ namespace Crayon.Translator.Python
 		{
 			output.Add("create_sorted_copy_of_list(");
 			this.Translator.TranslateExpression(output, list);
-			output.Add(")");
-		}
-
-		protected override void TranslateSoundPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("playSoundImpl(");
-			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 

@@ -1,3 +1,12 @@
-﻿
-// $sfx_load_from_resource(path)
+﻿// $sfx_load_from_resource(path)
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$sfx_load_from_resource requires a string argument.");
+}
+value = loadSoundFromResource($_cast('string', Value$arg1.internalValue));
+if (value == null) {
+	return killExecution(stack, pc, "Resource not found.");
+}
+
+output = value;
