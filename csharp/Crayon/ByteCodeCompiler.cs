@@ -773,9 +773,13 @@ namespace Crayon
 				throw new Exception("This should have been optimized into a += or -=");
 			}
 
-			// TODO: once I optimize the addition of inline integers, use that op instead of the two ops
 			if (increment.Root is Variable)
 			{
+				// OpCode re-use be damned. This should be not one, but two top-level op codes.
+				// INCREMENT_INLINE and INCREMENT_POP (depending on whether outputUsed is true)
+				// In fact, the code here in its current form is actually WRONG because someString++ will have 
+				// a '1' appended to it when it really should be an error if the variable is not an integer.
+				// Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
 				Variable variable = (Variable)increment.Root;
 				int scopeId = variable.LocalScopeId == -1 ? variable.GlobalScopeId : variable.LocalScopeId;
 				this.CompileExpression(parser, buffer, increment.Root, true);

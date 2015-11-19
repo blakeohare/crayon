@@ -15,53 +15,50 @@ value = null;
 if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	if (%%%STRONGLY_TYPED%%%) {
 		if (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1) {
-			value = VALUE_TRUE;
+			bool1 = true;
 		} else {
-			value = VALUE_FALSE;
+			bool1 = false;
 		}
 	} else {
 		if (leftType == rightType) {
 			if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
 				if (left == right) { // may have to change if a platform doesn't support == for strings
-					value = VALUE_TRUE;
+					bool1 = true;
 				} else {
-					value = VALUE_FALSE;
+					bool1 = false;
 				}
 			} else if (leftType == Types.INSTANCE) {
 				objInstance = $_cast('ObjectInstance', left);
 				objInstance2 = $_cast('ObjectInstance', right);
 				if (ObjectInstance$objInstance.objectId == ObjectInstance$objInstance2.objectId) {
-					value = VALUE_TRUE;
+					bool1 = true;
 				} else {
-					value = VALUE_FALSE;
+					bool1 = false;
 				}
+			} else {
+				return killExecution(stack, pc, "== and != not defined here yet.");
 			}
 		} else {
 			if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 				// does this work on c#? 
 				// (object)0.0 == (object)0
 				if (left == right) {
-					value = VALUE_TRUE;
+					bool1 = true;
 				} else {
-					value = VALUE_FALSE;
+					bool1 = false;
 				}
 			} else {
-				value = VALUE_FALSE;
+				bool1 = false;
 			}
 		}
 	}
-					
-	if (value != null) {
-		if (op == BinaryOps.NOT_EQUALS) {
-			if ($_cast('bool', Value$value.internalValue)) {
-				value = VALUE_FALSE;
-			} else {
-				value = VALUE_TRUE;
-			}
-		}
-	} else {
-		return killExecution(stack, pc, "== and != not defined here yet.");
+
+	if (op == BinaryOps.NOT_EQUALS) {
+		bool1 = !bool1;
 	}
+
+	if (bool1) value = VALUE_TRUE;
+	else value = VALUE_FALSE;
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, valueToString(leftValue) + valueToString(rightValue));
 } else {
