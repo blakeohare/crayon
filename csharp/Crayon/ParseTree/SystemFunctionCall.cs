@@ -19,6 +19,12 @@
 				return null;
 			}
 
+			if (this.Name == "$_has_increment")
+			{
+				bool hasIncrement = !parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.Python.PythonPlatform));
+				return new BooleanConstant(this.FirstToken, hasIncrement);
+			}
+
 			if (this.Name == "$_is_javascript")
 			{
 				bool isJavaScript = parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.JavaScript.JavaScriptPlatform));

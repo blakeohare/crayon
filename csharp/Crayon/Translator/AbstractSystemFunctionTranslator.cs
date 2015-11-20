@@ -170,6 +170,10 @@ namespace Crayon.Translator
 				case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
 				case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
 				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
+				case "_postfix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, false); break;
+				case "_postfix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, false); break;
+				case "_prefix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, true); break;
+				case "_prefix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, true); break;
 				case "_print": VerifyCount(functionCall, 1); TranslatePrint(output, args[0]); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
 				case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
@@ -312,6 +316,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateParseInt(List<string> output, Expression rawString);
 		protected abstract void TranslateParseJson(List<string> output, Expression rawString);
 		protected abstract void TranslatePauseForFrame(List<string> output);
+		protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
 		protected abstract void TranslatePrint(List<string> output, Expression message);
 		protected abstract void TranslateRandomFloat(List<string> output);
 		protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);

@@ -425,6 +425,14 @@ namespace Crayon.Translator.Java
 			throw new InvalidOperationException();
 		}
 
+		protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
+		{
+			string op = increment ? "++" : "--";
+			if (prefix) output.Add(op);
+			this.Translator.TranslateExpression(output, expression);
+			if (!prefix) output.Add(op);
+		}
+
 		protected override void TranslateInt(List<string> output, Expression value)
 		{
 			output.Add("((int)");

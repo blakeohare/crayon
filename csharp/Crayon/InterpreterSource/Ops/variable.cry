@@ -16,5 +16,9 @@ if ($_dictionary_contains(locals, int1)) {
 }
 
 import inline "InterpreterSource/ValueStackCapacityCheck.cry";
-$_array_set(valueStack, valueStackSize, value);
-valueStackSize += 1;
+if ($_has_increment()) {
+	$_array_set(valueStack, $_postfix_increment(valueStackSize), value);
+} else {
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+}

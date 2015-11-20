@@ -390,6 +390,14 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
+		{
+			string op = increment ? "++" : "--";
+			if (prefix) output.Add(op);
+			this.Translator.TranslateExpression(output, expression);
+			if (!prefix) output.Add(op);
+		}
+
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("TODO_initialize_game_with_fps(");

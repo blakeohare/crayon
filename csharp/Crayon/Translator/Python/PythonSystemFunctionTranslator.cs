@@ -516,6 +516,11 @@ namespace Crayon.Translator.Python
 			output.Add("))");
 		}
 
+		protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
+		{
+			throw new InvalidOperationException("Should have been optimized out.");
+		}
+
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("platform_begin(");

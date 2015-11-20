@@ -300,6 +300,14 @@ namespace Crayon.Translator.CSharp
 			output.Add(").Width");
 		}
 
+		protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
+		{
+			string op = increment ? "++" : "--";
+			if (prefix) output.Add(op);
+			this.Translator.TranslateExpression(output, expression);
+			if (!prefix) output.Add(op);
+		}
+
 		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
 		{
 			output.Add("GameWindow.FPS = ");

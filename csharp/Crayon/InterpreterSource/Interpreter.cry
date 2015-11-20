@@ -184,7 +184,12 @@ function @omitReturn @type('string') interpret(
 				$_comment('THIS SHOULD NEVER HAPPEN');
 				return killExecution(stack, pc, "Bad op code: " + $_string_cast_weak($_array_get(ops, pc)));
 		}
-		pc += 1;
+		// TODO: once row is moved inline with ops, put this in the ops[pc] expression, i.e. ops[++pc].
+		if ($_has_increment()) {
+			$_prefix_increment(pc);
+		} else {
+			pc += 1;
+		}
 	}
 }
 
