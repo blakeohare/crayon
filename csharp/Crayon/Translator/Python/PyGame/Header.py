@@ -397,14 +397,13 @@ def readLocalSoundResource(path):
 	path = path.replace('/', os.sep)
 	if os.path.exists(path):
 		try:
-			snd = pygame.mixer.Sound(path)
+			return pygame.mixer.Sound(path)
 		except:
 			return None
-		return v_instantiateSoundInstance(snd, False, -1)
 	return None
 
 def playSoundImpl(snd):
-	snd[0].play()
+	snd.play()
 
 def io_helper_check_path(path, isDirCheck, checkCase):
 	# TODO: check case.
