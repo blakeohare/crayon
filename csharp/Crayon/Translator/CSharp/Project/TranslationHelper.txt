@@ -230,9 +230,9 @@ namespace %%%PROJECT_ID%%%
 			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
 		}
 
-		public static void SfxPlay(SoundInstance sound)
+		public static void SfxPlay(object nativeSound)
 		{
-			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)sound.nativeObject;
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
 			sdlSound.Play();
 		}
 

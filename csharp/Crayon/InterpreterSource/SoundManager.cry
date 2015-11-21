@@ -65,7 +65,8 @@ function @type('bool') soundManagerUpdate() {
 			} else if (SoundEvent$ev.type == SoundEventType.RESUME_MUSIC) {
 				$_music_resume();
 			} else if (SoundEvent$ev.type == SoundEventType.PLAY_SOUND) {
-				$_sfx_play(SoundEvent$ev.sound);
+				@type('SoundInstance') sound = SoundEvent$ev.sound;
+				$_sfx_play(SoundInstance$sound.nativeObject);
 			}
 		}
 		SoundStatus$soundStatus.soundEventQueue = newQueue;

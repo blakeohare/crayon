@@ -42,3 +42,35 @@ R.musicLoadFromResource = function (filepath, statusOut) {
 	}, false);
 	return v_instantiateMusicInstance(filepath, audioObject, filepath, true);
 };
+
+R.soundObjectIndexByFilename = {};
+R.soundObjectsByIndex = [];
+
+R.prepSoundForLoading = function (filepath) {
+	var index = R.soundObjectIndexByFilename[filepath];
+	if (index === undefined) {
+		index = R.soundObjectsByIndex.length;
+		var data = [[new Audio(filepath)], filepath, index];
+		R.soundObjectIndexByFilename = index;
+		R.soundObjectsByIndex.push(data);
+	}
+
+	return R.soundObjectsByIndex[index];
+};
+
+R.playSound = function (soundStruct) {
+	var audioList = soundStruct[0];
+	var audio = null;
+	for (var i = 0; i < audioList.length; ++i) {
+		if (audioList[i].ended) {
+			audio = audioList[i];
+			break;
+		}
+	}
+	if (audio == null) {
+		audio = new Audio(soundStruct[1]);
+		audioList.push(audio);
+	}
+	audio.currentTime = 0;
+	audio.play();
+};

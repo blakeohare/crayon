@@ -20,11 +20,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.pumpAsyncMessageQueue()");
 		}
 
-		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateArcCos(List<string> output, Expression value)
 		{
 			output.Add("Math.acos(");
@@ -307,7 +302,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, blue);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, alpha);
-			output.Add(")");	
+			output.Add(")");
 		}
 
 		protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
@@ -332,7 +327,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, blue);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, alpha);
-			output.Add(")");	
+			output.Add(")");
 		}
 
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
@@ -490,7 +485,7 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
 		{
 			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(".width");	
+			output.Add(".width");
 		}
 
 		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
@@ -851,6 +846,13 @@ namespace Crayon.Translator.JavaScript
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
 			throw new Exception("Not supported in JavaScript");
+		}
+
+		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+		{
+			output.Add("R.prepSoundForLoading(");
+			this.Translator.TranslateExpression(output, filePath);
+			output.Add(")");
 		}
 
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
