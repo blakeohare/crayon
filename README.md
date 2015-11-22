@@ -1,4 +1,4 @@
-﻿# Crayon version 0.1.6 (Alpha)
+﻿# Crayon version 0.1.7 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -21,36 +21,34 @@ The official Crayon IRC channel is #crayon on irc.esper.net. Feel free to ask an
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
-# New in 0.1.6
+# New in 0.1.7
 
-## Major features:
-* Limited music support in Python, JavaScript, and C# projects.
-* Image scaling support.
-* Added support for drawing arbitrary triangles.
-* Fixed inconsistencies with keycodes across all platforms. 
-* Added a null coallescing operator (C# style).
-* Added a $launch_browser function.
-* Added a primitive method to concatenate one list to the end of another.
-* Negative indexes are valid in lists and strings (Python style).
-* Added a .clone() method for dictionaries.
-* Added default toString behavior for user object instances.
-* Empty sprite sheets are no longer valid.
+## All platforms:
+* Added gamepad support (available in C# and Python only, although JavaScript support is planned for 0.1.8)
+* Added sound support (except for Java projects).
+* Added ability to draw images to the screen with an overall opacity applied to it.
+* Using a variable that was never declared is now a compile-time error.
+* Various performance improvements.
+* Fixed bugs with switch statement. Fallthroughs are compile time errors.
+* Fixed do-while loops.
+* Fixed bug where $gfx_image_sheet_loaded was failing with weird random behavior if you didn't pass in a constant value.
+* Fixed base.method() invocations.
+* Fix $arctan compiler crash.
+* Fix compiler crash when curly brace was not properly closed.
 
-## Improvements and Bug Fixes:
-* event.button field was causing crashes on Python and JavaScript platforms.
-* Fixed bug where list slicing would return full list if start index was after end of the list.
-* OpenTK projects were not sending close button and Alt-F4 quit events.
-* Fixed bug where $gfx_fill_screen wasn't working on OpenGL based platforms.
-* Fixed bug where the window would not close on Java projects that experience user-fault crashes.
-* Fixed bug where $typeof was returning 'unknown_type' for booleans.
-* Fixed sprite sheet bug that would create invalid sheets if an image touched exactly the edge of a y coordinate that was a multiple of 256.
-* Fixed crash in JavaScript that occurred while writing to the mock disk.
-* Fixed compiler crash if the source or output folder was missing.
-* Fixed compiler crash if compiling while a file is in use by the OS.
-* Fixed compiler crash when project ID was missing.
-* Throw a compile error if subclass was referenced before it was declared (as opposed to VM runtime crash)
-* Fixed base.method() support. Invoke the implementation in the subclass as one would expect.
-* Fixed bug where alpha value was being ignored when drawing ellipses in Python.
-* Added SDL.dll and SDL_mixer.dll to C# project output as this is required to play music.
-* Fix bug where images in sprite sheets were getting drawn twice into the top left tile that they occupy, which is noticeable for images that have opacity.
-* Fixed missing $parse_float implementation in JavaScript and Python.
+### C# Projects
+* C# export is perfect. No bug fixes were necessary.
+
+### JavaScript Projects
+* Added a built-in JavaScript minifier.
+* Semicolons were not being picked up properly in Chrome.
+* Suppress key hold-n-repeat events.
+
+### Java Projects
+* Suppress key hold-n-repeat events.
+* image flipping stopped working at some point. fixed now.
+* list.sort() crash fixed.
+
+### Python Projects
+* Not calling $game_event_pump() should not cause window to hang.
+* The error message generator for bad argument counts in primitive methods was causing the VM to crash.
