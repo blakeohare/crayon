@@ -92,13 +92,21 @@ class AwtTranslationHelper {
     public static BufferedImage flipImage(Object original, boolean flipX, boolean flipY) {
         BufferedImage originalImage = (BufferedImage) original;
         if (!flipX && !flipY) return originalImage;
-        BufferedImage flippedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        int x = 0;
+        int y = 0;
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        BufferedImage flippedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = flippedImage.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.concatenate(AffineTransform.getScaleInstance(flipX ? -1 : 1, flipY ? -1 : 1));
-        at.concatenate(AffineTransform.getTranslateInstance(flipX ? originalImage.getWidth() : 0, flipY ? originalImage.getHeight() : 0));
-        g.transform(at);
-        g.drawImage(originalImage, 0, 0, null);
+        if (flipX) {
+            x = width;
+            width = -width;
+        }
+        if (flipY) {
+            y = height;
+            height = -height;
+        }
+        g.drawImage(originalImage, x, y, width, height, null);
         g.dispose();
         return flippedImage;
     }
