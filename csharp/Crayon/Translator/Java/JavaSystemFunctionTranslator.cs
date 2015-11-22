@@ -84,7 +84,7 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
 		{
-			output.Add("RenderEngine.blitImage(");
+			output.Add("RenderEngine.blitImageAlpha(");
 			this.Translator.TranslateExpression(output, image);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, x);

@@ -1,5 +1,6 @@
 ﻿package %%%PACKAGE%%%;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -7,11 +8,12 @@ public final class RenderEngine {
 
     private static final int BLIT_IMAGE = 1;
     private static final int BLIT_IMAGE_PARTIAL = 2;
-    private static final int DRAW_ELLIPSE = 3;
-    private static final int DRAW_LINE = 4;
-    private static final int DRAW_RECTANGLE = 5;
-    private static final int DRAW_TRIANGLE = 6;
-    private static final int FILL_SCREEN = 7;
+    private static final int BLIT_IMAGE_ALPHA = 3;
+    private static final int DRAW_ELLIPSE = 4;
+    private static final int DRAW_LINE = 5;
+    private static final int DRAW_RECTANGLE = 6;
+    private static final int DRAW_TRIANGLE = 7;
+    private static final int FILL_SCREEN = 8;
 
     private static int[] renderArgs = new int[1000];
     private static int renderArgsVirtualLength = 0;
@@ -20,6 +22,8 @@ public final class RenderEngine {
     private static Image[] images = new Image[100];
     private static int imagesVirtualLength = 0;
     private static int imagesRealLength = images.length;
+
+    private static AlphaComposite[] alphaComposite = new AlphaComposite[256];
 
     private RenderEngine() {
     }
@@ -49,6 +53,28 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE;
         renderArgs[renderArgsVirtualLength++] = x;
         renderArgs[renderArgsVirtualLength++] = y;
+
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void blitImageAlpha(Object imageObject, int x, int y, int alpha) {
+        if (alpha < 1) return;
+        if (alpha > 254) {
+            blitImage(imageObject, x, y);
+            return;
+        }
+        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_ALPHA;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+        renderArgs[renderArgsVirtualLength++] = alpha;
 
         images[imagesVirtualLength++] = (Image) imageObject;
     }
@@ -140,9 +166,14 @@ public final class RenderEngine {
         renderArgs[renderArgsVirtualLength++] = alpha;
     }
 
-
-
     public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
+
+        if (alphaComposite[0] == null) {
+            for (int i = 0; i < 256; ++i) {
+                alphaComposite[i] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, i / 255f);
+            }
+        }
+
         int index = 0;
         int imagesIndex = 0;
         int x, y, sx, sy, width, height, red, green, blue, alpha;
@@ -167,6 +198,16 @@ public final class RenderEngine {
                     y = renderArgs[index++];
 
                     g.drawImage((java.awt.Image) image.rawResource, x, y, null);
+                    break;
+
+                case BLIT_IMAGE_ALPHA:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    g.setComposite(alphaComposite[alpha]);
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
+                    g.setComposite(alphaComposite[255]);
                     break;
 
                 case BLIT_IMAGE_PARTIAL:
