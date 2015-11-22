@@ -18,6 +18,7 @@ namespace Crayon.Translator.JavaScript
 				{
 					case "case": output.Add("case "); break; // switch(x) { case 42: ...
 					case "return": output.Add("return "); break; // return foo
+					case "new": output.Add("new "); break; // new Audio(...
 					case "in": output.Add(" in "); break; // foreach loops
 					case "var": output.Add("var "); break; // var varname
 
