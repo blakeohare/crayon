@@ -2,6 +2,8 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.Set;
 
@@ -148,8 +150,22 @@ final class TranslationHelper {
         throw new IllegalStateException(message);
     }
 
+    private static final Comparator<Value> STRING_COMPARATOR = new Comparator<Value>() {
+        @Override
+        public int compare(Value v1, Value v2) {
+            return ((String) v1.internalValue).compareTo((String) v2.internalValue);
+        }
+    };
+
+    private static final Comparator<Value> INTEGER_COMPARATOR = new Comparator<Value>() {
+        @Override
+        public int compare(Value v1, Value v2) {
+            return ((int) v1.internalValue) - ((int) v2.internalValue);
+        }
+    };
+
     public static void sortPrimitiveValueList(ArrayList<Value> items, boolean isString) {
-        throw new IllegalStateException("Not implemented yet.");
+        Collections.sort(items, isString ? STRING_COMPARATOR : INTEGER_COMPARATOR);
     }
 
     public static int[] sortedCopyOfIntArray(int[] nums) {
