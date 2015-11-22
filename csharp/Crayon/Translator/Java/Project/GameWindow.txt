@@ -238,9 +238,17 @@ class GameWindow {
         return value;
     }
 
+    private final HashMap<String, Boolean> pressedKeys = new HashMap<>();
+
     private void handleKeyPress(int keyCode, boolean down) {
         String key = convertKeyCode(keyCode);
         if (key != null) {
+            Boolean status = pressedKeys.get(key);
+            if (down && status != null && status) {
+                // Pressing and holding a key will result in a key repeat. Suppress this.
+                return;
+            }
+            pressedKeys.put(key, down);
             eventQueue.add(CrayonWrapper.v_buildGameEvent(
                 down ? "keydown" : "keyup",
                 "key",
