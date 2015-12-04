@@ -41,7 +41,9 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateLaunchBrowser(List<string> output, Expression url)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.launchBrowser(");
+			this.Translator.TranslateExpression(output, url);
+			output.Add(")");
 		}
 
 		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
@@ -204,27 +206,39 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.loadMusicFromResource(");
+			this.Translator.TranslateExpression(output, filename);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, intOutStatus);
+			output.Add(")");
 		}
 
 		protected override void TranslateMusicPause(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.pauseMusic()");
 		}
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.playMusicNow(");
+			this.Translator.TranslateExpression(output, musicNativeObject);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLooping);
+			output.Add(")");
 		}
 
 		protected override void TranslateMusicResume(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.resumeMusic()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
 		{
-			throw new NotImplementedException();
+			output.Add("AndroidTranslationHelper.setMusicVolume(");
+			this.Translator.TranslateExpression(output, musicNativeObject);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, ratio);
+			output.Add(")");
 		}
 
 		protected override void TranslatePrint(List<string> output, Expression message)

@@ -17,7 +17,7 @@ class AndroidTranslationHelper {
     private static void TODO() {
         throw new RuntimeException("TODO");
     }
-    
+
     private static void TODO(String message) {
         throw new RuntimeException("TODO. " + message);
     }
@@ -148,8 +148,33 @@ class AndroidTranslationHelper {
         throw new RuntimeException("TODO: implement makeHttpRequest");
     }
 
-	public static SoundInstance readLocalSoundResource(String path) {
-		TODO();
-		return null;
-	}
+    public static SoundInstance readLocalSoundResource(String path) {
+        TODO();
+        return null;
+    }
+
+    public static void launchBrowser(String url) {
+        TODO();
+    }
+
+    public static MusicInstance loadMusicFromResource(String path, int[] intOutParam) {
+        TODO();
+        return null;
+    }
+
+    public static void playMusicNow(Object nativeMusicObject, boolean isLooping) {
+        TODO();
+    }
+
+    public static void pauseMusic() {
+        TODO();
+    }
+
+    public static void resumeMusic() {
+        TODO();
+    }
+
+    public static void setMusicVolume(Object nativeMusicObject, double ratio) {
+        //TODO();
+    }
 }
