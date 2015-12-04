@@ -122,7 +122,19 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
+        gl.glDisable(GL10.GL_DITHER);
+        gl.glDisable(GL10.GL_LIGHTING);
+
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glClearColor(0.00f, 0.00f, 0.00f, 1.00f);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
     }
 
     @Override
@@ -144,8 +156,7 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
         // Skip update phase if throttled frame rate is exceeded. Which is okay because 
         // the draw buffer from previously executed frames will be shown.
         update();
-
-		GlUtil.setGl(gl);
+        GlUtil.setGl(gl);
         render(gl);
     }
 
@@ -172,8 +183,8 @@ public class CrayonGlRenderer implements GLSurfaceView.Renderer {
     }
 
     private void render(GL10 gl) {
-        
         if (isScreenInitialized && isFpsInitialized) {
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             CrayonWrapper.v_glRender(gl, userDefinedWidth, userDefinedHeight, screenWidth, screenHeight);
         }
     }

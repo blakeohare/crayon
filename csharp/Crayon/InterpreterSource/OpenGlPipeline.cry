@@ -101,10 +101,9 @@ function @type('bool') glRenderNew(
 					$_gl_enable_vertex_array(gl); // gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 					$_gl_enable_texture_coord_array(gl); // gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-					// TODO: could this be run only once?
-					//$_gl_front_face_cw(gl); // gl.glFrontFace(GL10.GL_CW);
-
 					$_gl_color_4(gl, 255, 255, 255, 255);
+
+					$_gl_bind_texture(gl, textureId);
 
 					// Vertex buffers
 					$_gl_vertex_pointer(gl, vertexBuffer); // gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
@@ -601,7 +600,7 @@ function @type('bool') glFillScreen(
 	@type('int') blue) {
 	glResetDrawBuffer();
 	// TODO: get the real values
-	glDrawRectangle(0, 0, 1000, 1000, red, green, blue, 255);
+	glDrawRectangle(0, 0, 9999, 9999, red, green, blue, 255);
 	return true;
 }
 
