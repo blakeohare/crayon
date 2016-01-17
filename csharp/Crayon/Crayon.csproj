@@ -369,6 +369,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_with_alpha.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_rotated.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_descriptor_guess.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -435,9 +436,14 @@
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SystemLib\Game.cry" />
+    <EmbeddedResource Include="SystemLib\ImageManager\manifest.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\manifest.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\enums.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZElement.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZGame.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZPanel.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZPlayerInputState.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZWindow.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />

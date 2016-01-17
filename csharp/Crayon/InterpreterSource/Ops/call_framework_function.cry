@@ -30,6 +30,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_GAMEPAD_CLEAR_BINDINGS%%%: $_comment('$gamepad_clear_bindings'); import inline "InterpreterSource/FrameworkFunctions/gamepad_clear_bindings.cry"; break;
 	case %%%FF_GAMEPAD_CLEAR_IDS%%%: $_comment('$gamepad_clear_ids'); import inline "InterpreterSource/FrameworkFunctions/gamepad_clear_ids.cry"; break;
 	case %%%FF_GAMEPAD_COUNT%%%: $_comment('$gamepad_count'); import inline "InterpreterSource/FrameworkFunctions/gamepad_count.cry"; break;
+	case %%%FF_GAMEPAD_DESCRIPTOR_GUESS%%%: $_comment('$gamepad_descriptor_guess'); import inline "InterpreterSource/FrameworkFunctions/gamepad_descriptor_guess.cry"; break;
 	case %%%FF_GAMEPAD_ENABLE_RECENT%%%: $_comment('$gamepad_enable_recent'); import inline "InterpreterSource/FrameworkFunctions/gamepad_enable_recent.cry"; break;
 	case %%%FF_GAMEPAD_GET_DEVICE%%%: $_comment('$gamepad_get_device'); import inline "InterpreterSource/FrameworkFunctions/gamepad_get_device.cry"; break;
 	case %%%FF_GAMEPAD_GET_STATE%%%: $_comment('$gamepad_get_state'); import inline "InterpreterSource/FrameworkFunctions/gamepad_get_state.cry"; break;

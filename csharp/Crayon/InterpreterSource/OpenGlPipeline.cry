@@ -228,11 +228,12 @@ function @type('bool') glRenderOld(
 		@type('double') cy = 0.0;
 		@type('double') dx = 0.0;
 		@type('double') dy = 0.0;
+		@type('double') tx = 0.0;
+		@type('double') ty = 0.0;
 
 		@type('double') angle = 0.0;
 		@type('double') r_cos = 0.0;
 		@type('double') r_sin = 0.0;
-		@type('double') tfloat = 0.0;
 
 		if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
 			@type('float') newXFloat = 0;
@@ -512,7 +513,8 @@ function @type('bool') glRenderOld(
 					width = $_array_get(GL_DATA, i | 3); // source width
 					height = $_array_get(GL_DATA, i | 4); // source height
 					angle = $_unsafe_float_division($_array_get(GL_DATA, i | 5), 1000000.0); // angle is propagated via the integer array as floor(angle * 1000000). Convert back.
-					
+					alpha = 255;
+
 					textureWidth = Image$image.textureRight - Image$image.textureLeft;
 					textureHeight = Image$image.textureBottom - Image$image.textureTop;
 					textureLeft = Image$image.textureLeft;
@@ -555,40 +557,17 @@ function @type('bool') glRenderOld(
 
 					r_cos = $_cos(angle);
 					r_sin = $_sin(angle);
+					tx = width * .5;
+					ty = height * -.5;
 
-					dx = width * .5;
-					dy = height * -.5;
-					ax = -dx;
-					ay = -dy;
-					bx = dx;
-					by = ay;
-					cx = ax;
-					cy = dy;
-
-					tfloat = r_cos * ax - r_sin * ay;
-					ay = r_sin * ax + r_cos * ay;
-					ax = tfloat;
-
-					tfloat = r_cos * bx - r_sin * by;
-					by = r_sin * bx + r_cos * by;
-					bx = tfloat;
-
-					tfloat = r_cos * cx - r_sin * cy;
-					cy = r_sin * cx + r_cos * cy;
-					cx = tfloat;
-
-					tfloat = r_cos * dx - r_sin * dy;
-					dy = r_sin * dx + r_cos * dy;
-					dx = tfloat;
-
-					ax += startX;
-					bx += startX;
-					cx += startX;
-					dx += startX;
-					ay += startY;
-					by += startY;
-					cy += startY;
-					dy += startY;
+					ax = r_cos * -tx - r_sin * -ty + startX;
+					ay = r_sin * -tx + r_cos * -ty + startY;
+					bx = r_cos * tx - r_sin * -ty + startX;
+					by = r_sin * tx + r_cos * -ty + startY;
+					cx = r_cos * -tx - r_sin * ty + startX;
+					cy = r_sin * -tx + r_cos * ty + startY;
+					dx = r_cos * tx - r_sin * ty + startX;
+					dy = r_sin * tx + r_cos * ty + startY;
 
 					$_gl_tex_coord_2(gl, textureLeft, textureTop);
 					$_gl_vertex_2(gl, $_int($_unsafe_integer_division(ax * RW, VW)), $_int($_unsafe_integer_division(ay * RH, VH)));

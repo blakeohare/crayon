@@ -9,6 +9,7 @@ namespace Crayon.ParseTree
 	{
 		public Token FileToken { get; private set; }
 		public bool IsSystemLibrary { get; private set; }
+		public string SystemLibraryParent { get; set; }
 
 		public ImportStatement(Token importToken, Token fileToken, bool isSystemLibrary)
 			: base(importToken)

@@ -1336,3 +1336,61 @@ function @type('bool') gamepadIsPushyChangedRecently(@type('Value') deviceOrPlay
 	}
 	return false;
 }
+
+function @type('string') gamepadDescriptorGuess(@type('Value') deviceValue, @type('Value') stringId, @type('Array<int>') intOutParam) {
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('GamepadDeviceInfo') device = $_cast('GamepadDeviceInfo', extractNativeObjectOfType(deviceValue, NativeObjectSubType.GAMEPAD_DEVICE));
+		if (device == null) {
+			$_array_set(intOutParam, 0, 1);
+			return null;
+		}
+		if (Value$stringId.type != Types.STRING) {
+			$_array_set(intOutParam, 0, 2);
+			return null;
+		}
+		$_array_set(intOutParam, 0, 0);
+
+		@type('string') id = $_cast('string', Value$stringId.internalValue);
+		@type('int') buttonCount = GamepadDeviceInfo$device.buttonCount;
+		@type('int') hatCount = GamepadDeviceInfo$device.hatCount;
+		@type('int') axisCount = GamepadDeviceInfo$device.axisCount;
+	
+
+		if (hatCount > 0) {
+			if ($_string_equals(id, "dpad:x:negative")) return "D:X:0";
+			if ($_string_equals(id, "dpad:x:positive")) return "D:X:1";
+			if ($_string_equals(id, "dpad:y:negative")) return "D:Y:0";
+			if ($_string_equals(id, "dpad:y:positive")) return "D:Y:1";
+		}
+
+		if ($_string_equals(id, "axis1:x:negative") && axisCount > 0) return "A:0:0";
+		if ($_string_equals(id, "axis1:x:positive") && axisCount > 0) return "A:0:1";
+		if ($_string_equals(id, "axis1:y:negative") && axisCount > 1) return "A:1:0";
+		if ($_string_equals(id, "axis1:y:positive") && axisCount > 1) return "A:1:1";
+		if ($_string_equals(id, "axis2:x:negative") && axisCount > 2) return "A:2:0";
+		if ($_string_equals(id, "axis2:x:positive") && axisCount > 2) return "A:2:1";
+		if ($_string_equals(id, "axis2:y:negative") && axisCount > 3) return "A:3:0";
+		if ($_string_equals(id, "axis2:y:positive") && axisCount > 3) return "A:3:1";
+		if ($_string_equals(id, "dpad:x:negative") && axisCount > 4) return "A:4:0";
+		if ($_string_equals(id, "dpad:x:positive") && axisCount > 4) return "A:4:1";
+		if ($_string_equals(id, "dpad:y:negative") && axisCount > 5) return "A:5:0";
+		if ($_string_equals(id, "dpad:y:positive") && axisCount > 5) return "A:5:1";
+		if ($_string_equals(id, "trigger:left") && axisCount > 6) return "A:5:0";
+		if ($_string_equals(id, "trigger:right") && axisCount > 6) return "A:5:1";
+
+		if ($_string_equals(id, "button:a") && buttonCount > 0) return "B:0";
+		if ($_string_equals(id, "button:b") && buttonCount > 1) return "B:1";
+		if ($_string_equals(id, "button:x") && buttonCount > 2) return "B:2";
+		if ($_string_equals(id, "button:y") && buttonCount > 3) return "B:3";
+		if ($_string_equals(id, "bumper:left") && buttonCount > 4) return "B:4";
+		if ($_string_equals(id, "bumper:right") && buttonCount > 5) return "B:5";
+		if ($_string_equals(id, "button:back") && buttonCount > 6) return "B:6";
+		if ($_string_equals(id, "button:start") && buttonCount > 7) return "B:7";
+		if ($_string_equals(id, "trigger:left") && axisCount > 8) return "B:8";
+		if ($_string_equals(id, "trigger:right") && axisCount > 9) return "B:9";
+	
+	} else {
+		$_array_set(intOutParam, 0, 1);
+	}
+	return null;
+}

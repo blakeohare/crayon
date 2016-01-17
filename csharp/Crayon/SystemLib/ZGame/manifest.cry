@@ -1,0 +1,14 @@
+﻿import "enums.cry";
+
+class _ZObject {
+	constructor() { }
+}
+_ZUNIQUE = new _ZObject();
+
+_Z_ONE_INSTANCE_CHECK = [true] * 2;
+
+import "ZGame.cry";
+import "ZPlayerInputState.cry";
+import "ZWindow.cry";
+import "ZElement.cry";
+import "ZPanel.cry";

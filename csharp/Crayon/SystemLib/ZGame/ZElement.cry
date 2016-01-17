@@ -1,0 +1,9 @@
+﻿
+class ZElement {
+	constructor() {
+		this._Z_window = _Z_WINDOW_INSTANCE[0];
+		if (this._Z_window == null) {
+			$assert(false, "Cannot create UI elements until a window has been created.");
+		}
+	}
+}

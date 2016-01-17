@@ -1,0 +1,12 @@
+﻿
+class ZPlayerInputState {
+	constructor() {
+		this._left_axis = [0.0, 0.0];
+		this._right_axis = [0.0, 0.0];
+		this._dpad = [0.0, 0.0];
+		
+		this._normalized_left_axis = false;
+		this._normalized_right_axis = false;
+		this._normalized_dpad = false;
+	}
+}

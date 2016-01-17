@@ -119,6 +119,10 @@ namespace Crayon
 				case FrameworkFunction.GAMEPAD_COUNT:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
+				case FrameworkFunction.GAMEPAD_DESCRIPTOR_GUESS:
+					VerifyLength(throwToken, frameworkFunction, 2, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING");
+					break;
 				case FrameworkFunction.GAMEPAD_ENABLE_RECENT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;

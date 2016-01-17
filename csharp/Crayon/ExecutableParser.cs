@@ -8,8 +8,11 @@ namespace Crayon
 	{
 		private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>("= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
-		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>("Game".Split(' '));
-
+		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>(new string[] {
+			"ImageManager",
+			"ZGame",
+		});
+		
 		public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot)
 		{
 			string value = tokens.PeekValue();
@@ -47,19 +50,25 @@ namespace Crayon
 
 					Token fileToken = tokens.Pop();
 					char importPathFirstChar = fileToken.Value[0];
-					
+					bool isSystemLibrary = false;
 					if (importPathFirstChar != '\'' && importPathFirstChar != '"')
 					{
 						if (SYSTEM_LIBRARIES.Contains(fileToken.Value))
 						{
 							tokens.PopExpected(";");
-							return new ImportStatement(importToken, fileToken, true);
+							return new ImportStatement(importToken, fileToken, true) { SystemLibraryParent = parser.CurrentSystemLibrary };
 						}
 						else
 						{
 							throw new ParserException(fileToken, "Expected string path to file or system library name.");
 						}
 					}
+					else if (parser.CurrentSystemLibrary != null)
+					{
+						isSystemLibrary = true;
+					}
+
+
 					tokens.PopExpected(";");
 
 					if (inline)
@@ -78,7 +87,7 @@ namespace Crayon
 					}
 					else
 					{
-						return new ImportStatement(importToken, fileToken, false);
+						return new ImportStatement(importToken, fileToken, isSystemLibrary) { SystemLibraryParent = parser.CurrentSystemLibrary };
 					}
 				}
 

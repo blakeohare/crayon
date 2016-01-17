@@ -12,6 +12,7 @@ namespace Crayon
 			this.NullablePlatform = platform;
 			this.IsTranslateMode = platform != null;
 			this.CurrentClass = null;
+			this.CurrentSystemLibrary = null;
 			this.BuildContext = buildContext;
 			this.VariableIds = new VariableIdAllocator();
 		}
@@ -27,6 +28,8 @@ namespace Crayon
 		public static bool IsTranslateMode_STATIC_HACK { get; set; }
 
 		public VariableIdAllocator VariableIds { get; private set; }
+
+		public string CurrentSystemLibrary { get; set; }
 
 		public ClassDefinition CurrentClass { get; set; }
 
@@ -460,11 +463,26 @@ namespace Crayon
 
 			int fileId = fileIdCounter++;
 			string code = codeOverride;
+			string prevSystemLibrary = this.CurrentSystemLibrary;
 			if (codeOverride == null)
 			{
 				if (importStatement != null && importStatement.IsSystemLibrary)
 				{
-					code = Util.ReadFileInternally("SystemLib/" + importStatement.FileToken.Value + ".cry");
+					string importValueToken = importStatement.FileToken.Value;
+					if (importValueToken[0] == '\'' || importValueToken[0] == '"')
+					{
+						importValueToken = importValueToken.Substring(1, importValueToken.Length - 2);
+					}
+					this.CurrentSystemLibrary = importStatement.SystemLibraryParent ?? importValueToken;
+
+					string sysLibPath = "manifest.cry";
+					char c = importStatement.FileToken.Value[0];
+					if (c == '\'' || c == '"')
+					{
+						sysLibPath = importStatement.FileToken.Value;
+						sysLibPath = sysLibPath.Substring(1, sysLibPath.Length - 2);
+					}
+					code = Util.ReadFileInternally("SystemLib/" + this.CurrentSystemLibrary + "/" + sysLibPath);
 				}
 				else
 				{
@@ -515,6 +533,8 @@ namespace Crayon
 					executables.Add(executable);
 				}
 			}
+
+			this.CurrentSystemLibrary = prevSystemLibrary;
 
 			return executables.ToArray();
 		}

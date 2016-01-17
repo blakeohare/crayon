@@ -1,0 +1,10 @@
+﻿
+_Z_WINDOW_INSTANCE = [null];
+class ZWindow {
+	constructor() {
+		$assert(_Z_ONE_INSTANCE_CHECK[1], "Only one instance of ZWindow can be created.");
+		_Z_ONE_INSTANCE_CHECK[1] = false;
+		this._Z_content = null;
+		_Z_WINDOW_INSTANCE[0] = this;
+	}
+}
