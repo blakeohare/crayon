@@ -229,6 +229,11 @@ function @type('bool') glRenderOld(
 		@type('double') dx = 0.0;
 		@type('double') dy = 0.0;
 
+		@type('double') angle = 0.0;
+		@type('double') r_cos = 0.0;
+		@type('double') r_sin = 0.0;
+		@type('double') tfloat = 0.0;
+
 		if (%%%IS_OPEN_GL_NEW_STYLE%%%) {
 			@type('float') newXFloat = 0;
 			@type('float') newYFloat = 0;
@@ -496,6 +501,106 @@ function @type('bool') glRenderOld(
 						$_gl_vertex_2(gl, cx, cy);
 						$_gl_vertex_2(gl, dx, dy);
 					}
+					break;
+
+				case OpenGlAction.DRAW_IMAGE_ROTATED:
+					image = $_array_get(GL_IMAGES, image_i);
+					image_i += 1;
+
+					startX = $_array_get(GL_DATA, i | 1); // centerX
+					startY = $_array_get(GL_DATA, i | 2); // centerY
+					width = $_array_get(GL_DATA, i | 3); // source width
+					height = $_array_get(GL_DATA, i | 4); // source height
+					angle = $_unsafe_float_division($_array_get(GL_DATA, i | 5), 1000000.0); // angle is propagated via the integer array as floor(angle * 1000000). Convert back.
+					
+					textureWidth = Image$image.textureRight - Image$image.textureLeft;
+					textureHeight = Image$image.textureBottom - Image$image.textureTop;
+					textureLeft = Image$image.textureLeft;
+					textureTop = Image$image.textureTop;
+					textureRight = textureLeft + textureWidth;
+					textureBottom = textureTop + textureHeight;
+
+					// This is all ripped from below. Need to do an inline import.
+					compositeImage = Image$image.compositeResource;
+					if (!CompositeImage$compositeImage.loaded) {
+						if (state != null)
+						{
+							state = null;
+							$_gl_end(gl);
+						}
+						CompositeImage$compositeImage.glTextureId = $_gl_load_texture(gl, CompositeImage$compositeImage.nativeBitmap);
+						CompositeImage$compositeImage.loaded = true;
+					}
+					textureId = CompositeImage$compositeImage.glTextureId;
+
+					if (state == null ||
+						GlRenderState$state.mode != OpenGlMode.QUADS ||
+						GlRenderState$state.a != alpha ||
+						GlRenderState$state.textureId != textureId) {
+						if (state == null) {
+							state = new GlRenderState(0, 0, 0, 0, 0, 0);
+						} else {
+							$_gl_end(gl);
+						}
+
+						GlRenderState$state.mode = OpenGlMode.QUADS;
+						GlRenderState$state.textureId = textureId;
+						GlRenderState$state.a = alpha;
+
+						$_gl_enable_texture_2d(gl);
+						$_gl_color_4(gl, 255, 255, 255, alpha);
+						$_gl_bind_texture(gl, textureId);
+						$_gl_begin_quads(gl);
+					}
+
+					r_cos = $_cos(angle);
+					r_sin = $_sin(angle);
+
+					dx = width * .5;
+					dy = height * -.5;
+					ax = -dx;
+					ay = -dy;
+					bx = dx;
+					by = ay;
+					cx = ax;
+					cy = dy;
+
+					tfloat = r_cos * ax - r_sin * ay;
+					ay = r_sin * ax + r_cos * ay;
+					ax = tfloat;
+
+					tfloat = r_cos * bx - r_sin * by;
+					by = r_sin * bx + r_cos * by;
+					bx = tfloat;
+
+					tfloat = r_cos * cx - r_sin * cy;
+					cy = r_sin * cx + r_cos * cy;
+					cx = tfloat;
+
+					tfloat = r_cos * dx - r_sin * dy;
+					dy = r_sin * dx + r_cos * dy;
+					dx = tfloat;
+
+					ax += startX;
+					bx += startX;
+					cx += startX;
+					dx += startX;
+					ay += startY;
+					by += startY;
+					cy += startY;
+					dy += startY;
+
+					$_gl_tex_coord_2(gl, textureLeft, textureTop);
+					$_gl_vertex_2(gl, $_int($_unsafe_integer_division(ax * RW, VW)), $_int($_unsafe_integer_division(ay * RH, VH)));
+						
+					$_gl_tex_coord_2(gl, textureRight, textureTop);
+					$_gl_vertex_2(gl, $_int($_unsafe_integer_division(bx * RW, VW)), $_int($_unsafe_integer_division(by * RH, VH)));
+
+					$_gl_tex_coord_2(gl, textureRight, textureBottom);
+					$_gl_vertex_2(gl, $_int($_unsafe_integer_division(dx * RW, VW)), $_int($_unsafe_integer_division(dy * RH, VH)));
+
+					$_gl_tex_coord_2(gl, textureLeft, textureBottom);
+					$_gl_vertex_2(gl, $_int($_unsafe_integer_division(cx * RW, VW)), $_int($_unsafe_integer_division(cy * RH, VH)));
 					break;
 
 				case OpenGlAction.DRAW_IMAGE:
@@ -792,6 +897,41 @@ function glDrawImageAdvanced(
 
 	$_array_set(GL_IMAGES, GL_IMAGES_VIRTUAL_SIZE, image);
 	GL_IMAGES_VIRTUAL_SIZE += 1;
+}
+
+function glDrawImageRotated(
+	@type('Image') image,
+	@type('int') targetCenterX,
+	@type('int') targetCenterY,
+	@type('double') angle) {
+	
+	@type('int') width = Image$image.width;
+	@type('int') height = Image$image.height;
+
+	if (angle == 0) {
+		glDrawImageSimple(
+			image, 
+			targetCenterX - $_unsafe_integer_division(width, 2),
+			targetCenterY - $_unsafe_integer_division(height, 2));
+	} else {
+		angle = angle % (2 * 3.14159265358979323);
+		if (angle < 0) angle += (2 * 3.14159265358979323);
+		
+		if (GL_VIRTUAL_SIZE == GL_REAL_SIZE) glIncreaseDataCapacity();
+		if (GL_IMAGES_VIRTUAL_SIZE == GL_IMAGES_REAL_SIZE) glIncreaseImageListCapacity();
+
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE, OpenGlAction.DRAW_IMAGE_ROTATED);
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 1, targetCenterX);
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 2, targetCenterY);
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 3, width);
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 4, height);
+		$_array_set(GL_DATA, GL_VIRTUAL_SIZE | 5, $_int(angle * 1000000));
+		
+		GL_VIRTUAL_SIZE += 16;
+
+		$_array_set(GL_IMAGES, GL_IMAGES_VIRTUAL_SIZE, image);
+		GL_IMAGES_VIRTUAL_SIZE += 1;
+	}
 }
 
 // size must ALWAYS be divisible by 16

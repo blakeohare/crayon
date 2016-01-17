@@ -368,6 +368,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_get_state.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_with_alpha.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
+    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_rotated.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

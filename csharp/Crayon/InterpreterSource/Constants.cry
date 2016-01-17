@@ -149,8 +149,9 @@ enum OpenGlAction {
 	DRAW_RECTANGLE = 1,
 	DRAW_ELLIPSE = 2,
 	DRAW_IMAGE = 3,
-	DRAW_LINE = 4,
-	DRAW_TRIANGLE = 5,
+	DRAW_IMAGE_ROTATED = 4,
+	DRAW_LINE = 5,
+	DRAW_TRIANGLE = 6,
 }
 
 enum OpenGlMode {

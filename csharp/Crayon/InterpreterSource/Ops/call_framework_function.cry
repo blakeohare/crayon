@@ -38,6 +38,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_GFX_BLIT_IMAGE%%%: $_comment('$gfx_blit_image'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%: $_comment('$gfx_blit_image_partial'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE_PARTIAL_AT_SCALE%%%: $_comment('$gfx_blit_image_partial_at_scale'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial_at_scale.cry"; break;
+	case %%%FF_GFX_BLIT_IMAGE_ROTATED%%%: $_comment('$gfx_blit_image_rotated'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_rotated.cry"; break;
 	case %%%FF_GFX_BLIT_IMAGE_WITH_ALPHA%%%: $_comment('$gfx_blit_image_with_alpha'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_with_alpha.cry"; break;
 	case %%%FF_GFX_DRAW_ELLIPSE%%%: $_comment('$gfx_draw_ellipse'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_ellipse.cry"; break;
 	case %%%FF_GFX_DRAW_LINE%%%: $_comment('$gfx_draw_line'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_line.cry"; break;

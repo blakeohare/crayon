@@ -1,0 +1,36 @@
+﻿// $gfx_blit_image_rotated(image, targetXCenter, targetYCenter, radiansCW)
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+
+if (image1 == null) {
+	return killExecution(stack, pc, "$gfx_blit_image_rotated requires an image instance as its first argument.");
+}
+
+if (Value$arg2.type != Types.INTEGER ||
+	Value$arg3.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_blit_image_rotated requires integer values for the target coordinate.");
+}
+
+if (Value$arg4.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg4.internalValue);
+} else if (Value$arg4.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg4.internalValue);
+	float1 = int1;
+} else {
+	return killExecution(stack, pc, "$gfx_blit_image_rotated requires a number for the rotation value.");
+}
+
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawImageRotated(
+		image1,
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		float1);
+} else {
+	$_blit_image_rotated(
+		image1,
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		float1);
+}
