@@ -9,7 +9,7 @@ import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 // 3 - descriptor invalid
 // 4 - alias isn't suitable type
 // 6 - sign invalid
-int1 = gamepadBind(arg1, arg2, arg3, 1, null, arg4, false);
+int1 = gamepadBind(arg1, arg2, arg3, 1, arg4, null, false);
 if (int1 < 2) {
 	if (int1 == 0) {
 		output = VALUE_FALSE;
