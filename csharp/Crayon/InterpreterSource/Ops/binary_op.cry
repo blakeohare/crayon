@@ -136,10 +136,78 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			$_comment('list + list');
 			value = new Value(Types.LIST, $_list_concat($_cast('List<Value>', left), $_cast('List<Value>', right))); break;
 
+		/*
+			All 4 basic operations for integers and integers have the buildInteger code inlined.
+		*/
+
 		// int + int
 		case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 			$_comment('int + int');
-			value = buildInteger($_cast('int', left) + $_cast('int', right)); break;
+			int1 = $_cast('int', left) + $_cast('int', right);
+			if (int1 < 0) {
+				if (int1 > -INTEGER_NEGATIVE_CACHE) {
+					value = INTEGERS_CACHE[1][-int1];
+				} else {
+					value = new Value(Types.INTEGER, int1);
+				}
+			} else if (int1 < INTEGER_POSITIVE_CACHE) {
+				value = INTEGERS_CACHE[0][int1];
+			} else {
+				value = new Value(Types.INTEGER, int1);
+			}
+			break;
+
+		// int - int
+		case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
+			$_comment('int - int');
+			int1 = $_cast('int', left) - $_cast('int', right);
+			if (int1 < 0) {
+				if (int1 > -INTEGER_NEGATIVE_CACHE) {
+					value = INTEGERS_CACHE[1][-int1];
+				} else {
+					value = new Value(Types.INTEGER, int1);
+				}
+			} else if (int1 < INTEGER_POSITIVE_CACHE) {
+				value = INTEGERS_CACHE[0][int1];
+			} else {
+				value = new Value(Types.INTEGER, int1);
+			}
+			break;
+			
+		// int * int
+		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
+			$_comment('int * int');
+			int1 = $_cast('int', left) * $_cast('int', right);
+			if (int1 < 0) {
+				if (int1 > -INTEGER_NEGATIVE_CACHE) {
+					value = INTEGERS_CACHE[1][-int1];
+				} else {
+					value = new Value(Types.INTEGER, int1);
+				}
+			} else if (int1 < INTEGER_POSITIVE_CACHE) {
+				value = INTEGERS_CACHE[0][int1];
+			} else {
+				value = new Value(Types.INTEGER, int1);
+			}
+			break;
+
+		// int / int
+		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
+			$_comment('int / int');
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0");
+			int1 = $_unsafe_integer_division($_cast('int', left), $_cast('int', right));
+			if (int1 < 0) {
+				if (int1 > -INTEGER_NEGATIVE_CACHE) {
+					value = INTEGERS_CACHE[1][-int1];
+				} else {
+					value = new Value(Types.INTEGER, int1);
+				}
+			} else if (int1 < INTEGER_POSITIVE_CACHE) {
+				value = INTEGERS_CACHE[0][int1];
+			} else {
+				value = new Value(Types.INTEGER, int1);
+			}
+			break;
 
 		// float + int
 		case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
@@ -155,11 +223,6 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float + float');
 			value = buildFloat($_cast('double', left) + $_cast('double', right)); break;
-							
-		// int - int
-		case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
-			$_comment('int - int');
-			value = buildInteger($_cast('int', left) - $_cast('int', right)); break;
 
 		// int - float
 		case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
@@ -176,11 +239,6 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			$_comment('float - float');
 			value = buildFloat($_cast('double', left) - $_cast('double', right)); break;
 
-		// int * int
-		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
-			$_comment('int * int');
-			value = buildInteger($_cast('int', left) * $_cast('int', right)); break;
-
 		// float * int
 		case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float * int');
@@ -195,13 +253,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float * float');
 			value = buildFloat($_cast('double', left) * $_cast('double', right)); break;
-							
-		// int / int
-		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
-			$_comment('int / int');
-			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0");
-			value = buildInteger($_unsafe_integer_division($_cast('int', left), $_cast('int', right))); break;
-							
+
 		// int / float
 		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int / float');
