@@ -17,6 +17,6 @@
 		if (this._Z_opacity <= 0) return;
 		x = left + this._Z_x_offset;
 		y = top + this._Z_y_offset;
-		$gfx_draw_rectangle(left, top, width, height, this._Z_r, this._Z_g, this._Z_b, this._Z_a);
+		$gfx_draw_rectangle(left, top, width, height, this._Z_r, this._Z_g, this._Z_b, this._Z_opacity);
 	}
 }

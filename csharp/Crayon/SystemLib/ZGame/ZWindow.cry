@@ -35,11 +35,14 @@ class ZWindow {
 	}
 
 	function update() {
-		$assert(false, "ZWindow.update() must be overridden.");
+		// Override me.
 	}
 
-	function render() {
-		$assert(false, "ZWindow.render() must be overridden.");
+	function render(left, top, width, height) {
+		if (this._Z_content != null) {
+			// TODO: take into consideration width and height, although this will be uncommon for the root element.
+			this._Z_content.render(0, 0, width, height);
+		}
 	}
 
 	function set_content(element) {

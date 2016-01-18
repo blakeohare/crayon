@@ -152,6 +152,6 @@ class ZElement {
 	// Panels will pass in the top left coordinate of where this should be rendered.
 	// This coordinate already takes into account the alignment and reported width/height properties of the element.
 	function render(left, top, width, height) {
-		$assert(false, "ZEleent.render(left, right) has no default implementation and must be overridden.");
+		$assert(false, "ZElement.render(left, right) has no default implementation and must be overridden.");
 	}
 }

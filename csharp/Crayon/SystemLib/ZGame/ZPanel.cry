@@ -173,15 +173,15 @@ class ZPanel : ZElement {
 				width = element._Z_reported_width;
 				height = element._Z_reported_height;
 				switch (element._Z_alignment) {
-					case ZAlignment.TOP_LEFT: element.render(left, top); break;
-					case ZAlignment.TOP_CENTER: element.render((left + right - width) / 2, top); break;
-					case ZAlignment.TOP_RIGHT: element.render(right - width, top); break;
-					case ZAlignment.CENTER_LEFT: element.render(left, (top + bottom - height) / 2); break;
-					case ZAlignment.CENTER: element.render((left + right - width) / 2, (top + bottom - height) / 2); break;
-					case ZAlignment.CENTER_RIGHT: element.render(right - width, (top + bottom - height) / 2); break;
-					case ZAlignment.BOTTOM_LEFT: element.render(left, bottom - height); break;
-					case ZAlignment.BOTTOM_CENTER: element.render((left + right - width) / 2, bottom - height); break;
-					case ZAlignment.BOTTOM_RIGHT: element.render(right - width, bottom - height); break;
+					case ZAlignment.TOP_LEFT: element.render(left, top, width, height); break;
+					case ZAlignment.TOP_CENTER: element.render((left + right - width) / 2, top, width, height); break;
+					case ZAlignment.TOP_RIGHT: element.render(right - width, top, width, height); break;
+					case ZAlignment.CENTER_LEFT: element.render(left, (top + bottom - height) / 2, width, height); break;
+					case ZAlignment.CENTER: element.render((left + right - width) / 2, (top + bottom - height) / 2, width, height); break;
+					case ZAlignment.CENTER_RIGHT: element.render(right - width, (top + bottom - height) / 2, width, height); break;
+					case ZAlignment.BOTTOM_LEFT: element.render(left, bottom - height, width, height); break;
+					case ZAlignment.BOTTOM_CENTER: element.render((left + right - width) / 2, bottom - height, width, height); break;
+					case ZAlignment.BOTTOM_RIGHT: element.render(right - width, bottom - height, width, height); break;
 					default: $assert(false, "Invalid ZPanel alignment"); break;
 				}
 

@@ -20,4 +20,10 @@
 		}
 		return this;
 	}
+
+	function render(left, top, width, height) {
+		if (this._Z_image != null) {
+			$gfx_blit_image(this._Z_image, left, top);
+		}
+	}
 }

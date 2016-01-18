@@ -139,7 +139,7 @@ class ZGame {
 
 			if (phase >= 2) {
 				window._Z_update_wrapper();
-				window.render();
+				window.render(0, 0, screen_size[0], screen_size[1]);
 			}
 
 			$game_clock_tick();
@@ -155,8 +155,7 @@ class ZGame {
 				unassigned_devices.add(device);
 			}
 		}
-		$print("COUNT: " + count);
-		$print("UNASSIGNED: " + unassigned_devices.length);
+
 		for (i = count; i < player_ids.length; ++i) {
 			if (unassigned_devices.length > 0) {
 				device = unassigned_devices[0];
