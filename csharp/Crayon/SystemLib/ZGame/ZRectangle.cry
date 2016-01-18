@@ -1,0 +1,22 @@
+﻿class ZRectangle : ZElement {
+	constructor(id = null) : base(id) {
+		this.set_color(0, 0, 0, 0);
+		this.set_width_pixels(100);
+		this.set_height_pixels(100);
+	}
+
+	function set_color(r, g, b, a) {
+		this._Z_r = _Z_ensure_integer_range(r, 0, 255);
+		this._Z_g = _Z_ensure_integer_range(g, 0, 255);
+		this._Z_b = _Z_ensure_integer_range(b, 0, 255);
+		this._Z_opacity = _Z_ensure_integer_range(a, 0, 255);
+		return this;
+	}
+
+	function render(left, top, width, height) {
+		if (this._Z_opacity <= 0) return;
+		x = left + this._Z_x_offset;
+		y = top + this._Z_y_offset;
+		$gfx_draw_rectangle(left, top, width, height, this._Z_r, this._Z_g, this._Z_b, this._Z_a);
+	}
+}

@@ -1,11 +1,14 @@
 ﻿
+_Z_GAME_INSTANCE = [null];
+
 class ZGame {
 	constructor(args) {
-		$assert(_Z_ONE_INSTANCE_CHECK[0], "Only one instance of ZGame can be created.");
-		_Z_ONE_INSTANCE_CHECK[0] = false;
+		$assert(_Z_GAME_INSTANCE[0] == null, "Only one instance of ZGame can be created.");
+		_Z_GAME_INSTANCE[0] = this;
 
 		$assert($typeof(args) == $typeof({}), "ZGame argument must be a dictionary of ZParams.");
 		this._Z_args = args;
+		this._Z_fps = null;
 	}
 
 	function start() {
@@ -15,6 +18,7 @@ class ZGame {
 		this._present('FPS', args, ZParam.FPS, true);
 		fps = args[ZParam.FPS];
 		this._verify_int('FPS', fps, true);
+		this._Z_fps = fps;
 
 		this._present('SCREEN_SIZE', args, ZParam.SCREEN_SIZE, true);
 		screen_size = args[ZParam.SCREEN_SIZE];
@@ -53,6 +57,8 @@ class ZGame {
 			? args[ZParam.IMAGE_SHEETS_LOADED_CALLBACK]
 			: null;
 
+		_Z_IMAGE_MANAGER[0] = args.get(ZParam.IMAGE_MANAGER, null) ?? new ImageManager();
+
 		// TODO: rest of the verifications
 
 		$game_initialize(fps);
@@ -71,27 +77,69 @@ class ZGame {
 			player_input_states[player_id] = new ZPlayerInputState(player_id);
 		}
 		
-		IDS = {
-			ZGamepadButton.LEFT_AXIS: "Left Axis",
-			ZGamepadButton.RIGHT_AXIS: "Right Axis",
-			ZGamepadButton.DPAD: "D-Pad",
-			ZGamepadButton.BUTTON_A: 'A',
-			ZGamepadButton.BUTTON_B: 'B',
-			ZGamepadButton.BUTTON_X: 'X',
-			ZGamepadButton.BUTTON_Y: 'Y',
-			ZGamepadButton.LEFT_BUMPER: "Left Bumper",
-			ZGamepadButton.RIGHT_BUMPER: "Right Bumper",
-			ZGamepadButton.LEFT_TRIGGER: "Left Trigger",
-			ZGamepadButton.RIGHT_TRIGGER: "Right Trigger",
-			ZGamepadButton.START: "Start",
-			ZGamepadButton.BACK: "Back",
-		};
+		phase = 0;
+
+		this.load_progress = 0.0;
 
 		while (true) {
 			for (event : $game_pump_events()) {
-				if (event.is_gamepad) {
-					$print("GAMEPAD: " + event.player + " " + IDS.get(event.name, "?? " + event.name) + " " + event.value);
+				if (event.is_quit) {
+					return;
 				}
+				if (event.is_gamepad) {
+					
+				}
+			}
+
+			switch (phase) {
+				case 0: // prepreloading
+					if (prepre_load_sheets.length > 0) {
+						$gfx_image_sheet_load(prepre_load_sheets);
+						phase = 1;
+					} else {
+						phase = 2;
+						window.initialize();
+					}
+					break;
+				case 1:
+					if ($gfx_image_sheet_loaded(prepre_load_sheets)) {
+						phase = 2;
+						window.initialize();
+					}
+					break;
+
+				case 2:
+					if (pre_load_sheets.length > 0) {
+						$gfx_image_sheet_load(pre_load_sheets);
+						phase = 3;
+					} else {
+						this.load_progress = 1.0;
+						phase = 4;
+						if (finished_loading_callback != null) {
+							finished_loading_callback();
+						}
+					}
+					break;
+
+				case 3:
+					if ($gfx_image_sheet_loaded(pre_load_sheets)) {
+						this.load_progress = 1.0;
+						phase = 4;
+						if (finished_loading_callback != null) {
+							finished_loading_callback();
+						}
+					} else {
+						this.load_progress = $gfx_image_sheet_load_progress(pre_load_sheets);
+					}
+					break;
+
+				default:
+					break;
+			}
+
+			if (phase >= 2) {
+				window._Z_update_wrapper();
+				window.render();
 			}
 
 			$game_clock_tick();
@@ -167,7 +215,7 @@ class ZGame {
 	}
 
 	function _present(param_name, args, param, required = false) {
-		output = args.get(param, _ZUNIQUE) != _ZUNIQUE;
+		output = args.get(param, _Z_UNIQUE) != _Z_UNIQUE;
 		if (required) $assert(output, param_name + " is required.");
 		return output;
 	}

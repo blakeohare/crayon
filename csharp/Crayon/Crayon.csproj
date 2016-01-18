@@ -433,6 +433,7 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZEvent.cry" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
@@ -444,6 +445,12 @@
     <EmbeddedResource Include="SystemLib\ZGame\ZPanel.cry" />
     <EmbeddedResource Include="SystemLib\ZGame\ZPlayerInputState.cry" />
     <EmbeddedResource Include="SystemLib\ZGame\ZWindow.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZImage.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZStackPanel.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZRectangle.cry" />
+    <EmbeddedResource Include="SystemLib\EasingFunctions\manifest.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZStoryBoard.cry" />
+    <EmbeddedResource Include="SystemLib\ZGame\ZStoryBoardRunnerContext.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />

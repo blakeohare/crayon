@@ -1,0 +1,23 @@
+﻿class ZImage : ZElement {
+	constructor(id = null) : base(id) {
+		this._Z_image = null;
+		this._Z_reported_width = 0;
+		this._Z_reported_height = 0;
+	}
+
+	function set_source(image) {
+		if ($typeof(image) == 'string') {
+			image = _Z_IMAGE_MANAGER[0].get(image);
+		}
+
+		this._Z_image = image;
+		if (image == null) {
+			this._Z_reported_width = 0;
+			this._Z_reported_height = 0;
+		} else {
+			this._Z_reported_width = image.width;
+			this._Z_reported_height = image.height;
+		}
+		return this;
+	}
+}

@@ -2,9 +2,64 @@
 _Z_WINDOW_INSTANCE = [null];
 class ZWindow {
 	constructor() {
-		$assert(_Z_ONE_INSTANCE_CHECK[1], "Only one instance of ZWindow can be created.");
-		_Z_ONE_INSTANCE_CHECK[1] = false;
-		this._Z_content = null;
+		$assert(_Z_WINDOW_INSTANCE[0] == null, "Only one instance of ZWindow can be created.");
 		_Z_WINDOW_INSTANCE[0] = this;
+		this._Z_content = null;
+
+		this._Z_reusable_dict = {};
+		this._Z_storyboards = [];
+	}
+
+	function initialize() {
+		$print("AHOY");
+	}
+
+	function _Z_update_wrapper() {
+
+		if (this._Z_content != null) {
+			this._Z_content._Z_update();
+		}
+
+		if (this._Z_storyboards.length > 0) {
+			new_storyboards = [];
+			for (storyboard : this._Z_storyboards) {
+				storyboard.run();
+				if (!storyboard.done) {
+					new_storyboards.add(storyboard);
+				}
+			}
+			this._Z_storyboards = new_storyboards;
+		}
+
+		this.update();
+	}
+
+	function update() {
+		$assert(false, "ZWindow.update() must be overridden.");
+	}
+
+	function render() {
+		$assert(false, "ZWindow.render() must be overridden.");
+	}
+
+	function set_content(element) {
+		this._Z_content = element;
+		return this;
+	}
+
+	function get_element_by_id(id) {
+		return this._Z_content == null ? null : this._Z_content.get_element_by_id(id);
+	}
+
+	function add_storyboards(storyboards) {
+		for (storyboard : storyboards) {
+			this.add_storyboard(storyboard);
+		}
+		return this;
+	}
+
+	function add_storyboard(storyboard) {
+		this._Z_storyboards.add(new _ZSBRunnerContext(this, storyboard));
+		return this;
 	}
 }

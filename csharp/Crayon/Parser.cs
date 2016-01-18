@@ -60,9 +60,10 @@ namespace Crayon
 			private Dictionary<string, Token> firstUsage;
 			private HashSet<string> usedButNotAssigned;
 
-			public VarScope(VarScope globalFallback) {
+			public VarScope(VarScope globalFallback)
+			{
 				this.fallback = globalFallback;
-				this.ids = new Dictionary<string,int>();
+				this.ids = new Dictionary<string, int>();
 				this.firstUsage = new Dictionary<string, Token>();
 				this.usedButNotAssigned = new HashSet<string>();
 			}
@@ -106,7 +107,7 @@ namespace Crayon
 			{
 				int localId = -1;
 				int globalId = -1;
-				
+
 				if (this.fallback == null)
 				{
 					if (this.ids.ContainsKey(name))
@@ -253,6 +254,7 @@ namespace Crayon
 			{
 				throw new ParserException(classDef.FirstToken, "Multiple classes with the name: '" + name + "'");
 			}
+
 			this.classDefinitions[name] = classDef;
 			this.classDefinitionOrder[name] = this.classDefinitionOrder.Count;
 		}
@@ -264,11 +266,15 @@ namespace Crayon
 			int classDefN = this.classDefinitionOrder[className];
 			int subclassDefN = this.classDefinitionOrder.ContainsKey(subclassName) ? this.classDefinitionOrder[subclassName] : Int32.MaxValue;
 
-			if (classDefN < subclassDefN) {
+			if (classDefN < subclassDefN)
+			{
 				string errorBase = "The class \"" + className + "\" cannot extend from \"" + subclassName + "\" because ";
-				if (classDef.FirstToken.FileID == subclass.FirstToken.FileID) {
+				if (classDef.FirstToken.FileID == subclass.FirstToken.FileID)
+				{
 					throw new ParserException(classDef.FirstToken, errorBase + "it is defined before \"" + subclassName + "\". Swap the order of the definitions.");
-				} else {
+				}
+				else
+				{
 					throw new ParserException(classDef.FirstToken, errorBase + "it is defined sequentially before \"" + subclassName + "\". Check the order of your file imports.");
 				}
 			}
@@ -455,9 +461,10 @@ namespace Crayon
 
 		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot, ImportStatement importStatement)
 		{
-			if (pathOfFilesRelativeToRoot.Contains(filename))
+			if (importStatement != null && importStatement.IsSystemLibrary && pathOfFilesRelativeToRoot.Contains(filename))
 			{
-				throw new Exception("File imported multiple times: '" + filename + "'");
+				// Disregard files imported multiple times.
+				return new Executable[0];
 			}
 			pathOfFilesRelativeToRoot.Add(filename);
 
@@ -473,7 +480,10 @@ namespace Crayon
 					{
 						importValueToken = importValueToken.Substring(1, importValueToken.Length - 2);
 					}
-					this.CurrentSystemLibrary = importStatement.SystemLibraryParent ?? importValueToken;
+					else
+					{
+						this.CurrentSystemLibrary = importValueToken;
+					}
 
 					string sysLibPath = "manifest.cry";
 					char c = importStatement.FileToken.Value[0];

@@ -9,6 +9,7 @@ namespace Crayon
 		private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>("= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
 		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>(new string[] {
+			"EasingFunctions",
 			"ImageManager",
 			"ZGame",
 		});
@@ -60,7 +61,7 @@ namespace Crayon
 						}
 						else
 						{
-							throw new ParserException(fileToken, "Expected string path to file or system library name.");
+							throw new ParserException(fileToken, "Unknown system library name.");
 						}
 					}
 					else if (parser.CurrentSystemLibrary != null)

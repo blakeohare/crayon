@@ -1,0 +1,11 @@
+﻿class ZStackPanel : ZPanel {
+	constructor() : base() {
+		this._Z_direction = ZStackDirection.DOWN;
+		this._Z_is_stack_panel = true; // Terrible OO
+	}
+
+	function set_direction(direction) {
+		this._Z_direction = direction;
+		return this;
+	}
+}

@@ -1,9 +1,157 @@
 ﻿
 class ZElement {
-	constructor() {
+	constructor(id = null) {
 		this._Z_window = _Z_WINDOW_INSTANCE[0];
 		if (this._Z_window == null) {
 			$assert(false, "Cannot create UI elements until a window has been created.");
 		}
+
+		this._Z_id = id;
+		this._Z_loaded = false;
+
+		this._Z_parent = null;
+
+		this._Z_is_container = false;
+
+		this._Z_visible = true;
+		this._Z_x_offset = 0;
+		this._Z_y_offset = 0;
+		this._Z_reported_width = 0;
+		this._Z_reported_height = 0;
+		this._Z_alignment = ZAlignment.TOP_LEFT;
+		this._Z_scale = 1.0;
+		this._Z_rotation = null;
+
+		this._Z_width_type = _ZBoundsType.NONE;
+		this._Z_height_type = _ZBoundsType.NONE;
+
+		this._Z_neighbors = null;
+
+		this._Z_bounds = null;
+		this._Z_zindex = 0;
+
+		this._Z_events = null;
+	}
+
+	function on_load(storyboard) {
+		return this._Z_push_event('on_load', storyboard);
+	}
+
+	function on_focus(storyboard) {
+		return this._Z_push_event('on_focus', storyboard);
+	}
+
+	function on_unfocus(storyboard) {
+		return this._Z_push_event('on_unfocus', storyboard);
+	}
+
+	function on_click(storyboard) {
+		return this._Z_push_event('on_click', storyboard);
+	}
+
+	function _Z_push_event(type, storyboard) {
+		if (this._Z_events == null) {
+			this._Z_events = {};
+		}
+		list = this._Z_events.get(type, null);
+		if (list == null) {
+			list = [];
+			this._Z_events[type] = list;
+		}
+		list.add(storyboard);
+		return this;
+	}
+	
+	function _Z_update() {
+		if (!this._Z_loaded) {
+			if (this._Z_events != null) {
+				events = this._Z_events.get('on_load', null);
+				if (events != null) {
+					this._Z_window.add_storyboards(events);
+				}
+			}
+			this._Z_loaded = true;
+		}
+
+		if (this._Z_is_container) {
+			for (element : this._Z_children) {
+				element._Z_update();
+			}
+		}
+	}
+
+	function clear_width() {
+		this._Z_width_type = _ZBoundsType.NONE;
+		return this;
+	}
+	
+	function set_width_pixels(width) {
+		this._Z_width_type = _ZBoundsType.PIXELS;
+		this._Z_width = width;
+		return this;
+	}
+
+	function set_width_pecentage(width) {
+		this._Z_width_type = _ZBoundsType.PERCENTAGE;
+		this._Z_width = width;
+		return this;
+	}
+
+	function clear_height() {
+		this._Z_height_type = _ZBoundsType.NONE;
+		return this;
+	}
+
+	function set_height_pixels(height) {
+		this._Z_height_type = _ZBoundsType.PIXELS;
+		this._Z_height = height;
+		return this;
+	}
+
+	function set_height_pecentage(height) {
+		this._Z_height_type = _ZBoundsType.PERCENTAGE;
+		this._Z_height = height;
+		return this;
+	}
+
+	function set_size_percentage(width, height) {
+		this._Z_width_type = _ZBoundsType.PERCENTAGE;
+		this._Z_height_type = _ZBoundsType.PERCENTAGE;
+		this._Z_width = width;
+		this._Z_height = height;
+		return this;
+	}
+
+	function set_alignment(alignment) {
+		this._Z_alignment = alignment;
+		return this;
+	}
+
+	function set_neighbor_north(element) {
+		return this._Z_set_neighbor(element, 1);
+	}
+
+	function set_neighbor_south(element) {
+		return this._Z_set_neighbor(element, 3);
+	}
+
+	function set_neighbor_east(element) {
+		return this._Z_set_neighbor(element, 2);
+	}
+
+	function set_neighbor_west(element) {
+		return this._Z_set_neighbor(element, 0);
+	}
+
+	function _Z_set_neighbor(element, index) {
+		if (this._Z_neighbors == null) this._Z_neighbors = [null] * 4;
+		this._Z_neighbors[index] = element;
+		return this;
+	}
+
+	// Panels will pass in the top left coordinate of where this should be rendered.
+	// This coordinate already takes into account the alignment and reported width/height properties of the element.
+	function render(left, top, width, height) {
+		$assert(false, "ZEleent.render(left, right) has no default implementation and must be overridden.");
 	}
 }

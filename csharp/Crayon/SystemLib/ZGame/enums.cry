@@ -14,6 +14,7 @@
 	USE_GAMEPAD,
 	GAMEPAD_BUTTONS_USED,
 	GAMEPAD_KEYBOARD_FALLBACKS,
+	IMAGE_MANAGER,
 }
 
 enum ZGamepadButton {
@@ -44,4 +45,31 @@ enum ZGamepadButton {
 	RIGHT_TRIGGER,
 	START,
 	BACK,
+}
+
+enum ZAlignment {
+	TOP_LEFT,
+	TOP_CENTER,
+	TOP_RIGHT,
+
+	CENTER_LEFT,
+	CENTER,
+	CENTER_RIGHT,
+
+	BOTTOM_LEFT,
+	BOTTOM_CENTER,
+	BOTTOM_RIGHT,
+}
+
+enum ZStackDirection {
+	DOWN,
+	RIGHT,
+	UP,
+	LEFT,
+}
+
+enum _ZBoundsType {
+	NONE,
+	PIXELS,
+	PERCENTAGE,
 }
