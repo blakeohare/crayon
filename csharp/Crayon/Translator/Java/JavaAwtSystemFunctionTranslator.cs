@@ -6,6 +6,11 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAwtSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
 		{
 			output.Add("AwtTranslationHelper.makeHttpRequest(");

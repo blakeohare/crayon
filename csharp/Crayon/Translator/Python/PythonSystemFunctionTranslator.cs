@@ -126,6 +126,19 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+		{
+			output.Add("blit_rotated(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, centerX);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, centerY);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, angle);
+			output.Add(")");
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);

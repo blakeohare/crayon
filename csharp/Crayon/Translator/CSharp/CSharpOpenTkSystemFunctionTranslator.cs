@@ -20,6 +20,11 @@ namespace Crayon.Translator.CSharp
 			throw new System.InvalidOperationException("Should be optimized out.");
 		}
 
+		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+		{
+			throw new System.InvalidOperationException("Should be optimized out.");
+		}
+
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
 		{
 			throw new System.InvalidOperationException("Should be optimized out.");

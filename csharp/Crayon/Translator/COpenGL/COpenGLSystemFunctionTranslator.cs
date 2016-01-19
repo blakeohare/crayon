@@ -94,6 +94,11 @@ namespace Crayon.Translator.COpenGL
 			throw new NotImplementedException();
 		}
 
+		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			output.Add("((");

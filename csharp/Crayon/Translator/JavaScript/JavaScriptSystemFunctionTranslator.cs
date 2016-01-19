@@ -125,6 +125,19 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
+		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+		{
+			output.Add("R.blitRotated(");
+			this.Translator.TranslateExpression(output, image);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, centerX);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, centerY);
+			output.Add(this.Shorten(", "));
+			this.Translator.TranslateExpression(output, angle);
+			output.Add(this.Shorten(")"));
+		}
+
 		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			this.Translator.TranslateExpression(output, expression);

@@ -92,6 +92,7 @@ namespace Crayon.Translator
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
 				case "_blit_image_alpha": VerifyCount(functionCall, 4); TranslateBlitImageAlpha(output, args[0], args[1], args[2], args[3]); break;
 				case "_blit_image_partial": VerifyCount(functionCall, 9); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
+				case "_blit_image_rotated": VerifyCount(functionCall, 4); TranslateBlitImageRotated(output, args[0], args[1], args[2], args[3]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
@@ -229,6 +230,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
 		protected abstract void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha);
 		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight);
+		protected abstract void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
