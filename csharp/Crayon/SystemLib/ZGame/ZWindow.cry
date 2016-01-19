@@ -71,7 +71,6 @@ class ZWindow {
 			}
 
 			if (element != null) {
-				$print("Found element! " + element);
 				element._Z_invoke_events('on_mouse_enter');
 			}
 

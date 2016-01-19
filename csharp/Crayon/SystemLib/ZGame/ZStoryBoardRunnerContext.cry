@@ -30,7 +30,7 @@
 
 		switch (instr) {
 			case _ZSBCommand.BRANCH:
-				this.window.add_storyboard(instr[1]);
+				this.window.add_storyboard(this.instruction[1]);
 				return this.run_next();
 
 			case _ZSBCommand.INVOKE:

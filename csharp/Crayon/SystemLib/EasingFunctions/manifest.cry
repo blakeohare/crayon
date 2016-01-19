@@ -105,6 +105,7 @@ function _EASING_ease_impl(function_id_or_custom, start, end, current, duration,
 					: progress * (e - s) + s);
 			}
 		}
+		return output;
 	}
 
 	return integer_output 
