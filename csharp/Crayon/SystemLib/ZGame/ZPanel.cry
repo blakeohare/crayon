@@ -52,7 +52,6 @@ class ZPanel : ZElement {
 
 		// Children have no bearing on the panel's overall size.
 		// They will simply overflow if they exceed the bounds.
-		i = 0;
 		for (child : this._Z_children) {
 			child._Z_precompute_bounds();
 		}
@@ -97,30 +96,37 @@ class ZPanel : ZElement {
 		bottom = top + height;
 
 		for (child : this._Z_children) {
+			x_margins = child._Z_margin_left + child._Z_margin_right;
+			y_margins = child._Z_margin_top + child._Z_margin_top;
+
 			y_alloc = child._Z_precomputed_height_pixels;
 			if (child._Z_precomputed_height_ratio > 0) {
-				t = height - y_alloc;
+				t = height - y_alloc - y_margins;
 				if (t > 0) {
 					y_alloc += $floor(t * child._Z_precomputed_height_ratio);
 				}
 			}
+
 			x_alloc = child._Z_precomputed_width_pixels;
 			if (child._Z_precomputed_width_ratio > 0) {
-				t = width - x_alloc;
+				t = width - x_alloc - x_margins;
 				if (t > 0) {
 					x_alloc += $floor(t * child._Z_precomputed_width_ratio);
 				}
 			}
+
 			switch (child._Z_valignment) {
-				case ZVerticalAlignment.TOP: y = top; break;
+				case ZVerticalAlignment.TOP: y = top + child._Z_margin_top; break;
 				case ZVerticalAlignment.CENTER: y = top + (height - y_alloc) / 2; break;
-				case ZVerticalAlignment.BOTTOM: y = top + height - y_alloc; break;
+				case ZVerticalAlignment.BOTTOM: y = top + height - y_alloc - child._Z_margin_bottom; break;
 			}
+
 			switch (child._Z_halignment) {
-				case ZHorizontalAlignment.LEFT: x = left; break;
+				case ZHorizontalAlignment.LEFT: x = left + child._Z_margin_left; break;
 				case ZHorizontalAlignment.CENTER: x = left + (width - x_alloc) / 2; break;
-				case ZHorizontalAlignment.RIGHT: x = left + (width - x_alloc) / 2; break;
+				case ZHorizontalAlignment.RIGHT: x = left + width - x_alloc - child._Z_margin_right; break;
 			}
+
 			child.render(x, y, x_alloc, y_alloc);
 		}
 	}

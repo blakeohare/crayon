@@ -40,9 +40,12 @@ class ZWindow {
 	}
 
 	function render(left, top, width, height) {
-		if (this._Z_content != null) {
-			this._Z_content._Z_precompute_bounds();
-			this._Z_content.render(0, 0, width, height);
+		content = this._Z_content;
+		if (content != null) {
+			content._Z_precompute_bounds();
+			width -= content._Z_margin_left + content._Z_margin_right;
+			height -= content._Z_margin_top + content._Z_margin_top;
+			content.render(content._Z_margin_left, content._Z_margin_top, width, height);
 		}
 	}
 

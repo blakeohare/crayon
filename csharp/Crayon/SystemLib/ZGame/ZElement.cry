@@ -35,6 +35,11 @@ class ZElement {
 		this._Z_requested_height = 0;
 
 		this._Z_set_precomputed_bounds(0, 0, 0.0, 0.0);
+
+		this._Z_margin_top = 0;
+		this._Z_margin_bottom = 0;
+		this._Z_margin_left = 0;
+		this._Z_margin_right = 0;
 	}
 
 	function _Z_precompute_bounds(whwh) {
@@ -175,6 +180,42 @@ class ZElement {
 	function _Z_set_neighbor(element, index) {
 		if (this._Z_neighbors == null) this._Z_neighbors = [null] * 4;
 		this._Z_neighbors[index] = element;
+		return this;
+	}
+
+	function set_margin_left(left) {
+		this._Z_margin_left = left;
+		return this;
+	}
+
+	function set_margin_right(right) {
+		this._Z_margin_right = right;
+		return this;
+	}
+
+	function set_margin_top(top) {
+		this._Z_margin_top = top;
+		return this;
+	}
+
+	function set_margin_bottom(bottom) {
+		this._Z_margin_bottom = bottom;
+		return this;
+	}
+
+	function set_margin(value) {
+		this._Z_margin_left = value;
+		this._Z_margin_top = value;
+		this._Z_margin_right = value;
+		this._Z_margin_bottom = value;
+		return this;
+	}
+
+	function set_margins(left, top, right, bottom) {
+		this._Z_margin_left = left;
+		this._Z_margin_top = top;
+		this._Z_margin_right = right;
+		this._Z_margin_bottom = bottom;
 		return this;
 	}
 

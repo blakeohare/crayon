@@ -15,7 +15,7 @@
 			per_h = 0.0;
 			for (child : this._Z_children) {
 				child._Z_precompute_bounds();
-				pix_h += child._Z_precomputed_height_pixels;
+				pix_h += child._Z_precomputed_height_pixels + child._Z_margin_top + child._Z_margin_bottom;
 				per_h += child._Z_precomputed_height_ratio;
 			}
 			switch (this._Z_width_type) {
@@ -37,7 +37,7 @@
 			per_w = 0.0;
 			for (child : this._Z_children) {
 				child._Z_precompute_bounds();
-				pix_w += child._Z_precomputed_width_pixels;
+				pix_w += child._Z_precomputed_width_pixels + child._Z_margin_left + child._Z_margin_right;
 				per_w += child._Z_precomputed_width_ratio;
 			}
 			switch (this._Z_height_type) {
@@ -80,20 +80,20 @@
 					ratio_fix = 1.0;
 				}
 
-				i = 1;
 				for (child : this._Z_children) {
+					x_margins = child._Z_margin_left + child._Z_margin_right;
 					x_alloc = child._Z_precomputed_width_pixels;
 					has_ratio = child._Z_precomputed_width_ratio > 0;
 					if (has_ratio) {
-						t = width - x_alloc;
+						t = width - x_alloc - x_margins;
 						if (t > 0) {
 							x_alloc += $floor(t * child._Z_precomputed_width_ratio);
 						}
 					}
 					switch (child._Z_halignment) {
-						case ZHorizontalAlignment.LEFT: x = left; break;
+						case ZHorizontalAlignment.LEFT: x = left + child._Z_margin_left; break;
 						case ZHorizontalAlignment.CENTER: x = left + (width - x_alloc) / 2; break;
-						case ZHorizontalAlignment.RIGHT: x = left + (width - x_alloc) / 2; break;
+						case ZHorizontalAlignment.RIGHT: x = left + width - x_alloc - child._Z_margin_right; break;
 					}
 					
 					y_alloc = child._Z_precomputed_height_pixels;
@@ -102,11 +102,13 @@
 					}
 
 					if (is_up) {
-						y -= y_alloc;
+						y -= y_alloc + child._Z_margin_bottom;
 						child.render(x, y, x_alloc, y_alloc);
+						y -= child._Z_margin_top;
 					} else {
+						y += child._Z_margin_top;
 						child.render(x, y, x_alloc, y_alloc);
-						y += y_alloc;
+						y += y_alloc + child._Z_margin_bottom;
 					}
 				}
 				break;
