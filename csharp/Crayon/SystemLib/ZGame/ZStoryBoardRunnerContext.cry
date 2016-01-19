@@ -112,6 +112,13 @@
 			case _ZSBCommand.REPEAT:
 				this.index = -1;
 				return this.run_next();
+
+			case _ZSBCommand.VISIBILITY:
+				element = this.window.get_element_by_id(this.instruction[1]);
+				if (element != null) {
+					element._Z_visibility = this.instruction[2];
+				}
+				return this.run_next();
 		}
 	}
 

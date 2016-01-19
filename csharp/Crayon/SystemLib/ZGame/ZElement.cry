@@ -13,7 +13,7 @@ class ZElement {
 
 		this._Z_is_container = false;
 
-		this._Z_visible = true;
+		this._Z_visibility = ZVisibility.VISIBLE;
 		this._Z_x_offset = 0;
 		this._Z_y_offset = 0;
 		this._Z_valignment = ZVerticalAlignment.TOP;
@@ -25,6 +25,7 @@ class ZElement {
 		this._Z_height_type = _ZBoundsType.NONE;
 
 		this._Z_neighbors = null;
+		this._Z_can_have_focus = false;
 
 		this._Z_bounds = null;
 		this._Z_zindex = 0;
@@ -40,6 +41,11 @@ class ZElement {
 		this._Z_margin_bottom = 0;
 		this._Z_margin_left = 0;
 		this._Z_margin_right = 0;
+
+		this._Z_rendered_left = -1;
+		this._Z_rendered_right = -1;
+		this._Z_rendered_top = -1;
+		this._Z_rendered_bottom = -1;
 	}
 
 	function _Z_precompute_bounds(whwh) {
@@ -58,14 +64,17 @@ class ZElement {
 	}
 
 	function on_focus(storyboard) {
+		this._Z_can_have_focus = true;
 		return this._Z_push_event('on_focus', storyboard);
 	}
 
 	function on_unfocus(storyboard) {
+		this._Z_can_have_focus = true;
 		return this._Z_push_event('on_unfocus', storyboard);
 	}
 
 	function on_click(storyboard) {
+		this._Z_can_have_focus = true;
 		return this._Z_push_event('on_click', storyboard);
 	}
 
@@ -180,6 +189,7 @@ class ZElement {
 	function _Z_set_neighbor(element, index) {
 		if (this._Z_neighbors == null) this._Z_neighbors = [null] * 4;
 		this._Z_neighbors[index] = element;
+		this._Z_can_have_focus = true;
 		return this;
 	}
 

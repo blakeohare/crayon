@@ -6,6 +6,7 @@
 	PRINT,
 	REPEAT,
 	SCALE,
+	VISIBILITY,
 }
 
 class ZStoryBoard {
@@ -110,5 +111,9 @@ class ZStoryBoard {
 
 	function scale(element, ratio) {
 		return this._Z_add([_ZSBCommand.SCALE, element, ratio]);
+	}
+
+	function visibility(element, mode) {
+		return this._Z_add([_ZSBCommand.VISIBILITY, element, mode]);
 	}
 }

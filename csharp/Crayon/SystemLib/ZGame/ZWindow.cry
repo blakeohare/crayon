@@ -10,6 +10,7 @@ class ZWindow {
 		this._Z_storyboards = [];
 
 		this._Z_focused_element = null;
+		this._Z_mouse_over_element = null;
 	}
 
 	function initialize() {
@@ -54,6 +55,43 @@ class ZWindow {
 		return this;
 	}
 
+	function hit_test(x, y) {
+		if (this._Z_content != null) {
+			return this._Z_content.hit_test(x, y);
+		}
+		return null;
+	}
+
+	function _Z_update_mouse_over(x, y) {
+		element = this.hit_test(x, y);
+
+		if (element != this._Z_mouse_over_element) {
+			if (this._Z_mouse_over_element != null) {
+				this._Z_mouse_over_element._Z_invoke_events('on_mouse_leave');
+			}
+
+			if (element != null) {
+				$print("Found element! " + element);
+				element._Z_invoke_events('on_mouse_enter');
+			}
+
+			this._Z_mouse_over_element = element;
+
+			if (element != null && element._Z_can_have_focus) {
+				this.focus_element(element);
+			}
+		}
+	}
+
+	function _Z_apply_click(x, y, is_left, is_down) {
+		element = this.hit_test(x, y);
+		if (element != null) {
+			if (is_left && is_down) {
+				element._Z_invoke_events('on_click');
+			}
+		}
+	}
+
 	function get_element_by_id(id) {
 		return this._Z_content == null ? null : this._Z_content.get_element_by_id(id);
 	}
@@ -65,7 +103,7 @@ class ZWindow {
 			}
 
 			if (element != null) {
-				this._Z_focused_element._Z_invoke_events('on_focus');
+				element._Z_invoke_events('on_focus');
 			}
 
 			this._Z_focused_element = element;

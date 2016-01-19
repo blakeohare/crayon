@@ -71,3 +71,9 @@ enum _ZBoundsType {
 	PIXELS,
 	RATIO,
 }
+
+enum ZVisibility {
+	VISIBLE,
+	HIDDEN,
+	COLLAPSED,
+}

@@ -54,8 +54,8 @@
 			if (this._Z_scale != 1.0) {
 				width = this._Z_image.width;
 				height = this._Z_image.height;
-				new_width = width * this._Z_scale;
-				new_height = height * this._Z_scale;
+				new_width = $floor(width * this._Z_scale);
+				new_height = $floor(height * this._Z_scale);
 				
 				left = left + this._Z_x_offset + (width - new_width) / 2;
 				top = top + this._Z_y_offset + (height - new_height) / 2;

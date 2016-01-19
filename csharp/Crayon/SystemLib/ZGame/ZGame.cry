@@ -81,6 +81,9 @@ class ZGame {
 
 		this.load_progress = 0.0;
 
+		mouse_x = 0;
+		mouse_y = 0;
+
 		while (true) {
 			for (event : $game_pump_events()) {
 				if (event.is_quit) {
@@ -88,6 +91,20 @@ class ZGame {
 				}
 				if (event.is_gamepad) {
 					
+				}
+
+				if (event.is_mouse) {
+					mouse_x = event.x;
+					mouse_y = event.y;
+					window._Z_update_mouse_over(mouse_x, mouse_y);
+					switch (event.type) {
+						case 'mouseleftdown':
+						case 'mouserightdown':
+						case 'mouseleftup':
+						case 'mouserightup':
+							window._Z_apply_click(mouse_x, mouse_y, event.button == 'left', event.down);
+							break;
+					}
 				}
 			}
 
