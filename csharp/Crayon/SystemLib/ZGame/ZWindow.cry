@@ -8,10 +8,11 @@ class ZWindow {
 
 		this._Z_reusable_dict = {};
 		this._Z_storyboards = [];
+
+		this._Z_focused_element = null;
 	}
 
 	function initialize() {
-		$print("AHOY");
 	}
 
 	function _Z_update_wrapper() {
@@ -40,7 +41,7 @@ class ZWindow {
 
 	function render(left, top, width, height) {
 		if (this._Z_content != null) {
-			// TODO: take into consideration width and height, although this will be uncommon for the root element.
+			this._Z_content._Z_precompute_bounds();
 			this._Z_content.render(0, 0, width, height);
 		}
 	}
@@ -52,6 +53,21 @@ class ZWindow {
 
 	function get_element_by_id(id) {
 		return this._Z_content == null ? null : this._Z_content.get_element_by_id(id);
+	}
+
+	function focus_element(element) {
+		if (this._Z_focused_element != element) {
+			if (this._Z_focused_element != null) {
+				this._Z_focused_element._Z_invoke_events('on_unfocus');
+			}
+
+			if (element != null) {
+				this._Z_focused_element._Z_invoke_events('on_focus');
+			}
+
+			this._Z_focused_element = element;
+		}
+		return this;
 	}
 
 	function add_storyboards(storyboards) {

@@ -19,6 +19,48 @@ class ZPanel : ZElement {
 		this._Z_panel_height_type = _ZBoundsType.NONE;
 	}
 
+
+	function _Z_precompute_bounds() {
+		switch (this._Z_width_type) {
+			case _ZBoundsType.NONE:
+				pix_w = 0;
+				per_w = 1.0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_w = 0;
+				per_w = this._Z_width;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_w = this._Z_width;
+				per_w = 0;
+				break;
+		}
+		switch (this._Z_height_type) {
+			case _ZBoundsType.NONE:
+				pix_h = 0;
+				per_h = 1.0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_h = 0;
+				per_h = this._Z_height;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_h = this._Z_height;
+				per_h = 0;
+				break;
+		}
+
+		// Children have no bearing on the panel's overall size.
+		// They will simply overflow if they exceed the bounds.
+		i = 0;
+		for (child : this._Z_children) {
+			child._Z_precompute_bounds();
+		}
+
+		this._Z_set_precomputed_bounds(pix_w, pix_h, per_w, per_h);
+	}
+
+
 	function get_element_by_id(id) {
 		if (this._Z_id == id) return this;
 		for (child : this._Z_children) {
@@ -35,9 +77,6 @@ class ZPanel : ZElement {
 
 	function add_element(element) {
 		// TODO: verify that no cycle is created.
-		
-
-
 		this._Z_children.add(element);
 		return this;
 	}
@@ -57,144 +96,32 @@ class ZPanel : ZElement {
 		right = left + width;
 		bottom = top + height;
 
-		switch (this._Z_alignment) {
-			case ZAlignment.TOP_LEFT:
-				startX = left;
-				startY = top;
-				hstretch = _ZPanelStretchDirection.RIGHT;
-				vstretch = _ZPanelStretchDirection.DOWN;
-				break;
-
-			case ZAlignment.TOP_CENTER:
-				startX = (left + right) / 2;
-				startY = top;
-				hstretch = _ZPanelStretchDirection.BOTH;
-				vstretch = _ZPanelStretchDirection.DOWN;
-				break;
-
-			case ZAlignment.TOP_RIGHT:
-				startX = right;
-				startY = top;
-				hstretch = _ZPanelStretchDirection.LEFT;
-				vstretch = _ZPanelStretchDirection.DOWN;
-				break;
-
-			case ZAlignment.CENTER_LEFT:
-				startX = left;
-				startY = (top + bottom) / 2;
-				hstretch = _ZPanelStretchDirection.RIGHT;
-				vstretch = _ZPanelStretchDirection.BOTH;
-				break;
-
-			case ZAlignment.CENTER:
-				startX = (left + right) / 2;
-				startY = (top + bottom) / 2;
-				hstretch = _ZPanelStretchDirection.BOTH;
-				vstretch = _ZPanelStretchDirection.BOTH;
-				break;
-
-			case ZAlignment.CENTER_RIGHT:
-				startX = right;
-				startY = (top + bottom) / 2;
-				hstretch = _ZPanelStretchDirection.LEFT;
-				vstretch = _ZPanelStretchDirection.BOTH;
-				break;
-
-			case ZAlignment.BOTTOM_LEFT:
-				startX = left;
-				startY = bottom;
-				hstretch = _ZPanelStretchDirection.RIGHT;
-				vstretch = _ZPanelStretchDirection.UP;
-				break;
-				
-			case ZAlignment.BOTTOM_CENTER:
-				startX = (left + right) / 2;
-				startY = bottom;
-				hstretch = _ZPanelStretchDirection.BOTH;
-				vstretch = _ZPanelStretchDirection.UP;
-				break;
-
-			case ZAlignment.BOTTOM_RIGHT:
-				startX = right;
-				startY = bottom;
-				hstretch = _ZPanelStretchDirection.LEFT;
-				vstretch = _ZPanelStretchDirection.UP;
-				break;
-				
-			default:
-				$assert(false, "Unknown ZPanel alignment.");
-				break;
-		}
-		
-		switch (this._Z_panel_width_type) {
-			case _ZBoundsType.PIXELS: width = this._Z_panel_width; break;
-			case _ZBoundsType.PERCENTAGE: width = $floor(.01 * this._Z_panel_width * width); break;
-		}
-		
-		switch (this._Z_panel_height_type) {
-			case _ZBoundsType.PIXELS: height = this._Z_panel_height; break;
-			case _ZBoundsType.PERCENTAGE: height = $floor(.01 * this._Z_panel_height * height); break;
-		}
-
-		switch (hstretch) {
-			case _ZPanelStretchDirection.BOTH:
-				left = startX - width / 2;
-				right = left + width;
-				break;
-			case _ZPanelStretchDirection.LEFT:
-				right = startX;
-				left = right - width;
-				break;
-			case _ZPanelStretchDirection.RIGHT:
-				left = startX;
-				right = left + width;
-				break;
-		}
-		
-		switch (vstretch) {
-			case _ZPanelStretchDirection.BOTH:
-				top = startY - height / 2;
-				bottom = top + height;
-				break;
-			case _ZPanelStretchDirection.UP:
-				bottom = startX;
-				top = bottom - height;
-				break;
-			case _ZPanelStretchDirection.DOWN:
-				top = startY;
-				bottom = startY + height;
-				break;
-		}
-
-		for (element : this._Z_children) {
-			if (element._Z_is_container) {
-				element.render(left, top, right - left, bottom - top);
-			} else {
-				width = element._Z_reported_width;
-				height = element._Z_reported_height;
-				switch (element._Z_alignment) {
-					case ZAlignment.TOP_LEFT: element.render(left, top, width, height); break;
-					case ZAlignment.TOP_CENTER: element.render((left + right - width) / 2, top, width, height); break;
-					case ZAlignment.TOP_RIGHT: element.render(right - width, top, width, height); break;
-					case ZAlignment.CENTER_LEFT: element.render(left, (top + bottom - height) / 2, width, height); break;
-					case ZAlignment.CENTER: element.render((left + right - width) / 2, (top + bottom - height) / 2, width, height); break;
-					case ZAlignment.CENTER_RIGHT: element.render(right - width, (top + bottom - height) / 2, width, height); break;
-					case ZAlignment.BOTTOM_LEFT: element.render(left, bottom - height, width, height); break;
-					case ZAlignment.BOTTOM_CENTER: element.render((left + right - width) / 2, bottom - height, width, height); break;
-					case ZAlignment.BOTTOM_RIGHT: element.render(right - width, bottom - height, width, height); break;
-					default: $assert(false, "Invalid ZPanel alignment"); break;
+		for (child : this._Z_children) {
+			y_alloc = child._Z_precomputed_height_pixels;
+			if (child._Z_precomputed_height_ratio > 0) {
+				t = height - y_alloc;
+				if (t > 0) {
+					y_alloc += $floor(t * child._Z_precomputed_height_ratio);
 				}
-
-				// Totally temporary hack to unblock testing
-				if (this._Z_is_stack_panel) {
-					switch (this._Z_direction) {
-						case ZStackDirection.DOWN:
-							top += height;
-							break;
-					}
-				}
-
 			}
+			x_alloc = child._Z_precomputed_width_pixels;
+			if (child._Z_precomputed_width_ratio > 0) {
+				t = width - x_alloc;
+				if (t > 0) {
+					x_alloc += $floor(t * child._Z_precomputed_width_ratio);
+				}
+			}
+			switch (child._Z_valignment) {
+				case ZVerticalAlignment.TOP: y = top; break;
+				case ZVerticalAlignment.CENTER: y = top + (height - y_alloc) / 2; break;
+				case ZVerticalAlignment.BOTTOM: y = top + height - y_alloc; break;
+			}
+			switch (child._Z_halignment) {
+				case ZHorizontalAlignment.LEFT: x = left; break;
+				case ZHorizontalAlignment.CENTER: x = left + (width - x_alloc) / 2; break;
+				case ZHorizontalAlignment.RIGHT: x = left + (width - x_alloc) / 2; break;
+			}
+			child.render(x, y, x_alloc, y_alloc);
 		}
 	}
 }

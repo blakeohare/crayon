@@ -47,18 +47,16 @@ enum ZGamepadButton {
 	BACK,
 }
 
-enum ZAlignment {
-	TOP_LEFT,
-	TOP_CENTER,
-	TOP_RIGHT,
-
-	CENTER_LEFT,
+enum ZVerticalAlignment {
+	TOP,
 	CENTER,
-	CENTER_RIGHT,
+	BOTTOM,
+}
 
-	BOTTOM_LEFT,
-	BOTTOM_CENTER,
-	BOTTOM_RIGHT,
+enum ZHorizontalAlignment {
+	LEFT,
+	CENTER,
+	RIGHT,
 }
 
 enum ZStackDirection {
@@ -71,5 +69,5 @@ enum ZStackDirection {
 enum _ZBoundsType {
 	NONE,
 	PIXELS,
-	PERCENTAGE,
+	RATIO,
 }

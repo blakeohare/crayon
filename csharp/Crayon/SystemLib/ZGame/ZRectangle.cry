@@ -1,8 +1,40 @@
 ﻿class ZRectangle : ZElement {
 	constructor(id = null) : base(id) {
 		this.set_color(0, 0, 0, 0);
-		this.set_width_pixels(100);
-		this.set_height_pixels(100);
+		this._Z_width_type = _ZBoundsType.NONE;
+		this._Z_height_type = _ZBoundsType.NONE;
+	}
+
+	function _Z_precompute_bounds() {
+		switch (this._Z_width_type) {
+			case _ZBoundsType.NONE:
+				pix_w = 32;
+				per_w = 0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_w = 0;
+				per_w = this._Z_width;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_w = this._Z_width;
+				per_w = 0;
+				break;
+		}
+		switch (this._Z_height_type) {
+			case _ZBoundsType.NONE:
+				pix_h = 32;
+				per_h = 0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_h = 0;
+				per_h = this._Z_height;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_h = this._Z_height;
+				per_h = 0;
+				break;
+		}
+		this._Z_set_precomputed_bounds(pix_w, pix_h, per_w, per_h);
 	}
 
 	function set_color(r, g, b, a) {

@@ -53,7 +53,7 @@
 
 					switch (instr) {
 						case _ZSBCommand.OFFSET:
-							start = [this.element._Z_x, this.element._Z_y];
+							start = [this.element._Z_x_offset, this.element._Z_y_offset];
 							end = [this.instruction[2], this.instruction[3]];
 							break;
 						case _ZSBCommand.OPACITY:
@@ -93,8 +93,8 @@
 
 				switch (instr) {
 					case _ZSBCommand.OFFSET:
-						if (end[0] != null) this.element._Z_x = end[0];
-						if (end[1] != null) this.element._Z_y = end[1];
+						if (end[0] != null) this.element._Z_x_offset = end[0];
+						if (end[1] != null) this.element._Z_y_offset = end[1];
 						break;
 					case _ZSBCommand.OPACITY: this.element._Z_opacity = end; break;
 					case _ZSBCommand.SCALE: this.element._Z_scale = end; break;

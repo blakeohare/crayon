@@ -16,9 +16,8 @@ class ZElement {
 		this._Z_visible = true;
 		this._Z_x_offset = 0;
 		this._Z_y_offset = 0;
-		this._Z_reported_width = 0;
-		this._Z_reported_height = 0;
-		this._Z_alignment = ZAlignment.TOP_LEFT;
+		this._Z_valignment = ZVerticalAlignment.TOP;
+		this._Z_halignment = ZHorizontalAlignment.LEFT;
 		this._Z_scale = 1.0;
 		this._Z_rotation = null;
 
@@ -31,6 +30,22 @@ class ZElement {
 		this._Z_zindex = 0;
 
 		this._Z_events = null;
+
+		this._Z_requested_width = 0;
+		this._Z_requested_height = 0;
+
+		this._Z_set_precomputed_bounds(0, 0, 0.0, 0.0);
+	}
+
+	function _Z_precompute_bounds(whwh) {
+		$assert(false, "Override me.");
+	}
+
+	function _Z_set_precomputed_bounds(pix_w, pix_h, per_w, per_h) {
+		this._Z_precomputed_width_pixels = $floor(pix_w);
+		this._Z_precomputed_height_pixels = $floor(pix_h);
+		this._Z_precomputed_width_ratio = per_w;
+		this._Z_precomputed_height_ratio = per_h;
 	}
 
 	function on_load(storyboard) {
@@ -47,6 +62,15 @@ class ZElement {
 
 	function on_click(storyboard) {
 		return this._Z_push_event('on_click', storyboard);
+	}
+
+	function _Z_invoke_events(type) {
+		if (this._Z_events != null) {
+			events = this._Z_events.get(type, null);
+			if (events != null) {
+				this._Z_window.add_storyboards(events);
+			}
+		}
 	}
 
 	function _Z_push_event(type, storyboard) {
@@ -92,7 +116,7 @@ class ZElement {
 	}
 
 	function set_width_pecentage(width) {
-		this._Z_width_type = _ZBoundsType.PERCENTAGE;
+		this._Z_width_type = _ZBoundsType.RATIO;
 		this._Z_width = width;
 		return this;
 	}
@@ -109,21 +133,26 @@ class ZElement {
 	}
 
 	function set_height_pecentage(height) {
-		this._Z_height_type = _ZBoundsType.PERCENTAGE;
+		this._Z_height_type = _ZBoundsType.RATIO;
 		this._Z_height = height;
 		return this;
 	}
 
 	function set_size_percentage(width, height) {
-		this._Z_width_type = _ZBoundsType.PERCENTAGE;
-		this._Z_height_type = _ZBoundsType.PERCENTAGE;
-		this._Z_width = width;
-		this._Z_height = height;
+		this._Z_width_type = _ZBoundsType.RATIO;
+		this._Z_height_type = _ZBoundsType.RATIO;
+		this._Z_width = width / 100.0;
+		this._Z_height = height / 100.0;
 		return this;
 	}
 
-	function set_alignment(alignment) {
-		this._Z_alignment = alignment;
+	function set_vertical_alignment(alignment) {
+		this._Z_valignment = alignment;
+		return this;
+	}
+
+	function set_horizontal_alignment(alignment) {
+		this._Z_halignment = alignment;
 		return this;
 	}
 

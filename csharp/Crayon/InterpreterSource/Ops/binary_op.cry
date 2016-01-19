@@ -5,7 +5,7 @@ leftValue = $_array_get(valueStack, valueStackSize);
 
 leftType = Value$leftValue.type;
 rightType = Value$rightValue.type;
-				
+
 left = Value$leftValue.internalValue;
 right = Value$rightValue.internalValue;
 
