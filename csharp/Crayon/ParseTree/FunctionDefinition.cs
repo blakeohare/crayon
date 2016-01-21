@@ -14,10 +14,12 @@ namespace Crayon.ParseTree
 		private Dictionary<string, Annotation> annotations;
 		public VariableIdAllocator VariableIds { get; private set; }
 		public int NameGlobalID { get; set; }
+		public string Namespace { get; set; }
 
-		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations)
+		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations, string namespyace)
 			: base(functionToken)
 		{
+			this.Namespace = namespyace;
 			this.NameToken = nameToken;
 			this.ArgNames = argNames.ToArray();
 			this.ArgVarIDs = new int[this.ArgNames.Length];

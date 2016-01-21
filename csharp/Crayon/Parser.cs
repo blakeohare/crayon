@@ -15,6 +15,7 @@ namespace Crayon
 			this.CurrentSystemLibrary = null;
 			this.BuildContext = buildContext;
 			this.VariableIds = new VariableIdAllocator();
+			this.CurrentNamespace = "";
 		}
 
 		private int fileIdCounter = 0;
@@ -383,9 +384,22 @@ namespace Crayon
 		private Executable[] ResolveCode(Executable[] original)
 		{
 			List<Executable> output = new List<Executable>();
+			List<Executable> namespaceMembers = new List<Executable>();
 			foreach (Executable line in original)
 			{
-				output.AddRange(line.Resolve(this));
+				if (line is Namespace)
+				{
+					((Namespace)line).AppendFlattenedCode(namespaceMembers);
+					foreach (Executable namespaceLine in namespaceMembers)
+					{
+						output.AddRange(namespaceLine.Resolve(this));
+					}
+					namespaceMembers.Clear();
+				}
+				else
+				{
+					output.AddRange(line.Resolve(this));
+				}
 			}
 
 			if (!this.IsTranslateMode)
@@ -687,5 +701,21 @@ namespace Crayon
 
 			return string.Join("", output);
 		}
+
+		private Stack<string> namespaceStack = new Stack<string>();
+
+		public void PushNamespacePrefix(string value)
+		{
+			this.namespaceStack.Push(value);
+			this.CurrentNamespace = string.Join(":", this.namespaceStack);
+		}
+
+		public void PopNamespacePrefix()
+		{
+			this.namespaceStack.Pop();
+			this.CurrentNamespace = string.Join(":", this.namespaceStack);
+		}
+
+		public string CurrentNamespace { get; private set; }
 	}
 }

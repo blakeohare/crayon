@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crayon.ParseTree;
 
 namespace Crayon
@@ -102,8 +103,17 @@ namespace Crayon
 					return ParseEnumDefinition(tokens);
 				}
 
+				if (value == "namespace")
+				{
+					if (!isRoot)
+					{
+						throw new ParserException(tokens.Peek(), "Namespace declarations cannot be nested in other constructs.");
+					}
+				}
+
 				switch (value)
 				{
+					case "namespace": return ParseNamespace(parser, tokens);
 					case "function": return ParseFunction(parser, tokens);
 					case "class": return ParseClassDefinition(parser, tokens);
 					case "enum": return ParseEnumDefinition(tokens);
@@ -273,7 +283,7 @@ namespace Crayon
 
 			if (baseClasses.Count > 1) throw new ParserException(baseClasses[1], "Cannot support interfaces yet.");
 
-			return new ClassDefinition(classToken, classNameToken, baseClasses, methods, constructorDef);
+			return new ClassDefinition(classToken, classNameToken, baseClasses, methods, constructorDef, parser.CurrentNamespace);
 		}
 
 		private static Executable ParseStruct(TokenStream tokens)
@@ -301,6 +311,42 @@ namespace Crayon
 			}
 
 			return new StructDefinition(structToken, structNameToken, fieldTokens, typeAnnotations);
+		}
+
+		private static Executable ParseNamespace(Parser parser, TokenStream tokens)
+		{
+			Token namespaceToken = tokens.PopExpected("namespace");
+			Token first = tokens.Pop();
+			Parser.VerifyIdentifier(first);
+			List<Token> namespacePieces = new List<Token>() { first };
+			while (tokens.PopIfPresent("."))
+			{
+				Token nsToken = tokens.Pop();
+				Parser.VerifyIdentifier(nsToken);
+				namespacePieces.Add(nsToken);
+			}
+
+			parser.PushNamespacePrefix(string.Join(":", namespacePieces.Select<Token, string>(t => t.Value)));
+			tokens.PopExpected("{");
+			List<Executable> namespaceMembers = new List<Executable>();
+			while (!tokens.PopIfPresent("}"))
+			{
+				Executable executable = ExecutableParser.Parse(parser, tokens, false, false, true);
+				if (executable is FunctionDefinition || 
+					executable is ClassDefinition ||
+					executable is Namespace)
+				{
+					namespaceMembers.Add(executable);
+				}
+				else
+				{
+					throw new ParserException(executable.FirstToken, "Only function, class, and nested namespace declarations may exist as direct members of a namespace.");
+				}
+			}
+			
+			parser.PopNamespacePrefix();
+
+			return new Namespace(namespaceToken, namespaceMembers); ;
 		}
 
 		private static Executable ParseFunction(Parser parser, TokenStream tokens)
@@ -338,7 +384,7 @@ namespace Crayon
 
 			IList<Executable> code = Parser.ParseBlock(parser, tokens, true);
 
-			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code, functionAnnotations);
+			return new FunctionDefinition(functionToken, functionNameToken, argNames, defaultValues, argAnnotations, code, functionAnnotations, parser.CurrentNamespace);
 		}
 
 		private static Executable ParseFor(Parser parser, TokenStream tokens)

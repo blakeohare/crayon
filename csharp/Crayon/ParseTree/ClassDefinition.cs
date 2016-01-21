@@ -10,12 +10,14 @@ namespace Crayon.ParseTree
 		public Token[] SubClasses { get; private set; }
 		public FunctionDefinition[] Methods { get; private set; }
 		public ConstructorDefinition Constructor { get; private set; }
+		public string Namespace { get; set; }
 
 		private ClassDefinition baseClassInstance = null;
 
-		public ClassDefinition(Token classToken, Token nameToken, IList<Token> subclasses, IList<FunctionDefinition> methods, ConstructorDefinition constructor)
+		public ClassDefinition(Token classToken, Token nameToken, IList<Token> subclasses, IList<FunctionDefinition> methods, ConstructorDefinition constructor, string namespyace)
 			: base(classToken)
 		{
+			this.Namespace = namespyace;
 			this.NameToken = nameToken;
 			this.SubClasses = subclasses.ToArray();
 			this.Methods = methods.ToArray();
