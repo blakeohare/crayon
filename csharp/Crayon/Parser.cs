@@ -142,6 +142,11 @@ namespace Crayon
 		private VarScope globalScope = new VarScope(null);
 		private VarScope localScope = null;
 
+		public int[] GetGlobalScopeId(string name)
+		{
+			return this.globalScope.GetId(name);
+		}
+
 		public void ResetLocalScope()
 		{
 			this.localScope = new VarScope(this.globalScope);
@@ -381,82 +386,9 @@ namespace Crayon
 			return output.ToArray();
 		}
 
-		private Executable[] ResolveCode(Executable[] original)
+		private Executable[] ResolveCode(Executable[] originalCode)
 		{
-			List<Executable> output = new List<Executable>();
-			List<Executable> namespaceMembers = new List<Executable>();
-			foreach (Executable line in original)
-			{
-				if (line is Namespace)
-				{
-					((Namespace)line).AppendFlattenedCode(namespaceMembers);
-					foreach (Executable namespaceLine in namespaceMembers)
-					{
-						output.AddRange(namespaceLine.Resolve(this));
-					}
-					namespaceMembers.Clear();
-				}
-				else
-				{
-					output.AddRange(line.Resolve(this));
-				}
-			}
-
-			if (!this.IsTranslateMode)
-			{
-				// These track all possible places where variables can be declared outside of the global scope.
-				List<FunctionDefinition> functions = new List<FunctionDefinition>();
-				List<ClassDefinition> classes = new List<ClassDefinition>();
-				List<ConstructorDefinition> constructors = new List<ConstructorDefinition>();
-
-				List<Executable> codeContainers = new List<Executable>();
-
-				// Assign all ID's to variables.
-				foreach (Executable executable in output)
-				{
-					if (executable is FunctionDefinition)
-					{
-						FunctionDefinition funcDef = (FunctionDefinition)executable;
-						this.VariableRegister(funcDef.NameToken.Value, true, funcDef.NameToken);
-						codeContainers.Add(executable);
-					}
-					else if (executable is ClassDefinition)
-					{
-						codeContainers.Add(executable);
-					}
-					else
-					{
-						executable.VariableUsagePass(this);
-					}
-				}
-
-				foreach (Executable executable in output)
-				{
-					if (executable is FunctionDefinition)
-					{
-						// Code containers' usage/id pass methods are meant for doing ID allocation for the code in them.
-						FunctionDefinition funcDef = (FunctionDefinition)executable;
-						funcDef.NameGlobalID = this.globalScope.GetId(funcDef.NameToken.Value)[1];
-					}
-					else if (executable is ClassDefinition)
-					{
-						// Do nothing.
-					}
-					else
-					{
-						executable.VariableIdAssignmentPass(this);
-					}
-				}
-
-				foreach (Executable functionOrClass in codeContainers)
-				{
-					this.ResetLocalScope();
-					functionOrClass.VariableUsagePass(this);
-					functionOrClass.VariableIdAssignmentPass(this);
-				}
-			}
-
-			return output.ToArray();
+			return new Resolver(this, originalCode).Resolve(this.IsTranslateMode);
 		}
 
 		public Executable[] ParseInternal(string filename, string contents)

@@ -122,6 +122,7 @@
     <Compile Include="ParseTree\WhileLoop.cs" />
     <Compile Include="PrimitiveMethods.cs" />
     <Compile Include="PrimitiveMethodsUtil.cs" />
+    <Compile Include="Resolver.cs" />
     <Compile Include="SpriteSheetBuilder.cs" />
     <Compile Include="SubTypes.cs" />
     <Compile Include="Token.cs" />
