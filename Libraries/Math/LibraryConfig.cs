@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Crayon;
 
-namespace Core
+namespace Math
 {
 	public class LibraryConfig : ILibraryConfig
 	{

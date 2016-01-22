@@ -354,6 +354,10 @@ namespace Crayon
 				case FrameworkFunction.SFX_STOP:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
+				case FrameworkFunction.TAN:
+					VerifyLength(throwToken, frameworkFunction, 1, args);
+					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
+					break;
 				case FrameworkFunction.SIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");

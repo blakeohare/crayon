@@ -55,7 +55,7 @@ namespace Crayon
 					bool isSystemLibrary = false;
 					if (importPathFirstChar != '\'' && importPathFirstChar != '"')
 					{
-						if (SYSTEM_LIBRARIES.Contains(fileToken.Value))
+						if (parser.SystemLibraryManager.ImportLibrary(fileToken.Value))
 						{
 							tokens.PopExpected(";");
 							return new ImportStatement(importToken, fileToken, true) { SystemLibraryParent = parser.CurrentSystemLibrary };

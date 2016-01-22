@@ -15,6 +15,7 @@ namespace Crayon
 			this.CurrentSystemLibrary = null;
 			this.BuildContext = buildContext;
 			this.VariableIds = new VariableIdAllocator();
+			this.SystemLibraryManager = new SystemLibraryManager();
 			this.CurrentNamespace = "";
 		}
 
@@ -31,6 +32,8 @@ namespace Crayon
 		public VariableIdAllocator VariableIds { get; private set; }
 
 		public string CurrentSystemLibrary { get; set; }
+
+		public SystemLibraryManager SystemLibraryManager { get; private set; }
 
 		public ClassDefinition CurrentClass { get; set; }
 
@@ -438,7 +441,7 @@ namespace Crayon
 						sysLibPath = importStatement.FileToken.Value;
 						sysLibPath = sysLibPath.Substring(1, sysLibPath.Length - 2);
 					}
-					code = Util.ReadFileInternally("SystemLib/" + this.CurrentSystemLibrary + "/" + sysLibPath);
+					code = this.SystemLibraryManager.GetEmbeddedCode(importValueToken);
 				}
 				else
 				{

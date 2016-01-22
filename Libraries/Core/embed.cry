@@ -1,0 +1,19 @@
+﻿function assert(condition, message = null) {
+	if (condition) $assert(false, message ?? "Assertion failed.");
+}
+
+function chr(value) {
+	return $chr(value);
+}
+
+function ord(value) {
+	return $ord(value);
+}
+
+function print(value) {
+	$print(value);
+}
+
+function typeof(value) {
+	return $typeof(value);
+}

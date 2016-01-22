@@ -54,6 +54,7 @@
     <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="CompileContext.cs" />
     <Compile Include="HackUtil.cs" />
+    <Compile Include="ILibraryConfig.cs" />
     <Compile Include="InterpreterCompiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Resolver.cs" />
     <Compile Include="SpriteSheetBuilder.cs" />
     <Compile Include="SubTypes.cs" />
+    <Compile Include="SystemLibraryManager.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Tokenizer.cs" />
     <Compile Include="Program.cs" />
@@ -435,24 +437,9 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZEvent.cry" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
-    <EmbeddedResource Include="SystemLib\ImageManager\manifest.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\manifest.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\enums.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZElement.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZGame.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZPanel.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZPlayerInputState.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZWindow.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZImage.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZStackPanel.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZRectangle.cry" />
-    <EmbeddedResource Include="SystemLib\EasingFunctions\manifest.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZStoryBoard.cry" />
-    <EmbeddedResource Include="SystemLib\ZGame\ZStoryBoardRunnerContext.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />
