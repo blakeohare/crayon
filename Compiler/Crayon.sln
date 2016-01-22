@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\Libraries\Core\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "..\Libraries\Math\Math.csproj", "{54FAA86C-ABEF-48AE-AE29-60FA108AD12B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{69DE32A4-0913-4B75-B8DD-6953FB042E45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,5 +52,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A50B4111-AA72-4C38-8620-5D1A23274C52} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
+		{54FAA86C-ABEF-48AE-AE29-60FA108AD12B} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
 	EndGlobalSection
 EndGlobal
