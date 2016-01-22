@@ -1,6 +1,0 @@
-﻿
-if (valueStackSize == valueStackCapacity) {
-	valueStackIncreaseCapacity();
-	valueStackCapacity = ProgramData$p.valueStackCapacity;
-	valueStack = ProgramData$p.valueStack;
-}

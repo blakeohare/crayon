@@ -1,3 +1,0 @@
-﻿
-// $sfx_set_volume(sound_instance, ratio)
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";

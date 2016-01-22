@@ -1,9 +1,0 @@
-﻿package %%%PACKAGE%%%;
-
-class OpenGlRenderer {
-	private OpenGlRenderer() {}
-
-	public void render() {
-		
-	}
-}
