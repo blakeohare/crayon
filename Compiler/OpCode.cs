@@ -20,6 +20,7 @@
 		CALL_FUNCTION, // 1: num args passed, 2: 1|0 is value used?
 		CALL_FRAMEWORK_FUNCTION, // 1: function ID (not identifier ID). Since these are defined by the framework, function count is verified at compile time and popped accordingly at runtime by the op itself, 2: 1|0 is output used?, 3: arg count
 		CALL_FUNCTION_ON_GLOBAL, // 1: global scope ID, 2: num args passed, 3: 1|0 is value used?
+		CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
 		CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
 		CONTINUE, // no ops. This should be resolved into a jump before actually being run.
 		DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.

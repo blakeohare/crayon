@@ -102,6 +102,7 @@
     <Compile Include="ParseTree\Increment.cs" />
     <Compile Include="ParseTree\Instantiate.cs" />
     <Compile Include="ParseTree\IntegerConstant.cs" />
+    <Compile Include="ParseTree\LibraryFunctionCall.cs" />
     <Compile Include="ParseTree\ListDefinition.cs" />
     <Compile Include="ParseTree\ListSlice.cs" />
     <Compile Include="ParseTree\Namespace.cs" />
@@ -324,7 +325,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_float.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_int.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_json.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\print.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\random.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\resource_read_text.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_get_master_volume.cry" />
@@ -374,6 +374,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_rotated.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_descriptor_guess.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

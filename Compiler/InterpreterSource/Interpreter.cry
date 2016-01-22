@@ -60,6 +60,9 @@ function @omitReturn @type('string') interpret(
 	@type('Dictionary<string, Value>') dictStringValueLookup = null;
 	@type('bool') first = false;
 
+	@type('bool') lib_func_error_occurred = false;
+	@type('string') lib_func_error_message = "";
+
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
@@ -144,6 +147,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.CALL_FRAMEWORK_FUNCTION: $_comment('CALL_FRAMEWORK_FUNCTION'); import inline 'InterpreterSource/Ops/call_framework_function.cry'; break;
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
 			case OpCodes.CALL_FUNCTION_ON_GLOBAL: $_comment('CALL_FUNCTION_ON_GLOBAL'); import inline 'InterpreterSource/Ops/call_function_on_global.cry'; break;
+			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'InterpreterSource/Ops/call_lib_function.cry'; break;
 			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'InterpreterSource/Ops/class_definition.cry'; break;
 			case OpCodes.DEF_DICTIONARY: $_comment('DEF_DICT'); import inline 'InterpreterSource/Ops/def_dictionary.cry'; break;
 			case OpCodes.DEF_LIST: $_comment('DEF_LIST'); import inline 'InterpreterSource/Ops/def_list.cry'; break;

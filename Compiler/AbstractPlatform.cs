@@ -25,6 +25,8 @@ namespace Crayon
 		public abstract bool IsArraySameAsList { get; }
 		public abstract string PlatformShortId { get; }
 
+		public string LibraryBigSwitchStatement { get; set; }
+
 		// When passing args to a new stack frame, build these by placing args into a fixed length list
 		// Otherwise append items from the stack to the variable length list.
 		public abstract bool UseFixedListArgConstruction { get; }
@@ -77,9 +79,13 @@ namespace Crayon
 			{
 				ex.AssignVariablesToIds(userCodeParser.VariableIds);
 			}
-			
+
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
-			return bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
+			ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
+
+			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement();
+
+			return buffer;
 		}
 
 		private void GenerateReadableByteCode(string path, ByteBuffer byteCode)

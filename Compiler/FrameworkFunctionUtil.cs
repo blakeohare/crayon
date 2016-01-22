@@ -309,10 +309,6 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				case FrameworkFunction.PRINT:
-					// TODO: allow print to take multiple arguments.
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
 				case FrameworkFunction.RANDOM:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;

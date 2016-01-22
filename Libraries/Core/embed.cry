@@ -11,7 +11,7 @@ function ord(value) {
 }
 
 function print(value) {
-	$print(value);
+	return $$lib_core_print(value);
 }
 
 function typeof(value) {

@@ -606,6 +606,7 @@ namespace Crayon
 			else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
 			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
+			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -854,6 +855,14 @@ namespace Crayon
 				this.CompileExpression(parser, buffer, item, true);
 			}
 			buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
+		}
+
+		private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, bool outputUsed)
+		{
+			this.CompileExpressionList(parser, buffer, libFunc.Args, true);
+			int argCount = libFunc.Args.Length;
+			int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
+			buffer.Add(libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
 		}
 
 		private void CompileSystemFunctionCall(Parser parser, ByteBuffer buffer, SystemFunctionCall sysFunc, bool outputUsed)

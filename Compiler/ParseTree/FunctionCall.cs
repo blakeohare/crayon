@@ -9,12 +9,15 @@ namespace Crayon.ParseTree
 		public Token ParenToken { get; private set; }
 		public Expression[] Args { get; private set; }
 
+		private string library = null;
+
 		public FunctionCall(Expression root, Token parenToken, IList<Expression> args)
 			: base(root.FirstToken)
 		{
 			this.Root = root;
 			this.ParenToken = parenToken;
 			this.Args = args.ToArray();
+			this.library = Parser.CurrentSystemLibrary_STATIC_HACK;
 		}
 
 		public override Expression Resolve(Parser parser)
@@ -29,10 +32,15 @@ namespace Crayon.ParseTree
 			if (this.Root is Variable)
 			{
 				string varName = ((Variable)this.Root).Name;
+				if (varName.StartsWith("$$"))
+				{
+					string libFuncName = varName.Substring(2);
+					return new LibraryFunctionCall(this.FirstToken, libFuncName, this.Args, this.library).Resolve(parser);
+				}
+
 				if (varName.StartsWith("$"))
 				{
-					SystemFunctionCall sfc = new SystemFunctionCall(this.Root.FirstToken, this.Args);
-					return sfc.Resolve(parser);
+					return new SystemFunctionCall(this.Root.FirstToken, this.Args).Resolve(parser);
 				}
 
 				if (parser.GetClass(varName) != null)

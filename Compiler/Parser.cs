@@ -31,6 +31,7 @@ namespace Crayon
 
 		public VariableIdAllocator VariableIds { get; private set; }
 
+		public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
 		public string CurrentSystemLibrary { get; set; }
 
 		public SystemLibraryManager SystemLibraryManager { get; private set; }
@@ -432,6 +433,7 @@ namespace Crayon
 					else
 					{
 						this.CurrentSystemLibrary = importValueToken;
+						Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
 					}
 
 					string sysLibPath = "manifest.cry";
@@ -494,6 +496,7 @@ namespace Crayon
 			}
 
 			this.CurrentSystemLibrary = prevSystemLibrary;
+			Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
 
 			return executables.ToArray();
 		}

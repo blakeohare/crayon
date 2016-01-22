@@ -91,6 +91,7 @@ namespace Crayon
 			replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
 			replacements.Add("GENERATED_TILE_DIRECTORY", this.platform.GeneratedFilesFolder + "/spritesheets");
 			replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
+			replacements.Add("LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT", this.platform.LibraryBigSwitchStatement);
 			return replacements;
 		}
 

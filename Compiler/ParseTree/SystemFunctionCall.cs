@@ -45,7 +45,8 @@
 
 		public override void VariableIdAssignmentPass(Parser parser)
 		{
-			for (int i = 0; i < this.Args.Length; ++i) {
+			for (int i = 0; i < this.Args.Length; ++i)
+			{
 				this.Args[i].VariableIdAssignmentPass(parser);
 			}
 		}

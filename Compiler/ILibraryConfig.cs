@@ -8,5 +8,6 @@ namespace Crayon
 	public interface ILibraryConfig
 	{
 		string GetEmbeddedCode();
+		string GetTranslationCode(string functionName);
 	}
 }

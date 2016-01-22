@@ -70,7 +70,6 @@ namespace Crayon
 						isSystemLibrary = true;
 					}
 
-
 					tokens.PopExpected(";");
 
 					if (inline)

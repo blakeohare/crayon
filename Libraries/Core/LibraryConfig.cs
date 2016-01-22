@@ -17,5 +17,10 @@ namespace Core
 		{
 			return ReadFile("embed.cry");
 		}
+
+		public string GetTranslationCode(string functionName)
+		{
+			return ReadFile("Translation/" + functionName + ".cry");
+		}
 	}
 }

@@ -10,9 +10,38 @@ namespace Crayon
 
 		private Dictionary<string, ILibraryConfig> importedLibraries = new Dictionary<string, ILibraryConfig>();
 
-		public SystemLibraryManager()
-		{
+		private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
 
+		private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
+		private List<string> orderedListOfFunctionNames = new List<string>();
+
+		public SystemLibraryManager() { }
+
+		public string GetLibrarySwitchStatement()
+		{
+			List<string> output = new List<string>();
+			foreach (string name in this.orderedListOfFunctionNames)
+			{
+				output.Add("case " + this.libFunctionIds[name] + ":\n");
+				output.Add("$_comment('" + name + "');");
+				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
+				output.Add("\nbreak;\n");
+			}
+			return string.Join("\n", output);
+		}
+
+		public int GetIdForFunction(string name, string library)
+		{
+			if (this.libFunctionIds.ContainsKey(name))
+			{
+				return this.libFunctionIds[name];
+			}
+
+			this.functionNameToLibraryName[name] = library;
+			this.orderedListOfFunctionNames.Add(name);
+			int id = this.orderedListOfFunctionNames.Count;
+			this.libFunctionIds[name] = id;
+			return id;
 		}
 
 		public string GetEmbeddedCode(string libraryName)
@@ -83,7 +112,7 @@ namespace Crayon
 				{
 					assembly = System.Reflection.Assembly.LoadFrom(dllPath);
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					return false;
 				}

@@ -85,7 +85,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_PARSE_FLOAT%%%: $_comment('$parse_float'); import inline "InterpreterSource/FrameworkFunctions/parse_float.cry"; break;
 	case %%%FF_PARSE_INT%%%: $_comment('$parse_int'); import inline "InterpreterSource/FrameworkFunctions/parse_int.cry"; break;
 	case %%%FF_PARSE_JSON%%%: $_comment('$parse_json'); import inline "InterpreterSource/FrameworkFunctions/parse_json.cry"; break;
-	case %%%FF_PRINT%%%: $_comment('$print'); import inline "InterpreterSource/FrameworkFunctions/print.cry"; break;
 	case %%%FF_RANDOM%%%: $_comment('$random'); import inline "InterpreterSource/FrameworkFunctions/random.cry"; break;
 	case %%%FF_RESOURCE_READ_TEXT%%%: $_comment('$resource_read_text'); import inline "InterpreterSource/FrameworkFunctions/resource_read_text.cry"; break;
 	case %%%FF_SFX_GET_MASTER_VOLUME%%%: $_comment('$sfx_get_master_volume'); import inline "InterpreterSource/FrameworkFunctions/sfx_get_master_volume.cry"; break;
