@@ -273,8 +273,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize_screen.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arctan.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arctan2.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\assert.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\chr.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\cos.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\current_time.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\floor.cry" />
@@ -324,7 +322,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_set_position.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_set_volume.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_stop.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\ord.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_float.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_int.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_json.cry" />
@@ -342,7 +339,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_stop.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sin.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\tan.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\typeof.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_directory.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_file.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_directory_listing.cry" />

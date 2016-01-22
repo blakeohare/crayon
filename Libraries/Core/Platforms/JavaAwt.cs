@@ -3,7 +3,7 @@ using Crayon.ParseTree;
 
 namespace Core.Platforms
 {
-	class Java : INativeTranslator
+	class JavaAwt : INativeTranslator
 	{
 		public string TranslatePrint(ExpressionTranslator translator, Expression value)
 		{

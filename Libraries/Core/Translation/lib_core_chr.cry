@@ -1,5 +1,6 @@
 ﻿
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 output = null;
 if (Value$arg1.type == Types.INTEGER) {
 	int1 = $_cast('int', Value$arg1.internalValue);
@@ -7,6 +8,8 @@ if (Value$arg1.type == Types.INTEGER) {
 		output = buildCommonString($_chr(int1));
 	}
 }
+
 if (output == null) {
-	return killExecution(stack, pc, "$chr requires an integer between 0 and 255");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$chr requires an integer between 0 and 255";
 }

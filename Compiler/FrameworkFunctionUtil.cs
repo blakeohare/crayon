@@ -40,14 +40,6 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER NUMBER");
 					break;
-				case FrameworkFunction.ASSERT:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "BOOLEAN STRING");
-					break;
-				case FrameworkFunction.CHR:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
-					break;
 				case FrameworkFunction.COS:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
@@ -293,10 +285,6 @@ namespace Crayon
 				case FrameworkFunction.MUSIC_STOP:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.ORD:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
 				case FrameworkFunction.PARSE_FLOAT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
@@ -357,9 +345,6 @@ namespace Crayon
 				case FrameworkFunction.SIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
-					break;
-				case FrameworkFunction.TYPEOF:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
 				case FrameworkFunction.USER_DATA_DELETE_DIRECTORY:
 					VerifyLength(throwToken, frameworkFunction, 2, args);

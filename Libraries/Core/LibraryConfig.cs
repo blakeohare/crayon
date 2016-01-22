@@ -14,13 +14,12 @@ namespace Core
 
 		public LibraryConfig()
 		{
-			Java java = new Java();
 			this.nativeTranslators = new Dictionary<PlatformId, INativeTranslator>()
 			{
 				{ PlatformId.C_OPENGL, new COpenGl() },
 				{ PlatformId.CSHARP_OPENTK, new CSharpOpenTk() },
-				{ PlatformId.JAVA_ANDROID, java },
-				{ PlatformId.JAVA_AWT, java },
+				{ PlatformId.JAVA_ANDROID, new JavaAndroid() },
+				{ PlatformId.JAVA_AWT, new JavaAwt() },
 				{ PlatformId.JAVASCRIPT_CANVAS, new JavaScriptCanvas() },
 				{ PlatformId.PYTHON_PYGAME, new PythonPyGame() },
 			};

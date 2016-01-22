@@ -1,13 +1,13 @@
 ﻿function assert(condition, message = null) {
-	if (condition) $assert(false, message ?? "Assertion failed.");
+	return $$lib_core_assert(condition, message);
 }
 
 function chr(value) {
-	return $chr(value);
+	return $$lib_core_chr(value);
 }
 
 function ord(value) {
-	return $ord(value);
+	return $$lib_core_ord(value);
 }
 
 function print(value) {
@@ -15,5 +15,5 @@ function print(value) {
 }
 
 function typeof(value) {
-	return $typeof(value);
+	return $$lib_core_typeof(value);
 }

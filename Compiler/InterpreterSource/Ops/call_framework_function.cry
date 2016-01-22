@@ -9,8 +9,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_ARCSIN%%%: $_comment('$arcsin'); import inline "InterpreterSource/FrameworkFunctions/arcsin.cry"; break;
 	case %%%FF_ARCTAN%%%: $_comment('$arctan'); import inline "InterpreterSource/FrameworkFunctions/arctan.cry"; break;
 	case %%%FF_ARCTAN2%%%: $_comment('$arctan2'); import inline "InterpreterSource/FrameworkFunctions/arctan2.cry"; break;
-	case %%%FF_ASSERT%%%: $_comment('$assert'); import inline "InterpreterSource/FrameworkFunctions/assert.cry"; break;
-	case %%%FF_CHR%%%: $_comment('$chr'); import inline "InterpreterSource/FrameworkFunctions/chr.cry"; break;
 	case %%%FF_COS%%%: $_comment('$cos'); import inline "InterpreterSource/FrameworkFunctions/cos.cry"; break;
 	case %%%FF_CURRENT_TIME%%%: $_comment('$current_time'); import inline "InterpreterSource/FrameworkFunctions/current_time.cry"; break;
 	case %%%FF_FLOOR%%%: $_comment('$floor'); import inline "InterpreterSource/FrameworkFunctions/floor.cry"; break;
@@ -81,7 +79,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_SET_POSITION%%%: $_comment('$music_set_position'); import inline "InterpreterSource/FrameworkFunctions/music_set_position.cry"; break;
 	case %%%FF_MUSIC_SET_VOLUME%%%: $_comment('$music_set_volume'); import inline "InterpreterSource/FrameworkFunctions/music_set_volume.cry"; break;
 	case %%%FF_MUSIC_STOP%%%: $_comment('$music_stop'); import inline "InterpreterSource/FrameworkFunctions/music_stop.cry"; break;
-	case %%%FF_ORD%%%: $_comment('$ord'); import inline "InterpreterSource/FrameworkFunctions/ord.cry"; break;
 	case %%%FF_PARSE_FLOAT%%%: $_comment('$parse_float'); import inline "InterpreterSource/FrameworkFunctions/parse_float.cry"; break;
 	case %%%FF_PARSE_INT%%%: $_comment('$parse_int'); import inline "InterpreterSource/FrameworkFunctions/parse_int.cry"; break;
 	case %%%FF_PARSE_JSON%%%: $_comment('$parse_json'); import inline "InterpreterSource/FrameworkFunctions/parse_json.cry"; break;
@@ -99,7 +96,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_SFX_STOP%%%: $_comment('$sfx_stop'); import inline "InterpreterSource/FrameworkFunctions/sfx_stop.cry"; break;
 	case %%%FF_SIN%%%: $_comment('$sin'); import inline "InterpreterSource/FrameworkFunctions/sin.cry"; break;
 	case %%%FF_TAN%%%: $_comment('$tan'); import inline "InterpreterSource/FrameworkFunctions/tan.cry"; break;
-	case %%%FF_TYPEOF%%%: $_comment('$typeof'); import inline "InterpreterSource/FrameworkFunctions/typeof.cry"; break;
 	case %%%FF_USER_DATA_DELETE_DIRECTORY%%%: $_comment('$user_data_delete_directory'); import inline "InterpreterSource/FrameworkFunctions/user_data_delete_directory.cry"; break;
 	case %%%FF_USER_DATA_DELETE_FILE%%%: $_comment('$user_data_delete_file'); import inline "InterpreterSource/FrameworkFunctions/user_data_delete_file.cry"; break;
 	case %%%FF_USER_DATA_DIRECTORY_LISTING%%%: $_comment('$user_data_directory_listing'); import inline "InterpreterSource/FrameworkFunctions/user_data_directory_listing.cry"; break;

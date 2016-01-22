@@ -880,13 +880,6 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("print(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("random.random()");

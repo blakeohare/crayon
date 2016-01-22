@@ -693,13 +693,6 @@ namespace Crayon.Translator.COpenGL
 			output.Add("TODO_pause_for_frame()");
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("printf(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("TODO_random_float()");

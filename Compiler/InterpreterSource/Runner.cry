@@ -259,7 +259,7 @@ function @type('bool') runTick() {
 		} else {
 			if ($_string_length(error) > 0) {
 				// error message and stack trace
-				$_print(error);
+				$_lib_core_print(error);
 			}
 			// execution ended, either with error or gracefully.
 			$_unregister_ticker();
@@ -287,7 +287,7 @@ function @type('bool') runTick() {
 				return false;
 			} else {
 				// error message and stack trace
-				$_print(error);
+				$_lib_core_print(error);
 				return false;
 			}
 		}

@@ -246,13 +246,6 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("android.util.Log.d(\"\", ");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
 			output.Add("AndroidTranslationHelper.readLocalImageResource(");

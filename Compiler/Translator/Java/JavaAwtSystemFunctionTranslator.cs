@@ -232,13 +232,6 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.Noop()");
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("System.out.println(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
 		{
 			output.Add("AwtTranslationHelper.loadImageFromLocalFile(");

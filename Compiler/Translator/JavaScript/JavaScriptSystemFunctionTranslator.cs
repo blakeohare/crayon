@@ -844,13 +844,6 @@ namespace Crayon.Translator.JavaScript
 			throw new Exception("This should have been optimized out.");
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("R.print(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("Math.random()");

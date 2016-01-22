@@ -623,13 +623,6 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslatePrint(List<string> output, Expression message)
-		{
-			output.Add("System.Console.WriteLine(");
-			this.Translator.TranslateExpression(output, message);
-			output.Add(")");
-		}
-
 		protected override void TranslateRandomFloat(List<string> output)
 		{
 			output.Add("TranslationHelper.GetRandomNumber()");
