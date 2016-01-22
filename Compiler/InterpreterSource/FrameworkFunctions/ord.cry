@@ -1,0 +1,14 @@
+﻿
+// $ord(character)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+output = null;
+if (Value$arg1.type == Types.STRING) {
+	string1 = $_cast('string', Value$arg1.internalValue);
+	if ($_string_length(string1) == 1) {
+		output = buildInteger($_ord(string1));
+	}
+}
+if (output == null) {
+	return killExecution(stack, pc, "$ord requires a 1 character string.");
+}

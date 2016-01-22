@@ -1,0 +1,4 @@
+﻿
+classId = $_array_get($_array_get(specialCache, pc), 0);
+classInfo = $_array_get(classTable, classId);
+ClassInfo$classInfo.initialized = true;

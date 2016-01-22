@@ -1,0 +1,16 @@
+﻿class ImageManager {
+	constructor(assumed_prefix = '') {
+		this.images = {};
+		this.assumed_prefix = assumed_prefix;
+	}
+
+	function get(path) {
+		img = this.images.get(path, null);
+		if (img == null) {
+			$gfx_image_load_from_resource('t', this.assumed_prefix + path);
+			img = $gfx_image_get('t');
+			this.images[path] = img;
+		}
+		return img;
+	}
+}

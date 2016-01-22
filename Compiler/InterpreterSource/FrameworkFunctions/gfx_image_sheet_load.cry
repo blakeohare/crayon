@@ -1,0 +1,15 @@
+﻿// $gfx_image_sheet_load(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+stringList = toStringList(arg1, stringList);
+if (stringList == null) {
+	return killExecution(stack, pc, "$image_sheet_load argument must either be a string or a list of strings.");
+}
+
+for (i = 0; i < $_array_length(stringList); i += 1) {
+	string1 = $_array_get(stringList, i);
+	bool1 = loadImageSheet(string1);
+	if (!bool1) {
+		return killExecution(stack, pc, "'" + string1 + "' was not declared as an image sheet.");
+	}
+}

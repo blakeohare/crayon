@@ -1,0 +1,32 @@
+﻿
+// $user_data_make_directory(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$user_data_make_directory requires 1 string argument.");
+}
+string1 = $_cast('string', Value$arg1.internalValue);
+if (!$_io_does_path_exist($_app_data_root(), true, true, true)) {
+	int1 = $_io_create_directory($_app_data_root());
+	if (int1 != IOErrors.NONE) {
+		return killExecution(stack, pc, "Could not create user data folder: " + ioErrorToString(int1));
+	}
+}
+int1 = ioPathFixer(
+	string1, // path
+	stringOutParam,
+	true, // valid char check
+	true, // is user data
+	false, // require full path to exist
+	true, // require parent path to exist
+	true, // ensure parent path exists
+	true); // enforce case sensitivity
+						
+string1 = $_array_get(stringOutParam, 0);
+if ($_is_windows_program()) {
+	string1 = $_string_replace(string1, '/', '\\');
+}
+int1 = $_io_create_directory(string1);
+if (int1 != IOErrors.NONE) {
+	return killExecution(stack, pc, "$user_data_make_directory: " + ioErrorToString(int1));
+}

@@ -1,0 +1,13 @@
+﻿// $gamepad_enable_recent(id_or_idList)
+// returns number of gamepads initialized
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+int1 = gamepadEnableRecent(arg1, intOutParam, stringOutParam);
+int2 = $_array_get(intOutParam, 0);
+if (int2 != 0) {
+	if (int2 == 1) return killExecution(stack, pc, "$gamepad_enable_recent cannot be called at this time. Gamepad info is initialized when the game windows is launched.");
+	if (int2 == 2) return killExecution(stack, pc, "$gamepad_enable_recent must take in a string or integer as an argument or a list of strings and integers.");
+	int1 = 0; // everything else fail silently.
+}
+
+output = buildInteger(int1);

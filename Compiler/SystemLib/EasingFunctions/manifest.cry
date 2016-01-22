@@ -1,0 +1,114 @@
+﻿
+enum EasingFunction {
+	CIRCLE = 1,
+	CUBIC = 2,
+	ELASTIC = 3,
+	LINEAR = 4,
+	QUAD = 5,
+	QUART = 6,
+	QUINT = 7,
+	SIN = 8,
+}
+
+enum _EASE_EasingType {
+	IN,
+	OUT,
+	IN_OUT,
+}
+
+// By precomputing, it eliminates the need to go between the translated and interpreted barrier for every easing computation (once the rest of the easing computation is replaced with translated code)
+class CustomEasingFunction {
+	constructor(fn) {
+		pts = [];
+		i = -1;
+		while (++i <= 1000) {
+			pts.add(0.0 + fn(i / 1000.0));
+		}
+		this._EASING_pts = pts;
+	}
+}
+
+function easeIn(function_id, start, end, current, duration, integer_output = false) {
+	return _EASING_ease_impl(function_id, start, end, current, duration, integer_output, _EASE_EasingType.IN);
+}
+
+function easeOut(function_id, start, end, current, duration, integer_output = false) {
+	return _EASING_ease_impl(function_id, start, end, current, duration, integer_output, _EASE_EasingType.OUT);
+}
+
+function ease(function_id, start, end, current, duration, integer_output = false) {
+	return _EASING_ease_impl(function_id, start, end, current, duration, integer_output, _EASE_EasingType.IN_OUT);
+}
+
+// TODO: change all this to translated code.
+function _EASING_ease_impl(function_id_or_custom, start, end, current, duration, integer_output, piece) {
+	invert = false;
+	switch (piece) {
+		case _EASE_EasingType.IN: break;
+		case _EASE_EasingType.OUT: invert = true; break;
+		default:
+			dcurrent = current * 2.0;
+			mid = (start + end) / 2.0;
+			if (dcurrent >= duration) {
+				return _EASING_ease_impl(function_id_or_custom, mid, end, dcurrent - duration, duration, integer_output, _EASE_EasingType.OUT);
+			}
+			return _EASING_ease_impl(function_id_or_custom, start, mid, dcurrent, 2 * duration, integer_output, _EASE_EasingType.IN);
+	}
+
+	progress = 1.0 * current / duration;
+	if (progress > 1) return end;
+	else if (progress < 0) return start;
+
+	if (invert) progress = 1.0 - progress;
+	
+	if ($typeof(function_id_or_custom) == 'integer') {
+		switch (function_id_or_custom) {
+			case EasingFunction.CIRCLE: progress = (1 - progress ** 2) ** .5; break;
+			case EasingFunction.CUBIC: progress = progress ** 3; break;
+			case EasingFunction.ELASTIC: 
+				// Curve is too idle close to 0. Stretch the latter 60% to cover the full range...
+				if (progress < .1) {
+					// After the remapping, the final curve technically starts at .004 instead of 0.
+					// Linearly scale the first 10% down with respect to x so that the beginning matches 0 perfectly and t = 10% matches on both progressions.
+					progress = (progress * 6 + 4) * progress;
+				} else {
+					progress = progress * .6 + .4;
+				}
+				progress = $sin(progress * (2 * 3.1415926535897932 * 5.25)) * (progress ** 6); break;
+			case EasingFunction.QUAD: progress = progress ** 2; break;
+			case EasingFunction.QUART: progress = progress ** 4; break;
+			case EasingFunction.QUINT: progress = progress ** 5; break;
+			case EasingFunction.SIN: progress = 1.0 - $cos(progress * (3.1415926535897932 / 2)); break;
+			case EasingFunction.LINEAR: 
+			default:
+				break;
+		}
+	} else {
+		pts = function_id_or_custom._EASING_pts;
+		// TODO: interpolate between points.
+		progress = pts[$floor(progress * (pts.length - 1))];
+	}
+	
+	if (invert) progress = 1.0 - progress;
+
+	if ($typeof(start) == 'list') {
+		output = [];
+		length = start.length;
+		for (i = 0; i < length; ++i) {
+			e = end[i];
+			s = start[i];
+			if (e == null) {
+				output.add(null);
+			} else {
+				output.add(integer_output 
+					? $floor(progress * (e - s) + s)
+					: progress * (e - s) + s);
+			}
+		}
+		return output;
+	}
+
+	return integer_output 
+		? $floor(progress * (end - start) + start)
+		: progress * (end - start) + start;
+}

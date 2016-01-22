@@ -1,0 +1,5 @@
+﻿// $gamepad_clear_ids()
+bool1 = gamepadClearIds();
+if (bool1) {
+	return killExecution(stack, pc, "$gamepad_clear_ids() cannot be called at this time. Gamepad info is initialized when the game windows is launched.");
+}

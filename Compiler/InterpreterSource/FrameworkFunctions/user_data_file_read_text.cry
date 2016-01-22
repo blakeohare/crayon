@@ -1,0 +1,13 @@
+﻿
+// $user_data_file_read_text(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$user_data_file_read_text requires 1 string argument.");
+}
+string1 = $_cast('string', Value$arg1.internalValue); // path
+int1 = ioReadFileText($_cast('string', Value$arg1.internalValue), true, false, stringOutParam);
+if (int1 != IOErrors.NONE) {
+	return killExecution(stack, pc, "$user_data_file_read_text: " + ioErrorToString(int1));
+}
+output = buildString($_array_get(stringOutParam, 0));

@@ -1,0 +1,191 @@
+﻿package %%%PACKAGE%%%;
+
+import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+public class CrayonGlRenderer implements GLSurfaceView.Renderer {
+    private CrayonGlSurfaceView surfaceView;
+
+    private int screenWidth = 1;
+    private int screenHeight = 1;
+    private static double targetFps = 0;
+    private static int userDefinedWidth = 0;
+    private static int userDefinedHeight = 0;
+    private static boolean isScreenInitialized = false;
+    private static boolean isFpsInitialized = false;
+
+    private FloatBuffer quadVertexBuffer;
+    private FloatBuffer ellipseVertexBuffer;
+
+    private float[] quadVertices = new float[] {
+        0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+    };
+
+    private float[] ellipseVertices = allocateEllipse();
+
+    public CrayonGlRenderer(CrayonGlSurfaceView surfaceView) {
+        this.surfaceView = surfaceView;
+        quadVertexBuffer = buildVertexBuffer(quadVertices);
+        ellipseVertexBuffer = buildVertexBuffer(ellipseVertices);
+    }
+
+    private FloatBuffer buildVertexBuffer(float[] vertices) {
+        ByteBuffer vertexByteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
+        vertexByteBuffer.order(ByteOrder.nativeOrder());
+        FloatBuffer vertexBuffer = vertexByteBuffer.asFloatBuffer();
+        vertexBuffer.put(vertices);
+        vertexBuffer.position(0);
+        return vertexBuffer;
+    }
+
+    private float[] allocateEllipse() {
+        int ptCount = 60;
+        float[] output = new float[(ptCount + 2)* 3];
+        output[0] = .5f;
+        output[1] = .5f;
+        output[2] = 0f;
+
+        for (int i = 0; i < ptCount; ++i) {
+            double ang = i * 2 * 3.14159265358979 / ptCount;
+            output[i * 3 + 3] = (float) (Math.cos(ang) * .5 + .5);
+            output[i * 3 + 4] = (float) (Math.sin(ang) * .5 + .5);
+            output[i * 3 + 5] = 0f;
+        }
+
+        // close the fan to the starting edge point.
+        output[output.length - 3] = output[3];
+        output[output.length - 2] = output[4];
+        output[output.length - 1] = output[5];
+
+        return output;
+    }
+
+    private void drawRectangle(GL10 gl, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+        y = screenHeight - y - height;
+
+        float newX = 2f * x / screenWidth - 1;
+        float newY = 2f * y / screenHeight - 1;
+        float newWidth = 2f * width / screenWidth;
+        float newHeight = 2f * height / screenHeight;
+
+        gl.glLoadIdentity();
+        gl.glTranslatef(newX, newY, 0);
+        gl.glScalef(newWidth, newHeight, 0f);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+        gl.glColor4f(red / 255f, green / 255f, blue / 255f, alpha / 255f);
+
+        // Point to our vertex buffer
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBuffer);
+
+        // Draw the vertices as triangle strip
+        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, quadVertices.length / 3);
+
+        //Disable the client state before leaving
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+    private void drawEllipse(GL10 gl, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+        y = screenHeight - y - height;
+
+        float newX = 2f * x / screenWidth - 1;
+        float newY = 2f * y / screenHeight - 1;
+        float newWidth = 2f * width / screenWidth;
+        float newHeight = 2f * height / screenHeight;
+
+        gl.glLoadIdentity();
+        gl.glTranslatef(newX, newY, 0);
+        gl.glScalef(newWidth, newHeight, 0f);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+        gl.glColor4f(red / 255f, green / 255f, blue / 255f, alpha / 255f);
+
+        // Point to our vertex buffer
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, ellipseVertexBuffer);
+
+        // Draw the vertices as triangle strip
+        gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, ellipseVertices.length / 3);
+
+        //Disable the client state before leaving
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+    @Override
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
+        gl.glDisable(GL10.GL_DITHER);
+        gl.glDisable(GL10.GL_LIGHTING);
+
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glClearColor(0.00f, 0.00f, 0.00f, 1.00f);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+    }
+
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
+        if(height == 0) height = 1;
+        screenWidth = width;
+        screenHeight = height;
+        gl.glViewport(0, 0, width, height);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glLoadIdentity();
+        GLU.gluOrtho2D(gl, 0, 0, width, height);
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
+    }
+
+    @Override
+    public void onDrawFrame(GL10 gl) {
+        // TODO: frame rate throttling.
+        // Skip update phase if throttled frame rate is exceeded. Which is okay because 
+        // the draw buffer from previously executed frames will be shown.
+        update();
+        GlUtil.setGl(gl);
+        render(gl);
+    }
+
+    private void update() {
+        CrayonWrapper.v_glResetDrawBuffer();
+
+        boolean continueExecution = CrayonWrapper.v_runTick();
+
+        if (!continueExecution) {
+            System.exit(0);
+        }
+    }
+
+    // scaled dimensions are ignored because there is no concept of a window. The screen is the window.
+    public static void initializeScreen(int requestedWidth, int requestedHeight) {
+        userDefinedWidth = requestedWidth;
+        userDefinedHeight = requestedHeight;
+        isScreenInitialized = true;
+    }
+
+    public static void initializeGame(double fps) {
+        targetFps = fps;
+        isFpsInitialized = true;
+    }
+
+    private void render(GL10 gl) {
+        if (isScreenInitialized && isFpsInitialized) {
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            CrayonWrapper.v_glRender(gl, userDefinedWidth, userDefinedHeight, screenWidth, screenHeight);
+        }
+    }
+}

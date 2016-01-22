@@ -1,0 +1,4 @@
+﻿
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, 0)));
+valueStackSize += 1;

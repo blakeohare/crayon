@@ -1,0 +1,5 @@
+import 'methods_list.cry';
+
+function methods() {
+	methods_list();
+}

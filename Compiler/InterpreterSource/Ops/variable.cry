@@ -1,0 +1,24 @@
+﻿/*
+	row:
+	[0] -> name ID
+	[1] -> local scope ID
+	[2] -> global scope ID [possibly absent]
+*/
+int1 = $_array_get(row, 1);
+if ($_dictionary_contains(locals, int1)) {
+	value = $_dictionary_get_guaranteed(locals, int1);
+} else if ($_array_length(row) == 3 && $_dictionary_contains(globals, $_array_get(row, 2))) {
+	// the above if statement is somewhat slow, but the user is asking for trouble if they have a local variable
+	// that has the same name as a global variable and are actually expecting the global value.
+	value = $_dictionary_get_guaranteed(globals, $_array_get(row, 2));
+} else {
+	return killExecution(stack, pc, "Variable not defined: " + $_array_get(identifiers, $_array_get(row, 0)));
+}
+
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+if ($_has_increment()) {
+	$_array_set(valueStack, $_postfix_increment(valueStackSize), value);
+} else {
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+}

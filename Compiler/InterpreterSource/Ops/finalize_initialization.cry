@@ -1,0 +1,21 @@
+﻿
+ProgramData$p.identifiers = $_convert_list_to_array('string', ProgramData$p.identifiersBuilder);
+ProgramData$p.literalTable = $_convert_list_to_array('Value', ProgramData$p.literalTableBuilder);
+ProgramData$p.integerSwitchLookups = $_convert_list_to_array('Dictionary<int, int>', ProgramData$p.integerSwitchLookupsBuilder);
+ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
+ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
+
+ProgramData$p.identifiersBuilder = null;
+ProgramData$p.literalTableBuilder = null;
+ProgramData$p.integerSwitchLookupsBuilder = null;
+ProgramData$p.stringSwitchLookupsBuilder = null;
+ProgramData$p.sourceCodeBuilder = null;
+
+identifiers = ProgramData$p.identifiers;
+literalTable = ProgramData$p.literalTable;
+integerSwitches = ProgramData$p.integerSwitchLookups;
+stringSwitches = ProgramData$p.stringSwitchLookups;
+
+imageSheetStatusInitialization();
+
+ProgramData$p.initializationComplete = true;

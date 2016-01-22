@@ -1,0 +1,10 @@
+﻿
+int1 = $_array_get(row, 0);
+i = $_array_get(row, 1);
+if (i >= $_array_length(StackFrame$stack.args)) {
+	// pass in previous stack so that it's pointing at the spot where you invoke the function.
+	stack = StackFrame$stack.previous;
+	return killExecution(stack, StackFrame$stack.pc, "Not enough arguments supplied.");
+}
+value = $_array_get(StackFrame$stack.args, $_array_get(row, 1));
+$_dictionary_set(locals, int1, value);

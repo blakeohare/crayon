@@ -1,0 +1,3 @@
+﻿
+// $music_load_from_user_data(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

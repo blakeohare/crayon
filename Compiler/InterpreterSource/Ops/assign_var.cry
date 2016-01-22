@@ -1,0 +1,3 @@
+﻿
+valueStackSize -= 1;
+$_dictionary_set(locals, $_array_get(row, 0), $_array_get(valueStack, valueStackSize));

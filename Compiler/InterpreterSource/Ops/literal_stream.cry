@@ -1,0 +1,15 @@
+﻿int1 = $_array_length(row);
+
+if (valueStackSize + int1 > valueStackCapacity) {
+	// literal count may be greater than a capacity increase in some cases.
+	while (valueStackSize + int1 > valueStackCapacity) {
+		valueStackIncreaseCapacity();
+		valueStackCapacity = ProgramData$p.valueStackCapacity;
+		valueStack = ProgramData$p.valueStack;
+	}
+}
+
+for (i = int1 - 1; i >= 0; i -= 1) {
+	$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, i)));
+	valueStackSize += 1;
+}

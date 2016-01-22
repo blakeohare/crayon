@@ -1,0 +1,21 @@
+﻿// $gfx_image_sheet_error_code(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+// Error codes: same as $image_error_code
+
+stringList = toStringList(arg1, stringList);
+if (stringList == null) {
+	return killExecution(stack, pc, "$image_sheet_error_code argument must either be a string or a list of strings.");
+}
+
+int1 = 0;
+// take the first non-zero entry you find.
+for (i = 0; i < $_array_length(stringList); i += 1) {
+	int2 = getSheetErrorCode($_array_get(stringList, i));
+	if (int2 > 0) {
+		int1 = int2;
+		i = $_array_length(stringList);
+	}
+}
+
+output = buildInteger(int1);

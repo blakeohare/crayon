@@ -1,0 +1,41 @@
+﻿
+// $draw_rectangle(x, y, width, height, red, green, blue, alpha)
+import inline "InterpreterSource/FrameworkFunctions/8_arg.cry";
+
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg3.type != Types.INTEGER ||
+	Value$arg4.type != Types.INTEGER ||
+	Value$arg5.type != Types.INTEGER ||
+	Value$arg6.type != Types.INTEGER ||
+	Value$arg7.type != Types.INTEGER ||
+	Value$arg8.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_draw_rectangle requires 8 integer arguments.");
+}
+// check if alpha, width, or height are 0 and bypass drawing altogether.
+int1 = $_cast('int', Value$arg8.internalValue);
+int2 = $_cast('int', Value$arg3.internalValue);
+int3 = $_cast('int', Value$arg4.internalValue);
+if (int1 > 0 && int2 > 0 && int3 > 0) {
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		glDrawRectangle(
+			$_cast('int', Value$arg1.internalValue),
+			$_cast('int', Value$arg2.internalValue),
+			int2,
+			int3,
+			$_cast('int', Value$arg5.internalValue),
+			$_cast('int', Value$arg6.internalValue),
+			$_cast('int', Value$arg7.internalValue),
+			$_cast('int', int1));
+	} else {
+		$_draw_rectangle(
+			$_cast('int', Value$arg1.internalValue),
+			$_cast('int', Value$arg2.internalValue),
+			int2,
+			int3,
+			$_cast('int', Value$arg5.internalValue),
+			$_cast('int', Value$arg6.internalValue),
+			$_cast('int', Value$arg7.internalValue),
+			int1);
+	}
+}

@@ -1,0 +1,28 @@
+﻿
+// $game_initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$game_initialize_screen_scaled requires four integer arguments.");
+}
+
+int1 = $_cast('int', Value$arg1.internalValue);
+int2 = $_cast('int', Value$arg2.internalValue);
+int3 = $_cast('int', Value$arg3.internalValue);
+int4 = $_cast('int', Value$arg4.internalValue);
+
+if (int1 < 1 || int2 < 1 || int3 < 1 || int4 < 1) {
+	return killExecution(stack, pc, "Screen dimensions must be positive.");
+}
+
+if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+	StackFrame$stack.pc = pc;
+	yieldControl(stack, valueStackSize);
+	pc = StackFrame$stack.pc;
+	$_initialize_screen(int1, int2, int3, int4);
+	return '';
+} else {
+	$_initialize_screen(int1, int2, int3, int4);
+}

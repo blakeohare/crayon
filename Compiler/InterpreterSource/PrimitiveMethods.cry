@@ -1,0 +1,411 @@
+﻿
+function @type('Value') wrongArgCountError(@type('Array<string>') stringOutParam, @type('string') name, @type('int') expected, @type('int') actual) {
+	@type('string') output = null;
+	if (expected == 0) {
+		output = name + " does not accept any arguments.";
+	} else if (expected == 1) {
+		output = name + " accepts exactly 1 argument.";
+	} else {
+		output = name + " requires " + $_string_cast_weak(expected) + " arguments.";
+	}
+
+	output += " Found: " + $_string_cast_weak(actual);
+	$_array_set(stringOutParam, 0, output);
+	return null;
+}
+
+function @type('Value') primitiveMethodError(@type('Array<string>') stringOutParam, @type('string') error) {
+	$_array_set(stringOutParam, 0, error);
+	return null;
+}
+
+function @type('Value') callSystemMethod(
+		@type('int') methodId,
+		@type('Value') wrappedContext,
+		@type('Array<Value>') funcArgs,
+		@type('Array<string>') stringOutParam) {
+	$_array_set(stringOutParam, 0, null);
+	
+	@type('Value') output = VALUE_NULL;
+	@type('object') context = Value$wrappedContext.internalValue;
+	@type('int') i = 0;
+	// trusted switch. No weird values will occur. (assuming you implement all the methods you have in the lookup table)
+	switch (methodId) {
+		case %%%PRIMITIVE_METHOD_LIST_ADD%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "List add method", 1, $_array_length(funcArgs));
+			$_list_push($_force_parens($_cast('List<Value>', context)), $_array_get(funcArgs, 0));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CLEAR%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List clear method", 0, $_array_length(funcArgs));
+			// TODO: replace with the platform's .clear if convenient
+			if (%%%PLATFORM_SUPPORTS_LIST_CLEAR%%%) {
+				$_list_clear($_force_parens($_cast('List<Value>', Value$wrappedContext.internalValue)));
+			} else {
+				Value$wrappedContext.internalValue = $_new_list('Value');
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CLONE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List clone method", 0, $_array_length(funcArgs));
+			@type('List<Value>') list4 = $_cast('List<Value>', context);
+			@type('List<Value>') lc_wrappedList = $_new_list('Value');
+			@type('int') len3 = $_list_length(list4);
+			// TODO: use native clone if convenient (e.g. newlist = list + [], list.clone(), list[:], etc)
+			for (i = 0; i < len3; i += 1) {
+				$_list_push(lc_wrappedList, $_list_get(list4, i));
+			}
+			output = new Value(Types.LIST, lc_wrappedList);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CONCAT%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "List concat method", 1, $_array_length(funcArgs));
+			@type('List<Value>') list5 = $_cast('List<Value>', context);
+			@type('Value') concatList = $_array_get(funcArgs, 0);
+			if (Value$concatList.type != Types.LIST) return primitiveMethodError(stringOutParam, "Argument of list.concat must be another list.");
+			@type('List<Value>') list6 = $_cast('List<Value>', Value$concatList.internalValue);
+			@type('int') concatlength = $_list_length(list6);
+			// TODO: do a check to see if the platform supports natively-implemented list concatenation.
+			for (@type('int') concati = 0; concati < concatlength; concati += 1) {
+				$_list_push(list5, $_list_get(list6, concati));
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "List contains method", 1, $_array_length(funcArgs));
+			@type('List<Value>') list1 = $_cast('List<Value>', context);
+			@type('int') len = $_list_length(list1);
+			@type('Value') target = $_array_get(funcArgs, 0);
+			output = VALUE_FALSE;
+			for (i = 0; i < len; i += 1) {
+				if (doEqualityComparisonAndReturnCode(target, $_list_get(list1, i)) == 1) {
+					output = VALUE_TRUE;
+					i += len;
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_INSERT%%%:
+			if ($_array_length(funcArgs) != 2) return wrongArgCountError(stringOutParam, "List insert method", 2, $_array_length(funcArgs));
+			@type('Value') wrappedIndex = $_array_get(funcArgs, 0);
+			@type('Value') value = $_array_get(funcArgs, 1);
+			@type('List<Value>') list2 = $_cast('List<Value>', context);
+			if (Value$wrappedIndex.type != Types.INTEGER) return primitiveMethodError(stringOutParam, "First argument of list.insert needs to be an integer.");
+			@type('int') index = $_cast('int', Value$wrappedIndex.internalValue);
+			if (index < 0 || index > $_list_length(list2)) return primitiveMethodError(stringOutParam, "Index out of bounds.");
+			$_list_insert(list2, index, value);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_JOIN%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "List join method", 1, $_array_length(funcArgs));
+			@type('List<Value>') list3 = $_cast('List<Value>', context);
+			@type('Value') wrappedSep = $_array_get(funcArgs, 0);
+			// TODO: make first argument optional
+			if (Value$wrappedSep.type != Types.STRING) return primitiveMethodError(stringOutParam, "Argument of list.join needs to be a string.");
+			@type('List<string>') sb = $_new_list('string');
+			@type('string') sepstr = $_cast('string', Value$wrappedSep.internalValue);
+			@type('int') len2 = $_list_length(list3);
+			for (i = 0; i < len2; i += 1) {
+				$_list_push(sb, valueToString($_list_get(list3, i)));
+			}
+			@type('string') string1 = $_list_join(sb, sepstr);
+			output = buildString(string1);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_POP%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List pop method", 0, $_array_length(funcArgs));
+			@type('List<Value>') lp_list = $_cast('List<Value>', context);
+			if ($_list_length(lp_list) == 0) return primitiveMethodError(stringOutParam, "Cannot pop from empty list.");
+			output = $_list_get(lp_list, $_list_last_index(lp_list));
+			$_list_pop(lp_list);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REMOVE%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "List remove method", 1, $_array_length(funcArgs));
+			@type('Value') lr_wrappedIndex = $_array_get(funcArgs, 0);
+			if (Value$lr_wrappedIndex.type != Types.INTEGER) return primitiveMethodError(stringOutParam, "First argument of list.remove needs to be an integer.");
+			i = $_cast('int', Value$lr_wrappedIndex.internalValue);
+			@type('List<Value>') lr_list = $_cast('List<Value>', context);
+			if (i < 0 || i >= $_list_length(lr_list)) return primitiveMethodError(stringOutParam, "Index out of bounds.");
+			output = $_list_get(lr_list, i);
+			$_list_remove_at(lr_list, i);
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_REVERSE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List reverse method", 0, $_array_length(funcArgs));
+			$_list_reverse_in_place($_force_parens($_cast('List<Value>', context)));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List shuffle method", 0, $_array_length(funcArgs));
+			$_list_shuffle_in_place($_force_parens($_cast('List<Value>', context)));
+			break;
+		case %%%PRIMITIVE_METHOD_LIST_SORT%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "List sort method", 0, $_array_length(funcArgs));
+			@type('List<Value>') sortingList = $_cast('List<Value>', context);
+			@type('int') listLength = $_list_length(sortingList);
+			if (listLength > 1) {
+				@type('Value') sortItem = $_list_get(sortingList, 0);
+				@type('bool') is_number = Value$sortItem.type == Types.INTEGER || Value$sortItem.type == Types.FLOAT;
+				@type('bool') is_string = Value$sortItem.type == Types.STRING;
+				i = $_list_length(sortingList) - 1;
+				if (!is_number && !is_string) return primitiveMethodError(stringOutParam, "sort method does not support lists of this type.");
+				while (i > 0) {
+					sortItem = $_list_get(sortingList, i);
+					if (is_number) {
+						if (Value$sortItem.type != Types.INTEGER && Value$sortItem.type != Types.FLOAT) {
+							return primitiveMethodError(stringOutParam, "Cannot call .sort() on a list with mixed types.");
+						}
+					} else if (is_string) {
+						if (Value$sortItem.type != Types.STRING) {
+							return primitiveMethodError(stringOutParam, "Cannot call .sort() on a list with mixed types.");
+						}
+					}
+					i -= 1;
+				}
+
+				$_sort_primitive_values(sortingList, is_string);
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "String split method", 1, $_array_length(funcArgs));
+			@type('Value') ss_wrappedSep = $_array_get(funcArgs, 0);
+			if (Value$ss_wrappedSep.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "Split method requires a string. Found a " + getTypeFromId(Value$ss_wrappedSep.type) + " instead.");
+			}
+			@type('string') ss_string = $_cast('string', context);
+			@type('Array<string>') ss_rawList = $_string_split(ss_string, $_cast('string', Value$ss_wrappedSep.internalValue));
+			@type('List<Value>') ss_wrappedList = $_new_list('Value');
+			@type('int') ss_len = $_array_length(ss_rawList);
+			for (i = 0; i < ss_len; i += 1) {
+				$_list_push(ss_wrappedList, buildString($_array_get(ss_rawList, i)));
+			}
+			output = new Value(Types.LIST, ss_wrappedList);
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "String contains method", 1, $_array_length(funcArgs));
+			@type('Value') sc_item = $_array_get(funcArgs, 0);
+			if (Value$sc_item.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "String contains method requires a string. Found a " + getTypeFromId(Value$sc_item.type) + " instead.");
+			}
+			@type('string') sc_string = $_cast('string', context);
+			if ($_string_contains(sc_string, $_cast('string', Value$sc_item.internalValue))) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "String endsWith method", 1, $_array_length(funcArgs));
+			@type('Value') sew_item = $_array_get(funcArgs, 0);
+			@type('string') sew_string = $_cast('string', context);
+			if (Value$sew_item.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "String endsWith method requires a string. Found a " + getTypeFromId(Value$sew_item.type) + " instead.");
+			}
+			if ($_string_endswith(sew_string, $_cast('string', Value$sew_item.internalValue))) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "String indexOf method", 1, $_array_length(funcArgs));
+			@type('Value') sio_item = $_array_get(funcArgs, 0);
+			@type('string') sio_string = $_cast('string', context);
+			if (Value$sio_item.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "String indexOf method requires a string. Found a " + getTypeFromId(Value$sio_item.type) + " instead.");
+			}
+			output = buildInteger($_string_index_of(sio_string, $_cast('string', Value$sio_item.internalValue)));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "String startsWith method", 1, $_array_length(funcArgs));
+			@type('Value') ssw_item = $_array_get(funcArgs, 0);
+			@type('string') ssw_string = $_cast('string', context);
+			if (Value$ssw_item.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "String startsWith method requires a string. Found a " + getTypeFromId(Value$ssw_item.type) + " instead.");
+			}
+			if ($_string_startswith(ssw_string, $_cast('string', Value$ssw_item.internalValue))) {
+				output = VALUE_TRUE;
+			} else {
+				output = VALUE_FALSE;
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_UPPER%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "String upper method", 0, $_array_length(funcArgs));
+			@type('string') su_string = $_cast('string', context);
+			output = buildString($_string_upper(su_string));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_LOWER%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "String lower method", 0, $_array_length(funcArgs));
+			@type('string') sl_string = $_cast('string', context);
+			output = buildString($_string_lower(sl_string));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_TRIM%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "String trim method", 0, $_array_length(funcArgs));
+			@type('string') st_string = $_cast('string', context);
+			output = buildString($_string_trim(st_string));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_REVERSE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "String reverse method", 0, $_array_length(funcArgs));
+			@type('string') sr_string = $_cast('string', context);
+			output = buildString($_string_reverse(sr_string));
+			break;
+		case %%%PRIMITIVE_METHOD_STRING_REPLACE%%%:
+			if ($_array_length(funcArgs) != 2) return wrongArgCountError(stringOutParam, "String replace method", 2, $_array_length(funcArgs));
+			@type('Value') sr_a = $_array_get(funcArgs, 0);
+			@type('Value') sr_b = $_array_get(funcArgs, 1);
+			if (Value$sr_a.type != Types.STRING || Value$sr_b.type != Types.STRING) {
+				return primitiveMethodError(stringOutParam, "string replace must take in two strings as arguments.");
+			}
+			@type('string') srep_value = $_cast('string', context);
+			output = buildString($_string_replace(
+					srep_value,
+					$_cast('string', Value$sr_a.internalValue),
+					$_cast('string', Value$sr_b.internalValue)));
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "Dictionary clear method", 0, $_array_length(funcArgs));
+			@type('DictImpl') dclear_dict = $_cast('DictImpl', context);
+			DictImpl$dclear_dict.keyIntLookup = $_new_dictionary('int', 'Value');
+			DictImpl$dclear_dict.valueIntLookup = $_new_dictionary('int', 'Value');
+			DictImpl$dclear_dict.keyStringLookup = $_new_dictionary('string', 'Value');
+			DictImpl$dclear_dict.valueStringLookup = $_new_dictionary('string', 'Value');
+			DictImpl$dclear_dict.size = 0;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "Dictionary clone method", 0, $_array_length(funcArgs));
+			@type('DictImpl') dclone_dict = $_cast('DictImpl', context);
+			@type('Dictionary<int, Value>') keyIntLookup_clone = $_new_dictionary('int', 'Value');
+			@type('Dictionary<int, Value>') valueIntLookup_clone = $_new_dictionary('int', 'Value');
+			@type('Dictionary<string, Value>') keyStringLookup_clone = $_new_dictionary('string', 'Value');
+			@type('Dictionary<string, Value>') valueStringLookup_clone = $_new_dictionary('string', 'Value');
+
+			@type('DictImpl') dclone_dict_new = new DictImpl(
+				keyIntLookup_clone,
+				valueIntLookup_clone,
+				keyStringLookup_clone,
+				valueStringLookup_clone,
+				DictImpl$dclone_dict.size,
+				DictImpl$dclone_dict.keyType);
+			@type('int') clone_i = 0;
+			@type('int') clone_int_key = 0;
+			@type('string') clone_string_key = null;
+			@type('Array<int>') clone_int_keys = $_dictionary_get_keys('int', DictImpl$dclone_dict.keyIntLookup);
+			@type('Array<string>') clone_string_keys = $_dictionary_get_keys('string', DictImpl$dclone_dict.keyStringLookup);
+			for (clone_i = $_array_length(clone_int_keys) - 1; clone_i >= 0; clone_i -= 1) {
+				clone_int_key = $_array_get(clone_int_keys, clone_i);
+				$_dictionary_set(keyIntLookup_clone, clone_int_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.keyIntLookup, clone_int_key));
+				$_dictionary_set(valueIntLookup_clone, clone_int_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.valueIntLookup, clone_int_key));
+			}
+			for (clone_i = $_array_length(clone_string_keys) - 1; clone_i >= 0; clone_i -= 1) {
+				clone_string_key = $_array_get(clone_string_keys, clone_i);
+				$_dictionary_set(keyStringLookup_clone, clone_string_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.keyStringLookup, clone_string_key));
+				$_dictionary_set(valueStringLookup_clone, clone_string_key, $_dictionary_get_guaranteed(DictImpl$dclone_dict.valueStringLookup, clone_string_key));
+			}
+			output = new Value(Types.DICTIONARY, dclone_dict_new);
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%:
+			if ($_array_length(funcArgs) != 2) return wrongArgCountError(stringOutParam, "Dictionary get method", 2, $_array_length(funcArgs));
+			@type('Value') dg_key = $_array_get(funcArgs, 0);
+			@type('Value') dg_defaultValue = $_array_get(funcArgs, 1);
+			@type('DictImpl') dg_dict = $_cast('DictImpl', context);
+			@type('int') dg_key_type = Value$dg_key.type;
+			output = dg_defaultValue;
+			if (DictImpl$dg_dict.keyType == dg_key_type) {
+				if (dg_key_type == Types.STRING) {
+					@type('string') keyValue = $_cast('string', Value$dg_key.internalValue);
+					@type('Dictionary<string, Value>') dg_lookup = $_cast('Dictionary<string, Value>', DictImpl$dg_dict.valueStringLookup);
+					if ($_dictionary_contains(dg_lookup, keyValue)) {
+						output = $_dictionary_get_guaranteed(dg_lookup, keyValue);
+					}
+				} else {
+					@type('int') dg_keyValue = 0;
+					if (DictImpl$dg_dict.keyType == Types.INSTANCE) {
+						@type('ObjectInstance') dg_oi = $_cast('ObjectInstance', Value$dg_key.internalValue);
+						dg_keyValue = ObjectInstance$dg_oi.objectId;
+					} else {
+						dg_keyValue = $_cast('int', Value$dg_key.internalValue);
+					}
+					@type('Dictionary<int, Value>') dg_lookup = $_cast('Dictionary<int, Value>', DictImpl$dg_dict.valueIntLookup);
+					if ($_dictionary_contains(dg_lookup, dg_keyValue)) {
+						output = $_dictionary_get_guaranteed(dg_lookup, dg_keyValue);
+					}
+				}
+			}
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "Dictionary remove method", 1, $_array_length(funcArgs));
+			@type('Value') key = $_array_get(funcArgs, 0);
+			@type('int') keyType = Value$key.type;
+			@type('DictImpl') dr_dictImpl = $_cast('DictImpl', context);
+			if (DictImpl$dr_dictImpl.keyType != keyType) return primitiveMethodError(stringOutParam, "Key not found.");
+			if (keyType == Types.STRING) {
+				@type('Dictionary<string, Value>') keyLookup = DictImpl$dr_dictImpl.keyStringLookup;
+				@type('string') keyValue = $_cast('string', Value$key.internalValue);
+				if (!$_dictionary_contains(keyLookup, keyValue)) return primitiveMethodError(stringOutParam, "Key not found.");
+				$_dictionary_remove(keyLookup, keyValue);
+				$_dictionary_remove(DictImpl$dr_dictImpl.valueStringLookup, keyValue);
+			} else {
+				@type('Dictionary<int, Value>') keyLookup = DictImpl$dr_dictImpl.keyIntLookup;
+				@type('int') keyValue = 0;
+				if (keyType == Types.INSTANCE) {
+					@type('ObjectInstance') dr_objInstance = $_cast('ObjectInstance', Value$key.internalValue);
+					keyValue = ObjectInstance$dr_objInstance.objectId;
+				} else {
+					keyValue = $_cast('int', Value$key.internalValue);
+				}
+				if (!$_dictionary_contains(keyLookup, keyValue)) return primitiveMethodError(stringOutParam, "Key not found.");
+				$_dictionary_remove(keyLookup, keyValue);
+				$_dictionary_remove(DictImpl$dr_dictImpl.valueIntLookup, keyValue);
+			}
+			DictImpl$dr_dictImpl.size -= 1;
+			break;
+		case %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%:
+			if ($_array_length(funcArgs) != 1) return wrongArgCountError(stringOutParam, "Dictionary contains method", 1, $_array_length(funcArgs));
+			@type('Value') dc_arg = $_array_get(funcArgs, 0);
+			@type('int') dc_argType = Value$dc_arg.type;
+			@type('DictImpl') dc_dictImpl = $_cast('DictImpl', context);
+
+			if (DictImpl$dc_dictImpl.keyType != dc_argType) {
+				output = VALUE_FALSE;
+			} else if (dc_argType == Types.STRING) {
+				if ($_dictionary_contains(DictImpl$dc_dictImpl.keyStringLookup, $_cast('string', Value$dc_arg.internalValue))) {
+					output = VALUE_TRUE;
+				} else {
+					output = VALUE_FALSE;
+				}
+			} else {
+				@type('int') intKey = 0;
+				if (dc_argType == Types.INTEGER) {
+					intKey = $_cast('int', Value$dc_arg.internalValue);
+				} else {
+					@type('ObjectInstance') dc_obj_instance = $_cast('ObjectInstance', Value$dc_arg.internalValue);
+					intKey = ObjectInstance$dc_obj_instance.objectId;
+				}
+				if ($_dictionary_contains(DictImpl$dc_dictImpl.keyIntLookup, intKey)) {
+					output = VALUE_TRUE;
+				} else {
+					output = VALUE_FALSE;
+				}
+			}
+			break;
+
+		case %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "Dictionary values method", 0, $_array_length(funcArgs));
+			@type('DictImpl') dv_dict = $_cast('DictImpl', context);
+			if (DictImpl$dv_dict.keyType == Types.STRING) {
+				output = new Value(Types.LIST,
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dv_dict.valueStringLookup)));
+			} else {
+				output = new Value(Types.LIST, 
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dv_dict.valueIntLookup)));
+			}
+			break;
+
+		case %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%:
+			if ($_array_length(funcArgs) != 0) return wrongArgCountError(stringOutParam, "Dictionary keys method", 0, $_array_length(funcArgs));
+			@type('DictImpl') dk_dict = $_cast('DictImpl', context);
+			if (DictImpl$dk_dict.keyType == Types.STRING) {
+				output = new Value(Types.LIST,
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dk_dict.keyStringLookup)));
+			} else {
+				output = new Value(Types.LIST,
+					$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dk_dict.keyIntLookup)));
+			}
+			break;
+
+		default:
+			return primitiveMethodError(stringOutParam, "Unknown system method");
+	}
+	return output;
+}

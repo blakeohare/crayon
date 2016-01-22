@@ -1,0 +1,29 @@
+import 'SceneBase.cry';
+import 'ImageLibrary.cry';
+import 'LoadingScene.cry';
+import 'PlayScene.cry';
+
+function main() {
+	$game_initialize(30);
+	$game_initialize_screen(800, 600);
+	$game_set_title("Fire Dodge Game");
+	active_scene = new LoadingScene();
+	
+	while (active_scene != null) {
+		
+		events = $game_pump_events();
+		for (e : events) {
+			if (e.is_quit) return;
+		}
+		active_scene.process_input(events);
+		active_scene.update();
+		$gfx_fill_screen(0, 0, 0);
+		active_scene.render();
+		
+		active_scene = active_scene.next;
+		
+		$game_clock_tick();
+	}
+}
+
+main();

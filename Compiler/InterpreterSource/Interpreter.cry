@@ -1,0 +1,443 @@
+﻿
+function @omitReturn @type('string') interpret(
+		@type('StackFrame') stack,
+		@type('Array<int>') ops,
+		@type('Array<Array<int>>') args,
+		@type('Array<string>') stringArgs,
+		@type('Array<string>') identifiers,
+		@type('Dictionary<string, int>') inv_identifiers,
+		@type('Array<Value>') literalTable,
+		@type('Array<ClassInfo>') classTable,
+		@type('Array<Dictionary<int, MethodDefinition>>') classMethods,
+		@type('Array<Array<int>>') specialCache,
+		@type('Dictionary<int, Value>') globals) {
+
+	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
+	@type('ProgramData') p = $_get_program_data();
+
+	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
+	@type('int') valueStackSize = ProgramData$p.valueStackSize;
+	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
+
+	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
+
+	if (ProgramData$p.initializationComplete) {
+		performWorkNuggetPreFrame();
+	}
+
+	// declare types...
+	@type('int') type = 0;
+	@type('int') nameId = 0;
+	@type('int') classId = 0;
+	@type('ClassInfo') classInfo = null;
+	@type('int') len = 0;
+	@type('Value') root = null;
+	@type('Array<int>') row = null;
+	@type('int') pc = 0;
+	@type('int') argCount = 0;
+	@type('Array<Value>') funcArgs = null;
+	@type('Array<string>') stringList = null;
+	@type('bool') returnValueUsed = false;
+	@type('Value') output = null;
+	@type('Value') func = null;
+	@type('SystemMethod') sysMethod = null;
+	@type('MethodInstance') methodInstance = null;
+	@type('MethodDefinition') methodDefinition = null;
+	@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
+	@type('FunctionDefinition') funcDef = null;
+	@type('ObjectInstance') objInstance = null;
+	@type('ObjectInstance') objInstance2 = null;
+	@type('object') object1 = null;
+	@type('DictImpl') dictImpl = null;
+	@type('Array<List<Token>>') tokensByPc = null;
+	@type('List<Token>') tokens = null;
+	@type('int') keyType = 0;
+	@type('int') intKey = 0;
+	@type('string') stringKey = null;
+	@type('Dictionary<int, Value>') dictIntKeyLookup = null;
+	@type('Dictionary<int, Value>') dictIntValueLookup = null;
+	@type('Dictionary<string, Value>') dictStringKeyLookup = null;
+	@type('Dictionary<string, Value>') dictStringValueLookup = null;
+	@type('bool') first = false;
+
+	@type('int') int1 = 0;
+	@type('int') int2 = 0;
+	@type('int') int3 = 0;
+	@type('int') int4 = 0;
+	@type('int') int5 = 0;
+	@type('int') i = 0;
+	@type('double') float1 = 3.14;
+	@type('double') float2 = 2.718;
+	@type('double') float3 = 1.618;
+	@type('Value') value = null;
+	@type('Value') value2 = null;
+	@type('Value') value3 = null;
+	@type('string') string1 = null;
+	@type('string') string2 = null;
+	@type('string') string3 = null;
+	@type('List<Value>') list1 = null;
+	@type('List<Value>') list2 = null;
+	@type('List<string>') stringList1 = null;
+	@type('bool') bool1 = false;
+	@type('bool') bool2 = false;
+	@type('List<int>') intList1 = null;
+	@type('NativeObjectWrapper') nativeObject = null;
+	@type('Image') image1 = null;
+	@type('GameEvent') gameEvent = null;
+	@type('SoundInstance') sound1 = null;
+	@type('MusicInstance') music1 = null;
+	@type('HttpRequest') httpRequest1 = null;
+	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
+	@type('Array<double>') floatList1 = $_new_array('double', 2);
+
+	// binary op variables...
+	@type('int') op = 0;
+	@type('Value') leftValue = null;
+	@type('Value') rightValue = null;
+	@type('object') left = null;
+	@type('object') right = null;
+	@type('int') leftType = 0;
+	@type('int') rightType = 0;
+
+	// args...
+	@type('Value') arg1 = null;
+	@type('Value') arg2 = null;
+	@type('Value') arg3 = null;
+	@type('Value') arg4 = null;
+	@type('Value') arg5 = null;
+	@type('Value') arg6 = null;
+	@type('Value') arg7 = null;
+	@type('Value') arg8 = null;
+	@type('Value') arg9 = null;
+	@type('Value') arg10 = null;
+
+	@type('Array<int>') primitiveMethodIdLookup = ProgramData$p.primitiveMethodIdLookup;
+	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
+	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
+	@type('Dictionary<int, int>') integerSwitch = null;
+	@type('Dictionary<string, int>') stringSwitch = null;
+
+	@type('Array<int>') intOutParam = $_new_array('int', 4);
+	@type('Array<string>') stringOutParam = $_new_array('string', 4);
+
+	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
+
+	pc = StackFrame$stack.pc;
+
+	while (true) {
+		row = $_array_get(args, pc);
+		switch ($_array_get(ops, pc)) {
+			case OpCodes.ADD_LITERAL: $_comment('ADD_LITERAL'); import inline 'InterpreterSource/Ops/add_literal.cry'; break;
+			case OpCodes.ADD_NAME: $_comment('ADD_NAME'); import inline 'InterpreterSource/Ops/add_name.cry'; break;
+			case OpCodes.ASSIGN_FUNCTION_ARG: $_comment('ASSIGN_FUNCTION_ARG'); import inline 'InterpreterSource/Ops/assign_function_arg.cry'; break;
+			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP: $_comment('ASSIGN_FUNCTION_ARG_AND_JUMP'); import inline 'InterpreterSource/Ops/assign_function_arg_and_jump.cry'; break;
+			case OpCodes.ASSIGN_INDEX: $_comment('ASSIGN_INDEX'); import inline 'InterpreterSource/Ops/assign_index.cry'; break;
+			case OpCodes.ASSIGN_STEP: $_comment('ASSIGN_STEP'); import inline 'InterpreterSource/Ops/assign_step.cry'; break;
+			case OpCodes.ASSIGN_THIS_STEP: $_comment('ASSIGN_THIS_STEP'); import inline 'InterpreterSource/Ops/assign_this_step.cry'; break;
+			case OpCodes.ASSIGN_VAR: $_comment('ASSIGN_VAR'); import inline 'InterpreterSource/Ops/assign_var.cry'; break;
+			case OpCodes.BINARY_OP: $_comment('BINARY_OP'); import inline 'InterpreterSource/Ops/binary_op.cry'; break;
+			case OpCodes.BOOLEAN_NOT: $_comment('BOOLEAN_NOT'); import inline 'InterpreterSource/Ops/boolean_not.cry'; break;
+			case OpCodes.BUILD_SWITCH_INT: $_comment('BUILD_SWITCH_INT'); import inline 'InterpreterSource/Ops/build_switch_int.cry'; break;
+			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'InterpreterSource/Ops/build_switch_string.cry'; break;
+			case OpCodes.CALL_BASE_CONSTRUCTOR: $_comment('CALL_BASE_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_base_constructor.cry'; break;
+			case OpCodes.CALL_CONSTRUCTOR: $_comment('CALL_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_constructor.cry'; break;
+			case OpCodes.CALL_FRAMEWORK_FUNCTION: $_comment('CALL_FRAMEWORK_FUNCTION'); import inline 'InterpreterSource/Ops/call_framework_function.cry'; break;
+			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
+			case OpCodes.CALL_FUNCTION_ON_GLOBAL: $_comment('CALL_FUNCTION_ON_GLOBAL'); import inline 'InterpreterSource/Ops/call_function_on_global.cry'; break;
+			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'InterpreterSource/Ops/class_definition.cry'; break;
+			case OpCodes.DEF_DICTIONARY: $_comment('DEF_DICT'); import inline 'InterpreterSource/Ops/def_dictionary.cry'; break;
+			case OpCodes.DEF_LIST: $_comment('DEF_LIST'); import inline 'InterpreterSource/Ops/def_list.cry'; break;
+			case OpCodes.DEF_ORIGINAL_CODE: $_comment('DEF_ORIGINAL_CODE'); import inline 'InterpreterSource/Ops/def_original_code.cry'; break;
+			case OpCodes.DEREF_DOT: $_comment('DEREF_DOT'); import inline 'InterpreterSource/Ops/deref_dot.cry'; break;
+			case OpCodes.DEREF_DOT_ON_BASE: $_comment('DEREF_DOT_ON_BASE'); import inline 'InterpreterSource/Ops/deref_dot_on_base.cry'; break;
+			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'InterpreterSource/Ops/duplicate_stack_top.cry'; break;
+			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'InterpreterSource/Ops/finalize_initialization.cry'; break;
+			case OpCodes.FUNCTION_DEFINITION: $_comment('FUNCTION_DEFINITION'); import inline 'InterpreterSource/Ops/function_definition.cry'; break;
+			case OpCodes.INDEX: $_comment('INDEX'); import inline 'InterpreterSource/Ops/index.cry'; break;
+			case OpCodes.INITIALIZE_GAMEPAD: $_comment('INITIALIZE_GAMEPAD'); import inline 'InterpreterSource/Ops/initialize_gamepad.cry'; break;
+			case OpCodes.ITERATION_STEP: $_comment('ITERATION_STEP'); import inline 'InterpreterSource/Ops/iteration_step.cry'; break;
+			case OpCodes.JUMP: $_comment('JUMP'); import inline 'InterpreterSource/Ops/jump.cry'; break;
+			case OpCodes.JUMP_IF_FALSE: $_comment('JUMP_IF_FALSE'); import inline 'InterpreterSource/Ops/jump_if_false.cry'; break;
+			case OpCodes.JUMP_IF_FALSE_NO_POP: $_comment('JUMP_IF_FALSE_NON_POP'); import inline 'InterpreterSource/Ops/jump_if_false_no_pop.cry'; break;
+			case OpCodes.JUMP_IF_TRUE: $_comment('JUMP_IF_TRUE'); import inline 'InterpreterSource/Ops/jump_if_true.cry'; break;
+			case OpCodes.JUMP_IF_TRUE_NO_POP: $_comment('JUMP_IF_TRUE_NO_POP'); import inline 'InterpreterSource/Ops/jump_if_true_no_pop.cry'; break;
+			case OpCodes.LIST_SLICE: $_comment('LIST_SLICE'); import inline 'InterpreterSource/Ops/list_slice.cry'; break;
+			case OpCodes.LITERAL: $_comment('LITERAL'); import inline 'InterpreterSource/Ops/literal.cry'; break;
+			case OpCodes.LITERAL_STREAM: $_comment('LITERAL_STREAM'); import inline 'InterpreterSource/Ops/literal_stream.cry'; break;
+			case OpCodes.NEGATIVE_SIGN: $_comment('NEGATIVE_SIGN'); import inline 'InterpreterSource/Ops/negative_sign.cry'; break;
+			case OpCodes.POP: $_comment('POP'); import inline 'InterpreterSource/Ops/pop.cry'; break;
+			case OpCodes.POP_IF_NULL_OR_JUMP: $_comment('POP_IF_NULL_OR_JUMP'); import inline 'InterpreterSource/Ops/pop_if_null_or_jump.cry'; break;
+			case OpCodes.RETURN: $_comment('RETURN'); import inline 'InterpreterSource/Ops/return.cry'; break;
+			case OpCodes.RETURN_NULL: $_comment('RETURN_NULL'); import inline 'InterpreterSource/Ops/return_null.cry'; break;
+			case OpCodes.SPRITE_SHEET_BUILDER: $_comment('SPRITE_SHEET_BUILDER'); import inline 'InterpreterSource/Ops/sprite_sheet_builder.cry'; break;
+			case OpCodes.STACK_INSERTION_FOR_INCREMENT: $_comment('STACK_INSERTION_FOR_INCREMENT'); import inline 'InterpreterSource/Ops/stack_insertion_for_increment.cry'; break;
+			case OpCodes.STACK_SWAP_POP: $_comment('STACK_SWAP_POP'); import inline 'InterpreterSource/Ops/stack_swap_pop.cry'; break;
+			case OpCodes.SWITCH_INT: $_comment('SWITCH_INT'); import inline 'InterpreterSource/Ops/switch_int.cry'; break;
+			case OpCodes.SWITCH_STRING: $_comment('SWITCH_STRING'); import inline 'InterpreterSource/Ops/switch_string.cry'; break;
+			case OpCodes.THIS: $_comment('THIS'); import inline 'InterpreterSource/Ops/this.cry'; break;
+			case OpCodes.TOKEN_DATA: $_comment('TOKEN_DATA'); import inline 'InterpreterSource/Ops/token_data.cry'; break;
+			case OpCodes.USER_CODE_START: $_comment('USER_CODE_START'); import inline 'InterpreterSource/Ops/user_code_start.cry'; break;
+			case OpCodes.VARIABLE: $_comment('VARIABLE'); import inline 'InterpreterSource/Ops/variable.cry'; break;
+			case OpCodes.VARIABLE_GLOBAL: $_comment('VARIABLE_GLOBAL'); import inline 'InterpreterSource/Ops/variable_global.cry'; break;
+			case OpCodes.VERIFY_TYPE_IS_ITERABLE: $_comment('VERIFY_TYPE_IS_ITERABLE'); import inline 'InterpreterSource/Ops/verify_type_is_iterable.cry'; break;
+			default:
+				$_comment('THIS SHOULD NEVER HAPPEN');
+				return killExecution(stack, pc, "Bad op code: " + $_string_cast_weak($_array_get(ops, pc)));
+		}
+		// TODO: once row is moved inline with ops, put this in the ops[pc] expression, i.e. ops[++pc].
+		if ($_has_increment()) {
+			$_prefix_increment(pc);
+		} else {
+			pc += 1;
+		}
+	}
+}
+
+function @type('int') declareSpriteSheetImage(
+		@type('SpriteSheetData') spriteSheetData,
+		@type('int') groupId,
+		@type('string') imagePath,
+		@type('int') tileId, // top left corner
+		@type('int') width,
+		@type('int') height,
+		@type('int') x,
+		@type('int') y,
+		@type('bool') solitary) {
+
+	@type('SpriteSheetItemDescriptor') ssid = new SpriteSheetItemDescriptor(
+		imagePath,
+		groupId,
+		0, // this may be unncessary
+		tileId,
+		solitary,
+		x,
+		y,
+		width,
+		height);
+
+	$_dictionary_set(SpriteSheetData$spriteSheetData.files, imagePath, ssid);
+
+	@type('Dictionary<int, bool>') tileIds = $_dictionary_get_guaranteed(SpriteSheetData$spriteSheetData.tileIdsByGroupId, groupId);
+	@type('int') colSpan = $_int($_unsafe_integer_division(x % 256 + width - 1, 256)) + 1;
+	@type('int') rowSpan = $_int($_unsafe_integer_division(y % 256 + height - 1, 256)) + 1;
+	if (solitary) {
+		colSpan = 1;
+		rowSpan = 1;
+	}
+	for (@type('int') row = 0; row < rowSpan; row += 1) {
+		for (@type('int') col = 0; col < colSpan; col += 1) {
+			$_dictionary_set(tileIds, tileId + row * 4 + col, true);
+		}
+	}
+	return 0;
+}
+
+// returns a status code:
+// 0 - list is empty
+// 1 - list has contents
+// 2 - start index is out of bounds
+// 3 - start index occurs after begin index (relative to direction)
+function @type('int') canonicalizeListSliceArgs(
+	@type('Array<int>') outParams, 
+	@type('Value') beginValue,
+	@type('Value') endValue,
+	@type('int') beginIndex,
+	@type('int') endIndex,
+	@type('int') stepAmount,
+	@type('int') length,
+	@type('bool') isForward) {
+
+	if (beginValue == null) {
+		if (isForward) beginIndex = 0;
+		else beginIndex = length - 1;
+	}
+	if (endValue == null) {
+		if (isForward) endIndex = length;
+		else endIndex = -1 - length; // if it were -1, it'll get canonicalized into length - 1.
+	}
+
+	if (beginIndex < 0) beginIndex += length;
+	if (endIndex < 0) endIndex += length;
+
+	if (isForward) {
+		if (beginIndex >= length) return 0;
+		if (beginIndex < 0) return 2;
+		if (endIndex < beginIndex) return 3;
+		if (beginIndex == endIndex) return 0;
+		if (endIndex > length) endIndex = length;
+	} else {
+		if (beginIndex < 0) return 0;
+		if (beginIndex >= length) return 2;
+		if (endIndex > beginIndex) return 3;
+		if (beginIndex == endIndex) return 0;
+		if (endIndex < -1) endIndex = -1;
+	}
+	$_array_set(outParams, 0, beginIndex);
+	$_array_set(outParams, 1, endIndex);
+	return 1;
+}
+
+function @type('string') killExecution(@type('StackFrame') stack, @type('int') pc, @type('string') message) {
+	return killExecutionWithTokenOverride(stack, pc, null, message);
+}
+
+function @type('string') killExecutionWithTokenOverride(
+		@type('StackFrame') stack,
+		@type('int') pc,
+		@type('Token') firstTokenOverride, 
+		@type('string') message) {
+	@type('string') fullMessage = '';
+	@type('ProgramData') programData = $_get_program_data(); 
+	@type('Array<List<Token>>') allTokens = ProgramData$programData.tokenData;
+	@type('List<Token>') tokenList = null;
+	@type('Token') token = null;
+	@type('Array<string>') allFiles = generateSourceFiles();
+	@type('bool') first = true;
+	@type('int') line = 0;
+	@type('int') col = 0;
+	@type('int') fileId = 0;
+
+	StackFrame$stack.pc = pc;
+
+	while (stack != null) {
+		pc = StackFrame$stack.pc;
+		stack = StackFrame$stack.previous;
+
+		token = null;
+
+		tokenList = $_array_get(allTokens, pc);
+		if (tokenList != null) {
+			token = $_list_get(tokenList, 0);
+		}
+		if (first && firstTokenOverride != null) {
+			token = firstTokenOverride;
+		}
+
+		if (token != null) {
+			line = Token$token.lineIndex;
+			col = Token$token.colIndex;
+			fileId = Token$token.fileId;
+			if (fileId < $_array_length(allFiles)) {
+				@type('string') fileData = $_array_get(allFiles, fileId);
+				@type('Array<string>') lines = $_string_split(fileData, '\n');
+				@type('string') filename = $_array_get(lines, 0);
+				@type('string') linevalue = $_array_get(lines, line + 1);
+				fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
+				if (first) {
+					@type('string') linedisplay = '';
+					@type('string') arrowdisplay = '';
+					@type('bool') lefttrim = true;
+					for (@type('int') i = 0; i < $_string_length(linevalue); i += 1) {
+						@type('char') c = $_string_char_at(linevalue, i);
+						if (lefttrim) {
+							if (c == $_string_as_char(' ') || c == $_string_as_char('\t') || c == $_string_as_char('\r')) {
+								col -= 1;
+							} else {
+								lefttrim = false;
+								i -= 1;
+							}
+						} else {
+							if (col == 0) {
+								arrowdisplay += '^';
+								linedisplay += c;
+							} else if (c == $_string_as_char('\t')) {
+								arrowdisplay += '    ';
+								linedisplay += '    ';
+							} else {
+								arrowdisplay += ' ';
+								linedisplay += c;
+							}
+							col -= 1;
+						}
+					}
+					fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+				}
+			} else {
+				token = null; // execution killed before file data was loaded
+			}
+		}
+
+		if (token == null) {
+			fullMessage = "[No Stack Info]\n" + fullMessage;
+			if (first) {
+				fullMessage += "[No Stack Info]\n  " + message + "\n";
+			}
+		}
+
+		first = false;
+		token = null;
+	}
+	return "Error:\n" + fullMessage;
+}
+
+// This saves the state of the interpreter so that it's ready to have
+// interpret() called again. Even though this is only called once directly
+// in the translated crayon interpreter code, certain platforms will need
+// to call this manually.
+function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
+	@type('ProgramData') p = $_get_program_data();
+	ProgramData$p.stackTop = stack;
+	ProgramData$p.valueStackSize = valueStackSize;
+	StackFrame$stack.pc += 1;
+}
+
+// Work nuggets are only performed if the ProgramData.initializationComplete field is set to true
+
+// TODO: move the image sheet work nuggest stuff into the generic thread safe message pump system.
+// change $_async_message_queue_pump() to take in a boolean indicating whether it should fetch pre or post frame work nuggets.
+
+function performWorkNuggetPreFrame() {
+	imageSheetPerformWorkNuggetPreFrame();
+	gamepadPollBeginFrame();
+}
+
+function performWorkNuggetPostFrame() {
+	
+	imageSheetPerformWorkNuggetPostFrame();
+
+	/*
+		This array contains multiple messages in one flat array.
+		The first item in the array is an integer indicating the number of total messages.
+		Each message type has a set number of values. The first value is always the AsyncMessageType enum value.
+	*/
+	@type('Array<object>') messages = $_async_message_queue_pump();
+
+	if (messages != null) {
+		@type('int') index = 1;
+		@type('int') messageCount = $_cast('int', $_array_get(messages, 0));
+		for (@type('int') i = 0; i < messageCount; i += 1) {
+			@type('int') messageType = $_cast('int', $_array_get(messages, index));
+			switch (messageType) {
+				case AsyncMessageType.HTTP_RESPONSE:
+					handleHttpResponse(
+						$_cast('HttpRequest', $_array_get(messages, index + 1)), // request object
+						$_cast('int', $_array_get(messages, index + 2)), // status code
+						$_cast('string', $_array_get(messages, index + 3)), // status
+						$_cast('string', $_array_get(messages, index + 4)), // content
+						$_cast('Dictionary<string, Array<string>>', $_array_get(messages, index + 5))); // headers
+					index += 6;
+					break;
+				default:
+					$_assert("bad message type");
+					break;
+			}
+		}
+	}
+
+	soundManagerUpdate();
+}
+
+
+function valueStackIncreaseCapacity() {
+	@type('ProgramData') p = $_get_program_data();
+	@type('int') oldCapacity = ProgramData$p.valueStackCapacity;
+	@type('Array<Value>') stack = ProgramData$p.valueStack;
+	@type('int') newCapacity = oldCapacity * 2;
+	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
+	// TODO: fast array copy, although it's not too important since this doen't happen very often.
+	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
+		$_array_set(newStack, i, $_array_get(stack, i));
+	}
+	ProgramData$p.valueStackCapacity = newCapacity;
+	ProgramData$p.valueStack = newStack;
+}

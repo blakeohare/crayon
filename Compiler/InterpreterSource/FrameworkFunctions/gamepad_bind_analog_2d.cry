@@ -1,0 +1,27 @@
+﻿
+// $gamepad_bind_analog_2d(device, descriptor, alias, isX, isPositive);
+import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+
+// status code:
+// 0 - not bound
+// 1 - bound
+// 2 - device invalid
+// 3 - descriptor invalid
+// 4 - alias isn't suitable type
+// 5 - direction invalid
+// 6 - sign invalid
+int1 = gamepadBind(arg1, arg2, arg3, 2, arg5, arg4, false);
+if (int1 < 2) {
+	if (int1 == 0) {
+		output = VALUE_FALSE;
+	} else {
+		output = VALUE_TRUE;
+	}
+} else {
+	if (int1 == 2) return killExecution(stack, pc, "$gamepad_bind_analog_2d requires a gamepad device reference as its first argument.");
+	if (int1 == 3) return killExecution(stack, pc, "Hardware button descriptor was invalid. Please use the value from the hardware event's .descriptor field.");
+	if (int1 == 4) return killExecution(stack, pc, "$gamepad_bind_analog_2d requires an integer or string as its 3rd argument.");
+	if (int1 == 5) return killExecution(stack, pc, "$gamepad_bind_analog_2d requires a boolean as its 5th argument.");
+	if (int1 == 6) return killExecution(stack, pc, "$gamepad_bind_analog_2d requires a boolean as its 4th argument.");
+	return killExecution(stack, pc, "$gamepad_bind_analog_2d encountered an unknown error.");
+}

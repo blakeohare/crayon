@@ -1,0 +1,299 @@
+﻿package %%%PACKAGE%%%;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+public final class RenderEngine {
+
+    private static final int BLIT_IMAGE = 1;
+    private static final int BLIT_IMAGE_PARTIAL = 2;
+    private static final int BLIT_IMAGE_ALPHA = 3;
+    private static final int DRAW_ELLIPSE = 4;
+    private static final int DRAW_LINE = 5;
+    private static final int DRAW_RECTANGLE = 6;
+    private static final int DRAW_TRIANGLE = 7;
+    private static final int FILL_SCREEN = 8;
+
+    private static int[] renderArgs = new int[1000];
+    private static int renderArgsVirtualLength = 0;
+    private static int renderArgsRealLength = renderArgs.length;
+
+    private static Image[] images = new Image[100];
+    private static int imagesVirtualLength = 0;
+    private static int imagesRealLength = images.length;
+
+    private static AlphaComposite[] alphaComposite = new AlphaComposite[256];
+
+    private RenderEngine() {
+    }
+
+    public static void reset() {
+        fillScreen(0, 0, 0);
+    }
+
+    public static void fillScreen(int red, int green, int blue) {
+        renderArgsVirtualLength = 0;
+        imagesVirtualLength = 0;
+        renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+    }
+
+    public static void blitImage(Object imageObject, int x, int y) {
+        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void blitImageAlpha(Object imageObject, int x, int y, int alpha) {
+        if (alpha < 1) return;
+        if (alpha > 254) {
+            blitImage(imageObject, x, y);
+            return;
+        }
+        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_ALPHA;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void blitImagePartial(Object imageObject, int targetX, int targetY, int targetWidth, int targetHeight, int sourceX, int sourceY, int sourceWidth, int sourceHeight) {
+        if (renderArgsVirtualLength + 7 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_PARTIAL;
+        renderArgs[renderArgsVirtualLength++] = targetX;
+        renderArgs[renderArgsVirtualLength++] = targetY;
+        renderArgs[renderArgsVirtualLength++] = sourceX;
+        renderArgs[renderArgsVirtualLength++] = sourceY;
+        renderArgs[renderArgsVirtualLength++] = sourceWidth;
+        renderArgs[renderArgsVirtualLength++] = sourceHeight;
+
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
+
+    public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_ELLIPSE;
+        renderArgs[renderArgsVirtualLength++] = left;
+        renderArgs[renderArgsVirtualLength++] = top;
+        renderArgs[renderArgsVirtualLength++] = width;
+        renderArgs[renderArgsVirtualLength++] = height;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void drawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 10 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_LINE;
+        renderArgs[renderArgsVirtualLength++] = startX;
+        renderArgs[renderArgsVirtualLength++] = startY;
+        renderArgs[renderArgsVirtualLength++] = endX;
+        renderArgs[renderArgsVirtualLength++] = endY;
+        renderArgs[renderArgsVirtualLength++] = lineWidth;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void drawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_RECTANGLE;
+        renderArgs[renderArgsVirtualLength++] = x;
+        renderArgs[renderArgsVirtualLength++] = y;
+        renderArgs[renderArgsVirtualLength++] = width;
+        renderArgs[renderArgsVirtualLength++] = height;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void drawTriangle(int ax, int ay, int bx, int by, int cx, int cy, int red, int green, int blue, int alpha) {
+        if (renderArgsVirtualLength + 11 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        renderArgs[renderArgsVirtualLength++] = DRAW_TRIANGLE;
+        renderArgs[renderArgsVirtualLength++] = ax;
+        renderArgs[renderArgsVirtualLength++] = ay;
+        renderArgs[renderArgsVirtualLength++] = bx;
+        renderArgs[renderArgsVirtualLength++] = by;
+        renderArgs[renderArgsVirtualLength++] = cx;
+        renderArgs[renderArgsVirtualLength++] = cy;
+        renderArgs[renderArgsVirtualLength++] = red;
+        renderArgs[renderArgsVirtualLength++] = green;
+        renderArgs[renderArgsVirtualLength++] = blue;
+        renderArgs[renderArgsVirtualLength++] = alpha;
+    }
+
+    public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
+
+        if (alphaComposite[0] == null) {
+            for (int i = 0; i < 256; ++i) {
+                alphaComposite[i] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, i / 255f);
+            }
+        }
+
+        int index = 0;
+        int imagesIndex = 0;
+        int x, y, sx, sy, width, height, red, green, blue, alpha;
+        int ax, ay, bx, by, cx, cy;
+        int[] xs = new int[3];
+        int[] ys = new int[3];
+        Image image;
+        while (index < renderArgsVirtualLength) {
+            switch (renderArgs[index++]) {
+                case FILL_SCREEN:
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    
+                    g.setColor(new Color(red, green, blue));
+                    g.fillRect(-1, -1, canvasWidth + 2, canvasHeight + 2);
+                    break;
+
+                case BLIT_IMAGE:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
+                    break;
+
+                case BLIT_IMAGE_ALPHA:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    g.setComposite(alphaComposite[alpha]);
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
+                    g.setComposite(alphaComposite[255]);
+                    break;
+
+                case BLIT_IMAGE_PARTIAL:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    sx = renderArgs[index++];
+                    sy = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    g.drawImage((java.awt.Image) image.rawResource, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
+                    break;
+
+                case DRAW_ELLIPSE:
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillOval(x, y, width, height);
+                    break;
+
+                case DRAW_LINE:
+                    sx = renderArgs[index++];
+                    sy = renderArgs[index++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.setStroke(new java.awt.BasicStroke(width));
+                    g.drawLine(x, y, sx, sy);
+                    break;
+
+                case DRAW_RECTANGLE:
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    width = renderArgs[index++];
+                    height = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+
+                    // TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillRect(x, y, width, height);
+                    break;
+
+                case DRAW_TRIANGLE:
+                    xs[0] = renderArgs[index++];
+                    ys[0] = renderArgs[index++];
+                    xs[1] = renderArgs[index++];
+                    ys[1] = renderArgs[index++];
+                    xs[2] = renderArgs[index++];
+                    ys[2] = renderArgs[index++];
+                    red = renderArgs[index++];
+                    green = renderArgs[index++];
+                    blue = renderArgs[index++];
+                    alpha = renderArgs[index++];
+
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillPolygon(xs, ys, 3);
+                    break;
+            }
+        }
+    }
+
+    private static void expandArgsCapacity() {
+        int[] newRenderArgs = new int[renderArgsRealLength * 2];
+        System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
+        renderArgs = newRenderArgs;
+        renderArgsRealLength = renderArgs.length;
+    }
+
+    private static void expandImagesCapacity() {
+        Image[] newImages = new Image[imagesRealLength * 2];
+        System.arraycopy(images , 0, newImages, 0, imagesVirtualLength);
+        images = newImages;
+        imagesRealLength = images.length;
+    }
+}

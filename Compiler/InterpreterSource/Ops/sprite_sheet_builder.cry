@@ -1,0 +1,23 @@
+﻿
+int1 = $_array_get(row, 0);
+
+if (int1 == 0) { // Sprite sheet declaration
+	int1 = $_array_get(row, 1); // sprite sheet ID#
+	string1 = $_array_get(stringArgs, pc); // sprite sheet name
+
+	$_dictionary_set(SpriteSheetData$spriteSheetData.filesByGroupId, int1, $_new_list('string'));
+	$_dictionary_set(SpriteSheetData$spriteSheetData.tileIdsByGroupId, int1, $_new_dictionary('int', 'bool'));
+	$_dictionary_set(SpriteSheetData$spriteSheetData.groupIdsByName, string1, int1);
+
+} else {
+	declareSpriteSheetImage(
+		spriteSheetData,
+		$_array_get(row, 1), // group ID
+		$_array_get(stringArgs, pc), // image file path
+		$_array_get(row, 2), // tile ID of top left corner
+		$_array_get(row, 3), // image width
+		$_array_get(row, 4), // image height
+		$_array_get(row, 5), // x coordinate within this tile
+		$_array_get(row, 6), // y coordinate within this tile
+		$_array_get(row, 7) == 1); // solitary image (this tile IS the image, do not do spill calculations)
+}

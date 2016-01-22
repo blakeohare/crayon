@@ -1,0 +1,10 @@
+﻿
+@type('List<Dictionary<string, int>>') allStringSwitchLookups = ProgramData$p.stringSwitchLookupsBuilder;
+// int1 is id
+int1 = $_array_get(row, 0);
+while ($_list_length(allStringSwitchLookups) <= int1) {
+	$_list_push(allStringSwitchLookups, $_new_dictionary('string', 'int'));
+}
+@type('Dictionary<string, int>') stringSwitchLookup = $_list_get(allStringSwitchLookups, int1);
+string1 = $_array_get(stringArgs, pc);
+$_dictionary_set(stringSwitchLookup, string1, $_array_get(row, 1));

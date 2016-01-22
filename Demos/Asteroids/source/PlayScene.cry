@@ -1,0 +1,107 @@
+class PlayScene : AbstractScene {
+	constructor(demo_mode) : base() {
+		this.demo = demo_mode;
+		if (this.demo) {
+			this.player = null;
+		} else {
+			this.player = new Ship(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+		}
+		this.asteroids = [];
+		this.bullets = [];
+		while (this.asteroids.length < 4) {
+			x = $floor($random() * GAME_WIDTH);
+			y = $floor($random() * GAME_HEIGHT);
+			asteroid = new Asteroid(x, y, AsteroidSize.BIG);
+			if (this.player == null || !asteroid.collides_with_player(this.player)) {
+				this.asteroids.add(asteroid);
+			}
+		}
+	}
+	
+	function update(events, pressed_keys) {
+		
+		if (this.player != null) {
+			fire_bullet = false;
+			for (event : events) {
+				if (event.is_key && event.down) {
+					if (event.key == 'space' || event.key == 'enter') {
+						fire_bullet = true;
+					}
+				}
+			}
+			
+			if (fire_bullet) {
+				bullet = new Bullet(
+					this.player.x,
+					this.player.y,
+					this.player.angle);
+				this.bullets.add(bullet);
+			}
+			rotate_direction = pressed_keys['left'] ? -1 : pressed_keys['right'] ? 1 : 0;
+			this.player.update(pressed_keys['up'], pressed_keys['down'], rotate_direction);
+		}
+
+		for (bullet : this.bullets) {
+			bullet.update();
+		}
+		
+		for (asteroid : this.asteroids) {
+			asteroid.update();
+			
+			for (bullet : this.bullets) {
+				dx = bullet.x - asteroid.x;
+				dy = bullet.y - asteroid.y;
+				dist = (dx ** 2 + dy ** 2) ** .5;
+				if (dist < asteroid.radius) {
+					asteroid.dead = true;
+					bullet.dead = true;
+				}
+			}
+			
+			if (this.player != null) {
+				if (!asteroid.dead) {
+					if (asteroid.collides_with_player(this.player)) {
+						this.player = null;
+						this.next = new GameOverScene(this);
+					}
+				}
+			}
+		}
+		
+		new_asteroid_list = [];
+		for (asteroid : this.asteroids) {
+			if (asteroid.dead) {
+				for (spawn : asteroid.split()) {
+					new_asteroid_list.add(spawn);
+				}
+			} else {
+				new_asteroid_list.add(asteroid);
+			}
+		}
+		
+		this.asteroids = new_asteroid_list;
+		
+		new_bullet_list = [];
+		for (bullet : this.bullets) {
+			if (!bullet.dead) {
+				new_bullet_list.add(bullet);
+			}
+		}
+		this.bullets = new_bullet_list;
+	}
+	
+	function render(rc) {
+		$gfx_fill_screen(0, 0, 0);
+		for (asteroid : this.asteroids) {
+			asteroid.render(rc);
+		}
+		
+		for (bullet : this.bullets) {
+			bullet.render();
+		}
+		
+		if (this.player != null) {
+			this.player.render(rc);
+		}
+	}
+}

@@ -1,0 +1,132 @@
+class PlayScene : SceneBase {
+	constructor(level) : base() {
+		levelname = 'level-' + level;
+		this.grid = level_store.get_fresh_grid(levelname);
+		start = level_store.get_starting_point(levelname);
+		this.finish = level_store.get_finish(levelname);
+		this.player = new Sprite('player', start[0] * 40 + 20, start[1] * 40 + 20);
+		this.level = level;
+		this.counter = 0;
+		this.sprites = [this.player];
+		this.fires = null;
+		this.wincounter = -1;
+		this.arrowspressed = [false, false, false, false];
+	}
+	
+	function process_input(events) {
+		if (this.wincounter < 0 && this.player.onfire < 0) {
+			keys_involved = false;
+			
+			for (i = 0; i < events.length; ++i) {
+				ev = events[i];
+				t = ev[0];
+				if (t == 'mouseleftdown') {
+					x = events[i][1];
+					y = events[i][2];
+					this.move_player_towards(x, y - 40);
+				} else if (t == 'key') {
+					down = ev[1];
+					key = ev[2];
+					if (key == 'left' || key == 'right' || key == 'up' || key == 'down') {
+						if (key == 'left') this.arrowspressed[0] = down;
+						else if (key == 'up') this.arrowspressed[1] = down;
+						else if (key == 'right') this.arrowspressed[2] = down;
+						else this.arrowspressed[3] = down;
+						keys_involved = true;
+					}
+				}
+			}
+						
+			dx = this.arrowspressed[0] ? -1 : (this.arrowspressed[2] ? 1 : 0);
+			dy = this.arrowspressed[1] ? -1 : (this.arrowspressed[3] ? 1 : 0);
+			
+			
+			if (dx != 0 || dy != 0 || keys_involved) {
+				this.player.targetX = this.player.x + dx * 10;
+				this.player.targetY = this.player.y + dy * 10;
+			}
+		}
+	}
+	
+	function move_player_towards(x, y) {
+	
+		if (this.player.onfire < 0) {
+			this.player.targetX = x;
+			this.player.targetY = y;
+		}
+		
+	}
+	
+	function update() {
+		this.counter++;
+		this.wincounter--;
+		
+		if (this.player.onfire == 0) {
+			this.next = new TitleScene();
+		} else if (this.wincounter < 0) {
+			fx = this.finish[0] * 40 + 20;
+			fy = this.finish[1] * 40 + 20;
+			dx = this.player.x - fx;
+			dy = this.player.y - fy;
+			if (dx * dx + dy * dy < 20 * 20) {
+				this.wincounter = 60;
+			}
+		} else if (this.wincounter == 0) {
+			if (level_store.level_exists('level-' + (this.level + 1))) {
+				this.next = new PlayScene(this.level + 1);
+			} else {
+				this.next = new WinScene();
+			}
+		} else { // if (this.wincounter > 0)
+			return null; // don't do any more updates if the level is won
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			sprite = this.sprites[i];
+			sprite.update(this.grid);
+		}
+		
+		if (this.fires == null) {
+			this.fires = [];
+			for (y = 0; y < 14; ++y) {
+				for (x = 0; x < 20; ++x) {
+					tile = this.grid[x][y];
+					if (tile.type == 'fire') {
+						this.fires.add(tile);
+					}
+				}
+			}
+		}
+		
+		for (i = 0; i < this.fires.length; ++i) {
+			fire = this.fires[i];
+			fire.age++;
+			if (fire.age == 30) {
+				fire.spread(this.grid, this.fires);
+			}
+		}
+	}
+	
+	function render(imgLib) {
+		rc = this.counter / 3;
+		grid = this.grid;
+		for (y = 0; y < 14; ++y) {
+			for (x = 0; x < 20; ++x) {
+				
+				grid[x][y].render(imgLib, rc, x, y);
+			}
+		}
+		
+		for (i = 0; i < this.sprites.length; ++i) {
+			sprite = this.sprites[i];
+			sprite.render(imgLib, this.counter);
+		}
+		
+		if (this.wincounter >= 0) {
+			height = $floor((60 - this.wincounter) * 600 / 60);
+			if (height > 0) {
+				$draw_rectangle(0, 0, 800, height, 0, 0, 0, 255);
+			}
+		}
+	}
+}

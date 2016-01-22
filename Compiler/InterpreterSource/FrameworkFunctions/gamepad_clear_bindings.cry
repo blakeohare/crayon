@@ -1,0 +1,7 @@
+﻿// $gamepad_clear_bindings(gamepad)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+bool1 = gamepadClearBindings(arg1);
+if (!bool1) {
+	return killExecution(stack, pc, "$gamepad_clear_bindings() requires a gamepad reference as its argument.");
+}

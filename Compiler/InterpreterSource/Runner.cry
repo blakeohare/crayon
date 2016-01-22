@@ -1,0 +1,307 @@
+﻿
+function main() {
+
+	initialize_constant_values();
+
+	@type('Code') byteCode = loadByteCode();
+	@type('Array<int>') ops = Code$byteCode.ops;
+	@type('int') opsLength = $_array_length(ops);
+	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
+	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
+
+	@type('Dictionary<int, int>') nameIdToClassId = $_new_dictionary('int', 'int');
+	@type('Dictionary<int, MethodDefinition>') methodLookup = null;
+	@type('List<ClassInfo>') classTable = $_new_list('ClassInfo');
+	@type('List<Dictionary<int, MethodDefinition>>') classMethodsBuilder = $_new_list('Dictionary<int, MethodDefinition>');
+
+	// Because these data structures are keyed off the class ID and 0 is invalid, a null entry is added first
+	$_list_push(classTable, null);
+	$_list_push(classMethodsBuilder, null);
+
+	@type('int') nameId = 0;
+	@type('int') id = 0;
+	@type('int') classId = 0;
+	@type('int') baseClassId = 0;
+	@type('int') baseClassNameId = 0;
+	@type('int') lastClassId = 0;
+	@type('ClassInfo') classInfo = null;
+
+	for (@type('int') i = 0; i < opsLength; i += 1) {
+		@type('int') op = $_array_get(ops, i);
+		if (op == OpCodes.CLASS_DEFINITION) {
+			@type('Array<int>') args = $_array_get(opArgs, i);
+			id = $_list_length(classTable);
+			lastClassId = id;
+			nameId = $_array_get(args, 0);
+			$_dictionary_set(nameIdToClassId, nameId, id);
+			baseClassNameId = $_array_get(args, 1);
+			@type('int') constructorArgsCount = $_array_get(args, 2); // -1 if no constructor present
+			@type('int') methodCount = $_array_get(args, 3);
+
+			baseClassId = 0;
+			if (baseClassNameId > 0) {
+				// base class name not found is a compile time error.
+				baseClassId = $_dictionary_get_guaranteed(nameIdToClassId, baseClassNameId);
+			}
+			
+			if (baseClassId == 0) {
+				methodLookup = $_new_dictionary('int', 'MethodDefinition');
+			} else {
+				methodLookup = copyMethodLookupDictionary($_list_get(classMethodsBuilder, baseClassId));
+			}
+
+			for (@type('int') j = 0; j < methodCount; j += 1) {
+				@type('int') methodNameId = $_array_get(args, (j * 3) + 4);
+				@type('int') pcOffset = $_array_get(args, (j * 3) + 5);
+				@type('int') maxArgs = $_array_get(args, (j * 3) + 6);
+
+				@type('MethodDefinition') methodData = new MethodDefinition(
+					methodNameId,
+					maxArgs,
+					i + pcOffset);
+
+				$_dictionary_set(methodLookup, methodNameId, methodData);
+			}
+
+			classInfo = new ClassInfo(
+				nameId,
+				0, // PC of constructor (0 if absent, overriden to correct value below)
+				0, // maximum arg count of constructor
+				baseClassId,
+				false, // do base constructors need to be invoked? (overridden below if yes)
+				false); // Is class usable? This gets changed to 1 when the class definition is encountered.
+
+			if (constructorArgsCount >= 0) {
+				ClassInfo$classInfo.constructorPc = i + 2;
+				ClassInfo$classInfo.constructorMaxArgCount = constructorArgsCount;
+			}
+			
+			if (baseClassId != 0) {
+				@type('ClassInfo') baseClassInfo = $_list_get(classTable, baseClassId);
+				if (ClassInfo$baseClassInfo.constructorPc > 0 || ClassInfo$baseClassInfo.baseConstructorRequired) {
+					ClassInfo$classInfo.baseConstructorRequired = true;
+				}
+			}
+
+			$_list_push(classTable, classInfo);
+			$_list_push(classMethodsBuilder, methodLookup);
+		}
+	}
+
+	@type('Array<Array<int>>') specialCache = $_new_array('Array<int>', opsLength);
+	@type('Array<int>') specialCacheEntry = null;
+	for (i = 0; i < opsLength; i += 1) {
+		@type('int') op = $_array_get(ops, i);
+		@type('Array<int>') args = $_array_get(opArgs, i);
+		if (op == OpCodes.CLASS_DEFINITION) {
+			nameId = $_array_get(args, 0);
+			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
+			lastClassId = classId;
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, classId);
+		} else if (op == OpCodes.CALL_CONSTRUCTOR) {
+			nameId = $_array_get(args, 1);
+			classId = $_dictionary_get_guaranteed(nameIdToClassId, nameId);
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, classId);
+		} else if (op == OpCodes.CALL_BASE_CONSTRUCTOR) {
+			classInfo = $_list_get(classTable, lastClassId);
+			baseClassId = ClassInfo$classInfo.baseClassId;
+			specialCacheEntry = $_new_array('int', 1);
+			$_array_set(specialCacheEntry, 0, baseClassId);
+		} else {
+			specialCacheEntry = null;
+		}
+		
+		$_array_set(specialCache, i, specialCacheEntry);
+	}
+
+	@type('Array<int>') primitiveMethodIdLookup = $_new_array('int', MAX_TYPE * %%%PREDEFINED_FIELD_COUNT%%%);
+	for (i = 0; i < MAX_TYPE * %%%PREDEFINED_FIELD_COUNT%%%; i += 1) {
+		primitiveMethodIdLookup[i] = 0;
+	}
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ADD%%%] = %%%PRIMITIVE_METHOD_LIST_ADD%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLEAR%%%] = %%%PRIMITIVE_METHOD_LIST_CLEAR%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLONE%%%] = %%%PRIMITIVE_METHOD_LIST_CLONE%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONCAT%%%] = %%%PRIMITIVE_METHOD_LIST_CONCAT%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_INSERT%%%] = %%%PRIMITIVE_METHOD_LIST_INSERT%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_JOIN%%%] = %%%PRIMITIVE_METHOD_LIST_JOIN%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_POP%%%] = %%%PRIMITIVE_METHOD_LIST_POP%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REMOVE%%%] = %%%PRIMITIVE_METHOD_LIST_REMOVE%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REVERSE%%%] = %%%PRIMITIVE_METHOD_LIST_REVERSE%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SHUFFLE%%%] = %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%;
+	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SORT%%%] = %%%PRIMITIVE_METHOD_LIST_SORT%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SPLIT%%%] = %%%PRIMITIVE_METHOD_STRING_SPLIT%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ENDSWITH%%%] = %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_INDEXOF%%%] = %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_STARTSWITH%%%] = %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_UPPER%%%] = %%%PRIMITIVE_METHOD_STRING_UPPER%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_LOWER%%%] = %%%PRIMITIVE_METHOD_STRING_LOWER%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_TRIM%%%] = %%%PRIMITIVE_METHOD_STRING_TRIM%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REVERSE%%%] = %%%PRIMITIVE_METHOD_STRING_REVERSE%%%;
+	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REPLACE%%%] = %%%PRIMITIVE_METHOD_STRING_REPLACE%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLEAR%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLONE%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_GET%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REMOVE%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_VALUES%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%;
+	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_KEYS%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%;
+
+	@type('StackFrame') stack = new StackFrame(
+		0, // pc
+		$_new_dictionary('int', 'Value'), // locals
+		$_new_array('Value', 0), // args
+		null, // previous
+		false, // returnValueUsed
+		null, // object context
+		0); // valueStackSize
+
+	$_set_program_data(new ProgramData(
+		stack,
+		ops,
+		opArgs,
+		stringArgs,
+		specialCache,
+		null, // identifiers
+		$_new_list('string'), // identifiers builder
+		$_new_dictionary('string', 'int'), // inv_identifiers
+		null, // literal table
+		$_new_list('Value'), // literal table builder
+		$_convert_list_to_array('ClassInfo', classTable),
+		$_convert_list_to_array('Dictionary<int, MethodDefinition>', classMethodsBuilder),
+		false, // ticker registered
+		$_new_array('List<Token>', $_array_length(ops)), // token data
+		0, // user code start
+		StackFrame$stack.locals, // global var scope
+		null, // original source code data
+		$_new_list('string'), // original source code data builder
+		null, // integer switch lookups
+		$_new_list('Dictionary<int, int>'), // integer switch lookups builder
+		null, // string switch lookups
+		$_new_list('Dictionary<string, int>'), // string switch lookups builder
+		primitiveMethodIdLookup, // primitive method lookup
+		0, // instance counter
+		new SpriteSheetData(
+			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
+			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
+			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
+			$_new_dictionary('string', 'int') // group name --> group ID
+		),
+		new ImageSheetStatus(
+			$_new_dictionary('string', 'string'),
+			$_new_dictionary('string', 'object'),
+			$_new_dictionary('string', 'int'),
+			$_new_dictionary('string', 'TileLoadRequest'),
+			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'),
+			$_new_dictionary('int', 'Array<string>'),
+			$_new_dictionary('string', 'int'),
+			false,
+			$_new_dictionary('string', 'Image'),
+			$_new_dictionary('string', 'CompositeImage'),
+			$_new_dictionary('int', 'int'),
+			$_new_dictionary('int', 'List<SpriteSheetItemDescriptor>>'),
+			$_new_dictionary('string', 'Array<int>'),
+			$_new_list('TileLoadRequest'),
+			$_new_dictionary('string', 'object'),
+			$_new_dictionary('int', 'Array<int>'),
+			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
+		new SoundStatus(
+			$_new_list('SoundEvent'), // sound event queue
+			null, // currently playing music instance
+			1.0, // sound master volume
+			1.0, // music master volume
+			1.0, // fade volume ratio
+			1.0, // last set music volume
+			true // force set music volume (go ahead and do a force set first in case default is something weird like 0.7)
+		),
+		false,
+		new GamepadStatus(false, $_new_list('GamepadDeviceInfo'), $_new_list('Value'), $_new_list('GamepadHardwarePushy'), $_new_list('GamepadAtomicPushy'), $_new_list('Value'), $_new_list('Value')),
+		0, // gameCounter (incremented on $game_clock_tick())
+
+		// The value stack:
+		0, // size
+		100, // capacity
+		$_new_array('Value', 100) // array
+		));
+
+	runTick();
+}
+
+function @type('bool') runTick() {
+	@type('ProgramData') p = $_get_program_data();
+
+	if (%%%PLATFORM_IS_ASYNC%%%) {
+		if (!ProgramData$p.tickerRegistered) {
+			ProgramData$p.tickerRegistered = true;
+			$_register_ticker();
+		}
+
+		$_begin_frame();
+
+		@type('string') error = interpret(
+			ProgramData$p.stackTop,
+			ProgramData$p.ops,
+			ProgramData$p.args,
+			ProgramData$p.stringArgs,
+			ProgramData$p.identifiers,
+			ProgramData$p.inv_identifiers,
+			ProgramData$p.literalTable,
+			ProgramData$p.classTable,
+			ProgramData$p.classMethods,
+			ProgramData$p.specialCache,
+			ProgramData$p.globalVarScope);
+		if (error == null) {
+			// do nothing, let the next tick occur
+			$_register_timeout();
+		} else {
+			if ($_string_length(error) > 0) {
+				// error message and stack trace
+				$_print(error);
+			}
+			// execution ended, either with error or gracefully.
+			$_unregister_ticker();
+			return false;
+		}
+		return true;
+	} else {
+		while (true) {
+			@type('string') error = interpret(
+				ProgramData$p.stackTop,
+				ProgramData$p.ops,
+				ProgramData$p.args,
+				ProgramData$p.stringArgs,
+				ProgramData$p.identifiers,
+				ProgramData$p.inv_identifiers,
+				ProgramData$p.literalTable,
+				ProgramData$p.classTable,
+				ProgramData$p.classMethods,
+				ProgramData$p.specialCache,
+				ProgramData$p.globalVarScope);
+			if (error == null) {
+				$_pause_for_frame();
+			} else if (error == '') {
+				// empty string means the execution came to an end.
+				return false;
+			} else {
+				// error message and stack trace
+				$_print(error);
+				return false;
+			}
+		}
+		return false;
+	}
+}
+
+function @type('Dictionary<int, MethodDefinition>') copyMethodLookupDictionary(@type('Dictionary<int, MethodDefinition>') dict) {
+	@type('Array<int>') key_list = $_dictionary_get_keys('int', dict);
+	@type('Dictionary<int, MethodDefinition>') output = $_new_dictionary('int', 'MethodDefinition');
+	for (@type('int') i = 0; i < $_array_length(key_list); i += 1) {
+		@type('int') key = $_array_get(key_list, i);
+		@type('MethodDefinition') value = $_dictionary_get_guaranteed(dict, key);
+		$_dictionary_set(output, key, value);
+	}
+	return output;
+}

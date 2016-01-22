@@ -1,0 +1,25 @@
+﻿// $gfx_blit_image_with_alpha(image, x, y, alpha);
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+if (image1 == null) {
+	return killExecution(stack, pc, "$gfx_blit_image must consume an image as its first argument.");
+}
+if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_blit_image coordinates must be integers.");
+}
+
+if (Value$arg4.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_blit_image_with_alpha alpha value must be an integer.");
+}
+
+int1 = $_cast('int', Value$arg4.internalValue);
+if (int1 < 0 || int1 > 255) {
+	return killExecution(stack, pc, "$gfx_blit_image_with_alpha alpha value must be between 0 and 255.");
+}
+
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawImageWithAlpha(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
+} else {
+	$_blit_image_alpha(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
+}

@@ -1,0 +1,10 @@
+﻿
+if (ProgramData$p.initializationComplete) {
+	performWorkNuggetPostFrame();
+}
+
+ProgramData$p.gameCounter += 1;
+StackFrame$stack.pc = pc;
+yieldControl(stack, valueStackSize);
+pc = StackFrame$stack.pc;
+return null;

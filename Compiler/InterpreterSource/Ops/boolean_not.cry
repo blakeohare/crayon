@@ -1,0 +1,8 @@
+﻿
+value = $_array_get(valueStack, valueStackSize - 1);
+if (Value$value.type != Types.BOOLEAN) return killExecution(stack, pc, "Boolean expected.");
+if ($_cast('bool', Value$value.internalValue)) {
+	$_array_set(valueStack, valueStackSize - 1, VALUE_FALSE);
+} else {
+	$_array_set(valueStack, valueStackSize - 1, VALUE_TRUE);
+}

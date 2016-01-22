@@ -1,0 +1,54 @@
+﻿class ZRectangle : ZElement {
+	constructor(id = null) : base(id) {
+		this.set_color(0, 0, 0, 0);
+		this._Z_width_type = _ZBoundsType.NONE;
+		this._Z_height_type = _ZBoundsType.NONE;
+	}
+
+	function _Z_precompute_bounds() {
+		switch (this._Z_width_type) {
+			case _ZBoundsType.NONE:
+				pix_w = 32;
+				per_w = 0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_w = 0;
+				per_w = this._Z_width;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_w = this._Z_width;
+				per_w = 0;
+				break;
+		}
+		switch (this._Z_height_type) {
+			case _ZBoundsType.NONE:
+				pix_h = 32;
+				per_h = 0;
+				break;
+			case _ZBoundsType.RATIO:
+				pix_h = 0;
+				per_h = this._Z_height;
+				break;
+			case _ZBoundsType.PIXELS:
+				pix_h = this._Z_height;
+				per_h = 0;
+				break;
+		}
+		this._Z_set_precomputed_bounds(pix_w, pix_h, per_w, per_h);
+	}
+
+	function set_color(r, g, b, a) {
+		this._Z_r = _Z_ensure_integer_range(r, 0, 255);
+		this._Z_g = _Z_ensure_integer_range(g, 0, 255);
+		this._Z_b = _Z_ensure_integer_range(b, 0, 255);
+		this._Z_opacity = _Z_ensure_integer_range(a, 0, 255);
+		return this;
+	}
+
+	function render(left, top, width, height) {
+		if (this._Z_opacity <= 0) return;
+		x = left + this._Z_x_offset;
+		y = top + this._Z_y_offset;
+		$gfx_draw_rectangle(left, top, width, height, this._Z_r, this._Z_g, this._Z_b, this._Z_opacity);
+	}
+}

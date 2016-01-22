@@ -1,0 +1,16 @@
+﻿// $gfx_flip_image(image, shouldFlipX, shouldFlipY)
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+if (image1 == null) {
+	return killExecution(stack, pc, "$gfx_flip_image requires an image as its first argument.");
+}
+
+if (Value$arg2.type != Types.BOOLEAN || Value$arg3.type != Types.BOOLEAN) {
+	return killExecution(stack, pc, "$gfx_flip_image requires an image and two booleans.");
+}
+
+output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, flipImage(
+	image1,
+	$_cast('bool', Value$arg2.internalValue),
+	$_cast('bool', Value$arg3.internalValue))));

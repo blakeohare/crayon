@@ -1,0 +1,15 @@
+﻿// $gfx_blit_image(image, x, y);
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+if (image1 == null) {
+	return killExecution(stack, pc, "$gfx_blit_image must consume an image as its first argument.");
+}
+if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_blit_image coordinates must be integers.");
+}
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawImageSimple(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+} else {
+	$_blit_image(image1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+}

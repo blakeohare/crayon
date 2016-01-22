@@ -1,0 +1,20 @@
+﻿
+// $typeof(value)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+switch (Value$arg1.type) {
+	case Types.NULL: string1 = "null"; break;
+	case Types.BOOLEAN: string1 = "boolean"; break;
+	case Types.INTEGER: string1 = "integer"; break;
+	case Types.FLOAT: string1 = "float"; break;
+	case Types.STRING: string1 = "string"; break;
+	case Types.LIST: string1 = "list"; break;
+	case Types.DICTIONARY: string1 = "dictionary"; break;
+	case Types.INSTANCE: string1 = "instance"; break;
+	case Types.FUNCTION: string1 = "function"; break;
+	case Types.METHOD: string1 = "method"; break;
+	case Types.SYS_METHOD: string1 = "primitive_method"; break;
+	case Types.NATIVE_OBJECT: string1 = "native_system_object"; break;
+	default: string1 = "unknown_type"; break;
+}
+output = buildCommonString(string1);

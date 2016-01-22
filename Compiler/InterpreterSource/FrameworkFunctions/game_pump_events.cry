@@ -1,0 +1,20 @@
+﻿
+list1 = $_get_events_raw_list();
+
+if ($_list_length(GamepadStatus$gamepadStatus.hardwareEvents) > 0) {
+	list2 = GamepadStatus$gamepadStatus.hardwareEvents;
+	for (int1 = 0; int1 < $_list_length(list2); int1 += 1) {
+		$_list_push(list1, $_list_get(list2, int1));
+	}
+	$_list_clear(GamepadStatus$gamepadStatus.hardwareEvents);
+}
+
+if ($_list_length(GamepadStatus$gamepadStatus.virtualEvents) > 0) {
+	list2 = GamepadStatus$gamepadStatus.virtualEvents;
+	for (int1 = 0; int1 < $_list_length(list2); int1 += 1) {
+		$_list_push(list1, $_list_get(list2, int1));
+	}
+	$_list_clear(GamepadStatus$gamepadStatus.virtualEvents);
+}
+
+output = new Value(Types.LIST, list1);

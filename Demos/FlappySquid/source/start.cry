@@ -1,0 +1,139 @@
+import 'pipe.cry';
+
+
+function main() {
+	$initialize_game(60);
+	screen_width = 640;
+	screen_height = 480;
+	screen = $initialize_screen(screen_width, screen_height);
+	
+	left_pressed = false;
+	right_pressed = false;
+	up_pressed = false;
+	down_pressed = false;
+	
+	pipes = [null];
+	pipe_width = 60;
+	pipe_spacing = 120;
+	pipe_vspacing = 100;
+	
+	ground_thickness = 80;
+	
+	pipe_area_height = screen_height - ground_thickness;
+	
+	player_x = 150;
+	player_y = pipe_area_height / 3;
+	player_vy = 0.0;
+	
+	x_offset = screen_width + 50;
+	
+	mode = 'menu';
+	
+	while (true) {
+		for (i = 0; i < 100; ++i) {
+			$current_time();
+		}
+		start = $current_time();
+		events = $get_events();
+		space_pressed = false;
+		
+		i = 0;
+		while (i < events.length) {
+			event = events[i];
+			type = event[0];
+			if (type == 'key') {
+				down = event[1];
+				key = event[2];
+				if (key == 'space') {
+					space_pressed = true;
+				}
+			} else if (type == 'mouseleftdown') {
+				space_pressed = true;
+			} else if (type == 'exit') {
+				return;
+			}
+			i += 1;
+		}
+		
+		animate_ground = true;
+		if (mode == 'menu') {
+			if (space_pressed) {
+				mode = 'game';
+			}
+		} else if (mode == 'game') {
+			x_offset -= 3;
+			player_vy = player_vy + .7;
+			if (space_pressed) {
+				player_vy = -5.0;
+			}
+			player_y = player_y + player_vy;
+		} else if (mode == 'end') {
+			animate_ground = false;
+		}
+		
+		
+		do_trim = false;
+		
+		for (i = 0; i < pipes.length; ++i) {
+			left = i * (pipe_spacing + pipe_width) + x_offset;
+			if (left >= screen_width) {
+				i += 99999;
+			} else {
+				pipe = pipes[i];
+				if (pipe == null) {					
+					pipe_opening = $random() * (pipe_area_height - pipe_vspacing - 20) + 10 + (pipe_vspacing / 2);
+					pipe = new Pipe($floor(pipe_opening));
+					pipes[i] = pipe;
+					pipes.add(null);
+				}
+				
+				right = left + pipe_width;
+				opening = pipe.opening;
+				top = opening - 50;
+				bottom = opening + 50;
+				pipe.left = left;
+				pipe.right = right;
+				pipe.top = top;
+				pipe.bottom = bottom;
+				
+				if (right < 0) do_trim = true;
+			}
+		}
+		
+		if (do_trim) {
+			// TODO: trim left pipe once this stops being a useful stress test
+			// TODO: adjust x_offset
+		}
+		
+		$fill_screen(screen, 0, 0, 0);
+		$draw_rectangle(screen, 0, 0, 640, 480, 100, 200, 255, 255);
+		$draw_rectangle(screen, 0, 400, 640, 80, 0, 120, 40, 255);
+		
+		for (i = 0; i < pipes.length; ++i) {
+			pipe = pipes[i];
+			if (pipe != null) {
+				$draw_rectangle(screen, pipe.left, 0, pipe_width, pipe.top, 0, 100, 0, 255);
+				$draw_rectangle(screen, pipe.left, pipe.bottom, pipe_width, pipe_area_height - pipe.bottom, 0, 100, 0, 255);
+			}
+		}
+		
+		$draw_rectangle(screen, player_x, player_y, 20, 20, 255, 0, 0, 255);
+		
+		
+		end = $current_time();
+		diff = end - start;
+		if (diff == 0) {
+			fps = 1000;
+		} else {
+			fps = 1.0 / diff;
+		}
+		
+		if (fps < 60) {
+			$print('FPS dropping: ' + fps + ', ' + pipes.length);
+		}
+		
+		$clock_tick();
+	}
+}
+
+main();

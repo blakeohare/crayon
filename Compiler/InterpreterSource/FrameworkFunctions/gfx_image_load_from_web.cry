@@ -1,0 +1,8 @@
+﻿// $gfx_image_load_from_web(key, url)
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	return killExecution(stack, pc, "$image_load_from_web requires two string arguments.");
+}
+string1 = $_cast('string', Value$arg2.internalValue);
+$_download_image($_cast('string', Value$arg1.internalValue), string1);

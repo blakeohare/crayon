@@ -1,0 +1,31 @@
+﻿// $gfx_image_sheet_load_progres(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+stringList = toStringList(arg1, stringList);
+if (stringList == null) {
+	return killExecution(stack, pc, "$image_sheet_load_progress argument must either be a string or a list of strings.");
+}
+
+int1 = 0; // files loaded
+int2 = 0; // total files to load
+
+for (i = 0; i < $_array_length(stringList); i += 1) {
+	string1 = $_array_get(stringList, i);
+	if (getSheetErrorCode(string1) > 0) {
+		int2 = 0; // this function should return 1.0
+		i += $_array_length(stringList);
+	} else {
+		int3 = getNumTilesLoaded(string1);
+		if (int3 == -1) {
+			return killExecution(stack, pc, "'" + string1 + "' is not a valid image sheet.");
+		}
+		int1 += int3;
+		int2 += getNumTiles(string1);
+	}
+}
+
+if (int2 == 0) {
+	output = VALUE_FLOAT_ONE;
+} else {
+	output = buildFloat($_unsafe_float_division(1.0 * int1, int2));
+}

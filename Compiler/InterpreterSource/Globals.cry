@@ -1,0 +1,20 @@
+﻿@uncontained @type('Array<Array<Value>>') INTEGERS_CACHE = $_new_array('Array<Value>', 2);
+@uncontained @type('Value') VALUE_NULL = new Value(Types.NULL, null);
+@uncontained @type('Value') VALUE_TRUE = new Value(Types.BOOLEAN, true);
+@uncontained @type('Value') VALUE_FALSE = new Value(Types.BOOLEAN, false);
+@uncontained @type('Value') VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+@uncontained @type('Value') VALUE_FLOAT_ZERO = new Value(Types.FLOAT, 0.0);
+@uncontained @type('Value') VALUE_FLOAT_ONE = new Value(Types.FLOAT, 1.0);
+@uncontained @type('Value') VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);
+
+@uncontained @type('string') ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+@uncontained @type('string') HEX_UPPERCASE = '0123456789ABCDEF';
+@uncontained @type('Dictionary<string, Value>') COMMON_STRINGS = $_new_dictionary('string', 'Value');
+
+// The following are used in the OpenGL render pipeline.
+@uncontained @type('Array<int>') GL_DATA = $_new_array('int', 0);
+@uncontained @type('int') GL_VIRTUAL_SIZE = 0;
+@uncontained @type('int') GL_REAL_SIZE  = 0;
+@uncontained @type('Array<Image>') GL_IMAGES = $_new_array('Image', 0);
+@uncontained @type('int') GL_IMAGES_VIRTUAL_SIZE = 0;
+@uncontained @type('int') GL_IMAGES_REAL_SIZE = 0;

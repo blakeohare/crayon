@@ -1,0 +1,8 @@
+﻿
+valueStackSize -= 6;
+arg6 = $_array_get(valueStack, valueStackSize + 5);
+arg5 = $_array_get(valueStack, valueStackSize + 4);
+arg4 = $_array_get(valueStack, valueStackSize + 3);
+arg3 = $_array_get(valueStack, valueStackSize + 2);
+arg2 = $_array_get(valueStack, valueStackSize + 1);
+arg1 = $_array_get(valueStack, valueStackSize);

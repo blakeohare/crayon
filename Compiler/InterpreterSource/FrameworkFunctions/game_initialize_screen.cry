@@ -1,0 +1,23 @@
+﻿// $game_initialize_screen(width, height)
+
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$game_initialize_screen requires two integer arguments.");
+}
+
+int1 = $_cast('int', Value$arg1.internalValue);
+int2 = $_cast('int', Value$arg2.internalValue);
+if (int1 < 1 || int2 < 1) {
+	return killExecution(stack, pc, "Screen dimensions must be positive.");
+}
+
+if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+	StackFrame$stack.pc = pc;
+	yieldControl(stack, valueStackSize);
+	pc = StackFrame$stack.pc;
+	$_initialize_screen(int1, int2, null, null);
+	return '';
+} else {
+	$_initialize_screen(int1, int2, null, null);
+}

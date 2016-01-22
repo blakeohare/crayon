@@ -1,0 +1,69 @@
+﻿
+// This is mostly replicated in CALL_FUNCTION. Be sure to keep changes in sync.
+argCount = $_array_get(row, 1);
+returnValueUsed = $_array_get(row, 2) == 1;
+if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+	funcArgs = $_new_array('Value', argCount);
+	while (argCount > 0) {
+		argCount -= 1;
+		valueStackSize -= 1;
+		$_array_set(funcArgs, argCount, $_array_get(valueStack, valueStackSize));
+	}
+} else {
+	funcArgs = $_new_list('Value');
+	while (argCount > 0) {
+		valueStackSize -= 1;
+		$_list_push(funcArgs, $_array_get(valueStack, valueStackSize));
+		argCount -= 1;
+	}
+	if ($_array_get(row, 1) > 1) {
+		$_list_reverse_in_place(funcArgs);
+	}
+}
+
+int1 = $_array_get(row, 0);
+if ($_dictionary_contains(globals, int1)) {
+	func = $_dictionary_get_guaranteed(globals, int1);
+} else {
+	func = null;
+}
+
+if (func != null) {
+	type = Value$func.type;
+	if (type == Types.FUNCTION) {
+		locals = $_new_dictionary('int', 'Value');
+		funcDef = $_cast('FunctionDefinition', Value$func.internalValue);
+		if (argCount > FunctionDefinition$funcDef.maxArgCount) {
+			return killExecution(stack, pc, "Too many args passed to " + FunctionDefinition$funcDef.name);
+		}
+		StackFrame$stack.pc = pc;
+		pc = FunctionDefinition$funcDef.pc;
+		stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
+	} else if (type == Types.METHOD) {
+		methodInstance = $_cast('MethodInstance', Value$func.internalValue);
+		if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
+			if (MethodInstance$methodInstance.maxArgs < $_array_length(funcArgs)) {
+				return killExecution(stack, pc, "Too many args were passed in.");
+			}
+		} else {
+			if (MethodInstance$methodInstance.maxArgs < $_list_length(funcArgs)) {
+				return killExecution(stack, pc, "Too many args were passed in.");
+			}
+		}
+		locals = $_new_dictionary('int', 'Value');
+		StackFrame$stack.pc = pc;
+		pc = MethodInstance$methodInstance.pc - 1;
+		stack = new StackFrame(
+			pc,
+			locals,
+			funcArgs,
+			stack,
+			returnValueUsed,
+			MethodInstance$methodInstance.context,
+			valueStackSize);
+	} else {
+		return killExecution(stack, pc, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
+	}
+} else {
+	return killExecution(stack, pc, "That function is not defined: '" + $_array_get(identifiers, $_array_get(row, 0)) + "'");
+}

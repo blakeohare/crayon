@@ -1,0 +1,26 @@
+﻿
+if (StackFrame$stack.previous == null) {
+	// returning from the root stack
+	return '';
+}
+
+if (StackFrame$stack.returnValueUsed) {
+	// keep the return value
+	if (valueStackSize != StackFrame$stack.valueStackSize + 1) {
+		// if the value stack size is some strange value that indicates some stuff was pushed on it
+		// (such as the foreach loop iteration context that happens when you return from within a foreach loop)
+		// then grab the return value, reset the stack size to what it should be, and then push it to the stack.
+		value = $_array_get(valueStack, valueStackSize - 1);
+		valueStackSize = StackFrame$stack.valueStackSize + 1;
+		$_array_set(valueStack, valueStackSize - 1, value);
+	} else {
+		// Nothing to do. Just leave the return value on the stack and walk away.
+	}
+} else {
+	// discard the return value. Set the value stack size back the way it was.
+	valueStackSize = StackFrame$stack.valueStackSize;
+}
+
+stack = StackFrame$stack.previous;
+pc = StackFrame$stack.pc;
+locals = StackFrame$stack.locals;

@@ -1,0 +1,18 @@
+﻿
+// $gamepad_get_state(device_or_player_id, alias);
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+// status code (set in outParam):
+// 0 - success (or not bound)
+// 1 - too early
+// 2 - invalid device type
+// 3 - invalid alias type
+output = gamepadGetPushyState(arg1, arg2, intOutParam);
+int1 = $_array_get(intOutParam, 0);
+if (int1 != 0) {
+	if (int1 == 1) string1 = "$gamepad_get_state cannot be called until the game window is open.";
+	else if (int1 == 2) string1 = "$gamepad_get_state requires a gamepad device reference or a player ID (int or string) as its first argument.";
+	else if (int1 == 3) string1 = "$gamepad_get_state requires an event alias as its second argument (int or string).";
+	else string1 = "$gamepad_get_state encountered an unknown error.";
+	return killExecution(stack, pc, string1);
+}

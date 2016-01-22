@@ -1,0 +1,8 @@
+﻿
+int1 = $_array_get(row, 0);
+i = $_array_get(row, 1);
+if (i < $_array_length(StackFrame$stack.args)) {
+	value = $_array_get(StackFrame$stack.args, i);
+	$_dictionary_set(locals, int1, value);
+	pc += $_array_get(row, 2);
+}

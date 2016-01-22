@@ -1,0 +1,40 @@
+﻿// $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
+import inline "InterpreterSource/FrameworkFunctions/9_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+
+if (image1 == null ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg3.type != Types.INTEGER ||
+	Value$arg4.type != Types.INTEGER ||
+	Value$arg5.type != Types.INTEGER ||
+	Value$arg6.type != Types.INTEGER ||
+	Value$arg7.type != Types.INTEGER ||
+	Value$arg8.type != Types.INTEGER ||
+	Value$arg9.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.");
+}
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawImageAdvanced(
+		image1,
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		$_cast('int', Value$arg4.internalValue),
+		$_cast('int', Value$arg5.internalValue),
+		$_cast('int', Value$arg6.internalValue),
+		$_cast('int', Value$arg7.internalValue),
+		$_cast('int', Value$arg8.internalValue),
+		$_cast('int', Value$arg9.internalValue),
+		255);
+} else {
+	$_blit_image_partial(
+		image1,
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		$_cast('int', Value$arg4.internalValue),
+		$_cast('int', Value$arg5.internalValue),
+		$_cast('int', Value$arg6.internalValue),
+		$_cast('int', Value$arg7.internalValue),
+		$_cast('int', Value$arg8.internalValue),
+		$_cast('int', Value$arg9.internalValue));
+}

@@ -1,0 +1,42 @@
+﻿
+// $user_data_directory_listing(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$user_data_directory_listing requires a string argument.");
+}
+list1 = $_new_list('Value');
+string1 = $_cast('string', Value$arg1.internalValue);
+int1 = ioListDir(string1,
+	false, // strictPath
+	true, // isUserData
+	list1,
+	stringOutParam);
+if (int1 != IOErrors.NONE) {
+	bool1 = true;
+	if (int1 == IOErrors.DOES_NOT_EXIST) {
+		int1 = ioPathFixer(
+			string1,
+			stringOutParam,
+			false, // valid char check
+			true, // is user data
+			false, // require full path to exist
+			true, // require parent path to exist
+			false, // ensure parent path exists
+			true); // enforce case sensitivity
+				
+		if ($_is_javascript()) {
+			if (int1 == IOErrors.NONE && $_string_length($_array_get(stringOutParam, 0)) == 0) {
+				bool1 = false;
+			}
+		} else {
+			if ($_string_equals($_app_data_root(), $_array_get(stringOutParam, 0))) {
+				bool1 = false;
+			}
+		}
+	}
+	if (bool1) {
+		return killExecution(stack, pc, "$user_data_directory_listing: " + ioErrorToString(int1));
+	}
+}
+output = buildListByWrappingInput(list1);

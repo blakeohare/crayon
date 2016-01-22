@@ -1,0 +1,5 @@
+﻿// $game_set_title(string)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+string1 = valueToString(arg1);
+$_set_title(string1);

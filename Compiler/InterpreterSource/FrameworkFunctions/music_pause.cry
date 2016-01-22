@@ -1,0 +1,4 @@
+﻿// $music_pause()
+// Pauses current music. No-op if no music is playing.
+
+soundManagerPauseMusic(true);

@@ -1,0 +1,5 @@
+﻿// $gamepad_save_config()
+int1 = gamepadSaveConfig(stringOutParam /* Used internally by IO stuff. */);
+if (int1 != 0) {
+	if (int1 == 1)  return killExecution(stack, pc, "$gamepad_save_config() cannot be called at this time. Gamepad info is initialized when the game windows is launched.");
+}

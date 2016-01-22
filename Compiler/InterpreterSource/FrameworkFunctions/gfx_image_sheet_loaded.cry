@@ -1,0 +1,38 @@
+﻿// $gfx_image_sheet_loaded(idOrIds)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+bool1 = false; // type error encountered
+int1 = 1; // 0 - not done, 1 - success, 2 - failure, this variable is a BIT MASK
+if (Value$arg1.type == Types.LIST) {
+	list1 = $_cast('List<Value>', Value$arg1.internalValue);
+	for (i = 0; i < $_list_length(list1); i += 1) {
+		value = $_list_get(list1, i);
+		if (Value$value.type != Types.STRING) {
+			bool1 = true;
+			i = $_list_length(list1);
+		} else {
+			int2 = isImageSheetLoaded($_cast('string', Value$value.internalValue));
+			if (int2 == 2) {
+				return killExecution(stack, pc, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
+			}
+
+			int1 &= int2;
+		}
+	}
+} else if (Value$arg1.type == Types.STRING) {
+	int1 = isImageSheetLoaded($_cast('string', Value$arg1.internalValue));
+} else {
+	bool1 = true;
+}
+
+if (bool1) {
+	return killExecution(stack, pc, "$image_sheet_load arguments must either be a string or a list of strings.");
+}
+
+if (int1 == 0) {
+	output = VALUE_FALSE;
+} else if (int1 == 1) {
+	output = VALUE_TRUE;
+} else { // int1 == 2 || int1 == 3
+	return killExecution(stack, pc, "$gfx_image_sheet_loaded cannot be called on sheet ID's that have not been loaded yet.");
+}

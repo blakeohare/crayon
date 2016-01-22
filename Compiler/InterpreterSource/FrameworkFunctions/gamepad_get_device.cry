@@ -1,0 +1,17 @@
+﻿
+// $gamepad_get_device(index);
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+// status code:
+// 0 - no error
+// 1 - too early
+// 2 - not an integer
+// 3 - out of range
+output = gamepadGetDevice(arg1, intOutParam);
+int1 = $_array_get(intOutParam, 0);
+if (int1 != 0) {
+	if (int1 == 1) return killExecution(stack, pc, "$gamepad_get_device cannot be called at this time. Gamepad info is initialized when the game windows is launched.");
+	if (int1 == 2) return killExecution(stack, pc, "$gamepad_get_device requires an integer argument.");
+	if (int1 == 3) return killExecution(stack, pc, "Device index was out of range. Must be a non-negative number less than $gamepad_count().");
+	return killExecution(stack, pc, "An unknown error occurred while invoke $gamepad_get_device.");
+}

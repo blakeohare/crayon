@@ -1,0 +1,15 @@
+﻿
+valueStackSize = StackFrame$stack.valueStackSize;
+
+if (StackFrame$stack.returnValueUsed) {
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, VALUE_NULL);
+	valueStackSize += 1;
+}
+
+stack = StackFrame$stack.previous;
+if (stack == null) {
+	return '';
+}
+pc = StackFrame$stack.pc;
+locals = StackFrame$stack.locals;

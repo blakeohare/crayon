@@ -1,0 +1,71 @@
+﻿// $http_request(method, url, http_headers, body)
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+
+bool1 = true;
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	bool1 = false;
+} else if (Value$arg3.type != Types.DICTIONARY && Value$arg3.type != Types.NULL) {
+	bool1 = false;
+} else if (Value$arg4.type != Types.STRING && Value$arg4.type != Types.NULL) {
+	bool1 = false;
+}
+		
+/*
+	The headers string-to-string|list dictionary will be flattened to the following two single-dimensional lists.
+	The string list is a list of all the headers immediately followed by 1 or more header values. Note that headers
+	can be repeated, like Set-Cookie.
+	The int list is a list of how many header values are included for each header.
+	For example:
+	{ 
+		'User-Agent': "MyGame/v1.0",
+		'Set-Cookie': ["Cookie1", "Cookie2"]
+	}
+	Gets flattened to:
+		intList = [1, 2]
+		stringList = ['User-Agent', 'MyGame/v1.0', 'Set-Cookie', 'Cookie1', 'Cookie2']
+	Types are also verified by this code with appropriate error messages thrown.
+*/
+intList1 = $_new_list('int');
+stringList1 = $_new_list('string');
+		
+if (Value$arg3.type == Types.DICTIONARY) {
+	// TODO: iterate through dictionary and verify string contents
+	dictImpl = $_cast('DictImpl', Value$arg3.internalValue);
+	if (DictImpl$dictImpl.size > 0) {
+		if (DictImpl$dictImpl.keyType != Types.STRING) {
+			return killExecution(stack, pc, "HTTP Headers must be a dictionary keyed from strings");
+		}
+		stringList = $_dictionary_get_keys('string', DictImpl$dictImpl.valueStringLookup);
+		for (int1 = 0; int1 < $_array_length(stringList); int1 += 1) {
+			string1 = $_array_get(stringList, int1); // Header name
+			$_list_push(stringList1, string1);
+			value = $_dictionary_get_guaranteed(DictImpl$dictImpl.valueStringLookup, string1);
+			if (Value$value.type == Types.STRING) {
+				$_list_push(intList1, 1);
+				$_list_push(stringList1, $_cast('string', Value$value.internalValue));
+			} else if (Value$value.type == Types.LIST) {
+				list1 = $_cast('List<Value>', Value$value.internalValue);
+				$_list_push(intList1, $_list_length(list1));
+				for (int2 = 0; int2 < $_list_length(list1); int2 += 1) {
+					value2 = $_list_get(list1, int2);
+					$_list_push(stringList1, $_cast('string', Value$value2.internalValue));
+				}
+			} else {
+				return killExecution(stack, pc, "The values of an HTTP headers dictionary must be strings or, for repeated headers, a list of strings");
+			}
+		}
+	}
+}
+
+if (!bool1) {
+	return killExecution(stack, pc, "Invalid arguments. $http_request's arguments require 2 strings, a dictionary, and a string.");
+}
+string1 = $_cast('string', Value$arg1.internalValue); // method
+string2 = $_cast('string', Value$arg2.internalValue); // url
+string3 = $_cast('string', Value$arg4.internalValue); // body
+
+output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.HTTP_REQUEST, makeHttpRequest(string1, string2, string3, intList1, stringList1, stringOutParam)));
+
+if ($_array_get(stringOutParam, 0) != null) {
+	return killExecution(stack, pc, "Error while making HTTP request: " + $_array_get(stringOutParam, 0));
+}

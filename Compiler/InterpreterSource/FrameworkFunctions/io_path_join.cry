@@ -1,0 +1,36 @@
+﻿// $io_path_join(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+bool1 = true;
+list1 = null;
+// generally the number of string components in a path join command are < 5
+// and most commonly just 2. Just iteratively concatenate a string for conciseness.
+// It's okay.
+string1 = ""; 
+// TODO: accept a variable number of string args.
+if (Value$arg1.type != Types.LIST) {
+	bool1 = false;
+} else {
+	list1 = $_cast('List<Value>', Value$arg1.internalValue);
+	string2 = "/";
+	if ($_is_windows_program()) {
+		string2 = "\\";
+	}
+	for (i = 0; i < $_list_length(list1); i += 1) {
+		value = $_list_get(list1, i);
+		if (Value$value.type != Types.STRING) {
+			bool1 = false;
+			/* break; */ i = $_list_length(list1); // break isn't supported in translate mode.
+		} else {
+			if (i == 0) {
+				string1 += $_cast('string', Value$value.internalValue);
+			} else {
+				string1 += string2 + $_cast('string', Value$value.internalValue);
+			}
+		}
+	}
+}
+if (!bool1) {
+	return killExecution(stack, pc, "$io_path_join requires a list of strings as input.");
+}
+output = buildString(string1);

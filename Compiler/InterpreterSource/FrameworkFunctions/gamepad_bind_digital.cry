@@ -1,0 +1,23 @@
+﻿
+// $gamepad_bind_digital(device, descriptor, alias);
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+// status code:
+// 0 - not bound
+// 1 - bound
+// 2 - device invalid
+// 3 - descriptor invalid
+// 4 - alias isn't suitable type
+int1 = gamepadBind(arg1, arg2, arg3, 0, null, null, true);
+if (int1 < 2) {
+	if (int1 == 0) {
+		output = VALUE_FALSE;
+	} else {
+		output = VALUE_TRUE;
+	}
+} else {
+	if (int1 == 2) return killExecution(stack, pc, "$gamepad_bind_digital requires a gamepad device reference as its first argument.");
+	if (int1 == 3) return killExecution(stack, pc, "Hardware button descriptor was invalid. Please use the value from the hardware event's .descriptor field.");
+	if (int1 == 4) return killExecution(stack, pc, "$gamepad_bind_digital requires an integer or string as its 3rd argument.");
+	return killExecution(stack, pc, "$gamepad_bind_digital encountered an unknown error.");
+}

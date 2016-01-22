@@ -1,0 +1,14 @@
+﻿
+list1 = $_new_list('Value');
+int1 = $_array_get(row, 0);
+while (int1 > 0) {
+	valueStackSize -= 1;
+	$_list_push(list1, $_array_get(valueStack, valueStackSize));
+	int1 -= 1;
+}
+$_list_reverse_in_place(list1);
+value = new Value(Types.LIST, list1);
+
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

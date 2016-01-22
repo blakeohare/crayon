@@ -1,0 +1,124 @@
+﻿
+_Z_WINDOW_INSTANCE = [null];
+class ZWindow {
+	constructor() {
+		$assert(_Z_WINDOW_INSTANCE[0] == null, "Only one instance of ZWindow can be created.");
+		_Z_WINDOW_INSTANCE[0] = this;
+		this._Z_content = null;
+
+		this._Z_reusable_dict = {};
+		this._Z_storyboards = [];
+
+		this._Z_focused_element = null;
+		this._Z_mouse_over_element = null;
+	}
+
+	function initialize() {
+	}
+
+	function _Z_update_wrapper() {
+
+		if (this._Z_content != null) {
+			this._Z_content._Z_update();
+		}
+
+		if (this._Z_storyboards.length > 0) {
+			new_storyboards = [];
+			for (storyboard : this._Z_storyboards) {
+				storyboard.run();
+				if (!storyboard.done) {
+					new_storyboards.add(storyboard);
+				}
+			}
+			this._Z_storyboards = new_storyboards;
+		}
+
+		this.update();
+	}
+
+	function update() {
+		// Override me.
+	}
+
+	function render(left, top, width, height) {
+		content = this._Z_content;
+		if (content != null) {
+			content._Z_precompute_bounds();
+			width -= content._Z_margin_left + content._Z_margin_right;
+			height -= content._Z_margin_top + content._Z_margin_top;
+			content.render(content._Z_margin_left, content._Z_margin_top, width, height);
+		}
+	}
+
+	function set_content(element) {
+		this._Z_content = element;
+		return this;
+	}
+
+	function hit_test(x, y) {
+		if (this._Z_content != null) {
+			return this._Z_content.hit_test(x, y);
+		}
+		return null;
+	}
+
+	function _Z_update_mouse_over(x, y) {
+		element = this.hit_test(x, y);
+
+		if (element != this._Z_mouse_over_element) {
+			if (this._Z_mouse_over_element != null) {
+				this._Z_mouse_over_element._Z_invoke_events('on_mouse_leave');
+			}
+
+			if (element != null) {
+				element._Z_invoke_events('on_mouse_enter');
+			}
+
+			this._Z_mouse_over_element = element;
+
+			if (element != null && element._Z_can_have_focus) {
+				this.focus_element(element);
+			}
+		}
+	}
+
+	function _Z_apply_click(x, y, is_left, is_down) {
+		element = this.hit_test(x, y);
+		if (element != null) {
+			if (is_left && is_down) {
+				element._Z_invoke_events('on_click');
+			}
+		}
+	}
+
+	function get_element_by_id(id) {
+		return this._Z_content == null ? null : this._Z_content.get_element_by_id(id);
+	}
+
+	function focus_element(element) {
+		if (this._Z_focused_element != element) {
+			if (this._Z_focused_element != null) {
+				this._Z_focused_element._Z_invoke_events('on_unfocus');
+			}
+
+			if (element != null) {
+				element._Z_invoke_events('on_focus');
+			}
+
+			this._Z_focused_element = element;
+		}
+		return this;
+	}
+
+	function add_storyboards(storyboards) {
+		for (storyboard : storyboards) {
+			this.add_storyboard(storyboard);
+		}
+		return this;
+	}
+
+	function add_storyboard(storyboard) {
+		this._Z_storyboards.add(new _ZSBRunnerContext(this, storyboard));
+		return this;
+	}
+}

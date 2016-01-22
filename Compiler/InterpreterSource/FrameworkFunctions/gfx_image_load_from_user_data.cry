@@ -1,0 +1,8 @@
+﻿// $gfx_image_load_from_user_data(key, path)
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
+	return killExecution(stack, pc, "$image_load_from_user_data requires two string arguments.");
+}
+
+loadImageFromUserData($_cast('string', Value$arg1.internalValue), $_cast('string', Value$arg2.internalValue));

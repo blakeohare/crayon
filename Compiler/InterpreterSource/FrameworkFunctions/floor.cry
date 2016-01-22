@@ -1,0 +1,19 @@
+﻿
+// $floor(number)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+	if (%%%INT_IS_FLOOR%%%) {
+		output = buildInteger($_int(float1));
+	} else {
+		if (float1 < 0 && float1 % 1 != 0) {
+			output = buildInteger($_int(float1) - 1);
+		} else {
+			output = buildInteger($_int(float1));
+		}
+	}
+} else if (Value$arg1.type == Types.INTEGER) {
+	output = arg1;
+} else {
+	return killExecution(stack, pc, "$floor expects a numeric argument.");
+}

@@ -1,0 +1,19 @@
+﻿
+// $image_error_code(image_key)
+// Error codes:
+// 0 - none (success or pending)
+// 1 - file not found
+// 2 - timed out
+// 3 - invalid format
+// 4 - too big
+// 5 - sprite sheet image not initialized
+// 99 - unknown
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$image_error_code requires a string argument.");
+}
+
+string1 = $_cast('string', Value$arg1.internalValue);
+int1 = getImageErrorCode(string1);
+output = buildInteger(int1);

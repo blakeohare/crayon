@@ -1,0 +1,7 @@
+class Action {
+	constructor(action, down) {
+		this.action = action;
+		this.down = down;
+		this.up = !down;
+	}
+}

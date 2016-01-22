@@ -1,0 +1,4 @@
+﻿
+// $music_set_position(float_seconds) 
+// Always refers to currently playing song.
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

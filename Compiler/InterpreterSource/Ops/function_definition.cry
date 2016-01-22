@@ -1,0 +1,14 @@
+﻿
+if ($_array_get(row, 3) == 1) {
+	// TODO: figure out why I put this if statement here.
+} else {
+	funcDef = new FunctionDefinition(
+		pc + $_array_get(row, 1), // PC
+		$_array_get(row, 2), // max arg count
+		$_array_get(identifiers, $_array_get(row, 0))); // name
+	
+	
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, new Value(Types.FUNCTION, funcDef));
+	valueStackSize += 1;
+}

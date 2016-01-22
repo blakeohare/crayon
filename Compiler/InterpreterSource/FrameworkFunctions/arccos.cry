@@ -1,0 +1,19 @@
+﻿
+// $arccos(theta)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+	if (float1 < -1 || float1  > 1) {
+		return killExecution(stack, pc, "$arc_cos requires a number in the range of -1 to 1");
+	}
+	output = buildFloat($_arc_cos(float1));
+} else if (Value$arg1.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	if (int1 < -1 || int1 > 1) {
+		return killExecution(stack, pc, "$arc_cos requires a number in the range of -1 to 1");
+	}
+	output = buildFloat($_arc_cos(int1));
+} else {
+	return killExecution(stack, pc, "$arc_cos requires a number as input.");
+}

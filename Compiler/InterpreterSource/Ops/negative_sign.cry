@@ -1,0 +1,10 @@
+﻿
+value = $_array_get(valueStack, valueStackSize - 1);
+type = Value$value.type;
+if (type == Types.INTEGER) {
+	$_array_set(valueStack, valueStackSize - 1, buildInteger(-$_cast('int', Value$value.internalValue)));
+} else if (type == Types.FLOAT) {
+	$_array_set(valueStack, valueStackSize - 1, buildFloat(-$_cast('double', Value$value.internalValue)));
+} else {
+	return killExecution(stack, pc, "Negative sign can only be applied to numbers. Found " + getTypeFromId(type) + " instead.");
+}

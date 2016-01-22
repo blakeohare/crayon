@@ -1,0 +1,3 @@
+﻿
+valueStackSize -= 1;
+arg1 = $_array_get(valueStack, valueStackSize);

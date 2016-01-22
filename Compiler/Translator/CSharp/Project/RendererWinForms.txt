@@ -1,0 +1,263 @@
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal class Renderer
+	{
+		private const int DRAW_RECTANGLE = 1;
+		private const int DRAW_ELLIPSE = 2;
+		private const int DRAW_LINE = 3;
+		private const int DRAW_TRIANGLE = 4;
+		private const int BLIT_IMAGE = 5;
+		private const int BLIT_IMAGE_PARTIAL = 6;
+
+		public static Renderer INSTANCE = null;
+		
+		private int[] data = new int[1600];
+		private int dataVirtualLength = 0;
+		private int dataRealLength = 1600;
+
+		private Image[] images = new Image[100];
+		private int imagesVirtualLength = 0;
+		private int imagesRealLength = 100;
+
+		private int screenWidth;
+		private int screenHeight;
+		private System.Drawing.Graphics g;
+
+		public Renderer()
+		{
+			INSTANCE = this;
+		}
+
+		public void Render(System.Drawing.Graphics g)
+		{
+			SolidBrush brush = new SolidBrush(Color.Black);
+			int lastBrushColor = Color.Black.ToArgb();
+			int color, width, height;
+			Image image;
+			int imageIndex = 0;
+
+			for (int i = 0; i < dataVirtualLength; i += 16)
+			{
+				switch (this.data[i])
+				{
+					case BLIT_IMAGE:
+						image = this.images[imageIndex++];
+						g.DrawImage(image.Pixels, data[i | 1], data[i | 2]);
+						break;
+
+					case BLIT_IMAGE_PARTIAL:
+						image = this.images[imageIndex++];
+						width = data[i | 5];
+						height = data[i | 6];
+						g.DrawImage(
+							image.Pixels,
+							new Rectangle(data[i | 1], data[i | 2], width, height),
+							data[i | 3],
+							data[i | 4],
+							width,
+							height,
+							GraphicsUnit.Pixel);
+						break;
+
+					case DRAW_RECTANGLE:
+						color = data[i | 5];
+						if (color != lastBrushColor)
+						{
+							brush.Color = Color.FromArgb(color);
+							lastBrushColor = color;
+						}
+						g.FillRectangle(
+							brush,
+							data[i | 1],
+							data[i | 2],
+							data[i | 3],
+							data[i | 4]);
+						break;
+
+					case DRAW_ELLIPSE:
+						color = data[i | 5];
+						if (color != lastBrushColor)
+						{
+							brush.Color = Color.FromArgb(color);
+							lastBrushColor = color;
+						}
+						g.FillEllipse(
+							brush,
+							data[i | 1],
+							data[i | 2],
+							data[i | 3],
+							data[i | 4]);
+						break;
+
+					case DRAW_LINE:
+						color = data[i | 5];
+						if (color != lastBrushColor)
+						{
+							brush.Color = Color.FromArgb(color);
+							lastBrushColor = color;
+						}
+						g.DrawLine(
+							new Pen(brush),
+							new Point(data[i | 1], data[i | 2]),
+							new Point(data[i | 3], data[i | 4]));
+						break;
+
+					default:
+						throw new System.Exception("Unrecognized draw event.");
+				}
+			}
+		}
+
+		public void Reset(System.Drawing.Graphics g, int width, int height)
+		{
+			this.g = g;
+			this.screenWidth = width;
+			this.screenHeight = height;
+			this.dataVirtualLength = 0;
+			this.imagesVirtualLength = 0;
+		}
+
+		public void Fill(int red, int green, int blue)
+		{
+			this.dataVirtualLength = 0;
+			this.DrawRectangle(0, 0, this.screenWidth, this.screenHeight, red, green, blue, 255);
+		}
+		
+		public void BlitImage(Image image, int x, int y)
+		{
+			if (x >= this.screenWidth ||
+				y >= this.screenHeight ||
+				x + image.Width < 0 ||
+				y + image.Height < 0)
+			{
+				return;
+			}
+
+			if (this.dataVirtualLength + 16 >= this.dataRealLength)
+			{
+				this.ExpandCapacity();
+			}
+
+			if (imagesVirtualLength + 1 >= imagesRealLength)
+			{
+				this.ExpandImageCapacity();
+			}
+
+			data[dataVirtualLength] = BLIT_IMAGE;
+			data[dataVirtualLength | 1] = x;
+			data[dataVirtualLength | 2] = y;
+
+			images[imagesVirtualLength++] = image;
+			
+			dataVirtualLength += 16;
+		}
+
+		public void BlitImagePartial(Image image, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
+		{
+			if (this.dataVirtualLength + 16 >= this.dataRealLength)
+			{
+				this.ExpandCapacity();
+			}
+
+			if (imagesVirtualLength + 1 >= imagesRealLength)
+			{
+				this.ExpandImageCapacity();
+			}
+
+			data[dataVirtualLength] = BLIT_IMAGE_PARTIAL;
+			data[dataVirtualLength | 1] = targetX;
+			data[dataVirtualLength | 2] = targetY;
+			data[dataVirtualLength | 3] = sourceX;
+			data[dataVirtualLength | 4] = sourceY;
+			data[dataVirtualLength | 5] = width;
+			data[dataVirtualLength | 6] = height;
+
+			images[imagesVirtualLength++] = image;
+
+			dataVirtualLength += 16;
+		}
+
+		public void DrawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha)
+		{
+			if (this.dataVirtualLength + 16 >= this.dataRealLength)
+			{
+				this.ExpandCapacity();
+			}
+
+			data[dataVirtualLength] = DRAW_RECTANGLE;
+			data[dataVirtualLength | 1] = x;
+			data[dataVirtualLength | 2] = y;
+			data[dataVirtualLength | 3] = width;
+			data[dataVirtualLength | 4] = height;
+			data[dataVirtualLength | 5] = 
+				(alpha << 24) |
+				(red << 16) |
+				(green << 8) |
+				blue;
+			dataVirtualLength += 16;
+		}
+
+		public void DrawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha)
+		{
+			if (this.dataVirtualLength + 16 >= this.dataRealLength)
+			{
+				this.ExpandCapacity();
+			}
+
+			data[dataVirtualLength] = DRAW_LINE;
+			data[dataVirtualLength | 1] = startX;
+			data[dataVirtualLength | 2] = startY;
+			data[dataVirtualLength | 3] = endX;
+			data[dataVirtualLength | 4] = endY;
+			data[dataVirtualLength | 5] = lineWidth;
+			data[dataVirtualLength | 6] = 
+				(alpha << 24) |
+				(red << 16) |
+				(green << 8) |
+				blue;
+			dataVirtualLength += 16;
+		}
+
+		public void DrawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha)
+		{
+			if (this.dataVirtualLength + 16 >= this.dataRealLength)
+			{
+				this.ExpandCapacity();
+			}
+
+			data[dataVirtualLength] = DRAW_ELLIPSE;
+			data[dataVirtualLength | 1] = left;
+			data[dataVirtualLength | 2] = top;
+			data[dataVirtualLength | 3] = width;
+			data[dataVirtualLength | 4] = height;
+			data[dataVirtualLength | 5] = 
+				(alpha << 24) |
+				(red << 16) |
+				(green << 8) |
+				blue;
+			dataVirtualLength += 16;
+		}
+
+		private void ExpandCapacity()
+		{
+			int[] newData = new int[this.data.Length * 2];
+			System.Array.Copy(this.data, newData, this.data.Length);
+			this.data = newData;
+			this.dataRealLength = this.data.Length;
+		}
+
+		private void ExpandImageCapacity()
+		{
+			Image[] newImages = new Image[this.images.Length * 2];
+			System.Array.Copy(this.images, newImages, this.images.Length);
+			this.images = newImages;
+			this.imagesRealLength = this.images.Length;	
+		}
+	}
+}

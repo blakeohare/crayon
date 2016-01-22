@@ -1,0 +1,274 @@
+﻿
+_Z_GAME_INSTANCE = [null];
+
+class ZGame {
+	constructor(args) {
+		$assert(_Z_GAME_INSTANCE[0] == null, "Only one instance of ZGame can be created.");
+		_Z_GAME_INSTANCE[0] = this;
+
+		$assert($typeof(args) == $typeof({}), "ZGame argument must be a dictionary of ZParams.");
+		this._Z_args = args;
+		this._Z_fps = null;
+	}
+
+	function start() {
+		args = this._Z_args;
+
+		// FPS
+		this._present('FPS', args, ZParam.FPS, true);
+		fps = args[ZParam.FPS];
+		this._verify_int('FPS', fps, true);
+		this._Z_fps = fps;
+
+		this._present('SCREEN_SIZE', args, ZParam.SCREEN_SIZE, true);
+		screen_size = args[ZParam.SCREEN_SIZE];
+		this._verify_list('SCREEN_SIZE', screen_size, 2);
+		this._verify_int_list('SCREEN_SIZE', screen_size, true);
+
+		this._present('TITLE', args, ZParam.WINDOW_TITLE, true);
+		window_title = args[ZParam.WINDOW_TITLE];
+		this._verify_string('TITLE', window_title);
+
+		use_gamepad = args.get(ZParam.USE_GAMEPAD, false);
+
+		player_ids = args[ZParam.PLAYER_IDS];
+
+		include_menu_events = args.get(ZParam.INCLUDE_MENU_EVENTS, false);
+		this._verify_bool('INCLUDE_MENU_EVENTS', include_menu_events);
+
+		auto_configure_gamepad = args.get(ZParam.AUTO_CONFIGURE_GAMEPAD, false);
+		this._verify_bool('AUTO_CONFIGURE_GAMEPAD', auto_configure_gamepad);
+		
+		keyboard_as_gamepad_fallback = args.get(ZParam.KEYBOARD_AS_GAMEPAD_FALLBACK, false);
+		this._verify_bool('KEYBOARD_AS_GAMEPAD_FALLBACK', keyboard_as_gamepad_fallback);
+
+		pre_load_sheets = args.get(ZParam.IMAGE_SHEETS_PRE_LOAD, []);
+		this._verify_list('IMAGE_SHEETS_PRE_LOAD', pre_load_sheets);
+		this._verify_string_list('IMAGE_SHEETS_PRE_LOAD', pre_load_sheets);
+		
+		prepre_load_sheets = args.get(ZParam.IMAGE_SHEETS_PREPRE_LOAD, []);
+		this._verify_list('IMAGE_SHEETS_PREPRE_LOAD', prepre_load_sheets);
+		this._verify_string_list('IMAGE_SHEETS_PREPRE_LOAD', prepre_load_sheets);
+
+		this._present('WINDOW', args, ZParam.WINDOW, true);
+		window = args[ZParam.WINDOW];
+
+		finished_loading_callback = this._present('IMAGE_SHEETS_LOADED_CALLBACK', args, ZParam.IMAGE_SHEETS_LOADED_CALLBACK)
+			? args[ZParam.IMAGE_SHEETS_LOADED_CALLBACK]
+			: null;
+
+		_Z_IMAGE_MANAGER[0] = args.get(ZParam.IMAGE_MANAGER, null) ?? new ImageManager();
+
+		// TODO: rest of the verifications
+
+		$game_initialize(fps);
+		$game_initialize_screen(screen_size[0], screen_size[1]);
+		$game_set_title(window_title);
+
+		if (use_gamepad) {
+			this._initialize_gamepad(player_ids, args[ZParam.GAMEPAD_BUTTONS_USED]);
+		}
+
+		menu_events = [];
+		player_input_states = {};
+		pressed_keys = {};
+
+		for (player_id : player_ids) {
+			player_input_states[player_id] = new ZPlayerInputState(player_id);
+		}
+		
+		phase = 0;
+
+		this.load_progress = 0.0;
+
+		mouse_x = 0;
+		mouse_y = 0;
+
+		while (true) {
+			for (event : $game_pump_events()) {
+				if (event.is_quit) {
+					return;
+				}
+				if (event.is_gamepad) {
+					
+				}
+
+				if (event.is_mouse) {
+					mouse_x = event.x;
+					mouse_y = event.y;
+					window._Z_update_mouse_over(mouse_x, mouse_y);
+					switch (event.type) {
+						case 'mouseleftdown':
+						case 'mouserightdown':
+						case 'mouseleftup':
+						case 'mouserightup':
+							window._Z_apply_click(mouse_x, mouse_y, event.button == 'left', event.down);
+							break;
+					}
+				}
+			}
+
+			switch (phase) {
+				case 0: // prepreloading
+					if (prepre_load_sheets.length > 0) {
+						$gfx_image_sheet_load(prepre_load_sheets);
+						phase = 1;
+					} else {
+						phase = 2;
+						window.initialize();
+					}
+					break;
+				case 1:
+					if ($gfx_image_sheet_loaded(prepre_load_sheets)) {
+						phase = 2;
+						window.initialize();
+					}
+					break;
+
+				case 2:
+					if (pre_load_sheets.length > 0) {
+						$gfx_image_sheet_load(pre_load_sheets);
+						phase = 3;
+					} else {
+						this.load_progress = 1.0;
+						phase = 4;
+						if (finished_loading_callback != null) {
+							finished_loading_callback();
+						}
+					}
+					break;
+
+				case 3:
+					if ($gfx_image_sheet_loaded(pre_load_sheets)) {
+						this.load_progress = 1.0;
+						phase = 4;
+						if (finished_loading_callback != null) {
+							finished_loading_callback();
+						}
+					} else {
+						this.load_progress = $gfx_image_sheet_load_progress(pre_load_sheets);
+					}
+					break;
+
+				default:
+					break;
+			}
+
+			if (phase >= 2) {
+				window._Z_update_wrapper();
+				window.render(0, 0, screen_size[0], screen_size[1]);
+			}
+
+			$game_clock_tick();
+		}
+	}
+
+	function _initialize_gamepad(player_ids, buttons) {
+		count = $gamepad_enable_recent(player_ids);
+		unassigned_devices = [];
+		for (i = 0; i < $gamepad_count(); ++i) {
+			device = $gamepad_get_device(i);
+			if (device.id == null) {
+				unassigned_devices.add(device);
+			}
+		}
+
+		for (i = count; i < player_ids.length; ++i) {
+			if (unassigned_devices.length > 0) {
+				device = unassigned_devices[0];
+				unassigned_devices.remove(0);
+				player_id = player_ids[i];
+				$gamepad_set_id(device, player_id);
+				for (button : buttons) {
+					switch (button) {
+						case ZGamepadButton.LEFT_AXIS:
+						case ZGamepadButton.RIGHT_AXIS:
+							axis_id = button == ZGamepadButton.LEFT_AXIS ? 1 : 2;
+							$gamepad_bind_analog_2d(device, $gamepad_descriptor_guess(device, 'axis' + axis_id + ':x:positive'), button, true, true);
+							$gamepad_bind_analog_2d(device, $gamepad_descriptor_guess(device, 'axis' + axis_id + ':x:negative'), button, true, false);
+							$gamepad_bind_analog_2d(device, $gamepad_descriptor_guess(device, 'axis' + axis_id + ':y:positive'), button, false, true);
+							$gamepad_bind_analog_2d(device, $gamepad_descriptor_guess(device, 'axis' + axis_id + ':y:negative'), button, false, false);
+							break;
+						
+						case ZGamepadButton.DPAD:
+							$gamepad_bind_digital_2d(device, $gamepad_descriptor_guess(device, 'dpad:x:positive'), button, true, true);
+							$gamepad_bind_digital_2d(device, $gamepad_descriptor_guess(device, 'dpad:x:negative'), button, true, false);
+							$gamepad_bind_digital_2d(device, $gamepad_descriptor_guess(device, 'dpad:y:positive'), button, false, true);
+							$gamepad_bind_digital_2d(device, $gamepad_descriptor_guess(device, 'dpad:y:negative'), button, false, false);
+							break;
+							
+						case ZGamepadButton.BUTTON_A:
+						case ZGamepadButton.BUTTON_B:
+						case ZGamepadButton.BUTTON_X:
+						case ZGamepadButton.BUTTON_Y:
+						case ZGamepadButton.START:
+						case ZGamepadButton.BACK:
+						case ZGamepadButton.LEFT_BUMPER:
+						case ZGamepadButton.RIGHT_BUMPER:
+							
+							switch (button) {
+								case ZGamepadButton.BUTTON_A: id  = 'button:a'; break;
+								case ZGamepadButton.BUTTON_B: id  = 'button:b'; break;
+								case ZGamepadButton.BUTTON_X: id  = 'button:x'; break;
+								case ZGamepadButton.BUTTON_Y: id  = 'button:y'; break;
+								case ZGamepadButton.START: id  = 'button:start'; break;
+								case ZGamepadButton.BACK: id  = 'button:back'; break;
+								case ZGamepadButton.LEFT_BUMPER: id  = 'bumper:left'; break;
+								case ZGamepadButton.RIGHT_BUMPER: id  = 'bumper:right'; break;
+							
+							}
+							$gamepad_bind_digital(device, $gamepad_descriptor_guess(device, id), button);
+							break;
+
+						case ZGamepadButton.LEFT_TRIGGER:
+						case ZGamepadButton.RIGHT_TRIGGER:
+							$gamepad_bind_analog(device, $gamepad_descriptor_guess(device, 'trigger:' + button == ZGamepadButton.LEFT_TRIGGER ? 'left' : 'right'), button);
+							break;
+					}
+				}
+			}
+		}
+	}
+
+	function _present(param_name, args, param, required = false) {
+		output = args.get(param, _Z_UNIQUE) != _Z_UNIQUE;
+		if (required) $assert(output, param_name + " is required.");
+		return output;
+	}
+
+	function _verify_bool(param_name, value) {
+		$assert($typeof(value) == $typeof(true), param_name + " must be a boolean.");
+	}
+
+	function _verify_int(param_name, value, is_positive = false) {
+		$assert($typeof(value) == $typeof(0), param_name + " must be an integer.");
+		if (is_positive) {
+			$assert(value > 0, param_name + " must be positive.");
+		}
+	}
+
+	function _verify_list(param_name, value, size = null) {
+		$assert($typeof(value) == $typeof([]), param_name + " must be a list.");
+		if (size != null) {
+			$assert(value.length == size, param_name + " must be a list of size " + size + ".");
+		}
+	}
+
+	function _verify_int_list(param_name, value, is_positive=false) {
+		msg = param_name + " must be a list of " + (is_positive ? 'positive' : '') + " integers.";
+		for (item : value) {
+			$assert($typeof(item) == $typeof(0) && (!is_positive || item > 0), msg);
+		}
+	}
+
+	function _verify_string(param_name, value) {
+		$assert($typeof(value) == $typeof(''), param_name + " must be a string.");
+	}
+
+	function _verify_string_list(param_name, value) {
+		msg = param_name + " must be a list of strings.";
+		for (item : value) {
+			$assert($typeof(item) == $typeof(''), msg);
+		}
+	}
+}

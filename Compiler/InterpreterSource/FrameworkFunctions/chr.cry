@@ -1,0 +1,12 @@
+﻿
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+output = null;
+if (Value$arg1.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	if (int1 >= 0 && int1 < 256) {
+		output = buildCommonString($_chr(int1));
+	}
+}
+if (output == null) {
+	return killExecution(stack, pc, "$chr requires an integer between 0 and 255");
+}

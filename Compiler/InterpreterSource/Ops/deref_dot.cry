@@ -1,0 +1,331 @@
+﻿
+root = $_array_get(valueStack, valueStackSize - 1);
+type = Value$root.type;
+nameId = $_array_get(row, 0);
+if (type == Types.INSTANCE) {
+	objInstance = $_cast('ObjectInstance', Value$root.internalValue);
+	dictIntValueLookup = $_cast('Dictionary<int, Value>', ObjectInstance$objInstance.fields);
+	if ($_dictionary_contains(dictIntValueLookup, nameId)) {
+		$_array_set(valueStack, valueStackSize - 1, $_dictionary_get_guaranteed(dictIntValueLookup, nameId));
+	} else {
+		classId = ObjectInstance$objInstance.classId;
+		methodDefinitionLookup = $_array_get(classMethods, classId);
+		if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
+			methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
+			value = new Value(Types.METHOD,
+				new MethodInstance(
+					root,
+					MethodDefinition$methodDefinition.pc,
+					MethodDefinition$methodDefinition.maxArgs));
+			$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
+			$_array_set(valueStack, valueStackSize - 1, value);
+		} else {
+			return killExecution(stack, pc, "Field used before it was defined.");
+		}
+	}
+} else if (type == Types.NATIVE_OBJECT) {
+	nativeObject = $_cast('NativeObjectWrapper', Value$root.internalValue);
+	int1 = NativeObjectWrapper$nativeObject.subType; // subtype ID
+	int2 = $_array_get(row, 1); // field ID
+	value = VALUE_NULL;
+	switch
+		{MAX_SUBTYPE * %%%PREDEFINED_FIELD_COUNT%%%} // max possibilities
+		(int1 * %%%PREDEFINED_FIELD_COUNT%%% + int2) {
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_BUTTON%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) { // TODO: replace vague type with an enum.
+				value = buildCommonString(GameEvent$gameEvent.arg);
+			} else {
+				return killExecution(stack, pc, "Only mouse events have a button field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_DOWN%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType) ||
+				$_string_equals("key", GameEvent$gameEvent.vagueType)) {
+				if ($_string_equals("mousemove", GameEvent$gameEvent.specificType)) {
+					return killExecution(stack, pc, "'mousemove' events do not have a 'down' field.");
+				} else {
+					if (GameEvent$gameEvent.down) {
+						value = VALUE_TRUE;
+					} else {
+						value = VALUE_FALSE;	
+					}
+				}
+			} else {
+				return killExecution(stack, pc, "'" + GameEvent$gameEvent.specificType + "' events do not have a 'down' field.");
+			}
+			break;
+
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_KEY%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
+				value = VALUE_TRUE;
+			} else {
+				value = VALUE_FALSE;
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_MOUSE%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+				value = VALUE_TRUE;
+			} else {
+				value = VALUE_FALSE;
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_QUIT%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("quit", GameEvent$gameEvent.vagueType)) {
+				value = VALUE_TRUE;
+			} else {
+				value = VALUE_FALSE;
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_GAMEPAD%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+				value = VALUE_TRUE;
+			} else {
+				value = VALUE_FALSE;
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_HARDWARE%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+				value = VALUE_TRUE;
+			} else {
+				value = VALUE_FALSE;
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_KEY%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("key", GameEvent$gameEvent.vagueType)) {
+				value = buildCommonString(GameEvent$gameEvent.arg);
+			} else {
+				return killExecution(stack, pc, "Only keyboard events have a key field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_TYPE%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			value = buildCommonString(GameEvent$gameEvent.specificType);
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_X%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+				value = buildInteger(GameEvent$gameEvent.x);
+			} else {
+				return killExecution(stack, pc, "Only mouse events have an x field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_Y%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("mouse", GameEvent$gameEvent.vagueType)) {
+				value = buildInteger(GameEvent$gameEvent.y);
+			} else {
+				return killExecution(stack, pc, "Only mouse events have a y field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_PLAYER%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+				value = GameEvent$gameEvent.argValue;
+			} else {
+				return killExecution(stack, pc, "Only gamepad events have a player field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_NAME%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+				value = GameEvent$gameEvent.argValue3;
+			} else {
+				return killExecution(stack, pc, "Only gamepad events have a namefield.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_VALUE%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+				value = GameEvent$gameEvent.argValue2;
+			} else {
+				return killExecution(stack, pc, "Only gamepad events have a value field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_DEVICE%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("hardware", GameEvent$gameEvent.vagueType) || 
+				$_string_equals("gamepad", GameEvent$gameEvent.vagueType)) {
+				value = $_list_get(GamepadStatus$gamepadStatus.deviceValues, GameEvent$gameEvent.x);
+			} else {
+				return killExecution(stack, pc, "Only hardware/gamepad events have a device field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_IS_SIGNIFICANT%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+				if (GameEvent$gameEvent.y == 1) {
+					value = VALUE_TRUE;
+				} else {
+					value = VALUE_FALSE;
+				}
+			} else {
+				return killExecution(stack, pc, "Only hardware events have an is_significant field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_DESCRIPTOR%%%:
+			gameEvent = $_cast('GameEvent', NativeObjectWrapper$nativeObject.value);
+			if ($_string_equals("hardware", GameEvent$gameEvent.vagueType)) {
+				value = buildCommonString(GameEvent$gameEvent.arg);
+			} else {
+				return killExecution(stack, pc, "Only hardware events have a descriptor field.");
+			}
+			break;
+
+		case NativeObjectSubType.EVENT * %%%PREDEFINED_FIELD_COUNT%%%:
+			string1 = $_array_get(identifiers, nameId);
+			return killExecution(stack, pc, "Game Event does not have a field called '" + string1 + "'");
+			break;
+
+		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ID%%%:
+			gamepadDeviceInfo1 = $_cast('GamepadDeviceInfo', NativeObjectWrapper$nativeObject.value);
+			value = GamepadDeviceInfo$gamepadDeviceInfo1.playerId;
+			if (value == null) {
+				value = VALUE_NULL;
+			}
+			break;
+
+		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_NAME%%%:
+			gamepadDeviceInfo1 = $_cast('GamepadDeviceInfo', NativeObjectWrapper$nativeObject.value);
+			value = buildCommonString(GamepadDeviceInfo$gamepadDeviceInfo1.name);
+			break;
+
+		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_HAS_CONFIGURATION%%%:
+			gamepadDeviceInfo1 = $_cast('GamepadDeviceInfo', NativeObjectWrapper$nativeObject.value);
+			if ($_list_length(GamepadDeviceInfo$gamepadDeviceInfo1.stringVirtualPushyIds) == 0 &&
+				$_list_length(GamepadDeviceInfo$gamepadDeviceInfo1.stringVirtualPushyIds) == 0) {
+				value = VALUE_FALSE;
+			} else {
+				value = VALUE_TRUE;
+			}
+			break;
+
+		case NativeObjectSubType.GAMEPAD_DEVICE * %%%PREDEFINED_FIELD_COUNT%%%:
+			string1 = $_array_get(identifiers, nameId);
+			return killExecution(stack, pc, "Gamepad does not have a field called '" + string1 + "'");
+			break;
+
+		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_COMPLETED%%%:
+			httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
+			int1 = HttpRequest$httpRequest1.statusCode;
+			if (int1 == 0) {
+				value = VALUE_FALSE;
+			} else {
+				value = VALUE_TRUE;
+			}
+			break;
+			
+		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTENT%%%:
+			httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
+			int1 = HttpRequest$httpRequest1.statusCode;
+			if (int1 == 0) {
+				// TODO: may reconsider adding an HttpRequest native object field that gets set to true once .completed is called 
+				// and returns true so that there won't be any race conditions.
+				return killExecution(stack, pc, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+			}
+			string2 = HttpRequest$httpRequest1.body;
+			if (string2 == null) {
+				value = VALUE_NULL;
+			} else {
+				value = buildString(string2);
+			}
+			break;
+			
+		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CODE%%%:
+			httpRequest1 = $_cast('HttpRequest', NativeObjectWrapper$nativeObject.value);
+			int1 = HttpRequest$httpRequest1.statusCode;
+			if (int1 == 0) {
+				return killExecution(stack, pc, "Cannot dereference any fields on an incomplete HTTP request other than .completed");
+			}
+			value = buildInteger(int1);
+			break;
+
+		case NativeObjectSubType.HTTP_REQUEST * %%%PREDEFINED_FIELD_COUNT%%%:
+			string1 = $_array_get(identifiers, nameId);
+			return killExecution(stack, pc, "HTTP requests do not have a field called '" + string1 + "'");
+			break;
+			
+		case NativeObjectSubType.IMAGE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_WIDTH%%%:
+			image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
+			value = buildInteger(Image$image1.width);
+			break;
+
+		case NativeObjectSubType.IMAGE * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_HEIGHT%%%:
+			image1 = $_cast('Image', NativeObjectWrapper$nativeObject.value);
+			value = buildInteger(Image$image1.height);
+			break;
+			
+		case NativeObjectSubType.IMAGE * %%%PREDEFINED_FIELD_COUNT%%%:
+			string1 = $_array_get(identifiers, nameId);
+			return killExecution(stack, pc, "Image does not have a field called '" + string1 + "'");
+			break;
+
+		default:
+			// Generally this won't happen.
+			return killExecution(stack, pc, "Unrecognized field.");
+			break;
+	}
+	$_array_set(valueStack, valueStackSize - 1, value);
+} else {
+	int2 = $_array_get(row, 1);
+	if (int2 == %%%PREDEFINED_FIELD_LENGTH%%%) {
+		// Length is a field, and a relatively common one, so it's called it differently here.
+		// However, if there are other fields that start to get added, I'll probably do something a bit more
+		// streamlined with the primitive method logic below, such as field ID's in the same lookup
+		// but making them negative.
+		len = -1;
+		if (type == Types.LIST) {
+			list1 = $_cast('List<Value>', Value$root.internalValue);
+			len = $_list_length(list1);
+		} else if (type == Types.STRING) {
+			string1 = $_cast('string', Value$root.internalValue);
+			len = $_string_length(string1);
+		} else if (type == Types.DICTIONARY) {
+			dictImpl = $_cast('DictImpl', Value$root.internalValue);
+			len = DictImpl$dictImpl.size;
+		} else {
+			return killExecution(stack, pc, getTypeFromId(type) + " does not have a length property.");
+		}
+
+		if (len < INTEGER_POSITIVE_CACHE) {
+			$_array_set(valueStack, valueStackSize - 1, $_array_get($_array_get(INTEGERS_CACHE, 0), len));
+		} else {
+			$_array_set(valueStack, valueStackSize - 1, new Value(Types.INTEGER, len));
+		}
+	} else {
+		int1 = $_array_get(primitiveMethodIdLookup, type * %%%PREDEFINED_FIELD_COUNT%%% + int2);
+		if (int1 == 0) {
+			if (type == Types.NULL) {
+				return killExecution(stack, pc, "Null reference error.");
+			}
+			return killExecution(
+				stack,
+				pc,
+				getTypeFromId(type) + " type does not have a field called '" + $_array_get(identifiers, $_array_get(row, 0)) + "'.");
+		}
+		$_array_set(valueStack, valueStackSize - 1, new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
+	}
+}

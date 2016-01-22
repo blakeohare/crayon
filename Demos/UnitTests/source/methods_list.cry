@@ -1,0 +1,13 @@
+
+function methods_list() {
+
+	$print('methods_list - list primitive methods');
+	
+	a = [1, 2, 3];
+	b = [4, 5, 6];
+	
+	a.concat(b);
+	
+	$assert(a + '' == '[1, 2, 3, 4, 5, 6]', "methods_list");
+	$assert(b + '' == '[4, 5, 6]', "methods_list");
+}

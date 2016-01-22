@@ -1,0 +1,180 @@
+﻿package %%%PACKAGE%%%;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import java.util.ArrayList;
+
+class AndroidTranslationHelper {
+    private AndroidTranslationHelper() {}
+
+    private static GameActivity context = null;
+
+    public static void setContext(GameActivity context) {
+        AndroidTranslationHelper.context = context;
+    }
+
+    private static void TODO() {
+        throw new RuntimeException("TODO");
+    }
+
+    private static void TODO(String message) {
+        throw new RuntimeException("TODO. " + message);
+    }
+
+    public static int[] initializeScreen(
+        int gameWidth,
+        int gameHeight,
+        int screenWidth,
+        int screenHeight) {
+        CrayonGlRenderer.initializeScreen(gameWidth, gameHeight);
+		return null;
+    }
+
+    public static void playSound(Object soundInstance) {
+        TODO("Also use a more specific type.");
+    }
+
+    private static String rawByteCodeString = null;
+    public static String getRawByteCodeString() {
+        return rawByteCodeString;
+    }
+
+    public static void setRawByteCodeString(String value) {
+        rawByteCodeString = value;
+    }
+
+    public static String getAppDataRoot() {
+        TODO();
+        return "";
+    }
+
+    public static ArrayList<Value> getEventsRawList() {
+        return new ArrayList<>();
+    }
+
+    public static int ioCreateDirectory(String path) {
+        TODO();
+        return 0;
+    }
+
+    public static String ioCurrentDirectory() {
+        TODO();
+        return "";
+    }
+
+    public static boolean ioDoesPathExist(String path, boolean directoriesOnly, boolean performCaseCheck, boolean isUserData) {
+        TODO();
+        return false;
+    }
+
+    public static int ioDeleteFile(String path, boolean isUserData) {
+        TODO();
+        return 0;
+    }
+
+    public static int ioDeleteDirectory(String path, boolean recursive) {
+        TODO();
+        return 0;
+    }
+
+    public static android.graphics.Bitmap readLocalTileResource(String path) {
+        return context.loadBitmap("spritesheets/" + path + ".png");
+    }
+
+    public static android.graphics.Bitmap flushImagetteToBitmap(Imagette imagette) {
+        int width = imagette.width;
+        int height = imagette.height;
+        Bitmap finalImage = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas g = new Canvas(finalImage);
+        int length = imagette.nativeBitmaps.size();
+        for (int i = 0; i < length; ++i) {
+            Bitmap img = (Bitmap) imagette.nativeBitmaps.get(i);
+            int x = imagette.xs.get(i);
+            int y = imagette.ys.get(i);
+            int w = img.getWidth();
+            int h = img.getHeight();
+            Rect src = new Rect(0, 0, w, h);
+            Rect dst = new Rect(x, y, w, h);
+            g.drawBitmap(img, src, dst, null);
+        }
+        g.save();
+        return finalImage;
+    }
+
+	// TODO: delete this and call CrayonGlRenderer's implementation directly.
+    public static void initializeGame(double fps) {
+        CrayonGlRenderer.initializeGame(fps);
+    }
+
+    public static android.graphics.Bitmap readLocalImageResource(String path) {
+        TODO();
+        return null;
+    }
+
+    public static void setTitle(String title) {
+        // There's really not much title to set.
+    }
+
+    public static String resourceReadText(String path) {
+        TODO();
+        return null;
+    }
+
+    public static boolean isWindows() {
+        return false;
+    }
+
+    public static void fillScreen(int red, int green, int blue) {
+        CrayonWrapper.v_glFillScreen(red, green, blue);
+    }
+
+    public static String ioFileReadText(String path, boolean isUserData) {
+        TODO();
+        return "";
+    }
+
+    public static int ioFileWriteText(String path, String contents, boolean isUserData) {
+        TODO();
+        return 0;
+    }
+
+    public static String[] ioFilesInDirectory(String path, boolean isUserData) {
+        TODO();
+        return null;
+    }
+
+    public static void makeHttpRequest(String method, String url, String body, String userAgent, String contentType, String contentLength, ArrayList<String> headerNameList, ArrayList<String> headerNameValues) {
+        throw new RuntimeException("TODO: implement makeHttpRequest");
+    }
+
+    public static SoundInstance readLocalSoundResource(String path) {
+        TODO();
+        return null;
+    }
+
+    public static void launchBrowser(String url) {
+        TODO();
+    }
+
+    public static MusicInstance loadMusicFromResource(String path, int[] intOutParam) {
+        TODO();
+        return null;
+    }
+
+    public static void playMusicNow(Object nativeMusicObject, boolean isLooping) {
+        TODO();
+    }
+
+    public static void pauseMusic() {
+        TODO();
+    }
+
+    public static void resumeMusic() {
+        TODO();
+    }
+
+    public static void setMusicVolume(Object nativeMusicObject, double ratio) {
+        //TODO();
+    }
+}

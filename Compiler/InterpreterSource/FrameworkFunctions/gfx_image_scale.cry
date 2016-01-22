@@ -1,0 +1,14 @@
+﻿// $gfx_image_scale(image, newWidth, newHeight)
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+image1 = extractImageFromValue(arg1);
+if (image1 == null) {
+	return killExecution(stack, pc, "$gfx_image_scale requires an image as its first argument.");
+}
+if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_image_scale requires an image and two integers.");
+}
+output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, scaleImage(
+	image1,
+	$_cast('int', Value$arg2.internalValue),
+	$_cast('int', Value$arg3.internalValue))));

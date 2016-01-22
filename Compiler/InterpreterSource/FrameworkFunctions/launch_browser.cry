@@ -1,0 +1,14 @@
+﻿// $launch_browser(url)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$launch_browser requires a string argument.");
+}
+string1 = $_cast('string', Value$arg1.internalValue);
+string2 = $_string_lower(string1);
+if ($_string_startswith(string2, 'http://') ||
+	$_string_startswith(string2, 'https://')) {
+	$_launch_browser(string1);
+} else {
+	return killExecution(stack, pc, "$launch_browser can only open URLs that begin with http:// and https://");
+}

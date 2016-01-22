@@ -1,0 +1,22 @@
+﻿function @omitReturn @type('string') getBinaryOpFromId(@type('int') id) {
+	switch (id) {
+		case BinaryOps.ADDITION: return '+';
+		case BinaryOps.SUBTRACTION: return '-';
+		case BinaryOps.MULTIPLICATION: return '*';
+		case BinaryOps.DIVISION: return '/';
+		case BinaryOps.MODULO: return '%';
+		case BinaryOps.EXPONENT: return '**';
+		case BinaryOps.BITWISE_AND: return '&';
+		case BinaryOps.BITWISE_OR: return '|';
+		case BinaryOps.BITWISE_XOR: return '^';
+		case BinaryOps.BIT_SHIFT_LEFT: return '<<';
+		case BinaryOps.BIT_SHIFT_RIGHT: return '>>';
+		case BinaryOps.EQUALS: return '==';
+		case BinaryOps.NOT_EQUALS: return '!=';
+		case BinaryOps.LESS_THAN: return '<';
+		case BinaryOps.LESS_THAN_OR_EQUAL: return '<=';
+		case BinaryOps.GREATER_THAN: return '>';
+		case BinaryOps.GREATER_THAN_OR_EQUAL: return '>=';
+		default: return "unknown";
+	}
+}

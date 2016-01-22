@@ -1,0 +1,85 @@
+﻿function @type('HttpRequest') makeHttpRequest(
+	@type('string') method,
+	@type('string') url,
+	@type('string') body,
+	@type('List<int>') headerRepeatCount,
+	@type('List<string>') headerNamesAndValues,
+	@type('Array<string>') errorOut) {
+	
+	$_array_set(errorOut, 0, null);
+
+	@type('HttpRequest') request = new HttpRequest(0, null, null, null);
+
+	@type('List<string>') headerNames = $_new_list('string');
+	@type('List<string>') headerValues = $_new_list('string');
+	@type('string') userAgent = "Crayon/v0.1.7; Have a nice day.";
+	@type('string') contentType = null;
+	@type('string') contentLength = null;
+	@type('bool') noContent = (body == null) || $_string_equals("GET", method);
+	if (!noContent) {
+		contentLength = $_string_cast_strong($_string_length(body));
+	}
+	@type('int') i = 0;
+	@type('int') j = 0;
+
+	// Flatten the weird number-string list pair to two pairs of ordered lists.
+	// User-Agent, Content-Type, and Content-Length get special handling.
+	while (i < $_list_length(headerRepeatCount)) {
+		@type('int') count = $_list_get(headerRepeatCount, i);
+		i += 1;
+		@type('string') headerName = $_list_get(headerNamesAndValues, j);
+		@type('string') canonicalName = $_string_upper(headerName);
+		
+		j +=1;
+		while (count > 0) {
+			@type('string') headerValue = $_list_get(headerNamesAndValues, j);
+			j += 1;
+			if ($_string_equals("USER-AGENT", canonicalName)) {
+				userAgent = headerValue;
+			} else if ($_string_equals("CONTENT-LENGTH", canonicalName)) {
+				if (noContent) {
+					$_array_set(errorOut, 0, "Cannot set content length without a body.");
+					return null;
+				}
+				// do nothing. content length is automatically set as body.length
+			} else if ($_string_equals("CONTENT-TYPE", canonicalName)) {
+				if (noContent) {
+					$_array_set(errorOut, 0, "Cannot set content type without a body.");
+					return null;
+				}
+				contentType = headerValue;
+			} else {
+				$_list_push(headerNames, headerName);
+				$_list_push(headerValues, headerValue);
+			}
+			count -= 1;
+		}
+	}
+
+	$_http_request(
+		request,
+		method,
+		url,
+		body,
+		userAgent,
+		contentType,
+		contentLength,
+		headerNames,
+		headerValues);
+	return request;
+}
+
+function @type('bool') handleHttpResponse(
+	@type('HttpRequest') request, 
+	@type('int') statusCode, 
+	@type('string') status,
+	@type('string') body, 
+	@type('Dictionary<string, Array<string>>') headers) {
+
+	HttpRequest$request.statusCode = statusCode;
+	HttpRequest$request.status = status;
+	HttpRequest$request.headers = headers;
+	HttpRequest$request.body = body;
+
+	return false;
+}

@@ -1,0 +1,12 @@
+function make_grid(width, height) {
+	columns = [];
+	for (x = 0; x < width; ++x) {
+		column = [];
+		for (y = 0; y < height; ++y) {
+			column.add(null);
+		}
+		columns.add(column);
+	}
+	
+	return columns;
+}

@@ -1,0 +1,80 @@
+
+
+class TestClass : Scene {
+	constructor() : base() {
+		this.counter = 0;
+		
+		this.state = [];
+		this.tests = this.get_tests();
+		
+		this.red = [255, 0, 0];
+		this.green = [0, 180, 0];
+		this.gray = [50, 50, 50];
+		
+		this.nuke_folder_contents('.');
+		files = $user_data_directory_listing('.');
+		$assert(files.length == 0, "nuke setup did not clear everything");
+	}
+	
+	function get_tests() {
+		$assert(false, "Override me!");
+	}
+	
+	function nuke_folder_contents(path) {
+		files = $user_data_directory_listing(path);
+		for (file : files) {
+			fullpath = path + '/' + file;
+			if ($user_data_is_path_directory(fullpath)) {
+				this.nuke_folder_contents(fullpath);
+				$user_data_delete_directory(fullpath, true);
+			} else {
+				$user_data_delete_file(fullpath);
+			}
+		}
+	}
+	
+	function update() {
+		
+		for (ev : $game_pump_events()) {
+			if (ev.is_quit) {
+				this.end_game = true;
+			}
+		}
+		
+		if (this.counter < this.tests.length) {
+			test = this.tests[this.counter];
+			
+			error = test();
+			
+			if (error == null) this.state.add(true);
+			else {
+				this.state.add(false);
+				$print(error);
+			}
+		}
+		
+		this.counter++;
+	}
+	
+	function render() {
+		index = 0;
+		margin = 5;
+		size = 10;
+		for (y = 0; y < 10; ++y) {
+			for (x = 0; x < 10; ++x) {
+				if (index < this.tests.length) {
+					color = this.gray;
+					if (index < this.state.length) {
+						color = this.state[index] ? this.green : this.red;
+					}
+					left = x * (margin + size) + 10;
+					top = y * (margin + size) + 10;
+					
+					$gfx_draw_rectangle(left, top, size, size, color[0], color[1], color[2], 255);
+				}
+				index++;
+			}
+		}
+	}
+}
+

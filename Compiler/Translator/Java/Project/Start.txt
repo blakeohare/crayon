@@ -1,0 +1,7 @@
+﻿package %%%PACKAGE%%%;
+
+class Start {
+	public static void main(String[] args) {
+		CrayonWrapper.v_main();
+	}
+}

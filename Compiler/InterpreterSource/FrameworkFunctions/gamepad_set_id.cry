@@ -1,0 +1,14 @@
+﻿
+// $gamepad_set_id(device, id);
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+// status code:
+// 0 - no error
+// 1 - not a device
+// 2 - bad ID
+int1 = gamepadSetId(arg1, arg2);
+if (int1 != 0) {
+	if (int1 == 1) return killExecution(stack, pc, "$gamepad_set_id requires a gamepad device reference as its first argument.");
+	if (int1 == 2) return killExecution(stack, pc, "$gamepad_set_id requires an integer or string as its second argument.");
+	return killExecution(stack, pc, "Unknown error occurred while invoking $gamepad_set_id.");
+}

@@ -1,0 +1,12 @@
+﻿// $io_is_path_directory(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$io_is_path_directory requires a string argument.");
+}
+bool1 = ioCheckPathExistence($_cast('string', Value$arg1.internalValue), false, false, true, stringOutParam);
+if (bool1) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

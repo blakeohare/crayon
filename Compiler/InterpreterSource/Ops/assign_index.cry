@@ -1,0 +1,73 @@
+﻿
+valueStackSize -= 3;
+value = $_array_get(valueStack, valueStackSize + 2);
+value2 = $_array_get(valueStack, valueStackSize + 1); // index
+root = $_array_get(valueStack, valueStackSize);
+
+type = Value$root.type;
+bool1 = row[0] == 1; // re-push this onto the stack once it is assigned
+if (type == Types.LIST) {
+	if (Value$value2.type == Types.INTEGER) {
+		i = $_cast('int', Value$value2.internalValue);
+		list1 = $_cast('List<Value>', Value$root.internalValue);
+		if (i < 0) {
+			i += $_list_length(list1);
+			if (i < 0) {
+				return killExecution(stack, pc, "Index is out of range.");
+			}
+		}
+		
+		if (i >= $_list_length(list1)) {
+			return killExecution(stack, pc, "Index is out of range.");
+		}
+
+		$_list_set(list1, i, value);
+	} else {
+		return killExecution(stack, pc, "List index must be an integer.");
+	}
+} else if (type == Types.DICTIONARY) {
+	keyType = Value$value2.type;
+	if (keyType == Types.INTEGER) {
+		intKey = $_cast('int', Value$value2.internalValue);
+	} else if (keyType == Types.STRING) {
+		stringKey = $_cast('string', Value$value2.internalValue);
+	} else if (keyType == Types.INSTANCE) {
+		objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
+		intKey = ObjectInstance$objInstance.objectId;
+	} else {
+		return killExecution(stack, pc, "Invalid key for a dictionary.");
+	}
+
+	dictImpl = $_cast('DictImpl', Value$root.internalValue);
+	bool2 = DictImpl$dictImpl.size > 0; // already contains stuff
+	if (bool2 && DictImpl$dictImpl.keyType != keyType) {
+		return killExecution(stack, pc, "Cannot have multiple keys in one dictionary with different types.");
+	}
+	if (keyType == Types.STRING) {
+		if (!$_dictionary_contains(DictImpl$dictImpl.keyStringLookup, stringKey)) {
+			$_dictionary_set(DictImpl$dictImpl.keyStringLookup, stringKey, value2);
+			DictImpl$dictImpl.size += 1;
+			if (!bool2) { // is empty?
+				DictImpl$dictImpl.keyType = keyType;
+			}
+		}
+		$_dictionary_set(DictImpl$dictImpl.valueStringLookup, stringKey, value);
+	} else {
+		if (!$_dictionary_contains(DictImpl$dictImpl.keyIntLookup, intKey)) {
+			$_dictionary_set(DictImpl$dictImpl.keyIntLookup, intKey, value2);
+			DictImpl$dictImpl.size += 1;
+			if (!bool2) { // is empty?
+				DictImpl$dictImpl.keyType = keyType;
+			}
+		}
+		$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
+	}
+} else {
+	return killExecution(stack, pc, getTypeFromId(type) + " type does not support assigning to an index.");
+}
+
+if (bool1) {
+	// No capacity check necessary. Things were already popped off.
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+}

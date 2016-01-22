@@ -1,0 +1,137 @@
+﻿class ZStackPanel : ZPanel {
+	constructor() : base() {
+		this._Z_direction = ZStackDirection.DOWN;
+		this._Z_is_stack_panel = true; // Terrible OO
+	}
+
+	function set_direction(direction) {
+		this._Z_direction = direction;
+		return this;
+	}
+
+	function _Z_precompute_bounds() {
+		if (this._Z_direction == ZStackDirection.DOWN || this._Z_direction == ZStackDirection.UP) {
+			pix_h = 0;
+			per_h = 0.0;
+			for (child : this._Z_children) {
+				if (child._Z_visibility != ZVisibility.COLLAPSED) {
+					child._Z_precompute_bounds();
+					pix_h += child._Z_precomputed_height_pixels + child._Z_margin_top + child._Z_margin_bottom;
+					per_h += child._Z_precomputed_height_ratio;
+				}
+			}
+			switch (this._Z_width_type) {
+				case _ZBoundsType.NONE:
+					pix_w = 0;
+					per_w = 1.0;
+					break;
+				case _ZBoundsType.RATIO:
+					pix_w = 0;
+					per_w = this._Z_width;
+					break;
+				case _ZBoundsType.PIXELS:
+					pix_w = this._Z_width;
+					per_w = 0;
+					break;
+			}
+		} else {
+			pix_w = 0;
+			per_w = 0.0;
+			for (child : this._Z_children) {
+				if (child._Z_visibility != ZVisibility.COLLAPSED) {
+					child._Z_precompute_bounds();
+					pix_w += child._Z_precomputed_width_pixels + child._Z_margin_left + child._Z_margin_right;
+					per_w += child._Z_precomputed_width_ratio;
+				}
+			}
+			switch (this._Z_height_type) {
+				case _ZBoundsType.NONE:
+					pix_h = 0;
+					per_h = 1.0;
+					break;
+				case _ZBoundsType.RATIO:
+					pix_h = 0;
+					per_h = this._Z_height;
+					break;
+				case _ZBoundsType.PIXELS:
+					pix_h = this._Z_height;
+					per_h = 0;
+					break;
+			}
+		}
+		
+		this._Z_set_precomputed_bounds(pix_w, pix_h, per_w, per_h);
+	}
+
+	function render(left, top, width, height) {
+		if (this._Z_rotation != null) {
+			$assert(false, "Rotation on panels not supported yet.");
+		}
+		
+		switch (this._Z_direction) {
+			case ZStackDirection.DOWN:
+			case ZStackDirection.UP:
+				is_up = this._Z_direction == ZStackDirection.UP;
+				if (is_up) {
+					y = top + height;
+				} else {
+					y = top;
+				}
+				total_allowance = height - this._Z_precomputed_height_pixels;
+				if (this._Z_precomputed_height_ratio > 1) {
+					ratio_fix = 1.0 / this._Z_precomputed_height_ratio;
+				} else {
+					ratio_fix = 1.0;
+				}
+
+				for (child : this._Z_children) {
+					if (child._Z_visibility != ZVisibility.COLLAPSED) {
+						x_margins = child._Z_margin_left + child._Z_margin_right;
+						x_alloc = child._Z_precomputed_width_pixels;
+						has_ratio = child._Z_precomputed_width_ratio > 0;
+						if (has_ratio) {
+							t = width - x_alloc - x_margins;
+							if (t > 0) {
+								x_alloc += $floor(t * child._Z_precomputed_width_ratio);
+							}
+						}
+						switch (child._Z_halignment) {
+							case ZHorizontalAlignment.LEFT: x = left + child._Z_margin_left; break;
+							case ZHorizontalAlignment.CENTER: x = left + (width - x_alloc) / 2; break;
+							case ZHorizontalAlignment.RIGHT: x = left + width - x_alloc - child._Z_margin_right; break;
+						}
+					
+						y_alloc = child._Z_precomputed_height_pixels;
+						if (has_ratio) {
+							y_alloc += $floor(total_allowance * child._Z_precomputed_height_ratio * ratio_fix);
+						}
+
+						if (is_up) {
+							y -= y_alloc + child._Z_margin_bottom;
+						} else {
+							y += child._Z_margin_top;
+						}
+
+						child._Z_rendered_left = x;
+						child._Z_rendered_right = x + x_alloc;
+						child._Z_rendered_top = y;
+						child._Z_rendered_bottom = y + y_alloc;
+
+						if (child._Z_visibility == ZVisibility.VISIBLE) {
+							child.render(x, y, x_alloc, y_alloc);
+						}
+
+						if (is_up) {
+							y -= child._Z_margin_top;
+						} else {
+							y += y_alloc + child._Z_margin_bottom;
+						}
+					}
+				}
+				break;
+			default:
+				$assert(false, "TODO: other stack panel directions.");
+				break;
+		}
+	}
+}

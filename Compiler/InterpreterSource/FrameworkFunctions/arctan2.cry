@@ -1,0 +1,28 @@
+﻿// $arctan2(y, x)
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+	if (Value$arg2.type == Types.FLOAT) {
+		float2 = $_cast('double', Value$arg2.internalValue);
+		output = buildFloat($_arc_tan(float1, float2));
+	} else if (Value$arg2.type == Types.INTEGER) {
+		int2 = $_cast('int', Value$arg2.internalValue);
+		output = buildFloat($_arc_tan(float1, int2));
+	} else {
+		return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
+	}
+} else if (Value$arg1.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	if (Value$arg2.type == Types.FLOAT) {
+		float2 = $_cast('double', Value$arg2.internalValue);
+		output = buildFloat($_arc_tan(int1, float2));
+	} else if (Value$arg2.type == Types.INTEGER) {
+		int2 = $_cast('int', Value$arg2.internalValue);
+		output = buildFloat($_arc_tan(int1, int2));
+	} else {
+		return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
+	}
+} else {
+	return killExecution(stack, pc, "$arctan2 requires 2 numeric arguments.");
+}

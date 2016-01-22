@@ -1,0 +1,20 @@
+﻿
+// TODO: when you add ability to add optional arguments, add a boolean for failing silently.
+
+// $parse_json(string)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$parse_json requires a string argument.");
+}
+string1 = $_cast('string', Value$arg1.internalValue);
+bool1 = true; // is error
+if ($_string_length(string1) > 0) {
+	output = $_parse_json(string1);
+	if (output != null) {
+		bool1 = false;
+	}
+}
+if (bool1) {
+	return killExecution(stack, pc, "Attempted to parse an invalid JSON string.");
+}

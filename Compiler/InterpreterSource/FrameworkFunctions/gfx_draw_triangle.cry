@@ -1,0 +1,43 @@
+﻿
+// $draw_triangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha)
+import inline "InterpreterSource/FrameworkFunctions/10_arg.cry";
+
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER ||
+	Value$arg3.type != Types.INTEGER ||
+	Value$arg4.type != Types.INTEGER ||
+	Value$arg5.type != Types.INTEGER ||
+	Value$arg6.type != Types.INTEGER) {
+	return killExecution(stack, pc, "$gfx_draw_triangle coordinates must be integers.");
+}
+if (Value$arg7.type != Types.INTEGER ||
+	Value$arg8.type != Types.INTEGER ||
+	Value$arg9.type != Types.INTEGER ||
+	Value$arg10.type != Types.INTEGER) {
+	return killExecution(stack, pc, "Color values must be integers.");
+}
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawTriangle(
+		$_cast('int', Value$arg1.internalValue),
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		$_cast('int', Value$arg4.internalValue),
+		$_cast('int', Value$arg5.internalValue),
+		$_cast('int', Value$arg6.internalValue),
+		$_cast('int', Value$arg7.internalValue),
+		$_cast('int', Value$arg8.internalValue),
+		$_cast('int', Value$arg9.internalValue),
+		$_cast('int', Value$arg10.internalValue));
+} else {
+	$_draw_triangle(
+		$_cast('int', Value$arg1.internalValue),
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue),
+		$_cast('int', Value$arg4.internalValue),
+		$_cast('int', Value$arg5.internalValue),
+		$_cast('int', Value$arg6.internalValue),
+		$_cast('int', Value$arg7.internalValue),
+		$_cast('int', Value$arg8.internalValue),
+		$_cast('int', Value$arg9.internalValue),
+		$_cast('int', Value$arg10.internalValue));
+}

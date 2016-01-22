@@ -1,0 +1,271 @@
+﻿// ALL FILE PATHS ARE CASE SENSITIVE ON ALL PLATFORMS!!!!
+// (Yes, even on Windows. It's magic.)
+
+function @type('string') ioErrorToString(@type('int') errorCode) {
+	if (errorCode == IOErrors.NONE) return null;
+	if (errorCode == IOErrors.INVALID_PATH) return "Invalid path.";
+	if (errorCode == IOErrors.PATH_STEPS_ABOVE_DOMAIN) return "Too many parent directory references (..). Path makes reference above allowed root.";
+	if (errorCode == IOErrors.DOES_NOT_EXIST) return "Path does not exist.";
+	if (errorCode == IOErrors.BAD_CASING) return "Path does not exist (paths are case sensitive).";
+	if (errorCode == IOErrors.NONEXISTENT_DRIVE) return "Path refers to a non-existent drive letter";
+	if (errorCode == IOErrors.IMPOSSIBLE_STATE) return "Invalid state.";
+	if (errorCode == IOErrors.READ_ONLY) return "Disk is read only.";
+	if (errorCode == IOErrors.DISK_FULL) return "Disk is full.";
+	if (errorCode == IOErrors.PATH_TOO_LONG) return "File path is too long.";
+	if (errorCode == IOErrors.RESERVED_NAME) return "Path uses a reserved name.";
+	return "Unknown error.";
+}
+
+function @type('int') ioReadFileText(@type('string') path, @type('bool') isUserData, @type('bool') strictPath, @type('Array<string>') outParam) {
+	@type('int') status = ioPathFixer(path, outParam, strictPath, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(outParam, 0);
+	@type('string') content = $_io_file_read_text(path, isUserData);
+	if (content == null) return IOErrors.UNKNOWN_ERROR;
+	$_array_set(outParam, 0, content);
+	return IOErrors.NONE;
+}
+
+// user data will ensure the folder exists before you create the file. Otherwise it'll crash if the parent folder doesn't already exist.
+function @type('int') ioWriteFileText(@type('string') path, @type('string') content, @type('bool') isUserData, @type('bool') strictPath, @type('Array<string>') outParam) {
+	@type('int') status = ioPathFixer(path, outParam, strictPath, isUserData, false, !isUserData, isUserData, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(outParam, 0);
+	return $_io_file_write_text(path, content, isUserData);
+}
+
+function @type('int') ioListDir(
+	@type('string') path,
+	@type('bool') strictPath,
+	@type('bool') isUserData,
+	@type('List<Value>') filesOutParam,
+	@type('Array<string>') stringOutParam) {
+
+	@type('int') status = ioPathFixer(path, stringOutParam, strictPath, isUserData, true, false, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(stringOutParam, 0);
+	@type('Array<string>') files = $_io_files_in_directory(path, isUserData);
+	if (files == null) return IOErrors.UNKNOWN_ERROR;
+	for (@type('int') i = 0; i < $_array_length(files); i += 1) {
+		$_list_push(filesOutParam, buildString($_array_get(files, i)));
+	}
+	return IOErrors.NONE;
+}
+
+function @type('int') ioDeleteFile(
+	@type('string') path,
+	@type('bool') strictPath,
+	@type('bool') isUserData,
+	@type('Array<string>') stringOutParam
+) {
+	@type('int') status = ioPathFixer(path, stringOutParam, true, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(stringOutParam, 0);
+	// path could either be a directory or file.
+	@type('bool') directoryExists = $_io_does_path_exist(path, true, true, isUserData);
+	if (directoryExists) {
+		return IOErrors.CANNOT_DELETE_DIRECTORY;
+	}
+
+	return $_io_delete_file(path, isUserData);
+}
+
+function @type('int') ioDeleteDirectory(
+	@type('string') path,
+	@type('bool') strictPath,
+	@type('bool') isUserData,
+	@type('bool') recursive,
+	@type('Array<string>') stringOutParam
+) {
+	@type('int') status = ioPathFixer(path, stringOutParam, true, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return status;
+	path = $_array_get(stringOutParam, 0);
+	return $_io_delete_directory(path, recursive);
+}
+
+function @type('bool') ioCheckPathExistence(@type('string') path, @type('bool') strictPath, @type('bool') isUserData, @type('bool') dirOnly, @type('Array<string>') stringOutParam) {
+	@type('int') status = ioPathFixer(path, stringOutParam, strictPath, isUserData, true, true, false, true);
+	if (status != IOErrors.NONE) return false;
+	path = $_array_get(stringOutParam, 0);
+	return $_io_does_path_exist(path, dirOnly, true, isUserData);
+}
+
+/*
+	This function does all path canonicalization and verification with a series of input flags.
+	It can check to see if the requisite files are found, it consolidates relative path ..'s and .'s and
+	can verify either that the path exists or just the parent path exists. Valid chars, etc.
+*/
+function @type('int') ioPathFixer(
+	@type('string') originalPath,
+	@type('Array<string>') pathOut,
+	@type('bool') validCharCheck,
+	@type('bool') isUserDataPath, // Will use %APPDATA%/ or ~/.app/ as the current directory instead of the real current directory.
+	@type('bool') requireFullPathToExist,
+	@type('bool') requireParentPathToExist,
+	@type('bool') ensureParentPathExists,
+	@type('bool') enforceCaseSensitivity) {
+
+	// if it's an empty string, then just stop. The path is invalid.
+	if ($_string_length(originalPath) == 0) return IOErrors.INVALID_PATH;
+
+	if (validCharCheck) {
+		// TODO: this
+	}
+
+	// Get some preliminary information...
+	@type('bool') isWindows = $_is_windows_program();
+	@type('bool') extraCaseSensitiveCheck = enforceCaseSensitivity && isWindows;
+
+	// Convert \'s into /'s
+	@type('string') slashyPath = $_string_replace(originalPath, '\\', '/');
+
+	// If you have a ~/ path, expand out the ~
+	if (!isWindows && $_string_char_at(slashyPath, 0) == 126) {
+		// TODO: this
+	}
+
+	// Determine if the path is already absolute
+	@type('bool') isRelative = true;
+	if (isWindows) {
+		if ($_string_length(originalPath) > 1) {
+			if ($_string_char_at(slashyPath, 1) == $_string_char_at(':', 0)) isRelative = false;
+		}
+	} else {
+		if ($_string_char_at(slashyPath, 0) == $_string_char_at('/', 0)) {
+			isRelative = false;
+		}
+	}
+
+	// Convert the path the absolute if it is not already.
+	// ExpandedPath refers to the opposite of condensed, meaning it is possible to have paths that look like...
+	// C:/foo/./bar/../baz/../../blah.txt
+	@type('string') absoluteExpandedPath = slashyPath;
+	if (isRelative) {
+		if (isUserDataPath) {
+			if ($_is_javascript()) { }
+			else {
+				absoluteExpandedPath = $_app_data_root() + '/' + slashyPath;
+			}
+		} else {
+			absoluteExpandedPath = $_io_current_directory() + '/' + slashyPath;
+		}
+	}
+
+	// Now condense out the ..'s and .'s from the path.
+	@type('Array<string>') parts = $_string_split(absoluteExpandedPath, '/');
+	@type('List<string>') pathBuilder = $_new_list('string');
+	for (@type('int') i = 0; i < $_array_length(parts); i += 1) {
+		@type('string') part = $_array_get(parts, i);
+		if ($_string_equals("..", part)) {
+			if ($_list_length(pathBuilder) == 0) {
+				// cannot pop the X: e.g. C:\foo\..\..\E:\file.txt
+				return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
+			}
+			$_list_pop(pathBuilder);
+			if (isWindows && $_list_length(pathBuilder) == 0) {
+				return IOErrors.PATH_STEPS_ABOVE_DOMAIN; 
+			}
+		} else if ($_string_equals(".", part) || $_string_length(part) == 0) {
+			// do nothing for '.' or empty strings (which occur before and after the end of the path if there were slashes at either end)
+		} else {
+			$_list_push(pathBuilder, part);
+		}
+	}
+	
+	// Check to see if this is the root directory e.g. C:\ or /
+	@type('bool') isRoot = false;
+	if (isWindows) {
+		if ($_list_length(pathBuilder) == 0) return IOErrors.PATH_STEPS_ABOVE_DOMAIN; // you need a letter colon
+		isRoot = $_list_length(pathBuilder) == 1;
+	} else {
+		isRoot = $_list_length(pathBuilder) == 0;
+	}
+
+	// Get the finalized strings for the full path and the parent path (the latter can be null if full path is root)
+	@type('string') fullPath = $_list_join(pathBuilder, '/');
+	@type('string') parentPath = null;
+	if (!isRoot) {
+		$_list_pop(pathBuilder);
+		parentPath = $_list_join(pathBuilder, '/');
+	}
+
+	// If the path was intended to be a user data path (.e.g something in %appdata% or ~/.appname folders) then
+	// you don't want the user to ever be able to access something outside of that using ..'s so verify that the
+	// condensed path still has that prefix on it.
+	if (isUserDataPath) {
+		if ($_is_javascript()) {
+			if ($_string_startswith(fullPath, '../')) {
+				return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
+			}
+		} else if (!$_string_startswith(fullPath, $_app_data_root())) {
+			return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
+		} else if (!$_io_does_path_exist($_app_data_root(), true, false, isUserDataPath)) {
+			@type('string') appDataPath = $_app_data_root();
+			if (isWindows) appDataPath = $_string_replace(appDataPath, '/', '\\');
+			@type('int') err = $_io_create_directory(appDataPath);
+			if (err != IOErrors.NONE) return err;
+		}
+	}
+
+	if (requireFullPathToExist) {
+		if (!$_io_does_path_exist(fullPath, false, extraCaseSensitiveCheck, isUserDataPath)) {
+			if (extraCaseSensitiveCheck) {
+				if ($_io_does_path_exist(fullPath, false, false, isUserDataPath)) {
+					return IOErrors.BAD_CASING; // path exists when case sensitivity is off
+				}
+			}
+			return IOErrors.DOES_NOT_EXIST; // path doesn't exist
+		}
+	} else if (requireParentPathToExist) {
+		if (parentPath != null) {
+			if (!$_io_does_path_exist(parentPath, true, extraCaseSensitiveCheck, isUserDataPath)) {
+				if (extraCaseSensitiveCheck) {
+					if ($_io_does_path_exist(parentPath, true, false, isUserDataPath)) {
+						return IOErrors.BAD_CASING; // parent exists when case sensitivity is off
+					}
+				}
+				return IOErrors.DOES_NOT_EXIST;
+			}
+		}
+	}
+
+	if (ensureParentPathExists) {
+		@type('int') code = ioEnsurePathPartsExist(pathBuilder, isWindows, isUserDataPath);
+		if (code != IOErrors.NONE) {
+			return code;
+		}
+	}
+
+	$_array_set(pathOut, 0, fullPath);
+	$_array_set(pathOut, 1, parentPath);
+	return IOErrors.NONE;
+}
+
+// Ensures that the given folder path exists. Path is always absolute.
+// Returns an IOErrors value.
+function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, @type('bool') isWindows, @type('bool') isUserData) {
+	@type('string') sep = '/';
+	if (isWindows) sep = '\\';
+	@type('string') path = $_list_join(pathBuilder, sep);
+	if ($_io_does_path_exist(path, true, false, isUserData)) {
+		return IOErrors.NONE;
+	}
+
+	if (isWindows) {
+		if ($_list_length(pathBuilder) == 1) {
+			return IOErrors.NONEXISTENT_DRIVE; 
+		}
+	} else if ($_list_length(pathBuilder) == 0) {
+		if ($_is_javascript()) {
+			return IOErrors.NONE;
+		} else {
+			return IOErrors.IMPOSSIBLE_STATE; // linux root doesn't exist? what?
+		}
+	}
+	@type('string') current = $_list_get(pathBuilder, $_list_length(pathBuilder) - 1);
+	$_list_pop(pathBuilder);
+	@type('int') recurseCode = ioEnsurePathPartsExist(pathBuilder, isWindows, isUserData);
+	$_list_push(pathBuilder, current);
+	if (recurseCode != 0) return recurseCode;
+	return $_io_create_directory(path); // return status
+}

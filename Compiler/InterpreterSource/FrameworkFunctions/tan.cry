@@ -1,0 +1,16 @@
+﻿
+// $tan(theta)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+// I do not check for arg1 == pi/2 because the float arithmetic
+// never produces a true pi/2. The closest a 64 bit floating point number can get
+// to pi/2 produces 16331239353195370. 
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+	output = buildFloat($_tan(float1));
+} else if (Value$arg1.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	output = buildFloat($_tan(int1));
+} else {
+	return killExecution(stack, pc, "$tan requires a number argument.");
+}

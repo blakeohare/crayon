@@ -1,0 +1,11 @@
+﻿// $gfx_is_image_loaded(image_key)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+int1 = isImageLoaded($_cast('string', Value$arg1.internalValue));
+if (int1 == 0) {
+	return killExecution(stack, pc, "$gfx_is_image_loaded cannot be called on keys where loading has not been initialized.");
+} else if (int1 == 1) {
+	output = VALUE_TRUE;
+} else { // int1 == 2
+	output = VALUE_FALSE;
+}

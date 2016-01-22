@@ -1,0 +1,119 @@
+﻿enum _ZSBCommand {
+	BRANCH,
+	INVOKE,
+	OFFSET,
+	OPACITY,
+	PRINT,
+	REPEAT,
+	SCALE,
+	VISIBILITY,
+}
+
+class ZStoryBoard {
+	constructor() {
+		this._Z_claimed = false;
+		this._Z_instructions = [];
+		this._Z_easing = [];
+		this._Z_cache_data = [];
+		this._Z_current = 0;
+		this._Z_ticks_on_current = 0;
+		this._Z_window = _Z_WINDOW_INSTANCE[0];
+		game = _Z_GAME_INSTANCE[0];
+		$assert(this._Z_window != null, "Cannot create a storyboard before ZWindow is instantiated.");
+		$assert(game != null, "Cannot create a storyboard before ZGame is instantiated.");
+		this._Z_fps = game._Z_fps;
+	}
+
+	function _Z_add(instruction) {
+		this._Z_instructions.add(instruction);
+		this._Z_cache_data.add([]);
+		this._Z_easing.add(null);
+		return this;
+	}
+
+	function _Z_ease(type, fn, duration) {
+		if (this._Z_instructions.length == 0) {
+			$assert(false, "Cannot add easing function to empty storyboard.");
+		}
+
+		frames = $floor(duration * this._Z_fps + .5);
+		if (frames > 0) {
+			switch (this._Z_instructions[-1][0]) {
+				case _ZSBCommand.OFFSET:
+				case _ZSBCommand.OPACITY:
+				case _ZSBCommand.SCALE:
+					this._Z_easing[-1] = [type, fn, frames];
+					break;
+				default:
+					$assert(false, "Last added storyboard command does not support easing functions.");
+					break;
+			}
+		}
+		return this;
+	}
+
+	function ease(fn, duration) {
+		return this._Z_ease(_EASE_EasingType.IN_OUT, fn, duration);
+	}
+
+	function easeIn(fn, duration) {
+		return this._Z_ease(_EASE_EasingType.IN, fn, duration);
+	}
+
+	function easeOut(fn, duration) {
+		return this._Z_ease(_EASE_EasingType.OUT, fn, duration);
+	}
+
+	/////////////////////////////
+
+	function branch(storyboard) {
+		return this._Z_add([_ZSBCommand.BRANCH, storyboard]);
+	}
+
+	function disable_input() {
+		// TODO: this
+		return this;
+	}
+
+	function enable_input() {
+		// TODO: this
+		return this;
+	}
+
+	function focus(element_id) {
+		// TODO: this
+		return this;
+	}
+
+	function invoke(fp, arg = _Z_UNIQUE) {
+		return this._Z_add([_ZSBCommand.INVOKE, fp, arg != _Z_UNIQUE, arg]);
+	}
+
+	function offset(element, x, y) {
+		if (x != null || y != null) {
+			this._Z_add([_ZSBCommand.OFFSET, element, x, y]);
+		}
+		return this;
+	}
+
+	function opacity(element, targetValue) {
+		return this._Z_add([_ZSBCommand.OPACITY, element, targetValue]);
+	}
+
+	function print(text) {
+		return this._Z_add([_ZSBCommand.PRINT, text]);
+	}
+
+	function repeat() {
+		// allow for a count?
+		return this._Z_add([_ZSBCommand.REPEAT]);
+	}
+
+	function scale(element, ratio) {
+		return this._Z_add([_ZSBCommand.SCALE, element, ratio]);
+	}
+
+	function visibility(element, mode) {
+		return this._Z_add([_ZSBCommand.VISIBILITY, element, mode]);
+	}
+}

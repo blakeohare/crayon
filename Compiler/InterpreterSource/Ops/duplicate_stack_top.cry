@@ -1,0 +1,20 @@
+﻿
+if ($_array_get(row, 0) == 1) {
+	value = $_array_get(valueStack, valueStackSize - 1);
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+} else if ($_array_get(row, 0) == 2) {
+	if (valueStackSize + 1 > valueStackCapacity) {
+		valueStackIncreaseCapacity();
+		valueStackCapacity = ProgramData$p.valueStackCapacity;
+		valueStack = ProgramData$p.valueStack;
+	}
+
+	$_array_set(valueStack, valueStackSize, $_array_get(valueStack, valueStackSize - 2));
+	$_array_set(valueStack, valueStackSize + 1, $_array_get(valueStack, valueStackSize - 1));
+	valueStackSize += 2;
+} else {
+	// This should not happen. All occurrences of duplicate stack top are either for size 1 or 2.
+	return "Error";
+}

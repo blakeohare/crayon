@@ -1,0 +1,2 @@
+﻿valueStackSize -= 1;
+$_array_set(valueStack, valueStackSize - 1, $_array_get(valueStack, valueStackSize));

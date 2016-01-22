@@ -1,0 +1,6 @@
+﻿// $gamepad_count()
+int1 = gamepadGetDeviceCount();
+if (int1 == -1) {
+	return killExecution(stack, pc, "$gamepad_count() cannot be called at this time. Gamepad info is initialized when the game windows is launched.");
+}
+output = buildInteger(int1);

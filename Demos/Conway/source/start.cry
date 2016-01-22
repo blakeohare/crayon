@@ -1,0 +1,145 @@
+FPS = 60;
+WIDTH = 40;
+HEIGHT = 30;
+CELL_SIZE = 20;
+SCREEN_WIDTH = CELL_SIZE * WIDTH;
+SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
+FRAMES_PER_UPDATE = 5;
+
+function make_grid(width, height) {
+	grid = [];
+	while (width-- > 0) {
+		grid.add([null] * height);
+	}
+	return grid;
+}
+
+function get_random_blue() {
+	r = $floor($random() * 40);
+	g = $floor($random() * 100) + 100;
+	b = $floor($random() * 80) + 170;
+	return [r, g, b];
+}
+
+function main() {
+	$game_initialize(FPS);
+	$game_initialize_screen(SCREEN_WIDTH, SCREEN_HEIGHT);
+	$game_set_title("Conway's Game of Life");
+	
+	counter = 0;
+	
+	grid = make_grid(WIDTH, HEIGHT);
+	buffer = make_grid(WIDTH, HEIGHT);
+	neighbors_fast_lookup = make_grid(WIDTH, HEIGHT);
+	blues = make_grid(WIDTH, HEIGHT);
+	
+	for (y = 0; y < HEIGHT; ++y) {
+		for (x = 0; x < WIDTH; ++x) {
+			grid[x][y] = $random() < .5;
+			blues[x][y] = get_random_blue();
+			neighbors = [];
+			for (dx = -1; dx <= 1; dx++) {
+				for (dy = -1; dy <= 1; dy++) {
+					if (dx != 0 || dy != 0) {
+						nx = x + dx;
+						ny = y + dy;
+						if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
+							neighbors.add([nx, ny]);
+						}
+					}
+				}
+			}
+			neighbors_fast_lookup[x][y] = neighbors;
+		}
+	}
+	
+	last_col = -1;
+	last_row = -1;
+	mouse_pressed = false;
+	
+	while (true) {
+		events = $game_pump_events();
+		for (event : events) {
+			if (event.is_quit) {
+				return;
+			} else if (event.is_mouse) {
+				if (event.type == 'mousemove') {
+					last_col = event.x / CELL_SIZE;
+					last_row = event.y / CELL_SIZE;
+				} else if (event.type == 'mouseleftdown') {
+					mouse_pressed = true;
+				} else if (event.type == 'mouseleftup') {
+					mouse_pressed = false;
+				}
+			}
+		}
+		
+		if (mouse_pressed) {
+			if (last_col >= 0 && 
+				last_row >= 0 &&
+				last_col < WIDTH && 
+				last_row < HEIGHT) {
+				grid[last_col][last_row] = true;
+			}
+		}
+		
+		++counter;
+		
+		if (counter % FRAMES_PER_UPDATE == 0) {
+			// Perform an iteration...
+			for (y = 0; y < HEIGHT; ++y) {
+				for (x = 0; x < WIDTH; ++x) {
+					neighbors = 0;
+					for (neighbor : neighbors_fast_lookup[x][y]) {
+						if (grid[neighbor[0]][neighbor[1]]) {
+							neighbors++;
+						}
+					}
+					current_state = grid[x][y];
+					new_state = current_state;
+					if (current_state) {
+						if (neighbors < 2) {
+							new_state = false; // die from loneliness
+						} else if (neighbors > 3) {
+							new_state = false; // die from overcrowding
+						}
+					} else {
+						if (neighbors == 3) {
+							new_state = true; // new cell is born
+						}
+					}
+					
+					if (current_state == new_state) {
+						buffer[x][y] = current_state;
+					} else if (new_state) {
+						buffer[x][y] = true;
+					} else {
+						buffer[x][y] = false;
+					}
+				}
+			}
+			
+			for (y = 0; y < HEIGHT; ++y) {
+				for (x = 0; x < WIDTH; ++x) {
+					grid[x][y] = buffer[x][y];
+				}
+			}
+		}
+		
+		$gfx_draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 255);
+		for (y = 0; y < HEIGHT; ++y) {
+			for (x = 0; x < WIDTH; ++x) {
+				if (grid[x][y]) {
+					rgb = blues[x][y];
+					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, rgb[0], rgb[1], rgb[2], 255);
+				} else if (x == last_col && y == last_row) {
+					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 128, 128, 128, 128);
+				}
+			}
+		}
+		
+		$game_clock_tick();
+	}
+}
+
+main();

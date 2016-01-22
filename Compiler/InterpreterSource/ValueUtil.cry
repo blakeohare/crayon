@@ -1,0 +1,527 @@
+﻿
+// These are prone to infinite recursion.
+// The problem is that not all platforms have a way to check for reference equality for things
+// like dictionaries or lists.
+function @type('string') valueToString(@type('Value') wrappedValue) {
+	@type('int') type = Value$wrappedValue.type;
+	@type('object') value = Value$wrappedValue.internalValue;
+	if (type == Types.NULL) return "null";
+	if (type == Types.BOOLEAN) {
+		if ($_cast('bool', value)) return "true";
+		return "false";
+	}
+	if (type == Types.FLOAT) {
+		@type('string') floatStr = $_string_cast_strong(value);
+		if (!$_string_contains(floatStr, '.')) {
+			floatStr += '.0';
+		}
+		return floatStr;
+	}
+	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(value);
+	if (type == Types.LIST) {
+		@type('List<Value>') internalList = $_cast('List<Value>', value);
+		@type('string') output = "[";
+		for (@type('int') i = 0; i < $_list_length(internalList); i += 1) {
+			if (i > 0) output += ", ";
+			output += valueToString($_list_get(internalList, i));
+		}
+		output += "]";
+		return output;
+	}
+	if (type == Types.INSTANCE) {
+		@type('ObjectInstance') objInstance = $_cast('ObjectInstance', value);
+		@type('int') classId = ObjectInstance$objInstance.classId;
+		@type('int') ptr = ObjectInstance$objInstance.objectId;
+		@type('ProgramData') pd = $_get_program_data();
+		@type('ClassInfo') classInfo = $_array_get(ProgramData$pd.classTable, classId);
+		@type('int') nameId = ClassInfo$classInfo.nameId;
+		@type('string') className = $_array_get(ProgramData$pd.identifiers, nameId);
+		return "Instance<" + className + "#" + $_string_cast_strong(ptr) + ">";
+	}
+	if (type == Types.DICTIONARY) {
+		// This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
+		// Therefore this is also prone to infinite recursion.
+		@type('DictImpl') internalDict = $_cast('DictImpl', value);
+		@type('int') size = DictImpl$internalDict.size;
+		if (size == 0) return "{}";
+		@type('string') output = "{";
+		if (DictImpl$internalDict.keyType == Types.INTEGER) {
+			@type('Array<int>') intKeys = $_dictionary_get_keys('int', DictImpl$internalDict.keyIntLookup);
+			@type('int') intKey = 0;
+			for (@type('int') i = 0; i < size; i += 1) {
+				if (i > 0) output += ', ';
+				else output += ' ';
+				intKey = $_array_get(intKeys, i);
+				output += $_string_cast_weak(intKey) + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey));
+			}
+		} else {
+			@type('Array<string>') stringKeys = $_dictionary_get_keys('string', DictImpl$internalDict.keyStringLookup);
+			@type('string') stringKey = '';
+			for (@type('int') i = 0; i < size; i += 1) {
+				if (i > 0) output += ', ';
+				else output += ' ';
+				stringKey = $_array_get(stringKeys, i);
+				output += stringKey + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey));
+			}
+		}
+		output += ' }';
+		return output;
+	}
+
+	if (type == Types.NATIVE_OBJECT) {
+		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', value);
+		switch (NativeObjectWrapper$nativeObject.subType) {
+			case NativeObjectSubType.EVENT: return "NativeObject:Event";
+			case NativeObjectSubType.GAMEPAD_DEVICE: return "NativeObject:GamepadDevice";
+			case NativeObjectSubType.HTTP_REQUEST: return "NativeObject:HttpRequest";
+			case NativeObjectSubType.IMAGE: return "NativeObject:Image";
+			case NativeObjectSubType.IMAGE_LOADER: return "NativeObject:ImageLoader";
+			case NativeObjectSubType.SOUND: return "NativeObject:Sound";
+			case NativeObjectSubType.MUSIC: return "NativeObject:Music";
+			case NativeObjectSubType.TEXT_LOADER: return "NativeObject:TextLoader";
+			default: return "NativeObject:Unknown";
+		}
+	}
+
+	return "TODO: toString for " + getTypeFromId(type);
+}
+
+function initialize_constant_values() {
+	@type('int') i = 0;
+	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
+	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
+	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
+		$_array_set(positive_integers, i, new Value(Types.INTEGER, i));
+	}
+	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
+		$_array_set(negative_integers, i, new Value(Types.INTEGER, -i));
+	}
+	$_array_set(INTEGERS_CACHE, 0, positive_integers);
+	$_array_set(INTEGERS_CACHE, 1, negative_integers);
+}
+
+function @type('Value') buildInteger(@type('int') num) {
+	if (num < 0) {
+		if (num > -INTEGER_NEGATIVE_CACHE) {
+			return INTEGERS_CACHE[1][-num];
+		}
+	} else {
+		if (num < INTEGER_POSITIVE_CACHE) {
+			return INTEGERS_CACHE[0][num];
+		}
+	}
+	return new Value(Types.INTEGER, num);
+}
+
+function @type('Value') buildString(@type('string') s) {
+	if ($_string_length(s) == 0) {
+		return VALUE_EMPTY_STRING;
+	}
+	return new Value(Types.STRING, s);
+}
+
+function @type('Value') buildListByWrappingInput(list) {
+	return new Value(Types.LIST, list);
+}
+
+function @type('Value') buildList2(@type('Value') value1, @type('Value') value2) {
+	@type('List<Value>') list = $_new_list('Value');
+	$_list_push(list, value1);
+	$_list_push(list, value2);
+	return new Value(Types.LIST, list);
+}
+
+function @type('Value') buildBoolean(@type('bool') value) {
+	if (value) return VALUE_TRUE;
+	return VALUE_FALSE;
+}
+
+function @type('Value') buildFloat(@type('double') value) {
+	if (value == 0.0) return VALUE_FLOAT_ZERO;
+	if (value == 1.0) return VALUE_FLOAT_ONE;
+	return new Value(Types.FLOAT, value);
+}
+
+// This returns a numerical code rather than a boolean
+//  0 = false
+//  1 = true
+//  2 = == operation not defined
+function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
+	@type('int') leftType = Value$a.type;
+	@type('int') rightType = Value$b.type;
+
+	// This method has separate implementations for strongly and loosely typed platforms
+	if (%%%STRONGLY_TYPED%%%) {
+		if (leftType == rightType) {
+			if (leftType == Types.NULL) return 1;
+			
+			if (leftType == Types.INTEGER) {
+				if ($_cast('int', Value$a.internalValue) == $_cast('int', Value$b.internalValue)) {
+					return 1;
+				}
+				return 0;
+			}
+
+			if (leftType < Types.LIST) {
+				if (rightType == Types.FLOAT) {
+					if ($_cast('double', Value$a.internalValue) == $_cast('double', Value$b.internalValue)) {
+						return 1;
+					}
+				} else if ($_dot_equals(Value$a.internalValue, Value$b.internalValue)) {
+					return 1;
+				}
+				return 0;
+			}
+
+			if (leftType == Types.INSTANCE) {
+				@type('ObjectInstance') obj1 = $_cast('ObjectInstance', Value$a.internalValue);
+				@type('ObjectInstance') obj2 = $_cast('ObjectInstance', Value$b.internalValue);
+				if (ObjectInstance$obj1.objectId == ObjectInstance$obj2.objectId) {
+					return 1;
+				}
+				return 0;
+			}
+
+			return 2;
+		} else if (leftType == Types.INTEGER || leftType == Types.FLOAT) {
+			if (rightType == Types.FLOAT) {
+				if ($_cast('int', Value$a.internalValue) == $_cast('double', Value$b.internalValue)) {
+					return 1;
+				}
+			} else if (rightType == Types.INTEGER) {
+				if ($_cast('double', Value$a.internalValue) == $_cast('int', Value$b.internalValue)) {
+					return 1;
+				}
+			}
+			return 0;
+			
+		}
+		return 0;
+	} else {
+		if (leftType == rightType || 
+			(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
+			(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
+			left = Value$a.internalValue;
+			right = Value$b.internalValue;
+			if (leftType < Types.LIST) {
+				if (left == right) {
+					return 1;
+				}
+				return 0;
+			}
+
+			if (leftType == Types.INSTANCE) {
+				if ($_list_get(left, 2) == $_list_get(right, 2)) {
+					return 1;
+				}
+				return 0;
+			}
+
+			// == is not defined for this type. If a user needs to compare two things of one of the remaining types,
+			// they are probably writing bad code.
+			return 2;
+		}
+		return 0;
+	}
+}
+
+function @type('Value') buildLiteral(@type('int') type, @type('int') value, @type('Array<Value>') floatTable, @type('Array<Value>') stringTable) {
+	if (type == Types.NULL) return VALUE_NULL;
+	if (type == Types.INTEGER) return buildInteger(value);
+	if (type == Types.FLOAT) return $_array_get(floatTable, value);
+	if (type == Types.STRING) return $_array_get(stringTable, value);
+	if (type == Types.BOOLEAN && value == 1) return VALUE_TRUE;
+	if (type == Types.BOOLEAN && value == 0) return VALUE_FALSE;
+	return null;
+}
+
+function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Array<Value>') values) {
+	@type('Dictionary<string, Value>') keyLookup = $_new_dictionary('string', 'Value');
+	@type('Dictionary<string, Value>') valueLookup = $_new_dictionary('string', 'Value');
+
+	@type('int') i = $_array_length(keys) - 1;
+	@type('string') key = null;
+	@type('Value') keyValue = null;
+	while (i >= 0) {
+		key = $_array_get(keys, i);
+		keyValue = new Value(Types.STRING, key);
+		$_dictionary_set(keyLookup, key, keyValue);
+		$_dictionary_set(valueLookup, key, $_array_get(values, i));
+		i -= 1;
+	}
+
+	return new Value(Types.DICTIONARY, new DictImpl(
+		$_new_dictionary('int', 'Value'),
+		$_new_dictionary('int', 'Value'),
+		keyLookup,
+		valueLookup,
+		$_dictionary_size(keyLookup),
+		Types.STRING));
+}
+
+function @type('Array<string>') toStringList(@type('Value') valueStringOrList, @type('Array<string>') maybeReuse) {
+	if (Value$valueStringOrList.type == Types.STRING) {
+		if (maybeReuse == null || $_array_length(maybeReuse) != 1) {
+			maybeReuse = $_new_array('string', 1);
+		}
+		$_array_set(maybeReuse, 0, $_cast('string', Value$valueStringOrList.internalValue));
+		return maybeReuse;
+	}
+
+	if (Value$valueStringOrList.type == Types.LIST) {
+		@type('List<Value>') list = $_cast('List<Value>', Value$valueStringOrList.internalValue);
+		@type('int') length = $_list_length(list);
+		if (maybeReuse == null || $_array_length(maybeReuse) != length) {
+			maybeReuse = $_new_array('string', length);
+		}
+		for (@type('int') i = length - 1; i >= 0; i -= 1) {
+			@type('Value') value = $_list_get(list, i);
+			if (Value$value.type != Types.STRING) {
+				return null;
+			}
+			$_array_set(maybeReuse, i, $_cast('string', Value$value.internalValue));
+		}
+		return maybeReuse;
+	}
+
+	return null;
+}
+
+function @type('bool') sortValues(
+	@type('Array<Value>') input,
+	@type('Array<Value>') output,
+	@type('int') startIndex,
+	@type('int') length,
+	@type('bool') isString) {
+
+	if (length < 3) {
+		if (length == 2) {
+			@type('bool') doSwap = false;
+			if (isString) {
+				doSwap = stringCompare($_array_get(input, startIndex), $_array_get(input, startIndex + 1));
+			} else {
+				doSwap = numberCompare($_array_get(input, startIndex), $_array_get(input, startIndex + 1));
+			}
+			if (doSwap) {
+				$_array_set(output, startIndex, $_array_get(input, startIndex + 1));
+				$_array_set(output, startIndex + 1, $_array_get(input, startIndex));
+			} else {
+				$_array_set(output, startIndex, $_array_get(input, startIndex));
+				$_array_set(output, startIndex + 1, $_array_get(input, startIndex + 1));
+			}
+		} else if (length == 1) {
+			$_array_set(output, startIndex, $_array_get(input, startIndex));
+		}
+		return true;
+	}
+
+	@type('Value') pivot = $_array_get(input, startIndex + $_unsafe_integer_division(length, 2));
+	@type('int') endIndex = startIndex + length;
+	@type('int') startPointer = startIndex;
+	@type('int') endPointer = endIndex - 1;
+	@type('Value') item = null;
+	if (isString) {
+		for (@type('int') i = startIndex; i < endIndex; i += 1) {
+			item = $_array_get(input, i);
+			if (stringCompare(pivot, item)) {
+				$_array_set(output, endPointer, item);
+				endPointer -= 1;
+			} else {
+				$_array_set(output, startPointer, item);
+				startPointer += 1;
+			}
+		}
+	} else {
+		for (@type('int') i = startIndex; i < endIndex; i += 1) {
+			item = $_array_get(input, i);
+			if (numberCompare(pivot, item)) {
+				$_array_set(output, endPointer, item);
+				endPointer -= 1;
+			} else {
+				$_array_set(output, startPointer, item);
+				startPointer += 1;
+			}
+		}
+	}
+
+	@type('int') firstLength = startPointer - startIndex;
+	@type('int') secondLength = length - firstLength;
+	if (firstLength > 0) {
+		sortValues(output, input, startIndex, firstLength, isString);
+	}
+	if (secondLength > 0) {
+		sortValues(output, input, startIndex + firstLength, length - firstLength, isString);
+	}
+
+	return true;
+}
+
+function @type('bool') stringCompare(@type('Value') a, @type('Value') b) {
+	@type('string') aString = $_cast('string', Value$a.internalValue);
+	@type('string') bString = $_cast('string', Value$b.internalValue);
+	return $_string_compare(aString, bString) > 0;
+}
+
+function @type('bool') numberCompare(@type('Value') a, @type('Value') b) {
+	@type('float') aNumber = 0;
+	@type('float') bNumber = 0;
+	if (Value$a.type == Types.INTEGER) {
+		aNumber = $_cast('int', Value$a.internalValue);
+	} else {
+		aNumber = $_cast('float', Value$a.internalValue);
+	}
+	if (Value$b.type == Types.INTEGER) {
+		bNumber = $_cast('int', Value$b.internalValue);
+	} else {
+		bNumber = $_cast('float', Value$b.internalValue);
+	}
+
+	return aNumber > bNumber;
+}
+
+function @type('int') nextPowerOf2(@type('int') value) {
+	
+	if (((value - 1) & value) == 0) return value;
+
+	@type('int') output = 1;
+	while (output < value)
+	{
+		output *= 2;
+	}
+	return output;
+}
+
+function @type('Value') buildGameEvent(
+	@type('string') specificType,
+	@type('string') vagueType,
+	@type('int') x,
+	@type('int') y,
+	@type('double') amount,
+	@type('bool') down,
+	@type('string') arg,
+	@type('Value') argValue) {
+	
+	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
+		specificType,
+		vagueType,
+		x,
+		y,
+		amount,
+		down,
+		arg,
+		argValue,
+		null,
+		null)));
+}
+
+function @type('Value') buildGameEventWithExtraArg(
+	@type('string') specificType,
+	@type('string') vagueType,
+	@type('int') x,
+	@type('int') y,
+	@type('double') amount,
+	@type('bool') down,
+	@type('string') arg,
+	@type('Value') argValue,
+	@type('Value') argValue2,
+	@type('Value') argValue3) {
+	
+	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
+		specificType,
+		vagueType,
+		x,
+		y,
+		amount,
+		down,
+		arg,
+		argValue,
+		argValue2,
+		argValue3)));
+}
+
+function @type('Value') buildCommonString(@type('string') s) {
+	if (!$_dictionary_contains(COMMON_STRINGS, s)) {
+		@type('Value') value = buildString(s);
+		$_dictionary_set(COMMON_STRINGS, s, value);
+	}
+	return $_dictionary_get_guaranteed(COMMON_STRINGS, s);
+}
+
+function @type('Image') extractImageFromValue(@type('Value') value) {
+	if (Value$value.type == Types.NATIVE_OBJECT) {
+		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', Value$value.internalValue);
+		if (NativeObjectWrapper$nativeObject.subType == NativeObjectSubType.IMAGE) {
+			return $_cast('Image', NativeObjectWrapper$nativeObject.value);
+		}
+	}
+	return null;
+}
+
+function @type('Value') multiplyString(@type('Value') strValue, @type('string') str, @type('int') n) {
+	if (n <= 2) {
+		if (n == 1) return strValue;
+		if (n == 2) return buildString(str + str);
+		return VALUE_EMPTY_STRING;
+	}
+
+	@type('List<string>') builder = $_new_list('string');
+	while (n > 0) {
+		n -= 1;
+		$_list_push(builder, str);
+	}
+
+	str = $_list_join(builder, '');
+	return buildString(str);
+}
+
+function @type('object') extractNativeObjectOfType(@type('Value') value, @type('int') subType) {
+	if (Value$value.type != Types.NATIVE_OBJECT) return null;
+	@type('NativeObjectWrapper') now = $_cast('NativeObjectWrapper', Value$value.internalValue);
+	if (NativeObjectWrapper$now.subType != subType) return null;
+	return NativeObjectWrapper$now.value;
+}
+
+function @type('string') stringToHex(@type('string') original) {
+	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
+		@type('string') hex = HEX_UPPERCASE;
+		@type('int') length = $_string_length(original);
+		@type('Array<string>') output = $_new_array('string', length * 2);
+		@type('int') byte = 0;
+		for (@type('int') i = 0; i < length; i += 1) {
+			byte = $_ord($_force_parens("" + $_string_char_at(original, i)));
+			$_array_set(output, i * 2, $_string_cast_strong($_string_char_at(HEX_UPPERCASE, (byte >> 4) & 15)));
+			$_array_set(output, i * 2 + 1, $_string_cast_strong($_string_char_at(HEX_UPPERCASE, byte & 15)));
+		}
+		return $_list_join(output, "");
+	} else {
+		return null;
+	}
+}
+
+function @type('string') stringFromHex(@type('string') encoded) {
+	encoded = $_string_upper(encoded);
+	@type('List<string>') output = $_new_list('string');
+	@type('int') length = $_string_length(encoded);
+	@type('int') a = 0;
+	@type('int') b = 0;
+	@type('string') c = null;
+	for (@type('int') i = 0; i + 1 < length; i += 2) {
+		c = "" + $_string_char_at(encoded, i);
+		a = $_string_index_of(HEX_UPPERCASE, c);
+		if (a == -1) return null;
+		c = "" + $_string_char_at(encoded, i + 1);
+		b = $_string_index_of(HEX_UPPERCASE, c);
+		if (b == -1) return null;
+		a = a * 16 + b;
+		$_list_push(output, $_chr(a));
+	}
+	return $_list_join(output, "");
+}
+
+function @type('int') parsePosDecInt(@type('string') original) {
+	@type('int') int1 = 0; // $_is_valid_integer is implemented with int.TryParse(value, int1) where int1 is hardcoded.
+	if ($_is_valid_integer(original)) {
+		return $_parse_int(original);
+	}
+	return -1;
+}

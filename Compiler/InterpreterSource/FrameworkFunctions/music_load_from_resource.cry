@@ -1,0 +1,18 @@
+﻿
+// $music_load_from_resource(path)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type != Types.STRING) {
+	return killExecution(stack, pc, "$music_load_from_resource requires a string argument.");
+}
+string1 = $_cast('string', Value$arg1.internalValue);
+music1 = $_music_load_from_resource(string1, intOutParam);
+int1 = $_array_get(intOutParam, 0);
+		
+if (int1 != 0) {
+	if (int1 == 1) return killExecution(stack, pc, "The resource could not be found.");
+	if (int1 == 2) return killExecution(stack, pc, "The provided resource is not a recognized format.");
+	return killExecution(stack, pc, "An unknown error occurred while loading the music resource.");
+}
+
+output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.MUSIC, music1));

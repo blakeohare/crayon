@@ -1,0 +1,925 @@
+﻿
+function @type('Image') instantiateImage(
+	@type('CompositeImage') resource, // for GL based platforms only
+	@type('object') nativeBitmap, // for blit based platforms only
+	@type('int') x,
+	@type('int') y,
+	@type('int') width,
+	@type('int') height,
+	@type('bool') flipX,
+	@type('bool') flipY) {
+
+	if (%%%IS_OPEN_GL_BASED%%%) {
+
+		@type('int') resourceWidth = CompositeImage$resource.width;
+		@type('int') resourceHeight = CompositeImage$resource.height;
+		
+		@type('float') textureLeft = $_cast('float', $_unsafe_float_division(1.0 * x, resourceWidth));
+		@type('float') textureRight = $_cast('float', $_unsafe_float_division(1.0 * (x + width), resourceWidth));
+		@type('float') textureTop = $_cast('float', $_unsafe_float_division(1.0 * y, resourceHeight));
+		@type('float') textureBottom = $_cast('float', $_unsafe_float_division(1.0 * (y + height), resourceHeight));
+
+		// not an image sheet?
+		if (resourceWidth == width && resourceHeight == height) {
+			// check to see if the width and height are powers of 2
+			if (((width - 1) & width) != 0 || ((height - 1) & height) != 0) {
+				// if they aren't then we need to make sure the texture right and bottom are scaled correctly such that it will reflect
+				// the true bitmap bounds when it is normalized.
+				@type('int') normalizedWidth = nextPowerOf2(width);
+				@type('int') normalizedHeight = nextPowerOf2(height);
+				textureLeft = 0;
+				textureRight = $_cast('float', $_unsafe_float_division(1.0 * width, normalizedWidth));
+				textureTop = 0;
+				textureBottom = $_cast('float', $_unsafe_float_division(1.0 * height, normalizedHeight));
+			}
+		}
+
+		if (flipX) {
+			@type('float') t = textureLeft;
+			textureLeft = textureRight;
+			textureRight = t;
+		}
+
+		if (flipY) {
+			@type('float') t = textureTop;
+			textureTop = textureBottom;
+			textureBottom = t;
+		}
+
+		return new Image(
+			resource,
+			null,
+			x,
+			y,
+			width,
+			height,
+			width,
+			height,
+			textureLeft,
+			textureTop,
+			textureRight,
+			textureBottom);
+	} else {
+		// TODO: consider using native methods?
+		if (nativeBitmap == null) {
+			nativeBitmap = CompositeImage$resource.nativeBitmap;
+			if (flipX || flipY) {
+				$_assert("cannot flip image during image sheet composition phase.");
+			}
+		} else {
+			if (x != 0 || y != 0) {
+				$_assert("this should not happen.");
+			}
+			if (flipX || flipY) {
+				nativeBitmap = $_image_create_flipped_copy_of_native_bitmap(nativeBitmap, flipX, flipY);
+			}
+		}
+
+		if (x != 0 || y != 0 || width != $_image_native_bitmap_width(nativeBitmap) || height != $_image_native_bitmap_height(nativeBitmap)) {
+			// Crop the image, if necessary.
+			@type('Imagette') img = createImagetteFromDimensions(width, height);
+			imagetteBlitRaw(img, nativeBitmap, -x, -y);
+			
+			nativeBitmap = $_image_imagette_flush_to_native_bitmap(img);
+		}
+
+		return new Image(
+			null,
+			nativeBitmap,
+			0,
+			0,
+			width,
+			height,
+			width,
+			height,
+			// the following are texture mappings and are ignored in blit based platforms...
+			0,
+			0,
+			1,
+			1);
+	}
+}
+
+function @type('Image') scaleImage(
+	@type('Image') image,
+	@type('int') newWidth,
+	@type('int') newHeight) {
+	
+	if (Image$image.width == newWidth && Image$image.height == newHeight) {
+		return image;
+	}
+
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		return new Image(
+			Image$image.compositeResource,
+			Image$image.rawResource,
+			Image$image.sourceX,
+			Image$image.sourceY,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
+			newWidth,
+			newHeight,
+			Image$image.textureLeft,
+			Image$image.textureTop,
+			Image$image.textureRight,
+			Image$image.textureBottom
+			);
+	} else {
+		return new Image(
+			null,
+			$_image_scale_native_resource(Image$image.rawResource, newWidth, newHeight),
+			0,
+			0,
+			newWidth,
+			newHeight,
+			newWidth,
+			newHeight,
+			0,
+			0,
+			1,
+			1);
+	}
+}
+
+function @type('Image') flipImage(
+	@type('Image') image,
+	@type('bool') flipX,
+	@type('bool') flipY) {
+	
+	if (!flipX && !flipY) {
+		return image;
+	}
+
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		@type('float') tleft = Image$image.textureLeft;
+		@type('float') tright = Image$image.textureRight;
+		@type('float') ttop = Image$image.textureTop;
+		@type('float') tbottom = Image$image.textureBottom;
+		@type('float') t = 0;
+
+		if (flipX) {
+			t = tleft;
+			tleft = tright;
+			tright = t;
+		}
+
+		if (flipY) {
+			t = ttop;
+			ttop = tbottom;
+			tbottom = t;
+		}
+
+		return new Image(
+			Image$image.compositeResource,
+			Image$image.rawResource,
+			Image$image.sourceX,
+			Image$image.sourceY,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
+			Image$image.width,
+			Image$image.height,
+			tleft,
+			ttop,
+			tright,
+			tbottom);
+	} else {
+		@type('object') nativeBitmap = Image$image.rawResource;
+
+		return instantiateImage(
+			null,
+			nativeBitmap,
+			0,
+			0,
+			Image$image.sourceWidth,
+			Image$image.sourceHeight,
+			flipX,
+			flipY);
+	}
+}
+
+
+function @type('List<SpriteSheetItemDescriptor>') getSpriteSheetMembers(
+	@type('ImageSheetStatus') sheetStatus, 
+	@type('string') groupName) {
+
+	@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$sheetStatus.groupNameToId, groupName);
+	return $_dictionary_get_guaranteed(ImageSheetStatus$sheetStatus.spriteSheetItemDescriptorsByGroupId, groupId);
+}
+
+function getImageByKey(@type('string') key) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
+	if ($_dictionary_contains(ImageSheetStatus$imageUtil.resourceImagesByKeys, key)) {
+		@type('CompositeImage') bmp = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.resourceImagesByKeys, key);
+		@type('int') x = 0;
+		@type('int') y = 0;
+		@type('int') width = CompositeImage$bmp.width;
+		@type('int') height = CompositeImage$bmp.height;
+		if ($_dictionary_contains(ImageSheetStatus$imageUtil.texturePartitioningInformation, key)) {
+			@type('Array<int>') location = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.texturePartitioningInformation, key);
+			x = $_array_get(location, 1);
+			y = $_array_get(location, 2);
+			width = $_array_get(location, 3);
+			height = $_array_get(location, 4);
+		}
+		return instantiateImage(bmp, null, x, y, width, height, false, false);
+	}
+	return null;
+}
+
+function @type('CompositeImage') createCompositeImage(nativeBitmap) {
+	return new CompositeImage(
+		nativeBitmap,
+		$_image_native_bitmap_width(nativeBitmap),
+		$_image_native_bitmap_height(nativeBitmap),
+		-1,
+		false);
+}
+
+function imageSheetStatusInitialization() {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
+	@type('SpriteSheetData') ssd = ProgramData$p.spriteSheetData;
+	@type('Array<string>') groupNames = $_dictionary_get_keys('string', SpriteSheetData$ssd.groupIdsByName);
+	@type('int') i = 0;
+	@type('int') id = 0;
+
+	// Create a mapping of group names and group IDs.
+	// Declare that these sheets are not loaded.
+	// Determine which tile IDs are in which groups.
+	for (i = 0; i < $_array_length(groupNames); i += 1) {
+		@type('string') groupName = $_array_get(groupNames, i);
+		id = $_dictionary_get_guaranteed(SpriteSheetData$ssd.groupIdsByName, groupName);
+		$_dictionary_set(ImageSheetStatus$imageUtil.groupNameToId, groupName, id);
+		$_dictionary_set(ImageSheetStatus$imageUtil.sheetStatus, id, IMAGE_SHEET_STATUS_NOT_LOADED);
+		@type('Array<int>') tileIds = $_dictionary_get_keys('int', $_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<int>') tileIdsSorted = $_sorted_copy_of_int_array(tileIds);
+		$_dictionary_set(ImageSheetStatus$imageUtil.tilesPerId, id, tileIdsSorted);
+	}
+
+	// TODO: I should really add comments to the rest of this.
+	@type('Dictionary<string, SpriteSheetItemDescriptor>') filesLookup = SpriteSheetData$ssd.files;
+	@type('List<SpriteSheetItemDescriptor>') ssids = $_cast_to_list('SpriteSheetItemDescriptor', $_dictionary_get_values(filesLookup));
+	for (i = 0; i < $_list_length(ssids); i += 1) {
+		@type('SpriteSheetItemDescriptor') ssid = $_list_get(ssids, i);
+		@type('List<SpriteSheetItemDescriptor>') ssidsForGroup = null;
+		id = SpriteSheetItemDescriptor$ssid.groupId;
+		if ($_dictionary_contains(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id)) {
+			ssidsForGroup = $_dictionary_get_guaranteed(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id);
+		} else {
+			ssidsForGroup = $_new_list('SpriteSheetItemDescriptor');
+			$_dictionary_set(ImageSheetStatus$imageUtil.spriteSheetItemDescriptorsByGroupId, id, ssidsForGroup);
+		}
+		$_list_push(ssidsForGroup, ssid);
+	}
+
+	@type('Array<int>') groupIds = $_dictionary_get_keys('int', SpriteSheetData$ssd.tileIdsByGroupId);
+	for (i = 0; i < $_array_length(groupIds); i += 1) {
+		id = $_array_get(groupIds, i);
+		@type('Array<int>') keys = $_dictionary_get_keys('int', $_dictionary_get_guaranteed(SpriteSheetData$ssd.tileIdsByGroupId, id));
+		@type('Array<string>') tileNamesForGroupId = $_new_array('string', $_array_length(keys));
+		for (@type('int') j = 0; j < $_array_length(keys); j += 1) {
+			@type('string') name = $_string_cast_weak(id) + "_" + $_string_cast_weak($_array_get(keys, j));
+			$_array_set(tileNamesForGroupId, j, name);
+		}
+		$_dictionary_set(
+			ImageSheetStatus$imageUtil.generatedTileNamesByGroupId,
+			id,
+			tileNamesForGroupId);
+	}
+}
+
+function @type('bool') initiateTileLoading(@type('TileLoadRequest') request) {
+	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
+		// In most platforms, this is synchronous...
+		TileLoadRequest$request.nativeResource = $_read_local_tile_resource(TileLoadRequest$request.path);
+
+		// ...and so you immediately want to mark the status as loaded.
+		TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADED;
+	} else {
+		@type('string') key = $_image_initiate_async_download_of_resource('%%%GENERATED_TILE_DIRECTORY%%%/' + TileLoadRequest$request.path + '.png');
+		TileLoadRequest$request.asyncReferenceKey = key;
+		TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADING;
+	}
+	return true;
+}
+
+// once an image is loaded it is added to the tilesByName genName->Bitmap lookup.
+// If all the tile ID's in a particular group ID are represented, then all downloads are complete for this group.
+function @type('bool') areAllTilesLoadedForGroupId(
+	@type('ImageSheetStatus') iss,
+	@type('int') groupId) {
+
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+	@type('Dictionary<string, object>') tilesByName = ImageSheetStatus$iss.tilesByName;
+	for (@type('int') i = $_array_length(tileIds) - 1; i >= 0; i -= 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		@type('string') genName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		if (!$_dictionary_contains(tilesByName, genName)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function @type('int') getNumTiles(@type('string') groupName) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') iss = ProgramData$p.imageSheetStatus;
+	if ($_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+		@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+		return $_array_length(tileIds);
+	}
+	return -1;
+}
+
+// returns false if the sheet name provided does not exist.
+// This populates the entire loader queue for all the required tiles.
+// This queue is pumped by the performWorkNugget[Pre|Post]Frame methods.
+function @type('bool') loadImageSheet(@type('string') groupName) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ImageSheetStatus') iss = ProgramData$p.imageSheetStatus;
+
+	// This group doesn't exist.
+	if (!$_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		return false;
+	}
+
+	// Determine group ID.
+	@type('int') groupId = $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+
+	// Have you loaded this before? No-op.
+	if ($_dictionary_get_guaranteed(ImageSheetStatus$iss.sheetStatus, groupId) != IMAGE_SHEET_STATUS_NOT_LOADED) {
+		return true;
+	}
+
+	// At this point mark the sheet as being actively loaded.
+	$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADING);
+
+	// Okay, so what do we actually need to load?
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+
+	// Is this group empty? Honestly, that would be really weird. But let's check anyway and exit out if it is.
+	if ($_array_length(tileIds) == 0) {
+		// Mark it as done and exit out. This way it doesn't act like it's loading forever since the image load
+		// handler is the thing that marks it as no longer loading.
+		$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADED);
+		return true;
+	}
+
+	// Go through all the tile IDs and create a loader status object for each.
+	// Add them to a queue.
+	// This queue is pumped by the workNugget methods.
+	for (@type('int') i = 0; i < $_array_length(tileIds); i += 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		@type('string') tileGenName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		$_list_push(ImageSheetStatus$iss.tileLoadQueue,
+			new TileLoadRequest(
+				tileGenName,
+				IMAGE_SHEET_STATUS_NOT_LOADED,
+				groupId,
+				groupName,
+				tileId,
+				null,
+				''));
+	}
+
+	return true;
+}
+
+function @type('ImageSheetStatus') getImageSheetStatus() {
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.imageSheetStatus;
+}
+
+function @type('int') getGroupId(@type('ImageSheetStatus') iss, @type('string') groupName) {
+	if ($_dictionary_contains(ImageSheetStatus$iss.groupNameToId, groupName)) {
+		return $_dictionary_get_guaranteed(ImageSheetStatus$iss.groupNameToId, groupName);
+	}
+	return -1;
+}
+
+function @type('int') getNumTilesLoaded(@type('string') groupName) {
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('int') groupId = getGroupId(iss, groupName);
+	if (groupId == -1) return -1;
+
+	@type('int') tileCount = 0;
+	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
+	for (@type('int') i = 0; i < $_array_length(tileIds); i += 1) {
+		@type('int') tileId = $_array_get(tileIds, i);
+		if ($_dictionary_contains(ImageSheetStatus$iss.tilesByName, $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId))) {
+			tileCount += 1;
+		}
+	}
+	return tileCount;
+}
+
+function @type('int') getSheetErrorCode(@type('string') groupName) {
+	// TODO: this
+	return 0;
+}
+
+// return values:
+// 0 -> no
+// 1 -> yes
+// 2 -> error, not found, or not initialized
+function @type('int') isImageSheetLoaded(@type('string') groupName) {
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('int') groupId = getGroupId(iss, groupName);
+	if (groupId == -1)
+		return 2;
+
+	@type('int') status = $_dictionary_get_guaranteed(ImageSheetStatus$iss.sheetStatus, groupId);
+
+	if (status == IMAGE_SHEET_STATUS_LOADED) {
+		@type('ImageSheetVirtualizationGrid') grid = $_dictionary_get_guaranteed(ImageSheetStatus$iss.virtualizationGrids, groupName);
+		ImageSheetVirtualizationGrid$grid.loadCompletionChecked = true;
+		return 1;
+	}
+
+	if (status == IMAGE_SHEET_STATUS_LOADING)
+		return 0;
+
+	return 2;
+}
+
+function @type('Imagette') createImagetteFromBitmap(nativeBitmap) {
+	@type('List<object>') images = $_new_list('object');
+	@type('List<int>') xs = $_new_list('int');
+	@type('List<int>') ys = $_new_list('int');
+	$_list_push(images, nativeBitmap);
+	$_list_push(xs, 0);
+	$_list_push(ys, 0);
+
+	return new Imagette(
+		$_image_native_bitmap_width(nativeBitmap),
+		$_image_native_bitmap_height(nativeBitmap),
+		images,
+		xs,
+		ys);
+}
+
+function @type('Imagette') createImagetteFromDimensions(@type('int') width, @type('int') height) {
+	return new Imagette(
+		width,
+		height,
+		$_new_list('object'),
+		$_new_list('int'),
+		$_new_list('int'));
+}
+
+function imagetteBlitRaw(@type('Imagette') target, nativeBitmap, @type('int') x, @type('int') y) {
+	$_list_push(Imagette$target.nativeBitmaps, nativeBitmap);
+	$_list_push(Imagette$target.xs, x);
+	$_list_push(Imagette$target.ys, y);
+}
+
+function imagetteBlitFellowImagette(@type('Imagette') target, @type('Imagette') source, @type('int') x, @type('int') y) {
+	for (@type('int') i = $_list_length(Imagette$source.nativeBitmaps) - 1; i >= 0; i -= 1) {
+		$_list_push(Imagette$target.nativeBitmaps, $_list_get(Imagette$source.nativeBitmaps, i));
+		$_list_push(Imagette$target.xs, $_list_get(Imagette$source.xs, i) + x);
+		$_list_push(Imagette$target.ys, $_list_get(Imagette$source.ys, i) + y);
+	}
+}
+
+// Returns biggest sheet ID for reasons.
+function @type('int') virtualizationGridDoBasicConsolidations(
+	@type('int') groupId,
+	@type('List<SpriteSheetItemDescriptor>') spriteSheetItemDescriptors,
+	@type('Dictionary<string, object>') nativeTileBitmapsByGeneratedName,
+
+	// The remaining parameters are actually out parameters and are empty going in.
+	@type('Dictionary<string, Array<int>>') locations,
+	@type('List<string>') paths,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<int, Imagette>') solitarySheets) {
+	
+	@type('int') biggestSheetId = 0;
+	
+	for (@type('int') j = 0; j < $_list_length(spriteSheetItemDescriptors); j += 1) {
+		@type('SpriteSheetItemDescriptor') item = $_list_get(spriteSheetItemDescriptors, j);
+		@type('string') filename = SpriteSheetItemDescriptor$item.filePath;
+		$_list_push(paths, filename);
+		@type('int') x = SpriteSheetItemDescriptor$item.x;
+		@type('int') y = SpriteSheetItemDescriptor$item.y;
+		@type('int') width = SpriteSheetItemDescriptor$item.width;
+		@type('int') height = SpriteSheetItemDescriptor$item.height;
+		@type('int') tileId = SpriteSheetItemDescriptor$item.tileId;
+		if (tileId > biggestSheetId) {
+			biggestSheetId = tileId;
+		}
+		@type('string') generatedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		@type('Array<int>') locationData = null;
+		if (SpriteSheetItemDescriptor$item.solitary) {
+			$_dictionary_set(solitarySheets, tileId, createImagetteFromBitmap($_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, generatedName)));
+			locationData = $_new_array('int', 5);
+			$_array_set(locationData, 0, tileId);
+			$_array_set(locationData, 1, 0);
+			$_array_set(locationData, 2, 0);
+			$_array_set(locationData, 3, SpriteSheetItemDescriptor$item.width);
+			$_array_set(locationData, 4, SpriteSheetItemDescriptor$item.height);
+			$_dictionary_set(locations, filename, locationData);
+		} else {
+			@type('int') col = 0;
+			@type('int') row = 0;
+			@type('int') roundedId = $_unsafe_integer_division(tileId, 16) * 16;
+			if (!$_dictionary_contains(nonSolitarySheets, roundedId)) {
+				$_dictionary_set(nonSolitarySheets, roundedId, createImagetteFromDimensions(1024, 1024));
+
+				for (@type('int') i = 0; i < 16; i += 1) {
+					@type('int') interiorTileId = roundedId + i;
+					@type('string') interiorTileGeneratedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(interiorTileId);
+					col = i % 4;
+					row = $_unsafe_integer_division(i, 4);
+					if ($_dictionary_contains(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName)) {
+						@type('object') tileBmp = $_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName);
+						if (tileBmp != null) {
+						imagetteBlitRaw(
+							$_dictionary_get_guaranteed(nonSolitarySheets, roundedId),
+							tileBmp,
+							col * 256,
+							row * 256);
+						}
+					}
+				}
+			}
+			col = (tileId - roundedId) % 4;
+			row = $_unsafe_integer_division($_force_parens(tileId - roundedId), 4);
+			locationData = $_new_array('int', 5);
+			$_array_set(locationData, 0, roundedId);
+			$_array_set(locationData, 1, col * 256 + SpriteSheetItemDescriptor$item.x);
+			$_array_set(locationData, 2, row * 256 + SpriteSheetItemDescriptor$item.y);
+			$_array_set(locationData, 3, SpriteSheetItemDescriptor$item.width);
+			$_array_set(locationData, 4, SpriteSheetItemDescriptor$item.height);
+			$_dictionary_set(locations, filename, locationData);
+		}
+	}
+	return biggestSheetId;
+}
+
+function @type('Imagette') virtualizationGridBuildAMegaSheet(
+	@type('int') megaSheetId,
+	@type('List<int>') megaSheetMemberSheetIds,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<int, Array<int>>') oldSheetOffsetInformation) {
+
+	@type('int') totalMembers = $_list_length(megaSheetMemberSheetIds);
+	@type('int') imageUnitWidth = $_int($_exponent($_force_parens(totalMembers - 1), 0.5) + 1);
+	@type('int') imageWidth = nextPowerOf2(imageUnitWidth * 1024);
+	@type('Imagette') megaSheetBitmap = createImagetteFromDimensions(imageWidth, imageWidth);
+
+	for (@type('int') i = 0; i < totalMembers; i += 1) {
+		@type('int') sheetId = $_list_get(megaSheetMemberSheetIds, i);
+		// Allocate the ID's in this compact square pattern:
+		// 0  1  4  9
+		// 3  2  5  10
+		// 8  7  6  11
+		// 15 14 13 12
+		// etc
+		// "gen"eration refers to the layer # of the L shape that the sheet is occupying. You can find it by flooring the square root of the number in that cell.
+		// Arithmetic magic.
+		@type('int') gen = $_int($_exponent(i, 0.5)); // floor(sqrt(i))
+		@type('int') col = gen;
+		@type('int') row = i - gen * gen;
+		if (row > gen) {
+			@type('int') adj = row - gen;
+			col -= adj;
+			row -= adj;
+		}
+		@type('int') x = col * 1024;
+		@type('int') y = row * 1024;
+		imagetteBlitFellowImagette(megaSheetBitmap, $_dictionary_get_guaranteed(nonSolitarySheets, sheetId), x, y);
+		@type('Array<int>') offsetInformation = $_new_array('int', 3);
+		$_array_set(offsetInformation, 0, megaSheetId);
+		$_array_set(offsetInformation, 1, x);
+		$_array_set(offsetInformation, 2, y);
+		$_dictionary_set(oldSheetOffsetInformation, sheetId, offsetInformation);
+	}
+	return megaSheetBitmap;
+}
+
+// The dictionary that is returned by this function should replace the nonSolitarySheets
+// dictionary that is passed in.
+// TODO: why not just modify the contents?
+function @type('Dictionary<int, Imagette>') virtualizationGridDoFurtherConsolidations(
+	@type('int') biggestSheetId,
+	@type('int') maxTextureSize,
+	@type('Dictionary<int, Imagette>') nonSolitarySheets,
+	@type('Dictionary<string, Array<int>>') locations) {
+
+	@type('int') unitLength = $_unsafe_integer_division(maxTextureSize, 1024);
+	@type('int') maxSheetsPerMegaSheet = unitLength * unitLength;
+	@type('int') sheetCount = $_dictionary_size(nonSolitarySheets);
+	@type('int') i = 0;
+	// Start making a list of ID groupings that don't exceed the maximum capacity of a megasheet.
+	@type('List<List<int>>') megaSheetMapping = $_new_list('List<int>');
+	@type('Array<int>') listOfSheetIds = $_dictionary_get_keys('int', nonSolitarySheets);
+	@type('Array<int>') orderedSheetIds = $_sorted_copy_of_int_array(listOfSheetIds); // order the IDs so that the image produce is deterministic. Otherwise the consolidation order will be random based on the platform's natural dictionary key ordering.
+	for (i = 0; i < $_array_length(orderedSheetIds); i += 1) {
+		@type('int') sheetIdToCombine = $_array_get(orderedSheetIds, i);
+		if ($_list_length(megaSheetMapping) == 0 ||
+			$_list_length($_list_get(megaSheetMapping, $_list_length(megaSheetMapping) - 1)) == maxSheetsPerMegaSheet) {
+			$_list_push(megaSheetMapping, $_new_list('int'));
+		}
+		$_list_push($_list_get(megaSheetMapping, $_list_length(megaSheetMapping) - 1), sheetIdToCombine);
+	}
+
+	// now that the members of the mega sheets are fully determined, create the images.
+	@type('int') megaSheetId = biggestSheetId;
+	@type('Dictionary<int, Imagette>') megaSheetById = $_new_dictionary('int', 'Imagette');
+	@type('Dictionary<int, Array<int>>') oldSheetOffsetInformation = $_new_dictionary('int', 'Array<int>');
+	for (i = 0; i < $_list_length(megaSheetMapping); i += 1) {
+		@type('List<int>') megaSheetMemberSheetIds = $_list_get(megaSheetMapping, i);
+		megaSheetId += 1;
+		$_dictionary_set(
+			megaSheetById,
+			megaSheetId,
+			virtualizationGridBuildAMegaSheet(
+				megaSheetId,
+				megaSheetMemberSheetIds,
+				nonSolitarySheets,
+				oldSheetOffsetInformation));
+	}
+
+	// now update the location information to reflect the new sheet ID's and locations.
+	@type('string') locationKey = null;
+	@type('Array<string>') locationKeys = $_dictionary_get_keys('string', locations);
+	for (i = 0; i < $_array_length(locationKeys); i += 1) {
+		locationKey = $_array_get(locationKeys, i);
+		@type('Array<int>') locationInfo = $_dictionary_get_guaranteed(locations, locationKey);
+		@type('int') oldSheetId = $_array_get(locationInfo, 0);
+		if ($_dictionary_contains(oldSheetOffsetInformation, oldSheetId)) {
+			@type('Array<int>') updatedInfo = $_dictionary_get_guaranteed(oldSheetOffsetInformation, oldSheetId);
+			$_array_set(locationInfo, 0, $_array_get(updatedInfo, 0));
+			$_array_set(locationInfo, 1, $_array_get(locationInfo, 1) + $_array_get(updatedInfo, 1));
+			$_array_set(locationInfo, 2, $_array_get(locationInfo, 2) + $_array_get(updatedInfo, 2));
+		}
+	}
+	return megaSheetById;
+}
+
+function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
+	@type('int') groupId,
+	@type('string') groupName,
+	@type('List<SpriteSheetItemDescriptor>') spriteSheetItemDescriptors,
+	@type('Dictionary<string, object>') nativeTileBitmapsByGeneratedName) {
+
+	@type('Dictionary<string, Array<int>>') locations = $_new_dictionary('string', 'Array<int>'); // [ tile ID, x, y, width, height ]
+	@type('List<string>') paths = $_new_list('string');
+	@type('Dictionary<int, Imagette>') nonSolitarySheets = $_new_dictionary('int', 'Imagette');
+	@type('Dictionary<int, Imagette>') solitarySheets = $_new_dictionary('int', 'Imagette');
+
+	@type('int') biggestSheetId = virtualizationGridDoBasicConsolidations(
+		groupId,
+		spriteSheetItemDescriptors,
+		nativeTileBitmapsByGeneratedName,
+		locations,
+		paths,
+		nonSolitarySheets,
+		solitarySheets);
+
+	@type('int') maxTextureSize = 1024;
+	if (%%%IS_OPEN_GL_BASED%%%) {
+		maxTextureSize = $_gl_max_texture_size();
+	}
+
+	// Go through and further consolidate things if possible.
+	if (maxTextureSize > 1024 && $_dictionary_size(nonSolitarySheets) > 1) {
+		// replace the non solitary sheets with the new mega sheets.
+		nonSolitarySheets = virtualizationGridDoFurtherConsolidations(biggestSheetId, maxTextureSize, nonSolitarySheets, locations);
+	}
+
+	@type('int') i = 0;
+	@type('int') sheetId = 0;
+	@type('Dictionary<int, CompositeImage>') sheets = $_new_dictionary('int', 'CompositeImage');
+	@type('Dictionary<int, Imagette>') allSheets = nonSolitarySheets;
+	@type('Array<int>') sheetIds = $_dictionary_get_keys('int', solitarySheets);
+	for (i = 0; i < $_array_length(sheetIds); i += 1) {
+		sheetId = $_array_get(sheetIds, i);
+		$_dictionary_set(allSheets, sheetId, $_dictionary_get_guaranteed(solitarySheets, sheetId));
+	}
+	
+	sheetIds = $_dictionary_get_keys('int', allSheets);
+	for (i = 0; i < $_array_length(sheetIds); i += 1) {
+		sheetId = $_array_get(sheetIds, i);
+		@type('Imagette') imagette = $_dictionary_get_guaranteed(allSheets, sheetId);
+		@type('object') actualBitmap = $_image_imagette_flush_to_native_bitmap(imagette);
+		$_dictionary_set(sheets, sheetId, createCompositeImage(actualBitmap));
+	}
+	
+	return new ImageSheetVirtualizationGrid(
+		locations,
+		sheets,
+		groupName,
+		groupId,
+		$_convert_list_to_array('string', paths),
+		false);
+}
+
+function finalizeGroupLoading(
+	@type('int') groupId,
+	@type('string') groupName) {
+
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+
+	// filter the tilesByName lookup to just the ones in this group now that it's done loading.
+	@type('Array<string>') genNamesInGroup = $_dictionary_get_guaranteed(ImageSheetStatus$iss.generatedTileNamesByGroupId, groupId);
+	@type('Dictionary<string, object>') tilesInGroupByGenName = $_new_dictionary('string', 'object');
+	@type('int') i = 0;
+	for (i = 0; i < $_array_length(genNamesInGroup); i += 1) {
+		@type('string') genName = $_array_get(genNamesInGroup, i);
+		$_dictionary_set(tilesInGroupByGenName, genName, $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesByName, genName));
+	}
+
+	// and create a virtualization grid for this group. 
+	// This is a mapping of image paths to bitmap+location within the bitmap
+	@type('List<SpriteSheetItemDescriptor>') sheetMembers = getSpriteSheetMembers(iss, groupName);
+	@type('ImageSheetVirtualizationGrid') grid = instantiateVirtualizationGrid(
+		groupId,
+		groupName,
+		$_dictionary_get_guaranteed(ImageSheetStatus$iss.spriteSheetItemDescriptorsByGroupId, groupId),
+		tilesInGroupByGenName);
+
+	$_dictionary_set(ImageSheetStatus$iss.virtualizationGrids, groupName, grid);
+
+	@type('Array<string>') paths = ImageSheetVirtualizationGrid$grid.paths;
+	for (i = 0; i < $_array_length(paths); i += 1) {
+		@type('string') path = $_array_get(paths, i);
+		$_dictionary_set(ImageSheetStatus$iss.fileToVirtualizationGrid, path, grid);
+	}
+
+	$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADED);
+}
+
+function imageSheetPerformWorkNuggetPreFrame() {
+
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('List<TileLoadRequest>') queue = ImageSheetStatus$iss.tileLoadQueue;
+	if ($_list_length(queue) > 0) {
+		// check to see if any tiles have been loaded.
+		for (@type('int') i = 0; i < $_list_length(queue); i += 1) {
+			@type('TileLoadRequest') request = $_list_get(queue, i);
+
+			if (!%%%IMAGES_LOAD_INSTANTLY%%%) {
+				if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_LOADING) {
+					@type('string') key = TileLoadRequest$request.asyncReferenceKey;
+					@type('object') platformImage = $_image_async_download_completed_payload(key);
+					if (platformImage != null) {
+						TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADED;
+						TileLoadRequest$request.nativeResource = platformImage;
+					}
+				}
+			}
+
+			if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_LOADED) {
+				// [down]load complete. Add to the ImageSheetStatus and figure out if this was the last one for the group.
+				$_dictionary_set(ImageSheetStatus$iss.tilesByName, TileLoadRequest$request.path, TileLoadRequest$request.nativeResource);
+				@type('int') groupId = TileLoadRequest$request.groupId;
+				if (areAllTilesLoadedForGroupId(iss, groupId)) {
+					finalizeGroupLoading(groupId, TileLoadRequest$request.groupName);
+				}
+				$_list_remove_at(queue, i);
+				i -= 1;
+			}
+		}
+	}
+
+	if (!%%%IMAGES_LOAD_INSTANTLY%%%) {
+		// Are there any active async downloads?
+		if ($_dictionary_size(ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop) > 0) {
+			// Check to see if they're done.
+			@type('Array<string>') autogenKeys = $_dictionary_get_keys('string', ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop);
+			for (@type('int') j = $_array_length(autogenKeys) - 1; j >= 0; j -= 1) {
+				@type('string') autogenKey = $_array_get(autogenKeys, j);
+				@type('object') imageObject = $_image_async_download_completed_payload(autogenKey);
+				if (imageObject != null) {
+					// If the image is done, copy it to the userKey -> image resource lookup table and remove the autogen key entry.
+					@type('CompositeImage') compositeImage = createCompositeImage(imageObject);
+					@type('string') userKey = $_dictionary_get_guaranteed(ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop, autogenKey);
+					$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, userKey, compositeImage);
+					$_dictionary_remove(ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop, autogenKey);
+				}
+			}
+		}
+	}
+}
+
+// Fire requests to load tiles
+function imageSheetPerformWorkNuggetPostFrame() {
+
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+
+	@type('List<TileLoadRequest>') queue = ImageSheetStatus$iss.tileLoadQueue;
+	if ($_list_length(queue) > 0) {
+		// All requests are populated into the tile load queue when the user invokes the loading of a sheet.
+		// This loop ensures that at least IMAGE_SHEET_TILES_LOADED_PER_FRAME downloads are active during the gap between frames.
+		@type('int') activeDownloads = 0;
+		for (@type('int') i = 0; i < $_list_length(queue) && activeDownloads < IMAGE_SHEET_TILES_LOADED_PER_FRAME; i += 1) {
+			@type('TileLoadRequest') request = $_list_get(queue, i);
+			if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_NOT_LOADED) {
+				initiateTileLoading(request);
+				activeDownloads += 1;
+			} else if (TileLoadRequest$request.status == IMAGE_SHEET_STATUS_LOADED) {
+				// TODO: remove this once this has been thoroughly debugged
+				$_assert("should not encounter a loaded image here.");
+			}
+		}
+	}
+}
+
+/*
+	Things TODO:
+	- create manifest
+	- manifest must be a lookup of structs with information including whether or not the resource is included in a sprite sheet
+	- change this method to return a status code rather than a boolean so that it can throw specific error messages
+	-   such as attempting to initiate a load of an image that exists in an image sheet that hasn't been initialized yet.
+*/
+
+// Status codes:
+// 0 - nope, not loaded
+// 1 - yup, it's loaded
+// 2 - yup, it's loaded. But you didn't check to see if the sheet it came from was done loading so it could have totally not 
+//     been, which means this is an unsafe access so we're going to crash anyway because shame on you for accessing without 
+//     checking.
+function @type('int') loadImageFromLocalResources(@type('string') key, @type('string') path) {
+
+	// If the image sheet is loaded, then you're good too go
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	if ($_dictionary_contains(ImageSheetStatus$iss.fileToVirtualizationGrid, path)) {
+		@type('ImageSheetVirtualizationGrid') grid = $_dictionary_get_guaranteed(ImageSheetStatus$iss.fileToVirtualizationGrid, path);
+		if (!ImageSheetVirtualizationGrid$grid.loadCompletionChecked) {
+			return 2;
+		}
+		@type('Array<int>') location = $_dictionary_get_guaranteed(ImageSheetVirtualizationGrid$grid.imageLocations, path);
+		$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, $_dictionary_get_guaranteed(ImageSheetVirtualizationGrid$grid.sheets, $_array_get(location, 0)));
+		$_dictionary_set(ImageSheetStatus$iss.texturePartitioningInformation, key, location);
+		return 1;
+	}
+
+	// if images load instantly then load it and set the key
+	if (%%%IMAGES_LOAD_INSTANTLY%%%) {
+		@type('object') bmp = $_read_local_image_resource(path);
+		if (bmp != null) {
+			$_dictionary_set(ImageSheetStatus$iss.resourceImagesByKeys, key, createCompositeImage(bmp));
+			return 1;
+		}
+	} else {
+		// TODO: verify the image is in the local resource manifest. 
+		// Unlike async loads which will immediately fallover, you must know the file exists before you try to download.
+		@type('string') autogenKey = $_image_initiate_async_download_of_resource(path);
+		$_dictionary_set(ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop, autogenKey, key);
+		return 1;
+	}
+	return 0;
+}
+
+// TODO: retry counter support
+function imageDownloadCompletionHandler(@type('string') key, bitmap) {
+
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+
+	@type('int') status = 1;
+	if (bitmap == null) {
+		// TODO: more in-depth error codes than "2"
+		status = 2;
+	}
+	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesByKey, key, bitmap);
+	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesErrorCodes, key, status);
+}
+
+function @type('int') getImageErrorCode(@type('string') key) {
+	$_assert("Not implemented.");
+	return 0;
+}
+
+function loadImageFromUserData(@type('string') key, @type('string') path) {
+	$_assert("Not implemented.");
+}
+
+// 0 - loading not initialized, 1 - loaded, 2 - not finished loading
+function @type('int') isImageLoaded(@type('string') key) {
+	@type('int') status = 0; // not loaded yet
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+
+	if ($_dictionary_contains(ImageSheetStatus$iss.resourceImagesByKeys, key)) {
+		status = 1; // yes, loaded
+	}
+
+	// Do not optimize this code out with a if (status == 0). If there are async downloads, their status will
+	// supersede the already downloaded version. This will happen if the user downloads and image with the same
+	// key as an already downloaded image.
+	if (!%%%IMAGES_LOAD_INSTANTLY%%%) {
+		// Generally there won't be too many images loading in parallel, so this loop is okay. Would not recommend adding a new inverse dictionary for this.
+		@type('Array<string>') autogenKeys = $_dictionary_get_keys('string', ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop);
+		for (@type('int') i = $_array_length(autogenKeys) - 1; i >= 0; i -= 1) {
+			@type('string') autogenKey = $_array_get(autogenKeys, i);
+			@type('string') userKey = $_dictionary_get_guaranteed(ImageSheetStatus$iss.autogeneratedAsyncDownloadKeyToUserKeyLoop, autogenKey);
+			if ($_string_equals(userKey, key)) {
+				return 2;
+			}
+		}
+	}
+
+	return status;
+}

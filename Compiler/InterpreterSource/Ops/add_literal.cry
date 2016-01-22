@@ -1,0 +1,17 @@
+﻿
+type = $_array_get(row, 0);
+if (type == Types.NULL) {
+	$_list_push(ProgramData$p.literalTableBuilder, VALUE_NULL);
+} else if (type == Types.BOOLEAN) {
+	if ($_array_get(row, 1) == 1) {
+		$_list_push(ProgramData$p.literalTableBuilder, VALUE_TRUE);
+	} else {
+		$_list_push(ProgramData$p.literalTableBuilder, VALUE_FALSE);
+	}
+} else if (type == Types.INTEGER) {
+	$_list_push(ProgramData$p.literalTableBuilder, buildInteger($_array_get(row, 1)));
+} else if (type == Types.FLOAT) {
+	$_list_push(ProgramData$p.literalTableBuilder, buildFloat($_string_parse_float($_array_get(stringArgs, pc))));
+} else if (type == Types.STRING) {
+	$_list_push(ProgramData$p.literalTableBuilder, buildCommonString($_array_get(stringArgs, pc)));
+}

@@ -1,0 +1,13 @@
+﻿valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
+if (Value$value.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$value.internalValue); // switch ID
+	integerSwitch = $_array_get(integerSwitches, $_array_get(row, 0));
+	if ($_dictionary_contains(integerSwitch, int1)) {
+		pc += $_dictionary_get_guaranteed(integerSwitch, int1);
+	} else {
+		pc += $_array_get(row, 1); // default
+	}
+} else {
+	return killExecution(stack, pc, "Switch statement expects an integer.");
+}

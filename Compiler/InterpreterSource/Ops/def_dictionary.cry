@@ -1,0 +1,62 @@
+﻿
+dictIntKeyLookup = $_new_dictionary('int', 'Value');
+dictIntValueLookup = $_new_dictionary('int', 'Value');
+dictStringKeyLookup = $_new_dictionary('string', 'Value');
+dictStringValueLookup = $_new_dictionary('string', 'Value');
+len = $_array_get(row, 0);
+type = Types.INTEGER; // always ignored when size is 0
+first = true;
+i = len; // size
+while (i > 0) {
+	valueStackSize -= 2;
+	value = $_array_get(valueStack, valueStackSize + 1); // value
+	value2 = $_array_get(valueStack, valueStackSize); // key
+	if (first) {
+		type = Value$value2.type;
+		first = false;
+	} else if (type != Value$value2.type) {
+		return killExecution(stack, pc, "Cannot have multiple key types in one dictionary.");
+	}
+
+	if (type == Types.INTEGER) {
+		intKey = $_cast('int', Value$value2.internalValue);
+	} else if (type == Types.STRING) {
+		stringKey = $_cast('string', Value$value2.internalValue);
+	} else if (type == Types.INSTANCE) {
+		objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
+		intKey = ObjectInstance$objInstance.objectId;
+	} else {
+		return killExecution(stack, pc, "Only integers, strings, and objects can be used as dictionary keys.");
+	}
+
+	if (type == Types.STRING) {
+		$_dictionary_set(dictStringKeyLookup, stringKey, value2);
+		$_dictionary_set(dictStringValueLookup, stringKey, value);
+	} else {
+		$_dictionary_set(dictIntKeyLookup, intKey, value2);
+		$_dictionary_set(dictIntValueLookup, intKey, value);
+	}
+	i -= 1;
+}
+
+if (type == Types.STRING) {
+	if ($_dictionary_size(dictStringKeyLookup) != len) {
+		return killExecution(stack, pc, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+	}
+} else {
+	if ($_dictionary_size(dictIntKeyLookup) != len) {
+		return killExecution(stack, pc, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+	}
+}
+
+value = new Value(Types.DICTIONARY, new DictImpl(
+	dictIntKeyLookup,
+	dictIntValueLookup,
+	dictStringKeyLookup,
+	dictStringValueLookup,
+	len,
+	type));
+
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

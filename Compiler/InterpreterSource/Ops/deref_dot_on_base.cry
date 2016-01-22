@@ -1,0 +1,19 @@
+﻿
+root = StackFrame$stack.objectContext;
+nameId = $_array_get(row, 0);
+classId = $_array_get(row, 1);
+methodDefinitionLookup = $_array_get(classMethods, classId);
+if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
+	methodDefinition = $_dictionary_get_guaranteed(methodDefinitionLookup, nameId);
+	value = new Value(Types.METHOD,
+		new MethodInstance(
+			root,
+			MethodDefinition$methodDefinition.pc,
+			MethodDefinition$methodDefinition.maxArgs));
+
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+} else {
+	return killExecution(stack, pc, "Base class did not have a method by this name.");
+}

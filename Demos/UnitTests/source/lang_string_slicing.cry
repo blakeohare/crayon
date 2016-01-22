@@ -1,0 +1,43 @@
+
+function lang_string_slicing() {
+	original = 'abcdefghij';
+	
+	$print('lang_string_slicing - cloning');
+	$assert(original[:] == 'abcdefghij', 'lang_string_slicing - cloning');
+	
+	$print('lang_string_slicing - forward stepping with default increment');
+	$assert(original[0:10] == 'abcdefghij', 'lang_string_slicing - default increment');
+	$assert(original[3:10] == 'defghij', 'lang_string_slicing - default increment');
+	$assert(original[0:7] == 'abcdefg', 'lang_string_slicing - default increment');
+	$assert(original[3:7] == 'defg', 'lang_string_slicing - default increment');
+	$assert(original[-5:] == 'fghij', 'lang_string_slicing - default increment');
+	$assert(original[4:] == 'efghij', 'lang_string_slicing - default increment');
+	$assert(original[:6] == 'abcdef', 'lang_string_slicing - default increment');
+	$assert(original[:-2] == 'abcdefgh', 'lang_string_slicing - default increment');
+	$assert(original[-8:8] == 'cdefgh', 'lang_string_slicing - default increment');
+	$assert(original[7:7] == '', 'lang_string_slicing - default increment');
+	$assert(original[1:] == 'bcdefghij', 'lang_string_slicing - default increment');
+	$assert(original[original.length:] == '', 'lang_string_slicing - default increment');
+	
+	
+	
+	$print('lang_string_slicing - forward stepping with custom increment');
+	$assert(original[::2] == 'acegi', 'lang_string_slicing - custom increment');
+	$assert(original[1:7:3] == 'be', 'lang_string_slicing - custom increment');
+	$assert(original[1:8:3] == 'beh', 'lang_string_slicing - custom increment');
+	
+	$print('lang_string_slicing - backward stepping');
+	$assert(original[5::-1] == 'fedcba', 'lang_string_slicing - backwards');
+	$assert(original[9:-11:-1] == 'jihgfedcba', 'lang_string_slicing - backwards');
+	$assert(original[3:3:-1] == '', 'lang_string_slicing - backwards');
+	$assert(original[5:3:-1] == 'fe', 'lang_string_slicing - backwards');
+	$assert(original[5:3:-5] == 'f', 'lang_string_slicing - backwards');
+	$assert(original[::-1] == 'jihgfedcba', 'lang_string_slicing - backwards');
+	$assert(original[:3:-1] == 'jihgfe', 'lang_string_slicing - backwards');
+	$assert(original[8:2:-2] == 'ige', 'lang_string_slicing - backwards');
+	
+	x = [1, 2, 3];
+	$assert(x[1:] + '' == '[2, 3]', "lang_list_slicing");
+	x = [42];
+	$assert(x[1:].length == 0, "lang_list_slicing");
+}

@@ -1,0 +1,10 @@
+﻿
+// $sfx_play(sound_instance)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+sound1 = $_cast('SoundInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.SOUND));
+if (sound1 == null) {
+	return killExecution(stack, pc, "$sfx_play requires a sound instance as an argument.");
+}
+
+soundManagerPlaySound(sound1);
