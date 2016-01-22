@@ -21,7 +21,16 @@ namespace Crayon.Translator
 		public void Translate(string tab, List<string> output, SystemFunctionCall functionCall)
 		{
 			Expression[] args = functionCall.Args;
-			string name = functionCall.Name.Substring(1);
+			string fullName = functionCall.Name;
+			string name = fullName.Substring(1);
+
+			if (name.StartsWith("_lib_"))
+			{
+				output.Add(functionCall.AssociatedLibrary.TranslateNativeInvocation(
+					this.Platform.ExpressionTranslatorForExternalLibraries, fullName, args));
+				return;
+			}
+
 			if (name.StartsWith("_gl_") && this.Platform.OpenGlTranslator != null)
 			{
 				AbstractOpenGlTranslator gl = this.Platform.OpenGlTranslator;

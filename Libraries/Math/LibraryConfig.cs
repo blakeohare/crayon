@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Crayon;
+using Crayon.ParseTree;
 
 namespace Math
 {
@@ -21,6 +22,11 @@ namespace Math
 		public string GetTranslationCode(string functionName)
 		{
 			return ReadFile("Translation/" + functionName + ".cry");
+		}
+
+		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		{
+			throw new Exception();
 		}
 	}
 }

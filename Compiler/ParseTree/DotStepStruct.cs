@@ -23,16 +23,16 @@ namespace Crayon.ParseTree
 			this.StructDefinition = structDef;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			return this;
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 	}

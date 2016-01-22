@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Crayon.ParseTree;
 
 namespace Crayon
 {
@@ -9,5 +10,6 @@ namespace Crayon
 	{
 		string GetEmbeddedCode();
 		string GetTranslationCode(string functionName);
+		string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args);
 	}
 }

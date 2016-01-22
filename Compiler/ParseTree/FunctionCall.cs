@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
 			this.library = Parser.CurrentSystemLibrary_STATIC_HACK;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			// TODO: isset(var) insertion goes here
 
@@ -54,7 +54,7 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Root.VariableUsagePass(parser);
 			for (int i = 0; i < this.Args.Length; ++i)
@@ -63,7 +63,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Root.VariableIdAssignmentPass(parser);
 			for (int i = 0; i < this.Args.Length; ++i)

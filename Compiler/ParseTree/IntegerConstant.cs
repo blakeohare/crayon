@@ -65,17 +65,17 @@ namespace Crayon.ParseTree
 			this.Value = value;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			// doesn't get simpler than this.
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

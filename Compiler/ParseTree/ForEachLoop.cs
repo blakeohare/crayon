@@ -20,14 +20,14 @@ namespace Crayon.ParseTree
 			this.Code = code.ToArray();
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.IterationExpression = this.IterationExpression.Resolve(parser);
 			this.Code = Resolve(parser, this.Code).ToArray();
 			return Listify(this);
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			string iterator = this.IterationVariable.Value;
 			varIds.RegisterVariable(iterator);
@@ -38,7 +38,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.IterationExpression.VariableUsagePass(parser);
 			parser.VariableRegister(this.IterationVariable.Value, true, this.IterationVariable);
@@ -48,7 +48,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.IterationExpression.VariableIdAssignmentPass(parser);
 			int[] ids = parser.VariableGetLocalAndGlobalIds(this.IterationVariable.Value);

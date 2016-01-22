@@ -29,13 +29,13 @@ namespace Crayon.ParseTree
 			this.Args = args.ToArray();
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			// Args are already resolved.
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
@@ -43,7 +43,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{

@@ -16,7 +16,7 @@
 			this.Root = root;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			if (parser.IsTranslateMode)
 			{
@@ -34,13 +34,13 @@
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			// does not declare a variable, despite technically being an assignment. Do not create an ID.
 			this.Root.VariableUsagePass(parser);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Root.VariableIdAssignmentPass(parser);
 		}

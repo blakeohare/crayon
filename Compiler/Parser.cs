@@ -7,7 +7,7 @@ namespace Crayon
 {
 	internal class Parser
 	{
-		public Parser(AbstractPlatform platform, BuildContext buildContext)
+		public Parser(AbstractPlatform platform, BuildContext buildContext, SystemLibraryManager sysLibMan)
 		{
 			this.NullablePlatform = platform;
 			this.IsTranslateMode = platform != null;
@@ -15,7 +15,7 @@ namespace Crayon
 			this.CurrentSystemLibrary = null;
 			this.BuildContext = buildContext;
 			this.VariableIds = new VariableIdAllocator();
-			this.SystemLibraryManager = new SystemLibraryManager();
+			this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
 			this.CurrentNamespace = "";
 		}
 

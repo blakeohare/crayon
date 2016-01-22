@@ -6,18 +6,18 @@ namespace Crayon.ParseTree
 	{
 		public BreakStatement(Token breakToken) : base(breakToken) { }
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			return Listify(this);
 		}
 
 		public override bool IsTerminator { get { return true; } }
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

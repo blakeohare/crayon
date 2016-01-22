@@ -2,7 +2,7 @@
 
 namespace Crayon.ParseTree
 {
-	internal abstract class Expression : Node
+	public abstract class Expression : Node
 	{
 		public Expression(Token firstToken)
 			: base(firstToken)
@@ -10,17 +10,17 @@ namespace Crayon.ParseTree
 			this.Annotations = null;
 		}
 
-		public abstract Expression Resolve(Parser parser);
+		internal abstract Expression Resolve(Parser parser);
 
 		public virtual bool IsLiteral { get { return false; } }
 
-		public Dictionary<string, Annotation> Annotations { get; set; }
+		internal Dictionary<string, Annotation> Annotations { get; set; }
 
 		// To be overridden if necessary.
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{ }
 
-		public Annotation GetAnnotation(string type)
+		internal Annotation GetAnnotation(string type)
 		{
 			if (this.Annotations != null && this.Annotations.ContainsKey(type))
 			{
@@ -29,7 +29,7 @@ namespace Crayon.ParseTree
 			return null;
 		}
 
-		public virtual void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal virtual void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			// Override me!
 		}

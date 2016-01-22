@@ -4,6 +4,7 @@
 	{
 		public string Name { get; private set; }
 		public Expression[] Args { get; private set; }
+		public ILibraryConfig AssociatedLibrary { get; private set; }
 
 		public SystemFunctionCall(Token token, Expression[] args)
 			: base(token)
@@ -12,8 +13,18 @@
 			this.Args = args;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
+			if (this.Name.StartsWith("$_lib_"))
+			{
+				string libraryName = this.Name.Split('_')[2];
+				ILibraryConfig library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName);
+				if (library != null)
+				{
+					this.AssociatedLibrary = library;
+				}
+			}
+
 			if (this.Name == "$_comment" && !parser.PreserveTranslationComments)
 			{
 				return null;
@@ -35,7 +46,7 @@
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
@@ -43,7 +54,7 @@
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{

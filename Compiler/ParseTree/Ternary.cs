@@ -14,7 +14,7 @@
 			this.FalseValue = falseValue;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			this.Condition = this.Condition.Resolve(parser);
 			this.TrueValue = this.TrueValue.Resolve(parser);
@@ -29,14 +29,14 @@
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Condition.VariableUsagePass(parser);
 			this.TrueValue.VariableUsagePass(parser);
 			this.FalseValue.VariableUsagePass(parser);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Condition.VariableIdAssignmentPass(parser);
 			this.TrueValue.VariableIdAssignmentPass(parser);

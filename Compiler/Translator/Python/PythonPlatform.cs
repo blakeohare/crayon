@@ -5,7 +5,7 @@ namespace Crayon.Translator.Python
 	class PythonPlatform : AbstractPlatform
 	{
 		public PythonPlatform()
-			: base(false, new PythonTranslator(), new PythonSystemFunctionTranslator(), null, new PyGameGamepadTranslator())
+			: base(PlatformId.PYTHON_PYGAME, LanguageId.PYTHON, false, new PythonTranslator(), new PythonSystemFunctionTranslator(), null, new PyGameGamepadTranslator())
 		{ }
 
 		public override bool IsAsync { get { return false; } }

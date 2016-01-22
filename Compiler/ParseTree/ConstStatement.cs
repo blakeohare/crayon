@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
 			this.Name = nameToken.Value;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.Expression = this.Expression.Resolve(parser);
 
@@ -36,11 +36,11 @@ namespace Crayon.ParseTree
 			return new Executable[0];
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

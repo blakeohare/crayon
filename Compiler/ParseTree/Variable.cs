@@ -22,7 +22,7 @@
 			}
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			if (this.Name == "$var")
 			{
@@ -59,7 +59,7 @@
 			return this;
 		}
 
-		public override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
 		{
 			if (this.GetAnnotation("global") == null)
 			{
@@ -67,19 +67,19 @@
 			}
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			varIds.RegisterVariable(this.Name);
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			// Assignments require context of the parent element and should handle this and bypass calling this function.
 			// Therefore all invocations of this will assume usage as opposed to assignment.
 			parser.VariableRegister(this.Name, false, this.FirstToken);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			int[] ids = parser.VariableGetLocalAndGlobalIds(this.Name);
 			this.LocalScopeId = ids[0];

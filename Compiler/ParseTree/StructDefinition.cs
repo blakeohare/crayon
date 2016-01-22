@@ -27,7 +27,7 @@ namespace Crayon.ParseTree
 		public string[] FieldsByIndex { get; private set; }
 		public Dictionary<string, int> IndexByField { get; private set; }
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			if (parser.IsByteCodeMode)
 			{
@@ -39,11 +39,11 @@ namespace Crayon.ParseTree
 			return new Executable[0];
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

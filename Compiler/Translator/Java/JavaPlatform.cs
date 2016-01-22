@@ -17,8 +17,8 @@ namespace Crayon.Translator.Java
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool IsArraySameAsList { get { return false; } }
 
-		public JavaPlatform(JavaSystemFunctionTranslator systemFunctionTranslator, AbstractOpenGlTranslator openGlTranslator)
-			: base(false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator, null)
+		public JavaPlatform(PlatformId platform, JavaSystemFunctionTranslator systemFunctionTranslator, AbstractOpenGlTranslator openGlTranslator)
+			: base(platform, LanguageId.JAVA, false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator, null)
 		{ }
 
 		public string TranslateType(string original, bool wrapped)

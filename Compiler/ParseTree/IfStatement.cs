@@ -17,7 +17,7 @@ namespace Crayon.ParseTree
 			this.FalseCode = falseCode.ToArray();
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.Condition = this.Condition.Resolve(parser);
 
@@ -33,7 +33,7 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			foreach (Executable line in this.TrueCode)
 			{
@@ -57,7 +57,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.TrueCode.Concat<Executable>(this.FalseCode))
 			{
@@ -65,7 +65,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Condition.VariableUsagePass(parser);
 			for (int i = 0; i < this.TrueCode.Length; ++i)
@@ -78,7 +78,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Condition.VariableIdAssignmentPass(parser);
 			for (int i = 0; i < this.TrueCode.Length; ++i)

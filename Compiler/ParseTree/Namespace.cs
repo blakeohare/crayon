@@ -35,27 +35,27 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
 		}
 
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			throw new NotImplementedException();
 		}

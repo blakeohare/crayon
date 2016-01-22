@@ -7,7 +7,7 @@
 		{
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			if (parser.IsInClass && parser.CurrentClass.SubClasses.Length > 0)
 			{
@@ -17,11 +17,11 @@
 			throw new ParserException(this.FirstToken, "Reference to base keyword in a class that does not have any base classes.");
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

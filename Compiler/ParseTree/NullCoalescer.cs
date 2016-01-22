@@ -12,7 +12,7 @@
 			this.SecondaryExpression = secondaryExpression;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			this.PrimaryExpression = this.PrimaryExpression.Resolve(parser);
 			this.SecondaryExpression = this.SecondaryExpression.Resolve(parser);
@@ -34,13 +34,13 @@
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.PrimaryExpression.VariableUsagePass(parser);
 			this.SecondaryExpression.VariableUsagePass(parser);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.PrimaryExpression.VariableIdAssignmentPass(parser);
 			this.SecondaryExpression.VariableIdAssignmentPass(parser);

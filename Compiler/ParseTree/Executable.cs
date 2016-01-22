@@ -14,9 +14,9 @@ namespace Crayon.ParseTree
 
 		public virtual bool IsTerminator { get { return false; } }
 
-		public abstract IList<Executable> Resolve(Parser parser);
+		internal abstract IList<Executable> Resolve(Parser parser);
 
-		public static IList<Executable> Resolve(Parser parser, IList<Executable> executables)
+		internal static IList<Executable> Resolve(Parser parser, IList<Executable> executables)
 		{
 			List<Executable> output = new List<Executable>();
 			foreach (Executable executable in executables)
@@ -28,7 +28,7 @@ namespace Crayon.ParseTree
 
 		// The reason why I still run this function with actuallyDoThis = false is so that other platforms can still be exported to
 		// and potentially crash if the implementation was somehow broken on Python (or some other future platform that doesn't have traditional switch statements).
-		public static Executable[] RemoveBreaksForElifedSwitch(bool actuallyDoThis, IList<Executable> executables)
+		internal static Executable[] RemoveBreaksForElifedSwitch(bool actuallyDoThis, IList<Executable> executables)
 		{
 			List<Executable> newCode = new List<Executable>(executables);
 			if (newCode.Count == 0) throw new Exception("A switch statement contained a case that had no code and a fallthrough.");
@@ -62,10 +62,10 @@ namespace Crayon.ParseTree
 		}
 
 		// To be overridden if necessary.
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{ }
 
-		public virtual void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal virtual void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			// Override me!
 		}

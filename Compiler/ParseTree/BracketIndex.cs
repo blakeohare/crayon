@@ -14,7 +14,7 @@
 			this.Index = index;
 		}
 
-		public override Expression Resolve(Parser parser)
+		internal override Expression Resolve(Parser parser)
 		{
 			this.Root = this.Root.Resolve(parser);
 			this.Index = this.Index.Resolve(parser);
@@ -59,13 +59,13 @@
 			return this;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Root.VariableUsagePass(parser);
 			this.Index.VariableUsagePass(parser);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Root.VariableIdAssignmentPass(parser);
 			this.Index.VariableIdAssignmentPass(parser);

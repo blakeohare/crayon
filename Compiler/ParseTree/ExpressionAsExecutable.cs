@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
 			this.Expression = expression;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.Expression = this.Expression.Resolve(parser);
 
@@ -31,12 +31,12 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Expression.VariableUsagePass(parser);
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Expression.VariableIdAssignmentPass(parser);
 		}

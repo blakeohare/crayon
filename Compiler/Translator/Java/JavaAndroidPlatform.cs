@@ -8,7 +8,7 @@ namespace Crayon.Translator.Java
 	internal class JavaAndroidPlatform : JavaPlatform
 	{
 		public JavaAndroidPlatform()
-			: base(new JavaAndroidSystemFunctionTranslator(), new JavaAndroidOpenGlEsTranslator())
+			: base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), new JavaAndroidOpenGlEsTranslator())
 		{
 		}
 

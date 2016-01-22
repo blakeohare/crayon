@@ -40,7 +40,7 @@ namespace Crayon.ParseTree
 			return null;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			for (int i = 0; i < this.DefaultValues.Length; ++i)
 			{
@@ -78,12 +78,12 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			varIds.RegisterVariable(this.NameToken.Value);
 		}
 
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			foreach (Executable line in this.Code)
 			{
@@ -91,7 +91,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public IList<string> GetVariableDeclarationList()
+		internal IList<string> GetVariableDeclarationList()
 		{
 			HashSet<string> dontRedeclareThese = new HashSet<string>();
 			foreach (Token argNameToken in this.ArgNames)
@@ -112,7 +112,7 @@ namespace Crayon.ParseTree
 			return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
@@ -131,7 +131,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{

@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
 			this.Constructor = constructor;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.ClassID = parser.GetClassId(this);
 
@@ -107,7 +107,7 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			if (this.Constructor != null)
 			{
@@ -120,7 +120,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			if (this.Constructor != null)
 			{

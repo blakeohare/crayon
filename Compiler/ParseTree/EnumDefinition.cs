@@ -21,7 +21,7 @@ namespace Crayon.ParseTree
 			this.IntValue = new Dictionary<string, int>();
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			HashSet<int> consumed = new HashSet<int>();
 			int[] valuesArray = new int[this.Items.Length];
@@ -79,11 +79,11 @@ namespace Crayon.ParseTree
 			return Executable.EMPTY_ARRAY;
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

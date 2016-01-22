@@ -77,7 +77,7 @@ namespace Crayon.ParseTree
 
 		// TODO: in the resolve be sure to make fallthroughs an error. 
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			if (parser.IsByteCodeMode && this.explicitMax != null)
 			{
@@ -188,7 +188,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			foreach (Chunk chunk in this.Chunks)
 			{
@@ -199,7 +199,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		private IList<Executable> CompilationResolution(Parser parser)
+		internal IList<Executable> CompilationResolution(Parser parser)
 		{
 			Chunk lastChunk = this.chunks[this.chunks.Length - 1];
 			bool lastChunkContainsNull = false;
@@ -250,7 +250,7 @@ namespace Crayon.ParseTree
 			return expectedTotal == integersUsed.Count;
 		}
 
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			foreach (Chunk chunk in this.chunks)
 			{
@@ -277,7 +277,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Condition.VariableUsagePass(parser);
 			for (int i = 0; i < this.Chunks.Length; ++i)
@@ -290,7 +290,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Condition.VariableIdAssignmentPass(parser);
 			for (int i = 0; i < this.chunks.Length; ++i)

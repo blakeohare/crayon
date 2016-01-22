@@ -53,6 +53,7 @@
     <Compile Include="ByteCodeCompiler.cs" />
     <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="CompileContext.cs" />
+    <Compile Include="ExpressionTranslator.cs" />
     <Compile Include="HackUtil.cs" />
     <Compile Include="ILibraryConfig.cs" />
     <Compile Include="InterpreterCompiler.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="FileOutput.cs" />
     <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="IOErrors.cs" />
+    <Compile Include="LanguageId.cs" />
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="NativeObjectTypes.cs" />
     <Compile Include="OpCode.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="ParseTree\ThisKeyword.cs" />
     <Compile Include="ParseTree\Variable.cs" />
     <Compile Include="ParseTree\WhileLoop.cs" />
+    <Compile Include="PlatformId.cs" />
     <Compile Include="PrimitiveMethods.cs" />
     <Compile Include="PrimitiveMethodsUtil.cs" />
     <Compile Include="Resolver.cs" />

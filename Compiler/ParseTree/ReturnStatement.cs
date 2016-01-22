@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
 			this.Expression = nullableExpression;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			if (this.Expression != null)
 			{
@@ -23,7 +23,7 @@ namespace Crayon.ParseTree
 
 		public override bool IsTerminator { get { return true; } }
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			if (this.Expression != null)
 			{
@@ -31,7 +31,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			if (this.Expression != null)
 			{

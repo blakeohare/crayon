@@ -34,10 +34,10 @@ namespace Crayon
 		private AbstractPlatform platform;
 		private Parser interpreterParser;
 
-		public InterpreterCompiler(AbstractPlatform platform)
+		public InterpreterCompiler(AbstractPlatform platform, SystemLibraryManager sysLibMan)
 		{
 			this.platform = platform;
-			this.interpreterParser = new Parser(platform, null);
+			this.interpreterParser = new Parser(platform, null, sysLibMan);
 		}
 
 		public Dictionary<string, Executable[]> Compile()

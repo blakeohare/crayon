@@ -19,7 +19,7 @@ namespace Crayon.ParseTree
 			this.Value = assignedValue;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			this.Target = this.Target.Resolve(parser);
 
@@ -44,17 +44,17 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void GetAllVariableNames(Dictionary<string, bool> lookup)
+		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			this.Target.GetAllVariableNames(lookup);
 		}
 
-		public override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
 		{
 			this.Target.AssignVariablesToIds(varIds);
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			this.Value.VariableUsagePass(parser);
 
@@ -74,7 +74,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Value.VariableIdAssignmentPass(parser);
 			Variable variable = this.TargetAsVariable;

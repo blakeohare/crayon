@@ -9,6 +9,7 @@ namespace Crayon
 	{
 
 		private Dictionary<string, ILibraryConfig> importedLibraries = new Dictionary<string, ILibraryConfig>();
+		private Dictionary<string, ILibraryConfig> librariesByKey = new Dictionary<string, ILibraryConfig>();
 
 		private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
 
@@ -28,6 +29,12 @@ namespace Crayon
 				output.Add("\nbreak;\n");
 			}
 			return string.Join("\n", output);
+		}
+
+		public ILibraryConfig GetLibraryFromKey(string key)
+		{
+			ILibraryConfig output;
+			return this.librariesByKey.TryGetValue(key, out output) ? output : null;
 		}
 
 		public int GetIdForFunction(string name, string library)
@@ -124,6 +131,7 @@ namespace Crayon
 				}
 
 				this.importedLibraries[name] = libraryConfig;
+				this.librariesByKey[name.ToLower()] = libraryConfig;
 				return true;
 			}
 			return false;

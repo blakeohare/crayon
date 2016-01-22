@@ -18,7 +18,7 @@ namespace Crayon.ParseTree
 			this.IsSystemLibrary = isSystemLibrary;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			throw new Exception("Imports shouldn't exist at this point in the compilation pipeline.");
 		}
@@ -42,11 +42,11 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
 	}

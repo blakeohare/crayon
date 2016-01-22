@@ -15,6 +15,10 @@ namespace Crayon
 		public AbstractGamepadTranslator GamepadTranslator { get; private set; } // null if Gamepad not supported.
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
+		public PlatformId PlatformId { get; private set; }
+		public LanguageId LanguageId { get; private set; }
+		public ExpressionTranslator ExpressionTranslatorForExternalLibraries { get; private set; }
+
 		public abstract bool IsAsync { get; }
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
@@ -39,12 +43,18 @@ namespace Crayon
 		internal CompileContext Context { get; private set; }
 
 		public AbstractPlatform(
+			PlatformId platform,
+			LanguageId language,
 			bool isMin,
 			AbstractTranslator translator,
 			AbstractSystemFunctionTranslator systemFunctionTranslator,
 			AbstractOpenGlTranslator nullableOpenGlTranslator,
 			AbstractGamepadTranslator nullableGamepadTranslator)
 		{
+			this.PlatformId = platform;
+			this.LanguageId = language;
+			this.ExpressionTranslatorForExternalLibraries = new ExpressionTranslator(this);
+
 			this.Context = new CompileContext();
 			this.IsMin = isMin;
 			this.Translator = translator;
@@ -66,13 +76,11 @@ namespace Crayon
 				this.OpenGlTranslator.Platform = this;
 				this.OpenGlTranslator.Translator = this.Translator;
 			}
-
-			this.InterpreterCompiler = new InterpreterCompiler(this);
 		}
 
 		private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
 		{
-			Parser userCodeParser = new Parser(null, buildContext);
+			Parser userCodeParser = new Parser(null, buildContext, null);
 			ParseTree.Executable[] userCode = userCodeParser.ParseRoot(inputFolder);
 			
 			foreach (Executable ex in userCode)
@@ -84,7 +92,7 @@ namespace Crayon
 			ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 
 			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement();
-
+			this.InterpreterCompiler = new InterpreterCompiler(this, userCodeParser.SystemLibraryManager);
 			return buffer;
 		}
 
@@ -150,7 +158,11 @@ namespace Crayon
 			}
 		}
 
-		public void Compile(BuildContext buildContext, string inputFolder, string baseOutputFolder, string nullableReadableByteCodeOutputPath)
+		public void Compile(
+			BuildContext buildContext, 
+			string inputFolder, 
+			string baseOutputFolder, 
+			string nullableReadableByteCodeOutputPath)
 		{
 			Parser.IsTranslateMode_STATIC_HACK = false;
 

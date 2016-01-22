@@ -42,6 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LibraryConfig.cs" />
+    <Compile Include="Platforms\COpenGl.cs" />
+    <Compile Include="Platforms\CSharpOpenTk.cs" />
+    <Compile Include="Platforms\INativeTranslator.cs" />
+    <Compile Include="Platforms\Java.cs" />
+    <Compile Include="Platforms\JavaScriptCanvas.cs" />
+    <Compile Include="Platforms\PythonPyGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

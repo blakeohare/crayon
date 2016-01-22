@@ -23,7 +23,7 @@ namespace Crayon.ParseTree
 			this.BaseToken = baseToken;
 		}
 
-		public override IList<Executable> Resolve(Parser parser)
+		internal override IList<Executable> Resolve(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
@@ -45,7 +45,7 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		public override void VariableUsagePass(Parser parser)
+		internal override void VariableUsagePass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
@@ -69,7 +69,7 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		public override void VariableIdAssignmentPass(Parser parser)
+		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
