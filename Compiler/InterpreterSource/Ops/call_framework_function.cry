@@ -4,28 +4,6 @@
 // However if there are optional arguments, the number of args used in this call are located in row[2]
 output = VALUE_NULL;
 switch ($_array_get(row, 0)) {
-	case %%%FF_GFX_BLIT_IMAGE%%%: $_comment('$gfx_blit_image'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image.cry"; break;
-	case %%%FF_GFX_BLIT_IMAGE_PARTIAL%%%: $_comment('$gfx_blit_image_partial'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial.cry"; break;
-	case %%%FF_GFX_BLIT_IMAGE_PARTIAL_AT_SCALE%%%: $_comment('$gfx_blit_image_partial_at_scale'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_partial_at_scale.cry"; break;
-	case %%%FF_GFX_BLIT_IMAGE_ROTATED%%%: $_comment('$gfx_blit_image_rotated'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_rotated.cry"; break;
-	case %%%FF_GFX_BLIT_IMAGE_WITH_ALPHA%%%: $_comment('$gfx_blit_image_with_alpha'); import inline "InterpreterSource/FrameworkFunctions/gfx_blit_image_with_alpha.cry"; break;
-	case %%%FF_GFX_DRAW_ELLIPSE%%%: $_comment('$gfx_draw_ellipse'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_ellipse.cry"; break;
-	case %%%FF_GFX_DRAW_LINE%%%: $_comment('$gfx_draw_line'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_line.cry"; break;
-	case %%%FF_GFX_DRAW_RECTANGLE%%%: $_comment('$gfx_draw_rectangle'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_rectangle.cry"; break;
-	case %%%FF_GFX_DRAW_TRIANGLE%%%: $_comment('gfx_draw_tirangle'); import inline "InterpreterSource/FrameworkFunctions/gfx_draw_triangle.cry"; break;
-	case %%%FF_GFX_FILL_SCREEN%%%: $_comment('$gfx_fill_screen'); import inline "InterpreterSource/FrameworkFunctions/gfx_fill_screen.cry"; break;
-	case %%%FF_GFX_FLIP_IMAGE%%%: $_comment('$gfx_flip_image'); import inline "InterpreterSource/FrameworkFunctions/gfx_flip_image.cry"; break;
-	case %%%FF_GFX_IMAGE_ERROR_CODE%%%: $_comment('$gfx_image_error_code'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_error_code.cry"; break;
-	case %%%FF_GFX_IMAGE_GET%%%: $_comment('$gfx_image_get'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_get.cry"; break;
-	case %%%FF_GFX_IMAGE_LOAD_FROM_RESOURCE%%%: $_comment('$gfx_image_load_from_resource'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_load_from_resource.cry"; break;
-	case %%%FF_GFX_IMAGE_LOAD_FROM_USER_DATA%%%: $_comment('$gfx_image_load_from_user_data'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_load_from_user_data.cry"; break;
-	case %%%FF_GFX_IMAGE_LOAD_FROM_WEB%%%: $_comment('$gfx_image_load_from_web'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_load_from_web.cry"; break;
-	case %%%FF_GFX_IMAGE_SHEET_ERROR_CODE%%%: $_comment('$gfx_image_sheet_error_code'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_sheet_error_code.cry"; break;
-	case %%%FF_GFX_IMAGE_SCALE%%%: $_comment('$gfx_image_scale'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_scale.cry"; break;
-	case %%%FF_GFX_IMAGE_SHEET_LOAD%%%: $_comment('$gfx_image_sheet_load'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_sheet_load.cry"; break;
-	case %%%FF_GFX_IMAGE_SHEET_LOAD_PROGRESS%%%: $_comment('$gfx_image_sheet_load_progress'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_sheet_load_progress.cry"; break;
-	case %%%FF_GFX_IMAGE_SHEET_LOADED%%%: $_comment('$gfx_image_sheet_loaded'); import inline "InterpreterSource/FrameworkFunctions/gfx_image_sheet_loaded.cry"; break;
-	case %%%FF_GFX_IS_IMAGE_LOADED%%%: $_comment('$gfx_is_image_loaded'); import inline "InterpreterSource/FrameworkFunctions/gfx_is_image_loaded.cry"; break;
 	case %%%FF_HTTP_REQUEST%%%: $_comment('$http_request'); import inline "InterpreterSource/FrameworkFunctions/http_request.cry"; break;
 	case %%%FF_IO_CURRENT_DIRECTORY%%%: $_comment('$io_current_directory'); import inline "InterpreterSource/FrameworkFunctions/io_current_directory.cry"; break;
 	case %%%FF_IO_DIRECTORY_LISTING%%%: $_comment('$io_directory_list'); import inline "InterpreterSource/FrameworkFunctions/io_directory_list.cry"; break;

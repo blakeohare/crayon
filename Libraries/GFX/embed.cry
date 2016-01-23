@@ -1,79 +1,79 @@
 ﻿function gfx_blit_image(image, x, y) {
-	return $gfx_blit_image(image, x, y);
+	return $$lib_gfx_blit_image(image, x, y);
 }
 
 function gfx_blit_image_partial(image, x, y, target_x, target_y, width, height) {
-	return $gfx_blit_image_partial(image, x, y, target_x, target_y, width, height);
+	return $$lib_gfx_blit_image_partial(image, x, y, target_x, target_y, width, height);
 }
 
 function gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight) {
-	return $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
+	return $$lib_gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
 }
 
 function gfx_draw_ellipse(left, top, width, height, r, g, b, a) {
-	return $gfx_draw_ellipse(left, top, width, height, r, g, b, a);
+	return $$lib_gfx_draw_ellipse(left, top, width, height, r, g, b, a);
 }
 
 function gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a) {
-	return $gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a);
+	return $$lib_gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a);
 }
 
 function gfx_draw_rectangle(left, top, width, height, r, g, b, a) {
-	return $gfx_draw_rectangle(left, top, width, height, r, g, b, a);
+	return $$lib_gfx_draw_rectangle(left, top, width, height, r, g, b, a);
 }
 
 function gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a) {
-	return $gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
+	return $$lib_gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
 }
 
 function gfx_fill_screen(r, g, b) {
-	return $gfx_fill_screen(r, g, b);
+	return $$lib_gfx_fill_screen(r, g, b);
 }
 
 function gfx_flip_image(image, flip_x, flip_y) {
-	return $gfx_flip_image(image, flip_x, flip_y);
+	return $$lib_gfx_flip_image(image, flip_x, flip_y);
 }
 
 function gfx_image_error_code(key) {
-	return $gfx_image_error_code(key);
+	return $$lib_gfx_image_error_code(key);
 }
 
 function gfx_image_get(key) {
-	return $gfx_image_get(key);
+	return $$lib_gfx_image_get(key);
 }
 
 function gfx_image_load_from_resource(key, path) {
-	return $gfx_image_load_from_resource(key, path);
+	return $$lib_gfx_image_load_from_resource(key, path);
 }
 
 function gfx_image_load_from_web(key, url) {
-	return $gfx_image_load_from_web(key, url);
+	return $$lib_gfx_image_load_from_web(key, url);
 }
 
 function gfx_image_load_from_user_data(key, path) {
-	return $gfx_image_load_from_user_data(key, path);
+	return $$lib_gfx_image_load_from_user_data(key, path);
 }
 
 function gfx_image_scale(image, new_width, new_height) {
-	return $gfx_image_scale(image, new_width, new_height);
+	return $$lib_gfx_image_scale(image, new_width, new_height);
 }
 
 function gfx_image_sheet_error_code(id_or_ids) {
-	return $gfx_image_sheet_error_code(id_or_ids);
+	return $$lib_gfx_image_sheet_error_code(id_or_ids);
 }
 
 function gfx_image_sheet_load(id_or_ids) {
-	return $gfx_image_sheet_load(id_or_ids);
+	return $$lib_gfx_image_sheet_load(id_or_ids);
 }
 
 function gfx_image_sheet_load_progress(id_or_ids) {
-	return $gfx_image_sheet_load_progress(id_or_ids);
+	return $$lib_gfx_image_sheet_load_progress(id_or_ids);
 }
 
 function gfx_image_sheet_loaded(id_or_ids) {
-	return $gfx_image_sheet_loaded(id_or_ids);
+	return $$lib_gfx_image_sheet_loaded(id_or_ids);
 }
 
 function gfx_is_image_loaded(key) {
-	return $gfx_is_image_loaded(key);
+	return $$lib_gfx_is_image_loaded(key);
 }

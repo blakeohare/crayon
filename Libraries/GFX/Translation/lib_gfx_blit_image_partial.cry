@@ -10,9 +10,9 @@ if (image1 == null ||
 	Value$arg5.type != Types.INTEGER ||
 	Value$arg6.type != Types.INTEGER ||
 	Value$arg7.type != Types.INTEGER) {
-	return killExecution(stack, pc, "$gfx_blit_image_partial requires an image object and 6 integer arguments.");
-}
-if (%%%IS_OPEN_GL_BASED%%%) {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$gfx_blit_image_partial requires an image object and 6 integer arguments.";
+} else if (%%%IS_OPEN_GL_BASED%%%) {
 	glDrawImageAdvanced(
 		image1,
 		$_cast('int', Value$arg2.internalValue),

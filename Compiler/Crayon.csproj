@@ -264,27 +264,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\4_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\http_request.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial_at_scale.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_draw_ellipse.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_draw_line.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_draw_rectangle.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_draw_triangle.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_fill_screen.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_flip_image.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_error_code.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_get.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_load_from_resource.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_load_from_user_data.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_load_from_web.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_scale.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_error_code.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_load.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_load_progress.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_is_image_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_current_directory.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_directory_list.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_file_read_text.cry" />
@@ -334,9 +314,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_resume.cry" />
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_with_alpha.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_rotated.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

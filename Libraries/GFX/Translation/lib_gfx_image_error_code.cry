@@ -11,9 +11,10 @@
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type != Types.STRING) {
-	return killExecution(stack, pc, "$image_error_code requires a string argument.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$image_error_code requires a string argument.";
+} else {
+	string1 = $_cast('string', Value$arg1.internalValue);
+	int1 = getImageErrorCode(string1);
+	output = buildInteger(int1);
 }
-
-string1 = $_cast('string', Value$arg1.internalValue);
-int1 = getImageErrorCode(string1);
-output = buildInteger(int1);
