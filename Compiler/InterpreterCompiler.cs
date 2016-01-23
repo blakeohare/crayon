@@ -81,7 +81,6 @@ namespace Crayon
 			replacements.Add("PLATFORM_IS_ASYNC", this.platform.IsAsync ? "true" : "false");
 			replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
 			replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
-			replacements.Add("INT_IS_FLOOR", this.platform.IntIsFloor ? "true" : "false");
 			replacements.Add("USE_FIXED_LENGTH_ARG_CONSTRUCTION", this.platform.UseFixedListArgConstruction ? "true" : "false");
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("SCREEN_BLOCKS_EXECUTION", this.platform.ScreenBlocksExecution ? "true" : "false");

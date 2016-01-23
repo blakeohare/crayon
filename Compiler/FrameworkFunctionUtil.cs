@@ -28,28 +28,8 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
-				case FrameworkFunction.ABS:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
-					break;
-				case FrameworkFunction.ARCTAN:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
-					break;
-				case FrameworkFunction.ARCTAN2:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER NUMBER");
-					break;
-				case FrameworkFunction.COS:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
-					break;
 				case FrameworkFunction.CURRENT_TIME:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.FLOOR:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
 					break;
 				case FrameworkFunction.GAME_CLOCK_TICK:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
@@ -289,9 +269,6 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
-				case FrameworkFunction.RANDOM:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
 				case FrameworkFunction.RESOURCE_READ_TEXT:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
@@ -329,14 +306,6 @@ namespace Crayon
 					break;
 				case FrameworkFunction.SFX_STOP:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.TAN:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
-					break;
-				case FrameworkFunction.SIN:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "NUMBER");
 					break;
 				case FrameworkFunction.USER_DATA_DELETE_DIRECTORY:
 					VerifyLength(throwToken, frameworkFunction, 2, args);

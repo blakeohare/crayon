@@ -22,7 +22,6 @@ namespace Crayon
 		public abstract bool IsAsync { get; }
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
-		public abstract bool IntIsFloor { get; }
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool ScreenBlocksExecution { get; }
 		public abstract string GeneratedFilesFolder { get; }
@@ -91,7 +90,7 @@ namespace Crayon
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
 			ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 
-			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement();
+			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement(this.LanguageId, this.PlatformId);
 			this.InterpreterCompiler = new InterpreterCompiler(this, userCodeParser.SystemLibraryManager);
 			return buffer;
 		}

@@ -14,6 +14,10 @@ namespace Core
 
 		public LibraryConfig()
 		{
+			// TODO: right now the only good use for this is a reference template for creating native translators in other libraries.
+			// There isn't actually a good reason to only define print in lib_core as $_print is actually used in other places in the
+			// VM. For example, printing stack traces. Once other libraries use native translators, remove this and put $_print back
+			// the way it was.
 			this.nativeTranslators = new Dictionary<PlatformId, INativeTranslator>()
 			{
 				{ PlatformId.C_OPENGL, new COpenGl() },
@@ -45,7 +49,7 @@ namespace Core
 			return ReadFile("embed.cry");
 		}
 
-		public string GetTranslationCode(string functionName)
+		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
 		{
 			return ReadFile("Translation/" + functionName + ".cry");
 		}

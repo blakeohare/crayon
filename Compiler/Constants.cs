@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Crayon
 {
-	internal class Constants
+	public class Constants
 	{
 		private static readonly Dictionary<string, string> CONSTANT_REPLACEMENTS;
 
@@ -82,7 +82,7 @@ namespace Crayon
 			CONSTANT_REPLACEMENTS = constants;
 		}
 
-		public static int GetPrimitiveFieldId(string name)
+		internal static int GetPrimitiveFieldId(string name)
 		{
 			int id = 0;
 			PRIMITIVE_FIELD_IDS.TryGetValue(name, out id);

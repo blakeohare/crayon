@@ -16,7 +16,7 @@ namespace SFX
 			return ReadFile("embed.cry");
 		}
 
-		public string GetTranslationCode(string functionName)
+		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
 		{
 			return ReadFile("Translation/" + functionName + ".cry");
 		}

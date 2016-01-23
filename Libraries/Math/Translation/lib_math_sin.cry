@@ -9,5 +9,6 @@ if (Value$arg1.type == Types.FLOAT) {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	output = buildFloat($_sin(int1));
 } else {
-	return killExecution(stack, pc, "$sin requires a number argument.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "sin requires a number argument.";
 }

@@ -4,14 +4,7 @@
 // However if there are optional arguments, the number of args used in this call are located in row[2]
 output = VALUE_NULL;
 switch ($_array_get(row, 0)) {
-	case %%%FF_ABS%%%: $_comment('$abs'); import inline "InterpreterSource/FrameworkFunctions/abs.cry"; break;
-	case %%%FF_ARCCOS%%%: $_comment('$arccos'); import inline "InterpreterSource/FrameworkFunctions/arccos.cry"; break;
-	case %%%FF_ARCSIN%%%: $_comment('$arcsin'); import inline "InterpreterSource/FrameworkFunctions/arcsin.cry"; break;
-	case %%%FF_ARCTAN%%%: $_comment('$arctan'); import inline "InterpreterSource/FrameworkFunctions/arctan.cry"; break;
-	case %%%FF_ARCTAN2%%%: $_comment('$arctan2'); import inline "InterpreterSource/FrameworkFunctions/arctan2.cry"; break;
-	case %%%FF_COS%%%: $_comment('$cos'); import inline "InterpreterSource/FrameworkFunctions/cos.cry"; break;
 	case %%%FF_CURRENT_TIME%%%: $_comment('$current_time'); import inline "InterpreterSource/FrameworkFunctions/current_time.cry"; break;
-	case %%%FF_FLOOR%%%: $_comment('$floor'); import inline "InterpreterSource/FrameworkFunctions/floor.cry"; break;
 	case %%%FF_GAME_CLOCK_TICK%%%: $_comment('$game_clock_tick'); import inline "InterpreterSource/FrameworkFunctions/game_clock_tick.cry"; break;
 	case %%%FF_GAME_INITIALIZE%%%: $_comment('$game_initialize'); import inline "InterpreterSource/FrameworkFunctions/game_initialize.cry"; break;
 	case %%%FF_GAME_INITIALIZE_SCREEN%%%: $_comment('$game_initialize_screen'); import inline "InterpreterSource/FrameworkFunctions/game_initialize_screen.cry"; break;
@@ -91,8 +84,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_SFX_SET_MASTER_VOLUME%%%: $_comment('$sfx_set_master_volume'); import inline "InterpreterSource/FrameworkFunctions/sfx_set_master_volume.cry"; break;
 	case %%%FF_SFX_SET_VOLUME%%%: $_comment('$sfx_set_volume'); import inline "InterpreterSource/FrameworkFunctions/sfx_set_volume.cry"; break;
 	case %%%FF_SFX_STOP%%%: $_comment('$sfx_stop'); import inline "InterpreterSource/FrameworkFunctions/sfx_stop.cry"; break;
-	case %%%FF_SIN%%%: $_comment('$sin'); import inline "InterpreterSource/FrameworkFunctions/sin.cry"; break;
-	case %%%FF_TAN%%%: $_comment('$tan'); import inline "InterpreterSource/FrameworkFunctions/tan.cry"; break;
 	case %%%FF_USER_DATA_DELETE_DIRECTORY%%%: $_comment('$user_data_delete_directory'); import inline "InterpreterSource/FrameworkFunctions/user_data_delete_directory.cry"; break;
 	case %%%FF_USER_DATA_DELETE_FILE%%%: $_comment('$user_data_delete_file'); import inline "InterpreterSource/FrameworkFunctions/user_data_delete_file.cry"; break;
 	case %%%FF_USER_DATA_DIRECTORY_LISTING%%%: $_comment('$user_data_directory_listing'); import inline "InterpreterSource/FrameworkFunctions/user_data_directory_listing.cry"; break;

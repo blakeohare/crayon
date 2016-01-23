@@ -18,14 +18,14 @@ namespace Crayon
 
 		public SystemLibraryManager() { }
 
-		public string GetLibrarySwitchStatement()
+		public string GetLibrarySwitchStatement(LanguageId language, PlatformId platform)
 		{
 			List<string> output = new List<string>();
 			foreach (string name in this.orderedListOfFunctionNames)
 			{
 				output.Add("case " + this.libFunctionIds[name] + ":\n");
 				output.Add("$_comment('" + name + "');");
-				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
+				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(language, platform, name));
 				output.Add("\nbreak;\n");
 			}
 			return string.Join("\n", output);

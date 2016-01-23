@@ -1,5 +1,6 @@
 ﻿
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
 if (Value$arg1.type == Types.INTEGER) {
 	if ($_cast('int', Value$arg1.internalValue) < 0) {
 		output = buildInteger(-$_cast('int', Value$arg1.internalValue));
@@ -13,5 +14,6 @@ if (Value$arg1.type == Types.INTEGER) {
 		output = arg1;
 	}
 } else {
-	return killExecution(stack, pc, "$abs requires a number as input.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "abs requires a number as input.";
 }

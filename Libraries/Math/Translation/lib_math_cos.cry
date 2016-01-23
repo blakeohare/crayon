@@ -7,5 +7,6 @@ if (Value$arg1.type == Types.FLOAT) {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	output = buildFloat($_cos(int1));
 } else {
-	return killExecution(stack, pc, "$cos requires a number argument.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "cos requires a number argument.";
 }

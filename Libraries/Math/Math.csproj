@@ -53,6 +53,18 @@
       <Name>Crayon</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_math_abs.cry" />
+    <EmbeddedResource Include="Translation\lib_math_arccos.cry" />
+    <EmbeddedResource Include="Translation\lib_math_cos.cry" />
+    <EmbeddedResource Include="Translation\lib_math_floor.cry" />
+    <EmbeddedResource Include="Translation\lib_math_sin.cry" />
+    <EmbeddedResource Include="Translation\lib_math_tan.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_math_arcsin.cry" />
+    <EmbeddedResource Include="Translation\lib_math_arctan.cry" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

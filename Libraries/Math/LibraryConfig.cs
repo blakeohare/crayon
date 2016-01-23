@@ -19,9 +19,30 @@ namespace Math
 			return ReadFile("embed.cry");
 		}
 
-		public string GetTranslationCode(string functionName)
+		private static bool IsIntFloor(LanguageId language) {
+			switch (language) {
+				case LanguageId.C:
+				case LanguageId.JAVA:
+				case LanguageId.JAVASCRIPT:
+					return true;
+				case LanguageId.PYTHON:
+				case LanguageId.CSHARP:
+					return false;
+				default:
+					throw new Exception(); // Unknown platform.
+			}
+		}
+
+		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
 		{
-			return ReadFile("Translation/" + functionName + ".cry");
+			string file = ReadFile("Translation/" + functionName + ".cry");
+
+			file = Crayon.Constants.DoReplacements(file, new Dictionary<string, string>()
+			{
+				{ "INT_IS_FLOOR", IsIntFloor(language) ? "true" : "false" },
+			});
+
+			return file;
 		}
 
 		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)

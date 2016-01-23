@@ -271,16 +271,9 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\http_request.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize_screen.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arctan.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arctan2.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\cos.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\current_time.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\floor.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_clock_tick.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\abs.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arccos.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\arcsin.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial.cry" />
@@ -334,8 +327,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_set_master_volume.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_set_volume.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_stop.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sin.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\tan.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_directory.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_file.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_directory_listing.cry" />
