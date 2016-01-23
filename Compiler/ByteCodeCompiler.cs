@@ -590,7 +590,6 @@ namespace Crayon
 			else if (expr is BinaryOpChain) this.CompileBinaryOpChain(parser, buffer, (BinaryOpChain)expr, outputUsed);
 			else if (expr is StringConstant) this.CompileStringConstant(parser, buffer, (StringConstant)expr, outputUsed);
 			else if (expr is NegativeSign) this.CompileNegativeSign(parser, buffer, (NegativeSign)expr, outputUsed);
-			else if (expr is SystemFunctionCall) this.CompileSystemFunctionCall(parser, buffer, (SystemFunctionCall)expr, outputUsed);
 			else if (expr is ListDefinition) this.CompileListDefinition(parser, buffer, (ListDefinition)expr, outputUsed);
 			else if (expr is Increment) this.CompileIncrement(parser, buffer, (Increment)expr, outputUsed);
 			else if (expr is FloatConstant) this.CompileFloatConstant(parser, buffer, (FloatConstant)expr, outputUsed);
@@ -863,16 +862,6 @@ namespace Crayon
 			int argCount = libFunc.Args.Length;
 			int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
 			buffer.Add(libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
-		}
-
-		private void CompileSystemFunctionCall(Parser parser, ByteBuffer buffer, SystemFunctionCall sysFunc, bool outputUsed)
-		{
-			this.CompileExpressionList(parser, buffer, sysFunc.Args, true);
-			int argCount = sysFunc.Args.Length;
-			string frameworkFunctionName = sysFunc.Name.Substring(1);
-			FrameworkFunction ff = parser.GetFrameworkFunction(sysFunc.FirstToken, frameworkFunctionName);
-			FrameworkFunctionUtil.VerifyArgsAsMuchAsPossible(sysFunc.FirstToken, ff, sysFunc.Args);
-			buffer.Add(sysFunc.FirstToken, OpCode.CALL_FRAMEWORK_FUNCTION, (int)ff, outputUsed ? 1 : 0, argCount);
 		}
 
 		private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

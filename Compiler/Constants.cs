@@ -20,7 +20,6 @@ namespace Crayon
 			Dictionary<string, Type> enumReplacementsByPrefix = new Dictionary<string, Type>()
 			{
 				{ "ASYNC_MESSAGE_TYPE", typeof(AsyncMessageType) },
-				{ "FF", typeof(FrameworkFunction) },
 				{ "IO_ERROR", typeof(IOErrors) },
 				{ "PRIMITIVE_METHOD", typeof(PrimitiveMethods) },
 				{ "SUBTYPE_ID", typeof(SubTypes) },

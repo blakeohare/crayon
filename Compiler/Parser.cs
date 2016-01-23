@@ -316,17 +316,6 @@ namespace Crayon
 
 		public AbstractPlatform NullablePlatform { get; private set; }
 
-		public FrameworkFunction GetFrameworkFunction(Token token, string name)
-		{
-			if ((name.StartsWith("_") && this.IsByteCodeMode) ||
-				!FrameworkFunctionUtil.FF_LOOKUP.ContainsKey(name))
-			{
-				throw new ParserException(token, "Framework function by this name was not found: '$" + name + "'");
-			}
-
-			return FrameworkFunctionUtil.FF_LOOKUP[name];
-		}
-
 		public void AddEnumDefinition(EnumDefinition enumDefinition)
 		{
 			if (this.enumDefinitions.ContainsKey(enumDefinition.Name))

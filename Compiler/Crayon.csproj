@@ -61,7 +61,6 @@
     <Compile Include="EofException.cs" />
     <Compile Include="ExpressionParser.cs" />
     <Compile Include="FileOutput.cs" />
-    <Compile Include="FrameworkFunctionUtil.cs" />
     <Compile Include="IOErrors.cs" />
     <Compile Include="LanguageId.cs" />
     <Compile Include="LiteralLookup.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="ParseTree\FloatConstant.cs" />
     <Compile Include="ParseTree\ForEachLoop.cs" />
     <Compile Include="ParseTree\ForLoop.cs" />
-    <Compile Include="FrameworkFunction.cs" />
     <Compile Include="ParseTree\FunctionCall.cs" />
     <Compile Include="ParseTree\FunctionDefinition.cs" />
     <Compile Include="ParseTree\IfStatement.cs" />
@@ -236,7 +234,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\build_switch_string.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_base_constructor.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_constructor.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_framework_function.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\stack_insertion_for_increment.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_function.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_function_on_global.cry" />
@@ -264,21 +261,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\4_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_current_directory.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_directory_list.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_file_read_text.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_file_write_text.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_is_path_directory.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_path_exists.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\io_path_join.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_directory.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_delete_file.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_directory_listing.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_file_read_text.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_file_write_text.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_is_path_directory.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_make_directory.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\user_data_path_exists.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\5_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\6_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\7_arg.cry" />

@@ -144,7 +144,6 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'InterpreterSource/Ops/build_switch_string.cry'; break;
 			case OpCodes.CALL_BASE_CONSTRUCTOR: $_comment('CALL_BASE_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_base_constructor.cry'; break;
 			case OpCodes.CALL_CONSTRUCTOR: $_comment('CALL_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_constructor.cry'; break;
-			case OpCodes.CALL_FRAMEWORK_FUNCTION: $_comment('CALL_FRAMEWORK_FUNCTION'); import inline 'InterpreterSource/Ops/call_framework_function.cry'; break;
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
 			case OpCodes.CALL_FUNCTION_ON_GLOBAL: $_comment('CALL_FUNCTION_ON_GLOBAL'); import inline 'InterpreterSource/Ops/call_function_on_global.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'InterpreterSource/Ops/call_lib_function.cry'; break;

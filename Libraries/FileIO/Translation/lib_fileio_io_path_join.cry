@@ -6,7 +6,7 @@ list1 = null;
 // generally the number of string components in a path join command are < 5
 // and most commonly just 2. Just iteratively concatenate a string for conciseness.
 // It's okay.
-string1 = ""; 
+string1 = "";
 // TODO: accept a variable number of string args.
 if (Value$arg1.type != Types.LIST) {
 	bool1 = false;
@@ -30,7 +30,9 @@ if (Value$arg1.type != Types.LIST) {
 		}
 	}
 }
-if (!bool1) {
-	return killExecution(stack, pc, "$io_path_join requires a list of strings as input.");
+if (bool1) {
+	output = buildString(string1);
+} else {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$io_path_join requires a list of strings as input.";
 }
-output = buildString(string1);
