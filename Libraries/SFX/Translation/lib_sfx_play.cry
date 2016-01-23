@@ -4,7 +4,8 @@ import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 sound1 = $_cast('SoundInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.SOUND));
 if (sound1 == null) {
-	return killExecution(stack, pc, "$sfx_play requires a sound instance as an argument.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$sfx_play requires a sound instance as an argument.";
+} else {
+	soundManagerPlaySound(sound1);
 }
-
-soundManagerPlaySound(sound1);
