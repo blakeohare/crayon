@@ -2,8 +2,6 @@
 {
 	internal enum FrameworkFunction
 	{
-		CURRENT_TIME,
-
 		GAME_CLOCK_TICK,
 		GAME_INITIALIZE,
 		GAME_INITIALIZE_SCREEN,

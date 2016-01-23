@@ -6,6 +6,10 @@ function chr(value) {
 	return $$lib_core_chr(value);
 }
 
+function current_time() {
+	return $$lib_core_current_time();
+}
+
 function ord(value) {
 	return $$lib_core_ord(value);
 }

@@ -28,9 +28,6 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
-				case FrameworkFunction.CURRENT_TIME:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
 				case FrameworkFunction.GAME_CLOCK_TICK:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;

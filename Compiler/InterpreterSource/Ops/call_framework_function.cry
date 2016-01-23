@@ -4,7 +4,6 @@
 // However if there are optional arguments, the number of args used in this call are located in row[2]
 output = VALUE_NULL;
 switch ($_array_get(row, 0)) {
-	case %%%FF_CURRENT_TIME%%%: $_comment('$current_time'); import inline "InterpreterSource/FrameworkFunctions/current_time.cry"; break;
 	case %%%FF_GAME_CLOCK_TICK%%%: $_comment('$game_clock_tick'); import inline "InterpreterSource/FrameworkFunctions/game_clock_tick.cry"; break;
 	case %%%FF_GAME_INITIALIZE%%%: $_comment('$game_initialize'); import inline "InterpreterSource/FrameworkFunctions/game_initialize.cry"; break;
 	case %%%FF_GAME_INITIALIZE_SCREEN%%%: $_comment('$game_initialize_screen'); import inline "InterpreterSource/FrameworkFunctions/game_initialize_screen.cry"; break;

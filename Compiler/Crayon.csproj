@@ -271,7 +271,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\http_request.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize_screen.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\current_time.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_clock_tick.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital.cry" />
