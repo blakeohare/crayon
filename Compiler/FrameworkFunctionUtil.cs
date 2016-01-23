@@ -285,14 +285,6 @@ namespace Crayon
 				case FrameworkFunction.MUSIC_STOP:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
-				case FrameworkFunction.PARSE_FLOAT:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
-				case FrameworkFunction.PARSE_INT:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
 				case FrameworkFunction.PARSE_JSON:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");

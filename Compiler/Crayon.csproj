@@ -322,10 +322,7 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_set_position.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_set_volume.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_stop.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_float.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_int.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\parse_json.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\random.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\resource_read_text.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_get_master_volume.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\sfx_load_from_file.cry" />

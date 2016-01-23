@@ -11,11 +11,11 @@ function ord(value) {
 }
 
 function parseFloat(value) {
-	return $parse_float(value);
+	return $$lib_core_parse_float(value);
 }
 
 function parseInt(value) {
-	return $parse_int(value);
+	return $$lib_core_parse_int(value);
 }
 
 function print(value) {

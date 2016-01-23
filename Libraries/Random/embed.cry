@@ -1,15 +1,15 @@
 ﻿function randomFloat() {
-	return $random();
+	return $$lib_random_random_float();
 }
 
 function randomInt(minIncl, maxExcl = null) {
-	// TODO: write a native function
+	// TODO: write a native function for integers
 	if (maxExcl == null) {
-		return $floor($random() * minIncl);
+		return $floor($$lib_random_random_float() * minIncl);
 	}
-	return $floor($random() * (maxExcl - minIncl)) + minIncl;
+	return $floor($$lib_random_random_float() * (maxExcl - minIncl)) + minIncl;
 }
 
 function randomChoice(list) {
-	return list[$floor($random() * list.length)];
+	return list[$floor($$lib_random_random_float() * list.length)];
 }

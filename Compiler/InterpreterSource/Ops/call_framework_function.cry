@@ -79,10 +79,7 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_SET_POSITION%%%: $_comment('$music_set_position'); import inline "InterpreterSource/FrameworkFunctions/music_set_position.cry"; break;
 	case %%%FF_MUSIC_SET_VOLUME%%%: $_comment('$music_set_volume'); import inline "InterpreterSource/FrameworkFunctions/music_set_volume.cry"; break;
 	case %%%FF_MUSIC_STOP%%%: $_comment('$music_stop'); import inline "InterpreterSource/FrameworkFunctions/music_stop.cry"; break;
-	case %%%FF_PARSE_FLOAT%%%: $_comment('$parse_float'); import inline "InterpreterSource/FrameworkFunctions/parse_float.cry"; break;
-	case %%%FF_PARSE_INT%%%: $_comment('$parse_int'); import inline "InterpreterSource/FrameworkFunctions/parse_int.cry"; break;
 	case %%%FF_PARSE_JSON%%%: $_comment('$parse_json'); import inline "InterpreterSource/FrameworkFunctions/parse_json.cry"; break;
-	case %%%FF_RANDOM%%%: $_comment('$random'); import inline "InterpreterSource/FrameworkFunctions/random.cry"; break;
 	case %%%FF_RESOURCE_READ_TEXT%%%: $_comment('$resource_read_text'); import inline "InterpreterSource/FrameworkFunctions/resource_read_text.cry"; break;
 	case %%%FF_SFX_GET_MASTER_VOLUME%%%: $_comment('$sfx_get_master_volume'); import inline "InterpreterSource/FrameworkFunctions/sfx_get_master_volume.cry"; break;
 	case %%%FF_SFX_LOAD_FROM_FILE%%%: $_comment('$sfx_load_from_file'); import inline "InterpreterSource/FrameworkFunctions/sfx_load_from_file.cry"; break;
