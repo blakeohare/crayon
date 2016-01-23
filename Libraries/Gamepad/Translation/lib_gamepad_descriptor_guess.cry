@@ -23,8 +23,9 @@ int1 = $_array_get(intOutParam, 0);
 if (int1 == 0) {
 	output = buildString(string1);
 } else {
-	if (int1 == 1) return killExecution(stack, pc, "$gamepad_descriptor_guess requires a gamepad device as its first argument.");
-	if (int1 == 2) return killExecution(stack, pc, "$gamepad_descriptor_guess requires a string as its first argument.");
-	if (int1 == 3) return killExecution(stack, pc, "The given string was not a recognized physical input ID. See documentation for a list of possible values.");
-	return killExecution(stack, pc, "$gamepad_descriptor_guess encountered an unknown error.");
+	lib_func_error_occurred = true;
+	lib_func_error_message = "$gamepad_descriptor_guess encountered an unknown error.";
+	if (int1 == 1) lib_func_error_message = "$gamepad_descriptor_guess requires a gamepad device as its first argument.";
+	if (int1 == 2) lib_func_error_message = "$gamepad_descriptor_guess requires a string as its first argument.";
+	if (int1 == 3) lib_func_error_message = "The given string was not a recognized physical input ID. See documentation for a list of possible values.";
 }

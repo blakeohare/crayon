@@ -1,6 +1,6 @@
 ﻿
 function game_clock_tick() {
-	return $lib_game_clock_tick();
+	return $$lib_game_clock_tick();
 }
 
 function game_initialize(fps) {

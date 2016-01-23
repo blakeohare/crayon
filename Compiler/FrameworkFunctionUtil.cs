@@ -28,66 +28,6 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
-				case FrameworkFunction.GAMEPAD_BIND_ANALOG:
-					VerifyLength(throwToken, frameworkFunction, 3, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT");
-					break;
-				case FrameworkFunction.GAMEPAD_BIND_ANALOG_1D:
-					VerifyLength(throwToken, frameworkFunction, 4, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN");
-					break;
-				case FrameworkFunction.GAMEPAD_BIND_ANALOG_2D:
-					VerifyLength(throwToken, frameworkFunction, 5, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
-					break;
-				case FrameworkFunction.GAMEPAD_BIND_DIGITAL:
-					VerifyLength(throwToken, frameworkFunction, 3, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT");
-					break;
-				case FrameworkFunction.GAMEPAD_BIND_DIGITAL_1D:
-					VerifyLength(throwToken, frameworkFunction, 4, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN");
-					break;
-				case FrameworkFunction.GAMEPAD_BIND_DIGITAL_2D:
-					VerifyLength(throwToken, frameworkFunction, 5, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT BOOLEAN BOOLEAN");
-					break;
-				case FrameworkFunction.GAMEPAD_CHANGED_RECENTLY:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
-					break;
-				case FrameworkFunction.GAMEPAD_CLEAR_BINDINGS:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT");
-					break;
-				case FrameworkFunction.GAMEPAD_CLEAR_IDS:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GAMEPAD_COUNT:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GAMEPAD_DESCRIPTOR_GUESS:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING");
-					break;
-				case FrameworkFunction.GAMEPAD_ENABLE_RECENT:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					break;
-				case FrameworkFunction.GAMEPAD_GET_DEVICE:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
-					break;
-				case FrameworkFunction.GAMEPAD_GET_STATE:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
-					break;
-				case FrameworkFunction.GAMEPAD_SAVE_CONFIG:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GAMEPAD_SET_ID:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT OBJECT");
-					break;
 				case FrameworkFunction.GFX_BLIT_IMAGE:
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
@@ -132,6 +72,8 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE BOOLEAN BOOLEAN");
 					break;
+				case FrameworkFunction.GFX_IMAGE_ERROR_CODE:
+					break;
 				case FrameworkFunction.GFX_IMAGE_GET:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
@@ -140,9 +82,15 @@ namespace Crayon
 					VerifyLength(throwToken, frameworkFunction, 2, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING");
 					break;
+				case FrameworkFunction.GFX_IMAGE_LOAD_FROM_USER_DATA:
+					break;
+				case FrameworkFunction.GFX_IMAGE_LOAD_FROM_WEB:
+					break;
 				case FrameworkFunction.GFX_IMAGE_SCALE:
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INSTANCE INTEGER INTEGER");
+					break;
+				case FrameworkFunction.GFX_IMAGE_SHEET_ERROR_CODE:
 					break;
 				case FrameworkFunction.GFX_IMAGE_SHEET_LOAD:
 					VerifyLength(throwToken, frameworkFunction, 1, args);

@@ -264,10 +264,8 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\4_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_count.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\http_request.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial_at_scale.cry" />
@@ -335,24 +333,10 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_resume.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital_1d.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital_2d.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_clear_ids.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_enable_recent.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_get_device.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_save_config.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_set_id.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog_1d.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_analog_2d.cry" />
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_clear_bindings.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_changed_recently.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_get_state.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_with_alpha.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_rotated.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_descriptor_guess.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

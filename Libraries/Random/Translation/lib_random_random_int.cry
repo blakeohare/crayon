@@ -9,7 +9,7 @@ if (Value$arg2.type == Types.NULL) {
 		int1 = $_cast('int', Value$arg1.internalValue);
 		if (int1 > 0) {
 			// TODO: add a $_random_int(max) translated framework function.
-			output = buildInteger($_floor($_random_float() * int1));
+			output = buildInteger($_int($_force_parens($_random_float() * int1)));
 			bool1 = false;
 		}
 	}
@@ -31,7 +31,7 @@ if (Value$arg2.type == Types.NULL) {
 		} else if (int2 == int1 + 1) { // silly, but possible
 			output = buildInteger(int1);
 		} else {
-			output = buildInteger($_floor($_random_float() * (int2 - int1)) + int1);
+			output = buildInteger($_int($_force_parens($_random_float() * (int2 - int1))) + int1);
 		}
 	}
 }

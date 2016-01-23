@@ -11,7 +11,7 @@ function io_file_read_text(filepath) {
 }
 
 function io_file_write_text(filepath, content) {
-	return $io_file_write_text(filepath);
+	return $io_file_write_text(filepath, content);
 }
 
 function io_is_path_directory(path) {
@@ -26,8 +26,8 @@ function io_path_join(path_segment_list) {
 	return $io_path_join(path_segment_list);
 }
 
-function $user_data_delete_directory(path) {
-	return $user_data_delete_directory(path);
+function $user_data_delete_directory(path, recursive) {
+	return $user_data_delete_directory(path, recursive);
 }
 
 function user_data_delete_file(filepath) {

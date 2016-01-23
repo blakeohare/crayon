@@ -1,4 +1,4 @@
-﻿function gfx_blit_image(image, x, y);
+﻿function gfx_blit_image(image, x, y) {
 	return $gfx_blit_image(image, x, y);
 }
 

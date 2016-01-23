@@ -53,6 +53,26 @@
   <ItemGroup>
     <EmbeddedResource Include="embed.cry" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_analog.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_analog_1d.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_analog_2d.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_digital.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_digital_1d.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_bind_digital_2d.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_changed_recently.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_clear_bindings.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_clear_ids.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_count.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_enable_recent.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_get_device.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_get_state.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_save_config.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_set_id.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_descriptor_guess.cry" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

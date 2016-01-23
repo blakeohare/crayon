@@ -43,26 +43,51 @@ function music_set_master_volume(ratio) {
 	return $music_set_master_volume(ratio);
 }
 
-function music_set_volume(ratio) {
+function music_set_volume(song, ratio) {
 	return $music_set_volume(song, ratio);
 }
 
 function music_stop(fade_out_duration) {
-	return $music_stop(fade_out_duration);
+	// TODO: fade out duration.
+	return $music_stop();
 }
 
-function sfx_get_sound(key) {
-	return $sfx_get_sound(key);
+function sfx_get_master_volume() {
+	return $sfx_get_master_volume();
 }
 
-function sfx_is_sound_loaded(key) {
-	return $sfx_is_sound_loaded(key);
+function sfx_load_from_file(path) {
+	return $sfx_load_from_file(path);
 }
 
-function sfx_load_sound_from_resource(key, path) {
-	return $sfx_load_sound_from_resource(key, path);
+function sfx_load_from_resource(path) {
+	return $sfx_load_from_resource(path);
 }
 
-function sfx_play_sound(sound) {
-	return $sfx_play_sound(sound);
+function sfx_load_from_user_data(path) {
+	return $sfx_load_from_user_data(path);
+}
+
+function sfx_load_from_web(url) {
+	return $sfx_load_from_web(url);
+}
+
+function sfx_pause(snd) {
+	return $sfx_pause(snd);
+}
+
+function sfx_play(snd) {
+	return $sfx_play(snd);
+}
+
+function sfx_set_master_volume(ratio) {
+	return $sfx_set_master_volume(ratio);
+}
+
+function sfx_set_volume(snd, ratio) {
+	return $sfx_set_volume(snd, ratio);
+}
+
+function sfx_stop(snd) {
+	return $sfx_stop(snd);
 }
