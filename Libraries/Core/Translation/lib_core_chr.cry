@@ -11,5 +11,5 @@ if (Value$arg1.type == Types.INTEGER) {
 
 if (output == null) {
 	lib_func_error_occurred = true;
-	lib_func_error_message = "$chr requires an integer between 0 and 255";
+	lib_func_error_message = "chr requires an integer between 0 and 255";
 }

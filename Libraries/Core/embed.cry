@@ -10,6 +10,14 @@ function ord(value) {
 	return $$lib_core_ord(value);
 }
 
+function parseFloat(value) {
+	return $parse_float(value);
+}
+
+function parseInt(value) {
+	return $parse_int(value);
+}
+
 function print(value) {
 	return $$lib_core_print(value);
 }

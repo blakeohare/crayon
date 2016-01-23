@@ -11,5 +11,5 @@ if (Value$arg1.type == Types.STRING) {
 }
 if (output == null) {
 	lib_func_error_occurred = true;
-	lib_func_error_message = "$ord requires a 1 character string.";
+	lib_func_error_message = "ord requires a 1 character string.";
 }

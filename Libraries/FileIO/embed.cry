@@ -1,0 +1,59 @@
+﻿function io_current_directory() {
+	return $io_current_directory();
+}
+
+function io_directory_listing(filepath) {
+	return $io_directory_listing(filepath);
+}
+
+function io_file_read_text(filepath) {
+	return $io_file_read_text(filepath);
+}
+
+function io_file_write_text(filepath, content) {
+	return $io_file_write_text(filepath);
+}
+
+function io_is_path_directory(path) {
+	return $io_is_path_directory(path);
+}
+
+function io_path_exists(path) {
+	return $io_path_exists(path);
+}
+
+function io_path_join(path_segment_list) {
+	return $io_path_join(path_segment_list);
+}
+
+function $user_data_delete_directory(path) {
+	return $user_data_delete_directory(path);
+}
+
+function user_data_delete_file(filepath) {
+	return $user_data_delete_file(filepath);
+}
+
+function user_data_directory_listing(path) {
+	return $user_data_directory_listing(path);
+}
+
+function user_data_file_read_text(filepath) {
+	return $user_data_file_read_text(filepath);
+}
+
+function user_data_file_write_text(filepath, content) {
+	return $user_data_file_write_text(filepath, content);
+}
+
+function user_data_make_directory(path) {
+	return $user_data_make_directory(path);
+}
+
+function user_data_is_path_directory(path) {
+	return $user_data_is_path_directory(path);
+}
+
+function user_data_path_exists(path) {
+	return $user_data_path_exists(path);
+}

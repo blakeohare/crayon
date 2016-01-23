@@ -1,0 +1,23 @@
+﻿
+function game_clock_tick() {
+	return $game_clock_tick();
+}
+
+function game_initialize(fps) {
+	return $game_initialize(fps);
+}
+
+function game_initialize_screen(width, height, screen_width = null, screen_height = null) {
+	if (screen_width == null) {
+		return $game_initialize_screen(width, height);
+	}
+	return $game_initialize_screen_scaled(width, height, screen_width, screen_height);
+}
+
+function game_pump_events() {
+	return $game_pump_events();
+}
+
+function game_set_title(title) {
+	return $game_set_title(title);
+}
