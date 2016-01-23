@@ -53,7 +53,9 @@
   <ItemGroup>
     <EmbeddedResource Include="embed.cry" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Translation\lib_random_random_int.cry" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_random_random_float.cry" />
   </ItemGroup>

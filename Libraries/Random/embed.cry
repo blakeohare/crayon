@@ -2,14 +2,19 @@
 	return $$lib_random_random_float();
 }
 
+// When one argument is provided, it is the max exclusive upper bound and the min is 0. 
 function randomInt(minIncl, maxExcl = null) {
-	// TODO: write a native function for integers
-	if (maxExcl == null) {
-		return $floor($$lib_random_random_float() * minIncl);
-	}
-	return $floor($$lib_random_random_float() * (maxExcl - minIncl)) + minIncl;
+	return $$lib_random_random_int(minIncl, maxExcl);
 }
 
+function randomBool() {
+	return $$$lib_random_random_float() > .5;
+}
+
+// TODO: maybe turn this into a primitive method of list.
 function randomChoice(list) {
-	return list[$floor($$lib_random_random_float() * list.length)];
+	if (list.length == 0) {
+		$assert(false, "randomChoice requires a non-empty list.");
+	}
+	return list[$$lib_random_random_int(0, list.length)];
 }
