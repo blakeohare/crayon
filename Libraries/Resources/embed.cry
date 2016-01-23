@@ -1,4 +1,4 @@
 ﻿
 function resource_read_text(filepath) {
-	return $resource_read_text(filepath);
+	return $$lib_resources_read_text(filepath);
 }

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ABEDB158-1482-4BA3-96F3-9B17B7605D54}</ProjectGuid>
+    <ProjectGuid>{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JSON</RootNamespace>
-    <AssemblyName>JSON</AssemblyName>
+    <RootNamespace>Web</RootNamespace>
+    <AssemblyName>Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -52,9 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="embed.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_json_parse.cry" />
+    <EmbeddedResource Include="Translation\lib_web_launch_browser.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

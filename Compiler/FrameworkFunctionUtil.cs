@@ -28,10 +28,6 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
-				case FrameworkFunction.HTTP_REQUEST:
-					VerifyLength(throwToken, frameworkFunction, 4, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING STRING DICTIONARY? STRING?");
-					break;
 				case FrameworkFunction.IO_CURRENT_DIRECTORY:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
 					break;
@@ -58,10 +54,6 @@ namespace Crayon
 				case FrameworkFunction.IO_PATH_JOIN:
 					VerifyLength(throwToken, frameworkFunction, 1, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "LIST");
-					break;
-				case FrameworkFunction.LAUNCH_BROWSER:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
 					break;
 				case FrameworkFunction.MUSIC_GET_CURRENT:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
@@ -110,13 +102,6 @@ namespace Crayon
 					break;
 				case FrameworkFunction.MUSIC_STOP:
 					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.PARSE_JSON:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
-				case FrameworkFunction.RESOURCE_READ_TEXT:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
 					break;
 				case FrameworkFunction.SFX_GET_MASTER_VOLUME:
 					VerifyLength(throwToken, frameworkFunction, 0, args);

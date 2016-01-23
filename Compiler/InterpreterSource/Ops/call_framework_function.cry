@@ -4,7 +4,6 @@
 // However if there are optional arguments, the number of args used in this call are located in row[2]
 output = VALUE_NULL;
 switch ($_array_get(row, 0)) {
-	case %%%FF_HTTP_REQUEST%%%: $_comment('$http_request'); import inline "InterpreterSource/FrameworkFunctions/http_request.cry"; break;
 	case %%%FF_IO_CURRENT_DIRECTORY%%%: $_comment('$io_current_directory'); import inline "InterpreterSource/FrameworkFunctions/io_current_directory.cry"; break;
 	case %%%FF_IO_DIRECTORY_LISTING%%%: $_comment('$io_directory_list'); import inline "InterpreterSource/FrameworkFunctions/io_directory_list.cry"; break;
 	case %%%FF_IO_FILE_READ_TEXT%%%: $_comment('$io_file_read_text'); import inline "InterpreterSource/FrameworkFunctions/io_file_read_text.cry"; break;
@@ -12,7 +11,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_IO_IS_PATH_DIRECTORY%%%: $_comment('$io_is_path_directory'); import inline "InterpreterSource/FrameworkFunctions/io_is_path_directory.cry"; break;
 	case %%%FF_IO_PATH_EXISTS%%%: $_comment('$io_path_exists'); import inline "InterpreterSource/FrameworkFunctions/io_path_exists.cry"; break;
 	case %%%FF_IO_PATH_JOIN%%%: $_comment('$io_path_join'); import inline "InterpreterSource/FrameworkFunctions/io_path_join.cry"; break;
-	case %%%FF_LAUNCH_BROWSER%%%: $_comment('$launch_browser'); import inline "InterpreterSource/FrameworkFunctions/launch_browser.cry"; break;
 	case %%%FF_MUSIC_GET_CURRENT%%%: $_comment('$music_get_current'); import inline "InterpreterSource/FrameworkFunctions/music_get_current.cry"; break;
 	case %%%FF_MUSIC_GET_MASTER_VOLUME%%%: $_comment('$music_get_master_volume'); import inline "InterpreterSource/FrameworkFunctions/music_get_master_volume.cry"; break;
 	case %%%FF_MUSIC_GET_POSITION%%%: $_comment('$music_get_position'); import inline "InterpreterSource/FrameworkFunctions/music_get_position.cry"; break;
@@ -27,8 +25,6 @@ switch ($_array_get(row, 0)) {
 	case %%%FF_MUSIC_SET_POSITION%%%: $_comment('$music_set_position'); import inline "InterpreterSource/FrameworkFunctions/music_set_position.cry"; break;
 	case %%%FF_MUSIC_SET_VOLUME%%%: $_comment('$music_set_volume'); import inline "InterpreterSource/FrameworkFunctions/music_set_volume.cry"; break;
 	case %%%FF_MUSIC_STOP%%%: $_comment('$music_stop'); import inline "InterpreterSource/FrameworkFunctions/music_stop.cry"; break;
-	case %%%FF_PARSE_JSON%%%: $_comment('$parse_json'); import inline "InterpreterSource/FrameworkFunctions/parse_json.cry"; break;
-	case %%%FF_RESOURCE_READ_TEXT%%%: $_comment('$resource_read_text'); import inline "InterpreterSource/FrameworkFunctions/resource_read_text.cry"; break;
 	case %%%FF_SFX_GET_MASTER_VOLUME%%%: $_comment('$sfx_get_master_volume'); import inline "InterpreterSource/FrameworkFunctions/sfx_get_master_volume.cry"; break;
 	case %%%FF_SFX_LOAD_FROM_FILE%%%: $_comment('$sfx_load_from_file'); import inline "InterpreterSource/FrameworkFunctions/sfx_load_from_file.cry"; break;
 	case %%%FF_SFX_LOAD_FROM_RESOURCE%%%: $_comment('$sfx_load_from_resource'); import inline "InterpreterSource/FrameworkFunctions/sfx_load_from_resource.cry"; break;

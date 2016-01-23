@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "..\Libraries\R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSON", "..\Libraries\JSON\JSON.csproj", "{ABEDB158-1482-4BA3-96F3-9B17B7605D54}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "..\Libraries\Web\Web.csproj", "{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,16 @@ Global
 		{ABEDB158-1482-4BA3-96F3-9B17B7605D54}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{ABEDB158-1482-4BA3-96F3-9B17B7605D54}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ABEDB158-1482-4BA3-96F3-9B17B7605D54}.Release|x86.ActiveCfg = Release|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -173,5 +185,6 @@ Global
 		{2A486805-DD77-463E-904E-D4A27060A437} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
 		{2057C131-EC41-4F81-B77D-166720F80CA3} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
 		{ABEDB158-1482-4BA3-96F3-9B17B7605D54} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
+		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3} = {69DE32A4-0913-4B75-B8DD-6953FB042E45}
 	EndGlobalSection
 EndGlobal
