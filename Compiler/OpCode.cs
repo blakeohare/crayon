@@ -18,7 +18,6 @@
 		CALL_BASE_CONSTRUCTOR, // 1: num args passed
 		CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 		CALL_FUNCTION, // 1: num args passed, 2: 1|0 is value used?
-		CALL_FRAMEWORK_FUNCTION, // 1: function ID (not identifier ID). Since these are defined by the framework, function count is verified at compile time and popped accordingly at runtime by the op itself, 2: 1|0 is output used?, 3: arg count
 		CALL_FUNCTION_ON_GLOBAL, // 1: global scope ID, 2: num args passed, 3: 1|0 is value used?
 		CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
 		CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
