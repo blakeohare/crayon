@@ -873,14 +873,6 @@ namespace Crayon
 			FrameworkFunction ff = parser.GetFrameworkFunction(sysFunc.FirstToken, frameworkFunctionName);
 			FrameworkFunctionUtil.VerifyArgsAsMuchAsPossible(sysFunc.FirstToken, ff, sysFunc.Args);
 			buffer.Add(sysFunc.FirstToken, OpCode.CALL_FRAMEWORK_FUNCTION, (int)ff, outputUsed ? 1 : 0, argCount);
-			if (ff == FrameworkFunction.GAME_INITIALIZE_SCREEN ||
-				ff == FrameworkFunction.GAME_INITIALIZE_SCREEN_SCALED)
-			{
-				// This is a little tacky, but on some platforms, creation of the window is blocking, and a new
-				// invocation into interpreter is required for the VM to continue and so simply calling gamepad
-				// initialization synchronously with window initialization doesn't work.
-				buffer.Add(sysFunc.FirstToken, OpCode.INITIALIZE_GAMEPAD);
-			}
 		}
 
 		private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

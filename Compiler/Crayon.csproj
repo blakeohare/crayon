@@ -264,15 +264,9 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\4_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_set_title.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_count.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize_screen_scaled.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_pump_events.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_image_sheet_loaded.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\http_request.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize_screen.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_clock_tick.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\game_initialize.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gfx_blit_image_partial.cry" />
@@ -341,7 +335,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\music_resume.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\initialize_gamepad.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital_1d.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_bind_digital_2d.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\gamepad_clear_ids.cry" />

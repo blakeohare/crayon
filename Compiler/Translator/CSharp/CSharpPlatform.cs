@@ -16,7 +16,6 @@ namespace Crayon.Translator.CSharp
 		public override bool IsStronglyTyped { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
-		public override bool ScreenBlocksExecution { get { return true; } }
 		public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/GeneratedFiles"; } }
 		public override bool IsArraySameAsList { get { return false; } }
 

@@ -53,6 +53,16 @@
   <ItemGroup>
     <EmbeddedResource Include="embed.cry" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_game_clock_tick.cry" />
+    <EmbeddedResource Include="Translation\lib_game_initialize.cry" />
+    <EmbeddedResource Include="Translation\lib_game_initialize_screen.cry" />
+    <EmbeddedResource Include="Translation\lib_game_pump_events.cry" />
+    <EmbeddedResource Include="Translation\lib_game_set_title.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_game_initialize_gamepad.cry" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

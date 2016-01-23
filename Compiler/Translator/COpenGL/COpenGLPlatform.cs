@@ -16,7 +16,6 @@ namespace Crayon.Translator.COpenGL
 		public override bool SupportsListClear { get { return true; } }
 		public override bool IsStronglyTyped { get { return true; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
-		public override bool ScreenBlocksExecution { get { return true; } }
 		public override bool UseFixedListArgConstruction { get { return true; } }
 		public override bool IsArraySameAsList { get { return false; } }
 		public override string GeneratedFilesFolder { get { return "generated_files"; } }

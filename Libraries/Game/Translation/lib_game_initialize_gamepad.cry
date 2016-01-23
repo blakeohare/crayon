@@ -1,0 +1,4 @@
+﻿
+// Temporary hack. See comment in Game/embed.cry.
+
+gamepadInitializeState();

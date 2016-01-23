@@ -28,28 +28,6 @@ namespace Crayon
 			Types[] argTypes = BuildKnownTypeList(args);
 			switch (frameworkFunction)
 			{
-				case FrameworkFunction.GAME_CLOCK_TICK:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GAME_INITIALIZE:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER");
-					break;
-				case FrameworkFunction.GAME_INITIALIZE_SCREEN:
-					VerifyLength(throwToken, frameworkFunction, 2, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER");
-					break;
-				case FrameworkFunction.GAME_INITIALIZE_SCREEN_SCALED:
-					VerifyLength(throwToken, frameworkFunction, 4, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "INTEGER INTEGER INTEGER INTEGER");
-					break;
-				case FrameworkFunction.GAME_PUMP_EVENTS:
-					VerifyLength(throwToken, frameworkFunction, 0, args);
-					break;
-				case FrameworkFunction.GAME_SET_TITLE:
-					VerifyLength(throwToken, frameworkFunction, 1, args);
-					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "STRING");
-					break;
 				case FrameworkFunction.GAMEPAD_BIND_ANALOG:
 					VerifyLength(throwToken, frameworkFunction, 3, args);
 					VerifyTypes(throwToken, frameworkFunction, args, argTypes, "OBJECT STRING OBJECT");

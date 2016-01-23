@@ -14,7 +14,6 @@ namespace Crayon.Translator.Python
 		public override bool IsStronglyTyped { get { return false; } }
 		public override bool UseFixedListArgConstruction { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
-		public override bool ScreenBlocksExecution { get { return false; } }
 		public override bool IsArraySameAsList { get { return true; } }
 
 		public override string GeneratedFilesFolder { get { return "_generated_files"; } }

@@ -1,6 +1,6 @@
 ﻿
 function game_clock_tick() {
-	return $game_clock_tick();
+	return $lib_game_clock_tick();
 }
 
 function game_initialize(fps) {
@@ -9,9 +9,14 @@ function game_initialize(fps) {
 
 function game_initialize_screen(width, height, screen_width = null, screen_height = null) {
 	if (screen_width == null) {
-		return $game_initialize_screen(width, height);
+		$game_initialize_screen_scaled(width, height, null, null);
+	} else {
+		$game_initialize_screen_scaled(width, height, screen_width, screen_height);
 	}
-	return $game_initialize_screen_scaled(width, height, screen_width, screen_height);
+
+	// The existence of this here is temporary.
+	// Cleanup strategy: static initializers in Gamepad class, once static initializers are created.
+	$$lib_game_initialize_gamepad();
 }
 
 function game_pump_events() {

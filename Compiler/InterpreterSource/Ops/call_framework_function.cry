@@ -4,12 +4,6 @@
 // However if there are optional arguments, the number of args used in this call are located in row[2]
 output = VALUE_NULL;
 switch ($_array_get(row, 0)) {
-	case %%%FF_GAME_CLOCK_TICK%%%: $_comment('$game_clock_tick'); import inline "InterpreterSource/FrameworkFunctions/game_clock_tick.cry"; break;
-	case %%%FF_GAME_INITIALIZE%%%: $_comment('$game_initialize'); import inline "InterpreterSource/FrameworkFunctions/game_initialize.cry"; break;
-	case %%%FF_GAME_INITIALIZE_SCREEN%%%: $_comment('$game_initialize_screen'); import inline "InterpreterSource/FrameworkFunctions/game_initialize_screen.cry"; break;
-	case %%%FF_GAME_INITIALIZE_SCREEN_SCALED%%%: $_comment('$game_initialize_screen_scaled'); import inline "InterpreterSource/FrameworkFunctions/game_initialize_screen_scaled.cry"; break;
-	case %%%FF_GAME_PUMP_EVENTS%%%: $_comment('$game_pump_events'); import inline "InterpreterSource/FrameworkFunctions/game_pump_events.cry"; break;
-	case %%%FF_GAME_SET_TITLE%%%: $_comment('$game_set_title'); import inline "InterpreterSource/FrameworkFunctions/game_set_title.cry"; break;
 	case %%%FF_GAMEPAD_BIND_ANALOG%%%: $_comment('$gamepad_bind_analog'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog.cry"; break;
 	case %%%FF_GAMEPAD_BIND_ANALOG_1D%%%: $_comment('$gamepad_bind_analog_1d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog_1d.cry"; break;
 	case %%%FF_GAMEPAD_BIND_ANALOG_2D%%%: $_comment('$gamepad_bind_analog_2d'); import inline "InterpreterSource/FrameworkFunctions/gamepad_bind_analog_2d.cry"; break;
