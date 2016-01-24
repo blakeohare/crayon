@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Crayon.ParseTree
 {
@@ -10,27 +8,29 @@ namespace Crayon.ParseTree
 	internal class Namespace : Executable
 	{
 		public Executable[] Code { get; set; }
+		public string Name { get; set; }
 
-		// Going to try to get away with not having a reference to the actual namespace name.
-		// The namespace object should strictly be a wrapper of multiple executables as one executable and flattened as soon as possible.
-		// Actual function and class definitions have a field that refer to the fully flattened namespace name.
-		public Namespace(Token namespaceToken, IList<Executable> code)
-			: base(namespaceToken)
+		public Namespace(Token namespaceToken, string name, Executable owner)
+			: base(namespaceToken, owner)
 		{
-			this.Code = code.ToArray();
+			this.Name = name;
 		}
 
-		public void AppendFlattenedCode(IList<Executable> codeList)
+		public void GetFlattenedCode(IList<Executable> executableOut, string[] imports, string libraryName)
 		{
-			foreach (Executable line in this.Code)
+			foreach (Executable item in this.Code)
 			{
-				if (line is Namespace)
+				item.NamespacePrefixSearch = imports;
+				item.LibraryName = libraryName;
+
+				if (item is Namespace)
 				{
-					((Namespace)line).AppendFlattenedCode(codeList);
+					((Namespace)item).GetFlattenedCode(executableOut, imports, libraryName);
 				}
 				else
 				{
-					codeList.Add(line);
+					// already filtered at parse time to correct member types.
+					executableOut.Add(item);
 				}
 			}
 		}

@@ -17,6 +17,7 @@ namespace Crayon
 			this.VariableIds = new VariableIdAllocator();
 			this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
 			this.CurrentNamespace = "";
+			this.NamespacePrefixLookupForCurrentFile = new List<string>();
 		}
 
 		private int fileIdCounter = 0;
@@ -41,6 +42,8 @@ namespace Crayon
 		public bool IsInClass { get { return this.CurrentClass != null; } }
 
 		public BuildContext BuildContext { get; private set; }
+
+		public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
 		public bool PreserveTranslationComments
 		{
@@ -379,87 +382,97 @@ namespace Crayon
 			return output.ToArray();
 		}
 
-		private Executable[] ResolveCode(Executable[] originalCode)
+		private Executable[] ResolveCode(IList<Executable> originalCode)
 		{
 			return new Resolver(this, originalCode).Resolve(this.IsTranslateMode);
 		}
 
-		public Executable[] ParseInternal(string filename, string contents)
+		public Executable[] ParseInterpreterCode(string filename, string contents)
 		{
-			Executable[] output = ParseImport(".", filename, contents, new HashSet<string>(), null);
+			TokenStream tokens = Tokenizer.Tokenize(filename, contents, 0, true);
+			List<Executable> output = new List<Executable>();
+			while (tokens.HasMore)
+			{
+				output.Add(ExecutableParser.Parse(this, tokens, false, true, true, null));
+			}
 			return ResolveCode(output);
 		}
 
-		public Executable[] ParseRoot(string rootFolder)
+		private void GetCodeFilesImpl(string rootFolder, string currentFolder, Dictionary<string, string> filesOutput)
 		{
-			string fileName = "start.cry";
-			Executable[] output = ParseImport(rootFolder, fileName, null, new HashSet<string>(), null);
-			output = ResolveCode(output);
+			foreach (string file in System.IO.Directory.GetFiles(currentFolder))
+			{
+				if (file.ToLowerInvariant().EndsWith(".cry"))
+				{
+					string contents = System.IO.File.ReadAllText(file);
+					string relativePath = file.Substring(rootFolder.Length + 1);
+					filesOutput[relativePath] = contents;
+				}
+			}
+
+			foreach (string directory in System.IO.Directory.GetDirectories(currentFolder))
+			{
+				GetCodeFilesImpl(rootFolder, directory, filesOutput);
+			}
+		}
+
+		public Dictionary<string, string> GetCodeFiles(string rootFolder)
+		{
+			rootFolder = System.IO.Path.GetFullPath(rootFolder);
+			Dictionary<string, string> output = new Dictionary<string, string>();
+			this.GetCodeFilesImpl(rootFolder, rootFolder, output);
 			return output;
 		}
 
-		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot, ImportStatement importStatement)
+		public Executable[] ParseAllTheThings(string rootFolder)
 		{
-			if (importStatement != null && importStatement.IsSystemLibrary && pathOfFilesRelativeToRoot.Contains(filename))
+			List<Executable> output = new List<Executable>();
+			Dictionary<string, string> files = this.GetCodeFiles(rootFolder);
+			// Only iterate through actual user files. Library imports will be inserted into the code when encountered
+			// the first time for each library.
+			foreach (string fileName in files.Keys)
 			{
-				// Disregard files imported multiple times.
-				return new Executable[0];
+				string code = files[fileName];
+				Executable[] fileContent = this.ParseInterpretedCode(fileName, code, null);
+				output.AddRange(fileContent);
 			}
-			pathOfFilesRelativeToRoot.Add(filename);
+			return ResolveCode(output);
+		}
 
-			int fileId = fileIdCounter++;
-			string code = codeOverride;
-			string prevSystemLibrary = this.CurrentSystemLibrary;
-			if (codeOverride == null)
-			{
-				if (importStatement != null && importStatement.IsSystemLibrary)
-				{
-					string importValueToken = importStatement.FileToken.Value;
-					if (importValueToken[0] == '\'' || importValueToken[0] == '"')
-					{
-						importValueToken = importValueToken.Substring(1, importValueToken.Length - 2);
-					}
-					else
-					{
-						this.CurrentSystemLibrary = importValueToken;
-						Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
-					}
+		private HashSet<string> importedFiles = new HashSet<string>();
 
-					string sysLibPath = "manifest.cry";
-					char c = importStatement.FileToken.Value[0];
-					if (c == '\'' || c == '"')
-					{
-						sysLibPath = importStatement.FileToken.Value;
-						sysLibPath = sysLibPath.Substring(1, sysLibPath.Length - 2);
-					}
-					code = this.SystemLibraryManager.GetEmbeddedCode(importValueToken);
-				}
-				else
-				{
-					string fullpath = System.IO.Path.Combine(rootFolder, filename);
-					if (System.IO.File.Exists(fullpath))
-					{
-						code = Util.ReadFileExternally(fullpath, true);
-					}
-					else
-					{
-						throw new ParserException(importStatement.FirstToken, "File does not exist or is misspelled: '" + filename + "'");
-					}
-				}
-			}
+		public int GetNextFileId()
+		{
+			return fileIdCounter++;
+		}
+
+		public Executable[] ParseInterpretedCode(string filename, string code, string libraryName)
+		{
+			int fileId = this.GetNextFileId();
 			this.RegisterFileUsed(filename, code, fileId);
 			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId, true);
 
-			Dictionary<string, StructDefinition> structureDefinitions = new Dictionary<string, StructDefinition>();
-			Dictionary<string, Expression> constantDefinitions = new Dictionary<string, Expression>();
-
 			List<Executable> executables = new List<Executable>();
+
+			List<string> namespaceImportsBuilder = new List<string>();
+
+			while (tokens.HasMore && tokens.IsNext("import"))
+			{
+				ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
+				if (importStatement == null) throw new Exception();
+				namespaceImportsBuilder.Add(importStatement.ImportPath);
+				Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+				executables.AddRange(libraryEmbeddedCode);
+			}
+
+			string[] namespaceImports = namespaceImportsBuilder.ToArray();
+
 			while (tokens.HasMore)
 			{
 				Executable executable;
 				try
 				{
-					executable = ExecutableParser.Parse(this, tokens, false, true, true);
+					executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
 				}
 				catch (EofException)
 				{
@@ -468,24 +481,21 @@ namespace Crayon
 
 				if (executable is ImportStatement)
 				{
-					ImportStatement execAsImportStatement = (ImportStatement)executable;
-					string filePath = execAsImportStatement.FilePath;
-					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot, execAsImportStatement);
-					executables.AddRange(importedCode);
+					throw new ParserException(executable.FirstToken, "All imports must occur at the beginning of the file.");
 				}
-				else if (executable is ClassDefinition)
+
+				executable.NamespacePrefixSearch = namespaceImports;
+				executable.LibraryName = libraryName;
+
+				if (executable is Namespace)
 				{
-					this.RegisterClass((ClassDefinition)executable);
-					executables.Add(executable);
+					((Namespace)executable).GetFlattenedCode(executables, namespaceImports, libraryName);
 				}
 				else
 				{
 					executables.Add(executable);
 				}
 			}
-
-			this.CurrentSystemLibrary = prevSystemLibrary;
-			Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
 
 			return executables.ToArray();
 		}
@@ -534,7 +544,7 @@ namespace Crayon
 
 		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
 
-		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired)
+		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, Executable owner)
 		{
 			List<Executable> output = new List<Executable>();
 
@@ -542,7 +552,7 @@ namespace Crayon
 			{
 				while (!tokens.PopIfPresent("}"))
 				{
-					output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
+					output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
 				}
 			}
 			else
@@ -557,7 +567,7 @@ namespace Crayon
 					return output;
 				}
 
-				output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
+				output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
 			}
 			return output;
 		}

@@ -22,7 +22,7 @@ namespace Crayon
 						tokens.PopExpected(",");
 					}
 
-					args.Add(ExpressionParser.Parse(tokens));
+					args.Add(ExpressionParser.Parse(tokens, null));
 				}
 			}
 			return new Annotation(annotationToken, typeToken, args);

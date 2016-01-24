@@ -2,8 +2,8 @@
 {
 	internal class BaseKeyword : Expression
 	{
-		public BaseKeyword(Token token)
-			: base(token)
+		public BaseKeyword(Token token, Executable owner)
+			: base(token, owner)
 		{
 		}
 

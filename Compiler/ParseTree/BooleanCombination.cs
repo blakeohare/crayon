@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Expression[] Expressions { get; private set; }
 		public Token[] Ops { get; private set; }
 
-		public BooleanCombination(IList<Expression> expressions, IList<Token> ops)
-			: base(expressions[0].FirstToken)
+		public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Executable owner)
+			: base(expressions[0].FirstToken, owner)
 		{
 			this.Expressions = expressions.ToArray();
 			this.Ops = ops.ToArray();

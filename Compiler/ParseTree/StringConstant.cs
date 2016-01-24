@@ -5,8 +5,8 @@ namespace Crayon.ParseTree
 	internal class StringConstant : Expression
 	{
 		public string Value { get; private set; }
-		public StringConstant(Token token, string value)
-			: base(token)
+		public StringConstant(Token token, string value, Executable owner)
+			: base(token, owner)
 		{
 			this.Value = value;
 		}

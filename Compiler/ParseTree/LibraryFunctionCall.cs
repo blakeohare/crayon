@@ -11,7 +11,8 @@ namespace Crayon.ParseTree
 		public Expression[] Args { get; private set; }
 		public string LibraryName { get; set; }
 
-		public LibraryFunctionCall(Token token, string name, IList<Expression> args, string libraryName) : base(token)
+		public LibraryFunctionCall(Token token, string name, IList<Expression> args, string libraryName, Executable owner)
+			: base(token, owner)
 		{
 			if (libraryName == null)
 			{

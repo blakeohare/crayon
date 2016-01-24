@@ -59,7 +59,7 @@ namespace Crayon
 
 				code = Constants.DoReplacements(code, replacements);
 
-				Executable[] lines = this.interpreterParser.ParseInternal(file, code);
+				Executable[] lines = this.interpreterParser.ParseInterpreterCode(file, code);
 				if (lines.Length > 0)
 				{
 					output[fileId] = lines.ToArray();
@@ -69,7 +69,7 @@ namespace Crayon
 			string switchLookupCode = this.interpreterParser.GetSwitchLookupCode().Trim();
 			if (switchLookupCode.Length > 0)
 			{
-				output["SwitchLookups"] = this.interpreterParser.ParseInternal("SwitchLookups.cry", switchLookupCode);
+				output["SwitchLookups"] = this.interpreterParser.ParseInterpreterCode("SwitchLookups.cry", switchLookupCode);
 			}
 
 			return output;

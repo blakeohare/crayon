@@ -9,8 +9,8 @@ namespace Crayon.ParseTree
 		public Token[] Fields { get; private set; }
 		public Annotation[] Types { get; private set; }
 
-		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations)
-			: base(structToken)
+		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations, Executable owner)
+			: base(structToken, owner)
 		{
 			this.Name = nameToken;
 			this.Fields = fields.ToArray();

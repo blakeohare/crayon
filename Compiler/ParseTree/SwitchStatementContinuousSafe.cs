@@ -9,8 +9,8 @@ namespace Crayon.ParseTree
 		public Expression Condition { get; private set; }
 		public SwitchStatement OriginalSwitchStatement { get; private set; }
 
-		public SwitchStatementContinuousSafe(SwitchStatement switchStatement)
-			: base(switchStatement.FirstToken)
+		public SwitchStatementContinuousSafe(SwitchStatement switchStatement, Executable owner)
+			: base(switchStatement.FirstToken, owner)
 		{
 			this.OriginalSwitchStatement = switchStatement;
 			this.Condition = switchStatement.Condition;

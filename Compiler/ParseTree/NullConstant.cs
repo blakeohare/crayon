@@ -2,8 +2,8 @@
 {
 	internal class NullConstant : Expression
 	{
-		public NullConstant(Token token)
-			: base(token)
+		public NullConstant(Token token, Executable owner)
+			: base(token, owner)
 		{ }
 
 		public override bool IsLiteral { get { return true; } }

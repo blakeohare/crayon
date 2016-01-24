@@ -11,8 +11,8 @@ namespace Crayon.ParseTree
 		public Expression[] Values { get; private set; }
 		public Dictionary<string, int> IntValue { get; private set; }
 
-		public EnumDefinition(Token enumToken, Token nameToken, IList<Token> items, IList<Expression> values)
-			: base(enumToken)
+		public EnumDefinition(Token enumToken, Token nameToken, IList<Token> items, IList<Expression> values, Executable owner)
+			: base(enumToken, owner)
 		{
 			this.NameToken = nameToken;
 			this.Name = nameToken.Value;

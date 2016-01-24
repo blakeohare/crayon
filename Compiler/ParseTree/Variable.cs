@@ -7,8 +7,8 @@
 		public int LocalScopeId { get; set; }
 		public int GlobalScopeId { get; set; }
 
-		public Variable(Token token, string name)
-			: base(token)
+		public Variable(Token token, string name, Executable owner)
+			: base(token, owner)
 		{
 			this.Name = name;
 		}
@@ -26,7 +26,7 @@
 		{
 			if (this.Name == "$var")
 			{
-				return new CompileTimeDictionary(this.FirstToken, "var");
+				return new CompileTimeDictionary(this.FirstToken, "var", this.FunctionOrClassOwner);
 			}
 
 			if (this.Name == "this" || this.Name == "base")
@@ -35,11 +35,11 @@
 				{
 					if (this.Name == "this")
 					{
-						return new ThisKeyword(this.FirstToken).Resolve(parser);
+						return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner).Resolve(parser);
 					}
 					else
 					{
-						return new BaseKeyword(this.FirstToken).Resolve(parser);
+						return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner).Resolve(parser);
 					}
 				}
 

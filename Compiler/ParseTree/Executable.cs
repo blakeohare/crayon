@@ -4,12 +4,15 @@ using System.Linq;
 
 namespace Crayon.ParseTree
 {
-	internal abstract class Executable : Node
+	public abstract class Executable : Node
 	{
 		public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 
-		public Executable(Token firstToken)
-			: base(firstToken)
+		public string[] NamespacePrefixSearch { get; set; }
+		public string LibraryName { get; set; }
+
+		public Executable(Token firstToken, Executable owner)
+			: base(firstToken, owner)
 		{ }
 
 		public virtual bool IsTerminator { get { return false; } }

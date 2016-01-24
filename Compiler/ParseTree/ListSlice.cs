@@ -11,14 +11,14 @@ namespace Crayon.ParseTree
 		public Expression[] Items { get; set; } // these can be null
 		public Expression Root { get; set; }
 
-		public ListSlice(Expression root, List<Expression> items, Token bracketToken)
-			: base(root.FirstToken)
+		public ListSlice(Expression root, List<Expression> items, Token bracketToken, Executable owner)
+			: base(root.FirstToken, owner)
 		{
 			this.Root = root;
 			this.BracketToken = bracketToken;
 			if (items.Count == 2)
 			{
-				items.Add(new IntegerConstant(null, 1));
+				items.Add(new IntegerConstant(null, 1, owner));
 			}
 
 			if (items.Count != 3)
@@ -28,7 +28,7 @@ namespace Crayon.ParseTree
 
 			if (items[2] == null)
 			{
-				items[2] = new IntegerConstant(null, 1);
+				items[2] = new IntegerConstant(null, 1, owner);
 			}
 
 			this.Items = items.ToArray();

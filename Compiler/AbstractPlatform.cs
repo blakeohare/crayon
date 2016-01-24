@@ -79,7 +79,7 @@ namespace Crayon
 		private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
 		{
 			Parser userCodeParser = new Parser(null, buildContext, null);
-			ParseTree.Executable[] userCode = userCodeParser.ParseRoot(inputFolder);
+			ParseTree.Executable[] userCode = userCodeParser.ParseAllTheThings(inputFolder);
 			
 			foreach (Executable ex in userCode)
 			{

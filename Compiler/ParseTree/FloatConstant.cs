@@ -6,8 +6,8 @@
 
 		public override bool IsLiteral { get { return true; } }
 
-		public FloatConstant(Token startValue, double value)
-			: base(startValue)
+		public FloatConstant(Token startValue, double value, Executable owner)
+			: base(startValue, owner)
 		{
 			this.Value = value;
 		}

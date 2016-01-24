@@ -14,17 +14,77 @@ namespace Crayon
 		public Resolver(Parser parser, IList<Executable> originalCode)
 		{
 			this.parser = parser;
-			this.currentCode = originalCode;
+			this.currentCode = originalCode.ToArray();
+		}
+
+		private Dictionary<string, Executable> CreateFullyQualifiedLookup(IList<Executable> code)
+		{
+			HashSet<string> namespaces = new HashSet<string>();
+
+			Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();
+			bool mainFound = false;
+			foreach (Executable item in code)
+			{
+				string ns;
+				string memberName;
+				if (item is FunctionDefinition) {
+					FunctionDefinition fd = (FunctionDefinition) item;
+					ns = fd.Namespace;
+					memberName = fd.NameToken.Value;
+					if (memberName == "main")
+					{
+						if (mainFound)
+						{
+							throw new ParserException(item.FirstToken, "Multiple main methods found.");
+						}
+						mainFound = true;
+						lookup["~"] = item;
+					}
+				} else if (item is ClassDefinition) {
+					ClassDefinition cd = (ClassDefinition)item;
+					ns = cd.Namespace;
+					memberName = cd.Namespace;
+				} else {
+					throw new Exception();
+				}
+
+				if (ns.Length > 0)
+				{
+					string accumulator = "";
+					foreach (string nsPart in ns.Split('.'))
+					{
+						if (accumulator.Length > 0) accumulator += ".";
+						accumulator += nsPart;
+						namespaces.Add(accumulator);
+					}
+				}
+
+				string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
+
+				lookup[fullyQualifiedName] = item;
+			}
+
+			foreach (string key in lookup.Keys)
+			{
+				if (namespaces.Contains(key))
+				{
+					throw new ParserException(lookup[key].FirstToken, "This name collides with a namespace definition.");
+				}
+			}
+
+			return lookup;
 		}
 
 		public Executable[] Resolve(bool isTranslateMode)
 		{
-			List<Executable> output = this.SimpleFirstPassResolution(this.parser, this.currentCode);
-
 			if (isTranslateMode)
 			{
-				return output.ToArray();
+				return this.SimpleFirstPassResolution(this.parser, this.currentCode).ToArray();
 			}
+
+			Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
+			
+			List<Executable> output = this.SimpleFirstPassResolution(this.parser, this.currentCode);
 
 			// These track all possible places where variables can be declared outside of the global scope.
 			List<FunctionDefinition> functions = new List<FunctionDefinition>();
@@ -84,22 +144,9 @@ namespace Crayon
 		private List<Executable> SimpleFirstPassResolution(Parser parser, IList<Executable> original)
 		{
 			List<Executable> output = new List<Executable>();
-			List<Executable> namespaceMembers = new List<Executable>();
 			foreach (Executable line in original)
 			{
-				if (line is Namespace)
-				{
-					((Namespace)line).AppendFlattenedCode(namespaceMembers);
-					foreach (Executable namespaceLine in namespaceMembers)
-					{
-						output.AddRange(namespaceLine.Resolve(parser));
-					}
-					namespaceMembers.Clear();
-				}
-				else
-				{
-					output.AddRange(line.Resolve(parser));
-				}
+				output.AddRange(line.Resolve(parser));
 			}
 
 			return output;

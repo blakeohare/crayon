@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Token NameToken { get; private set; }
 		public string Name { get; private set; }
 
-		public ConstStatement(Token constToken, Token nameToken, Expression expression)
-			: base(constToken)
+		public ConstStatement(Token constToken, Token nameToken, Expression expression, Executable owner)
+			: base(constToken, owner)
 		{
 			this.Expression = expression;
 			this.NameToken = nameToken;

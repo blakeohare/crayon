@@ -6,8 +6,8 @@
 		public Token BracketToken { get; private set; }
 		public Expression Index { get; set; }
 
-		public BracketIndex(Expression root, Token bracketToken, Expression index)
-			: base(root.FirstToken)
+		public BracketIndex(Expression root, Token bracketToken, Expression index, Executable owner)
+			: base(root.FirstToken, owner)
 		{
 			this.Root = root;
 			this.BracketToken = bracketToken;
@@ -35,10 +35,10 @@
 							Crayon.BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
 							switch (buildVar.Type)
 							{
-								case Crayon.BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue);
-								case Crayon.BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue);
-								case Crayon.BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue);
-								case Crayon.BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue);
+								case Crayon.BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.FunctionOrClassOwner);
+								case Crayon.BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.FunctionOrClassOwner);
+								case Crayon.BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.FunctionOrClassOwner);
+								case Crayon.BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.FunctionOrClassOwner);
 								default:
 									throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
 

@@ -4,8 +4,8 @@
 	{
 		public Expression Root { get; private set; }
 
-		public NegativeSign(Token sign, Expression root)
-			: base(sign)
+		public NegativeSign(Token sign, Expression root, Executable owner)
+			: base(sign, owner)
 		{
 			this.Root = root;
 		}
@@ -15,12 +15,12 @@
 			this.Root = this.Root.Resolve(parser);
 			if (this.Root is IntegerConstant)
 			{
-				return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1);
+				return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
 			}
 
 			if (this.Root is FloatConstant)
 			{
-				return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1);
+				return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
 			}
 
 			return this;

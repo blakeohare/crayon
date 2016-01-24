@@ -6,8 +6,8 @@
 		public Token StepToken { get; set; }
 		public string ClassToWhichThisMethodRefers { get; set; }
 
-		public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken)
-			: base(firstToken)
+		public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.DotToken = dotToken;
 			this.StepToken = stepToken;

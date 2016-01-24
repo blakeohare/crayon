@@ -10,8 +10,8 @@ namespace Crayon.ParseTree
 		public string AssignmentOp { get; private set; }
 		public Variable TargetAsVariable { get { return this.Target as Variable; } }
 
-		public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue)
-			: base(target.FirstToken)
+		public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Executable owner)
+			: base(target.FirstToken, owner)
 		{
 			this.Target = target;
 			this.AssignmentOpToken = assignmentOpToken;

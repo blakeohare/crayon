@@ -6,7 +6,7 @@ namespace Crayon
 {
 	internal static class ExpressionParser
 	{
-		public static Expression Parse(TokenStream tokens)
+		public static Expression Parse(TokenStream tokens, Executable owner)
 		{
 			Dictionary<string, Annotation> annotations = null;
 			if (tokens.IsNext("@"))
@@ -18,39 +18,39 @@ namespace Crayon
 					annotations[annotation.Type] = annotation;
 				}
 			}
-			Expression output = ParseTernary(tokens);
+			Expression output = ParseTernary(tokens, owner);
 			output.Annotations = annotations;
 			return output;
 		}
 
-		private static Expression ParseTernary(TokenStream tokens)
+		private static Expression ParseTernary(TokenStream tokens, Executable owner)
 		{
-			Expression root = ParseNullCoalescing(tokens);
+			Expression root = ParseNullCoalescing(tokens, owner);
 			if (tokens.PopIfPresent("?"))
 			{
-				Expression trueExpr = ParseTernary(tokens);
+				Expression trueExpr = ParseTernary(tokens, owner);
 				tokens.PopExpected(":");
-				Expression falseExpr = ParseTernary(tokens);
+				Expression falseExpr = ParseTernary(tokens, owner);
 
-				return new Ternary(root, trueExpr, falseExpr);
+				return new Ternary(root, trueExpr, falseExpr, owner);
 			}
 			return root;
 		}
 
-		private static Expression ParseNullCoalescing(TokenStream tokens)
+		private static Expression ParseNullCoalescing(TokenStream tokens, Executable owner)
 		{
-			Expression root = ParseBooleanCombination(tokens);
+			Expression root = ParseBooleanCombination(tokens, owner);
 			if (tokens.PopIfPresent("??"))
 			{
-				Expression secondaryExpression = ParseNullCoalescing(tokens);
-				return new NullCoalescer(root, secondaryExpression);
+				Expression secondaryExpression = ParseNullCoalescing(tokens, owner);
+				return new NullCoalescer(root, secondaryExpression, owner);
 			}
 			return root;
 		}
 
-		private static Expression ParseBooleanCombination(TokenStream tokens)
+		private static Expression ParseBooleanCombination(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseBitwiseOp(tokens);
+			Expression expr = ParseBitwiseOp(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "||" || next == "&&")
 			{
@@ -59,63 +59,63 @@ namespace Crayon
 				while (next == "||" || next == "&&")
 				{
 					ops.Add(tokens.Pop());
-					expressions.Add(ParseBitwiseOp(tokens));
+					expressions.Add(ParseBitwiseOp(tokens, owner));
 					next = tokens.PeekValue();
 				}
-				return new BooleanCombination(expressions, ops);
+				return new BooleanCombination(expressions, ops, owner);
 			}
 			return expr;
 		}
 
-		private static Expression ParseBitwiseOp(TokenStream tokens)
+		private static Expression ParseBitwiseOp(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseEqualityComparison(tokens);
+			Expression expr = ParseEqualityComparison(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "|" || next == "&" || next == "^")
 			{
 				Token bitwiseToken = tokens.Pop();
-				Expression rightExpr = ParseBitwiseOp(tokens);
-				return new BinaryOpChain(expr, bitwiseToken, rightExpr);
+				Expression rightExpr = ParseBitwiseOp(tokens, owner);
+				return new BinaryOpChain(expr, bitwiseToken, rightExpr, owner);
 			}
 			return expr;
 		}
 
-		private static Expression ParseEqualityComparison(TokenStream tokens)
+		private static Expression ParseEqualityComparison(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseInequalityComparison(tokens);
+			Expression expr = ParseInequalityComparison(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "==" || next == "!=")
 			{
 				Token equalityToken = tokens.Pop();
-				Expression rightExpr = ParseEqualityComparison(tokens);
-				return new BinaryOpChain(expr, equalityToken, rightExpr);
+				Expression rightExpr = ParseEqualityComparison(tokens, owner);
+				return new BinaryOpChain(expr, equalityToken, rightExpr, owner);
 			}
 			return expr;
 		}
 
-		private static Expression ParseInequalityComparison(TokenStream tokens)
+		private static Expression ParseInequalityComparison(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseBitShift(tokens);
+			Expression expr = ParseBitShift(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "<" || next == ">" || next == "<=" || next == ">=")
 			{
 				// Don't allow chaining of inqeualities
 				Token opToken = tokens.Pop();
-				Expression rightExpr = ParseBitShift(tokens);
-				return new BinaryOpChain(expr, opToken, rightExpr);
+				Expression rightExpr = ParseBitShift(tokens, owner);
+				return new BinaryOpChain(expr, opToken, rightExpr, owner);
 			}
 			return expr;
 		}
 
-		private static Expression ParseBitShift(TokenStream tokens)
+		private static Expression ParseBitShift(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseAddition(tokens);
+			Expression expr = ParseAddition(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "<<" || next == ">>")
 			{
 				Token opToken = tokens.Pop();
-				Expression rightExpr = ParseBitShift(tokens);
-				return new BinaryOpChain(expr, opToken, rightExpr);
+				Expression rightExpr = ParseBitShift(tokens, owner);
+				return new BinaryOpChain(expr, opToken, rightExpr, owner);
 			}
 			return expr;
 		}
@@ -124,78 +124,78 @@ namespace Crayon
 		private static readonly HashSet<string> MULTIPLICATION_OPS = new HashSet<string>("* / %".Split(' '));
 		private static readonly HashSet<string> NEGATE_OPS = new HashSet<string>("! -".Split(' '));
 
-		private static Expression ParseAddition(TokenStream tokens)
+		private static Expression ParseAddition(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseMultiplication(tokens);
+			Expression expr = ParseMultiplication(tokens, owner);
 			string next = tokens.PeekValue();
 			while (ADDITION_OPS.Contains(next))
 			{
 				Token op = tokens.Pop();
-				Expression right = ParseMultiplication(tokens);
-				expr = new BinaryOpChain(expr, op, right);
+				Expression right = ParseMultiplication(tokens, owner);
+				expr = new BinaryOpChain(expr, op, right, owner);
 				next = tokens.PeekValue();
 			}
 			return expr;
 		}
 
-		private static Expression ParseMultiplication(TokenStream tokens)
+		private static Expression ParseMultiplication(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseNegate(tokens);
+			Expression expr = ParseNegate(tokens, owner);
 			string next = tokens.PeekValue();
 			while (MULTIPLICATION_OPS.Contains(next))
 			{
 				Token op = tokens.Pop();
-				Expression right = ParseNegate(tokens);
-				expr = new BinaryOpChain(expr, op, right);
+				Expression right = ParseNegate(tokens, owner);
+				expr = new BinaryOpChain(expr, op, right, owner);
 				next = tokens.PeekValue();
 			}
 			return expr;
 		}
 
-		private static Expression ParseNegate(TokenStream tokens)
+		private static Expression ParseNegate(TokenStream tokens, Executable owner)
 		{
 			string next = tokens.PeekValue();
 			if (NEGATE_OPS.Contains(next))
 			{
 				Token negateOp = tokens.Pop();
-				Expression root = ParseNegate(tokens);
+				Expression root = ParseNegate(tokens, owner);
 				// TODO: just make a negation parse tree node
-				if (negateOp.Value == "!") return new BooleanNot(negateOp, root);
-				if (negateOp.Value == "-") return new NegativeSign(negateOp, root);
+				if (negateOp.Value == "!") return new BooleanNot(negateOp, root, owner);
+				if (negateOp.Value == "-") return new NegativeSign(negateOp, root, owner);
 				throw new Exception("This shouldn't happen.");
 			}
 
-			return ParseExponents(tokens);
+			return ParseExponents(tokens, owner);
 		}
 
-		private static Expression ParseExponents(TokenStream tokens)
+		private static Expression ParseExponents(TokenStream tokens, Executable owner)
 		{
-			Expression expr = ParseIncrement(tokens);
+			Expression expr = ParseIncrement(tokens, owner);
 			string next = tokens.PeekValue();
 			if (next == "**")
 			{
 				Token op = tokens.Pop();
-				Expression right = ParseNegate(tokens);
-				expr = new BinaryOpChain(expr, op, right);
+				Expression right = ParseNegate(tokens, owner);
+				expr = new BinaryOpChain(expr, op, right, owner);
 			}
 			return expr;
 		}
 
-		private static Expression ParseIncrement(TokenStream tokens)
+		private static Expression ParseIncrement(TokenStream tokens, Executable owner)
 		{
 			Expression root;
 			if (tokens.IsNext("++") || tokens.IsNext("--"))
 			{
 				Token incrementToken = tokens.Pop();
-				root = ParseEntity(tokens);
-				return new Increment(incrementToken, incrementToken, incrementToken.Value == "++", true, root);
+				root = ParseEntity(tokens, owner);
+				return new Increment(incrementToken, incrementToken, incrementToken.Value == "++", true, root, owner);
 			}
 
-			root = ParseEntity(tokens);
+			root = ParseEntity(tokens, owner);
 			if (tokens.IsNext("++") || tokens.IsNext("--"))
 			{
 				Token incrementToken = tokens.Pop();
-				return new Increment(root.FirstToken, incrementToken, incrementToken.Value == "++", false, root);
+				return new Increment(root.FirstToken, incrementToken, incrementToken.Value == "++", false, root, owner);
 			}
 
 			return root;
@@ -203,7 +203,7 @@ namespace Crayon
 
 		private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
 
-		private static Expression ParseInstantiate(TokenStream tokens)
+		private static Expression ParseInstantiate(TokenStream tokens, Executable owner)
 		{
 			Token newToken = tokens.PopExpected("new");
 			Token classNameToken = tokens.Pop();
@@ -217,23 +217,23 @@ namespace Crayon
 				{
 					tokens.PopExpected(",");
 				}
-				args.Add(Parse(tokens));
+				args.Add(Parse(tokens, owner));
 			}
 
-			return new Instantiate(newToken, classNameToken, args);
+			return new Instantiate(newToken, classNameToken, args, owner);
 		}
 
-		private static Expression ParseEntity(TokenStream tokens)
+		private static Expression ParseEntity(TokenStream tokens, Executable owner)
 		{
 			Expression root;
 			if (tokens.PopIfPresent("("))
 			{
-				root = Parse(tokens);
+				root = Parse(tokens, owner);
 				tokens.PopExpected(")");
 			}
 			else
 			{
-				root = ParseEntityWithoutSuffixChain(tokens);
+				root = ParseEntityWithoutSuffixChain(tokens, owner);
 			}
 			bool anySuffixes = true;
 			while (anySuffixes)
@@ -243,7 +243,7 @@ namespace Crayon
 					Token dotToken = tokens.Pop();
 					Token stepToken = tokens.Pop();
 					Parser.VerifyIdentifier(stepToken);
-					root = new DotStep(root, dotToken, stepToken);
+					root = new DotStep(root, dotToken, stepToken, owner);
 				}
 				else if (tokens.IsNext("["))
 				{
@@ -255,7 +255,7 @@ namespace Crayon
 					}
 					else
 					{
-						sliceComponents.Add(Parse(tokens));
+						sliceComponents.Add(Parse(tokens, owner));
 					}
 
 					for (int i = 0; i < 2; ++i)
@@ -268,7 +268,7 @@ namespace Crayon
 							}
 							else
 							{
-								sliceComponents.Add(Parse(tokens));
+								sliceComponents.Add(Parse(tokens, owner));
 							}
 						}
 					}
@@ -278,11 +278,11 @@ namespace Crayon
 					if (sliceComponents.Count == 1)
 					{
 						Expression index = sliceComponents[0];
-						root = new BracketIndex(root, openBracket, index);
+						root = new BracketIndex(root, openBracket, index, owner);
 					}
 					else
 					{
-						root = new ListSlice(root, sliceComponents, openBracket);
+						root = new ListSlice(root, sliceComponents, openBracket, owner);
 					}
 				}
 				else if (tokens.IsNext("("))
@@ -296,9 +296,9 @@ namespace Crayon
 							tokens.PopExpected(",");
 						}
 
-						args.Add(Parse(tokens));
+						args.Add(Parse(tokens, owner));
 					}
-					root = new FunctionCall(root, openParen, args);
+					root = new FunctionCall(root, openParen, args, owner);
 				}
 				else
 				{
@@ -308,24 +308,24 @@ namespace Crayon
 			return root;
 		}
 
-		private static Expression ParseEntityWithoutSuffixChain(TokenStream tokens)
+		private static Expression ParseEntityWithoutSuffixChain(TokenStream tokens, Executable owner)
 		{
 			string next = tokens.PeekValue();
 
-			if (next == "null") return new NullConstant(tokens.Pop());
-			if (next == "true") return new BooleanConstant(tokens.Pop(), true);
-			if (next == "false") return new BooleanConstant(tokens.Pop(), false);
+			if (next == "null") return new NullConstant(tokens.Pop(), owner);
+			if (next == "true") return new BooleanConstant(tokens.Pop(), true, owner);
+			if (next == "false") return new BooleanConstant(tokens.Pop(), false, owner);
 
 			Token peekToken = tokens.Peek();
-			if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken));
-			if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken));
-			if (next == "new") return ParseInstantiate(tokens);
+			if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
+			if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
+			if (next == "new") return ParseInstantiate(tokens, owner);
 
 			char firstChar = next[0];
 			if (VARIABLE_STARTER.Contains(firstChar))
 			{
 				Token varToken = tokens.Pop();
-				return new Variable(varToken, varToken.Value);
+				return new Variable(varToken, varToken.Value, owner);
 			}
 
 			if (firstChar == '[')
@@ -336,10 +336,10 @@ namespace Crayon
 				while (!tokens.PopIfPresent("]"))
 				{
 					if (!previousHasCommaOrFirst) tokens.PopExpected("]"); // throws appropriate error
-					elements.Add(Parse(tokens));
+					elements.Add(Parse(tokens, owner));
 					previousHasCommaOrFirst = tokens.PopIfPresent(",");
 				}
-				return new ListDefinition(bracketToken, elements);
+				return new ListDefinition(bracketToken, elements, owner);
 			}
 
 			if (firstChar == '{')
@@ -351,19 +351,19 @@ namespace Crayon
 				while (!tokens.PopIfPresent("}"))
 				{
 					if (!previousHasCommaOrFirst) tokens.PopExpected("}"); // throws appropriate error
-					keys.Add(Parse(tokens));
+					keys.Add(Parse(tokens, owner));
 					tokens.PopExpected(":");
-					values.Add(Parse(tokens));
+					values.Add(Parse(tokens, owner));
 					previousHasCommaOrFirst = tokens.PopIfPresent(",");
 				}
-				return new DictionaryDefinition(braceToken, keys, values);
+				return new DictionaryDefinition(braceToken, keys, values, owner);
 			}
 
 			if (next.Length > 2 && next.Substring(0, 2) == "0x")
 			{
 				Token intToken = tokens.Pop();
 				int intValue = IntegerConstant.ParseIntConstant(intToken, intToken.Value);
-				return new IntegerConstant(intToken, intValue);
+				return new IntegerConstant(intToken, intValue, owner);
 			}
 
 			if (Parser.IsInteger(next))
@@ -386,11 +386,11 @@ namespace Crayon
 					numberValue += "." + afterDecimal.Value;
 
 					double floatValue = FloatConstant.ParseValue(numberToken, numberValue);
-					return new FloatConstant(numberToken, floatValue);
+					return new FloatConstant(numberToken, floatValue, owner);
 				}
 
 				int intValue = IntegerConstant.ParseIntConstant(numberToken, numberToken.Value);
-				return new IntegerConstant(numberToken, intValue);
+				return new IntegerConstant(numberToken, intValue, owner);
 			}
 
 			if (tokens.IsNext("."))
@@ -408,7 +408,7 @@ namespace Crayon
 				double floatValue;
 				if (double.TryParse(numberValue, out floatValue))
 				{
-					return new FloatConstant(dotToken, floatValue);
+					return new FloatConstant(dotToken, floatValue, owner);
 				}
 
 				throw new ParserException(dotToken, "Invalid float literal.");

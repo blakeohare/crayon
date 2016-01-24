@@ -4,7 +4,9 @@ namespace Crayon.ParseTree
 {
 	internal class ContinueStatement : Executable
 	{
-		public ContinueStatement(Token continueToken) : base(continueToken) { }
+		public ContinueStatement(Token continueToken, Executable owner)
+			: base(continueToken, owner)
+		{ }
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{

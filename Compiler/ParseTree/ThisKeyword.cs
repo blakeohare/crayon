@@ -7,8 +7,8 @@ namespace Crayon.ParseTree
 {
 	internal class ThisKeyword : Expression 
 	{
-		public ThisKeyword(Token token)
-			: base(token)
+		public ThisKeyword(Token token, Executable owner)
+			: base(token, owner)
 		{
 		}
 

@@ -42,8 +42,8 @@ namespace Crayon.ParseTree
 		private Expression explicitMax;
 		private Token explicitMaxToken;
 
-		public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken)
-			: base(switchToken)
+		public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken, Executable owner)
+			: base(switchToken, owner)
 		{
 			if (cases.Count == 0) throw new ParserException(switchToken, "Switch statement needs cases.");
 			if (code.Count == 0) throw new ParserException(switchToken, "Switch statement needs code.");
@@ -177,10 +177,10 @@ namespace Crayon.ParseTree
 
 				if (this.IsSafe & this.IsContinuous)
 				{
-					return new SwitchStatementContinuousSafe(this).Resolve(parser);
+					return new SwitchStatementContinuousSafe(this, this.FunctionOrClassOwner).Resolve(parser);
 				}
 
-				return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax).Resolve(parser);
+				return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax, this.FunctionOrClassOwner).Resolve(parser);
 			}
 			else
 			{

@@ -7,8 +7,8 @@
 		public Expression Root { get; private set; }
 		public Token IncrementToken { get; private set; }
 
-		public Increment(Token firstToken, Token incrementToken, bool isIncrement, bool isPrefix, Expression root)
-			: base(firstToken)
+		public Increment(Token firstToken, Token incrementToken, bool isIncrement, bool isPrefix, Expression root, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.IncrementToken = incrementToken;
 			this.IsIncrement = isIncrement;

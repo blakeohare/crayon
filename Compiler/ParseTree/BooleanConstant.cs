@@ -6,8 +6,8 @@
 
 		public override bool IsLiteral { get { return true; } }
 
-		public BooleanConstant(Token token, bool value)
-			: base(token)
+		public BooleanConstant(Token token, bool value, Executable owner)
+			: base(token, owner)
 		{
 			this.Value = value;
 		}
@@ -17,12 +17,7 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void VariableUsagePass(Parser parser) { }
+		internal override void VariableIdAssignmentPass(Parser parser) { }
 	}
 }

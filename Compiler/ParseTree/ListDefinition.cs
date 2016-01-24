@@ -6,8 +6,8 @@ namespace Crayon.ParseTree
 	internal class ListDefinition : Expression
 	{
 		public Expression[] Items { get; private set; }
-		public ListDefinition(Token openBracket, IList<Expression> items)
-			: base(openBracket)
+		public ListDefinition(Token openBracket, IList<Expression> items, Executable owner)
+			: base(openBracket, owner)
 		{
 			this.Items = items.ToArray();
 		}

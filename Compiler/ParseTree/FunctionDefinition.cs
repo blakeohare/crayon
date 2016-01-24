@@ -6,32 +6,44 @@ namespace Crayon.ParseTree
 	internal class FunctionDefinition : Executable
 	{
 		public Token NameToken { get; private set; }
-		public Token[] ArgNames { get; private set; }
-		public Expression[] DefaultValues { get; private set; }
-		public int[] ArgVarIDs { get; private set; }
-		public Executable[] Code { get; private set; }
-		public Annotation[] ArgAnnotations { get; private set; }
+		public Token[] ArgNames { get; set; }
+		public Expression[] DefaultValues { get; set; }
+		private int[] argVarIds = null;
+		public Executable[] Code { get; set; }
+		public Annotation[] ArgAnnotations { get; set; }
 		private Dictionary<string, Annotation> annotations;
 		public VariableIdAllocator VariableIds { get; private set; }
 		public int NameGlobalID { get; set; }
 		public string Namespace { get; set; }
 
-		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations, string namespyace)
-			: base(functionToken)
+		public FunctionDefinition(
+			Token functionToken,
+			Executable nullableOwner,
+			Token nameToken,
+			IList<Annotation> functionAnnotations,
+			string namespyace)
+			: base(functionToken, nullableOwner)
 		{
 			this.Namespace = namespyace;
 			this.NameToken = nameToken;
-			this.ArgNames = argNames.ToArray();
-			this.ArgVarIDs = new int[this.ArgNames.Length];
-			this.DefaultValues = argDefaultValues.ToArray();
-			this.ArgAnnotations = argAnnotations.ToArray();
-			this.Code = code.ToArray();
 			this.annotations = new Dictionary<string, Annotation>();
 			foreach (Annotation annotation in functionAnnotations)
 			{
 				this.annotations[annotation.Type] = annotation;
 			}
 			this.VariableIds = new VariableIdAllocator();
+		}
+
+		public int[] ArgVarIDs
+		{
+			get
+			{
+				if (this.argVarIds == null)
+				{
+					this.argVarIds = new int[this.ArgNames.Length];
+				}
+				return this.argVarIds;
+			}
 		}
 
 		public Annotation GetAnnotation(string type)
@@ -61,7 +73,7 @@ namespace Crayon.ParseTree
 			if (this.Code.Length == 0 || !(this.Code[this.Code.Length - 1] is ReturnStatement))
 			{
 				List<Executable> newCode = new List<Executable>(this.Code);
-				newCode.Add(new ReturnStatement(this.FirstToken, null));
+				newCode.Add(new ReturnStatement(this.FirstToken, null, this.FunctionOrClassOwner));
 				this.Code = newCode.ToArray();
 			}
 

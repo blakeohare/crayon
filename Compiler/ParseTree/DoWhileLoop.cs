@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Executable[] Code { get; private set; }
 		public Expression Condition { get; private set; }
 
-		public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition)
-			: base(doToken)
+		public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition, Executable owner)
+			: base(doToken, owner)
 		{
 			this.Code = code.ToArray();
 			this.Condition = condition;

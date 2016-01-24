@@ -13,8 +13,8 @@ namespace Crayon.ParseTree
 		public string FieldName { get; private set; }
 		public StructDefinition StructDefinition { get; private set; }
 
-		public DotStepStruct(Token token, StructDefinition structDef, DotStep original)
-			: base(token)
+		public DotStepStruct(Token token, StructDefinition structDef, DotStep original, Executable owner)
+			: base(token, owner)
 		{
 			this.DotToken = original.DotToken;
 			this.RawRoot = original.Root;

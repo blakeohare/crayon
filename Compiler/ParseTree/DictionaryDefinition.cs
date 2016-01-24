@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Expression[] Keys { get; private set; }
 		public Expression[] Values { get; private set; }
 
-		public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values)
-			: base(braceToken)
+		public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, Executable owner)
+			: base(braceToken, owner)
 		{
 			this.Keys = keys.ToArray();
 			this.Values = values.ToArray();

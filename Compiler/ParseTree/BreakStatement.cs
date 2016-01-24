@@ -4,7 +4,9 @@ namespace Crayon.ParseTree
 {
 	internal class BreakStatement : Executable
 	{
-		public BreakStatement(Token breakToken) : base(breakToken) { }
+		public BreakStatement(Token breakToken, Executable owner)
+			: base(breakToken, owner)
+		{ }
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
@@ -12,13 +14,7 @@ namespace Crayon.ParseTree
 		}
 
 		public override bool IsTerminator { get { return true; } }
-
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void VariableUsagePass(Parser parser) { }
+		internal override void VariableIdAssignmentPass(Parser parser) { }
 	}
 }

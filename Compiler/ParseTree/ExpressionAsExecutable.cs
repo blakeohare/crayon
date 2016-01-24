@@ -6,8 +6,8 @@ namespace Crayon.ParseTree
 	{
 		public Expression Expression { get; private set; }
 
-		public ExpressionAsExecutable(Expression expression)
-			: base(expression.FirstToken)
+		public ExpressionAsExecutable(Expression expression, Executable owner)
+			: base(expression.FirstToken, owner)
 		{
 			this.Expression = expression;
 		}
@@ -24,7 +24,12 @@ namespace Crayon.ParseTree
 			if (this.Expression is Increment)
 			{
 				Increment inc = (Increment)this.Expression;
-				Assignment output = new Assignment(inc.Root, inc.IncrementToken, inc.IsIncrement ? "+=" : "-=", new IntegerConstant(inc.IncrementToken, 1));
+				Assignment output = new Assignment(
+					inc.Root, 
+					inc.IncrementToken, 
+					inc.IsIncrement ? "+=" : "-=", 
+					new IntegerConstant(inc.IncrementToken, 1, this.FunctionOrClassOwner),
+					this.FunctionOrClassOwner);
 				return output.Resolve(parser);
 			}
 

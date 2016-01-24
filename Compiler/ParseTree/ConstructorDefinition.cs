@@ -12,8 +12,8 @@ namespace Crayon.ParseTree
 		public Expression[] BaseArgs { get; private set; }
 		public Token BaseToken { get; private set; }
 
-		public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken)
-			: base(constructorToken)
+		public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken, Executable owner)
+			: base(constructorToken, owner)
 		{
 			this.Args = args.ToArray();
 			this.ArgVarIDs = new int[this.Args.Length];

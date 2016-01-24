@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Token DotToken { get; private set; }
 		public Token StepToken { get; private set; }
 
-		public DotStep(Expression root, Token dotToken, Token stepToken)
-			: base(root.FirstToken)
+		public DotStep(Expression root, Token dotToken, Token stepToken, Executable owner)
+			: base(root.FirstToken, owner)
 		{
 			this.Root = root;
 			this.DotToken = dotToken;
@@ -31,7 +31,7 @@ namespace Crayon.ParseTree
 				{
 					if (enumDef.IntValue.ContainsKey(step))
 					{
-						return new IntegerConstant(this.FirstToken, enumDef.IntValue[step]);
+						return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.FunctionOrClassOwner);
 					}
 					throw new ParserException(this.StepToken, "The enum '" + variable.Name + "' does not contain a definition for '" + step + "'");
 				}
@@ -53,14 +53,14 @@ namespace Crayon.ParseTree
 						{
 							throw new ParserException(this.StepToken, "The struct '" + structDef.Name.Value + "' does not contain a field called '" + step + "'");
 						}
-						return new DotStepStruct(this.FirstToken, structDef, this);
+						return new DotStepStruct(this.FirstToken, structDef, this, this.FunctionOrClassOwner);
 					}
 				}
 			}
 
 			if (this.Root is BaseKeyword)
 			{
-				return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken).Resolve(parser);
+				return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.FunctionOrClassOwner).Resolve(parser);
 			}
 
 			if (this.Root is StringConstant)
@@ -77,7 +77,7 @@ namespace Crayon.ParseTree
 				else if (step == "length")
 				{
 					int length = ((StringConstant)this.Root).Value.Length;
-					return new IntegerConstant(this.FirstToken, length);
+					return new IntegerConstant(this.FirstToken, length, this.FunctionOrClassOwner);
 				}
 			}
 

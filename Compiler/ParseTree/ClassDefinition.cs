@@ -8,20 +8,25 @@ namespace Crayon.ParseTree
 		public int ClassID { get; private set; }
 		public Token NameToken { get; private set; }
 		public Token[] SubClasses { get; private set; }
-		public FunctionDefinition[] Methods { get; private set; }
-		public ConstructorDefinition Constructor { get; private set; }
+		public FunctionDefinition[] Methods { get; set; }
+		public ConstructorDefinition Constructor { get; set; }
 		public string Namespace { get; set; }
+
+		// When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
 
 		private ClassDefinition baseClassInstance = null;
 
-		public ClassDefinition(Token classToken, Token nameToken, IList<Token> subclasses, IList<FunctionDefinition> methods, ConstructorDefinition constructor, string namespyace)
-			: base(classToken)
+		public ClassDefinition(
+			Token classToken, 
+			Token nameToken, 
+			IList<Token> subclasses,
+			string namespyace, 
+			Executable owner)
+			: base(classToken, owner)
 		{
 			this.Namespace = namespyace;
 			this.NameToken = nameToken;
 			this.SubClasses = subclasses.ToArray();
-			this.Methods = methods.ToArray();
-			this.Constructor = constructor;
 		}
 
 		internal override IList<Executable> Resolve(Parser parser)

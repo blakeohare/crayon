@@ -59,8 +59,8 @@ namespace Crayon.ParseTree
 			return number;
 		}
 
-		public IntegerConstant(Token token, int value)
-			: base(token)
+		public IntegerConstant(Token token, int value, Executable owner)
+			: base(token, owner)
 		{
 			this.Value = value;
 		}

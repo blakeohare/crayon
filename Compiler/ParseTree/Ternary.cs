@@ -6,8 +6,8 @@
 		public Expression TrueValue { get; private set; }
 		public Expression FalseValue { get; private set; }
 
-		public Ternary(Expression condition, Expression trueValue, Expression falseValue)
-			: base(condition.FirstToken)
+		public Ternary(Expression condition, Expression trueValue, Expression falseValue, Executable owner)
+			: base(condition.FirstToken, owner)
 		{
 			this.Condition = condition;
 			this.TrueValue = trueValue;

@@ -10,15 +10,15 @@ namespace Crayon.ParseTree
 		public Expression Right { get; private set; }
 		public Token Op { get; private set; }
 
-		public BinaryOpChain(Expression left, Token op, Expression right)
-			: base(left.FirstToken)
+		public BinaryOpChain(Expression left, Token op, Expression right, Executable owner)
+			: base(left.FirstToken, owner)
 		{
 			this.Left = left;
 			this.Right = right;
 			this.Op = op;
 		}
 
-		public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops)
+		public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Executable owner)
 		{
 			// TODO: don't pop from the front, you fool. that's silly slow. 
 			List<Expression> mutableList = new List<Expression>(expressions);
@@ -33,14 +33,14 @@ namespace Crayon.ParseTree
 			Token op = mutableOps[0];
 			mutableOps.RemoveAt(0);
 
-			BinaryOpChain boc = new BinaryOpChain(left, op, right);
+			BinaryOpChain boc = new BinaryOpChain(left, op, right, owner);
 			while (mutableList.Count > 0)
 			{
 				right = mutableList[0];
 				mutableList.RemoveAt(0);
 				op = mutableOps[0];
 				mutableOps.RemoveAt(0);
-				boc = new BinaryOpChain(boc, op, right);
+				boc = new BinaryOpChain(boc, op, right, owner);
 			}
 
 			return boc;
@@ -58,10 +58,6 @@ namespace Crayon.ParseTree
 
 		internal override Expression Resolve(Parser parser)
 		{
-			if (this.Left.Resolve(parser) == null)
-			{
-
-			}
 			this.Left = this.Left.Resolve(parser);
 			this.Right = this.Right.Resolve(parser);
 			string leftType = this.GetType(this.Left);
@@ -223,17 +219,17 @@ namespace Crayon.ParseTree
 
 		private Expression MakeFloat(Token firstToken, double value)
 		{
-			return new FloatConstant(firstToken, value);
+			return new FloatConstant(firstToken, value, this.FunctionOrClassOwner);
 		}
 
 		private Expression MakeInt(Token firstToken, int value)
 		{
-			return new IntegerConstant(firstToken, value);
+			return new IntegerConstant(firstToken, value, this.FunctionOrClassOwner);
 		}
 
 		private Expression MakeString(Token firstToken, string value)
 		{
-			return new StringConstant(firstToken, value);
+			return new StringConstant(firstToken, value, this.FunctionOrClassOwner);
 		}
 
 		private bool GetBool(Expression expr)
@@ -268,7 +264,7 @@ namespace Crayon.ParseTree
 
 		private Expression MakeBool(Token firstToken, bool value)
 		{
-			return new BooleanConstant(firstToken, value);
+			return new BooleanConstant(firstToken, value, this.FunctionOrClassOwner);
 		}
 
 		internal override void VariableUsagePass(Parser parser)

@@ -6,8 +6,8 @@
 		public Expression[] Args { get; private set; }
 		public ILibraryConfig AssociatedLibrary { get; private set; }
 
-		public SystemFunctionCall(Token token, Expression[] args)
-			: base(token)
+		public SystemFunctionCall(Token token, Expression[] args, Executable owner)
+			: base(token, owner)
 		{
 			this.Name = token.Value;
 			this.Args = args;
@@ -33,13 +33,13 @@
 			if (this.Name == "$_has_increment")
 			{
 				bool hasIncrement = !parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.Python.PythonPlatform));
-				return new BooleanConstant(this.FirstToken, hasIncrement);
+				return new BooleanConstant(this.FirstToken, hasIncrement, this.FunctionOrClassOwner);
 			}
 
 			if (this.Name == "$_is_javascript")
 			{
 				bool isJavaScript = parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.JavaScript.JavaScriptPlatform));
-				return new BooleanConstant(this.FirstToken, isJavaScript);
+				return new BooleanConstant(this.FirstToken, isJavaScript, this.FunctionOrClassOwner);
 			}
 
 			// args have already been resolved.

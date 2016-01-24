@@ -4,8 +4,8 @@
 	{
 		public Expression Root { get; private set; }
 
-		public BooleanNot(Token bang, Expression root)
-			: base(bang)
+		public BooleanNot(Token bang, Expression root, Executable owner)
+			: base(bang, owner)
 		{
 			this.Root = root;
 		}
@@ -16,7 +16,7 @@
 
 			if (this.Root is BooleanConstant)
 			{
-				return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value);
+				return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.FunctionOrClassOwner);
 			}
 
 			return this;

@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Token NameToken { get; private set; }
 		public Expression[] Args { get; private set; }
 
-		public StructInstance(Token firstToken, Token nameToken, IList<Expression> args)
-			: base(firstToken)
+		public StructInstance(Token firstToken, Token nameToken, IList<Expression> args, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.NameToken = nameToken;
 			this.Args = args.ToArray();

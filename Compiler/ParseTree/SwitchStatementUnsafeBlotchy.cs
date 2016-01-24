@@ -25,8 +25,8 @@ namespace Crayon.ParseTree
 		private static int counter = 0;
 		private int id = ++counter;
 
-		public SwitchStatementUnsafeBlotchy(SwitchStatement switchStatement, bool useExplicitMax, int explicitMax)
-			: base(switchStatement.FirstToken)
+		public SwitchStatementUnsafeBlotchy(SwitchStatement switchStatement, bool useExplicitMax, int explicitMax, Executable owner)
+			: base(switchStatement.FirstToken, owner)
 		{
 			this.OriginalSwitchStatement = switchStatement;
 			this.Condition = switchStatement.Condition;

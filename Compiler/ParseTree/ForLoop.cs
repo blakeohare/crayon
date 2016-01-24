@@ -10,11 +10,11 @@ namespace Crayon.ParseTree
 		public Executable[] Step { get; private set; }
 		public Executable[] Code { get; private set; }
 
-		public ForLoop(Token forToken, IList<Executable> init, Expression condition, IList<Executable> step, IList<Executable> code)
-			: base(forToken)
+		public ForLoop(Token forToken, IList<Executable> init, Expression condition, IList<Executable> step, IList<Executable> code, Executable owner)
+			: base(forToken, owner)
 		{
 			this.Init = init.ToArray();
-			this.Condition = condition ?? new BooleanConstant(forToken, true);
+			this.Condition = condition ?? new BooleanConstant(forToken, true, owner);
 			this.Step = step.ToArray();
 			this.Code = code.ToArray();
 		}

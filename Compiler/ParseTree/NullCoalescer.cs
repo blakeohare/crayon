@@ -5,8 +5,8 @@
 		public Expression PrimaryExpression { get; set; }
 		public Expression SecondaryExpression { get; set; }
 
-		public NullCoalescer(Expression primaryExpression, Expression secondaryExpression)
-			: base(primaryExpression.FirstToken)
+		public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, Executable owner)
+			: base(primaryExpression.FirstToken, owner)
 		{
 			this.PrimaryExpression = primaryExpression;
 			this.SecondaryExpression = secondaryExpression;
