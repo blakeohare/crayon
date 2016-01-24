@@ -6,6 +6,7 @@ namespace Crayon.ParseTree
 	internal class FunctionDefinition : Executable
 	{
 		public Token NameToken { get; private set; }
+		public bool IsStaticMethod { get; private set; }
 		public Token[] ArgNames { get; set; }
 		public Expression[] DefaultValues { get; set; }
 		private int[] argVarIds = null;
@@ -19,11 +20,13 @@ namespace Crayon.ParseTree
 		public FunctionDefinition(
 			Token functionToken,
 			Executable nullableOwner,
+			bool isStaticMethod,
 			Token nameToken,
 			IList<Annotation> functionAnnotations,
 			string namespyace)
 			: base(functionToken, nullableOwner)
 		{
+			this.IsStaticMethod = isStaticMethod;
 			this.Namespace = namespyace;
 			this.NameToken = nameToken;
 			this.annotations = new Dictionary<string, Annotation>();

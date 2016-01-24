@@ -22,6 +22,18 @@ namespace Crayon
 			return this.PeekValue() == token;
 		}
 
+		public bool AreNext(string token1, string token2)
+		{
+			if (this.IsNext(token1))
+			{
+				if (this.index + 1 < this.length)
+				{
+					return this.tokens[this.index + 1].Value == token2;
+				}
+			}
+			return false;
+		}
+
 		public Token Peek()
 		{
 			if (this.index < this.length)

@@ -264,10 +264,11 @@ namespace Crayon
 
 			tokens.PopExpected("{");
 			List<FunctionDefinition> methods = new List<FunctionDefinition>();
+			List<FieldDeclaration> fields = new List<FieldDeclaration>();
 			ConstructorDefinition constructorDef = null;
 			while (!tokens.PopIfPresent("}"))
 			{
-				if (tokens.IsNext("function"))
+				if (tokens.IsNext("function") || tokens.AreNext("static", "function"))
 				{
 					methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(parser, tokens, cd));
 				}
@@ -280,15 +281,42 @@ namespace Crayon
 
 					constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(parser, tokens, cd);
 				}
+				else if (tokens.AreNext("static", "constructor"))
+				{
+					throw new NotImplementedException();
+				}
+				else if (tokens.IsNext("field") || tokens.AreNext("static", "field"))
+				{
+					fields.Add(ExecutableParser.ParseField(tokens, cd));
+				}
 				else
 				{
 					tokens.PopExpected("}");
 				}
 			}
 
+			cd.Methods = methods.ToArray();
+			cd.Constructor = constructorDef;
+			cd.Fields = fields.ToArray();
+
 			if (baseClasses.Count > 1) throw new ParserException(baseClasses[1], "Cannot support interfaces yet.");
 
 			return cd;
+		}
+
+		private static FieldDeclaration ParseField(TokenStream tokens, ClassDefinition owner)
+		{
+			bool isStatic = tokens.PopIfPresent("static");
+			Token fieldToken = tokens.PopExpected("field");
+			Token nameToken = tokens.Pop();
+			Parser.VerifyIdentifier(nameToken);
+			FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner);
+			if (tokens.PopIfPresent("="))
+			{
+				fd.DefaultValue = ExpressionParser.Parse(tokens, owner);
+			}
+			tokens.PopExpected(";");
+			return fd;
 		}
 
 		private static Executable ParseStruct(TokenStream tokens, Executable owner)
@@ -362,6 +390,11 @@ namespace Crayon
 
 		private static Executable ParseFunction(Parser parser, TokenStream tokens, Executable nullableOwner)
 		{
+			bool isStatic = 
+				nullableOwner != null && 
+				nullableOwner is ClassDefinition && 
+				tokens.PopIfPresent("static");
+
 			Token functionToken = tokens.PopExpected("function");
 
 			List<Annotation> functionAnnotations = new List<Annotation>();
@@ -374,7 +407,7 @@ namespace Crayon
 			Token functionNameToken = tokens.Pop();
 			Parser.VerifyIdentifier(functionNameToken);
 
-			FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, functionNameToken, functionAnnotations, parser.CurrentNamespace);
+			FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace);
 
 			tokens.PopExpected("(");
 			List<Token> argNames = new List<Token>();

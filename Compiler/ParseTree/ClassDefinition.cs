@@ -10,6 +10,7 @@ namespace Crayon.ParseTree
 		public Token[] SubClasses { get; private set; }
 		public FunctionDefinition[] Methods { get; set; }
 		public ConstructorDefinition Constructor { get; set; }
+		public FieldDeclaration[] Fields { get; set; }
 		public string Namespace { get; set; }
 
 		// When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
