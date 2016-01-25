@@ -1,7 +1,12 @@
-﻿namespace Crayon.ParseTree
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class Variable : Expression
 	{
+		public override bool CanAssignTo { get { return true; } }
+
 		public string Name { get; private set; }
 
 		public int LocalScopeId { get; set; }
@@ -59,6 +64,21 @@
 			return this;
 		}
 
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			if (this.Name.StartsWith("$$"))
+			{
+				return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.FunctionOrClassOwner);
+			}
+
+			Executable exec = DoNameLookup(lookup, imports, this.Name);
+			if (exec != null)
+			{
+				return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.FunctionOrClassOwner);
+			}
+			return this;
+		}
+
 		internal override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
 		{
 			if (this.GetAnnotation("global") == null)
@@ -84,6 +104,11 @@
 			int[] ids = parser.VariableGetLocalAndGlobalIds(this.Name);
 			this.LocalScopeId = ids[0];
 			this.GlobalScopeId = ids[1];
+		}
+
+		public override string ToString()
+		{
+			return "<Variable> " + this.Name;
 		}
 	}
 }

@@ -5,13 +5,17 @@ namespace Crayon.ParseTree
 {
 	internal class Instantiate : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Token NameToken { get; private set; }
+		public string Name { get; private set; }
 		public Expression[] Args { get; private set; }
 
-		public Instantiate(Token firstToken, Token classNameToken, IList<Expression> args, Executable owner)
+		public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, Executable owner)
 			: base(firstToken, owner)
 		{
-			this.NameToken = classNameToken;
+			this.NameToken = firstClassNameToken;
+			this.Name = name;
 			this.Args = args.ToArray();
 		}
 
@@ -19,10 +23,10 @@ namespace Crayon.ParseTree
 		{
 			string className = this.NameToken.Value;
 
-			StructDefinition structDefinition = parser.GetStructDefinition(className);
-
 			if (parser.IsTranslateMode)
 			{
+				StructDefinition structDefinition = parser.GetStructDefinition(className);
+
 				if (structDefinition != null)
 				{
 					StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args, this.FunctionOrClassOwner);
@@ -63,6 +67,13 @@ namespace Crayon.ParseTree
 			{
 				this.Args[i].VariableIdAssignmentPass(parser);
 			}
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+
+			throw new System.NotImplementedException(); // TODO: this
 		}
 	}
 }

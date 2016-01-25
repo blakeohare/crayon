@@ -5,31 +5,36 @@ using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class ThisKeyword : Expression
+	internal class LibraryFunctionReference : Expression
 	{
 		public override bool CanAssignTo { get { return false; } }
 
-		public ThisKeyword(Token token, Executable owner)
+		public string Name { get; private set; }
+
+		public LibraryFunctionReference(Token token, string name, Executable owner)
 			: base(token, owner)
 		{
+			this.Name = name;
 		}
 
 		internal override Expression Resolve(Parser parser)
 		{
-			return this;
+			throw new ParserException(this.FirstToken, "Library functions cannot be passed around as references. They can only be invoked.");
 		}
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			return this;
+			throw new InvalidOperationException(); // Created during resolve name phase.
 		}
 
 		internal override void VariableUsagePass(Parser parser)
 		{
+			throw new NotImplementedException();
 		}
 
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -6,12 +6,14 @@ namespace Crayon.ParseTree
 	{
 		public Token NameToken { get; set; }
 		public Expression DefaultValue { get; set; }
+		public bool IsStaticField { get; private set; }
 
-		public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner)
+		public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic)
 			: base(fieldToken, owner)
 		{
 			this.NameToken = nameToken;
 			this.DefaultValue = new NullConstant(fieldToken, owner);
+			this.IsStaticField = isStatic;
 		}
 
 		internal override IList<Executable> Resolve(Parser parser)
@@ -22,5 +24,11 @@ namespace Crayon.ParseTree
 
 		internal override void VariableUsagePass(Parser parser) { }
 		internal override void VariableIdAssignmentPass(Parser parser) { }
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.DefaultValue = this.DefaultValue.ResolveNames(parser, lookup, imports);
+			return this;
+		}
 	}
 }

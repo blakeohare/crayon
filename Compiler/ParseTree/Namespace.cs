@@ -40,6 +40,11 @@ namespace Crayon.ParseTree
 			throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException();
+		}
+
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			throw new NotImplementedException();

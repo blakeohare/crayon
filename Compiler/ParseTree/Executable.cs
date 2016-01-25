@@ -29,6 +29,8 @@ namespace Crayon.ParseTree
 			return output;
 		}
 
+		internal abstract Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
+
 		// The reason why I still run this function with actuallyDoThis = false is so that other platforms can still be exported to
 		// and potentially crash if the implementation was somehow broken on Python (or some other future platform that doesn't have traditional switch statements).
 		internal static Executable[] RemoveBreaksForElifedSwitch(bool actuallyDoThis, IList<Executable> executables)

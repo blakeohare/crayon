@@ -7,6 +7,8 @@ namespace Crayon.ParseTree
 {
 	internal class ListSlice : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Token BracketToken { get; set; }
 		public Expression[] Items { get; set; } // these can be null
 		public Expression Root { get; set; }
@@ -45,6 +47,13 @@ namespace Crayon.ParseTree
 					this.Items[i] = this.Items[i].Resolve(parser);
 				}
 			}
+			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
 			return this;
 		}
 

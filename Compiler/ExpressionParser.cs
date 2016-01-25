@@ -208,6 +208,13 @@ namespace Crayon
 			Token newToken = tokens.PopExpected("new");
 			Token classNameToken = tokens.Pop();
 			Parser.VerifyIdentifier(classNameToken);
+			string name = classNameToken.Value;
+			while (tokens.PopIfPresent("."))
+			{
+				Token nameNext = tokens.Pop();
+				Parser.VerifyIdentifier(nameNext);
+				name += "." + nameNext.Value;
+			}
 
 			List<Expression> args = new List<Expression>();
 			tokens.PopExpected("(");
@@ -220,7 +227,7 @@ namespace Crayon
 				args.Add(Parse(tokens, owner));
 			}
 
-			return new Instantiate(newToken, classNameToken, args, owner);
+			return new Instantiate(newToken, classNameToken, name, args, owner);
 		}
 
 		private static Expression ParseEntity(TokenStream tokens, Executable owner)

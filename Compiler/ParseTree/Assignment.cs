@@ -63,7 +63,7 @@ namespace Crayon.ParseTree
 			// Note that things like += do not declare a new variable name and so they don't count as assignment
 			// in this context. foo += value should NEVER take a global scope value and assign it to a local scope value.
 			// Globals cannot be assigned to from outside the global scope.
-			if (variable != null && 
+			if (variable != null &&
 				this.AssignmentOpToken.Value == "=")
 			{
 				parser.VariableRegister(variable.Name, true, this.Target.FirstToken);
@@ -88,6 +88,20 @@ namespace Crayon.ParseTree
 			{
 				this.Target.VariableIdAssignmentPass(parser);
 			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Target = this.Target.ResolveNames(parser, lookup, imports);
+			this.Value = this.Value.ResolveNames(parser, lookup, imports);
+
+			// TODO: abstract property, CanAssignTo
+			if (!this.Target.CanAssignTo)
+			{
+				throw new ParserException(this.Target.FirstToken, "Cannot use assignment on this.");
+			}
+
+			return this;
 		}
 	}
 }

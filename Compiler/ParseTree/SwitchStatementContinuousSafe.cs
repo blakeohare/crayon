@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -32,6 +33,11 @@ namespace Crayon.ParseTree
 			}
 
 			return Listify(this);
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException();
 		}
 
 		public SearchTree GenerateSearchTree()

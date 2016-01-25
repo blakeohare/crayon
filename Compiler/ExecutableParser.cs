@@ -82,7 +82,7 @@ namespace Crayon
 						}
 
 						Token pathToken = tokens.Pop();
-						Parser.VerifyIdentifier(importToken);
+						Parser.VerifyIdentifier(pathToken);
 						importPathBuilder.Add(pathToken.Value);
 					}
 					string importPath = string.Join(".", importPathBuilder);
@@ -97,7 +97,7 @@ namespace Crayon
 						throw new ParserException(tokens.Peek(), "Enums can only be defined from the root of a file and cannot be nested inside functions/loops/etc.");
 					}
 
-					return ParseEnumDefinition(tokens, owner);
+					return ParseEnumDefinition(parser, tokens, owner);
 				}
 
 				if (value == "namespace")
@@ -113,7 +113,7 @@ namespace Crayon
 					case "namespace": return ParseNamespace(parser, tokens, owner);
 					case "function": return ParseFunction(parser, tokens, owner);
 					case "class": return ParseClassDefinition(parser, tokens, owner);
-					case "enum": return ParseEnumDefinition(tokens, owner);
+					case "enum": return ParseEnumDefinition(parser, tokens, owner);
 					case "for": return ParseFor(parser, tokens, owner);
 					case "while": return ParseWhile(parser, tokens, owner);
 					case "do": return ParseDoWhile(parser, tokens, owner);
@@ -123,7 +123,7 @@ namespace Crayon
 					case "return": return ParseReturn(tokens, owner);
 					case "break": return ParseBreak(tokens, owner);
 					case "continue": return ParseContinue(tokens, owner);
-					case "const": return ParseConst(tokens, owner);
+					case "const": return ParseConst(parser, tokens, owner);
 					case "constructor": return ParseConstructor(parser, tokens, owner);
 					default: break;
 				}
@@ -194,7 +194,7 @@ namespace Crayon
 			return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
 		}
 
-		private static Executable ParseConst(TokenStream tokens, Executable owner)
+		private static Executable ParseConst(Parser parser, TokenStream tokens, Executable owner)
 		{
 			Token constToken = tokens.PopExpected("const");
 			Token nameToken = tokens.Pop();
@@ -203,10 +203,15 @@ namespace Crayon
 			Expression expression = ExpressionParser.Parse(tokens, owner);
 			tokens.PopExpected(";");
 
-			return new ConstStatement(constToken, nameToken, expression, owner);
+			if (!(expression is IConstantValue))
+			{
+				throw new ParserException(expression.FirstToken, "Constants can only be integers, floats, strings, booleans, or null.");
+			}
+
+			return new ConstStatement(constToken, nameToken, parser.CurrentNamespace, expression, owner);
 		}
 
-		private static Executable ParseEnumDefinition(TokenStream tokens, Executable owner)
+		private static Executable ParseEnumDefinition(Parser parser, TokenStream tokens, Executable owner)
 		{
 			Token enumToken = tokens.PopExpected("enum");
 			Token nameToken = tokens.Pop();
@@ -234,7 +239,7 @@ namespace Crayon
 				items.Add(enumItem);
 			}
 
-			return new EnumDefinition(enumToken, nameToken, items, values, owner);
+			return new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, items, values, owner);
 		}
 
 		private static Executable ParseClassDefinition(Parser parser, TokenStream tokens, Executable owner)
@@ -242,23 +247,35 @@ namespace Crayon
 			Token classToken = tokens.PopExpected("class");
 			Token classNameToken = tokens.Pop();
 			Parser.VerifyIdentifier(classNameToken);
-			List<Token> baseClasses = new List<Token>();
+			List<Token> baseClassTokens = new List<Token>();
+			List<string> baseClassStrings = new List<string>();
 			if (tokens.PopIfPresent(":"))
 			{
-				if (baseClasses.Count > 0)
+				if (baseClassTokens.Count > 0)
 				{
 					tokens.PopExpected(",");
 				}
 
-				Token baseClass = tokens.Pop();
-				Parser.VerifyIdentifier(baseClass);
-				baseClasses.Add(baseClass);
+				Token baseClassToken = tokens.Pop();
+				string baseClassName = baseClassToken.Value;
+
+				Parser.VerifyIdentifier(baseClassToken);
+				while (tokens.PopIfPresent("."))
+				{
+					Token baseClassTokenNext = tokens.Pop();
+					Parser.VerifyIdentifier(baseClassTokenNext);
+					baseClassName += "." + baseClassTokenNext.Value;
+				}
+
+				baseClassTokens.Add(baseClassToken);
+				baseClassStrings.Add(baseClassName);
 			}
 
 			ClassDefinition cd = new ClassDefinition(
 				classToken,
 				classNameToken,
-				baseClasses,
+				baseClassTokens,
+				baseClassStrings,
 				parser.CurrentNamespace,
 				owner);
 
@@ -299,8 +316,6 @@ namespace Crayon
 			cd.Constructor = constructorDef;
 			cd.Fields = fields.ToArray();
 
-			if (baseClasses.Count > 1) throw new ParserException(baseClasses[1], "Cannot support interfaces yet.");
-
 			return cd;
 		}
 
@@ -310,7 +325,7 @@ namespace Crayon
 			Token fieldToken = tokens.PopExpected("field");
 			Token nameToken = tokens.Pop();
 			Parser.VerifyIdentifier(nameToken);
-			FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner);
+			FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic);
 			if (tokens.PopIfPresent("="))
 			{
 				fd.DefaultValue = ExpressionParser.Parse(tokens, owner);

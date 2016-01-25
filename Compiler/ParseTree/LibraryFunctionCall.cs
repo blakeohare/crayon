@@ -7,21 +7,25 @@ namespace Crayon.ParseTree
 {
 	internal class LibraryFunctionCall: Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public string Name { get; private set; }
 		public Expression[] Args { get; private set; }
 		public string LibraryName { get; set; }
 
-		public LibraryFunctionCall(Token token, string name, IList<Expression> args, string libraryName, Executable owner)
+		public LibraryFunctionCall(Token token, string name, IList<Expression> args, Executable owner)
 			: base(token, owner)
 		{
-			if (libraryName == null)
+			string callingLibrary = owner.LibraryName;
+
+			if (callingLibrary == null)
 			{
 				throw new ParserException(this.FirstToken, "Cannot call native library functions from outside a library.");
 			}
 
-			this.LibraryName = libraryName;
+			this.LibraryName = callingLibrary;
 
-			string expectedPrefix = "lib_" + libraryName.ToLower() + "_";
+			string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
 			if (!name.StartsWith(expectedPrefix))
 			{
 				throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
@@ -34,6 +38,11 @@ namespace Crayon.ParseTree
 		{
 			// Args are already resolved.
 			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException(); // this class is generated on the general resolve pass.
 		}
 
 		internal override void VariableUsagePass(Parser parser)

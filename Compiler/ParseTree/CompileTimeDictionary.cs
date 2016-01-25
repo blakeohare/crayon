@@ -7,6 +7,8 @@ namespace Crayon.ParseTree
 {
 	class CompileTimeDictionary : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public string Type { get; private set; }
 
 		public CompileTimeDictionary(Token firstToken, string type, Executable owner)
@@ -26,6 +28,11 @@ namespace Crayon.ParseTree
 
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			return this;
 		}
 	}
 }

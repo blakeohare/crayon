@@ -6,16 +6,18 @@ namespace Crayon.ParseTree
 	internal class EnumDefinition : Executable
 	{
 		public string Name { get; private set; }
+		public string Namespace { get; set; }
 		public Token NameToken { get; private set; }
 		public Token[] Items { get; private set; }
 		public Expression[] Values { get; private set; }
 		public Dictionary<string, int> IntValue { get; private set; }
 
-		public EnumDefinition(Token enumToken, Token nameToken, IList<Token> items, IList<Expression> values, Executable owner)
+		public EnumDefinition(Token enumToken, Token nameToken, string ns, IList<Token> items, IList<Expression> values, Executable owner)
 			: base(enumToken, owner)
 		{
 			this.NameToken = nameToken;
 			this.Name = nameToken.Value;
+			this.Namespace = ns;
 			this.Items = items.ToArray();
 			this.Values = values.ToArray();
 			this.IntValue = new Dictionary<string, int>();
@@ -85,6 +87,11 @@ namespace Crayon.ParseTree
 
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new System.InvalidOperationException();
 		}
 	}
 }

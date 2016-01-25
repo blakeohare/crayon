@@ -69,6 +69,8 @@ struct ProgramData {
 	@type('int') valueStackSize,
 	@type('int') valueStackCapacity,
 	@type('Array<Value>') valueStack,
+
+	@type('Array<ClassInfo2>') classTable2,
 }
 
 struct StackFrame {
@@ -116,6 +118,19 @@ struct ClassInfo {
 	@type('int') baseClassId,
 	@type('bool') baseConstructorRequired,
 	@type('bool') initialized
+}
+
+struct ClassInfo2 {
+	@type('int') id,
+	@type('int') nameId,
+	@type('int') baseClassId,
+	@type('Array<Value>') staticFields,
+	@type('int') staticConstructorFunctionId,
+	@type('int') constructorFunctionId,
+	@type('int') memberCount,
+	@type('Dictionary<int, int>') globalIdToMemberId,
+	@type('Array<int>') functionIdsByMemberId, // function ID of 0 indicates a field.
+	@type('int') staticInitializationState, // 0 - not initialized, 1 - in progress, 2 - done
 }
 
 struct FunctionDefinition {

@@ -223,8 +223,18 @@ namespace Crayon
 			buffer.Concat(chunkBuffer);
 		}
 
+		private void CompileClass2(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
+		{
+			throw new NotImplementedException();
+			//List<int> args = new List<int>();
+			//buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
+		}
+
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
 		{
+			this.CompileClass2(parser, buffer, classDefinition);
+
+			/*
 			ByteBuffer methodBuffer = new ByteBuffer();
 			bool hasConstructor = classDefinition.Constructor != null;
 
@@ -284,18 +294,30 @@ namespace Crayon
 
 			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
 			buffer.Add(null, OpCode.JUMP, methodBuffer.Size);
-			buffer.Concat(methodBuffer);
+			buffer.Concat(methodBuffer);//*/
 		}
 
 		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
 		{
 			// TODO: throw parser exception in the resolver if a return appears with any value
+			
+			ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
+
 			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs);
 
 			if (constructor.BaseToken != null)
 			{
 				this.CompileExpressionList(parser, buffer, constructor.BaseArgs, true);
 				buffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
+			}
+
+			foreach (FieldDeclaration fd in cd.Fields)
+			{
+				if (!fd.IsStaticField)
+				{
+					this.CompileExpression(parser, buffer, fd.DefaultValue, true);
+					buffer.Add(fd.FirstToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(fd.NameToken.Value));
+				}
 			}
 
 			this.Compile(parser, buffer, constructor.Code);

@@ -5,6 +5,7 @@ namespace Crayon.ParseTree
 {
 	internal class ConstructorDefinition : Executable
 	{
+		public int FunctionID { get; private set; }
 		public Executable[] Code { get; private set; }
 		public Token[] Args { get; private set; }
 		public int[] ArgVarIDs { get; private set; }
@@ -25,6 +26,8 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
+			this.FunctionID = parser.GetNextFunctionId();
+
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
 				this.DefaultValues[i] = this.DefaultValues[i] == null ? null : this.DefaultValues[i].Resolve(parser);
@@ -89,6 +92,17 @@ namespace Crayon.ParseTree
 			{
 				this.Code[i].VariableIdAssignmentPass(parser);
 			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
+			if (this.BaseArgs != null)
+			{
+				this.BatchExpressionNameResolver(parser, lookup, imports, this.BaseArgs);
+			}
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
 		}
 	}
 }

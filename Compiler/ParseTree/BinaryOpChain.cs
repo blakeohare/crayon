@@ -6,6 +6,8 @@ namespace Crayon.ParseTree
 {
 	internal class BinaryOpChain : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Left { get; private set; }
 		public Expression Right { get; private set; }
 		public Token Op { get; private set; }
@@ -25,7 +27,7 @@ namespace Crayon.ParseTree
 			List<Token> mutableOps = new List<Token>(ops);
 			Expression left = mutableList[0];
 			Expression right = mutableList[1];
-			
+
 			// Pop! Pop! \o/
 			mutableList.RemoveAt(0);
 			mutableList.RemoveAt(0);
@@ -277,6 +279,13 @@ namespace Crayon.ParseTree
 		{
 			this.Left.VariableIdAssignmentPass(parser);
 			this.Right.VariableIdAssignmentPass(parser);
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Left = this.Left.ResolveNames(parser, lookup, imports);
+			this.Right = this.Right.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

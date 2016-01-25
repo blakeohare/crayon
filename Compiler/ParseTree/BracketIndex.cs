@@ -2,6 +2,8 @@
 {
 	internal class BracketIndex : Expression
 	{
+		public override bool CanAssignTo { get { return true; } }
+
 		public Expression Root { get; set; }
 		public Token BracketToken { get; private set; }
 		public Expression Index { get; set; }
@@ -69,6 +71,13 @@
 		{
 			this.Root.VariableIdAssignmentPass(parser);
 			this.Index.VariableIdAssignmentPass(parser);
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			this.Index = this.Index.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

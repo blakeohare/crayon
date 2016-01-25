@@ -10,7 +10,11 @@ namespace Crayon.ParseTree
 			this.Annotations = null;
 		}
 
+		public abstract bool CanAssignTo { get; }
+
 		internal abstract Expression Resolve(Parser parser);
+
+		internal abstract Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
 
 		public virtual bool IsLiteral { get { return false; } }
 

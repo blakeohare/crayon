@@ -5,6 +5,8 @@ namespace Crayon.ParseTree
 {
 	internal class ListDefinition : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Items { get; private set; }
 		public ListDefinition(Token openBracket, IList<Expression> items, Executable owner)
 			: base(openBracket, owner)
@@ -19,6 +21,12 @@ namespace Crayon.ParseTree
 				this.Items[i] = this.Items[i].Resolve(parser);
 			}
 
+			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
 			return this;
 		}
 

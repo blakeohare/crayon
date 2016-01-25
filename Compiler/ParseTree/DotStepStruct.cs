@@ -7,6 +7,8 @@ namespace Crayon.ParseTree
 {
 	internal class DotStepStruct : Expression
 	{
+		public override bool CanAssignTo { get { return true; } }
+
 		public Token DotToken { get; private set; }
 		public Expression RawRoot { get; private set; }
 		public string RootVar { get; private set; }
@@ -34,6 +36,11 @@ namespace Crayon.ParseTree
 
 		internal override void VariableUsagePass(Parser parser)
 		{
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException();
 		}
 	}
 }

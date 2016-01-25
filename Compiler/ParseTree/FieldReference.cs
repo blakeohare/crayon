@@ -5,13 +5,16 @@ using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class ThisKeyword : Expression
+	internal class FieldReference : Expression
 	{
-		public override bool CanAssignTo { get { return false; } }
+		public override bool CanAssignTo { get { return true; } }
 
-		public ThisKeyword(Token token, Executable owner)
+		public FieldDeclaration Field { get; set; }
+
+		public FieldReference(Token token, FieldDeclaration field, Executable owner)
 			: base(token, owner)
 		{
+			this.Field = field;
 		}
 
 		internal override Expression Resolve(Parser parser)
@@ -21,15 +24,17 @@ namespace Crayon.ParseTree
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			return this;
+			throw new InvalidOperationException(); // created in the resolve name phase.
 		}
 
 		internal override void VariableUsagePass(Parser parser)
 		{
+			throw new NotImplementedException();
 		}
 
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
+			throw new NotImplementedException();
 		}
 	}
 }

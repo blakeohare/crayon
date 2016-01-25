@@ -21,6 +21,15 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			if (this.Expression != null)
+			{
+				this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
+			}
+			return this;
+		}
+
 		public override bool IsTerminator { get { return true; } }
 
 		internal override void VariableUsagePass(Parser parser)

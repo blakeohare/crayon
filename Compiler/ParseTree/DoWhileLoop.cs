@@ -59,5 +59,12 @@ namespace Crayon.ParseTree
 
 			this.Condition.VariableIdAssignmentPass(parser);
 		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			return this;
+		}
 	}
 }

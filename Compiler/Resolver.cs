@@ -9,8 +9,8 @@ namespace Crayon
 	internal class Resolver
 	{
 		private Parser parser;
-		private IList<Executable> currentCode;
-		
+		private Executable[] currentCode;
+
 		public Resolver(Parser parser, IList<Executable> originalCode)
 		{
 			this.parser = parser;
@@ -27,8 +27,9 @@ namespace Crayon
 			{
 				string ns;
 				string memberName;
-				if (item is FunctionDefinition) {
-					FunctionDefinition fd = (FunctionDefinition) item;
+				if (item is FunctionDefinition)
+				{
+					FunctionDefinition fd = (FunctionDefinition)item;
 					ns = fd.Namespace;
 					memberName = fd.NameToken.Value;
 					if (memberName == "main")
@@ -40,11 +41,29 @@ namespace Crayon
 						mainFound = true;
 						lookup["~"] = item;
 					}
-				} else if (item is ClassDefinition) {
+				}
+				else if (item is ClassDefinition)
+				{
 					ClassDefinition cd = (ClassDefinition)item;
 					ns = cd.Namespace;
-					memberName = cd.Namespace;
-				} else {
+					memberName = cd.NameToken.Value;
+
+					// TODO: nested classes, constants, and enums.
+				}
+				else if (item is EnumDefinition)
+				{
+					EnumDefinition ed = (EnumDefinition)item;
+					ns = ed.Namespace;
+					memberName = ed.Name;
+				}
+				else if (item is ConstStatement)
+				{
+					ConstStatement cs = (ConstStatement)item;
+					ns = cs.Namespace;
+					memberName = cs.Name;
+				}
+				else
+				{
 					throw new Exception();
 				}
 
@@ -72,84 +91,53 @@ namespace Crayon
 				}
 			}
 
+			// Go through and fill in all the partially qualified namespace names.
+			foreach (string ns in namespaces)
+			{
+				lookup[ns] = new Namespace(null, ns, null);
+			}
+
 			return lookup;
 		}
 
-		public Executable[] Resolve(bool isTranslateMode)
+		public Executable[] ResolveTranslatedCode()
 		{
-			if (isTranslateMode)
-			{
-				return this.SimpleFirstPassResolution(this.parser, this.currentCode).ToArray();
-			}
+			this.SimpleFirstPassResolution();
+			return this.currentCode;
+		}
 
+		public Executable[] ResolveInterpretedCode()
+		{
+			// Resolve raw names into the actual things they refer to based on namespaces and imports.
+			this.ResolveNames();
+
+			this.SimpleFirstPassResolution();
+
+			// TODO: rearrange class definition order to be safe for CLASS_INITIALIZER such that all parent classes precede their implementers.
+
+			return this.currentCode;
+		}
+
+		private void ResolveNames()
+		{
 			Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
-			
-			List<Executable> output = this.SimpleFirstPassResolution(this.parser, this.currentCode);
 
-			// These track all possible places where variables can be declared outside of the global scope.
-			List<FunctionDefinition> functions = new List<FunctionDefinition>();
-			List<ClassDefinition> classes = new List<ClassDefinition>();
-			List<ConstructorDefinition> constructors = new List<ConstructorDefinition>();
-
-			List<Executable> codeContainers = new List<Executable>();
-
-			// Assign all ID's to variables.
-			foreach (Executable executable in output)
+			foreach (Executable item in this.currentCode)
 			{
-				if (executable is FunctionDefinition)
-				{
-					FunctionDefinition funcDef = (FunctionDefinition)executable;
-					parser.VariableRegister(funcDef.NameToken.Value, true, funcDef.NameToken);
-					codeContainers.Add(executable);
-				}
-				else if (executable is ClassDefinition)
-				{
-					codeContainers.Add(executable);
-				}
-				else
-				{
-					executable.VariableUsagePass(parser);
-				}
+				item.ResolveNames(this.parser, definitionsByFullyQualifiedNames, item.NamespacePrefixSearch);
 			}
-
-			foreach (Executable executable in output)
-			{
-				if (executable is FunctionDefinition)
-				{
-					// Code containers' usage/id pass methods are meant for doing ID allocation for the code in them.
-					FunctionDefinition funcDef = (FunctionDefinition)executable;
-					funcDef.NameGlobalID = parser.GetGlobalScopeId(funcDef.NameToken.Value)[1];
-				}
-				else if (executable is ClassDefinition)
-				{
-					// Do nothing.
-				}
-				else
-				{
-					executable.VariableIdAssignmentPass(parser);
-				}
-			}
-
-			foreach (Executable functionOrClass in codeContainers)
-			{
-				parser.ResetLocalScope();
-				functionOrClass.VariableUsagePass(parser);
-				functionOrClass.VariableIdAssignmentPass(parser);
-			}
-
-			return output.ToArray();
 		}
 
 		// This will run for both compiled and translated code.
-		private List<Executable> SimpleFirstPassResolution(Parser parser, IList<Executable> original)
+		private void SimpleFirstPassResolution()
 		{
 			List<Executable> output = new List<Executable>();
-			foreach (Executable line in original)
+			foreach (Executable line in this.currentCode)
 			{
-				output.AddRange(line.Resolve(parser));
+				output.AddRange(line.Resolve(this.parser));
 			}
 
-			return output;
+			this.currentCode = output.ToArray();
 		}
 
 		// Convert anything that looks like a function call into a verified pointer to the function if possible using the
@@ -180,6 +168,24 @@ namespace Crayon
 			List<Executable> output = new List<Executable>();
 
 			return output;
+		}
+
+		public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, Executable owner)
+		{
+			if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
+			if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
+			if (item is EnumDefinition) throw new ParserException(primaryToken, "Cannot create reference to enum. Must complete reference to enum member.");
+			if (item is ConstStatement)
+			{
+				// TODO: do this properly.
+				// Must create a new parse node that contains the value rather than use the one from conststatement, otherwise the tokens will be wrong.
+				// It'd be super useful if there was an IConstant interface for expressions that had a clone method that took in a new token.
+				//return ((ConstStatement)exec).Expression;
+				throw new Exception();
+			}
+			if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
+
+			throw new System.InvalidOperationException(); // what?
 		}
 	}
 }

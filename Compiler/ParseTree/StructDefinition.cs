@@ -39,6 +39,11 @@ namespace Crayon.ParseTree
 			return new Executable[0];
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		internal override void VariableUsagePass(Parser parser)
 		{
 		}

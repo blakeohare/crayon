@@ -22,6 +22,13 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
+		}
+
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			foreach (Executable line in this.Code)

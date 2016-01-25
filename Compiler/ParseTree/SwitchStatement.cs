@@ -140,7 +140,7 @@ namespace Crayon.ParseTree
 								string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
 								if (field.ToUpperInvariant() == field)
 								{
-									throw new ParserException(chunk.Cases[i].FirstToken, 
+									throw new ParserException(chunk.Cases[i].FirstToken,
 										"Only strings, integers, and enums can be used in a switch statement. It looks like this is probably supposed to be an enum. Make sure that it is spelled correctly.");
 								}
 							}
@@ -186,6 +186,17 @@ namespace Crayon.ParseTree
 			{
 				return this.CompilationResolution(parser);
 			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			foreach (Chunk chunk in this.Chunks)
+			{
+				this.BatchExpressionNameResolver(parser, lookup, imports, chunk.Cases);
+				this.BatchExecutableNameResolver(parser, lookup, imports, chunk.Code);
+			}
+			return this;
 		}
 
 		internal override void AssignVariablesToIds(VariableIdAllocator varIds)

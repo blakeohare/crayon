@@ -5,6 +5,8 @@ namespace Crayon.ParseTree
 {
 	internal class FunctionCall : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Root { get; private set; }
 		public Token ParenToken { get; private set; }
 		public Expression[] Args { get; private set; }
@@ -29,13 +31,8 @@ namespace Crayon.ParseTree
 			if (this.Root is Variable)
 			{
 				string varName = ((Variable)this.Root).Name;
-				if (varName.StartsWith("$$"))
-				{
-					string libFuncName = varName.Substring(2);
-					return new LibraryFunctionCall(this.FirstToken, libFuncName, this.Args, this.FunctionOrClassOwner.LibraryName, this.FunctionOrClassOwner).Resolve(parser);
-				}
 
-				if (varName.StartsWith("$"))
+				if (parser.IsTranslateMode && varName.StartsWith("$"))
 				{
 					return new SystemFunctionCall(this.Root.FirstToken, this.Args, this.FunctionOrClassOwner).Resolve(parser);
 				}
@@ -66,7 +63,52 @@ namespace Crayon.ParseTree
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
 				this.Args[i].VariableIdAssignmentPass(parser);
-			}	
+			}
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+
+			if (this.Root is LibraryFunctionReference)
+			{
+				return new LibraryFunctionCall(
+					this.FirstToken,
+					((LibraryFunctionReference)this.Root).Name,
+					this.Args,
+					this.FunctionOrClassOwner);
+			}
+
+			if (this.Root is SystemFunctionReference)
+			{
+				return new SystemFunctionCall(this.FirstToken, this.Args, this.FunctionOrClassOwner);
+			}
+
+			if (this.Root is DotStep ||
+				this.Root is Variable ||
+				this.Root is FieldReference ||
+				this.Root is FunctionReference ||
+				this.Root is BaseMethodReference)
+			{
+				return this;
+			}
+
+			if (this.Root is IConstantValue)
+			{
+				if (this.Args.Length == 1 && this.Args[0] is BinaryOpChain)
+				{
+					throw new ParserException(this.ParenToken, "Constants cannot be invoked like functions. Although it sort of looks like you're missing an op here.");
+				}
+				throw new ParserException(this.ParenToken, "Constants cannot be invoked like functions.");
+			}
+
+			if (this.Root is ClassReference)
+			{
+				throw new ParserException(this.Root.FirstToken, "Classes cannot be invoked like a function. If you meant to instantiate a new instance, use the 'new' keyword.");
+			}
+
+			throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
 		}
 	}
 }

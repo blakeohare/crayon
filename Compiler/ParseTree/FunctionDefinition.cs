@@ -5,6 +5,7 @@ namespace Crayon.ParseTree
 {
 	internal class FunctionDefinition : Executable
 	{
+		public int FunctionID { get; set; }
 		public Token NameToken { get; private set; }
 		public bool IsStaticMethod { get; private set; }
 		public Token[] ArgNames { get; set; }
@@ -57,6 +58,8 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
+			this.FunctionID = parser.GetNextFunctionId();
+
 			for (int i = 0; i < this.DefaultValues.Length; ++i)
 			{
 				if (this.DefaultValues[i] != null)
@@ -161,6 +164,13 @@ namespace Crayon.ParseTree
 			{
 				this.Code[i].VariableIdAssignmentPass(parser);
 			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
 		}
 	}
 }

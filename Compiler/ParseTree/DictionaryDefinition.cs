@@ -5,6 +5,8 @@ namespace Crayon.ParseTree
 {
 	internal class DictionaryDefinition : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Keys { get; private set; }
 		public Expression[] Values { get; private set; }
 
@@ -42,6 +44,13 @@ namespace Crayon.ParseTree
 				this.Keys[i].VariableIdAssignmentPass(parser);
 				this.Values[i].VariableIdAssignmentPass(parser);
 			}	
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Keys);
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
+			return this;
 		}
 	}
 }

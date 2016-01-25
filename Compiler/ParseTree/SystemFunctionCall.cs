@@ -2,6 +2,7 @@
 {
 	internal class SystemFunctionCall : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
 		public string Name { get; private set; }
 		public Expression[] Args { get; private set; }
 		public ILibraryConfig AssociatedLibrary { get; private set; }
@@ -43,6 +44,12 @@
 			}
 
 			// args have already been resolved.
+			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
 			return this;
 		}
 

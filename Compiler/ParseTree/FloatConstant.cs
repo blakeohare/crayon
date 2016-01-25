@@ -1,7 +1,9 @@
 ﻿namespace Crayon.ParseTree
 {
-	internal class FloatConstant : Expression
+	internal class FloatConstant : Expression, IConstantValue
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public double Value { get; private set; }
 
 		public override bool IsLiteral { get { return true; } }
@@ -33,6 +35,16 @@
 
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			return this;
+		}
+
+		public Expression CloneValue(Token token, Executable owner)
+		{
+			return new FloatConstant(token, this.Value, owner);
 		}
 	}
 }

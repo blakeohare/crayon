@@ -78,6 +78,7 @@
     <Compile Include="ParseTree\BracketIndex.cs" />
     <Compile Include="ParseTree\BreakStatement.cs" />
     <Compile Include="ParseTree\ClassDefinition.cs" />
+    <Compile Include="ParseTree\ClassReference.cs" />
     <Compile Include="ParseTree\CompileTimeDictionary.cs" />
     <Compile Include="ParseTree\ConstructorDefinition.cs" />
     <Compile Include="ParseTree\ConstStatement.cs" />
@@ -98,12 +99,15 @@
     <Compile Include="ParseTree\ForLoop.cs" />
     <Compile Include="ParseTree\FunctionCall.cs" />
     <Compile Include="ParseTree\FunctionDefinition.cs" />
+    <Compile Include="ParseTree\FunctionReference.cs" />
+    <Compile Include="ParseTree\IConstantValue.cs" />
     <Compile Include="ParseTree\IfStatement.cs" />
     <Compile Include="ParseTree\ImportStatement.cs" />
     <Compile Include="ParseTree\Increment.cs" />
     <Compile Include="ParseTree\Instantiate.cs" />
     <Compile Include="ParseTree\IntegerConstant.cs" />
     <Compile Include="ParseTree\LibraryFunctionCall.cs" />
+    <Compile Include="ParseTree\LibraryFunctionReference.cs" />
     <Compile Include="ParseTree\ListDefinition.cs" />
     <Compile Include="ParseTree\ListSlice.cs" />
     <Compile Include="ParseTree\Namespace.cs" />
@@ -111,7 +115,9 @@
     <Compile Include="ParseTree\Node.cs" />
     <Compile Include="ParseTree\NullCoalescer.cs" />
     <Compile Include="ParseTree\NullConstant.cs" />
+    <Compile Include="ParseTree\PartialNamespaceReference.cs" />
     <Compile Include="ParseTree\ReturnStatement.cs" />
+    <Compile Include="ParseTree\FieldReference.cs" />
     <Compile Include="ParseTree\StringConstant.cs" />
     <Compile Include="ParseTree\StructInstance.cs" />
     <Compile Include="ParseTree\StructDefinition.cs" />
@@ -119,6 +125,7 @@
     <Compile Include="ParseTree\SwitchStatementContinuousSafe.cs" />
     <Compile Include="ParseTree\SwitchStatementUnsafeBlotchy.cs" />
     <Compile Include="ParseTree\SystemFunctionCall.cs" />
+    <Compile Include="ParseTree\SystemFunctionReference.cs" />
     <Compile Include="ParseTree\Ternary.cs" />
     <Compile Include="ParseTree\ThisKeyword.cs" />
     <Compile Include="ParseTree\Variable.cs" />
@@ -271,6 +278,7 @@
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
+    <EmbeddedResource Include="InterpreterSource\ClassInitializer.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -334,6 +342,7 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
+    <EmbeddedResource Include="InterpreterSource\Ops\class_definition_2.cry" />
     <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />

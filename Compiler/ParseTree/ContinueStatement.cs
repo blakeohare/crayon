@@ -20,5 +20,10 @@ namespace Crayon.ParseTree
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			return this;
+		}
 	}
 }

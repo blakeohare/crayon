@@ -5,6 +5,8 @@ namespace Crayon.ParseTree
 {
 	internal class BooleanCombination : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Expressions { get; private set; }
 		public Token[] Ops { get; private set; }
 
@@ -48,6 +50,12 @@ namespace Crayon.ParseTree
 			{
 				expr.VariableIdAssignmentPass(parser);
 			}
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);
+			return this;
 		}
 	}
 }

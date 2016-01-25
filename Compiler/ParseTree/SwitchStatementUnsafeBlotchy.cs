@@ -135,6 +135,11 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException(); // translate mode only
+		}
+
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			this.OriginalSwitchStatement.GetAllVariableNames(lookup);

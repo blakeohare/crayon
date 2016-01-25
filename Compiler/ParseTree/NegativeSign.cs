@@ -2,6 +2,8 @@
 {
 	internal class NegativeSign : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Root { get; private set; }
 
 		public NegativeSign(Token sign, Expression root, Executable owner)
@@ -34,6 +36,12 @@
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Root.VariableIdAssignmentPass(parser);
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Crayon.ParseTree
 {
 	internal class StringConstant : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public string Value { get; private set; }
 		public StringConstant(Token token, string value, Executable owner)
 			: base(token, owner)
@@ -48,6 +51,11 @@ namespace Crayon.ParseTree
 		}
 
 		internal override Expression Resolve(Parser parser)
+		{
+			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			return this;
 		}

@@ -224,7 +224,10 @@ function main() {
 		// The value stack:
 		0, // size
 		100, // capacity
-		$_new_array('Value', 100) // array
+		$_new_array('Value', 100), // array
+
+		// New OO stuff
+		$_new_array('ClassInfo2', 100)
 		));
 
 	runTick();

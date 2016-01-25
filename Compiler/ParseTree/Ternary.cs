@@ -2,6 +2,8 @@
 {
 	internal class Ternary : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Condition { get; private set; }
 		public Expression TrueValue { get; private set; }
 		public Expression FalseValue { get; private set; }
@@ -26,6 +28,14 @@
 				return bc.Value ? this.TrueValue : this.FalseValue;
 			}
 
+			return this;
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			this.TrueValue = this.Condition.ResolveNames(parser, lookup, imports);
+			this.FalseValue = this.Condition.ResolveNames(parser, lookup, imports);
 			return this;
 		}
 

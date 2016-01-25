@@ -2,6 +2,8 @@
 {
 	internal class Increment : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public bool IsIncrement { get; private set; }
 		public bool IsPrefix { get; private set; }
 		public Expression Root { get; private set; }
@@ -43,6 +45,12 @@
 		internal override void VariableIdAssignmentPass(Parser parser)
 		{
 			this.Root.VariableIdAssignmentPass(parser);
+		}
+
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

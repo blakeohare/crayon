@@ -1,0 +1,96 @@
+﻿@type('bool') initializeClass(@type('ProgramData') p, @type('Array<int>') args) {
+	@type('int') i = 0;
+	@type('int') memberId = 0;
+	@type('int') globalId = 0;
+
+	@type('int') classId = $_array_get(args, 0);
+	@type('int') baseClassId = $_array_get(args, 1);
+	@type('int') globalNameId = $_array_get(args, 2);
+	
+	@type('int') constructorFunctionId = $_array_get(args, 3);
+	@type('int') staticConstructorFunctionId = $_array_get(args, 4);
+
+	@type('int') staticFieldCount = $_array_get(args, 5); // without static methods whose function IDs are resolved inline at compile time
+
+	// non-static members
+	@type('int') fieldCount = $_array_get(args, 6);
+	@type('int') methodCount = $_array_get(args, 7);
+	
+	@type('Dictionary<int, int>') globalIdToMemberIndex = $_new_dictionary('int', 'int');
+	@type('List<int>') memberIndexToFunctionId = $_new_list('int');
+
+	@type('Array<ClassInfo2>') classTable = getClassTable(p, classId);
+	if (baseClassId > 0) {
+		// member ID's are allocated first to base class members
+		@type('ClassInfo2') baseClass = $_array_get(classTable, baseClassId);
+		@type('Dictionary<int, int>') baseClassGlobalIdToMemberIndex = ClassInfo2$baseClass.globalIdToMemberId;
+		@type('Array<int>') globalIds = $_dictionary_get_keys(baseClassGlobalIdToMemberIndex);
+		
+		for (i = 0; i < $_array_length(globalIds); i += 1) {
+			globalId = $_array_get(globalIds, i);
+			memberId = $_dictionary_get_guaranteed(baseClassGlobalIdToMemberIndex, globalId);
+			$_dictionary_set(globalIdToMemberIndex, globalId, memberId);
+		}
+
+		@type('Array<int>') baseFunctionLookup = ClassInfo2$baseClass.functionIdsByMemberId;
+		for (i = 0; i < $_array_length(baseFunctionLookup); i += 1) {
+			functionId =  $_array_get(baseFunctionLookup, i);
+			$_list_add(memberIndexToFunctionId, functionid);
+		}
+	}
+
+	@type('int') argsOffset = 8;
+	// And now the subclass (this class) gets the next member IDs
+	for (i = 0; i < argsOffset + fieldCount; i += 1) {
+		globalId = $_array_get(args, i);
+		memberId = $_array_length(memberIndexToFunctionId);
+		$_dictionary_set(globalIdToMemberIndex, globalId, memberId);
+		$_list_add(memberIndexToFunctionId, 0);
+	}
+
+	for (i = 0; i < argsOffset + fieldCount + methodCount; i += 2) {
+		globalId = $_array_get(args, i);
+		memberId = $_array_length(memberIndexToFunctionId);
+		functionId = $_array_get(args, i + 1);
+		$_dictionary_set(globalIdToMemberIndex, globalId, memberId);
+		$_list_add(memberIndexToFunctionId, functionId);
+	}
+
+	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
+	for (i = 0; i < staticFieldCount; i += 1) {
+		$_array_set(staticFields, i, VALUE_NULL);
+	}
+
+	@type('ClassInfo2') classInfo = new ClassInfo2(
+		classId,
+		nameId,
+		baseClassId,
+		staticFields,
+		staticConstructorFunctionId,
+		fieldCount + methodCount, // new instances will be allocated to have a members array of this size.
+		globalIdToMemberIndex,
+		memberIndexToFunctionId,
+		0); // static initialization state
+
+	$_array_set(ProgramData$p.classTable2, classId, classInfo);
+
+	return true;
+}
+
+@type('Array<ClassInfo2>') getClassTable(@type('ProgramData') p, @type('int') expectedCapacity) {
+	@type('Array<ClassInfo2>') oldTable = ProgramData$p.classTable2;
+	@type('int') oldLength = $_array_length(oldTable);
+	if (classId < oldLength) return oldTable;
+	@type('int') newLength = oldLength * 2;
+	if (classId >= newLength) {
+		newLength = classId + 100;
+	}
+
+	@type('Array<ClassInfo2>') newTable = $_new_array('ClassInfo2', newLength);
+	for (@type('int') i = oldLength - 1; i >= 0; --i) {
+		$_array_set(newTable, i, $_array_get(oldTable, i));
+	}
+
+	ProgramData$p.classTable2 = newTable;
+	return newTable;
+}

@@ -20,7 +20,13 @@ namespace Crayon
 			this.NamespacePrefixLookupForCurrentFile = new List<string>();
 		}
 
+		private int functionIdCounter = 0;
 		private int fileIdCounter = 0;
+
+		public int GetNextFunctionId()
+		{
+			return ++this.functionIdCounter;
+		}
 
 		private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
@@ -382,11 +388,6 @@ namespace Crayon
 			return output.ToArray();
 		}
 
-		private Executable[] ResolveCode(IList<Executable> originalCode)
-		{
-			return new Resolver(this, originalCode).Resolve(this.IsTranslateMode);
-		}
-
 		public Executable[] ParseInterpreterCode(string filename, string contents)
 		{
 			TokenStream tokens = Tokenizer.Tokenize(filename, contents, 0, true);
@@ -395,7 +396,7 @@ namespace Crayon
 			{
 				output.Add(ExecutableParser.Parse(this, tokens, false, true, true, null));
 			}
-			return ResolveCode(output);
+			return new Resolver(this, output).ResolveTranslatedCode();
 		}
 
 		private void GetCodeFilesImpl(string rootFolder, string currentFolder, Dictionary<string, string> filesOutput)
@@ -436,7 +437,7 @@ namespace Crayon
 				Executable[] fileContent = this.ParseInterpretedCode(fileName, code, null);
 				output.AddRange(fileContent);
 			}
-			return ResolveCode(output);
+			return new Resolver(this, output).ResolveInterpretedCode();
 		}
 
 		private HashSet<string> importedFiles = new HashSet<string>();
@@ -521,7 +522,39 @@ namespace Crayon
 		}
 
 		private static readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>(
-			"if else class function constructor return break continue for do while true false null this import enum switch base case default foreach try catch finally new".Split(' '));
+			new string[] {
+				"base",
+				"break",
+				"case",
+				"catch",
+				"class",
+				"const",
+				"constructor",
+				"continue",
+				"default",
+				"do",
+				"else",
+				"enum",
+				"false",
+				"field",
+				"finally",
+				"for",
+				"function",
+				"if",
+				"import",
+				"interface",
+				"namespace",
+				"new",
+				"null",
+				"return",
+				"static",
+				"switch",
+				"this",
+				"true",
+				"try",
+				"while",
+			});
+
 		internal static bool IsReservedKeyword(string value)
 		{
 			return RESERVED_KEYWORDS.Contains(value);
@@ -530,6 +563,11 @@ namespace Crayon
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
 		internal static bool IsValidIdentifier(string value)
 		{
+			if (IsReservedKeyword(value))
+			{
+				return false;
+			}
+
 			if (value[0] >= '0' && value[0] <= '9') return false;
 
 			foreach (char c in value)
