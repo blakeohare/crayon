@@ -227,7 +227,8 @@ function main() {
 		$_new_array('Value', 100), // array
 
 		// New OO stuff
-		$_new_array('ClassInfo2', 100)
+		$_new_array('ClassInfo2', 100),
+		$_new_array('FunctionInfo2', 100)
 		));
 
 	runTick();

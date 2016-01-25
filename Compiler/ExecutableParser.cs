@@ -203,11 +203,6 @@ namespace Crayon
 			Expression expression = ExpressionParser.Parse(tokens, owner);
 			tokens.PopExpected(";");
 
-			if (!(expression is IConstantValue))
-			{
-				throw new ParserException(expression.FirstToken, "Constants can only be integers, floats, strings, booleans, or null.");
-			}
-
 			return new ConstStatement(constToken, nameToken, parser.CurrentNamespace, expression, owner);
 		}
 

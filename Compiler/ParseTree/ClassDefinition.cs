@@ -13,6 +13,7 @@ namespace Crayon.ParseTree
 		// TODO: interface definitions.
 		public FunctionDefinition[] Methods { get; set; }
 		public ConstructorDefinition Constructor { get; set; }
+		public ConstructorDefinition StaticConstructor { get; set; }
 		public FieldDeclaration[] Fields { get; set; }
 		public string Namespace { get; set; }
 
@@ -190,16 +191,8 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
 		{
-			// Tack on this class as an import. Once classes/enums/constants can be nested inside other classes, it'll be important.
-			string thisClassFullyQualified = this.Namespace;
-			if (thisClassFullyQualified.Length > 0) thisClassFullyQualified += ".";
-			thisClassFullyQualified += this.NameToken.Value;
-			List<string> newImports = new List<string>(imports);
-			newImports.Add(thisClassFullyQualified);
-			imports = newImports.ToArray();
-
 			List<ClassDefinition> baseClasses = new List<ClassDefinition>();
 			List<Token> baseClassesTokens = new List<Token>();
 			for (int i = 0; i < this.BaseClassDeclarations.Length; ++i)
@@ -233,6 +226,22 @@ namespace Crayon.ParseTree
 			{
 				this.BaseClass = baseClasses[0];
 			}
+		}
+
+		private string[] ExpandImportsToIncludeThis(string[] imports)
+		{
+			// Tack on this class as an import. Once classes/enums/constants can be nested inside other classes, it'll be important.
+			string thisClassFullyQualified = this.Namespace;
+			if (thisClassFullyQualified.Length > 0) thisClassFullyQualified += ".";
+			thisClassFullyQualified += this.NameToken.Value;
+			List<string> newImports = new List<string>(imports);
+			newImports.Add(thisClassFullyQualified);
+			return newImports.ToArray();
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			imports = this.ExpandImportsToIncludeThis(imports);
 
 			foreach (FieldDeclaration fd in this.Fields)
 			{
@@ -243,6 +252,23 @@ namespace Crayon.ParseTree
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Methods);
 
 			return this;
+		}
+
+		public void VerifyNoBaseClassLoops()
+		{
+			if (this.BaseClass == null) return;
+
+			HashSet<int> classIds = new HashSet<int>();
+			ClassDefinition walker = this;
+			while (walker != null)
+			{
+				if (classIds.Contains(walker.ClassID))
+				{
+					throw new ParserException(this.FirstToken, "This class' parent class hierarchy creates a cycle.");
+				}
+				classIds.Add(walker.ClassID);
+				walker = walker.BaseClass;
+			}
 		}
 	}
 }

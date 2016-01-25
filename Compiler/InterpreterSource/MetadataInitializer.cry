@@ -1,7 +1,50 @@
-﻿@type('bool') initializeClass(@type('ProgramData') p, @type('Array<int>') args) {
+﻿function @type('int') initializeFunction(@type('ProgramData') p, @type('Array<int>') args, @type('int') currentPc) {
+
+	@type('int') functionId = $_array_get(args, 0);
+	@type('int') nameId = $_array_get(args, 1);
+	@type('int') minArgCount = $_array_get(args, 2);
+	@type('int') maxArgCount = $_array_get(args, 3);
+	@type('int') functionType = $_array_get(args, 4);
+	@type('int') classId = $_array_get(args, 5);
+	@type('int') pcJump = $_array_get(args, 6);
+
+	@type('Array<FunctionInfo2>') functionTable = getFunctionTable(p, functionId);
+
+	$_array_set(functionTable, functionId, new FunctionInfo2(
+		functionId,
+		nameId,
+		currentPc + 1,
+		minArgCount,
+		maxArgCount,
+		functionType,
+		classId));
+
+	return pcJump;
+}
+
+function @type('Array<FunctionInfo2>') getFunctionTable(@type('ProgramData') p, @type('int') functionId) {
+	@type('Array<FunctionInfo2>') oldTable = ProgramData$p.functionTable;
+	@type('int') oldLength = $_array_length(oldTable);
+
+	if (functionId < oldLength) return oldTable;
+
+	@type('int') newLength = oldLength * 2;
+	if (functionId >= newLength) newLength = functionId + 100;
+
+	@type('Array<FunctionInfo2>') newTable = $_new_array('FunctionInfo2', newLength);
+	for (@type('int') i = 0; i < oldLength; i += 1) {
+		$_array_set(newTable, i, $_array_get(oldTable, i));
+	}
+
+	ProgramData$p.functionTable = newTable;
+	return newTable;
+}
+
+function @type('bool') initializeClass(@type('ProgramData') p, @type('Array<int>') args) {
 	@type('int') i = 0;
 	@type('int') memberId = 0;
 	@type('int') globalId = 0;
+	@type('int') functionId = 0;
 
 	@type('int') classId = $_array_get(args, 0);
 	@type('int') baseClassId = $_array_get(args, 1);
@@ -24,7 +67,7 @@
 		// member ID's are allocated first to base class members
 		@type('ClassInfo2') baseClass = $_array_get(classTable, baseClassId);
 		@type('Dictionary<int, int>') baseClassGlobalIdToMemberIndex = ClassInfo2$baseClass.globalIdToMemberId;
-		@type('Array<int>') globalIds = $_dictionary_get_keys(baseClassGlobalIdToMemberIndex);
+		@type('Array<int>') globalIds = $_dictionary_get_keys('int', baseClassGlobalIdToMemberIndex);
 		
 		for (i = 0; i < $_array_length(globalIds); i += 1) {
 			globalId = $_array_get(globalIds, i);
@@ -35,25 +78,25 @@
 		@type('Array<int>') baseFunctionLookup = ClassInfo2$baseClass.functionIdsByMemberId;
 		for (i = 0; i < $_array_length(baseFunctionLookup); i += 1) {
 			functionId =  $_array_get(baseFunctionLookup, i);
-			$_list_add(memberIndexToFunctionId, functionid);
+			$_list_push(memberIndexToFunctionId, functionId);
 		}
 	}
 
 	@type('int') argsOffset = 8;
 	// And now the subclass (this class) gets the next member IDs
-	for (i = 0; i < argsOffset + fieldCount; i += 1) {
+	for (i = argsOffset; i < argsOffset + fieldCount; i += 1) {
 		globalId = $_array_get(args, i);
-		memberId = $_array_length(memberIndexToFunctionId);
+		memberId = $_list_length(memberIndexToFunctionId);
 		$_dictionary_set(globalIdToMemberIndex, globalId, memberId);
-		$_list_add(memberIndexToFunctionId, 0);
+		$_list_push(memberIndexToFunctionId, 0);
 	}
 
-	for (i = 0; i < argsOffset + fieldCount + methodCount; i += 2) {
+	for (i = argsOffset + fieldCount; i < $_array_length(args); i += 2) {
 		globalId = $_array_get(args, i);
-		memberId = $_array_length(memberIndexToFunctionId);
+		memberId = $_list_length(memberIndexToFunctionId);
 		functionId = $_array_get(args, i + 1);
 		$_dictionary_set(globalIdToMemberIndex, globalId, memberId);
-		$_list_add(memberIndexToFunctionId, functionId);
+		$_list_push(memberIndexToFunctionId, functionId);
 	}
 
 	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
@@ -63,13 +106,14 @@
 
 	@type('ClassInfo2') classInfo = new ClassInfo2(
 		classId,
-		nameId,
+		globalNameId,
 		baseClassId,
 		staticFields,
 		staticConstructorFunctionId,
+		constructorFunctionId,
 		fieldCount + methodCount, // new instances will be allocated to have a members array of this size.
 		globalIdToMemberIndex,
-		memberIndexToFunctionId,
+		$_convert_list_to_array('int', memberIndexToFunctionId),
 		0); // static initialization state
 
 	$_array_set(ProgramData$p.classTable2, classId, classInfo);
@@ -77,7 +121,7 @@
 	return true;
 }
 
-@type('Array<ClassInfo2>') getClassTable(@type('ProgramData') p, @type('int') expectedCapacity) {
+function @type('Array<ClassInfo2>') getClassTable(@type('ProgramData') p, @type('int') classId) {
 	@type('Array<ClassInfo2>') oldTable = ProgramData$p.classTable2;
 	@type('int') oldLength = $_array_length(oldTable);
 	if (classId < oldLength) return oldTable;
@@ -87,7 +131,7 @@
 	}
 
 	@type('Array<ClassInfo2>') newTable = $_new_array('ClassInfo2', newLength);
-	for (@type('int') i = oldLength - 1; i >= 0; --i) {
+	for (@type('int') i = oldLength - 1; i >= 0; i -= 1) {
 		$_array_set(newTable, i, $_array_get(oldTable, i));
 	}
 

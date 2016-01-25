@@ -113,7 +113,7 @@ namespace Crayon
 
 			this.SimpleFirstPassResolution();
 
-			// TODO: rearrange class definition order to be safe for CLASS_INITIALIZER such that all parent classes precede their implementers.
+			this.RearrangeClassDefinitions();
 
 			return this.currentCode;
 		}
@@ -122,9 +122,66 @@ namespace Crayon
 		{
 			Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
 
+			IEnumerable<ClassDefinition> allClasses = this.currentCode.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.ResolveBaseClasses(definitionsByFullyQualifiedNames, cd.NamespacePrefixSearch);
+			}
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.VerifyNoBaseClassLoops();
+			}
+
 			foreach (Executable item in this.currentCode)
 			{
 				item.ResolveNames(this.parser, definitionsByFullyQualifiedNames, item.NamespacePrefixSearch);
+			}
+		}
+
+		private void RearrangeClassDefinitions()
+		{
+			// Rearrange class definitions so that base classes always come first.
+
+			HashSet<int> classIdsIncluded = new HashSet<int>();
+			List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
+			List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
+			List<Executable> output = new List<Executable>();
+			output.AddRange(functionDefinitions);
+			foreach (Executable exec in this.currentCode)
+			{
+				if (exec is FunctionDefinition)
+				{
+					functionDefinitions.Add((FunctionDefinition)exec);
+				}
+				else if (exec is ClassDefinition)
+				{
+					classDefinitions.Add((ClassDefinition)exec);
+				}
+				else
+				{
+					throw new ParserException(exec.FirstToken, "Unexpected item.");
+				}
+			}
+
+			foreach (ClassDefinition cd in classDefinitions)
+			{
+				this.RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
+			}
+		}
+
+		private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<Executable> output)
+		{
+			if (!idsAlreadyIncluded.Contains(def.ClassID))
+			{
+				if (def.BaseClass != null)
+				{
+					this.RearrangeClassDefinitionsHelper(def.BaseClass, idsAlreadyIncluded, output);
+				}
+
+				output.Add(def);
+				idsAlreadyIncluded.Add(def.ClassID);
 			}
 		}
 

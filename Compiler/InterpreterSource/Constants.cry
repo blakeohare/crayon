@@ -19,7 +19,7 @@
 	CALL_FUNCTION_ON_GLOBAL, // 1: global scope ID, 2: num args passed, 3: 1|0 is value used?
 	CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
 	CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
-	CLASS_DEFINITION2, // ^ even more so.
+	CLASS_DEFINITION2, // It's complicated. See initializeClass method in MetadataInitializer.cry
 	CONTINUE, // no ops. This should be resolved into a jump before actually being run.
 	DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
 	DEF_DICTIONARY, // 1: size
@@ -28,7 +28,8 @@
 	DEREF_DOT_ON_BASE, // 1: step ID
 	DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 	FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
-	FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
+	FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceededFUNCTION_DEFINITION2, // 1: function ID, 2: function name ID (or 0 for constructors), 3: PC offset, 4: min args, 5: max args, 6: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor)
+	FUNCTION_DEFINITION2, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: Jump (skip function body)
 	INDEX,
 	ITERATION_STEP, // stack is in the following state: [index, local scope ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
 	JUMP,
@@ -42,6 +43,7 @@
 	NEGATIVE_SIGN, // no args. pop, flip, push.
 	POP, // no args. pop value from value stack.
 	POP_IF_NULL_OR_JUMP, // if the last item on the value stack is null, pop it. If it isn't, then jump. 1: jump distance.
+	PUSH_FUNC_REF, // push a verified function pointer to the stack, 1: function ID, 2: type, 3: class ID for static initialization check (or 0 if no check is necessary)
 	RETURN,
 	RETURN_NULL,
 	SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.

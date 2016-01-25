@@ -17,6 +17,7 @@ namespace Crayon.ParseTree
 		public VariableIdAllocator VariableIds { get; private set; }
 		public int NameGlobalID { get; set; }
 		public string Namespace { get; set; }
+		public int FinalizedPC { get; set; }
 
 		public FunctionDefinition(
 			Token functionToken,

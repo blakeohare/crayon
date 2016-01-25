@@ -278,7 +278,8 @@
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
-    <EmbeddedResource Include="InterpreterSource\ClassInitializer.cry" />
+    <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

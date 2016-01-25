@@ -223,78 +223,48 @@ namespace Crayon
 			buffer.Concat(chunkBuffer);
 		}
 
-		private void CompileClass2(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
-		{
-			throw new NotImplementedException();
-			//List<int> args = new List<int>();
-			//buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
-		}
-
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
 		{
-			this.CompileClass2(parser, buffer, classDefinition);
-
-			/*
-			ByteBuffer methodBuffer = new ByteBuffer();
-			bool hasConstructor = classDefinition.Constructor != null;
-
-			if (hasConstructor)
+			foreach (FunctionDefinition fd in classDefinition.Methods)
 			{
-				this.CompileConstructor(parser, methodBuffer, classDefinition.Constructor);
+				int pc = buffer.Size;
+				fd.FinalizedPC = pc;
+				this.CompileFunctionDefinition(parser, buffer, fd, true);
 			}
 
-			Dictionary<int, int> methodOffsets = new Dictionary<int, int>();
-			Dictionary<int, int> argCount = new Dictionary<int,int>();
-			List<int> methodIds = new List<int>();
-			foreach (FunctionDefinition method in classDefinition.Methods)
-			{
-				int methodName = parser.GetId(method.NameToken.Value);
-				if (methodOffsets.ContainsKey(methodName))
-				{
-					throw new ParserException(method.NameToken, "A method with this name already exists in this class.");
-				}
-				methodIds.Add(methodName);
-				methodOffsets[methodName] = methodBuffer.Size;
-				argCount[methodName] = method.ArgNames.Length;
-
-				this.CompileFunctionDefinition(parser, methodBuffer, method, true);
-			}
-
-			List<int> args = new List<int>();
-			// class name ID
-			args.Add(parser.GetId(classDefinition.NameToken.Value));
+			int classId = classDefinition.ClassID;
+			int baseClassId = classDefinition.BaseClass != null ? classDefinition.BaseClass.ClassID : 0;
+			int nameId = parser.GetId(classDefinition.NameToken.Value);
+			int constructorId = classDefinition.Constructor.FunctionID;
+			int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : 0;
 			
-			// subclass ID or -1
-			if (classDefinition.SubClasses.Length > 1) throw new NotImplementedException("Interfaces not supported yet.");
-			if (classDefinition.SubClasses.Length == 0)
-			{
-				args.Add(-1);
-			}
-			else
-			{
-				args.Add(parser.GetId(classDefinition.SubClasses[0].Value));
-			}
+			FieldDeclaration[] staticFields = classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).ToArray();
+			FieldDeclaration[] regularFields = classDefinition.Fields.Where<FieldDeclaration>(fd => !fd.IsStaticField).ToArray();
+			FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.IsStaticMethod).ToArray();
 
-			// has constructor? (the byte code is always next after the jump)
-			args.Add(hasConstructor ? classDefinition.Constructor.Args.Length : -1);
-
-			// how many methods?
-			args.Add(methodIds.Count);
-
-			// each method is a set of 3 integers...
-			foreach (int methodId in methodIds)
+			List<int> args = new List<int>()
 			{
-				// name of the method...
-				args.Add(methodId);
-				// PC offset...
-				args.Add(methodOffsets[methodId] + 2);
-				// Maximum number of args...
-				args.Add(argCount[methodId]);
+				classId,
+				baseClassId,
+				nameId,
+				constructorId,
+				staticConstructorId,
+				staticFields.Length,
+				regularFields.Length,
+				regularMethods.Length,
+			};
+
+			foreach (FieldDeclaration field in regularFields) {
+				args.Add(parser.GetId(field.NameToken.Value));
 			}
 
-			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
-			buffer.Add(null, OpCode.JUMP, methodBuffer.Size);
-			buffer.Concat(methodBuffer);//*/
+			foreach (FunctionDefinition func in regularMethods)
+			{
+				args.Add(parser.GetId(func.NameToken.Value));
+				args.Add(func.FunctionID);
+			}
+
+			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
 		}
 
 		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
@@ -580,18 +550,26 @@ namespace Crayon
 
 			int offset = tBuffer.Size;
 
+			int minArgCount = 0;
+			for (int i = 0; i < funDef.DefaultValues.Length; ++i)
+			{
+				if (funDef.DefaultValues[i] != null)
+				{
+					break;
+				}
+				minArgCount++;
+			}
+
 			buffer.Add(
 				funDef.FirstToken,
-				OpCode.FUNCTION_DEFINITION,
+				OpCode.FUNCTION_DEFINITION2,
+				funDef.FunctionID,
 				parser.GetId(funDef.NameToken.Value), // local var to save in
-				isMethod ? 0 : 2, // offset from current PC where code is located
+				minArgCount,
 				funDef.ArgNames.Length, // max number of args supplied
-				isMethod ? 1 : 0); // is a method
-			if (!isMethod)
-			{
-				buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, funDef.NameGlobalID);
-				buffer.Add(null, OpCode.JUMP, offset);
-			}
+				isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
+				isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
+				tBuffer.Size);
 
 			buffer.Concat(tBuffer);
 		}
@@ -628,6 +606,7 @@ namespace Crayon
 			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
 			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, outputUsed);
+			else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -637,6 +616,30 @@ namespace Crayon
 			{
 				throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
 			}
+		}
+
+		// Non-invoked function references.
+		private void CompileFunctionReference(Parser parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
+		{
+			EnsureUsed(funcRef.FirstToken, outputUsed);
+
+			FunctionDefinition funcDef = funcRef.FunctionDefinition;
+
+			int classIdStaticCheck = 0;
+			int type = 0;
+			if (funcDef.FunctionOrClassOwner is ClassDefinition && funcDef.IsStaticMethod)
+			{
+				if (funcDef.IsStaticMethod) {
+					classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID ;
+					type = 2;
+				} else {
+					type = 1;
+				}
+			}
+			buffer.Add(funcRef.FirstToken, OpCode.PUSH_FUNC_REF,
+				funcDef.FunctionID,
+				type,
+				classIdStaticCheck);
 		}
 
 		private void CompileBaseKeyword(Parser parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)

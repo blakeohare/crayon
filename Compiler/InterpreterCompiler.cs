@@ -18,11 +18,11 @@ namespace Crayon
 			// These are just piles of functions so they can be compiled in any order.
 			"BinaryOpsUtil.cry",
 			"ByteCodeLoader.cry",
-			"ClassInitializer.cry",
 			"GamepadManager.cry",
 			"Graphics.cry",
 			"Interpreter.cry",
 			"IOManager.cry",
+			"MetadataInitializer.cry",
 			"NetworkManager.cry",
 			"OpenGlPipeline.cry", // conditionally excluded below based on platform.
 			"PrimitiveMethods.cry",

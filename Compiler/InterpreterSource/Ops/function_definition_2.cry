@@ -1,0 +1,2 @@
+﻿
+pc += initializeFunction(p, row, pc); // returns a PC offset to skip over the actual code body of the function.

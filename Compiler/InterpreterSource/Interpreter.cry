@@ -158,6 +158,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'InterpreterSource/Ops/duplicate_stack_top.cry'; break;
 			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'InterpreterSource/Ops/finalize_initialization.cry'; break;
 			case OpCodes.FUNCTION_DEFINITION: $_comment('FUNCTION_DEFINITION'); import inline 'InterpreterSource/Ops/function_definition.cry'; break;
+			case OpCodes.FUNCTION_DEFINITION2: $_comment('FUNCTION_DEFINITION2'); import inline 'InterpreterSource/Ops/function_definition_2.cry'; break;
 			case OpCodes.INDEX: $_comment('INDEX'); import inline 'InterpreterSource/Ops/index.cry'; break;
 			case OpCodes.ITERATION_STEP: $_comment('ITERATION_STEP'); import inline 'InterpreterSource/Ops/iteration_step.cry'; break;
 			case OpCodes.JUMP: $_comment('JUMP'); import inline 'InterpreterSource/Ops/jump.cry'; break;

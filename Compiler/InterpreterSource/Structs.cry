@@ -71,6 +71,7 @@ struct ProgramData {
 	@type('Array<Value>') valueStack,
 
 	@type('Array<ClassInfo2>') classTable2,
+	@type('Array<FunctionInfo2>') functionTable,
 }
 
 struct StackFrame {
@@ -131,6 +132,16 @@ struct ClassInfo2 {
 	@type('Dictionary<int, int>') globalIdToMemberId,
 	@type('Array<int>') functionIdsByMemberId, // function ID of 0 indicates a field.
 	@type('int') staticInitializationState, // 0 - not initialized, 1 - in progress, 2 - done
+}
+
+struct FunctionInfo2 {
+	@type('int') id,
+	@type('int') nameId,
+	@type('int') pc,
+	@type('int') minArgs,
+	@type('int') maxArgs,
+	@type('int') type, // 0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor
+	@type('int') associatedClassId,
 }
 
 struct FunctionDefinition {
