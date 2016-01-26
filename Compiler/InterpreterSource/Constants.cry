@@ -16,6 +16,7 @@
 	CALL_BASE_CONSTRUCTOR, // 1: num args passed
 	CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 	CALL_FUNCTION, // 1: num args passed, 2: 1|0 is value used?
+	CALL_FUNCTION2, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
 	CALL_FUNCTION_ON_GLOBAL, // 1: global scope ID, 2: num args passed, 3: 1|0 is value used?
 	CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
 	CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.
@@ -84,6 +85,27 @@ enum BinaryOps
 
 const MAX_OP = BinaryOps.GREATER_THAN_OR_EQUAL + 1;
 
+// Needs to be in sync with FunctionInvocationType.cs
+enum FunctionInvocationType
+{
+	NORMAL_FUNCTION = 1,
+	STATIC_METHOD = 2,
+	LOCAL_METHOD = 3,
+	POINTER_PROVIDED = 4,
+	FIELD_INVOCATION = 5,
+	CONSTRUCTOR = 6,
+	BASE_CONSTRUCTOR = 7,
+	STATIC_CONSTRUCTOR = 8,
+	PRIMITIVE_METHOD = 9,
+}
+
+enum FunctionPointerType {
+	FUNCTION,
+	METHOD,
+	STATIC_METHOD,
+	PRIMITIVE_METHOD,
+}
+
 enum NativeObjectTypes {
 	SCREEN = %%%TYPE_NATIVE_OBJECT_SCREEN%%%,
 	IMAGE = %%%TYPE_NATIVE_OBJECT_IMAGE%%%,
@@ -99,8 +121,6 @@ enum Types {
 	DICTIONARY = %%%TYPE_ID_DICTIONARY%%%,
 	INSTANCE = %%%TYPE_ID_INSTANCE%%%,
 	FUNCTION = %%%TYPE_ID_FUNCTION%%%,
-	METHOD = %%%TYPE_ID_METHOD%%%,
-	SYS_METHOD = %%%TYPE_ID_SYS_METHOD%%%,
 	NATIVE_OBJECT = %%%TYPE_ID_NATIVE_OBJECT%%%,
 }
 const MAX_TYPE = Types.NATIVE_OBJECT + 1;
@@ -166,4 +186,10 @@ enum SoundEventType {
 	PAUSE_MUSIC = 3,
 	RESUME_MUSIC = 4,
 	PLAY_SOUND = 5,
+}
+
+enum PrimitiveMethodName {
+	LOWER = 1,
+	UPPER,
+	REVERSE,
 }

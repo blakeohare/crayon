@@ -39,7 +39,7 @@ if (int1 != 0) {
 	}
 	StackFrame$stack.pc = pc;
 	pc = int1 - 1;
-	stack = new StackFrame(pc, locals, funcArgs, stack, false, value, valueStackSize);
+	stack = new StackFrame(pc, locals, funcArgs, stack, false, value, valueStackSize, 0);
 } else {
 	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, value);

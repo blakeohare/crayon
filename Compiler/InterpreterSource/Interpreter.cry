@@ -31,6 +31,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') classId = 0;
 	@type('int') functionId = 0;
 	@type('ClassInfo') classInfo = null;
+	@type('ClassInfo2') classInfo2 = null;
 	@type('int') len = 0;
 	@type('Value') root = null;
 	@type('Array<int>') row = null;
@@ -82,6 +83,8 @@ function @omitReturn @type('string') interpret(
 	@type('List<Value>') list1 = null;
 	@type('List<Value>') list2 = null;
 	@type('List<string>') stringList1 = null;
+	@type('List<int>') intList1 = null;
+	@type('Array<Value>') valueArray1 = null;
 	@type('bool') bool1 = false;
 	@type('bool') bool2 = false;
 	@type('List<int>') intList1 = null;
@@ -93,6 +96,7 @@ function @omitReturn @type('string') interpret(
 	@type('HttpRequest') httpRequest1 = null;
 	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
+	@type('FunctionPointer') functionPointer1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -146,6 +150,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.CALL_BASE_CONSTRUCTOR: $_comment('CALL_BASE_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_base_constructor.cry'; break;
 			case OpCodes.CALL_CONSTRUCTOR: $_comment('CALL_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_constructor.cry'; break;
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
+			case OpCodes.CALL_FUNCTION2: $_comment('CALL_FUNCTION2'); import inline 'InterpreterSource/Ops/call_function2.cry'; break;
 			case OpCodes.CALL_FUNCTION_ON_GLOBAL: $_comment('CALL_FUNCTION_ON_GLOBAL'); import inline 'InterpreterSource/Ops/call_function_on_global.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'InterpreterSource/Ops/call_lib_function.cry'; break;
 			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'InterpreterSource/Ops/class_definition.cry'; break;

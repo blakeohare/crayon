@@ -54,6 +54,7 @@
     <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="CompileContext.cs" />
     <Compile Include="ExpressionTranslator.cs" />
+    <Compile Include="FunctionInvocationType.cs" />
     <Compile Include="HackUtil.cs" />
     <Compile Include="ILibraryConfig.cs" />
     <Compile Include="InterpreterCompiler.cs" />
@@ -280,6 +281,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
+    <None Include="InterpreterSource\Ops\call_function2.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

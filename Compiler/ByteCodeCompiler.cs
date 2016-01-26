@@ -9,10 +9,18 @@ namespace Crayon
 	{
 		public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines, IList<string> spriteSheetOpsStringArgs, IList<int[]> spriteSheetOpsIntArgs)
 		{
+			FunctionDefinition mainFunction = lines
+				.OfType<FunctionDefinition>()
+				.Where<FunctionDefinition>(fd => fd.NameToken.Value == "main")
+				.FirstOrDefault<FunctionDefinition>();
+
+			if (mainFunction == null) {
+				throw new Exception(); // should have thrown before if there was no main function.
+			}
+
 			ByteBuffer userCode = new ByteBuffer();
 
 			this.Compile(parser, userCode, lines);
-			userCode.Add(null, OpCode.RETURN_NULL);
 
 			ByteBuffer literalsTable = parser.LiteralLookup.BuildByteCode();
 
@@ -36,6 +44,11 @@ namespace Crayon
 			output.Add(null, OpCode.USER_CODE_START, header.Size + 1, parser.VariableIds.Size);
 			output.Concat(header);
 			output.Concat(userCode);
+
+			// artificially inject a function call to main() at the very end after all declarations are done.
+			output.Add(null, OpCode.DEF_LIST, 0); // TODO: op code to build a list of the command line args. For now just pass in an empty list.
+			output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
+			output.Add(null, OpCode.RETURN_NULL);
 
 			return output;
 		}

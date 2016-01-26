@@ -18,6 +18,7 @@
 		CALL_BASE_CONSTRUCTOR, // 1: num args passed
 		CALL_CONSTRUCTOR, // 1: arg count, 2: class name ID, 3: output used | special cache 1: Class ID
 		CALL_FUNCTION, // 1: num args passed, 2: 1|0 is value used?
+		CALL_FUNCTION2, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
 		CALL_FUNCTION_ON_GLOBAL, // 1: global scope ID, 2: num args passed, 3: 1|0 is value used?
 		CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
 		CLASS_DEFINITION, // Super complicated. See documentation in OO_readme.txt.

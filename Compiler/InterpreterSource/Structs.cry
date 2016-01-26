@@ -72,6 +72,7 @@ struct ProgramData {
 
 	@type('Array<ClassInfo2>') classTable2,
 	@type('Array<FunctionInfo2>') functionTable,
+	@type('List<int>') classStaticInitializationStack,
 }
 
 struct StackFrame {
@@ -82,6 +83,7 @@ struct StackFrame {
 	@type('bool') returnValueUsed,
 	@type('Value') objectContext,
 	@type('int') valueStackSize,
+	@type('int') markClassAsInitialized,
 }
 
 struct Token {
@@ -152,8 +154,19 @@ struct FunctionDefinition {
 
 struct ObjectInstance {
 	@type('int') classId,
-	@type('Dictionary<int, Value>') fields,
-	@type('int') objectId
+	@type('int') objectId,
+	@type('Array<Value>') members,
+
+	// system libraries can attach arbitrary values to objects, which can be operated on more efficiently than values, and
+	// are inherently inaccessible by user code.
+	@type('Array<object>') nativeData,
+}
+
+struct FunctionPointer {
+	@type('int') type, // Enum value: FunctionPointerType
+	@type('Value') context,
+	@type('int') classId,
+	@type('int') functionId,
 }
 
 struct CompositeImage {

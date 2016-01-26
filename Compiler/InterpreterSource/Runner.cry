@@ -157,7 +157,8 @@ function main() {
 		null, // previous
 		false, // returnValueUsed
 		null, // object context
-		0); // valueStackSize
+		0, // valueStackSize
+		0); // static initialization class ID marker upon completion (not applicable here)
 
 	$_set_program_data(new ProgramData(
 		stack,
@@ -228,7 +229,8 @@ function main() {
 
 		// New OO stuff
 		$_new_array('ClassInfo2', 100),
-		$_new_array('FunctionInfo2', 100)
+		$_new_array('FunctionInfo2', 100),
+		$_new_list('int') // class static initialization stack
 		));
 
 	runTick();

@@ -38,7 +38,7 @@ if (func != null) {
 		}
 		StackFrame$stack.pc = pc;
 		pc = FunctionDefinition$funcDef.pc;
-		stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize);
+		stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, null, valueStackSize, 0);
 	} else if (type == Types.METHOD) {
 		methodInstance = $_cast('MethodInstance', Value$func.internalValue);
 		if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
@@ -60,7 +60,8 @@ if (func != null) {
 			stack,
 			returnValueUsed,
 			MethodInstance$methodInstance.context,
-			valueStackSize);
+			valueStackSize,
+			0);
 	} else {
 		return killExecution(stack, pc, "Cannot invoke " + getTypeFromId(type) + " types like a function.");
 	}
