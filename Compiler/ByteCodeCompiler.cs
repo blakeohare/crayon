@@ -1087,19 +1087,32 @@ namespace Crayon
 
 		private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
 		{
-			this.CompileExpressionList(parser, buffer, funCall.Args, true);
-
 			Expression root = funCall.Root;
-			Variable rootVar = root as Variable;
-			if (rootVar != null && rootVar.LocalScopeId == -1)
+			if (root is FunctionReference)
 			{
-				string functionName = rootVar.Name;
-				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION_ON_GLOBAL, rootVar.GlobalScopeId, funCall.Args.Length, outputUsed ? 1 : 0);
+				FunctionReference verifiedFunction = (FunctionReference)root;
+				FunctionDefinition fd = verifiedFunction.FunctionDefinition;
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				if (fd.FunctionOrClassOwner is ClassDefinition)
+				{
+					throw new NotImplementedException(); // TODO: redo this
+				}
+				else
+				{
+					// vanilla function
+					buffer.Add(
+						funCall.ParenToken,
+						OpCode.CALL_FUNCTION2,
+						(int) FunctionInvocationType.NORMAL_FUNCTION,
+						funCall.Args.Length,
+						fd.FunctionID,
+						outputUsed ? 1 : 0,
+						0);
+				}
 			}
 			else
 			{
-				this.CompileExpression(parser, buffer, funCall.Root, true);
-				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION, funCall.Args.Length, outputUsed ? 1 : 0);
+				throw new NotImplementedException(); // TODO: redo this
 			}
 		}
 	}
