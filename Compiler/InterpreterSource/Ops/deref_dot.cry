@@ -1,4 +1,7 @@
 ﻿
+return killExecution(stack, pc, "TODO: all this has to be changed.");
+
+/*
 root = $_array_get(valueStack, valueStackSize - 1);
 type = Value$root.type;
 nameId = $_array_get(row, 0);
@@ -329,3 +332,4 @@ if (type == Types.INSTANCE) {
 		$_array_set(valueStack, valueStackSize - 1, new Value(Types.SYS_METHOD, new SystemMethod(root, int1)));
 	}
 }
+//*/

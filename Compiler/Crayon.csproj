@@ -281,7 +281,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
-    <None Include="InterpreterSource\Ops\call_function2.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\call_function2.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

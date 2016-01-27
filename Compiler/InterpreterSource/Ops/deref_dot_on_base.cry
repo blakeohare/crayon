@@ -1,4 +1,5 @@
-﻿
+﻿return killExecution(stack, pc, "TODO: remove this.");
+/*
 root = StackFrame$stack.objectContext;
 nameId = $_array_get(row, 0);
 classId = $_array_get(row, 1);
@@ -17,3 +18,4 @@ if ($_dictionary_contains(methodDefinitionLookup, nameId)) {
 } else {
 	return killExecution(stack, pc, "Base class did not have a method by this name.");
 }
+*/

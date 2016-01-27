@@ -6,5 +6,10 @@ valueStackSize -= 1;
 value = $_array_get(valueStack, valueStackSize);
 
 nameId = $_array_get(row, 0);
+
+/*
 objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
 $_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
+//*/
+
+return killExecution(stack, pc, "TODO: re-implement with new OO");

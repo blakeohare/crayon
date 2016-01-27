@@ -2,6 +2,9 @@
 
 // This is mostly replicated in CALL_FUNCTION_ON_GLOBAL. Be sure to keep changes in sync.
 
+return killExecution(stack, pc, "TODO: should be replaced with CALL_FUNCTION2");
+
+/*
 valueStackSize -= 1;
 func = $_array_get(valueStack, valueStackSize);
 argCount = $_array_get(row, 0);
@@ -71,3 +74,4 @@ if (type == Types.SYS_METHOD) {
 } else {
 	return killExecution(stack, pc, "Cannot invoke " + getTypeFromId(type) + " like a function.");
 }
+//*/

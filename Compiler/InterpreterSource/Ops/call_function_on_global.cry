@@ -1,4 +1,6 @@
 ﻿
+return killExecution(stack, pc, "TODO: should be replaced with CALL_FUNCTION2");
+/*
 // This is mostly replicated in CALL_FUNCTION. Be sure to keep changes in sync.
 argCount = $_array_get(row, 1);
 returnValueUsed = $_array_get(row, 2) == 1;
@@ -68,3 +70,4 @@ if (func != null) {
 } else {
 	return killExecution(stack, pc, "That function is not defined: '" + $_array_get(identifiers, $_array_get(row, 0)) + "'");
 }
+//*/

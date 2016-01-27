@@ -67,7 +67,7 @@ if (type == FunctionInvocationType.STATIC_METHOD) {
 		bool1 = false; // should call static constructor?
 		if (ClassInfo2$classInfo2.staticInitializationState == 2) {
 			ClassInfo2$classInfo2.staticInitializationState = 1;
-			$_list_push(ProgramData$p.classStaticInitializationsStack, classId);
+			$_list_push(ProgramData$p.classStaticInitializationStack, classId);
 		} else { // initialization of the class being called is in progress
 			intList1 = ProgramData$p.classStaticInitializationStack;
 			if ($_list_get(intList, $_list_length(intList1) - 1) != classId) { // is it somewhere else in the stack?
@@ -125,7 +125,7 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 				objInstance = $_cast('ObjectInstance', Value$value.internalValue);
 				int1 = ObjectInstance$objInstance.classId; // note that classId has the field name ID and so this is sort of confusing
 				classInfo2 = $_array_get(classTable2, int1);
-				if ($_dictionary_containsKey(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
+				if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
 					int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
 					// now that we have the member ID, check to see if this is a field or a known method.
 					functionId = $_array_get(ClassInfo2$classInfo2.functionIdsByMemberId, int1); // get the function ID, if present
@@ -156,7 +156,7 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 }
 
 if (type == FunctionInvocationType.POINTER_PROVIDED) {
-	if (Value$value.type == Types.FUNCTION_POINTER) {
+	if (Value$value.type == Types.FUNCTION) {
 		functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
 		switch (FunctionPointer$functionPointer1.type) {
 			case FunctionPointerType.FUNCTION:
@@ -216,6 +216,13 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 						return killExecution(stack, pc, "TODO: re-implement string.lower");
 					}
 					break;
+				case PrimitiveMethodName.REPLACE:
+					if (argCount == 2) {
+						return killExecution(stack, pc, "TODO: re-implement string.replace(old, new)");
+					} else if (argCount == 3) {
+						return killExecution(stack, pc, "TODO: re-implement string.replace(old, new, replaceLimit)");
+					}
+					break;
 				case PrimitiveMethodName.REVERSE:
 					if (argCount == 0) {
 						return killExecution(stack, pc, "TODO: re-implement string.reverse");
@@ -243,13 +250,6 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 				case PrimitiveMethodName.UPPER:
 					if (argCount == 0) {
 						return killExecution(stack, pc, "TODO: re-implement string.upper()");
-					}
-					break;
-				case PrimitiveMethodName.REPLACE:
-					if (argCount == 2) {
-						return killExecution(stack, pc, "TODO: re-implement string.replace(old, new)");
-					} else if (argCount == 3) {
-						return killExecution(stack, pc, "TODO: re-implement string.replace(old, new, replaceLimit)");
 					}
 					break;
 				default:
@@ -305,12 +305,17 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 						return killExecution(stack, pc, "TODO: re-implement list.reverse");
 					}
 					break;
+				case PrimitiveMethodName.SHUFFLE:
+					if (argCount == 0) {
+						return killExecution(stack, pc, "TODO: re-implement list.shuffle()");
+					}
+					break;
 				case PrimitiveMethodName.SORT:
 					if (argCount == 0) {
 						return killExecution(stack, pc, "TODO: re-implement list.sort()");
 					} else if (argCount == 1) {
 						value2 = $_array_get(funcArgs, 0);
-						if (Value$value2.type == Types.FUNCTION_POINTER) {
+						if (Value$value2.type == Types.FUNCTION) {
 
 							bool1 = true;
 							type = FunctionInvocationType.NORMAL_FUNCTION;
@@ -319,11 +324,6 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 						} else {
 							return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");
 						}
-					}
-					break;
-				case PrimitiveMethodName.SHUFFLE:
-					if (argCount == 0) {
-						return killExecution(stack, pc, "TODO: re-implement list.shuffle()");
 					}
 					break;
 				default: break;
@@ -440,7 +440,7 @@ if (bool1) {
 			}
 			break;
 		case FunctionInvocationType.BASE_CONSTRUCTOR:
-			value = StackFrame$stack.context;
+			value = StackFrame$stack.objectContext;
 			classInfo2 = $_array_get(classTable2, classId);
 			functionId = ClassInfo2$classInfo2.constructorFunctionId;
 			functionInfo2 = $_array_get(functionTable2, functionId);

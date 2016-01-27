@@ -189,7 +189,26 @@ enum SoundEventType {
 }
 
 enum PrimitiveMethodName {
-	LOWER = 1,
-	UPPER,
+	ADD,
+	CLEAR,
+	CLONE,
+	CONCAT,
+	CONTAINS,
+	ENDS_WITH,
+	GET,
+	INDEX_OF,
+	INSERT,
+	JOIN,
+	KEYS,
+	LOWER,
+	REMOVE,
+	REPLACE,
 	REVERSE,
+	SHUFFLE,
+	SORT,
+	SPLIT,
+	STARTS_WITH,
+	TRIM,
+	UPPER,
+	VALUES,
 }
