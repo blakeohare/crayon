@@ -116,40 +116,6 @@ function main() {
 		$_array_set(specialCache, i, specialCacheEntry);
 	}
 
-	@type('Array<int>') primitiveMethodIdLookup = $_new_array('int', MAX_TYPE * %%%PREDEFINED_FIELD_COUNT%%%);
-	for (i = 0; i < MAX_TYPE * %%%PREDEFINED_FIELD_COUNT%%%; i += 1) {
-		primitiveMethodIdLookup[i] = 0;
-	}
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ADD%%%] = %%%PRIMITIVE_METHOD_LIST_ADD%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLEAR%%%] = %%%PRIMITIVE_METHOD_LIST_CLEAR%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLONE%%%] = %%%PRIMITIVE_METHOD_LIST_CLONE%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONCAT%%%] = %%%PRIMITIVE_METHOD_LIST_CONCAT%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_LIST_CONTAINS%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_INSERT%%%] = %%%PRIMITIVE_METHOD_LIST_INSERT%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_JOIN%%%] = %%%PRIMITIVE_METHOD_LIST_JOIN%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_POP%%%] = %%%PRIMITIVE_METHOD_LIST_POP%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REMOVE%%%] = %%%PRIMITIVE_METHOD_LIST_REMOVE%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REVERSE%%%] = %%%PRIMITIVE_METHOD_LIST_REVERSE%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SHUFFLE%%%] = %%%PRIMITIVE_METHOD_LIST_SHUFFLE%%%;
-	primitiveMethodIdLookup[Types.LIST * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SORT%%%] = %%%PRIMITIVE_METHOD_LIST_SORT%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_SPLIT%%%] = %%%PRIMITIVE_METHOD_STRING_SPLIT%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_STRING_CONTAINS%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_ENDSWITH%%%] = %%%PRIMITIVE_METHOD_STRING_ENDSWITH%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_INDEXOF%%%] = %%%PRIMITIVE_METHOD_STRING_INDEXOF%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_STARTSWITH%%%] = %%%PRIMITIVE_METHOD_STRING_STARTSWITH%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_UPPER%%%] = %%%PRIMITIVE_METHOD_STRING_UPPER%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_LOWER%%%] = %%%PRIMITIVE_METHOD_STRING_LOWER%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_TRIM%%%] = %%%PRIMITIVE_METHOD_STRING_TRIM%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REVERSE%%%] = %%%PRIMITIVE_METHOD_STRING_REVERSE%%%;
-	primitiveMethodIdLookup[Types.STRING * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REPLACE%%%] = %%%PRIMITIVE_METHOD_STRING_REPLACE%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLEAR%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CLEAR%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CLONE%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CLONE%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_GET%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_GET%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_REMOVE%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_REMOVE%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_CONTAINS%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_CONTAINS%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_VALUES%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_VALUES%%%;
-	primitiveMethodIdLookup[Types.DICTIONARY * %%%PREDEFINED_FIELD_COUNT%%% + %%%PREDEFINED_FIELD_KEYS%%%] = %%%PRIMITIVE_METHOD_DICTIONARY_KEYS%%%;
-
 	@type('StackFrame') stack = new StackFrame(
 		0, // pc
 		$_new_dictionary('int', 'Value'), // locals
@@ -183,7 +149,6 @@ function main() {
 		$_new_list('Dictionary<int, int>'), // integer switch lookups builder
 		null, // string switch lookups
 		$_new_list('Dictionary<string, int>'), // string switch lookups builder
-		primitiveMethodIdLookup, // primitive method lookup
 		0, // instance counter
 		new SpriteSheetData(
 			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
@@ -230,7 +195,8 @@ function main() {
 		// New OO stuff
 		$_new_array('ClassInfo2', 100),
 		$_new_array('FunctionInfo2', 100),
-		$_new_list('int') // class static initialization stack
+		$_new_list('int'), // class static initialization stack
+		null
 		));
 
 	runTick();

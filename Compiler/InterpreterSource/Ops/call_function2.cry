@@ -57,11 +57,13 @@
 
 type = $_array_get(row, 0);
 argCount = $_array_get(row, 1);
+functionId = $_array_get(row, 2);
 returnValueUsed = $_array_get(row, 3) == 1;
 classId = $_array_get(row, 4);
 
 // Check to see if a static initialization is required.
 if (type == FunctionInvocationType.STATIC_METHOD) {
+	$_comment('Is static method');
 	classInfo2 = $_array_get(ProgramData$p.classTable2, classId);
 	if (ClassInfo2$classInfo2.staticInitializationState > 0) {
 		bool1 = false; // should call static constructor?
@@ -70,13 +72,14 @@ if (type == FunctionInvocationType.STATIC_METHOD) {
 			$_list_push(ProgramData$p.classStaticInitializationStack, classId);
 		} else { // initialization of the class being called is in progress
 			intList1 = ProgramData$p.classStaticInitializationStack;
-			if ($_list_get(intList, $_list_length(intList1) - 1) != classId) { // is it somewhere else in the stack?
+			if ($_list_get(intList1, $_list_length(intList1) - 1) != classId) { // is it somewhere else in the stack?
 				return killExecution(stack, pc, "Static initialization cycle detected. See stack trace for cycle details.");
 			}
 		}
 
 		if (bool1) {
 			// Static constructor needs to be called before this method can be invoked.
+			$_comment('must invoke static constructor');
 			type = FunctionInvocationType.STATIC_CONSTRUCTOR;
 			pc -= 1; // when the static constructor is done, you want the PC to start back on this same op and retry the static method invocation.
 			argCount = 0;
@@ -85,6 +88,7 @@ if (type == FunctionInvocationType.STATIC_METHOD) {
 	}
 }
 
+$_comment('construct args array');
 // Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
 if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 	// creating an array of fixed length is fast in C# and Java
@@ -111,6 +115,7 @@ if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
 
 
 if (type == FunctionInvocationType.FIELD_INVOCATION) {
+	$_comment('field invocation');
 	// provided pointers have no risk of requiring a static initialization because the pointer can only be 
 	// provided from a source that would have already triggered it.
 
@@ -118,62 +123,66 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 	value = $_array_get(valueStack, valueStackSize - 1);
 	valueStackSize -= 1;
 
-	// If this is a field invocation on an object instance, resolve it into a LOCAL_METHOD or POINTER_PROVIDED.
-	if (type == FunctionInvocationType.FIELD_INVOCATION) {
-		switch (Value$value.type) {
-			case Types.INSTANCE:
-				objInstance = $_cast('ObjectInstance', Value$value.internalValue);
-				int1 = ObjectInstance$objInstance.classId; // note that classId has the field name ID and so this is sort of confusing
-				classInfo2 = $_array_get(classTable2, int1);
-				if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
-					int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
-					// now that we have the member ID, check to see if this is a field or a known method.
-					functionId = $_array_get(ClassInfo2$classInfo2.functionIdsByMemberId, int1); // get the function ID, if present
-					if (functionId > 0) {
-						// This is a local method. 'value' already contains the context.
-						type = FunctionInvocationType.LOCAL_METHOD;
-					} else {
-						// This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
-						// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here 
-						// as it will be done redundantly later.
-						value = $_array_get(ObjectInstance$objInstance.members, int1);
-						type = FunctionInvocationType.POINTER_PROVIDED;
-					}
+	switch (Value$value.type) {
+		case Types.INSTANCE:
+			$_comment('field invoked on an object instance.');
+			objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+			int1 = ObjectInstance$objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
+			classInfo2 = $_array_get(classTable2, int1);
+			if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
+				int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
+				// now that we have the member ID, check to see if this is a field or a known method.
+				functionId = $_array_get(ClassInfo2$classInfo2.functionIdsByMemberId, int1); // get the function ID, if present
+				if (functionId > 0) {
+					// This is a local method. 'value' already contains the context.
+					type = FunctionInvocationType.LOCAL_METHOD;
 				} else {
-					return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
+					// This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
+					// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here 
+					// as it will be done redundantly later.
+					value = $_array_get(ObjectInstance$objInstance1.members, int1);
+					type = FunctionInvocationType.POINTER_PROVIDED;
 				}
-				break;
-			default:
-				// resolve a primitive method
-				functionId = resolvePrimitiveMethodName2(p, Value$value.type, classId); // enum value in PrimitiveMethodName
-				if (functionId == 0) {
-					return killExecution(stack, pc, "Unknown primitive method.");
-				}
-				type = FunctionInvocationType.PRIMITIVE_METHOD;
-				break;
-		}
+			} else {
+				return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
+			}
+			break;
+		default:
+			$_comment('primitive method suspected.');
+			// resolve a primitive method
+			functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
+			if (functionId == 0) {
+				return killExecution(stack, pc, "Unknown primitive method.");
+			}
+			type = FunctionInvocationType.PRIMITIVE_METHOD;
+			break;
 	}
 }
 
 if (type == FunctionInvocationType.POINTER_PROVIDED) {
+	$_comment('pointer provided');
 	if (Value$value.type == Types.FUNCTION) {
 		functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
 		switch (FunctionPointer$functionPointer1.type) {
 			case FunctionPointerType.FUNCTION:
+				$_comment('pointer to a function');
 				functionId = FunctionPointer$functionPointer1.functionId;
 				type = FunctionInvocationType.NORMAL_FUNCTION;
 				break;
 			case FunctionPointerType.METHOD:
+				$_comment('pointer to a method');
 				functionId = FunctionPointer$functionPointer1.functionId;
 				value = FunctionPointer$functionPointer1.context;
 				type = FunctionInvocationType.LOCAL_METHOD;
 				break;
 			case FunctionPointerType.STATIC_METHOD:
+				$_comment('pointer to a static method');
 				functionId = FunctionPointer$functionPointer1.functionId;
 				classId = FunctionPointer$functionPointer1.classId;
 				type = FunctionInvocationType.STATIC_METHOD;
 				break;
 			case FunctionPointerType.PRIMITIVE_METHOD:
+				$_comment('pointer to a primitive method');
 				value = FunctionPointer$functionPointer1.context;
 				functionId = FunctionPointer$functionPointer1.functionId;
 				type = FunctionInvocationType.PRIMITIVE_METHOD;
@@ -190,10 +199,12 @@ if (type == FunctionInvocationType.POINTER_PROVIDED) {
 bool1 = true; 
 
 if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
+	$_comment('primitive method invocation');
 	bool1 = false;
 	output = null;
 	switch (Value$value.type) {
 		case Types.STRING:
+			$_comment('...on a string');
 			string1 = $_cast('string', Value$value.internalValue);
 			switch (functionId) {
 				case PrimitiveMethodName.CONTAINS:
@@ -257,6 +268,7 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 			}
 			break;
 		case Types.LIST:
+			$_comment('...on a list');
 			list1 = $_cast('List<Value>', Value$value.internalValue);
 			switch (functionId) {
 				case PrimitiveMethodName.ADD:
@@ -330,6 +342,7 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 			}
 			break;
 		case Types.DICTIONARY:
+			$_comment('...on a dictionary');
 			switch (functionId) {
 				case PrimitiveMethodName.CLEAR:
 					if (argCount == 0) {
@@ -387,6 +400,7 @@ if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 }
 
 if (bool1) {
+	$_comment('push a new frame to the stack');
 	
 	StackFrame$stack.pc = pc;
 
@@ -396,28 +410,32 @@ if (bool1) {
 	// value --> the value of 'this' in the next function
 	switch (type) {
 		case FunctionInvocationType.NORMAL_FUNCTION:
+			$_comment('function');
 			functionInfo2 = $_array_get(functionTable2, functionId);
 			pc = FunctionInfo2$functionInfo2.pc;
 			value = null;
 			classId = 0;
 			break;
 		case FunctionInvocationType.STATIC_METHOD:
+			$_comment('static method');
 			// classId already set
 			functionInfo2 = $_array_get(functionTable2, functionId);
 			pc = FunctionInfo2$functionInfo2.pc;
 			value = null;
 			break;
 		case FunctionInvocationType.LOCAL_METHOD:
+			$_comment('non-static method');
 			functionInfo2 = $_array_get(functionTable2, functionId);
 			pc = FunctionInfo2$functionInfo2.pc;
 			classId = 0;
 			// value already set
 			break;
 		case FunctionInvocationType.CONSTRUCTOR:
+			$_comment('constructor');
 			ProgramData$p.instanceCounter += 1;
 			classInfo2 = $_array_get(classTable2, classId);
 			valueArray1 = $_new_array('Value', ClassInfo2$classInfo2.memberCount);
-			for (i = $_list_length(valueArray1) - 1; i >= 0; i -= 1) {
+			for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
 				$_array_set(valueArray1, i, VALUE_NULL);
 			}
 			objInstance1 = new ObjectInstance(
@@ -440,6 +458,7 @@ if (bool1) {
 			}
 			break;
 		case FunctionInvocationType.BASE_CONSTRUCTOR:
+			$_comment('base constructor');
 			value = StackFrame$stack.objectContext;
 			classInfo2 = $_array_get(classTable2, classId);
 			functionId = ClassInfo2$classInfo2.constructorFunctionId;
@@ -448,6 +467,7 @@ if (bool1) {
 			classId = 0;
 			break;
 		case FunctionInvocationType.STATIC_CONSTRUCTOR:
+			$_comment('static constructor');
 			classInfo2 = $_array_get(classTable2, classId);
 			functionId = ClassInfo2$classInfo2.staticConstructorFunctionId;
 			functionInfo2 = $_array_get(functionTable2, functionId);
@@ -457,7 +477,8 @@ if (bool1) {
 			break;
 		default: break; // this should not happen.
 	}
-
+	
+	$_comment('invoke the function');
 	locals = $_new_dictionary('int', 'Value');
 	stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, value, valueStackSize, classId);
 }

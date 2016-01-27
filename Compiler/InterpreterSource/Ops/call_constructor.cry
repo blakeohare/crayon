@@ -1,5 +1,5 @@
 ﻿// #functioncall
-
+/*
 classId = $_array_get($_array_get(specialCache, pc), 0);
 ProgramData$p.instanceCounter += 1;
 value = new Value(Types.INSTANCE, new ObjectInstance(classId, $_new_dictionary('int', 'Value'), ProgramData$p.instanceCounter));
@@ -45,3 +45,6 @@ if (int1 != 0) {
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }
+//*/
+
+return killExecution(stack, pc, "TODO: remove this.");

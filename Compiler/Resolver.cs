@@ -97,6 +97,19 @@ namespace Crayon
 				lookup[ns] = new Namespace(null, ns, null);
 			}
 
+			if (lookup.ContainsKey("~"))
+			{
+				FunctionDefinition mainFunc = (FunctionDefinition)lookup["~"];
+				if (mainFunc.ArgNames.Length > 1)
+				{
+					throw new ParserException(mainFunc.FirstToken, "The main function must accept 0 or 1 arguments.");
+				}
+			}
+			else
+			{
+				throw new Exception("No main(args) function was defined.");
+			}
+
 			return lookup;
 		}
 
@@ -148,7 +161,6 @@ namespace Crayon
 			List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
 			List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
 			List<Executable> output = new List<Executable>();
-			output.AddRange(functionDefinitions);
 			foreach (Executable exec in this.currentCode)
 			{
 				if (exec is FunctionDefinition)
@@ -165,10 +177,14 @@ namespace Crayon
 				}
 			}
 
+			output.AddRange(functionDefinitions);
+
 			foreach (ClassDefinition cd in classDefinitions)
 			{
 				this.RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
 			}
+
+			this.currentCode = output.ToArray();
 		}
 
 		private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<Executable> output)

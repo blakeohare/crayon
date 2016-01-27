@@ -1,4 +1,77 @@
-﻿
+﻿function @type('Array<int>') primitiveMethodsInitializeLookup(@type('Dictionary<string, int>') nameLookups) {
+	@type('int') length = $_dictionary_size(nameLookups);
+	@type('Array<int>') lookup = $_new_array('int', length);
+
+	for (@type('int') i = 0; i < length; i += 1) {
+		$_array_set(lookup, i, -1);
+	}
+
+	if ($_dictionary_contains(nameLookups, 'add')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'add'), PrimitiveMethodName.ADD);
+	if ($_dictionary_contains(nameLookups, 'clear')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clear'), PrimitiveMethodName.CLEAR);
+	if ($_dictionary_contains(nameLookups, 'clone')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clone'), PrimitiveMethodName.CLONE);
+	if ($_dictionary_contains(nameLookups, 'concat')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'concat'), PrimitiveMethodName.CONCAT);
+	if ($_dictionary_contains(nameLookups, 'contains')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'contains'), PrimitiveMethodName.CONTAINS);
+	if ($_dictionary_contains(nameLookups, 'endsWith')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'endsWith'), PrimitiveMethodName.ENDS_WITH);
+	if ($_dictionary_contains(nameLookups, 'indexOf')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'indexOf'), PrimitiveMethodName.INDEX_OF);
+	if ($_dictionary_contains(nameLookups, 'insert')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'insert'), PrimitiveMethodName.INSERT);
+	if ($_dictionary_contains(nameLookups, 'join')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'join'), PrimitiveMethodName.JOIN);
+	if ($_dictionary_contains(nameLookups, 'keys')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'keys'), PrimitiveMethodName.KEYS);
+	if ($_dictionary_contains(nameLookups, 'lower')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'lower'), PrimitiveMethodName.LOWER);
+	if ($_dictionary_contains(nameLookups, 'remove')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'remove'), PrimitiveMethodName.REMOVE);
+	if ($_dictionary_contains(nameLookups, 'replace')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'replace'), PrimitiveMethodName.REPLACE);
+	if ($_dictionary_contains(nameLookups, 'reverse')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'reverse'), PrimitiveMethodName.REVERSE);
+	if ($_dictionary_contains(nameLookups, 'shuffle')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'shuffle'), PrimitiveMethodName.SHUFFLE);
+	if ($_dictionary_contains(nameLookups, 'sort')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'sort'), PrimitiveMethodName.SORT);
+	if ($_dictionary_contains(nameLookups, 'split')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'split'), PrimitiveMethodName.SPLIT);
+	if ($_dictionary_contains(nameLookups, 'startsWith')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'startsWith'), PrimitiveMethodName.STARTS_WITH);
+	if ($_dictionary_contains(nameLookups, 'trim')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'trim'), PrimitiveMethodName.TRIM);
+	if ($_dictionary_contains(nameLookups, 'upper')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'upper'), PrimitiveMethodName.UPPER);
+	if ($_dictionary_contains(nameLookups, 'values')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'values'), PrimitiveMethodName.VALUES);
+
+	return lookup;
+}
+
+
+// returns an integer value in the enum PrimitiveMethodName
+function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @type('int') type, @type('int') globalNameId) {
+	@type('int') output = $_array_get(lookup, globalNameId);
+	if (output != -1) {
+		switch (type + MAX_TYPE * output) {
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.CONTAINS:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.ENDS_WITH:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.INDEX_OF:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.LOWER:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.REPLACE:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.REVERSE:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.SPLIT:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.STARTS_WITH:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.TRIM:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.UPPER:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.ADD:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CLEAR:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CLONE:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CONCAT:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CONTAINS:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.INSERT:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.JOIN:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REMOVE:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REVERSE:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.SHUFFLE:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.SORT:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.CLEAR:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.CLONE:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.GET:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.KEYS:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.REMOVE:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
+				return output;
+			default:
+				break;
+		}
+	}
+	return 0;
+}
+
 function @type('Value') wrongArgCountError(@type('Array<string>') stringOutParam, @type('string') name, @type('int') expected, @type('int') actual) {
 	@type('string') output = null;
 	if (expected == 0) {

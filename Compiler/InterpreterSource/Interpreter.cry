@@ -19,6 +19,9 @@ function @omitReturn @type('string') interpret(
 	@type('int') valueStackSize = ProgramData$p.valueStackSize;
 	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
 
+	@type('Array<ClassInfo2>') classTable2 = ProgramData$p.classTable2;
+	@type('Array<FunctionInfo2>') functionTable2 = ProgramData$p.functionTable;
+
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
 	if (ProgramData$p.initializationComplete) {
@@ -42,12 +45,13 @@ function @omitReturn @type('string') interpret(
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
-	@type('SystemMethod') sysMethod = null;
-	@type('MethodInstance') methodInstance = null;
-	@type('MethodDefinition') methodDefinition = null;
-	@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
-	@type('FunctionDefinition') funcDef = null;
-	@type('ObjectInstance') objInstance = null;
+	//@type('SystemMethod') sysMethod = null;
+	//@type('MethodInstance') methodInstance = null;
+	//@type('MethodDefinition') methodDefinition = null;
+	//@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
+	//@type('FunctionDefinition') funcDef = null;
+	@type('FunctionInfo2') functionInfo2 = null;
+	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;
 	@type('DictImpl') dictImpl = null;
@@ -65,15 +69,19 @@ function @omitReturn @type('string') interpret(
 	@type('bool') lib_func_error_occurred = false;
 	@type('string') lib_func_error_message = "";
 
+	// These are all general purpose variables that can be used by any op.
+	// Declared once before the interpreter runs to prevent overhead per VM cycle.
+	@type('bool') bool1 = false;
+	@type('bool') bool2 = false;
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
 	@type('int') int4 = 0;
 	@type('int') int5 = 0;
 	@type('int') i = 0;
-	@type('double') float1 = 3.14;
-	@type('double') float2 = 2.718;
-	@type('double') float3 = 1.618;
+	@type('double') float1 = 0.0;
+	@type('double') float2 = 0.0;
+	@type('double') float3 = 0.0;
 	@type('Value') value = null;
 	@type('Value') value2 = null;
 	@type('Value') value3 = null;
@@ -85,9 +93,6 @@ function @omitReturn @type('string') interpret(
 	@type('List<string>') stringList1 = null;
 	@type('List<int>') intList1 = null;
 	@type('Array<Value>') valueArray1 = null;
-	@type('bool') bool1 = false;
-	@type('bool') bool2 = false;
-	@type('List<int>') intList1 = null;
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
@@ -119,7 +124,7 @@ function @omitReturn @type('string') interpret(
 	@type('Value') arg9 = null;
 	@type('Value') arg10 = null;
 
-	@type('Array<int>') primitiveMethodIdLookup = ProgramData$p.primitiveMethodIdLookup;
+	@type('Array<int>') globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<int, int>') integerSwitch = null;

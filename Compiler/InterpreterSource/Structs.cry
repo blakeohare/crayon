@@ -57,7 +57,6 @@ struct ProgramData {
 	@type('List<Dictionary<int, int>>') integerSwitchLookupsBuilder,
 	@type('Array<Dictionary<string, int>>') stringSwitchLookups,
 	@type('List<Dictionary<string, int>>') stringSwitchLookupsBuilder,
-	@type('Array<int>') primitiveMethodIdLookup,
 	@type('int') instanceCounter,
 	@type('SpriteSheetData') spriteSheetData,
 	@type('ImageSheetStatus') imageSheetStatus,
@@ -73,6 +72,7 @@ struct ProgramData {
 	@type('Array<ClassInfo2>') classTable2,
 	@type('Array<FunctionInfo2>') functionTable,
 	@type('List<int>') classStaticInitializationStack,
+	@type('Array<int>') globalNameIdToPrimitiveMethodName,
 }
 
 struct StackFrame {

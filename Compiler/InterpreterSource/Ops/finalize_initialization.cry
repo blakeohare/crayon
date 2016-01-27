@@ -4,6 +4,7 @@ ProgramData$p.literalTable = $_convert_list_to_array('Value', ProgramData$p.lite
 ProgramData$p.integerSwitchLookups = $_convert_list_to_array('Dictionary<int, int>', ProgramData$p.integerSwitchLookupsBuilder);
 ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
 ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
+ProgramData$p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(inv_identifiers);
 
 ProgramData$p.identifiersBuilder = null;
 ProgramData$p.literalTableBuilder = null;
@@ -15,6 +16,7 @@ identifiers = ProgramData$p.identifiers;
 literalTable = ProgramData$p.literalTable;
 integerSwitches = ProgramData$p.integerSwitchLookups;
 stringSwitches = ProgramData$p.stringSwitchLookups;
+globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
 
 imageSheetStatusInitialization();
 

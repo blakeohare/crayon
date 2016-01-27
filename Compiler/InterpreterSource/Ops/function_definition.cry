@@ -1,4 +1,4 @@
-﻿
+﻿/*
 if ($_array_get(row, 3) == 1) {
 	// TODO: figure out why I put this if statement here.
 } else {
@@ -12,3 +12,5 @@ if ($_array_get(row, 3) == 1) {
 	$_array_set(valueStack, valueStackSize, new Value(Types.FUNCTION, funcDef));
 	valueStackSize += 1;
 }
+//*/
+return killExecution(stack, pc, "TODO: remove this.");
