@@ -18,6 +18,10 @@ namespace Crayon.ParseTree
 
 		public void GetFlattenedCode(IList<Executable> executableOut, string[] imports, string libraryName)
 		{
+			List<string> importsBuilder = new List<string>() { this.Name };
+			importsBuilder.AddRange(imports);
+			imports = importsBuilder.ToArray();
+
 			foreach (Executable item in this.Code)
 			{
 				item.NamespacePrefixSearch = imports;
