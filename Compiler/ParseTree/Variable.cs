@@ -86,11 +86,6 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
-		{
-			varIds.RegisterVariable(this.Name);
-		}
-
 		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			this.LocalScopeId = varIds.GetVarId(this.FirstToken, true);

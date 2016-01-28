@@ -32,10 +32,5 @@ namespace Crayon.ParseTree
 			}
 			return null;
 		}
-
-		internal virtual void AssignVariablesToIds(VariableIdAllocator varIds)
-		{
-			// Override me!
-		}
 	}
 }
