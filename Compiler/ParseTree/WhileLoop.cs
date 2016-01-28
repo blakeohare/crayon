@@ -37,29 +37,28 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.Code)
 			{
-				ex.AssignVariablesToIds(varIds);
+				ex.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
 			for (int i = 0; i < this.Code.Length; ++i)
 			{
-				this.Code[i].VariableUsagePass(parser);
+				this.Code[i].CalculateLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
 			for (int i = 0; i < this.Code.Length; ++i)
 			{
-				this.Code[i].VariableIdAssignmentPass(parser);
+				this.Code[i].SetLocalIdPass(varIds);
 			}
 		}
 	}

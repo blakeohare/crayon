@@ -81,17 +81,18 @@ namespace Crayon.ParseTree
 			return Executable.EMPTY_ARRAY;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
 
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			throw new System.InvalidOperationException();
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			throw new System.InvalidOperationException(); // should be resolved by now.
 		}
 	}
 }

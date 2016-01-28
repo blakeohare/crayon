@@ -36,20 +36,22 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
-		{
-			this.Expression.VariableUsagePass(parser);
-		}
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Expression.VariableIdAssignmentPass(parser);
+			this.Expression.SetLocalIdPass(varIds);
 		}
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
 			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			// no assignments
 		}
 	}
 }

@@ -269,16 +269,10 @@ namespace Crayon.ParseTree
 			return new BooleanConstant(firstToken, value, this.FunctionOrClassOwner);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Left.VariableUsagePass(parser);
-			this.Right.VariableUsagePass(parser);
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-			this.Left.VariableIdAssignmentPass(parser);
-			this.Right.VariableIdAssignmentPass(parser);
+			this.Left.SetLocalIdPass(varIds);
+			this.Right.SetLocalIdPass(varIds);
 		}
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

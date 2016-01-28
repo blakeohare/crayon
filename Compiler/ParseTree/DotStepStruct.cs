@@ -30,17 +30,14 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
-
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
-
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			throw new InvalidOperationException();
+			throw new InvalidOperationException(); // translate mode only
+		}
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

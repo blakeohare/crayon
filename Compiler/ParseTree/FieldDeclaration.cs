@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -22,13 +23,31 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser) { }
-		internal override void VariableIdAssignmentPass(Parser parser) { }
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // never call this function directly.
+		}
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // never call this function directly.
+		}
+
+		public void VerifyNoVariablesAreDereferenced()
+		{
+			// Pass in an empty Var ID allocator, so that any variable usage will generate an error message.
+			this.DefaultValue.SetLocalIdPass(new VariableIdAllocator());
+		}
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			this.DefaultValue = this.DefaultValue.ResolveNames(parser, lookup, imports);
 			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			varIds.RegisterVariable(this.NameToken.Value);
 		}
 	}
 }

@@ -29,7 +29,6 @@ namespace Crayon.ParseTree
 			throw new InvalidOperationException(); // Created during the resolve names phase.
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser) { }
-		internal override void VariableUsagePass(Parser parser) { }
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 	}
 }

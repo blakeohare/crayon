@@ -49,15 +49,16 @@ namespace Crayon.ParseTree
 			this.Target.GetAllVariableNames(lookup);
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
-			this.Target.AssignVariablesToIds(varIds);
+			if (this.Target is Variable)
+			{
+				varIds.RegisterVariable(((Variable)this.Target).Name);
+			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Value.VariableUsagePass(parser);
-
 			Variable variable = this.TargetAsVariable;
 
 			// Note that things like += do not declare a new variable name and so they don't count as assignment
@@ -66,28 +67,14 @@ namespace Crayon.ParseTree
 			if (variable != null &&
 				this.AssignmentOpToken.Value == "=")
 			{
-				parser.VariableRegister(variable.Name, true, this.Target.FirstToken);
-			}
-			else
-			{
-				this.Target.VariableUsagePass(parser);
+				varIds.RegisterVariable(variable.Name);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Value.VariableIdAssignmentPass(parser);
-			Variable variable = this.TargetAsVariable;
-			if (variable != null)
-			{
-				int[] ids = parser.VariableGetLocalAndGlobalIds(variable.Name);
-				variable.LocalScopeId = ids[0];
-				variable.GlobalScopeId = ids[1];
-			}
-			else
-			{
-				this.Target.VariableIdAssignmentPass(parser);
-			}
+			this.Value.SetLocalIdPass(varIds);
+			this.Target.SetLocalIdPass(varIds);
 		}
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

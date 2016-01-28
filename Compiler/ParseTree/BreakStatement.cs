@@ -14,12 +14,17 @@ namespace Crayon.ParseTree
 		}
 
 		public override bool IsTerminator { get { return true; } }
-		internal override void VariableUsagePass(Parser parser) { }
-		internal override void VariableIdAssignmentPass(Parser parser) { }
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			// no assignments
 		}
 	}
 }

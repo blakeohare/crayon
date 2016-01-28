@@ -61,16 +61,10 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Root.VariableUsagePass(parser);
-			this.Index.VariableUsagePass(parser);
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-			this.Root.VariableIdAssignmentPass(parser);
-			this.Index.VariableIdAssignmentPass(parser);
+			this.Root.SetLocalIdPass(varIds);
+			this.Index.SetLocalIdPass(varIds);
 		}
 
 		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)

@@ -30,14 +30,9 @@ namespace Crayon.ParseTree
 			throw new InvalidOperationException(); // created during the name resolution phase.
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			throw new NotImplementedException();
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-			throw new NotImplementedException();
+			throw new NotImplementedException(); // optimized out
 		}
 	}
 }

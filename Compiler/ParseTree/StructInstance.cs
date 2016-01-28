@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -34,12 +35,9 @@ namespace Crayon.ParseTree
 			throw new System.NotImplementedException();
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

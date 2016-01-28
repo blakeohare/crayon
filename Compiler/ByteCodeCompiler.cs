@@ -294,7 +294,7 @@ namespace Crayon
 			ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
 
 			List<int> offsetsForOptionalArgs = new List<int>();
-			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs, offsetsForOptionalArgs);
+			this.CompileFunctionArgs(parser, buffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
 
 			if (constructor.BaseToken != null)
 			{
@@ -445,7 +445,11 @@ namespace Crayon
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					this.CompileExpression(parser, buffer, assignment.Value, true);
-					int scopeId = varTarget.LocalScopeId == -1 ? varTarget.GlobalScopeId : varTarget.LocalScopeId;
+					int scopeId = varTarget.LocalScopeId;
+					if (scopeId == -1)
+					{
+						throw new Exception(); // this should not happen.
+					}
 					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else if (assignment.Target is BracketIndex)
@@ -485,20 +489,14 @@ namespace Crayon
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					int scopeId = varTarget.LocalScopeId;
-					if (scopeId != -1)
+					if (scopeId == -1)
 					{
-						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name), scopeId);
-						throw new NotImplementedException(); // TODO: redo this
-					}
-					else // it's in the global scope
-					{
-						scopeId = varTarget.GlobalScopeId;
-						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE_GLOBAL, parser.GetId(varTarget.Name), scopeId);
-						throw new NotImplementedException(); // TODO: redo this
+						throw new Exception(); // all variables should have local ID's allocated or errors thrown by now.
 					}
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
 					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
+					throw new NotImplementedException(); // TODO: redo this
 				}
 				else if (assignment.Target is DotStep)
 				{
@@ -539,7 +537,7 @@ namespace Crayon
 			}
 		}
 
-		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, IList<int> argVarIds, List<int> offsetsForOptionalArgs)
+		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
 		{
 			int bufferStartSize = buffer.Size;
 			for (int i = 0; i < argNames.Count; ++i)
@@ -558,7 +556,7 @@ namespace Crayon
 			ByteBuffer tBuffer = new ByteBuffer();
 
 			List<int> offsetsForOptionalArgs = new List<int>();
-			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, funDef.ArgVarIDs, offsetsForOptionalArgs);
+			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs);
 
 			Compile(parser, tBuffer, funDef.Code);
 
@@ -582,7 +580,7 @@ namespace Crayon
 				funDef.ArgNames.Length, // max number of args supplied
 				isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
 				isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
-				funDef.VariableIds.Size,
+				funDef.LocalScopeSize,
 				tBuffer.Size,
 				offsetsForOptionalArgs.Count
 			};
@@ -827,7 +825,7 @@ namespace Crayon
 				// a '1' appended to it when it really should be an error if the variable is not an integer.
 				// Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
 				Variable variable = (Variable)increment.Root;
-				int scopeId = variable.LocalScopeId == -1 ? variable.GlobalScopeId : variable.LocalScopeId;
+				int scopeId = variable.LocalScopeId;
 				this.CompileExpression(parser, buffer, increment.Root, true);
 				if (increment.IsPrefix)
 				{
@@ -990,13 +988,7 @@ namespace Crayon
 			Token token = variable.FirstToken;
 			if (variable.LocalScopeId == -1)
 			{
-				buffer.Add(token, OpCode.VARIABLE_GLOBAL, nameId, variable.GlobalScopeId);
-				throw new NotImplementedException(); // TODO: redo this
-			}
-			else if (variable.GlobalScopeId == -1)
-			{
-				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId);
-				throw new NotImplementedException(); // TODO: redo this
+				throw new ParserException(token, "Variable used but not declared.");
 			}
 			else
 			{

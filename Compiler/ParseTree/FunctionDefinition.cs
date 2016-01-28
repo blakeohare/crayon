@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 		public Executable[] Code { get; set; }
 		public Annotation[] ArgAnnotations { get; set; }
 		private Dictionary<string, Annotation> annotations;
-		public VariableIdAllocator VariableIds { get; private set; }
+		public int LocalScopeSize { get; set; }
 		public int NameGlobalID { get; set; }
 		public string Namespace { get; set; }
 		public int FinalizedPC { get; set; }
@@ -36,7 +36,6 @@ namespace Crayon.ParseTree
 			{
 				this.annotations[annotation.Type] = annotation;
 			}
-			this.VariableIds = new VariableIdAllocator();
 		}
 
 		public int[] ArgVarIDs
@@ -84,22 +83,20 @@ namespace Crayon.ParseTree
 				this.Code = newCode.ToArray();
 			}
 
-			foreach (Token arg in this.ArgNames)
-			{
-				this.VariableIds.RegisterVariable(arg.Value);
-			}
-
-			foreach (Executable ex in this.Code)
-			{
-				ex.AssignVariablesToIds(this.VariableIds);
-			}
-
 			return Listify(this);
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			varIds.RegisterVariable(this.NameToken.Value);
+			foreach (Token argToken in this.ArgNames)
+			{
+				varIds.RegisterVariable(argToken.Value);
+			}
+			foreach (Executable line in this.Code)
+			{
+				line.GenerateGlobalNameIdManifest(varIds);
+			}
 		}
 
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
@@ -131,40 +128,14 @@ namespace Crayon.ParseTree
 			return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.ArgNames.Length; ++i)
-			{
-				Token arg = this.ArgNames[i];
-				parser.VariableRegister(arg.Value, true, arg);
-				Expression defaultValue = this.DefaultValues[i];
-				if (defaultValue != null)
-				{
-					defaultValue.VariableUsagePass(parser);
-				}
-			}
-
-			for (int i = 0; i < this.Code.Length; ++i)
-			{
-				this.Code[i].VariableUsagePass(parser);
-			}
+			throw new System.InvalidOperationException(); // never call this directly on a function.
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.ArgNames.Length; ++i)
-			{
-				this.ArgVarIDs[i] = parser.VariableGetLocalAndGlobalIds(this.ArgNames[i].Value)[0];
-				if (this.DefaultValues[i] != null)
-				{
-					this.DefaultValues[i].VariableIdAssignmentPass(parser);
-				}
-			}
-
-			for (int i = 0; i < this.Code.Length; ++i)
-			{
-				this.Code[i].VariableIdAssignmentPass(parser);
-			}
+			throw new System.InvalidOperationException(); // never call this directly on a function.
 		}
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
@@ -172,6 +143,27 @@ namespace Crayon.ParseTree
 			this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
 			return this;
+		}
+
+		internal void AllocateLocalScopeIds()
+		{
+			VariableIdAllocator variableIds = new VariableIdAllocator();
+			for (int i = 0; i < this.ArgNames.Length; ++i)
+			{
+				variableIds.RegisterVariable(this.ArgNames[i].Value);
+			}
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.CalculateLocalIdPass(variableIds);
+			}
+
+			this.LocalScopeSize = variableIds.Size;
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.SetLocalIdPass(variableIds);
+			}
 		}
 	}
 }

@@ -10,7 +10,6 @@ namespace Crayon.ParseTree
 		public string Name { get; private set; }
 
 		public int LocalScopeId { get; set; }
-		public int GlobalScopeId { get; set; }
 
 		public Variable(Token token, string name, Executable owner)
 			: base(token, owner)
@@ -92,18 +91,9 @@ namespace Crayon.ParseTree
 			varIds.RegisterVariable(this.Name);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			// Assignments require context of the parent element and should handle this and bypass calling this function.
-			// Therefore all invocations of this will assume usage as opposed to assignment.
-			parser.VariableRegister(this.Name, false, this.FirstToken);
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-			int[] ids = parser.VariableGetLocalAndGlobalIds(this.Name);
-			this.LocalScopeId = ids[0];
-			this.GlobalScopeId = ids[1];
+			this.LocalScopeId = varIds.GetVarId(this.FirstToken, true);
 		}
 
 		public override string ToString()

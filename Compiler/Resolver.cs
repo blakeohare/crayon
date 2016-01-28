@@ -128,6 +128,8 @@ namespace Crayon
 
 			this.RearrangeClassDefinitions();
 
+			this.AllocateLocalScopeIds();
+
 			return this.currentCode;
 		}
 
@@ -213,6 +215,25 @@ namespace Crayon
 			}
 
 			this.currentCode = output.ToArray();
+		}
+
+		private void AllocateLocalScopeIds()
+		{
+			foreach (Executable item in this.currentCode)
+			{
+				if (item is FunctionDefinition)
+				{
+					((FunctionDefinition)item).AllocateLocalScopeIds();
+				}
+				else if (item is ClassDefinition)
+				{
+					((ClassDefinition)item).AllocateLocalScopeIds();
+				}
+				else
+				{
+					throw new System.InvalidOperationException(); // everything else in the root scope should have thrown before now.
+				}
+			}
 		}
 
 		// Convert anything that looks like a function call into a verified pointer to the function if possible using the

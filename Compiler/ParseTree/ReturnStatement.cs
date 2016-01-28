@@ -32,20 +32,19 @@ namespace Crayon.ParseTree
 
 		public override bool IsTerminator { get { return true; } }
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			if (this.Expression != null)
 			{
-				this.Expression.VariableUsagePass(parser);
+				this.Expression.SetLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
-			if (this.Expression != null)
-			{
-				this.Expression.VariableIdAssignmentPass(parser);
-			}
+			// no assignments
 		}
 	}
 }

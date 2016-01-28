@@ -20,17 +20,12 @@ namespace Crayon.ParseTree
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			throw new InvalidOperationException(); // created in the name resolution phase.
+			throw new InvalidOperationException(); // translate mode only
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			throw new NotImplementedException();
-		}
-
-		internal override void VariableUsagePass(Parser parser)
-		{
-			throw new NotImplementedException();
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

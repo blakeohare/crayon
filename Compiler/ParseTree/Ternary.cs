@@ -39,18 +39,11 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
-			this.TrueValue.VariableUsagePass(parser);
-			this.FalseValue.VariableUsagePass(parser);
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-			this.Condition.VariableIdAssignmentPass(parser);
-			this.TrueValue.VariableIdAssignmentPass(parser);
-			this.FalseValue.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
+			this.TrueValue.SetLocalIdPass(varIds);
+			this.FalseValue.SetLocalIdPass(varIds);
 		}
 	}
 }

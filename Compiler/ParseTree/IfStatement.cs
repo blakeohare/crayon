@@ -57,37 +57,28 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.TrueCode.Concat<Executable>(this.FalseCode))
 			{
-				ex.AssignVariablesToIds(varIds);
+				ex.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
-			for (int i = 0; i < this.TrueCode.Length; ++i)
+			foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
 			{
-				this.TrueCode[i].VariableUsagePass(parser);
-			}
-			for (int i = 0; i < this.FalseCode.Length; ++i)
-			{
-				this.FalseCode[i].VariableUsagePass(parser);
+				ex.CalculateLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
-			for (int i = 0; i < this.TrueCode.Length; ++i)
+			this.Condition.SetLocalIdPass(varIds);
+			foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
 			{
-				this.TrueCode[i].VariableIdAssignmentPass(parser);
-			}
-			for (int i = 0; i < this.FalseCode.Length; ++i)
-			{
-				this.FalseCode[i].VariableIdAssignmentPass(parser);
+				ex.SetLocalIdPass(varIds);
 			}
 		}
 

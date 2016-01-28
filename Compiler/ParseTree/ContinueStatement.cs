@@ -13,17 +13,18 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
 
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			// no assignments
 		}
 	}
 }

@@ -79,7 +79,7 @@ namespace Crayon
 			
 			foreach (Executable ex in userCode)
 			{
-				ex.AssignVariablesToIds(userCodeParser.VariableIds);
+				ex.GenerateGlobalNameIdManifest(userCodeParser.VariableIds);
 			}
 
 			ByteCodeCompiler bcc = new ByteCodeCompiler();

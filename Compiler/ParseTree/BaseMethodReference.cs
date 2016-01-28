@@ -22,13 +22,7 @@ namespace Crayon.ParseTree
 			throw new System.NotImplementedException();
 		}
 
-		internal override void VariableUsagePass(Parser parser)
-		{
-		}
-
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{

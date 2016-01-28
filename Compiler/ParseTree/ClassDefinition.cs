@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -37,6 +38,37 @@ namespace Crayon.ParseTree
 			this.NameToken = nameToken;
 			this.BaseClassTokens = subclassTokens.ToArray();
 			this.BaseClassDeclarations = subclassNames.ToArray();
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			varIds.RegisterVariable(this.NameToken.Value);
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				fd.GenerateGlobalNameIdManifest(varIds);
+			}
+			if (this.StaticConstructor != null)
+			{
+				this.StaticConstructor.GenerateGlobalNameIdManifest(varIds);
+			}
+			if (this.Constructor != null)
+			{
+				this.Constructor.GenerateGlobalNameIdManifest(varIds);
+			}
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				fd.GenerateGlobalNameIdManifest(varIds);
+			}
+		}
+
+		public void AllocateLocalScopeIds()
+		{
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				fd.VerifyNoVariablesAreDereferenced();
+			}
+
+			throw new NotImplementedException(); // TODO, methods, constructors. 
 		}
 
 		public FunctionDefinition GetMethod(string name, bool walkUpBaseClasses)
@@ -165,30 +197,14 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			if (this.Constructor != null)
-			{
-				this.Constructor.VariableUsagePass(parser);
-			}
-
-			foreach (FunctionDefinition func in this.Methods)
-			{
-				func.VariableUsagePass(parser);
-			}
+			throw new System.InvalidOperationException(); // never call this directly on a class.
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			if (this.Constructor != null)
-			{
-				this.Constructor.VariableIdAssignmentPass(parser);
-			}
-
-			foreach (FunctionDefinition func in this.Methods)
-			{
-				func.VariableIdAssignmentPass(parser);
-			}
+			throw new System.InvalidOperationException(); // never call this directly on a class.
 		}
 
 		public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
