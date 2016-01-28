@@ -135,6 +135,8 @@ namespace Crayon
 		{
 			Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
 
+			this.parser.MainFunctionHasArg = ((FunctionDefinition)definitionsByFullyQualifiedNames["~"]).ArgNames.Length == 1;
+
 			IEnumerable<ClassDefinition> allClasses = this.currentCode.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
 
 			foreach (ClassDefinition cd in allClasses)

@@ -45,6 +45,8 @@ namespace Crayon
 
 		public ClassDefinition CurrentClass { get; set; }
 
+		public bool MainFunctionHasArg { get; set; }
+
 		public bool IsInClass { get { return this.CurrentClass != null; } }
 
 		public BuildContext BuildContext { get; private set; }
