@@ -236,7 +236,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\assign_function_arg_and_jump.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_index.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_step.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_var.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\assign_local.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\binary_op.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\boolean_not.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\build_switch_int.cry" />
@@ -282,6 +282,7 @@
     <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_function2.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\local.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

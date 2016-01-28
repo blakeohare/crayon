@@ -1,5 +1,8 @@
 ﻿// #functioncall
 
+return killExecution(stack, pc, "TODO: remove this.");
+
+/*
 classId = $_array_get($_array_get(specialCache, pc), 0);
 classInfo = $_array_get(classTable, classId);
 value = StackFrame$stack.objectContext;
@@ -36,3 +39,4 @@ if (int1 != 0) {
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }
+//*/

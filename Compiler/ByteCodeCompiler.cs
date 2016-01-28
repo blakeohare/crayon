@@ -286,7 +286,8 @@ namespace Crayon
 			
 			ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
 
-			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs);
+			List<int> offsetsForOptionalArgs = new List<int>();
+			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs, offsetsForOptionalArgs);
 
 			if (constructor.BaseToken != null)
 			{
@@ -438,7 +439,7 @@ namespace Crayon
 					Variable varTarget = (Variable)assignment.Target;
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					int scopeId = varTarget.LocalScopeId == -1 ? varTarget.GlobalScopeId : varTarget.LocalScopeId;
-					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else if (assignment.Target is BracketIndex)
 				{
@@ -480,15 +481,17 @@ namespace Crayon
 					if (scopeId != -1)
 					{
 						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name), scopeId);
+						throw new NotImplementedException(); // TODO: redo this
 					}
 					else // it's in the global scope
 					{
 						scopeId = varTarget.GlobalScopeId;
 						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE_GLOBAL, parser.GetId(varTarget.Name), scopeId);
+						throw new NotImplementedException(); // TODO: redo this
 					}
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else if (assignment.Target is DotStep)
 				{
@@ -529,26 +532,16 @@ namespace Crayon
 			}
 		}
 
-		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, IList<int> argVarIds)
+		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, IList<int> argVarIds, List<int> offsetsForOptionalArgs)
 		{
+			int bufferStartSize = buffer.Size;
 			for (int i = 0; i < argNames.Count; ++i)
 			{
-				string argName = argNames[i].Value;
-				Expression defaultValue = argValues[i];
-				int localVarId = argVarIds[i];
-				if (defaultValue == null)
+				if (argValues[i] != null)
 				{
-					buffer.Add(argNames[i], OpCode.ASSIGN_FUNCTION_ARG, localVarId, i);
-				}
-				else
-				{
-					ByteBuffer defaultValueCode = new ByteBuffer();
-
-					this.CompileExpression(parser, defaultValueCode, defaultValue, true);
-					defaultValueCode.Add(argNames[i], OpCode.ASSIGN_VAR, localVarId);
-
-					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, localVarId, i, defaultValueCode.Size);
-					buffer.Concat(defaultValueCode);
+					this.CompileExpression(parser, buffer, argValues[i], true);
+					buffer.Add(argNames[i], OpCode.ASSIGN_LOCAL, i);
+					offsetsForOptionalArgs.Add(buffer.Size - bufferStartSize);
 				}
 			}
 		}
@@ -557,7 +550,8 @@ namespace Crayon
 		{
 			ByteBuffer tBuffer = new ByteBuffer();
 
-			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, funDef.ArgVarIDs);
+			List<int> offsetsForOptionalArgs = new List<int>();
+			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, funDef.ArgVarIDs, offsetsForOptionalArgs);
 
 			Compile(parser, tBuffer, funDef.Code);
 
@@ -573,16 +567,23 @@ namespace Crayon
 				minArgCount++;
 			}
 
-			buffer.Add(
-				funDef.FirstToken,
-				OpCode.FUNCTION_DEFINITION2,
+			List<int> args = new List<int>()
+			{
 				funDef.FunctionID,
 				parser.GetId(funDef.NameToken.Value), // local var to save in
 				minArgCount,
 				funDef.ArgNames.Length, // max number of args supplied
 				isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
 				isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
-				tBuffer.Size);
+				funDef.VariableIds.Size,
+				tBuffer.Size,
+				offsetsForOptionalArgs.Count
+			};
+			args.AddRange(offsetsForOptionalArgs);
+
+			buffer.Add(
+				funDef.FirstToken,
+				OpCode.FUNCTION_DEFINITION2, args.ToArray());
 
 			buffer.Concat(tBuffer);
 		}
@@ -826,14 +827,14 @@ namespace Crayon
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else
 				{
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 			}
 			else if (increment.Root is BracketIndex)
@@ -983,14 +984,16 @@ namespace Crayon
 			if (variable.LocalScopeId == -1)
 			{
 				buffer.Add(token, OpCode.VARIABLE_GLOBAL, nameId, variable.GlobalScopeId);
+				throw new NotImplementedException(); // TODO: redo this
 			}
 			else if (variable.GlobalScopeId == -1)
 			{
 				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId);
+				throw new NotImplementedException(); // TODO: redo this
 			}
 			else
 			{
-				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId, variable.GlobalScopeId);
+				buffer.Add(token, OpCode.LOCAL, variable.LocalScopeId, nameId);
 			}
 		}
 

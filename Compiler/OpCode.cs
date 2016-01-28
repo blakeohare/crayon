@@ -9,7 +9,7 @@
 		ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
 		ASSIGN_STEP, // name ID of step. value stack: [root, value]
 		ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
-		ASSIGN_VAR, // 1: local scope ID
+		ASSIGN_LOCAL, // 1: local scope ID
 		BINARY_OP,
 		BOOLEAN_NOT, // no args.
 		BREAK, // no ops. This should be resolved into a jump before actually being run.
@@ -32,7 +32,7 @@
 		DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 		FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
 		FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceeded
-		FUNCTION_DEFINITION2, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: Jump (skip function body)
+		FUNCTION_DEFINITION2, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
 		INDEX,
 		ITERATION_STEP, // stack is in the following state: [index, local scope ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
 		JUMP,
@@ -43,6 +43,7 @@
 		LIST_SLICE, // 1: begin slice index is present, 2: end slice index is present, 3: step is present
 		LITERAL, // 1: literal ID in the literal table
 		LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
+		LOCAL, // pushes a local value onto the stack. 1: local ID, 2: name ID
 		NEGATIVE_SIGN, // no args. pop, flip, push.
 		POP, // no args. pop value from value stack.
 		POP_IF_NULL_OR_JUMP, // if the last item on the value stack is null, pop it. If it isn't, then jump. 1: jump distance.

@@ -90,27 +90,10 @@ if (type == FunctionInvocationType.STATIC_METHOD) {
 
 $_comment('construct args array');
 // Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
-if (%%%USE_FIXED_LENGTH_ARG_CONSTRUCTION%%%) {
-	// creating an array of fixed length is fast in C# and Java
-	funcArgs = $_new_array('Value', argCount);
-	while (argCount > 0) {
-		argCount -= 1;
-		valueStackSize -= 1;
-		$_array_set(funcArgs, argCount, $_array_get(valueStack, valueStackSize));
-	}
-} else {
-	// Building a list from 0 is faster in Python and JavaScript
-	// Note that this code uses a list instead of an array even though the rest of this op treats funcArgs as an array.
-	// This is because this is currently only being used on Python/JavaScript where those are the same thing.
-	funcArgs = $_new_list('Value');
-	while (argCount > 0) {
-		valueStackSize -= 1;
-		$_list_push(funcArgs, $_array_get(valueStack, valueStackSize));
-		argCount -= 1;
-	}
-	if ($_list_length(funcArgs) > 1) {
-		$_list_reverse_in_place(funcArgs);
-	}
+
+for (i = argCount - 1; i >= 0; i -= 1) {
+	valueStackSize -= 1;
+	$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
 }
 
 
@@ -478,7 +461,66 @@ if (bool1) {
 		default: break; // this should not happen.
 	}
 	
+	if (argCount < FunctionInfo2$functionInfo2.minArgs || 
+		argCount > FunctionInfo2$functionInfo2.maxArgs) {
+		return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
+	}
+
+	int1 = FunctionInfo2$functionInfo2.localsSize;
+	int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
+	if (localsStackCapacity <= int2 + int1) {
+		// expand locals capacity
+		// TODO: move this into a helper function.
+		int3 = localsStackCapacity * 2 + int1; // new capacity
+		valueArray1 = $_new_array('Value', int3);
+		intArray1 = $_new_array('int', int3);
+		for (i = localsStackCapacity - 1; i >= 0; i -= 1) {
+			$_array_set(valueArray1, i, $_array_get(localsStack, i));
+			$_array_set(intArray1, i, $_array_get(localsStackSet, i));
+		}
+		localsStack = valueArray1;
+		localsStackSet = intArray1;
+		localsStackCapacity = int3;
+		ProgramData$p.localsStack = localsStack;
+		ProgramData$p.localsStackSet = localsStackSet;
+	}
+
+	localsStackSetToken += 1;
+	// TODO: set this to 100 to test.
+	// If this comment is still here, then that means I haven't tested this.
+	if (localsStackSetToken > 2000000000) {
+		resetLocalsStackTokens(stack, localsStackSet, localsStack);
+		localsStackSetToken = 2;
+	}
+
+	localsStackOffset = int2;
+
 	$_comment('invoke the function');
-	locals = $_new_dictionary('int', 'Value');
-	stack = new StackFrame(pc, locals, funcArgs, stack, returnValueUsed, value, valueStackSize, classId);
+	stack = new StackFrame(
+		pc,
+		localsStackSetToken,
+		localsStackOffset,
+		localsStackOffset + int1, // locals stack end (exclusive) and also the next stack frame's localsStackOffset
+		stack,
+		returnValueUsed,
+		value, // the value of the 'this' keyword
+		valueStackSize,
+		classId);
+
+	// now that we're in the new stack frame, flush out all the passed args to the local stack since their 
+	// ID's are allocated with args first.
+	for (i = 0; i < argCount; i += 1) {
+		$_array_set(localsStack, localsStackOffset + i, $_array_get(funcArgs, i));
+	}
+
+	if (argCount != FunctionInfo2$functionInfo2.maxArgs) {
+		// optional args are simply local variable assignments at the front of the function body.
+		// Adjust the PC to skip these if those arguments were provided.
+		int1 = argCount - FunctionInfo2$functionInfo2.minArgs; // number of optional args provided
+		if (int1 > 0) {
+			// The amount to increment the PC by is conveniently stored in the function metadata in an 
+			// array indexed by the number of optional args provided.
+			pc += $_array_get(FunctionInfo2$functionInfo2.pcOffsetsForOptionalArgs, int1);
+		}
+	}
 }

@@ -5,6 +5,7 @@ ProgramData$p.integerSwitchLookups = $_convert_list_to_array('Dictionary<int, in
 ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
 ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
 ProgramData$p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(inv_identifiers);
+ProgramData$p.funcArgs = $_new_array('Value', $_array_length(ProgramData$p.identifiers)); // over allocated but that's okay
 
 ProgramData$p.identifiersBuilder = null;
 ProgramData$p.literalTableBuilder = null;
@@ -17,6 +18,7 @@ literalTable = ProgramData$p.literalTable;
 integerSwitches = ProgramData$p.integerSwitchLookups;
 stringSwitches = ProgramData$p.stringSwitchLookups;
 globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
+funcArgs = ProgramData$p.funcArgs;
 
 imageSheetStatusInitialization();
 

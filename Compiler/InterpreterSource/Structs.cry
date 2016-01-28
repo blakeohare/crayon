@@ -50,7 +50,6 @@ struct ProgramData {
 	@type('bool') tickerRegistered,
 	@type('Array<List<Token>>') tokenData,
 	@type('int') userCodeStart,
-	@type('Dictionary<int, Value>') globalVarScope,
 	@type('Array<string>') sourceCode,
 	@type('List<string>') sourceCodeBuilder,
 	@type('Array<Dictionary<int, int>>') integerSwitchLookups,
@@ -73,12 +72,16 @@ struct ProgramData {
 	@type('Array<FunctionInfo2>') functionTable,
 	@type('List<int>') classStaticInitializationStack,
 	@type('Array<int>') globalNameIdToPrimitiveMethodName,
+	@type('Array<Value>') localsStack,
+	@type('Array<int>') localsStackSet,
+	@type('Array<Value>') funcArgs,
 }
 
 struct StackFrame {
 	@type('int') pc,
-	@type('Dictionary<int, Value>') locals,
-	@type('Array<Value>') args,
+	@type('int') localsStackSetToken, // if localsStackSet[i + offset] has this value, then that means localsStack[i + offset] is valid.
+	@type('int') localsStackOffset, // offset local ID by this to get the value in localsStack
+	@type('int') localsStackOffsetEnd, // ending offset of the locals stack
 	@type('StackFrame') previous,
 	@type('bool') returnValueUsed,
 	@type('Value') objectContext,
@@ -144,6 +147,8 @@ struct FunctionInfo2 {
 	@type('int') maxArgs,
 	@type('int') type, // 0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor
 	@type('int') associatedClassId,
+	@type('int') localsSize,
+	@type('Array<int>') pcOffsetsForOptionalArgs,
 }
 
 struct FunctionDefinition {

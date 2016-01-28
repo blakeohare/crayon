@@ -1,4 +1,4 @@
-﻿
+﻿/*
 valueStackSize = StackFrame$stack.valueStackSize;
 
 if (StackFrame$stack.returnValueUsed) {
@@ -13,3 +13,5 @@ if (stack == null) {
 }
 pc = StackFrame$stack.pc;
 locals = StackFrame$stack.locals;
+//*/
+return killExecution(stack, pc,"TODO: delete this."); // modify RETURN to have an optimized path for null.

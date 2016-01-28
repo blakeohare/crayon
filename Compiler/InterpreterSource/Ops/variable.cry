@@ -4,7 +4,7 @@
 	[1] -> local scope ID
 	[2] -> global scope ID [possibly absent]
 */
-int1 = $_array_get(row, 1);
+/*int1 = $_array_get(row, 1);
 if ($_dictionary_contains(locals, int1)) {
 	value = $_dictionary_get_guaranteed(locals, int1);
 } else if ($_array_length(row) == 3 && $_dictionary_contains(globals, $_array_get(row, 2))) {
@@ -21,4 +21,6 @@ if ($_has_increment()) {
 } else {
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
-}
+}//*/
+
+return killExecution(stack, pc, "TODO: delete this.");

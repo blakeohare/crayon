@@ -3,6 +3,7 @@
 	[0] -> name ID
 	[1] -> global scope ID
 */
+/*
 int1 = $_array_get(row, 1);
 if ($_dictionary_contains(globals, int1)) {
 	value = $_dictionary_get_guaranteed(globals, int1);
@@ -13,3 +14,5 @@ if ($_dictionary_contains(globals, int1)) {
 import inline "InterpreterSource/ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;
+//*/
+return killExecution(stack, pc, "TODO: delete this.");

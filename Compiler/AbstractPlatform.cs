@@ -29,10 +29,6 @@ namespace Crayon
 
 		public string LibraryBigSwitchStatement { get; set; }
 
-		// When passing args to a new stack frame, build these by placing args into a fixed length list
-		// Otherwise append items from the stack to the variable length list.
-		public abstract bool UseFixedListArgConstruction { get; }
-
 		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
 		public bool IsGamepadSupported { get { return this.GamepadTranslator != null; } }
 

@@ -115,11 +115,19 @@ function main() {
 		
 		$_array_set(specialCache, i, specialCacheEntry);
 	}
+	
+	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
+	@type('Array<int>') localsStackSet = $_new_array('int', 1000);
+	for (i = $_array_length(localsStack) - 1; i >= 0; i -= 1) {
+		$_array_set(localsStack, i, null);
+		$_array_set(localsStackSet, i, 0);
+	}
 
 	@type('StackFrame') stack = new StackFrame(
 		0, // pc
-		$_new_dictionary('int', 'Value'), // locals
-		$_new_array('Value', 0), // args
+		1, // localsStackSetToken,
+		0, // localsStackOffset,
+		0, // localsStackOffsetEnd,
 		null, // previous
 		false, // returnValueUsed
 		null, // object context
@@ -142,7 +150,7 @@ function main() {
 		false, // ticker registered
 		$_new_array('List<Token>', $_array_length(ops)), // token data
 		0, // user code start
-		StackFrame$stack.locals, // global var scope
+		//StackFrame$stack.locals, // global var scope
 		null, // original source code data
 		$_new_list('string'), // original source code data builder
 		null, // integer switch lookups
@@ -196,7 +204,10 @@ function main() {
 		$_new_array('ClassInfo2', 100),
 		$_new_array('FunctionInfo2', 100),
 		$_new_list('int'), // class static initialization stack
-		null
+		null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
+		localsStack,
+		localsStackSet,
+		null // funcArgs (set in FINALIZE_INITIALIZATION)
 		));
 
 	runTick();
@@ -223,8 +234,7 @@ function @type('bool') runTick() {
 			ProgramData$p.literalTable,
 			ProgramData$p.classTable,
 			ProgramData$p.classMethods,
-			ProgramData$p.specialCache,
-			ProgramData$p.globalVarScope);
+			ProgramData$p.specialCache);
 		if (error == null) {
 			// do nothing, let the next tick occur
 			$_register_timeout();
@@ -250,8 +260,7 @@ function @type('bool') runTick() {
 				ProgramData$p.literalTable,
 				ProgramData$p.classTable,
 				ProgramData$p.classMethods,
-				ProgramData$p.specialCache,
-				ProgramData$p.globalVarScope);
+				ProgramData$p.specialCache);
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {
