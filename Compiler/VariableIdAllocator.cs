@@ -31,7 +31,7 @@ namespace Crayon
 
 			if (isRead)
 			{
-				throw new ParserException(variableToken, "This variable is not defined anywhere.");
+				throw new ParserException(variableToken, "'" + variableToken.Value + "' is not defined anywhere.");
 			}
 
 			throw new ParserException(variableToken,

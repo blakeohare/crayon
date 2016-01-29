@@ -1112,6 +1112,19 @@ namespace Crayon
 						0);
 				}
 			}
+			else if (root is Variable)
+			{
+				this.CompileExpression(parser, buffer, root, true);
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.POINTER_PROVIDED,
+					funCall.Args.Length,
+					0,
+					outputUsed ? 1 : 0,
+					0);
+			}
 			else
 			{
 				throw new NotImplementedException(); // TODO: redo this

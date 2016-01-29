@@ -280,6 +280,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_function2.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\local.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\push_func_ref.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

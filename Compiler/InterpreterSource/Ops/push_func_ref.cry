@@ -1,0 +1,28 @@
+﻿/*
+	row[0] --> Function ID
+	row[1] --> Type
+		0: normal function
+		1: method
+		2: static method
+		3: lambda, one of these days
+	row[2] --> class ID
+*/
+
+value = null;
+switch ($_array_get(row, 1)) {
+	case 0: // normal function
+		value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.FUNCTION, null, 0, $_array_get(row, 0)));
+		break;
+	case 1: // method
+		return killExecution(stack, pc, "TODO: implement this.");
+
+	case 2: // static method
+		// note that a static constructor call must occur here.
+		return killExecution(stack, pc, "TODO: implement this.");
+}
+
+if (value != null) {
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, value);
+	valueStackSize += 1;
+}

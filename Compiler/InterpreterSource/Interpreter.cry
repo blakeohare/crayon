@@ -187,6 +187,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.NEGATIVE_SIGN: $_comment('NEGATIVE_SIGN'); import inline 'InterpreterSource/Ops/negative_sign.cry'; break;
 			case OpCodes.POP: $_comment('POP'); import inline 'InterpreterSource/Ops/pop.cry'; break;
 			case OpCodes.POP_IF_NULL_OR_JUMP: $_comment('POP_IF_NULL_OR_JUMP'); import inline 'InterpreterSource/Ops/pop_if_null_or_jump.cry'; break;
+			case OpCodes.PUSH_FUNC_REF: $_comment('PUSH_FUNC_REF'); import inline 'InterpreterSource/Ops/push_func_ref.cry'; break;
 			case OpCodes.RETURN: $_comment('RETURN'); import inline 'InterpreterSource/Ops/return.cry'; break;
 			case OpCodes.SPRITE_SHEET_BUILDER: $_comment('SPRITE_SHEET_BUILDER'); import inline 'InterpreterSource/Ops/sprite_sheet_builder.cry'; break;
 			case OpCodes.STACK_INSERTION_FOR_INCREMENT: $_comment('STACK_INSERTION_FOR_INCREMENT'); import inline 'InterpreterSource/Ops/stack_insertion_for_increment.cry'; break;

@@ -125,6 +125,9 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 					// as it will be done redundantly later.
 					value = $_array_get(ObjectInstance$objInstance1.members, int1);
 					type = FunctionInvocationType.POINTER_PROVIDED;
+
+					$_array_set(valueStack, valueStackSize, value);
+					valueStackSize += 1;
 				}
 			} else {
 				return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
@@ -144,6 +147,10 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 
 if (type == FunctionInvocationType.POINTER_PROVIDED) {
 	$_comment('pointer provided');
+
+	value = $_array_get(valueStack, valueStackSize - 1);
+	valueStackSize -= 1;
+
 	if (Value$value.type == Types.FUNCTION) {
 		functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
 		switch (FunctionPointer$functionPointer1.type) {
