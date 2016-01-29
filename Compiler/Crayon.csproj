@@ -228,7 +228,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\negative_sign.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\pop.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\return.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\return_null.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\sprite_sheet_builder.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\add_literal.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\add_name.cry" />
@@ -261,7 +260,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\this.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\token_data.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\user_code_start.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\variable.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
@@ -277,7 +275,6 @@
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\variable_global.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />

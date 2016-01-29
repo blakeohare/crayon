@@ -49,7 +49,6 @@
 		POP_IF_NULL_OR_JUMP, // if the last item on the value stack is null, pop it. If it isn't, then jump. 1: jump distance.
 		PUSH_FUNC_REF, // push a verified function pointer to the stack, 1: function ID, 2: type, 3: class ID for static initialization check (or 0 if no check is necessary)
 		RETURN,
-		RETURN_NULL,
 		SPRITE_SHEET_BUILDER, // See SpriteSheetBuilder.GenerateManifestAndProduceSheetNameIdMapping() for documentation.
 		STACK_INSERTION_FOR_INCREMENT, // duplicates the top element of the stack but pushes it 3 spots back. [..., a, b, c] --> [..., c, a, b, c]
 		STACK_SWAP_POP, // swaps the last 2 items on the stack and then pops the (new) last one.
@@ -58,8 +57,6 @@
 		THIS, // pushes the current object context onto the stack.
 		TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
 		USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
-		VARIABLE, // 1: name id, 2: local scope ID, [optional] 3: global scope ID
-		VARIABLE_GLOBAL, // 1: name id, 2: global scope ID
 		VERIFY_TYPE_IS_ITERABLE, // verifies the last item on the stack is a list
 	}
 }
