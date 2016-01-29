@@ -510,7 +510,9 @@ if (bool1) {
 	// now that we're in the new stack frame, flush out all the passed args to the local stack since their 
 	// ID's are allocated with args first.
 	for (i = 0; i < argCount; i += 1) {
-		$_array_set(localsStack, localsStackOffset + i, $_array_get(funcArgs, i));
+		int1 = localsStackOffset + i;
+		$_array_set(localsStack, int1, $_array_get(funcArgs, i));
+		$_array_set(localsStackSet, int1, localsStackSetToken);
 	}
 
 	if (argCount != FunctionInfo2$functionInfo2.maxArgs) {

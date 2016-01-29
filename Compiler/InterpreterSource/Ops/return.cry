@@ -28,6 +28,7 @@ if (StackFrame$stack.returnValueUsed) {
 	}
 } else {
 	// discard the return value. Set the value stack size back the way it was.
+	stack = StackFrame$stack.previous;
 	valueStackSize = StackFrame$stack.valueStackSize;
 }
 

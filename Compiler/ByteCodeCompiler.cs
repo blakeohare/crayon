@@ -55,7 +55,7 @@ namespace Crayon
 			{
 				output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
 			}
-			output.Add(null, OpCode.RETURN_NULL);
+			output.Add(null, OpCode.RETURN, 0);
 
 			return output;
 		}
@@ -312,14 +312,14 @@ namespace Crayon
 			}
 
 			this.Compile(parser, buffer, constructor.Code);
-			buffer.Add(null, OpCode.RETURN_NULL);
+			buffer.Add(null, OpCode.RETURN, 0);
 		}
 
 		private void CompileReturnStatement(Parser parser, ByteBuffer buffer, ReturnStatement returnStatement)
 		{
 			if (returnStatement.Expression == null || returnStatement.Expression is NullConstant)
 			{
-				buffer.Add(returnStatement.FirstToken, OpCode.RETURN_NULL);
+				buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 0);
 			}
 			else
 			{
