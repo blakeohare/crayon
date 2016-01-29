@@ -49,9 +49,9 @@
 	args:
 	row[0] --> type (see above)
 	row[1] --> args passed by user.
-	row[2] --> functionID if known (available for all types except POINTER_PROVIDED)
+	row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
 	row[3] --> 1 if output is used
-	row[4] --> class ID if method or constructor of any type.
+	row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
 
 */
 
@@ -137,7 +137,7 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 			$_comment('primitive method suspected.');
 			// resolve a primitive method
 			functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
-			if (functionId == 0) {
+			if (functionId < 0) {
 				return killExecution(stack, pc, "Unknown primitive method.");
 			}
 			type = FunctionInvocationType.PRIMITIVE_METHOD;

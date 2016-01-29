@@ -2,6 +2,19 @@
 return killExecution(stack, pc, "TODO: all this has to be changed.");
 
 /*
+value = $_array_get(valueStack, valueStackSize - 1);
+valueStackSize -= 1;
+
+switch (Value$value.type) {
+	case Types.LIST:
+	case Types.STRING:
+	case Types.DICTIONARY:
+
+}//*/
+
+
+
+/*
 root = $_array_get(valueStack, valueStackSize - 1);
 type = Value$root.type;
 nameId = $_array_get(row, 0);

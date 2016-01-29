@@ -170,5 +170,5 @@ function @type('int') resetLocalsStackTokens(@type('StackFrame') stack, @type('A
 		stackWalker = StackFrame$stackWalker.previous;
 	}
 	
-	return 0;
+	return -1;
 }

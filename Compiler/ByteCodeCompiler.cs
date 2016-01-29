@@ -1112,7 +1112,23 @@ namespace Crayon
 						0);
 				}
 			}
-			else if (root is Variable)
+			else if (root is DotStep)
+			{
+				DotStep ds = (DotStep)root;
+				Expression dotRoot = ds.Root;
+				int globalNameId = parser.GetId(ds.StepToken.Value);
+				this.CompileExpression(parser, buffer, dotRoot, true);
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.FIELD_INVOCATION,
+					funCall.Args.Length,
+					0,
+					outputUsed ? 1 : 0,
+					globalNameId);
+			}
+			else
 			{
 				this.CompileExpression(parser, buffer, root, true);
 				this.CompileExpressionList(parser, buffer, funCall.Args, true);
@@ -1124,10 +1140,6 @@ namespace Crayon
 					0,
 					outputUsed ? 1 : 0,
 					0);
-			}
-			else
-			{
-				throw new NotImplementedException(); // TODO: redo this
 			}
 		}
 	}

@@ -80,6 +80,7 @@ namespace Crayon.ParseTree
 				this.Root is Variable ||
 				this.Root is FieldReference ||
 				this.Root is FunctionReference ||
+				this.Root is BracketIndex ||
 				this.Root is BaseMethodReference)
 			{
 				return this;
