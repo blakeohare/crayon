@@ -1109,6 +1109,7 @@ function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<
 		if (fileReadStatus == 0) {
 			@type('int') i = 0;
 			@type('int') j = 0;
+			@type('int') jb = 0;
 			@type('int') gamepadsLoaded = 0;
 			@type('List<Value>') idList = null;
 			@type('Value') idValue = null;
@@ -1161,8 +1162,8 @@ function @type('int') gamepadEnableRecent(@type('Value') idOrList, @type('Array<
 						}
 						// even if a gamepad does not have an ID set, you should still initialize the buttons.
 
-						for (j = 1; j < $_array_length(parts); j += 1) {
-							@type('Array<string>') pushyConfigParts = $_string_split($_array_get(parts, j), "|");
+						for (jb = 1; jb < $_array_length(parts); jb += 1) {
+							@type('Array<string>') pushyConfigParts = $_string_split($_array_get(parts, jb), "|");
 							if ($_array_length(pushyConfigParts) > 2) {
 								@type('bool') isPushyString = $_string_equals($_array_get(pushyConfigParts, 0), "1");
 								@type('string') rawPushyAlias = stringFromHex($_array_get(pushyConfigParts, 1));
