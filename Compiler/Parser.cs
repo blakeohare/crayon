@@ -69,6 +69,36 @@ namespace Crayon
 		public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
 		public int GetNullConstant() { return this.literalLookup.GetNullId(); }
 
+		public int GetLiteralId(Expression value)
+		{
+			if (value is NullConstant)
+			{
+				return GetNullConstant();
+			}
+
+			if (value is IntegerConstant)
+			{
+				return this.GetIntConstant(((IntegerConstant)value).Value);
+			}
+
+			if (value is FloatConstant)
+			{
+				return this.GetFloatConstant(((FloatConstant)value).Value);
+			}
+
+			if (value is BooleanConstant)
+			{
+				return this.GetBoolConstant(((BooleanConstant)value).Value);
+			}
+
+			if (value is StringConstant)
+			{
+				return this.GetStringConstant(((StringConstant)value).Value);
+			}
+
+			return -1;
+		}
+
 		private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
 		private Dictionary<string, Dictionary<int, int>> intListLookups = new Dictionary<string, Dictionary<int, int>>();
 		private Dictionary<string, int> explicitMaxes = new Dictionary<string, int>();

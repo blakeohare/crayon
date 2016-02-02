@@ -11,6 +11,9 @@ namespace Crayon.ParseTree
 		public Expression[] DefaultValues { get; private set; }
 		public Expression[] BaseArgs { get; private set; }
 		public Token BaseToken { get; private set; }
+		public int LocalScopeSize { get; set; }
+		public int MinArgCount { get; set; }
+		public int MaxArgCount { get; set; }
 
 		public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken, Executable owner)
 			: base(constructorToken, owner)
@@ -27,10 +30,17 @@ namespace Crayon.ParseTree
 		{
 			this.FunctionID = parser.GetNextFunctionId();
 
+			this.MaxArgCount = this.ArgNames.Length;
+			int minArgCount = 0;
 			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
-				this.DefaultValues[i] = this.DefaultValues[i] == null ? null : this.DefaultValues[i].Resolve(parser);
+				if (this.DefaultValues[i] != null)
+				{
+					minArgCount++;
+					this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
+				}
 			}
+			this.MinArgCount = minArgCount;
 
 			for (int i = 0; i < this.BaseArgs.Length; ++i)
 			{
@@ -67,6 +77,35 @@ namespace Crayon.ParseTree
 		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			throw new System.InvalidOperationException(); // never call this directly on a constructor.
+		}
+
+		internal void AllocateLocalScopeIds()
+		{
+			VariableIdAllocator variableIds = new VariableIdAllocator();
+			for (int i = 0; i < this.ArgNames.Length; ++i)
+			{
+				variableIds.RegisterVariable(this.ArgNames[i].Value);
+			}
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.CalculateLocalIdPass(variableIds);
+			}
+
+			this.LocalScopeSize = variableIds.Size;
+
+			if (this.BaseArgs != null)
+			{
+				foreach (Expression ex in this.BaseArgs)
+				{
+					ex.SetLocalIdPass(variableIds);
+				}
+			}
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.SetLocalIdPass(variableIds);
+			}
 		}
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

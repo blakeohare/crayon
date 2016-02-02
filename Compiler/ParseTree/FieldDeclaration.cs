@@ -8,6 +8,7 @@ namespace Crayon.ParseTree
 		public Token NameToken { get; set; }
 		public Expression DefaultValue { get; set; }
 		public bool IsStaticField { get; private set; }
+		public int MemberID { get; set; }
 
 		public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic)
 			: base(fieldToken, owner)
@@ -15,6 +16,7 @@ namespace Crayon.ParseTree
 			this.NameToken = nameToken;
 			this.DefaultValue = new NullConstant(fieldToken, owner);
 			this.IsStaticField = isStatic;
+			this.MemberID = -1;
 		}
 
 		internal override IList<Executable> Resolve(Parser parser)

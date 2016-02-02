@@ -153,6 +153,7 @@ namespace Crayon
 			tokens.PopExpected("(");
 			List<Token> argNames = new List<Token>();
 			List<Expression> argValues = new List<Expression>();
+			bool optionalArgFound = false;
 			while (!tokens.PopIfPresent(")"))
 			{
 				if (argNames.Count > 0)
@@ -166,6 +167,11 @@ namespace Crayon
 				if (tokens.PopIfPresent("="))
 				{
 					defaultValue = ExpressionParser.Parse(tokens, owner);
+					optionalArgFound = true;
+				}
+				else if (optionalArgFound)
+				{
+					throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
 				}
 
 				argNames.Add(argName);
@@ -423,6 +429,7 @@ namespace Crayon
 			List<Token> argNames = new List<Token>();
 			List<Expression> defaultValues = new List<Expression>();
 			List<Annotation> argAnnotations = new List<Annotation>();
+			bool optionalArgFound = false;
 			while (!tokens.PopIfPresent(")"))
 			{
 				if (argNames.Count > 0) tokens.PopExpected(",");
@@ -433,7 +440,12 @@ namespace Crayon
 				Parser.VerifyIdentifier(argName);
 				if (tokens.PopIfPresent("="))
 				{
+					optionalArgFound = true;
 					defaultValue = ExpressionParser.Parse(tokens, fd);
+				}
+				else if (optionalArgFound)
+				{
+					throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
 				}
 				argAnnotations.Add(annotation);
 				argNames.Add(argName);

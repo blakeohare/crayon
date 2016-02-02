@@ -18,6 +18,8 @@ namespace Crayon.ParseTree
 		public FieldDeclaration[] Fields { get; set; }
 		public string Namespace { get; set; }
 
+		private bool memberIdsResolved = false;
+
 		// When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
 
 		private Dictionary<string, FunctionDefinition> functionDefinitionsByName = null;
@@ -68,7 +70,20 @@ namespace Crayon.ParseTree
 				fd.VerifyNoVariablesAreDereferenced();
 			}
 
-			throw new NotImplementedException(); // TODO, methods, constructors. 
+			// null check has occurred before now.
+			this.Constructor.AllocateLocalScopeIds();
+
+			if (this.StaticConstructor != null)
+			{
+				this.StaticConstructor.AllocateLocalScopeIds();
+			}
+
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				VariableIdAllocator varIds = new VariableIdAllocator();
+				fd.CalculateLocalIdPass(varIds);
+				fd.SetLocalIdPass(varIds);
+			}
 		}
 
 		public FunctionDefinition GetMethod(string name, bool walkUpBaseClasses)
@@ -143,18 +158,15 @@ namespace Crayon.ParseTree
 				this.Methods[i] = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
 			}
 
-			if (this.Constructor != null)
+			this.Constructor.Resolve(parser);
+			if (this.StaticConstructor != null)
 			{
-				this.Constructor.Resolve(parser);
+				this.StaticConstructor.Resolve(parser);
 			}
-			
+
 			parser.CurrentClass = null;
 
 			bool hasABaseClass = this.baseClassInstance != null;
-			if (this.Constructor == null)
-			{
-				throw new ParserException(this.FirstToken, "Class is missing constructor.");
-			}
 			bool callsBaseConstructor = this.Constructor.BaseToken != null;
 			if (hasABaseClass && callsBaseConstructor)
 			{
@@ -264,6 +276,18 @@ namespace Crayon.ParseTree
 				fd.ResolveNames(parser, lookup, imports);
 			}
 
+			if (this.StaticConstructor != null)
+			{
+				this.StaticConstructor.ResolveNames(parser, lookup, imports);
+			}
+
+			// TODO: if there is no constructor, just create an implicit one.
+			// This should be empty if there is no base class, or just pass along the base class' args if there is.
+			if (this.Constructor == null)
+			{
+				throw new ParserException(this.FirstToken, "All classes must have a constructor.");
+			}
+
 			this.Constructor.ResolveNames(parser, lookup, imports);
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Methods);
 
@@ -285,6 +309,64 @@ namespace Crayon.ParseTree
 				classIds.Add(walker.ClassID);
 				walker = walker.BaseClass;
 			}
+		}
+
+		private Dictionary<string, Executable> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, Executable>();
+
+		public void ResolveMemberIds()
+		{
+			if (this.memberIdsResolved) return;
+
+			if (this.BaseClass != null)
+			{
+				this.BaseClass.ResolveMemberIds();
+				Dictionary<string, Executable> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
+				foreach (string key in parentDefinitions.Keys)
+				{
+					this.flattenedFieldAndMethodDeclarationsByName[key] = parentDefinitions[key];
+				}
+			}
+
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				Executable existingItem;
+				if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
+				{
+					// TODO: definition of a field or a method? from this class or a parent?
+					// TODO: check to see if this is already resolved before now.
+					throw new ParserException(fd.FirstToken, "This overrides a previous definition.");
+				}
+
+				fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
+				this.flattenedFieldAndMethodDeclarationsByName[fd.NameToken.Value] = fd;
+			}
+
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				if (!fd.IsStaticMethod)
+				{
+					Executable existingItem;
+					if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
+					{
+						if (existingItem is FieldDeclaration)
+						{
+							// TODO: again, give more information. 
+							throw new ParserException(fd.FirstToken, "This field overrides a previous definition.");
+						}
+
+						// Take the old member ID it overrides.
+						fd.MemberID = ((FunctionDefinition)existingItem).MemberID;
+					}
+					else
+					{
+						fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
+					}
+
+					this.flattenedFieldAndMethodDeclarationsByName[fd.NameToken.Value] = fd;
+				}
+			}
+
+			this.memberIdsResolved = true;
 		}
 	}
 }

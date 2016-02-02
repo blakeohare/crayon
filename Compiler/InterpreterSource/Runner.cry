@@ -25,7 +25,9 @@ function main() {
 	@type('int') baseClassNameId = 0;
 	@type('int') lastClassId = 0;
 	@type('ClassInfo') classInfo = null;
+	@type('int') i = 0;
 
+	/*
 	for (@type('int') i = 0; i < opsLength; i += 1) {
 		@type('int') op = $_array_get(ops, i);
 		if (op == OpCodes.CLASS_DEFINITION) {
@@ -86,8 +88,9 @@ function main() {
 			$_list_push(classTable, classInfo);
 			$_list_push(classMethodsBuilder, methodLookup);
 		}
-	}
+	}//*/
 
+	/*
 	@type('Array<Array<int>>') specialCache = $_new_array('Array<int>', opsLength);
 	@type('Array<int>') specialCacheEntry = null;
 	for (i = 0; i < opsLength; i += 1) {
@@ -114,7 +117,7 @@ function main() {
 		}
 		
 		$_array_set(specialCache, i, specialCacheEntry);
-	}
+	}//*/
 	
 	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
 	@type('Array<int>') localsStackSet = $_new_array('int', 1000);
@@ -139,7 +142,7 @@ function main() {
 		ops,
 		opArgs,
 		stringArgs,
-		specialCache,
+		//specialCache,
 		null, // identifiers
 		$_new_list('string'), // identifiers builder
 		$_new_dictionary('string', 'int'), // inv_identifiers
@@ -233,8 +236,9 @@ function @type('bool') runTick() {
 			ProgramData$p.inv_identifiers,
 			ProgramData$p.literalTable,
 			ProgramData$p.classTable,
-			ProgramData$p.classMethods,
-			ProgramData$p.specialCache);
+			ProgramData$p.classMethods
+			//,ProgramData$p.specialCache
+			);
 		if (error == null) {
 			// do nothing, let the next tick occur
 			$_register_timeout();
@@ -259,8 +263,9 @@ function @type('bool') runTick() {
 				ProgramData$p.inv_identifiers,
 				ProgramData$p.literalTable,
 				ProgramData$p.classTable,
-				ProgramData$p.classMethods,
-				ProgramData$p.specialCache);
+				ProgramData$p.classMethods
+				//,ProgramData$p.specialCache
+				);
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {

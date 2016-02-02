@@ -18,6 +18,7 @@ namespace Crayon.ParseTree
 		public int NameGlobalID { get; set; }
 		public string Namespace { get; set; }
 		public int FinalizedPC { get; set; }
+		public int MemberID { get; set; }
 
 		public FunctionDefinition(
 			Token functionToken,
@@ -36,6 +37,7 @@ namespace Crayon.ParseTree
 			{
 				this.annotations[annotation.Type] = annotation;
 			}
+			this.MemberID = -1;
 		}
 
 		public int[] ArgVarIDs

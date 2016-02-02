@@ -62,28 +62,23 @@ returnValueUsed = $_array_get(row, 3) == 1;
 classId = $_array_get(row, 4);
 
 // Check to see if a static initialization is required.
-if (type == FunctionInvocationType.STATIC_METHOD) {
-	$_comment('Is static method');
+if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
+	$_comment('constructor or static method');
 	classInfo2 = $_array_get(ProgramData$p.classTable2, classId);
-	if (ClassInfo2$classInfo2.staticInitializationState > 0) {
-		bool1 = false; // should call static constructor?
-		if (ClassInfo2$classInfo2.staticInitializationState == 2) {
+	if (ClassInfo2$classInfo2.staticInitializationState < 2) {
+		if (ClassInfo2$classInfo2.staticInitializationState == 0) {
+			$_comment('must invoke static constructor');
 			ClassInfo2$classInfo2.staticInitializationState = 1;
 			$_list_push(ProgramData$p.classStaticInitializationStack, classId);
+			type = FunctionInvocationType.STATIC_CONSTRUCTOR;
+			pc -= 1; // when the static constructor is done, you want the PC to start back on this same op and retry the static method invocation.
+			argCount = 0;
+			returnValueUsed = false;
 		} else { // initialization of the class being called is in progress
 			intList1 = ProgramData$p.classStaticInitializationStack;
 			if ($_list_get(intList1, $_list_length(intList1) - 1) != classId) { // is it somewhere else in the stack?
 				return killExecution(stack, pc, "Static initialization cycle detected. See stack trace for cycle details.");
 			}
-		}
-
-		if (bool1) {
-			// Static constructor needs to be called before this method can be invoked.
-			$_comment('must invoke static constructor');
-			type = FunctionInvocationType.STATIC_CONSTRUCTOR;
-			pc -= 1; // when the static constructor is done, you want the PC to start back on this same op and retry the static method invocation.
-			argCount = 0;
-			returnValueUsed = false;
 		}
 	}
 }
@@ -115,7 +110,7 @@ if (type == FunctionInvocationType.FIELD_INVOCATION) {
 			if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
 				int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
 				// now that we have the member ID, check to see if this is a field or a known method.
-				functionId = $_array_get(ClassInfo2$classInfo2.functionIdsByMemberId, int1); // get the function ID, if present
+				functionId = $_array_get(ClassInfo2$classInfo2.functionIds, int1); // get the function ID, if present
 				if (functionId > 0) {
 					// This is a local method. 'value' already contains the context.
 					type = FunctionInvocationType.LOCAL_METHOD;

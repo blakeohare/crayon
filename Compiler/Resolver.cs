@@ -155,6 +155,11 @@ namespace Crayon
 			{
 				item.ResolveNames(this.parser, definitionsByFullyQualifiedNames, item.NamespacePrefixSearch);
 			}
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.ResolveMemberIds();
+			}
 		}
 
 		private void RearrangeClassDefinitions()

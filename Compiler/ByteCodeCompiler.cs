@@ -245,6 +245,16 @@ namespace Crayon
 
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
 		{
+			// All static field starting values have been converted into statements at the beginning of the static constructor
+			// TODO: verify I've actually done that.
+
+			if (classDefinition.StaticConstructor != null)
+			{
+				this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor);
+			}
+
+			this.CompileConstructor(parser, buffer, classDefinition.Constructor);
+
 			foreach (FunctionDefinition fd in classDefinition.Methods)
 			{
 				int pc = buffer.Size;
@@ -253,14 +263,75 @@ namespace Crayon
 			}
 
 			int classId = classDefinition.ClassID;
-			int baseClassId = classDefinition.BaseClass != null ? classDefinition.BaseClass.ClassID : 0;
+			int baseClassId = classDefinition.BaseClass != null ? classDefinition.BaseClass.ClassID : -1;
 			int nameId = parser.GetId(classDefinition.NameToken.Value);
 			int constructorId = classDefinition.Constructor.FunctionID;
-			int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : 0;
-			
-			FieldDeclaration[] staticFields = classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).ToArray();
+			int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : -1;
+
+			int staticFieldCount = classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).Count();
 			FieldDeclaration[] regularFields = classDefinition.Fields.Where<FieldDeclaration>(fd => !fd.IsStaticField).ToArray();
 			FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.IsStaticMethod).ToArray();
+			List<int> members = new List<int>();
+			List<FieldDeclaration> fieldsWithComplexValues = new List<FieldDeclaration>();
+			foreach (FieldDeclaration fd in regularFields)
+			{
+				int memberId = fd.MemberID;
+				int fieldNameId = parser.GetId(fd.NameToken.Value);
+				int initInstruction;
+				int literalId = 0;
+				if (fd.DefaultValue is ListDefinition && ((ListDefinition)fd.DefaultValue).Items.Length == 0)
+				{
+					initInstruction = 1;
+				}
+				else if (fd.DefaultValue is DictionaryDefinition && ((DictionaryDefinition)fd.DefaultValue).Keys.Length == 0)
+				{
+					initInstruction = 2;
+				}
+				else
+				{
+					initInstruction = 0;
+					literalId = parser.GetLiteralId(fd.DefaultValue);
+					if (literalId == -1)
+					{
+						literalId = parser.GetNullConstant();
+					}
+				}
+
+				members.AddRange(new int[] {
+					0, // flag for field
+					memberId,
+					fieldNameId,
+					initInstruction,
+					literalId});
+			}
+
+			foreach (FunctionDefinition fd in regularMethods)
+			{
+				int memberId = fd.MemberID;
+				int methodNameId = fd.NameGlobalID;
+				int functionId = fd.FunctionID;
+
+				members.AddRange(new int[] {
+					1, // flag for method
+					memberId,
+					methodNameId,
+					functionId,
+					0, // ignored value. It's just here to keep spacing consistent.
+				});
+			}
+
+			ByteBuffer initializer = null;
+
+			if (fieldsWithComplexValues.Count > 0)
+			{
+				initializer = new ByteBuffer();
+				foreach (FieldDeclaration complexField in fieldsWithComplexValues)
+				{
+					this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
+					initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
+				}
+				initializer.Add(null, OpCode.RETURN, 0);
+			}
 
 			List<int> args = new List<int>()
 			{
@@ -268,51 +339,74 @@ namespace Crayon
 				baseClassId,
 				nameId,
 				constructorId,
+				initializer == null ? 0 : initializer.Size, // jump amount after initialization
 				staticConstructorId,
-				staticFields.Length,
-				regularFields.Length,
-				regularMethods.Length,
+				staticFieldCount,
 			};
 
-			foreach (FieldDeclaration field in regularFields) {
-				args.Add(parser.GetId(field.NameToken.Value));
-			}
-
-			foreach (FunctionDefinition func in regularMethods)
-			{
-				args.Add(parser.GetId(func.NameToken.Value));
-				args.Add(func.FunctionID);
-			}
+			args.AddRange(members);
 
 			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
+
+			if (initializer != null)
+			{
+				buffer.Concat(initializer);
+			}
 		}
 
 		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
 		{
 			// TODO: throw parser exception in the resolver if a return appears with any value
-			
+
+			ByteBuffer tBuffer = new ByteBuffer();
+
 			ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
 
 			List<int> offsetsForOptionalArgs = new List<int>();
-			this.CompileFunctionArgs(parser, buffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
+			this.CompileFunctionArgs(parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
 
-			if (constructor.BaseToken != null)
+			int minArgs = 0;
+			int maxArgs = constructor.ArgNames.Length;
+			for (int i = 0; i < constructor.ArgNames.Length; ++i)
 			{
-				this.CompileExpressionList(parser, buffer, constructor.BaseArgs, true);
-				buffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
-			}
-
-			foreach (FieldDeclaration fd in cd.Fields)
-			{
-				if (!fd.IsStaticField)
+				if (constructor.DefaultValues[i] == null)
 				{
-					this.CompileExpression(parser, buffer, fd.DefaultValue, true);
-					buffer.Add(fd.FirstToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(fd.NameToken.Value));
+					minArgs++;
+				}
+				else
+				{
+					break;
 				}
 			}
 
-			this.Compile(parser, buffer, constructor.Code);
-			buffer.Add(null, OpCode.RETURN, 0);
+			if (constructor.BaseToken != null)
+			{
+				this.CompileExpressionList(parser, tBuffer, constructor.BaseArgs, true);
+				tBuffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
+			}
+
+			this.Compile(parser, tBuffer, constructor.Code);
+			tBuffer.Add(null, OpCode.RETURN, 0);
+
+			bool isStatic = constructor == cd.StaticConstructor;
+
+			List<int> args = new List<int>()
+			{
+				constructor.FunctionID,
+				-1,
+				minArgs,
+				maxArgs,
+				isStatic ? 4 : 3,
+				cd.ClassID,
+				constructor.LocalScopeSize,
+				tBuffer.Size,
+				offsetsForOptionalArgs.Count,
+			};
+
+			args.AddRange(offsetsForOptionalArgs);
+
+			buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION2, args.ToArray());
+			buffer.Concat(tBuffer);
 		}
 
 		private void CompileReturnStatement(Parser parser, ByteBuffer buffer, ReturnStatement returnStatement)
@@ -786,8 +880,17 @@ namespace Crayon
 
 		private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
 		{
+			ClassDefinition cd = (ClassDefinition)instantiate.Class;
+			ConstructorDefinition constructor = cd.Constructor;
+
 			this.CompileExpressionList(parser, buffer, instantiate.Args, true);
-			buffer.Add(instantiate.NameToken, OpCode.CALL_CONSTRUCTOR, instantiate.Args.Length, parser.GetId(instantiate.NameToken.Value), outputUsed ? 1 : 0);
+			buffer.Add(instantiate.NameToken,
+				OpCode.CALL_FUNCTION2,
+				(int)FunctionInvocationType.CONSTRUCTOR,
+				instantiate.Args.Length,
+				constructor.FunctionID,
+				outputUsed ? 1 : 0,
+				cd.ClassID);
 		}
 
 		private void CompileThisKeyword(Parser parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)

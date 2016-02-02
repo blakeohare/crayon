@@ -8,8 +8,9 @@ function @omitReturn @type('string') interpret(
 		@type('Dictionary<string, int>') inv_identifiers,
 		@type('Array<Value>') literalTable,
 		@type('Array<ClassInfo>') classTable,
-		@type('Array<Dictionary<int, MethodDefinition>>') classMethods,
-		@type('Array<Array<int>>') specialCache) {
+		@type('Array<Dictionary<int, MethodDefinition>>') classMethods
+		//,@type('Array<Array<int>>') specialCache
+	) {
 
 	@type('ProgramData') p = $_get_program_data();
 
