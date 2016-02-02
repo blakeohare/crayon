@@ -191,6 +191,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	ClassInfo2$classInfo.functionIds = $_convert_list_to_array('int', functionIds);
 	ClassInfo2$classInfo.fieldInitializationCommand = $_convert_list_to_array('int', fieldInitializationCommand);
 	ClassInfo2$classInfo.fieldInitializationLiteral = $_convert_list_to_array('Value', fieldInitializationLiteral);
+	ClassInfo2$classInfo.memberCount = $_list_length(functionIds);
 
 	return pcJumpAfterDone;
 }

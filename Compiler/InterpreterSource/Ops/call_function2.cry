@@ -421,7 +421,23 @@ if (bool1) {
 			classInfo2 = $_array_get(classTable2, classId);
 			valueArray1 = $_new_array('Value', ClassInfo2$classInfo2.memberCount);
 			for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
-				$_array_set(valueArray1, i, VALUE_NULL);
+				switch ($_array_get(ClassInfo2$classInfo2.fieldInitializationCommand, i)) {
+					case 0:
+						$_array_set(valueArray1, i, $_array_get(ClassInfo2$classInfo2.fieldInitializationLiteral, i));
+						break;
+					case 1:
+						$_array_set(valueArray1, i, new Value(Types.LIST, $_new_list('Value')));
+						break;
+					case 2:
+						$_array_set(valueArray1, i, new Value(Types.DICTIONARY, new DictImpl(
+							$_new_dictionary('int', 'Value'),
+							$_new_dictionary('int', 'Value'),
+							$_new_dictionary('string', 'Value'),
+							$_new_dictionary('string', 'Value'),
+							0,
+							Types.INTEGER)));
+						break;
+				}
 			}
 			objInstance1 = new ObjectInstance(
 				classId,
