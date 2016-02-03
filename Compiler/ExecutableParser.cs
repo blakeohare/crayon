@@ -284,6 +284,8 @@ namespace Crayon
 			List<FunctionDefinition> methods = new List<FunctionDefinition>();
 			List<FieldDeclaration> fields = new List<FieldDeclaration>();
 			ConstructorDefinition constructorDef = null;
+			ConstructorDefinition staticConstructorDef = null;
+
 			while (!tokens.PopIfPresent("}"))
 			{
 				if (tokens.IsNext("function") || tokens.AreNext("static", "function"))
@@ -301,7 +303,13 @@ namespace Crayon
 				}
 				else if (tokens.AreNext("static", "constructor"))
 				{
-					throw new NotImplementedException();
+					tokens.Pop(); // static token
+					if (staticConstructorDef != null)
+					{
+						throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
+					}
+
+					staticConstructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(parser, tokens, cd);
 				}
 				else if (tokens.IsNext("field") || tokens.AreNext("static", "field"))
 				{
@@ -315,6 +323,7 @@ namespace Crayon
 
 			cd.Methods = methods.ToArray();
 			cd.Constructor = constructorDef;
+			cd.StaticConstructor = staticConstructorDef;
 			cd.Fields = fields.ToArray();
 
 			return cd;

@@ -80,9 +80,7 @@ namespace Crayon.ParseTree
 
 			foreach (FunctionDefinition fd in this.Methods)
 			{
-				VariableIdAllocator varIds = new VariableIdAllocator();
-				fd.CalculateLocalIdPass(varIds);
-				fd.SetLocalIdPass(varIds);
+				fd.AllocateLocalScopeIds();
 			}
 		}
 
