@@ -7,6 +7,13 @@ if (StackFrame$stack.previous == null) {
 	return '';
 }
 
+// is this the static constructor returning?
+if (StackFrame$stack.markClassAsInitialized != 0) {
+	classInfo2 = $_array_get(classTable2, StackFrame$stack.markClassAsInitialized);
+	ClassInfo2$classInfo2.staticInitializationState = 2; // mark class as completely ready to use.
+	$_list_pop(ProgramData$p.classStaticInitializationStack);
+}
+
 if (StackFrame$stack.returnValueUsed) {
 	if ($_array_get(row, 0) == 0) {
 		// returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.

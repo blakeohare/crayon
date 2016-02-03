@@ -244,3 +244,24 @@ function @type('int') resetLocalsStackTokens(@type('StackFrame') stack, @type('A
 	
 	return -1;
 }
+
+function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type('int') newScopeSize) {
+	@type('Array<Value>') oldLocals = ProgramData$p.localsStack;
+	@type('Array<int>') oldSetIndicator = ProgramData$p.localsStackSet;
+
+	@type('int') oldCapacity = $_array_length(oldLocals);
+	@type('int') newCapacity = oldCapacity * 2 + newScopeSize;
+
+	@type('Array<Value>') newLocals = $_new_array('Value', newCapacity);
+	@type('Array<int>') newSetIndicator = $_new_array('int', newCapacity);
+
+	for (@type('int') i = 0; i < oldCapacity; i += 1) {
+		$_array_set(newLocals, i, $_array_get(oldLocals, i));
+		$_array_set(newSetIndicator, i, $_array_get(oldSetIndicator, i));
+	}
+
+	ProgramData$p.localsStack = newLocals;
+	ProgramData$p.localsStackSet = newSetIndicator;
+
+	return 0;
+}

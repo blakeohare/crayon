@@ -403,10 +403,10 @@ if (bool1) {
 			break;
 		case FunctionInvocationType.STATIC_METHOD:
 			$_comment('static method');
-			// classId already set
 			functionInfo2 = $_array_get(functionTable2, functionId);
 			pc = FunctionInfo2$functionInfo2.pc;
 			value = null;
+			classId = 0;
 			break;
 		case FunctionInvocationType.LOCAL_METHOD:
 			$_comment('non-static method');
@@ -487,20 +487,10 @@ if (bool1) {
 	int1 = FunctionInfo2$functionInfo2.localsSize;
 	int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
 	if (localsStackCapacity <= int2 + int1) {
-		// expand locals capacity
-		// TODO: move this into a helper function.
-		int3 = localsStackCapacity * 2 + int1; // new capacity
-		valueArray1 = $_new_array('Value', int3);
-		intArray1 = $_new_array('int', int3);
-		for (i = localsStackCapacity - 1; i >= 0; i -= 1) {
-			$_array_set(valueArray1, i, $_array_get(localsStack, i));
-			$_array_set(intArray1, i, $_array_get(localsStackSet, i));
-		}
-		localsStack = valueArray1;
-		localsStackSet = intArray1;
-		localsStackCapacity = int3;
-		ProgramData$p.localsStack = localsStack;
-		ProgramData$p.localsStackSet = localsStackSet;
+		increaseLocalsStackCapacity(p, int1);
+		localsStack = ProgramData$p.localsStack;
+		localsStackSet = ProgramData$p.localsStackSet;
+		localsStackCapacity = $_array_length(localsStack);
 	}
 
 	localsStackSetToken += 1;
@@ -523,7 +513,7 @@ if (bool1) {
 		returnValueUsed,
 		value, // the value of the 'this' keyword
 		valueStackSize,
-		classId);
+		classId); // Static initialization complete marker used by RETURN op. For static constructors ONLY!
 
 	// now that we're in the new stack frame, flush out all the passed args to the local stack since their 
 	// ID's are allocated with args first.
