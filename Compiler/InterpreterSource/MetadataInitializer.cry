@@ -94,12 +94,17 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	@type('int') staticFieldCount = $_array_get(args, 6); // just static fields. no static methods. those function IDs are resolved inline at compile time
 	@type('Dictionary<int, int>') globalNameIdToMemberId = $_new_dictionary('int', 'int');
 
+	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
+	for (i = 0; i < staticFieldCount; i += 1) {
+		$_array_set(staticFields, i, VALUE_NULL);
+	}
+
 	@type('ClassInfo2') classInfo = new ClassInfo2(
 		classId,
 		globalNameId,
 		baseClassId,
 		staticInitializationState,
-		null, // static fields array. This is set during general runtime by the static constructor
+		staticFields,
 		staticConstructorFunctionId,
 		constructorFunctionId,
 		null, // field initializer PC list with base-most class first.

@@ -110,8 +110,12 @@ namespace Crayon.ParseTree
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
-			if (this.BaseArgs != null)
+			if (this.DefaultValues.Length > 0)
+			{
+				this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
+			}
+
+			if (this.BaseArgs.Length > 0)
 			{
 				this.BatchExpressionNameResolver(parser, lookup, imports, this.BaseArgs);
 			}

@@ -1,0 +1,8 @@
+﻿
+classInfo2 = $_array_get(classTable2, $_array_get(row, 0));
+
+// TODO: invoke static initializer if necessary
+
+import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, $_array_get(ClassInfo2$classInfo2.staticFields, $_array_get(row, 1)));
+valueStackSize += 1;

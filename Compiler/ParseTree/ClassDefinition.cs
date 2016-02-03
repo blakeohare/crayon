@@ -88,6 +88,8 @@ namespace Crayon.ParseTree
 		{
 			if (this.functionDefinitionsByName == null)
 			{
+				this.functionDefinitionsByName = new Dictionary<string, FunctionDefinition>();
+
 				foreach (FunctionDefinition fd in this.Methods)
 				{
 					this.functionDefinitionsByName[fd.NameToken.Value] = fd;
@@ -111,9 +113,17 @@ namespace Crayon.ParseTree
 		{
 			if (this.fieldDeclarationsByName == null)
 			{
+				this.fieldDeclarationsByName = new Dictionary<string, FieldDeclaration>();
+
+				int staticMemberId = 0;
+
 				foreach (FieldDeclaration fd in this.Fields)
 				{
 					this.fieldDeclarationsByName[fd.NameToken.Value] = fd;
+					if (fd.IsStaticField)
+					{
+						fd.StaticMemberID = staticMemberId++;
+					}
 				}
 			}
 

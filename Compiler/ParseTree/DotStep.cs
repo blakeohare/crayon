@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon.ParseTree
 {
@@ -97,6 +98,25 @@ namespace Crayon.ParseTree
 			FieldDeclaration fieldDec;
 			Expression root = this.Root;
 			string field = this.StepToken.Value;
+
+			if (root is Variable)
+			{
+				root = root.ResolveNames(parser, lookup, imports);
+				this.Root = root;
+			}
+
+			if (root is PartialNamespaceReference)
+			{
+				// already a fully qualified namespace, therefore imports don't matter.
+				string fullyQualifiedName = ((PartialNamespaceReference)root).Name + "." + field;
+				if (lookup.ContainsKey(fullyQualifiedName))
+				{
+					return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.FunctionOrClassOwner);
+				}
+
+				throw new ParserException(this.FirstToken, "Could not find class or function by this name");
+			}
+
 			if (root is ClassReference)
 			{
 				ClassDefinition cd = ((ClassReference)root).ClassDefinition;
@@ -127,18 +147,6 @@ namespace Crayon.ParseTree
 
 				// TODO: show spelling suggestions.
 				throw new ParserException(this.StepToken, "No static fields or methods named '" + field + "'.");
-			}
-
-			if (root is PartialNamespaceReference)
-			{
-				// already a fully qualified namespace, therefore imports don't matter.
-				string fullyQualifiedName = ((PartialNamespaceReference)root).Name + "." + field;
-				if (lookup.ContainsKey(fullyQualifiedName))
-				{
-					return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.FunctionOrClassOwner);
-				}
-
-				throw new ParserException(this.FirstToken, "Could not find class or function by this name");
 			}
 
 			if (root is BaseKeyword)

@@ -9,6 +9,7 @@ namespace Crayon.ParseTree
 		public Expression DefaultValue { get; set; }
 		public bool IsStaticField { get; private set; }
 		public int MemberID { get; set; }
+		public int StaticMemberID { get; set; }
 
 		public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic)
 			: base(fieldToken, owner)

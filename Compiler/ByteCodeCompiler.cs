@@ -571,6 +571,24 @@ namespace Crayon
 						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
 					}
 				}
+				else if (assignment.Target is FieldReference)
+				{
+					this.CompileExpression(parser, buffer, assignment.Value, true);
+					FieldReference fieldReference = (FieldReference)assignment.Target;
+					if (fieldReference.Field.IsStaticField)
+					{
+						buffer.Add(
+							assignment.AssignmentOpToken,
+							OpCode.ASSIGN_STATIC_FIELD,
+							((ClassDefinition)fieldReference.Field.FunctionOrClassOwner).ClassID,
+							fieldReference.Field.StaticMemberID);
+					}
+					else
+					{
+						// TODO: "this.foo = value"
+						throw new NotImplementedException(); 
+					}
+				}
 				else
 				{
 					throw new Exception("This shouldn't happen.");
@@ -720,6 +738,7 @@ namespace Crayon
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
 			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, outputUsed);
 			else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
+			else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -728,6 +747,24 @@ namespace Crayon
 			if (!outputUsed)
 			{
 				throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
+			}
+		}
+
+		private void CompileFieldReference(Parser parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
+		{
+			EnsureUsed(fieldRef.FirstToken, outputUsed);
+
+			if (fieldRef.Field.IsStaticField)
+			{
+				buffer.Add(
+					fieldRef.FirstToken,
+					OpCode.DEREF_STATIC_FIELD,
+					((ClassDefinition)fieldRef.Field.FunctionOrClassOwner).ClassID,
+					fieldRef.Field.StaticMemberID);
+			}
+			else
+			{
+				throw new NotImplementedException();
 			}
 		}
 

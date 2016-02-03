@@ -5,9 +5,10 @@
 	ASSIGN_FUNCTION_ARG, // 1: scope ID, 2: function arg value index to assign to variable
 	ASSIGN_FUNCTION_ARG_AND_JUMP, // 1: scope ID, 2: function arg value index to assign to variable, 3: PC offset to jump if arg is present (otherwise don't assign and keep going)
 	ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
+	ASSIGN_LOCAL, // 1: local scope ID
+	ASSIGN_STATIC_FIELD, // 1: class ID, 2: field ID
 	ASSIGN_STEP, // name ID of step. value stack: [root, value]
 	ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
-	ASSIGN_LOCAL, // 1: local scope ID
 	BINARY_OP,
 	BOOLEAN_NOT, // no args.
 	BREAK, // no ops. This should be resolved into a jump before actually being run.
@@ -27,6 +28,7 @@
 	DEF_LIST, // 1: size
 	DEREF_DOT, // 1: step ID
 	DEREF_DOT_ON_BASE, // 1: step ID
+	DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID
 	DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
 	FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
 	FUNCTION_DEFINITION, // 1: function name ID, 2: PC offset where first line of function is, 3: total number of args; check to make sure not exceededFUNCTION_DEFINITION2, // 1: function ID, 2: function name ID (or 0 for constructors), 3: PC offset, 4: min args, 5: max args, 6: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor)

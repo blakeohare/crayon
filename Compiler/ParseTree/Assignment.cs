@@ -82,7 +82,6 @@ namespace Crayon.ParseTree
 			this.Target = this.Target.ResolveNames(parser, lookup, imports);
 			this.Value = this.Value.ResolveNames(parser, lookup, imports);
 
-			// TODO: abstract property, CanAssignTo
 			if (!this.Target.CanAssignTo)
 			{
 				throw new ParserException(this.Target.FirstToken, "Cannot use assignment on this.");
