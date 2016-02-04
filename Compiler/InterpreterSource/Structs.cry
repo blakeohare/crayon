@@ -185,6 +185,9 @@ struct ClassInfo2 {
 	@type('Array<int>') fieldInitializationCommand, // 0 - USE_LITERAL, 1 - LIST, 2 - DICT, 3 - SYSTEM NULL (reserved for method)
 	@type('Array<Value>') fieldInitializationLiteral,
 
+	// TODO: It might actually be good to create two of these, one that's global ID to all member ID's, and another 
+	// for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave 
+	// the road for private/protected/public modifiers.
 	@type('Dictionary<int, int>') globalIdToMemberId,
 }
 
