@@ -30,7 +30,7 @@ if (StackFrame$stack.returnValueUsed) {
 		value = $_array_get(valueStack, valueStackSize - 1);
 		valueStackSize = StackFrame$stack.valueStackSize;
 		stack = StackFrame$stack.previous;
-		$_array_set(valueStack, valueStackSize, VALUE_NULL);
+		$_array_set(valueStack, valueStackSize, value);
 		valueStackSize = StackFrame$stack.valueStackSize + 1;
 	}
 } else {
