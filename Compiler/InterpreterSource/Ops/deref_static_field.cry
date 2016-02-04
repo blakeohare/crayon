@@ -1,7 +1,5 @@
-﻿// TODO: test this by dereferencing a class before instantiating it
-
-
-// A lot of this code is duplicated in CALL_FUNCTION. TODO: import inline
+﻿
+// A lot of this code is duplicated in CALL_FUNCTION and ASSIGN_STATIC_FIELD. TODO: import inline
 
 classInfo2 = $_array_get(classTable2, $_array_get(row, 0));
 bool1 = true;

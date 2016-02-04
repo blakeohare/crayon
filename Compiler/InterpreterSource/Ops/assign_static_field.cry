@@ -2,9 +2,64 @@
 // row[0] -> class ID
 // row[1] -> static member ID
 
-classInfo2 = $_array_get(classTable2, $_array_get(row, 0)); 
-valueStackSize -= 1;
-$_array_set(
-	ClassInfo2$classInfo2.staticFields,
-	$_array_get(row, 1),
-	$_array_get(valueStack, valueStackSize));
+// A lot of this code is duplicated in CALL_FUNCTION and DEREF_STATIC_FIELD. TODO: import inline
+
+classInfo2 = $_array_get(classTable2, $_array_get(row, 0));
+bool1 = true;
+if (ClassInfo2$classInfo2.staticInitializationState < 2) {
+	classId = ClassInfo2$classInfo2.id;
+	if (ClassInfo2$classInfo2.staticInitializationState == 1) {
+		// check to make sure it's the last item on the static init stack
+		intList1 = ProgramData$p.classStaticInitializationStack;
+		if ($_list_get(intList1, $_list_length(intList1) - 1) != classId) {
+			return killExecution(stack, pc, "Static initialization loop detected. This class this field is a member of is not done being initialized.");
+		}
+	} else {
+		bool1 = false;
+
+		ClassInfo2$classInfo2.staticInitializationState = 1;
+		$_list_push(ProgramData$p.classStaticInitializationStack, classId);
+		
+		functionInfo2 = $_array_get(functionTable2, ClassInfo2$classInfo2.staticConstructorFunctionId);
+
+		StackFrame$stack.pc = pc - 1; // when static constructor completes, return to this same op.
+		pc = FunctionInfo2$functionInfo2.pc;
+
+		int1 = FunctionInfo2$functionInfo2.localsSize;
+		int2 = StackFrame$stack.localsStackOffsetEnd;
+		if (localsStackCapacity <= int2 + int1) {
+			increaseLocalsStackCapacity(p, int1);
+			localsStack = ProgramData$p.localsStack;
+			localsStackSet = ProgramData$p.localsStackSet;
+			localsStackCapacity = $_array_length(localsStack);
+		}
+
+		localsStackSetToken += 1;
+		if (localsStackSetToken > 2000000000) {
+			resetLocalsStackTokens(stack, localsStackSet, localsStack);
+			localsStackSetToken = 2;
+		}
+
+		localsStackOffset = int2;
+
+		stack = new StackFrame(
+			pc,
+			localsStackSetToken,
+			localsStackOffset,
+			localsStackOffset + int1,
+			stack,
+			false, // return value used?
+			null, // value of 'this' keyword.
+			valueStackSize,
+			classId); // mark class as initialized when RETURN runs.
+	}
+}
+
+if (bool1) {
+	classInfo2 = $_array_get(classTable2, $_array_get(row, 0)); 
+	valueStackSize -= 1;
+	$_array_set(
+		ClassInfo2$classInfo2.staticFields,
+		$_array_get(row, 1),
+		$_array_get(valueStack, valueStackSize));
+}
