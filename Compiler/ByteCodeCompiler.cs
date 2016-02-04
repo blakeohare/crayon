@@ -1241,7 +1241,14 @@ namespace Crayon
 					ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
 					if (fd.IsStaticMethod)
 					{
-						throw new NotImplementedException(); // TODO: redo this
+						buffer.Add(
+							funCall.ParenToken,
+							OpCode.CALL_FUNCTION2,
+							(int)FunctionInvocationType.STATIC_METHOD,
+							funCall.Args.Length,
+							fd.FunctionID,
+							outputUsed ? 1 : 0,
+							cd.ClassID);
 					}
 					else
 					{

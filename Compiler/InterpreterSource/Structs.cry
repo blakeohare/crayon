@@ -189,6 +189,10 @@ struct ClassInfo2 {
 	// for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave 
 	// the road for private/protected/public modifiers.
 	@type('Dictionary<int, int>') globalIdToMemberId,
+
+	// TODO: another thought is to allocate an array for all global ID's to map to member ID's. This would be a lot of
+	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized 
+	// codebase.
 }
 
 struct FunctionInfo2 {
