@@ -210,7 +210,9 @@ function main() {
 		null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
 		localsStack,
 		localsStackSet,
-		null // funcArgs (set in FINALIZE_INITIALIZATION)
+		null, // funcArgs (set in FINALIZE_INITIALIZATION)
+
+		-1 // the global name ID for "length"
 		));
 
 	runTick();

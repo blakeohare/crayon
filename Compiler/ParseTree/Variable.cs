@@ -70,6 +70,11 @@ namespace Crayon.ParseTree
 				return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.FunctionOrClassOwner);
 			}
 
+			if (this.Name == "this")
+			{
+				return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner);
+			}
+
 			Executable exec = DoNameLookup(lookup, imports, this.Name);
 			if (exec != null)
 			{

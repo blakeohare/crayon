@@ -294,6 +294,7 @@ namespace Crayon
 					if (literalId == -1)
 					{
 						literalId = parser.GetNullConstant();
+						fieldsWithComplexValues.Add(fd);
 					}
 				}
 
@@ -418,7 +419,7 @@ namespace Crayon
 			else
 			{
 				this.CompileExpression(parser, buffer, returnStatement.Expression, true);
-				buffer.Add(returnStatement.FirstToken, OpCode.RETURN);
+				buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 1);
 			}
 		}
 
@@ -1237,7 +1238,23 @@ namespace Crayon
 				this.CompileExpressionList(parser, buffer, funCall.Args, true);
 				if (fd.FunctionOrClassOwner is ClassDefinition)
 				{
-					throw new NotImplementedException(); // TODO: redo this
+					ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
+					if (fd.IsStaticMethod)
+					{
+						throw new NotImplementedException(); // TODO: redo this
+					}
+					else
+					{
+						buffer.Add(
+							funCall.ParenToken,
+							OpCode.CALL_FUNCTION2,
+							(int)FunctionInvocationType.LOCAL_METHOD,
+							funCall.Args.Length,
+							fd.FunctionID,
+							outputUsed ? 1 : 0,
+							cd.ClassID);
+
+					}
 				}
 				else
 				{

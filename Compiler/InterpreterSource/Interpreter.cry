@@ -100,6 +100,7 @@ function @omitReturn @type('string') interpret(
 	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
+	@type('Dictionary<int, int>') intIntDict1 = null;
 
 	// binary op variables...
 	@type('int') op = 0;

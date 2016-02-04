@@ -77,6 +77,8 @@ struct ProgramData {
 	@type('Array<Value>') localsStack,
 	@type('Array<int>') localsStackSet,
 	@type('Array<Value>') funcArgs,
+
+	@type('int') lengthId,
 }
 
 struct StackFrame {
@@ -201,7 +203,7 @@ struct FunctionInfo2 {
 struct FunctionDefinition {
 	@type('int') pc,
 	@type('int') maxArgCount,
-	@type('string') name
+	@type('string') name,
 }
 
 struct ObjectInstance {

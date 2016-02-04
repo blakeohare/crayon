@@ -388,6 +388,7 @@ if (bool1) {
 	$_comment('push a new frame to the stack');
 	
 	StackFrame$stack.pc = pc;
+	bool1 = false; // bool1 now indicates whether the PC's in intArray1 indicate additional stack frames that need to be pushed.
 
 	// Set the following variables...
 	// pc --> since pc is now saved, put the new PC into the 'pc' variable.
@@ -457,6 +458,9 @@ if (bool1) {
 				$_array_set(valueStack, valueStackSize, value);
 				valueStackSize += 1;
 			}
+
+			intArray1 = ClassInfo2$classInfo2.fieldInitializerPcs;
+			bool1 = true;
 			break;
 		case FunctionInvocationType.BASE_CONSTRUCTOR:
 			$_comment('base constructor');
@@ -532,5 +536,22 @@ if (bool1) {
 			// array indexed by the number of optional args provided.
 			pc += $_array_get(FunctionInfo2$functionInfo2.pcOffsetsForOptionalArgs, int1);
 		}
+	}
+
+	if (bool1) {
+		for (i = 0; i < $_array_length(intArray1); i += 1) {
+			stack = new StackFrame(
+				$_array_get(intArray1, i), // PC of initializer - 1
+				localsStackSetToken, // locals are not allowed in field initializer, so these are all the same.
+				localsStackOffset,
+				localsStackOffset,
+				stack,
+				false, // return value used
+				value, // value of 'this' keyword
+				valueStackSize, // should not change
+				0); // for static constructors only
+		}
+
+		pc = StackFrame$stack.pc;
 	}
 }
