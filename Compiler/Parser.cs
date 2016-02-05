@@ -189,39 +189,6 @@ namespace Crayon
 			return null;
 		}
 
-		public void RegisterClass(ClassDefinition classDef)
-		{
-			string name = classDef.NameToken.Value;
-			if (this.classDefinitions.ContainsKey(name))
-			{
-				throw new ParserException(classDef.FirstToken, "Multiple classes with the name: '" + name + "'");
-			}
-
-			this.classDefinitions[name] = classDef;
-			this.classDefinitionOrder[name] = this.classDefinitionOrder.Count;
-		}
-
-		public void VerifySubclassDeclarationOrder(ClassDefinition classDef, ClassDefinition subclass)
-		{
-			string className = classDef.NameToken.Value;
-			string subclassName = subclass.NameToken.Value;
-			int classDefN = this.classDefinitionOrder[className];
-			int subclassDefN = this.classDefinitionOrder.ContainsKey(subclassName) ? this.classDefinitionOrder[subclassName] : Int32.MaxValue;
-
-			if (classDefN < subclassDefN)
-			{
-				string errorBase = "The class \"" + className + "\" cannot extend from \"" + subclassName + "\" because ";
-				if (classDef.FirstToken.FileID == subclass.FirstToken.FileID)
-				{
-					throw new ParserException(classDef.FirstToken, errorBase + "it is defined before \"" + subclassName + "\". Swap the order of the definitions.");
-				}
-				else
-				{
-					throw new ParserException(classDef.FirstToken, errorBase + "it is defined sequentially before \"" + subclassName + "\". Check the order of your file imports.");
-				}
-			}
-		}
-
 		private void VerifyNameFree(Token nameToken)
 		{
 			if (things.Contains(nameToken.Value))

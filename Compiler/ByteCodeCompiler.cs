@@ -383,7 +383,14 @@ namespace Crayon
 			if (constructor.BaseToken != null)
 			{
 				this.CompileExpressionList(parser, tBuffer, constructor.BaseArgs, true);
-				tBuffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
+				tBuffer.Add(
+					constructor.BaseToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.BASE_CONSTRUCTOR,
+					constructor.BaseArgs.Length,
+					cd.BaseClass.Constructor.FunctionID,
+					0,
+					cd.BaseClass.ClassID);
 			}
 
 			this.Compile(parser, tBuffer, constructor.Code);

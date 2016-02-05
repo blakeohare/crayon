@@ -6,6 +6,8 @@ namespace Crayon.ParseTree
 {
 	internal class ClassDefinition : Executable
 	{
+		private static int classIdAlloc = 1;
+
 		public int ClassID { get; private set; }
 		public ClassDefinition BaseClass { get; private set; }
 		public Token NameToken { get; private set; }
@@ -25,8 +27,6 @@ namespace Crayon.ParseTree
 		private Dictionary<string, FunctionDefinition> functionDefinitionsByName = null;
 		private Dictionary<string, FieldDeclaration> fieldDeclarationsByName = null;
 
-		private ClassDefinition baseClassInstance = null;
-
 		public ClassDefinition(
 			Token classToken, 
 			Token nameToken, 
@@ -36,6 +36,8 @@ namespace Crayon.ParseTree
 			Executable owner)
 			: base(classToken, owner)
 		{
+			this.ClassID = ClassDefinition.classIdAlloc++;
+
 			this.Namespace = ns;
 			this.NameToken = nameToken;
 			this.BaseClassTokens = subclassTokens.ToArray();
@@ -142,8 +144,6 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
-			this.ClassID = parser.GetClassId(this);
-
 			if (parser.IsInClass)
 			{
 				throw new ParserException(this.FirstToken, "Nested classes aren't a thing, yet.");
@@ -174,11 +174,11 @@ namespace Crayon.ParseTree
 
 			parser.CurrentClass = null;
 
-			bool hasABaseClass = this.baseClassInstance != null;
+			bool hasABaseClass = this.BaseClass != null;
 			bool callsBaseConstructor = this.Constructor.BaseToken != null;
 			if (hasABaseClass && callsBaseConstructor)
 			{
-				Expression[] defaultValues = this.baseClassInstance.Constructor.DefaultValues;
+				Expression[] defaultValues = this.BaseClass.Constructor.DefaultValues;
 				int maxValues = defaultValues.Length;
 				int minValues = 0;
 				for (int i = 0; i < maxValues; ++i)
@@ -194,7 +194,7 @@ namespace Crayon.ParseTree
 			}
 			else if (hasABaseClass && !callsBaseConstructor)
 			{
-				if (this.baseClassInstance.Constructor != null)
+				if (this.BaseClass.Constructor != null)
 				{
 					throw new ParserException(this.FirstToken, "The base class of this class has a constructor which must be called.");
 				}
@@ -207,12 +207,6 @@ namespace Crayon.ParseTree
 			{
 				// yeah, that's fine.
 			}
-
-			if (this.baseClassInstance != null)
-			{
-				parser.VerifySubclassDeclarationOrder(this, this.baseClassInstance);
-			}
-
 
 			return Listify(this);
 		}
@@ -241,7 +235,7 @@ namespace Crayon.ParseTree
 					throw new ParserException(token, "Class not found.");
 				}
 
-				if (!(baseClassInstance is ClassDefinition))
+				if (baseClassInstance is ClassDefinition)
 				{
 					baseClasses.Add((ClassDefinition)baseClassInstance);
 					baseClassesTokens.Add(token);
