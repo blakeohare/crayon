@@ -80,7 +80,9 @@ if (bool1) {
 		$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
 	}
 
-	if (type == FunctionInvocationType.FIELD_INVOCATION) {
+	if (type == FunctionInvocationType.LOCAL_METHOD) {
+		value = StackFrame$stack.objectContext;
+	} else if (type == FunctionInvocationType.FIELD_INVOCATION) {
 		$_comment('field invocation');
 		// provided pointers have no risk of requiring a static initialization because the pointer can only be 
 		// provided from a source that would have already triggered it.

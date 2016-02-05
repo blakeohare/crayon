@@ -811,8 +811,12 @@ namespace Crayon
 		private void CompileBaseMethodReference(Parser parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
 		{
 			EnsureUsed(baseMethodReference.FirstToken, outputUsed);
-			int baseClassId = parser.GetClass(baseMethodReference.ClassToWhichThisMethodRefers).ClassID;
-			buffer.Add(baseMethodReference.DotToken, OpCode.DEREF_DOT_ON_BASE, parser.GetId(baseMethodReference.StepToken.Value), baseClassId);
+			int baseClassId = baseMethodReference.ClassToWhichThisMethodRefers.ClassID;
+			buffer.Add(
+				baseMethodReference.DotToken,
+				OpCode.DEREF_DOT_ON_BASE,
+				parser.GetId(baseMethodReference.StepToken.Value),
+				baseClassId);
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)
@@ -1300,6 +1304,25 @@ namespace Crayon
 					0,
 					outputUsed ? 1 : 0,
 					globalNameId);
+			}
+			else if (root is BaseMethodReference)
+			{
+				BaseMethodReference bmr = (BaseMethodReference)root;
+				FunctionDefinition fd = bmr.ClassToWhichThisMethodRefers.GetMethod(bmr.StepToken.Value, true);
+				if (fd == null)
+				{
+					throw new ParserException(bmr.DotToken, "This method does not exist on any base class.");
+				}
+
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.LOCAL_METHOD,
+					funCall.Args.Length,
+					fd.FunctionID,
+					outputUsed ? 1 : 0,
+					bmr.ClassToWhichThisMethodRefers.ClassID);
 			}
 			else
 			{

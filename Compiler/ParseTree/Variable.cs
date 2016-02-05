@@ -75,6 +75,11 @@ namespace Crayon.ParseTree
 				return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner);
 			}
 
+			if (this.Name == "base")
+			{
+				return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner);
+			}
+
 			Executable exec = DoNameLookup(lookup, imports, this.Name);
 			if (exec != null)
 			{

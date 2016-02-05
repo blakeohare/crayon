@@ -43,6 +43,11 @@ namespace Crayon.ParseTree
 				}
 			}
 
+			if (this.Root is DotStep && ((DotStep)this.Root).Root is BaseKeyword)
+			{
+
+			}
+
 			this.Root = this.Root.Resolve(parser);
 
 			return this;
