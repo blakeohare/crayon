@@ -772,7 +772,10 @@ namespace Crayon
 			}
 			else
 			{
-				throw new NotImplementedException();
+				buffer.Add(
+					fieldRef.FirstToken,
+					OpCode.DEREF_INSTANCE_FIELD,
+					fieldRef.Field.MemberID);
 			}
 		}
 
