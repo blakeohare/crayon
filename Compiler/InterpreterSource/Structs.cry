@@ -76,6 +76,7 @@ struct ProgramData {
 	@type('Array<int>') globalNameIdToPrimitiveMethodName,
 	@type('Array<Value>') localsStack,
 	@type('Array<int>') localsStackSet,
+	@type('int') localsStackSetToken,
 	@type('Array<Value>') funcArgs,
 
 	@type('int') lengthId,

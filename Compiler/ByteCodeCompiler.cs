@@ -1260,7 +1260,6 @@ namespace Crayon
 							fd.FunctionID,
 							outputUsed ? 1 : 0,
 							cd.ClassID);
-
 					}
 				}
 				else

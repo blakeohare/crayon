@@ -283,6 +283,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\push_func_ref.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_static_field.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\deref_static_field.cry" />
+    <EmbeddedResource Include="InterpreterSource\InvokeStaticConstructor.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

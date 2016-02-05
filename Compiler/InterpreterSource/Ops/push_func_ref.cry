@@ -18,7 +18,16 @@ switch ($_array_get(row, 1)) {
 
 	case 2: // static method
 		// note that a static constructor call must occur here.
-		return killExecution(stack, pc, "TODO: implement this.");
+		classId = $_array_get(row, 2);
+		classInfo2 = $_array_get(classTable2, classId);
+		import inline "InterpreterSource/InvokeStaticConstructor.cry";
+		if (bool1) {
+			value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, $_array_get(row, 0)));
+		} else {
+			// a precaution just in case value is ever added to InvokeStaticConstructor.cry
+			value = null;
+		}
+		break;
 }
 
 if (value != null) {

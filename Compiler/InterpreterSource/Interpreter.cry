@@ -101,6 +101,7 @@ function @omitReturn @type('string') interpret(
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
+	@type('StackFrame') stackFrame2 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
