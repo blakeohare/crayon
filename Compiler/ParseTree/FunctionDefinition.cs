@@ -15,7 +15,6 @@ namespace Crayon.ParseTree
 		public Annotation[] ArgAnnotations { get; set; }
 		private Dictionary<string, Annotation> annotations;
 		public int LocalScopeSize { get; set; }
-		public int NameGlobalID { get; set; }
 		public string Namespace { get; set; }
 		public int FinalizedPC { get; set; }
 		public int MemberID { get; set; }

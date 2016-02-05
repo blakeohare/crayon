@@ -309,7 +309,7 @@ namespace Crayon
 			foreach (FunctionDefinition fd in regularMethods)
 			{
 				int memberId = fd.MemberID;
-				int methodNameId = fd.NameGlobalID;
+				int methodNameId = parser.GetId(fd.NameToken.Value);
 				int functionId = fd.FunctionID;
 
 				members.AddRange(new int[] {
