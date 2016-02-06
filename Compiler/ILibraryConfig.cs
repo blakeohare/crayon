@@ -11,5 +11,6 @@ namespace Crayon
 		string GetEmbeddedCode();
 		string GetTranslationCode(LanguageId language, PlatformId platform, string functionName);
 		string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args);
+		Dictionary<string, string> GetSupplementalTranslatedCode();
 	}
 }

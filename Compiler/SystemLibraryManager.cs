@@ -57,6 +57,20 @@ namespace Crayon
 			return this.importedLibraries[libraryName].GetEmbeddedCode();
 		}
 
+		public Dictionary<string, string> GetSupplementalTranslationFiles()
+		{
+			Dictionary<string, string> output = new Dictionary<string, string>();
+			foreach (ILibraryConfig library in this.importedLibraries.Values)
+			{
+				Dictionary<string, string> files = library.GetSupplementalTranslatedCode();
+				foreach (string key in files.Keys)
+				{
+					output[key] = files[key];
+				}
+			}
+			return output;
+		}
+
 		private Dictionary<string, string> systemLibraryPathsByName = null;
 
 		private string GetSystemLibraryPath(string name)

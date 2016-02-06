@@ -30,4 +30,32 @@
 	function typeof(value) {
 		return $$lib_core_typeof(value);
 	}
+
+	function _LIB_CORE_list_sort_by_key(fp, list) {
+		if (list.length > 1) {
+			k = [];
+			for (t : list) {
+				k.add(fp(t));
+			}
+			$$lib_core_sort_list(list, k);
+		}
+	}
+
+	function _LIB_CORE_list_map(fp, list) {
+		output = [];
+		for (t : list) {
+			output.add(fp(t));
+		}
+		return output;
+	}
+
+	function _LIB_CORE_list_filter(fp, list) {
+		output = [];
+		for (t : list) {
+			if (fp(t) == true) {
+				output.add(t);
+			}
+		}
+		return output;
+	}
 }

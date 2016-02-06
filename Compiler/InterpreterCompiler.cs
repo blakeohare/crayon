@@ -47,6 +47,10 @@ namespace Crayon
 
 			Dictionary<string, string> replacements = this.BuildReplacementsDictionary();
 
+			Dictionary<string, string> filesById = new Dictionary<string, string>();
+			Dictionary<string, string> libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles();
+			List<string> orderedFileIds = new List<string>();
+
 			foreach (string file in FILES)
 			{
 				string fileId = file.Split('.')[0];
@@ -57,10 +61,21 @@ namespace Crayon
 				}
 
 				string code = Util.ReadFileInternally("InterpreterSource/" + file);
+				filesById[fileId] = code;
+				orderedFileIds.Add(fileId);
+			}
 
-				code = Constants.DoReplacements(code, replacements);
+			foreach (string fileId in libraryProducedFiles.Keys)
+			{
+				filesById[fileId] = libraryProducedFiles[fileId];
+				orderedFileIds.Add(fileId);
+			}
 
-				Executable[] lines = this.interpreterParser.ParseInterpreterCode(file, code);
+			foreach (string fileId in orderedFileIds)
+			{
+				string code = Constants.DoReplacements(filesById[fileId], replacements);
+
+				Executable[] lines = this.interpreterParser.ParseInterpreterCode(fileId, code);
 				if (lines.Length > 0)
 				{
 					output[fileId] = lines.ToArray();

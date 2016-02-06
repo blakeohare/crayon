@@ -52,8 +52,10 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CLONE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CONCAT:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CONTAINS:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.FILTER:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.INSERT:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.JOIN:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.MAP:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REVERSE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.SHUFFLE:
@@ -227,7 +229,7 @@ function @type('Value') callSystemMethod(
 					i -= 1;
 				}
 
-				$_sort_primitive_values(sortingList, is_string);
+				//$_sort_primitive_values(sortingList, is_string);
 			}
 			break;
 		case %%%PRIMITIVE_METHOD_STRING_SPLIT%%%:

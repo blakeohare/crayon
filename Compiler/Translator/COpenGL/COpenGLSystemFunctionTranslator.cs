@@ -762,10 +762,12 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
-		protected override void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression isString)
+		protected override void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression parallelList, Expression isString)
 		{
 			output.Add("TODO_sort_primitive_list(");
 			this.Translator.TranslateExpression(output, valueList);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, parallelList);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isString);
 			output.Add(")");

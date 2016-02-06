@@ -80,6 +80,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_core_current_time.cry" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_core_sort_list.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CoreLibHelper.cry" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

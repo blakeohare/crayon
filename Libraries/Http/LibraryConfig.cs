@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Crayon;
 using Crayon.ParseTree;
 
@@ -24,6 +25,11 @@ namespace Http
 		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
 		{
 			throw new Exception();
+		}
+
+		public Dictionary<string, string> GetSupplementalTranslatedCode()
+		{
+			return new Dictionary<string, string>();
 		}
 	}
 }

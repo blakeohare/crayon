@@ -4,8 +4,8 @@ if (valueStackSize + int1 > valueStackCapacity) {
 	// literal count may be greater than a capacity increase in some cases.
 	while (valueStackSize + int1 > valueStackCapacity) {
 		valueStackIncreaseCapacity();
-		valueStackCapacity = ProgramData$p.valueStackCapacity;
 		valueStack = ProgramData$p.valueStack;
+		valueStackCapacity = $_array_length(valueStack);
 	}
 }
 

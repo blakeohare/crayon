@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Crayon;
 using Crayon.ParseTree;
-using System.Collections.Generic;
 
 namespace Game
 {
@@ -49,6 +49,11 @@ namespace Game
 		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
 		{
 			throw new Exception();
+		}
+
+		public Dictionary<string, string> GetSupplementalTranslatedCode()
+		{
+			return new Dictionary<string, string>();
 		}
 	}
 }

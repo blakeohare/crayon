@@ -29,6 +29,14 @@ namespace Core
 			};
 		}
 
+		public Dictionary<string, string> GetSupplementalTranslatedCode()
+		{
+			return new Dictionary<string, string>()
+			{
+				{ "CoreLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "CoreLibHelper.cry") },
+			};
+		}
+
 		internal INativeTranslator GetTranslator(ExpressionTranslator exprTranslator)
 		{
 			INativeTranslator output = null;

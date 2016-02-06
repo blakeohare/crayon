@@ -14,8 +14,8 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<string>') identifiers = ProgramData$p.identifiers;
 
 	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
-	@type('int') valueStackSize = ProgramData$p.valueStackSize;
-	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
+	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
+	@type('int') valueStackCapacity = $_array_length(valueStack);
 
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
@@ -52,6 +52,7 @@ function @omitReturn @type('string') interpret() {
 	@type('Dictionary<string, Value>') dictStringKeyLookup = null;
 	@type('Dictionary<string, Value>') dictStringValueLookup = null;
 	@type('bool') first = false;
+	@type('bool') primitiveMethodToCoreLibraryFallback = false;
 
 	@type('bool') lib_func_error_occurred = false;
 	@type('string') lib_func_error_message = "";
@@ -382,7 +383,7 @@ function @type('string') killExecutionWithTokenOverride(
 function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	@type('ProgramData') p = $_get_program_data();
 	ProgramData$p.stackTop = stack;
-	ProgramData$p.valueStackSize = valueStackSize;
+	ProgramData$p.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
 }
 
@@ -435,14 +436,12 @@ function performWorkNuggetPostFrame() {
 
 function valueStackIncreaseCapacity() {
 	@type('ProgramData') p = $_get_program_data();
-	@type('int') oldCapacity = ProgramData$p.valueStackCapacity;
 	@type('Array<Value>') stack = ProgramData$p.valueStack;
+	@type('int') oldCapacity = $_array_length(stack);
 	@type('int') newCapacity = oldCapacity * 2;
 	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
-	// TODO: fast array copy, although it's not too important since this doen't happen very often.
 	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
 		$_array_set(newStack, i, $_array_get(stack, i));
 	}
-	ProgramData$p.valueStackCapacity = newCapacity;
 	ProgramData$p.valueStack = newStack;
 }

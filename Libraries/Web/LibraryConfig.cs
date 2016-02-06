@@ -28,5 +28,10 @@ namespace Web
 		{
 			throw new Exception();
 		}
+
+		public Dictionary<string, string> GetSupplementalTranslatedCode()
+		{
+			return new Dictionary<string, string>();
+		}
 	}
 }

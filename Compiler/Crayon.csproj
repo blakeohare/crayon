@@ -276,6 +276,7 @@
     <EmbeddedResource Include="InterpreterSource\Ops\deref_static_field.cry" />
     <EmbeddedResource Include="InterpreterSource\InvokeStaticConstructor.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\deref_instance_field.cry" />
+    <None Include="InterpreterSource\PrimitiveMethods\list_add.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -360,7 +361,9 @@
   <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="InterpreterSource\PrimitiveMethods\_README.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

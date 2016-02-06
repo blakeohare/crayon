@@ -132,9 +132,9 @@ if (bool1) {
 
 	if (type == FunctionInvocationType.POINTER_PROVIDED) {
 		$_comment('pointer provided');
-
-		value = $_array_get(valueStack, valueStackSize - 1);
+		
 		valueStackSize -= 1;
+		value = $_array_get(valueStack, valueStackSize);
 
 		if (Value$value.type == Types.FUNCTION) {
 			functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
@@ -168,15 +168,11 @@ if (bool1) {
 			return killExecution(stack, pc, "This type cannot be invoked like a function.");
 		}
 	}
-
-	// should invoke function. Set to false if PRIMITIVE_METHOD, although some primitive methods that take in a function pointer and need to
-	// run in general execution are implemented as byte code in a library. 
-	bool1 = true; 
-
+	
 	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 		$_comment('primitive method invocation');
-		bool1 = false;
 		output = null;
+		primitiveMethodToCoreLibraryFallback = false;
 		switch (Value$value.type) {
 			case Types.STRING:
 				$_comment('...on a string');
@@ -303,11 +299,10 @@ if (bool1) {
 						} else if (argCount == 1) {
 							value2 = $_array_get(funcArgs, 0);
 							if (Value$value2.type == Types.FUNCTION) {
-
-								bool1 = true;
-								type = FunctionInvocationType.NORMAL_FUNCTION;
-								functionId = 0; // TODO: figure out the function ID of the Core.listSort(fp, list)
-								// TODO: push the list onto the funcArgs list.
+								primitiveMethodToCoreLibraryFallback = true;
+								functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2);
+								$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
+								argCount = 2;
 							} else {
 								return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");
 							}
@@ -318,6 +313,7 @@ if (bool1) {
 				break;
 			case Types.DICTIONARY:
 				$_comment('...on a dictionary');
+				dictImpl = $_cast('DictImpl', Value$value.internalValue);
 				switch (functionId) {
 					case PrimitiveMethodName.CLEAR:
 						if (argCount == 0) {
@@ -363,14 +359,21 @@ if (bool1) {
 			default: break;
 		}
 	
-		if (!bool1) {
-			if (output == null) {
-				return killExecution(stack, pc, "primitive method not found.");
+		if (output == null) {
+			if (primitiveMethodToCoreLibraryFallback) {
+				type = FunctionInvocationType.NORMAL_FUNCTION;
+				bool1 = true;
+				// functionId has been set.
 			} else {
+				return killExecution(stack, pc, "primitive method not found.");
+			}
+		} else {
+			if (returnValueUsed) {
 				import inline "InterpreterSource/ValueStackCapacityCheck.cry";
 				$_array_set(valueStack, valueStackSize, output);
 				valueStackSize += 1;
 			}
+			bool1 = false;
 		}
 	}
 

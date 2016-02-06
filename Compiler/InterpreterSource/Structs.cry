@@ -63,7 +63,7 @@ struct ProgramData {
 	@type('GamepadStatus') gamepadStatus,
 	@type('int') gameCounter,
 
-	@type('int') valueStackSize,
+	@type('int') currentValueStackSize,
 	@type('int') valueStackCapacity,
 	@type('Array<Value>') valueStack,
 
@@ -77,6 +77,7 @@ struct ProgramData {
 	@type('Array<Value>') funcArgs,
 
 	@type('int') lengthId,
+	@type('Array<int>') primitiveMethodFunctionIdFallbackLookup,
 }
 
 struct StackFrame {
@@ -87,7 +88,7 @@ struct StackFrame {
 	@type('StackFrame') previous,
 	@type('bool') returnValueUsed,
 	@type('Value') objectContext,
-	@type('int') valueStackSize,
+	@type('int') valueStackPopSize, // size of the value stack when this frame is popped.
 	@type('int') markClassAsInitialized,
 }
 

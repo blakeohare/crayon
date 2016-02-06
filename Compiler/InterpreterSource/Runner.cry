@@ -107,7 +107,8 @@ function main() {
 		1, // localsStackSetToken
 		null, // funcArgs (set in FINALIZE_INITIALIZATION)
 
-		-1 // the global name ID for "length"
+		-1, // the global name ID for "length"
+		$_new_array('int', 10) // primitive method to function ID fallback lookup
 		));
 
 	runTick();
