@@ -231,8 +231,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\sprite_sheet_builder.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\add_literal.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\add_name.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_function_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_function_arg_and_jump.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_index.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_step.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_local.cry" />
@@ -240,19 +238,13 @@
     <EmbeddedResource Include="InterpreterSource\Ops\boolean_not.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\build_switch_int.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\build_switch_string.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_base_constructor.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_constructor.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\stack_insertion_for_increment.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_function.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_function_on_global.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\class_definition.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\def_dictionary.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\def_list.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\def_original_code.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\deref_dot.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\duplicate_stack_top.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\finalize_initialization.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\function_definition.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\index.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\stack_swap_pop.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\switch_int.cry" />
@@ -263,7 +255,6 @@
     <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\deref_dot_on_base.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\1_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
     <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
@@ -349,7 +340,6 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
     <EmbeddedResource Include="InterpreterSource\Ops\class_definition_2.cry" />
-    <Content Include="Translator\OO_readme.txt" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
   </ItemGroup>

@@ -814,9 +814,10 @@ namespace Crayon
 			int baseClassId = baseMethodReference.ClassToWhichThisMethodRefers.ClassID;
 			buffer.Add(
 				baseMethodReference.DotToken,
-				OpCode.DEREF_DOT_ON_BASE,
+				OpCode.PUSH_FUNC_REF,
 				parser.GetId(baseMethodReference.StepToken.Value),
-				baseClassId);
+				1, // instance method
+				0);
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)

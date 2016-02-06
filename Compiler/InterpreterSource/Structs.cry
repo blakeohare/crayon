@@ -44,7 +44,7 @@ struct ProgramData {
 	//@type('Array<Array<int>>') specialCache,
 	@type('Array<string>') identifiers,
 	@type('List<string>') identifiersBuilder,
-	@type('Dictionary<string, int>') inv_identifiers,
+	@type('Dictionary<string, int>') invIdentifiers,
 	@type('Array<Value>') literalTable,
 	@type('List<Value>') literalTableBuilder,
 	@type('Array<ClassInfo>') classTable,
