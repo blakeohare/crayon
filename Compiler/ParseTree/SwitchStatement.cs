@@ -42,8 +42,8 @@ namespace Crayon.ParseTree
 		private Expression explicitMax;
 		private Token explicitMaxToken;
 
-		public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken)
-			: base(switchToken)
+		public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken, Executable owner)
+			: base(switchToken, owner)
 		{
 			if (cases.Count == 0) throw new ParserException(switchToken, "Switch statement needs cases.");
 			if (code.Count == 0) throw new ParserException(switchToken, "Switch statement needs code.");
@@ -140,7 +140,7 @@ namespace Crayon.ParseTree
 								string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
 								if (field.ToUpperInvariant() == field)
 								{
-									throw new ParserException(chunk.Cases[i].FirstToken, 
+									throw new ParserException(chunk.Cases[i].FirstToken,
 										"Only strings, integers, and enums can be used in a switch statement. It looks like this is probably supposed to be an enum. Make sure that it is spelled correctly.");
 								}
 							}
@@ -177,10 +177,10 @@ namespace Crayon.ParseTree
 
 				if (this.IsSafe & this.IsContinuous)
 				{
-					return new SwitchStatementContinuousSafe(this).Resolve(parser);
+					return new SwitchStatementContinuousSafe(this, this.FunctionOrClassOwner).Resolve(parser);
 				}
 
-				return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax).Resolve(parser);
+				return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax, this.FunctionOrClassOwner).Resolve(parser);
 			}
 			else
 			{
@@ -188,13 +188,24 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			foreach (Chunk chunk in this.Chunks)
+			{
+				this.BatchExpressionNameResolver(parser, lookup, imports, chunk.Cases);
+				this.BatchExecutableNameResolver(parser, lookup, imports, chunk.Code);
+			}
+			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Chunk chunk in this.Chunks)
 			{
 				foreach (Executable ex in chunk.Code)
 				{
-					ex.AssignVariablesToIds(varIds);
+					ex.GenerateGlobalNameIdManifest(varIds);
 				}
 			}
 		}
@@ -277,28 +288,27 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
 			for (int i = 0; i < this.Chunks.Length; ++i)
 			{
 				Chunk chunk = this.Chunks[i];
 				for (int j = 0; j < chunk.Code.Length; ++j)
 				{
-					chunk.Code[j].VariableUsagePass(parser);
+					chunk.Code[j].CalculateLocalIdPass(varIds);
 				}
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
 			for (int i = 0; i < this.chunks.Length; ++i)
 			{
 				Chunk chunk = this.Chunks[i];
 				for (int j = 0; j < chunk.Code.Length; ++j)
 				{
-					chunk.Code[j].VariableIdAssignmentPass(parser);
+					chunk.Code[j].SetLocalIdPass(varIds);
 				}
 			}
 		}

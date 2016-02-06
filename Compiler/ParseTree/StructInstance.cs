@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
 {
 	internal class StructInstance : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Token NameToken { get; private set; }
 		public Expression[] Args { get; private set; }
 
-		public StructInstance(Token firstToken, Token nameToken, IList<Expression> args)
-			: base(firstToken)
+		public StructInstance(Token firstToken, Token nameToken, IList<Expression> args, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.NameToken = nameToken;
 			this.Args = args.ToArray();
@@ -27,12 +30,14 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			throw new System.NotImplementedException();
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

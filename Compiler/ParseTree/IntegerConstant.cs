@@ -2,8 +2,10 @@
 
 namespace Crayon.ParseTree
 {
-	internal class IntegerConstant : Expression
+	internal class IntegerConstant : Expression, IConstantValue
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public int Value { get; private set; }
 
 		public override bool IsLiteral { get { return true; } }
@@ -59,8 +61,8 @@ namespace Crayon.ParseTree
 			return number;
 		}
 
-		public IntegerConstant(Token token, int value)
-			: base(token)
+		public IntegerConstant(Token token, int value, Executable owner)
+			: base(token, owner)
 		{
 			this.Value = value;
 		}
@@ -71,12 +73,16 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
+
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		public Expression CloneValue(Token token, Executable owner)
 		{
+			return new IntegerConstant(token, this.Value, owner);
 		}
 	}
 }

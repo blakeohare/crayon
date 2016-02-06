@@ -2,13 +2,15 @@
 {
 	internal class Increment : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public bool IsIncrement { get; private set; }
 		public bool IsPrefix { get; private set; }
 		public Expression Root { get; private set; }
 		public Token IncrementToken { get; private set; }
 
-		public Increment(Token firstToken, Token incrementToken, bool isIncrement, bool isPrefix, Expression root)
-			: base(firstToken)
+		public Increment(Token firstToken, Token incrementToken, bool isIncrement, bool isPrefix, Expression root, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.IncrementToken = incrementToken;
 			this.IsIncrement = isIncrement;
@@ -34,15 +36,15 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			// does not declare a variable, despite technically being an assignment. Do not create an ID.
-			this.Root.VariableUsagePass(parser);
+			this.Root.SetLocalIdPass(varIds);
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Root.VariableIdAssignmentPass(parser);
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

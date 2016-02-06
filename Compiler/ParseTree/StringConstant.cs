@@ -1,12 +1,15 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Crayon.ParseTree
 {
 	internal class StringConstant : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public string Value { get; private set; }
-		public StringConstant(Token token, string value)
-			: base(token)
+		public StringConstant(Token token, string value, Executable owner)
+			: base(token, owner)
 		{
 			this.Value = value;
 		}
@@ -52,12 +55,11 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 	}
 }

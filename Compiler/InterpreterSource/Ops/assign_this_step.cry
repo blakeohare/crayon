@@ -1,10 +1,13 @@
-﻿// TODO: prevent assignment to methods
+﻿
+// row[0] -> member ID
 
-value2 = StackFrame$stack.objectContext; // value2 will never be null because that is a compile error.
+// Assignments that override methods are blocked at compile-time.
 
+value2 = StackFrame$stack.objectContext; // use of 'this' is blocked at compile time outside of non-static methods.
+
+objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
 valueStackSize -= 1;
-value = $_array_get(valueStack, valueStackSize);
-
-nameId = $_array_get(row, 0);
-objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
-$_dictionary_set(ObjectInstance$objInstance.fields, nameId, value);
+$_array_set(
+	ObjectInstance$objInstance1.members,
+	$_array_get(row, 0),
+	$_array_get(valueStack, valueStackSize));

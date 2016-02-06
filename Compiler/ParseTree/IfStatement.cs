@@ -9,8 +9,8 @@ namespace Crayon.ParseTree
 		public Executable[] TrueCode { get; private set; }
 		public Executable[] FalseCode { get; private set; }
 
-		public IfStatement(Token ifToken, Expression condition, IList<Executable> trueCode, IList<Executable> falseCode)
-			: base(ifToken)
+		public IfStatement(Token ifToken, Expression condition, IList<Executable> trueCode, IList<Executable> falseCode, Executable owner)
+			: base(ifToken, owner)
 		{
 			this.Condition = condition;
 			this.TrueCode = trueCode.ToArray();
@@ -57,38 +57,37 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.TrueCode.Concat<Executable>(this.FalseCode))
 			{
-				ex.AssignVariablesToIds(varIds);
+				ex.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
-			for (int i = 0; i < this.TrueCode.Length; ++i)
+			foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
 			{
-				this.TrueCode[i].VariableUsagePass(parser);
-			}
-			for (int i = 0; i < this.FalseCode.Length; ++i)
-			{
-				this.FalseCode[i].VariableUsagePass(parser);
+				ex.CalculateLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
-			for (int i = 0; i < this.TrueCode.Length; ++i)
+			this.Condition.SetLocalIdPass(varIds);
+			foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
 			{
-				this.TrueCode[i].VariableIdAssignmentPass(parser);
+				ex.SetLocalIdPass(varIds);
 			}
-			for (int i = 0; i < this.FalseCode.Length; ++i)
-			{
-				this.FalseCode[i].VariableIdAssignmentPass(parser);
-			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.TrueCode);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.FalseCode);
+			return this;
 		}
 	}
 }

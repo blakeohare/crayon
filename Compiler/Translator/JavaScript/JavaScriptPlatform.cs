@@ -18,7 +18,6 @@ namespace Crayon.Translator.JavaScript
 		public override bool IsAsync { get { return true; } }
 		public override bool SupportsListClear { get { return false; } }
 		public override bool IsStronglyTyped { get { return false; } }
-		public override bool UseFixedListArgConstruction { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool IsArraySameAsList { get { return true; } }
 		public override string PlatformShortId { get { return "javascript"; } }

@@ -7,13 +7,15 @@ namespace Crayon.ParseTree
 		public Expression Expression { get; private set; }
 		public Token NameToken { get; private set; }
 		public string Name { get; private set; }
+		public string Namespace { get; private set; }
 
-		public ConstStatement(Token constToken, Token nameToken, Expression expression)
-			: base(constToken)
+		public ConstStatement(Token constToken, Token nameToken, string ns, Expression expression, Executable owner)
+			: base(constToken, owner)
 		{
 			this.Expression = expression;
 			this.NameToken = nameToken;
 			this.Name = nameToken.Value;
+			this.Namespace = ns;
 		}
 
 		internal override IList<Executable> Resolve(Parser parser)
@@ -36,12 +38,18 @@ namespace Crayon.ParseTree
 			return new Executable[0];
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			throw new System.InvalidOperationException();
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
+			throw new System.InvalidOperationException(); // should be resolved by now.
 		}
 	}
 }

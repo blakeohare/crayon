@@ -1,0 +1,6 @@
+﻿
+valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
+int1 = localsStackOffset + $_array_get(row, 0);
+$_array_set(localsStack, int1, value);
+$_array_set(localsStackSet, int1, localsStackSetToken);

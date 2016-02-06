@@ -2,10 +2,12 @@
 {
 	internal class BooleanNot : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Root { get; private set; }
 
-		public BooleanNot(Token bang, Expression root)
-			: base(bang)
+		public BooleanNot(Token bang, Expression root, Executable owner)
+			: base(bang, owner)
 		{
 			this.Root = root;
 		}
@@ -16,20 +18,21 @@
 
 			if (this.Root is BooleanConstant)
 			{
-				return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value);
+				return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.FunctionOrClassOwner);
 			}
 
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Root.VariableUsagePass(parser);
+			this.Root.SetLocalIdPass(varIds);
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Root.VariableIdAssignmentPass(parser);
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Expression Condition { get; private set; }
 		public Executable[] Code { get; private set; }
 
-		public WhileLoop(Token whileToken, Expression condition, IList<Executable> code)
-			: base(whileToken)
+		public WhileLoop(Token whileToken, Expression condition, IList<Executable> code, Executable owner)
+			: base(whileToken, owner)
 		{
 			this.Condition = condition;
 			this.Code = code.ToArray();
@@ -22,6 +22,13 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
+		}
+
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			foreach (Executable line in this.Code)
@@ -30,29 +37,28 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.Code)
 			{
-				ex.AssignVariablesToIds(varIds);
+				ex.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableUsagePass(parser);
 			for (int i = 0; i < this.Code.Length; ++i)
 			{
-				this.Code[i].VariableUsagePass(parser);
+				this.Code[i].CalculateLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
 			for (int i = 0; i < this.Code.Length; ++i)
 			{
-				this.Code[i].VariableIdAssignmentPass(parser);
+				this.Code[i].SetLocalIdPass(varIds);
 			}
 		}
 	}

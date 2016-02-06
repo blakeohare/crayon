@@ -6,8 +6,8 @@ namespace Crayon.ParseTree
 	{
 		public Expression Expression { get; private set; }
 
-		public ExpressionAsExecutable(Expression expression)
-			: base(expression.FirstToken)
+		public ExpressionAsExecutable(Expression expression, Executable owner)
+			: base(expression.FirstToken, owner)
 		{
 			this.Expression = expression;
 		}
@@ -24,21 +24,34 @@ namespace Crayon.ParseTree
 			if (this.Expression is Increment)
 			{
 				Increment inc = (Increment)this.Expression;
-				Assignment output = new Assignment(inc.Root, inc.IncrementToken, inc.IsIncrement ? "+=" : "-=", new IntegerConstant(inc.IncrementToken, 1));
+				Assignment output = new Assignment(
+					inc.Root, 
+					inc.IncrementToken, 
+					inc.IsIncrement ? "+=" : "-=", 
+					new IntegerConstant(inc.IncrementToken, 1, this.FunctionOrClassOwner),
+					this.FunctionOrClassOwner);
 				return output.Resolve(parser);
 			}
 
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Expression.VariableUsagePass(parser);
+			this.Expression.SetLocalIdPass(varIds);
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Expression.VariableIdAssignmentPass(parser);
+			this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
+			return this;
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			// no assignments
 		}
 	}
 }

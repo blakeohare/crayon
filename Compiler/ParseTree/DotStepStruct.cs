@@ -7,14 +7,16 @@ namespace Crayon.ParseTree
 {
 	internal class DotStepStruct : Expression
 	{
+		public override bool CanAssignTo { get { return true; } }
+
 		public Token DotToken { get; private set; }
 		public Expression RawRoot { get; private set; }
 		public string RootVar { get; private set; }
 		public string FieldName { get; private set; }
 		public StructDefinition StructDefinition { get; private set; }
 
-		public DotStepStruct(Token token, StructDefinition structDef, DotStep original)
-			: base(token)
+		public DotStepStruct(Token token, StructDefinition structDef, DotStep original, Executable owner)
+			: base(token, owner)
 		{
 			this.DotToken = original.DotToken;
 			this.RawRoot = original.Root;
@@ -28,12 +30,14 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

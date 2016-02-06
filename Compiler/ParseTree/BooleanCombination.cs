@@ -5,11 +5,13 @@ namespace Crayon.ParseTree
 {
 	internal class BooleanCombination : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Expressions { get; private set; }
 		public Token[] Ops { get; private set; }
 
-		public BooleanCombination(IList<Expression> expressions, IList<Token> ops)
-			: base(expressions[0].FirstToken)
+		public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Executable owner)
+			: base(expressions[0].FirstToken, owner)
 		{
 			this.Expressions = expressions.ToArray();
 			this.Ops = ops.ToArray();
@@ -34,20 +36,18 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			foreach (Expression expr in this.Expressions)
 			{
-				expr.VariableUsagePass(parser);
+				expr.SetLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			foreach (Expression expr in this.Expressions)
-			{
-				expr.VariableIdAssignmentPass(parser);
-			}
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);
+			return this;
 		}
 	}
 }

@@ -11,9 +11,7 @@ switch (Value$arg1.type) {
 	case Types.LIST: string1 = "list"; break;
 	case Types.DICTIONARY: string1 = "dictionary"; break;
 	case Types.INSTANCE: string1 = "instance"; break;
-	case Types.FUNCTION: string1 = "function"; break;
-	case Types.METHOD: string1 = "method"; break;
-	case Types.SYS_METHOD: string1 = "primitive_method"; break;
+	case Types.FUNCTION: string1 = "function"; break; // TODO: be more descriptive
 	case Types.NATIVE_OBJECT: string1 = "native_system_object"; break;
 	default: string1 = "unknown_type"; break;
 }

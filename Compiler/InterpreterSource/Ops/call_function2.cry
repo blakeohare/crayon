@@ -1,0 +1,539 @@
+﻿
+/*
+	All function calls (even constructor invocations and primitive metthods) go through this op code, with the exception 
+	of static constructors that are implicitly called from dereferencing a static field. However, implicit static constructor
+	invocations that occur as a result of a static method invocation goes through this op as well.
+
+	Generally, any ambiguous function invocation (such as invoking a field on a variable of unknown type) is resolved into
+	a known invocation, and then follows through the rest of the shared codepath.
+
+	Here are the values of FunctionInvocationType, and what they do in this op...
+		
+		NORMAL_FUNCTION
+		Nothing special. Function is invoked.
+		
+		STATIC_METHOD
+		Check to see if the class is staticly initialized. If it isn't (or not in progress), don't pop the args, subtract
+		1 from the PC, and then change the invocation type to STATIC_CONSTRUCTOR. When it returns, it'll return to the previous
+		PC and then resume this op again and it'll be initialized.
+		
+		LOCAL_METHOD
+		At the final invocation phase, functionId and value must be set. 
+		
+		POINTER_PROVIDED
+		Pop the stack, look at the pointer, and figure out what this is. Change type accordingly.
+		This happens before final invocation time.
+		
+		FIELD_INVOCATION
+		Pop the stack, look at the pointer, look at the field name, then resolve this into one of the following:
+		LOCAL_METHOD, POINTER_PROVIDED (i.e. it's a function pointer that was set on a normal field of a class, or
+		PRIMITIVE_METHOD
+		
+		CONSTRUCTOR
+
+		BASE_CONSTRUCTOR
+		
+		STATIC_CONSTRUCTOR
+		This is never invoked from the byte code. It is always invoked as a result of STATIC_METHOD.
+		When it is invoked, it must mark the stack frame as having a static initalization resolution, so that when it's popped,
+		the class is marked as fully initialized.
+		
+		PRIMITIVE_METHOD
+		This is the only function invocation that does not result in stack changes. The value is computed 
+		synchronously and immediately pushed back to the stack.
+		There may be an exception to this in the future thoough, when list.sort(key_function_pointer) is added,
+		in which case, this primitive method call may possibly be resolved into a NORMAL_FUNCTION call referring a
+		function in the core library.
+	}
+
+	args:
+	row[0] --> type (see above)
+	row[1] --> args passed by user.
+	row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
+	row[3] --> 1 if output is used
+	row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
+
+*/
+
+type = $_array_get(row, 0);
+argCount = $_array_get(row, 1);
+functionId = $_array_get(row, 2);
+returnValueUsed = $_array_get(row, 3) == 1;
+classId = $_array_get(row, 4);
+
+// Check to see if a static initialization is required.
+bool1 = true;
+if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
+	$_comment('constructor or static method');
+	classInfo2 = $_array_get(ProgramData$p.classTable2, classId);
+
+	import inline "InterpreterSource/InvokeStaticConstructor.cry";
+}
+
+if (bool1) {
+
+	$_comment('construct args array');
+	// Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
+
+	for (i = argCount - 1; i >= 0; i -= 1) {
+		valueStackSize -= 1;
+		$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
+	}
+
+	if (type == FunctionInvocationType.LOCAL_METHOD) {
+		value = StackFrame$stack.objectContext;
+	} else if (type == FunctionInvocationType.FIELD_INVOCATION) {
+		$_comment('field invocation');
+		// provided pointers have no risk of requiring a static initialization because the pointer can only be 
+		// provided from a source that would have already triggered it.
+
+		// Pop the stack and see what we have.
+		valueStackSize -= 1;
+		value = $_array_get(valueStack, valueStackSize);
+
+		switch (Value$value.type) {
+			case Types.INSTANCE:
+				$_comment('field invoked on an object instance.');
+				objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+				int1 = ObjectInstance$objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
+				classInfo2 = $_array_get(classTable2, int1);
+				if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
+					int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
+					// now that we have the member ID, check to see if this is a field or a known method.
+					functionId = $_array_get(ClassInfo2$classInfo2.functionIds, int1); // get the function ID, if present
+					if (functionId > 0) {
+						// This is a local method. 'value' already contains the context.
+						type = FunctionInvocationType.LOCAL_METHOD;
+					} else {
+						// This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
+						// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here 
+						// as it will be done redundantly later.
+						value = $_array_get(ObjectInstance$objInstance1.members, int1);
+						type = FunctionInvocationType.POINTER_PROVIDED;
+
+						$_array_set(valueStack, valueStackSize, value);
+						valueStackSize += 1;
+					}
+				} else {
+					return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
+				}
+				break;
+			default:
+				$_comment('primitive method suspected.');
+				// resolve a primitive method
+				functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
+				if (functionId < 0) {
+					return killExecution(stack, pc, "Unknown primitive method.");
+				}
+				type = FunctionInvocationType.PRIMITIVE_METHOD;
+				break;
+		}
+	}
+
+	if (type == FunctionInvocationType.POINTER_PROVIDED) {
+		$_comment('pointer provided');
+
+		value = $_array_get(valueStack, valueStackSize - 1);
+		valueStackSize -= 1;
+
+		if (Value$value.type == Types.FUNCTION) {
+			functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
+			switch (FunctionPointer$functionPointer1.type) {
+				case FunctionPointerType.FUNCTION:
+					$_comment('pointer to a function');
+					functionId = FunctionPointer$functionPointer1.functionId;
+					type = FunctionInvocationType.NORMAL_FUNCTION;
+					break;
+				case FunctionPointerType.METHOD:
+					$_comment('pointer to a method');
+					functionId = FunctionPointer$functionPointer1.functionId;
+					value = FunctionPointer$functionPointer1.context;
+					type = FunctionInvocationType.LOCAL_METHOD;
+					break;
+				case FunctionPointerType.STATIC_METHOD:
+					$_comment('pointer to a static method');
+					functionId = FunctionPointer$functionPointer1.functionId;
+					classId = FunctionPointer$functionPointer1.classId;
+					type = FunctionInvocationType.STATIC_METHOD;
+					break;
+				case FunctionPointerType.PRIMITIVE_METHOD:
+					$_comment('pointer to a primitive method');
+					value = FunctionPointer$functionPointer1.context;
+					functionId = FunctionPointer$functionPointer1.functionId;
+					type = FunctionInvocationType.PRIMITIVE_METHOD;
+					break;
+				default: break; // this should not happen.
+			}
+		} else {
+			return killExecution(stack, pc, "This type cannot be invoked like a function.");
+		}
+	}
+
+	// should invoke function. Set to false if PRIMITIVE_METHOD, although some primitive methods that take in a function pointer and need to
+	// run in general execution are implemented as byte code in a library. 
+	bool1 = true; 
+
+	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
+		$_comment('primitive method invocation');
+		bool1 = false;
+		output = null;
+		switch (Value$value.type) {
+			case Types.STRING:
+				$_comment('...on a string');
+				string1 = $_cast('string', Value$value.internalValue);
+				switch (functionId) {
+					case PrimitiveMethodName.CONTAINS:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement string.contains");
+						}
+						break;
+					case PrimitiveMethodName.ENDS_WITH:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement string.endsWith");
+						}
+						break;
+					case PrimitiveMethodName.INDEX_OF:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement string.indexOf");
+						}
+						break;
+					case PrimitiveMethodName.LOWER:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement string.lower");
+						}
+						break;
+					case PrimitiveMethodName.REPLACE:
+						if (argCount == 2) {
+							return killExecution(stack, pc, "TODO: re-implement string.replace(old, new)");
+						} else if (argCount == 3) {
+							return killExecution(stack, pc, "TODO: re-implement string.replace(old, new, replaceLimit)");
+						}
+						break;
+					case PrimitiveMethodName.REVERSE:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement string.reverse");
+						}
+						break;
+					case PrimitiveMethodName.SPLIT:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement string.split()");
+						} else if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement string.split(sep)");
+						} else if (argCount == 2) {
+							return killExecution(stack, pc, "TODO: re-implement string.split(sep, splitLimit)");
+						}
+						break;
+					case PrimitiveMethodName.STARTS_WITH:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement string.startsWith(str)");
+						}
+						break;
+					case PrimitiveMethodName.TRIM:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement string.trim()");
+						}
+						break;
+					case PrimitiveMethodName.UPPER:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement string.upper()");
+						}
+						break;
+					default:
+						break;
+				}
+				break;
+			case Types.LIST:
+				$_comment('...on a list');
+				list1 = $_cast('List<Value>', Value$value.internalValue);
+				switch (functionId) {
+					case PrimitiveMethodName.ADD:
+						for (i = 0; i < argCount; i += 1) {
+							$_list_push(list1, $_array_get(funcArgs, i));
+						}
+						output = VALUE_NULL;
+						break;
+					case PrimitiveMethodName.CLEAR:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.clear");
+						}
+						break;
+					case PrimitiveMethodName.CLONE:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.clone");
+						}
+						break;
+					case PrimitiveMethodName.CONCAT:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.concat");
+						}
+						break;
+					case PrimitiveMethodName.CONTAINS:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement list.contains");
+						}
+						break;
+					case PrimitiveMethodName.INSERT:
+						if (argCount == 2) {
+							return killExecution(stack, pc, "TODO: re-implement list.insert");
+						}
+						break;
+					case PrimitiveMethodName.JOIN:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement list.join");
+						}
+						break;
+					case PrimitiveMethodName.REMOVE:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement list.remove");
+						}
+						break;
+					case PrimitiveMethodName.REVERSE:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.reverse");
+						}
+						break;
+					case PrimitiveMethodName.SHUFFLE:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.shuffle()");
+						}
+						break;
+					case PrimitiveMethodName.SORT:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement list.sort()");
+						} else if (argCount == 1) {
+							value2 = $_array_get(funcArgs, 0);
+							if (Value$value2.type == Types.FUNCTION) {
+
+								bool1 = true;
+								type = FunctionInvocationType.NORMAL_FUNCTION;
+								functionId = 0; // TODO: figure out the function ID of the Core.listSort(fp, list)
+								// TODO: push the list onto the funcArgs list.
+							} else {
+								return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");
+							}
+						}
+						break;
+					default: break;
+				}
+				break;
+			case Types.DICTIONARY:
+				$_comment('...on a dictionary');
+				switch (functionId) {
+					case PrimitiveMethodName.CLEAR:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.clear()");
+						}
+						break;
+					case PrimitiveMethodName.CLONE:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.clone()");
+						}
+						break;
+					case PrimitiveMethodName.CONTAINS:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.contains()");
+						}
+						break;
+					case PrimitiveMethodName.GET:
+						if (argCount == 2) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.get(key, fallback)");
+						} else if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.get(key)");
+						}
+						break;
+					case PrimitiveMethodName.KEYS:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.keys()");
+						}
+						break;
+					case PrimitiveMethodName.REMOVE:
+						if (argCount == 1) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.remove(key)");
+						}
+						break;
+					case PrimitiveMethodName.VALUES:
+						if (argCount == 0) {
+							return killExecution(stack, pc, "TODO: re-implement dictionary.values()");
+						}
+						break;
+					default: break;
+				}
+				break;
+
+			default: break;
+		}
+	
+		if (!bool1) {
+			if (output == null) {
+				return killExecution(stack, pc, "primitive method not found.");
+			} else {
+				import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+				$_array_set(valueStack, valueStackSize, output);
+				valueStackSize += 1;
+			}
+		}
+	}
+
+	if (bool1) {
+		$_comment('push a new frame to the stack');
+	
+		StackFrame$stack.pc = pc;
+		bool1 = false; // bool1 now indicates whether the PC's in intArray1 indicate additional stack frames that need to be pushed.
+
+		// Set the following variables...
+		// pc --> since pc is now saved, put the new PC into the 'pc' variable.
+		// classId --> for static constructors, set this to the class ID to mark as initialization-completed, 0 otherwise
+		// value --> the value of 'this' in the next function
+		switch (type) {
+			case FunctionInvocationType.NORMAL_FUNCTION:
+				$_comment('function');
+				functionInfo2 = $_array_get(functionTable2, functionId);
+				pc = FunctionInfo2$functionInfo2.pc;
+				value = null;
+				classId = 0;
+				break;
+			case FunctionInvocationType.STATIC_METHOD:
+				$_comment('static method');
+				functionInfo2 = $_array_get(functionTable2, functionId);
+				pc = FunctionInfo2$functionInfo2.pc;
+				value = null;
+				classId = 0;
+				break;
+			case FunctionInvocationType.LOCAL_METHOD:
+				$_comment('non-static method');
+				functionInfo2 = $_array_get(functionTable2, functionId);
+				pc = FunctionInfo2$functionInfo2.pc;
+				classId = 0;
+				// value already set
+				break;
+			case FunctionInvocationType.CONSTRUCTOR:
+				$_comment('constructor');
+				ProgramData$p.instanceCounter += 1;
+				classInfo2 = $_array_get(classTable2, classId);
+				valueArray1 = $_new_array('Value', ClassInfo2$classInfo2.memberCount);
+				for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
+					switch ($_array_get(ClassInfo2$classInfo2.fieldInitializationCommand, i)) {
+						case 0:
+							$_array_set(valueArray1, i, $_array_get(ClassInfo2$classInfo2.fieldInitializationLiteral, i));
+							break;
+						case 1:
+							$_array_set(valueArray1, i, new Value(Types.LIST, $_new_list('Value')));
+							break;
+						case 2:
+							$_array_set(valueArray1, i, new Value(Types.DICTIONARY, new DictImpl(
+								$_new_dictionary('int', 'Value'),
+								$_new_dictionary('int', 'Value'),
+								$_new_dictionary('string', 'Value'),
+								$_new_dictionary('string', 'Value'),
+								0,
+								Types.INTEGER)));
+							break;
+					}
+				}
+				objInstance1 = new ObjectInstance(
+					classId,
+					ProgramData$p.instanceCounter,
+					valueArray1,
+					null);
+				value = new Value(Types.INSTANCE, objInstance1);
+				functionId = ClassInfo2$classInfo2.constructorFunctionId;
+				functionInfo2 = $_array_get(functionTable2, functionId);
+				pc = FunctionInfo2$functionInfo2.pc;
+				classId = 0;
+				if (returnValueUsed) {
+					// if the return value is used, push the new constructed object to the stack NOW and then call the function
+					// as though the return value is not used.
+					returnValueUsed = false;
+					import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+					$_array_set(valueStack, valueStackSize, value);
+					valueStackSize += 1;
+				}
+
+				intArray1 = ClassInfo2$classInfo2.fieldInitializerPcs;
+				bool1 = true;
+				break;
+			case FunctionInvocationType.BASE_CONSTRUCTOR:
+				$_comment('base constructor');
+				value = StackFrame$stack.objectContext;
+				classInfo2 = $_array_get(classTable2, classId);
+				functionId = ClassInfo2$classInfo2.constructorFunctionId;
+				functionInfo2 = $_array_get(functionTable2, functionId);
+				pc = FunctionInfo2$functionInfo2.pc;
+				classId = 0;
+				break;
+			default: break; // this should not happen.
+		}
+	
+		if (argCount < FunctionInfo2$functionInfo2.minArgs || 
+			argCount > FunctionInfo2$functionInfo2.maxArgs) {
+			return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
+		}
+
+		int1 = FunctionInfo2$functionInfo2.localsSize;
+		int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
+		if (localsStackCapacity <= int2 + int1) {
+			increaseLocalsStackCapacity(p, int1);
+			localsStack = ProgramData$p.localsStack;
+			localsStackSet = ProgramData$p.localsStackSet;
+			localsStackCapacity = $_array_length(localsStack);
+		}
+
+		localsStackSetToken += 1;
+		// TODO: set this to 100 to test.
+		// If this comment is still here, then that means I haven't tested this.
+		if (localsStackSetToken > 2000000000) {
+			resetLocalsStackTokens(p, stack);
+			localsStackSetToken = 2;
+		}
+
+		localsStackOffset = int2;
+
+		$_comment('invoke the function');
+		stack = new StackFrame(
+			pc,
+			localsStackSetToken,
+			localsStackOffset,
+			localsStackOffset + int1, // locals stack end (exclusive) and also the next stack frame's localsStackOffset
+			stack,
+			returnValueUsed,
+			value, // the value of the 'this' keyword
+			valueStackSize,
+			0); // for static constructor use only
+
+		// now that we're in the new stack frame, flush out all the passed args to the local stack since their 
+		// ID's are allocated with args first.
+		for (i = 0; i < argCount; i += 1) {
+			int1 = localsStackOffset + i;
+			$_array_set(localsStack, int1, $_array_get(funcArgs, i));
+			$_array_set(localsStackSet, int1, localsStackSetToken);
+		}
+
+		if (argCount != FunctionInfo2$functionInfo2.maxArgs) {
+			// optional args are simply local variable assignments at the front of the function body.
+			// Adjust the PC to skip these if those arguments were provided.
+			int1 = argCount - FunctionInfo2$functionInfo2.minArgs; // number of optional args provided
+			if (int1 > 0) {
+				// The amount to increment the PC by is conveniently stored in the function metadata in an 
+				// array indexed by the number of optional args provided.
+				pc += $_array_get(FunctionInfo2$functionInfo2.pcOffsetsForOptionalArgs, int1);
+			}
+		}
+
+		if (bool1) {
+			for (i = 0; i < $_array_length(intArray1); i += 1) {
+				stack = new StackFrame(
+					$_array_get(intArray1, i), // PC of initializer - 1
+					localsStackSetToken, // locals are not allowed in field initializer, so these are all the same.
+					localsStackOffset,
+					localsStackOffset,
+					stack,
+					false, // return value used
+					value, // value of 'this' keyword
+					valueStackSize, // should not change
+					0); // for static constructors only
+			}
+
+			pc = StackFrame$stack.pc;
+		}
+	}
+}

@@ -1,26 +1,45 @@
-﻿
+﻿// row[0]: 
+//   0 --> no return value on stack, implicit null.
+//   1 --> return value is on the stack.
+
 if (StackFrame$stack.previous == null) {
 	// returning from the root stack
 	return '';
 }
 
+// is this the static constructor returning?
+if (StackFrame$stack.markClassAsInitialized != 0) {
+	classInfo2 = $_array_get(classTable2, StackFrame$stack.markClassAsInitialized);
+	ClassInfo2$classInfo2.staticInitializationState = 2; // mark class as completely ready to use.
+	$_list_pop(ProgramData$p.classStaticInitializationStack);
+}
+
 if (StackFrame$stack.returnValueUsed) {
-	// keep the return value
-	if (valueStackSize != StackFrame$stack.valueStackSize + 1) {
-		// if the value stack size is some strange value that indicates some stuff was pushed on it
-		// (such as the foreach loop iteration context that happens when you return from within a foreach loop)
-		// then grab the return value, reset the stack size to what it should be, and then push it to the stack.
-		value = $_array_get(valueStack, valueStackSize - 1);
+	if ($_array_get(row, 0) == 0) {
+		// returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
+		valueStackSize = StackFrame$stack.valueStackSize;
+		stack = StackFrame$stack.previous;
+		import inline "InterpreterSource/ValueStackCapacityCheck.cry"; // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
+		$_array_set(valueStack, valueStackSize, VALUE_NULL);
 		valueStackSize = StackFrame$stack.valueStackSize + 1;
-		$_array_set(valueStack, valueStackSize - 1, value);
 	} else {
-		// Nothing to do. Just leave the return value on the stack and walk away.
+		// everything else, pop the value, pop any garbage (such as foreach loop data) off the value stack along with the stack frame, and push the value back on the stack.
+		// no capacity check needed since the value was already on the stack.
+		// It's possible to optimize this such that the value unpop and repop could be eliminated if there is no other garbage on the value stack, but the 
+		// performance benefits are relatively slim.
+		value = $_array_get(valueStack, valueStackSize - 1);
+		valueStackSize = StackFrame$stack.valueStackSize;
+		stack = StackFrame$stack.previous;
+		$_array_set(valueStack, valueStackSize, value);
+		valueStackSize = StackFrame$stack.valueStackSize + 1;
 	}
 } else {
 	// discard the return value. Set the value stack size back the way it was.
 	valueStackSize = StackFrame$stack.valueStackSize;
+	stack = StackFrame$stack.previous;
 }
 
-stack = StackFrame$stack.previous;
 pc = StackFrame$stack.pc;
-locals = StackFrame$stack.locals;
+localsStackOffset = StackFrame$stack.localsStackOffset;
+localsStackSetToken = StackFrame$stack.localsStackSetToken;
+

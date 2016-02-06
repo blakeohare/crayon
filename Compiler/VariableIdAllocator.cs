@@ -21,35 +21,21 @@ namespace Crayon
 			}
 		}
 
-		/*
-		 * nameToken - the token of the value you're getting the ID of
-		 * fallbackScope - null for global scope checks. 
-		 * isDereference - the user is trying to dereference a variable. Used to determine if the failure
-		 *     of this function is a bug in the user's code or if it's a bug in the parser where a variable
-		 *     assignment was not registered.
-		 */
-		public int GetVarId(Token nameToken, VariableIdAllocator fallbackScope, bool isDereference)
+		public int GetVarId(Token variableToken, bool isRead)
 		{
 			int id;
-			if (this.idsByVar.TryGetValue(nameToken.Value, out id))
+			if (this.idsByVar.TryGetValue(variableToken.Value, out id))
 			{
 				return id;
 			}
 
-			if (fallbackScope != null)
+			if (isRead)
 			{
-				return fallbackScope.GetVarId(nameToken, null, isDereference);
+				throw new ParserException(variableToken, "'" + variableToken.Value + "' is not defined anywhere.");
 			}
 
-			if (isDereference)
-			{
-				throw new ParserException(nameToken, "This variable is not defined anywhere.");
-			}
-			else
-			{
-				throw new ParserException(nameToken, 
-					"BAD STATE - CRAYON BUG!!!! A variable assignment was not registered by the parse tree traversal.");
-			}
+			throw new ParserException(variableToken,
+				"BAD STATE - CRAYON BUG!!!! A variable assignment was not registered by the parse tree traversal.");
 		}
 	}
 }

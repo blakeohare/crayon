@@ -2,12 +2,14 @@
 {
 	internal class Ternary : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Condition { get; private set; }
 		public Expression TrueValue { get; private set; }
 		public Expression FalseValue { get; private set; }
 
-		public Ternary(Expression condition, Expression trueValue, Expression falseValue)
-			: base(condition.FirstToken)
+		public Ternary(Expression condition, Expression trueValue, Expression falseValue, Executable owner)
+			: base(condition.FirstToken, owner)
 		{
 			this.Condition = condition;
 			this.TrueValue = trueValue;
@@ -29,18 +31,19 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Condition.VariableUsagePass(parser);
-			this.TrueValue.VariableUsagePass(parser);
-			this.FalseValue.VariableUsagePass(parser);
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			this.TrueValue = this.Condition.ResolveNames(parser, lookup, imports);
+			this.FalseValue = this.Condition.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Condition.VariableIdAssignmentPass(parser);
-			this.TrueValue.VariableIdAssignmentPass(parser);
-			this.FalseValue.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
+			this.TrueValue.SetLocalIdPass(varIds);
+			this.FalseValue.SetLocalIdPass(varIds);
 		}
 	}
 }

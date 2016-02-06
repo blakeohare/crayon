@@ -2,10 +2,12 @@
 {
 	internal class NegativeSign : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression Root { get; private set; }
 
-		public NegativeSign(Token sign, Expression root)
-			: base(sign)
+		public NegativeSign(Token sign, Expression root, Executable owner)
+			: base(sign, owner)
 		{
 			this.Root = root;
 		}
@@ -15,25 +17,26 @@
 			this.Root = this.Root.Resolve(parser);
 			if (this.Root is IntegerConstant)
 			{
-				return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1);
+				return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
 			}
 
 			if (this.Root is FloatConstant)
 			{
-				return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1);
+				return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
 			}
 
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Root.VariableUsagePass(parser);
+			this.Root.SetLocalIdPass(varIds);
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Root.VariableIdAssignmentPass(parser);
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

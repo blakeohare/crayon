@@ -28,9 +28,9 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 					bool1 = false;
 				}
 			} else if (leftType == Types.INSTANCE) {
-				objInstance = $_cast('ObjectInstance', left);
+				objInstance1 = $_cast('ObjectInstance', left);
 				objInstance2 = $_cast('ObjectInstance', right);
-				if (ObjectInstance$objInstance.objectId == ObjectInstance$objInstance2.objectId) {
+				if (ObjectInstance$objInstance1.objectId == ObjectInstance$objInstance2.objectId) {
 					bool1 = true;
 				} else {
 					bool1 = false;

@@ -250,7 +250,7 @@ namespace Crayon.Translator.JavaScript
 
 		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
 		{
-			TranslateAssert(output, new StringConstant(null, "TODO: web image downloads"));
+			TranslateAssert(output, new StringConstant(null, "TODO: web image downloads", key.FunctionOrClassOwner));
 		}
 
 		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)

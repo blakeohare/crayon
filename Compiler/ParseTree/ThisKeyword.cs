@@ -5,10 +5,12 @@ using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class ThisKeyword : Expression 
+	internal class ThisKeyword : Expression
 	{
-		public ThisKeyword(Token token)
-			: base(token)
+		public override bool CanAssignTo { get { return false; } }
+
+		public ThisKeyword(Token token, Executable owner)
+			: base(token, owner)
 		{
 		}
 
@@ -17,12 +19,11 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
-		{
-		}
+		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 	}
 }

@@ -12,7 +12,6 @@ namespace Crayon.Translator.Python
 		public override bool RemoveBreaksFromSwitch { get { return true; } }
 		public override bool SupportsListClear { get { return false; } }
 		public override bool IsStronglyTyped { get { return false; } }
-		public override bool UseFixedListArgConstruction { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool IsArraySameAsList { get { return true; } }
 

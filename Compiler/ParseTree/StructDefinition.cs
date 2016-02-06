@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -9,8 +10,8 @@ namespace Crayon.ParseTree
 		public Token[] Fields { get; private set; }
 		public Annotation[] Types { get; private set; }
 
-		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations)
-			: base(structToken)
+		public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations, Executable owner)
+			: base(structToken, owner)
 		{
 			this.Name = nameToken;
 			this.Fields = fields.ToArray();
@@ -39,12 +40,24 @@ namespace Crayon.ParseTree
 			return new Executable[0];
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			throw new System.NotImplementedException();
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
+		}
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // translate mode only
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // not called in translate mode.
 		}
 	}
 }

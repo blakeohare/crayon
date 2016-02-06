@@ -1,12 +1,16 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class NullCoalescer : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression PrimaryExpression { get; set; }
 		public Expression SecondaryExpression { get; set; }
 
-		public NullCoalescer(Expression primaryExpression, Expression secondaryExpression)
-			: base(primaryExpression.FirstToken)
+		public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, Executable owner)
+			: base(primaryExpression.FirstToken, owner)
 		{
 			this.PrimaryExpression = primaryExpression;
 			this.SecondaryExpression = secondaryExpression;
@@ -34,16 +38,17 @@
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.PrimaryExpression.VariableUsagePass(parser);
-			this.SecondaryExpression.VariableUsagePass(parser);
+			this.PrimaryExpression = this.PrimaryExpression.ResolveNames(parser, lookup, imports);
+			this.SecondaryExpression = this.SecondaryExpression.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.PrimaryExpression.VariableIdAssignmentPass(parser);
-			this.SecondaryExpression.VariableIdAssignmentPass(parser);
+			this.PrimaryExpression.SetLocalIdPass(varIds);
+			this.SecondaryExpression.SetLocalIdPass(varIds);
 		}
 	}
 }

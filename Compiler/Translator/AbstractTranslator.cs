@@ -62,6 +62,7 @@ namespace Crayon.Translator
 				"Graphics",
 				"Interpreter",
 				"IOManager",
+				"MetadataInitializer",
 				"NetworkManager",
 				"PrimitiveMethods",
 				"Runner",

@@ -7,18 +7,20 @@ namespace Crayon.ParseTree
 {
 	internal class ListSlice : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Token BracketToken { get; set; }
 		public Expression[] Items { get; set; } // these can be null
 		public Expression Root { get; set; }
 
-		public ListSlice(Expression root, List<Expression> items, Token bracketToken)
-			: base(root.FirstToken)
+		public ListSlice(Expression root, List<Expression> items, Token bracketToken, Executable owner)
+			: base(root.FirstToken, owner)
 		{
 			this.Root = root;
 			this.BracketToken = bracketToken;
 			if (items.Count == 2)
 			{
-				items.Add(new IntegerConstant(null, 1));
+				items.Add(new IntegerConstant(null, 1, owner));
 			}
 
 			if (items.Count != 3)
@@ -28,7 +30,7 @@ namespace Crayon.ParseTree
 
 			if (items[2] == null)
 			{
-				items[2] = new IntegerConstant(null, 1);
+				items[2] = new IntegerConstant(null, 1, owner);
 			}
 
 			this.Items = items.ToArray();
@@ -48,28 +50,22 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			this.Root.VariableUsagePass(parser);
-			for (int i = 0; i < this.Items.Length; ++i)
-			{
-				Expression item = this.Items[i];
-				if (item != null)
-				{
-					this.Items[i].VariableUsagePass(parser);
-				}
-			}
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			this.Root.VariableIdAssignmentPass(parser);
+			this.Root.SetLocalIdPass(varIds);
 			for (int i = 0; i < this.Items.Length; ++i)
 			{
 				Expression item = this.Items[i];
 				if (item != null)
 				{
-					this.Items[i].VariableIdAssignmentPass(parser);
+					this.Items[i].SetLocalIdPass(varIds);
 				}
 			}
 		}

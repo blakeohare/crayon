@@ -4,13 +4,17 @@ namespace Crayon.ParseTree
 {
 	public abstract class Expression : Node
 	{
-		public Expression(Token firstToken)
-			: base(firstToken)
+		public Expression(Token firstToken, Executable owner)
+			: base(firstToken, owner)
 		{
 			this.Annotations = null;
 		}
 
+		public abstract bool CanAssignTo { get; }
+
 		internal abstract Expression Resolve(Parser parser);
+
+		internal abstract Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
 
 		public virtual bool IsLiteral { get { return false; } }
 
@@ -27,11 +31,6 @@ namespace Crayon.ParseTree
 				return this.Annotations[type];
 			}
 			return null;
-		}
-
-		internal virtual void AssignVariablesToIds(VariableIdAllocator varIds)
-		{
-			// Override me!
 		}
 	}
 }

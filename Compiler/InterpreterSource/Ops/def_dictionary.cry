@@ -23,8 +23,8 @@ while (i > 0) {
 	} else if (type == Types.STRING) {
 		stringKey = $_cast('string', Value$value2.internalValue);
 	} else if (type == Types.INSTANCE) {
-		objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
-		intKey = ObjectInstance$objInstance.objectId;
+		objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
+		intKey = ObjectInstance$objInstance1.objectId;
 	} else {
 		return killExecution(stack, pc, "Only integers, strings, and objects can be used as dictionary keys.");
 	}

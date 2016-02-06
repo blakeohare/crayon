@@ -1,33 +1,149 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
 {
 	internal class ClassDefinition : Executable
 	{
+		private static int classIdAlloc = 1;
+
 		public int ClassID { get; private set; }
+		public ClassDefinition BaseClass { get; private set; }
 		public Token NameToken { get; private set; }
-		public Token[] SubClasses { get; private set; }
-		public FunctionDefinition[] Methods { get; private set; }
-		public ConstructorDefinition Constructor { get; private set; }
+		public Token[] BaseClassTokens { get; private set; }
+		public string[] BaseClassDeclarations { get; private set; }
+		// TODO: interface definitions.
+		public FunctionDefinition[] Methods { get; set; }
+		public ConstructorDefinition Constructor { get; set; }
+		public ConstructorDefinition StaticConstructor { get; set; }
+		public FieldDeclaration[] Fields { get; set; }
 		public string Namespace { get; set; }
 
-		private ClassDefinition baseClassInstance = null;
+		private bool memberIdsResolved = false;
 
-		public ClassDefinition(Token classToken, Token nameToken, IList<Token> subclasses, IList<FunctionDefinition> methods, ConstructorDefinition constructor, string namespyace)
-			: base(classToken)
+		// When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
+
+		private Dictionary<string, FunctionDefinition> functionDefinitionsByName = null;
+		private Dictionary<string, FieldDeclaration> fieldDeclarationsByName = null;
+
+		public ClassDefinition(
+			Token classToken, 
+			Token nameToken, 
+			IList<Token> subclassTokens,
+			IList<string> subclassNames,
+			string ns, 
+			Executable owner)
+			: base(classToken, owner)
 		{
-			this.Namespace = namespyace;
+			this.ClassID = ClassDefinition.classIdAlloc++;
+
+			this.Namespace = ns;
 			this.NameToken = nameToken;
-			this.SubClasses = subclasses.ToArray();
-			this.Methods = methods.ToArray();
-			this.Constructor = constructor;
+			this.BaseClassTokens = subclassTokens.ToArray();
+			this.BaseClassDeclarations = subclassNames.ToArray();
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			varIds.RegisterVariable(this.NameToken.Value);
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				fd.GenerateGlobalNameIdManifest(varIds);
+			}
+			if (this.StaticConstructor != null)
+			{
+				this.StaticConstructor.GenerateGlobalNameIdManifest(varIds);
+			}
+			if (this.Constructor != null)
+			{
+				this.Constructor.GenerateGlobalNameIdManifest(varIds);
+			}
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				fd.GenerateGlobalNameIdManifest(varIds);
+			}
+		}
+
+		public void AllocateLocalScopeIds()
+		{
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				fd.VerifyNoVariablesAreDereferenced();
+			}
+
+			// null check has occurred before now.
+			this.Constructor.AllocateLocalScopeIds();
+
+			if (this.StaticConstructor != null)
+			{
+				this.StaticConstructor.AllocateLocalScopeIds();
+			}
+
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				fd.AllocateLocalScopeIds();
+			}
+		}
+
+		public FunctionDefinition GetMethod(string name, bool walkUpBaseClasses)
+		{
+			if (this.functionDefinitionsByName == null)
+			{
+				this.functionDefinitionsByName = new Dictionary<string, FunctionDefinition>();
+
+				foreach (FunctionDefinition fd in this.Methods)
+				{
+					this.functionDefinitionsByName[fd.NameToken.Value] = fd;
+				}
+			}
+
+			if (this.functionDefinitionsByName.ContainsKey(name))
+			{
+				return this.functionDefinitionsByName[name];
+			}
+
+			if (walkUpBaseClasses && this.BaseClass != null)
+			{
+				return this.BaseClass.GetMethod(name, walkUpBaseClasses);
+			}
+
+			return null;
+		}
+
+		public FieldDeclaration GetField(string name, bool walkUpBaseClasses)
+		{
+			if (this.fieldDeclarationsByName == null)
+			{
+				this.fieldDeclarationsByName = new Dictionary<string, FieldDeclaration>();
+
+				int staticMemberId = 0;
+
+				foreach (FieldDeclaration fd in this.Fields)
+				{
+					this.fieldDeclarationsByName[fd.NameToken.Value] = fd;
+					if (fd.IsStaticField)
+					{
+						fd.StaticMemberID = staticMemberId++;
+					}
+				}
+			}
+
+			if (this.fieldDeclarationsByName.ContainsKey(name))
+			{
+				return this.fieldDeclarationsByName[name];
+			}
+
+			if (walkUpBaseClasses && this.BaseClass != null)
+			{
+				return this.BaseClass.GetField(name, walkUpBaseClasses);
+			}
+
+			return null;
 		}
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
-			this.ClassID = parser.GetClassId(this);
-
 			if (parser.IsInClass)
 			{
 				throw new ParserException(this.FirstToken, "Nested classes aren't a thing, yet.");
@@ -38,37 +154,31 @@ namespace Crayon.ParseTree
 				throw new ParserException(this.NameToken, "'" + this.NameToken.Value + "' is a reserved keyword.");
 			}
 
-			if (this.SubClasses.Length > 0)
+			parser.CurrentClass = this;
+
+			for (int i = 0; i < this.Fields.Length; ++i)
 			{
-				ClassDefinition baseClassDef = parser.GetClass(this.SubClasses[0].Value);
-				if (baseClassDef == null)
-				{
-					throw new ParserException(this.SubClasses[0], "The class '" + this.SubClasses[0].Value + "' could not be found.");
-				}
-				this.baseClassInstance = baseClassDef;
+				this.Fields[i] = (FieldDeclaration)this.Fields[i].Resolve(parser)[0];
 			}
 
-			parser.CurrentClass = this;
 			for (int i = 0; i < this.Methods.Length; ++i)
 			{
 				this.Methods[i] = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
 			}
 
-			if (this.Constructor != null)
+			this.Constructor.Resolve(parser);
+			if (this.StaticConstructor != null)
 			{
-				this.Constructor.Resolve(parser);
+				this.StaticConstructor.Resolve(parser);
 			}
+
 			parser.CurrentClass = null;
 
-			bool hasABaseClass = this.baseClassInstance != null;
-			if (this.Constructor == null)
-			{
-				throw new ParserException(this.FirstToken, "Class is missing constructor.");
-			}
+			bool hasABaseClass = this.BaseClass != null;
 			bool callsBaseConstructor = this.Constructor.BaseToken != null;
 			if (hasABaseClass && callsBaseConstructor)
 			{
-				Expression[] defaultValues = this.baseClassInstance.Constructor.DefaultValues;
+				Expression[] defaultValues = this.BaseClass.Constructor.DefaultValues;
 				int maxValues = defaultValues.Length;
 				int minValues = 0;
 				for (int i = 0; i < maxValues; ++i)
@@ -84,7 +194,7 @@ namespace Crayon.ParseTree
 			}
 			else if (hasABaseClass && !callsBaseConstructor)
 			{
-				if (this.baseClassInstance.Constructor != null)
+				if (this.BaseClass.Constructor != null)
 				{
 					throw new ParserException(this.FirstToken, "The base class of this class has a constructor which must be called.");
 				}
@@ -98,39 +208,167 @@ namespace Crayon.ParseTree
 				// yeah, that's fine.
 			}
 
-			if (this.baseClassInstance != null)
-			{
-				parser.VerifySubclassDeclarationOrder(this, this.baseClassInstance);
-			}
-
-
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			if (this.Constructor != null)
+			throw new System.InvalidOperationException(); // never call this directly on a class.
+		}
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new System.InvalidOperationException(); // never call this directly on a class.
+		}
+
+		public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
+		{
+			List<ClassDefinition> baseClasses = new List<ClassDefinition>();
+			List<Token> baseClassesTokens = new List<Token>();
+			for (int i = 0; i < this.BaseClassDeclarations.Length; ++i)
 			{
-				this.Constructor.VariableUsagePass(parser);
+				string value = this.BaseClassDeclarations[i];
+				Token token = this.BaseClassTokens[i];
+				Executable baseClassInstance = Executable.DoNameLookup(lookup, imports, value);
+				if (baseClassInstance == null)
+				{
+					throw new ParserException(token, "Class not found.");
+				}
+
+				if (baseClassInstance is ClassDefinition)
+				{
+					baseClasses.Add((ClassDefinition)baseClassInstance);
+					baseClassesTokens.Add(token);
+				}
+				// TODO: else if (baseClassInstance is InterfaceDefinition) { ... }
+				else
+				{
+					throw new ParserException(token, "This is not a class.");
+				}
 			}
 
-			foreach (FunctionDefinition func in this.Methods)
+			if (baseClasses.Count > 1)
 			{
-				func.VariableUsagePass(parser);
+				throw new ParserException(baseClassesTokens[1], "Multiple base classes found. Did you mean to use an interface?");
+			}
+
+			if (baseClasses.Count == 1)
+			{
+				this.BaseClass = baseClasses[0];
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		private string[] ExpandImportsToIncludeThis(string[] imports)
 		{
-			if (this.Constructor != null)
+			// Tack on this class as an import. Once classes/enums/constants can be nested inside other classes, it'll be important.
+			string thisClassFullyQualified = this.Namespace;
+			if (thisClassFullyQualified.Length > 0) thisClassFullyQualified += ".";
+			thisClassFullyQualified += this.NameToken.Value;
+			List<string> newImports = new List<string>(imports);
+			newImports.Add(thisClassFullyQualified);
+			return newImports.ToArray();
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			imports = this.ExpandImportsToIncludeThis(imports);
+
+			foreach (FieldDeclaration fd in this.Fields)
 			{
-				this.Constructor.VariableIdAssignmentPass(parser);
+				fd.ResolveNames(parser, lookup, imports);
 			}
 
-			foreach (FunctionDefinition func in this.Methods)
+			if (this.StaticConstructor != null)
 			{
-				func.VariableIdAssignmentPass(parser);
+				this.StaticConstructor.ResolveNames(parser, lookup, imports);
 			}
+
+			// TODO: if there is no constructor, just create an implicit one.
+			// This should be empty if there is no base class, or just pass along the base class' args if there is.
+			if (this.Constructor == null)
+			{
+				throw new ParserException(this.FirstToken, "All classes must have a constructor.");
+			}
+
+			this.Constructor.ResolveNames(parser, lookup, imports);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Methods);
+
+			return this;
+		}
+
+		public void VerifyNoBaseClassLoops()
+		{
+			if (this.BaseClass == null) return;
+
+			HashSet<int> classIds = new HashSet<int>();
+			ClassDefinition walker = this;
+			while (walker != null)
+			{
+				if (classIds.Contains(walker.ClassID))
+				{
+					throw new ParserException(this.FirstToken, "This class' parent class hierarchy creates a cycle.");
+				}
+				classIds.Add(walker.ClassID);
+				walker = walker.BaseClass;
+			}
+		}
+
+		private Dictionary<string, Executable> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, Executable>();
+
+		public void ResolveMemberIds()
+		{
+			if (this.memberIdsResolved) return;
+
+			if (this.BaseClass != null)
+			{
+				this.BaseClass.ResolveMemberIds();
+				Dictionary<string, Executable> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
+				foreach (string key in parentDefinitions.Keys)
+				{
+					this.flattenedFieldAndMethodDeclarationsByName[key] = parentDefinitions[key];
+				}
+			}
+
+			foreach (FieldDeclaration fd in this.Fields)
+			{
+				Executable existingItem;
+				if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
+				{
+					// TODO: definition of a field or a method? from this class or a parent?
+					// TODO: check to see if this is already resolved before now.
+					throw new ParserException(fd.FirstToken, "This overrides a previous definition.");
+				}
+
+				fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
+				this.flattenedFieldAndMethodDeclarationsByName[fd.NameToken.Value] = fd;
+			}
+
+			foreach (FunctionDefinition fd in this.Methods)
+			{
+				if (!fd.IsStaticMethod)
+				{
+					Executable existingItem;
+					if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
+					{
+						if (existingItem is FieldDeclaration)
+						{
+							// TODO: again, give more information. 
+							throw new ParserException(fd.FirstToken, "This field overrides a previous definition.");
+						}
+
+						// Take the old member ID it overrides.
+						fd.MemberID = ((FunctionDefinition)existingItem).MemberID;
+					}
+					else
+					{
+						fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
+					}
+
+					this.flattenedFieldAndMethodDeclarationsByName[fd.NameToken.Value] = fd;
+				}
+			}
+
+			this.memberIdsResolved = true;
 		}
 	}
 }

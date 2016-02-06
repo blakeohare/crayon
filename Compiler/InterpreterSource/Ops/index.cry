@@ -30,8 +30,8 @@ if (Value$root.type == Types.LIST) {
 		} else if (keyType == Types.STRING) {
 			stringKey = $_cast('string', Value$value.internalValue);
 		} else if (keyType == Types.INSTANCE) {
-			objInstance = $_cast('ObjectInstance', Value$value.internalValue);
-			intKey = ObjectInstance$objInstance.objectId;
+			objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+			intKey = ObjectInstance$objInstance1.objectId;
 		} else {
 			if (DictImpl$dictImpl.size == 0) {
 				return killExecution(stack, pc, "Key not found. Dictionary is empty.");

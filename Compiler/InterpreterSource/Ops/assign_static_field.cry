@@ -1,0 +1,14 @@
+﻿
+// row[0] -> class ID
+// row[1] -> static member ID
+
+classInfo2 = $_array_get(classTable2, $_array_get(row, 0));
+import inline "InterpreterSource/InvokeStaticConstructor.cry";
+
+if (bool1) {
+	valueStackSize -= 1;
+	$_array_set(
+		ClassInfo2$classInfo2.staticFields,
+		$_array_get(row, 1),
+		$_array_get(valueStack, valueStackSize));
+}

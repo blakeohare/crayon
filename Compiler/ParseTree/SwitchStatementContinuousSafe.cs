@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -9,8 +10,8 @@ namespace Crayon.ParseTree
 		public Expression Condition { get; private set; }
 		public SwitchStatement OriginalSwitchStatement { get; private set; }
 
-		public SwitchStatementContinuousSafe(SwitchStatement switchStatement)
-			: base(switchStatement.FirstToken)
+		public SwitchStatementContinuousSafe(SwitchStatement switchStatement, Executable owner)
+			: base(switchStatement.FirstToken, owner)
 		{
 			this.OriginalSwitchStatement = switchStatement;
 			this.Condition = switchStatement.Condition;
@@ -32,6 +33,16 @@ namespace Crayon.ParseTree
 			}
 
 			return Listify(this);
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException();
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // not called in translate mode.
 		}
 
 		public SearchTree GenerateSearchTree()
@@ -85,12 +96,14 @@ namespace Crayon.ParseTree
 			this.OriginalSwitchStatement.GetAllVariableNames(lookup);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 	}
 }

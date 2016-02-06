@@ -25,8 +25,8 @@ namespace Crayon.ParseTree
 		private static int counter = 0;
 		private int id = ++counter;
 
-		public SwitchStatementUnsafeBlotchy(SwitchStatement switchStatement, bool useExplicitMax, int explicitMax)
-			: base(switchStatement.FirstToken)
+		public SwitchStatementUnsafeBlotchy(SwitchStatement switchStatement, bool useExplicitMax, int explicitMax, Executable owner)
+			: base(switchStatement.FirstToken, owner)
 		{
 			this.OriginalSwitchStatement = switchStatement;
 			this.Condition = switchStatement.Condition;
@@ -135,17 +135,29 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			throw new InvalidOperationException(); // translate mode only
+		}
+
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{
 			this.OriginalSwitchStatement.GetAllVariableNames(lookup);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new InvalidOperationException(); // translate mode only
+		}
+
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+		{
+			throw new InvalidOperationException(); // not called in translate mode.
 		}
 	}
 }

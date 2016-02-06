@@ -4,12 +4,15 @@ using System.Linq;
 
 namespace Crayon.ParseTree
 {
-	internal abstract class Executable : Node
+	public abstract class Executable : Node
 	{
 		public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 
-		public Executable(Token firstToken)
-			: base(firstToken)
+		public string[] NamespacePrefixSearch { get; set; }
+		public string LibraryName { get; set; }
+
+		public Executable(Token firstToken, Executable owner)
+			: base(firstToken, owner)
 		{ }
 
 		public virtual bool IsTerminator { get { return false; } }
@@ -25,6 +28,8 @@ namespace Crayon.ParseTree
 			}
 			return output;
 		}
+
+		internal abstract Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
 
 		// The reason why I still run this function with actuallyDoThis = false is so that other platforms can still be exported to
 		// and potentially crash if the implementation was somehow broken on Python (or some other future platform that doesn't have traditional switch statements).
@@ -61,13 +66,12 @@ namespace Crayon.ParseTree
 			return new Executable[] { ex };
 		}
 
+		internal abstract void CalculateLocalIdPass(VariableIdAllocator varIds);
+
 		// To be overridden if necessary.
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
 		{ }
 
-		internal virtual void AssignVariablesToIds(VariableIdAllocator varIds)
-		{
-			// Override me!
-		}
+		internal abstract void GenerateGlobalNameIdManifest(VariableIdAllocator varIds);
 	}
 }

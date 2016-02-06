@@ -9,10 +9,18 @@ namespace Crayon
 	{
 		public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines, IList<string> spriteSheetOpsStringArgs, IList<int[]> spriteSheetOpsIntArgs)
 		{
+			FunctionDefinition mainFunction = lines
+				.OfType<FunctionDefinition>()
+				.Where<FunctionDefinition>(fd => fd.NameToken.Value == "main")
+				.FirstOrDefault<FunctionDefinition>();
+
+			if (mainFunction == null) {
+				throw new Exception(); // should have thrown before if there was no main function.
+			}
+
 			ByteBuffer userCode = new ByteBuffer();
 
 			this.Compile(parser, userCode, lines);
-			userCode.Add(null, OpCode.RETURN_NULL);
 
 			ByteBuffer literalsTable = parser.LiteralLookup.BuildByteCode();
 
@@ -36,6 +44,18 @@ namespace Crayon
 			output.Add(null, OpCode.USER_CODE_START, header.Size + 1, parser.VariableIds.Size);
 			output.Concat(header);
 			output.Concat(userCode);
+
+			// artificially inject a function call to main() at the very end after all declarations are done.
+			if (parser.MainFunctionHasArg)
+			{
+				output.Add(null, OpCode.DEF_LIST, 0); // TODO: op code to build a list of the command line args. For now just pass in an empty list.
+				output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
+			}
+			else
+			{
+				output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
+			}
+			output.Add(null, OpCode.RETURN, 0);
 
 			return output;
 		}
@@ -225,93 +245,214 @@ namespace Crayon
 
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
 		{
-			ByteBuffer methodBuffer = new ByteBuffer();
-			bool hasConstructor = classDefinition.Constructor != null;
+			bool hasStaticFieldsWithStartingValues = classDefinition.Fields
+				.Where<FieldDeclaration>(fd =>
+					fd.IsStaticField &&
+					fd.DefaultValue != null &&
+					!(fd.DefaultValue is NullConstant))
+				.Count() > 0;
 
-			if (hasConstructor)
+			if (hasStaticFieldsWithStartingValues)
 			{
-				this.CompileConstructor(parser, methodBuffer, classDefinition.Constructor);
-			}
-
-			Dictionary<int, int> methodOffsets = new Dictionary<int, int>();
-			Dictionary<int, int> argCount = new Dictionary<int,int>();
-			List<int> methodIds = new List<int>();
-			foreach (FunctionDefinition method in classDefinition.Methods)
-			{
-				int methodName = parser.GetId(method.NameToken.Value);
-				if (methodOffsets.ContainsKey(methodName))
+				if (classDefinition.StaticConstructor == null)
 				{
-					throw new ParserException(method.NameToken, "A method with this name already exists in this class.");
+					classDefinition.StaticConstructor = new ConstructorDefinition(null, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, classDefinition);
 				}
-				methodIds.Add(methodName);
-				methodOffsets[methodName] = methodBuffer.Size;
-				argCount[methodName] = method.ArgNames.Length;
 
-				this.CompileFunctionDefinition(parser, methodBuffer, method, true);
+				List<Executable> staticFieldInitializers = new List<Executable>();
+				foreach (FieldDeclaration fd in classDefinition.Fields)
+				{
+					if (fd.IsStaticField && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
+					{
+						Executable assignment = new Assignment(new FieldReference(fd.FirstToken, fd, classDefinition), fd.NameToken, "=", fd.DefaultValue, classDefinition);
+						staticFieldInitializers.Add(assignment);
+					}
+				}
+
+				staticFieldInitializers.AddRange(classDefinition.StaticConstructor.Code);
+				classDefinition.StaticConstructor.Code = staticFieldInitializers.ToArray();
 			}
 
-			List<int> args = new List<int>();
-			// class name ID
-			args.Add(parser.GetId(classDefinition.NameToken.Value));
-			
-			// subclass ID or -1
-			if (classDefinition.SubClasses.Length > 1) throw new NotImplementedException("Interfaces not supported yet.");
-			if (classDefinition.SubClasses.Length == 0)
+			if (classDefinition.StaticConstructor != null)
 			{
-				args.Add(-1);
+				// All static field initializers are added here.
+				this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor);
 			}
-			else
+
+			this.CompileConstructor(parser, buffer, classDefinition.Constructor);
+
+			foreach (FunctionDefinition fd in classDefinition.Methods)
 			{
-				args.Add(parser.GetId(classDefinition.SubClasses[0].Value));
+				int pc = buffer.Size;
+				fd.FinalizedPC = pc;
+				this.CompileFunctionDefinition(parser, buffer, fd, true);
 			}
 
-			// has constructor? (the byte code is always next after the jump)
-			args.Add(hasConstructor ? classDefinition.Constructor.Args.Length : -1);
+			int classId = classDefinition.ClassID;
+			int baseClassId = classDefinition.BaseClass != null ? classDefinition.BaseClass.ClassID : -1;
+			int nameId = parser.GetId(classDefinition.NameToken.Value);
+			int constructorId = classDefinition.Constructor.FunctionID;
+			int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : -1;
 
-			// how many methods?
-			args.Add(methodIds.Count);
-
-			// each method is a set of 3 integers...
-			foreach (int methodId in methodIds)
+			int staticFieldCount = classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).Count();
+			FieldDeclaration[] regularFields = classDefinition.Fields.Where<FieldDeclaration>(fd => !fd.IsStaticField).ToArray();
+			FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.IsStaticMethod).ToArray();
+			List<int> members = new List<int>();
+			List<FieldDeclaration> fieldsWithComplexValues = new List<FieldDeclaration>();
+			foreach (FieldDeclaration fd in regularFields)
 			{
-				// name of the method...
-				args.Add(methodId);
-				// PC offset...
-				args.Add(methodOffsets[methodId] + 2);
-				// Maximum number of args...
-				args.Add(argCount[methodId]);
+				int memberId = fd.MemberID;
+				int fieldNameId = parser.GetId(fd.NameToken.Value);
+				int initInstruction;
+				int literalId = 0;
+				if (fd.DefaultValue is ListDefinition && ((ListDefinition)fd.DefaultValue).Items.Length == 0)
+				{
+					initInstruction = 1;
+				}
+				else if (fd.DefaultValue is DictionaryDefinition && ((DictionaryDefinition)fd.DefaultValue).Keys.Length == 0)
+				{
+					initInstruction = 2;
+				}
+				else
+				{
+					initInstruction = 0;
+					literalId = parser.GetLiteralId(fd.DefaultValue);
+					if (literalId == -1)
+					{
+						literalId = parser.GetNullConstant();
+						fieldsWithComplexValues.Add(fd);
+					}
+				}
+
+				members.AddRange(new int[] {
+					0, // flag for field
+					memberId,
+					fieldNameId,
+					initInstruction,
+					literalId});
 			}
 
-			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
-			buffer.Add(null, OpCode.JUMP, methodBuffer.Size);
-			buffer.Concat(methodBuffer);
+			foreach (FunctionDefinition fd in regularMethods)
+			{
+				int memberId = fd.MemberID;
+				int methodNameId = parser.GetId(fd.NameToken.Value);
+				int functionId = fd.FunctionID;
+
+				members.AddRange(new int[] {
+					1, // flag for method
+					memberId,
+					methodNameId,
+					functionId,
+					0, // ignored value. It's just here to keep spacing consistent.
+				});
+			}
+
+			ByteBuffer initializer = null;
+
+			if (fieldsWithComplexValues.Count > 0)
+			{
+				initializer = new ByteBuffer();
+				foreach (FieldDeclaration complexField in fieldsWithComplexValues)
+				{
+					this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
+					initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
+				}
+				initializer.Add(null, OpCode.RETURN, 0);
+			}
+
+			List<int> args = new List<int>()
+			{
+				classId,
+				baseClassId,
+				nameId,
+				constructorId,
+				initializer == null ? 0 : initializer.Size, // jump amount after initialization
+				staticConstructorId,
+				staticFieldCount,
+			};
+
+			args.AddRange(members);
+
+			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
+
+			if (initializer != null)
+			{
+				buffer.Concat(initializer);
+			}
 		}
 
 		private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
 		{
 			// TODO: throw parser exception in the resolver if a return appears with any value
-			this.CompileFunctionArgs(parser, buffer, constructor.Args, constructor.DefaultValues, constructor.ArgVarIDs);
+
+			ByteBuffer tBuffer = new ByteBuffer();
+
+			ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
+
+			List<int> offsetsForOptionalArgs = new List<int>();
+			this.CompileFunctionArgs(parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
+
+			int minArgs = 0;
+			int maxArgs = constructor.ArgNames.Length;
+			for (int i = 0; i < constructor.ArgNames.Length; ++i)
+			{
+				if (constructor.DefaultValues[i] == null)
+				{
+					minArgs++;
+				}
+				else
+				{
+					break;
+				}
+			}
 
 			if (constructor.BaseToken != null)
 			{
-				this.CompileExpressionList(parser, buffer, constructor.BaseArgs, true);
-				buffer.Add(constructor.BaseToken, OpCode.CALL_BASE_CONSTRUCTOR, constructor.BaseArgs.Length);
+				this.CompileExpressionList(parser, tBuffer, constructor.BaseArgs, true);
+				tBuffer.Add(
+					constructor.BaseToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.BASE_CONSTRUCTOR,
+					constructor.BaseArgs.Length,
+					cd.BaseClass.Constructor.FunctionID,
+					0,
+					cd.BaseClass.ClassID);
 			}
 
-			this.Compile(parser, buffer, constructor.Code);
-			buffer.Add(null, OpCode.RETURN_NULL);
+			this.Compile(parser, tBuffer, constructor.Code);
+			tBuffer.Add(null, OpCode.RETURN, 0);
+
+			bool isStatic = constructor == cd.StaticConstructor;
+
+			List<int> args = new List<int>()
+			{
+				constructor.FunctionID,
+				-1,
+				minArgs,
+				maxArgs,
+				isStatic ? 4 : 3,
+				cd.ClassID,
+				constructor.LocalScopeSize,
+				tBuffer.Size,
+				offsetsForOptionalArgs.Count,
+			};
+
+			args.AddRange(offsetsForOptionalArgs);
+
+			buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION2, args.ToArray());
+			buffer.Concat(tBuffer);
 		}
 
 		private void CompileReturnStatement(Parser parser, ByteBuffer buffer, ReturnStatement returnStatement)
 		{
 			if (returnStatement.Expression == null || returnStatement.Expression is NullConstant)
 			{
-				buffer.Add(returnStatement.FirstToken, OpCode.RETURN_NULL);
+				buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 0);
 			}
 			else
 			{
 				this.CompileExpression(parser, buffer, returnStatement.Expression, true);
-				buffer.Add(returnStatement.FirstToken, OpCode.RETURN);
+				buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 1);
 			}
 		}
 
@@ -432,8 +573,12 @@ namespace Crayon
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					this.CompileExpression(parser, buffer, assignment.Value, true);
-					int scopeId = varTarget.LocalScopeId == -1 ? varTarget.GlobalScopeId : varTarget.LocalScopeId;
-					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_VAR, scopeId);
+					int scopeId = varTarget.LocalScopeId;
+					if (scopeId == -1)
+					{
+						throw new Exception(); // this should not happen.
+					}
+					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else if (assignment.Target is BracketIndex)
 				{
@@ -460,6 +605,24 @@ namespace Crayon
 						buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
 					}
 				}
+				else if (assignment.Target is FieldReference)
+				{
+					this.CompileExpression(parser, buffer, assignment.Value, true);
+					FieldReference fieldReference = (FieldReference)assignment.Target;
+					if (fieldReference.Field.IsStaticField)
+					{
+						buffer.Add(
+							assignment.AssignmentOpToken,
+							OpCode.ASSIGN_STATIC_FIELD,
+							((ClassDefinition)fieldReference.Field.FunctionOrClassOwner).ClassID,
+							fieldReference.Field.StaticMemberID);
+					}
+					else
+					{
+						// TODO: "this.foo = value"
+						throw new NotImplementedException(); 
+					}
+				}
 				else
 				{
 					throw new Exception("This shouldn't happen.");
@@ -472,18 +635,14 @@ namespace Crayon
 				{
 					Variable varTarget = (Variable)assignment.Target;
 					int scopeId = varTarget.LocalScopeId;
-					if (scopeId != -1)
+					if (scopeId == -1)
 					{
-						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE, parser.GetId(varTarget.Name), scopeId);
-					}
-					else // it's in the global scope
-					{
-						scopeId = varTarget.GlobalScopeId;
-						buffer.Add(varTarget.FirstToken, OpCode.VARIABLE_GLOBAL, parser.GetId(varTarget.Name), scopeId);
+						throw new Exception(); // all variables should have local ID's allocated or errors thrown by now.
 					}
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
+					throw new NotImplementedException(); // TODO: redo this
 				}
 				else if (assignment.Target is DotStep)
 				{
@@ -524,26 +683,16 @@ namespace Crayon
 			}
 		}
 
-		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, IList<int> argVarIds)
+		private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
 		{
+			int bufferStartSize = buffer.Size;
 			for (int i = 0; i < argNames.Count; ++i)
 			{
-				string argName = argNames[i].Value;
-				Expression defaultValue = argValues[i];
-				int localVarId = argVarIds[i];
-				if (defaultValue == null)
+				if (argValues[i] != null)
 				{
-					buffer.Add(argNames[i], OpCode.ASSIGN_FUNCTION_ARG, localVarId, i);
-				}
-				else
-				{
-					ByteBuffer defaultValueCode = new ByteBuffer();
-
-					this.CompileExpression(parser, defaultValueCode, defaultValue, true);
-					defaultValueCode.Add(argNames[i], OpCode.ASSIGN_VAR, localVarId);
-
-					buffer.Add(defaultValue.FirstToken, OpCode.ASSIGN_FUNCTION_ARG_AND_JUMP, localVarId, i, defaultValueCode.Size);
-					buffer.Concat(defaultValueCode);
+					this.CompileExpression(parser, buffer, argValues[i], true);
+					buffer.Add(argNames[i], OpCode.ASSIGN_LOCAL, i);
+					offsetsForOptionalArgs.Add(buffer.Size - bufferStartSize);
 				}
 			}
 		}
@@ -552,24 +701,40 @@ namespace Crayon
 		{
 			ByteBuffer tBuffer = new ByteBuffer();
 
-			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, funDef.ArgVarIDs);
+			List<int> offsetsForOptionalArgs = new List<int>();
+			this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs);
 
 			Compile(parser, tBuffer, funDef.Code);
 
 			int offset = tBuffer.Size;
 
+			int minArgCount = 0;
+			for (int i = 0; i < funDef.DefaultValues.Length; ++i)
+			{
+				if (funDef.DefaultValues[i] != null)
+				{
+					break;
+				}
+				minArgCount++;
+			}
+
+			List<int> args = new List<int>()
+			{
+				funDef.FunctionID,
+				parser.GetId(funDef.NameToken.Value), // local var to save in
+				minArgCount,
+				funDef.ArgNames.Length, // max number of args supplied
+				isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
+				isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
+				funDef.LocalScopeSize,
+				tBuffer.Size,
+				offsetsForOptionalArgs.Count
+			};
+			args.AddRange(offsetsForOptionalArgs);
+
 			buffer.Add(
 				funDef.FirstToken,
-				OpCode.FUNCTION_DEFINITION,
-				parser.GetId(funDef.NameToken.Value), // local var to save in
-				isMethod ? 0 : 2, // offset from current PC where code is located
-				funDef.ArgNames.Length, // max number of args supplied
-				isMethod ? 1 : 0); // is a method
-			if (!isMethod)
-			{
-				buffer.Add(funDef.FirstToken, OpCode.ASSIGN_VAR, funDef.NameGlobalID);
-				buffer.Add(null, OpCode.JUMP, offset);
-			}
+				OpCode.FUNCTION_DEFINITION2, args.ToArray());
 
 			buffer.Concat(tBuffer);
 		}
@@ -606,6 +771,8 @@ namespace Crayon
 			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
 			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, outputUsed);
+			else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
+			else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
 			else throw new NotImplementedException();
 		}
 
@@ -617,6 +784,51 @@ namespace Crayon
 			}
 		}
 
+		private void CompileFieldReference(Parser parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
+		{
+			EnsureUsed(fieldRef.FirstToken, outputUsed);
+
+			if (fieldRef.Field.IsStaticField)
+			{
+				buffer.Add(
+					fieldRef.FirstToken,
+					OpCode.DEREF_STATIC_FIELD,
+					((ClassDefinition)fieldRef.Field.FunctionOrClassOwner).ClassID,
+					fieldRef.Field.StaticMemberID);
+			}
+			else
+			{
+				buffer.Add(
+					fieldRef.FirstToken,
+					OpCode.DEREF_INSTANCE_FIELD,
+					fieldRef.Field.MemberID);
+			}
+		}
+
+		// Non-invoked function references.
+		private void CompileFunctionReference(Parser parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
+		{
+			EnsureUsed(funcRef.FirstToken, outputUsed);
+
+			FunctionDefinition funcDef = funcRef.FunctionDefinition;
+
+			int classIdStaticCheck = 0;
+			int type = 0;
+			if (funcDef.FunctionOrClassOwner is ClassDefinition && funcDef.IsStaticMethod)
+			{
+				if (funcDef.IsStaticMethod) {
+					classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID ;
+					type = 2;
+				} else {
+					type = 1;
+				}
+			}
+			buffer.Add(funcRef.FirstToken, OpCode.PUSH_FUNC_REF,
+				funcDef.FunctionID,
+				type,
+				classIdStaticCheck);
+		}
+
 		private void CompileBaseKeyword(Parser parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
 		{
 			throw new ParserException(baseKeyword.FirstToken, "Cannot have a reference to 'base' without invoking a field.");
@@ -625,8 +837,13 @@ namespace Crayon
 		private void CompileBaseMethodReference(Parser parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
 		{
 			EnsureUsed(baseMethodReference.FirstToken, outputUsed);
-			int baseClassId = parser.GetClass(baseMethodReference.ClassToWhichThisMethodRefers).ClassID;
-			buffer.Add(baseMethodReference.DotToken, OpCode.DEREF_DOT_ON_BASE, parser.GetId(baseMethodReference.StepToken.Value), baseClassId);
+			int baseClassId = baseMethodReference.ClassToWhichThisMethodRefers.ClassID;
+			buffer.Add(
+				baseMethodReference.DotToken,
+				OpCode.PUSH_FUNC_REF,
+				parser.GetId(baseMethodReference.StepToken.Value),
+				1, // instance method
+				0);
 		}
 
 		private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)
@@ -742,8 +959,17 @@ namespace Crayon
 
 		private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
 		{
+			ClassDefinition cd = (ClassDefinition)instantiate.Class;
+			ConstructorDefinition constructor = cd.Constructor;
+
 			this.CompileExpressionList(parser, buffer, instantiate.Args, true);
-			buffer.Add(instantiate.NameToken, OpCode.CALL_CONSTRUCTOR, instantiate.Args.Length, parser.GetId(instantiate.NameToken.Value), outputUsed ? 1 : 0);
+			buffer.Add(instantiate.NameToken,
+				OpCode.CALL_FUNCTION2,
+				(int)FunctionInvocationType.CONSTRUCTOR,
+				instantiate.Args.Length,
+				constructor.FunctionID,
+				outputUsed ? 1 : 0,
+				cd.ClassID);
 		}
 
 		private void CompileThisKeyword(Parser parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
@@ -781,21 +1007,21 @@ namespace Crayon
 				// a '1' appended to it when it really should be an error if the variable is not an integer.
 				// Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
 				Variable variable = (Variable)increment.Root;
-				int scopeId = variable.LocalScopeId == -1 ? variable.GlobalScopeId : variable.LocalScopeId;
+				int scopeId = variable.LocalScopeId;
 				this.CompileExpression(parser, buffer, increment.Root, true);
 				if (increment.IsPrefix)
 				{
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 				else
 				{
 					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
 					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-					buffer.Add(variable.FirstToken, OpCode.ASSIGN_VAR, scopeId);
+					buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
 				}
 			}
 			else if (increment.Root is BracketIndex)
@@ -944,15 +1170,11 @@ namespace Crayon
 			Token token = variable.FirstToken;
 			if (variable.LocalScopeId == -1)
 			{
-				buffer.Add(token, OpCode.VARIABLE_GLOBAL, nameId, variable.GlobalScopeId);
-			}
-			else if (variable.GlobalScopeId == -1)
-			{
-				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId);
+				throw new ParserException(token, "Variable used but not declared.");
 			}
 			else
 			{
-				buffer.Add(token, OpCode.VARIABLE, nameId, variable.LocalScopeId, variable.GlobalScopeId);
+				buffer.Add(token, OpCode.LOCAL, variable.LocalScopeId, nameId);
 			}
 		}
 
@@ -1049,19 +1271,98 @@ namespace Crayon
 
 		private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
 		{
-			this.CompileExpressionList(parser, buffer, funCall.Args, true);
-
 			Expression root = funCall.Root;
-			Variable rootVar = root as Variable;
-			if (rootVar != null && rootVar.LocalScopeId == -1)
+			if (root is FunctionReference)
 			{
-				string functionName = rootVar.Name;
-				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION_ON_GLOBAL, rootVar.GlobalScopeId, funCall.Args.Length, outputUsed ? 1 : 0);
+				FunctionReference verifiedFunction = (FunctionReference)root;
+				FunctionDefinition fd = verifiedFunction.FunctionDefinition;
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				if (fd.FunctionOrClassOwner is ClassDefinition)
+				{
+					ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
+					if (fd.IsStaticMethod)
+					{
+						buffer.Add(
+							funCall.ParenToken,
+							OpCode.CALL_FUNCTION2,
+							(int)FunctionInvocationType.STATIC_METHOD,
+							funCall.Args.Length,
+							fd.FunctionID,
+							outputUsed ? 1 : 0,
+							cd.ClassID);
+					}
+					else
+					{
+						buffer.Add(
+							funCall.ParenToken,
+							OpCode.CALL_FUNCTION2,
+							(int)FunctionInvocationType.LOCAL_METHOD,
+							funCall.Args.Length,
+							fd.FunctionID,
+							outputUsed ? 1 : 0,
+							cd.ClassID);
+					}
+				}
+				else
+				{
+					// vanilla function
+					buffer.Add(
+						funCall.ParenToken,
+						OpCode.CALL_FUNCTION2,
+						(int) FunctionInvocationType.NORMAL_FUNCTION,
+						funCall.Args.Length,
+						fd.FunctionID,
+						outputUsed ? 1 : 0,
+						0);
+				}
+			}
+			else if (root is DotStep)
+			{
+				DotStep ds = (DotStep)root;
+				Expression dotRoot = ds.Root;
+				int globalNameId = parser.GetId(ds.StepToken.Value);
+				this.CompileExpression(parser, buffer, dotRoot, true);
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.FIELD_INVOCATION,
+					funCall.Args.Length,
+					0,
+					outputUsed ? 1 : 0,
+					globalNameId);
+			}
+			else if (root is BaseMethodReference)
+			{
+				BaseMethodReference bmr = (BaseMethodReference)root;
+				FunctionDefinition fd = bmr.ClassToWhichThisMethodRefers.GetMethod(bmr.StepToken.Value, true);
+				if (fd == null)
+				{
+					throw new ParserException(bmr.DotToken, "This method does not exist on any base class.");
+				}
+
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.LOCAL_METHOD,
+					funCall.Args.Length,
+					fd.FunctionID,
+					outputUsed ? 1 : 0,
+					bmr.ClassToWhichThisMethodRefers.ClassID);
 			}
 			else
 			{
-				this.CompileExpression(parser, buffer, funCall.Root, true);
-				buffer.Add(funCall.ParenToken, OpCode.CALL_FUNCTION, funCall.Args.Length, outputUsed ? 1 : 0);
+				this.CompileExpression(parser, buffer, root, true);
+				this.CompileExpressionList(parser, buffer, funCall.Args, true);
+				buffer.Add(
+					funCall.ParenToken,
+					OpCode.CALL_FUNCTION2,
+					(int)FunctionInvocationType.POINTER_PROVIDED,
+					funCall.Args.Length,
+					0,
+					outputUsed ? 1 : 0,
+					0);
 			}
 		}
 	}

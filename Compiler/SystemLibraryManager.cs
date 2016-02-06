@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Crayon.ParseTree;
 
 namespace Crayon
 {
@@ -56,85 +57,124 @@ namespace Crayon
 			return this.importedLibraries[libraryName].GetEmbeddedCode();
 		}
 
-		private static string libraryDirectory = null;
+		private Dictionary<string, string> systemLibraryPathsByName = null;
 
-		public string LibraryDirectory
+		private string GetSystemLibraryPath(string name)
 		{
-			get
+			if (this.systemLibraryPathsByName == null)
 			{
-				if (libraryDirectory != null)
+				this.systemLibraryPathsByName = new Dictionary<string, string>();
+
+				List<string> crayonHomeDlls = new List<string>();
+
+				string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+				if (crayonHome != null)
 				{
-					return libraryDirectory;
+					string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "lib");
+					foreach (string dll in System.IO.Directory.GetFiles(crayonHomeLibraries))
+					{
+						if (dll.EndsWith(".dll"))
+						{
+							crayonHomeDlls.Add(dll);
+						}
+					}
 				}
 
+				List<string> debugDlls = new List<string>();
 #if DEBUG
-				// Walk up the current directory which is presumably running under source control and look for the
-				// "Libraries" directory.
-				string currentDirectory = System.IO.Path.GetFullPath(".");
 
+				// Presumably running from source. Walk up to the root directory and find the Libraries directory.
+				// From there use the list of folders.
+				string currentDirectory = System.IO.Path.GetFullPath(".");
+				string librariesDirectory = null;
 				while (currentDirectory != null && currentDirectory.Length > 0)
 				{
 					string path = System.IO.Path.Combine(currentDirectory, "Libraries");
 					if (System.IO.Directory.Exists(path))
 					{
-						libraryDirectory = path;
-						return path;
+						librariesDirectory = path;
+						break;
 					}
 					currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
 				}
-				throw new Exception("Library directory is not configured.");
-#else
-				// Require the CRAYON_HOME environment variable to be defined.
-				string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
-				if (crayonHome != null && !System.IO.File.Exists(System.IO.Path.Combine(crayonHome, "crayon.exe")))
-				{
-					crayonHome = null;
-				}
 
-				if (crayonHome == null)
+				if (librariesDirectory != null)
 				{
-					throw new Exception("CRAYON_HOME environment variable must be set to the directory where crayon.exe is located.");
+					foreach (string libraryDirectory in System.IO.Directory.GetDirectories(librariesDirectory))
+					{
+						string libraryName = System.IO.Path.GetFileName(libraryDirectory);
+						string dllPath = System.IO.Path.Combine(libraryDirectory, "bin", "Debug", libraryName + ".dll");
+						if (System.IO.File.Exists(dllPath))
+						{
+							debugDlls.Add(dllPath);
+						}
+					}
 				}
-
-				libraryDirectory = System.IO.Path.Combine(crayonHome, "lib");
-				return libraryDirectory;
 #endif
+				List<string> allLibrariesInPrecedenceOrder = new List<string>();
+				allLibrariesInPrecedenceOrder.AddRange(crayonHomeDlls);
+				allLibrariesInPrecedenceOrder.AddRange(debugDlls);
+
+				foreach (string file in allLibrariesInPrecedenceOrder)
+				{
+					string libraryName = System.IO.Path.GetFileNameWithoutExtension(file);
+					this.systemLibraryPathsByName[libraryName] = file;
+				}
 			}
+
+			string fullpath;
+			return this.systemLibraryPathsByName.TryGetValue(name, out fullpath)
+				? fullpath
+				: null;
 		}
 
-		public bool ImportLibrary(string name)
+		private HashSet<string> alreadyImported = new HashSet<string>();
+		private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
+
+		public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
 		{
-			if (importedLibraries.ContainsKey(name))
+			name = name.Split('.')[0];
+			if (alreadyImported.Contains(name))
 			{
-				return true;
+				return EMPTY_EXECUTABLE;
 			}
 
-			string libDir = this.LibraryDirectory;
+			alreadyImported.Add(name);
 
-			string dllPath = System.IO.Path.Combine(libDir, name, "bin", "Debug", name + ".dll");
-			if (System.IO.File.Exists(dllPath))
+			string dllPath = this.GetSystemLibraryPath(name);
+
+			if (dllPath == null)
 			{
-				System.Reflection.Assembly assembly = null;
-				try
-				{
-					assembly = System.Reflection.Assembly.LoadFrom(dllPath);
-				}
-				catch (Exception)
-				{
-					return false;
-				}
-
-				ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".LibraryConfig") as ILibraryConfig;
-				if (libraryConfig == null)
-				{
-					return false;
-				}
-
-				this.importedLibraries[name] = libraryConfig;
-				this.librariesByKey[name.ToLower()] = libraryConfig;
-				return true;
+				return EMPTY_EXECUTABLE;
 			}
-			return false;
+
+			System.Reflection.Assembly assembly = null;
+			try
+			{
+				assembly = System.Reflection.Assembly.LoadFrom(dllPath);
+			}
+			catch (Exception)
+			{
+				throw new ParserException(throwToken, "Could not import library: " + name);
+			}
+
+			ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".LibraryConfig") as ILibraryConfig;
+			if (libraryConfig == null)
+			{
+				throw new ParserException(throwToken, "Error creating LibraryConfig instance in Library '" + name + "'");
+			}
+
+			this.importedLibraries[name] = libraryConfig;
+			this.librariesByKey[name.ToLowerInvariant()] = libraryConfig;
+
+			string oldSystemLibrary = parser.CurrentSystemLibrary;
+			parser.CurrentSystemLibrary = name;
+
+			string libraryCode = libraryConfig.GetEmbeddedCode();
+			Executable[] libraryParseTree = parser.ParseInterpretedCode("[" + name + "]", libraryCode, name);
+
+			parser.CurrentSystemLibrary = oldSystemLibrary;
+			return libraryParseTree;
 		}
 	}
 }

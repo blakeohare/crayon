@@ -8,8 +8,8 @@ namespace Crayon.ParseTree
 		public Executable[] Code { get; private set; }
 		public Expression Condition { get; private set; }
 
-		public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition)
-			: base(doToken)
+		public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition, Executable owner)
+			: base(doToken, owner)
 		{
 			this.Code = code.ToArray();
 			this.Condition = condition;
@@ -32,32 +32,37 @@ namespace Crayon.ParseTree
 			}
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			foreach (Executable ex in this.Code)
 			{
-				ex.AssignVariablesToIds(varIds);
+				ex.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.Code.Length; ++i)
+			foreach (Executable ex in this.Code)
 			{
-				this.Code[i].VariableUsagePass(parser);
+				ex.CalculateLocalIdPass(varIds);
 			}
-
-			this.Condition.VariableUsagePass(parser);
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.Code.Length; ++i)
+			foreach (Executable ex in this.Code)
 			{
-				this.Code[i].VariableIdAssignmentPass(parser);
+				ex.SetLocalIdPass(varIds);
 			}
 
-			this.Condition.VariableIdAssignmentPass(parser);
+			this.Condition.SetLocalIdPass(varIds);
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 	}
 }

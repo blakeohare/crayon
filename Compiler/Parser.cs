@@ -17,9 +17,16 @@ namespace Crayon
 			this.VariableIds = new VariableIdAllocator();
 			this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
 			this.CurrentNamespace = "";
+			this.NamespacePrefixLookupForCurrentFile = new List<string>();
 		}
 
+		private int functionIdCounter = 0;
 		private int fileIdCounter = 0;
+
+		public int GetNextFunctionId()
+		{
+			return ++this.functionIdCounter;
+		}
 
 		private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
@@ -38,9 +45,13 @@ namespace Crayon
 
 		public ClassDefinition CurrentClass { get; set; }
 
+		public bool MainFunctionHasArg { get; set; }
+
 		public bool IsInClass { get { return this.CurrentClass != null; } }
 
 		public BuildContext BuildContext { get; private set; }
+
+		public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
 		public bool PreserveTranslationComments
 		{
@@ -58,113 +69,34 @@ namespace Crayon
 		public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
 		public int GetNullConstant() { return this.literalLookup.GetNullId(); }
 
-		private class VarScope
+		public int GetLiteralId(Expression value)
 		{
-			private VarScope fallback;
-			private Dictionary<string, int> ids;
-			private Dictionary<string, Token> firstUsage;
-			private HashSet<string> usedButNotAssigned;
-
-			public VarScope(VarScope globalFallback)
+			if (value is NullConstant)
 			{
-				this.fallback = globalFallback;
-				this.ids = new Dictionary<string, int>();
-				this.firstUsage = new Dictionary<string, Token>();
-				this.usedButNotAssigned = new HashSet<string>();
+				return GetNullConstant();
 			}
 
-			public void NoteUsage(string name, Token token, bool isAssignment)
+			if (value is IntegerConstant)
 			{
-				if (!this.firstUsage.ContainsKey(name))
-				{
-					this.firstUsage[name] = token;
-				}
-
-				if (isAssignment)
-				{
-					if (this.usedButNotAssigned.Contains(name))
-					{
-						this.usedButNotAssigned.Remove(name);
-						this.ids[name] = this.ids.Count;
-					}
-					else if (!this.ids.ContainsKey(name))
-					{
-						this.ids[name] = this.ids.Count;
-					}
-				}
-				else
-				{
-					if (!this.ids.ContainsKey(name) && !this.usedButNotAssigned.Contains(name))
-					{
-						this.usedButNotAssigned.Add(name);
-					}
-				}
+				return this.GetIntConstant(((IntegerConstant)value).Value);
 			}
 
-			private static int[] REUSABLE_OUTPUT_LOCAL_AND_GLOBAL = new int[2];
-
-			public int[] GetId(string name)
+			if (value is FloatConstant)
 			{
-				return this.GetId(name, true);
+				return this.GetFloatConstant(((FloatConstant)value).Value);
 			}
 
-			public int[] GetId(string name, bool requireUsage)
+			if (value is BooleanConstant)
 			{
-				int localId = -1;
-				int globalId = -1;
-
-				if (this.fallback == null)
-				{
-					if (this.ids.ContainsKey(name))
-					{
-						globalId = this.ids[name];
-					}
-				}
-				else
-				{
-					if (this.ids.ContainsKey(name))
-					{
-						localId = this.ids[name];
-					}
-
-					this.fallback.GetId(name, false);
-					globalId = REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[1];
-				}
-
-				if (requireUsage && localId == -1 && globalId == -1)
-				{
-					// TODO: It would be amazing to include spelling suggestions here if the levenshtein distance from other local+global scope variables or enums is less than 3.
-					throw new ParserException(this.firstUsage[name], "The variable '" + name + "' is used but never assigned to.");
-				}
-
-				REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[0] = localId;
-				REUSABLE_OUTPUT_LOCAL_AND_GLOBAL[1] = globalId;
-				return REUSABLE_OUTPUT_LOCAL_AND_GLOBAL;
+				return this.GetBoolConstant(((BooleanConstant)value).Value);
 			}
-		}
 
-		private VarScope globalScope = new VarScope(null);
-		private VarScope localScope = null;
+			if (value is StringConstant)
+			{
+				return this.GetStringConstant(((StringConstant)value).Value);
+			}
 
-		public int[] GetGlobalScopeId(string name)
-		{
-			return this.globalScope.GetId(name);
-		}
-
-		public void ResetLocalScope()
-		{
-			this.localScope = new VarScope(this.globalScope);
-		}
-
-		public void VariableRegister(string variableName, bool isAssignment, Token token)
-		{
-			VarScope scope = localScope ?? globalScope;
-			scope.NoteUsage(variableName, token, isAssignment);
-		}
-
-		public int[] VariableGetLocalAndGlobalIds(string variableName)
-		{
-			return (localScope ?? globalScope).GetId(variableName);
+			return -1;
 		}
 
 		private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
@@ -257,39 +189,6 @@ namespace Crayon
 			return null;
 		}
 
-		public void RegisterClass(ClassDefinition classDef)
-		{
-			string name = classDef.NameToken.Value;
-			if (this.classDefinitions.ContainsKey(name))
-			{
-				throw new ParserException(classDef.FirstToken, "Multiple classes with the name: '" + name + "'");
-			}
-
-			this.classDefinitions[name] = classDef;
-			this.classDefinitionOrder[name] = this.classDefinitionOrder.Count;
-		}
-
-		public void VerifySubclassDeclarationOrder(ClassDefinition classDef, ClassDefinition subclass)
-		{
-			string className = classDef.NameToken.Value;
-			string subclassName = subclass.NameToken.Value;
-			int classDefN = this.classDefinitionOrder[className];
-			int subclassDefN = this.classDefinitionOrder.ContainsKey(subclassName) ? this.classDefinitionOrder[subclassName] : Int32.MaxValue;
-
-			if (classDefN < subclassDefN)
-			{
-				string errorBase = "The class \"" + className + "\" cannot extend from \"" + subclassName + "\" because ";
-				if (classDef.FirstToken.FileID == subclass.FirstToken.FileID)
-				{
-					throw new ParserException(classDef.FirstToken, errorBase + "it is defined before \"" + subclassName + "\". Swap the order of the definitions.");
-				}
-				else
-				{
-					throw new ParserException(classDef.FirstToken, errorBase + "it is defined sequentially before \"" + subclassName + "\". Check the order of your file imports.");
-				}
-			}
-		}
-
 		private void VerifyNameFree(Token nameToken)
 		{
 			if (things.Contains(nameToken.Value))
@@ -379,87 +278,92 @@ namespace Crayon
 			return output.ToArray();
 		}
 
-		private Executable[] ResolveCode(Executable[] originalCode)
+		public Executable[] ParseInterpreterCode(string filename, string contents)
 		{
-			return new Resolver(this, originalCode).Resolve(this.IsTranslateMode);
+			TokenStream tokens = Tokenizer.Tokenize(filename, contents, 0, true);
+			List<Executable> output = new List<Executable>();
+			while (tokens.HasMore)
+			{
+				output.Add(ExecutableParser.Parse(this, tokens, false, true, true, null));
+			}
+			return new Resolver(this, output).ResolveTranslatedCode();
 		}
 
-		public Executable[] ParseInternal(string filename, string contents)
+		private void GetCodeFilesImpl(string rootFolder, string currentFolder, Dictionary<string, string> filesOutput)
 		{
-			Executable[] output = ParseImport(".", filename, contents, new HashSet<string>(), null);
-			return ResolveCode(output);
+			foreach (string file in System.IO.Directory.GetFiles(currentFolder))
+			{
+				if (file.ToLowerInvariant().EndsWith(".cry"))
+				{
+					string contents = System.IO.File.ReadAllText(file);
+					string relativePath = file.Substring(rootFolder.Length + 1);
+					filesOutput[relativePath] = contents;
+				}
+			}
+
+			foreach (string directory in System.IO.Directory.GetDirectories(currentFolder))
+			{
+				GetCodeFilesImpl(rootFolder, directory, filesOutput);
+			}
 		}
 
-		public Executable[] ParseRoot(string rootFolder)
+		public Dictionary<string, string> GetCodeFiles(string rootFolder)
 		{
-			string fileName = "start.cry";
-			Executable[] output = ParseImport(rootFolder, fileName, null, new HashSet<string>(), null);
-			output = ResolveCode(output);
+			rootFolder = System.IO.Path.GetFullPath(rootFolder);
+			Dictionary<string, string> output = new Dictionary<string, string>();
+			this.GetCodeFilesImpl(rootFolder, rootFolder, output);
 			return output;
 		}
 
-		public Executable[] ParseImport(string rootFolder, string filename, string codeOverride, HashSet<string> pathOfFilesRelativeToRoot, ImportStatement importStatement)
+		public Executable[] ParseAllTheThings(string rootFolder)
 		{
-			if (importStatement != null && importStatement.IsSystemLibrary && pathOfFilesRelativeToRoot.Contains(filename))
+			List<Executable> output = new List<Executable>();
+			Dictionary<string, string> files = this.GetCodeFiles(rootFolder);
+			// Only iterate through actual user files. Library imports will be inserted into the code when encountered
+			// the first time for each library.
+			foreach (string fileName in files.Keys)
 			{
-				// Disregard files imported multiple times.
-				return new Executable[0];
+				string code = files[fileName];
+				Executable[] fileContent = this.ParseInterpretedCode(fileName, code, null);
+				output.AddRange(fileContent);
 			}
-			pathOfFilesRelativeToRoot.Add(filename);
+			return new Resolver(this, output).ResolveInterpretedCode();
+		}
 
-			int fileId = fileIdCounter++;
-			string code = codeOverride;
-			string prevSystemLibrary = this.CurrentSystemLibrary;
-			if (codeOverride == null)
-			{
-				if (importStatement != null && importStatement.IsSystemLibrary)
-				{
-					string importValueToken = importStatement.FileToken.Value;
-					if (importValueToken[0] == '\'' || importValueToken[0] == '"')
-					{
-						importValueToken = importValueToken.Substring(1, importValueToken.Length - 2);
-					}
-					else
-					{
-						this.CurrentSystemLibrary = importValueToken;
-						Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
-					}
+		private HashSet<string> importedFiles = new HashSet<string>();
 
-					string sysLibPath = "manifest.cry";
-					char c = importStatement.FileToken.Value[0];
-					if (c == '\'' || c == '"')
-					{
-						sysLibPath = importStatement.FileToken.Value;
-						sysLibPath = sysLibPath.Substring(1, sysLibPath.Length - 2);
-					}
-					code = this.SystemLibraryManager.GetEmbeddedCode(importValueToken);
-				}
-				else
-				{
-					string fullpath = System.IO.Path.Combine(rootFolder, filename);
-					if (System.IO.File.Exists(fullpath))
-					{
-						code = Util.ReadFileExternally(fullpath, true);
-					}
-					else
-					{
-						throw new ParserException(importStatement.FirstToken, "File does not exist or is misspelled: '" + filename + "'");
-					}
-				}
-			}
+		public int GetNextFileId()
+		{
+			return fileIdCounter++;
+		}
+
+		public Executable[] ParseInterpretedCode(string filename, string code, string libraryName)
+		{
+			int fileId = this.GetNextFileId();
 			this.RegisterFileUsed(filename, code, fileId);
 			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId, true);
 
-			Dictionary<string, StructDefinition> structureDefinitions = new Dictionary<string, StructDefinition>();
-			Dictionary<string, Expression> constantDefinitions = new Dictionary<string, Expression>();
-
 			List<Executable> executables = new List<Executable>();
+
+			List<string> namespaceImportsBuilder = new List<string>();
+
+			while (tokens.HasMore && tokens.IsNext("import"))
+			{
+				ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
+				if (importStatement == null) throw new Exception();
+				namespaceImportsBuilder.Add(importStatement.ImportPath);
+				Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+				executables.AddRange(libraryEmbeddedCode);
+			}
+
+			string[] namespaceImports = namespaceImportsBuilder.ToArray();
+
 			while (tokens.HasMore)
 			{
 				Executable executable;
 				try
 				{
-					executable = ExecutableParser.Parse(this, tokens, false, true, true);
+					executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
 				}
 				catch (EofException)
 				{
@@ -468,24 +372,21 @@ namespace Crayon
 
 				if (executable is ImportStatement)
 				{
-					ImportStatement execAsImportStatement = (ImportStatement)executable;
-					string filePath = execAsImportStatement.FilePath;
-					Executable[] importedCode = this.ParseImport(rootFolder, filePath, null, pathOfFilesRelativeToRoot, execAsImportStatement);
-					executables.AddRange(importedCode);
+					throw new ParserException(executable.FirstToken, "All imports must occur at the beginning of the file.");
 				}
-				else if (executable is ClassDefinition)
+
+				executable.NamespacePrefixSearch = namespaceImports;
+				executable.LibraryName = libraryName;
+
+				if (executable is Namespace)
 				{
-					this.RegisterClass((ClassDefinition)executable);
-					executables.Add(executable);
+					((Namespace)executable).GetFlattenedCode(executables, namespaceImports, libraryName);
 				}
 				else
 				{
 					executables.Add(executable);
 				}
 			}
-
-			this.CurrentSystemLibrary = prevSystemLibrary;
-			Parser.CurrentSystemLibrary_STATIC_HACK = this.CurrentSystemLibrary;
 
 			return executables.ToArray();
 		}
@@ -511,7 +412,39 @@ namespace Crayon
 		}
 
 		private static readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>(
-			"if else class function constructor return break continue for do while true false null this import enum switch base case default foreach try catch finally new".Split(' '));
+			new string[] {
+				"base",
+				"break",
+				"case",
+				"catch",
+				"class",
+				"const",
+				"constructor",
+				"continue",
+				"default",
+				"do",
+				"else",
+				"enum",
+				"false",
+				"field",
+				"finally",
+				"for",
+				"function",
+				"if",
+				"import",
+				"interface",
+				"namespace",
+				"new",
+				"null",
+				"return",
+				"static",
+				"switch",
+				"this",
+				"true",
+				"try",
+				"while",
+			});
+
 		internal static bool IsReservedKeyword(string value)
 		{
 			return RESERVED_KEYWORDS.Contains(value);
@@ -520,6 +453,11 @@ namespace Crayon
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
 		internal static bool IsValidIdentifier(string value)
 		{
+			if (IsReservedKeyword(value))
+			{
+				return false;
+			}
+
 			if (value[0] >= '0' && value[0] <= '9') return false;
 
 			foreach (char c in value)
@@ -534,7 +472,7 @@ namespace Crayon
 
 		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
 
-		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired)
+		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, Executable owner)
 		{
 			List<Executable> output = new List<Executable>();
 
@@ -542,7 +480,7 @@ namespace Crayon
 			{
 				while (!tokens.PopIfPresent("}"))
 				{
-					output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
+					output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
 				}
 			}
 			else
@@ -557,7 +495,7 @@ namespace Crayon
 					return output;
 				}
 
-				output.Add(ExecutableParser.Parse(parser, tokens, false, true, false));
+				output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
 			}
 			return output;
 		}

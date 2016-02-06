@@ -5,9 +5,11 @@ namespace Crayon.ParseTree
 {
 	internal class ListDefinition : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Items { get; private set; }
-		public ListDefinition(Token openBracket, IList<Expression> items)
-			: base(openBracket)
+		public ListDefinition(Token openBracket, IList<Expression> items, Executable owner)
+			: base(openBracket, owner)
 		{
 			this.Items = items.ToArray();
 		}
@@ -22,19 +24,17 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			for (int i = 0; i < this.Items.Length; ++i)
-			{
-				this.Items[i].VariableUsagePass(parser);
-			}
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
+			return this;
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.Items.Length; ++i)
+			foreach (Expression item in this.Items)
 			{
-				this.Items[i].VariableIdAssignmentPass(parser);
+				item.SetLocalIdPass(varIds);
 			}
 		}
 	}

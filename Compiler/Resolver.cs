@@ -9,100 +9,236 @@ namespace Crayon
 	internal class Resolver
 	{
 		private Parser parser;
-		private IList<Executable> currentCode;
-		
+		private Executable[] currentCode;
+
 		public Resolver(Parser parser, IList<Executable> originalCode)
 		{
 			this.parser = parser;
-			this.currentCode = originalCode;
+			this.currentCode = originalCode.ToArray();
 		}
 
-		public Executable[] Resolve(bool isTranslateMode)
+		private Dictionary<string, Executable> CreateFullyQualifiedLookup(IList<Executable> code)
 		{
-			List<Executable> output = this.SimpleFirstPassResolution(this.parser, this.currentCode);
+			HashSet<string> namespaces = new HashSet<string>();
 
-			if (isTranslateMode)
+			Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();
+			bool mainFound = false;
+			foreach (Executable item in code)
 			{
-				return output.ToArray();
-			}
-
-			// These track all possible places where variables can be declared outside of the global scope.
-			List<FunctionDefinition> functions = new List<FunctionDefinition>();
-			List<ClassDefinition> classes = new List<ClassDefinition>();
-			List<ConstructorDefinition> constructors = new List<ConstructorDefinition>();
-
-			List<Executable> codeContainers = new List<Executable>();
-
-			// Assign all ID's to variables.
-			foreach (Executable executable in output)
-			{
-				if (executable is FunctionDefinition)
+				string ns;
+				string memberName;
+				if (item is FunctionDefinition)
 				{
-					FunctionDefinition funcDef = (FunctionDefinition)executable;
-					parser.VariableRegister(funcDef.NameToken.Value, true, funcDef.NameToken);
-					codeContainers.Add(executable);
+					FunctionDefinition fd = (FunctionDefinition)item;
+					ns = fd.Namespace;
+					memberName = fd.NameToken.Value;
+					if (memberName == "main")
+					{
+						if (mainFound)
+						{
+							throw new ParserException(item.FirstToken, "Multiple main methods found.");
+						}
+						mainFound = true;
+						lookup["~"] = item;
+					}
 				}
-				else if (executable is ClassDefinition)
+				else if (item is ClassDefinition)
 				{
-					codeContainers.Add(executable);
+					ClassDefinition cd = (ClassDefinition)item;
+					ns = cd.Namespace;
+					memberName = cd.NameToken.Value;
+
+					// TODO: nested classes, constants, and enums.
+				}
+				else if (item is EnumDefinition)
+				{
+					EnumDefinition ed = (EnumDefinition)item;
+					ns = ed.Namespace;
+					memberName = ed.Name;
+				}
+				else if (item is ConstStatement)
+				{
+					ConstStatement cs = (ConstStatement)item;
+					ns = cs.Namespace;
+					memberName = cs.Name;
 				}
 				else
 				{
-					executable.VariableUsagePass(parser);
+					throw new Exception();
+				}
+
+				if (ns.Length > 0)
+				{
+					string accumulator = "";
+					foreach (string nsPart in ns.Split('.'))
+					{
+						if (accumulator.Length > 0) accumulator += ".";
+						accumulator += nsPart;
+						namespaces.Add(accumulator);
+					}
+				}
+
+				string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
+
+				lookup[fullyQualifiedName] = item;
+			}
+
+			foreach (string key in lookup.Keys)
+			{
+				if (namespaces.Contains(key))
+				{
+					throw new ParserException(lookup[key].FirstToken, "This name collides with a namespace definition.");
 				}
 			}
 
-			foreach (Executable executable in output)
+			// Go through and fill in all the partially qualified namespace names.
+			foreach (string ns in namespaces)
 			{
-				if (executable is FunctionDefinition)
+				lookup[ns] = new Namespace(null, ns, null);
+			}
+
+			if (lookup.ContainsKey("~"))
+			{
+				FunctionDefinition mainFunc = (FunctionDefinition)lookup["~"];
+				if (mainFunc.ArgNames.Length > 1)
 				{
-					// Code containers' usage/id pass methods are meant for doing ID allocation for the code in them.
-					FunctionDefinition funcDef = (FunctionDefinition)executable;
-					funcDef.NameGlobalID = parser.GetGlobalScopeId(funcDef.NameToken.Value)[1];
+					throw new ParserException(mainFunc.FirstToken, "The main function must accept 0 or 1 arguments.");
 				}
-				else if (executable is ClassDefinition)
+			}
+			else
+			{
+				throw new Exception("No main(args) function was defined.");
+			}
+
+			return lookup;
+		}
+
+		public Executable[] ResolveTranslatedCode()
+		{
+			this.SimpleFirstPassResolution();
+			return this.currentCode;
+		}
+
+		public Executable[] ResolveInterpretedCode()
+		{
+			// Resolve raw names into the actual things they refer to based on namespaces and imports.
+			this.ResolveNames();
+
+			this.SimpleFirstPassResolution();
+
+			this.RearrangeClassDefinitions();
+
+			this.AllocateLocalScopeIds();
+
+			return this.currentCode;
+		}
+
+		private void ResolveNames()
+		{
+			Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
+
+			this.parser.MainFunctionHasArg = ((FunctionDefinition)definitionsByFullyQualifiedNames["~"]).ArgNames.Length == 1;
+
+			IEnumerable<ClassDefinition> allClasses = this.currentCode.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.ResolveBaseClasses(definitionsByFullyQualifiedNames, cd.NamespacePrefixSearch);
+			}
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.VerifyNoBaseClassLoops();
+			}
+
+			foreach (Executable item in this.currentCode)
+			{
+				item.ResolveNames(this.parser, definitionsByFullyQualifiedNames, item.NamespacePrefixSearch);
+			}
+
+			foreach (ClassDefinition cd in allClasses)
+			{
+				cd.ResolveMemberIds();
+			}
+		}
+
+		private void RearrangeClassDefinitions()
+		{
+			// Rearrange class definitions so that base classes always come first.
+
+			HashSet<int> classIdsIncluded = new HashSet<int>();
+			List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
+			List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
+			List<Executable> output = new List<Executable>();
+			foreach (Executable exec in this.currentCode)
+			{
+				if (exec is FunctionDefinition)
 				{
-					// Do nothing.
+					functionDefinitions.Add((FunctionDefinition)exec);
+				}
+				else if (exec is ClassDefinition)
+				{
+					classDefinitions.Add((ClassDefinition)exec);
 				}
 				else
 				{
-					executable.VariableIdAssignmentPass(parser);
+					throw new ParserException(exec.FirstToken, "Unexpected item.");
 				}
 			}
 
-			foreach (Executable functionOrClass in codeContainers)
+			output.AddRange(functionDefinitions);
+
+			foreach (ClassDefinition cd in classDefinitions)
 			{
-				parser.ResetLocalScope();
-				functionOrClass.VariableUsagePass(parser);
-				functionOrClass.VariableIdAssignmentPass(parser);
+				this.RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
 			}
 
-			return output.ToArray();
+			this.currentCode = output.ToArray();
+		}
+
+		private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<Executable> output)
+		{
+			if (!idsAlreadyIncluded.Contains(def.ClassID))
+			{
+				if (def.BaseClass != null)
+				{
+					this.RearrangeClassDefinitionsHelper(def.BaseClass, idsAlreadyIncluded, output);
+				}
+
+				output.Add(def);
+				idsAlreadyIncluded.Add(def.ClassID);
+			}
 		}
 
 		// This will run for both compiled and translated code.
-		private List<Executable> SimpleFirstPassResolution(Parser parser, IList<Executable> original)
+		private void SimpleFirstPassResolution()
 		{
 			List<Executable> output = new List<Executable>();
-			List<Executable> namespaceMembers = new List<Executable>();
-			foreach (Executable line in original)
+			foreach (Executable line in this.currentCode)
 			{
-				if (line is Namespace)
+				output.AddRange(line.Resolve(this.parser));
+			}
+
+			this.currentCode = output.ToArray();
+		}
+
+		private void AllocateLocalScopeIds()
+		{
+			foreach (Executable item in this.currentCode)
+			{
+				if (item is FunctionDefinition)
 				{
-					((Namespace)line).AppendFlattenedCode(namespaceMembers);
-					foreach (Executable namespaceLine in namespaceMembers)
-					{
-						output.AddRange(namespaceLine.Resolve(parser));
-					}
-					namespaceMembers.Clear();
+					((FunctionDefinition)item).AllocateLocalScopeIds();
+				}
+				else if (item is ClassDefinition)
+				{
+					((ClassDefinition)item).AllocateLocalScopeIds();
 				}
 				else
 				{
-					output.AddRange(line.Resolve(parser));
+					throw new System.InvalidOperationException(); // everything else in the root scope should have thrown before now.
 				}
 			}
-
-			return output;
 		}
 
 		// Convert anything that looks like a function call into a verified pointer to the function if possible using the
@@ -133,6 +269,24 @@ namespace Crayon
 			List<Executable> output = new List<Executable>();
 
 			return output;
+		}
+
+		public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, Executable owner)
+		{
+			if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
+			if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
+			if (item is EnumDefinition) throw new ParserException(primaryToken, "Cannot create reference to enum. Must complete reference to enum member.");
+			if (item is ConstStatement)
+			{
+				// TODO: do this properly.
+				// Must create a new parse node that contains the value rather than use the one from conststatement, otherwise the tokens will be wrong.
+				// It'd be super useful if there was an IConstant interface for expressions that had a clone method that took in a new token.
+				//return ((ConstStatement)exec).Expression;
+				throw new Exception();
+			}
+			if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
+
+			throw new System.InvalidOperationException(); // what?
 		}
 	}
 }

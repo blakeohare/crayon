@@ -5,33 +5,50 @@ namespace Crayon.ParseTree
 {
 	internal class FunctionDefinition : Executable
 	{
+		public int FunctionID { get; set; }
 		public Token NameToken { get; private set; }
-		public Token[] ArgNames { get; private set; }
-		public Expression[] DefaultValues { get; private set; }
-		public int[] ArgVarIDs { get; private set; }
-		public Executable[] Code { get; private set; }
-		public Annotation[] ArgAnnotations { get; private set; }
+		public bool IsStaticMethod { get; private set; }
+		public Token[] ArgNames { get; set; }
+		public Expression[] DefaultValues { get; set; }
+		private int[] argVarIds = null;
+		public Executable[] Code { get; set; }
+		public Annotation[] ArgAnnotations { get; set; }
 		private Dictionary<string, Annotation> annotations;
-		public VariableIdAllocator VariableIds { get; private set; }
-		public int NameGlobalID { get; set; }
+		public int LocalScopeSize { get; set; }
 		public string Namespace { get; set; }
+		public int FinalizedPC { get; set; }
+		public int MemberID { get; set; }
 
-		public FunctionDefinition(Token functionToken, Token nameToken, IList<Token> argNames, IList<Expression> argDefaultValues, IList<Annotation> argAnnotations, IList<Executable> code, IList<Annotation> functionAnnotations, string namespyace)
-			: base(functionToken)
+		public FunctionDefinition(
+			Token functionToken,
+			Executable nullableOwner,
+			bool isStaticMethod,
+			Token nameToken,
+			IList<Annotation> functionAnnotations,
+			string namespyace)
+			: base(functionToken, nullableOwner)
 		{
+			this.IsStaticMethod = isStaticMethod;
 			this.Namespace = namespyace;
 			this.NameToken = nameToken;
-			this.ArgNames = argNames.ToArray();
-			this.ArgVarIDs = new int[this.ArgNames.Length];
-			this.DefaultValues = argDefaultValues.ToArray();
-			this.ArgAnnotations = argAnnotations.ToArray();
-			this.Code = code.ToArray();
 			this.annotations = new Dictionary<string, Annotation>();
 			foreach (Annotation annotation in functionAnnotations)
 			{
 				this.annotations[annotation.Type] = annotation;
 			}
-			this.VariableIds = new VariableIdAllocator();
+			this.MemberID = -1;
+		}
+
+		public int[] ArgVarIDs
+		{
+			get
+			{
+				if (this.argVarIds == null)
+				{
+					this.argVarIds = new int[this.ArgNames.Length];
+				}
+				return this.argVarIds;
+			}
 		}
 
 		public Annotation GetAnnotation(string type)
@@ -42,6 +59,8 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
+			this.FunctionID = parser.GetNextFunctionId();
+
 			for (int i = 0; i < this.DefaultValues.Length; ++i)
 			{
 				if (this.DefaultValues[i] != null)
@@ -61,26 +80,24 @@ namespace Crayon.ParseTree
 			if (this.Code.Length == 0 || !(this.Code[this.Code.Length - 1] is ReturnStatement))
 			{
 				List<Executable> newCode = new List<Executable>(this.Code);
-				newCode.Add(new ReturnStatement(this.FirstToken, null));
+				newCode.Add(new ReturnStatement(this.FirstToken, null, this.FunctionOrClassOwner));
 				this.Code = newCode.ToArray();
-			}
-
-			foreach (Token arg in this.ArgNames)
-			{
-				this.VariableIds.RegisterVariable(arg.Value);
-			}
-
-			foreach (Executable ex in this.Code)
-			{
-				ex.AssignVariablesToIds(this.VariableIds);
 			}
 
 			return Listify(this);
 		}
 
-		internal override void AssignVariablesToIds(VariableIdAllocator varIds)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
 			varIds.RegisterVariable(this.NameToken.Value);
+			foreach (Token argToken in this.ArgNames)
+			{
+				varIds.RegisterVariable(argToken.Value);
+			}
+			foreach (Executable line in this.Code)
+			{
+				line.GenerateGlobalNameIdManifest(varIds);
+			}
 		}
 
 		internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
@@ -112,39 +129,41 @@ namespace Crayon.ParseTree
 			return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.ArgNames.Length; ++i)
-			{
-				Token arg = this.ArgNames[i];
-				parser.VariableRegister(arg.Value, true, arg);
-				Expression defaultValue = this.DefaultValues[i];
-				if (defaultValue != null)
-				{
-					defaultValue.VariableUsagePass(parser);
-				}
-			}
-
-			for (int i = 0; i < this.Code.Length; ++i)
-			{
-				this.Code[i].VariableUsagePass(parser);
-			}
+			throw new System.InvalidOperationException(); // never call this directly on a function.
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
+			throw new System.InvalidOperationException(); // never call this directly on a function.
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
+		}
+
+		internal void AllocateLocalScopeIds()
+		{
+			VariableIdAllocator variableIds = new VariableIdAllocator();
 			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
-				this.ArgVarIDs[i] = parser.VariableGetLocalAndGlobalIds(this.ArgNames[i].Value)[0];
-				if (this.DefaultValues[i] != null)
-				{
-					this.DefaultValues[i].VariableIdAssignmentPass(parser);
-				}
+				variableIds.RegisterVariable(this.ArgNames[i].Value);
 			}
 
-			for (int i = 0; i < this.Code.Length; ++i)
+			foreach (Executable ex in this.Code)
 			{
-				this.Code[i].VariableIdAssignmentPass(parser);
+				ex.CalculateLocalIdPass(variableIds);
+			}
+
+			this.LocalScopeSize = variableIds.Size;
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.SetLocalIdPass(variableIds);
 			}
 		}
 	}

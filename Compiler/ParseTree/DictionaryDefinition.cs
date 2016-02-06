@@ -5,11 +5,13 @@ namespace Crayon.ParseTree
 {
 	internal class DictionaryDefinition : Expression
 	{
+		public override bool CanAssignTo { get { return false; } }
+
 		public Expression[] Keys { get; private set; }
 		public Expression[] Values { get; private set; }
 
-		public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values)
-			: base(braceToken)
+		public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, Executable owner)
+			: base(braceToken, owner)
 		{
 			this.Keys = keys.ToArray();
 			this.Values = values.ToArray();
@@ -26,22 +28,20 @@ namespace Crayon.ParseTree
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			for (int i = 0, length = this.Keys.Length; i < length; ++i)
 			{
-				this.Keys[i].VariableUsagePass(parser);
-				this.Values[i].VariableUsagePass(parser);
-			}
+				this.Keys[i].SetLocalIdPass(varIds);
+				this.Values[i].SetLocalIdPass(varIds);
+			}	
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			for (int i = 0, length = this.Keys.Length; i < length; ++i)
-			{
-				this.Keys[i].VariableIdAssignmentPass(parser);
-				this.Values[i].VariableIdAssignmentPass(parser);
-			}	
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Keys);
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
+			return this;
 		}
 	}
 }

@@ -32,8 +32,8 @@ if (type == Types.LIST) {
 	} else if (keyType == Types.STRING) {
 		stringKey = $_cast('string', Value$value2.internalValue);
 	} else if (keyType == Types.INSTANCE) {
-		objInstance = $_cast('ObjectInstance', Value$value2.internalValue);
-		intKey = ObjectInstance$objInstance.objectId;
+		objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
+		intKey = ObjectInstance$objInstance1.objectId;
 	} else {
 		return killExecution(stack, pc, "Invalid key for a dictionary.");
 	}

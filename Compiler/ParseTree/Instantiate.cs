@@ -5,13 +5,18 @@ namespace Crayon.ParseTree
 {
 	internal class Instantiate : Expression
 	{
-		public Token NameToken { get; private set; }
-		public Expression[] Args { get; private set; }
+		public override bool CanAssignTo { get { return false; } }
 
-		public Instantiate(Token firstToken, Token classNameToken, IList<Expression> args)
-			: base(firstToken)
+		public Token NameToken { get; private set; }
+		public string Name { get; private set; }
+		public Expression[] Args { get; private set; }
+		public ClassDefinition Class { get; set; }
+
+		public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, Executable owner)
+			: base(firstToken, owner)
 		{
-			this.NameToken = classNameToken;
+			this.NameToken = firstClassNameToken;
+			this.Name = name;
 			this.Args = args.ToArray();
 		}
 
@@ -19,23 +24,20 @@ namespace Crayon.ParseTree
 		{
 			string className = this.NameToken.Value;
 
-			StructDefinition structDefinition = parser.GetStructDefinition(className);
-
 			if (parser.IsTranslateMode)
 			{
+				StructDefinition structDefinition = parser.GetStructDefinition(className);
+
 				if (structDefinition != null)
 				{
-					StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args);
+					if (this.Args.Length != structDefinition.Fields.Length)
+					{
+						throw new ParserException(this.FirstToken, "Args length did not match struct field count for '" + structDefinition.Name.Value + "'.");
+					}
+
+					StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args, this.FunctionOrClassOwner);
 					si = (StructInstance)si.Resolve(parser);
 					return si;
-				}
-			}
-			else
-			{
-				ClassDefinition classDefinition = parser.GetClass(className);
-				if (classDefinition == null)
-				{
-					throw new ParserException(this.NameToken, "Class not defined: '" + className + "'");
 				}
 			}
 
@@ -44,25 +46,44 @@ namespace Crayon.ParseTree
 				this.Args[i] = this.Args[i].Resolve(parser);
 			}
 
-			// TODO: use parser context to resolve this into a struct
+			ConstructorDefinition cons = this.Class.Constructor;
+			if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
+			{
+				// TODO: show the correct arg count.
+				throw new ParserException(this.FirstToken, "This constructor has the wrong number of arguments.");
+			}
 
 			return this;
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			for (int i = 0; i < this.Args.Length; ++i)
 			{
-				this.Args[i].VariableUsagePass(parser);
+				this.Args[i].SetLocalIdPass(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			for (int i = 0; i < this.Args.Length; ++i)
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+
+			Executable ex = Expression.DoNameLookup(lookup, imports, this.Name);
+			if (ex == null)
 			{
-				this.Args[i].VariableIdAssignmentPass(parser);
+				throw new ParserException(this.NameToken, "No class found called '" + this.Name + "'");
 			}
+
+			if (ex is ClassDefinition)
+			{
+				this.Class = (ClassDefinition)ex;
+			}
+			else
+			{
+				throw new ParserException(this.NameToken, "This is not a class.");
+			}
+
+			return this;
 		}
 	}
 }

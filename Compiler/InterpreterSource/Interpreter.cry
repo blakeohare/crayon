@@ -5,19 +5,17 @@ function @omitReturn @type('string') interpret(
 		@type('Array<Array<int>>') args,
 		@type('Array<string>') stringArgs,
 		@type('Array<string>') identifiers,
-		@type('Dictionary<string, int>') inv_identifiers,
-		@type('Array<Value>') literalTable,
-		@type('Array<ClassInfo>') classTable,
-		@type('Array<Dictionary<int, MethodDefinition>>') classMethods,
-		@type('Array<Array<int>>') specialCache,
-		@type('Dictionary<int, Value>') globals) {
+		@type('Array<Value>') literalTable
+	) {
 
-	@type('Dictionary<int, Value>') locals = StackFrame$stack.locals;
 	@type('ProgramData') p = $_get_program_data();
 
 	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
 	@type('int') valueStackSize = ProgramData$p.valueStackSize;
 	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
+
+	@type('Array<ClassInfo2>') classTable2 = ProgramData$p.classTable2;
+	@type('Array<FunctionInfo2>') functionTable2 = ProgramData$p.functionTable;
 
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
@@ -29,23 +27,18 @@ function @omitReturn @type('string') interpret(
 	@type('int') type = 0;
 	@type('int') nameId = 0;
 	@type('int') classId = 0;
-	@type('ClassInfo') classInfo = null;
+	@type('int') functionId = 0;
+	@type('ClassInfo2') classInfo2 = null;
 	@type('int') len = 0;
 	@type('Value') root = null;
 	@type('Array<int>') row = null;
-	@type('int') pc = 0;
 	@type('int') argCount = 0;
-	@type('Array<Value>') funcArgs = null;
 	@type('Array<string>') stringList = null;
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
-	@type('SystemMethod') sysMethod = null;
-	@type('MethodInstance') methodInstance = null;
-	@type('MethodDefinition') methodDefinition = null;
-	@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
-	@type('FunctionDefinition') funcDef = null;
-	@type('ObjectInstance') objInstance = null;
+	@type('FunctionInfo2') functionInfo2 = null;
+	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;
 	@type('DictImpl') dictImpl = null;
@@ -63,15 +56,19 @@ function @omitReturn @type('string') interpret(
 	@type('bool') lib_func_error_occurred = false;
 	@type('string') lib_func_error_message = "";
 
+	// These are all general purpose variables that can be used by any op.
+	// Declared once before the interpreter runs to prevent overhead per VM cycle.
+	@type('bool') bool1 = false;
+	@type('bool') bool2 = false;
 	@type('int') int1 = 0;
 	@type('int') int2 = 0;
 	@type('int') int3 = 0;
 	@type('int') int4 = 0;
 	@type('int') int5 = 0;
 	@type('int') i = 0;
-	@type('double') float1 = 3.14;
-	@type('double') float2 = 2.718;
-	@type('double') float3 = 1.618;
+	@type('double') float1 = 0.0;
+	@type('double') float2 = 0.0;
+	@type('double') float3 = 0.0;
 	@type('Value') value = null;
 	@type('Value') value2 = null;
 	@type('Value') value3 = null;
@@ -81,9 +78,9 @@ function @omitReturn @type('string') interpret(
 	@type('List<Value>') list1 = null;
 	@type('List<Value>') list2 = null;
 	@type('List<string>') stringList1 = null;
-	@type('bool') bool1 = false;
-	@type('bool') bool2 = false;
 	@type('List<int>') intList1 = null;
+	@type('Array<Value>') valueArray1 = null;
+	@type('Array<int>') intArray1 = null;
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
@@ -92,6 +89,9 @@ function @omitReturn @type('string') interpret(
 	@type('HttpRequest') httpRequest1 = null;
 	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
+	@type('FunctionPointer') functionPointer1 = null;
+	@type('Dictionary<int, int>') intIntDict1 = null;
+	@type('StackFrame') stackFrame2 = null;
 
 	// binary op variables...
 	@type('int') op = 0;
@@ -114,7 +114,7 @@ function @omitReturn @type('string') interpret(
 	@type('Value') arg9 = null;
 	@type('Value') arg10 = null;
 
-	@type('Array<int>') primitiveMethodIdLookup = ProgramData$p.primitiveMethodIdLookup;
+	@type('Array<int>') globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<int, int>') integerSwitch = null;
@@ -125,37 +125,41 @@ function @omitReturn @type('string') interpret(
 
 	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
 
-	pc = StackFrame$stack.pc;
+	@type('Array<Value>') localsStack = ProgramData$p.localsStack;
+	@type('Array<int>') localsStackSet = ProgramData$p.localsStackSet;
+	@type('int') localsStackSetToken = StackFrame$stack.localsStackSetToken;
+	@type('int') localsStackCapacity = $_array_length(localsStack);
+	@type('int') localsStackOffset = StackFrame$stack.localsStackOffset;
+	@type('Array<Value>') funcArgs = ProgramData$p.funcArgs;
+
+	@type('int') pc = StackFrame$stack.pc;
 
 	while (true) {
 		row = $_array_get(args, pc);
 		switch ($_array_get(ops, pc)) {
 			case OpCodes.ADD_LITERAL: $_comment('ADD_LITERAL'); import inline 'InterpreterSource/Ops/add_literal.cry'; break;
 			case OpCodes.ADD_NAME: $_comment('ADD_NAME'); import inline 'InterpreterSource/Ops/add_name.cry'; break;
-			case OpCodes.ASSIGN_FUNCTION_ARG: $_comment('ASSIGN_FUNCTION_ARG'); import inline 'InterpreterSource/Ops/assign_function_arg.cry'; break;
-			case OpCodes.ASSIGN_FUNCTION_ARG_AND_JUMP: $_comment('ASSIGN_FUNCTION_ARG_AND_JUMP'); import inline 'InterpreterSource/Ops/assign_function_arg_and_jump.cry'; break;
 			case OpCodes.ASSIGN_INDEX: $_comment('ASSIGN_INDEX'); import inline 'InterpreterSource/Ops/assign_index.cry'; break;
+			case OpCodes.ASSIGN_STATIC_FIELD: $_comment('ASSIGN_STATIC_FIELD'); import inline 'InterpreterSource/Ops/assign_static_field.cry'; break;
 			case OpCodes.ASSIGN_STEP: $_comment('ASSIGN_STEP'); import inline 'InterpreterSource/Ops/assign_step.cry'; break;
 			case OpCodes.ASSIGN_THIS_STEP: $_comment('ASSIGN_THIS_STEP'); import inline 'InterpreterSource/Ops/assign_this_step.cry'; break;
-			case OpCodes.ASSIGN_VAR: $_comment('ASSIGN_VAR'); import inline 'InterpreterSource/Ops/assign_var.cry'; break;
+			case OpCodes.ASSIGN_LOCAL: $_comment('ASSIGN_LOCAL'); import inline 'InterpreterSource/Ops/assign_local.cry'; break;
 			case OpCodes.BINARY_OP: $_comment('BINARY_OP'); import inline 'InterpreterSource/Ops/binary_op.cry'; break;
 			case OpCodes.BOOLEAN_NOT: $_comment('BOOLEAN_NOT'); import inline 'InterpreterSource/Ops/boolean_not.cry'; break;
 			case OpCodes.BUILD_SWITCH_INT: $_comment('BUILD_SWITCH_INT'); import inline 'InterpreterSource/Ops/build_switch_int.cry'; break;
 			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'InterpreterSource/Ops/build_switch_string.cry'; break;
-			case OpCodes.CALL_BASE_CONSTRUCTOR: $_comment('CALL_BASE_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_base_constructor.cry'; break;
-			case OpCodes.CALL_CONSTRUCTOR: $_comment('CALL_CONSTRUCTOR'); import inline 'InterpreterSource/Ops/call_constructor.cry'; break;
-			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
-			case OpCodes.CALL_FUNCTION_ON_GLOBAL: $_comment('CALL_FUNCTION_ON_GLOBAL'); import inline 'InterpreterSource/Ops/call_function_on_global.cry'; break;
+			case OpCodes.CALL_FUNCTION2: $_comment('CALL_FUNCTION2'); import inline 'InterpreterSource/Ops/call_function2.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'InterpreterSource/Ops/call_lib_function.cry'; break;
-			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'InterpreterSource/Ops/class_definition.cry'; break;
+			case OpCodes.CLASS_DEFINITION2: $_comment('CLASS_DEFINITION2'); import inline 'InterpreterSource/Ops/class_definition_2.cry'; break;
 			case OpCodes.DEF_DICTIONARY: $_comment('DEF_DICT'); import inline 'InterpreterSource/Ops/def_dictionary.cry'; break;
 			case OpCodes.DEF_LIST: $_comment('DEF_LIST'); import inline 'InterpreterSource/Ops/def_list.cry'; break;
 			case OpCodes.DEF_ORIGINAL_CODE: $_comment('DEF_ORIGINAL_CODE'); import inline 'InterpreterSource/Ops/def_original_code.cry'; break;
 			case OpCodes.DEREF_DOT: $_comment('DEREF_DOT'); import inline 'InterpreterSource/Ops/deref_dot.cry'; break;
-			case OpCodes.DEREF_DOT_ON_BASE: $_comment('DEREF_DOT_ON_BASE'); import inline 'InterpreterSource/Ops/deref_dot_on_base.cry'; break;
+			case OpCodes.DEREF_INSTANCE_FIELD: $_comment('DEREF_INSTANCE_FIELD'); import inline 'InterpreterSource/Ops/deref_instance_field.cry'; break;
+			case OpCodes.DEREF_STATIC_FIELD: $_comment('DEREF_STATIC_FIELD'); import inline 'InterpreterSource/Ops/deref_static_field.cry'; break;
 			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'InterpreterSource/Ops/duplicate_stack_top.cry'; break;
 			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'InterpreterSource/Ops/finalize_initialization.cry'; break;
-			case OpCodes.FUNCTION_DEFINITION: $_comment('FUNCTION_DEFINITION'); import inline 'InterpreterSource/Ops/function_definition.cry'; break;
+			case OpCodes.FUNCTION_DEFINITION2: $_comment('FUNCTION_DEFINITION2'); import inline 'InterpreterSource/Ops/function_definition_2.cry'; break;
 			case OpCodes.INDEX: $_comment('INDEX'); import inline 'InterpreterSource/Ops/index.cry'; break;
 			case OpCodes.ITERATION_STEP: $_comment('ITERATION_STEP'); import inline 'InterpreterSource/Ops/iteration_step.cry'; break;
 			case OpCodes.JUMP: $_comment('JUMP'); import inline 'InterpreterSource/Ops/jump.cry'; break;
@@ -166,11 +170,12 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.LIST_SLICE: $_comment('LIST_SLICE'); import inline 'InterpreterSource/Ops/list_slice.cry'; break;
 			case OpCodes.LITERAL: $_comment('LITERAL'); import inline 'InterpreterSource/Ops/literal.cry'; break;
 			case OpCodes.LITERAL_STREAM: $_comment('LITERAL_STREAM'); import inline 'InterpreterSource/Ops/literal_stream.cry'; break;
+			case OpCodes.LOCAL: $_comment('LOCAL'); import inline 'InterpreterSource/Ops/local.cry'; break;
 			case OpCodes.NEGATIVE_SIGN: $_comment('NEGATIVE_SIGN'); import inline 'InterpreterSource/Ops/negative_sign.cry'; break;
 			case OpCodes.POP: $_comment('POP'); import inline 'InterpreterSource/Ops/pop.cry'; break;
 			case OpCodes.POP_IF_NULL_OR_JUMP: $_comment('POP_IF_NULL_OR_JUMP'); import inline 'InterpreterSource/Ops/pop_if_null_or_jump.cry'; break;
+			case OpCodes.PUSH_FUNC_REF: $_comment('PUSH_FUNC_REF'); import inline 'InterpreterSource/Ops/push_func_ref.cry'; break;
 			case OpCodes.RETURN: $_comment('RETURN'); import inline 'InterpreterSource/Ops/return.cry'; break;
-			case OpCodes.RETURN_NULL: $_comment('RETURN_NULL'); import inline 'InterpreterSource/Ops/return_null.cry'; break;
 			case OpCodes.SPRITE_SHEET_BUILDER: $_comment('SPRITE_SHEET_BUILDER'); import inline 'InterpreterSource/Ops/sprite_sheet_builder.cry'; break;
 			case OpCodes.STACK_INSERTION_FOR_INCREMENT: $_comment('STACK_INSERTION_FOR_INCREMENT'); import inline 'InterpreterSource/Ops/stack_insertion_for_increment.cry'; break;
 			case OpCodes.STACK_SWAP_POP: $_comment('STACK_SWAP_POP'); import inline 'InterpreterSource/Ops/stack_swap_pop.cry'; break;
@@ -179,8 +184,6 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.THIS: $_comment('THIS'); import inline 'InterpreterSource/Ops/this.cry'; break;
 			case OpCodes.TOKEN_DATA: $_comment('TOKEN_DATA'); import inline 'InterpreterSource/Ops/token_data.cry'; break;
 			case OpCodes.USER_CODE_START: $_comment('USER_CODE_START'); import inline 'InterpreterSource/Ops/user_code_start.cry'; break;
-			case OpCodes.VARIABLE: $_comment('VARIABLE'); import inline 'InterpreterSource/Ops/variable.cry'; break;
-			case OpCodes.VARIABLE_GLOBAL: $_comment('VARIABLE_GLOBAL'); import inline 'InterpreterSource/Ops/variable_global.cry'; break;
 			case OpCodes.VERIFY_TYPE_IS_ITERABLE: $_comment('VERIFY_TYPE_IS_ITERABLE'); import inline 'InterpreterSource/Ops/verify_type_is_iterable.cry'; break;
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');

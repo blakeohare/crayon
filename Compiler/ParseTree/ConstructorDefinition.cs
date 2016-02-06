@@ -5,18 +5,21 @@ namespace Crayon.ParseTree
 {
 	internal class ConstructorDefinition : Executable
 	{
-		public Executable[] Code { get; private set; }
-		public Token[] Args { get; private set; }
-		public int[] ArgVarIDs { get; private set; }
+		public int FunctionID { get; private set; }
+		public Executable[] Code { get; set; }
+		public Token[] ArgNames { get; private set; }
 		public Expression[] DefaultValues { get; private set; }
 		public Expression[] BaseArgs { get; private set; }
 		public Token BaseToken { get; private set; }
+		public int LocalScopeSize { get; set; }
+		public int MinArgCount { get; set; }
+		public int MaxArgCount { get; set; }
 
-		public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken)
-			: base(constructorToken)
+		public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken, Executable owner)
+			: base(constructorToken, owner)
 		{
-			this.Args = args.ToArray();
-			this.ArgVarIDs = new int[this.Args.Length];
+			this.ArgNames = args.ToArray();
+			//this.ArgVarIDs = new int[this.Args.Length];
 			this.DefaultValues = defaultValues.ToArray();
 			this.BaseArgs = baseArgs.ToArray();
 			this.Code = code.ToArray();
@@ -25,10 +28,19 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
-			for (int i = 0; i < this.Args.Length; ++i)
+			this.FunctionID = parser.GetNextFunctionId();
+
+			this.MaxArgCount = this.ArgNames.Length;
+			int minArgCount = 0;
+			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
-				this.DefaultValues[i] = this.DefaultValues[i] == null ? null : this.DefaultValues[i].Resolve(parser);
+				if (this.DefaultValues[i] != null)
+				{
+					minArgCount++;
+					this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
+				}
 			}
+			this.MinArgCount = minArgCount;
 
 			for (int i = 0; i < this.BaseArgs.Length; ++i)
 			{
@@ -45,50 +57,70 @@ namespace Crayon.ParseTree
 			return Listify(this);
 		}
 
-		internal override void VariableUsagePass(Parser parser)
+		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.Args.Length; ++i)
+			foreach (Token argToken in this.ArgNames)
 			{
-				Token arg = this.Args[i];
-				parser.VariableRegister(arg.Value, true, arg);
-				Expression defaultValue = this.DefaultValues[i];
-				if (defaultValue != null)
-				{
-					defaultValue.VariableUsagePass(parser);
-				}
+				varIds.RegisterVariable(argToken.Value);
 			}
-
-			for (int i = 0; i < this.BaseArgs.Length; ++i)
+			foreach (Executable line in this.Code)
 			{
-				this.BaseArgs[i].VariableUsagePass(parser);
-			}
-
-			for (int i = 0; i < this.Code.Length; ++i)
-			{
-				this.Code[i].VariableUsagePass(parser);
+				line.GenerateGlobalNameIdManifest(varIds);
 			}
 		}
 
-		internal override void VariableIdAssignmentPass(Parser parser)
+		internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
 		{
-			for (int i = 0; i < this.Args.Length; ++i)
+			throw new System.InvalidOperationException(); // never call this directly on a constructor.
+		}
+
+		internal override void SetLocalIdPass(VariableIdAllocator varIds)
+		{
+			throw new System.InvalidOperationException(); // never call this directly on a constructor.
+		}
+
+		internal void AllocateLocalScopeIds()
+		{
+			VariableIdAllocator variableIds = new VariableIdAllocator();
+			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
-				this.ArgVarIDs[i] = parser.VariableGetLocalAndGlobalIds(this.Args[i].Value)[0];
-				if (this.DefaultValues[i] != null)
+				variableIds.RegisterVariable(this.ArgNames[i].Value);
+			}
+
+			foreach (Executable ex in this.Code)
+			{
+				ex.CalculateLocalIdPass(variableIds);
+			}
+
+			this.LocalScopeSize = variableIds.Size;
+
+			if (this.BaseArgs != null)
+			{
+				foreach (Expression ex in this.BaseArgs)
 				{
-					this.DefaultValues[i].VariableIdAssignmentPass(parser);
+					ex.SetLocalIdPass(variableIds);
 				}
 			}
 
-			for (int i = 0; i < this.BaseArgs.Length; ++i)
+			foreach (Executable ex in this.Code)
 			{
-				this.BaseArgs[i].VariableIdAssignmentPass(parser);
+				ex.SetLocalIdPass(variableIds);
+			}
+		}
+
+		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+		{
+			if (this.DefaultValues.Length > 0)
+			{
+				this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
 			}
 
-			for (int i = 0; i < this.Code.Length; ++i)
+			if (this.BaseArgs.Length > 0)
 			{
-				this.Code[i].VariableIdAssignmentPass(parser);
+				this.BatchExpressionNameResolver(parser, lookup, imports, this.BaseArgs);
 			}
+			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+			return this;
 		}
 	}
 }
