@@ -100,8 +100,8 @@ function main() {
 		$_new_array('Value', 100), // array
 
 		// New OO stuff
-		$_new_array('ClassInfo2', 100),
-		$_new_array('FunctionInfo2', 100),
+		$_new_array('ClassInfo', 100),
+		$_new_array('FunctionInfo', 100),
 		$_new_list('int'), // class static initialization stack
 		null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
 		localsStack,

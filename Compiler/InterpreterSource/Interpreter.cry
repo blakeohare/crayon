@@ -14,8 +14,8 @@ function @omitReturn @type('string') interpret(
 	@type('int') valueStackSize = ProgramData$p.valueStackSize;
 	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
 
-	@type('Array<ClassInfo2>') classTable2 = ProgramData$p.classTable2;
-	@type('Array<FunctionInfo2>') functionTable2 = ProgramData$p.functionTable;
+	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
+	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;
 
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 
@@ -28,7 +28,7 @@ function @omitReturn @type('string') interpret(
 	@type('int') nameId = 0;
 	@type('int') classId = 0;
 	@type('int') functionId = 0;
-	@type('ClassInfo2') classInfo2 = null;
+	@type('ClassInfo') classInfo = null;
 	@type('int') len = 0;
 	@type('Value') root = null;
 	@type('Array<int>') row = null;
@@ -37,7 +37,7 @@ function @omitReturn @type('string') interpret(
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
-	@type('FunctionInfo2') functionInfo2 = null;
+	@type('FunctionInfo') functionInfo = null;
 	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;

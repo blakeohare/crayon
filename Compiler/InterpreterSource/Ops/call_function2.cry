@@ -65,7 +65,7 @@ classId = $_array_get(row, 4);
 bool1 = true;
 if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
 	$_comment('constructor or static method');
-	classInfo2 = $_array_get(ProgramData$p.classTable2, classId);
+	classInfo = $_array_get(ProgramData$p.classTable, classId);
 
 	import inline "InterpreterSource/InvokeStaticConstructor.cry";
 }
@@ -96,11 +96,11 @@ if (bool1) {
 				$_comment('field invoked on an object instance.');
 				objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 				int1 = ObjectInstance$objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
-				classInfo2 = $_array_get(classTable2, int1);
-				if ($_dictionary_contains(ClassInfo2$classInfo2.globalIdToMemberId, classId)) {
-					int1 = $_dictionary_get_guaranteed(ClassInfo2$classInfo2.globalIdToMemberId, classId); // int1 is now the member ID.
+				classInfo = $_array_get(classTable, int1);
+				if ($_dictionary_contains(ClassInfo$classInfo.globalIdToMemberId, classId)) {
+					int1 = $_dictionary_get_guaranteed(ClassInfo$classInfo.globalIdToMemberId, classId); // int1 is now the member ID.
 					// now that we have the member ID, check to see if this is a field or a known method.
-					functionId = $_array_get(ClassInfo2$classInfo2.functionIds, int1); // get the function ID, if present
+					functionId = $_array_get(ClassInfo$classInfo.functionIds, int1); // get the function ID, if present
 					if (functionId > 0) {
 						// This is a local method. 'value' already contains the context.
 						type = FunctionInvocationType.LOCAL_METHOD;
@@ -387,34 +387,34 @@ if (bool1) {
 		switch (type) {
 			case FunctionInvocationType.NORMAL_FUNCTION:
 				$_comment('function');
-				functionInfo2 = $_array_get(functionTable2, functionId);
-				pc = FunctionInfo2$functionInfo2.pc;
+				functionInfo = $_array_get(functionTable, functionId);
+				pc = FunctionInfo$functionInfo.pc;
 				value = null;
 				classId = 0;
 				break;
 			case FunctionInvocationType.STATIC_METHOD:
 				$_comment('static method');
-				functionInfo2 = $_array_get(functionTable2, functionId);
-				pc = FunctionInfo2$functionInfo2.pc;
+				functionInfo = $_array_get(functionTable, functionId);
+				pc = FunctionInfo$functionInfo.pc;
 				value = null;
 				classId = 0;
 				break;
 			case FunctionInvocationType.LOCAL_METHOD:
 				$_comment('non-static method');
-				functionInfo2 = $_array_get(functionTable2, functionId);
-				pc = FunctionInfo2$functionInfo2.pc;
+				functionInfo = $_array_get(functionTable, functionId);
+				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				// value already set
 				break;
 			case FunctionInvocationType.CONSTRUCTOR:
 				$_comment('constructor');
 				ProgramData$p.instanceCounter += 1;
-				classInfo2 = $_array_get(classTable2, classId);
-				valueArray1 = $_new_array('Value', ClassInfo2$classInfo2.memberCount);
+				classInfo = $_array_get(classTable, classId);
+				valueArray1 = $_new_array('Value', ClassInfo$classInfo.memberCount);
 				for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
-					switch ($_array_get(ClassInfo2$classInfo2.fieldInitializationCommand, i)) {
+					switch ($_array_get(ClassInfo$classInfo.fieldInitializationCommand, i)) {
 						case 0:
-							$_array_set(valueArray1, i, $_array_get(ClassInfo2$classInfo2.fieldInitializationLiteral, i));
+							$_array_set(valueArray1, i, $_array_get(ClassInfo$classInfo.fieldInitializationLiteral, i));
 							break;
 						case 1:
 							$_array_set(valueArray1, i, new Value(Types.LIST, $_new_list('Value')));
@@ -436,9 +436,9 @@ if (bool1) {
 					valueArray1,
 					null);
 				value = new Value(Types.INSTANCE, objInstance1);
-				functionId = ClassInfo2$classInfo2.constructorFunctionId;
-				functionInfo2 = $_array_get(functionTable2, functionId);
-				pc = FunctionInfo2$functionInfo2.pc;
+				functionId = ClassInfo$classInfo.constructorFunctionId;
+				functionInfo = $_array_get(functionTable, functionId);
+				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				if (returnValueUsed) {
 					// if the return value is used, push the new constructed object to the stack NOW and then call the function
@@ -449,27 +449,27 @@ if (bool1) {
 					valueStackSize += 1;
 				}
 
-				intArray1 = ClassInfo2$classInfo2.fieldInitializerPcs;
+				intArray1 = ClassInfo$classInfo.fieldInitializerPcs;
 				bool1 = true;
 				break;
 			case FunctionInvocationType.BASE_CONSTRUCTOR:
 				$_comment('base constructor');
 				value = StackFrame$stack.objectContext;
-				classInfo2 = $_array_get(classTable2, classId);
-				functionId = ClassInfo2$classInfo2.constructorFunctionId;
-				functionInfo2 = $_array_get(functionTable2, functionId);
-				pc = FunctionInfo2$functionInfo2.pc;
+				classInfo = $_array_get(classTable, classId);
+				functionId = ClassInfo$classInfo.constructorFunctionId;
+				functionInfo = $_array_get(functionTable, functionId);
+				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				break;
 			default: break; // this should not happen.
 		}
 	
-		if (argCount < FunctionInfo2$functionInfo2.minArgs || 
-			argCount > FunctionInfo2$functionInfo2.maxArgs) {
+		if (argCount < FunctionInfo$functionInfo.minArgs || 
+			argCount > FunctionInfo$functionInfo.maxArgs) {
 			return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
 		}
 
-		int1 = FunctionInfo2$functionInfo2.localsSize;
+		int1 = FunctionInfo$functionInfo.localsSize;
 		int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
 		if (localsStackCapacity <= int2 + int1) {
 			increaseLocalsStackCapacity(p, int1);
@@ -508,14 +508,14 @@ if (bool1) {
 			$_array_set(localsStackSet, int1, localsStackSetToken);
 		}
 
-		if (argCount != FunctionInfo2$functionInfo2.maxArgs) {
+		if (argCount != FunctionInfo$functionInfo.maxArgs) {
 			// optional args are simply local variable assignments at the front of the function body.
 			// Adjust the PC to skip these if those arguments were provided.
-			int1 = argCount - FunctionInfo2$functionInfo2.minArgs; // number of optional args provided
+			int1 = argCount - FunctionInfo$functionInfo.minArgs; // number of optional args provided
 			if (int1 > 0) {
 				// The amount to increment the PC by is conveniently stored in the function metadata in an 
 				// array indexed by the number of optional args provided.
-				pc += $_array_get(FunctionInfo2$functionInfo2.pcOffsetsForOptionalArgs, int1);
+				pc += $_array_get(FunctionInfo$functionInfo.pcOffsetsForOptionalArgs, int1);
 			}
 		}
 

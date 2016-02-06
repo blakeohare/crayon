@@ -5,10 +5,10 @@
 // This code assumes all stack-related local variables (like valueStackSize, pc, etc) are in an accurate state.
 
 bool1 = true;
-if (ClassInfo2$classInfo2.staticInitializationState < 2) {
+if (ClassInfo$classInfo.staticInitializationState < 2) {
 	StackFrame$stack.pc = pc;
 	// maybeInvokeStaticConstructor is null if the static constructor was not invoked.
-	stackFrame2 = maybeInvokeStaticConstructor(p, stack, classInfo2, valueStackSize, intOutParam);
+	stackFrame2 = maybeInvokeStaticConstructor(p, stack, classInfo, valueStackSize, intOutParam);
 
 	if ($_array_get(intOutParam, 0) == 1) {
 		return killExecution(stack, pc, "Static initialization loop detected. The class this field is a member of is not done being initialized.");

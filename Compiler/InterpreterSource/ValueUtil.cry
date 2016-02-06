@@ -33,8 +33,8 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		@type('int') classId = ObjectInstance$objInstance.classId;
 		@type('int') ptr = ObjectInstance$objInstance.objectId;
 		@type('ProgramData') pd = $_get_program_data();
-		@type('ClassInfo2') classInfo = $_array_get(ProgramData$pd.classTable2, classId);
-		@type('int') nameId = ClassInfo2$classInfo.nameId;
+		@type('ClassInfo') classInfo = $_array_get(ProgramData$pd.classTable, classId);
+		@type('int') nameId = ClassInfo$classInfo.nameId;
 		@type('string') className = $_array_get(ProgramData$pd.identifiers, nameId);
 		return "Instance<" + className + "#" + $_string_cast_strong(ptr) + ">";
 	}

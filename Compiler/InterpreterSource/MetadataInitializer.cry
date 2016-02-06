@@ -15,8 +15,8 @@
 		$_array_set(pcOffsetsForOptionalArgs, i, $_array_get(args, 9 + i));
 	}
 
-	@type('Array<FunctionInfo2>') functionTable = getFunctionTable(p, functionId);
-	$_array_set(functionTable, functionId, new FunctionInfo2(
+	@type('Array<FunctionInfo>') functionTable = getFunctionTable(p, functionId);
+	$_array_set(functionTable, functionId, new FunctionInfo(
 		functionId,
 		nameId,
 		currentPc, // Store the function body's PC - 1 which coincidently is the current PC.
@@ -30,8 +30,8 @@
 	return pcJump;
 }
 
-function @type('Array<FunctionInfo2>') getFunctionTable(@type('ProgramData') p, @type('int') functionId) {
-	@type('Array<FunctionInfo2>') oldTable = ProgramData$p.functionTable;
+function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @type('int') functionId) {
+	@type('Array<FunctionInfo>') oldTable = ProgramData$p.functionTable;
 	@type('int') oldLength = $_array_length(oldTable);
 
 	if (functionId < oldLength) return oldTable;
@@ -39,7 +39,7 @@ function @type('Array<FunctionInfo2>') getFunctionTable(@type('ProgramData') p, 
 	@type('int') newLength = oldLength * 2;
 	if (functionId >= newLength) newLength = functionId + 100;
 
-	@type('Array<FunctionInfo2>') newTable = $_new_array('FunctionInfo2', newLength);
+	@type('Array<FunctionInfo>') newTable = $_new_array('FunctionInfo', newLength);
 	for (@type('int') i = 0; i < oldLength; i += 1) {
 		$_array_set(newTable, i, $_array_get(oldTable, i));
 	}
@@ -99,7 +99,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		$_array_set(staticFields, i, VALUE_NULL);
 	}
 
-	@type('ClassInfo2') classInfo = new ClassInfo2(
+	@type('ClassInfo') classInfo = new ClassInfo(
 		classId,
 		globalNameId,
 		baseClassId,
@@ -114,20 +114,20 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		null, // Literal starting value by member ID
 		globalNameIdToMemberId);
 	
-	@type('Array<ClassInfo2>') classTable = getClassTable(p, classId);
+	@type('Array<ClassInfo>') classTable = getClassTable(p, classId);
 
 	$_array_set(classTable, classId, classInfo);
 
-	@type('List<ClassInfo2>') classChain = $_new_list('ClassInfo2');
+	@type('List<ClassInfo>') classChain = $_new_list('ClassInfo');
 	$_list_push(classChain, classInfo);
 	@type('int') classIdWalker = baseClassId;
 	while (classIdWalker != -1) {
-		@type('ClassInfo2') walkerClass = $_array_get(classTable, classIdWalker);
+		@type('ClassInfo') walkerClass = $_array_get(classTable, classIdWalker);
 		$_list_push(classChain, walkerClass);
-		classIdWalker = ClassInfo2$walkerClass.baseClassId;
+		classIdWalker = ClassInfo$walkerClass.baseClassId;
 	}
 
-	@type('ClassInfo2') baseClass = null;
+	@type('ClassInfo') baseClass = null;
 	if (baseClassId != -1) {
 		baseClass = $_list_get(classChain, 1);
 	}
@@ -138,12 +138,12 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		$_list_push(fieldInitializerPcs, pc);
 	}
 	if (baseClass != null) {
-		@type('Array<int>') baseFieldInitializerPcs = ClassInfo2$baseClass.fieldInitializerPcs;
+		@type('Array<int>') baseFieldInitializerPcs = ClassInfo$baseClass.fieldInitializerPcs;
 		for (i = 0; i < $_array_length(baseFieldInitializerPcs); i += 1) {
 			$_list_push(fieldInitializerPcs, $_array_get(baseFieldInitializerPcs, i));
 		}
 	}
-	ClassInfo2$classInfo.fieldInitializerPcs = $_convert_list_to_array('int', fieldInitializerPcs);
+	ClassInfo$classInfo.fieldInitializerPcs = $_convert_list_to_array('int', fieldInitializerPcs);
 
 	// populate all the members. basically just copy the member lookups for the base class and then
 	// overlay the current classes value on top of it.
@@ -156,16 +156,16 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 
 	// copy from base class
 	if (baseClass != null) {
-		for (i = 0; i < ClassInfo2$baseClass.memberCount; i += 1) {
-			$_list_push(functionIds, $_array_get(ClassInfo2$baseClass.functionIds, i));
-			$_list_push(fieldInitializationCommand, $_array_get(ClassInfo2$baseClass.fieldInitializationCommand, i));
-			$_list_push(fieldInitializationLiteral, $_array_get(ClassInfo2$baseClass.fieldInitializationLiteral, i));
+		for (i = 0; i < ClassInfo$baseClass.memberCount; i += 1) {
+			$_list_push(functionIds, $_array_get(ClassInfo$baseClass.functionIds, i));
+			$_list_push(fieldInitializationCommand, $_array_get(ClassInfo$baseClass.fieldInitializationCommand, i));
+			$_list_push(fieldInitializationLiteral, $_array_get(ClassInfo$baseClass.fieldInitializationLiteral, i));
 		}
 
-		@type('Array<int>') keys = $_dictionary_get_keys('int', ClassInfo2$baseClass.globalIdToMemberId);
+		@type('Array<int>') keys = $_dictionary_get_keys('int', ClassInfo$baseClass.globalIdToMemberId);
 		for (i = 0; i < $_array_length(keys); i += 1) {
 			t = $_array_get(keys, i);
-			$_dictionary_set(globalNameIdToMemberId, t, $_dictionary_get_guaranteed(ClassInfo2$baseClass.globalIdToMemberId, t));
+			$_dictionary_set(globalNameIdToMemberId, t, $_dictionary_get_guaranteed(ClassInfo$baseClass.globalIdToMemberId, t));
 		}
 	}
 
@@ -193,16 +193,16 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		}
 	}
 
-	ClassInfo2$classInfo.functionIds = $_convert_list_to_array('int', functionIds);
-	ClassInfo2$classInfo.fieldInitializationCommand = $_convert_list_to_array('int', fieldInitializationCommand);
-	ClassInfo2$classInfo.fieldInitializationLiteral = $_convert_list_to_array('Value', fieldInitializationLiteral);
-	ClassInfo2$classInfo.memberCount = $_list_length(functionIds);
+	ClassInfo$classInfo.functionIds = $_convert_list_to_array('int', functionIds);
+	ClassInfo$classInfo.fieldInitializationCommand = $_convert_list_to_array('int', fieldInitializationCommand);
+	ClassInfo$classInfo.fieldInitializationLiteral = $_convert_list_to_array('Value', fieldInitializationLiteral);
+	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
 
 	return pcJumpAfterDone;
 }
 
-function @type('Array<ClassInfo2>') getClassTable(@type('ProgramData') p, @type('int') classId) {
-	@type('Array<ClassInfo2>') oldTable = ProgramData$p.classTable2;
+function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('int') classId) {
+	@type('Array<ClassInfo>') oldTable = ProgramData$p.classTable;
 	@type('int') oldLength = $_array_length(oldTable);
 	if (classId < oldLength) return oldTable;
 	@type('int') newLength = oldLength * 2;
@@ -210,12 +210,12 @@ function @type('Array<ClassInfo2>') getClassTable(@type('ProgramData') p, @type(
 		newLength = classId + 100;
 	}
 
-	@type('Array<ClassInfo2>') newTable = $_new_array('ClassInfo2', newLength);
+	@type('Array<ClassInfo>') newTable = $_new_array('ClassInfo', newLength);
 	for (@type('int') i = oldLength - 1; i >= 0; i -= 1) {
 		$_array_set(newTable, i, $_array_get(oldTable, i));
 	}
 
-	ProgramData$p.classTable2 = newTable;
+	ProgramData$p.classTable = newTable;
 	return newTable;
 }
 
@@ -274,12 +274,12 @@ function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type(
 function @type('StackFrame') maybeInvokeStaticConstructor(
 		@type('ProgramData') p,
 		@type('StackFrame') stack,
-		@type('ClassInfo2') classInfo,
+		@type('ClassInfo') classInfo,
 		@type('int') valueStackSize,
 		@type('Array<int>') intOutParam) {
 
-	@type('int') classId = ClassInfo2$classInfo.id;
-	if (ClassInfo2$classInfo.staticInitializationState == 1) {
+	@type('int') classId = ClassInfo$classInfo.id;
+	if (ClassInfo$classInfo.staticInitializationState == 1) {
 		// check to make sure it's the last item on the static init stack
 		@type('List<int>') classIdsBeingInitialized = ProgramData$p.classStaticInitializationStack;
 		if ($_list_get(classIdsBeingInitialized, $_list_length(classIdsBeingInitialized) - 1) != classId) {
@@ -290,16 +290,16 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 		return null;
 	}
 
-	ClassInfo2$classInfo.staticInitializationState = 1;
+	ClassInfo$classInfo.staticInitializationState = 1;
 	$_list_push(ProgramData$p.classStaticInitializationStack, classId);
 	
-	@type('FunctionInfo2') functionInfo = $_array_get(
+	@type('FunctionInfo') functionInfo = $_array_get(
 		ProgramData$p.functionTable,
-		ClassInfo2$classInfo.staticConstructorFunctionId);
+		ClassInfo$classInfo.staticConstructorFunctionId);
 
 	StackFrame$stack.pc -= 1; // when static constructor completes, return to this same op.
 
-	@type('int') newFrameLocalsSize = FunctionInfo2$functionInfo.localsSize;
+	@type('int') newFrameLocalsSize = FunctionInfo$functionInfo.localsSize;
 	@type('int') currentFrameLocalsEnd = StackFrame$stack.localsStackOffsetEnd;
 	if ($_array_length(ProgramData$p.localsStack) <= currentFrameLocalsEnd + newFrameLocalsSize) {
 		increaseLocalsStackCapacity(p, newFrameLocalsSize);
@@ -312,7 +312,7 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 	ProgramData$p.localsStackSetToken += 1;
 
 	return new StackFrame(
-		FunctionInfo2$functionInfo.pc,
+		FunctionInfo$functionInfo.pc,
 		ProgramData$p.localsStackSetToken,
 		currentFrameLocalsEnd,
 		currentFrameLocalsEnd + newFrameLocalsSize,

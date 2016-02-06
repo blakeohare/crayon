@@ -67,8 +67,8 @@ struct ProgramData {
 	@type('int') valueStackCapacity,
 	@type('Array<Value>') valueStack,
 
-	@type('Array<ClassInfo2>') classTable2,
-	@type('Array<FunctionInfo2>') functionTable,
+	@type('Array<ClassInfo>') classTable,
+	@type('Array<FunctionInfo>') functionTable,
 	@type('List<int>') classStaticInitializationStack,
 	@type('Array<int>') globalNameIdToPrimitiveMethodName,
 	@type('Array<Value>') localsStack,
@@ -142,7 +142,7 @@ struct SystemMethod {
 	code chunk.
 	
 */
-struct ClassInfo2 {
+struct ClassInfo {
 	@type('int') id,
 	@type('int') nameId,
 	@type('int') baseClassId, // or -1 if no base class
@@ -172,7 +172,7 @@ struct ClassInfo2 {
 	// codebase.
 }
 
-struct FunctionInfo2 {
+struct FunctionInfo {
 	@type('int') id,
 	@type('int') nameId,
 	@type('int') pc,

@@ -9,8 +9,8 @@ if (StackFrame$stack.previous == null) {
 
 // is this the static constructor returning?
 if (StackFrame$stack.markClassAsInitialized != 0) {
-	classInfo2 = $_array_get(classTable2, StackFrame$stack.markClassAsInitialized);
-	ClassInfo2$classInfo2.staticInitializationState = 2; // mark class as completely ready to use.
+	classInfo = $_array_get(classTable, StackFrame$stack.markClassAsInitialized);
+	ClassInfo$classInfo.staticInitializationState = 2; // mark class as completely ready to use.
 	$_list_pop(ProgramData$p.classStaticInitializationStack);
 }
 

@@ -10,11 +10,11 @@ nameId = $_array_get(row, 0);
 if (Value$value2.type == Types.INSTANCE) {
 	objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
 	classId = ObjectInstance$objInstance1.classId;
-	classInfo2 = $_array_get(classTable2, classId);
-	intIntDict1 = ClassInfo2$classInfo2.globalIdToMemberId;
+	classInfo = $_array_get(classTable, classId);
+	intIntDict1 = ClassInfo$classInfo.globalIdToMemberId;
 	if ($_dictionary_contains(intIntDict1, nameId)) {
 		int1 = $_dictionary_get_guaranteed(intIntDict1, nameId); // member ID
-		int2 = $_array_get(ClassInfo2$classInfo2.functionIds, int1);
+		int2 = $_array_get(ClassInfo$classInfo.functionIds, int1);
 		if (int2 == -1) {
 			$_array_set(ObjectInstance$objInstance1.members, int1, value);
 		} else {
