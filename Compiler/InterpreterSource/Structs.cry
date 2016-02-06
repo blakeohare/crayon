@@ -41,14 +41,11 @@ struct ProgramData {
 	@type('Array<int>') ops,
 	@type('Array<Array<int>>') args,
 	@type('Array<string>') stringArgs,
-	//@type('Array<Array<int>>') specialCache,
 	@type('Array<string>') identifiers,
 	@type('List<string>') identifiersBuilder,
 	@type('Dictionary<string, int>') invIdentifiers,
 	@type('Array<Value>') literalTable,
 	@type('List<Value>') literalTableBuilder,
-	@type('Array<ClassInfo>') classTable,
-	@type('Array<Dictionary<int, MethodDefinition>>') classMethods,
 	@type('bool') tickerRegistered,
 	@type('Array<List<Token>>') tokenData,
 	@type('int') userCodeStart,
@@ -105,30 +102,9 @@ struct Value {
 	@type('object') internalValue
 }
 
-struct MethodInstance {
-	@type('Value') context,
-	@type('int') pc,
-	@type('int') maxArgs
-}
-
-struct MethodDefinition {
-	@type('int') nameId,
-	@type('int') maxArgs,
-	@type('int') pc
-}
-
 struct SystemMethod {
 	@type('Value') context,
 	@type('int') id
-}
-
-struct ClassInfo {
-	@type('int') nameId,
-	@type('int') constructorPc,
-	@type('int') constructorMaxArgCount,
-	@type('int') baseClassId,
-	@type('bool') baseConstructorRequired,
-	@type('bool') initialized
 }
 
 /*

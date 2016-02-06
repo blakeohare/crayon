@@ -9,22 +9,12 @@ function main() {
 	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
 	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
-	@type('Dictionary<int, int>') nameIdToClassId = $_new_dictionary('int', 'int');
-	@type('Dictionary<int, MethodDefinition>') methodLookup = null;
-	@type('List<ClassInfo>') classTable = $_new_list('ClassInfo');
-	@type('List<Dictionary<int, MethodDefinition>>') classMethodsBuilder = $_new_list('Dictionary<int, MethodDefinition>');
-
-	// Because these data structures are keyed off the class ID and 0 is invalid, a null entry is added first
-	$_list_push(classTable, null);
-	$_list_push(classMethodsBuilder, null);
-
 	@type('int') nameId = 0;
 	@type('int') id = 0;
 	@type('int') classId = 0;
 	@type('int') baseClassId = 0;
 	@type('int') baseClassNameId = 0;
 	@type('int') lastClassId = 0;
-	@type('ClassInfo') classInfo = null;
 	@type('int') i = 0;
 
 	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
@@ -56,8 +46,6 @@ function main() {
 		$_new_dictionary('string', 'int'), // invIdentifiers
 		null, // literal table
 		$_new_list('Value'), // literal table builder
-		$_convert_list_to_array('ClassInfo', classTable),
-		$_convert_list_to_array('Dictionary<int, MethodDefinition>', classMethodsBuilder),
 		false, // ticker registered
 		$_new_array('List<Token>', $_array_length(ops)), // token data
 		0, // user code start
@@ -144,10 +132,7 @@ function @type('bool') runTick() {
 			ProgramData$p.args,
 			ProgramData$p.stringArgs,
 			ProgramData$p.identifiers,
-			ProgramData$p.literalTable,
-			ProgramData$p.classTable,
-			ProgramData$p.classMethods
-			//,ProgramData$p.specialCache
+			ProgramData$p.literalTable
 			);
 		if (error == null) {
 			// do nothing, let the next tick occur
@@ -170,11 +155,7 @@ function @type('bool') runTick() {
 				ProgramData$p.args,
 				ProgramData$p.stringArgs,
 				ProgramData$p.identifiers,
-				ProgramData$p.literalTable,
-				ProgramData$p.classTable,
-				ProgramData$p.classMethods
-				//,ProgramData$p.specialCache
-				);
+				ProgramData$p.literalTable);
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {
@@ -188,15 +169,4 @@ function @type('bool') runTick() {
 		}
 		return false;
 	}
-}
-
-function @type('Dictionary<int, MethodDefinition>') copyMethodLookupDictionary(@type('Dictionary<int, MethodDefinition>') dict) {
-	@type('Array<int>') key_list = $_dictionary_get_keys('int', dict);
-	@type('Dictionary<int, MethodDefinition>') output = $_new_dictionary('int', 'MethodDefinition');
-	for (@type('int') i = 0; i < $_array_length(key_list); i += 1) {
-		@type('int') key = $_array_get(key_list, i);
-		@type('MethodDefinition') value = $_dictionary_get_guaranteed(dict, key);
-		$_dictionary_set(output, key, value);
-	}
-	return output;
 }

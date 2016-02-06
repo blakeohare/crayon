@@ -5,9 +5,7 @@ function @omitReturn @type('string') interpret(
 		@type('Array<Array<int>>') args,
 		@type('Array<string>') stringArgs,
 		@type('Array<string>') identifiers,
-		@type('Array<Value>') literalTable,
-		@type('Array<ClassInfo>') classTable,
-		@type('Array<Dictionary<int, MethodDefinition>>') classMethods
+		@type('Array<Value>') literalTable
 	) {
 
 	@type('ProgramData') p = $_get_program_data();
@@ -30,7 +28,6 @@ function @omitReturn @type('string') interpret(
 	@type('int') nameId = 0;
 	@type('int') classId = 0;
 	@type('int') functionId = 0;
-	@type('ClassInfo') classInfo = null;
 	@type('ClassInfo2') classInfo2 = null;
 	@type('int') len = 0;
 	@type('Value') root = null;
@@ -40,11 +37,6 @@ function @omitReturn @type('string') interpret(
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('Value') func = null;
-	//@type('SystemMethod') sysMethod = null;
-	//@type('MethodInstance') methodInstance = null;
-	//@type('MethodDefinition') methodDefinition = null;
-	//@type('Dictionary<int, MethodDefinition>') methodDefinitionLookup = null;
-	//@type('FunctionDefinition') funcDef = null;
 	@type('FunctionInfo2') functionInfo2 = null;
 	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;
