@@ -1,0 +1,9 @@
+﻿
+int1 = localsStackOffset + $_array_get(row, 0);
+if ($_array_get(localsStackSet, int1) == localsStackSetToken) {
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, $_array_get(localsStack, int1));
+	valueStackSize += 1;
+} else {
+	return killExecution(stack, pc, "Variable used before it was set.");
+}

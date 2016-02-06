@@ -1,0 +1,11 @@
+﻿
+classInfo = $_array_get(classTable, $_array_get(row, 0));
+
+// reads value in classInfo and sets bool1 to true if op should continue.
+import inline "InterpreterSource/InvokeStaticConstructor.cry";
+
+if (bool1) {
+	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, $_array_get(ClassInfo$classInfo.staticFields, $_array_get(row, 1)));
+	valueStackSize += 1;
+}

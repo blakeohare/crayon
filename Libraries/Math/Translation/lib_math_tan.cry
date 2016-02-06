@@ -1,0 +1,16 @@
+﻿
+// $tan(theta)
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+// Checking for pi / 2 is not really necessary even though it is not a valid tan value, because 
+// floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+	output = buildFloat($_tan(float1));
+} else if (Value$arg1.type == Types.INTEGER) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	output = buildFloat($_tan(int1));
+} else {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "tan requires a number argument.";
+}

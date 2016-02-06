@@ -1,0 +1,69 @@
+﻿// row[0] -> global name ID
+
+value = $_array_get(valueStack, valueStackSize - 1);
+nameId = $_array_get(row, 0);
+
+switch (Value$value.type) {
+	case Types.INSTANCE:
+		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+		classInfo = $_array_get(classTable, ObjectInstance$objInstance1.classId);
+		intIntDict1 = ClassInfo$classInfo.globalIdToMemberId;
+		
+		// TODO: a better way to do this without double-lookup.
+		if ($_dictionary_contains(intIntDict1, nameId)) {
+			int1 = $_dictionary_get_guaranteed(intIntDict1, nameId);
+
+			functionId = $_array_get(ClassInfo$classInfo.functionIds, int1);
+			if (functionId == -1) {
+				output = $_array_get(ObjectInstance$objInstance1.members, int1);
+			} else {
+				// This is pretty straightforward.
+				return killExecution(stack, pc, "TODO: method pointers.");
+			}
+		} else {
+			string1 = "Instance"; // TODO: use class name.
+			output = null;
+		}
+		break;
+
+	case Types.STRING:
+		if (ProgramData$p.lengthId == nameId) {
+			int2 = $_string_length($_force_parens($_cast('string', Value$value.internalValue)));
+			output = buildInteger(int2);
+		} else {
+			string1 = "string";
+			output = null;
+		}
+		break;
+
+	case Types.LIST:
+		if (ProgramData$p.lengthId == nameId) {
+			int2 = $_list_length($_force_parens($_cast('List<Value>', Value$value.internalValue)));
+			output = buildInteger(int2);
+		} else {
+			string1 = "list";
+			output = null;
+		}
+		break;
+
+	case Types.DICTIONARY:
+		if (ProgramData$p.lengthId == nameId) {
+			dictImpl = $_cast('DictImpl', Value$value.internalValue);
+			output = buildInteger(DictImpl$dictImpl.size);
+		} else {
+			string1 = "dictionary";
+			output = null;
+		}
+		break;
+
+	default:
+		output = null;
+		break;
+}
+
+if (output == null) {
+	// TODO: return a better error message.
+	return killExecution(stack, pc, string1 + " does not have that field.");
+}
+
+$_array_set(valueStack, valueStackSize - 1, output);

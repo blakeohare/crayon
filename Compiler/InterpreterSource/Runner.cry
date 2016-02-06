@@ -1,0 +1,172 @@
+﻿
+function main() {
+
+	initialize_constant_values();
+
+	@type('Code') byteCode = loadByteCode();
+	@type('Array<int>') ops = Code$byteCode.ops;
+	@type('int') opsLength = $_array_length(ops);
+	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
+	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
+
+	@type('int') nameId = 0;
+	@type('int') id = 0;
+	@type('int') classId = 0;
+	@type('int') baseClassId = 0;
+	@type('int') baseClassNameId = 0;
+	@type('int') lastClassId = 0;
+	@type('int') i = 0;
+
+	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
+	@type('Array<int>') localsStackSet = $_new_array('int', 1000);
+	for (i = $_array_length(localsStack) - 1; i >= 0; i -= 1) {
+		$_array_set(localsStack, i, null);
+		$_array_set(localsStackSet, i, 0);
+	}
+
+	@type('StackFrame') stack = new StackFrame(
+		0, // pc
+		1, // localsStackSetToken,
+		0, // localsStackOffset,
+		0, // localsStackOffsetEnd,
+		null, // previous
+		false, // returnValueUsed
+		null, // object context
+		0, // valueStackSize
+		0); // static initialization class ID marker upon completion (not applicable here)
+
+	$_set_program_data(new ProgramData(
+		stack,
+		ops,
+		opArgs,
+		stringArgs,
+		//specialCache,
+		null, // identifiers
+		$_new_list('string'), // identifiers builder
+		$_new_dictionary('string', 'int'), // invIdentifiers
+		null, // literal table
+		$_new_list('Value'), // literal table builder
+		false, // ticker registered
+		$_new_array('List<Token>', $_array_length(ops)), // token data
+		0, // user code start
+		//StackFrame$stack.locals, // global var scope
+		null, // original source code data
+		$_new_list('string'), // original source code data builder
+		null, // integer switch lookups
+		$_new_list('Dictionary<int, int>'), // integer switch lookups builder
+		null, // string switch lookups
+		$_new_list('Dictionary<string, int>'), // string switch lookups builder
+		0, // instance counter
+		new SpriteSheetData(
+			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
+			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
+			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
+			$_new_dictionary('string', 'int') // group name --> group ID
+		),
+		new ImageSheetStatus(
+			$_new_dictionary('string', 'string'),
+			$_new_dictionary('string', 'object'),
+			$_new_dictionary('string', 'int'),
+			$_new_dictionary('string', 'TileLoadRequest'),
+			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'),
+			$_new_dictionary('int', 'Array<string>'),
+			$_new_dictionary('string', 'int'),
+			false,
+			$_new_dictionary('string', 'Image'),
+			$_new_dictionary('string', 'CompositeImage'),
+			$_new_dictionary('int', 'int'),
+			$_new_dictionary('int', 'List<SpriteSheetItemDescriptor>>'),
+			$_new_dictionary('string', 'Array<int>'),
+			$_new_list('TileLoadRequest'),
+			$_new_dictionary('string', 'object'),
+			$_new_dictionary('int', 'Array<int>'),
+			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
+		new SoundStatus(
+			$_new_list('SoundEvent'), // sound event queue
+			null, // currently playing music instance
+			1.0, // sound master volume
+			1.0, // music master volume
+			1.0, // fade volume ratio
+			1.0, // last set music volume
+			true // force set music volume (go ahead and do a force set first in case default is something weird like 0.7)
+		),
+		false,
+		new GamepadStatus(false, $_new_list('GamepadDeviceInfo'), $_new_list('Value'), $_new_list('GamepadHardwarePushy'), $_new_list('GamepadAtomicPushy'), $_new_list('Value'), $_new_list('Value')),
+		0, // gameCounter (incremented on $game_clock_tick())
+
+		// The value stack:
+		0, // size
+		100, // capacity
+		$_new_array('Value', 100), // array
+
+		// New OO stuff
+		$_new_array('ClassInfo', 100),
+		$_new_array('FunctionInfo', 100),
+		$_new_list('int'), // class static initialization stack
+		null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
+		localsStack,
+		localsStackSet,
+		1, // localsStackSetToken
+		null, // funcArgs (set in FINALIZE_INITIALIZATION)
+
+		-1 // the global name ID for "length"
+		));
+
+	runTick();
+}
+
+function @type('bool') runTick() {
+	@type('ProgramData') p = $_get_program_data();
+
+	if (%%%PLATFORM_IS_ASYNC%%%) {
+		if (!ProgramData$p.tickerRegistered) {
+			ProgramData$p.tickerRegistered = true;
+			$_register_ticker();
+		}
+
+		$_begin_frame();
+
+		@type('string') error = interpret(
+			ProgramData$p.stackTop,
+			ProgramData$p.ops,
+			ProgramData$p.args,
+			ProgramData$p.stringArgs,
+			ProgramData$p.identifiers,
+			ProgramData$p.literalTable
+			);
+		if (error == null) {
+			// do nothing, let the next tick occur
+			$_register_timeout();
+		} else {
+			if ($_string_length(error) > 0) {
+				// error message and stack trace
+				$_lib_core_print(error);
+			}
+			// execution ended, either with error or gracefully.
+			$_unregister_ticker();
+			return false;
+		}
+		return true;
+	} else {
+		while (true) {
+			@type('string') error = interpret(
+				ProgramData$p.stackTop,
+				ProgramData$p.ops,
+				ProgramData$p.args,
+				ProgramData$p.stringArgs,
+				ProgramData$p.identifiers,
+				ProgramData$p.literalTable);
+			if (error == null) {
+				$_pause_for_frame();
+			} else if (error == '') {
+				// empty string means the execution came to an end.
+				return false;
+			} else {
+				// error message and stack trace
+				$_lib_core_print(error);
+				return false;
+			}
+		}
+		return false;
+	}
+}

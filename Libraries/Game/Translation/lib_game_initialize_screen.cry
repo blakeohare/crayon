@@ -1,0 +1,57 @@
+﻿
+// $game_initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+
+bool1 = false;
+bool2 = false; // 4 args supplied.
+
+if (Value$arg1.type != Types.INTEGER ||
+	Value$arg2.type != Types.INTEGER) {
+		bool1 = true;
+}
+
+if (Value$arg3.type != Types.NULL) {
+	if (Value$arg3.type != Types.INTEGER ||
+		Value$arg4.type != Types.INTEGER) {
+		bool1 = true;
+	}
+	bool2 = true;
+}
+
+if (bool1) {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "screen dimensions must be integers.";
+} else {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	int2 = $_cast('int', Value$arg2.internalValue);
+	bool1 = false;
+	if (bool2) {
+		int3 = $_cast('int', Value$arg3.internalValue);
+		int4 = $_cast('int', Value$arg4.internalValue);
+		bool1 = true;
+	}
+
+	if (int1 < 1 || int2 < 1 || (bool2 && int3 < 1) || (bool2 && int4 < 1)) {
+		lib_func_error_occurred = true;
+		lib_func_error_message = "screen dimensions must be positive.";
+	}
+
+	if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
+		StackFrame$stack.pc = pc;
+		yieldControl(stack, valueStackSize);
+		pc = StackFrame$stack.pc;
+		if (bool2) {
+			$_initialize_screen(int1, int2, int3, int4);
+		} else {
+			$_initialize_screen(int1, int2, null, null);
+		}
+		return '';
+	} else {
+		if (bool2) {
+			$_initialize_screen(int1, int2, int3, int4);
+		} else {
+			$_initialize_screen(int1, int2, null, null);
+		}
+	}
+}
+ 

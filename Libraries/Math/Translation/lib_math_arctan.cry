@@ -1,0 +1,26 @@
+﻿// $arctan2(y, x)
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+bool1 = false;
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+} else if (Value$arg1.type == Types.INTEGER) {
+	float1 = $_cast('int', Value$arg1.internalValue);
+} else {
+	bool1 = true;
+}
+
+if (Value$arg1.type == Types.FLOAT) {
+	float2 = $_cast('double', Value$arg2.internalValue);
+} else if (Value$arg1.type == Types.INTEGER) {
+	float2 = $_cast('int', Value$arg2.internalValue);
+} else {
+	bool1 = true;
+}
+
+if (bool1) {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "arctan requires numeric arguments.";
+} else {
+	output = buildFloat($_arc_tan(float1, float2));
+}

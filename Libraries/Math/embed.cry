@@ -1,0 +1,33 @@
+﻿namespace Math {
+	function abs(value) {
+		return $$lib_math_abs(value);
+	}
+
+	function arccos(ratio) {
+		return $$lib_math_arccos(ratio);
+	}
+
+	function arcsin(ratio) {
+		return $$lib_math_arcsin(ratio);
+	}
+
+	function arctan(ratio_or_y, x = 1) {
+		return $$lib_math_arctan(ratio_or_y, x);
+	}
+
+	function cos(theta) {
+		return $$lib_math_cos(theta);
+	}
+
+	function floor(value) {
+		return $$lib_math_floor(value);
+	}
+
+	function sin(theta) {
+		return $$lib_math_sin(theta);
+	}
+
+	function tan(theta) {
+		return $$lib_math_tan(theta);
+	}
+}

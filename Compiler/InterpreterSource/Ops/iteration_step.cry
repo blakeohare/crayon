@@ -1,0 +1,33 @@
+﻿// TODO: move the local scope ID into the op args rather than putting it on the stack.
+
+value3 = $_array_get(valueStack, valueStackSize - 3); // iterating index wrapped value
+value2 = $_array_get(valueStack, valueStackSize - 2); // local scope ID of iterating variable
+value = $_array_get(valueStack, valueStackSize - 1); // list, string (or possibly a new Types.STACK_FRAME in the future if yield is introduced)
+int1 = $_cast('int', Value$value3.internalValue); // iterator index
+int2 = $_cast('int', Value$value2.internalValue); // iterating variable local scope ID
+if (Value$value.type == Types.LIST) {
+	list1 = $_cast('List<Value>', Value$value.internalValue); // the actual list
+	len = $_list_length(list1);
+	bool1 = true;
+} else {
+	string1 = $_cast('string', Value$value.internalValue); // the actual string
+	len = $_string_length(string1);
+	bool1 = false;
+}
+
+if (int1 < len) {
+	if (bool1) {
+		value = $_list_get(list1, int1);
+	} else {
+		// Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
+		value = buildCommonString($_char_to_string($_string_char_at(string1, int1)));
+	}
+	int3 = localsStackOffset + int2;
+	$_array_set(localsStack, int3, value);
+	$_array_set(localsStackSet, int3, localsStackSetToken);
+} else {
+	pc += $_array_get(row, 0);
+}
+
+// This feels cheesey, but all other solutions I can think of are cheesier.
+$_array_set(valueStack, valueStackSize - 3, buildInteger(int1 + 1));

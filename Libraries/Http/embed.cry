@@ -1,0 +1,3 @@
+﻿function http_request(method, url, http_headers, body) {
+	return $$lib_http_request(method, url, http_headers, body);
+}

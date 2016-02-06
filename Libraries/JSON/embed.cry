@@ -1,0 +1,3 @@
+﻿function parse_json(text) {
+	return $$lib_json_parse(text);
+}

@@ -1,2 +1,0 @@
-﻿
-output = buildFloat($_current_time_seconds());

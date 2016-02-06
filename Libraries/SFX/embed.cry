@@ -1,0 +1,93 @@
+﻿
+function music_load_from_file(path) {
+	return $$lib_sfx_music_load_from_file(path);
+}
+
+function music_load_from_resource(path) {
+	return $$lib_sfx_music_load_from_resource(path);
+}
+
+function music_load_from_user_data(path) {
+	return $$lib_sfx_music_load_from_user_data(path);
+}
+
+function music_load_from_web(url) {
+	return $$lib_sfx_music_load_from_web(url);
+}
+
+function music_get_current() {
+	return $$lib_sfx_music_get_current();
+}
+
+function music_get_master_volume() {
+	return $$lib_sfx_music_get_master_volume();
+}
+
+function music_get_position() {
+	return $$lib_sfx_music_get_position();
+}
+
+function music_pause() {
+	return $$lib_sfx_music_pause();
+}
+
+function music_play(song, loop, start_time, fade_in_duration, fade_out_duration) {
+	return $$lib_sfx_music_play(song, loop, start_time, fade_in_duration, fade_out_duration);
+}
+
+function music_set_position(time) {
+	return $$lib_sfx_music_set_position(time);
+}
+
+function music_set_master_volume(ratio) {
+	return $$lib_sfx_music_set_master_volume(ratio);
+}
+
+function music_set_volume(song, ratio) {
+	return $$lib_sfx_music_set_volume(song, ratio);
+}
+
+function music_stop(fade_out_duration) {
+	// TODO: fade out duration.
+	return $$lib_sfx_music_stop();
+}
+
+function sfx_get_master_volume() {
+	return $$lib_sfx_get_master_volume();
+}
+
+function sfx_load_from_file(path) {
+	return $$lib_sfx_load_from_file(path);
+}
+
+function sfx_load_from_resource(path) {
+	return $$lib_sfx_load_from_resource(path);
+}
+
+function sfx_load_from_user_data(path) {
+	return $$lib_sfx_load_from_user_data(path);
+}
+
+function sfx_load_from_web(url) {
+	return $$lib_sfx_load_from_web(url);
+}
+
+function sfx_pause(snd) {
+	return $$lib_sfx_pause(snd);
+}
+
+function sfx_play(snd) {
+	return $$lib_sfx_play(snd);
+}
+
+function sfx_set_master_volume(ratio) {
+	return $$lib_sfx_set_master_volume(ratio);
+}
+
+function sfx_set_volume(snd, ratio) {
+	return $$lib_sfx_set_volume(snd, ratio);
+}
+
+function sfx_stop(snd) {
+	return $$lib_sfx_stop(snd);
+}

@@ -1,0 +1,6 @@
+﻿// $$lib_core_print(value)
+
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+string1 = valueToString(arg1);
+$_lib_core_print(string1);
