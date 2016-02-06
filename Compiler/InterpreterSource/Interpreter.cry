@@ -1,21 +1,21 @@
 ﻿
-function @omitReturn @type('string') interpret(
-		@type('StackFrame') stack,
-		@type('Array<int>') ops,
-		@type('Array<Array<int>>') args,
-		@type('Array<string>') stringArgs,
-		@type('Array<string>') identifiers,
-		@type('Array<Value>') literalTable
-	) {
+function @omitReturn @type('string') interpret() {
 
 	@type('ProgramData') p = $_get_program_data();
+
+	@type('StackFrame') stack = ProgramData$p.stackTop;
+	@type('Array<int>') ops = ProgramData$p.ops;
+	@type('Array<Array<int>>') args = ProgramData$p.args;
+	@type('Array<string>') stringArgs = ProgramData$p.stringArgs;
+
+	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
+	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;
+	@type('Array<Value>') literalTable = ProgramData$p.literalTable;
+	@type('Array<string>') identifiers = ProgramData$p.identifiers;
 
 	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
 	@type('int') valueStackSize = ProgramData$p.valueStackSize;
 	@type('int') valueStackCapacity = ProgramData$p.valueStackCapacity;
-
-	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
-	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;
 
 	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
 

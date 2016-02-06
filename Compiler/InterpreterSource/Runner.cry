@@ -40,7 +40,6 @@ function main() {
 		ops,
 		opArgs,
 		stringArgs,
-		//specialCache,
 		null, // identifiers
 		$_new_list('string'), // identifiers builder
 		$_new_dictionary('string', 'int'), // invIdentifiers
@@ -49,7 +48,6 @@ function main() {
 		false, // ticker registered
 		$_new_array('List<Token>', $_array_length(ops)), // token data
 		0, // user code start
-		//StackFrame$stack.locals, // global var scope
 		null, // original source code data
 		$_new_list('string'), // original source code data builder
 		null, // integer switch lookups
@@ -99,7 +97,7 @@ function main() {
 		100, // capacity
 		$_new_array('Value', 100), // array
 
-		// New OO stuff
+		// OO stuff
 		$_new_array('ClassInfo', 100),
 		$_new_array('FunctionInfo', 100),
 		$_new_list('int'), // class static initialization stack
@@ -126,14 +124,8 @@ function @type('bool') runTick() {
 
 		$_begin_frame();
 
-		@type('string') error = interpret(
-			ProgramData$p.stackTop,
-			ProgramData$p.ops,
-			ProgramData$p.args,
-			ProgramData$p.stringArgs,
-			ProgramData$p.identifiers,
-			ProgramData$p.literalTable
-			);
+		@type('string') error = interpret();
+
 		if (error == null) {
 			// do nothing, let the next tick occur
 			$_register_timeout();
@@ -149,13 +141,8 @@ function @type('bool') runTick() {
 		return true;
 	} else {
 		while (true) {
-			@type('string') error = interpret(
-				ProgramData$p.stackTop,
-				ProgramData$p.ops,
-				ProgramData$p.args,
-				ProgramData$p.stringArgs,
-				ProgramData$p.identifiers,
-				ProgramData$p.literalTable);
+			@type('string') error = interpret();
+
 			if (error == null) {
 				$_pause_for_frame();
 			} else if (error == '') {
