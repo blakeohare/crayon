@@ -6,7 +6,7 @@ namespace Crayon.ParseTree
 	internal class ConstructorDefinition : Executable
 	{
 		public int FunctionID { get; private set; }
-		public Executable[] Code { get; private set; }
+		public Executable[] Code { get; set; }
 		public Token[] ArgNames { get; private set; }
 		public Expression[] DefaultValues { get; private set; }
 		public Expression[] BaseArgs { get; private set; }

@@ -245,11 +245,42 @@ namespace Crayon
 
 		private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
 		{
-			// All static field starting values have been converted into statements at the beginning of the static constructor
-			// TODO: verify I've actually done that.
+			bool hasStaticFieldsWithStartingValues = classDefinition.Fields
+				.Where<FieldDeclaration>(fd =>
+					fd.IsStaticField &&
+					fd.DefaultValue != null &&
+					!(fd.DefaultValue is NullConstant))
+				.Count() > 0;
+
+			if (hasStaticFieldsWithStartingValues)
+			{
+				if (classDefinition.StaticConstructor == null)
+				{
+					classDefinition.StaticConstructor = new ConstructorDefinition(null, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, classDefinition);
+				}
+
+				List<Executable> staticFieldInitializers = new List<Executable>();
+				foreach (FieldDeclaration fd in classDefinition.Fields)
+				{
+					if (fd.IsStaticField && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
+					{
+						Executable assignment = new Assignment(new FieldReference(fd.FirstToken, fd, classDefinition), fd.NameToken, "=", fd.DefaultValue, classDefinition);
+						staticFieldInitializers.Add(assignment);
+					}
+				}
+
+				staticFieldInitializers.AddRange(classDefinition.StaticConstructor.Code);
+				classDefinition.StaticConstructor.Code = staticFieldInitializers.ToArray();
+			}
+			if (classDefinition.StaticConstructor == null && 
+				classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).Count() > 0)
+			{
+
+			}
 
 			if (classDefinition.StaticConstructor != null)
 			{
+				// All static field initializers are added here.
 				this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor);
 			}
 
