@@ -814,7 +814,7 @@ namespace Crayon
 
 			int classIdStaticCheck = 0;
 			int type = 0;
-			if (funcDef.FunctionOrClassOwner is ClassDefinition && funcDef.IsStaticMethod)
+			if (funcDef.FunctionOrClassOwner is ClassDefinition)
 			{
 				if (funcDef.IsStaticMethod) {
 					classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID ;
@@ -841,7 +841,7 @@ namespace Crayon
 			buffer.Add(
 				baseMethodReference.DotToken,
 				OpCode.PUSH_FUNC_REF,
-				parser.GetId(baseMethodReference.StepToken.Value),
+				baseMethodReference.FunctionDefinition.FunctionID,
 				1, // instance method
 				0);
 		}

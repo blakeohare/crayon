@@ -9,6 +9,7 @@ namespace Crayon.ParseTree
 		public Token DotToken { get; set; }
 		public Token StepToken { get; set; }
 		public ClassDefinition ClassToWhichThisMethodRefers { get; set; }
+		public FunctionDefinition FunctionDefinition { get; set; }
 
 		public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, Executable owner)
 			: base(firstToken, owner)
@@ -29,6 +30,11 @@ namespace Crayon.ParseTree
 				throw new System.InvalidOperationException(); // this should not happen.
 			}
 			this.ClassToWhichThisMethodRefers = cd.BaseClass;
+			this.FunctionDefinition = this.ClassToWhichThisMethodRefers.GetMethod(this.StepToken.Value, true);
+			if (this.FunctionDefinition == null)
+			{
+				throw new ParserException(this.StepToken, "There is no method named '" + this.StepToken.Value + "' on any base class.");
+			}
 		}
 
 		internal override Expression Resolve(Parser parser)
