@@ -148,9 +148,9 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.BOOLEAN_NOT: $_comment('BOOLEAN_NOT'); import inline 'InterpreterSource/Ops/boolean_not.cry'; break;
 			case OpCodes.BUILD_SWITCH_INT: $_comment('BUILD_SWITCH_INT'); import inline 'InterpreterSource/Ops/build_switch_int.cry'; break;
 			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'InterpreterSource/Ops/build_switch_string.cry'; break;
-			case OpCodes.CALL_FUNCTION2: $_comment('CALL_FUNCTION2'); import inline 'InterpreterSource/Ops/call_function2.cry'; break;
+			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'InterpreterSource/Ops/call_function.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'InterpreterSource/Ops/call_lib_function.cry'; break;
-			case OpCodes.CLASS_DEFINITION2: $_comment('CLASS_DEFINITION2'); import inline 'InterpreterSource/Ops/class_definition_2.cry'; break;
+			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'InterpreterSource/Ops/class_definition.cry'; break;
 			case OpCodes.DEF_DICTIONARY: $_comment('DEF_DICT'); import inline 'InterpreterSource/Ops/def_dictionary.cry'; break;
 			case OpCodes.DEF_LIST: $_comment('DEF_LIST'); import inline 'InterpreterSource/Ops/def_list.cry'; break;
 			case OpCodes.DEF_ORIGINAL_CODE: $_comment('DEF_ORIGINAL_CODE'); import inline 'InterpreterSource/Ops/def_original_code.cry'; break;
@@ -159,7 +159,7 @@ function @omitReturn @type('string') interpret(
 			case OpCodes.DEREF_STATIC_FIELD: $_comment('DEREF_STATIC_FIELD'); import inline 'InterpreterSource/Ops/deref_static_field.cry'; break;
 			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'InterpreterSource/Ops/duplicate_stack_top.cry'; break;
 			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'InterpreterSource/Ops/finalize_initialization.cry'; break;
-			case OpCodes.FUNCTION_DEFINITION2: $_comment('FUNCTION_DEFINITION2'); import inline 'InterpreterSource/Ops/function_definition_2.cry'; break;
+			case OpCodes.FUNCTION_DEFINITION: $_comment('FUNCTION_DEFINITION'); import inline 'InterpreterSource/Ops/function_definition.cry'; break;
 			case OpCodes.INDEX: $_comment('INDEX'); import inline 'InterpreterSource/Ops/index.cry'; break;
 			case OpCodes.ITERATION_STEP: $_comment('ITERATION_STEP'); import inline 'InterpreterSource/Ops/iteration_step.cry'; break;
 			case OpCodes.JUMP: $_comment('JUMP'); import inline 'InterpreterSource/Ops/jump.cry'; break;

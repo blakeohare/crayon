@@ -268,8 +268,8 @@
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
     <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\function_definition_2.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_function2.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\function_definition.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\call_function.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\local.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\push_func_ref.cry" />
     <EmbeddedResource Include="InterpreterSource\Ops\assign_static_field.cry" />
@@ -339,7 +339,7 @@
     <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
     <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="InterpreterSource\Ops\class_definition_2.cry" />
+    <EmbeddedResource Include="InterpreterSource\Ops\class_definition.cry" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
     <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
   </ItemGroup>

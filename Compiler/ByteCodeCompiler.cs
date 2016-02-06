@@ -49,11 +49,11 @@ namespace Crayon
 			if (parser.MainFunctionHasArg)
 			{
 				output.Add(null, OpCode.DEF_LIST, 0); // TODO: op code to build a list of the command line args. For now just pass in an empty list.
-				output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
+				output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
 			}
 			else
 			{
-				output.Add(null, OpCode.CALL_FUNCTION2, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
+				output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
 			}
 			output.Add(null, OpCode.RETURN, 0);
 
@@ -373,7 +373,7 @@ namespace Crayon
 
 			args.AddRange(members);
 
-			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION2, args.ToArray());
+			buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
 
 			if (initializer != null)
 			{
@@ -411,7 +411,7 @@ namespace Crayon
 				this.CompileExpressionList(parser, tBuffer, constructor.BaseArgs, true);
 				tBuffer.Add(
 					constructor.BaseToken,
-					OpCode.CALL_FUNCTION2,
+					OpCode.CALL_FUNCTION,
 					(int)FunctionInvocationType.BASE_CONSTRUCTOR,
 					constructor.BaseArgs.Length,
 					cd.BaseClass.Constructor.FunctionID,
@@ -439,7 +439,7 @@ namespace Crayon
 
 			args.AddRange(offsetsForOptionalArgs);
 
-			buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION2, args.ToArray());
+			buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION, args.ToArray());
 			buffer.Concat(tBuffer);
 		}
 
@@ -734,7 +734,7 @@ namespace Crayon
 
 			buffer.Add(
 				funDef.FirstToken,
-				OpCode.FUNCTION_DEFINITION2, args.ToArray());
+				OpCode.FUNCTION_DEFINITION, args.ToArray());
 
 			buffer.Concat(tBuffer);
 		}
@@ -964,7 +964,7 @@ namespace Crayon
 
 			this.CompileExpressionList(parser, buffer, instantiate.Args, true);
 			buffer.Add(instantiate.NameToken,
-				OpCode.CALL_FUNCTION2,
+				OpCode.CALL_FUNCTION,
 				(int)FunctionInvocationType.CONSTRUCTOR,
 				instantiate.Args.Length,
 				constructor.FunctionID,
@@ -1284,7 +1284,7 @@ namespace Crayon
 					{
 						buffer.Add(
 							funCall.ParenToken,
-							OpCode.CALL_FUNCTION2,
+							OpCode.CALL_FUNCTION,
 							(int)FunctionInvocationType.STATIC_METHOD,
 							funCall.Args.Length,
 							fd.FunctionID,
@@ -1295,7 +1295,7 @@ namespace Crayon
 					{
 						buffer.Add(
 							funCall.ParenToken,
-							OpCode.CALL_FUNCTION2,
+							OpCode.CALL_FUNCTION,
 							(int)FunctionInvocationType.LOCAL_METHOD,
 							funCall.Args.Length,
 							fd.FunctionID,
@@ -1308,7 +1308,7 @@ namespace Crayon
 					// vanilla function
 					buffer.Add(
 						funCall.ParenToken,
-						OpCode.CALL_FUNCTION2,
+						OpCode.CALL_FUNCTION,
 						(int) FunctionInvocationType.NORMAL_FUNCTION,
 						funCall.Args.Length,
 						fd.FunctionID,
@@ -1325,7 +1325,7 @@ namespace Crayon
 				this.CompileExpressionList(parser, buffer, funCall.Args, true);
 				buffer.Add(
 					funCall.ParenToken,
-					OpCode.CALL_FUNCTION2,
+					OpCode.CALL_FUNCTION,
 					(int)FunctionInvocationType.FIELD_INVOCATION,
 					funCall.Args.Length,
 					0,
@@ -1344,7 +1344,7 @@ namespace Crayon
 				this.CompileExpressionList(parser, buffer, funCall.Args, true);
 				buffer.Add(
 					funCall.ParenToken,
-					OpCode.CALL_FUNCTION2,
+					OpCode.CALL_FUNCTION,
 					(int)FunctionInvocationType.LOCAL_METHOD,
 					funCall.Args.Length,
 					fd.FunctionID,
@@ -1357,7 +1357,7 @@ namespace Crayon
 				this.CompileExpressionList(parser, buffer, funCall.Args, true);
 				buffer.Add(
 					funCall.ParenToken,
-					OpCode.CALL_FUNCTION2,
+					OpCode.CALL_FUNCTION,
 					(int)FunctionInvocationType.POINTER_PROVIDED,
 					funCall.Args.Length,
 					0,
