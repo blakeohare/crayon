@@ -21,7 +21,7 @@ namespace Crayon
 			"",
 			"  -output            Output directory. Compiled output will go here.",
 			"",
-			"  -name              Project name.",
+			"  -name              Project name (project ID).",
 			"",
 			"  -platform          Platform to compile to.",
 			"     Platform choices:",
