@@ -171,188 +171,60 @@ if (bool1) {
 	
 	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 		$_comment('primitive method invocation');
-		output = null;
+		output = VALUE_NULL;
 		primitiveMethodToCoreLibraryFallback = false;
 		switch (Value$value.type) {
 			case Types.STRING:
 				$_comment('...on a string');
 				string1 = $_cast('string', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.CONTAINS:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement string.contains");
-						}
-						break;
-					case PrimitiveMethodName.ENDS_WITH:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement string.endsWith");
-						}
-						break;
-					case PrimitiveMethodName.INDEX_OF:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement string.indexOf");
-						}
-						break;
-					case PrimitiveMethodName.LOWER:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement string.lower");
-						}
-						break;
-					case PrimitiveMethodName.REPLACE:
-						if (argCount == 2) {
-							return killExecution(stack, pc, "TODO: re-implement string.replace(old, new)");
-						} else if (argCount == 3) {
-							return killExecution(stack, pc, "TODO: re-implement string.replace(old, new, replaceLimit)");
-						}
-						break;
-					case PrimitiveMethodName.REVERSE:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement string.reverse");
-						}
-						break;
-					case PrimitiveMethodName.SPLIT:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement string.split()");
-						} else if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement string.split(sep)");
-						} else if (argCount == 2) {
-							return killExecution(stack, pc, "TODO: re-implement string.split(sep, splitLimit)");
-						}
-						break;
-					case PrimitiveMethodName.STARTS_WITH:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement string.startsWith(str)");
-						}
-						break;
-					case PrimitiveMethodName.TRIM:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement string.trim()");
-						}
-						break;
-					case PrimitiveMethodName.UPPER:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement string.upper()");
-						}
-						break;
-					default:
-						break;
+					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/string_contains.cry'; break;
+					case PrimitiveMethodName.ENDS_WITH: import inline 'InterpreterSource/PrimitiveMethods/string_ends_with.cry'; break;
+					case PrimitiveMethodName.INDEX_OF: import inline 'InterpreterSource/PrimitiveMethods/string_index_of.cry'; break;
+					case PrimitiveMethodName.LOWER: import inline 'InterpreterSource/PrimitiveMethods/string_lower.cry'; break;
+					case PrimitiveMethodName.REPLACE: import inline 'InterpreterSource/PrimitiveMethods/string_replace.cry'; break;
+					case PrimitiveMethodName.REVERSE: import inline 'InterpreterSource/PrimitiveMethods/string_reverse.cry'; break;
+					case PrimitiveMethodName.SPLIT: import inline 'InterpreterSource/PrimitiveMethods/string_split.cry'; break;
+					case PrimitiveMethodName.STARTS_WITH: import inline 'InterpreterSource/PrimitiveMethods/string_starts_with.cry'; break;
+					case PrimitiveMethodName.TRIM: import inline 'InterpreterSource/PrimitiveMethods/string_trim.cry'; break;
+					case PrimitiveMethodName.UPPER: import inline 'InterpreterSource/PrimitiveMethods/string_upper.cry'; break;
+					default: output = null; break;
 				}
 				break;
 			case Types.LIST:
 				$_comment('...on a list');
 				list1 = $_cast('List<Value>', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.ADD:
-						for (i = 0; i < argCount; i += 1) {
-							$_list_push(list1, $_array_get(funcArgs, i));
-						}
-						output = VALUE_NULL;
-						break;
-					case PrimitiveMethodName.CLEAR:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.clear");
-						}
-						break;
-					case PrimitiveMethodName.CLONE:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.clone");
-						}
-						break;
-					case PrimitiveMethodName.CONCAT:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.concat");
-						}
-						break;
-					case PrimitiveMethodName.CONTAINS:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement list.contains");
-						}
-						break;
-					case PrimitiveMethodName.INSERT:
-						if (argCount == 2) {
-							return killExecution(stack, pc, "TODO: re-implement list.insert");
-						}
-						break;
-					case PrimitiveMethodName.JOIN:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement list.join");
-						}
-						break;
-					case PrimitiveMethodName.REMOVE:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement list.remove");
-						}
-						break;
-					case PrimitiveMethodName.REVERSE:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.reverse");
-						}
-						break;
-					case PrimitiveMethodName.SHUFFLE:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.shuffle()");
-						}
-						break;
-					case PrimitiveMethodName.SORT:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement list.sort()");
-						} else if (argCount == 1) {
-							value2 = $_array_get(funcArgs, 0);
-							if (Value$value2.type == Types.FUNCTION) {
-								primitiveMethodToCoreLibraryFallback = true;
-								functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2);
-								$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
-								argCount = 2;
-							} else {
-								return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");
-							}
-						}
-						break;
-					default: break;
+					case PrimitiveMethodName.ADD: import inline 'InterpreterSource/PrimitiveMethods/list_add.cry'; break;
+					case PrimitiveMethodName.CLEAR: import inline 'InterpreterSource/PrimitiveMethods/list_clear.cry'; break;
+					case PrimitiveMethodName.CLONE: import inline 'InterpreterSource/PrimitiveMethods/list_clone.cry'; break;
+					case PrimitiveMethodName.CONCAT: import inline 'InterpreterSource/PrimitiveMethods/list_concat.cry'; break;
+					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/list_contains.cry'; break;
+					case PrimitiveMethodName.FILTER: import inline 'InterpreterSource/PrimitiveMethods/list_filter.cry'; break;
+					case PrimitiveMethodName.INSERT: import inline 'InterpreterSource/PrimitiveMethods/list_insert.cry'; break;
+					case PrimitiveMethodName.JOIN: import inline 'InterpreterSource/PrimitiveMethods/list_join.cry'; break;
+					case PrimitiveMethodName.MAP: import inline 'InterpreterSource/PrimitiveMethods/list_map.cry'; break;
+					case PrimitiveMethodName.POP: import inline 'InterpreterSource/PrimitiveMethods/list_pop.cry'; break;
+					case PrimitiveMethodName.REMOVE: import inline 'InterpreterSource/PrimitiveMethods/list_remove.cry'; break;
+					case PrimitiveMethodName.REVERSE: import inline 'InterpreterSource/PrimitiveMethods/list_reverse.cry'; break;
+					case PrimitiveMethodName.SHUFFLE: import inline 'InterpreterSource/PrimitiveMethods/list_shuffle.cry'; break;
+					case PrimitiveMethodName.SORT: import inline 'InterpreterSource/PrimitiveMethods/list_sort.cry'; break;
+					default: output = null; break;
 				}
 				break;
 			case Types.DICTIONARY:
 				$_comment('...on a dictionary');
 				dictImpl = $_cast('DictImpl', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.CLEAR:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.clear()");
-						}
-						break;
-					case PrimitiveMethodName.CLONE:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.clone()");
-						}
-						break;
-					case PrimitiveMethodName.CONTAINS:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.contains()");
-						}
-						break;
-					case PrimitiveMethodName.GET:
-						if (argCount == 2) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.get(key, fallback)");
-						} else if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.get(key)");
-						}
-						break;
-					case PrimitiveMethodName.KEYS:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.keys()");
-						}
-						break;
-					case PrimitiveMethodName.REMOVE:
-						if (argCount == 1) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.remove(key)");
-						}
-						break;
-					case PrimitiveMethodName.VALUES:
-						if (argCount == 0) {
-							return killExecution(stack, pc, "TODO: re-implement dictionary.values()");
-						}
-						break;
-					default: break;
+					case PrimitiveMethodName.CLEAR: import inline 'InterpreterSource/PrimitiveMethods/dict_clear.cry'; break;
+					case PrimitiveMethodName.CLONE: import inline 'InterpreterSource/PrimitiveMethods/dict_clone.cry'; break;
+					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/dict_contains.cry'; break;
+					case PrimitiveMethodName.GET: import inline 'InterpreterSource/PrimitiveMethods/dict_get.cry'; break;
+					case PrimitiveMethodName.KEYS: import inline 'InterpreterSource/PrimitiveMethods/dict_keys.cry'; break;
+					case PrimitiveMethodName.MERGE: import inline 'InterpreterSource/PrimitiveMethods/dict_merge.cry'; break;
+					case PrimitiveMethodName.REMOVE: import inline 'InterpreterSource/PrimitiveMethods/dict_remove.cry'; break;
+					case PrimitiveMethodName.VALUES: import inline 'InterpreterSource/PrimitiveMethods/dict_values.cry'; break;
+					default: output = null; break;
 				}
 				break;
 

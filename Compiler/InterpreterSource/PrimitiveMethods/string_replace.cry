@@ -1,0 +1,16 @@
+﻿
+if (argCount != 2) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
+}
+
+value2 = $_array_get(funcArgs, 0);
+value3 = $_array_get(funcArgs, 1);
+
+if (Value$value2.type != Types.STRING || Value$value3.type != Types.STRING) {
+	return killExecution(stack, pc, "string replace method requires 2 strings as input.");
+}
+
+output = buildString($_string_replace(
+	string1,
+	$_cast('string', Value$value2.internalValue),
+	$_cast('string', Value$value3.internalValue)));

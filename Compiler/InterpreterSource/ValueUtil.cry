@@ -525,3 +525,53 @@ function @type('int') parsePosDecInt(@type('string') original) {
 	}
 	return -1;
 }
+
+function @type('DictImpl') cloneDictionary(@type('DictImpl') original, @type('DictImpl') clone) {
+	
+	@type('Dictionary<int, Value>') keyIntLookup_clone = null;
+	@type('Dictionary<int, Value>') valueIntLookup_clone = null;
+	@type('Dictionary<string, Value>') keyStringLookup_clone = null;
+	@type('Dictionary<string, Value>') valueStringLookup_clone = null;
+
+	if (clone == null) {
+		keyIntLookup_clone = $_new_dictionary('int', 'Value');
+		valueIntLookup_clone = $_new_dictionary('int', 'Value');
+		keyStringLookup_clone = $_new_dictionary('string', 'Value');
+		valueStringLookup_clone = $_new_dictionary('string', 'Value');
+
+		clone = new DictImpl(
+			keyIntLookup_clone,
+			valueIntLookup_clone,
+			keyStringLookup_clone,
+			valueStringLookup_clone,
+			0,
+			DictImpl$original.keyType);
+	} else {
+		keyIntLookup_clone = DictImpl$clone.keyIntLookup;
+		valueIntLookup_clone = DictImpl$clone.valueIntLookup;
+		keyStringLookup_clone = DictImpl$clone.keyStringLookup;
+		valueStringLookup_clone = DictImpl$clone.valueStringLookup;
+	}
+
+	@type('int') i = 0;
+	@type('int') iKey = 0;
+	@type('string') sKey = null;
+	@type('Array<int>') intKeys = $_dictionary_get_keys('int', DictImpl$original.keyIntLookup);
+	@type('Array<string>') stringKeys = $_dictionary_get_keys('string', DictImpl$original.keyStringLookup);
+
+	for (i = $_array_length(intKeys) - 1; i >= 0; i -= 1) {
+		iKey = $_array_get(intKeys, i);
+		$_dictionary_set(keyIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.keyIntLookup, iKey));
+		$_dictionary_set(valueIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.valueIntLookup, iKey));
+	}
+
+	for (i = $_array_length(stringKeys) - 1; i >= 0; i -= 1) {
+		sKey = $_array_get(stringKeys, i);
+		$_dictionary_set(keyStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.keyStringLookup, sKey));
+		$_dictionary_set(valueStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.valueStringLookup, sKey));
+	}
+
+	DictImpl$clone.size = $_dictionary_size(keyStringLookup_clone) + $_dictionary_size(keyIntLookup_clone);
+
+	return clone;
+}

@@ -150,24 +150,6 @@ final class TranslationHelper {
         throw new IllegalStateException(message);
     }
 
-    private static final Comparator<Value> STRING_COMPARATOR = new Comparator<Value>() {
-        @Override
-        public int compare(Value v1, Value v2) {
-            return ((String) v1.internalValue).compareTo((String) v2.internalValue);
-        }
-    };
-
-    private static final Comparator<Value> INTEGER_COMPARATOR = new Comparator<Value>() {
-        @Override
-        public int compare(Value v1, Value v2) {
-            return ((int) v1.internalValue) - ((int) v2.internalValue);
-        }
-    };
-
-    public static void sortPrimitiveValueList(ArrayList<Value> items, boolean isString) {
-        Collections.sort(items, isString ? STRING_COMPARATOR : INTEGER_COMPARATOR);
-    }
-
     public static int[] sortedCopyOfIntArray(int[] nums) {
         int[] output = Arrays.copyOf(nums, nums.length);
         Arrays.sort(output);

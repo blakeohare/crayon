@@ -1,0 +1,18 @@
+﻿
+if (argCount != 1) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+}
+
+value2 = $_array_get(funcArgs, 0);
+if (Value$value2.type != Types.FUNCTION) {
+	return killExecution(stack, pc, "list map method requires a function pointer as its argument.");
+}
+
+// TODO: consider checking arg length?
+
+primitiveMethodToCoreLibraryFallback = true;
+functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 1); // MAGIC NUMBER: 1
+$_array_set(funcArgs, 1, value2); // funcArgs is allocated very big.
+argCount = 2;
+
+output = null; // This is required. Triggers function fallback.

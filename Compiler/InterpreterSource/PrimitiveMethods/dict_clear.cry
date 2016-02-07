@@ -1,0 +1,14 @@
+﻿
+if (argCount > 0) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
+}
+
+if (DictImpl$dictImpl.size > 0) {
+	// TODO: use platform specific clear methods if available.
+	// TODO: empty dictionaries should be null and just set the lookups as needed, so that there are only 2 underlying dictionaries at a time, not 4.
+	DictImpl$dictImpl.keyIntLookup = $_new_dictionary('int', 'Value');
+	DictImpl$dictImpl.valueIntLookup = $_new_dictionary('int', 'Value');
+	DictImpl$dictImpl.keyStringLookup = $_new_dictionary('string', 'Value');
+	DictImpl$dictImpl.valueStringLookup = $_new_dictionary('string', 'Value');
+	DictImpl$dictImpl.size = 0;
+}

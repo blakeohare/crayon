@@ -42,6 +42,7 @@ function @omitReturn @type('string') interpret() {
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;
 	@type('DictImpl') dictImpl = null;
+	@type('DictImpl') dictImpl2 = null;
 	@type('Array<List<Token>>') tokensByPc = null;
 	@type('List<Token>') tokens = null;
 	@type('int') keyType = 0;

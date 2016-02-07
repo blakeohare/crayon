@@ -1,0 +1,14 @@
+﻿
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+// No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
+// Identical length is also presumed.
+
+list1 = $_cast('List<Value>', Value$arg1.internalValue); // original items
+list2 = $_cast('List<Value>', Value$arg2.internalValue); // keys
+
+lib_core_sort_lists(list2, list1, intOutParam);
+
+if ($_array_get(intOutParam, 0) > 0) {
+	return killExecution(stack, pc, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+}

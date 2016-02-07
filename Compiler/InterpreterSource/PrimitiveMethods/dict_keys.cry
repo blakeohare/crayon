@@ -1,0 +1,12 @@
+﻿
+if (argCount > 0) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
+}
+
+if (DictImpl$dictImpl.keyType == Types.STRING) {
+	output = new Value(Types.LIST,
+		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.keyStringLookup)));
+} else {
+	output = new Value(Types.LIST,
+		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.keyIntLookup)));
+}

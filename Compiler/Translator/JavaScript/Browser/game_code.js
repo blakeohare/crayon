@@ -293,21 +293,6 @@ R.typeClassify = function(thing) {
 	return 'null';
 };
 
-R.sortPrimitiveValuesList = function(list) {
-	var lookup = {};
-	var keys = [];
-	var i;
-	for (i = 0; i < list.length; ++i) {
-		var key = list[i][1];
-		lookup[key] = list[i];
-		keys.push(key);
-	}
-	keys.sort();
-	for (i = 0; i < list.length; ++i) {
-		list[i] = lookup[keys[i]];
-	}
-};
-
 R.pumpAsyncMessageQueue = function() {
 	return null;
 };

@@ -1,0 +1,6 @@
+﻿
+if (argCount > 0) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
+}
+
+output = buildString($_string_reverse(string1));

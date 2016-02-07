@@ -950,17 +950,6 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateSortPrimitiveValues(List<string> output, Expression valueList, Expression parallelList, Expression isString)
-		{
-			output.Add("sort_primitive_value_list(");
-			this.Translator.TranslateExpression(output, valueList);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, parallelList);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, isString);
-			output.Add(")");
-		}
-
 		protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
 		{
 			output.Add("create_sorted_copy_of_list(");

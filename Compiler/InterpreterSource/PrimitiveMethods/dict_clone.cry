@@ -1,0 +1,6 @@
+﻿
+if (argCount > 0) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary clone method", 0, argCount));
+}
+
+output = new Value(Types.DICTIONARY, cloneDictionary(dictImpl, null));

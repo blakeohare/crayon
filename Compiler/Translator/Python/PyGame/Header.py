@@ -298,11 +298,6 @@ def _parse_json_thing(item):
 		return v_buildDictionary(keys, values);
 	return v_VALUE_NULL;
 
-def _sort_helper(x):
-	return x[1]
-def sort_primitive_value_list(values, ignoredType):
-	values.sort(key=_sort_helper)
-
 _TEMP_SURFACE = [None]
 def draw_rectangle(x, y, width, height, r, g, b, a):
 	# Pygame has a bug where it doesn't draw rectangles if the height is 1.

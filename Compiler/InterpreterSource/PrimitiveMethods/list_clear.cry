@@ -1,0 +1,10 @@
+﻿
+if (argCount > 0) {
+	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
+}
+
+if (%%%PLATFORM_SUPPORTS_LIST_CLEAR%%%) {
+	$_list_clear($_force_parens($_cast('List<Value>', list1)));
+} else {
+	Value$value.internalValue = $_new_list('Value');
+}
