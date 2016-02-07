@@ -18,3 +18,5 @@ bool primitiveMethodToCoreLibraryFallback -> This is false. If you want the prim
 	One example where this is used is list.sort(userfunction) where the userfunction needs to be invoked in the interpreter, not 
 	synchronously in one command.
 int functionId -> see above
+
+output must be set to null if a function ID fallback is set.

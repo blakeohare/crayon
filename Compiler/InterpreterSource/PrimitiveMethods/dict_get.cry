@@ -35,5 +35,6 @@ switch (Value$value.type) {
 	default: 
 		// Don't warn that the type is wrong outright. Just let the fallback value return. 
 		// Which is technically correct. The best kind of correct.
+		int1 = 0;
 		break;
 }

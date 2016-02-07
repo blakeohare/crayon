@@ -162,7 +162,6 @@ if (bool1) {
 					functionId = FunctionPointer$functionPointer1.functionId;
 					type = FunctionInvocationType.PRIMITIVE_METHOD;
 					break;
-				default: break; // this should not happen.
 			}
 		} else {
 			return killExecution(stack, pc, "This type cannot be invoked like a function.");
@@ -227,8 +226,6 @@ if (bool1) {
 					default: output = null; break;
 				}
 				break;
-
-			default: break;
 		}
 	
 		if (output == null) {
@@ -336,7 +333,6 @@ if (bool1) {
 				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				break;
-			default: break; // this should not happen.
 		}
 	
 		if (argCount < FunctionInfo$functionInfo.minArgs || 

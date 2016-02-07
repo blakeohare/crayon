@@ -68,7 +68,7 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
 				return output;
 			default:
-				break;
+				return 0;
 		}
 	}
 	return 0;

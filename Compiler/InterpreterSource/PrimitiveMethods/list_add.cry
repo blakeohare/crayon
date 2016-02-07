@@ -1,6 +1,6 @@
 ﻿
 if (argCount == 0) {
-	return killExecution(stack, pc, "list.add requires at least one argument.");
+	return killExecution(stack, pc, "List add method requires at least one argument.");
 }
 
 for (i = 0; i < argCount; i += 1) {

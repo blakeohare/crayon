@@ -31,6 +31,9 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 				$_dictionary_remove(DictImpl$dictImpl.valueStringLookup, string1);
 			}
 			break;
+		default:
+			int1 = 0;
+			break;
 	}
 }
 
