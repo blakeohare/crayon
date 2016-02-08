@@ -573,18 +573,18 @@ namespace Crayon
 			return string.Join("", output);
 		}
 
-		private Stack<string> namespaceStack = new Stack<string>();
+		private List<string> namespaceStack = new List<string>();
 
 		public void PushNamespacePrefix(string value)
 		{
-			this.namespaceStack.Push(value);
-			this.CurrentNamespace = string.Join(":", this.namespaceStack);
+			this.namespaceStack.Add(value);
+			this.CurrentNamespace = string.Join(".", this.namespaceStack);
 		}
 
 		public void PopNamespacePrefix()
 		{
-			this.namespaceStack.Pop();
-			this.CurrentNamespace = string.Join(":", this.namespaceStack);
+			this.namespaceStack.RemoveAt(this.namespaceStack.Count - 1);
+			this.CurrentNamespace = string.Join(".", this.namespaceStack);
 		}
 
 		public string CurrentNamespace { get; private set; }

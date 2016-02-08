@@ -29,6 +29,7 @@
 
 			if (!(this.Root is Variable) &&
 				!(this.Root is BracketIndex) &&
+				!(this.Root is FieldReference) &&
 				!(this.Root is DotStep))
 			{
 				throw new ParserException(this.IncrementToken, "Inline increment/decrement operation is not valid for this expression.");

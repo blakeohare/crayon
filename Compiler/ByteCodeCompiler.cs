@@ -619,8 +619,10 @@ namespace Crayon
 					}
 					else
 					{
-						// TODO: "this.foo = value"
-						throw new NotImplementedException(); 
+						buffer.Add(
+							assignment.AssignmentOpToken,
+							OpCode.ASSIGN_THIS_STEP,
+							fieldReference.Field.MemberID);
 					}
 				}
 				else
@@ -1064,6 +1066,36 @@ namespace Crayon
 					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
 					buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
 					buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
+				}
+			}
+			else if (increment.Root is FieldReference)
+			{
+				FieldReference fr = (FieldReference)increment.Root;
+				bool isStatic = fr.Field.IsStaticField;
+				ClassDefinition cd = (ClassDefinition)fr.Field.FunctionOrClassOwner;
+				int memberId = isStatic ? fr.Field.StaticMemberID : fr.Field.MemberID;
+
+				this.CompileExpression(parser, buffer, fr, true);
+				if (increment.IsPrefix)
+				{
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
+				}
+				else
+				{
+					buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
+					buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
+					buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+				}
+				Token token = increment.IsPrefix ? increment.FirstToken : fr.FirstToken;
+				if (isStatic)
+				{
+					buffer.Add(token, OpCode.ASSIGN_STATIC_FIELD, ((ClassDefinition)fr.Field.FunctionOrClassOwner).ClassID, memberId);
+				}
+				else
+				{
+					buffer.Add(token, OpCode.ASSIGN_THIS_STEP, memberId);
 				}
 			}
 			else

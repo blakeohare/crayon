@@ -30,7 +30,7 @@ namespace GFX {
 		constructor(type, path) {
 			this._type = type;
 			this._path = path;
-			this._key = '' + ID_ALLOC++;
+			this._key = '' + ImageLoader.ID_ALLOC++;
 		}
 
 		static function fromResource(path) {
@@ -68,7 +68,7 @@ namespace GFX {
 				img = $$lib_gfx_image_get(this._key);
 				return new Image(img);
 			}
-			$assert(false, "Image not loaded yet.");
+			Core.assert(false, "Image not loaded yet.");
 		}
 
 		function getStatus() {
@@ -136,8 +136,8 @@ namespace GFX {
 		}
 
 		function fromIds(ids) {
-			$$lib_gfx_image_sheet_load(id_or_ids);
-			return new ImageSheetLoader(id_or_ids);
+			$$lib_gfx_image_sheet_load(ids);
+			return new ImageSheetLoader(ids);
 		}
 
 		function progress() {
@@ -150,7 +150,7 @@ namespace GFX {
 		
 		function getStatus() {
 			// TODO: convert into the same enum as ImageLoader
-			return $$lib_gfx_image_sheet_error_code(id_or_ids);
+			return $$lib_gfx_image_sheet_error_code(this._ids);
 		}
 	}
 
