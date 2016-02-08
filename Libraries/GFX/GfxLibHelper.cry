@@ -1,0 +1,11 @@
+﻿function @type('int') libGfxImgWidth(@type('object') imgObj, @type('Array<object>') output) {
+	@type('Image') img = $_cast('Image', imgObj);
+	$_array_set(output, 1, Image$img.width);
+	$_array_set(output, 2, Image$img.height);
+	return 0;
+}
+
+function @type('object') libGfxGetImgFromInstance(@type('Value') v) {
+	@type('ObjectInstance') oi = $_cast('ObjectInstance', Value$v.internalValue);
+	return $_array_get(ObjectInstance$oi.nativeData, 0);
+}

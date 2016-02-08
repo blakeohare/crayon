@@ -1,7 +1,7 @@
 ﻿// $gfx_blit_image_partial(image, targetX, targetY, sourceX, sourceY, width, height)
 import inline "InterpreterSource/FrameworkFunctions/7_arg.cry";
 
-image1 = extractImageFromValue(arg1);
+object1 = libGfxGetImgFromInstance(arg1);
 
 if (image1 == null ||
 	Value$arg2.type != Types.INTEGER ||
@@ -14,7 +14,7 @@ if (image1 == null ||
 	lib_func_error_message = "$gfx_blit_image_partial requires an image object and 6 integer arguments.";
 } else if (%%%IS_OPEN_GL_BASED%%%) {
 	glDrawImageAdvanced(
-		image1,
+		object1,
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),
 		$_cast('int', Value$arg6.internalValue), // w
@@ -26,7 +26,7 @@ if (image1 == null ||
 		255);
 } else {
 	$_blit_image_partial(
-		image1,
+		object1,
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),
 		$_cast('int', Value$arg6.internalValue), // w

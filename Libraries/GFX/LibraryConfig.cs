@@ -51,7 +51,10 @@ namespace GFX
 
 		public Dictionary<string, string> GetSupplementalTranslatedCode()
 		{
-			return new Dictionary<string, string>();
+			return new Dictionary<string, string>()
+			{
+				{ "GfxLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "GfxLibHelper.cry") },
+			};
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Crayon.ParseTree
 			}
 			else
 			{
-				throw new ParserException(this.FirstToken, "Invalid valud for const. Expression must resolve to a constant at compile time.");
+				throw new ParserException(this.FirstToken, "Invalid value for const. Expression must resolve to a constant at compile time.");
 			}
 
 			parser.RegisterConst(this.NameToken, this.Expression);

@@ -65,8 +65,7 @@ namespace GFX {
 
 		function getImage() {
 			if (this.isDone()) {
-				img = $$lib_gfx_image_get(this._key);
-				return new Image(img);
+				return new Image(this._key);
 			}
 			Core.assert(false, "Image not loaded yet.");
 		}
@@ -80,25 +79,30 @@ namespace GFX {
 	class Image {
 		field width;
 		field height;
-		field _native;
 
-		constructor(_native) {
-			this._native = _native;
-			this.width = $$lib_gfx_image_width(_native);
-			this.height = $$lib_gfx_image_height(_native);
+		/*
+			Native data:
+			[0] -> raw image object
+			[1] -> width
+			[2] -> height
+		*/
+		constructor(_key) {
+			$$lib_gfx_image_get(this); 
+			this.width = $$lib_core_native_int(this, 1);
+			this.height = $$lib_core_native_int(this, 2);
 		}
 
 		function draw(x, y) {
-			$$lib_gfx_blit_image(this._native, x, y);
+			$$lib_gfx_blit_image(this, x, y);
 		}
 
 		function drawPartial(tx, ty, sx, sy, width, height) {
-			$$lib_gfx_blit_image_partial(this._native, tx, ty, sx, sy, width, height);
+			$$lib_gfx_blit_image_partial(this, tx, ty, sx, sy, width, height);
 		}
 
 		function drawStretched(tx, ty, tw, th) {
 			return $$lib_gfx_blit_image_partial_at_scale(
-				this._native,
+				this,
 				tx, ty, 
 				tw, th, 
 				0, 0,
@@ -107,16 +111,24 @@ namespace GFX {
 
 		function drawPartialStretched(tx, ty, tw, th, sx, sy, sw, sh) {
 			return $$lib_gfx_blit_image_partial_at_scale(
-				this._native,
+				this,
 				tx, ty,
 				tw, th,
 				sx, sy,
 				sw, sh);
 		}
 
+		function drawRotated(x, y, theta) {
+			return $$lib_gfx_blit_image_rotated(this, x, y, theta);
+		}
+
+		function drawWithAlpha(x, y, alpha) {
+			return $$lib_gfx_blit_image_with_alpha(this, x, y, alpha);
+		}
+
 		function flip(h, v) {
 			if (h || v) {
-				img = $$lib_gfx_image_flip(this._native, h, v);
+				img = $$lib_gfx_flip_image(this, h, v);
 				return new Image(img);
 			}
 			return this;
@@ -124,7 +136,7 @@ namespace GFX {
 
 		function scale(w, h) {
 			assert(w > 0 && h > 0, "Image.scale arguments must be positive integers.");
-			return $$lib_gfx_image_scale(this._native, Math.floor(w), Math.floor(h));
+			return $$lib_gfx_image_scale(this, Math.floor(w), Math.floor(h));
 		}
 	}
 

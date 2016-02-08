@@ -1,7 +1,7 @@
 ﻿// $gfx_blit_image_rotated(image, targetXCenter, targetYCenter, radiansCW)
 import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 
-image1 = extractImageFromValue(arg1);
+object1 = libGfxGetImgFromInstance(arg1);
 
 if (image1 == null) {
 	lib_func_error_occurred = true;
@@ -21,13 +21,13 @@ if (image1 == null) {
 if (!lib_func_error_occurred) {
 	if (%%%IS_OPEN_GL_BASED%%%) {
 		glDrawImageRotated(
-			image1,
+			object1,
 			$_cast('int', Value$arg2.internalValue),
 			$_cast('int', Value$arg3.internalValue),
 			float1);
 	} else {
 		$_blit_image_rotated(
-			image1,
+			object1,
 			$_cast('int', Value$arg2.internalValue),
 			$_cast('int', Value$arg3.internalValue),
 			float1);
