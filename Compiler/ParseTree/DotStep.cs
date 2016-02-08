@@ -34,7 +34,7 @@ namespace Crayon.ParseTree
 				}
 				else if (enumDef.IntValue.ContainsKey(step))
 				{
-					return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+					return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.FunctionOrClassOwner);
 				}
 				else
 				{
