@@ -251,7 +251,6 @@ class GameWindow {
             pressedKeys.put(key, down);
             eventQueue.add(CrayonWrapper.v_buildGameEvent(
                 down ? "keydown" : "keyup",
-                "key",
                 0,
                 0,
                 0,
@@ -276,7 +275,7 @@ class GameWindow {
             eventName = "mousemove";
         }
 
-        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, "mouse", gameX, gameY, 0, false, isLeft ? "left" : "right", null));
+        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, gameX, gameY, 0, false, isLeft ? "left" : "right", null));
     }
 
     private static class GameWindowMouseListener implements MouseListener, MouseMotionListener {

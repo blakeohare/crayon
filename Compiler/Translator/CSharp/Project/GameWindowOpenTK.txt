@@ -17,7 +17,6 @@ namespace %%%PROJECT_ID%%%
 		private const int EXIT_CLOSE_BUTTON = 2;
 
 		private Queue<int> events = new Queue<int>();
-		private Queue<string> keyEvents = new Queue<string>();
 		private bool altPressed = false;
 
 		private int gameWidth;
@@ -108,10 +107,10 @@ namespace %%%PROJECT_ID%%%
 		private void KeyEvent(OpenTK.Input.Key key, bool down)
 		{
 			int keyCode = (int)key;
-
+			int cc;
 			if (keyCode >= KEY_CODE_A && keyCode <= KEY_CODE_Z)
 			{
-				keyEvents.Enqueue(LETTERS[keyCode - KEY_CODE_A]);
+				cc = keyCode - KEY_CODE_A + 65;
 			}
 			else if (keyCode >= KEY_CODE_F1 && keyCode <= KEY_CODE_F12)
 			{
@@ -120,90 +119,77 @@ namespace %%%PROJECT_ID%%%
 					events.Enqueue(EXIT);
 					events.Enqueue(EXIT_ALT_F4);
 				}
-
-				keyEvents.Enqueue("f" + (1 + keyCode - KEY_CODE_F1));
+				cc = keyCode - KEY_CODE_F1 + 112;
 			}
 			else if (keyCode >= KEY_CODE_0 && keyCode <= KEY_CODE_9)
 			{
-				keyEvents.Enqueue("" + (keyCode - KEY_CODE_0));
+				cc = keyCode - KEY_CODE_0 + 48;
 			}
 			else
 			{
-				string value;
 				switch (key)
 				{
-					case OpenTK.Input.Key.Space: value = "space"; break;
-					case OpenTK.Input.Key.Enter: value = "enter"; break;
-					case OpenTK.Input.Key.KeypadEnter: value = "enter"; break;
-					case OpenTK.Input.Key.Tab: value = "tab"; break;
-					case OpenTK.Input.Key.Escape: value = "escape"; break;
+					case OpenTK.Input.Key.Space: cc = 32; break;
+					case OpenTK.Input.Key.Enter:
+					case OpenTK.Input.Key.KeypadEnter: cc = 13; break;
+					case OpenTK.Input.Key.Tab: cc = 9; break;
+					case OpenTK.Input.Key.Escape: cc = 27; break;
 
-					case OpenTK.Input.Key.Left: value = "left"; break;
-					case OpenTK.Input.Key.Right: value = "right"; break;
-					case OpenTK.Input.Key.Up: value = "up"; break;
-					case OpenTK.Input.Key.Down: value = "down"; break;
+					case OpenTK.Input.Key.Left: cc = 37; break;
+					case OpenTK.Input.Key.Right: cc = 39; break;
+					case OpenTK.Input.Key.Up: cc = 38; break;
+					case OpenTK.Input.Key.Down: cc = 40; break;
 
-					case OpenTK.Input.Key.Comma: value = "comma"; break;
-					case OpenTK.Input.Key.Period: value = "period"; break;
-					case OpenTK.Input.Key.Semicolon: value = "semicolon"; break;
-					case OpenTK.Input.Key.Quote: value = "apostrophe"; break;
-					case OpenTK.Input.Key.Slash: value = "slash"; break;
-					case OpenTK.Input.Key.BackSlash: value = "backslash"; break;
-					case OpenTK.Input.Key.BracketLeft: value = "openbracket"; break;
-					case OpenTK.Input.Key.BracketRight: value = "closebracket"; break;
-					case OpenTK.Input.Key.Minus: value = "hyphen"; break;
-					case OpenTK.Input.Key.Plus: value = "equals"; break;
-					case OpenTK.Input.Key.Tilde: value = "tilde"; break;
+					case OpenTK.Input.Key.Comma: cc = 188; break;
+					case OpenTK.Input.Key.Period: cc = 190; break;
+					case OpenTK.Input.Key.Semicolon: cc = 186; break;
+					case OpenTK.Input.Key.Quote: cc = 222; break;
+					case OpenTK.Input.Key.Slash: cc = 191; break;
+					case OpenTK.Input.Key.BackSlash: cc = 220; break;
+					case OpenTK.Input.Key.BracketLeft: cc = 219; break;
+					case OpenTK.Input.Key.BracketRight: cc = 221; break;
+					case OpenTK.Input.Key.Minus: cc = 189; break;
+					case OpenTK.Input.Key.Plus: cc = 187; break;
+					case OpenTK.Input.Key.Tilde: cc = 192; break;
 
-					case OpenTK.Input.Key.ControlLeft: value = "ctrl"; break;
-					case OpenTK.Input.Key.ControlRight: value = "ctrl"; break;
-					case OpenTK.Input.Key.ShiftLeft: value = "shift"; break;
-					case OpenTK.Input.Key.ShiftRight: value = "shift"; break;
-					case OpenTK.Input.Key.AltLeft: value = "alt"; break;
-					case OpenTK.Input.Key.AltRight: value = "alt"; break;
+					case OpenTK.Input.Key.ControlLeft:
+					case OpenTK.Input.Key.ControlRight: cc = 17; break;
+					case OpenTK.Input.Key.ShiftLeft:
+					case OpenTK.Input.Key.ShiftRight: cc = 16; break;
+					case OpenTK.Input.Key.AltLeft:
+					case OpenTK.Input.Key.AltRight: cc = 18; this.altPressed = down; break;
 
-					case OpenTK.Input.Key.PageUp: value = "pageup"; break;
-					case OpenTK.Input.Key.PageDown: value = "pagedown"; break;
-					case OpenTK.Input.Key.Home: value = "home"; break;
-					case OpenTK.Input.Key.End: value = "end"; break;
-					case OpenTK.Input.Key.Delete: value = "delete"; break;
-					case OpenTK.Input.Key.Insert: value = "insert"; break;
-					case OpenTK.Input.Key.BackSpace: value = "backspace"; break;
-					case OpenTK.Input.Key.PrintScreen: value = "printscreen"; break;
-					case OpenTK.Input.Key.Pause: value = "pause"; break;
-					case OpenTK.Input.Key.Menu: value = "menu"; break;
-					case OpenTK.Input.Key.CapsLock: value = "capslock"; break;
-					case OpenTK.Input.Key.ScrollLock: value = "scrolllock"; break;
-					case OpenTK.Input.Key.NumLock: value = "numlock"; break;
+					case OpenTK.Input.Key.PageUp: cc = 33; break;
+					case OpenTK.Input.Key.PageDown: cc = 34; break;
+					case OpenTK.Input.Key.Home: cc = 36; break;
+					case OpenTK.Input.Key.End: cc = 35; break;
+					case OpenTK.Input.Key.Delete: cc = 46; break;
+					case OpenTK.Input.Key.Insert: cc = 45; break;
+					case OpenTK.Input.Key.BackSpace: cc = 8; break;
+					case OpenTK.Input.Key.PrintScreen: cc = 44; break;
+					case OpenTK.Input.Key.Pause: cc = 19; break;
+					case OpenTK.Input.Key.WinLeft: 
+					case OpenTK.Input.Key.WinRight: cc = 91; break;
+					case OpenTK.Input.Key.Menu: cc = 93; break;
+					case OpenTK.Input.Key.CapsLock: cc = 20; break;
+					case OpenTK.Input.Key.ScrollLock: cc = 145; break;
+					case OpenTK.Input.Key.NumLock: cc = 144; break;
 
-					default: value = null; break;
+					default: return;
 				}
-
-				if (value == null)
-				{
-					return;
-				}
-
-				if (value == "alt")
-				{
-					this.altPressed = down;
-				}
-
-				keyEvents.Enqueue(value);
 			}
 			events.Enqueue(KEY_EVENT);
 			events.Enqueue(down ? 1 : 0);
+			events.Enqueue(cc);
 		}
 
-		public List<Value> GetEvents()
+		public List<PlatformRelayObject> GetEvents()
 		{
-			List<Value> output = new List<Value>();
+			List<PlatformRelayObject> output = new List<PlatformRelayObject>();
 			Queue<int> events = instance.events;
-			Queue<string> keyEvents = instance.keyEvents;
 			int type;
-			int x, y;
-			bool down, isLeft;
-			string keyCode;
+			int x, y, keyCode;
+			bool isDown, isLeft;
 
 			while (events.Count > 0)
 			{
@@ -215,26 +201,24 @@ namespace %%%PROJECT_ID%%%
 						type = events.Dequeue();
 						if (type == MOUSE_MOVE)
 						{
-							output.Add(CrayonWrapper.v_buildGameEvent("mousemove", "mouse", x, y, 0, false, null, null));
+							output.Add(new PlatformRelayObject(32, x, y, 0, 0.0, null));
 						}
 						else
 						{
 							isLeft = type == MOUSE_LEFT;
-							down = events.Dequeue() == 1;
-							string button = type == MOUSE_LEFT ? "left" : "right";
-							output.Add(CrayonWrapper.v_buildGameEvent("mouse" + button + (down ? "down" : "up"), "mouse", x, y, 0, down, button, null));
+							isDown = events.Dequeue() == 1;
+							output.Add(new PlatformRelayObject(33 + (isLeft ? 0 : 2) + (isDown ? 0 : 1), x, y, 0, 0.0, null));
 						}
+						// TODO: mouse scroll
 						break;
 					case KEY_EVENT:
-						down = events.Dequeue() == 1;
-						keyCode = keyEvents.Dequeue();
-						// TODO: intercept alt-f4
-						output.Add(CrayonWrapper.v_buildGameEvent("key" + (down ? "down" : "up"), "key", 0, 0, 0, down, keyCode, null));
+						isDown = events.Dequeue() == 1;
+						keyCode = events.Dequeue();
+						output.Add(new PlatformRelayObject(isDown ? 16 : 17, keyCode, 0, 0, 0.0, null));
 						break;
 					case EXIT:
 						type = events.Dequeue();
-						string quitCode = type == EXIT_ALT_F4 ? "quit-altf4" : "quit-closebutton";
-						output.Add(CrayonWrapper.v_buildGameEvent(quitCode, "quit", 0, 0, 0, false, null, null));
+						output.Add(new PlatformRelayObject(type == EXIT_ALT_F4 ? 0 : 1, 0, 0, 0, 0.0, null));
 						break;
 					default:
 						break;

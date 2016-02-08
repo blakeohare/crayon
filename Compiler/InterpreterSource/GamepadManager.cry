@@ -736,8 +736,13 @@ function @type('bool') gamepadFireVirtualEvent(
 		@type('GamepadDeviceInfo') device = $_list_get(GamepadStatus$status.devices, deviceIndex);
 		@type('Value') playerId = GamepadDeviceInfo$device.playerId;
 		if (playerId == null) return true; // sanity check, but this should never happen.
-		value = buildGameEventWithExtraArg('gamepad', 'gamepad', deviceIndex, 0, 0.0, false, null, playerId, value, alias);
-		$_list_push(GamepadStatus$status.virtualEvents, value);
+		@type('GamepadVirtualEvent') gve = new GamepadVirtualEvent(
+			deviceIndex,
+			playerId,
+			value,
+			alias);
+		//value = buildGameEventWithExtraArg('gamepad', deviceIndex, 0, 0.0, false, null, playerId, value, alias);
+		$_list_push(GamepadStatus$status.virtualEvents, gve);
 		GamepadVirtualPushy$virtualPushy.gameCounter = gameCounter;
 	}
 	return true;
@@ -837,18 +842,39 @@ function @type('bool') gamepadFireAnalogEvent(
 		@type('double') value) {
 	
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		@type('int') isSignificant = 1;
-		if (value < .5) isSignificant = 0;
+		@type('bool') isSignificant = value >= .5;
+		/*
 		@type('Value') gameEvent = buildGameEvent(
 			'hardwareanalogaxis',
-			'hardware',
 			deviceIndex, // x field for device index
 			isSignificant, // y field for is_significant
 			value,
 			false,
 			pushyDescriptor,
-			playerId);
-		$_list_push(GamepadStatus$status.hardwareEvents, gameEvent);
+			playerId);//*/
+
+		@type('string') sPlayerId = null;
+		@type('int') iPlayerId = 0;
+		@type('int') playerIdType = 0;
+		if (playerId != null) {
+			if (Value$playerId.type == Types.INTEGER) {
+				iPlayerId = $_cast('int', Value$playerId.internalValue);
+				playerIdType = 2;
+			} else {
+				sPlayerId = $_cast('string', Value$playerId.internalValue);
+				playerIdType = 1;
+			}
+		}
+		$_list_push(GamepadStatus$status.hardwareEvents, new GamepadHardwareEvent(
+			1, // hardware analog axis event
+			deviceIndex,
+			isSignificant,
+			value,
+			false, // boolean value unused
+			pushyDescriptor,
+			playerIdType,
+			sPlayerId,
+			iPlayerId));
 	}
 	return true;
 }
@@ -862,18 +888,32 @@ function @type('bool') gamepadFireDigitalEvent(
 		@type('bool') isDigitalAxis) {
 	
 	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		@type('string') type = 'hardwarebutton';
-		if (isDigitalAxis) type = 'hardwaredigitalaxis';
-		@type('Value') gameEvent = buildGameEvent(
+		@type('int') type = 3; // button
+		if (isDigitalAxis) type = 2; // digital axis
+		
+		@type('string') sPlayerId = null;
+		@type('int') iPlayerId = 0;
+		@type('int') playerIdType = 0;
+		if (playerId != null) {
+			if (Value$playerId.type == Types.INTEGER) {
+				iPlayerId = $_cast('int', Value$playerId.internalValue);
+				playerIdType = 2;
+			} else {
+				sPlayerId = $_cast('string', Value$playerId.internalValue);
+				playerIdType = 1;
+			}
+		}
+
+		$_list_push(GamepadStatus$status.hardwareEvents, new GamepadHardwareEvent(
 			type,
-			'hardware',
-			deviceIndex, // x field for device index
-			1, // y field for is_significant
-			0.0,
+			deviceIndex,
+			true, // is significnat
+			0.0, // float value not used
 			value,
 			pushyDescriptor,
-			playerId);
-		$_list_push(GamepadStatus$status.hardwareEvents, gameEvent);
+			playerIdType,
+			sPlayerId,
+			iPlayerId));
 	}
 	return true;
 }

@@ -1,0 +1,14 @@
+﻿/*
+	Args:
+	[0] -> event instance
+	[1] -> event queue index (predetermined to be safely in range)
+
+*/
+
+
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+i = $_cast('int', Value$arg2.internalValue);
+
+libGamePopulateEventNativeData(ObjectInstance$objInstance1.nativeData, i);

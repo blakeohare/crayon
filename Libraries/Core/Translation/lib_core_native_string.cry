@@ -1,0 +1,21 @@
+﻿/*
+	Args:
+	[0] -> instance object
+	[1] -> index to extract from ObjectInstance.nativeData and cast to a string
+	[2] -> boolean for a cached commonString (true) or one-time string (false).
+			Common strings are permanently cached for the lifetime of the application and
+			are immune to any garbage collection.
+
+	all fields are always trusted
+*/
+
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+i = $_cast('int', Value$arg2.internalValue);
+string1 = $_cast('string', $_array_get(ObjectInstance$objInstance1.nativeData, i));
+if ($_cast('bool', Value$arg3.internalValue)) {
+	output = buildCommonString(string1);
+} else {
+	output = buildString(string1);
+}

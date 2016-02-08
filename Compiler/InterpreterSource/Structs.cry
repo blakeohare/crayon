@@ -348,8 +348,7 @@ struct NativeObjectWrapper {
  * This is the wrapped native object value used for events.
  */
 struct GameEvent {
-	@type('string') specificType, // { mouseleftdown | mouserightdown | mouseleftup | mouserightup | mousemove | mousescroll | keydown | keyup | quit-x | quit-altf4 }
-	@type('string') vagueType, // { mouse | key | hardware | quit } <-- technically these are redundant information with above, but allow for quick checks to see if specific fields are valid on the event object.
+	@type('int') specificType, // { mouseleftdown | mouserightdown | mouseleftup | mouserightup | mousemove | mousescroll | keydown | keyup | quit-x | quit-altf4 }
 	@type('int') x, // re-used by hardware events for device index
 	@type('int') y, // re-used by hardware events for 1 or 0 for is_significant
 	@type('double') amount,
@@ -358,6 +357,34 @@ struct GameEvent {
 	@type('Value') argValue, // used for player ID for gamepad hardware events
 	@type('Value') argValue2, // used for axis or button value in gamepad events
 	@type('Value') argValue3, // used for button alias in gamepad events
+}
+
+struct PlatformRelayObject {
+	@type('int') type,
+	@type('int') iarg1,
+	@type('int') iarg2,
+	@type('int') iarg3,
+	@type('double') farg1,
+	@type('string') sarg1,
+}
+
+struct GamepadHardwareEvent {
+	@type('int') type, // 1 - hardware analog axis event, 2 - hardware digital axis, 3 - hardware button
+	@type('int') deviceIndex,
+	@type('bool') isSignificant,
+	@type('double') fvalue,
+	@type('bool') bvalue,
+	@type('string') pushyDescriptor,
+	@type('int') playerIdType, // 0 - not set, 1 - string, 2 - int
+	@type('string') sPlayerId,
+	@type('int') iPlayerId,
+}
+
+struct GamepadVirtualEvent {
+	@type('int') deviceIndex,
+	@type('Value') playerId,
+	@type('Value') value,
+	@type('Value') alias,
 }
 
 struct GamepadStatus {
@@ -372,8 +399,8 @@ struct GamepadStatus {
 	@type('List<GamepadAtomicPushy>') atomicPushies,
 
 	// Objects to be added to the event queue.
-	@type('List<Value>') hardwareEvents,
-	@type('List<Value>') virtualEvents,
+	@type('List<GamepadHardwareEvent>') hardwareEvents,
+	@type('List<GamepadVirtualEvent>') virtualEvents,
 }
 
 struct GamepadDeviceInfo {

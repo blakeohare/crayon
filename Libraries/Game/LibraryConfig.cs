@@ -53,7 +53,10 @@ namespace Game
 
 		public Dictionary<string, string> GetSupplementalTranslatedCode()
 		{
-			return new Dictionary<string, string>();
+			return new Dictionary<string, string>()
+			{
+				{ "GameLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "GameLibHelper.cry") },
+			};
 		}
 	}
 }

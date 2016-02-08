@@ -104,14 +104,9 @@ namespace Crayon.ParseTree
 		{
 			FunctionDefinition funcDef; // used in multiple places.
 			FieldDeclaration fieldDec;
+			this.Root = this.Root.ResolveNames(parser, lookup, imports);
 			Expression root = this.Root;
 			string field = this.StepToken.Value;
-
-			if (root is Variable)
-			{
-				root = root.ResolveNames(parser, lookup, imports);
-				this.Root = root;
-			}
 
 			if (root is PartialNamespaceReference)
 			{

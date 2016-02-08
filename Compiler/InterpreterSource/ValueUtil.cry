@@ -390,10 +390,9 @@ function @type('int') nextPowerOf2(@type('int') value) {
 	}
 	return output;
 }
-
+/*
 function @type('Value') buildGameEvent(
 	@type('string') specificType,
-	@type('string') vagueType,
 	@type('int') x,
 	@type('int') y,
 	@type('double') amount,
@@ -403,7 +402,6 @@ function @type('Value') buildGameEvent(
 	
 	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
 		specificType,
-		vagueType,
 		x,
 		y,
 		amount,
@@ -416,7 +414,6 @@ function @type('Value') buildGameEvent(
 
 function @type('Value') buildGameEventWithExtraArg(
 	@type('string') specificType,
-	@type('string') vagueType,
 	@type('int') x,
 	@type('int') y,
 	@type('double') amount,
@@ -428,7 +425,6 @@ function @type('Value') buildGameEventWithExtraArg(
 	
 	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
 		specificType,
-		vagueType,
 		x,
 		y,
 		amount,
@@ -437,7 +433,7 @@ function @type('Value') buildGameEventWithExtraArg(
 		argValue,
 		argValue2,
 		argValue3)));
-}
+}//*/
 
 function @type('Value') buildCommonString(@type('string') s) {
 	if (!$_dictionary_contains(COMMON_STRINGS, s)) {

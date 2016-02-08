@@ -1,0 +1,2 @@
+﻿
+output = buildInteger($_lib_game_event_queue_size());

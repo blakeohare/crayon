@@ -1,4 +1,13 @@
-﻿
+﻿/*
+	arg[0] -> a re-usable value list to push event fields onto
+*/
+
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+libGamePumpEvents($_cast('List<Value>', Value$arg1.internalValue));
+output = arg1;
+
+/*
 list1 = $_get_events_raw_list();
 
 // TODO: this will have to be done differently.
@@ -18,6 +27,6 @@ if ($_list_length(GamepadStatus$gamepadStatus.virtualEvents) > 0) {
 		$_list_push(list1, $_list_get(list2, int1));
 	}
 	$_list_clear(GamepadStatus$gamepadStatus.virtualEvents);
-}
+}//*/
 
-output = new Value(Types.LIST, list1);
+output = arg1;

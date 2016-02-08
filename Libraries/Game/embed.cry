@@ -1,29 +1,284 @@
 ﻿namespace Game {
-	function clock_tick() {
-		return $$lib_game_clock_tick();
+	
+	// These keycodes are consistent with the JavaScript key codes.
+	// Because why not.
+	enum KeyboardKey {
+		
+		BACKSPACE = 8,
+		TAB = 9,
+		ENTER = 13,
+		SHIFT = 16,
+		CTRL = 17,
+		ALT = 18,
+		PAUSE = 19,
+		CAPS_LOCK = 20,
+		ESCAPE = 27,
+		SPACE = 32,
+		PAGE_UP = 33,
+		PAGE_DOWN = 34,
+		END = 35,
+		HOME = 36,
+		LEFT = 37,
+		UP = 38,
+		RIGHT = 39,
+		DOWN = 40,
+		PRINT_SCREEN = 44,
+		INSERT = 45,
+		DELETE = 46,
+		
+		NUM_0 = 48 + 0,
+		NUM_1 = 48 + 1,
+		NUM_2 = 48 + 2,
+		NUM_3 = 48 + 3,
+		NUM_4 = 48 + 4,
+		NUM_5 = 48 + 5,
+		NUM_6 = 48 + 6,
+		NUM_7 = 48 + 7,
+		NUM_8 = 48 + 8,
+		NUM_9 = 48 + 9,
+
+		A = 64 + 1,
+		B = 64 + 2,
+		C = 64 + 3,
+		D = 64 + 4,
+		E = 64 + 5,
+		F = 64 + 6,
+		G = 64 + 7,
+		H = 64 + 8,
+		I = 64 + 9,
+		J = 64 + 10,
+		K = 64 + 11,
+		L = 64 + 12,
+		M = 64 + 13,
+		N = 64 + 14,
+		O = 64 + 15,
+		P = 64 + 16,
+		Q = 64 + 17,
+		R = 64 + 18,
+		S = 64 + 19,
+		T = 64 + 20,
+		U = 64 + 21,
+		V = 64 + 22,
+		W = 64 + 23,
+		X = 64 + 24,
+		Y = 64 + 25,
+		Z = 64 + 26,
+		
+		// In the JS keycodes, left Window key is 91 and right Window key is 92. 
+		// But Crayon doesn't care which one you press.
+		OS_COMMAND = 91,
+		CONTEXT_MENU = 93,
+		
+		F1 = 111 + 1,
+		F2 = 111 + 2,
+		F3 = 111 + 3,
+		F4 = 111 + 4,
+		F5 = 111 + 5,
+		F6 = 111 + 6,
+		F7 = 111 + 7,
+		F8 = 111 + 8,
+		F9 = 111 + 9,
+		F10 = 111 + 10,
+		F11 = 111 + 11,
+		F12 = 111 + 12,
+		
+		NUM_LOCK = 144,
+		SCROLL_LOCK = 145,
+
+		SEMICOLON = 186,
+		EQUALS = 187,
+		COMMA = 188,
+		HYPHEN = 189,
+		PERIOD = 190,
+		SLASH = 191,
+		BACKTICK = 192,
+		OPEN_BRAKET = 219,
+		BACKSLASH = 220,
+		CLOSE_BRACKET = 221,
+		APOSTROPHE = 222,
 	}
 
-	function initialize(fps) {
-		return $$lib_game_initialize(fps);
+	enum EventQuitType {
+		ALT_F4 = 0,
+		CLOSE_BUTTON = 1,
 	}
 
-	function initialize_screen(width, height, screen_width = null, screen_height = null) {
-		if (screen_width == null) {
-			$$lib_game_initialize_screen(width, height, null, null);
-		} else {
-			$$lib_game_initialize_screen(width, height, screen_width, screen_height);
+	enum EventButton {
+		LEFT = 0,
+		// MIDDLE = 1, // TODO
+		RIGHT = 2,
+	}
+
+	// WARNING: These magic numbers are used throughout the stack
+	// GameLibHelper.cry and platform specific code.
+	enum EventType {
+		QUIT = 0x1,
+
+		KEY_DOWN = 0x10,
+		KEY_UP = 0x11,
+
+		MOUSE_MOVE = 0x20,
+		MOUSE_LEFT_DOWN = 0x21,
+		MOUSE_LEFT_UP = 0x22,
+		MOUSE_RIGHT_DOWN = 0x23,
+		MOUSE_RIGHT_UP = 0x24,
+		MOUSE_SCROLL = 0x25,
+		
+		GAMEPAD_RAW = 0x30,
+		GAMEPAD = 0x31,
+
+	}
+
+	class GameWindow {
+
+		static field instance;
+
+		static field _reusable_list = [];
+
+		// These are static and not associated with the actual GameWindow instance.
+		// That means static initializers (such as the GamePad event pump) can register events without the
+		// window being open yet. Also, becuase they are static, they can be guarded against unauthorized
+		// access from user code (TODO: make that last statement true by adding the library access annotation)
+		static field _eventPumpHandlers = [];
+		static field _frameBeginHandlers = [];
+		static field _frameEndHandlers = [];
+
+		static constructor() {
+			print("AHOY");
 		}
 
-		// The existence of this here is temporary.
-		// Cleanup strategy: static initializers in Gamepad class, once static initializers are created.
-		$$lib_game_initialize_gamepad();
+		constructor(title, fps, width, height, screenWidth = null, screenHeight = null) {
+			
+			Core.assert(GameWindow.instance == null, "Cannot create multiple GameWindows.");
+			GameWindow.instance = this;
+
+			screenWidth = screenWidth ?? width;
+			screenHeight = screenHeight ?? height;
+			
+			width = Math.floor(width);
+			height = Math.floor(height);
+			screenWidth = Math.floor(width);
+			screenHeight = Math.floor(height);
+
+			w = "width";
+			h = "height";
+			t = " must be positive.";
+			Core.assert(width > 0, w + t);
+			Core.assert(height > 0, h + t);
+			Core.assert(screenWidth > 0, "screen " + w + t);
+			Core.assert(screenHeight > 0, "screen " + h + t);
+			Core.assert(fps > 0, "FPS " + t);
+
+			$$lib_game_initialize(fps);
+			$$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
+			$$lib_game_set_title(title);
+
+			// TODO: move trigger to gamepad library. Use an event trigger.
+			$$lib_game_initialize_gamepad();
+		}
+
+		function clockTick() {
+			// TODO: add work queue triggers
+			return $$lib_game_clock_tick();
+		}
+
+		function pumpEvents() {
+			output = [];
+			t = $$lib_game_pump_events(GameWindow._reusable_list);
+			len = t.length;
+			i = 0;
+			while (i < len) {
+				switch (t[i++]) {
+					// for all mouse events: t[1] -> x, t[2] -> y
+					case EventType.MOUSE_MOVE: e = new MouseMoveEvent(t[i++], t[i++]); break;
+					case EventType.MOUSE_LEFT_DOWN: e = new MouseClickEvent(t[i - 1], EventButton.LEFT, true, t[i++], t[i++]); break;
+					case EventType.MOUSE_LEFT_UP: e = new MouseClickEvent(t[i - 1], EventButton.LEFT, false, t[i++], t[i++]); break;
+					case EventType.MOUSE_RIGHT_DOWN: e = new MouseClickEvent(t[i - 1], EventButton.RIGHT, true, t[i++], t[i++]); break;
+					case EventType.MOUSE_RIGHT_UP: e = new MouseClickEvent(t[i - 1], EventButton.RIGHT, false, t[i++], t[i++]); break;
+
+					// for mouse scroll events: t[3] -> scroll amount
+					case EventType.MOUSE_SCROLL: e = new MouseScrollEvent(t[i++], t[i++], t[i++]); break;
+
+					// for key events: t[1] -> key code (see enum)
+					case EventType.KEY_DOWN: e = new KeyEvent(t[i++], true); break;
+					case EventType.KEY_UP: e = new KeyEvent(t[i++], false); break;
+
+					// for quit events: t[1] -> quit subtype
+					case EventType.QUIT: e = new QuitEvent(t[i++]); break;
+
+					default: assert(false); break;
+				}
+
+				output.add(e);
+			}
+
+			// Things like gamepad events are added here
+			if (GameWindow._eventPumpHandlers.length > 0) {
+				for (t : GameWindow._eventPumpHandlers) {
+					t(output);
+				}
+			}
+
+			return output;
+		}
+
+		function setTitle(title) {
+			return $$lib_game_set_title(title);
+		}
 	}
 
-	function pump_events() {
-		return $$lib_game_pump_events();
+	// TODO: mark as abstract.
+	// This can be extended in other libraries, such as Gamepad
+	class Event {
+		field type;
+		constructor(type) {
+			this.type = type;
+		}
 	}
 
-	function set_title(title) {
-		return $$lib_game_set_title(title);
+	class QuitEvent : Event {
+		field quitType;
+		constructor(quitType) : base(EventType.QUIT) {
+			this.quitType = quitType;
+		}
+	}
+
+	class KeyEvent : Event {
+		field key;
+		field down;
+
+		constructor(key, down) : base(down ? EventType.KEY_DOWN : EventType.KEY_UP) {
+			this.key = key;
+			this.down = down;
+		}
+	}
+
+	class MouseEvent : Event {
+		field x;
+		field y;
+		constructor(type, x, y) : base(type) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+	class MouseClickEvent : MouseEvent {
+		field button;
+		field down;
+		constructor(type, button, down, x, y) : base(type, x, y) {
+			this.button = button;
+			this.down = down;
+		}
+	}
+
+	class MouseMoveEvent : MouseEvent {
+		constructor(x, y) : base(EventType.MOUSE_MOVE, x, y) { }
+	}
+
+	class MouseScrollEvent : MouseEvent {
+		field amount;
+		constructor(x, y, amount) : base(EventType.MOUSE_SCROLL, x, y) {
+			this.amount = amount;
+		}
 	}
 }
