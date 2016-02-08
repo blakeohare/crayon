@@ -32,6 +32,11 @@ namespace Crayon.ParseTree
 			{
 				string itemName = this.Items[i].Value;
 
+				if (itemName == "length")
+				{
+					throw new ParserException(this.Items[i], "The name 'length' is not allowed as an enum value as it is a reserved field. In general, enum members should be in ALL CAPS anyway.");
+				}
+
 				if (this.IntValue.ContainsKey(itemName))
 				{
 					throw new ParserException(this.Items[i], "Duplicate item in same enum. ");
@@ -87,7 +92,7 @@ namespace Crayon.ParseTree
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			// nothing to do
+			this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
 			return this;
 		}
 
