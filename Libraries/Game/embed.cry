@@ -1,28 +1,29 @@
-﻿
-function game_clock_tick() {
-	return $$lib_game_clock_tick();
-}
-
-function game_initialize(fps) {
-	return $$lib_game_initialize(fps);
-}
-
-function game_initialize_screen(width, height, screen_width = null, screen_height = null) {
-	if (screen_width == null) {
-		$$lib_game_initialize_screen(width, height, null, null);
-	} else {
-		$$lib_game_initialize_screen(width, height, screen_width, screen_height);
+﻿namespace Game {
+	function clock_tick() {
+		return $$lib_game_clock_tick();
 	}
 
-	// The existence of this here is temporary.
-	// Cleanup strategy: static initializers in Gamepad class, once static initializers are created.
-	$$lib_game_initialize_gamepad();
-}
+	function initialize(fps) {
+		return $$lib_game_initialize(fps);
+	}
 
-function game_pump_events() {
-	return $$lib_game_pump_events();
-}
+	function initialize_screen(width, height, screen_width = null, screen_height = null) {
+		if (screen_width == null) {
+			$$lib_game_initialize_screen(width, height, null, null);
+		} else {
+			$$lib_game_initialize_screen(width, height, screen_width, screen_height);
+		}
 
-function game_set_title(title) {
-	return $$lib_game_set_title(title);
+		// The existence of this here is temporary.
+		// Cleanup strategy: static initializers in Gamepad class, once static initializers are created.
+		$$lib_game_initialize_gamepad();
+	}
+
+	function pump_events() {
+		return $$lib_game_pump_events();
+	}
+
+	function set_title(title) {
+		return $$lib_game_set_title(title);
+	}
 }

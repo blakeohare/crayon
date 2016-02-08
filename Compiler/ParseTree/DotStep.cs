@@ -24,20 +24,28 @@ namespace Crayon.ParseTree
 			this.Root = this.Root.Resolve(parser);
 
 			string step = this.StepToken.Value;
+
+			if (this.Root is EnumReference)
+			{
+				EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
+				if (step == "length")
+				{
+					return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+				}
+				else if (enumDef.IntValue.ContainsKey(step))
+				{
+					return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+				}
+				else
+				{
+					throw new ParserException(this.StepToken, "The enum '" + enumDef.Name + "' does not contain a definition for '" + step + "'");
+				}
+			}
+
 			Variable variable = this.Root as Variable;
 			if (variable != null)
 			{
 				string varName = variable.Name;
-
-				EnumDefinition enumDef = parser.GetEnumDefinition(varName);
-				if (enumDef != null)
-				{
-					if (enumDef.IntValue.ContainsKey(step))
-					{
-						return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.FunctionOrClassOwner);
-					}
-					throw new ParserException(this.StepToken, "The enum '" + variable.Name + "' does not contain a definition for '" + step + "'");
-				}
 
 				if (parser.IsTranslateMode && varName.Contains('$'))
 				{

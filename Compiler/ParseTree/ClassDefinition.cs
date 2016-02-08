@@ -287,7 +287,7 @@ namespace Crayon.ParseTree
 			// This should be empty if there is no base class, or just pass along the base class' args if there is.
 			if (this.Constructor == null)
 			{
-				throw new ParserException(this.FirstToken, "All classes must have a constructor.");
+				this.Constructor = new ConstructorDefinition(this.FirstToken, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, this);
 			}
 
 			this.Constructor.ResolveNames(parser, lookup, imports);

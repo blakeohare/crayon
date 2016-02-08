@@ -103,7 +103,7 @@ namespace Crayon
 			{
 				string command;
 
-				command = @"C:\Things\NoisyProtozoa\Games\Shiny\Shiny.build -target windows";
+				command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
 
 				args = command.Split(' ');
 			}
@@ -145,13 +145,11 @@ namespace Crayon
 				argLookup.Remove("min");
 			}
 
-			/*
 			if (argLookup.ContainsKey("readablebytecode"))
 			{
 				buildContext.ReadableByteCode = true;
 				argLookup.Remove("readablebytecode");
 			}
-			*/
 
 			if (argLookup.ContainsKey("source"))
 			{
@@ -203,13 +201,11 @@ namespace Crayon
 			buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
 
 			if (!System.IO.Directory.Exists(buildContext.SourceFolder))
+			{
 				throw new InvalidOperationException("Source folder does not exist.");
+			}
 
-			string startCry = System.IO.Path.Combine(buildContext.SourceFolder, "start.cry");
-			if (!System.IO.File.Exists(startCry))
-				throw new InvalidOperationException("Program entry point could not be found. (start.cry)");
-
-			buildContext.ProjectID = buildContext.ProjectID ?? "Untitled Crayon Project";
+			buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
 
 			return buildContext;
 		}

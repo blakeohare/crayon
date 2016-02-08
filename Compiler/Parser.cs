@@ -337,33 +337,39 @@ namespace Crayon
 			return fileIdCounter++;
 		}
 
+		private static readonly TokenStream implicitCoreImport = Tokenizer.Tokenize("implicit code", "import Core;", -1, true);
+
 		public Executable[] ParseInterpretedCode(string filename, string code, string libraryName)
 		{
 			int fileId = this.GetNextFileId();
 			this.RegisterFileUsed(filename, code, fileId);
-			TokenStream tokens = Tokenizer.Tokenize(filename, code, fileId, true);
+			TokenStream userTokens = Tokenizer.Tokenize(filename, code, fileId, true);
 
 			List<Executable> executables = new List<Executable>();
 
 			List<string> namespaceImportsBuilder = new List<string>();
 
-			while (tokens.HasMore && tokens.IsNext("import"))
-			{
-				ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
-				if (importStatement == null) throw new Exception();
-				namespaceImportsBuilder.Add(importStatement.ImportPath);
-				Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-				executables.AddRange(libraryEmbeddedCode);
-			}
+			implicitCoreImport.Reset();
 
+			foreach (TokenStream tokens in new TokenStream[] { implicitCoreImport, userTokens })
+			{
+				while (tokens.HasMore && tokens.IsNext("import"))
+				{
+					ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
+					if (importStatement == null) throw new Exception();
+					namespaceImportsBuilder.Add(importStatement.ImportPath);
+					Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+					executables.AddRange(libraryEmbeddedCode);
+				}
+			}
 			string[] namespaceImports = namespaceImportsBuilder.ToArray();
 
-			while (tokens.HasMore)
+			while (userTokens.HasMore)
 			{
 				Executable executable;
 				try
 				{
-					executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
+					executable = ExecutableParser.Parse(this, userTokens, false, true, true, null);
 				}
 				catch (EofException)
 				{

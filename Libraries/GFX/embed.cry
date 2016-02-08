@@ -1,79 +1,178 @@
-﻿function gfx_blit_image(image, x, y) {
-	return $$lib_gfx_blit_image(image, x, y);
-}
+﻿import Core;
+import Math;
 
-function gfx_blit_image_partial(image, x, y, target_x, target_y, width, height) {
-	return $$lib_gfx_blit_image_partial(image, x, y, target_x, target_y, width, height);
-}
+namespace GFX {
 
-function gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight) {
-	return $$lib_gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight);
-}
+	enum _GFX_ImageLoaderType {
+		RESOURCE,
+		WEB,
+		USER_DATA,
+		FILE,
+	}
 
-function gfx_draw_ellipse(left, top, width, height, r, g, b, a) {
-	return $$lib_gfx_draw_ellipse(left, top, width, height, r, g, b, a);
-}
+	enum ImageLoaderStatus {
+		LOADING = 0,
+		OK = 1,
+		NOT_FOUND = 2,
+		INVALID = 3,
+		TIMED_OUT = 4,
+	}
 
-function gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a) {
-	return $$lib_gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a);
-}
+	class ImageLoader {
 
-function gfx_draw_rectangle(left, top, width, height, r, g, b, a) {
-	return $$lib_gfx_draw_rectangle(left, top, width, height, r, g, b, a);
-}
+		static field ID_ALLOC = 0;
 
-function gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a) {
-	return $$lib_gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
-}
+		field _path;
+		field _key;
+		field _type;
 
-function gfx_fill_screen(r, g, b) {
-	return $$lib_gfx_fill_screen(r, g, b);
-}
+		// TODO: private constructors
+		constructor(type, path) {
+			this._type = type;
+			this._path = path;
+			this._key = '' + ID_ALLOC++;
+		}
 
-function gfx_flip_image(image, flip_x, flip_y) {
-	return $$lib_gfx_flip_image(image, flip_x, flip_y);
-}
+		static function fromResource(path) {
+			loader = new ImageLoader(_GFX_ImageLoaderType.RESOURCE, path);
+			$$lib_gfx_image_load_from_resource(loader._key, path);
+			return loader;
+		}
 
-function gfx_image_error_code(key) {
-	return $$lib_gfx_image_error_code(key);
-}
+		static function fromWeb(url) {
+			loader = new ImageLoader(_GFX_ImageLoaderType.WEB, url);
+			$$lib_gfx_image_load_from_web(loader._key, url);
+			return loader;
+		}
 
-function gfx_image_get(key) {
-	return $$lib_gfx_image_get(key);
-}
+		function retryWebLoad() {
+			$$lib_gfx_image_load_from_web(this._key, this._path);
+		}
 
-function gfx_image_load_from_resource(key, path) {
-	return $$lib_gfx_image_load_from_resource(key, path);
-}
+		static function fromUserData(path) {
+			loader = new ImageLoader(_GFX_ImageLoaderType.USER_DATA, path);
+			$$lib_gfx_image_load_from_resource(loader._key, path);
+			return loader;
+		}
 
-function gfx_image_load_from_web(key, url) {
-	return $$lib_gfx_image_load_from_web(key, url);
-}
+		static function fromFile(path) {
+			assert(false, "Not implemented.");
+		}
 
-function gfx_image_load_from_user_data(key, path) {
-	return $$lib_gfx_image_load_from_user_data(key, path);
-}
+		function isDone() {
+			return $$lib_gfx_is_image_loaded(this._key);
+		}
 
-function gfx_image_scale(image, new_width, new_height) {
-	return $$lib_gfx_image_scale(image, new_width, new_height);
-}
+		function getImage() {
+			if (this.isDone()) {
+				img = $$lib_gfx_image_get(this._key);
+				return new Image(img);
+			}
+			$assert(false, "Image not loaded yet.");
+		}
 
-function gfx_image_sheet_error_code(id_or_ids) {
-	return $$lib_gfx_image_sheet_error_code(id_or_ids);
-}
+		function getStatus() {
+			// TODO: check what these values are and convert to the enum above.
+			return $$lib_gfx_image_error_code(this._key);
+		}
+	}
 
-function gfx_image_sheet_load(id_or_ids) {
-	return $$lib_gfx_image_sheet_load(id_or_ids);
-}
+	class Image {
+		field width;
+		field height;
+		field _native;
 
-function gfx_image_sheet_load_progress(id_or_ids) {
-	return $$lib_gfx_image_sheet_load_progress(id_or_ids);
-}
+		constructor(_native) {
+			this._native = _native;
+			this.width = $$lib_gfx_image_width(_native);
+			this.height = $$lib_gfx_image_height(_native);
+		}
 
-function gfx_image_sheet_loaded(id_or_ids) {
-	return $$lib_gfx_image_sheet_loaded(id_or_ids);
-}
+		function draw(x, y) {
+			$$lib_gfx_blit_image(this._native, x, y);
+		}
 
-function gfx_is_image_loaded(key) {
-	return $$lib_gfx_is_image_loaded(key);
+		function drawPartial(tx, ty, sx, sy, width, height) {
+			$$lib_gfx_blit_image_partial(this._native, tx, ty, sx, sy, width, height);
+		}
+
+		function drawStretched(tx, ty, tw, th) {
+			return $$lib_gfx_blit_image_partial_at_scale(
+				this._native,
+				tx, ty, 
+				tw, th, 
+				0, 0,
+				this.width, this.height);
+		}
+
+		function drawPartialStretched(tx, ty, tw, th, sx, sy, sw, sh) {
+			return $$lib_gfx_blit_image_partial_at_scale(
+				this._native,
+				tx, ty,
+				tw, th,
+				sx, sy,
+				sw, sh);
+		}
+
+		function flip(h, v) {
+			if (h || v) {
+				img = $$lib_gfx_image_flip(this._native, h, v);
+				return new Image(img);
+			}
+			return this;
+		}
+
+		function scale(w, h) {
+			assert(w > 0 && h > 0, "Image.scale arguments must be positive integers.");
+			return $$lib_gfx_image_scale(this._native, Math.floor(w), Math.floor(h));
+		}
+	}
+
+	class ImageSheetLoader {
+
+		field _ids;
+		constructor(_ids) {
+			this._ids = _ids;
+		}
+
+		function fromIds(ids) {
+			$$lib_gfx_image_sheet_load(id_or_ids);
+			return new ImageSheetLoader(id_or_ids);
+		}
+
+		function progress() {
+			return $$lib_gfx_image_sheet_load_progress(this._ids);
+		}
+
+		function isDone() {
+			return $$lib_gfx_image_sheet_loaded(this._ids);
+		}
+		
+		function getStatus() {
+			// TODO: convert into the same enum as ImageLoader
+			return $$lib_gfx_image_sheet_error_code(id_or_ids);
+		}
+	}
+
+	namespace Draw {
+		function ellipse(left, top, width, height, r, g, b, a = 255) {
+			return $$lib_gfx_draw_ellipse(left, top, width, height, r, g, b, a);
+		}
+
+		function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
+			return $$lib_gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a);
+		}
+
+		function rectangle(left, top, width, height, r, g, b, a = 255) {
+			return $$lib_gfx_draw_rectangle(left, top, width, height, r, g, b, a);
+		}
+
+		function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
+			return $$lib_gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
+		}
+
+		function fill(r, g, b) {
+			return $$lib_gfx_fill_screen(r, g, b);
+		}
+	}
 }

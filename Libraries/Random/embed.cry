@@ -1,20 +1,22 @@
-﻿function randomFloat() {
-	return $$lib_random_random_float();
-}
-
-// When one argument is provided, it is the max exclusive upper bound and the min is 0. 
-function randomInt(minIncl, maxExcl = null) {
-	return $$lib_random_random_int(minIncl, maxExcl);
-}
-
-function randomBool() {
-	return $$lib_random_random_float() > .5;
-}
-
-// TODO: maybe turn this into a primitive method of list.
-function randomChoice(list) {
-	if (list.length == 0) {
-		// TODO: throw exception.
+﻿namespace Random {
+	function randomFloat() {
+		return $$lib_random_random_float();
 	}
-	return list[$$lib_random_random_int(0, list.length)];
+
+	// When one argument is provided, it is the max exclusive upper bound and the min is 0. 
+	function randomInt(minIncl, maxExcl = null) {
+		return $$lib_random_random_int(minIncl, maxExcl);
+	}
+
+	function randomBool() {
+		return $$lib_random_random_float() > .5;
+	}
+
+	// TODO: maybe turn this into a primitive method of list.
+	function randomChoice(list) {
+		if (list.length == 0) {
+			// TODO: throw exception.
+		}
+		return list[$$lib_random_random_int(0, list.length)];
+	}
 }

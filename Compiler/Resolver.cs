@@ -275,7 +275,7 @@ namespace Crayon
 		{
 			if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
 			if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
-			if (item is EnumDefinition) throw new ParserException(primaryToken, "Cannot create reference to enum. Must complete reference to enum member.");
+			if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
 			if (item is ConstStatement)
 			{
 				// TODO: do this properly.

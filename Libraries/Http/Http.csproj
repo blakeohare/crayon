@@ -8,8 +8,8 @@
     <ProjectGuid>{E21FB741-C303-4E54-BA6F-D5128B0408CE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Http</RootNamespace>
-    <AssemblyName>Http</AssemblyName>
+    <RootNamespace>HTTP</RootNamespace>
+    <AssemblyName>HTTP</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

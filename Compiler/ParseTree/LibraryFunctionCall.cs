@@ -16,7 +16,13 @@ namespace Crayon.ParseTree
 		public LibraryFunctionCall(Token token, string name, IList<Expression> args, Executable owner)
 			: base(token, owner)
 		{
-			string callingLibrary = owner.LibraryName;
+			string callingLibrary = null;
+			Executable ownerWalker = owner;
+			while (callingLibrary == null && owner != null)
+			{
+				callingLibrary = owner.LibraryName;
+				owner = owner.FunctionOrClassOwner;
+			}
 
 			if (callingLibrary == null)
 			{
@@ -26,7 +32,7 @@ namespace Crayon.ParseTree
 			this.LibraryName = callingLibrary;
 
 			string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
-			if (!name.StartsWith(expectedPrefix))
+			if (!name.StartsWith(expectedPrefix) && !name.StartsWith("lib_core_"))
 			{
 				throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
 			}

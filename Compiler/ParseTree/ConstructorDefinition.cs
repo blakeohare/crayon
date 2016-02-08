@@ -24,12 +24,8 @@ namespace Crayon.ParseTree
 			this.BaseArgs = baseArgs.ToArray();
 			this.Code = code.ToArray();
 			this.BaseToken = baseToken;
-		}
 
-		internal override IList<Executable> Resolve(Parser parser)
-		{
-			this.FunctionID = parser.GetNextFunctionId();
-
+			// TODO: verify default args are at the end.
 			this.MaxArgCount = this.ArgNames.Length;
 			int minArgCount = 0;
 			for (int i = 0; i < this.ArgNames.Length; ++i)
@@ -37,10 +33,22 @@ namespace Crayon.ParseTree
 				if (this.DefaultValues[i] != null)
 				{
 					minArgCount++;
-					this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
 				}
 			}
 			this.MinArgCount = minArgCount;
+		}
+
+		internal override IList<Executable> Resolve(Parser parser)
+		{
+			this.FunctionID = parser.GetNextFunctionId();
+
+			for (int i = 0; i < this.ArgNames.Length; ++i)
+			{
+				if (this.DefaultValues[i] != null)
+				{
+					this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
+				}
+			}
 
 			for (int i = 0; i < this.BaseArgs.Length; ++i)
 			{

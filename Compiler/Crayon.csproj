@@ -89,6 +89,7 @@
     <Compile Include="ParseTree\DotStepStruct.cs" />
     <Compile Include="ParseTree\DoWhileLoop.cs" />
     <Compile Include="ParseTree\EnumDefinition.cs" />
+    <Compile Include="ParseTree\EnumReference.cs" />
     <Compile Include="ParseTree\Executable.cs" />
     <Compile Include="ExecutableParser.cs" />
     <Compile Include="ParseTree\Expression.cs" />

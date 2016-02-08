@@ -17,6 +17,11 @@ namespace Crayon
 			this.length = tokens.Count;
 		}
 
+		public void Reset()
+		{
+			this.index = 0;
+		}
+
 		public bool IsNext(string token)
 		{
 			return this.PeekValue() == token;

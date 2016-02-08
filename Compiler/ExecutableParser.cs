@@ -396,6 +396,8 @@ namespace Crayon
 				Executable executable = ExecutableParser.Parse(parser, tokens, false, false, true, namespaceInstance);
 				if (executable is FunctionDefinition ||
 					executable is ClassDefinition ||
+					executable is EnumDefinition ||
+					executable is ConstStatement ||
 					executable is Namespace)
 				{
 					namespaceMembers.Add(executable);

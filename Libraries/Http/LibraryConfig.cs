@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Crayon;
 using Crayon.ParseTree;
 
-namespace Http
+namespace HTTP
 {
 	public class LibraryConfig : ILibraryConfig
 	{

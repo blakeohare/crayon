@@ -699,11 +699,6 @@ namespace Crayon
 
 		private void CompileFunctionDefinition(Parser parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
 		{
-			if (funDef.FunctionID == 13)
-			{
-
-			}
-
 			ByteBuffer tBuffer = new ByteBuffer();
 
 			List<int> offsetsForOptionalArgs = new List<int>();
