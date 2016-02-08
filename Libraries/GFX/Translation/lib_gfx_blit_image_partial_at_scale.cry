@@ -16,7 +16,7 @@ if (object1 == null ||
 	lib_func_error_message = "$gfx_blit_image_partial_at_scale requires an image object and 8 integer arguments.";
 } else if (%%%IS_OPEN_GL_BASED%%%) {
 	glDrawImageAdvanced(
-		object1,
+		$_cast('Image', object1),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),
 		$_cast('int', Value$arg4.internalValue),
@@ -28,7 +28,7 @@ if (object1 == null ||
 		255);
 } else {
 	$_blit_image_partial(
-		object1,
+		$_cast('Image', object1),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),
 		$_cast('int', Value$arg4.internalValue),

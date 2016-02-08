@@ -18,9 +18,9 @@ if (image1 == null) {
 		lib_func_error_message = "$gfx_blit_image_with_alpha alpha value must be between 0 and 255.";
 	} else {
 		if (%%%IS_OPEN_GL_BASED%%%) {
-			glDrawImageWithAlpha(object1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
+			glDrawImageWithAlpha($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
 		} else {
-			$_blit_image_alpha(object1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
+			$_blit_image_alpha($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
 		}
 	}
 }

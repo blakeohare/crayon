@@ -58,6 +58,7 @@ switch (Value$value.type) {
 
 	default:
 		output = null;
+		string1 = "Value";
 		break;
 }
 

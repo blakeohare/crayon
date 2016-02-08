@@ -12,7 +12,7 @@ if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "Coordinates must be integers.";
 } else if (%%%IS_OPEN_GL_BASED%%%) {
-	glDrawImageSimple(object1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+	glDrawImageSimple($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 } else {
-	$_blit_image(object1, $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+	$_blit_image($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 }

@@ -1,4 +1,4 @@
-﻿function @type('int') libGfxImgWidth(@type('object') imgObj, @type('Array<object>') output) {
+﻿function @type('int') libGfxGetImageSize(@type('object') imgObj, @type('Array<object>') output) {
 	@type('Image') img = $_cast('Image', imgObj);
 	$_array_set(output, 1, Image$img.width);
 	$_array_set(output, 2, Image$img.height);

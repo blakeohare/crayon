@@ -10,7 +10,7 @@ if (object1 == null) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "No image with the key '" + string1 + "' has been loaded.";
 } else {
-	ObjectInstance$obj1Instance.nativeData = $_new_array('object', 3);
+	ObjectInstance$objInstance1.nativeData = $_new_array('object', 3);
 	$_array_set(ObjectInstance$objInstance1.nativeData, 0, object1);
-	gfxLibGetImgSize(object1, ObjectInstance$objInstance1.nativeData);
+	libGfxGetImageSize(object1, ObjectInstance$objInstance1.nativeData);
 }

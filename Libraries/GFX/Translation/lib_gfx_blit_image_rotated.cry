@@ -21,13 +21,13 @@ if (image1 == null) {
 if (!lib_func_error_occurred) {
 	if (%%%IS_OPEN_GL_BASED%%%) {
 		glDrawImageRotated(
-			object1,
+			$_cast('Image', object1),
 			$_cast('int', Value$arg2.internalValue),
 			$_cast('int', Value$arg3.internalValue),
 			float1);
 	} else {
 		$_blit_image_rotated(
-			object1,
+			$_cast('Image', object1),
 			$_cast('int', Value$arg2.internalValue),
 			$_cast('int', Value$arg3.internalValue),
 			float1);
