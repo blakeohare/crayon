@@ -60,6 +60,12 @@ namespace Crayon.ParseTree
 			{
 				return constant;
 			}
+
+			EnumDefinition enumDef = parser.GetEnumDefinition(this.Name);
+			if (enumDef != null)
+			{
+				return new EnumReference(this.FirstToken, enumDef, this.FunctionOrClassOwner);
+			}
 			return this;
 		}
 
