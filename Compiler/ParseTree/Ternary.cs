@@ -34,8 +34,8 @@
 		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
 		{
 			this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
-			this.TrueValue = this.Condition.ResolveNames(parser, lookup, imports);
-			this.FalseValue = this.Condition.ResolveNames(parser, lookup, imports);
+			this.TrueValue = this.TrueValue.ResolveNames(parser, lookup, imports);
+			this.FalseValue = this.FalseValue.ResolveNames(parser, lookup, imports);
 			return this;
 		}
 
