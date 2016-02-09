@@ -257,6 +257,7 @@ namespace Crayon
 				if (classDefinition.StaticConstructor == null)
 				{
 					classDefinition.StaticConstructor = new ConstructorDefinition(null, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, classDefinition);
+					classDefinition.StaticConstructor.Resolve(parser);
 				}
 
 				List<Executable> staticFieldInitializers = new List<Executable>();
