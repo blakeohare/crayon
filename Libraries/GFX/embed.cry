@@ -13,9 +13,10 @@ namespace GFX {
 	enum ImageLoaderStatus {
 		LOADING = 0,
 		OK = 1,
-		NOT_FOUND = 2,
-		INVALID = 3,
-		TIMED_OUT = 4,
+		NOT_STARTED = 2,
+		NOT_FOUND = 3,
+		INVALID = 4,
+		TIMED_OUT = 5,
 	}
 
 	class ImageLoader {
@@ -87,7 +88,7 @@ namespace GFX {
 			[2] -> height
 		*/
 		constructor(_key) {
-			$$lib_gfx_image_get(this); 
+			$$lib_gfx_image_get(this, _key); 
 			this.width = $$lib_core_native_int(this, 1);
 			this.height = $$lib_core_native_int(this, 2);
 		}

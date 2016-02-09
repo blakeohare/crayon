@@ -1,6 +1,9 @@
-﻿// $gfx_image_get(instance object, string key)
+﻿/*
+	Args (trusted values)
+	[0] -> image object instance to apply data to
+	[1] -> string key
+*/
 import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
-// Args passed from trusted source.
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 string1 = $_cast('string', Value$arg2.internalValue);

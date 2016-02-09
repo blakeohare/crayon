@@ -889,7 +889,24 @@ function imageDownloadCompletionHandler(@type('string') key, bitmap) {
 }
 
 function @type('int') getImageErrorCode(@type('string') key) {
-	$_assert("Not implemented.");
+	/*
+		From GFX/embed.cry...
+		enum ImageLoaderStatus {
+			LOADING = 0,
+			OK = 1,
+			NOT_STARTED = 2,
+			NOT_FOUND = 3,
+			INVALID = 4,
+			TIMED_OUT = 5,
+		}
+	*/
+	@type('ImageSheetStatus') iss = getImageSheetStatus();
+	@type('int') t = isImageLoaded(key);
+	if (t == 0) return 2;
+	if (t == 1) return 1;
+
+	// TODO: this is wrong for non-resource web downloads.
+
 	return 0;
 }
 
@@ -899,11 +916,9 @@ function loadImageFromUserData(@type('string') key, @type('string') path) {
 
 // 0 - loading not initialized, 1 - loaded, 2 - not finished loading
 function @type('int') isImageLoaded(@type('string') key) {
-	@type('int') status = 0; // not loaded yet
 	@type('ImageSheetStatus') iss = getImageSheetStatus();
-
 	if ($_dictionary_contains(ImageSheetStatus$iss.resourceImagesByKeys, key)) {
-		status = 1; // yes, loaded
+		return 1; // yes, loaded
 	}
 
 	// Do not optimize this code out with a if (status == 0). If there are async downloads, their status will
@@ -921,5 +936,5 @@ function @type('int') isImageLoaded(@type('string') key) {
 		}
 	}
 
-	return status;
+	return 0; // nope
 }
