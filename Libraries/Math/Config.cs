@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Crayon;
-using Crayon.ParseTree;
+using LibraryConfig;
 
 namespace Math
 {
-	public class LibraryConfig : ILibraryConfig
+	public class Config : ILibraryConfig
 	{
 		private static string ReadFile(string path)
 		{
-			return Util.ReadFileInternally(typeof(LibraryConfig).Assembly, path);
+			return LibraryUtil.ReadEmbeddedTextResource(typeof(Config).Assembly, path);
 		}
 
 		public string GetEmbeddedCode()
@@ -33,19 +32,19 @@ namespace Math
 			}
 		}
 
-		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
+		public string GetTranslationCode(IPlatform platform, string functionName)
 		{
 			string file = ReadFile("Translation/" + functionName + ".cry");
 
-			file = Crayon.Constants.DoReplacements(file, new Dictionary<string, string>()
+			file = platform.DoReplacements(file, new Dictionary<string, string>()
 			{
-				{ "INT_IS_FLOOR", IsIntFloor(language) ? "true" : "false" },
+				{ "INT_IS_FLOOR", IsIntFloor(platform.LanguageId) ? "true" : "false" },
 			});
 
 			return file;
 		}
 
-		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
 		{
 			throw new Exception();
 		}

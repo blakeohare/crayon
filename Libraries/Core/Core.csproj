@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LibraryConfig.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Platforms\COpenGl.cs" />
     <Compile Include="Platforms\CSharpOpenTk.cs" />
     <Compile Include="Platforms\INativeTranslator.cs" />
@@ -53,12 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="embed.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Compiler\Crayon.csproj">
-      <Project>{6A25BB31-4280-470F-959E-25D6D5A173AD}</Project>
-      <Name>Crayon</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_core_print.cry" />
@@ -91,6 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_core_native_string.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Compiler\LibraryConfig\LibraryConfig.csproj">
+      <Project>{035A169E-3D27-4D58-8CE7-16787BFECC91}</Project>
+      <Name>LibraryConfig</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

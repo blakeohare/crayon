@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Crayon;
-using Crayon.ParseTree;
+using LibraryConfig;
 
 namespace Game
 {
-	public class LibraryConfig : ILibraryConfig
+	public class Config : ILibraryConfig
 	{
 		private static string ReadFile(string path)
 		{
-			return Util.ReadFileInternally(typeof(LibraryConfig).Assembly, path);
+			return LibraryUtil.ReadEmbeddedTextResource(typeof(Config).Assembly, path);
 		}
 
 		public string GetEmbeddedCode()
@@ -36,17 +35,17 @@ namespace Game
 			}
 		}
 
-		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
+		public string GetTranslationCode(IPlatform platform, string functionName)
 		{
 			string file = ReadFile("Translation/" + functionName + ".cry");
-			file = Constants.DoReplacements(file, new Dictionary<string, string>()
+			file = platform.DoReplacements(file, new Dictionary<string, string>()
 			{
-				{ "SCREEN_BLOCKS_EXECUTION", ScreenBlocksExecution(platform) ? "true" : "false" },
+				{ "SCREEN_BLOCKS_EXECUTION", ScreenBlocksExecution(platform.PlatformId) ? "true" : "false" },
 			});
 			return file;
 		}
 
-		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
 		{
 			throw new Exception();
 		}
@@ -55,7 +54,7 @@ namespace Game
 		{
 			return new Dictionary<string, string>()
 			{
-				{ "GameLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "GameLibHelper.cry") },
+				{ "GameLibHelper", ReadFile("GameLibHelper.cry") },
 			};
 		}
 	}

@@ -26,7 +26,7 @@ namespace Crayon.Translator
 
 			if (name.StartsWith("_lib_"))
 			{
-				output.Add(functionCall.AssociatedLibrary.TranslateNativeInvocation(this.Platform.ExpressionTranslatorForExternalLibraries, fullName, args));
+				output.Add(functionCall.AssociatedLibrary.TranslateNativeInvocation(this.Platform, fullName, args));
 				return;
 			}
 

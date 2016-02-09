@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Crayon;
-using Crayon.ParseTree;
+using LibraryConfig;
 
-namespace SFX
+namespace HTTP
 {
-	public class LibraryConfig : ILibraryConfig
+	public class Config : ILibraryConfig
 	{
 		private static string ReadFile(string path)
 		{
-			return Util.ReadFileInternally(typeof(LibraryConfig).Assembly, path);
+			return LibraryUtil.ReadEmbeddedTextResource(typeof(Config).Assembly, path);
 		}
 
 		public string GetEmbeddedCode()
@@ -17,12 +16,12 @@ namespace SFX
 			return ReadFile("embed.cry");
 		}
 
-		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
+		public string GetTranslationCode(IPlatform platform, string functionName)
 		{
 			return ReadFile("Translation/" + functionName + ".cry");
 		}
 
-		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
 		{
 			throw new Exception();
 		}

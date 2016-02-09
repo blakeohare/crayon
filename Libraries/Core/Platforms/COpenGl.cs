@@ -1,11 +1,8 @@
-﻿using Crayon;
-using Crayon.ParseTree;
-
-namespace Core.Platforms
+﻿namespace Core.Platforms
 {
 	class COpenGl : INativeTranslator
 	{
-		public string TranslatePrint(ExpressionTranslator translator, Expression value)
+		public string TranslatePrint(LibraryConfig.IPlatform platform, object value)
 		{
 			throw new System.NotImplementedException();
 		}

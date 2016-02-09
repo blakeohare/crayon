@@ -1,15 +1,14 @@
 ﻿using System;
-using Crayon;
 using System.Collections.Generic;
-using Crayon.ParseTree;
+using LibraryConfig;
 
 namespace GFX
 {
-	public class LibraryConfig : ILibraryConfig
+	public class Config : ILibraryConfig
 	{
 		private static string ReadFile(string path)
 		{
-			return Util.ReadFileInternally(typeof(LibraryConfig).Assembly, path);
+			return LibraryUtil.ReadEmbeddedTextResource(typeof(Config).Assembly, path);
 		}
 
 		public string GetEmbeddedCode()
@@ -34,17 +33,17 @@ namespace GFX
 			}
 		}
 
-		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
+		public string GetTranslationCode(IPlatform platform, string functionName)
 		{
 			string file = ReadFile("Translation/" + functionName + ".cry");
-			file = Constants.DoReplacements(file, new Dictionary<string, string>()
+			file = platform.DoReplacements(file, new Dictionary<string, string>()
 			{
-				{ "IS_OPEN_GL_BASED", IsOpenGlBased(platform) ? "true" : "false" },
+				{ "IS_OPEN_GL_BASED", IsOpenGlBased(platform.PlatformId) ? "true" : "false" },
 			});
 			return file;
 		}
 
-		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
 		{
 			throw new Exception();
 		}
@@ -53,7 +52,7 @@ namespace GFX
 		{
 			return new Dictionary<string, string>()
 			{
-				{ "GfxLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "GfxLibHelper.cry") },
+				{ "GfxLibHelper", ReadFile("GfxLibHelper.cry") },
 			};
 		}
 	}

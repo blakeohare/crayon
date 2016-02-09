@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Crayon.ParseTree;
+using LibraryConfig;
 
 namespace Crayon
 {
@@ -19,14 +20,14 @@ namespace Crayon
 
 		public SystemLibraryManager() { }
 
-		public string GetLibrarySwitchStatement(LanguageId language, PlatformId platform)
+		public string GetLibrarySwitchStatement(AbstractPlatform platform)
 		{
 			List<string> output = new List<string>();
 			foreach (string name in this.orderedListOfFunctionNames)
 			{
 				output.Add("case " + this.libFunctionIds[name] + ":\n");
 				output.Add("$_comment('" + name + "');");
-				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(language, platform, name));
+				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(platform, name));
 				output.Add("\nbreak;\n");
 			}
 			return string.Join("\n", output);
@@ -177,7 +178,7 @@ namespace Crayon
 				throw new ParserException(throwToken, "Could not import library: " + name);
 			}
 
-			ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".LibraryConfig") as ILibraryConfig;
+			ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".Config") as ILibraryConfig;
 			if (libraryConfig == null)
 			{
 				throw new ParserException(throwToken, "Error creating LibraryConfig instance in Library '" + name + "'");

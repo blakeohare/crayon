@@ -1,13 +1,10 @@
-﻿using Crayon;
-using Crayon.ParseTree;
-
-namespace Core.Platforms
+﻿namespace Core.Platforms
 {
 	class CSharpOpenTk : INativeTranslator
 	{
-		public string TranslatePrint(ExpressionTranslator translator, Expression value)
+		public string TranslatePrint(LibraryConfig.IPlatform platform, object value)
 		{
-			return "System.Console.WriteLine(" + translator.Translate(value) + ")";
+			return "System.Console.WriteLine(" + platform.Translate(value) + ")";
 		}
 	}
 }

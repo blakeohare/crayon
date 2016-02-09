@@ -1,13 +1,10 @@
-﻿using Crayon;
-using Crayon.ParseTree;
-
-namespace Core.Platforms
+﻿namespace Core.Platforms
 {
 	class JavaScriptCanvas : INativeTranslator
 	{
-		public string TranslatePrint(ExpressionTranslator translator, Expression value)
+		public string TranslatePrint(LibraryConfig.IPlatform platform, object value)
 		{
-			return "R.print(" + translator.Translate(value) + ")";
+			return "R.print(" + platform.Translate(value) + ")";
 		}
 	}
 }

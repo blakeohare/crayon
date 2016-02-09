@@ -1,13 +1,10 @@
-﻿using Crayon;
-using Crayon.ParseTree;
-
-namespace Core.Platforms
+﻿namespace Core.Platforms
 {
 	class JavaAndroid : INativeTranslator
 	{
-		public string TranslatePrint(ExpressionTranslator translator, Expression value)
+		public string TranslatePrint(LibraryConfig.IPlatform platform, object value)
 		{
-			return "android.util.Log.d(\"\", " + translator.Translate(value) + ")";
+			return "android.util.Log.d(\"\", " + platform.Translate(value) + ")";
 		}
 	}
 }

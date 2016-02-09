@@ -1,13 +1,10 @@
-﻿using Crayon;
-using Crayon.ParseTree;
-
-namespace Core.Platforms
+﻿namespace Core.Platforms
 {
 	class JavaAwt : INativeTranslator
 	{
-		public string TranslatePrint(ExpressionTranslator translator, Expression value)
+		public string TranslatePrint(LibraryConfig.IPlatform platform, object value)
 		{
-			return "System.out.println(" + translator.Translate(value) + ")";
+			return "System.out.println(" + platform.Translate(value) + ")";
 		}
 	}
 }

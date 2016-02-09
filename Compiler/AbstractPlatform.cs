@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crayon.ParseTree;
 using Crayon.Translator;
+using LibraryConfig;
 
 namespace Crayon
 {
-	internal abstract class AbstractPlatform
+	internal abstract class AbstractPlatform : IPlatform
 	{
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }
@@ -17,7 +17,6 @@ namespace Crayon
 
 		public PlatformId PlatformId { get; private set; }
 		public LanguageId LanguageId { get; private set; }
-		public ExpressionTranslator ExpressionTranslatorForExternalLibraries { get; private set; }
 
 		public abstract bool IsAsync { get; }
 		public abstract bool SupportsListClear { get; }
@@ -47,7 +46,6 @@ namespace Crayon
 		{
 			this.PlatformId = platform;
 			this.LanguageId = language;
-			this.ExpressionTranslatorForExternalLibraries = new ExpressionTranslator(this);
 
 			this.Context = new CompileContext();
 			this.IsMin = isMin;
@@ -72,6 +70,23 @@ namespace Crayon
 			}
 		}
 
+		public string Translate(object expressionObj)
+		{
+			Expression expression = expressionObj as Expression;
+			if (expression == null)
+			{
+				throw new InvalidOperationException("Only expression objects provided by the compiler can be used here.");
+			}
+			List<string> output = new List<string>();
+			this.Translator.TranslateExpression(output, expression);
+			return string.Join("", output);
+		}
+
+		public string DoReplacements(string code, Dictionary<string, string> replacements)
+		{
+			return Constants.DoReplacements(code, replacements);
+		}
+
 		private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder, List<string> spriteSheetOpsStringArgs, List<int[]> spriteSheetOpsIntArgs)
 		{
 			Parser userCodeParser = new Parser(null, buildContext, null);
@@ -85,7 +100,7 @@ namespace Crayon
 			ByteCodeCompiler bcc = new ByteCodeCompiler();
 			ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 
-			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement(this.LanguageId, this.PlatformId);
+			this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement(this);
 			this.InterpreterCompiler = new InterpreterCompiler(this, userCodeParser.SystemLibraryManager);
 			return buffer;
 		}

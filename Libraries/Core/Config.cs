@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Crayon;
+using LibraryConfig;
 using Core.Platforms;
-using Crayon.ParseTree;
 
 namespace Core
 {
-	public class LibraryConfig : ILibraryConfig
+	public class Config : ILibraryConfig
 	{
 		private Dictionary<PlatformId, INativeTranslator> nativeTranslators;
 
-		public LibraryConfig()
+		public Config()
 		{
 			// TODO: right now the only good use for this is a reference template for creating native translators in other libraries.
 			// There isn't actually a good reason to only define print in lib_core as $_print is actually used in other places in the
@@ -33,23 +32,18 @@ namespace Core
 		{
 			return new Dictionary<string, string>()
 			{
-				{ "CoreLibHelper", Util.ReadFileInternally(typeof(LibraryConfig).Assembly, "CoreLibHelper.cry") },
+				{ "CoreLibHelper", ReadFile("CoreLibHelper.cry") },
 			};
 		}
 
-		internal INativeTranslator GetTranslator(ExpressionTranslator exprTranslator)
+		internal INativeTranslator GetTranslator(IPlatform platform)
 		{
 			INativeTranslator output = null;
-			if (this.nativeTranslators.TryGetValue(exprTranslator.Platform, out output))
+			if (this.nativeTranslators.TryGetValue(platform.PlatformId, out output))
 			{
 				return output;
 			}
-			throw new Exception("There is no Core support for " + exprTranslator.Platform); // which would be bad.
-		}
-
-		private static string ReadFile(string path)
-		{
-			return Util.ReadFileInternally(typeof(LibraryConfig).Assembly, path);
+			throw new Exception("There is no Core support for " + platform.PlatformId); // which would be bad.
 		}
 
 		public string GetEmbeddedCode()
@@ -57,21 +51,26 @@ namespace Core
 			return ReadFile("embed.cry");
 		}
 
-		public string GetTranslationCode(LanguageId language, PlatformId platform, string functionName)
+		public string GetTranslationCode(IPlatform platform, string functionName)
 		{
 			return ReadFile("Translation/" + functionName + ".cry");
 		}
 
-		public string TranslateNativeInvocation(ExpressionTranslator translator, string functionName, Expression[] args)
+		public string TranslateNativeInvocation(IPlatform platform, string functionName, object[] args)
 		{
-			INativeTranslator nativeTranslator = this.GetTranslator(translator);
+			INativeTranslator nativeTranslator = this.GetTranslator(platform);
 
 			switch (functionName)
 			{
-				case "$_lib_core_print": return nativeTranslator.TranslatePrint(translator, args[0]);
+				case "$_lib_core_print": return nativeTranslator.TranslatePrint(platform, args[0]);
 				default:
 					throw new Exception();
 			}
+		}
+
+		private static string ReadFile(string path)
+		{
+			return LibraryUtil.ReadEmbeddedTextResource(typeof(Config).Assembly, path);
 		}
 	}
 }

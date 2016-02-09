@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSON", "..\Libraries\JSON\J
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "..\Libraries\Web\Web.csproj", "{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryConfig", "LibraryConfig\LibraryConfig.csproj", "{035A169E-3D27-4D58-8CE7-16787BFECC91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,16 @@ Global
 		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{67C1E3C4-5998-4EBE-87AA-E5F80DDDDBB3}.Release|x86.ActiveCfg = Release|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{035A169E-3D27-4D58-8CE7-16787BFECC91}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

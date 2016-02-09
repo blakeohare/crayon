@@ -9,7 +9,7 @@ namespace Crayon.Translator.Java
 	internal class JavaAwtPlatform : JavaPlatform
 	{
 		public JavaAwtPlatform()
-			: base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), null)
+			: base(LibraryConfig.PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), null)
 		{
 		}
 
