@@ -148,7 +148,7 @@ namespace GFX {
 			this._ids = _ids;
 		}
 
-		function fromIds(ids) {
+		static function fromIds(ids) {
 			$$lib_gfx_image_sheet_load(ids);
 			return new ImageSheetLoader(ids);
 		}
