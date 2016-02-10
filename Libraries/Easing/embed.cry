@@ -39,10 +39,7 @@ namespace Easing {
 			i = -1;
 			m = intervals + 1;
 			while (++i <= m) {
-				t = fp(1.0 * i / m);
-				if (t < 0) t = 0;
-				else if (t > 1) t = 1;
-				pts.add(t);
+				pts.add(fp(1.0 * i / m) * 1.0);
 			}
 			$$lib_easing_apply_pts(this, pts);
 		}
