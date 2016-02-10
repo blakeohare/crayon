@@ -642,10 +642,10 @@ namespace Crayon
 					{
 						throw new Exception(); // all variables should have local ID's allocated or errors thrown by now.
 					}
+					buffer.Add(varTarget.FirstToken, OpCode.LOCAL, scopeId);
 					this.CompileExpression(parser, buffer, assignment.Value, true);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
 					buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
-					throw new NotImplementedException(); // TODO: redo this
 				}
 				else if (assignment.Target is DotStep)
 				{

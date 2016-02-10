@@ -276,14 +276,7 @@ namespace Crayon
 			if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
 			if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
 			if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
-			if (item is ConstStatement)
-			{
-				// TODO: do this properly.
-				// Must create a new parse node that contains the value rather than use the one from conststatement, otherwise the tokens will be wrong.
-				// It'd be super useful if there was an IConstant interface for expressions that had a clone method that took in a new token.
-				//return ((ConstStatement)exec).Expression;
-				throw new Exception();
-			}
+			if (item is ConstStatement) return new ConstReference(primaryToken, (ConstStatement)item, owner);
 			if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
 
 			throw new System.InvalidOperationException(); // what?

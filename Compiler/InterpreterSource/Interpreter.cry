@@ -83,6 +83,7 @@ function @omitReturn @type('string') interpret() {
 	@type('List<int>') intList1 = null;
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
+	@type('Array<object>') objArray1 = null;
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;

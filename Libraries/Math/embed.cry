@@ -1,4 +1,9 @@
 ﻿namespace Math {
+
+	// TODO: fix the enum and const resolution problems
+	//const PI = 3.14159265358979323846;
+	//const E = 2.718281828459045235360;
+
 	function abs(value) {
 		return $$lib_math_abs(value);
 	}

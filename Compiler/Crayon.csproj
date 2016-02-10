@@ -78,6 +78,7 @@
     <Compile Include="ParseTree\ClassDefinition.cs" />
     <Compile Include="ParseTree\ClassReference.cs" />
     <Compile Include="ParseTree\CompileTimeDictionary.cs" />
+    <Compile Include="ParseTree\ConstReference.cs" />
     <Compile Include="ParseTree\ConstructorDefinition.cs" />
     <Compile Include="ParseTree\ConstStatement.cs" />
     <Compile Include="ParseTree\ContinueStatement.cs" />

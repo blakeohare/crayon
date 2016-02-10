@@ -44,7 +44,8 @@ namespace Crayon.ParseTree
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
-			throw new System.InvalidOperationException();
+			this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
+			return this;
 		}
 
 		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
