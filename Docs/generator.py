@@ -100,9 +100,52 @@ def parse_namespace(name, namespace):
 			'description': parse_content_element(description)
 		}
 	
+	for fn in contents.get('function', []):
+		parse_function(name, fn)
+	
 	for enum in contents.get('enum', []):
 		parse_enum(name, enum)
 
+def parse_function(prefix, fn):
+	name = fn.attrib.get('name')
+	if name == None:
+		fail("Function requires a name.")
+	print "Parsing", prefix + '.' + name + '...'
+	path = prefix + '.' + name.lower()
+	data = {
+		'ARG_COUNT': '0',
+	}
+	items = get_children_lookup(fn)
+	args = items.get('arg', [])
+	header_data = [str(len(args))]
+	for arg in args:
+		arg_name = arg.attrib.get('name')
+		arg_type = arg.attrib.get('type')
+		arg_default = arg.attrib.get('default')
+		if arg_default == None: arg_default = ''
+		if ',' in arg_default: fail("Arg default value cannot contain a comma. Sorry.")
+		if arg_name == None: fail("Argument must have a name.")
+		if arg_type == None: fail("Argument must have a type.")
+		
+		header_data.append(arg_name)
+		header_data.append(arg_type)
+		header_data.append(arg_default) # possibly empty string
+	
+	data = [','.join(header_data)]
+	for arg in args:
+		description = parse_content_element(arg)
+		data.append(description)
+	
+	description = parse_content_element(items.get('description', [None])[0])
+	
+	ENTITIES[path] = {
+		'type': 'function',
+		'name': name,
+		'data': '~@#@~'.join(data),
+		'description': description,
+	}
+		
+		
 def parse_enum(prefix, enum):
 	name = enum.attrib.get('name')
 	if name == None:
@@ -183,6 +226,7 @@ _CHILD_PREFIX = {
 	'library': 'li',
 	'namespace': 'ns',
 	'class': 'cl',
+	'function': 'fn',
 	'enum': 'en',
 	'enum_value': 'ev',
 	'enum_value_simple': 'es',
@@ -195,11 +239,16 @@ def serialize_children(entity):
 		key = child['key']
 		if prefix == 'es':
 			key = child['name']
+		elif prefix == 'fn':
+			key = child['name'].lower()
 		if prefix == None:
 			fail("unexpected child type: " + child['type'])
 		output.append(prefix + ':' + key)
 	return ','.join(output)
 		
+
+def sanitize_sql_value(string):
+	return string.replace("'", "''")
 
 def generate_sql():
 	
@@ -225,9 +274,9 @@ def generate_sql():
 			'name': entity.get('name', ''),
 			'version': VERSION,
 			'path': key.replace('.', '/'),
-			'description': description,
+			'description': sanitize_sql_value(description),
 			'children': serialize_children(entity),
-			'data': ''
+			'data': sanitize_sql_value(entity.get('data', '')),
 		}
 		
 		row = []

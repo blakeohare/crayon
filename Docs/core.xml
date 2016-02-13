@@ -16,7 +16,7 @@
 					If none is provided, a generic message is displayed instead.
 				</arg>
 				<description>
-				Causes a crash if the given condition is not true.
+					Causes a crash if the given condition is not true.
 				</description>
 			</function>
 			
