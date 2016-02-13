@@ -1,0 +1,38 @@
+<documentation>
+	<library name="Core">
+		<description>
+			Core library. Unlike other libraries, this library is implicitly imported. 
+			Contains various common-use functions.
+		</description>
+		
+		<namespace name="Core">
+			
+			<function name="assert">
+				<arg name="condition" type="boolean">
+					Value to check. Error is generated if false.
+				</arg>
+				<arg name="message" type="string" default="null">
+					message to display in the error if the condition is false. 
+					If none is provided, a generic message is displayed instead.
+				</arg>
+				<description>
+				Causes a crash if the given condition is not true.
+				</description>
+			</function>
+			
+			<function name="print">
+				<arg name="value" type="any">
+					Value to print.
+				</arg>
+				<description>
+					Outputs a value to standard output.
+					<note>
+						For platforms that do not support standard output, the closest equivalent is used.
+						Notably for JavaScript, this is the developer's console.
+					</note>
+				</description>
+			</function>
+		</namespace>
+
+	</library>
+</documentation>
