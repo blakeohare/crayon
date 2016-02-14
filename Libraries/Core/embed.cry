@@ -31,6 +31,18 @@
 		return $$lib_core_typeof(value);
 	}
 
+	enum Type {
+		NULL = 0,
+		BOOLEAN = 1,
+		INTEGER = 2,
+		FLOAT = 3,
+		STRING = 4,
+		LIST = 5,
+		DICTIONARY = 6,
+		OBJECT = 7,
+		FUNCTION = 8,
+	}
+
 	function _LIB_CORE_list_sort_by_key(fp, list) {
 		if (list.length > 1) {
 			k = [];
