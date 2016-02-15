@@ -8,12 +8,12 @@ switch (Value$arg1.type) {
 	case Types.FLOAT: int1 = 3; break;
 	case Types.STRING: int1 = 4; break;
 	case Types.LIST: int1 = 5; break;
-	case Types.DICTIONARYint1 = 6; break;
+	case Types.DICTIONARY: int1 = 6; break;
 	case Types.INSTANCE: int1 = 7; break;
 	case Types.FUNCTION: int1 = 8; break;
 
 	// TODO: remove this
-	case Types.NATIVE_OBJECT: int1 = 9;
+	case Types.NATIVE_OBJECT: int1 = 9; break;
 
 	// This should never happen.
 	default: int1 = 10; break;
