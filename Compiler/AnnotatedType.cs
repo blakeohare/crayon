@@ -14,7 +14,8 @@ namespace Crayon
 		public AnnotatedType(Crayon.ParseTree.Annotation annotation)
 		{
 			if (annotation.Type != "type") throw new ParserException(annotation.FirstToken, "Expected type annotation.");
-			this.Initialize(annotation.FirstToken, Tokenizer.Tokenize("proxy token stream", annotation.GetSingleArgAsString(null), -1, false));
+			this.Initialize(annotation.FirstToken, 
+				new TokenStream(Tokenizer.Tokenize("proxy token stream", annotation.GetSingleArgAsString(null), -1, false)));
 		}
 
 		public AnnotatedType(Token stringToken, TokenStream proxyTokenStream)

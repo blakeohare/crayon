@@ -6,7 +6,7 @@ namespace Crayon.Translator.JavaScript
 	{
 		public static string Minify(string originalCode)
 		{
-			TokenStream tokens = Tokenizer.Tokenize("JS", originalCode, 1, true);
+			TokenStream tokens = new TokenStream(Tokenizer.Tokenize("JS", originalCode, 1, true));
 			List<string> output = new List<string>();
 			string prev = null;
 			while (tokens.HasMore)

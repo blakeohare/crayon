@@ -44,7 +44,7 @@ namespace Crayon.Translator.Java
 
 		public string GetTypeStringFromAnnotation(Token stringToken, string value, bool wrappedContext, bool dropGenerics)
 		{
-			AnnotatedType type = new AnnotatedType(stringToken, Tokenizer.Tokenize("type proxy", value, -1, false));
+			AnnotatedType type = new AnnotatedType(stringToken, new TokenStream(Tokenizer.Tokenize("type proxy", value, -1, false)));
 			return GetTypeStringFromAnnotation(type, wrappedContext, dropGenerics);
 		}
 

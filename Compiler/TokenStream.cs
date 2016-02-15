@@ -1,25 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon
 {
 	internal class TokenStream
 	{
-		private int index;
-		private int length;
-		private Token[] tokens;
+		private List<Token[]> tokenLayers = new List<Token[]>();
+		private List<int> indexes = new List<int>();
+		private Token[] topTokens;
+		private int topIndex;
+		private int topLength;
+		private bool empty;
 
 		public TokenStream(IList<Token> tokens)
 		{
-			this.index = 0;
-			this.tokens = tokens.ToArray();
-			this.length = tokens.Count;
+			this.topIndex = 0;
+			this.topTokens = tokens.ToArray();
+			this.topLength = this.topTokens.Length;
+
+			this.indexes.Add(0);
+			this.tokenLayers.Add(this.topTokens);
+			this.empty = false;
 		}
 
-		public void Reset()
+		private Token SafePeek()
 		{
-			this.index = 0;
+			if (this.empty) throw new EofException();
+
+			if (this.topIndex < this.topLength)
+			{
+				return this.topTokens[this.topIndex];
+			}
+
+			this.SafePopLayer();
+
+			return this.SafePeek();
+		}
+
+		private Token SafePop()
+		{
+			Token token = this.SafePeek();
+			this.topIndex++;
+			return token;
+		}
+
+		private bool SafeHasMore()
+		{
+			if (this.empty) return false;
+			if (this.topIndex < this.topLength) return true;
+			this.SafePopLayer();
+			return this.SafeHasMore();
+		}
+
+		private void SafePopLayer()
+		{
+			this.indexes.RemoveAt(this.indexes.Count - 1);
+			this.tokenLayers.RemoveAt(this.indexes.Count);
+
+			int i = this.indexes.Count - 1;
+			if (i == -1)
+			{
+				this.empty = true;
+			}
+			else
+			{
+				this.topIndex = this.indexes[i];
+				this.topTokens = this.tokenLayers[i];
+				this.topLength = this.topTokens.Length;
+			}
 		}
 
 		public bool IsNext(string token)
@@ -29,47 +77,41 @@ namespace Crayon
 
 		public bool AreNext(string token1, string token2)
 		{
-			if (this.IsNext(token1))
+			if (this.empty) return false;
+
+			if (!this.IsNext(token1)) return false;
+
+			// only check the top stack as multi-stream results are never contextually relevant.
+			if (this.topIndex + 1 < this.topLength)
 			{
-				if (this.index + 1 < this.length)
-				{
-					return this.tokens[this.index + 1].Value == token2;
-				}
+				return this.topTokens[this.topIndex + 1].Value == token2;
 			}
+
 			return false;
 		}
 
 		public Token Peek()
 		{
-			if (this.index < this.length)
-			{
-				return this.tokens[this.index];
-			}
-
-			throw new EofException();
+			return this.SafeHasMore() ? this.SafePeek() : null;
 		}
 
 		public Token Pop()
 		{
-			if (this.index < this.length)
-			{
-				return this.tokens[this.index++];
-			}
-
-			throw new EofException();
+			return this.SafePop();
 		}
 
 		public string PeekValue()
 		{
-			return this.Peek().Value;
+			return this.SafeHasMore() ? this.SafePeek().Value : null;
 		}
 
-		public string PeekValue(int skipAhead)
+		public string PeekValue(int offset)
 		{
-			int index = this.index + skipAhead;
-			if (index < this.length)
+			// only check the top stack as multi-stream results are never contextually relevant.
+			int index = this.topIndex + offset;
+			if (index < this.topLength)
 			{
-				return this.tokens[index].Value;
+				return this.topTokens[index].Value;
 			}
 			return null;
 		}
@@ -81,9 +123,9 @@ namespace Crayon
 
 		public bool PopIfPresent(string value)
 		{
-			if (this.index < this.length && this.tokens[this.index].Value == value)
+			if (this.PeekValue() == value)
 			{
-				this.index += 1;
+				this.Pop();
 				return true;
 			}
 			return false;
@@ -101,30 +143,29 @@ namespace Crayon
 
 		public bool HasMore
 		{
-			get { return this.index < this.length; }
+			get
+			{
+				return this.SafeHasMore();
+			}
 		}
 
 		public bool NextHasNoWhitespacePrefix
 		{
 			get
 			{
-				if (this.index < this.length)
-				{
-					Token token = this.tokens[this.index];
-					return token.HasWhitespacePrefix;
-				}
-				return false;
+				return this.SafeHasMore() && this.SafePeek().HasWhitespacePrefix;
 			}
 		}
 
-		// For inline imports
-		public void InsertTokens(TokenStream tokens)
+		// Inline imports, implicit core import statements...
+		public void InsertTokens(IList<Token> tokens)
 		{
-			Token[] otherTokens = tokens.tokens;
-			List<Token> theseTokens = new List<Token>(this.tokens);
-			theseTokens.InsertRange(this.index, otherTokens);
-			this.tokens = theseTokens.ToArray();
-			this.length = this.tokens.Length;
+			this.indexes[this.indexes.Count - 1] = this.topIndex;
+			this.topTokens = tokens.ToArray();
+			this.topIndex = 0;
+			this.topLength = this.topTokens.Length;
+			this.tokenLayers.Add(this.topTokens);
+			this.indexes.Add(0);
 		}
 	}
 }

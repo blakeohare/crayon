@@ -28,11 +28,7 @@ namespace Crayon
 						throw new ParserException(tokens.Peek(), "structs cannot be nested into any other construct.");
 					}
 
-					// struct is special. If you are not compiling in JS mode, 
-					if (Parser.IsValidIdentifier(tokens.PeekValue(1)) && tokens.PeekValue(2) == "{")
-					{
-						return ParseStruct(tokens, owner);
-					}
+					return ParseStruct(tokens, owner);
 				}
 
 				if (!isRoot && (value == "function" || value == "class"))
@@ -60,9 +56,8 @@ namespace Crayon
 							Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
 							inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
 						}
-						TokenStream inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
+						Token[] inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
 
-						// OMGHAX - insert the inline import into the current token stream.
 						tokens.InsertTokens(inlineTokens);
 
 						return ExecutableParser.Parse(parser, tokens, simpleOnly, semicolonPresent, isRoot, owner); // start exectuable parser anew.
