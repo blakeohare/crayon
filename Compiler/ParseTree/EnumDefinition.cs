@@ -25,6 +25,16 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
+			if (!parser.IsTranslateMode)
+			{
+				int resolutionState = parser.ConstantAndEnumResolutionState[this];
+				if (resolutionState == 2) return new Executable[0];
+				if (resolutionState == 1)
+				{
+					throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
+				}
+				parser.ConstantAndEnumResolutionState[this] = 1;
+			}
 			HashSet<int> consumed = new HashSet<int>();
 			int[] valuesArray = new int[this.Items.Length];
 
@@ -65,6 +75,7 @@ namespace Crayon.ParseTree
 					this.IntValue[itemName] = ic.Value;
 				}
 			}
+			parser.ConstantAndEnumResolutionState[this] = 2;
 
 			int next = 0;
 			for (int i = 0; i < this.Items.Length; ++i)

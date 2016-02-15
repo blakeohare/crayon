@@ -28,6 +28,13 @@ namespace Crayon.ParseTree
 			if (this.Root is EnumReference)
 			{
 				EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
+
+				int resolutionState = parser.ConstantAndEnumResolutionState[enumDef];
+				if (resolutionState != 2)
+				{
+					enumDef.Resolve(parser);
+				}
+
 				if (step == "length")
 				{
 					return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);

@@ -20,6 +20,17 @@ namespace Crayon.ParseTree
 
 		internal override IList<Executable> Resolve(Parser parser)
 		{
+			if (!parser.IsTranslateMode)
+			{
+				int resolutionState = parser.ConstantAndEnumResolutionState[this];
+				if (resolutionState == 2) return new Executable[0];
+				if (resolutionState == 1)
+				{
+					throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
+				}
+				parser.ConstantAndEnumResolutionState[this] = 1;
+			}
+
 			this.Expression = this.Expression.Resolve(parser);
 
 			if (this.Expression is IntegerConstant ||
@@ -33,6 +44,8 @@ namespace Crayon.ParseTree
 			{
 				throw new ParserException(this.FirstToken, "Invalid value for const. Expression must resolve to a constant at compile time.");
 			}
+
+			parser.ConstantAndEnumResolutionState[this] = 2;
 
 			parser.RegisterConst(this.NameToken, this.Expression);
 			return new Executable[0];

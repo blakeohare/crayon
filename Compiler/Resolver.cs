@@ -160,6 +160,17 @@ namespace Crayon
 			{
 				cd.ResolveMemberIds();
 			}
+
+			/*
+			 * 0 - not resolved
+			 * 1 - currently being resolved
+			 * 2 - fully resolved
+			 */
+			foreach (Executable ex in definitionsByFullyQualifiedNames.Values
+				.Where<Executable>(ex => ex is ConstStatement || ex is EnumDefinition))
+			{
+				parser.ConstantAndEnumResolutionState[ex] = 0;
+			}
 		}
 
 		private void RearrangeClassDefinitions()

@@ -18,7 +18,10 @@ namespace Crayon
 			this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
 			this.CurrentNamespace = "";
 			this.NamespacePrefixLookupForCurrentFile = new List<string>();
+			this.ConstantAndEnumResolutionState = new Dictionary<Executable, int>();
 		}
+
+		public Dictionary<Executable, int> ConstantAndEnumResolutionState { get; private set; }
 
 		private int functionIdCounter = 0;
 		private int fileIdCounter = 0;

@@ -17,7 +17,17 @@ namespace Crayon.ParseTree
 
 		internal override Expression Resolve(Parser parser)
 		{
-			throw new NotImplementedException();
+			if (parser.ConstantAndEnumResolutionState[this.ConstStatement] != 2)
+			{
+				this.ConstStatement.Resolve(parser);
+			}
+
+			IConstantValue value = this.ConstStatement.Expression as IConstantValue;
+			if (value == null)
+			{
+				throw new ParserException(this.ConstStatement.FirstToken, "Could not resolve this expression into a constant value.");
+			}
+			return value.CloneValue(this.FirstToken, this.FunctionOrClassOwner);
 		}
 
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
