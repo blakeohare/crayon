@@ -69,7 +69,7 @@ def parse_library(library):
 	library_name = library.attrib.get('name')
 	if library_name == None:
 		fail("Surely this library has a name")
-	print library_name
+	print "Parsing", library_name + '...'
 	library_key = library_name.lower()
 	items = get_children_lookup(library)
 	description = items.get('description', [None])[0]
@@ -105,13 +105,65 @@ def parse_namespace(name, namespace):
 	
 	for enum in contents.get('enum', []):
 		parse_enum(name, enum)
+	
+	for cls in contents.get('class', []):
+		parse_class(name, cls)
+
+def parse_class(prefix, cls):
+	name = cls.attrib.get('name')
+	if name == None:
+		fail("Class requires a name.")
+	print "Parsing", prefix + '.' + name + '...'
+	path = prefix + '.' + name.lower()
+	items = get_children_lookup(cls)
+	
+	contents = get_children_lookup(cls)
+	description = contents.get('description', [None])[0]
+	
+	ENTITIES[path] = {
+		'type': 'class',
+		'name': name,
+		'description': parse_content_element(description),
+	}
+	
+	for fi in contents.get('field', []):
+		parse_field(path, fi)
+	
+	for fn in contents.get('function', []):
+		parse_function(path, fn)
+	
+	for enum in contents.get('enum', []):
+		parse_enum(path, enum)
+	
+
+def parse_field(prefix, field):
+	name = field.attrib.get('name')
+	if name == None:
+		fail("Fields require a name.")
+	print "Parsing", prefix + '.' + name + '...'
+	path = prefix + '.' + name.lower()
+	
+	contents = get_children_lookup(field)
+	description = contents.get('description', [None])[0]
+	
+	ENTITIES[path] = {
+		'type': 'field',
+		'name': name,
+		'description': parse_content_element(description),
+	}
 
 def parse_function(prefix, fn):
 	name = fn.attrib.get('name')
+	is_constructor = False
+	if fn.attrib.get('constructor') == "true":
+		is_constructor = True
+		name = 'constructor'
+	
 	if name == None:
 		fail("Function requires a name.")
-	print "Parsing", prefix + '.' + name + '...'
+	
 	path = prefix + '.' + name.lower()
+	print "Parsing", prefix + '.' + name + '...'
 	data = {
 		'ARG_COUNT': '0',
 	}
@@ -161,7 +213,7 @@ def parse_enum(prefix, enum):
 	keys = []
 	for value in values_raw:
 		key = parse_enum_value(path, value)
-		keys.append(key)
+		keys.append(key.split('.')[-1])
 	description = items.get('description', [None])[0]
 	if description == None: fail("Enum without a description")
 	
@@ -230,17 +282,19 @@ _CHILD_PREFIX = {
 	'enum': 'en',
 	'enum_value': 'ev',
 	'enum_value_simple': 'es',
+	'field': 'fi',
 }
 
 def serialize_children(entity):
 	output = []
 	for child in entity.get('children', []):
 		prefix = _CHILD_PREFIX.get(child['type'])
-		key = child['key']
+		key = child['key'].split('.')[-1]
 		if prefix == 'es':
 			key = child['name']
 		elif prefix == 'fn':
 			key = child['name'].lower()
+		
 		if prefix == None:
 			fail("unexpected child type: " + child['type'])
 		output.append(prefix + ':' + key)
@@ -266,8 +320,6 @@ def generate_sql():
 		description = entity.get('description')
 		if description == None:
 			description = ''
-		else:
-			print key, description
 		sql_row = {
 			'type': type,
 			'key': VERSION + ':' + key,
@@ -281,7 +333,6 @@ def generate_sql():
 		
 		row = []
 		for column in columns:
-			print column
 			row.append("'" + sql_row[column] + "'")
 		queries.append("  (" + ', '.join(row) + ")")
 	
