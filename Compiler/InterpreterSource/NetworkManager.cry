@@ -12,7 +12,7 @@
 
 	@type('List<string>') headerNames = $_new_list('string');
 	@type('List<string>') headerValues = $_new_list('string');
-	@type('string') userAgent = "Crayon/v0.1.7; Have a nice day.";
+	@type('string') userAgent = "Crayon/v0.2.0; Have a nice day.";
 	@type('string') contentType = null;
 	@type('string') contentLength = null;
 	@type('bool') noContent = (body == null) || $_string_equals("GET", method);
