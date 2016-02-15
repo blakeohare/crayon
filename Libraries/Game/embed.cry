@@ -143,10 +143,14 @@
 		static field _frameBeginHandlers = [];
 		static field _frameEndHandlers = [];
 
+		field fps;
+
 		constructor(title, fps, width, height, screenWidth = null, screenHeight = null) {
 			
 			Core.assert(GameWindow.instance == null, "Cannot create multiple GameWindows.");
 			GameWindow.instance = this;
+
+			this.fps = fps;
 
 			screenWidth = screenWidth ?? width;
 			screenHeight = screenHeight ?? height;
