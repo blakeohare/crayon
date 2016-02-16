@@ -1,0 +1,123 @@
+<!-- TODO: show a graph -->
+<documentation>
+	<library name="Easing">
+		<description>
+			Library containing several CSS-inspired easing functions.
+		</description>
+		<namespace name="Easing">
+			<class name="EasingFunction">
+				<field static="true" name="LINEAR">
+					<description>
+						A linear easing function described by f(x) = x.
+					</description>
+				</field>
+				<field static="true" name="QUADRATIC">
+					<description>
+						A quadratic easing function described by f(x) = x<sup>2</sup>.
+					</description>
+				</field>
+				<field static="true" name="CUBIC">
+					<description>
+						A cubic easing function described by f(x) = x<sup>3</sup>.
+					</description>
+				</field>
+				<field static="true" name="QUART">
+					<description>
+						A quartic easing function described by f(x) = x<sup>4</sup>.
+					</description>
+				</field>
+				<field static="true" name="QUINT">
+					<description>
+						A quintic easing function described by f(x) = x<sup>5</sup>.
+					</description>
+				</field>
+				<field static="true" name="CIRCLE">
+					<description>
+						A circular easing function described by f(x) = sqrt(1 - x<sup>2</sup>).
+					</description>
+				</field>
+				<field static="true" name="SIN">
+					<description>
+						A sine-like easing function described by f(x) = 1 - cos(x * pi / 2).
+					</description>
+				</field>
+				<field static="true" name="ELASTIC">
+					<description>
+						An elastic easing function described by a complicated function that can be found in the source code if you're really that interested.
+					</description>
+				</field>
+				<description>
+					An easing function.
+				</description>
+				<function constructor="true">
+					<arg name="functionPointer" type="function">
+						A user-defined function that takes in a float from 0 to 1 and returns another float. Generally the output of this function should also be within the range of 0 to 1 but can also exceed either end of this range for things like recoil.
+					</arg>
+					<arg name="intervals" type="integer (positive)" default="100">
+						Number of intervals to sample. The easing computation will linearly interpolate between these points so that complex easing functions can be computed without concern of slowing down animations.
+					</arg>
+				</function>
+				<function name="ease">
+					<arg name="start" type="number">
+						Start value to interpolate from.
+					</arg>
+					<arg name="end" type="number">
+						End value to interpolate to.
+					</arg>
+					<arg name="current" type="number">
+						Current timeline value from t = 0.
+					</arg>
+					<arg name="duration" type="number">
+						Maximum timeline value.
+					</arg>
+					<arg name="integers" type="boolean" default="false">
+						When set to true, all output will be rounded to the nearest integer.
+					</arg>
+					<description>
+						Interpolates the values using both ease in and ease in and ease out. The first half of the progression is ease-in followed by ease-out during the second half.
+					</description>
+				</function>
+				<function name="easeIn">
+					<arg name="start" type="number">
+						Start value to interpolate from.
+					</arg>
+					<arg name="end" type="number">
+						End value to interpolate to.
+					</arg>
+					<arg name="current" type="number">
+						Current timeline value from t = 0.
+					</arg>
+					<arg name="duration" type="number">
+						Maximum timeline value.
+					</arg>
+					<arg name="integers" type="boolean" default="false">
+						When set to true, all output will be rounded to the nearest integer.
+					</arg>
+					<description>
+						Interpolates values using an ease in progression, which is the same as the easing function values, directly.
+					</description>
+				</function>
+				<function name="easeOut">
+					<arg name="start" type="number">
+						Start value to interpolate from.
+					</arg>
+					<arg name="end" type="number">
+						End value to interpolate to.
+					</arg>
+					<arg name="current" type="number">
+						Current timeline value from t = 0.
+					</arg>
+					<arg name="duration" type="number">
+						Maximum timeline value.
+					</arg>
+					<arg name="integers" type="boolean" default="false">
+						When set to true, all output will be rounded to the nearest integer.
+					</arg>
+					<description>
+						Interpolates values using an ease out progression. Easing out is the same as easeOut(ratio) = 1 - easeIn(1 - ratio).
+					</description>
+				</function>
+			</class>
+		</namespace>
+	</library>
+</documentation>
