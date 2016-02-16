@@ -64,7 +64,11 @@
 	function _LIB_CORE_list_filter(fp, list) {
 		output = [];
 		for (t : list) {
-			if (fp(t) == true) {
+			b = fp(t);
+			if ($$lib_core_typeof(b) != Core.Type.BOOLEAN) {
+				$$lib_core_assert(false, "User function returned a non-boolean value.");
+			}
+			if (b) { 
 				output.add(t);
 			}
 		}

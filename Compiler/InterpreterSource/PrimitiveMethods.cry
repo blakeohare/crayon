@@ -61,14 +61,17 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.INSERT:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.JOIN:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.MAP:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.POP:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.REVERSE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.SHUFFLE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.SORT:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.CLEAR:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.CLONE:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.CONTAINS:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.GET:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.KEYS:
+			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.MERGE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
 				return output;

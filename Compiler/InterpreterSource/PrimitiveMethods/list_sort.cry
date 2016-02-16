@@ -1,6 +1,6 @@
 ﻿
 if (argCount == 0) {
-	lib_core_sort_lists(list1, null, intOutParam);
+	lib_core_sort_lists(list1, list1, intOutParam);
 	if ($_array_get(intOutParam, 0) > 0) {
 		return killExecution(stack, pc, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 	}
@@ -14,6 +14,5 @@ if (argCount == 0) {
 	} else {
 		return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");
 	}
+	output = null; // This is required. Triggers function fallback.
 }
-
-output = null; // This is required. Triggers function fallback.

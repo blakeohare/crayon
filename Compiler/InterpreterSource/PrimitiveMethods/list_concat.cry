@@ -10,6 +10,6 @@ list2 = $_cast('List<Value>', Value$value2.internalValue);
 
 len = $_list_length(list2);
 // TODO: use native platform list concatenation if possible e.g. .AddRange()
-for (i = 0; i < len; i += 2) {
+for (i = 0; i < len; i += 1) {
 	$_list_push(list1, $_list_get(list2, i));
 }

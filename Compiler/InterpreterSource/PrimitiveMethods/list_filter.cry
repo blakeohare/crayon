@@ -8,11 +8,12 @@ if (Value$value2.type != Types.FUNCTION) {
 	return killExecution(stack, pc, "list filter method requires a function pointer as its argument.");
 }
 
-// TODO: consider checking arg length?
+// TODO: consider checking arg length of the method pointer?
+// For now it'll just error in the Core/embed.cry code
 
 primitiveMethodToCoreLibraryFallback = true;
 functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 0); // MAGIC NUMBER: 0
-$_array_set(funcArgs, 1, value2); // funcArgs is allocated very big.
+$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
 argCount = 2;
 
 output = null; // This is required. Triggers function fallback.

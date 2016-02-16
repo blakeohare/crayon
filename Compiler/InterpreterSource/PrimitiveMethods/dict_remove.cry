@@ -12,6 +12,7 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 				bool2 = false;
 				$_dictionary_remove(DictImpl$dictImpl.keyIntLookup, int1);
 				$_dictionary_remove(DictImpl$dictImpl.valueIntLookup, int1);
+				DictImpl$dictImpl.size -= 1;
 			}
 			break;
 		case Types.INSTANCE:
@@ -21,6 +22,7 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 				bool2 = false;
 				$_dictionary_remove(DictImpl$dictImpl.keyIntLookup, int1);
 				$_dictionary_remove(DictImpl$dictImpl.valueIntLookup, int1);
+				DictImpl$dictImpl.size -= 1;
 			}
 			break;
 		case Types.STRING:
@@ -29,6 +31,7 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 				bool2 = false;
 				$_dictionary_remove(DictImpl$dictImpl.keyStringLookup, string1);
 				$_dictionary_remove(DictImpl$dictImpl.valueStringLookup, string1);
+				DictImpl$dictImpl.size -= 1;
 			}
 			break;
 		default:

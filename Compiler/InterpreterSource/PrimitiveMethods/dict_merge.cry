@@ -18,3 +18,5 @@ if (DictImpl$dictImpl2.size > 0) {
 		cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
 	}
 }
+
+output = VALUE_NULL;

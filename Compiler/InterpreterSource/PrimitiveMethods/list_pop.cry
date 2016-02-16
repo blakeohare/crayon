@@ -8,4 +8,8 @@ if (len < 1) {
 	return killExecution(stack, pc, "Cannot pop from an empty list.");
 }
 
+if (returnValueUsed) {
+	output = $_list_get(list1, len - 1);
+}
+
 $_list_pop(list1);

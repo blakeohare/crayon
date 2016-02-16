@@ -5,8 +5,8 @@ if (argCount > 0) {
 
 if (DictImpl$dictImpl.keyType == Types.STRING) {
 	output = new Value(Types.LIST,
-		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.keyStringLookup)));
+		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.valueStringLookup)));
 } else {
 	output = new Value(Types.LIST,
-		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.keyIntLookup)));
+		$_cast_to_list('Value', $_dictionary_get_values(DictImpl$dictImpl.valueIntLookup)));
 }
