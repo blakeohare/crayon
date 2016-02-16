@@ -12,11 +12,16 @@
 	if ($_dictionary_contains(nameLookups, 'concat')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'concat'), PrimitiveMethodName.CONCAT);
 	if ($_dictionary_contains(nameLookups, 'contains')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'contains'), PrimitiveMethodName.CONTAINS);
 	if ($_dictionary_contains(nameLookups, 'endsWith')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'endsWith'), PrimitiveMethodName.ENDS_WITH);
+	if ($_dictionary_contains(nameLookups, 'filter')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'filter'), PrimitiveMethodName.FILTER);
+	if ($_dictionary_contains(nameLookups, 'get')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'get'), PrimitiveMethodName.GET);
 	if ($_dictionary_contains(nameLookups, 'indexOf')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'indexOf'), PrimitiveMethodName.INDEX_OF);
 	if ($_dictionary_contains(nameLookups, 'insert')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'insert'), PrimitiveMethodName.INSERT);
 	if ($_dictionary_contains(nameLookups, 'join')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'join'), PrimitiveMethodName.JOIN);
 	if ($_dictionary_contains(nameLookups, 'keys')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'keys'), PrimitiveMethodName.KEYS);
 	if ($_dictionary_contains(nameLookups, 'lower')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'lower'), PrimitiveMethodName.LOWER);
+	if ($_dictionary_contains(nameLookups, 'map')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'map'), PrimitiveMethodName.MAP);
+	if ($_dictionary_contains(nameLookups, 'merge')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'merge'), PrimitiveMethodName.MERGE);
+	if ($_dictionary_contains(nameLookups, 'pop')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'pop'), PrimitiveMethodName.POP);
 	if ($_dictionary_contains(nameLookups, 'remove')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'remove'), PrimitiveMethodName.REMOVE);
 	if ($_dictionary_contains(nameLookups, 'replace')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'replace'), PrimitiveMethodName.REPLACE);
 	if ($_dictionary_contains(nameLookups, 'reverse')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'reverse'), PrimitiveMethodName.REVERSE);
