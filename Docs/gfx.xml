@@ -1,0 +1,123 @@
+<documentation>
+	<library name="GFX">
+		<description>
+			Drawing and image-loading functions designed to be used with the Game library.
+		</description>
+		<namespace name="GFX">
+			<enum name="ImageLoaderStatus">
+				<description>
+					Enum for various states an <link see="GFX.ImageLoader">ImageLoader</link> can be in.
+				</description>
+				<value>LOADING</value>
+				<value>OK</value>
+				<value>NOT_STARTED</value>
+				<value>NOT_FOUND</value>
+				<value>INVALID</value>
+				<value>TIMED_OUT</value>
+			</enum>
+			<class name="ImageLoader">
+				<function static="true" name="fromResource">
+					<arg name="path" type="string">
+						Path to a bundled image resource.
+					</arg>
+					<description>
+						Creates an image loader instance for an image resource that was bundled with the project.
+					</description>
+				</function>
+				<function static="true" name="fromWeb">
+					<arg name="url" type="string">
+						URL to an image.
+					</arg>
+					<description>
+						Creates an image loader instance for an image file from the web. Note that bundled image resource should still be loaded with fromResource even if the project type is JavaScript.
+					</description>
+				</function>
+				<function static="true" name="fromUserData">
+					<arg name="path" type="string">
+						Path to an image file relative to the user data folder root.
+					</arg>
+					<description>
+						Creates an image loader instance for an image file in the user data folder.
+					</description>
+				</function>
+				<function static="true" name="fromFile">
+					<arg name="path" type="string">
+						Path to an image file on disk.
+					</arg>
+					<description>
+						Creates an image loader instance for an image file on the local disk.
+					</description>
+				</function>
+				<function name="isDone">
+					<description>
+						Returns a boolean that is true when loading is complete (regardless of error state).
+					</description>
+				</function>
+				<function name="getStatus">
+					<description>
+						Returns a <link see="GFX.ImageLoaderStatus">ImageLoaderStatus</link> enum value.
+					</description>
+				</function>
+				<function name="getImage">
+					<description>
+						Returns an <link see="GFX.Image">Image</link> instance. Throws an error if the image is not loaded yet. Use .isDone() and .getStatus() to be sure.
+					</description>
+				</function>
+			</class>
+			<class name="Image">
+				<field name="width">
+					<description>
+						Width of the image, in pixels.
+					</description>
+				</field>
+				<field name="height">
+					<description>
+						Height of the image, in pixels.
+					</description>
+				</field>
+				<function name="draw">
+					<arg name="x" type="integer">
+						X coordinate
+					</arg>
+					<arg name="y" type="integer">
+						Y coordinate
+					</arg>
+					<description>
+						Draws an image on the <link see="Game.GameWindow">GameWindow</link> screen. The top left corner of the image will be position on the given X and Y coordinates.
+					</description>
+				</function>
+			</class>
+			<namespace name="Draw">
+				<function name="ellipse">
+					<arg name="left" type="integer">
+						X coordinate of the left side of the ellipse.
+					</arg>
+					<arg name="top" type="integer">
+						Y coordinate of the top side of the ellipse.
+					</arg>
+					<arg name="width" type="integer">
+						Width of the ellipse.
+					</arg>
+					<arg name="height" type="integer">
+						Height of the ellipse.
+					</arg>
+					<arg name="red" type="integer">
+						Red value of the ellipse fill (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the ellipse fill (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the ellipse fill (0-255).
+					</arg>
+					<arg name="alpha" type="integer" default="255">
+						Alpha value of the ellipse fill (0-255).
+					</arg>
+					<description>
+						Draws a filled ellipse on the <link see="Game.GameWindow">GameWindow</link> screen.
+					</description>
+				</function>
+			</namespace>
+		</namespace>
+	</library>
+</documentation>
