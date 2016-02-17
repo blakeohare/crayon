@@ -1,4 +1,6 @@
-﻿namespace Game {
+﻿import Math;
+
+namespace Game {
 	
 	// These keycodes are consistent with the JavaScript key codes.
 	// Because why not.
