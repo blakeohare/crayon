@@ -1,61 +1,75 @@
 ﻿namespace FileIO {
-	function io_current_directory() {
-		return $$lib_fileio_io_current_directory();
+	namespace File {
+		function readText(filepath) {
+			return $$lib_fileio_io_file_read_text(filepath);
+		}
+		
+		function writeText(filepath, content) {
+			return $$lib_fileio_io_file_write_text(filepath, content);
+		}
 	}
 
-	function io_directory_list(filepath) {
-		return $$lib_fileio_io_directory_list(filepath);
+	namespace Directory {
+		function current() {
+			return $$lib_fileio_io_current_directory();
+		}
+		
+		function list(filepath) {
+			return $$lib_fileio_io_directory_list(filepath);
+		}
 	}
 
-	function io_file_read_text(filepath) {
-		return $$lib_fileio_io_file_read_text(filepath);
+	namespace Path {
+		function isDirectory(path) {
+			return $$lib_fileio_io_is_path_directory(path);
+		}
+		
+		function exists(path) {
+			return $$lib_fileio_io_path_exists(path);
+		}
+		
+		function join(path_segment_list) {
+			return $$lib_fileio_io_path_join(path_segment_list);
+		}
 	}
+	
+	namespace UserData {
+		namespace File {
+			function readText(filepath) {
+				return $$lib_fileio_user_data_file_read_text(filepath);
+			}
+			
+			function writeText(filepath, content) {
+				return $$lib_fileio_user_data_file_write_text(filepath, content);
+			}
+			
+			function delete(filepath) {
+				return $$lib_fileio_user_data_delete_file(filepath);
+			}
+		}
 
-	function io_file_write_text(filepath, content) {
-		return $$lib_fileio_io_file_write_text(filepath, content);
-	}
+		namespace Directory {
+			function list(path) {
+				return $$lib_fileio_user_data_directory_list(path);
+			}
+			
+			function create(path) {
+				return $$lib_fileio_user_data_make_directory(path);
+			}
+			
+			function delete(path, recursive) {
+				return $$lib_fileio_user_data_delete_directory(path, recursive);
+			}
+		}
 
-	function io_is_path_directory(path) {
-		return $$lib_fileio_io_is_path_directory(path);
-	}
-
-	function io_path_exists(path) {
-		return $$lib_fileio_io_path_exists(path);
-	}
-
-	function io_path_join(path_segment_list) {
-		return $$lib_fileio_io_path_join(path_segment_list);
-	}
-
-	function user_data_delete_directory(path, recursive) {
-		return $$lib_fileio_user_data_delete_directory(path, recursive);
-	}
-
-	function user_data_delete_file(filepath) {
-		return $$lib_fileio_user_data_delete_file(filepath);
-	}
-
-	function user_data_directory_list(path) {
-		return $$lib_fileio_user_data_directory_list(path);
-	}
-
-	function user_data_file_read_text(filepath) {
-		return $$lib_fileio_user_data_file_read_text(filepath);
-	}
-
-	function user_data_file_write_text(filepath, content) {
-		return $$lib_fileio_user_data_file_write_text(filepath, content);
-	}
-
-	function user_data_make_directory(path) {
-		return $$lib_fileio_user_data_make_directory(path);
-	}
-
-	function user_data_is_path_directory(path) {
-		return $$lib_fileio_user_data_is_path_directory(path);
-	}
-
-	function user_data_path_exists(path) {
-		return $$lib_fileio_user_data_path_exists(path);
+		namespace Path {
+			function isDirectory(path) {
+				return $$lib_fileio_user_data_is_path_directory(path);
+			}
+			
+			function exists(path) {
+				return $$lib_fileio_user_data_path_exists(path);
+			}
+		}
 	}
 }
