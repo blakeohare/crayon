@@ -21,7 +21,6 @@ R._global_vars = {
 	'image_store': null,
 	'temp_image': null,
 	'print_output': null,
-	'event_queue': [],
 	'ctx': null,
 	'last_frame_began': R.now(),
 	'image_downloads': {},
@@ -143,8 +142,8 @@ R.initializeGame = function (fps) {
 
 R.pump_event_objects = function () {
 	var new_events = [];
-	var output = R._global_vars['event_queue'];
-	R._global_vars['event_queue'] = new_events;
+	var output = R._eventRelays;
+	R._eventRelays = new_events;
 	return output;
 };
 

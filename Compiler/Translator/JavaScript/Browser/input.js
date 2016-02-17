@@ -1,4 +1,6 @@
 ﻿
+R._eventRelays = [];
+
 R._mousedown = function (ev) {
 	R._mousething(ev, true, true);
 };
@@ -29,9 +31,9 @@ R._mousething = function (ev, click, down) {
 		if (ev.which) rightclick = (ev.which == 3);
 		else if (ev.button) rightclick = (ev.button == 2);
 		var button = rightclick ? 'right' : 'left';
-		R._global_vars.event_queue.push(v_buildGameEvent('mouse' + button + (down ? 'down' : 'up'), x, y, 0, down, button, null));
+		R._eventRelays.push(v_buildRelayObj(33 + (rightclick ? 2 : 0) + (down ? 0 : 1), x, y, 0, 0, ''));
 	} else {
-		R._global_vars.event_queue.push(v_buildGameEvent('mousemove', x, y, 0, false, null, null));
+		R._eventRelays.push(v_buildRelayObj(32, x, y, 0, 0, ''));
 	}
 };
 
@@ -78,7 +80,7 @@ R._keydownup = function (ev, down) {
 			return;
 		}
 		R._pressed_keys[keycode] = down;
-		R._global_vars.event_queue.push(v_buildGameEvent('key' + (down ? 'down' : 'up'), 0, 0, 0, down, keycode, null));
+		R._eventRelays.push(v_buildRelayObj(down ? 16 : 17, keycode, 0, 0, 0, ''));
 	}
 };
 

@@ -390,6 +390,18 @@ function @type('int') nextPowerOf2(@type('int') value) {
 	}
 	return output;
 }
+
+function @type('PlatformRelayObject') buildRelayObj(
+	@type('int') type,
+	@type('int') iarg1,
+	@type('int') iarg2, 
+	@type('int') iarg3,
+	@type('double') farg1,
+	@type('string') sarg1) {
+
+	return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
+}
+
 /*
 function @type('Value') buildGameEvent(
 	@type('string') specificType,
