@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator
@@ -55,21 +56,7 @@ namespace Crayon.Translator
 
 		public void TranslateFunctions(List<string> output, Dictionary<string, Executable[]> code)
 		{
-			foreach (string file in new string[] {
-				"BinaryOpsUtil",
-				"ByteCodeLoader",
-				"GamepadManager",
-				"Graphics",
-				"Interpreter",
-				"IOManager",
-				"MetadataInitializer",
-				"NetworkManager",
-				"PrimitiveMethods",
-				"Runner",
-				"SoundManager",
-				"TypesUtil",
-				"ValueUtil",
-			})
+			foreach (string file in code.Keys.Where<string>(f => f != "Globals" && f != "SwitchLookups"))
 			{
 				this.Translate(output, code[file]);
 			}

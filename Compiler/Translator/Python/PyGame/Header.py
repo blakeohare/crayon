@@ -80,34 +80,27 @@ def _pygame_pump_events():
 			if KEY_LOOKUP.get(ev.key) != None:
 				keycode = KEY_LOOKUP.get(ev.key)
 				down = ev.type == pygame.KEYDOWN
-				evlist.append(v_buildGameEvent('keydown' if down else 'keyup', 0, 0, 0, down, keycode, None))
+				evlist.append(v_buildRelayObj(16 if down else 17, keycode, 0, 0, 0, None))
 			if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F4:
 				if pressed_keys[pygame.K_LALT] or pressed_keys[pygame.K_RALT]:
-					evlist.append(v_buildGameEvent('quit-altf4', 0, 0, 0, False, None, None))
+					evlist.append(v_buildRelayObj(1, 0, 0, 0, 0, None))
 		elif ev.type == pygame.QUIT:
-			evlist.append(v_buildGameEvent('quit-closebutton', 0, 0, 0, False, None, None))
+			evlist.append(v_buildRelayObj(1, 1, 0, 0, 0, None))
 		elif ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
 			x, y = ev.pos
 			x = x * vwidth // rwidth
 			y = y * vheight // rheight
 			right = ev.button == 3
 			down = ev.type == pygame.MOUSEBUTTONDOWN
-			if down:
-				if right:
-					type = 'mouserightdown'
-				else:
-					type = 'mouseleftdown'
-			else:
-				if right:
-					type = 'mouserightup'
-				else:
-					type = 'mouseleftup'
-			evlist.append(v_buildGameEvent(type, x, y, 0, False, "right" if right else "left", None))
+			type = 33
+			if not down: type += 1
+			if right: type += 2
+			evlist.append(v_buildRelayObj(type, x, y, 0, 0, None))
 		elif ev.type == pygame.MOUSEMOTION:
 			x, y = ev.pos
 			x = x * vwidth // rwidth
 			y = y * vheight // rheight
-			evlist.append(v_buildGameEvent('mousemove', x, y, 0, False, None, None))
+			evlist.append(v_buildRelayObj(32, x, y, 0, 0, None))
 		
 	return evlist
 

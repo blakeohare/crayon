@@ -218,7 +218,7 @@ namespace %%%PROJECT_ID%%%
 						break;
 					case EXIT:
 						type = events.Dequeue();
-						output.Add(new PlatformRelayObject(type == EXIT_ALT_F4 ? 0 : 1, 0, 0, 0, 0.0, null));
+						output.Add(new PlatformRelayObject(1, type == EXIT_ALT_F4 ? 0 : 1, 0, 0, 0.0, null));
 						break;
 					default:
 						break;
