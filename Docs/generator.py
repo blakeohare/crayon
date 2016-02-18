@@ -80,15 +80,17 @@ def parse_library(library):
 			'name': library_name,
 			'description': parse_content_element(description)
 		}
+	parse_children(None, items)
 	
-	for ns in items.get('namespace', []):
-		name = ns.attrib.get('name')
-		if name == None:
-			fail("Namespace without a name")
-		parse_namespace(library_key, ns)
-
-def parse_namespace(name, namespace):
+def parse_namespace(prefix, namespace):
+	
+	name = namespace.attrib.get('name')
+	if name == None:
+		fail("Namespace without a name")
 	key = name.lower()
+	if prefix != None:
+		key = prefix.lower() + '.' + key
+	print "Parsing " + key + '...'
 	
 	# Namespace names and library names will collide. Library entries are preferred.
 	contents = get_children_lookup(namespace)
@@ -99,15 +101,24 @@ def parse_namespace(name, namespace):
 			'name': name,
 			'description': parse_content_element(description)
 		}
+	parse_children(key, contents)
+	
+def parse_children(prefix, contents):
+	
+	for fi in contents.get('field', []):
+		parse_field(prefix, fi)
 	
 	for fn in contents.get('function', []):
-		parse_function(name, fn)
+		parse_function(prefix, fn)
 	
 	for enum in contents.get('enum', []):
-		parse_enum(name, enum)
+		parse_enum(prefix, enum)
 	
 	for cls in contents.get('class', []):
-		parse_class(name, cls)
+		parse_class(prefix, cls)
+		
+	for ns in contents.get('namespace', []):
+		parse_namespace(prefix, ns)
 
 def parse_class(prefix, cls):
 	name = cls.attrib.get('name')
@@ -126,14 +137,7 @@ def parse_class(prefix, cls):
 		'description': parse_content_element(description),
 	}
 	
-	for fi in contents.get('field', []):
-		parse_field(path, fi)
-	
-	for fn in contents.get('function', []):
-		parse_function(path, fn)
-	
-	for enum in contents.get('enum', []):
-		parse_enum(path, enum)
+	parse_children(path, contents)
 	
 
 def parse_field(prefix, field):
@@ -237,7 +241,7 @@ def parse_enum_value(path, value_element):
 	ENTITIES[key] = {
 		'type': 'enum_value_simple' if description == None else 'enum_value',
 		'name': value,
-		'description': description,
+		'description': parse_content_element(description),
 	}
 	
 	return key
@@ -255,6 +259,7 @@ for file in filter(lambda x:x.lower().endswith('.xml'), os.listdir('.')):
 
 ENTITIES['~'] = {
 	'type': 'root',
+	'name': VERSION,
 	'key': '~'
 }
 

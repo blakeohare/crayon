@@ -117,6 +117,116 @@
 						Draws a filled ellipse on the <link see="Game.GameWindow">GameWindow</link> screen.
 					</description>
 				</function>
+				<function name="line">
+					<description>
+						Draws a line between the given points with a given width and color.
+					</description>
+					<arg name="x1" type="integer">
+						X coordinate of the first point.
+					</arg>
+					<arg name="y1" type="integer">
+						Y coordinate of the first point.
+					</arg>
+					<arg name="x2" type="integer">
+						X coordinate of the second point.
+					</arg>
+					<arg name="y2" type="integer">
+						Y coordinate of the second point.
+					</arg>
+					<arg name="width" type="positive number">
+						Width of the line.
+					</arg>
+					<arg name="red" type="integer">
+						Red value of the line color (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the line color (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the line color (0-255).
+					</arg>
+					<arg name="alpha" type="integer" default="255">
+						Alpha value of the line color (0-255).
+					</arg>
+				</function>
+				<function name="rectangle">
+					<description>
+						Draws an axis-aligned filled rectangle at the given coordinates and color.
+					</description>
+					<arg name="left" type="integer">
+						X coordinate of the left side of the rectangle.
+					</arg>
+					<arg name="top" type="integer">
+						Y coordinate of the top side of the rectangle.
+					</arg>
+					<arg name="width" type="integer">
+						Width of the rectangle.
+					</arg>
+					<arg name="height" type="integer">
+						Height of the rectangle.
+					</arg>
+					<arg name="red" type="integer">
+						Red value of the line color (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the line color (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the line color (0-255).
+					</arg>
+					<arg name="alpha" type="integer" default="255">
+						Alpha value of the line color (0-255).
+					</arg>
+				</function>
+				<function name="triangle">
+					<description>
+						Draws an arbitrary triangle with the given fill color.
+					</description>
+					<arg name="x1" type="integer">
+						X coordinate of the first point.
+					</arg>
+					<arg name="y1" type="integer">
+						Y coordinate of the first point.
+					</arg>
+					<arg name="x2" type="integer">
+						X coordinate of the second point.
+					</arg>
+					<arg name="y2" type="integer">
+						Y coordinate of the second point.
+					</arg>
+					<arg name="x3" type="integer">
+						X coordinate of the third point.
+					</arg>
+					<arg name="y3" type="integer">
+						Y coordinate of the third point.
+					</arg>
+					<arg name="red" type="integer">
+						Red value of the line color (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the line color (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the line color (0-255).
+					</arg>
+					<arg name="alpha" type="integer" default="255">
+						Alpha value of the line color (0-255).
+					</arg>
+				</function>
+				<function name="fill">
+					<description>
+						Fills the screen with an opaque color.
+					</description>
+					<arg name="red" type="integer">
+						Red value of the fill (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the fill (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the fill (0-255).
+					</arg>
+				</function>
 			</namespace>
 		</namespace>
 	</library>
