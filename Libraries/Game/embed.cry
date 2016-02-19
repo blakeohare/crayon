@@ -180,8 +180,15 @@ namespace Game {
 		}
 
 		function clockTick() {
-			// TODO: add work queue triggers
-			return $$lib_game_clock_tick();
+			for (t : Game.GameWindow._frameEndHandlers) {
+				t();
+			}
+			
+			$$lib_game_clock_tick();
+
+			for (t : Game.GameWindow._frameBeginHandlers) {
+				t();
+			}
 		}
 
 		function pumpEvents() {

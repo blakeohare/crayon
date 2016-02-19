@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class StringConstant : Expression
+	internal class StringConstant : Expression, IConstantValue
 	{
 		public override bool CanAssignTo { get { return false; } }
 
@@ -61,5 +61,10 @@ namespace Crayon.ParseTree
 		}
 
 		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
+
+		public Expression CloneValue(Token token, Executable owner)
+		{
+			return new StringConstant(token, this.Value, owner);
+		}
 	}
 }

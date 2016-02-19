@@ -42,7 +42,10 @@ namespace Crayon.ParseTree
 
 		internal override Expression Resolve(Parser parser)
 		{
-			// Args are already resolved.
+			for (int i = 0; i < this.Args.Length; ++i)
+			{
+				this.Args[i] = this.Args[i].Resolve(parser);
+			}
 			return this;
 		}
 

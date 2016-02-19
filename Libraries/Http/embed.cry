@@ -1,5 +1,258 @@
-﻿namespace HTTP {
-	function http_request(method, url, http_headers, body) {
-		return $$lib_http_request(method, url, http_headers, body);
+﻿
+/*
+	This "import Game" needs to go away.
+
+	HTTP requests, in their current form, requires an asynchronous gap in the interpreter
+	to poll and update the state of the active HTTP requests. This is currently done bewteen
+	game frames when gameWindow.clockTick() is called. This stems from the nature of Crayon
+	being purely for games. Moving forward this needs to be decoupled in order to make Crayon
+	a general-purpose language. 
+
+	The plan for this involves adding an asynchronous work pump of some sort in Core that the
+	HTTP library registers itself to. But that's a design-doc for another day.
+*/
+import Game;
+
+namespace HTTP {
+
+	const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
+
+	enum Method {
+		GET,
+		POST,
+		PUT,
+		DELETE,
+	}
+
+	enum State {
+		NOT_SENT = 0,
+		SENT = 1,
+		DONE = 2,
+		ERROR = 3,
+	}
+
+	enum Status {
+		CONTINUE = 100,
+		SWITCHING_PROTOCOLS = 101,
+		PROCESSING = 102,
+		CHECKPOINT = 103,
+		
+		OK = 200,
+		CREATED = 201,
+		ACCEPTED = 202,
+		NON_AUTHORITATIVE_INFORMATION = 203,
+		NO_CONTENT = 204,
+		RESET_CONTENT = 205,
+		PARTIAL_CONTENT = 206,
+		MULTI_STATUS = 207,
+		ALREADY_REPORTED = 208,
+		IM_USED = 226,
+
+		MULTIPLE_CHOICES = 300,
+		MOVED_PERMANENTLY = 301,
+		MOVED_TEMPORARILY = 302,
+		SEE_OTHER = 303,
+		NOT_MODIFIED = 304,
+		USE_PROXY = 305,
+		SWITCH_PROXY = 306,
+		TEMPORARY_REDIRECT = 307,
+		PERMANENT_REDIRECT = 308,
+
+		BAD_REQUEST = 400,
+		UNAUTHORIZED = 401,
+		PAYMENT_REQUIRED = 402,
+		FORBIDDEN = 403,
+		NOT_FOUND = 404,
+		METHOD_NOT_ALLOWED = 405,
+		NOT_ACCEPTABLE = 406,
+		PROXY_AUTHENTICATION_REQUIRED = 407,
+		REQUEST_TIMEOUT = 408,
+		CONFLICT = 409,
+		GONE = 410,
+		LENGTH_REQUIRED = 411,
+		PRECONDITION_FAILED = 412,
+		PAYLOAD_TOO_LARGE = 413,
+		URI_TOO_LONG = 414,
+		UNSUPPORTED_MEDIA_TYPE = 415,
+		RANGE_NOT_SATISFIABLE = 416,
+		EXPECTATION_FAILED = 417,
+		IM_A_TEAPOT = 418,
+		ENHANCE_YOUR_CALM = 420,
+		MISDIRECTED_REQUEST = 421,
+		UNPROCESSABLE_ENTITY = 422,
+		LOCKED = 423,
+		FAILED_DEPENDENCY = 424,
+		UPGRADE_REQUIRED = 426,
+		PRECONDITION_REQUIRED = 428,
+		TOO_MANY_REQUESTS = 429,
+		REQQUEST_HEADER_FIELDS_TOO_LARGE = 431,
+		LOGIN_TIMEOUT = 440,
+		RETRY_WITH = 449,
+		BLOCKED_BY_PARENTAL_CONTROLS = 450,
+		UNAVAILABLE_FOR_LEGAL_REASONS = 451,
+		
+		INTERNAL_SERVER_ERROR = 500,
+		NOT_IMPLEMENTED = 501,
+		BAD_GATEWAY = 502,
+		SERVICE_UNAVAILABLE = 503,
+		GATEWAY_TIMEOUT = 504,
+		HTTP_VERSION_NOT_SUPPORTED = 505,
+		VARIANT_ALSO_NEGOTIATES = 506,
+		INSUFFICIENT_STORAGE = 507,
+		LOOP_DETECTED = 508,
+		BANDWIDTH_LIMIT_EXCEEDED = 509,
+		NOT_EXTENDED = 510,
+		NETWORK_AUTHENTICATION_REQIURED = 511,
+	}
+
+	class HttpRequest {
+		
+		static constructor() {
+			Game.GameWindow._frameEndHandlers.add(HttpRequest._worker);
+		}
+		
+		static field _active_requests = null;
+		
+		static function _worker() {
+			if (HttpRequest._active_requests != null) {
+				new_list = [];
+				for (r : HttpRequest._active_requests) {
+					/*
+						returns a list with the following values:
+						[0] -> status code (int)
+						[1] -> status (string)
+						[2] -> response body
+						[3] -> dictionary of canonical (lowercase) header names to their non-canonical (actual) value
+						[4] -> dictionary of canonical (lowercase) header names to a list of string values
+						[5] -> list of header names returned
+					*/
+					t = $$lib_http_request_poll(r);
+					if (t == null) {
+						new_list.add(r);
+					} else {
+						r._s = HTTP.State.DONE;
+						r._r = t;
+					}
+				}
+				HttpRequest._active_requests = new_list.length == 0 ? null : new_list;
+			}
+		}
+
+		field _u;
+		field _m = 'GET';
+		field _hk = [];
+		field _hv = [];
+		field _b = null;
+		field _s = State.NOT_SENT;
+		field _e;
+		field _r;
+
+		constructor(url) {
+			Core.assert($$lib_core_typeof(url) == Core.Type.STRING, "URL must be a string.");
+			this._u = url;
+		}
+
+		function getError() {
+			return this._e;
+		}
+
+		function getState() {
+			return this._s;
+		}
+
+		function _assertReady() {
+			Core.assert(this._r != null, "Cannot call this function until the request has completed successfully.");
+		}
+
+		function getStatusCode() {
+			this._assertReady();
+			return this._r[0];
+		}
+
+		function getStatus() {
+			this._assertReady();
+			return this._r[1];
+		}
+
+		function getBody() {
+			this._assertReady();
+			return this._r[2];
+		}
+
+		function getResponseHeaderValue(name) {
+			t = this.getResponseHeaderValues(name);
+			return t.length > 0 ? t[0] : null;
+		}
+
+		function getResponseHeaderValues(name) {
+			Core.assert($$lib_core_typeof(name) == Core.Type.STRING, "Header name must be a string.");
+			this._assertReady();
+			t = this._r[3].get(name.lower());
+			if (t == null) return [];
+			return this._r[4].get(t).clone();
+		}
+
+		function getResponseHeaderNames() {
+			this._assertReady();
+			return this._r[5].clone();
+		}
+
+		function setMethod(method) {
+			if ($$lib_core_typeof(method) == Core.Type.INTEGER) {
+				switch (method) {
+					case Method.DELETE: method = 'DELETE'; break;
+					case Method.GET: method = 'GET'; break;
+					case Method.POST: method = 'POST'; break;
+					case Method.PUT: method = 'PUT'; break;
+					default: Core.assert(false, "Unknown HTTP method."); break;
+				}
+			}
+			Core.assert($$lib_core_typeof(method) == Core.Type.STRING, "HTTP Method must be a string.");
+			this._m = method;
+			return this;
+		}
+		
+		function setHeader(name, value) {
+			name = name.trim();
+			Core.assert($$lib_core_typeof(name) == Core.Type.STRING, "HTTP header name must be a string.");
+			Core.assert(value != null, "HTTP header value cannot be null.");
+			this._hk.add(name);
+			this._hv.add((value + '').trim());
+			return this;
+		}
+
+		function setBody(value) {
+			this._b = value == null ? null : (value + '');
+			return this;
+		}
+
+		function sendAsync() {
+			Core.assert(this._s == HTTP.State.NOT_SENT, "Cannot send same request instance multiple times.");
+
+			// The HTTP request struct is set to the nativeData[0] of 'this' as a result of the following call...
+			t = $$lib_http_request(
+				this,
+				this._m,
+				this._u,
+				this._hk,
+				this._hv,
+				this._b,
+				HTTP.DEFAULT_USER_AGENT);
+
+			this._s = HTTP.State.ERROR;
+			switch (t) {
+				case 0:
+					this._e = null;
+					this._s = HTTP.State.SENT;
+					if (HttpRequest._active_requests == null) HttpRequest._active_requests = [];
+					HttpRequest._active_requests.add(this);
+					break;
+
+				case 1: this._e = "Cannot set content length without a body."; break;
+				case 2: this._e = "Cannot set content type without a body."; break;
+				default: this._e = "An unknown error has occurred."; break;
+			}
+			return this;
+		}
 	}
 }

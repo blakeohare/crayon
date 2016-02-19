@@ -19,6 +19,11 @@ namespace Crayon.ParseTree
 
 		internal override Expression Resolve(Parser parser)
 		{
+			for (int i = 0; i < this.Args.Length; ++i)
+			{
+				this.Args[i] = this.Args[i].Resolve(parser);
+			}
+
 			if (this.Name.StartsWith("$_lib_"))
 			{
 				string libraryName = this.Name.Split('_')[2];

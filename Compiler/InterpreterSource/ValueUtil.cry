@@ -235,6 +235,23 @@ function @type('Value') buildLiteral(@type('int') type, @type('int') value, @typ
 	return null;
 }
 
+function @type('DictImpl') createEmptyDictionary(@type('int') type) {
+	return new DictImpl(
+		$_new_dictionary('int', 'Value'),
+		$_new_dictionary('int', 'Value'),
+		$_new_dictionary('string', 'Value'),
+		$_new_dictionary('string', 'Value'),
+		0,
+		type);
+}
+
+function @type('int') setStringKvpToDict(@type('DictImpl') d, @type('string') k, @type('Value') v) {
+	$_dictionary_set(DictImpl$d.keyStringLookup, k, buildString(k));
+	$_dictionary_set(DictImpl$d.valueStringLookup, k, v);
+	DictImpl$d.size = $_dictionary_size(DictImpl$d.keyStringLookup);
+	return 0;
+}
+
 function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Array<Value>') values) {
 	@type('Dictionary<string, Value>') keyLookup = $_new_dictionary('string', 'Value');
 	@type('Dictionary<string, Value>') valueLookup = $_new_dictionary('string', 'Value');
@@ -401,51 +418,6 @@ function @type('PlatformRelayObject') buildRelayObj(
 
 	return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
 }
-
-/*
-function @type('Value') buildGameEvent(
-	@type('string') specificType,
-	@type('int') x,
-	@type('int') y,
-	@type('double') amount,
-	@type('bool') down,
-	@type('string') arg,
-	@type('Value') argValue) {
-	
-	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
-		specificType,
-		x,
-		y,
-		amount,
-		down,
-		arg,
-		argValue,
-		null,
-		null)));
-}
-
-function @type('Value') buildGameEventWithExtraArg(
-	@type('string') specificType,
-	@type('int') x,
-	@type('int') y,
-	@type('double') amount,
-	@type('bool') down,
-	@type('string') arg,
-	@type('Value') argValue,
-	@type('Value') argValue2,
-	@type('Value') argValue3) {
-	
-	return new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.EVENT, new GameEvent(
-		specificType,
-		x,
-		y,
-		amount,
-		down,
-		arg,
-		argValue,
-		argValue2,
-		argValue3)));
-}//*/
 
 function @type('Value') buildCommonString(@type('string') s) {
 	if (!$_dictionary_contains(COMMON_STRINGS, s)) {

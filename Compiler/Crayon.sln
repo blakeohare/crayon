@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileIO", "..\Libraries\FileIO\FileIO.csproj", "{E39CC258-57A8-4C7A-BA9A-65CE039D518D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTP", "..\Libraries\Http\HTTP.csproj", "{E21FB741-C303-4E54-BA6F-D5128B0408CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTP", "..\Libraries\HTTP\HTTP.csproj", "{E21FB741-C303-4E54-BA6F-D5128B0408CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "..\Libraries\Game\Game.csproj", "{F44E3D99-0AE7-4D35-95AD-EA38599CACC7}"
 EndProject
