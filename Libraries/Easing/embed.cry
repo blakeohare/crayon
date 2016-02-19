@@ -4,8 +4,6 @@ namespace Easing {
 	
 	class EasingFunction {
 
-		static field PI = 3.14159265358979; // TODO: fix the const resolution problem and replace usages of this with Math.PI.
-
 		static function _0(t) { return t; }
 		static field LINEAR = new EasingFunction(EasingFunction._0, 1);
 
@@ -24,13 +22,13 @@ namespace Easing {
 		static function _5(t) { return (1 - t ** 2) ** .5; }
 		static field CIRCLE = new EasingFunction(EasingFunction._5);
 
-		static function _6(t) { return 1.0 - Math.cos(t * (EasingFunction.PI / 2)); }
+		static function _6(t) { return 1.0 - Math.cos(t * (Math.PI / 2)); }
 		static field SIN = new EasingFunction(EasingFunction._6);
 
 		static function _7(t) {
 			if (t < .1) t = (t * 6 + 4) * t;
 			else t = t * .6 + .4;
-			return Math.sin(t * (2 * EasingFunction.PI * 5.25)) * (t ** 6);
+			return Math.sin(t * (2 * Math.PI * 5.25)) * (t ** 6);
 		}
 		static field ELASTIC = new EasingFunction(EasingFunction._7, 400);
 
