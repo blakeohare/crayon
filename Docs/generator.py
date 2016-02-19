@@ -47,7 +47,7 @@ def parse_content_element(element, buffer = None, trim_enabled = True):
 	if root:
 		return ''.join(buffer).strip()
 
-
+_CHILD_ORDER = {}
 def get_children_lookup(tag):
 	lookup = {}
 	for child in tag.getchildren():
@@ -57,13 +57,12 @@ def get_children_lookup(tag):
 			list = []
 			lookup[tag] = list
 		list.append(child)
+		_CHILD_ORDER[child] = len(_CHILD_ORDER)
 	return lookup
 
 def parse_documentation(documentation):
-	for library in documentation.getchildren():
-		if library.tag != 'library':
-			fail("Expected library tag")
-		parse_library(library)
+	items = get_children_lookup(documentation)
+	parse_children(None, items)
 
 def parse_library(library):
 	library_name = library.attrib.get('name')
@@ -76,6 +75,7 @@ def parse_library(library):
 	
 	if description != None:
 		ENTITIES[library_key] = {
+			'xml-entity': library,
 			'type': 'library',
 			'name': library_name,
 			'description': parse_content_element(description)
@@ -97,6 +97,7 @@ def parse_namespace(prefix, namespace):
 	description = contents.get('description', [None])[0]
 	if not ENTITIES.has_key(key):
 		ENTITIES[key] = {
+			'xml-entity': namespace,
 			'type': 'namespace',
 			'name': name,
 			'description': parse_content_element(description)
@@ -105,6 +106,9 @@ def parse_namespace(prefix, namespace):
 	
 def parse_children(prefix, contents):
 	
+	for li in contents.get('library', []):
+		parse_library(li)
+		
 	for fi in contents.get('field', []):
 		parse_field(prefix, fi)
 	
@@ -126,12 +130,12 @@ def parse_class(prefix, cls):
 		fail("Class requires a name.")
 	print "Parsing", prefix + '.' + name + '...'
 	path = prefix + '.' + name.lower()
-	items = get_children_lookup(cls)
 	
 	contents = get_children_lookup(cls)
 	description = contents.get('description', [None])[0]
 	
 	ENTITIES[path] = {
+		'xml-entity': cls,
 		'type': 'class',
 		'name': name,
 		'description': parse_content_element(description),
@@ -151,6 +155,7 @@ def parse_field(prefix, field):
 	description = contents.get('description', [None])[0]
 	
 	ENTITIES[path] = {
+		'xml-entity': field,
 		'type': 'field',
 		'name': name,
 		'description': parse_content_element(description),
@@ -195,6 +200,7 @@ def parse_function(prefix, fn):
 	description = parse_content_element(items.get('description', [None])[0])
 	
 	ENTITIES[path] = {
+		'xml-entity': fn,
 		'type': 'function',
 		'name': name,
 		'data': '~@#@~'.join(data),
@@ -225,6 +231,7 @@ def parse_enum(prefix, enum):
 		keys.sort()
 	
 	ENTITIES[path] = {
+		'xml-entity': enum,
 		'type': 'enum',
 		'name': name,
 		'values': keys,
@@ -244,6 +251,7 @@ def parse_enum_value(path, value_element):
 	key = path + '.' + value.lower()
 	
 	ENTITIES[key] = {
+		'xml-entity': value_element,
 		'type': 'enum_value_simple' if description == None else 'enum_value',
 		'name': value,
 		'description': parse_content_element(description),
@@ -297,7 +305,9 @@ _CHILD_PREFIX = {
 
 def serialize_children(entity):
 	output = []
-	for child in entity.get('children', []):
+	children = entity.get('children', [])
+	children.sort(key = lambda child:_CHILD_ORDER[child['xml-entity']])
+	for child in children:
 		prefix = _CHILD_PREFIX.get(child['type'])
 		key = child['key'].split('.')[-1]
 		if prefix == 'es':
