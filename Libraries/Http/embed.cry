@@ -152,16 +152,16 @@ namespace HTTP {
 			this._u = url;
 		}
 
+		function _assertReady() {
+			Core.assert(this._r != null, "Cannot call this function until the request has completed successfully.");
+		}
+
 		function getError() {
 			return this._e;
 		}
 
 		function getState() {
 			return this._s;
-		}
-
-		function _assertReady() {
-			Core.assert(this._r != null, "Cannot call this function until the request has completed successfully.");
 		}
 
 		function getStatusCode() {
@@ -211,7 +211,7 @@ namespace HTTP {
 			this._m = method;
 			return this;
 		}
-		
+
 		function setHeader(name, value) {
 			name = name.trim();
 			Core.assert($$lib_core_typeof(name) == Core.Type.STRING, "HTTP header name must be a string.");

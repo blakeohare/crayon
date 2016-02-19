@@ -78,7 +78,7 @@
 				<value>F10</value>
 				<value>F11</value>
 				<value>F12</value>
-				<value>OS_COMMAND<description>More commonly known as the Windows Key</description></value>
+				<value name="OS_COMMAND"><description>More commonly known as the Windows Key</description></value>
 				<value>CONTEXT_MENU</value>
 				<value>NUM_LOCK</value>
 				<value>SCROLL_LOCK</value>

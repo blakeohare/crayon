@@ -235,7 +235,12 @@ def parse_enum_value(path, value_element):
 	value = value_element.text
 	items = get_children_lookup(value_element)
 	description = items.get('description', [None])[0]
-	
+	if description == None:
+		value = value_element.text.strip()
+	else:
+		value = value_element.get('name')
+		if value == None:
+			fail("Enum values that have a description must have the name attribute set on the <value> tag.")
 	key = path + '.' + value.lower()
 	
 	ENTITIES[key] = {
