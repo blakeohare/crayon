@@ -7,6 +7,7 @@
 	}
 
 	if ($_dictionary_contains(nameLookups, 'add')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'add'), PrimitiveMethodName.ADD);
+	if ($_dictionary_contains(nameLookups, 'choice')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'choice'), PrimitiveMethodName.CHOICE);
 	if ($_dictionary_contains(nameLookups, 'clear')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clear'), PrimitiveMethodName.CLEAR);
 	if ($_dictionary_contains(nameLookups, 'clone')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clone'), PrimitiveMethodName.CLONE);
 	if ($_dictionary_contains(nameLookups, 'concat')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'concat'), PrimitiveMethodName.CONCAT);
@@ -53,6 +54,7 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.TRIM:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.UPPER:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.ADD:
+			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CHOICE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CLEAR:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CLONE:
 			case Types.LIST + MAX_TYPE * PrimitiveMethodName.CONCAT:

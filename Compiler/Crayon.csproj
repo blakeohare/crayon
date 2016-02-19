@@ -179,21 +179,20 @@
     <Compile Include="VariableIdAllocator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_pop.cry" />
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host_html.txt" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\drawing.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\file_io.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host_html.txt" />
     <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
+    <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\Python\PyGame\AsyncHttpFetcher.py" />
@@ -377,6 +376,7 @@
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_remove.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_values.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_add.cry" />
+    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_choice.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_clear.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_clone.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_concat.cry" />
@@ -385,6 +385,7 @@
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_insert.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_join.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_map.cry" />
+    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_pop.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_remove.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_reverse.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_shuffle.cry" />

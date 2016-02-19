@@ -24,6 +24,7 @@ namespace Crayon
 				case PrimitiveMethods.DICTIONARY_REMOVE: return "remove";
 				case PrimitiveMethods.DICTIONARY_VALUES: return "values";
 				case PrimitiveMethods.LIST_ADD: return "add";
+				case PrimitiveMethods.LIST_CHOICE: return "choice";
 				case PrimitiveMethods.LIST_CLEAR: return "clear";
 				case PrimitiveMethods.LIST_CLONE: return "clone";
 				case PrimitiveMethods.LIST_CONCAT: return "concat";

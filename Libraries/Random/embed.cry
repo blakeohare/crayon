@@ -11,12 +11,4 @@
 	function randomBool() {
 		return $$lib_random_random_float() > .5;
 	}
-
-	// TODO: maybe turn this into a primitive method of list.
-	function randomChoice(list) {
-		if (list.length == 0) {
-			// TODO: throw exception.
-		}
-		return list[$$lib_random_random_int(0, list.length)];
-	}
 }

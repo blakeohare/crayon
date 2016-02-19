@@ -182,6 +182,7 @@ enum SoundEventType {
 
 enum PrimitiveMethodName {
 	ADD,
+	CHOICE,
 	CLEAR,
 	CLONE,
 	CONCAT,

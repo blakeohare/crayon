@@ -195,6 +195,7 @@ if (bool1) {
 				list1 = $_cast('List<Value>', Value$value.internalValue);
 				switch (functionId) {
 					case PrimitiveMethodName.ADD: import inline 'InterpreterSource/PrimitiveMethods/list_add.cry'; break;
+					case PrimitiveMethodName.CHOICE: import inline 'InterpreterSource/PrimitiveMethods/list_choice.cry'; break;
 					case PrimitiveMethodName.CLEAR: import inline 'InterpreterSource/PrimitiveMethods/list_clear.cry'; break;
 					case PrimitiveMethodName.CLONE: import inline 'InterpreterSource/PrimitiveMethods/list_clone.cry'; break;
 					case PrimitiveMethodName.CONCAT: import inline 'InterpreterSource/PrimitiveMethods/list_concat.cry'; break;
