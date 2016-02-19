@@ -35,7 +35,13 @@ def parse_content_element(element, buffer = None, trim_enabled = True):
 			te = trim_enabled
 			if te and tag in DISABLE_TRIM_TAGS:
 				te = False
-			buffer.append('<' + tag + '>')
+			buffer.append('<' + tag)
+			for a in child.attrib.keys():
+				buffer.append(' ' + a + '="')
+				buffer.append(child.attrib.get(a))
+				buffer.append('"')
+			buffer.append('>')
+			
 			parse_content_element(child, buffer, te)
 			buffer.append('</' + tag + '>')
 			if child.tail != None:
