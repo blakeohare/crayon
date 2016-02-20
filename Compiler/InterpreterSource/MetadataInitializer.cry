@@ -10,9 +10,9 @@
 	@type('int') pcJump = $_array_get(args, 7);
 	@type('int') numPcOffsetsForOptionalArgs = $_array_get(args, 8);
 	
-	@type('Array<int>') pcOffsetsForOptionalArgs = $_new_array('int', numPcOffsetsForOptionalArgs);
+	@type('Array<int>') pcOffsetsForOptionalArgs = $_new_array('int', numPcOffsetsForOptionalArgs + 1);
 	for (@type('int') i = 0; i < numPcOffsetsForOptionalArgs; i += 1) {
-		$_array_set(pcOffsetsForOptionalArgs, i, $_array_get(args, 9 + i));
+		$_array_set(pcOffsetsForOptionalArgs, i + 1, $_array_get(args, 9 + i));
 	}
 
 	@type('Array<FunctionInfo>') functionTable = getFunctionTable(p, functionId);

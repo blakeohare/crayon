@@ -380,7 +380,7 @@ if (bool1) {
 			$_array_set(localsStackSet, int1, localsStackSetToken);
 		}
 
-		if (argCount != FunctionInfo$functionInfo.maxArgs) {
+		if (argCount != FunctionInfo$functionInfo.minArgs) {
 			// optional args are simply local variable assignments at the front of the function body.
 			// Adjust the PC to skip these if those arguments were provided.
 			int1 = argCount - FunctionInfo$functionInfo.minArgs; // number of optional args provided
