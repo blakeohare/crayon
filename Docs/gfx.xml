@@ -64,6 +64,35 @@
 					</description>
 				</function>
 			</class>
+			<class name="ImageSheetLoader">
+				<description>
+					An ImageSheetLoader loads all the resource images in an aggregated sheet in one swoop so they don't have to be loaded individually.
+					Once an image sheet finishes loading, individual image resources that are members of the sheet must still be loaded with an <link see="gfx.imageloader">ImageLoader</link>, however loading will occur synchronously and instantly.
+				</description>
+				<function static="true" name="fromIds">
+					<arg name="idOrIds" type="string or list of strings">
+						An ID (or list of IDs) of an image sheet defined in the build file.
+					</arg>
+					<description>
+						Factory method to create a new ImageSheetLoader from a set of IDs.
+					</description>
+				</function>
+				<function name="getProgress">
+					<description>
+						Returns the current overall progress of all image sheets managed by this loader as a float from 0 to 1.
+					</description>
+				</function>
+				<function name="isDone">
+					<description>
+						Returns a boolean for whether loading is complete for all sheets managed by this loader.
+					</description>
+				</function>
+				<function name="getStatus">
+					<description>
+						Returns an <link see="gfx.imageloaderstatus">ImageLoaderStatus</link> value indicating the state of the loader.
+					</description>
+				</function>
+			</class>
 			<class name="Image">
 				<field name="width">
 					<description>

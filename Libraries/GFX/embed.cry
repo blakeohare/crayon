@@ -149,11 +149,23 @@ namespace GFX {
 		}
 
 		static function fromIds(ids) {
-			$$lib_gfx_image_sheet_load(ids);
-			return new ImageSheetLoader(ids);
+			t = [];
+			e = "Image sheet ID must be a string or non-empty list of strings.";
+			if (typeof(ids) == Type.STRING) {
+				t.add(ids);
+			} else if (typeof(ids) == Type.LIST && ids.length > 0) {
+				for (id : ids) {
+					Core.assert(typeof(id) == Type.STRING, e);
+					t.add(id);
+				}
+			} else {
+				Core.assert(false, e);
+			}
+			$$lib_gfx_image_sheet_load(t);
+			return new ImageSheetLoader(t);
 		}
 
-		function progress() {
+		function getProgress() {
 			return $$lib_gfx_image_sheet_load_progress(this._ids);
 		}
 

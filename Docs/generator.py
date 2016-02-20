@@ -208,6 +208,7 @@ def parse_function(prefix, fn):
 	ENTITIES[path] = {
 		'xml-entity': fn,
 		'type': 'function',
+		'flags': ['s'] if fn.attrib.get('static') == 'true' else [],
 		'name': name,
 		'data': '~@#@~'.join(data),
 		'description': description,
@@ -332,7 +333,7 @@ def sanitize_sql_value(string):
 
 def generate_sql():
 	
-	columns = 'type key version name path description children data'.split(' ')
+	columns = 'type key version name path flags description children data'.split(' ')
 	
 	query = '\n'.join([
 		"DELETE FROM `documentation` WHERE `version` = '" + VERSION + "';\n",
@@ -343,6 +344,7 @@ def generate_sql():
 	for entity in ENTITIES.values():
 		key = entity['key']
 		type = entity['type']
+		flags = entity.get('flags', [])
 		description = entity.get('description')
 		if description == None:
 			description = ''
@@ -352,6 +354,7 @@ def generate_sql():
 			'name': entity.get('name', ''),
 			'version': VERSION,
 			'path': key.replace('.', '/'),
+			'flags': ''.join(flags),
 			'description': sanitize_sql_value(description),
 			'children': serialize_children(entity),
 			'data': sanitize_sql_value(entity.get('data', '')),
