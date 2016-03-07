@@ -291,15 +291,14 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 		@type('ClassInfo') classInfo,
 		@type('int') valueStackSize,
 		@type('Array<int>') intOutParam) {
-
+			
+	$_array_set(intOutParam, 0, 0);
 	@type('int') classId = ClassInfo$classInfo.id;
 	if (ClassInfo$classInfo.staticInitializationState == 1) {
 		// check to make sure it's the last item on the static init stack
 		@type('List<int>') classIdsBeingInitialized = ProgramData$p.classStaticInitializationStack;
 		if ($_list_get(classIdsBeingInitialized, $_list_length(classIdsBeingInitialized) - 1) != classId) {
 			$_array_set(intOutParam, 0, 1);
-		} else {
-			$_array_set(intOutParam, 0, 0);
 		}
 		return null;
 	}
