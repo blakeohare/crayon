@@ -123,6 +123,12 @@ namespace GFX {
 		}
 
 		function drawRotated(x, y, theta) {
+			// TODO: more efficient type checking
+			// force types or crash.
+			x = Math.floor(x);
+			y = Math.floor(y);
+			theta += 0.0;
+
 			return $$lib_gfx_blit_image_rotated(this, x, y, theta);
 		}
 

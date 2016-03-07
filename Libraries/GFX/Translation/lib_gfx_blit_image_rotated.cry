@@ -2,34 +2,20 @@
 import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
+int1 = $_cast('int', Value$arg2.internalValue);
+int2 = $_cast('int', Value$arg3.internalValue);
+float1 = $_cast('double', Value$arg4.internalValue);
 
-if (image1 == null) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_blit_image_rotated requires an image instance as its first argument.";
-} else if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_blit_image_rotated requires integer values for the target coordinate.";
-} else if (Value$arg4.type == Types.FLOAT) {
-	float1 = $_cast('double', Value$arg4.internalValue);
-} else if (Value$arg4.type == Types.INTEGER) {
-	float1 = $_cast('int', Value$arg4.internalValue);
+if (%%%IS_OPEN_GL_BASED%%%) {
+	glDrawImageRotated(
+		$_cast('Image', object1),
+		int1,
+		int2,
+		float1);
 } else {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_blit_image_rotated requires a number for the rotation value.";
-}
-
-if (!lib_func_error_occurred) {
-	if (%%%IS_OPEN_GL_BASED%%%) {
-		glDrawImageRotated(
-			$_cast('Image', object1),
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			float1);
-	} else {
-		$_blit_image_rotated(
-			$_cast('Image', object1),
-			$_cast('int', Value$arg2.internalValue),
-			$_cast('int', Value$arg3.internalValue),
-			float1);
-	}
+	$_blit_image_rotated(
+		$_cast('Image', object1),
+		int1,
+		int2,
+		float1);
 }
