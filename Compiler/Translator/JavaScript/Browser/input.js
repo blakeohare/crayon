@@ -73,8 +73,12 @@ R._keyup = function (ev) {
 R._pressed_keys = {};
 
 R._keydownup = function (ev, down) {
-	var keycode = R._getKeyCode(ev);
-	if (keycode != null) {
+	var keycode = ev.which ? ev.which : ev.keyCode;
+	if (!!keycode) {
+		if (keycode == 59) keycode = 186; // semicolon oddities different across browsers
+		if (keycode == 92) keycode--; // left-windows key and right-windows key is just one enum value.
+		if (keycode == 173) keycode = 189; // hyphen
+
 		if (down && R._pressed_keys[keycode]) {
 			// do not allow key repeats.
 			return;
@@ -82,58 +86,4 @@ R._keydownup = function (ev, down) {
 		R._pressed_keys[keycode] = down;
 		R._eventRelays.push(v_buildRelayObj(down ? 16 : 17, keycode, 0, 0, 0, ''));
 	}
-};
-
-R._keyCodeLookup = {
-	'k3': 'break',
-	'k8': 'backspace',
-	'k9': 'tab',
-	'k13': 'enter',
-	'k27': 'escape',
-	'k16': 'shift', 'k17': 'ctrl', 'k18': 'alt',
-	'k19': 'pause',
-	'k20': 'capslock',
-	'k32': 'space',
-	'k33': 'pageup', 'k34': 'pagedown',
-	'k35': 'end', 'k36': 'home',
-	'k44': 'printscreen',
-	'k45': 'insert', 'k46': 'delete',
-
-	'k48': '0', 'k49': '1', 'k50': '2', 'k51': '3', 'k52': '4',
-	'k53': '5', 'k54': '6', 'k55': '7', 'k56': '8', 'k57': '9',
-
-	'k65': 'a', 'k66': 'b', 'k67': 'c', 'k68': 'd', 'k69': 'e',
-	'k70': 'f', 'k71': 'g', 'k72': 'h', 'k73': 'i', 'k74': 'j',
-	'k75': 'k', 'k76': 'l', 'k77': 'm', 'k78': 'n', 'k79': 'o',
-	'k80': 'p', 'k81': 'q', 'k82': 'r', 'k83': 's', 'k84': 't',
-	'k85': 'u', 'k86': 'v', 'k87': 'w', 'k88': 'x', 'k89': 'y',
-	'k90': 'z',
-
-	'k112': 'f1', 'k113': 'f2', 'k114': 'f3', 'k115': 'f4',
-	'k116': 'f5', 'k117': 'f6', 'k118': 'f7', 'k119': 'f8',
-	'k120': 'f9', 'k121': 'f10', 'k122': 'f11', 'k123': 'f12',
-
-	'k37': 'left', 'k38': 'up', 'k39': 'right', 'k40': 'down',
-
-	'k59': 'semicolon',
-	'k61': 'equals',
-	'k93': 'menu',
-	'k145': 'scrolllock',
-	'k173': 'hyphen',
-	'k186': 'semicolon',
-	'k187': 'equals',
-	'k188': 'comma',
-	'k190': 'period',
-	'k191': 'slash',
-	'k192': 'tilde',
-	'k219': 'openbracket',
-	'k220': 'backslash',
-	'k221': 'closebracket',
-	'k222': 'apostrophe'
-};
-
-R._getKeyCode = function (ev) {
-	var keyCode = ev.which ? ev.which : ev.keyCode;
-	var output = R._keyCodeLookup['k' + keyCode];
-	return output === undefined ? null : output;
 };
