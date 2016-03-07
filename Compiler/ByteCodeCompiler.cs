@@ -679,6 +679,29 @@ namespace Crayon
 					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
 					buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
 				}
+				else if (assignment.Target is FieldReference)
+				{
+					FieldReference fieldRef = (FieldReference)assignment.Target;
+					this.CompileFieldReference(parser, buffer, fieldRef, true);
+					this.CompileExpression(parser, buffer, assignment.Value, true);
+					buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+
+					if (fieldRef.Field.IsStaticField)
+					{
+						buffer.Add(
+							assignment.AssignmentOpToken,
+							OpCode.ASSIGN_STATIC_FIELD,
+							((ClassDefinition)fieldRef.Field.FunctionOrClassOwner).ClassID,
+							fieldRef.Field.StaticMemberID);
+					}
+					else
+					{
+						buffer.Add(
+							assignment.AssignmentOpToken,
+							OpCode.ASSIGN_THIS_STEP,
+							fieldRef.Field.MemberID);
+					}
+				}
 				else
 				{
 					throw new ParserException(assignment.AssignmentOpToken, "Assignment is not allowed on this sort of expression.");
