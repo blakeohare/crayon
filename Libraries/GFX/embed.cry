@@ -132,8 +132,10 @@ namespace GFX {
 
 		function flip(h, v) {
 			if (h || v) {
-				img = $$lib_gfx_flip_image(this, h, v);
-				return new Image(img);
+				output = new Image(null);
+				output.width = this.width;
+				output.height = this.height;
+				return $$lib_gfx_flip_image(this, output, h, v);
 			}
 			return this;
 		}

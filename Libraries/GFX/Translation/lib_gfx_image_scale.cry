@@ -1,19 +1,7 @@
 ﻿// $gfx_image_scale(image, newEmptyImage, newWidth, newHeight)
 import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 
-// original image
 object1 = libGfxGetImgFromInstance(arg1);
-
-if (object1 == null) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_image_scale requires an image as its first argument.";
-} else if (Value$arg3.type != Types.INTEGER || Value$arg4.type != Types.INTEGER) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_image_scale requires an image and two integers.";
-} else {
-	// new image
-	object1 = scaleImage(object1, $_cast('int', Value$arg3.internalValue), $_cast('int', Value$arg4.internalValue));
-
-	libGfxSetImgOnInstance(arg2, object1);
-	output = arg2;
-}
+object1 = scaleImage(object1, $_cast('int', Value$arg3.internalValue), $_cast('int', Value$arg4.internalValue));
+libGfxSetImgOnInstance(arg2, object1);
+output = arg2;

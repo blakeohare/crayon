@@ -143,13 +143,13 @@ function @type('Image') scaleImage(
 }
 
 function @type('Image') flipImage(
-	@type('Image') image,
+	@type('object') imgObj,
 	@type('bool') flipX,
 	@type('bool') flipY) {
 	
-	if (!flipX && !flipY) {
-		return image;
-	}
+	// condition where flipX and flipY are both false is caught and short-circuited before now.
+
+	@type('Image') image = $_cast('Image', imgObj);
 
 	if (%%%IS_OPEN_GL_BASED%%%) {
 		@type('float') tleft = Image$image.textureLeft;
