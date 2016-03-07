@@ -1,0 +1,47 @@
+﻿// $$lib_math_ensure_range(value, min, max);
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+output = arg1;
+
+if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+} else if (Value$arg1.type == Types.INTEGER) {
+	float1 = $_cast('int', Value$arg1.internalValue);
+} else {
+	lib_func_error_occurred = true;
+}
+
+if (!lib_func_error_occurred) {
+	if (Value$arg2.type == Types.FLOAT) {
+		float2 = $_cast('double', Value$arg2.internalValue);
+	} else if (Value$arg2.type == Types.INTEGER) {
+		float2 = $_cast('int', Value$arg2.internalValue);
+	} else {
+		lib_func_error_occurred = true;
+	}
+
+	// harmless if above is an error since output will be ignored
+	if (float2 > float1) {
+		output = arg2;
+		float1 = float2;
+	}
+}
+
+if (!lib_func_error_occurred) {
+	if (Value$arg3.type == Types.FLOAT) {
+		float2 = $_cast('double', Value$arg3.internalValue);
+	} else if (Value$arg3.type == Types.INTEGER) {
+		float2 = $_cast('int', Value$arg3.internalValue);
+	} else {
+		lib_func_error_occurred = true;
+	}
+
+	// harmless if above is an error since output will be ignored
+	if (float2 < float1) {
+		output = arg3;
+	}
+}
+
+if (lib_func_error_occurred) {
+	lib_func_error_message = "ensureRange requires numeric arguments.";
+}

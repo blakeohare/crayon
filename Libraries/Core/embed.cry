@@ -9,7 +9,7 @@
 		return $$lib_core_chr(value);
 	}
 
-	function current_time() {
+	function currentTime() {
 		return $$lib_core_current_time();
 	}
 

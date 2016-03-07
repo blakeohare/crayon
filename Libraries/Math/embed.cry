@@ -3,10 +3,6 @@
 	const PI = 3.14159265358979323846;
 	const E = 2.718281828459045235360;
 
-	function abs(value) {
-		return $$lib_math_abs(value);
-	}
-
 	function arccos(ratio) {
 		return $$lib_math_arccos(ratio);
 	}
@@ -33,5 +29,20 @@
 
 	function tan(theta) {
 		return $$lib_math_tan(theta);
+	}
+
+	// Despite the fact that the following functions are relatively simple and could be implemented in
+	// non-translated code, they are relatively common and the native code should be inlined if possible.
+	function abs(value) {
+		return $$lib_math_abs(value);
+	}
+	function max(a, b) {
+		return $$lib_math_max(a, b);
+	}
+	function min(a, b) {
+		return $$lib_math_min(a, b);
+	}
+	function ensureRange(value, minBound, maxBound) {
+		return $$lib_math_ensure_range(value, minBound, maxBound);
 	}
 }

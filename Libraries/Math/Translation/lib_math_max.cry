@@ -1,4 +1,4 @@
-﻿// $arctan2(y, x)
+﻿// $$lib_math_max(a, b);
 import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
 
 bool1 = false;
@@ -20,7 +20,11 @@ if (Value$arg2.type == Types.FLOAT) {
 
 if (bool1) {
 	lib_func_error_occurred = true;
-	lib_func_error_message = "arctan requires numeric arguments.";
+	lib_func_error_message = "max requires numeric arguments.";
 } else {
-	output = buildFloat($_arc_tan(float1, float2));
+	if (float1 >= float2) {
+		output = arg1;
+	} else {
+		output = arg2;
+	}
 }

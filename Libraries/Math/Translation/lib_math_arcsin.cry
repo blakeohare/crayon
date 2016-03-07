@@ -5,21 +5,18 @@ import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type == Types.FLOAT) {
 	float1 = $_cast('double', Value$arg1.internalValue);
+} else if (Value$arg1.type == Types.INTEGER) {
+	float1 = $_cast('int', Value$arg1.internalValue);
+} else {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "arcsin requires a number as input.";
+}
+
+if (!lib_func_error_occurred) {
 	if (float1 < -1 || float1  > 1) {
 		lib_func_error_occurred = true;
 		lib_func_error_message = "arcsin requires a number in the range of -1 to 1.";
 	} else {
 		output = buildFloat($_arc_sin(float1));
 	}
-} else if (Value$arg1.type == Types.INTEGER) {
-	int1 = $_cast('int', Value$arg1.internalValue);
-	if (int1 < -1 || int1 > 1) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "arcsin requires a number in the range of -1 to 1.";
-	} else {
-		output = buildFloat($_arc_sin(int1));
-	}
-} else {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "arcsin requires a number as input.";
 }
