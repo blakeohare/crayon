@@ -124,7 +124,7 @@ namespace Crayon.ParseTree
 					return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.FunctionOrClassOwner);
 				}
 
-				throw new ParserException(this.FirstToken, "Could not find class or function by this name");
+				throw new ParserException(this.FirstToken, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");
 			}
 
 			if (root is ClassReference)
@@ -156,7 +156,7 @@ namespace Crayon.ParseTree
 				// TODO: nested classes, enums, constants
 
 				// TODO: show spelling suggestions.
-				throw new ParserException(this.StepToken, "No static fields or methods named '" + field + "'.");
+				throw new ParserException(this.StepToken, "No static fields or methods named '" + field + "' on the class " + cd.NameToken.Value + ".");
 			}
 
 			if (root is BaseKeyword)
@@ -250,7 +250,7 @@ namespace Crayon.ParseTree
 				}
 
 				// TODO: show suggestions in the error message for anything close to what was typed.
-				throw new ParserException(this.StepToken, "Unknown field.");
+				throw new ParserException(this.StepToken, "Unknown field: '" + field + "'.");
 			}
 
 			return this;
