@@ -558,7 +558,7 @@ function @type('bool') glRenderOld(
 					r_cos = $_cos(angle);
 					r_sin = $_sin(angle);
 					tx = width * .5;
-					ty = height * -.5;
+					ty = height * .5;
 
 					ax = r_cos * -tx - r_sin * -ty + startX;
 					ay = r_sin * -tx + r_cos * -ty + startY;

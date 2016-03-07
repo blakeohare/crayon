@@ -129,7 +129,7 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add("R.blitRotated(");
 			this.Translator.TranslateExpression(output, image);
-			output.Add(this.Shorten(", "));
+			output.Add(this.Shorten("[1], "));
 			this.Translator.TranslateExpression(output, centerX);
 			output.Add(this.Shorten(", "));
 			this.Translator.TranslateExpression(output, centerY);

@@ -96,8 +96,10 @@ namespace GFX {
 			}
 		}
 
+		// TODO: move all floor functions to inline in translated code.
+
 		function draw(x, y) {
-			$$lib_gfx_blit_image(this, x, y);
+			$$lib_gfx_blit_image(this, floor(x), floor(y));
 		}
 
 		function drawPartial(tx, ty, sx, sy, width, height) {
@@ -107,8 +109,8 @@ namespace GFX {
 		function drawStretched(tx, ty, tw, th) {
 			return $$lib_gfx_blit_image_partial_at_scale(
 				this,
-				tx, ty, 
-				tw, th, 
+				floor(tx), floor(ty),
+				floor(tw), floor(th),
 				0, 0,
 				this.width, this.height);
 		}
@@ -116,10 +118,10 @@ namespace GFX {
 		function drawPartialStretched(tx, ty, tw, th, sx, sy, sw, sh) {
 			return $$lib_gfx_blit_image_partial_at_scale(
 				this,
-				tx, ty,
-				tw, th,
-				sx, sy,
-				sw, sh);
+				floor(tx), floor(ty),
+				floor(tw), floor(th),
+				floor(sx), floor(sy),
+				floor(sw), floor(sh));
 		}
 
 		function drawRotated(x, y, theta) {

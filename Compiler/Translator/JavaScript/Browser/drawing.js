@@ -1,4 +1,13 @@
 ﻿
+R.blitRotated = function (canvas, x, y, theta) {
+	var ctx = R._global_vars.ctx;
+	ctx.save();
+	ctx.translate(x, y);
+	ctx.rotate(theta);
+	ctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+	ctx.restore();
+};
+
 R.blitPartial = function (canvas, tx, ty, tw, th, sx, sy, sw, sh) {
 	if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
 
