@@ -101,10 +101,11 @@ function @type('Image') instantiateImage(
 }
 
 function @type('Image') scaleImage(
-	@type('Image') image,
+	@type('object') imgObj,
 	@type('int') newWidth,
 	@type('int') newHeight) {
 	
+	@type('Image') image = $_cast('Image', imgObj);
 	if (Image$image.width == newWidth && Image$image.height == newHeight) {
 		return image;
 	}

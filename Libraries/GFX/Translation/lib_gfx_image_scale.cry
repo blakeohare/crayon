@@ -1,16 +1,19 @@
-﻿// $gfx_image_scale(image, newWidth, newHeight)
-import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+﻿// $gfx_image_scale(image, newEmptyImage, newWidth, newHeight)
+import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 
-image1 = extractImageFromValue(arg1);
-if (image1 == null) {
+// original image
+object1 = libGfxGetImgFromInstance(arg1);
+
+if (object1 == null) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "$gfx_image_scale requires an image as its first argument.";
-} else if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+} else if (Value$arg3.type != Types.INTEGER || Value$arg4.type != Types.INTEGER) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "$gfx_image_scale requires an image and two integers.";
 } else {
-	output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.IMAGE, scaleImage(
-		image1,
-		$_cast('int', Value$arg2.internalValue),
-		$_cast('int', Value$arg3.internalValue))));
+	// new image
+	object1 = scaleImage(object1, $_cast('int', Value$arg3.internalValue), $_cast('int', Value$arg4.internalValue));
+
+	libGfxSetImgOnInstance(arg2, object1);
+	output = arg2;
 }

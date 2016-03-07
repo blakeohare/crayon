@@ -88,9 +88,12 @@ namespace GFX {
 			[2] -> height
 		*/
 		constructor(_key) {
-			$$lib_gfx_image_get(this, _key); 
-			this.width = $$lib_core_native_int(this, 1);
-			this.height = $$lib_core_native_int(this, 2);
+			// _key == null, or blank image objects, are used internally and are tweaked/populated manually by the library
+			if (_key != null) {
+				$$lib_gfx_image_get(this, _key); 
+				this.width = $$lib_core_native_int(this, 1);
+				this.height = $$lib_core_native_int(this, 2);
+			}
 		}
 
 		function draw(x, y) {
@@ -136,8 +139,15 @@ namespace GFX {
 		}
 
 		function scale(w, h) {
+			// TODO: should negative scaling be considered flipping?
+			w = Math.floor(w);
+			h = Math.floor(h);
 			assert(w > 0 && h > 0, "Image.scale arguments must be positive integers.");
-			return $$lib_gfx_image_scale(this, Math.floor(w), Math.floor(h));
+			if (w == this.width && h == this.height) return this;
+			output = new Image(null);
+			output.width = w;
+			output.height = h;
+			return $$lib_gfx_image_scale(this, output, w, h);
 		}
 	}
 
