@@ -164,6 +164,7 @@ def parse_field(prefix, field):
 		'xml-entity': field,
 		'type': 'field',
 		'name': name,
+		'flags': ['s'] if field.attrib.get('static') == 'true' else [],
 		'description': parse_content_element(description),
 	}
 
