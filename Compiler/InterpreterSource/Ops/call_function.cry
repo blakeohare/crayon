@@ -388,6 +388,7 @@ if (bool1) {
 				// The amount to increment the PC by is conveniently stored in the function metadata in an 
 				// array indexed by the number of optional args provided.
 				pc += $_array_get(FunctionInfo$functionInfo.pcOffsetsForOptionalArgs, int1);
+				StackFrame$stack.pc = pc;
 			}
 		}
 
