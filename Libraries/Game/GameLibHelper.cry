@@ -5,9 +5,9 @@ function @type('int') libGamePumpEvents(@type('List<Value>') output) {
 	@type('int') len = $_list_length(eventList);
 	if (len > 0) {
 		@type('int') i = 0;
-		@type('PlatformRelayObject') ev = $_list_get(eventList, i);
 		for (i = 0; i < len; i += 1) {
 			// Magic numbers ahoy!
+			@type('PlatformRelayObject') ev = $_list_get(eventList, i);
 			$_list_push(output, buildInteger(PlatformRelayObject$ev.type));
 			@type('int') t = PlatformRelayObject$ev.type;
 			$_list_push(output, buildInteger(PlatformRelayObject$ev.iarg1)); // quit subtype or key code or x
