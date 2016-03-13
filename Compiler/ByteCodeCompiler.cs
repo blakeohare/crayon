@@ -1356,7 +1356,8 @@ namespace Crayon
 							funCall.Args.Length,
 							fd.FunctionID,
 							outputUsed ? 1 : 0,
-							cd.ClassID);
+							cd.ClassID,
+							verifiedFunction.FunctionDefinition.MemberID);
 					}
 				}
 				else
@@ -1405,7 +1406,8 @@ namespace Crayon
 					funCall.Args.Length,
 					fd.FunctionID,
 					outputUsed ? 1 : 0,
-					bmr.ClassToWhichThisMethodRefers.ClassID);
+					bmr.ClassToWhichThisMethodRefers.ClassID,
+					-1);
 			}
 			else
 			{

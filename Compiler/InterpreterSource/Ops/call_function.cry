@@ -52,6 +52,7 @@
 	row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
 	row[3] --> 1 if output is used
 	row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
+	row[5] --> only provided in a field invocation. The local field ID of the field being invoked. Used to do lookup on specific class if different than the one the function ID refers to.
 
 */
 
@@ -82,6 +83,14 @@ if (bool1) {
 
 	if (type == FunctionInvocationType.LOCAL_METHOD) {
 		value = StackFrame$stack.objectContext;
+		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+		if (ObjectInstance$objInstance1.classId != classId) {
+			int2 = $_array_get(row, 5);
+			if (int2 != -1) {
+				classInfo = $_array_get(classTable, ObjectInstance$objInstance1.classId);
+				functionId = $_array_get(ClassInfo$classInfo.functionIds, int2);
+			}
+		}
 	} else if (type == FunctionInvocationType.FIELD_INVOCATION) {
 		$_comment('field invocation');
 		// provided pointers have no risk of requiring a static initialization because the pointer can only be 

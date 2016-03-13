@@ -57,13 +57,18 @@ switch (Value$value.type) {
 		break;
 
 	default:
-		output = null;
-		string1 = "Value";
+		switch (Value$value.type) {
+			case Types.NULL: string1 = "null"; break;
+			case Types.BOOLEAN: string1 = "a boolean"; break;
+			case Types.INTEGER: string1 = "an integer"; break;
+			case Types.FLOAT: string1 = "a float"; break;
+			default: string1 = "this value"; break;
+		}
+		return killExecution(stack, pc, "Cannot dereference a field from " + string1 + ".");
 		break;
 }
 
 if (output == null) {
-	// TODO: return a better error message.
 	return killExecution(stack, pc, string1 + " does not have that field.");
 }
 
