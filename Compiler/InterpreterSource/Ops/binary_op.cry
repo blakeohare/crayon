@@ -99,9 +99,9 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
 			$_comment('float % float');
 			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Modulo by 0");
-			float1 = $_cast('double', left) % $_cast('double', right);
-			if (float1 < 0) float1 += $_cast('double', right);
-			value = buildFloat(float1);
+			float3 = $_cast('double', left) % $_cast('double', right);
+			if (float3 < 0) float3 += $_cast('double', right);
+			value = buildFloat(float3);
 			break;
 
 		// float % int

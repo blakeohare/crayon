@@ -10,8 +10,8 @@ if (Value$value.type == Types.LIST) {
 	len = $_list_length(list1);
 	bool1 = true;
 } else {
-	string1 = $_cast('string', Value$value.internalValue); // the actual string
-	len = $_string_length(string1);
+	string2 = $_cast('string', Value$value.internalValue); // the actual string
+	len = $_string_length(string2);
 	bool1 = false;
 }
 
@@ -20,7 +20,7 @@ if (int1 < len) {
 		value = $_list_get(list1, int1);
 	} else {
 		// Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
-		value = buildCommonString($_char_to_string($_string_char_at(string1, int1)));
+		value = buildCommonString($_char_to_string($_string_char_at(string2, int1)));
 	}
 	int3 = localsStackOffset + int2;
 	$_array_set(localsStack, int3, value);

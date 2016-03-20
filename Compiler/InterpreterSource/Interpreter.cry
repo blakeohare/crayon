@@ -36,7 +36,6 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<string>') stringList = null;
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
-	@type('Value') func = null;
 	@type('FunctionInfo') functionInfo = null;
 	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;

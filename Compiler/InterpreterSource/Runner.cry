@@ -9,12 +9,6 @@ function main() {
 	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
 	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
-	@type('int') nameId = 0;
-	@type('int') id = 0;
-	@type('int') classId = 0;
-	@type('int') baseClassId = 0;
-	@type('int') baseClassNameId = 0;
-	@type('int') lastClassId = 0;
 	@type('int') i = 0;
 
 	@type('Array<Value>') localsStack = $_new_array('Value', 1000);

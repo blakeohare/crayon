@@ -3,11 +3,11 @@ int1 = $_array_get(row, 0);
 
 if (int1 == 0) { // Sprite sheet declaration
 	int1 = $_array_get(row, 1); // sprite sheet ID#
-	string1 = $_array_get(stringArgs, pc); // sprite sheet name
+	string3 = $_array_get(stringArgs, pc); // sprite sheet name
 
 	$_dictionary_set(SpriteSheetData$spriteSheetData.filesByGroupId, int1, $_new_list('string'));
 	$_dictionary_set(SpriteSheetData$spriteSheetData.tileIdsByGroupId, int1, $_new_dictionary('int', 'bool'));
-	$_dictionary_set(SpriteSheetData$spriteSheetData.groupIdsByName, string1, int1);
+	$_dictionary_set(SpriteSheetData$spriteSheetData.groupIdsByName, string3, int1);
 
 } else {
 	declareSpriteSheetImage(
