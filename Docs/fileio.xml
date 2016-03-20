@@ -1,0 +1,60 @@
+<documentation>
+	<library name="FileIO">
+		<description>
+			Library for interacting with the local disk or virtualized disks.
+		</description>
+		<namespace name="FileIO">
+			<namespace name="File">
+				<function name="readText">
+					<arg name="filepath" type="string">Path to a text file to read, either absolute or relative.</arg>
+					<description>
+						Reads the contents of a text file and returns it as a string.
+					</description>
+				</function>
+				<function name="writeText">
+					<arg name="filepath" type="string">Path to a file to write.</arg>
+					<arg name="content" type="string">Value to write to the file.</arg>
+					<description>
+						Writes a value to a file. If the file exists, it will be overwritten. 
+						Content overwrites all previous contents (does not append).
+					</description>
+				</function>
+			</namespace>
+			<namespace name="Directory">
+				<function name="current">
+					<description>
+						Returns a string indicating the path of the current working directory, which is 
+						the starting point of all relative path inputs to other FileIO functions.
+					</description>
+				</function>
+				<function name="list">
+					<arg name="filepath" type="string">Path of a directory.</arg>
+					<description>
+						Lists all the files and directories in the given directory.
+					</description>
+				</function>
+			</namespace>
+			<namespace name="Path">
+				<function name="isDirectory">
+					<arg name="path" type="string">Path to a file or directory.</arg>
+					<description>
+						Returns a boolean indicating whether the given path is a directory or not.
+					</description>
+				</function>
+				<function name="exists">
+					<arg name="path" type="string">Path to a file or directory.</arg>
+					<description>
+						Returns a boolean indicating whether the given path exists as either a file or directory.
+					</description>
+				</function>
+				<function name="join">
+					<arg name="pathSegments" type="string list">List of strings that represent a path</arg>
+					<description>
+						Joins the strings in the list with the current platform's directory separator character. 
+						Generally this is either '/' or '\'. 
+					</description>
+				</function>
+			</namespace>
+		</namespace>
+	</library>
+</documentation>

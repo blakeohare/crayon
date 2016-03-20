@@ -330,7 +330,7 @@ def serialize_children(entity):
 		
 
 def sanitize_sql_value(string):
-	return string.replace("'", "''")
+	return string.replace("'", "''").replace('\\', '\\\\')
 
 def generate_sql():
 	
