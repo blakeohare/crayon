@@ -40,6 +40,7 @@ function @omitReturn @type('string') interpret() {
 	@type('ObjectInstance') objInstance1 = null;
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;
+	@type('object') object2 = null;
 	@type('DictImpl') dictImpl = null;
 	@type('DictImpl') dictImpl2 = null;
 	@type('Array<List<Token>>') tokensByPc = null;
@@ -86,7 +87,6 @@ function @omitReturn @type('string') interpret() {
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
-	@type('SoundInstance') sound1 = null;
 	@type('MusicInstance') music1 = null;
 	@type('HttpRequest') httpRequest1 = null;
 	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
@@ -430,8 +430,6 @@ function performWorkNuggetPostFrame() {
 			}
 		}
 	}
-
-	soundManagerUpdate();
 }
 
 

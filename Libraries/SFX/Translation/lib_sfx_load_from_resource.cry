@@ -1,13 +1,14 @@
-﻿// $sfx_load_from_resource(path)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+﻿/*
+	args[0] -> blank sound object instance
+	args[1] -> resource path
+*/
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
 
-if (Value$arg1.type != Types.STRING) {
+int1 = lib_sfx_loadSoundFromResource(
+	$_cast('ObjectInstance', Value$arg1.internalValue), 
+	$_cast('string', Value$arg2.internalValue));
+
+if (int1 == 0) {
 	lib_func_error_occurred = true;
-	lib_func_error_message = "$sfx_load_from_resource requires a string argument.";
-} else {
-	output = loadSoundFromResource($_cast('string', Value$arg1.internalValue));
-	if (value == null) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "Resource not found.";
-	}
+	lib_func_error_message = "Resource not found.";
 }

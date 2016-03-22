@@ -1,0 +1,55 @@
+﻿function @type('int') lib_sfx_stop(@type('object') sound, @type('bool') reset) {
+	$_sfx_stop(sound);
+	return 0;
+}
+
+function @type('int') lib_sfx_snd_stop(
+		@type('object') channel,
+		@type('object') resource,
+		@type('int') resourceId,
+		@type('bool') isActivelyPlaying,
+		@type('bool') hardStop) {
+	$_audio_snd_stop(channel, resource, resourceId, isActivelyPlaying, hardStop);
+	return 0;
+}
+
+function @type('int') lib_sfx_snd_get_state(@type('object') channel, @type('object') resource, @type('int') resourceId) {
+	return $_audio_snd_get_state(channel, resource, resourceId);
+}
+
+function @type('int') lib_sfx_snd_set_pan(@type('object') channel, @type('object') sndResource, @type('double') pan) {
+	return 0;
+}
+
+function @type('int') lib_sfx_snd_set_volume(@type('object') channel, @type('object') sndResource, @type('double') volume) {
+	return 0;
+}
+
+function @type('int') lib_sfx_snd_unpause(@type('object') channel, @type('object') sndResource, @type('double') volume, @type('double') pan) {
+	$_audio_snd_resume(channel, sndResource, volume, pan);
+	return 0;
+}
+
+function @type('int') lib_sfx_snd_launch(
+		@type('object') sndResource,
+		@type('Array<object>') channelNativeDataOut,
+		@type('double') volume,
+		@type('double') pan) {
+
+	@type('object') channel = $_audio_snd_play(sndResource, volume, pan);
+	if (channel == null) {
+		return 0;
+	}
+	$_array_set(channelNativeDataOut, 0, channel);
+	return 1;
+}
+
+function @type('int') lib_sfx_loadSoundFromResource(@type('ObjectInstance') obj, @type('string') path) {
+	@type('object') snd = $_read_local_sound_resource(path);
+	if (snd == null) {
+		return 0;
+	}
+	ObjectInstance$obj.nativeData = $_new_array('object', 1);
+	$_array_set(ObjectInstance$obj.nativeData, 0, snd);
+	return 1;
+}

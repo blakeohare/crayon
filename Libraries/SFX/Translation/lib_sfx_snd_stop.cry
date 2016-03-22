@@ -1,0 +1,24 @@
+﻿/*
+	args[0] -> Channel instance
+	args[1] -> SoundResource instance
+	args[2] -> Resource ID
+	args[3] -> current state (1 -> playing, 2 -> paused, 3 -> stopped)
+	args[4] -> true if the sound should be stopped completely and freed from the channel.
+*/
+import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // channel
+objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+object2 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound
+
+int1 = $_cast('int', Value$arg3.internalValue); // resource ID
+
+int2 = $_cast('int', Value$arg4.internalValue); // state
+
+bool1 = $_cast('bool', Value$arg5.internalValue); // true if should be stopped completely as opposed to paused
+bool2 = int2 == 2 && !bool1; // pausing an already paused sound?
+
+if (int1 != 3 && !bool2) {
+	lib_sfx_snd_stop(object1, object2, int1, int2 == 1, bool1);
+}

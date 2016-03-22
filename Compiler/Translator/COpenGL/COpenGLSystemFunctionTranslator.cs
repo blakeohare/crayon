@@ -74,6 +74,26 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
+		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			throw new NotImplementedException();
@@ -751,6 +771,13 @@ namespace Crayon.Translator.COpenGL
 		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
 		{
 			output.Add("TODO_sfx_play(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
+		protected override void TranslateSfxStop(List<string> output, Expression soundInstance)
+		{
+			output.Add("TODO_sfx_stop(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}

@@ -74,6 +74,26 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateBeginFrame(List<string> output)
 		{
 			throw new Exception("This code path should be optimized out of the python translation.");
@@ -939,6 +959,13 @@ namespace Crayon.Translator.Python
 		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
 		{
 			output.Add("playSoundImpl(");
+			this.Translator.TranslateExpression(output, soundInstance);
+			output.Add(")");
+		}
+
+		protected override void TranslateSfxStop(List<string> output, Expression soundInstance)
+		{
+			output.Add("stopSoundImpl(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}

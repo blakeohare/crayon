@@ -155,28 +155,6 @@ namespace %%%PROJECT_ID%%%
 			throw new Exception(message);
 		}
 
-		public static MusicInstance MusicLoad(string path, int[] statusOut, bool isResource)
-		{
-			statusOut[0] = 0;
-			SdlDotNet.Audio.Music music = null;
-			if (isResource)
-			{
-				byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
-				music = new SdlDotNet.Audio.Music(musicData);
-			}
-			else
-			{
-				if (System.IO.File.Exists(path))
-				{
-					music = new SdlDotNet.Audio.Music(path);
-				}
-				statusOut[0] = 1;
-				return null;
-			}
-
-			return CrayonWrapper.v_instantiateMusicInstance(path, music, null, true);
-		}
-
 		public static int MusicPlayNow(object nativeMusicObject, bool loop)
 		{
 			SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
@@ -209,14 +187,33 @@ namespace %%%PROJECT_ID%%%
 
 		public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
 		{
-			byte[] soundBytes = ResourceReader.ReadBytes(path, true).ToArray();
+			IList<byte> soundBytesList = ResourceReader.ReadBytes(path, true);
+			if (soundBytesList == null) return null;
+			byte[] soundBytes = soundBytesList.ToArray();
 			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
 		}
 
 		public static void SfxPlay(object nativeSound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
-			sdlSound.Play();
+			try
+			{
+				sdlSound.Play();
+			}
+			catch (SdlDotNet.Core.SdlException)
+			{
+				// No free channels or other hardware exceptions should just fail silently (no pun intended).
+			}
+		}
+
+		public static void SfxStop(object nativeSound)
+		{
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
+			try
+			{
+				sdlSound.Stop();
+			}
+			catch (SdlDotNet.Core.SdlException) { }
 		}
 
 		public static bool DoesPathExist(string path, bool directoriesOnly, bool checkCase)
@@ -391,6 +388,66 @@ namespace %%%PROJECT_ID%%%
 			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
 			catch (System.UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
 			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+
+		public static void AudioSoundStop(object rawChannel, object rawResource, int resourceId, bool isActivelyPlaying, bool isHardStop)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			SdlDotNet.Audio.Sound resource = (SdlDotNet.Audio.Sound)rawResource;
+
+			if (isHardStop)
+			{
+				channel.Stop();
+			}
+			else if (isActivelyPlaying)
+			{
+				channel.Pause();
+			}
+		}
+
+		public static int AudioSoundGetState(object rawChannel, object rawResource, int resourceId)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			if (channel.IsPlaying())
+			{
+				if (channel.IsPaused())
+				{
+					return 2;
+				}
+				return 1;
+			}
+			return 3;
+		}
+
+		public static void AudioSoundResume(object rawChannel, object rawResource, double volume, double pan)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			if (channel.IsPaused())
+			{
+				channel.Resume();
+				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+			}
+		}
+
+		public static object AudioSoundPlay(object rawRes, double volume, double pan)
+		{
+			SdlDotNet.Audio.Sound snd = (SdlDotNet.Audio.Sound)rawRes;
+			try
+			{
+				SdlDotNet.Audio.Channel channel = snd.Play();
+				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+				return channel;
+			}
+			catch (SdlDotNet.Core.SdlException)
+			{
+				return null;
+			}
+		}
+
+		private static void AudioApplyVolumeAndPan(SdlDotNet.Audio.Channel channel, double volume, double pan)
+		{
+			channel.Volume = (int)(255 * volume);
+			// TODO: apply pan using channel.SetPanning(left, right);
 		}
 	}
 }

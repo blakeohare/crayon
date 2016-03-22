@@ -1,0 +1,15 @@
+﻿/*
+	args[0] -> Sound instance
+	args[1] -> SoundResource instance
+	args[3] -> volume ratio (0.0 to 1.0)
+*/
+import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound
+objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+object2 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound resource
+
+float1 = $_cast('double', Value$arg3.internalValue); // volume
+
+lib_sfx_snd_set_volume(object1, object2, float1);

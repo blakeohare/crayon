@@ -96,6 +96,10 @@ namespace Crayon.Translator
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
 				case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
+				case "_audio_snd_get_state": VerifyCount(functionCall, 3); TranslateAudioSoundGetState(output, args[0], args[1], args[2]); break;
+				case "_audio_snd_play": VerifyCount(functionCall, 3); TranslateAudioSoundPlay(output, args[0], args[1], args[2]); break;
+				case "_audio_snd_resume": VerifyCount(functionCall, 4); TranslateAudioSoundResume(output, args[0], args[1], args[2], args[3]); break;
+				case "_audio_snd_stop": VerifyCount(functionCall, 5); TranslateAudioSoundStop(output, args[0], args[1], args[2], args[3], args[4]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
 				case "_blit_image_alpha": VerifyCount(functionCall, 4); TranslateBlitImageAlpha(output, args[0], args[1], args[2], args[3]); break;
@@ -193,6 +197,7 @@ namespace Crayon.Translator
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
 				case "_sfx_play": VerifyCount(functionCall, 1); TranslateSfxPlay(output, args[0]); break;
+				case "_sfx_stop": VerifyCount(functionCall, 1); TranslateSfxStop(output, args[0]); break;
 				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
@@ -232,6 +237,10 @@ namespace Crayon.Translator
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateAssert(List<string> output, Expression message);
+		protected abstract void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId);
+		protected abstract void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan);
+		protected abstract void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio);
+		protected abstract void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop);
 		protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
 		protected abstract void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha);
@@ -335,6 +344,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
 		protected abstract void TranslateSfxPlay(List<string> output, Expression soundInstance);
+		protected abstract void TranslateSfxStop(List<string> output, Expression soundInstance);
 		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);

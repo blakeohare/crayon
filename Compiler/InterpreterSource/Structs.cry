@@ -263,13 +263,6 @@ struct ImageSheetStatus {
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
 }
 
-struct SoundInstance {
-	@type('string') userFilePath, // path in the original project (consistent across platforms)
-	@type('object') nativeObject, // native sound object.
-	@type('string') realFilePath, // path on the actual disk
-	@type('double') volume, // volume for this particular music instance (combined with master volume)
-	@type('bool') isLoaded, // true if the music is loaded and ready to play
-}
 
 struct MusicInstance {
 	@type('string') userFilePath, // path in the original project (consistent across platforms)
@@ -284,13 +277,13 @@ struct MusicInstance {
 // If the sound or music for an event isn't loaded, it'll 
 struct SoundEvent {
 	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PAUSE_MUSIC, PLAY_SOUND
-	@type('SoundInstance') sound, 
+	@type('Value') sound,
 	@type('MusicInstance') music,
 	@type('bool') fadeOutEstablished, // set to true once the endFade timestamp is established.
 	@type('bool') musicLoops, // true if the music should loop.
 
 	// These are set when the event is created. These are in seconds.
-	@type('double') fadeOutDuration, 
+	@type('double') fadeOutDuration,
 
 	// These are all blank when the event is created. 
 	// When the music has loaded, these are set to the relative timestamps from the current time using the

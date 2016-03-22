@@ -1,94 +1,235 @@
-﻿namespace Sfx {
-	function music_load_from_file(path) {
-		return $$lib_sfx_music_load_from_file(path);
+﻿import Math;
+import Game;
+
+namespace SFX {
+	
+	/*
+	enum MusicEndTransition {
+		FADE,
+		INSTANT,
+		FINISH,
 	}
 
-	function music_load_from_resource(path) {
-		return $$lib_sfx_music_load_from_resource(path);
+	class Mixer {
+		field _activeSong;
+		
 	}
 
-	function music_load_from_user_data(path) {
-		return $$lib_sfx_music_load_from_user_data(path);
+	class Music {
+		
+
+		static function loadFromFile(path) {
+			$$lib_sfx_music_load_from_file(path);
+		}
+		
+		static function loadFromResource(path) {
+			return $$lib_sfx_music_load_from_resource(path);
+		}
+
+		static function loadFromUserData(path) {
+			return $$lib_sfx_music_load_from_user_data(path);
+		}
+
+		static function loadFromWeb(url) {
+			return $$lib_sfx_music_load_from_web(url);
+		}
+
+		static function getCurrent() {
+			return $$lib_sfx_music_get_current();
+		}
+
+		static function getMasterVolume() {
+			return $$lib_sfx_music_get_master_volume();
+		}
+
+		static function setMasterVolume(ratio) {
+			return $$lib_sfx_music_set_master_volume(ratio);
+		}
+
+		function getCurrentPosition() {
+			return $$lib_sfx_music_get_position();
+		}
+
+		function setPosition(time) {
+			return $$lib_sfx_music_set_position(time);
+		}
+
+		function pause() {
+			return $$lib_sfx_music_pause();
+		}
+
+		function play(song, loop, start_time, fade_in_duration, fade_out_duration) {
+			return $$lib_sfx_music_play(song, loop, start_time, fade_in_duration, fade_out_duration);
+		}
+
+		function fadeOut(duration) {
+			
+		}
+
+		function stop(fade_out_duration) {
+			// TODO: fade out duration.
+			return $$lib_sfx_music_stop();
+		}
+
+		function getVolume(ratio) {
+			return this._vol;
+		}
+
+		function setVolume(ratio) {
+			this._vol = ratio;
+			return $$lib_sfx_music_set_volume(this, this._vol);
+		}
+	}
+	
+	namespace Music {
+
+
+	}
+	//*/
+
+	enum SoundPlayState {
+		PLAYING = 1,
+		PAUSED = 2,
+		STOPPED = 3,
 	}
 
-	function music_load_from_web(url) {
-		return $$lib_sfx_music_load_from_web(url);
+	/*
+		nativeData[0] -> mixer channel identifier or whatever is necessary to identify this particular playing instance.
+	*/
+	class Sound {
+		field _soundResource;
+		field _id;
+
+		field _isStopped = false; // set to stopped to indicate the sound should never be resumable again.
+		field _volume;
+		field _pan;
+
+		// constructs and fires event
+		constructor(resource, volume, pan) {
+			this._soundResource = resource;
+			this._id = resource._id;
+			this._volume = volume;
+			this._pan = pan;
+
+			// This call will set the native data.
+			// Also, it'll just mark the sound as stopped if there's an error. 
+			// TODO: maybe a better indicator of an error playing the sound.
+			this._isStopped = $$lib_sfx_snd_play(this, resource, volume, pan) == 1;
+		}
+
+		function getState() {
+			// ensures that it also returns STOPPED if the channel is playing a different sound.
+			t = $$lib_sfx_snd_get_state(this, this._soundResource, this._id);
+			if (t == SoundPlayState.STOPPED) this._isStopped = true;
+			return t;
+		}
+
+		function resume() {
+			if (this.getState() == SoundPlayState.PAUSED) {
+				$$lib_sfx_snd_resume(this, this._soundResource, this._volume, this._pan);
+			}
+		}
+
+		function stop() {
+			t = this.getState();
+			if (t != SoundPlayState.STOPPED) {
+				$$lib_sfx_snd_stop(this, this._soundResource, this._id, t, true);
+			}
+		}
+
+		function pause() {
+			if (this.getState() == SoundPlayState.PLAYING) {
+				$$lib_sfx_snd_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
+			}
+		}
+		
+		function getResource() {
+			return this._soundResource;
+		}
+
+		/*
+			-1.0 -> left speaker only
+			1.0 -> right speaker only
+			0.0 -> balanced
+		*/
+		function setPan(value) {
+			this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
+			$$lib_sfx_snd_set_pan(this, this._soundResource, this._pan);
+		}
+
+		function getPan() { return this._pan; }
+		
+		/*
+			ratio from 0.0 to 1.0
+		*/
+		function setVolume(ratio) {
+			this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
+			$$lib_sfx_snd_set_volume(this, this._soundResource, this._volume);
+		}
+
+		function getVolume() { return this._volume; }
 	}
 
-	function music_get_current() {
-		return $$lib_sfx_music_get_current();
-	}
+	/*
+		native_data[0] -> actual native instance of the sound.
+	*/
+	class SoundResource {
 
-	function music_get_master_volume() {
-		return $$lib_sfx_music_get_master_volume();
-	}
+		static field _cache = {};
 
-	function music_get_position() {
-		return $$lib_sfx_music_get_position();
-	}
+		static field _resID = 0;
 
-	function music_pause() {
-		return $$lib_sfx_music_pause();
-	}
+		field _v = 1.0; // volume
+		field _p; // path
+		field _e; // is embedded resource
+		field _c = []; // playing channels
+		
+		field _id; // unique ID for this particular resource
 
-	function music_play(song, loop, start_time, fade_in_duration, fade_out_duration) {
-		return $$lib_sfx_music_play(song, loop, start_time, fade_in_duration, fade_out_duration);
-	}
+		// TODO: private constructors
+		constructor() {
+			this._id = SoundResource._resID++;
+		}
 
-	function music_set_position(time) {
-		return $$lib_sfx_music_set_position(time);
-	}
+		function setVolume(r) {
+			this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
+			$$lib_sfx_set_volume(this, this._v);
+		}
 
-	function music_set_master_volume(ratio) {
-		return $$lib_sfx_music_set_master_volume(ratio);
-	}
+		function getVolume() {
+			return this._v;
+		}
 
-	function music_set_volume(song, ratio) {
-		return $$lib_sfx_music_set_volume(song, ratio);
-	}
+		static function loadFromFile(path) {
+			s = new Sound();
+			$$lib_sfx_load_from_file(s, path + '');
+			s._p = path;
+			s._e = false;
+			return s;
+		}
 
-	function music_stop(fade_out_duration) {
-		// TODO: fade out duration.
-		return $$lib_sfx_music_stop();
-	}
+		static function loadFromResource(path, useCache = true) {
+			s = null;
+			path += ''; // ensure string
+			if (useCache) {
+				s = SoundResource._cache.get(path);
+			}
+			if (s == null) {
+				s = new SoundResource();
+				$$lib_sfx_load_from_resource(s, path);
+				s._p = path;
+				s._e = true;
+				if (useCache) {
+					SoundResource._cache[path] = s;
+				}
+			}
+			return s;
+		}
 
-	function sfx_get_master_volume() {
-		return $$lib_sfx_get_master_volume();
-	}
-
-	function sfx_load_from_file(path) {
-		return $$lib_sfx_load_from_file(path);
-	}
-
-	function sfx_load_from_resource(path) {
-		return $$lib_sfx_load_from_resource(path);
-	}
-
-	function sfx_load_from_user_data(path) {
-		return $$lib_sfx_load_from_user_data(path);
-	}
-
-	function sfx_load_from_web(url) {
-		return $$lib_sfx_load_from_web(url);
-	}
-
-	function sfx_pause(snd) {
-		return $$lib_sfx_pause(snd);
-	}
-
-	function sfx_play(snd) {
-		return $$lib_sfx_play(snd);
-	}
-
-	function sfx_set_master_volume(ratio) {
-		return $$lib_sfx_set_master_volume(ratio);
-	}
-
-	function sfx_set_volume(snd, ratio) {
-		return $$lib_sfx_set_volume(snd, ratio);
-	}
-
-	function sfx_stop(snd) {
-		return $$lib_sfx_stop(snd);
+		function play(volume = 1.0, pan = 0.0) {
+			c = new Sound(this, volume, pan);
+			this._c.add(c);
+			return c;
+		}
 	}
 }

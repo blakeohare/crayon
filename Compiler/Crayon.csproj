@@ -298,7 +298,6 @@
     <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
     <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
     <EmbeddedResource Include="InterpreterSource\Runner.cry" />
-    <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
     <EmbeddedResource Include="InterpreterSource\Structs.cry" />
     <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />
     <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />

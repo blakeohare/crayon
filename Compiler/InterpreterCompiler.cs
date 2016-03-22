@@ -27,7 +27,6 @@ namespace Crayon
 			"OpenGlPipeline.cry", // conditionally excluded below based on platform.
 			"PrimitiveMethods.cry",
 			"Runner.cry",
-			"SoundManager.cry",
 			"TypesUtil.cry",
 			"ValueUtil.cry",
 		};

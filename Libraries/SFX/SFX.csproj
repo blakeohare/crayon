@@ -51,7 +51,7 @@
     <EmbeddedResource Include="Translation\lib_sfx_music_get_current.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_stop.cry" />
+    <EmbeddedResource Include="Translation\lib_sfx_snd_stop.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_music_get_master_volume.cry" />
@@ -64,12 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_music_load_from_resource.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_load_from_user_data.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_load_from_web.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_music_pause.cry" />
@@ -93,25 +87,13 @@
     <EmbeddedResource Include="Translation\lib_sfx_music_stop.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_get_master_volume.cry" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_load_from_file.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_load_from_resource.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_load_from_user_data.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_load_from_web.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_pause.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_play.cry" />
+    <EmbeddedResource Include="Translation\lib_sfx_snd_play.cry" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_sfx_set_master_volume.cry" />
@@ -124,6 +106,21 @@
       <Project>{035A169E-3D27-4D58-8CE7-16787BFECC91}</Project>
       <Name>LibraryConfig</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SfxLibHelper.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_sfx_snd_get_state.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_sfx_snd_resume.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_sfx_snd_set_pan.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_sfx_snd_set_volume.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
