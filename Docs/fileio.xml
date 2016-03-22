@@ -55,6 +55,27 @@
 					</description>
 				</function>
 			</namespace>
+			<namespace name="UserData">
+				<description>
+					This namespace contains functionality similar to the <link see="fileio">FileIO</link> namespace as a whole. However all
+					operations are applied to the user's application data directory. For Windows users, this is a folder that is created
+					at "C:\Users\{username}\AppData\Roaming\{project ID}" where the project ID is defined in the build file. For Linux
+					and Mac users, this is the "~/.{project ID}" folder. For non-native platforms, operations are applied to a virtualized
+					disk that is backed by some sort of persistent storage. For JavaScript, this is a fake file system implemented over the
+					<link url="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage</link> API. The current directory
+					is considered to be the root of this user data directory and all relative path access outside of this directory (such as using ../)
+					is prevented and will result in an error.
+				</description>
+				<namespace name="File">
+					
+				</namespace>
+				<namespace name="Directory">
+					
+				</namespace>
+				<namespace name="Path">
+					
+				</namespace>
+			</namespace>
 		</namespace>
 	</library>
 </documentation>
