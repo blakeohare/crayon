@@ -8,8 +8,8 @@
     <ProjectGuid>{6F885367-B0A8-49C5-9EF5-1EC1F63D8928}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SFX</RootNamespace>
-    <AssemblyName>SFX</AssemblyName>
+    <RootNamespace>Audio</RootNamespace>
+    <AssemblyName>Audio</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,52 +48,28 @@
     <EmbeddedResource Include="embed.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_get_current.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_stop.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_stop.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_music_load_from_file.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_get_master_volume.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_music_load_from_resource.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_get_position.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_music_set_volume.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_load_from_file.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_music_stop.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_load_from_resource.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_load_from_file.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_pause.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_load_from_resource.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_play.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_resume.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_set_master_volume.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_set_position.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_set_volume.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_stop.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_load_from_file.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_load_from_resource.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_play.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_play.cry" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compiler\LibraryConfig\LibraryConfig.csproj">
@@ -102,22 +78,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SfxLibHelper.cry" />
+    <EmbeddedResource Include="AudioLibHelper.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_get_state.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_get_state.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_resume.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_resume.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_set_pan.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_set_pan.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_snd_set_volume.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_sfx_set_volume.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_sfx_music_is_playing.cry" />
+    <EmbeddedResource Include="Translation\lib_audio_music_is_playing.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_audio_music_play.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

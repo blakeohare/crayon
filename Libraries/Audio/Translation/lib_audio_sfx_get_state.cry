@@ -17,4 +17,4 @@ object2 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound
 
 int1 = $_cast('int', Value$arg3.internalValue); // resource ID
 
-output = buildInteger(lib_sfx_snd_get_state(object1, object2, int1));
+output = buildInteger(lib_audio_sfx_get_state(object1, object2, int1));

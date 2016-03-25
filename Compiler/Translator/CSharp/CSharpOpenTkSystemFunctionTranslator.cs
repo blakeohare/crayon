@@ -6,6 +6,11 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpOpenTkSystemFunctionTranslator : CSharpSystemFunctionTranslator
 	{
+		protected override void TranslateAudioMusicIsPlaying(List<string> output)
+		{
+			output.Add("TranslationHelper.AudioMusicIsPlaying()");
+		}
+
 		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
 		{
 			output.Add("TranslationHelper.AudioMusicPlay(");
@@ -230,16 +235,16 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
 		{
-			output.Add("TranslationHelper.SfxPlay(");
+			output.Add("TranslationHelper.AudioPlay(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 
-		protected override void TranslateSfxStop(List<string> output, Expression soundInstance)
+		protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
 		{
-			output.Add("TranslationHelper.SfxStop(");
+			output.Add("TranslationHelper.AudioStop(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}

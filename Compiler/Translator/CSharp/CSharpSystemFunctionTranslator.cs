@@ -680,7 +680,7 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
 		{
 			output.Add("TranslationHelper.SfxPlay(");
 			this.Translator.TranslateExpression(output, soundInstance);

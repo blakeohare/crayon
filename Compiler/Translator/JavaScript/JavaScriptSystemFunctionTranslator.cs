@@ -72,6 +72,11 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, message);
 		}
 
+		protected override void TranslateAudioMusicIsPlaying(List<string> output)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
 		{
 			throw new NotImplementedException();
@@ -931,14 +936,14 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateSfxPlay(List<string> output, Expression soundInstance)
+		protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
 		{
 			output.Add("R.playSound(");
 			this.Translator.TranslateExpression(output, soundInstance);
 			output.Add(")");
 		}
 
-		protected override void TranslateSfxStop(List<string> output, Expression soundInstance)
+		protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
 		{
 			output.Add("R.stopSound(");
 			this.Translator.TranslateExpression(output, soundInstance);

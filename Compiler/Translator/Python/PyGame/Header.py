@@ -390,8 +390,8 @@ def readLocalSoundResource(path):
 			return None
 	return None
 
-def playSoundImpl(snd):
-	snd.play()
+def playSoundImpl(sfx):
+	sfx.play()
 
 def io_helper_check_path(path, isDirCheck, checkCase):
 	# TODO: check case.

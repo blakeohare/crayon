@@ -1,7 +1,7 @@
 ﻿import Math;
 import Game;
 
-namespace SFX {
+namespace Audio {
 	/*
 		nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
 	*/
@@ -18,7 +18,7 @@ namespace SFX {
 			music = new Music();
 			music._isResource = true;
 			music._path = path + '';
-			if (!$$lib_sfx_music_load_from_resource(music, music._path)) {
+			if (!$$lib_audio_music_load_from_resource(music, music._path)) {
 				Core.assert(false, "Music resource not found.");
 			}
 			return music;
@@ -73,7 +73,7 @@ namespace SFX {
 					break;
 
 				case _MusicState.PLAYING_NORMAL:
-					if (!$$lib_sfx_music_is_playing()) {
+					if (!$$lib_audio_music_is_playing()) {
 						// Rather than just mark this as no longer playing, pretend that it's a transition out that's already done.
 						// This will either mark it as NOT_PLAYING or will automatically pop the queue and start the next song.
 						// Otherwise enqueuing a song during a non-looping song and if the song just happens to end while it's still fading
@@ -96,12 +96,12 @@ namespace SFX {
 						if (MusicPlayer.enqueuedMusic == null) {
 							MusicPlayer.currentState = _MusicState.NOT_PLAYING;
 							MusicPlayer.currentMusic = null;
-							$$lib_sfx_music_stop();
+							$$lib_audio_music_stop();
 						} else {
 							MusicPlayer.currentMusic = MusicPlayer.enqueuedMusic;
 							MusicPlayer.currentIsLoop = MusicPlayer.enqueuedIsLoop;
 							if (MusicPlayer.enqueuedInTransitionDuration == null) {
-								$$lib_sfx_music_play(
+								$$lib_audio_music_play(
 									MusicPlayer.currentMusic,
 									MusicPlayer.currentMusic._isResource,
 									MusicPlayer.currentMusic._path,
@@ -113,7 +113,7 @@ namespace SFX {
 								MusicPlayer.currentInTransitionDuration = null;
 								MusicPlayer.fadeVolume = 1.0;
 							} else {
-								$$lib_sfx_music_play(MusicPlayer.currentMusic, 0.0, MusicPlayer.currentIsLoop);
+								$$lib_audio_music_play(MusicPlayer.currentMusic, 0.0, MusicPlayer.currentIsLoop);
 								MusicPlayer.currentState = _MusicState.TRANSITION_IN;
 								MusicPlayer.currentInTransitionDuration = MusicPlayer.enqueuedInTransitionDuration;
 								MusicPlayer.currentTransitionStart = Core.currentTime();
@@ -128,7 +128,7 @@ namespace SFX {
 			diff = Math.abs(v - MusicPlayer.compositeVolume);
 			if (diff > 0.00001) {
 				MusicPlayer.compositeVolume = v;
-				$$lib_sfx_music_set_volume(v);
+				$$lib_audio_music_set_volume(v);
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace SFX {
 			if (outTransitionDuration == null) {
 				// instantaneous transitions
 				if (music == null) {
-					$$lib_sfx_music_stop();
+					$$lib_audio_music_stop();
 					MusicPlayer.currentMusic = null;
 					MusicPlayer.currentState = _MusicState.NOT_PLAYING;
 				} else {
@@ -182,11 +182,11 @@ namespace SFX {
 					if (inTransitionDuration == null) {
 						MusicPlayer.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
 						MusicPlayer.fadeVolume = 1.0;
-						$$lib_sfx_music_play(music, music._isResource, music._path, MusicPlayer.mainVolume, loop);
+						$$lib_audio_music_play(music, music._isResource, music._path, MusicPlayer.mainVolume, loop);
 					} else {
 						MusicPlayer.currentState = _MusicState.TRANSITION_IN;
 						MusicPlayer.fadeVolume = 0.0;
-						$$lib_sfx_music_play(music, music._isResource, music._path, 0.0, loop);
+						$$lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
 					}
 				}
 			} else {
@@ -228,32 +228,32 @@ namespace SFX {
 			// This call will set the native data.
 			// Also, it'll just mark the sound as stopped if there's an error. 
 			// TODO: maybe a better indicator of an error playing the sound.
-			this._isStopped = $$lib_sfx_snd_play(this, resource, volume, pan) == 1;
+			this._isStopped = $$lib_audio_sfx_play(this, resource, volume, pan) == 1;
 		}
 
 		function getState() {
 			// ensures that it also returns STOPPED if the channel is playing a different sound.
-			t = $$lib_sfx_snd_get_state(this, this._soundResource, this._id);
+			t = $$lib_audio_sfx_get_state(this, this._soundResource, this._id);
 			if (t == SoundPlayState.STOPPED) this._isStopped = true;
 			return t;
 		}
 
 		function resume() {
 			if (this.getState() == SoundPlayState.PAUSED) {
-				$$lib_sfx_snd_resume(this, this._soundResource, this._volume, this._pan);
+				$$lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
 			}
 		}
 
 		function stop() {
 			t = this.getState();
 			if (t != SoundPlayState.STOPPED) {
-				$$lib_sfx_snd_stop(this, this._soundResource, this._id, t, true);
+				$$lib_audio_sfx_stop(this, this._soundResource, this._id, t, true);
 			}
 		}
 
 		function pause() {
 			if (this.getState() == SoundPlayState.PLAYING) {
-				$$lib_sfx_snd_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
+				$$lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
 			}
 		}
 		
@@ -268,7 +268,7 @@ namespace SFX {
 		*/
 		function setPan(value) {
 			this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
-			$$lib_sfx_snd_set_pan(this, this._soundResource, this._pan);
+			$$lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
 		}
 
 		function getPan() { return this._pan; }
@@ -278,7 +278,7 @@ namespace SFX {
 		*/
 		function setVolume(ratio) {
 			this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
-			$$lib_sfx_snd_set_volume(this, this._soundResource, this._volume);
+			$$lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
 		}
 
 		function getVolume() { return this._volume; }
@@ -307,7 +307,7 @@ namespace SFX {
 
 		function setVolume(r) {
 			this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
-			$$lib_sfx_snd_set_volume(this, this._v);
+			$$lib_audio_sfx_set_volume(this, this._v);
 		}
 
 		function getVolume() {
@@ -316,7 +316,7 @@ namespace SFX {
 
 		static function loadFromFile(path) {
 			s = new Sound();
-			$$lib_sfx_load_from_file(s, path + '');
+			$$lib_audio_sfx_load_from_file(s, path + '');
 			s._p = path;
 			s._e = false;
 			return s;
@@ -330,7 +330,7 @@ namespace SFX {
 			}
 			if (s == null) {
 				s = new SoundResource();
-				$$lib_sfx_load_from_resource(s, path);
+				$$lib_audio_sfx_load_from_resource(s, path);
 				s._p = path;
 				s._e = true;
 				if (useCache) {

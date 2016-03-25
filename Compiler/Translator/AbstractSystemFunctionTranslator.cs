@@ -88,11 +88,15 @@ namespace Crayon.Translator
 			switch (name)
 			{
 				// TODO: migrate these to the Audio library.
+				case "_audio_play": VerifyCount(functionCall, 1); TranslateAudioPlay(output, args[0]); break;
+				case "_audio_stop": VerifyCount(functionCall, 1); TranslateAudioStop(output, args[0]); break;
+				
 				case "_audio_read_local_sound_resource": VerifyCount(functionCall, 1); TranslateReadLocalSoundResource(output, args[0]); break;
-				case "_audio_snd_get_state": VerifyCount(functionCall, 3); TranslateAudioSoundGetState(output, args[0], args[1], args[2]); break;
-				case "_audio_snd_play": VerifyCount(functionCall, 3); TranslateAudioSoundPlay(output, args[0], args[1], args[2]); break;
-				case "_audio_snd_resume": VerifyCount(functionCall, 4); TranslateAudioSoundResume(output, args[0], args[1], args[2], args[3]); break;
-				case "_audio_snd_stop": VerifyCount(functionCall, 5); TranslateAudioSoundStop(output, args[0], args[1], args[2], args[3], args[4]); break;
+				case "_audio_sfx_get_state": VerifyCount(functionCall, 3); TranslateAudioSoundGetState(output, args[0], args[1], args[2]); break;
+				case "_audio_sfx_play": VerifyCount(functionCall, 3); TranslateAudioSoundPlay(output, args[0], args[1], args[2]); break;
+				case "_audio_sfx_resume": VerifyCount(functionCall, 4); TranslateAudioSoundResume(output, args[0], args[1], args[2], args[3]); break;
+				case "_audio_sfx_stop": VerifyCount(functionCall, 5); TranslateAudioSoundStop(output, args[0], args[1], args[2], args[3], args[4]); break;
+				case "_audio_music_is_playing": VerifyCount(functionCall, 0); TranslateAudioMusicIsPlaying(output); break;
 				case "_audio_music_load_from_resource": VerifyCount(functionCall, 1); TranslateMusicLoadFromResource(output, args[0]); break;
 				case "_audio_music_pause": VerifyCount(functionCall, 0); TranslateMusicPause(output); break;
 				case "_audio_music_play_resource": VerifyCount(functionCall, 3); TranslateAudioMusicPlayResource(output, args[0], args[1], args[2]); break;
@@ -203,8 +207,6 @@ namespace Crayon.Translator
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
 				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
-				case "_sfx_play": VerifyCount(functionCall, 1); TranslateSfxPlay(output, args[0]); break;
-				case "_sfx_stop": VerifyCount(functionCall, 1); TranslateSfxStop(output, args[0]); break;
 				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
 				case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
 				case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
@@ -329,6 +331,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListSet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
 		protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
+		protected abstract void TranslateAudioMusicIsPlaying(List<string> output);
 		protected abstract void TranslateMusicLoadFromResource(List<string> output, Expression filename);
 		protected abstract void TranslateMusicPause(List<string> output);
 		protected abstract void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping);
@@ -353,8 +356,8 @@ namespace Crayon.Translator
 		protected abstract void TranslateResourceReadText(List<string> output, Expression path);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
-		protected abstract void TranslateSfxPlay(List<string> output, Expression soundInstance);
-		protected abstract void TranslateSfxStop(List<string> output, Expression soundInstance);
+		protected abstract void TranslateAudioPlay(List<string> output, Expression soundInstance);
+		protected abstract void TranslateAudioStop(List<string> output, Expression soundInstance);
 		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);

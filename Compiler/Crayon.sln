@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "..\Libraries\Game\G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GFX", "..\Libraries\GFX\GFX.csproj", "{1EBC6534-E249-4341-9760-096E64D004E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFX", "..\Libraries\SFX\SFX.csproj", "{6F885367-B0A8-49C5-9EF5-1EC1F63D8928}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio", "..\Libraries\Audio\Audio.csproj", "{6F885367-B0A8-49C5-9EF5-1EC1F63D8928}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamepad", "..\Libraries\Gamepad\Gamepad.csproj", "{59F15884-6CDD-4B89-8C07-E779F582AD91}"
 EndProject

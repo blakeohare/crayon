@@ -163,7 +163,7 @@ namespace %%%PROJECT_ID%%%
 			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
 		}
 
-		public static void SfxPlay(object nativeSound)
+		public static void AudioPlay(object nativeSound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
 			try
@@ -176,7 +176,7 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
-		public static void SfxStop(object nativeSound)
+		public static void AudioStop(object nativeSound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
 			try
@@ -401,10 +401,10 @@ namespace %%%PROJECT_ID%%%
 
 		public static object AudioSoundPlay(object rawRes, double volume, double pan)
 		{
-			SdlDotNet.Audio.Sound snd = (SdlDotNet.Audio.Sound)rawRes;
+			SdlDotNet.Audio.Sound sfx = (SdlDotNet.Audio.Sound)rawRes;
 			try
 			{
-				SdlDotNet.Audio.Channel channel = snd.Play();
+				SdlDotNet.Audio.Channel channel = sfx.Play();
 				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
 				return channel;
 			}
@@ -444,6 +444,11 @@ namespace %%%PROJECT_ID%%%
 			byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
 			if (musicData == null) return null;
 			return new SdlDotNet.Audio.Music(musicData);
+		}
+
+		public static bool AudioMusicIsPlaying()
+		{
+			return SdlDotNet.Audio.MusicPlayer.IsPlaying;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LibraryConfig;
 
-namespace SFX
+namespace Audio
 {
 	public class Config : ILibraryConfig
 	{
@@ -30,7 +30,7 @@ namespace SFX
 		{
 			return new Dictionary<string, string>()
 			{
-				{ "SfxLibHelper", ReadFile("SfxLibHelper.cry") },
+				{ "AudioLibHelper", ReadFile("AudioLibHelper.cry") },
 			};
 		}
 	}

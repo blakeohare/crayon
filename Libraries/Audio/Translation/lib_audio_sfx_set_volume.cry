@@ -12,4 +12,4 @@ object2 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound resou
 
 float1 = $_cast('double', Value$arg3.internalValue); // volume
 
-lib_sfx_snd_set_volume(object1, object2, float1);
+lib_audio_sfx_set_volume(object1, object2, float1);

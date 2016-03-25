@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
 	args[0] -> music instance with unintialized native data
 	args[1] -> path
 */
@@ -8,7 +7,7 @@ import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 string1 = $_cast('string', Value$arg2.internalValue);
 
-if (lib_sfx_music_load_from_resource(objInstance1, string1)) {
+if (lib_audio_music_load_from_resource(objInstance1, string1)) {
 	output = VALUE_TRUE;
 } else {
 	output = VALUE_FALSE;

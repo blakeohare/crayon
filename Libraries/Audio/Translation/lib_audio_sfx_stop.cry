@@ -20,5 +20,5 @@ bool1 = $_cast('bool', Value$arg5.internalValue); // true if should be stopped c
 bool2 = int2 == 2 && !bool1; // pausing an already paused sound?
 
 if (int1 != 3 && !bool2) {
-	lib_sfx_snd_stop(object1, object2, int1, int2 == 1, bool1);
+	lib_audio_sfx_stop(object1, object2, int1, int2 == 1, bool1);
 }

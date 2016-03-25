@@ -14,4 +14,4 @@ object2 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound resou
 float1 = $_cast('double', Value$arg3.internalValue); // volume
 float2 = $_cast('double', Value$arg4.internalValue); // pan
 
-lib_sfx_snd_unpause(object1, object2, float1, float2);
+lib_audio_sfx_unpause(object1, object2, float1, float2);

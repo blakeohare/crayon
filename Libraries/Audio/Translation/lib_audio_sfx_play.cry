@@ -14,6 +14,6 @@ float2 = $_cast('double', Value$arg4.internalValue);
 ObjectInstance$objInstance1.nativeData = $_new_array('object', 1); // native data for sound (channel)
 object1 = $_array_get(ObjectInstance$objInstance2.nativeData, 0); // resource
 
-int1 = lib_sfx_snd_launch(object1, ObjectInstance$objInstance1.nativeData, float1, float2);
+int1 = lib_audio_sfx_launch(object1, ObjectInstance$objInstance1.nativeData, float1, float2);
 
 output = buildInteger(int1);

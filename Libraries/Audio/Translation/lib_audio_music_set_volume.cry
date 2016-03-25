@@ -1,3 +1,4 @@
-﻿
-// $sfx_load_from_file(path)
+﻿/*
+	args[0] -> (float) ratio
+*/
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
