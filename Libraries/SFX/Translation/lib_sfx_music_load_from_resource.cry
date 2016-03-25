@@ -1,23 +1,15 @@
 ﻿
-// $music_load_from_resource(path)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+/*
+	args[0] -> music instance with unintialized native data
+	args[1] -> path
+*/
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
 
-if (Value$arg1.type != Types.STRING) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$music_load_from_resource requires a string argument.";
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+string1 = $_cast('string', Value$arg2.internalValue);
+
+if (lib_sfx_music_load_from_resource(objInstance1, string1)) {
+	output = VALUE_TRUE;
 } else {
-	string1 = $_cast('string', Value$arg1.internalValue);
-	music1 = $_music_load_from_resource(string1, intOutParam);
-	int1 = $_array_get(intOutParam, 0);
-		
-	if (int1 != 0) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "An unknown error occurred while loading the music resource.";
-		if (int1 == 1) lib_func_error_message ="The resource could not be found.";
-		if (int1 == 2) lib_func_error_message ="The provided resource is not a recognized format.";
-	}
-}
-
-if (!lib_func_error_occurred) {
-	output = new Value(Types.NATIVE_OBJECT, new NativeObjectWrapper(NativeObjectSubType.MUSIC, music1));
+	output = VALUE_FALSE;
 }

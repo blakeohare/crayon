@@ -6,6 +6,21 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAwtSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
 			throw new NotImplementedException();
@@ -227,7 +242,7 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
 			output.Add("AwtTranslationHelper.loadMusicFromResource()");
 		}
@@ -247,7 +262,7 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.Noop()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TranslationHelper.Noop()");
 		}

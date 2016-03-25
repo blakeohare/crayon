@@ -6,6 +6,32 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpOpenTkSystemFunctionTranslator : CSharpSystemFunctionTranslator
 	{
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			output.Add("TranslationHelper.AudioMusicPlay(");
+			this.Translator.TranslateExpression(output, nativeResource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLoop);
+			output.Add(")");
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			// same as playing a file directly since OpenTK deals directly with native loaded resources instead of files.
+			output.Add("TranslationHelper.AudioMusicPlay(");
+			this.Translator.TranslateExpression(output, nativeResource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLoop);
+			output.Add(")");
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			output.Add("System.IO.File.Exists(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
+		}
+
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
 			output.Add("TranslationHelper.AudioSoundGetState(");
@@ -171,13 +197,11 @@ namespace Crayon.Translator.CSharp
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
-			output.Add("TranslationHelper.MusicLoad(");
+			output.Add("TranslationHelper.MusicLoadResource(");
 			this.Translator.TranslateExpression(output, filename);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, intOutStatus);
-			output.Add(", true)");
+			output.Add(")");
 		}
 
 		protected override void TranslateMusicPause(List<string> output)
@@ -199,7 +223,7 @@ namespace Crayon.Translator.CSharp
 			output.Add("TranslationHelper.MusicResume()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TranslationHelper.MusicSetVolume(");
 			this.Translator.TranslateExpression(output, ratio);

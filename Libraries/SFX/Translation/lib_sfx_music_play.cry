@@ -1,30 +1,21 @@
-﻿// $music_play(song, is_looping, start_time, fade_out_duration, fade_in_duration)
+﻿/*
+	$$lib_sfx_music_play(MusicPlayer.currentMusic, MusicPlayer.mainVolume, MusicPlayer.currentIsLoop);
+
+	args[0] -> (Value) musicObject
+	args[1] -> (boolean) is embedded resource
+	args[2] -> (string) path to music file
+	args[3] -> (float) starting volume (not an int type, ever)
+	args[4] -> (boolean) loop
+*/
 import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
 
-music1 = $_cast('MusicInstance', extractNativeObjectOfType(arg1, NativeObjectSubType.MUSIC));
-lib_func_error_occurred = true;
-if (music1 == null) {
-	lib_func_error_message = "Invalid music instance.";
-} else if (Value$arg2.type != Types.BOOLEAN) {
-	lib_func_error_message = "2nd arg must be a boolean for looping.";
-} else if (Value$arg3.type != Types.FLOAT && Value$arg3.type != Types.INTEGER) {
-	lib_func_error_message = "3rd arg must be a number.";
-} else if (Value$arg4.type != Types.FLOAT && Value$arg4.type != Types.INTEGER) {
-	lib_func_error_message = "4th arg must be a number.";
-} else if (Value$arg5.type != Types.FLOAT && Value$arg5.type != Types.INTEGER) {
-	lib_func_error_message = "4th arg must be a number.";
-} else {
-	lib_func_error_occurred = false;
-}
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+bool1 = $_cast('bool', Value$arg2.internalValue);
+string1 = $_cast('string', Value$arg3.internalValue);
+float1 = $_cast('double', Value$arg4.internalValue);
+bool2 = $_cast('bool', Value$arg5.internalValue);
 
-if (!lib_func_error_occurred) {
-	bool1 = $_cast('bool', Value$arg2.internalValue);
-	if (Value$arg3.type == Types.FLOAT) float1 = $_cast('double', Value$arg3.internalValue);
-	else float1 = $_cast('double', $_cast('int', Value$arg3.internalValue));
-	if (Value$arg4.type == Types.FLOAT) float2 = $_cast('double', Value$arg4.internalValue);
-	else float2 = $_cast('double', $_cast('int', Value$arg4.internalValue));
-	if (Value$arg5.type == Types.FLOAT) float3 = $_cast('double', Value$arg5.internalValue);
-	else float3 = $_cast('double', $_cast('int', Value$arg5.internalValue));
-
-	int1 = soundManagerPlayMusic(music1, bool1, float1, float2, float3);
+if (lib_sfx_music_play(objInstance1, bool1, string1, float1, bool2) == -1) {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "Music file not found.";
 }

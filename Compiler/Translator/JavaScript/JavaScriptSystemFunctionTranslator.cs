@@ -72,6 +72,21 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, message);
 		}
 
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
 			throw new NotImplementedException();
@@ -771,12 +786,10 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
 			output.Add("R.musicLoadFromResource(");
 			this.Translator.TranslateExpression(output, filename);
-			output.Add(this.Shorten(", "));
-			this.Translator.TranslateExpression(output, intOutStatus);
 			output.Add(")");
 		}
 
@@ -801,9 +814,11 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.musicResume()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
-			output.Add("R.musicSetVolume()");
+			output.Add("R.musicSetVolume(");
+			this.Translator.TranslateExpression(output, ratio);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)

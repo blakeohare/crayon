@@ -74,6 +74,21 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
 			throw new NotImplementedException();
@@ -783,12 +798,10 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, num);
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
 			output.Add("_music_load(");
 			this.Translator.TranslateExpression(output, filename);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, intOutStatus);
 			output.Add(", True)");
 		}
 
@@ -811,7 +824,7 @@ namespace Crayon.Translator.Python
 			output.Add("_music_resume()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("_music_set_volume(");
 			this.Translator.TranslateExpression(output, ratio);

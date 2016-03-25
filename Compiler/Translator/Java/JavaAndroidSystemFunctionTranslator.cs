@@ -8,6 +8,21 @@ namespace Crayon.Translator.Java
 {
 	internal class JavaAndroidSystemFunctionTranslator : JavaSystemFunctionTranslator
 	{
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
 			throw new NotImplementedException();
@@ -229,12 +244,10 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
 			output.Add("AndroidTranslationHelper.loadMusicFromResource(");
 			this.Translator.TranslateExpression(output, filename);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, intOutStatus);
 			output.Add(")");
 		}
 
@@ -257,11 +270,9 @@ namespace Crayon.Translator.Java
 			output.Add("AndroidTranslationHelper.resumeMusic()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("AndroidTranslationHelper.setMusicVolume(");
-			this.Translator.TranslateExpression(output, musicNativeObject);
-			output.Add(", ");
 			this.Translator.TranslateExpression(output, ratio);
 			output.Add(")");
 		}

@@ -154,37 +154,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			throw new Exception(message);
 		}
-
-		public static int MusicPlayNow(object nativeMusicObject, bool loop)
-		{
-			SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
-			if (loop)
-			{
-				music.Play(loop);
-			}
-			else
-			{
-				music.Play(1);
-			}
-			return 0;
-		}
-
-		public static void MusicPause()
-		{
-			SdlDotNet.Audio.MusicPlayer.Pause();
-		}
-
-		public static void MusicResume()
-		{
-			SdlDotNet.Audio.MusicPlayer.Resume();
-		}
-
-		public static bool MusicSetVolume(double ratio)
-		{
-			SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
-			return true;
-		}
-
+		
 		public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
 		{
 			IList<byte> soundBytesList = ResourceReader.ReadBytes(path, true);
@@ -448,6 +418,32 @@ namespace %%%PROJECT_ID%%%
 		{
 			channel.Volume = (int)(255 * volume);
 			// TODO: apply pan using channel.SetPanning(left, right);
+		}
+
+		public static bool MusicSetVolume(double ratio)
+		{
+			SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
+			return true;
+		}
+
+		public static void AudioMusicPlay(object nativeMusicObject, bool loop)
+		{
+			SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
+			if (loop)
+			{
+				music.Play(loop);
+			}
+			else
+			{
+				music.Play(1);
+			}
+		}
+
+		public static object MusicLoadResource(string path)
+		{
+			byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
+			if (musicData == null) return null;
+			return new SdlDotNet.Audio.Music(musicData);
 		}
 	}
 }

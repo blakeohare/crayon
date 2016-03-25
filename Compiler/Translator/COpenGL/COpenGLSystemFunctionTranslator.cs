@@ -8,6 +8,21 @@ namespace Crayon.Translator.COpenGL
 {
 	class COpenGLSystemFunctionTranslator : AbstractSystemFunctionTranslator
 	{
+		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override void TranslateAppDataRoot(List<string> output)
 		{
 			output.Add("TODO_app_data_root()");
@@ -990,12 +1005,10 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename, Expression intOutStatus)
+		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
 			output.Add("TODO_music_load_from_resource(");
 			this.Translator.TranslateExpression(output, filename);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, intOutStatus);
 			output.Add(")");
 		}
 
@@ -1020,11 +1033,9 @@ namespace Crayon.Translator.COpenGL
 			output.Add("TODO_music_resume()");
 		}
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression musicNativeObject, Expression ratio)
+		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TODO_musci_set_volume(");
-			this.Translator.TranslateExpression(output, musicNativeObject);
-			output.Add(", ");
 			this.Translator.TranslateExpression(output, ratio);
 			output.Add(")");
 		}

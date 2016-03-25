@@ -1,0 +1,2 @@
+﻿// No args!
+output = lib_sfx_is_music_playing();
