@@ -381,18 +381,6 @@ def draw_ellipse(left, top, width, height, r, g, b, a):
 		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, width, height))
 
 
-def readLocalSoundResource(path):
-	path = path.replace('/', os.sep)
-	if os.path.exists(path):
-		try:
-			return pygame.mixer.Sound(path)
-		except:
-			return None
-	return None
-
-def playSoundImpl(sfx):
-	sfx.play()
-
 def io_helper_check_path(path, isDirCheck, checkCase):
 	# TODO: check case.
 	if os.path.exists(path):
@@ -522,5 +510,18 @@ def _audio_music_set_volume(ratio):
 def _audio_music_play_resource(path, loop):
 	pygame.mixer.music.load(path.replace('/', os.sep))
 	pygame.mixer.music.play(-1 if loop else 0)
+	
+def readLocalSoundResource(path):
+	path = path.replace('/', os.sep)
+	if os.path.exists(path):
+		try:
+			return pygame.mixer.Sound(path)
+		except:
+			return None
+	return None
+
+def _audio_sound_play(sfx, vol, pan):
+	ch = sfx.play()
+	ch.set_volume(vol)
 
 program_data = [None]
