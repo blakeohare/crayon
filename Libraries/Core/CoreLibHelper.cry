@@ -18,7 +18,7 @@ function @type('int') lib_core_sort_lists(
 	if (length < 2) return 0;
 
 	@type('int') i = 0;
-	@type('Value') item = $_array_get(keyList, 0);
+	@type('Value') item = $_list_get(keyList, 0);
 	@type('bool') isString = Value$item.type == Types.STRING;
 	@type('Array<string>') stringKeys = null;
 	@type('Array<double>') numKeys = null;

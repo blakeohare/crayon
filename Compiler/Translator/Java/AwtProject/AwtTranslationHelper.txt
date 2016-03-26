@@ -119,24 +119,6 @@ class AwtTranslationHelper {
         }
     }
 
-    // TODO: playSound ought to return a string with an error message, should one occur.
-    public static void playSoundImpl(Object soundObject) {
-        SoundInstance sound = (SoundInstance) soundObject;
-        InputStream is = new ByteArrayInputStream((byte[]) sound.nativeObject);
-        try {
-            Clip clip = AudioSystem.getClip();
-            AudioInputStream stream = AudioSystem.getAudioInputStream(is);
-            clip.open(stream);
-            clip.loop(0);
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException("Error");
-        } catch (UnsupportedAudioFileException e) {
-            throw new RuntimeException("Unsupported format");
-        } catch (IOException e) {
-            throw new RuntimeException("Error");
-        }
-    }
-
     private static byte[] readLocalResource(String path) {
         try {
             return readLocalResourceImpl(path);
@@ -165,10 +147,6 @@ class AwtTranslationHelper {
             }
         }
         return output;
-    }
-
-    public static SoundInstance readLocalSoundResource(String path) {
-        return null;
     }
 
     public static BufferedImage readLocalTileResource(String generatedTileId) {

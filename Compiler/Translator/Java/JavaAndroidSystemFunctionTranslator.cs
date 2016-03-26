@@ -25,7 +25,8 @@ namespace Crayon.Translator.Java
 
 		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			// cannot play files from disk on Android.
+			output.Add("false");
 		}
 
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)

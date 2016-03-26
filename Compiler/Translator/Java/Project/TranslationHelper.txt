@@ -15,6 +15,10 @@ final class TranslationHelper {
         return 0;
     }
 
+    public static Object NoopWithReturnNull() {
+        return null;
+    }
+
     private static ProgramData programData = null;
 
     public static Random random = new Random();
