@@ -133,8 +133,6 @@ namespace Audio {
 				Music.compositeVolume = v;
 				$$lib_audio_music_set_volume(v);
 			}
-			
-			print ([v, Music.currentState]);
 		}
 
 		static function getCurrent() {

@@ -76,42 +76,84 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateAudioMusicIsPlaying(List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_music_is_playing()");
 		}
 
 		protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_music_play_file(");
+			this.Translator.TranslateExpression(output, nativeResource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLoop);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_music_play_resource(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isLoop);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_music_verify_file_exists(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_sound_get_state(");
+			this.Translator.TranslateExpression(output, channel);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, resource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, resourceId);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_sound_play(");
+			this.Translator.TranslateExpression(output, resource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, volume);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, pan);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_sound_resume(");
+			this.Translator.TranslateExpression(output, channel);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, resource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, volumeRatio);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, panRatio);
+			output.Add(")");
 		}
 
 		protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
 		{
-			throw new NotImplementedException();
+			output.Add("_audio_sound_stop(");
+			this.Translator.TranslateExpression(output, channel);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, resource);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, resourceId);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isActivelyPlaying);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, isHardStop);
+			output.Add(")");
 		}
 
 		protected override void TranslateBeginFrame(List<string> output)
@@ -805,19 +847,18 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
 		{
-			output.Add("_music_load(");
-			this.Translator.TranslateExpression(output, filename);
-			output.Add(", True)");
+			// everything is just done by string in PyGame. No native music resource object.
+			output.Add("1");
 		}
 
 		protected override void TranslateMusicPause(List<string> output)
 		{
-			output.Add("_music_pause()");
+			output.Add("_audio_music_pause()");
 		}
 
 		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
 		{
-			output.Add("_music_play_now(");
+			output.Add("_audio_music_play_now(");
 			this.Translator.TranslateExpression(output, musicRealPath);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isLooping);
@@ -826,12 +867,12 @@ namespace Crayon.Translator.Python
 
 		protected override void TranslateMusicResume(List<string> output)
 		{
-			output.Add("_music_resume()");
+			output.Add("_audio_music_resume()");
 		}
 
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
-			output.Add("_music_set_volume(");
+			output.Add("_audio_music_set_volume(");
 			this.Translator.TranslateExpression(output, ratio);
 			output.Add(")");
 		}

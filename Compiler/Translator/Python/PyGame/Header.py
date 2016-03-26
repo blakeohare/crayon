@@ -510,17 +510,17 @@ def _parse_float_helper(f_out, value):
 	except:
 		f_out[0] = -1
 
-def _music_play_now(music, loop):
-	pygame.mixer.music.load(music)
-	pygame.mixer.music.play(-1 if loop else 1)
-
 def _music_pause():
 	pygame.mixer.music.pause()
 
 def _music_resume():
 	pygame.mixer.music.unpause()
 
-def _music_set_volume(ratio):
+def _audio_music_set_volume(ratio):
 	pygame.mixer.music.set_volume(ratio)
+
+def _audio_music_play_resource(path, loop):
+	pygame.mixer.music.load(path.replace('/', os.sep))
+	pygame.mixer.music.play(-1 if loop else 0)
 
 program_data = [None]
