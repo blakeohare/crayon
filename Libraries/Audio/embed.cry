@@ -86,7 +86,7 @@ namespace Audio {
 
 				case _MusicState.TRANSITION_OUT:
 					dt = Core.currentTime() - Music.currentTransitionStart;
-					if (dt >= Music.currentOutTransitionDuration) {
+					if (dt == null || dt >= Music.currentOutTransitionDuration) {
 						Music.fadeVolume = 0.0;
 						// music fade complete. 
 						if (Music.enqueuedMusic == null) {
@@ -194,6 +194,8 @@ namespace Audio {
 					} else {
 						Music.currentState = _MusicState.TRANSITION_IN;
 						Music.fadeVolume = 0.0;
+						Music.currentTransitionStart = Core.currentTime();
+						Music.currentInTransitionDuration = inTransitionDuration;
 						$$lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
 					}
 				}
