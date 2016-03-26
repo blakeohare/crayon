@@ -17,52 +17,52 @@ _global_vars = {
 }
 
 KEY_LOOKUP = {
-	pygame.K_LEFT: 'left',
-	pygame.K_RIGHT: 'right',
-	pygame.K_UP: 'up',
-	pygame.K_DOWN: 'down',
-	pygame.K_SPACE: 'space',
-	pygame.K_RETURN: 'enter',
-	pygame.K_ESCAPE: 'escape',
-	pygame.K_TAB: 'tab',
-	pygame.K_PAGEUP: 'pageup',
-	pygame.K_PAGEDOWN: 'pagedown',
-	pygame.K_HOME: 'home',
-	pygame.K_END: 'end',
-	pygame.K_DELETE: 'delete',
-	pygame.K_INSERT: 'insert',
-	pygame.K_COMMA: 'comma',
-	pygame.K_PERIOD: 'period',
-	pygame.K_SEMICOLON: 'semicolon',
-	pygame.K_SLASH: 'slash',
-	pygame.K_QUOTE: 'apostrophe',
-	pygame.K_BACKQUOTE: 'tilde',
-	pygame.K_MINUS: 'hyphen',
-	pygame.K_EQUALS: 'equals',
-	pygame.K_BACKSPACE: 'backspace',
-	pygame.K_BACKSLASH: 'backslash',
-	pygame.K_LEFTBRACKET: 'openbracket',
-	pygame.K_RIGHTBRACKET: 'closebracket',
-	pygame.K_MENU: 'menu',
-	pygame.K_PRINT: 'printscreen',
-	pygame.K_CAPSLOCK: 'capslock',
-	pygame.K_SCROLLOCK: 'scrolllock',
-	pygame.K_NUMLOCK: 'numlock',
-	pygame.K_PAUSE: 'pause',
-	pygame.K_LCTRL: 'ctrl',
-	pygame.K_RCTRL: 'ctrl',
-	pygame.K_LSHIFT: 'shift',
-	pygame.K_RSHIFT: 'shift',
-	pygame.K_LALT: 'alt',
-	pygame.K_RALT: 'alt'
+	pygame.K_LEFT: 37,
+	pygame.K_RIGHT: 39,
+	pygame.K_UP: 38,
+	pygame.K_DOWN: 40,
+	pygame.K_SPACE: 32,
+	pygame.K_RETURN: 13,
+	pygame.K_ESCAPE: 27,
+	pygame.K_TAB: 9,
+	pygame.K_PAGEUP: 33,
+	pygame.K_PAGEDOWN: 34,
+	pygame.K_HOME: 36,
+	pygame.K_END: 35,
+	pygame.K_DELETE: 46,
+	pygame.K_INSERT: 45,
+	pygame.K_COMMA: 188,
+	pygame.K_PERIOD: 190,
+	pygame.K_SEMICOLON: 186,
+	pygame.K_SLASH: 191,
+	pygame.K_QUOTE: 222,
+	pygame.K_BACKQUOTE: 192,
+	pygame.K_MINUS: 189,
+	pygame.K_EQUALS: 187,
+	pygame.K_BACKSPACE: 8,
+	pygame.K_BACKSLASH: 220,
+	pygame.K_LEFTBRACKET: 219,
+	pygame.K_RIGHTBRACKET: 221,
+	pygame.K_MENU: 93,
+	pygame.K_PRINT: 44,
+	pygame.K_CAPSLOCK: 20,
+	pygame.K_SCROLLOCK: 145,
+	pygame.K_NUMLOCK: 144,
+	pygame.K_PAUSE: 19,
+	pygame.K_LCTRL: 17,
+	pygame.K_RCTRL: 17,
+	pygame.K_LSHIFT: 16,
+	pygame.K_RSHIFT: 16,
+	pygame.K_LALT: 18,
+	pygame.K_RALT: 18,
 }
 
 for i in range(26):
-	KEY_LOOKUP[pygame.K_a + i] = chr(ord('a') + i)
+	KEY_LOOKUP[pygame.K_a + i] = 97 + i
 for i in range(10):
-	KEY_LOOKUP[pygame.K_0 + i] = chr(ord('0') + i)
+	KEY_LOOKUP[pygame.K_0 + i] = 48 + i
 for i in range(12):
-	KEY_LOOKUP[pygame.K_F1 + i] = 'f' + str(i + 1)
+	KEY_LOOKUP[pygame.K_F1 + i] = 113 + i
 
 def _pygame_pump_events():
 	evs = pygame.event.get()
@@ -509,10 +509,6 @@ def _parse_float_helper(f_out, value):
 		f_out[1] = output
 	except:
 		f_out[0] = -1
-
-def _music_load(filepath, intout, isResource):
-	intout[0] = 0
-	return v_instantiateMusicInstance(filepath, None, filepath, True);
 
 def _music_play_now(music, loop):
 	pygame.mixer.music.load(music)
