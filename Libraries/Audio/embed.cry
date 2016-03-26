@@ -113,7 +113,12 @@ namespace Audio {
 								MusicPlayer.currentInTransitionDuration = null;
 								MusicPlayer.fadeVolume = 1.0;
 							} else {
-								$$lib_audio_music_play(MusicPlayer.currentMusic, 0.0, MusicPlayer.currentIsLoop);
+								$$lib_audio_music_play(
+									MusicPlayer.currentMusic,
+									MusicPlayer.currentMusic._isResource,
+									MusicPlayer.currentMusic._path,
+									0.0,
+									MusicPlayer.currentIsLoop);
 								MusicPlayer.currentState = _MusicState.TRANSITION_IN;
 								MusicPlayer.currentInTransitionDuration = MusicPlayer.enqueuedInTransitionDuration;
 								MusicPlayer.currentTransitionStart = Core.currentTime();
