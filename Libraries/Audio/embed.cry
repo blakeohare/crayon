@@ -2,6 +2,15 @@
 import Game;
 
 namespace Audio {
+	
+	enum _MusicState {
+		NOT_PLAYING = 1,
+		TRANSITION_IN = 2,
+		PLAYING_NORMAL = 3,
+		PLAYING_LOOPING = 4,
+		TRANSITION_OUT = 5,
+	}
+
 	/*
 		nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
 	*/
@@ -23,20 +32,7 @@ namespace Audio {
 			}
 			return music;
 		}
-	}
 
-	enum _MusicState {
-		NOT_PLAYING = 1,
-		TRANSITION_IN = 2,
-		PLAYING_NORMAL = 3,
-		PLAYING_LOOPING = 4,
-		TRANSITION_OUT = 5,
-	}
-
-	class MusicPlayer {
-
-		static field _musicInstance = new Music();
-		
 		static field currentState = _MusicState.NOT_PLAYING;
 		static field currentMusic = null;
 		static field currentIsLoop = false;
@@ -53,22 +49,22 @@ namespace Audio {
 		static field fadeVolume = 1.0;
 
 		static constructor() {
-			Game.GameWindow._frameEndHandlers.add(MusicPlayer._gameWindowFrameEndHandler);
+			Game.GameWindow._frameEndHandlers.add(Music._gameWindowFrameEndHandler);
 		}
 
 		static function _gameWindowFrameEndHandler() {
-			switch (MusicPlayer.currentState) {
+			switch (Music.currentState) {
 				case _MusicState.NOT_PLAYING:
 					// nothing to do
 					break;
 
 				case _MusicState.TRANSITION_IN:
-					dt = Core.currentTime() - MusicPlayer.currentTransitionStart;
-					if (dt >= MusicPlayer.currentInTransitionDuration) {
-						MusicPlayer.fadeVolume = 1.0;
-						MusicPlayer.currentState = MusicPlayer.currentIsLoop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
+					dt = Core.currentTime() - Music.currentTransitionStart;
+					if (dt >= Music.currentInTransitionDuration) {
+						Music.fadeVolume = 1.0;
+						Music.currentState = Music.currentIsLoop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
 					} else {
-						MusicPlayer.fadeVolume = 1.0 * dt / MusicPlayer.currentInTransitionDuration;
+						Music.fadeVolume = 1.0 * dt / Music.currentInTransitionDuration;
 					}
 					break;
 
@@ -78,9 +74,9 @@ namespace Audio {
 						// This will either mark it as NOT_PLAYING or will automatically pop the queue and start the next song.
 						// Otherwise enqueuing a song during a non-looping song and if the song just happens to end while it's still fading
 						// the next song won't get triggered and that will make users cry.
-						MusicPlayer.currentState = _MusicState.TRANSITION_OUT;
-						MusicPlayer.currentTransitionStart = 0;
-						MusicPlayer.currentOutTransitionDuration = 1.0;
+						Music.currentState = _MusicState.TRANSITION_OUT;
+						Music.currentTransitionStart = 0;
+						Music.currentOutTransitionDuration = 1.0;
 					}
 					break;
 
@@ -89,76 +85,86 @@ namespace Audio {
 					break;
 
 				case _MusicState.TRANSITION_OUT:
-					dt = Core.currentTime() - MusicPlayer.currentTransitionStart;
-					if (dt >= MusicPlayer.currentOutTransitionDuration) {
-						MusicPlayer.fadeVolume = 0.0;
+					dt = Core.currentTime() - Music.currentTransitionStart;
+					if (dt >= Music.currentOutTransitionDuration) {
+						Music.fadeVolume = 0.0;
 						// music fade complete. 
-						if (MusicPlayer.enqueuedMusic == null) {
-							MusicPlayer.currentState = _MusicState.NOT_PLAYING;
-							MusicPlayer.currentMusic = null;
+						if (Music.enqueuedMusic == null) {
+							Music.currentState = _MusicState.NOT_PLAYING;
+							Music.currentMusic = null;
 							$$lib_audio_music_stop();
 						} else {
-							MusicPlayer.currentMusic = MusicPlayer.enqueuedMusic;
-							MusicPlayer.currentIsLoop = MusicPlayer.enqueuedIsLoop;
-							if (MusicPlayer.enqueuedInTransitionDuration == null) {
+							Music.currentMusic = Music.enqueuedMusic;
+							Music.currentIsLoop = Music.enqueuedIsLoop;
+							if (Music.enqueuedInTransitionDuration == null) {
 								$$lib_audio_music_play(
-									MusicPlayer.currentMusic,
-									MusicPlayer.currentMusic._isResource,
-									MusicPlayer.currentMusic._path,
-									MusicPlayer.mainVolume,
-									MusicPlayer.currentIsLoop);
-								MusicPlayer.currentState = MusicPlayer.currentIsLoop
+									Music.currentMusic,
+									Music.currentMusic._isResource,
+									Music.currentMusic._path,
+									Music.mainVolume,
+									Music.currentIsLoop);
+								Music.currentState = Music.currentIsLoop
 									? _MusicState.PLAYING_LOOPING
 									: _MusicState.PLAYING_NORMAL;
-								MusicPlayer.currentInTransitionDuration = null;
-								MusicPlayer.fadeVolume = 1.0;
+								Music.currentInTransitionDuration = null;
+								Music.fadeVolume = 1.0;
 							} else {
 								$$lib_audio_music_play(
-									MusicPlayer.currentMusic,
-									MusicPlayer.currentMusic._isResource,
-									MusicPlayer.currentMusic._path,
+									Music.currentMusic,
+									Music.currentMusic._isResource,
+									Music.currentMusic._path,
 									0.0,
-									MusicPlayer.currentIsLoop);
-								MusicPlayer.currentState = _MusicState.TRANSITION_IN;
-								MusicPlayer.currentInTransitionDuration = MusicPlayer.enqueuedInTransitionDuration;
-								MusicPlayer.currentTransitionStart = Core.currentTime();
+									Music.currentIsLoop);
+								Music.currentState = _MusicState.TRANSITION_IN;
+								Music.currentInTransitionDuration = Music.enqueuedInTransitionDuration;
+								Music.currentTransitionStart = Core.currentTime();
 							}
-							MusicPlayer.enqueuedMusic = null;
+							Music.enqueuedMusic = null;
 						}
+					} else {
+						Music.fadeVolume = 1.0 - dt / Music.currentOutTransitionDuration;
 					}
 					break;
 			}
 
-			v = Math.ensureRange(MusicPlayer.fadeVolume * MusicPlayer.mainVolume, 0.0, 1.0);
-			diff = Math.abs(v - MusicPlayer.compositeVolume);
+			v = Math.ensureRange(Music.fadeVolume * Music.mainVolume, 0.0, 1.0);
+			diff = Math.abs(v - Music.compositeVolume);
 			if (diff > 0.00001) {
-				MusicPlayer.compositeVolume = v;
+				Music.compositeVolume = v;
 				$$lib_audio_music_set_volume(v);
+			}
+			
+			print ([v, Music.currentState]);
+		}
+
+		static function getCurrent() {
+			return Music.currentMusic;
+		}
+
+		function fadeOutAndIn(loop = true, outTransition = 2.0, inTransition = 2.0) {
+			Music._transition(this, loop, outTransition, inTransition);
+		}
+
+		function fadeOutAndPlay(loop = true, outTransition = 2.0) {
+			Music._transition(this, loop, outTransition, null);
+		}
+
+		function play(loop = true) {
+			Music._transition(this, loop, null, null);
+		}
+
+		function fadeOut(duration = 2.0) {
+			if (Music.currentMusic == this) {
+				Music.fadeOutCurrent(duration);
 			}
 		}
 
-		static function getCurrentMusic() {
-			return MusicPlayer.currentMusic;
+		static function fadeOutCurrent(duration = 2.0) {
+			Music._transition(null, false, duration, null);
 		}
 
-		static function fadeTransition(music, loop = true, outTransition = 2.0, inTransition = 2.0) {
-			MusicPlayer._transition(music, loop, outTransition, inTransition);
-		}
-
-		static function fadeOutTransition(music, loop = true, outTransition = 2.0) {
-			MusicPlayer._transition(music, loop, outTransition, null);
-		}
-
-		static function playMusic(music, loop = true) {
-			MusicPlayer._transition(music, loop, null, null);
-		}
-
-		static function fadeOut(duration = 2.0) {
-			MusicPlayer._transition(null, false, duration, null);
-		}
-
-		static function playMusicWithFadeIn(music, loop = true, duration = 2.0) {
-			MusicPlayer._transition(music, loop, null, duration);
+		function fadeIn(loop = true, duration = 2.0) {
+			Music._transition(this, loop, null, duration);
 		}
 
 		/*
@@ -167,41 +173,38 @@ namespace Audio {
 			inTransition can be null to indicate instant start
 		*/
 		static function _transition(music, loop, outTransitionDuration, inTransitionDuration) {
-			if (Core.typeof(music) != Core.typeof(MusicPlayer._musicInstance)) {
-				Core.assert(false, "First argument must be an Audio.Music instance.");
-			}
 			if (inTransitionDuration == null || inTransitionDuration < 0.01) inTransitionDuration = null;
 			if (outTransitionDuration == null || outTransitionDuration < 0.01) outTransitionDuration = null;
-			if (music == MusicPlayer.currentMusic) return;
+			if (music == Music.currentMusic) return;
 			loop = loop == true;
 
 			if (outTransitionDuration == null) {
 				// instantaneous transitions
 				if (music == null) {
 					$$lib_audio_music_stop();
-					MusicPlayer.currentMusic = null;
-					MusicPlayer.currentState = _MusicState.NOT_PLAYING;
+					Music.currentMusic = null;
+					Music.currentState = _MusicState.NOT_PLAYING;
 				} else {
-					MusicPlayer.currentMusic = music;
-					MusicPlayer.currentIsLoop = loop;
+					Music.currentMusic = music;
+					Music.currentIsLoop = loop;
 					if (inTransitionDuration == null) {
-						MusicPlayer.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
-						MusicPlayer.fadeVolume = 1.0;
-						$$lib_audio_music_play(music, music._isResource, music._path, MusicPlayer.mainVolume, loop);
+						Music.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
+						Music.fadeVolume = 1.0;
+						$$lib_audio_music_play(music, music._isResource, music._path, Music.mainVolume, loop);
 					} else {
-						MusicPlayer.currentState = _MusicState.TRANSITION_IN;
-						MusicPlayer.fadeVolume = 0.0;
+						Music.currentState = _MusicState.TRANSITION_IN;
+						Music.fadeVolume = 0.0;
 						$$lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
 					}
 				}
 			} else {
 				// fade out. save transition information for the end-frame worker.
-				MusicPlayer.currentState = _MusicState.TRANSITION_OUT;
-				MusicPlayer.currentTransitionStart = Core.currentTime();
-				MusicPlayer.currentOutTransitionDuration = outTransitionDuration;
-				MusicPlayer.enqueuedMusic = music;
-				MusicPlayer.enqueuedInTransitionDuration = inTransitionDuration;
-				MusicPlayer.enqueuedIsLoop = loop;
+				Music.currentState = _MusicState.TRANSITION_OUT;
+				Music.currentTransitionStart = Core.currentTime();
+				Music.currentOutTransitionDuration = outTransitionDuration;
+				Music.enqueuedMusic = music;
+				Music.enqueuedInTransitionDuration = inTransitionDuration;
+				Music.enqueuedIsLoop = loop;
 			}
 		}
 	}
