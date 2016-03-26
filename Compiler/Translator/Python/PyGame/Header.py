@@ -62,7 +62,7 @@ for i in range(26):
 for i in range(10):
 	KEY_LOOKUP[pygame.K_0 + i] = 48 + i
 for i in range(12):
-	KEY_LOOKUP[pygame.K_F1 + i] = 113 + i
+	KEY_LOOKUP[pygame.K_F1 + i] = 112 + i
 
 def _pygame_pump_events():
 	evs = pygame.event.get()
