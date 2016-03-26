@@ -1,5 +1,5 @@
 ﻿namespace Json {
-	function parse_json(text) {
+	function parseJson(text) {
 		return $$lib_json_parse(text);
 	}
 }

@@ -1,0 +1,178 @@
+<documentation>
+	<library name="Audio">
+		<description>
+			Library for playing Sound effects and music in a Game instance.
+		</description>
+		<namespace name="Audio">
+			<class name="Music">
+				<description>
+					Represents a sound file that can be played as music. Only one music instance can be played simultaneously. 
+				</description>
+				<function name="play">
+					<arg name="loop" type="boolean" default="true">
+						True to make this song repeat after playback is finished.
+					</arg>
+					<description>
+						Plays the song with no intro transition. Halts current music playback if it is playing.
+					</description>
+				</function>
+				<function name="fadeOutAndPlay">
+					<arg name="loop" type="boolean" default="true">
+						True to make this song repeat after playback is finished.
+					</arg>
+					<arg name="outTransitionDuration" type="float" default="2.0">
+						Number of seconds to fade out the currently playing music if there is any.
+					</arg>
+					<description>
+						Fades out the currently playing music if there is any and plays the given music instance.
+					</description>
+				</function>
+				<function name="fadeOut">
+					<arg name="transitionDuration" type="float" default="2.0">
+						Number of seconds to fade out.
+					</arg>
+					<description>
+						Fades out this song if it is currently playing. See also <link see="audio.music.fadeoutcurrent">Music.fadeOutCurrent</link>.
+					</description>
+				</function>
+				<function name="fadeOutAndIn">
+					<arg name="loop" type="boolean" default="true">
+						True to make this song repeat after playback is finished.
+					</arg>
+					<arg name="outTransitionDuration" type="float" default="2.0">
+						Number of seconds to fade out the currently playing music if there is any.
+					</arg>
+					<arg name="inTransitionDuration" type="float" default="2.0">
+						Number of seconds to fade in the given music instance.
+					</arg>
+					<description>
+						Fades out the current music if there is any and fades in the given music instance.
+					</description>
+				</function>
+				<function static="true" name="fadeOutCurrent">
+					<arg name="duration" type="float" default="2.0">
+						Number of seconds to fade out.
+					</arg>
+					<description>
+						Fades out the current music if there is any playing.
+					</description>
+				</function>
+				<function static="true" name="getCurrent">
+					<description>
+						Returns the <link see="audio.music">Music</link> instance of the currently playing song, or null if there isn't one.
+					</description>
+				</function>
+				<function static="true" name="loadFromResource">
+					<arg name="path" type="string">
+						Resource path to an OGG file. Support for other formats may potentially work but is not guaranteed to be consistent between platforms.
+					</arg>
+					<description>
+						Returns a new <link see="audio.music">Music</link> instance of the given resource.
+					</description>
+				</function>
+			</class>
+			<class name="Sound">
+				<description>
+					Represents a sound playback object. Sound instances are created by <link see="audio.soundresource">SoundResource</link> and are ephemeral, expiring after playback is over.
+				</description>
+				<function name="getState">
+					<description>
+						Returns a <link see="audio.soundplaystate">SoundPlayState</link> enum value indicating the current state of the sound.
+					</description>
+				</function>
+				<function name="resume">
+					<description>
+						Resumes playback of the given sound.
+					</description>
+				</function>
+				<function name="stop">
+					<description>
+						Stops the currently playing sound. Playback cannot be resumed. To pause playback, use <link see="audio.sound.pause">pause</link>().
+					</description>
+				</function>
+				<function name="pause">
+					<description>
+						Pauses the currently playing sound. Playback can be resumed in the same position with <link see="audio.sound.resume">resume</link>().
+					</description>
+				</function>
+				<function name="getResource">
+					<description>
+						Returns the <link see="audio.soundresource">SoundResource</link> instance that corresponds to this sound.
+					</description>
+				</function>
+				<function name="getPan">
+					<description>
+						Returns the pan value for this sound, which is a float between -1 and 1. -1 Corresponds to left, 1 corresponds to right, and 0 is centered (default).
+					</description>
+				</function>
+				<function name="setPan">
+					<arg name="value" type="float">
+						The pan value to set. Value must be float between -1 and 1. -1 corresponds to left, 1 corresponds to right, and 0 is centered.
+					</arg>
+					<description>
+						Sets the pan value for this sound. 
+					</description>
+				</function>
+				<function name="getVolume">
+					<description>
+						Returns the volume ratio of this sound. This is a float between 0 (silent) and 1 (full volume).
+					</description>
+				</function>
+				<function name="setVolume">
+					<description>
+						Sets the current volume of this sound (just for this playback). This is float between 0 (silent) and 1 (full volume). 
+						To set the default volume for all future Sound instances created from this <link see="audio.soundresource">SoundResource</link>, 
+						invoke <link see="audio.soundresource.setvolume">setDefaultVolume</link>.
+					</description>
+				</function>
+			</class>
+			<class name="SoundResource">
+				<description>
+					Represents a raw sound resource that can be played. Playing a sound resource creates a <link see="audio.sound">Sound</link> instance which controls actual playback of the sound (pausing, resuming, fading, etc).
+				</description>
+				<function name="setDefaultVolume">
+					<arg name="value" type="float">
+						Volume value to set. This is a float between 0 (silent) and 1 (full volume).
+					</arg>
+					<description>
+						Sets the default volume that <link see="audio.sound">Sound</link> playback will start with.
+						Individual playback instances can have volume set with <link see="audio.sound.setvolume">Sound.setVolume</link>.
+					</description>
+				</function>
+				<function name="getDefaultVolume">
+					<description>
+						Gets the current default volume for this sound. 
+					</description>
+				</function>
+				<function static="true" name="loadFromFile">
+					<arg name="path" type="string">
+						Path to a sound file on disk. 
+					</arg>
+					<description>
+						Creates a new <link see="audio.soundresource">SoundResource</link> for an OGG file on disk.
+					</description>
+				</function>
+				<function static="true" name="loadFromResource">
+					<arg name="path" type="string">
+						Path to a sound file in the compiled resources.
+					</arg>
+					<arg name="useCache" type="boolean" default="true">
+						Set to false to force creation of a new SoundResource. Otherwise a reference to
+						a previously created instance will be returned.
+					</arg>
+					<description>
+						Creates a new <link see="audio.soundresource">SoundResource</link> for an OGG file in the compiled resources.
+					</description>
+				</function>
+				<function name="play">
+					<arg name="pan" type="float" default="0.0">
+						Pan value between -1.0 and 1.0. -1 represents left, 1 represents right, and 0 is centered (default).
+					</arg>
+					<description>
+						Plays the <link see="audio.soundresource">SoundResource</link> instance, and creates a new <link see="audio.sound">Sound</link> instance which represents the current playback session.
+					</description>
+				</function>
+			</class>
+		</namespace>
+	</library>
+</documentation>

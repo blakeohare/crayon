@@ -313,12 +313,12 @@ namespace Audio {
 			this._id = SoundResource._resID++;
 		}
 
-		function setVolume(r) {
+		function setDefaultVolume(r) {
 			this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
 			$$lib_audio_sfx_set_volume(this, this._v);
 		}
 
-		function getVolume() {
+		function getDefaultVolume() {
 			return this._v;
 		}
 
@@ -348,8 +348,8 @@ namespace Audio {
 			return s;
 		}
 
-		function play(volume = 1.0, pan = 0.0) {
-			c = new Sound(this, volume, pan);
+		function play(pan = 0.0) {
+			c = new Sound(this, this._v, pan);
 			this._c.add(c);
 			return c;
 		}
