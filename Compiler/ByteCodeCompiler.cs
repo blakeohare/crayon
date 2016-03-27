@@ -796,7 +796,7 @@ namespace Crayon
 			else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
 			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
-			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, outputUsed);
+			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, outputUsed);
 			else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
 			else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
 			else throw new NotImplementedException();
@@ -1138,9 +1138,10 @@ namespace Crayon
 			buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
 		}
 
-		private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, bool outputUsed)
+		private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, bool outputUsed)
 		{
-			this.CompileExpressionList(parser, buffer, libFunc.Args, true);
+			List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
+			this.CompileExpressionList(parser, buffer, args, true);
 			int argCount = libFunc.Args.Length;
 			int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
 			buffer.Add(libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
@@ -1325,6 +1326,49 @@ namespace Crayon
 			}
 		}
 
+		private void CompileInlinedLibraryFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall functionCall, FunctionDefinition libraryFunction, bool outputUsed)
+		{
+			int nativeLength = libraryFunction.ArgNames.Length;
+			int userLength = functionCall.Args.Length;
+			if (userLength > nativeLength)
+			{
+				throw new ParserException(functionCall.ParenToken, "More arguments were passed to this function than allowed.");
+			}
+
+			Dictionary<string, Expression> variableValues = new Dictionary<string, Expression>();
+			for (int i = 0; i < nativeLength; ++i)
+			{
+				Expression argValue;
+				if (i < userLength)
+				{
+					argValue = functionCall.Args[i];
+				}
+				else
+				{
+					argValue = libraryFunction.DefaultValues[i];
+					if (argValue == null)
+					{
+						throw new ParserException(functionCall.ParenToken, "Not enough arguments were supplied to this function.");
+					}
+				}
+				variableValues[libraryFunction.ArgNames[i].Value] = argValue;
+			}
+
+			LibraryFunctionCall nativeFunctionCall = ((ReturnStatement)libraryFunction.Code[0]).Expression as LibraryFunctionCall;
+			if (nativeFunctionCall == null)
+			{
+				throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
+			}
+
+			List<Expression> arguments = new List<Expression>();
+			for (int i = 0; i < nativeLength; ++i)
+			{
+				arguments.Add(variableValues[((Variable)nativeFunctionCall.Args[i]).Name]);
+			}
+
+			this.CompileLibraryFunctionCall(parser, buffer, nativeFunctionCall, arguments, outputUsed);
+		}
+
 		private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
 		{
 			Expression root = funCall.Root;
@@ -1332,45 +1376,53 @@ namespace Crayon
 			{
 				FunctionReference verifiedFunction = (FunctionReference)root;
 				FunctionDefinition fd = verifiedFunction.FunctionDefinition;
-				this.CompileExpressionList(parser, buffer, funCall.Args, true);
-				if (fd.FunctionOrClassOwner is ClassDefinition)
+
+				if (parser.InlinableLibraryFunctions.Contains(fd))
 				{
-					ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
-					if (fd.IsStaticMethod)
-					{
-						buffer.Add(
-							funCall.ParenToken,
-							OpCode.CALL_FUNCTION,
-							(int)FunctionInvocationType.STATIC_METHOD,
-							funCall.Args.Length,
-							fd.FunctionID,
-							outputUsed ? 1 : 0,
-							cd.ClassID);
-					}
-					else
-					{
-						buffer.Add(
-							funCall.ParenToken,
-							OpCode.CALL_FUNCTION,
-							(int)FunctionInvocationType.LOCAL_METHOD,
-							funCall.Args.Length,
-							fd.FunctionID,
-							outputUsed ? 1 : 0,
-							cd.ClassID,
-							verifiedFunction.FunctionDefinition.MemberID);
-					}
+					this.CompileInlinedLibraryFunctionCall(parser, buffer, funCall, fd, outputUsed);
 				}
 				else
 				{
-					// vanilla function
-					buffer.Add(
-						funCall.ParenToken,
-						OpCode.CALL_FUNCTION,
-						(int) FunctionInvocationType.NORMAL_FUNCTION,
-						funCall.Args.Length,
-						fd.FunctionID,
-						outputUsed ? 1 : 0,
-						0);
+					this.CompileExpressionList(parser, buffer, funCall.Args, true);
+					if (fd.FunctionOrClassOwner is ClassDefinition)
+					{
+						ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
+						if (fd.IsStaticMethod)
+						{
+							buffer.Add(
+								funCall.ParenToken,
+								OpCode.CALL_FUNCTION,
+								(int)FunctionInvocationType.STATIC_METHOD,
+								funCall.Args.Length,
+								fd.FunctionID,
+								outputUsed ? 1 : 0,
+								cd.ClassID);
+						}
+						else
+						{
+							buffer.Add(
+								funCall.ParenToken,
+								OpCode.CALL_FUNCTION,
+								(int)FunctionInvocationType.LOCAL_METHOD,
+								funCall.Args.Length,
+								fd.FunctionID,
+								outputUsed ? 1 : 0,
+								cd.ClassID,
+								verifiedFunction.FunctionDefinition.MemberID);
+						}
+					}
+					else
+					{
+						// vanilla function
+						buffer.Add(
+							funCall.ParenToken,
+							OpCode.CALL_FUNCTION,
+							(int)FunctionInvocationType.NORMAL_FUNCTION,
+							funCall.Args.Length,
+							fd.FunctionID,
+							outputUsed ? 1 : 0,
+							0);
+					}
 				}
 			}
 			else if (root is DotStep)

@@ -126,11 +126,50 @@ namespace Crayon
 
 			this.SimpleFirstPassResolution();
 
+			this.DetermineInlinableLibraryFunctions();
+
 			this.RearrangeClassDefinitions();
 
 			this.AllocateLocalScopeIds();
 
 			return this.currentCode;
+		}
+
+		private void DetermineInlinableLibraryFunctions()
+		{
+			HashSet<FunctionDefinition> inlineCandidates = new HashSet<FunctionDefinition>();
+			foreach (FunctionDefinition funcDef in this.currentCode.OfType<FunctionDefinition>())
+			{
+				// Look for function definitions that are in libraries that have one single line of code that's a return statement that
+				// invokes a native code.
+				if (funcDef.LibraryName != null && funcDef.Code.Length == 1)
+				{
+					ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
+					if (returnStatement != null)
+					{
+						LibraryFunctionCall libraryFunctionCall = returnStatement.Expression as LibraryFunctionCall;
+						if (libraryFunctionCall != null)
+						{
+							bool allSimpleVariables = true;
+							foreach (Expression expr in libraryFunctionCall.Args)
+							{
+								if (!(expr is Variable))
+								{
+									allSimpleVariables = false;
+									break;
+								}
+							}
+
+							if (allSimpleVariables)
+							{
+								inlineCandidates.Add(funcDef);
+							}
+						}
+					}
+				}
+			}
+
+			this.parser.InlinableLibraryFunctions = inlineCandidates;
 		}
 
 		private void ResolveNames()

@@ -56,6 +56,8 @@ namespace Crayon
 
 		public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
+		public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
+
 		public bool PreserveTranslationComments
 		{
 			get { return this.NullablePlatform == null ? false : !this.NullablePlatform.IsMin; }
