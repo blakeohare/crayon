@@ -87,7 +87,6 @@ function @omitReturn @type('string') interpret() {
 	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
 	@type('GameEvent') gameEvent = null;
-	@type('MusicInstance') music1 = null;
 	@type('HttpRequest') httpRequest1 = null;
 	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);

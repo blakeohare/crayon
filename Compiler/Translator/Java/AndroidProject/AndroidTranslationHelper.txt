@@ -157,7 +157,7 @@ class AndroidTranslationHelper {
         TODO();
     }
 
-    public static MusicInstance loadMusicFromResource(String path, int[] intOutParam) {
+    public static Object loadMusicFromResource(String path, int[] intOutParam) {
         TODO();
         return null;
     }

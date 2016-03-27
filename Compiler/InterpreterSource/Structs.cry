@@ -58,7 +58,6 @@ struct ProgramData {
 	@type('int') instanceCounter,
 	@type('SpriteSheetData') spriteSheetData,
 	@type('ImageSheetStatus') imageSheetStatus,
-	@type('SoundStatus') soundStatus,
 	@type('bool') initializationComplete,
 	@type('GamepadStatus') gamepadStatus,
 	@type('int') gameCounter,
@@ -261,46 +260,6 @@ struct ImageSheetStatus {
 	@type('Dictionary<string, object>') tilesByName,
 	@type('Dictionary<int, Array<int>>') tilesPerId,
 	@type('Dictionary<string, ImageSheetVirtualizationGrid>') virtualizationGrids
-}
-
-
-struct MusicInstance {
-	@type('string') userFilePath, // path in the original project (consistent across platforms)
-	@type('object') nativeObject, // native sound object, if necessary (SDL platforms use file paths directly, so this will be null)
-	@type('string') realFilePath, // path on the actual disk
-	@type('double') volume, // volume for this particular music instance (combined with master volume)
-	@type('bool') isLoaded, // true if the music is loaded and ready to play (for SDL, this is unknown and is assumed to be true despite the fact that it may take a few ticks to start playing)
-}
-
-// Enqueued in the SoundStatus.soundEventQueue
-// Dequeued by the work unit pump
-// If the sound or music for an event isn't loaded, it'll 
-struct SoundEvent {
-	@type('int') type, // FADE_MUSIC, PLAY_MUSIC, PAUSE_MUSIC, PLAY_SOUND
-	@type('Value') sound,
-	@type('MusicInstance') music,
-	@type('bool') fadeOutEstablished, // set to true once the endFade timestamp is established.
-	@type('bool') musicLoops, // true if the music should loop.
-
-	// These are set when the event is created. These are in seconds.
-	@type('double') fadeOutDuration,
-
-	// These are all blank when the event is created. 
-	// When the music has loaded, these are set to the relative timestamps from the current time using the
-	// durations listed above. These are all 1970 epoch timestamps.
-	@type('double') fadeStart,
-	@type('double') fadeMiddle,
-	@type('double') fadeEnd,
-}
-
-struct SoundStatus {
-	@type('List<SoundEvent>') soundEventQueue,
-	@type('MusicInstance') currentMusic,
-	@type('double') masterSoundVolume,
-	@type('double') masterMusicVolume,
-	@type('double') fadeVolumeRatio,
-	@type('double') lastSetMusicVolume,
-	@type('bool') forceVolumeSet,
 }
 
 struct TileLoadRequest {

@@ -172,14 +172,6 @@ enum OpenGlMode {
 	QUADS = 1,
 }
 
-enum SoundEventType {
-	FADE_MUSIC = 1,
-	PLAY_MUSIC = 2,
-	PAUSE_MUSIC = 3,
-	RESUME_MUSIC = 4,
-	PLAY_SOUND = 5,
-}
-
 enum PrimitiveMethodName {
 	ADD,
 	CHOICE,

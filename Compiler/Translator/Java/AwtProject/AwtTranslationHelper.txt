@@ -273,7 +273,7 @@ class AwtTranslationHelper {
         }
     }
 
-    public static MusicInstance loadMusicFromResource() {
+    public static Object loadMusicFromResource() {
         return null;
     }
 
