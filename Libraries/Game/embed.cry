@@ -126,7 +126,7 @@ namespace Game {
 		MOUSE_RIGHT_UP = 0x24,
 		MOUSE_SCROLL = 0x25,
 		
-		GAMEPAD_RAW = 0x30,
+		GAMEPAD_HARDWARE = 0x30,
 		GAMEPAD = 0x31,
 
 	}

@@ -1,3 +1,304 @@
-﻿namespace Gamepad {
-	// oi.
+﻿import Game;
+
+namespace Gamepad {
+	
+	// Button IDs for canonical (read: "XBox"/"PS") controllers.
+	// These are used by auto-configure.
+	enum ButtonId {
+		BUTTON_LEFT,
+		BUTTON_RIGHT,
+		BUTTON_UP,
+		BUTTON_DOWN,
+		DPAD_LEFT,
+		DPAD_RIGHT,
+		DPAD_UP,
+		DPAD_DOWN,
+		AXIS1,
+		AXIS2,
+		LEFT_TRIGGER,
+		RIGHT_TRIGGER,
+		LEFT_BUMPER,
+		RIGHT_BUMPER,
+		START,
+		BACK,
+	}
+
+	enum XBoxButtonId {
+		X = ButtonId.BUTTON_LEFT,
+		B = ButtonId.BUTTON_RIGHT,
+		Y = ButtonId.BUTTON_UP,
+		A = ButtonId.BUTTON_DOWN,
+		DPAD_LEFT = ButtonId.DPAD_LEFT,
+		DPAD_RIGHT = ButtonId.DPAD_RIGHT,
+		DPAD_UP = ButtonId.DPAD_UP,
+		DPAD_DOWN = ButtonId.DPAD_DOWN,
+		AXIS1 = ButtonId.AXIS1,
+		AXIS2 = ButtonId.AXIS2,
+		LEFT_TRIGGER = ButtonId.LEFT_TRIGGER,
+		RIGHT_TRIGGER = ButtonId.RIGHT_TRIGGER,
+		LEFT_BUMPER = ButtonId.LEFT_BUMPER,
+		RIGHT_BUMPER = ButtonId.RIGHT_BUMPER,
+		START = ButtonId.START,
+		BACK = ButtonId.BACK,
+	}
+
+	enum PsButtonId {
+		SQUARE = ButtonId.BUTTON_LEFT,
+		CIRCLE = ButtonId.BUTTON_RIGHT,
+		TRIANGLE = ButtonId.BUTTON_UP,
+		X = ButtonId.BUTTON_DOWN,
+		DPAD_LEFT = ButtonId.DPAD_LEFT,
+		DPAD_RIGHT = ButtonId.DPAD_RIGHT,
+		DPAD_UP = ButtonId.DPAD_UP,
+		DPAD_DOWN = ButtonId.DPAD_DOWN,
+		AXIS1 = ButtonId.AXIS1,
+		AXIS2 = ButtonId.AXIS2,
+		LEFT_BUMPER2 = ButtonId.LEFT_TRIGGER,
+		RIGHT_BUMPER2 = ButtonId.RIGHT_TRIGGER,
+		LEFT_BUMPER1 = ButtonId.LEFT_BUMPER,
+		RIGHT_BUMPER1 = ButtonId.RIGHT_BUMPER,
+		START = ButtonId.START,
+		SELECT = ButtonId.BACK,
+	}
+
+	enum SnesButtonId {
+		Y = ButtonId.BUTTON_LEFT,
+		A = ButtonId.BUTTON_RIGHT,
+		X = ButtonId.BUTTON_UP,
+		B = ButtonId.BUTTON_DOWN,
+		LEFT = ButtonId.DPAD_LEFT,
+		RIGHT = ButtonId.DPAD_RIGHT,
+		UP = ButtonId.DPAD_UP,
+		DOWN = ButtonId.DPAD_DOWN,
+		L = ButtonId.LEFT_BUMPER,
+		R = ButtonId.RIGHT_BUMPER,
+		START = ButtonId.START,
+		SELECT = ButtonId.BACK,
+	}
+
+	class GamepadManager {
+		
+		static field _devices = null;
+		static field _isGamepadSupported = $$lib_gamepad_is_supported();
+		static field _platformRequiresRefresh = $$lib_gamepad_platform_requires_refresh();
+		static field _device_count_checked = false;
+
+		static constructor() {
+			GameWindow._eventPumpHandlers.add(GamepadManager._eventPump);
+		}
+
+		constructor() {
+			Core.assert(false); // TODO: private constructors/static classes
+		}
+
+		static function isGamepadSupported() {
+			return GamepadManager._isGamepadSupported;
+		}
+
+		static function refreshDevices() {
+
+		}
+
+		static function getDeviceCount() {
+			Core.assert(GamepadManager._devices != null, "Cannot get device count without calling refreshDevices.");
+			GamepadManager._device_count_checked = true;
+			return 0;
+		}
+
+		static function getDeviceByIndex(index) {
+			Core.assert(GamepadManager._device_count_checked, "Cannot get device by index without checking device count.");
+			return null;
+		}
+
+		static function getDeviceById(id) {
+			Core.assert(GamepadManager._devices != null, "Cannot get device by ID without initializing.");
+			return null;
+		}
+
+		static function saveSettingsToUserData() {
+			
+		}
+
+		// Returns a list of player IDs
+		static function restoreSettingsFromUserData() {
+			
+		}
+
+		static function _eventPump(eventsOut) {
+			// TODO: add gamepad events to eventsOut
+		}
+	}
+
+	class GamepadDevice {
+		field _index;
+		field _id = null;
+		field _name;
+		field _button_count;
+		field _analog_axis_count;
+		field _digital_axis_count;
+		field _config_stack = [];
+		field _hardware_fingerprint;
+
+		constructor(index, name, _button_count, _analog_axis_count, _digital_axis_count) {
+			this._index = index;
+			this._name = name;
+			this._button_count = bc;
+			this._analog_axis_count = aac;
+			this._digital_axis_count = dac;
+		}
+
+		function setId(id) {
+			this._id = id;
+		}
+
+		function pushAutoConfigure() {
+			
+		}
+
+		function pushEmptyConfig() {
+
+		}
+
+		function popConfig() {
+
+		}
+
+		function flattenConfigs() {
+			
+		}
+
+		function clearBinding(buttonId) {
+			
+		}
+
+		function clearBindings() {
+			
+		}
+
+		function getName() {
+			return this._name;
+		}
+
+		function getButtonCount() {
+			return 0;
+		}
+
+		function getDigitalAxisCount() {
+			return 0;
+		}
+
+		function getAnalogAxisCount() {
+			return 0;
+		}
+
+		function getButtonState(index) {
+			return false;
+		}
+
+		function getDigitalAxisState(index) {
+			return 0;
+		}
+
+		function getAnalogAxisState(index) {
+			return 0.0;
+		}
+
+		// Mashy binders
+
+		function bindDigitalButton(buttonId) {
+			return false;
+		}
+		
+		function bind1dDigitalAxis(buttonId, isPositive) {
+			return false;
+		}
+
+		function bind2dDigitalAxis(buttonId, isX, isPositive) {
+			return false;
+		}
+
+		function bindAnalogButton(buttonId) {
+			return false;
+		}
+		
+		function bind1dAnalogAxis(buttonId, isPositive) {
+			return false;
+		}
+
+		function bind2dAnalogAxis(buttonId, isX, isPositive) {
+			return false;
+		}
+
+		function bindDigitalButtonByHardwareId(hardwareId, buttonId) {
+			return false;
+		}
+		
+		function bind1dDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
+			return false;
+		}
+
+		function bind2dDigitalAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
+			return false;
+		}
+
+		function bindAnalogButtonByHardwareId(hardwareId, buttonId) {
+			return false;
+		}
+		
+		function bind1dAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
+			return false;
+		}
+
+		function bind2dAnalogAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
+			return false;
+		}
+	}
+
+	class GamepadEvent : Game.Event {
+		field device;
+		field deviceId;
+		field buttonId;
+		field value;
+		field x;
+		field y;
+
+		constructor(device, buttonId, value, x, y) : base(Game.EventType.GAMEPAD) {
+			this.device = device;
+			this.deviceId = device._id;
+			this.buttonid = buttonId;
+			this.value = value;
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+	enum GamepadMashyType {
+		BUTTON,
+		ANALOG_AXIS,
+		DIGITAL_AXIS,
+	}
+
+	class GamepadRawHardwareEvent : Game.Event {
+		field device;
+		field deviceId;
+		field mashyType;
+		field mashyIndex;
+		field value;
+		field isSignificant;
+		field hardwareFingerprint;
+
+		constructor(device, mashyType, mashyIndex, value, hardwareFingerprint) : base(Game.EventType.GAMEPAD_RAW) {
+			this.device = device;
+			this.deviceId = device;
+			this.mashyType = mashyType;
+			this.mashyIndex = mashyIndex;
+			this.value = value;
+			if (keyType == GamepadMashyType.ANALOG_AXIS) {
+				this.isSignificant = Math.abs(value) > .3;
+			} else {
+				this.isSignificant = true;
+			}
+			this.hardwareFingerprint;
+		}
+	}
 }

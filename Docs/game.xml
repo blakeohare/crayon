@@ -127,7 +127,7 @@
 				<value>MOUSE_RIGHT_UP</value>
 				<value>MOUSE_RIGHT_DOWN</value>
 				<value>MOUSE_SCROLL</value>
-				<value>GAMEPAD_RAW</value>
+				<value>GAMEPAD_HARDWARE</value>
 				<value>GAMEPAD</value>
 			</enum>
 			
