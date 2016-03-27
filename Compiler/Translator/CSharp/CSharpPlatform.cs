@@ -7,8 +7,8 @@ namespace Crayon.Translator.CSharp
 {
 	abstract class CSharpPlatform : AbstractPlatform
 	{
-		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, Crayon.Translator.AbstractOpenGlTranslator openGlTranslator, AbstractGamepadTranslator gamepadTranslator)
-			: base(LibraryConfig.PlatformId.CSHARP_OPENTK, LibraryConfig.LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator, openGlTranslator, gamepadTranslator)
+		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, Crayon.Translator.AbstractOpenGlTranslator openGlTranslator)
+			: base(LibraryConfig.PlatformId.CSHARP_OPENTK, LibraryConfig.LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator, openGlTranslator)
 		{ }
 
 		public override bool IsAsync { get { return true; } }
@@ -82,7 +82,6 @@ namespace Crayon.Translator.CSharp
 				{ "AssemblyInfo.txt", "Properties/AssemblyInfo.cs" },
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
-				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
 				{ "AsyncMessageQueue.txt", "AsyncMessageQueue.cs" },
 			};

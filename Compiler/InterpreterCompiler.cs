@@ -18,7 +18,6 @@ namespace Crayon
 			// These are just piles of functions so they can be compiled in any order.
 			"BinaryOpsUtil.cry",
 			"ByteCodeLoader.cry",
-			"GamepadManager.cry",
 			"Graphics.cry",
 			"Interpreter.cry",
 			"IOManager.cry",
@@ -99,7 +98,6 @@ namespace Crayon
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_NEW_STYLE", (this.platform.IsOpenGlBased && this.platform.OpenGlTranslator.IsNewStyle) ? "true" : "false");
-			replacements.Add("IS_GAMEPAD_SUPPORTED", this.platform.IsGamepadSupported ? "true" : "false");
 			replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
 			replacements.Add("GENERATED_TILE_DIRECTORY", this.platform.GeneratedFilesFolder + "/spritesheets");
 			replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);

@@ -65,26 +65,6 @@ namespace Crayon.Translator
 				}
 			}
 
-			if (name.StartsWith("_gamepad_") && this.Platform.GamepadTranslator != null)
-			{
-				AbstractGamepadTranslator gpt = this.Platform.GamepadTranslator;
-				switch (name)
-				{
-					case "_gamepad_get_2d_digital_axis_count": VerifyCount(functionCall, 2); gpt.TranslateGet2dDigitalAxisCount(output, args[0], args[1]); return;
-					case "_gamepad_get_2d_digital_axis_value": VerifyCount(functionCall, 2); gpt.TranslateGet2dDigitalAxisValue(output, args[0], args[1]); return;
-					case "_gamepad_get_analog_axis_count": VerifyCount(functionCall, 2); gpt.TranslateGetAnalogAxisCount(output, args[0], args[1]); return;
-					case "_gamepad_get_analog_axis_value": VerifyCount(functionCall, 2); gpt.TranslateGetAnalogAxisValue(output, args[0], args[1]); return;
-					case "_gamepad_get_button_count": VerifyCount(functionCall, 2); gpt.TranslateGetButtonCount(output, args[0], args[1]); return;
-					case "_gamepad_get_button_value": VerifyCount(functionCall, 2); gpt.TranslateGetButtonValue(output, args[0], args[1]); return;
-					case "_gamepad_get_device": VerifyCount(functionCall, 1); gpt.TranslateGetDevice(output, args[0]); return;
-					case "_gamepad_get_device_count": VerifyCount(functionCall, 0); gpt.TranslateGetDeviceCount(output); return;
-					case "_gamepad_get_device_name": VerifyCount(functionCall, 2); gpt.TranslateGetDeviceName(output, args[0], args[1]); return;
-					case "_gamepad_initialize": VerifyCount(functionCall, 2); gpt.TranslateInitialize(output, args[0], args[1]); return;
-					case "_gamepad_poll": VerifyCount(functionCall, 0); gpt.TranslatePoll(output); return;
-					default: break; // default to the error in the switch statement below.
-				}
-			}
-
 			switch (name)
 			{
 				// TODO: migrate these to the Audio library.
@@ -282,15 +262,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
 		protected abstract void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue);
 		protected abstract void TranslateForceParens(List<string> output, Expression expression);
-		protected abstract void TranslateGamepadEnableDevice(List<string> output, Expression device);
-		protected abstract void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex);
-		protected abstract void TranslateGamepadGetAxisCount(List<string> output, Expression device);
-		protected abstract void TranslateGamepadGetButtonCount(List<string> output, Expression device);
-		protected abstract void TranslateGamepadGetDeviceCount(List<string> output);
-		protected abstract void TranslateGamepadGetDeviceName(List<string> output, Expression device);
-		protected abstract void TranslateGamepadGetHatCount(List<string> output, Expression device);
-		protected abstract void TranslateGamepadGetRawDevice(List<string> output, Expression index);
-		protected abstract void TranslateGamepadIsButtonPressed(List<string> output, Expression device, Expression buttonIndex);
 		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);
 		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);

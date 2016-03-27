@@ -17,8 +17,6 @@ function @omitReturn @type('string') interpret() {
 	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
 	@type('int') valueStackCapacity = $_array_length(valueStack);
 
-	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
-
 	if (ProgramData$p.initializationComplete) {
 		performWorkNuggetPreFrame();
 	}
@@ -84,11 +82,8 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
 	@type('Array<object>') objArray1 = null;
-	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
-	@type('GameEvent') gameEvent = null;
 	@type('HttpRequest') httpRequest1 = null;
-	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
@@ -394,7 +389,6 @@ function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 
 function performWorkNuggetPreFrame() {
 	imageSheetPerformWorkNuggetPreFrame();
-	gamepadPollBeginFrame();
 }
 
 function performWorkNuggetPostFrame() {

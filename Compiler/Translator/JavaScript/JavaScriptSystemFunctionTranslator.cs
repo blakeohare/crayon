@@ -410,51 +410,6 @@ namespace Crayon.Translator.JavaScript
 			output.Add(")");
 		}
 
-		protected override void TranslateGamepadEnableDevice(List<string> output, Expression device)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetAxisCount(List<string> output, Expression device)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetButtonCount(List<string> output, Expression device)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetDeviceCount(List<string> output)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetDeviceName(List<string> output, Expression device)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetHatCount(List<string> output, Expression device)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadGetRawDevice(List<string> output, Expression index)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
-		protected override void TranslateGamepadIsButtonPressed(List<string> output, Expression device, Expression buttonIndex)
-		{
-			throw new InvalidOperationException("Gamepad not supported.");
-		}
-
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
 			output.Add("R.pump_event_objects()");

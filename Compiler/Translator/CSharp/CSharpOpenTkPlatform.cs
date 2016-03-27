@@ -5,7 +5,7 @@ namespace Crayon.Translator.CSharp
 	class CSharpOpenTkPlatform : CSharpPlatform
 	{
 		public CSharpOpenTkPlatform()
-			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator(), new CSharpOpenTkGamepadTranslator())
+			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
 		{ }
 
 		public override string PlatformShortId { get { return "csotk"; } }

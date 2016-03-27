@@ -10,7 +10,7 @@ namespace Crayon.Translator.JavaScript
 		private string jsFolderPrefix;
 
 		public JavaScriptPlatform(bool isMin, string jsFolderPrefix)
-			: base(LibraryConfig.PlatformId.JAVASCRIPT_CANVAS, LibraryConfig.LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null, null)
+			: base(LibraryConfig.PlatformId.JAVASCRIPT_CANVAS, LibraryConfig.LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null)
 		{
 			this.jsFolderPrefix = jsFolderPrefix;
 		}

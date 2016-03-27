@@ -427,16 +427,6 @@ function @type('Value') buildCommonString(@type('string') s) {
 	return $_dictionary_get_guaranteed(COMMON_STRINGS, s);
 }
 
-function @type('Image') extractImageFromValue(@type('Value') value) {
-	if (Value$value.type == Types.NATIVE_OBJECT) {
-		@type('NativeObjectWrapper') nativeObject = $_cast('NativeObjectWrapper', Value$value.internalValue);
-		if (NativeObjectWrapper$nativeObject.subType == NativeObjectSubType.IMAGE) {
-			return $_cast('Image', NativeObjectWrapper$nativeObject.value);
-		}
-	}
-	return null;
-}
-
 function @type('Value') multiplyString(@type('Value') strValue, @type('string') str, @type('int') n) {
 	if (n <= 2) {
 		if (n == 1) return strValue;
@@ -452,30 +442,6 @@ function @type('Value') multiplyString(@type('Value') strValue, @type('string') 
 
 	str = $_list_join(builder, '');
 	return buildString(str);
-}
-
-function @type('object') extractNativeObjectOfType(@type('Value') value, @type('int') subType) {
-	if (Value$value.type != Types.NATIVE_OBJECT) return null;
-	@type('NativeObjectWrapper') now = $_cast('NativeObjectWrapper', Value$value.internalValue);
-	if (NativeObjectWrapper$now.subType != subType) return null;
-	return NativeObjectWrapper$now.value;
-}
-
-function @type('string') stringToHex(@type('string') original) {
-	if (%%%IS_GAMEPAD_SUPPORTED%%%) {
-		@type('string') hex = HEX_UPPERCASE;
-		@type('int') length = $_string_length(original);
-		@type('Array<string>') output = $_new_array('string', length * 2);
-		@type('int') byte = 0;
-		for (@type('int') i = 0; i < length; i += 1) {
-			byte = $_ord($_force_parens("" + $_string_char_at(original, i)));
-			$_array_set(output, i * 2, $_string_cast_strong($_string_char_at(HEX_UPPERCASE, (byte >> 4) & 15)));
-			$_array_set(output, i * 2 + 1, $_string_cast_strong($_string_char_at(HEX_UPPERCASE, byte & 15)));
-		}
-		return $_list_join(output, "");
-	} else {
-		return null;
-	}
 }
 
 function @type('string') stringFromHex(@type('string') encoded) {
