@@ -450,5 +450,13 @@ namespace %%%PROJECT_ID%%%
 		{
 			return SdlDotNet.Audio.MusicPlayer.IsPlaying;
 		}
+
+		public static bool AlwaysTrue() {
+			return true;
+		}
+
+		public static bool AlwaysFalse() {
+			return false;
+		}
 	}
 }

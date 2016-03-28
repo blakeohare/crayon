@@ -193,12 +193,8 @@ namespace Crayon.Translator.CSharp
 				};
 			}
 
-			// Create the actual compile targets in the .csproj file
 			List<string> compileTargetCode = new List<string>();
-			foreach (string compileTarget in compileTargets)
-			{
-				compileTargetCode.Add("    <Compile Include=\"" + compileTarget.Replace('/', '\\') + "\" />\r\n");
-			}
+
 			compileTargetCode.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
 			foreach (string embeddedResource in embeddedResources)
 			{

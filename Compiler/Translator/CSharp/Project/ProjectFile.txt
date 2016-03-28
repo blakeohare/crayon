@@ -40,8 +40,8 @@
 %%%EXTRA_DLLS%%%%%%SYSTEM_LIBRARIES%%%
   </ItemGroup>
   <ItemGroup>
-%%%COMPILE_TARGETS%%%
-  </ItemGroup>
+    <Compile Include="**\*.cs" />
+%%%COMPILE_TARGETS%%%  </ItemGroup>
   <ItemGroup>
 %%%COPY_FILES%%%
   </ItemGroup>
