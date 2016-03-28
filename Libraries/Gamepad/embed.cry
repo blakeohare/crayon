@@ -161,6 +161,11 @@ namespace Gamepad {
 
 		static function _eventPump(eventsOut) {
 			// TODO: add gamepad events to eventsOut
+			if (GamepadManager._devices != null) {
+				for (device : GamepadManager._devices) {
+					device._updatePass(eventsOut);
+				}
+			}
 		}
 
 		static function setDeadZoneTolerance(amount) {
@@ -271,7 +276,7 @@ namespace Gamepad {
 
 		static field _hat_check_reusable = [0, 0];
 
-		function _updatePass() {
+		function _updatePass(eventsOut) {
 			$$lib_gamepad_poll_universe();
 			counter = this._counter++;
 			updated_indices = [];
@@ -318,6 +323,17 @@ namespace Gamepad {
 
 					// case 3 will not occur, as i is incremented and handles 2D axes Y values in case 2
 				}
+			}
+
+			for (index : updated_indices) {
+				mashy = this._hardware_mashies[index];
+				switch (mashy[0]) {
+					case 0: t = GamepadMashyType.BUTTON; break;
+					case 1: t = GamepadMashyType.ANALOG_AXIS; break;
+					default: t = GamepadMashyType.DIGITAL_AXIS; break;
+				}
+				eventsOut.add(new GamepadRawHardwareEvent(
+					this, t, index, mashy[3], mashy[2]));
 			}
 		}
 
@@ -451,7 +467,6 @@ namespace Gamepad {
 		ANALOG_AXIS,
 		DIGITAL_AXIS,
 	}
-
 	class GamepadRawHardwareEvent : Game.Event {
 		field device;
 		field deviceId;
