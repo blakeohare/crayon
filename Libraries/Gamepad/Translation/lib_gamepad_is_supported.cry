@@ -1,0 +1,4 @@
+﻿output = VALUE_FALSE;
+if ($_lib_gamepad_is_supported()) {
+	output = VALUE_TRUE;
+}

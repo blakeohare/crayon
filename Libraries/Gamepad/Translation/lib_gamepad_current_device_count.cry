@@ -1,0 +1,6 @@
+﻿int1 = 0;
+if ($_lib_gamepad_is_supported()) { // dynamically determined in JavaScript. Constant TRUE in other platforms.
+	int1 = $_lib_gamepad_get_current_device_count();
+}
+
+output = buildInteger(int1);

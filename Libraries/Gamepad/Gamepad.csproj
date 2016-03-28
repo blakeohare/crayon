@@ -54,7 +54,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Translation\" />
+    <EmbeddedResource Include="Translation\lib_gamepad_current_device_count.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_initialize_device.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_platform_requires_refresh.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_is_supported.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_get_button_state.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_get_axis_1d_state.cry" />
+    <EmbeddedResource Include="Translation\lib_gamepad_get_axis_2d_state.cry" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_poll_universe.cry" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

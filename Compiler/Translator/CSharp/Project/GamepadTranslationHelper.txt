@@ -29,7 +29,7 @@ namespace %%%PROJECT_ID%%%
 #pragma warning restore 612,618
 		}
 
-		public static int GetDeviceCount()
+		public static int GetCurrentDeviceCount()
 		{
 			InitializeJoysticks();
 
@@ -51,43 +51,38 @@ namespace %%%PROJECT_ID%%%
 			return rawDescription;
 		}
 
-		public static object GetDevice(int index)
+		public static object GetDeviceReference(int index)
 		{
 			InitializeJoysticks();
 
 			return joysticks[index];
 		}
 
-		public static int GetButtonCount(object nativeDevice)
+		public static int GetDeviceButtonCount(object nativeDevice)
 		{
 			return ((JoystickDevice)nativeDevice).Button.Count;
 		}
 
-		public static bool GetButtonValue(object nativeDevice, int buttonIndex)
+		public static bool GetDeviceButtonState(object nativeDevice, int buttonIndex)
 		{
 			return ((JoystickDevice)nativeDevice).Button[buttonIndex];
 		}
 
-		public static int GetAnalogAxisCount(object nativeDevice)
+		public static int GetDeviceAxis1dCount(object nativeDevice)
 		{
 			return ((JoystickDevice)nativeDevice).Axis.Count;
 		}
 
-		public static double GetAnalogAxis(object nativeDevice, int axisIndex)
+		public static double GetDeviceAxis1dState(object nativeDevice, int axisIndex)
 		{
 			return ((JoystickDevice)nativeDevice).Axis[axisIndex];
 		}
 
-		public static int GetDigitalAxisCount(object nativeDevice)
+		public static int GetDeviceAxis2dCount(object nativeDevice)
 		{
 			return 0;
 		}
 
-		private static int[] DIGITAL_VECTOR_REUSABLE = new int[2];
-
-		public static int[] GetDigitalAxis(object nativeDevice, int axisIndex)
-		{
-			return DIGITAL_VECTOR_REUSABLE;
-		}
+		public static void GetDeviceAxis2dState(object nativeDevice, int axisIndex, object ignored) { }
 	}
 }

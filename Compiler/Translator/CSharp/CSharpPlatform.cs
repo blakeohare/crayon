@@ -84,6 +84,10 @@ namespace Crayon.Translator.CSharp
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
 				{ "AsyncMessageQueue.txt", "AsyncMessageQueue.cs" },
+
+				// TODO: only inject this when the Gamepad library is imported
+				// It'll require some reworking with the library code.
+				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
 			};
 
 			// Create a list of compiled C# files
