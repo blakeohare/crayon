@@ -222,7 +222,7 @@ namespace Gamepad {
 				0, // digital axis count
 				0, // analog axis count
 			];
-			$$lib_gamepad_initialize_device(this, params);
+			$$lib_gamepad_initialize_device(index, this, params);
 			this._name = params[0];
 			this._button_count = params[1];
 			this._axis_1d_count = params[2];
@@ -248,7 +248,7 @@ namespace Gamepad {
 
 			this._hardware_mashies = hardware_sources;
 			this._mashy_fingerprint_to_index = {};
-			for (i = 0; i < this._hardware_mashies.length; ++i) {
+			for (i = 1; i < this._hardware_mashies.length; ++i) {
 				this._mashy_fingerprint_to_index[hardware_sources[i][2]] = i;
 			}
 
