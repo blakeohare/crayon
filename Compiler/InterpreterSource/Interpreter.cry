@@ -17,8 +17,6 @@ function @omitReturn @type('string') interpret() {
 	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
 	@type('int') valueStackCapacity = $_array_length(valueStack);
 
-	@type('GamepadStatus') gamepadStatus = ProgramData$p.gamepadStatus;
-
 	if (ProgramData$p.initializationComplete) {
 		performWorkNuggetPreFrame();
 	}
@@ -37,12 +35,6 @@ function @omitReturn @type('string') interpret() {
 	@type('bool') returnValueUsed = false;
 	@type('Value') output = null;
 	@type('FunctionInfo') functionInfo = null;
-	@type('ObjectInstance') objInstance1 = null;
-	@type('ObjectInstance') objInstance2 = null;
-	@type('object') object1 = null;
-	@type('object') object2 = null;
-	@type('DictImpl') dictImpl = null;
-	@type('DictImpl') dictImpl2 = null;
 	@type('Array<List<Token>>') tokensByPc = null;
 	@type('List<Token>') tokens = null;
 	@type('int') keyType = 0;
@@ -77,18 +69,20 @@ function @omitReturn @type('string') interpret() {
 	@type('string') string1 = null;
 	@type('string') string2 = null;
 	@type('string') string3 = null;
+	@type('ObjectInstance') objInstance1 = null;
+	@type('ObjectInstance') objInstance2 = null;
+	@type('object') object1 = null;
+	@type('object') object2 = null;
 	@type('List<Value>') list1 = null;
 	@type('List<Value>') list2 = null;
+	@type('DictImpl') dictImpl = null;
+	@type('DictImpl') dictImpl2 = null;
 	@type('List<string>') stringList1 = null;
 	@type('List<int>') intList1 = null;
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
 	@type('Array<object>') objArray1 = null;
-	@type('NativeObjectWrapper') nativeObject = null;
 	@type('Image') image1 = null;
-	@type('GameEvent') gameEvent = null;
-	@type('HttpRequest') httpRequest1 = null;
-	@type('GamepadDeviceInfo') gamepadDeviceInfo1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
@@ -394,7 +388,6 @@ function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 
 function performWorkNuggetPreFrame() {
 	imageSheetPerformWorkNuggetPreFrame();
-	gamepadPollBeginFrame();
 }
 
 function performWorkNuggetPostFrame() {

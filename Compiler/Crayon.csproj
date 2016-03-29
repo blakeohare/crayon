@@ -142,7 +142,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenStream.cs" />
     <Compile Include="AbstractPlatform.cs" />
-    <Compile Include="Translator\AbstractGamepadTranslator.cs" />
     <Compile Include="Translator\AbstractOpenGlTranslator.cs" />
     <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
     <Compile Include="Translator\AbstractTranslator.cs" />
@@ -150,7 +149,6 @@
     <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
     <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
     <Compile Include="Translator\COpenGL\CTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpOpenTkGamepadTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkOpenGlTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
@@ -169,7 +167,6 @@
     <Compile Include="Translator\Java\JavaPlatform.cs" />
     <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Java\JavaTranslator.cs" />
-    <Compile Include="Translator\Python\PyGameGamepadTranslator.cs" />
     <Compile Include="Translator\Python\PythonPlatform.cs" />
     <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
     <Compile Include="Translator\Python\PythonTranslator.cs" />
@@ -287,7 +284,6 @@
     <EmbeddedResource Include="InterpreterSource\BinaryOpsUtil.cry" />
     <EmbeddedResource Include="InterpreterSource\ByteCodeLoader.cry" />
     <EmbeddedResource Include="InterpreterSource\Constants.cry" />
-    <EmbeddedResource Include="InterpreterSource\GamepadManager.cry" />
     <EmbeddedResource Include="InterpreterSource\Globals.cry" />
     <EmbeddedResource Include="InterpreterSource\Graphics.cry" />
     <EmbeddedResource Include="InterpreterSource\Interpreter.cry" />
@@ -408,6 +404,9 @@
       <Project>{035A169E-3D27-4D58-8CE7-16787BFECC91}</Project>
       <Name>LibraryConfig</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translator\Python\PyGame\GamepadLibraryHelper.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

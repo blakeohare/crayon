@@ -55,9 +55,6 @@
     <EmbeddedResource Include="Translation\lib_game_set_title.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translation\lib_game_initialize_gamepad.cry" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="GameLibHelper.cry" />
     <EmbeddedResource Include="Translation\lib_game_event_queue_flush.cry" />
     <EmbeddedResource Include="Translation\lib_game_event_queue_get.cry" />

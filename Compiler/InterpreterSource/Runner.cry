@@ -74,14 +74,6 @@ function main() {
 			$_new_dictionary('int', 'Array<int>'),
 			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
 		false,
-		new GamepadStatus(
-			false, 
-			$_new_list('GamepadDeviceInfo'),
-			$_new_list('Value'),
-			$_new_list('GamepadHardwarePushy'),
-			$_new_list('GamepadAtomicPushy'),
-			$_new_list('GamepadHardwareEvent'),
-			$_new_list('GamepadVirtualEvent')),
 		0, // gameCounter (incremented on $game_clock_tick())
 
 		// The value stack:

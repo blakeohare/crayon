@@ -5,7 +5,7 @@ namespace Crayon.Translator.Python
 	class PythonPlatform : AbstractPlatform
 	{
 		public PythonPlatform()
-			: base(LibraryConfig.PlatformId.PYTHON_PYGAME, LibraryConfig.LanguageId.PYTHON, false, new PythonTranslator(), new PythonSystemFunctionTranslator(), null, new PyGameGamepadTranslator())
+			: base(LibraryConfig.PlatformId.PYTHON_PYGAME, LibraryConfig.LanguageId.PYTHON, false, new PythonTranslator(), new PythonSystemFunctionTranslator(), null)
 		{ }
 
 		public override bool IsAsync { get { return false; } }
@@ -36,8 +36,13 @@ namespace Crayon.Translator.Python
 
 			concatenatedCode.Add(this.GetPyGameCode("Header.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
+
+			// TODO: conditional includes based on library imports.
+			concatenatedCode.Add(this.GetPyGameCode("GamepadLibraryHelper.py", replacements)); 
+			concatenatedCode.Add(this.Translator.NL);
 			concatenatedCode.Add(this.GetPyGameCode("AsyncHttpFetcher.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
+
 			this.Translator.TranslateGlobals(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);

@@ -126,7 +126,7 @@ namespace Game {
 		MOUSE_RIGHT_UP = 0x24,
 		MOUSE_SCROLL = 0x25,
 		
-		GAMEPAD_RAW = 0x30,
+		GAMEPAD_HARDWARE = 0x30,
 		GAMEPAD = 0x31,
 
 	}
@@ -174,9 +174,6 @@ namespace Game {
 			$$lib_game_initialize(fps);
 			$$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
 			$$lib_game_set_title(title);
-
-			// TODO: move trigger to gamepad library. Use an event trigger.
-			$$lib_game_initialize_gamepad();
 		}
 
 		function clockTick() {

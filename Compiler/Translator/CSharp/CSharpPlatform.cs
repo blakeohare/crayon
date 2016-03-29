@@ -7,8 +7,8 @@ namespace Crayon.Translator.CSharp
 {
 	abstract class CSharpPlatform : AbstractPlatform
 	{
-		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, Crayon.Translator.AbstractOpenGlTranslator openGlTranslator, AbstractGamepadTranslator gamepadTranslator)
-			: base(LibraryConfig.PlatformId.CSHARP_OPENTK, LibraryConfig.LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator, openGlTranslator, gamepadTranslator)
+		public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, Crayon.Translator.AbstractOpenGlTranslator openGlTranslator)
+			: base(LibraryConfig.PlatformId.CSHARP_OPENTK, LibraryConfig.LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator, openGlTranslator)
 		{ }
 
 		public override bool IsAsync { get { return true; } }
@@ -82,9 +82,12 @@ namespace Crayon.Translator.CSharp
 				{ "AssemblyInfo.txt", "Properties/AssemblyInfo.cs" },
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
-				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
 				{ "ResourceReader.txt", "ResourceReader.cs" },
 				{ "AsyncMessageQueue.txt", "AsyncMessageQueue.cs" },
+
+				// TODO: only inject this when the Gamepad library is imported
+				// It'll require some reworking with the library code.
+				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
 			};
 
 			// Create a list of compiled C# files
@@ -194,12 +197,8 @@ namespace Crayon.Translator.CSharp
 				};
 			}
 
-			// Create the actual compile targets in the .csproj file
 			List<string> compileTargetCode = new List<string>();
-			foreach (string compileTarget in compileTargets)
-			{
-				compileTargetCode.Add("    <Compile Include=\"" + compileTarget.Replace('/', '\\') + "\" />\r\n");
-			}
+
 			compileTargetCode.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
 			foreach (string embeddedResource in embeddedResources)
 			{

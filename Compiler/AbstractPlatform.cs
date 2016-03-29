@@ -12,7 +12,6 @@ namespace Crayon
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
 		public AbstractOpenGlTranslator OpenGlTranslator { get; private set; } // null if IsOpenGlBased is false
-		public AbstractGamepadTranslator GamepadTranslator { get; private set; } // null if Gamepad not supported.
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public PlatformId PlatformId { get; private set; }
@@ -29,7 +28,6 @@ namespace Crayon
 		public string LibraryBigSwitchStatement { get; set; }
 
 		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
-		public bool IsGamepadSupported { get { return this.GamepadTranslator != null; } }
 
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
@@ -41,8 +39,7 @@ namespace Crayon
 			bool isMin,
 			AbstractTranslator translator,
 			AbstractSystemFunctionTranslator systemFunctionTranslator,
-			AbstractOpenGlTranslator nullableOpenGlTranslator,
-			AbstractGamepadTranslator nullableGamepadTranslator)
+			AbstractOpenGlTranslator nullableOpenGlTranslator)
 		{
 			this.PlatformId = platform;
 			this.LanguageId = language;
@@ -52,16 +49,9 @@ namespace Crayon
 			this.Translator = translator;
 			this.SystemFunctionTranslator = systemFunctionTranslator;
 			this.OpenGlTranslator = nullableOpenGlTranslator;
-			this.GamepadTranslator = nullableGamepadTranslator;
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
-
-			if (this.GamepadTranslator != null)
-			{
-				this.GamepadTranslator.Platform = this;
-				this.GamepadTranslator.Translator= translator;
-			}
 
 			if (this.OpenGlTranslator != null)
 			{

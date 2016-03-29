@@ -313,51 +313,6 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
-		protected override void TranslateGamepadEnableDevice(List<string> output, Expression device)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetAxisValue(List<string> output, Expression device, Expression axisIndex)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetAxisCount(List<string> output, Expression device)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetButtonCount(List<string> output, Expression device)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetDeviceCount(List<string> output)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetDeviceName(List<string> output, Expression device)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetHatCount(List<string> output, Expression device)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadGetRawDevice(List<string> output, Expression index)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateGamepadIsButtonPressed(List<string> output, Expression device, Expression buttonIndex)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void TranslateGetEventsRawList(List<string> output)
 		{
 			output.Add("TODO_get_events_raw_list()");

@@ -15,7 +15,7 @@ namespace Crayon.Translator.Java
 		public override bool IsArraySameAsList { get { return false; } }
 
 		public JavaPlatform(LibraryConfig.PlatformId platform, JavaSystemFunctionTranslator systemFunctionTranslator, AbstractOpenGlTranslator openGlTranslator)
-			: base(platform, LibraryConfig.LanguageId.JAVA, false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator, null)
+			: base(platform, LibraryConfig.LanguageId.JAVA, false, new JavaTranslator(), systemFunctionTranslator, openGlTranslator)
 		{ }
 
 		public string TranslateType(string original, bool wrapped)

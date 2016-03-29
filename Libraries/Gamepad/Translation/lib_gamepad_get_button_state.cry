@@ -1,0 +1,16 @@
+﻿/*
+	args[0] -> GamepadDevice instance
+	args[1] -> button index (integer)
+
+	outputs a boolean Value
+*/
+import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+int1 = $_cast('int', Value$arg2.internalValue);
+
+if ($_lib_gamepad_get_button_state($_array_get(ObjectInstance$objInstance1.nativeData, 0), int1)) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}
