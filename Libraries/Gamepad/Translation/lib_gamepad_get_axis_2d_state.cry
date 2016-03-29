@@ -11,6 +11,6 @@ objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 int1 = $_cast('int', Value$arg2.internalValue);
 list1 = $_cast('List<Value>', Value$arg3.internalValue);
 
-$_lib_gamepad_get_axis_2d_state($_array_get(ObjectInstance$objInstance1.nativeData, 0), int1, intArray1);
-$_list_set(list1, 0, buildInteger($_array_get(intArray1, 0)));
-$_list_set(list1, 1, buildInteger($_array_get(intArray1, 1)));
+$_lib_gamepad_get_axis_2d_state($_array_get(ObjectInstance$objInstance1.nativeData, 0), int1, intOutParam);
+$_list_set(list1, 0, buildInteger($_array_get(intOutParam, 0)));
+$_list_set(list1, 1, buildInteger($_array_get(intOutParam, 1)));

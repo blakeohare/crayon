@@ -74,7 +74,47 @@ namespace Gamepad
 					}
 
 				case PlatformId.PYTHON_PYGAME:
-					throw new ArgumentException();
+					switch (functionName)
+					{
+						case "$_lib_gamepad_is_supported":
+							return "_always_true()";
+
+						case "$_lib_gamepad_platform_requires_refresh":
+							return "_always_false()";
+
+						case "$_lib_gamepad_get_current_device_count":
+							return "_lib_gamepad_get_current_joystick_count()";
+
+						case "$_lib_gamepad_get_device_reference":
+							return "_lib_gamepad_get_joystick(" + translator.Translate(args[0]) + ")";
+
+						case "$_lib_gamepad_get_name":
+							return "_lib_gamepad_get_joystick_name(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_button_count":
+							return "_lib_gamepad_get_joystick_button_count(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_1d_count":
+							return "_lib_gamepad_get_joystick_axis_1d_count(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_2d_count":
+							return "_lib_gamepad_get_joystick_axis_2d_count(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_button_state":
+							return "_lib_gamepad_get_joystick_button_state(" + translator.Translate(args[0]) + ", " + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_1d_state":
+							return "_lib_gamepad_get_joystick_axis_1d_state(" + translator.Translate(args[0]) + ", " + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_2d_state":
+							return "_lib_gamepad_get_joystick_axis_2d_state(" + translator.Translate(args[0]) + ", " + translator.Translate(args[1]) + ", " + translator.Translate(args[2]) + ")";
+
+						case "$_lib_gamepad_poll_universe":
+							return "_always_true()"; // no equivalent. Hardware refresh happens in real-time in PyGame without explicitly invoking it.
+
+						default:
+							throw new ArgumentException();
+					}
 
 				case PlatformId.JAVASCRIPT_CANVAS:
 					break;
