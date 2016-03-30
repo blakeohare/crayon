@@ -1,0 +1,150 @@
+<documentation>
+	<library name="Gamepad">
+		<description>
+			Library for interacting with connected Gamepads.
+		</description>
+		<namespace name="Gamepad">
+			<class name="GamepadManager">
+				<description>
+					Utility class for various gamepad configuration functions.
+				</description>
+				<function static="true" name="isGamepadSupported">
+					<description>
+						Returns true if the gamepad is currently supported in this program. 
+						For C# and Python, this returns true. 
+						For JavaScript, this value is determined based on browser capability.
+						False for all other platforms.
+					</description>
+				</function>
+				<function static="true" name="refreshDevices">
+					<description>
+						Initializes or updates the list of all available devices.
+						This must be called before gamepads can be queried.
+						Note that in some platforms refreshDevices must be called if new devices are connected.
+						For example, in most browsers that support gamepad, JavaScript will treat devices as non-present
+						until they are physically interacted with while the browser window has focus, at which point they
+						are shown as connected to code. refreshDevices must be called again once this happens. 
+						It is safe (non-detrimental to performance) to poll this function every frame, even for platforms that don't require it.
+						See also <link see="gamepad.gamepadmanager.platformrequiresrefresh">platformRequiresRefresh</link>().
+					</description>
+				</function>
+				<function static="true" name="platformRequiresRefresh">
+					<description>
+						Returns true if the current platform requires <link see="gamepad.gamepadmanager.refreshdevices">refreshDevices</link> to be 
+						called periodically to check for new devices that may have been connected or made available. Even if 
+						false is returned, <link see="gamepad.gamepadmanager.refreshdevices">refreshDevices</link>() must still
+						be invoked at least once to detect/initialize devices.
+					</description>
+				</function>
+				<function static="true" name="getDeviceCount">
+					<description>
+						Returns the number of devices currently connected. <link see="gamepad.gamepadmanager.refreshdevices">refreshDevices</link>() must
+						be invoked before this function is invoked.
+					</description>
+				</function>
+				<function static="true" name="getDeviceByIndex">
+					<arg name="index" type="integer">
+						Index of the gamepad. Must be between 0 (inclusive) and deviceCount (exclusive).
+					</arg>
+					<description>
+						Returns a <link see="gamepad.gamepaddevice">GamepadDevice</link> instance that corresponds to the nth device.
+						The order of the devices is mandated by the platform and may not be consistent between platforms.
+					</description>
+				</function>
+				<function static="true" name="getDeviceById">
+					<arg name="id" type="integer or string">
+						ID value that has potentially been assigned to a device, e.g. 'player1'.
+					</arg>
+					<description>
+						Returns a <link see="gamepad.gamepaddevice">GamepadDevice</link> instance that has been assigned this ID value.
+					</description>
+				</function>
+				<function static="true" name="saveSettingsToUserData">
+					<description>
+						Saves all user-defined gamepad configuration to a file in UserData in a platform-specific file.
+						This file can be read from by calling <link see="gamepad.gamepadmanager.restoresettingsfromuserdata">restoreSettingsFromUserData</link>().
+					</description>
+				</function>
+				<function static="true" name="restoreSettingsFromUserData">
+					<description>
+						Restores all gamepad configuration settings that have been saved in a previous session with 
+						<link see="gamepad.gamepadmanager.savesettingstouserdata">saveSettingsToUserData</link>(). If
+						the settings file doesn't exist yet, this function does nothing.
+					</description>
+				</function>
+			</class>
+			<class name="GamepadDevice">
+				<description>
+					Represents a physical gamepad device. Instances can be obtained from 
+					<link see="gamepad.gamepadmanager.getdevicebyindex">GamepadManager.getDeviceByIndex</link>(index) or
+					<link see="gamepad.gamepadmanager.getdevicebyid">GamepadManager.getDeviceById</link>(id).
+				</description>
+				<function name="setId">
+					<arg name="id" type="integer or string">
+						An arbitrary user-defined value that can be used to uniquely identify this gamepad.
+					</arg>
+					<description>
+						Sets an ID on this gamepad. Can be used to identify events generated from this device.
+					</description>
+				</function>
+				<function name="getId">
+					<description>
+						Returns the ID value for this gamepad device. See <link see="gamepad.gamepaddevice.setid">setId</link>().
+					</description>
+				</function>
+				<function name="getName">
+					<description>
+						Returns the platform-reported name of this device. This value is an arbitrary string that may vary from platform to platform.
+					</description>
+				</function>
+				<function name="getButtonCount">
+					<description>
+						Returns the number of buttons on this device.
+					</description>
+				</function>
+				<function name="getDigitalAxisCount">
+					<description>
+						Returns the number of digital axes available. Digital axes are 2-dimensional axes that use integer values between -1 and 1 inclusive.
+						These are sometimes referred to as "Hats" or "D-pads". 
+						Note that some platforms do not support digital axes and instead report them as analog axes that return floats, but only the values -1.0, 0.0, and 1.0 (or similar values that are off by a small epsilon).
+					</description>
+				</function>
+				<function name="getAnalogAxisCount">
+					<description>
+						Returns the number of analog axes available.
+					</description>
+				</function>
+				<function name="getButtonState">
+					<arg name="index" type="integer">
+						Index of the button.
+					</arg>
+					<description>
+						Returns the state of the given button as a boolean (true for currently pushed).
+						The index of the button must be between 0 (inclusive) and the total number of buttons (exclusive) 
+						as reported by <link see="gamepad.gamepaddevice.getbuttoncount">getButtonCount</link>().
+					</description>
+				</function>
+				<function name="getDigitalAxisState">
+					<arg name="index" type="integer">
+						Index of the digital axis.
+					</arg>
+					<description>
+						Returns the state of the given digital axis as a list of 2 integers between -1 and 1.
+						The index of the axis must be between 0 (inclusive) and the total number of digital axes (exclusive) 
+						as reported by <link see="gamepad.gamepaddevice.getdigitalaxiscount">getDigitalAxisCount</link>().
+					</description>
+				</function>
+				<function name="getAnalogAxisState">
+					<arg name="index" type="integer">
+						Index of the analog axis.
+					</arg>
+					<description>
+						Returns the state of the given analog axis as a float between 0.0 and 1.0.
+						The index of the axis must be between 0 (inclusive) and the total number of analog axes (exclusive) 
+						as reported by <link see="gamepad.gamepaddevice.getanalogaxiscount">getAnalogAxisCount</link>().
+					</description>
+				</function>
+			</class>
+		</namespace>
+	</library>
+</documentation>
