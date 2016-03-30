@@ -97,6 +97,10 @@ namespace Gamepad {
 			return GamepadManager._isGamepadSupported;
 		}
 
+		static function platformRequiresRefresh() {
+			return GamepadManager._platformRequiresRefresh;
+		}
+
 		static function refreshDevices() {
 			if (GamepadManager._devices == null) {
 				// For platforms that don't require a refresh, it's okay to ignore successive calls to this function.
@@ -168,9 +172,7 @@ namespace Gamepad {
 			}
 		}
 
-		static function setDeadZoneTolerance(amount) {
-			
-		}
+		// TODO: Determine if a dead zone filter should be global or set on individual gamepads.
 	}
 
 	/*
@@ -335,6 +337,10 @@ namespace Gamepad {
 				eventsOut.add(new GamepadRawHardwareEvent(
 					this, t, index, mashy[3], mashy[2]));
 			}
+		}
+
+		function getId() {
+			return this._id;
 		}
 
 		function setId(id) {
