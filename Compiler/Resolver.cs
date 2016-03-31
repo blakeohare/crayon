@@ -64,7 +64,7 @@ namespace Crayon
 				}
 				else
 				{
-					throw new Exception();
+					throw new ParserException(item.FirstToken, "This sort of expression cannot exist outside of function or field definitions.");
 				}
 
 				if (ns.Length > 0)
