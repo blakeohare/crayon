@@ -1,12 +1,17 @@
-FPS = 60;
-WIDTH = 40;
-HEIGHT = 30;
-CELL_SIZE = 20;
-SCREEN_WIDTH = CELL_SIZE * WIDTH;
-SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
-FRAMES_PER_UPDATE = 5;
+import Game;
+import GFX;
+import Math;
+import Random;
 
-function make_grid(width, height) {
+const FPS = 30;
+const WIDTH = 40;
+const HEIGHT = 30;
+const CELL_SIZE = 20;
+const SCREEN_WIDTH = CELL_SIZE * WIDTH;
+const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
+const FRAMES_PER_UPDATE = 3;
+
+function makeGrid(width, height) {
 	grid = [];
 	while (width-- > 0) {
 		grid.add([null] * height);
@@ -14,67 +19,71 @@ function make_grid(width, height) {
 	return grid;
 }
 
-function get_random_blue() {
-	r = $floor($random() * 40);
-	g = $floor($random() * 100) + 100;
-	b = $floor($random() * 80) + 170;
-	return [r, g, b];
+function getRandomBlue() {
+	return [
+		Random.randomInt(40),
+		Random.randomInt(100, 200),
+		Random.randomInt(170, 255)
+	];
 }
 
 function main() {
-	$game_initialize(FPS);
-	$game_initialize_screen(SCREEN_WIDTH, SCREEN_HEIGHT);
-	$game_set_title("Conway's Game of Life");
+	window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 	
 	counter = 0;
 	
-	grid = make_grid(WIDTH, HEIGHT);
-	buffer = make_grid(WIDTH, HEIGHT);
-	neighbors_fast_lookup = make_grid(WIDTH, HEIGHT);
-	blues = make_grid(WIDTH, HEIGHT);
+	grid = makeGrid(WIDTH, HEIGHT);
+	buffer = makeGrid(WIDTH, HEIGHT);
+	
+	neighborsLookup = makeGrid(WIDTH, HEIGHT);
+	blues = makeGrid(WIDTH, HEIGHT);
+	
+	adjacentOffsets = [-1, 0, 1];
 	
 	for (y = 0; y < HEIGHT; ++y) {
 		for (x = 0; x < WIDTH; ++x) {
-			grid[x][y] = $random() < .5;
-			blues[x][y] = get_random_blue();
+			grid[x][y] = Random.randomBool();
+			blues[x][y] = getRandomBlue();
 			neighbors = [];
-			for (dx = -1; dx <= 1; dx++) {
-				for (dy = -1; dy <= 1; dy++) {
-					if (dx != 0 || dy != 0) {
-						nx = x + dx;
-						ny = y + dy;
+			for (nx = x - 1; nx <= x + 1; ++nx) {
+				for (ny = y - 1; ny <= y + 1; ++ny) {
+					if (nx != x || ny != y) {
 						if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
 							neighbors.add([nx, ny]);
 						}
 					}
 				}
 			}
-			neighbors_fast_lookup[x][y] = neighbors;
+			neighborsLookup[x][y] = neighbors;
 		}
 	}
 	
 	last_col = -1;
 	last_row = -1;
-	mouse_pressed = false;
+	mousePressed = false;
 	
 	while (true) {
-		events = $game_pump_events();
-		for (event : events) {
-			if (event.is_quit) {
-				return;
-			} else if (event.is_mouse) {
-				if (event.type == 'mousemove') {
+		for (event : window.pumpEvents()) {
+			switch (event.type) {
+				case EventType.QUIT:
+					return;
+				
+				case EventType.MOUSE_MOVE:
 					last_col = event.x / CELL_SIZE;
 					last_row = event.y / CELL_SIZE;
-				} else if (event.type == 'mouseleftdown') {
-					mouse_pressed = true;
-				} else if (event.type == 'mouseleftup') {
-					mouse_pressed = false;
-				}
+					break;
+				
+				case EventType.MOUSE_LEFT_DOWN:
+					mousePressed = true;
+					break;
+				
+				case EventType.MOUSE_LEFT_UP:
+					mousePressed = false;
+					break;
 			}
 		}
 		
-		if (mouse_pressed) {
+		if (mousePressed) {
 			if (last_col >= 0 && 
 				last_row >= 0 &&
 				last_col < WIDTH && 
@@ -90,7 +99,7 @@ function main() {
 			for (y = 0; y < HEIGHT; ++y) {
 				for (x = 0; x < WIDTH; ++x) {
 					neighbors = 0;
-					for (neighbor : neighbors_fast_lookup[x][y]) {
+					for (neighbor : neighborsLookup[x][y]) {
 						if (grid[neighbor[0]][neighbor[1]]) {
 							neighbors++;
 						}
@@ -126,20 +135,22 @@ function main() {
 			}
 		}
 		
-		$gfx_draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 255);
+		GFX.Draw.fill(0, 0, 0);
 		for (y = 0; y < HEIGHT; ++y) {
 			for (x = 0; x < WIDTH; ++x) {
 				if (grid[x][y]) {
 					rgb = blues[x][y];
-					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, rgb[0], rgb[1], rgb[2], 255);
+					GFX.Draw.rectangle(
+						x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 
+						rgb[0], rgb[1], rgb[2]);
 				} else if (x == last_col && y == last_row) {
-					$gfx_draw_rectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 128, 128, 128, 128);
+					GFX.Draw.rectangle(
+						x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 
+						64, 64, 64);
 				}
 			}
 		}
 		
-		$game_clock_tick();
+		window.clockTick();
 	}
 }
-
-main();
