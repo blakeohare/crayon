@@ -84,7 +84,6 @@ namespace Crayon.Translator
 				case "_audio_music_verify_file_exists": VerifyCount(functionCall, 1); TranslateAudioMusicVerifyFileExists(output, args[0]); break;
 				
 				case "_music_play_now": VerifyCount(functionCall, 3); TranslateMusicPlayNow(output, args[0], args[1], args[2]); break;
-				case "_music_resume": VerifyCount(functionCall, 0); TranslateMusicResume(output); break;
 				case "_audio_music_set_volume": VerifyCount(functionCall, 1); TranslateMusicSetVolume(output, args[0]); break;
 				
 
@@ -306,7 +305,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateMusicLoadFromResource(List<string> output, Expression filename);
 		protected abstract void TranslateMusicPause(List<string> output);
 		protected abstract void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping);
-		protected abstract void TranslateMusicResume(List<string> output);
 		protected abstract void TranslateMusicSetVolume(List<string> output, Expression ratio);
 		protected abstract void TranslateNewArray(List<string> output, StringConstant type, Expression size);
 		protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);

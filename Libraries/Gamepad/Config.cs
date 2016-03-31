@@ -117,7 +117,47 @@ namespace Gamepad
 					}
 
 				case PlatformId.JAVASCRIPT_CANVAS:
-					break;
+					switch (functionName)
+					{
+						case "$_lib_gamepad_is_supported":
+							return "R.gamepad.isSupported()";
+
+						case "$_lib_gamepad_platform_requires_refresh":
+							return "R.gamepad.isSupported()";
+
+						case "$_lib_gamepad_get_current_device_count":
+							return "R.gamepad.getDeviceCount()";
+
+						case "$_lib_gamepad_get_device_reference":
+							return "R.gamepad.getDevice(" + translator.Translate(args[0]) + ")";
+
+						case "$_lib_gamepad_get_name":
+							return "R.gamepad.getName(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_button_count":
+							return "R.gamepad.getButtonCount(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_1d_count":
+							return "R.gamepad.getAxisCount(" + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_2d_count":
+							return "0";
+
+						case "$_lib_gamepad_get_button_state":
+							return "R.gamepad.getButtonState(" + translator.Translate(args[0]) + ", " + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_1d_state":
+							return "R.gamepad.getAxisState(" + translator.Translate(args[0]) + ", " + translator.Translate(args[1]) + ")";
+
+						case "$_lib_gamepad_get_axis_2d_state":
+							return "0"; // translated but never used.
+
+						case "$_lib_gamepad_poll_universe":
+							return "R.alwaysTrue()"; // no equivalent. Hardware refresh happens in real-time in PyGame without explicitly invoking it.
+
+						default:
+							throw new ArgumentException();
+					}
 
 				default:
 					// %%%LIB_GAMEPAD_ENABLED%%% should have hidden away all code that would have called this.

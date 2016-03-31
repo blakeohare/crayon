@@ -988,11 +988,6 @@ namespace Crayon.Translator.COpenGL
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicResume(List<string> output)
-		{
-			output.Add("TODO_music_resume()");
-		}
-
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TODO_musci_set_volume(");

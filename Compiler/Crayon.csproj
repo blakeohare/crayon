@@ -408,6 +408,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Translator\Python\PyGame\GamepadLibraryHelper.py" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translator\JavaScript\Browser\gamepad.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

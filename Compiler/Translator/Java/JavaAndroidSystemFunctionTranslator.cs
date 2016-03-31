@@ -271,11 +271,6 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicResume(List<string> output)
-		{
-			output.Add("AndroidTranslationHelper.resumeMusic()");
-		}
-
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("AndroidTranslationHelper.setMusicVolume(");

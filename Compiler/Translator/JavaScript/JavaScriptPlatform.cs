@@ -56,6 +56,7 @@ namespace Crayon.Translator.JavaScript
 				"sound.js",
 				"file_io.js",
 				"fake_disk.js",
+				"gamepad.js",
 				"http.js",
 				"interpreter_helpers.js",
 			})
@@ -122,14 +123,13 @@ namespace Crayon.Translator.JavaScript
 				}
 			}
 
-			if (textResources.Count > 0)
+			// TODO: don't generate resources file if there are no resources.
+			// But you'll also have to unlink it from the generated HTML.
+			output["resources.js"] = new FileOutput()
 			{
-				output["resources.js"] = new FileOutput()
-				{
-					TextContent = BuildTextResourcesCodeFile(textResources),
-					Type = FileOutputType.Text
-				};
-			}
+				TextContent = BuildTextResourcesCodeFile(textResources),
+				Type = FileOutputType.Text
+			};
 
 			return output;
 		}

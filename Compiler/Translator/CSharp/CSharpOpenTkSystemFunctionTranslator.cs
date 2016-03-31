@@ -158,11 +158,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicResume(List<string> output)
-		{
-			output.Add("TranslationHelper.MusicResume()");
-		}
-
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TranslationHelper.MusicSetVolume(");

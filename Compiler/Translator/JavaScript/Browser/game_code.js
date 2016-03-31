@@ -1,5 +1,8 @@
 ﻿var R = {};
 
+R.alwaysTrue = function() { return true; };
+R.alwaysFalse = function() { return false; };
+
 R.now = function () {
 	return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
 };

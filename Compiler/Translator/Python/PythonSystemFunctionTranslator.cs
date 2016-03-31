@@ -800,11 +800,6 @@ namespace Crayon.Translator.Python
 			output.Add(")");
 		}
 
-		protected override void TranslateMusicResume(List<string> output)
-		{
-			output.Add("_audio_music_resume()");
-		}
-
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("_audio_music_set_volume(");

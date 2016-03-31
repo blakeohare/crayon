@@ -264,11 +264,6 @@ namespace Crayon.Translator.Java
 			output.Add("TranslationHelper.Noop()");
 		}
 
-		protected override void TranslateMusicResume(List<string> output)
-		{
-			output.Add("TranslationHelper.Noop()");
-		}
-
 		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
 		{
 			output.Add("TranslationHelper.Noop()");

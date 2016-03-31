@@ -501,9 +501,6 @@ def _parse_float_helper(f_out, value):
 def _music_pause():
 	pygame.mixer.music.pause()
 
-def _music_resume():
-	pygame.mixer.music.unpause()
-
 def _audio_music_set_volume(ratio):
 	pygame.mixer.music.set_volume(ratio)
 
