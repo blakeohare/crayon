@@ -71,7 +71,13 @@ namespace Crayon.ParseTree
 			Executable ex = Expression.DoNameLookup(lookup, imports, this.Name);
 			if (ex == null)
 			{
-				throw new ParserException(this.NameToken, "No class found called '" + this.Name + "'");
+				string name = this.Name;
+				string message = "No class named '" + name + "' was found.";
+				if (name.Contains('.'))
+				{
+					message += " Did you forget to import a library?";
+				}
+				throw new ParserException(this.NameToken, message);
 			}
 
 			if (ex is ClassDefinition)

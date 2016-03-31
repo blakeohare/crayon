@@ -232,7 +232,7 @@ namespace Crayon.ParseTree
 				Executable baseClassInstance = Executable.DoNameLookup(lookup, imports, value);
 				if (baseClassInstance == null)
 				{
-					throw new ParserException(token, "Class not found.");
+					throw new ParserException(token, "No class named '" + token.Value + "' was found.");
 				}
 
 				if (baseClassInstance is ClassDefinition)
