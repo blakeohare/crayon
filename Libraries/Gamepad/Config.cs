@@ -69,6 +69,9 @@ namespace Gamepad
 						case "$_lib_gamepad_poll_universe":
 							return "GamepadTranslationHelper.Poll()";
 
+						case "$_lib_gamepad_refresh_devices":
+							return "TranslationHelper.AlwaysTrue()";
+
 						default:
 							throw new ArgumentException();
 					}
@@ -112,6 +115,9 @@ namespace Gamepad
 						case "$_lib_gamepad_poll_universe":
 							return "_always_true()"; // no equivalent. Hardware refresh happens in real-time in PyGame without explicitly invoking it.
 
+						case "$_lib_gamepad_refresh_devices":
+							return "_always_true()";
+
 						default:
 							throw new ArgumentException();
 					}
@@ -154,6 +160,9 @@ namespace Gamepad
 
 						case "$_lib_gamepad_poll_universe":
 							return "R.alwaysTrue()"; // no equivalent. Hardware refresh happens in real-time in PyGame without explicitly invoking it.
+
+						case "$_lib_gamepad_refresh_devices":
+							return "R.gamepad.refresh()";
 
 						default:
 							throw new ArgumentException();

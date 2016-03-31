@@ -71,6 +71,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Translation\lib_gamepad_poll_universe.cry" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translation\lib_gamepad_refresh_devices.cry" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

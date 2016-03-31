@@ -102,7 +102,19 @@ namespace Gamepad {
 		}
 
 		static function refreshDevices() {
-			if (GamepadManager._devices == null) {
+			if (GamepadManager._platformRequiresRefresh) {
+				devices = GamepadManager._devices;
+				if (devices == null) {
+					devices = [];
+					GamepadManager._devices = devices;
+				}
+
+				$$lib_gamepad_refresh_devices();
+				newCount = $$lib_gamepad_current_device_count();
+				while (newCount > devices.length) {
+					devices.add(new GamepadDevice(devices.length));
+				}
+			} else if (GamepadManager._devices == null) {
 				// For platforms that don't require a refresh, it's okay to ignore successive calls to this function.
 				devices = [];
 				deviceCount = $$lib_gamepad_current_device_count();
@@ -110,8 +122,6 @@ namespace Gamepad {
 					devices.add(new GamepadDevice(i));
 				}
 				GamepadManager._devices = devices;
-			} else if (GamepadManager._platformRequiresRefresh) {
-				// TODO: this.
 			}
 		}
 
