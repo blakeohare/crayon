@@ -1,11 +1,14 @@
-﻿// $gfx_blit_image_with_alpha(image, x, y, alpha);
+﻿/*
+	args[0] -> image object instance (trusted)
+	args[1] -> x
+	args[2] -> y
+	args[3] -> alpha
+*/
 import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
 
-object1 = libGfxGetImgFromInstance(arg1);
-if (image1 == null) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$gfx_blit_image must consume an image as its first argument.";
-} else if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
+object1 = libGfxGetImgFromInstance(arg1); // trusted source
+
+if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "$gfx_blit_image coordinates must be integers.";
 } else if (Value$arg4.type != Types.INTEGER) {
