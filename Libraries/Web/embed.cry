@@ -1,5 +1,5 @@
 ﻿namespace Web {
-	function launch_browser(url) {
+	function launchBrowser(url) {
 		return $$lib_web_launch_browser(url);
 	}
 }
