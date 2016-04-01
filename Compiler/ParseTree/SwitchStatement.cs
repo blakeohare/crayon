@@ -63,7 +63,7 @@ namespace Crayon.ParseTree
 				Chunk chunk = new Chunk(counter++, firstTokens[i], cases[i], code[i + 1]);
 				if (chunk.Code.Length > 0 && chunk.ContainsFallthrough)
 				{
-					throw new ParserException(firstTokens[i], "This switch statement case contains code, but falls through to the next case. Cases that contain code must end with a return or break statement.");
+					throw new ParserException(firstTokens[i], "This switch statement case contains code, but falls through to the next case. Cases that contain code must end with a return or break statement. Alternatively, you may just have mismatched curly braces somewhere.");
 				}
 				chunks.Add(chunk);
 			}
