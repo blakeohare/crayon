@@ -2,19 +2,4 @@
 	function readText(filepath) {
 		return $$lib_resources_read_text(filepath);
 	}
-	
-	function exists(filepath) {
-		Core.assert(false);
-		//return $$lib_resources_exists(filepath);
-	}
-	
-	function listDirectories(filepath) {
-		Core.assert(false);
-		//return $$lib_resources_list_dir(filepath);
-	}
-	
-	function listFiles(filepath) {
-		Core.assert(false);
-		//return $$lib_resources_list_file(filepath);
-	}
 }

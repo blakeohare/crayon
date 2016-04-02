@@ -1,0 +1,28 @@
+<documentation>
+	<library name="Random">
+		<description>
+			Library for generating random values.
+		</description>
+		<namespace name="Random">
+			<function name="randomBool">
+				<description>
+					Returns a random boolean.
+				</description>
+			</function>
+			<function name="randomFloat">
+				<description>
+					Returns a random float value between 0.0 (inclusiver) and 1.0 (exclusive).
+				</description>
+			</function>
+			<function name="randomInt">
+				<arg name="bound1" type="integer">Exclusive upper bound if this is the only argument provided. Inclusive lower bound if two arguments are provided.</arg>
+				<arg name="bound2" type="integer">Exclusive upper bound if both arguments are provided.</arg>				
+				<description>
+					Returns a random integer in the given range. Accepts either 1 or 2 arguments. 
+					For 1 argument, this produces a random number between 0 (inclusive) and the argument (exclusive).
+					For 2 arguments, this produces a random number between the first argument (inclusive) and the second argument (exclusive).
+				</description>
+			</function>
+		</namespace>
+	</library>
+</documentation>

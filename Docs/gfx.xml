@@ -16,6 +16,9 @@
 				<value>TIMED_OUT</value>
 			</enum>
 			<class name="ImageLoader">
+				<description>
+					Asynchronous image loader. Note that images declared as part of an image sheet must be loaded in the sheet first. See <link see="gfx.imagesheetloader">ImageSheetLoader</link>.
+				</description>
 				<function static="true" name="fromResource">
 					<arg name="path" type="string">
 						Path to a bundled image resource.

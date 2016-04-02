@@ -9,6 +9,8 @@
 	}
 
 	function randomBool() {
-		return $$lib_random_random_float() > .5;
+		// could write this as $$lib_random_random_float() < .5, but this way it can get inlined.
+		// performance of this function may potentially be important to the user.
+		return $$lib_random_random_bool();
 	}
 }

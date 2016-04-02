@@ -4,10 +4,12 @@
 	const E = 2.718281828459045235360;
 
 	function arccos(ratio) {
+		// range is checked in translated code.
 		return $$lib_math_arccos(ratio);
 	}
 
 	function arcsin(ratio) {
+		// range is checked in translated code.
 		return $$lib_math_arcsin(ratio);
 	}
 
