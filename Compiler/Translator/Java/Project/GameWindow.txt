@@ -122,59 +122,59 @@ class GameWindow {
         frame.setTitle(title);
     }
 
-    private static HashMap<Integer, String> keyCodeLookup = null;
-    private HashMap<Integer, String> getKeyCodeLookup() {
+    private static HashMap<Integer, Integer> keyCodeLookup = null;
+    private HashMap<Integer, Integer> getKeyCodeLookup() {
         if (keyCodeLookup == null) {
-            keyCodeLookup = new HashMap<Integer, String>();
+            keyCodeLookup = new HashMap<Integer, Integer>();
 
-            keyCodeLookup.put(KeyEvent.VK_LEFT, "left");
-            keyCodeLookup.put(KeyEvent.VK_RIGHT, "right");
-            keyCodeLookup.put(KeyEvent.VK_DOWN, "down");
-            keyCodeLookup.put(KeyEvent.VK_UP, "up");
+            keyCodeLookup.put(KeyEvent.VK_LEFT, 37);
+            keyCodeLookup.put(KeyEvent.VK_UP, 38);
+            keyCodeLookup.put(KeyEvent.VK_RIGHT, 39);
+            keyCodeLookup.put(KeyEvent.VK_DOWN, 40);
 
-            keyCodeLookup.put(KeyEvent.VK_SPACE, "space");
-            keyCodeLookup.put(KeyEvent.VK_ENTER, "enter");
-            keyCodeLookup.put(KeyEvent.VK_TAB, "tab");
-            keyCodeLookup.put(KeyEvent.VK_ESCAPE, "escape");
-            keyCodeLookup.put(KeyEvent.VK_BACK_SPACE, "backspace");
-            keyCodeLookup.put(KeyEvent.VK_PRINTSCREEN, "printscreen");
-            keyCodeLookup.put(KeyEvent.VK_HOME, "home");
-            keyCodeLookup.put(KeyEvent.VK_END, "end");
-            keyCodeLookup.put(KeyEvent.VK_PAGE_UP, "pageup");
-            keyCodeLookup.put(KeyEvent.VK_PAGE_DOWN, "pagedown");
-            keyCodeLookup.put(KeyEvent.VK_INSERT, "insert");
-            keyCodeLookup.put(KeyEvent.VK_DELETE, "delete");
-            keyCodeLookup.put(KeyEvent.VK_PAUSE, "pause");
+            keyCodeLookup.put(KeyEvent.VK_SPACE, 32);
+            keyCodeLookup.put(KeyEvent.VK_ENTER, 13);
+            keyCodeLookup.put(KeyEvent.VK_TAB, 9);
+            keyCodeLookup.put(KeyEvent.VK_ESCAPE, 27);
+            keyCodeLookup.put(KeyEvent.VK_BACK_SPACE, 8);
+            keyCodeLookup.put(KeyEvent.VK_PRINTSCREEN, 44);
+            keyCodeLookup.put(KeyEvent.VK_HOME, 36);
+            keyCodeLookup.put(KeyEvent.VK_END, 35);
+            keyCodeLookup.put(KeyEvent.VK_PAGE_UP, 33);
+            keyCodeLookup.put(KeyEvent.VK_PAGE_DOWN, 34);
+            keyCodeLookup.put(KeyEvent.VK_INSERT, 45);
+            keyCodeLookup.put(KeyEvent.VK_DELETE, 46);
+            keyCodeLookup.put(KeyEvent.VK_PAUSE, 19);
             
-            keyCodeLookup.put(KeyEvent.VK_NUM_LOCK, "numlock");
-            keyCodeLookup.put(KeyEvent.VK_CAPS_LOCK, "capslock");
-            keyCodeLookup.put(KeyEvent.VK_SCROLL_LOCK, "scrolllock");
+            keyCodeLookup.put(KeyEvent.VK_NUM_LOCK, 144);
+            keyCodeLookup.put(KeyEvent.VK_CAPS_LOCK, 20);
+            keyCodeLookup.put(KeyEvent.VK_SCROLL_LOCK, 145);
 
-            keyCodeLookup.put(KeyEvent.VK_SEMICOLON, "semicolon");
-            keyCodeLookup.put(KeyEvent.VK_QUOTE, "apostrophe");
-            keyCodeLookup.put(KeyEvent.VK_PERIOD, "period");
-            keyCodeLookup.put(KeyEvent.VK_COMMA, "comma");
-            keyCodeLookup.put(KeyEvent.VK_SLASH, "slash");
-            keyCodeLookup.put(KeyEvent.VK_OPEN_BRACKET, "openbracket");
-            keyCodeLookup.put(KeyEvent.VK_CLOSE_BRACKET, "closebracket");
-            keyCodeLookup.put(KeyEvent.VK_BACK_SLASH, "backslash");
-            keyCodeLookup.put(KeyEvent.VK_MINUS, "hyphen");
-            keyCodeLookup.put(KeyEvent.VK_EQUALS, "equals");
+            keyCodeLookup.put(KeyEvent.VK_SEMICOLON, 186);
+            keyCodeLookup.put(KeyEvent.VK_QUOTE, 222);
+            keyCodeLookup.put(KeyEvent.VK_PERIOD, 190);
+            keyCodeLookup.put(KeyEvent.VK_COMMA, 188);
+            keyCodeLookup.put(KeyEvent.VK_SLASH, 191);
+            keyCodeLookup.put(KeyEvent.VK_OPEN_BRACKET, 219);
+            keyCodeLookup.put(KeyEvent.VK_CLOSE_BRACKET, 221);
+            keyCodeLookup.put(KeyEvent.VK_BACK_SLASH, 229);
+            keyCodeLookup.put(KeyEvent.VK_MINUS, 189);
+            keyCodeLookup.put(KeyEvent.VK_EQUALS, 187);
 
-            keyCodeLookup.put(KeyEvent.VK_CONTROL, "ctrl");
-            keyCodeLookup.put(KeyEvent.VK_SHIFT, "shift");
-            keyCodeLookup.put(KeyEvent.VK_ALT, "alt");
+            keyCodeLookup.put(KeyEvent.VK_CONTROL, 17);
+            keyCodeLookup.put(KeyEvent.VK_SHIFT, 16);
+            keyCodeLookup.put(KeyEvent.VK_ALT, 18);
 
             for (int i = 0; i < 26; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_A + i, "" + (char)('a' + i));
+                keyCodeLookup.put(KeyEvent.VK_A + i, 97 + i);
             }
 
             for (int i = 0; i < 10; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_0 + i, "" + (char)('0' + i));
+                keyCodeLookup.put(KeyEvent.VK_0 + i, 48 + i);
             }
 
             for (int i = 0; i < 12; ++i) {
-                keyCodeLookup.put(KeyEvent.VK_F1 + i, "f" + (i + 1));
+                keyCodeLookup.put(KeyEvent.VK_F1 + i, 112 + i);
             }
         }
         return keyCodeLookup;
@@ -217,65 +217,53 @@ class GameWindow {
         frame.setVisible(true);
     }
 
-    private ArrayList<Value> eventQueue = new ArrayList<Value>();
+    private ArrayList<PlatformRelayObject> eventQueue = new ArrayList<PlatformRelayObject>();
 
-    public ArrayList<Value> pumpEventQueue() {
-        ArrayList<Value> output = eventQueue;
-        eventQueue = new ArrayList<Value>();
+    public ArrayList<PlatformRelayObject> pumpEventQueue() {
+        ArrayList<PlatformRelayObject> output = eventQueue;
+        eventQueue = new ArrayList<PlatformRelayObject>();
         return output;
     }
 
-    private String convertKeyCode(int keyCode) {
-        String value = getKeyCodeLookup().get(keyCode);
+    private Integer convertKeyCode(int keyCode) {
+        Integer value = getKeyCodeLookup().get(keyCode);
         if (value == null) {
             switch (keyCode) {
-                case 3: return "break";
-                case 192: return "tilde";
-                case 525: return "menu";
+                case 192: return 192; // backtick
+                case 525: return 93; // menu
                 default: return null;
             }
         }
         return value;
     }
 
-    private final HashMap<String, Boolean> pressedKeys = new HashMap<>();
+    private final HashMap<Integer, Boolean> pressedKeys = new HashMap<>();
 
     private void handleKeyPress(int keyCode, boolean down) {
-        String key = convertKeyCode(keyCode);
+        Integer key = convertKeyCode(keyCode);
         if (key != null) {
+            int keyValue = key;
             Boolean status = pressedKeys.get(key);
             if (down && status != null && status) {
                 // Pressing and holding a key will result in a key repeat. Suppress this.
                 return;
             }
             pressedKeys.put(key, down);
-            eventQueue.add(CrayonWrapper.v_buildGameEvent(
-                down ? "keydown" : "keyup",
-                0,
-                0,
-                0,
-                down,
-                key,
-                null));
+            eventQueue.add(new PlatformRelayObject(
+                down ? 16 : 17,
+                keyValue,
+                0, 0, 0.0, null));
         }
     }
 
-    private void handleMouseEvent(boolean isClick, boolean down, boolean isLeft, int x, int y) {
+    private void handleMouseEvent(boolean isClick, boolean isDown, boolean isLeft, int x, int y) {
         int gameX = x * gameWidth / screenWidth;
         int gameY = y * gameHeight / screenHeight;
-
-        String eventName;
         if (isClick) {
-            if (down) {
-                eventName = isLeft ? "mouseleftdown" : "mouserightdown";
-            } else {
-                eventName = isLeft ? "mouseleftup" : "mouserightup";
-            }
+            eventQueue.add(new PlatformRelayObject(33 + (isLeft ? 0 : 2) + (isDown ? 0 : 1), gameX, gameY, 0, 0.0, null));
         } else {
-            eventName = "mousemove";
+            eventQueue.add(new PlatformRelayObject(32, gameX, gameY, 0, 0.0, null));
         }
-
-        eventQueue.add(CrayonWrapper.v_buildGameEvent(eventName, gameX, gameY, 0, false, isLeft ? "left" : "right", null));
     }
 
     private static class GameWindowMouseListener implements MouseListener, MouseMotionListener {
