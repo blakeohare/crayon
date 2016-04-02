@@ -681,10 +681,11 @@ function @type('bool') glRenderOld(
 function @type('bool') glFillScreen(
 	@type('int') red,
 	@type('int') green,
-	@type('int') blue) {
+	@type('int') blue,
+	@type('int') width,
+	@type('int') height) {
 	glResetDrawBuffer();
-	// TODO: get the real values
-	glDrawRectangle(0, 0, 9999, 9999, red, green, blue, 255);
+	glDrawRectangle(0, 0, width, height, red, green, blue, 255);
 	return true;
 }
 

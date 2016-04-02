@@ -135,6 +135,9 @@ namespace Game {
 
 		static field instance;
 
+		field _w;
+		field _h;
+
 		static field _reusable_list = [];
 
 		// These are static and not associated with the actual GameWindow instance.
@@ -159,8 +162,11 @@ namespace Game {
 			
 			width = Math.floor(width);
 			height = Math.floor(height);
-			screenWidth = Math.floor(width);
-			screenHeight = Math.floor(height);
+			screenWidth = Math.floor(screenWidth);
+			screenHeight = Math.floor(screenHeight);
+
+			this._w = width;
+			this._h = height;
 
 			w = "width";
 			h = "height";

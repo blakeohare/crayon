@@ -1,4 +1,5 @@
 ﻿import Core;
+import Game;
 import Math;
 
 namespace GFX {
@@ -216,8 +217,11 @@ namespace GFX {
 			return $$lib_gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
 		}
 
+		// It's okay if the compiler can't inline this like the others.
+		// You shouldn't be calling fill more than once per frame anyway so one-time performance is irrelevant.
 		function fill(r, g, b) {
-			return $$lib_gfx_fill_screen(r, g, b);
+			t = Game.GameWindow.instance;
+			return $$lib_gfx_fill_screen(r, g, b, t._w, t._h);
 		}
 	}
 }
