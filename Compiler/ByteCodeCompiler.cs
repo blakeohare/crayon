@@ -14,7 +14,8 @@ namespace Crayon
 				.Where<FunctionDefinition>(fd => fd.NameToken.Value == "main")
 				.FirstOrDefault<FunctionDefinition>();
 
-			if (mainFunction == null) {
+			if (mainFunction == null)
+			{
 				throw new Exception(); // should have thrown before if there was no main function.
 			}
 
@@ -79,7 +80,8 @@ namespace Crayon
 			{
 				List<int> args = new List<int>();
 				Dictionary<int, int> lookup = intSwitches[i];
-				foreach (int key in lookup.Keys) {
+				foreach (int key in lookup.Keys)
+				{
 					int offset = lookup[key];
 					args.Add(key);
 					args.Add(offset);
@@ -179,7 +181,7 @@ namespace Crayon
 			this.Compile(parser, body2, forEachLoop.Code);
 
 			body.Add(forEachLoop.FirstToken, OpCode.ITERATION_STEP, body2.Size + 1);
-			
+
 			body2.Add(null, OpCode.JUMP, -body2.Size - 2);
 			body.Concat(body2);
 
@@ -199,8 +201,8 @@ namespace Crayon
 			ByteBuffer chunkBuffer = new ByteBuffer();
 
 			Dictionary<int, int> chunkIdsToOffsets = new Dictionary<int, int>();
-			Dictionary<int, int> integersToChunkIds = new Dictionary<int,int>();
-			Dictionary<string, int> stringsToChunkIds = new Dictionary<string,int>();
+			Dictionary<int, int> integersToChunkIds = new Dictionary<int, int>();
+			Dictionary<string, int> stringsToChunkIds = new Dictionary<string, int>();
 
 			int defaultChunkId = -1;
 			foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
@@ -796,7 +798,7 @@ namespace Crayon
 			else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
 			else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
 			else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
-			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, outputUsed);
+			else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, null, outputUsed);
 			else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
 			else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
 			else throw new NotImplementedException();
@@ -842,10 +844,13 @@ namespace Crayon
 			int type = 0;
 			if (funcDef.FunctionOrClassOwner is ClassDefinition)
 			{
-				if (funcDef.IsStaticMethod) {
-					classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID ;
+				if (funcDef.IsStaticMethod)
+				{
+					classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID;
 					type = 2;
-				} else {
+				}
+				else
+				{
 					type = 1;
 				}
 			}
@@ -1138,13 +1143,13 @@ namespace Crayon
 			buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
 		}
 
-		private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, bool outputUsed)
+		private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, Token parenTokenOverride, bool outputUsed)
 		{
 			List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
 			this.CompileExpressionList(parser, buffer, args, true);
 			int argCount = libFunc.Args.Length;
 			int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
-			buffer.Add(libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
+			buffer.Add(parenTokenOverride ?? libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
 		}
 
 		private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
@@ -1257,8 +1262,8 @@ namespace Crayon
 
 				// Add the literal ID arg from the above literals to the arg list of a LITERAL_STREAM
 				buffer.Add(
-					expressions[0].FirstToken, 
-					OpCode.LITERAL_STREAM, 
+					expressions[0].FirstToken,
+					OpCode.LITERAL_STREAM,
 					exprBuffer.ToIntList().Reverse<int[]>().Select<int[], int>(args => args[1]).ToArray());
 			}
 		}
@@ -1366,7 +1371,7 @@ namespace Crayon
 				arguments.Add(variableValues[((Variable)nativeFunctionCall.Args[i]).Name]);
 			}
 
-			this.CompileLibraryFunctionCall(parser, buffer, nativeFunctionCall, arguments, outputUsed);
+			this.CompileLibraryFunctionCall(parser, buffer, nativeFunctionCall, arguments, functionCall.ParenToken, outputUsed);
 		}
 
 		private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
