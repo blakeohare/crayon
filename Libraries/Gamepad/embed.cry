@@ -1,4 +1,6 @@
-﻿import Game;
+﻿import Core;
+import Game;
+import Math;
 
 namespace Gamepad {
 	
@@ -357,28 +359,43 @@ namespace Gamepad {
 			this._id = id;
 		}
 
+		function _getStackTop() {
+			Core.assert(this._config_stack.length > 0, "Gamepad config stack is empty.");
+			return this._config_stack[-1];
+		}
+
 		function pushAutoConfigure() {
-			
+			this.pushEmptyConfig();
+			Core.assert(false, "pushAutoConfigure not implemented.");
 		}
 
 		function pushEmptyConfig() {
-
+			this._config_stack.add([{}, {}]);
 		}
 
 		function popConfig() {
-
+			this._getStackTop();
+			this._config_stack.pop();
 		}
 
 		function flattenConfigs() {
-			
+			if (this._config_stack.length > 0) {
+				this._config_stack = [this._config_stack[-1]];
+			}
 		}
 
 		function clearBinding(buttonId) {
-			
+			this._getStackTop();
+			lookup = (Core.typeof(buttonId) == Type.INTEGER) ? this._config_stack[-1][0] : this._config_stack[-1][1];
+			if (lookup.contains(buttonId)) {
+				lookup.remove(buttonId);
+			}
 		}
 
 		function clearBindings() {
-			
+			t = this._getStackTop();
+			t[0].clear();
+			t[1].clear();
 		}
 
 		function getName() {
@@ -386,77 +403,242 @@ namespace Gamepad {
 		}
 
 		function getButtonCount() {
-			return 0;
+			return this._button_count;
 		}
 
 		function getDigitalAxisCount() {
-			return 0;
+			return this._axis_2d_count;
 		}
 
 		function getAnalogAxisCount() {
-			return 0;
+			return this._axis_1d_count;
 		}
 
 		function getButtonState(index) {
+			if (index >= 0 && index < this._button_count) {
+				return $$lib_gamepad_get_button_state(this, index);
+			}
+			Core.assert(false, "Button index out of range.");
+		}
+
+		function getAxis2dState(index) {
+			if (index >= 0 && index < this._axis_2d_count) {
+				$$lib_gamepad_get_axis_2d_state(this, index, GamepadDevice._hat_check_reusable);
+				return GamepadDevice._hat_check_reusable.clone();
+			}
+			Core.assert(false, "Digital Axis index out of range.");
+		}
+
+		function getAxis1dState(index) {
+			if (index >= 0 && index < this._axis_1d_count) {
+				return $$lib_gamepad_get_axis_1d_state(this, index);
+			}
+			Core.assert(false, "Analog axis index out of range.");
+		}
+
+		function _getLookupForId(buttonId) {
+			top = this._getStackTop();
+			t = Core.typeof(buttonId);
+			if (t == Core.Type.INTEGER) return top[0];
+			if (t == Core.Type.STRING) return top[1];
+			Core.assert(false, "Invalid button ID type.");
+		}
+
+		function _isHardwareMashyBoundAnywhere(index) {
+			for (lookup : this._config_stack[-1]) {
+				for (value : lookup.values()) {
+					for (i = 0; i < value[2]; ++i) {
+						if (value[2 + i] == index) {
+							return true;
+						}
+					}
+				}
+			}
 			return false;
 		}
 
-		function getDigitalAxisState(index) {
-			return 0;
+		/*
+			This is only used in the context of binding a button ID. If the button ID (and dimension) is already bound to something, ignore it.
+			Otherwise return the first hardware mashy thing that is currently in its non-default state.
+		*/
+		function _getIndexOfCurrentlyUnboundMashy(buttonId, dim) {
+			lookup = this._getLookupForId(buttonId);
+			currentBinding = lookup.get(buttonId);
+			if (currentBinding != null) {
+				if (currentBinding[1 + dim] != null) {
+					return null;
+				}
+			}
+
+			for (mashy : this._hardware_mashies) {
+				switch (mashy[0]) {
+					case 0: // button
+						if (mashy[3]) {
+							if (!this._isHardwareMashyBoundAnywhere(mashy[1])) {
+								return mashy[1];
+							}
+						}
+						break;
+
+					case 1: // 1D axis
+						if (abs(mashy[3]) > .5) {
+							index = mashy[1] * Math.sign(mashy[3]);
+							if (!this._isHardwareMashyBoundAnywhere(index)) {
+								return index;
+							}
+						}
+						break;
+
+					case 2: // 2D axis X
+					case 3: // 2D axis Y
+						if (mashy[3] != 0) {
+							index = mashy[1] * Math.sign(mashy[3]);
+							if (!this._isHardwareMashyBoundAnywhere(index)) {
+								return index;
+							}
+						}
+						break;
+				}
+			}
 		}
 
-		function getAnalogAxisState(index) {
-			return 0.0;
+		function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
+			lookup = this._getLookupForId(buttonId);
+			binding = lookup.get(buttonId);
+			if (binding == null) {
+				binding = [null] * 6;
+			}
+			lookup[buttonId] = binding;
+			binding[0] = isDigital;
+			binding[1] = dimensions;
+			return binding;
 		}
 
-		// Mashy binders
+		function _bindButton(buttonId, isDigital) {
+			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 1);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
+				binding[2] = index;
+				return true;
+			}
+			return false;
+		}
+
+		function _bind1dAxis(buttonId, isPositive, isDigital) {
+			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 2);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
+				binding[2 + (isPositive ? 1 : 0)] = index;
+				return true;
+			}
+			return false;
+		}
+
+		function _bind2dAxis(buttonId, isPositive, isX, isDigital) {
+			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 4);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
+				binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
+				return true;
+			}
+			return false;
+		}
 
 		function bindDigitalButton(buttonId) {
-			return false;
+			return this._bindButton(buttonId, true);
 		}
-		
+
 		function bind1dDigitalAxis(buttonId, isPositive) {
-			return false;
+			return this._bind1dAxis(buttonId, isPositive == true, true);
 		}
 
 		function bind2dDigitalAxis(buttonId, isX, isPositive) {
-			return false;
+			return this._bind2dAxis(buttonId, isPositive == true, isX == true, true);
 		}
 
 		function bindAnalogButton(buttonId) {
-			return false;
+			return this._bindButton(buttonId, false);
 		}
-		
+
 		function bind1dAnalogAxis(buttonId, isPositive) {
-			return false;
+			return this._bind1dAxis(buttonId, isPositive == true, false);
 		}
 
 		function bind2dAnalogAxis(buttonId, isX, isPositive) {
+			return this._bind2dAxis(buttonId, isPositive == true, isX == true, false);
+		}
+
+		function _freeAndGetIndex(hardwareId, isPositive) {
+			index = this._mashy_fingerprint_to_index.get(hardwareId);
+			if (index != null) {
+				if (isPositive) {
+					index *= -1;
+				}
+
+				config = this._getStackTop();
+				for (lookup : config) {
+					for (i = 2; i < 6; ++i) {
+						if (lookup[i] == index) {
+							lookup[i] = null;
+						}
+					}
+				}
+			}
+			return index;
+		}
+
+		function _bindButtonByHardwareId(hardwareId, buttonId, isDigital) {
+			index = this._freeAndGetIndex(hardwareId, true);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
+				binding[2] = index;
+				return true;
+			}
+			return false;
+		}
+
+		function _bind1dAxisByHardwareId(hardwareId, buttonId, isDigital, isPositive) {
+			index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
+				binding[2 + (isPositive ? 1 : 0)] = index;
+				return true;
+			}
+			return false;
+		}
+
+		function _bind2dAxisByHardwareId(hardwareId, buttonId, isDigital, isX, isPositive) {
+			index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
+			if (index != null) {
+				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
+				binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
+				return true;
+			}
 			return false;
 		}
 
 		function bindDigitalButtonByHardwareId(hardwareId, buttonId) {
-			return false;
-		}
-		
-		function bind1dDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
-			return false;
-		}
-
-		function bind2dDigitalAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
-			return false;
+			return this._bindButtonByHardwareId(hardwareId, buttonId, true);
 		}
 
 		function bindAnalogButtonByHardwareId(hardwareId, buttonId) {
-			return false;
+			return this._bindButtonByHardwareId(hardwareId, buttonId, false);
 		}
 		
+		function bind1dDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
+			return this._bind1dAxisByHardwareId(hardwareId, buttonId, true, isPositive == true);
+		}
+
 		function bind1dAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
-			return false;
+			return this._bind1dAxisByHardwareId(hardwareId, buttonId, false, isPositive == true);
+		}
+
+		function bind2dDigitalAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, isX == true, isPositive == true);
 		}
 
 		function bind2dAnalogAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
-			return false;
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, isX == true, isPositive == true);
 		}
 	}
 
