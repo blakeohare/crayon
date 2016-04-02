@@ -39,7 +39,7 @@ R.musicIsPlaying = function () {
 };
 
 R.musicLoad = function (filepath) {
-	var audioObject = new Audio(filepath);
+	var audioObject = new Audio(%%%JS_FILE_PREFIX%%% + filepath);
 	var m = [
 		audioObject,
 		filepath,
@@ -87,7 +87,7 @@ R.prepSoundForLoading = function (filepath) {
 	var index = R.soundObjectIndexByFilename[filepath];
 	if (index === undefined) {
 		index = R.soundObjectsByIndex.length;
-		var data = [[new Audio(filepath)], filepath, index];
+		var data = [[new Audio(%%%JS_FILE_PREFIX%%% + filepath)], filepath, index];
 		R.soundObjectIndexByFilename[filepath] = index;
 		R.soundObjectsByIndex.push(data);
 	}
@@ -129,7 +129,7 @@ R.playSound = function (sound, startFrom) {
 	}
 	if (audio == null) {
 		audioIndex = audioList.length;
-		audio = new Audio(sound[1]);
+		audio = new Audio(%%%JS_FILE_PREFIX%%% + sound[1]);
 		audioList.push(audio);
 	}
 	if (R.isAudioEnabled(audio)) {
