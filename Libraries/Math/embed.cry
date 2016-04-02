@@ -25,6 +25,10 @@
 		return $$lib_math_floor(value);
 	}
 
+	function sign(num) {
+		return $$lib_math_sign(num);
+	}
+
 	function sin(theta) {
 		return $$lib_math_sin(theta);
 	}

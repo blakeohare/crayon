@@ -1,0 +1,15 @@
+﻿
+import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+
+if (Value$arg1.type == Types.INTEGER) {
+	float1 = $_cast('double', $_cast('int', Value$arg1.internalValue));
+} else if (Value$arg1.type == Types.FLOAT) {
+	float1 = $_cast('double', Value$arg1.internalValue);
+} else {
+	lib_func_error_occurred = true;
+	lib_func_error_message = "sign requires a number as input.";
+}
+
+if (float1 == 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 0);
+else if (float1 > 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
+else output = $_array_get($_array_get(INTEGERS_CACHE, 1), 1);
