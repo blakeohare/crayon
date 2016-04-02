@@ -78,10 +78,10 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
 				return output;
 			default:
-				return 0;
+				return -1;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 function @type('string') primitiveMethodWrongArgCountError(@type('string') name, @type('int') expected, @type('int') actual) {

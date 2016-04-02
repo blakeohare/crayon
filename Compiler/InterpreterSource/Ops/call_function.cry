@@ -132,7 +132,10 @@ if (bool1) {
 				// resolve a primitive method
 				functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
 				if (functionId < 0) {
-					return killExecution(stack, pc, "Unknown primitive method.");
+					if (Value$value.type == Types.NULL) {
+						return killExecution(stack, pc, "Invoked method on null.");
+					}
+					return killExecution(stack, pc, "Unknown method.");
 				}
 				type = FunctionInvocationType.PRIMITIVE_METHOD;
 				break;
