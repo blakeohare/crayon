@@ -41,6 +41,8 @@ namespace Crayon
 
 		public VariableIdAllocator VariableIds { get; private set; }
 
+		public Executable CurrentCodeContainer { get; set; }
+
 		public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
 		public string CurrentSystemLibrary { get; set; }
 

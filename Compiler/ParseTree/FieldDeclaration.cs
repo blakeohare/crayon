@@ -44,7 +44,10 @@ namespace Crayon.ParseTree
 
 		internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
+			parser.CurrentCodeContainer = this;
 			this.DefaultValue = this.DefaultValue.ResolveNames(parser, lookup, imports);
+			parser.CurrentCodeContainer = null;
+
 			return this;
 		}
 

@@ -33,23 +33,6 @@ namespace Crayon.ParseTree
 				return new CompileTimeDictionary(this.FirstToken, "var", this.FunctionOrClassOwner);
 			}
 
-			if (this.Name == "this" || this.Name == "base")
-			{
-				if (parser.IsInClass)
-				{
-					if (this.Name == "this")
-					{
-						return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner).Resolve(parser);
-					}
-					else
-					{
-						return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner).Resolve(parser);
-					}
-				}
-
-				throw new ParserException(this.FirstToken, "'" + this.Name + "' keyword is only allowed inside classes.");
-			}
-
 			if (Parser.IsReservedKeyword(this.Name))
 			{
 				throw new ParserException(this.FirstToken, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
@@ -76,13 +59,45 @@ namespace Crayon.ParseTree
 				return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.FunctionOrClassOwner);
 			}
 
-			if (this.Name == "this")
+			if (this.Name == "this" || this.Name == "base")
 			{
-				return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner);
-			}
+				Executable container = parser.CurrentCodeContainer;
 
-			if (this.Name == "base")
-			{
+				if (container is FunctionDefinition)
+				{
+					FunctionDefinition funcDef = (FunctionDefinition)this.FunctionOrClassOwner;
+					if (funcDef.IsStaticMethod)
+					{
+						throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static method");
+					}
+
+					if (funcDef.FunctionOrClassOwner == null)
+					{
+						throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a function that isn't a class method.");
+					}
+				}
+
+				if (container is FieldDeclaration)
+				{
+					if (((FieldDeclaration)container).IsStaticField)
+					{
+						throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static field value.");
+					}
+				}
+
+				if (container is ConstructorDefinition)
+				{
+					ConstructorDefinition constructor = (ConstructorDefinition)container;
+					if (constructor == ((ClassDefinition)constructor.FunctionOrClassOwner).StaticConstructor) // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
+					{
+						throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static constructor.");
+					}
+				}
+
+				if (this.Name == "this")
+				{
+					return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner);
+				}
 				return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner);
 			}
 
