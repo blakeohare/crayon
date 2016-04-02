@@ -19,6 +19,9 @@ final class TranslationHelper {
         return null;
     }
 
+    public static boolean alwaysTrue() { return true; }
+    public static boolean alwaysFalse() { return false; }
+
     private static ProgramData programData = null;
 
     public static Random random = new Random();

@@ -23,7 +23,65 @@ namespace Audio
 
 		public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
 		{
-			throw new Exception();
+			switch (translator.PlatformId)
+			{
+				case PlatformId.CSHARP_OPENTK:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "TranslationHelper.AlwaysTrue()";
+						default:
+							throw new ArgumentException();
+					}
+
+				case PlatformId.PYTHON_PYGAME:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "_always_true()";
+						default:
+							throw new ArgumentException();
+					}
+
+				case PlatformId.JAVA_AWT:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "TranslationHelper.alwaysFalse()";
+						default:
+							throw new ArgumentException();
+					}
+
+				case PlatformId.JAVA_ANDROID:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "TranslationHelper.AlwaysFalse()";
+						default:
+							throw new ArgumentException();
+					}
+
+				case PlatformId.C_OPENGL:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "_TODO_AlwaysFalse()";
+						default:
+							throw new ArgumentException();
+					}
+
+				case PlatformId.JAVASCRIPT_CANVAS:
+					switch (functionName)
+					{
+						case "$_lib_audio_is_supported":
+							return "R.isAudioSupported()";
+						default:
+							throw new ArgumentException();
+					}
+
+				default:
+					throw new ArgumentException();
+			}
 		}
 
 		public Dictionary<string, string> GetSupplementalTranslatedCode()

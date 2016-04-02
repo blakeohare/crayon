@@ -15,6 +15,9 @@ namespace Audio {
 		nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
 	*/
 	class Music {
+
+		static field _isSupported = $$lib_audio_is_supported();
+
 		field _isResource;
 		field _path;
 
@@ -24,6 +27,8 @@ namespace Audio {
 		}
 
 		static function loadFromResource(path) {
+			if (!Music._isSupported) return null;
+
 			music = new Music();
 			music._isResource = true;
 			music._path = path + '';
@@ -323,6 +328,8 @@ namespace Audio {
 		}
 
 		static function loadFromFile(path) {
+			if (!Music._isSupported) return null;
+
 			s = new Sound();
 			$$lib_audio_sfx_load_from_file(s, path + '');
 			s._p = path;
@@ -331,6 +338,8 @@ namespace Audio {
 		}
 
 		static function loadFromResource(path, useCache = true) {
+			if (!Music._isSupported) return null;
+
 			s = null;
 			path += ''; // ensure string
 			if (useCache) {
