@@ -290,10 +290,53 @@ namespace Gamepad {
 
 		static field _hat_check_reusable = [0, 0];
 
+		field _buttonIdBySignedIndex = null;
+
+		function _getButtonIdBySignedIndex() {
+			if (this._buttonIdBySignedIndex == null) {
+				lookup = {};
+				this._buttonIdBySignedIndex = lookup;
+				if (this._config_stack.length > 0) {
+					for (button2binding : this._config_stack[-1]) {
+						for (buttonId : button2binding.keys()) {
+							binding = button2binding[buttonId];
+							for (i = 0; i < binding[1]; ++i) {
+								index = binding[i + 2];
+								lookup[index] = buttonId;
+							}
+						}
+					}
+				}
+			}
+			return this._buttonIdBySignedIndex;
+		}
+
+		static field _reusableButtonIds = [];
+
+		function _pushButtonIdsForAxis(index, oldValue, newValue, buttonLookup, buttonIds) {
+			if (oldValue >= 0 && newValue >= 0) {
+				buttonId = buttonLookup.get(index);
+				if (buttonId != null) buttonIds.add(buttonId);
+			} else if (oldValue <= 0 && newValue <= 0) {
+				buttonId = buttonLookup.get(-index);
+				if (buttonId != null) buttonIds.add(buttonId);
+			} else {
+				buttonId = buttonLookup.get(index);
+				if (buttonId != null) buttonIds.add(buttonId);
+				buttonId = buttonLookup.get(-index);
+				if (buttonId != null) buttonIds.add(buttonId);
+			}
+		}
+
 		function _updatePass(eventsOut) {
 			$$lib_gamepad_poll_universe();
 			counter = this._counter++;
 			updated_indices = [];
+
+			buttonIdBySignedIndex = this._getButtonIdBySignedIndex();
+			buttonIds = GamepadDevice._reusableButtonIds;
+			buttonIds.clear();
+
 			for (i = 1; i < this._hardware_mashies.length; ++i) { // skip 0. it is a null placeholder.
 				mashy = this._hardware_mashies[i];
 				old_value = mashy[3];
@@ -304,6 +347,10 @@ namespace Gamepad {
 							mashy[3] = new_value;
 							mashy[4] = counter;
 							updated_indices.add(i);
+							buttonId = buttonIdBySignedIndex.get(i);
+							if (buttonId != null) {
+								buttonIds.add(buttonId);
+							}
 						}
 						break;
 
@@ -313,6 +360,7 @@ namespace Gamepad {
 							mashy[3] = new_value;
 							mashy[4] = counter;
 							updated_indices.add(i);
+							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
 						}
 						break;
 
@@ -322,16 +370,22 @@ namespace Gamepad {
 						// go ahead and query both values and set them both.
 						$$lib_gamepad_get_axis_2d_state(this, mashy[1], GamepadDevice._hat_check_reusable);
 						if (GamepadDevice._hat_check_reusable[0] != mashy[3]) {
-							mashy[3] = GamepadDevice._hat_check_reusable[0];
+							oldValue = mashy[3];
+							newValue = GamepadDevice._hat_check_reusable[0];
+							mashy[3] = newValue;
 							mashy[4] = counter;
 							updated_indices.add(i);
+							this._pushButtonIdsForAxis(i, oldValue, newValue, buttonIdBySignedIndex, buttonIds);
 						}
 						++i; // go ahead and do Y since we already queried the value from hardware.
 						mashy = this._hardware_mashies[i];
 						if (GamepadDevice._hat_check_reusable[1] != mashy[3]) {
-							mashy[3] = GamepadDevice._hat_check_reusable[1];
+							oldValue = mashy[3];
+							newValue = GamepadDevice._hat_check_reusable[1];
+							mashy[3] = newValue;
 							mashy[4] = counter;
 							updated_indices.add(i);
+							this._pushButtonIdsForAxis(i, oldValue, newValue, buttonIdBySignedIndex, buttonIds);
 						}
 						break;
 
@@ -346,8 +400,82 @@ namespace Gamepad {
 					case 1: t = GamepadMashyType.ANALOG_AXIS; break;
 					default: t = GamepadMashyType.DIGITAL_AXIS; break;
 				}
-				eventsOut.add(new GamepadRawHardwareEvent(
-					this, t, index, mashy[3], mashy[2]));
+				eventsOut.add(new GamepadRawHardwareEvent(this, t, index, mashy[3], mashy[2]));
+			}
+
+			if (this._config_stack.length > 0) {
+				config = this._config_stack[-1];
+				iConfig = config[0];
+				sConfig = config[1];
+				for (buttonId : buttonIds) {
+					lookup = Core.typeof(buttonId) == Core.Type.INTEGER ? iConfig : sConfig;
+					binding = lookup.get(buttonId);
+					isDigital = binding[0];
+					dim = binding[1];
+					switch (dim) {
+						case 1:
+							value = this._getValueForSignedIndex(binding[2], isDigital, isDigital, false);
+							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+							break;
+
+						case 2:
+							valueNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
+							valuePos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
+							value = GamepadDevice._consolidateAxisValues(valueNeg, valuePos, isDigital);
+							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+							break;
+
+						case 4:
+							xNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
+							xPos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
+							yNeg = this._getValueForSignedIndex(binding[4], isDigital, false, true);
+							yPos = this._getValueForSignedIndex(binding[5], isDigital, false, true);
+							x = GamepadDevice._consolidateAxisValues(xNeg, xPos, isDigital);
+							y = GamepadDevice._consolidateAxisValues(yNeg, yPos, isDigital);
+							eventsOut.add(new GamepadEvent(this, buttonId, null, x, y));
+							break;
+					}
+				}
+			}
+		}
+
+		static function _consolidateAxisValues(neg, pos, isDigital) {
+			if (pos != null) return pos;
+			if (neg != null) return -neg;
+			return isDigital ? 0 : 0.0;
+		}
+
+		// Returns null, true, 1, or a float from 0 to 1
+		function _getValueForSignedIndex(signedIndex, isDigital, boolWanted, nullableFallback) {
+			if (signedIndex == null) return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
+
+			index = Math.abs(signedIndex);
+			isNegative = signedIndex < 0;
+			mashy = this._hardware_mashies[index];
+			value = mashy[3];
+			switch (mashy[0]) {
+				case 0:
+					if (value) {
+						return boolWanted ? true : (isDigital ? 1 : 1.0);
+					}
+					return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
+				case 1:
+				case 2:
+				case 3:
+					if (isNegative) value *= -1;
+					if (value > 0) {
+						if (boolWanted) {
+							return value > .5;
+						}
+						if (isDigital) {
+							return value > .5 ? 1 : 0;
+						}
+						return value;
+					}
+					if (nullableFallback) return null;
+					if (boolWanted) return false;
+					if (isDigital) return 0;
+					return 0.0;
 			}
 		}
 
@@ -371,11 +499,13 @@ namespace Gamepad {
 
 		function pushEmptyConfig() {
 			this._config_stack.add([{}, {}]);
+			this._buttonIdBySignedIndex = null;
 		}
 
 		function popConfig() {
 			this._getStackTop();
 			this._config_stack.pop();
+			this._buttonIdBySignedIndex = null;
 		}
 
 		function flattenConfigs() {
@@ -385,10 +515,11 @@ namespace Gamepad {
 		}
 
 		function clearBinding(buttonId) {
-			this._getStackTop();
-			lookup = (Core.typeof(buttonId) == Type.INTEGER) ? this._config_stack[-1][0] : this._config_stack[-1][1];
+			top = this._getStackTop();
+			lookup = (Core.typeof(buttonId) == Type.INTEGER) ? top[0] : top[1];
 			if (lookup.contains(buttonId)) {
 				lookup.remove(buttonId);
+				this._buttonIdBySignedIndex = null;
 			}
 		}
 
@@ -396,6 +527,7 @@ namespace Gamepad {
 			t = this._getStackTop();
 			t[0].clear();
 			t[1].clear();
+			this._buttonIdBySignedIndex = null;
 		}
 
 		function getName() {
@@ -406,11 +538,11 @@ namespace Gamepad {
 			return this._button_count;
 		}
 
-		function getDigitalAxisCount() {
+		function getAxis2dCount() {
 			return this._axis_2d_count;
 		}
 
-		function getAnalogAxisCount() {
+		function getAxis1dCount() {
 			return this._axis_1d_count;
 		}
 
@@ -447,7 +579,7 @@ namespace Gamepad {
 		function _isHardwareMashyBoundAnywhere(index) {
 			for (lookup : this._config_stack[-1]) {
 				for (value : lookup.values()) {
-					for (i = 0; i < value[2]; ++i) {
+					for (i = 0; i < value[1]; ++i) {
 						if (value[2 + i] == index) {
 							return true;
 						}
@@ -470,19 +602,21 @@ namespace Gamepad {
 				}
 			}
 
-			for (mashy : this._hardware_mashies) {
+			length = this._hardware_mashies.length;
+			for (i = 1; i < length; ++i) {
+				mashy = this._hardware_mashies[i];
 				switch (mashy[0]) {
 					case 0: // button
 						if (mashy[3]) {
-							if (!this._isHardwareMashyBoundAnywhere(mashy[1])) {
-								return mashy[1];
+							if (!this._isHardwareMashyBoundAnywhere(i)) {
+								return i;
 							}
 						}
 						break;
 
 					case 1: // 1D axis
 						if (abs(mashy[3]) > .5) {
-							index = mashy[1] * Math.sign(mashy[3]);
+							index = i * Math.sign(mashy[3]);
 							if (!this._isHardwareMashyBoundAnywhere(index)) {
 								return index;
 							}
@@ -492,7 +626,7 @@ namespace Gamepad {
 					case 2: // 2D axis X
 					case 3: // 2D axis Y
 						if (mashy[3] != 0) {
-							index = mashy[1] * Math.sign(mashy[3]);
+							index = i * Math.sign(mashy[3]);
 							if (!this._isHardwareMashyBoundAnywhere(index)) {
 								return index;
 							}
@@ -500,6 +634,7 @@ namespace Gamepad {
 						break;
 				}
 			}
+			return null;
 		}
 
 		function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
@@ -507,10 +642,11 @@ namespace Gamepad {
 			binding = lookup.get(buttonId);
 			if (binding == null) {
 				binding = [null] * 6;
+				lookup[buttonId] = binding;
 			}
-			lookup[buttonId] = binding;
 			binding[0] = isDigital;
 			binding[1] = dimensions;
+			this._buttonIdBySignedIndex = null;
 			return binding;
 		}
 
