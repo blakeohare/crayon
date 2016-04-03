@@ -1,0 +1,7 @@
+﻿// returns null on platforms where user data is not supported.
+
+output = VALUE_NULL;
+string1 = $_lib_gamepad_config_file_path();
+if (string1 != null) {
+	output = buildString(string1);
+}

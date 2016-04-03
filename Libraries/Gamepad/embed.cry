@@ -1,4 +1,5 @@
 ﻿import Core;
+import FileIO;
 import Game;
 import Math;
 
@@ -166,12 +167,106 @@ namespace Gamepad {
 			return null;
 		}
 
+		/*
+			Config file format:
+			Each line is an entry.
+			Each line has columns delimited by a comma.
+			Columns:
+			- hardware fingerprint (which includes a axis/button/hat count)
+			- the number of mashables that are bound
+			the following values are repeated N times where N is the number above...
+			- mashy hardware ID
+			- + or - indicating which direction of the mashy (defaults to ignorable + for buttons)
+			- S or I indicating that the button ID is a string or integer
+			- button ID, hex encoded if it's a string
+			- 1 or 0 -> isDigital
+			- 1, 2, or 4 -> dimensionality
+			- 0 to 3 -> index in the binding
+		*/
+
 		static function saveSettingsToUserData() {
-			
+			file = $$lib_gamepad_get_save_file_path();
+			if (file == null) return;
+			exists = FileIO.UserData.Path.exists(file);
+			if (exists && FileIO.UserData.Path.isDirectory(file)) return;
+
+			existingOrder = [];
+			deviceDataById = {};
+
+			if (exists) {
+				for (line : FileIO.UserData.File.readText(file).split('\n')) {
+					parts = line.split(':');
+					if (parts.length > 2) {
+						id = parts[0].trim();
+						bindings = Core.parseInt(parts[1].trim());
+						if (bindings != null && bindings > 0 && bindings.length * 7 == (parts.length - 2)) {
+							if (!deviceDataById.contains(id)) {
+							existingOrder.add(id);
+							}
+							// data might be totally bogus but weren't not making it worse
+							deviceDataById[id] = parts[2:];
+						}
+					}
+				}
+			}
+
+			if (GamepadManager._devices != null) {
+				for (device : GamepadManager._devices) {
+					if (device._config_stack.length > 0) {
+						config = device._config_stack[-1];
+						saved = [];
+						if (config[0].length > 0 || config[1].length > 0) {
+							for (lookup : config) {
+								for (buttonId : lookup.keys()) {
+									binding = lookup[buttonId];
+									for (i = 0; i < binding[1]; ++i) {
+										signedIndex = binding[2 + i];
+										if (signedIndex != null) {
+											mashy = device._hardware_mashies[Math.abs(signedIndex)];
+											isPositive = signedIndex > 0;
+											saved.add(
+												mashy[2],
+												isPositive ? '+' : '-',
+												Core.typeof(buttonId) == Core.Type.INTEGER ? 'I' : 'S',
+												Core.typeof(buttonId) == Core.Type.INTEGER ? ('' + buttonId) : GamepadDevice.stringToHex(buttonId),
+												binding[0] ? '1' : '0',
+												'' + binding[1],
+												'' + i);
+										}
+									}
+								}
+							}
+						}
+						if (saved.length > 0) {
+							id = device._hardware_fingerprint;
+							if (deviceDataById.contains(id)) {
+								for (i = 0; i < existingOrder.length; ++i) {
+									if (existingOrder[i] == id) {
+										existingOrder.remove(i);
+										break;
+									}
+								}
+							}
+							existingOrder.insert(0, id);
+							deviceDataById[id] = saved;
+						}
+					}
+				}
+			}
+
+			if (existingOrder.length > 0) {
+				lines = [];
+				for (id : existingOrder) {
+					data = deviceDataById[id];
+					data = [id, data.length] + data;
+					lines.add(data.join(','));
+				}
+				FileIO.UserData.File.writeText(file, lines.join('\n'));
+			}
 		}
 
-		// Returns a list of player IDs
-		static function restoreSettingsFromUserData() {
+		// Returns the number of IDs that were successfully assigned.
+		static function restoreSettingsFromUserData(deviceIdList) {
 			
 		}
 

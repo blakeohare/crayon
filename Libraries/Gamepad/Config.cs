@@ -72,6 +72,9 @@ namespace Gamepad
 						case "$_lib_gamepad_refresh_devices":
 							return "TranslationHelper.AlwaysTrue()";
 
+						case "$_lib_gamepad_config_file_path":
+							return "\".crayon-csotk.gamepad.config\"";
+
 						default:
 							throw new ArgumentException();
 					}
@@ -118,6 +121,9 @@ namespace Gamepad
 						case "$_lib_gamepad_refresh_devices":
 							return "_always_true()";
 
+						case "$_lib_gamepad_config_file_path":
+							return "\".crayon-pygame.gamepad.config\"";
+
 						default:
 							throw new ArgumentException();
 					}
@@ -163,6 +169,9 @@ namespace Gamepad
 
 						case "$_lib_gamepad_refresh_devices":
 							return "R.gamepad.refresh()";
+
+						case "$_lib_gamepad_config_file_path":
+							return "\".crayon-js.gamepad.config\"";
 
 						default:
 							throw new ArgumentException();
