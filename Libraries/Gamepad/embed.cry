@@ -197,6 +197,7 @@ namespace Gamepad {
 		field _button_count;
 		field _axis_1d_count;
 		field _axis_2d_count;
+		field _axis_count;
 		field _hardware_fingerprint;
 		field _counter = 0; // incremented each hardware pass. Used to denote if a value was set this frame or a previous frame.
 
@@ -246,6 +247,7 @@ namespace Gamepad {
 			this._button_count = params[1];
 			this._axis_1d_count = params[2];
 			this._axis_2d_count = params[3];
+			this._axis_count = this._axis_1d_count + this._axis_2d_count * 2;
 
 			// The index is stored as a positive or negative value which has special meaning.
 			// 0 messes that up.
@@ -538,34 +540,33 @@ namespace Gamepad {
 			return this._button_count;
 		}
 
-		function getAxis2dCount() {
-			return this._axis_2d_count;
-		}
-
-		function getAxis1dCount() {
-			return this._axis_1d_count;
+		function getAxisCount() {
+			return this._axis_count;
 		}
 
 		function getButtonState(index) {
+			// TODO: more efficient integer assertion
+			if (floor(index) != index) Core.assert(false, "index must be an integer.");
+
 			if (index >= 0 && index < this._button_count) {
 				return $$lib_gamepad_get_button_state(this, index);
 			}
 			Core.assert(false, "Button index out of range.");
 		}
 
-		function getAxis2dState(index) {
-			if (index >= 0 && index < this._axis_2d_count) {
-				$$lib_gamepad_get_axis_2d_state(this, index, GamepadDevice._hat_check_reusable);
-				return GamepadDevice._hat_check_reusable.clone();
+		function getAxisState(index) {
+			// TODO: more efficient integer assertion
+			if (floor(index) != index) Core.assert(false, "index must be an integer.");
+
+			if (index >= 0 && index < this._axis_count) {
+				if (index < this._axis_1d_count) {
+					return $$lib_gamepad_get_axis_1d_state(this, index);
+				}
+				index -= this._axis_1d_count;
+				$$lib_gamepad_get_axis_2d_state(this, index / 2, GamepadDevice._hat_check_reusable);
+				return GamepadDevice._hat_check_reusable[index % 2] * 1.0;
 			}
 			Core.assert(false, "Digital Axis index out of range.");
-		}
-
-		function getAxis1dState(index) {
-			if (index >= 0 && index < this._axis_1d_count) {
-				return $$lib_gamepad_get_axis_1d_state(this, index);
-			}
-			Core.assert(false, "Analog axis index out of range.");
 		}
 
 		function _getLookupForId(buttonId) {
