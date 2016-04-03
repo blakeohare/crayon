@@ -228,7 +228,7 @@ namespace Gamepad {
 												mashy[2],
 												isPositive ? '+' : '-',
 												Core.typeof(buttonId) == Core.Type.INTEGER ? 'I' : 'S',
-												Core.typeof(buttonId) == Core.Type.INTEGER ? ('' + buttonId) : GamepadDevice.stringToHex(buttonId),
+												Core.typeof(buttonId) == Core.Type.INTEGER ? ('' + buttonId) : GamepadDevice._stringToHex(buttonId),
 												binding[0] ? '1' : '0',
 												'' + binding[1],
 												'' + i);
@@ -369,13 +369,13 @@ namespace Gamepad {
 			}
 
 			this._hardware_fingerprint = [
-				GamepadDevice.stringToHex(this._name),
+				GamepadDevice._stringToHex(this._name),
 				this._button_count,
 				this._axis_1d_count,
 				this._axis_2d_count].join('~');
 		}
 
-		static function stringToHex(str) {
+		static function _stringToHex(str) {
 			output = [];
 			h = '0123456789abcdef';
 			for (c : str) {
@@ -494,10 +494,9 @@ namespace Gamepad {
 				mashy = this._hardware_mashies[index];
 				switch (mashy[0]) {
 					case 0: t = GamepadMashyType.BUTTON; break;
-					case 1: t = GamepadMashyType.ANALOG_AXIS; break;
-					default: t = GamepadMashyType.DIGITAL_AXIS; break;
+					default: t = GamepadMashyType.AXIS; break;
 				}
-				eventsOut.add(new GamepadRawHardwareEvent(this, t, index, mashy[3], mashy[2]));
+				eventsOut.add(new GamepadRawHardwareEvent(this, t, mashy[1], mashy[3], mashy[2]));
 			}
 
 			if (this._config_stack.length > 0) {
@@ -780,24 +779,32 @@ namespace Gamepad {
 			return this._bindButton(buttonId, true);
 		}
 
-		function bind1dDigitalAxis(buttonId, isPositive) {
+		function bindDigitalAxis(buttonId, isPositive) {
 			return this._bind1dAxis(buttonId, isPositive == true, true);
 		}
 
-		function bind2dDigitalAxis(buttonId, isX, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, isX == true, true);
+		function bindDigitalAxis2dX(buttonId, isPositive) {
+			return this._bind2dAxis(buttonId, isPositive == true, true, true);
+		}
+
+		function bindDigitalAxis2dY(buttonId, isPositive) {
+			return this._bind2dAxis(buttonId, isPositive == true, false, true);
 		}
 
 		function bindAnalogButton(buttonId) {
 			return this._bindButton(buttonId, false);
 		}
 
-		function bind1dAnalogAxis(buttonId, isPositive) {
+		function bindAnalogAxis(buttonId, isPositive) {
 			return this._bind1dAxis(buttonId, isPositive == true, false);
 		}
 
-		function bind2dAnalogAxis(buttonId, isX, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, isX == true, false);
+		function bindAnalogAxis2dX(buttonId, isPositive) {
+			return this._bind2dAxis(buttonId, isPositive == true, true, false);
+		}
+
+		function bindAnalogAxis2dY(buttonId, isPositive) {
+			return this._bind2dAxis(buttonId, isPositive == true, false, false);
 		}
 
 		function _freeAndGetIndex(hardwareId, isPositive) {
@@ -857,20 +864,28 @@ namespace Gamepad {
 			return this._bindButtonByHardwareId(hardwareId, buttonId, false);
 		}
 		
-		function bind1dDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
+		function bindDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
 			return this._bind1dAxisByHardwareId(hardwareId, buttonId, true, isPositive == true);
 		}
 
-		function bind1dAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
+		function bindAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
 			return this._bind1dAxisByHardwareId(hardwareId, buttonId, false, isPositive == true);
 		}
 
-		function bind2dDigitalAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, isX == true, isPositive == true);
+		function bindDigitalAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, true, isPositive == true);
 		}
 
-		function bind2dAnalogAxisByHardwareId(hardwareId, buttonId, isX, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, isX == true, isPositive == true);
+		function bindAnalogAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, true, isPositive == true);
+		}
+
+		function bindDigitalAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, false, isPositive == true);
+		}
+
+		function bindAnalogAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
+			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, false, isPositive == true);
 		}
 	}
 
@@ -893,9 +908,8 @@ namespace Gamepad {
 	}
 
 	enum GamepadMashyType {
-		BUTTON,
-		ANALOG_AXIS,
-		DIGITAL_AXIS,
+		BUTTON = 1,
+		AXIS = 2,
 	}
 	class GamepadRawHardwareEvent : Game.Event {
 		field device;
@@ -912,7 +926,7 @@ namespace Gamepad {
 			this.mashyType = mashyType;
 			this.mashyIndex = mashyIndex;
 			this.value = value;
-			if (mashyType == GamepadMashyType.ANALOG_AXIS) {
+			if (mashyType == GamepadMashyType.AXIS) {
 				this.isSignificant = Math.abs(value) > .5;
 			} else {
 				this.isSignificant = true;
