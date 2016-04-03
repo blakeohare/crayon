@@ -270,6 +270,13 @@ namespace Gamepad {
 			
 		}
 
+		static function clearAllIds() {
+			Core.assert(GamepadManager._devices != null, "Cannot clear IDs without initializing.");
+			for (d : GamepadManager._devices) {
+				d._id = null;
+			}
+		}
+
 		static function _eventPump(eventsOut) {
 			// TODO: add gamepad events to eventsOut
 			if (GamepadManager._devices != null) {
@@ -580,8 +587,15 @@ namespace Gamepad {
 		}
 
 		function setId(id) {
+			if (id != null) {
+				for (device : GamepadManager._devices) {
+					if (device._id == id) device._id = null;
+				}
+			}
 			this._id = id;
 		}
+
+		function clearId() { return this.setId(null); }
 
 		function _getStackTop() {
 			Core.assert(this._config_stack.length > 0, "Gamepad config stack is empty.");
