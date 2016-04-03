@@ -166,6 +166,10 @@ namespace Audio {
 			Music._transition(null, false, duration, null);
 		}
 
+		static function stop() {
+			Music._transition(null, false, null, null);
+		}
+
 		function fadeIn(loop = true, duration = 2.0) {
 			Music._transition(this, loop, null, duration);
 		}
