@@ -8,8 +8,14 @@ music[3] -> is looping
 
 */
 
+R._dummyAudio = new Audio();
+
+R.isAudioSupported = function () {
+	return R.isAudioEnabled(R._dummyAudio);
+};
+
 R.isAudioEnabled = function (audioObj) {
-	return !!audioObj.canPlayType('audio/ogg');
+	return !!R._dummyAudio.canPlayType('audio/ogg');
 };
 
 R.musicSetVolume = function (r) {
@@ -23,7 +29,9 @@ R.musicPlay = function (music, loop) {
 	if (R.musicIsPlaying()) R.musicCurrent[0].pause();
 
 	if (R.isAudioEnabled(music[0])) {
-		music[0].currentTime = 0;
+		if (music[0].readyState == 2) {
+			music[0].currentTime = 0;
+		}
 		music[3] = loop;
 		R.musicCurrent = music;
 		music[0].play();
@@ -48,7 +56,7 @@ R.musicLoad = function (filepath) {
 	];
 
 	audioObject.addEventListener('ended', function () {
-		if (m[3]) { // isLooping. 
+		if (m[3]) { // isLooping.
 			this.currentTime = 0;
 			this.play();
 		}
@@ -133,7 +141,9 @@ R.playSound = function (sound, startFrom) {
 		audioList.push(audio);
 	}
 	if (R.isAudioEnabled(audio)) {
-		audio.currentTime = startFrom;
+		if (audio.readyState == 2) {
+			audio.currentTime = startFrom;
+		}
 		audio.play();
 
 		// See channel struct comment above.
