@@ -201,6 +201,14 @@ def blit_partial(surface, targetX, targetY, targetWidth, targetHeight, sourceX, 
 		source_y_scaled = int(sourceY * scale_y)
 		_global_vars['virtual_screen'].blit(t_surf, (targetX, targetY), _PR(source_x_scaled, source_y_scaled, targetWidth, targetHeight))
 
+def blit_rotated(surface, x, y, theta):
+	# Kills your performance dead.
+	# One of these days, I'll use a Python OpenGL implementation like pyglet instead. But for now...
+	oh_god = pygame.transform.rotate(surface[1], -theta * 180 / math.pi)
+	w, h = oh_god.get_size()
+	_global_vars['virtual_screen'].blit(oh_god, (x - w // 2, y - h // 2))
+	
+
 _temp_image_cache = {}
 def get_temporary_image(width, height):
 	key = width * 1000000000 + height
