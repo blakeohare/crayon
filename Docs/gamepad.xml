@@ -322,6 +322,7 @@
 				</description>
 				<field name="device" type="gamepad.gamepaddevice">Device that generated this event.</field>
 				<field name="deviceId" type="integer or string">ID of the device that generated this event.</field>
+				<field name="buttonId" type="integer or string">Button ID of the event. </field>
 				<field name="value" type="mixed">Value of this event. For logical buttons, this is a boolean. For 1D axes, these are numbers. For 2D axes, this is not set and the x and y fields are used instead. Digital bindings will return integers, and analog bindings will return floats.</field>
 				<field name="x" type="number">Value of the X component of a 2D axis. Unset (null) if not a 2D axis event.</field>
 				<field name="y" type="number">Value of the Y component of a 2D axis. Unset (null) if not a 2D axis event.</field>

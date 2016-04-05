@@ -587,6 +587,10 @@ namespace Gamepad {
 		}
 
 		function setId(id) {
+			if (id != null && Core.typeof(id) != Core.Type.STRING && Core.typeof(id) != Core.Type.INTEGER) {
+				Core.assert(false, "Invalid gamepad ID. Must be a string or integer.");
+			}
+
 			if (id != null) {
 				for (device : GamepadManager._devices) {
 					if (device._id == id) device._id = null;
