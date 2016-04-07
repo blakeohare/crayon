@@ -1,15 +1,23 @@
+import GFX;
+import Math;
+
 class Sprite {
+
+	field id;
+	field x;
+	field y;
+	field dx = 0.0;
+	field dy = 0.0;
+	field vx = 0;
+	field vy = 0;
+	field vx_decay = 0;
+	field ground;
+	field x_accelerated = false;
+
 	constructor(id, x, y) {
 		this.id = id;
 		this.x = x + 0.0;
 		this.y = y + 0.0;
-		this.dx = 0.0;
-		this.dy = 0.0;
-		this.vy = 0;
-		this.vx = 0;
-		this.vx_decay = 0;
-		this.ground = null;
-		this.x_accelerated = false;
 	}
 	
 	function accelerate_x(is_right) {
@@ -21,13 +29,10 @@ class Sprite {
 			this.vx -= .05;
 			if (this.vx < -.3) this.vx = -0.3;
 		}
-		
 		this.dx += this.vx;
 	}
 	
 	function update(playscene) {
-		
-		
 		if (!this.x_accelerated && this.vx != 0) {
 			if (this.vx > 0) {
 				this.vx -= .05;
@@ -56,13 +61,11 @@ class Sprite {
 		bottom = this.y;
 		top = this.y - 1;
 		
-		col = $floor(newx);
-		row_bottom = $floor(bottom - bottom_epsilon);
-		row_top = $floor(top + top_epsilon);
+		col = Math.floor(newx);
+		row_bottom = Math.floor(bottom - bottom_epsilon);
+		row_top = Math.floor(top + top_epsilon);
 		
-		if (col < 0 || col >= cols || row_top < 0 || row_bottom >= rows) {
-			// nope
-		} else {
+		if (col >= 0 && col < cols && row_top >= 0 && row_bottom < rows) {
 			tile1 = grid[col][row_top];
 			tile2 = grid[col][row_bottom];
 			if ((tile1 == null || !tile1.template.blocking) &&
@@ -77,9 +80,9 @@ class Sprite {
 		bottom = new_y + bottom_epsilon;
 		x = this.x;
 		
-		col = $floor(x);
-		row_top = $floor(top);
-		row_bottom = $floor(bottom);
+		col = Math.floor(x);
+		row_top = Math.floor(top);
+		row_bottom = Math.floor(bottom);
 		
 		old_ground = this.ground;
 		this.ground = null;
@@ -107,14 +110,13 @@ class Sprite {
 				} else {
 					// do nothing
 				}
-				
 			}
 		}
 		
 		if (this.ground == null && this.vy >= 0) {
 			new_ground = null;
-			col = $floor(this.x);
-			row = $floor(this.y + .05);
+			col = Math.floor(this.x);
+			row = Math.floor(this.y + .05);
 			
 			if (row < rows) {
 				tile = grid[col][row];
@@ -141,8 +143,8 @@ class Sprite {
 	
 	function render(rc, cx, cy) {
 		radius = 16;
-		rx = $floor(this.x * 32) - cx;
-		ry = $floor(this.y * 32 - radius) - cy;
-		$gfx_draw_ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0, 255);
+		rx = Math.floor(this.x * 32) - cx;
+		ry = Math.floor(this.y * 32 - radius) - cy;
+		GFX.Draw.ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0);
 	}
 }

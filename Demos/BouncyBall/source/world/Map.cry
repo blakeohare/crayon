@@ -1,30 +1,36 @@
+import Resources;
 
 class Map {
+	field id;
+	field grid;
+	field width;
+	field height;
+	field startLoc;
+	
 	constructor(id) {
 		this.id = id;
-		raw_data = $resource_read_text('levels/' + id + '.txt').trim();
-		lines = raw_data.split('\n');
+		lines = Resources.readText('levels/' + id + '.txt').trim().split('\n');
 		width = lines[0].trim().length;
 		height = lines.length;
 		grid = make_grid(width, height);
 		
-		TILE_STORE.initialize();
+		TileStore.initialize();
 		
-		start_loc = null;
+		startLoc = null;
 		for (y = 0; y < height; ++y) {
 			line = lines[y].trim();
 			for (x = 0; x < width; ++x) {
 				id = line[x];
 				
 				if (id == 'O') {
-					start_loc = [x, y];
+					startLoc = [x, y];
 					id = '.';
 				}
 				
 				if (id == '.') {
 					tile = null;
 				} else {
-					template = TILE_STORE.get(id);
+					template = TileStore.get(id);
 					tile = new Tile(template, x, y);
 				}
 				grid[x][y] = tile;
@@ -33,7 +39,7 @@ class Map {
 		this.grid = grid;
 		this.width = width;
 		this.height = height;
-		this.start_loc = start_loc;
+		this.startLoc = startLoc;
 	}
 	
 	function render(rc, cx, cy) {
@@ -43,7 +49,7 @@ class Map {
 				if (tile != null) {
 					tt = tile.template;
 					if (tt.is_static) {
-						$gfx_blit_image(tt.image, x * 32 - cx, y * 32 - cy);
+						tt.image.draw(x * 32 - cx, y * 32 - cy);
 					}
 				}
 			}

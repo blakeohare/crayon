@@ -1,34 +1,41 @@
+import Math;
+import GFX;
+
 class FadeTransitionScene : AbstractScene {
+	field before;
+	field after;
+	field counter = 0;
+	field alpha = 0;
+	field duration = FPS;
+	field halfDuration;
+	field bg;
+	
 	constructor(before, after) : base() {
 		this.before = before;
 		this.after = after;
-		this.counter = 0;
-		this.alpha = 0;
-		this.duration = FPS;
-		this.half_duration = this.duration / 2;
+		this.halfDuration = this.duration / 2;
 		this.bg = this.before;
 	}
 	
 	function update(events, pressed_keys) {
 		this.counter++;
-		if (this.counter < this.half_duration) {
-			this.alpha = $floor(255 * this.counter /  this.half_duration);
+		if (this.counter < this.halfDuration) {
+			this.alpha = Math.floor(255 * this.counter /  this.halfDuration);
 		} else {
-			this.alpha = 255 - $floor(255 * (this.counter - this.half_duration) / this.half_duration);
+			this.alpha = 255 - Math.floor(255 * (this.counter - this.halfDuration) / this.halfDuration);
 		}
 		
-		if (this.alpha < 0) this.alpha = 0;
-		if (this.alpha > 255) this.alpha = 255;
+		this.alpha = Math.ensureRange(this.alpha, 0, 255);
 		
 		if (this.counter > this.duration) {
 			this.next = this.after;
-		} else if (this.counter > this.half_duration) {
+		} else if (this.counter > this.halfDuration) {
 			this.bg = this.after;
 		}
 	}
 	
 	function render(rc) {
 		this.bg.render(rc);
-		$gfx_draw_rectangle(-1, -1, WIDTH + 1, HEIGHT + 1, 0, 0, 0, this.alpha);
+		GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, this.alpha);
 	}
 }

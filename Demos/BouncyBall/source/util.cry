@@ -7,6 +7,5 @@ function make_grid(width, height) {
 		}
 		columns.add(column);
 	}
-	
 	return columns;
 }

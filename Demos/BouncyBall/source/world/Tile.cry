@@ -1,5 +1,9 @@
 
 class Tile {
+	field template;
+	field col;
+	field row;
+	
 	constructor(template, col, row) {
 		this.template = template;
 		this.col = col;

@@ -1,12 +1,24 @@
 
 class TileTemplate {
+	field id;
+	field blocking;
+	field images;
+	field image;
+	field is_static;
+	field images_length;
+	
+	static field TILE_TEMPLATE_BLOCKING_TILES = {
+		'x': true,
+		'g': true,
+	};
+	
 	constructor(id, image_paths) {
 		this.id = id;
-		this.blocking = TILE_TEMPLATE_BLOCKING_TILES.get(id, null) != null;
+		this.blocking = TileTemplate.TILE_TEMPLATE_BLOCKING_TILES.get(id, false);
 		
 		images = [];
 		for (path : image_paths) {
-			images.add(IMAGE_LIBRARY.get('tiles/' + path));
+			images.add(ImageLibrary.get('tiles/' + path));
 		}
 		
 		this.images = images;
@@ -15,9 +27,3 @@ class TileTemplate {
 		this.images_length = this.images.length;
 	}
 }
-
-
-TILE_TEMPLATE_BLOCKING_TILES = {
-	'x': 1,
-	'g': 1,
-};

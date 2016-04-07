@@ -1,22 +1,21 @@
-TILE_IDS = 'x g'.split(' ');
 
 class TileStore {
-	constructor() {
-		this.templates = null;
-	}
+	static field templates = null;
+	static field TILE_IDS = ['x', 'g'];
 	
-	function initialize() {
-		if (this.templates == null) {
-			this.templates = {};
-			for (id : TILE_IDS) {
+	constructor() { Core.assert(false); }
+	
+	static function initialize() {
+		if (TileStore.templates == null) {
+			TileStore.templates = {};
+			for (id : TileStore.TILE_IDS) {
 				template = new TileTemplate(id, [id + '.png']);
-				this.templates[id] = template;
+				TileStore.templates[id] = template;
 			}
 		}
 	}
 	
-	function get(id) {
-		return this.templates[id];
+	static function get(id) {
+		return TileStore.templates[id];
 	}
 }
-TILE_STORE = new TileStore();

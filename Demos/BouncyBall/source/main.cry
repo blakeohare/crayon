@@ -1,0 +1,44 @@
+import Game;
+
+const FPS = 30;
+const WIDTH = 640;
+const HEIGHT = 480;
+
+function main() {
+
+	window = new GameWindow("Platformer of sorts", FPS, WIDTH, HEIGHT);
+	
+	
+	active_scene = new LoadingScene();
+	pressedKeys = {};
+	pressedKeysThisFrame = {};
+	
+	counter = 0;
+	
+	while (active_scene != null) {
+		
+		pressedKeysThisFrame.clear();
+		
+		for (event : window.pumpEvents()) {
+			switch (event.type) {
+				case EventType.QUIT:
+					return;
+				case EventType.KEY_DOWN:
+					pressedKeys[event.key] = true;
+					pressedKeysThisFrame[event.key] = true;
+					break;
+					
+				case EventType.KEY_UP:
+					pressedKeys[event.key] = false;
+					break;
+			}
+		}
+		
+		active_scene.update(pressedKeys, pressedKeysThisFrame);
+		active_scene.render(counter++);
+		active_scene = active_scene.next;
+		
+		window.clockTick();
+	}
+	
+}
