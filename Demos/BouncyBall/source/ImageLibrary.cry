@@ -1,5 +1,8 @@
 import GFX;
 
+/*
+	Cache of images that have been loaded.
+*/
 class ImageLibrary {
 	static field images = {};
 	

@@ -1,5 +1,7 @@
 import Resources;
-
+/*
+	Map object. Contains the tile grid.
+*/
 class Map {
 	field id;
 	field grid;
@@ -12,7 +14,7 @@ class Map {
 		lines = Resources.readText('levels/' + id + '.txt').trim().split('\n');
 		width = lines[0].trim().length;
 		height = lines.length;
-		grid = make_grid(width, height);
+		grid = makeGrid(width, height);
 		
 		TileStore.initialize();
 		
@@ -22,6 +24,8 @@ class Map {
 			for (x = 0; x < width; ++x) {
 				id = line[x];
 				
+				// O is not a tile. It is a magic string to indicate start position.
+				// Treat it as an empty tile.
 				if (id == 'O') {
 					startLoc = [x, y];
 					id = '.';
@@ -47,10 +51,9 @@ class Map {
 			for (x = 0; x < this.width; ++x) {
 				tile = this.grid[x][y];
 				if (tile != null) {
-					tt = tile.template;
-					if (tt.is_static) {
-						tt.image.draw(x * 32 - cx, y * 32 - cy);
-					}
+					images = tile.template.images;
+					image = images[rc % images.length];
+					image.draw(x * 32 - cx, y * 32 - cy);
 				}
 			}
 		}

@@ -1,6 +1,10 @@
 import Math;
 import GFX;
 
+/*
+	Fades a scene to blackness for 1 second.
+	Fades a nother scene in for 1 second.
+*/
 class FadeTransitionScene : AbstractScene {
 	field before;
 	field after;
@@ -17,7 +21,7 @@ class FadeTransitionScene : AbstractScene {
 		this.bg = this.before;
 	}
 	
-	function update(events, pressed_keys) {
+	function update(pressedKeys, pressedThisframe) {
 		this.counter++;
 		if (this.counter < this.halfDuration) {
 			this.alpha = Math.floor(255 * this.counter /  this.halfDuration);

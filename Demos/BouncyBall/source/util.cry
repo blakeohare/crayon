@@ -1,11 +1,11 @@
-function make_grid(width, height) {
+/*
+	Creates a 2D grid of the given width and height.
+	The X coordinate is the 1st dimension.
+*/
+function makeGrid(width, height) {
 	columns = [];
-	for (x = 0; x < width; ++x) {
-		column = [];
-		for (y = 0; y < height; ++y) {
-			column.add(null);
-		}
-		columns.add(column);
+	while (width-- > 0) {
+		columns.add([null] * height);
 	}
 	return columns;
 }

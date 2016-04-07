@@ -2,6 +2,11 @@ import Game;
 import GFX;
 import Math;
 
+
+/*
+	Scene where actual gameplay takes place. 
+	Contains sprites and tiles.
+*/
 class PlayScene : AbstractScene {
 	field sky;
 	field map;
@@ -13,9 +18,9 @@ class PlayScene : AbstractScene {
 	constructor() : base() {
 		this.sky = ImageLibrary.get('sky.png');
 		this.map = new Map('level1');
-		start_x = this.map.startLoc[0] - .5;
-		start_y = this.map.startLoc[1] - .5;
-		this.player = new Sprite('player', start_x, start_y);
+		startX = this.map.startLoc[0] - .5;
+		startY = this.map.startLoc[1] - .5;
+		this.player = new Sprite('player', startX, startY);
 		this.sprites.add(this.player);
 		cx = this.player.x * 32;
 		cy = this.player.y * 32;
@@ -24,10 +29,9 @@ class PlayScene : AbstractScene {
 	}
 	
 	function update(pressedKeys, pressedThisFrame) {
-		v = .2;
-		move_right = pressedKeys.get(KeyboardKey.RIGHT, false);
-		move_left = pressedKeys.get(KeyboardKey.LEFT, false);
-		move = move_right || move_left;
+		moveRight = pressedKeys.get(KeyboardKey.RIGHT, false);
+		moveLeft = pressedKeys.get(KeyboardKey.LEFT, false);
+		move = moveRight || moveLeft;
 		
 		isJump = pressedThisFrame.get(KeyboardKey.SPACE, false);
 		if (isJump && this.player.ground != null) {
@@ -36,7 +40,7 @@ class PlayScene : AbstractScene {
 		}
 		
 		if (move) {
-			this.player.accelerate_x(move_right);
+			this.player.accelerateX(moveRight);
 		}
 		
 		for (sprite : this.sprites) {
@@ -53,14 +57,13 @@ class PlayScene : AbstractScene {
 		viewY = Math.floor(this.cameraCurrent[1]) - HEIGHT / 2;
 		if (viewX < 0) viewX = 0;
 		if (viewY < 0) viewY = 0;
-		map_width = this.map.width * 32;
-		map_height = this.map.height * 32;
-		if (viewX > map_width - WIDTH) viewX = map_width - WIDTH;
-		if (viewY > map_height - HEIGHT) viewY = map_height - HEIGHT;
+		mapWidth = this.map.width * 32;
+		mapHeight = this.map.height * 32;
+		if (viewX > mapWidth - WIDTH) viewX = mapWidth - WIDTH;
+		if (viewY > mapHeight - HEIGHT) viewY = mapHeight - HEIGHT;
 		
 		GFX.Draw.fill(255, 0, 0);
 		this.sky.draw(0, 0);
-		
 		this.map.render(rc, viewX, viewY);
 		
 		for (sprite : this.sprites) {

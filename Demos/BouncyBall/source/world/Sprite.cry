@@ -10,9 +10,8 @@ class Sprite {
 	field dy = 0.0;
 	field vx = 0;
 	field vy = 0;
-	field vx_decay = 0;
 	field ground;
-	field x_accelerated = false;
+	field xAccelerated = false;
 
 	constructor(id, x, y) {
 		this.id = id;
@@ -20,9 +19,9 @@ class Sprite {
 		this.y = y + 0.0;
 	}
 	
-	function accelerate_x(is_right) {
-		this.x_accelerated = true;
-		if (is_right) {
+	function accelerateX(isRightDirection) {
+		this.xAccelerated = true;
+		if (isRightDirection) {
 			this.vx += .05;
 			if (this.vx > .3) this.vx = 0.3;
 		} else {
@@ -33,7 +32,7 @@ class Sprite {
 	}
 	
 	function update(playscene) {
-		if (!this.x_accelerated && this.vx != 0) {
+		if (!this.xAccelerated && this.vx != 0) {
 			if (this.vx > 0) {
 				this.vx -= .05;
 				if (this.vx < 0) {
@@ -47,63 +46,62 @@ class Sprite {
 			}
 			this.dx += this.vx;
 		}
-		this.x_accelerated = false;
+		this.xAccelerated = false;
 		
 		map = playscene.map;
 		grid = map.grid;
 		cols = map.width;
 		rows = map.height;
 		
-		top_epsilon = 0.1;
-		bottom_epsilon = 0.001;
+		topEpsilon = 0.1;
+		bottomEpsilon = 0.001;
 		
 		newx = this.x + this.dx;
 		bottom = this.y;
 		top = this.y - 1;
 		
 		col = Math.floor(newx);
-		row_bottom = Math.floor(bottom - bottom_epsilon);
-		row_top = Math.floor(top + top_epsilon);
+		rowBottom = Math.floor(bottom - bottomEpsilon);
+		rowTop = Math.floor(top + topEpsilon);
 		
-		if (col >= 0 && col < cols && row_top >= 0 && row_bottom < rows) {
-			tile1 = grid[col][row_top];
-			tile2 = grid[col][row_bottom];
-			if ((tile1 == null || !tile1.template.blocking) &&
-				(tile2 == null || !tile2.template.blocking)) {
+		if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
+			tile1 = grid[col][rowTop];
+			tile2 = grid[col][rowBottom];
+			if ((tile1 == null || !tile1.template.isBlocking) &&
+				(tile2 == null || !tile2.template.isBlocking)) {
 				this.x = newx;
 			}
 		}
 		
 		dy = this.dy + this.vy;
-		new_y = this.y + dy;
-		top = new_y - 1 + top_epsilon;
-		bottom = new_y + bottom_epsilon;
+		newY = this.y + dy;
+		top = newY - 1 + topEpsilon;
+		bottom = newY + bottomEpsilon;
 		x = this.x;
 		
 		col = Math.floor(x);
-		row_top = Math.floor(top);
-		row_bottom = Math.floor(bottom);
+		rowTop = Math.floor(top);
+		rowBottom = Math.floor(bottom);
 		
-		old_ground = this.ground;
 		this.ground = null;
 		
-		if (col >= 0 && col < cols && row_top >= 0 && row_bottom < rows) {
-			tile_top = grid[col][row_top];
-			tile_bottom = grid[col][row_bottom];
-			if ((tile_top == null || !tile_top.template.blocking) &&
-				(tile_bottom == null || !tile_bottom.template.blocking)) {
+		if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
+			tileTop = grid[col][rowTop];
+			tileBottom = grid[col][rowBottom];
+			if ((tileTop == null || !tileTop.template.isBlocking) &&
+				(tileBottom == null || !tileBottom.template.isBlocking)) {
 				this.y = this.y + dy;
 			} else {
 				if (dy < 0) {
-					if (tile_top != null && tile_top.template.blocking) {
+					if (tileTop != null && tileTop.template.isBlocking) {
 						this.vy = 0; // head bonk!
 					} else {
 						this.y = this.y + dy;
 					}
 				} else if (dy > 0) {
-					if (tile_bottom != null && tile_bottom.template.blocking) {
-						this.ground = tile_bottom;
-						this.y = tile_bottom.row * 1.0;
+					if (tileBottom != null && tileBottom.template.isBlocking) {
+						this.ground = tileBottom;
+						this.y = tileBottom.row * 1.0;
 					} else {
 						this.y = this.y + dy;
 					}
@@ -114,18 +112,18 @@ class Sprite {
 		}
 		
 		if (this.ground == null && this.vy >= 0) {
-			new_ground = null;
+			newGround = null;
 			col = Math.floor(this.x);
 			row = Math.floor(this.y + .05);
 			
 			if (row < rows) {
 				tile = grid[col][row];
-				if (tile != null && tile.template.blocking) {
-					new_ground = tile;
+				if (tile != null && tile.template.isBlocking) {
+					newGround = tile;
 				}
 			}
 			
-			this.ground = new_ground;
+			this.ground = newGround;
 		}
 		
 		if (this.ground != null) {

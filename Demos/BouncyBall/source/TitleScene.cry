@@ -1,6 +1,10 @@
 import GFX;
 import Game;
 
+/*
+	A placeholder for a title screen.
+	Just displays the words "Press Space".
+*/
 class TitleScene : AbstractScene {
 	field pressSpace;
 	

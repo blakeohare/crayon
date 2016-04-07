@@ -3,7 +3,7 @@ class AbstractScene {
 	
 	constructor() { }
 	
-	function update(events, pressed_keys) {
+	function update(pressedKeys, pressedThisFrame) {
 		Core.assert(false, "Override me!");
 	}
 	

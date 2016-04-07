@@ -1,4 +1,6 @@
-
+/*
+	Cache of tile types.
+*/
 class TileStore {
 	static field templates = null;
 	static field TILE_IDS = ['x', 'g'];
