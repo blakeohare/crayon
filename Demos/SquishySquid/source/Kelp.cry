@@ -51,7 +51,22 @@ class Kelp {
 	function render(cameraX) {
 		left = Math.floor(this.left - cameraX + WIDTH / 2);
 		
-		GFX.Draw.rectangle(left, 0, KELP_WIDTH, this.topOpeningY, 100, 200, 0);
-		GFX.Draw.rectangle(left, this.bottomOpeningY, KELP_WIDTH, AVAILABLE_HEIGHT - this.bottomOpeningY, 100, 200, 0);
+		// Draw kelp on top
+		img = ImageLibrary.getFlipped('kelp.png');
+		targetX = left;
+		sourceX = 0;
+		targetY = 0;
+		kelpHeight = this.topOpeningY;
+		sourceY = img.height - kelpHeight;
+		img.drawPartial(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+		
+		// Draw kelp on bottom
+		img = ImageLibrary.get('kelp.png');
+		sourceX = 0;
+		sourceY = 0;
+		targetX = left;
+		targetY = this.bottomOpeningY;
+		kelpHeight = AVAILABLE_HEIGHT - this.bottomOpeningY;
+		img.drawPartial(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
 	}
 }

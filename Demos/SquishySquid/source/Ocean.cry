@@ -69,9 +69,20 @@ class Ocean {
 	}
 	
 	function render() {
-		GFX.Draw.fill(0, 80, 200);
-		GFX.Draw.rectangle(0, AVAILABLE_HEIGHT, WIDTH, HEIGHT - AVAILABLE_HEIGHT,
-			200, 200, 100);
+		panel = ImageLibrary.get('ocean_panel.png');
+		x = (-this.cameraX / 3) % panel.width - panel.width;
+		
+		while (x < WIDTH) {
+			panel.draw(x, 0);
+			x += panel.width;
+		}
+		
+		sand = ImageLibrary.get('sand.png');
+		x = -this.cameraX % sand.width - sand.width;
+		while (x < WIDTH) {
+			sand.draw(x, AVAILABLE_HEIGHT);
+			x += sand.width;
+		}
 		
 		for (kelp : this.kelp) {
 			kelp.render(this.cameraX);

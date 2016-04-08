@@ -48,7 +48,15 @@ class Squid {
 		x = Math.floor(this.x - cameraX + WIDTH / 2);
 		y = Math.floor(this.y);
 		
-		img = ImageLibrary.get('squid_1.png');
+		if (this.isDead) {
+			img = ImageLibrary.get('squid_dead.png');
+		} else {
+			imgNum = 1;
+			if (this.vy < 0) {
+				imgNum = this.vy < -5 ? 3 : 2;
+			}
+			img = ImageLibrary.get('squid_' + imgNum + '.png');
+		}
 		img.drawRotated(x, y, this.currentTheta);
 	}
 }
