@@ -1,0 +1,46 @@
+import Game;
+
+const FPS = 60;
+const WIDTH = 400;
+const HEIGHT = 700;
+
+function main() {
+	window = new Game.GameWindow('Squishy Squid', FPS, WIDTH, HEIGHT);
+	
+	activeScene = new LoadingScene();
+	
+	while (true) {
+		isTap = false;
+		for (event : window.pumpEvents()) {
+			switch (event.type) {
+				case EventType.QUIT:
+					return;
+					
+				case EventType.KEY_DOWN:
+					switch (event.key) {
+						case KeyboardKey.SPACE:
+						case KeyboardKey.ENTER:
+						case KeyboardKey.UP:
+							isTap = true;
+							break;
+						
+						default: break;
+					}
+					break;
+					
+				case EventType.MOUSE_LEFT_DOWN:
+				case EventType.MOUSE_RIGHT_DOWN:
+					isTap = true;
+					break;
+			}
+		}
+		
+		activeScene.update(isTap);
+		
+		activeScene.render();
+		
+		activeScene = activeScene._nextScene ?? activeScene;
+		
+		window.clockTick();
+	}
+}

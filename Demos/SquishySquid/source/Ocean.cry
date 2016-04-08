@@ -1,0 +1,81 @@
+import Random;
+import Math;
+
+const KELP_SPACING = 280;
+const AVAILABLE_HEIGHT = HEIGHT - 64;
+
+class Ocean {
+	
+	field squid = null;
+	field kelp = [];
+	field cameraX = 0;
+	field isAddKelpMode = false;
+	field isMoving = true;
+	
+	constructor() {
+		this.squid = new Squid(-WIDTH / 4, AVAILABLE_HEIGHT / 2);
+	}
+	
+	function start() {
+		this.isAddKelpMode = true;
+	}
+	
+	function update() {
+		if (this.isMoving) {
+			this.cameraX += 2.0;
+			this.checkCollisions();
+		}
+		
+		this.squid.x = this.cameraX - WIDTH / 4; // place squid along the left quartile
+		
+		if (this.isAddKelpMode) {
+			rightEdge = this.cameraX + WIDTH / 2;
+			// add a kelp patch if there are none or the last one is on the screen.
+			if (this.kelp.length == 0 || this.kelp[-1].x < rightEdge) {
+				openingY = Math.floor(Random.randomFloat() * (AVAILABLE_HEIGHT - KELP_OPENING_HEIGHT - 60) + 30 + KELP_OPENING_HEIGHT / 2);
+				kelp = new Kelp(rightEdge + KELP_SPACING, openingY);
+				this.kelp.add(kelp);
+			}
+			
+			this.squid.update();
+		}
+		
+		if (this.kelp.length > 0 && this.kelp[0].x < -KELP_SPACING) {
+			this.kelp = this.kelp[1:];
+		}
+	}
+	
+	function tap() {
+		this.squid.tap();
+	}
+	
+	function checkCollisions() {
+		isCollision = false;
+		if (this.squid.y > AVAILABLE_HEIGHT) {
+			isCollision = true;
+		} else {
+			for (kelp : this.kelp) {
+				if (kelp.isCollision(this.squid)) {
+					isCollision = true;
+					break;
+				}
+			}
+		}
+		
+		if (isCollision) {
+			this.squid.collide();
+			this.isMoving = false;
+		}
+	}
+	
+	function render() {
+		GFX.Draw.fill(0, 80, 200);
+		GFX.Draw.rectangle(0, AVAILABLE_HEIGHT, WIDTH, HEIGHT - AVAILABLE_HEIGHT,
+			200, 200, 100);
+		
+		for (kelp : this.kelp) {
+			kelp.render(this.cameraX);
+		}
+		this.squid.render(this.cameraX);
+	}
+}

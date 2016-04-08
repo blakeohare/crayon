@@ -1,0 +1,21 @@
+class PlayScene : AbstractScene {
+	field ocean;
+	
+	constructor(ocean) : base() {
+		this.ocean = ocean;
+		ocean.isAddKelpMode = true;
+	}
+	
+	function update(tap) {
+		this.ocean.update();
+		if (this.ocean.squid.isDead) {
+			this.switchScene(new DeathScene(this.ocean));
+		} else if (tap) {
+			this.ocean.tap();
+		}
+	}
+	
+	function render() {
+		this.ocean.render();
+	}
+}

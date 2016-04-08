@@ -1,0 +1,26 @@
+import GFX;
+
+class ImageLibrary {
+	static field images = {};
+	static field flippedImages = {};
+	
+	constructor() { }
+	
+	static function get(path) {
+		img = ImageLibrary.images.get(path);
+		if (img == null) {
+			img = ImageLoader.fromResource('images/' + path).getImage();
+			ImageLibrary.images[path] = img;
+		}
+		return img;
+	}
+	
+	static function getFlipped(path) {
+		img = ImageLibrary.flippedImages.get(path);
+		if (img == null) {
+			img = ImageLibrary.get(path).flip(false, true);
+			ImageLibrary.flippedImages[path] = img;
+		}
+		return img;
+	}
+}

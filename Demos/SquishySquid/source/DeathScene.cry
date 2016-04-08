@@ -1,0 +1,22 @@
+class DeathScene : AbstractScene {
+	
+	field ocean;
+	field counter = 0;
+	
+	constructor(ocean) : base() {
+		this.ocean = ocean;
+		ocean.isMoving = false;
+	}
+	
+	function update(tap) {
+		this.ocean.update();
+		this.counter++;
+		if (tap && this.counter > FPS) {
+			this.switchSceneWithFade(new TitleScene());
+		}
+	}
+	
+	function render() {
+		this.ocean.render();
+	}
+}

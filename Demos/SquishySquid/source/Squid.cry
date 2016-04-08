@@ -1,0 +1,46 @@
+const GRAVITY = .6;
+const JUMP_VELOCITY = -12;
+const SQUID_SIZE = 40; // side length of the image
+
+class Squid {
+	
+	field x;
+	field y;
+	field vy = 0.0;
+	field theta = 0.0;
+	field isDead = false;
+	field radius = SQUID_SIZE / 2.0;
+	
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	function update() {
+		if (this.isDead) {
+			this.y = Math.ensureRange(this.y + 8, 0, AVAILABLE_HEIGHT);
+			this.theta = Math.min(this.theta + .2, Math.PI / 2);
+		} else {
+			this.vy += GRAVITY;
+			this.y += this.vy;
+			cappedVelocity = Math.ensureRange(this.vy, -10, 10);
+			this.theta = cappedVelocity * Math.PI / 20;
+		}
+	}
+	
+	function tap() {
+		this.vy = JUMP_VELOCITY;
+	}
+	
+	function collide() {
+		this.isDead = true;
+	}
+	
+	function render(cameraX) {
+		x = Math.floor(this.x - cameraX + WIDTH / 2);
+		y = Math.floor(this.y);
+		
+		img = ImageLibrary.get('squid_1.png');
+		img.drawRotated(x, y, 0.0);
+	}
+}
