@@ -51,7 +51,7 @@ class Ocean {
 	
 	function checkCollisions() {
 		isCollision = false;
-		if (this.squid.y > AVAILABLE_HEIGHT) {
+		if (this.squid.y + this.squid.radius > AVAILABLE_HEIGHT) {
 			isCollision = true;
 		} else {
 			for (kelp : this.kelp) {

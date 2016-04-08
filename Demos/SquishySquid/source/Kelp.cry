@@ -20,7 +20,7 @@ class Kelp {
 		sTop = squid.y - squid.radius;
 		sBottom = squid.y + squid.radius;
 		sLeft = squid.x - squid.radius;
-		sRight = squid.y + squid.radius;
+		sRight = squid.x + squid.radius;
 		
 		// Squid center is vertically aligned with the kelp. 
 		// Just check to make sure top and bottom don't touch.
@@ -30,7 +30,7 @@ class Kelp {
 		
 		// Squid is above the top opening or below the bottom opening.
 		// Just check to make sure the squid is entirely to the left or right of the kelp.
-		if (sTop <= this.topOpeningY || sBottom >= this.bottomOpeningY) {
+		if (squid.y <= this.topOpeningY || squid.y >= this.bottomOpeningY) {
 			return sRight > this.left && sLeft < this.right;
 		}
 		
