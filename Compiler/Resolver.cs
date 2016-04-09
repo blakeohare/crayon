@@ -64,7 +64,12 @@ namespace Crayon
 				}
 				else
 				{
-					throw new ParserException(item.FirstToken, "This sort of expression cannot exist outside of function or field definitions.");
+					string error = "This sort of expression cannot exist outside of function or field definitions.";
+					if (item is Assignment)
+					{
+						error += " Did you mean to mark this as a const expression?";
+					}
+					throw new ParserException(item.FirstToken, error);
 				}
 
 				if (ns.Length > 0)
