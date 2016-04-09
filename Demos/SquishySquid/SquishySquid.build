@@ -16,7 +16,7 @@
 	
 	<target name="js_remote">
 		<platform>js</platform>
-		<jsfileprefix>/demos/flappysquid/</jsfileprefix>
+		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
 	</target>
 	
 	<target name="windows">
