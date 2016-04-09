@@ -3,8 +3,7 @@ import inline "InterpreterSource/FrameworkFunctions/7_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
 
-if (image1 == null ||
-	Value$arg2.type != Types.INTEGER ||
+if (Value$arg2.type != Types.INTEGER ||
 	Value$arg3.type != Types.INTEGER ||
 	Value$arg4.type != Types.INTEGER ||
 	Value$arg5.type != Types.INTEGER ||
