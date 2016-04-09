@@ -22,5 +22,5 @@ function range(a, b=null, c=null) {
 }
 
 function str(value) {
-	return '' + value;
+	return '' + (value ?? 'null');
 }
