@@ -1,13 +1,13 @@
 class AbstractScene {
-	constructor() {
-		this.next = this;
+	field next = null;
+	
+	constructor() { }
+	
+	function update(pressedKeys, pressedThisFrame) {
+		Core.assert(false, "Override me!");
 	}
 	
-	function update(events, pressed_keys) {
-		$assert(false, "Override me");
-	}
-	
-	function render(render_counter) {
-		$assert(false, "Override me");
+	function render() {
+		Core.assert(false, "Override me!");
 	}
 }

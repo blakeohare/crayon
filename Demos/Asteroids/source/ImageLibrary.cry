@@ -1,17 +1,16 @@
+import GFX;
+
 class ImageLibrary {
-	constructor() {
-		this.images = {};
-	}
+	static field images = {};
+
+	constructor() { }
 	
-	function get_image(path) {
-		img = this.images.get(path, null);
+	static function get(path) {
+		img = ImageLibrary.images.get(path);
 		if (img == null) {
-			$gfx_image_load_from_resource('t', 'images/' + path);
-			img = $gfx_image_get('t');
-			this.images[path] = img;
+			img = ImageLoader.fromResource('images/' + path).getImage();
+			ImageLibrary.images[path] = img;
 		}
 		return img;
 	}
 }
-
-IMAGE_LIBRARY = new ImageLibrary();

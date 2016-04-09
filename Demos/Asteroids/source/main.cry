@@ -1,0 +1,41 @@
+import Game;
+
+const FPS = 60;
+
+const GAME_WIDTH = 800;
+const GAME_HEIGHT = 600;
+
+function main() {
+	
+	window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
+
+	activeScene = new LoadingScene();
+	
+	pressedKeys = {};
+	pressedThisFrame = {};
+	
+	while (true) {
+	
+		pressedThisFrame.clear();
+	
+		for (event : window.pumpEvents()) {
+			switch (event.type) {
+				case EventType.QUIT:
+					return;
+				case EventType.KEY_DOWN:
+					pressedThisFrame[event.key] = true;
+					pressedKeys[event.key] = true;
+					break;
+				case EventType.KEY_UP:
+					pressedKeys[event.key] = false;
+					break;
+			}
+		}
+		
+		activeScene.update(pressedKeys, pressedThisFrame);
+		activeScene.render();
+		activeScene = activeScene.next ?? activeScene;
+		
+		window.clockTick();
+	}
+}

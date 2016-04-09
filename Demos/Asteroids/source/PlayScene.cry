@@ -1,46 +1,55 @@
 class PlayScene : AbstractScene {
-	constructor(demo_mode) : base() {
-		this.demo = demo_mode;
-		if (this.demo) {
-			this.player = null;
-		} else {
+
+	field player;
+	field asteroids;
+	field bullets;
+	
+	constructor(isDemoMode) : base() {
+		if (!isDemoMode) {
 			this.player = new Ship(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 		}
+		
 		this.asteroids = [];
 		this.bullets = [];
+		
+		// Create 4 asteroids. If there is a player in this scene, check to make sure it
+		// doesn't start out in a colliding position.
 		while (this.asteroids.length < 4) {
-			x = $floor($random() * GAME_WIDTH);
-			y = $floor($random() * GAME_HEIGHT);
+			x = Random.randomInt(GAME_WIDTH);
+			y = Random.randomInt(GAME_HEIGHT);
 			asteroid = new Asteroid(x, y, AsteroidSize.BIG);
-			if (this.player == null || !asteroid.collides_with_player(this.player)) {
+			if (this.player == null || !asteroid.isPlayerCollision(this.player)) {
 				this.asteroids.add(asteroid);
 			}
 		}
 	}
 	
-	function update(events, pressed_keys) {
+	function update(pressedKeys, pressedThisFrame) {
 		
 		if (this.player != null) {
-			fire_bullet = false;
-			for (event : events) {
-				if (event.is_key && event.down) {
-					if (event.key == 'space' || event.key == 'enter') {
-						fire_bullet = true;
-					}
-				}
-			}
+			shootUrLazor =
+				pressedThisFrame.get(KeyboardKey.SPACE, false) ||
+				pressedThisFrame.get(KeyboardKey.ENTER, false);
 			
-			if (fire_bullet) {
+			if (shootUrLazor) {
 				bullet = new Bullet(
 					this.player.x,
 					this.player.y,
 					this.player.angle);
 				this.bullets.add(bullet);
 			}
-			rotate_direction = pressed_keys['left'] ? -1 : pressed_keys['right'] ? 1 : 0;
-			this.player.update(pressed_keys['up'], pressed_keys['down'], rotate_direction);
+			
+			if (pressedKeys.get(KeyboardKey.LEFT, false)) rotation = ShipRotation.COUNTER_CLOCKWISE;
+			else if (pressedKeys.get(KeyboardKey.RIGHT, false)) rotation = ShipRotation.CLOCKWISE;
+			else rotation = ShipRotation.NONE;
+			
+			if (pressedKeys.get(KeyboardKey.UP, false)) thrust = ShipThrust.ACCELERATE;
+			else if (pressedKeys.get(KeyboardKey.DOWN, false)) thrust = ShipThrust.DECELERATE;
+			else thrust = ShipThrust.NONE;
+			
+			this.player.update(thrust, rotation);
 		}
-
+		
 		for (bullet : this.bullets) {
 			bullet.update();
 		}
@@ -60,7 +69,7 @@ class PlayScene : AbstractScene {
 			
 			if (this.player != null) {
 				if (!asteroid.dead) {
-					if (asteroid.collides_with_player(this.player)) {
+					if (asteroid.isPlayerCollision(this.player)) {
 						this.player = null;
 						this.next = new GameOverScene(this);
 					}
@@ -68,32 +77,32 @@ class PlayScene : AbstractScene {
 			}
 		}
 		
-		new_asteroid_list = [];
+		newAsteroidsList = [];
 		for (asteroid : this.asteroids) {
 			if (asteroid.dead) {
 				for (spawn : asteroid.split()) {
-					new_asteroid_list.add(spawn);
+					newAsteroidsList.add(spawn);
 				}
 			} else {
-				new_asteroid_list.add(asteroid);
+				newAsteroidsList.add(asteroid);
 			}
 		}
+		this.asteroids = newAsteroidsList;
 		
-		this.asteroids = new_asteroid_list;
-		
-		new_bullet_list = [];
+		newBulletList = [];
 		for (bullet : this.bullets) {
 			if (!bullet.dead) {
-				new_bullet_list.add(bullet);
+				newBulletList.add(bullet);
 			}
 		}
-		this.bullets = new_bullet_list;
+		this.bullets = newBulletList;
 	}
 	
-	function render(rc) {
-		$gfx_fill_screen(0, 0, 0);
+	function render() {
+		GFX.Draw.fill(0, 0, 0);
+		
 		for (asteroid : this.asteroids) {
-			asteroid.render(rc);
+			asteroid.render();
 		}
 		
 		for (bullet : this.bullets) {
@@ -101,7 +110,7 @@ class PlayScene : AbstractScene {
 		}
 		
 		if (this.player != null) {
-			this.player.render(rc);
+			this.player.render();
 		}
 	}
 }

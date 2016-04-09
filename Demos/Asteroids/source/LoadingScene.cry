@@ -1,37 +1,21 @@
-IMAGE_SHEET_NAME = 'everything';
+import GFX;
 
 class LoadingScene : AbstractScene {
+	
+	field loader;
+	
 	constructor() : base() {
-		this.counter = 0;
+		this.loader = ImageSheetLoader.fromIds('everything');
 	}
 	
 	function update(raw_events, pressed_keys) {
-		// TODO: no images yet
-		if (this.counter == 0) {
-			$gfx_image_sheet_load(IMAGE_SHEET_NAME);
-		}
-		
-		if ($gfx_image_sheet_loaded(IMAGE_SHEET_NAME)) {
-			this.progress = 1.0;
+		if (this.loader.isDone()) {
 			this.next = new TitleScene();
-		} else {
-			this.progress = $gfx_image_sheet_load_progress(IMAGE_SHEET_NAME);
 		}
-		
-		this.counter++;
 	}
 	
-	function render(rc) {
-		if (this.counter > 5) {
-			width = GAME_WIDTH * 3 / 4;
-			height = 20;
-			left = GAME_WIDTH / 8;
-			top = (GAME_HEIGHT - height) / 2;
-			
-			$gfx_draw_rectangle(left - 2, top - 2, width + 4, height + 4, 0, 255, 0, 255);
-			$gfx_draw_rectangle(left, top, width, height, 0, 255, 0, 255);
-			swidth = $floor(this.progress * (width - 4));
-			$gfx_draw_rectangle(left + 2, top + 2, swidth, height - 4, 0, 255, 0, 255);
-		}
-	}
+	// Could render a progress bar, but the images in this game are just simple text that it will 
+	// load instantaneously for almost all users. Flashing a progress bar for a split second would
+	// probably not be very useful.
+	function render() { }
 }
