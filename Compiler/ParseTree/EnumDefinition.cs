@@ -66,10 +66,6 @@ namespace Crayon.ParseTree
 					{
 						throw new ParserException(this.Values[i].FirstToken, "This integer value has already been used in the same enum.");
 					}
-					if (ic.Value < 0)
-					{
-						throw new ParserException(this.Values[i].FirstToken, "Only non-negative values may be used for enum values.");
-					}
 
 					consumed.Add(ic.Value);
 					this.IntValue[itemName] = ic.Value;
