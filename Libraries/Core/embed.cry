@@ -33,6 +33,14 @@
 		return $$lib_core_typeof(value);
 	}
 
+	function isString(value) {
+		return Core.typeof(value) == Core.Type.STRING;
+	}
+
+	function isNumber(value) {
+		return Core.typeof(value) == Core.Type.INTEGER || Core.typeof(value) == Core.Type.FLOAT;
+	}
+
 	enum Type {
 		NULL = 0,
 		BOOLEAN = 1,

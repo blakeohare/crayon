@@ -151,7 +151,16 @@ namespace Game {
 		field fps;
 
 		constructor(title, fps, width, height, screenWidth = null, screenHeight = null) {
-			
+			Core.assert(isString(title), "Title must be a string.");
+			t = " must be a number.";
+			w = "width";
+			h = "height";
+			Core.assert(isNumber(fps), "FPS" + t);
+			Core.assert(isNumber(width), "width" + t);
+			Core.assert(isNumber(height), "height" + t);
+			Core.assert(screenWidth == null || isNumber(screenWidth), "screen " + w + t);
+			Core.assert(screenHeight == null || isNumber(screenHeight), "screen " + h + t);
+
 			Core.assert(GameWindow.instance == null, "Cannot create multiple GameWindows.");
 			GameWindow.instance = this;
 
@@ -168,14 +177,12 @@ namespace Game {
 			this._w = width;
 			this._h = height;
 
-			w = "width";
-			h = "height";
 			t = " must be positive.";
 			Core.assert(width > 0, w + t);
 			Core.assert(height > 0, h + t);
 			Core.assert(screenWidth > 0, "screen " + w + t);
 			Core.assert(screenHeight > 0, "screen " + h + t);
-			Core.assert(fps > 0, "FPS " + t);
+			Core.assert(fps > 0, "FPS" + t);
 
 			$$lib_game_initialize(fps);
 			$$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
