@@ -30,9 +30,13 @@ namespace Crayon.ParseTree
 			int minArgCount = 0;
 			for (int i = 0; i < this.ArgNames.Length; ++i)
 			{
-				if (this.DefaultValues[i] != null)
+				if (this.DefaultValues[i] == null)
 				{
 					minArgCount++;
+				}
+				else
+				{
+					break;
 				}
 			}
 			this.MinArgCount = minArgCount;
