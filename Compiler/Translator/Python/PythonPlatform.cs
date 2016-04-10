@@ -52,7 +52,7 @@ namespace Crayon.Translator.Python
 			concatenatedCode.Add(this.GetPyGameCode("Footer.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
 
-			output["game.py"] = new FileOutput()
+			output["run.py"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
 				TextContent = string.Join("", concatenatedCode)

@@ -58,7 +58,7 @@ KEY_LOOKUP = {
 }
 
 for i in range(26):
-	KEY_LOOKUP[pygame.K_a + i] = 97 + i
+	KEY_LOOKUP[pygame.K_a + i] = 65 + i
 for i in range(10):
 	KEY_LOOKUP[pygame.K_0 + i] = 48 + i
 for i in range(12):
