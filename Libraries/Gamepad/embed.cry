@@ -263,8 +263,8 @@ namespace Gamepad {
 							isDigital = configlies[3] == '1';
 							dimensionality = Core.parseInt(configlies[4]);
 							dimIndex = Core.parseInt(configlies[5]);
-							mashyIndex = device._mashy_fingerprint_to_index.get(mashyId);
-
+							mashyIndex = device._mashy_fingerprint_to_index.get(mashyHardwareId);
+							
 							// Not the world's most perfect consistency check but should prevent corrupted data
 							// from bringing the game down.
 							if (mashyIndex != null &&
@@ -273,8 +273,10 @@ namespace Gamepad {
 								(dimensionality == 1 || dimensionality == 2 || dimensionality == 4) &&
 								dimIndex >= 0 && dimIndex <= 3) {
 								
-								configurationSuccesses = true;
-								device._config_stack.add([{}, {}]);
+								if (!configurationSuccesses) {
+									device._config_stack.add([{}, {}]);
+									configurationSuccesses = true;
+								}
 								bindingLookup = device._config_stack[-1][isButtonIdInteger ? 0 : 1];
 								binding = bindingLookup.get(buttonId);
 								if (binding == null) {
@@ -282,6 +284,7 @@ namespace Gamepad {
 									bindingLookup[buttonId] = binding;
 								}
 								
+								print("Is Positive? " + isPositive + ", dim index: " + dimIndex);
 								binding[2 + dimIndex] = mashyIndex * (isPositive ? 1 : -1);
 							}
 						}
