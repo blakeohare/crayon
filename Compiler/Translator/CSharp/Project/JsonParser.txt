@@ -51,7 +51,7 @@ namespace %%%PROJECT_ID%%%
 			{
 				value = ParseJsonString(rawValue, length, i);
 			}
-			else if (c == '.' || (c >= '0' && c <= '9'))
+			else if (c == '.' || c == '-' || (c >= '0' && c <= '9'))
 			{
 				value = ParseJsonNumber(rawValue, length, i);
 			}
@@ -76,7 +76,13 @@ namespace %%%PROJECT_ID%%%
 
 		private static Value ParseJsonNumber(char[] rawValue, int length, Index i)
 		{
-			char c;
+            int sign = 1;
+            char c = rawValue[i.Value];
+            if (c == '-')
+            {
+                sign = -1;
+                i.Value++;
+            }
 			StringBuilder sb = new StringBuilder();
 			while (i.Value < length)
 			{
@@ -99,7 +105,7 @@ namespace %%%PROJECT_ID%%%
 				double value;
 				if (double.TryParse(stringValue, out value))
 				{
-					return WrapFloat(value);
+					return WrapFloat(value * sign);
 				}
 			}
 			else
@@ -107,7 +113,7 @@ namespace %%%PROJECT_ID%%%
 				int value;
 				if (int.TryParse(stringValue, out value))
 				{
-					return WrapInteger(value);
+					return WrapInteger(value * sign);
 				}
 			}
 
