@@ -333,7 +333,7 @@ namespace Audio {
 		static function loadFromFile(path) {
 			if (!Music._isSupported) return null;
 
-			s = new Sound();
+			s = new SoundResource();
 			$$lib_audio_sfx_load_from_file(s, path + '');
 			s._p = path;
 			s._e = false;
