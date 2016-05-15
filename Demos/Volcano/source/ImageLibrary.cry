@@ -1,61 +1,16 @@
+import GFX;
+
 class ImageLibrary {
-	constructor() {
-		this.image_keys = [];
-		this.image_objects = [];
-		
-		keys = 
-			//"sprites/player".split(' ') +
-			"tiles/bg tiles/rock tiles/lava_lower".split(' ') +
-			"menus/title menus/you_ascended menus/meters".split(' ');
-		for (i = 1; i <= 4; ++i) {
-			keys.add("tiles/lava_upper_" + i);
-		}
-		
-		
-		for (i = 0; i < 2; ++i) {
-			dir = i == 0 ? 'left' : 'right';
-			keys.add('sprites/player_' + dir + '_1');
-			keys.add('sprites/player_' + dir + '_2');
-			keys.add('sprites/player_' + dir + '_jump');
-		}
-		
-		for (i = 0; i < 10; ++i) {
-			keys.add("menus/num" + i);
-		}
-		for (i = 0; i < keys.length; ++i) {
-			key = keys[i];
-			this.image_keys.add(key);
-			this.image_objects.add(null);
-			$download_image(key, 'images/' + key + '.png');
-		}
-		
-		this.downloaded = 0;
-		this.size = keys.length;
-		this.done = false;
-	}
+	static field images = {};
 	
-	function update() {
-		for (i = 0; i < this.size; ++i) {
-			if (this.image_objects[i] == null) {
-				key = this.image_keys[i];
-				if ($is_image_loaded(key)) {
-					this.image_objects[i] = $get_image(key);
-					this.downloaded++;
-				}
-			}
-		}
-		
-		if (this.downloaded == this.size) {
-			this.done = true;
-		}
-	}
+	constructor() { }
 	
-	function finalize() {
-		this.images = {};
-		for (i = 0; i < this.size; ++i) {
-			key = this.image_keys[i];
-			img = this.image_objects[i];
-			this.images[key] = img;
+	static function get(path) {
+		img = ImageLibrary.images.get(path);
+		if (img == null) {
+			img = ImageLoader.fromResource('images/' + path).getImage();
+			ImageLibrary.images[path] = img;
 		}
+		return img;
 	}
 }

@@ -1,25 +1,35 @@
-class PlayScene : SceneBase {
+import Game;
+import GFX;
+import Math;
+import Random;
+
+class PlayScene : AbstractScene {
+
+	field counter = 0;
+
+	field leftPressed = false;
+	field rightPressed = false;
+	field jumpPressed = false;
+	
+	field grid = makeGrid(20, 20);
+	field player;
+	field logicalGridTop = -20 + 15 * 40;
+	field lavaLevel = 18 * 40;
+	field nextRowId = 20;
+	field rowMapper = [];
+	field rowCount = 20;
+	
+	field cameraY = 0;
+	
 	constructor() : base() {
-		this.grid = make_grid(20, 20);
-		this.left_pressed = false;
-		this.right_pressed = false;
-		this.jump_pressed = false;
-		this.player = new Sprite('player', 400, 400);
-		this.logical_grid_top = -20 + 15 * 40;
-		this.lava_level = 18 * 40;
-		this.counter = 0;
-		this.sprites = [this.player];
-		this.nextRowId = 20;
-		this.row_mapper = [];
-		this.row_count = 20;
-		
-		this.initialize_grid();
+		this.player = new Player(400, 400);
+		this.initializeGrid();
 	}
 	
-	function get_tile(game_x, game_y) { // as opposed to col/row
-		y = game_y - this.logical_grid_top;
-		col = $floor(game_x / 40);
-		row = $floor(y / 40.0);
+	function getTile(gameX, gameY) { // as opposed to col/row
+		y = gameY - this.logicalGridTop;
+		col = floor(gameX / 40);
+		row = floor(y / 40);
 		if (col < 0 || col >= 20 || row < 0 || row >= this.grid.length) {
 			return null;
 		}
@@ -27,13 +37,13 @@ class PlayScene : SceneBase {
 		return this.grid[row][col];
 	}
 	
-	function initialize_grid() {
+	function initializeGrid() {
 		
 		for (y = 0; y < 20; ++y) {
 			rowMapEntry = [y];
-			this.row_mapper.add(rowMapEntry);
+			this.rowMapper.add(rowMapEntry);
 			for (x = 0; x < 20; ++x) {
-				is_rock = true;
+				is_rock = true; // what?
 				
 				if (is_rock) {
 					this.grid[y][x] = new Tile('rock', rowMapEntry, this);
@@ -41,144 +51,137 @@ class PlayScene : SceneBase {
 					this.grid[y][x] = new Tile('bg', rowMapEntry, this);
 				}
 			}
-			
 		}
 		
 		for (i = 0; i < 15; ++i) {
-			this.create_new_row();
+			this.createNewRow();
 		}
 	}
 	
-	function process_input(events) {
-		this.jump_pressed = false;
-		for (i = 0; i < events.length; ++i) {
-			ev = events[i];
-			type = ev[0];
-			if (type == 'key') {
-				key = ev[2];
-				if (key == 'left') {
-					this.left_pressed = ev[1];
-				} else if (key == 'right') {
-					this.right_pressed = ev[1];
-				} else if (key == 'space' && ev[1]) {
-					this.jump_pressed = true;
-				}
+	function processInput(events) {
+		this.jumpPressed = false;
+		for (event : events) {
+			switch (event.type) {
+				case EventType.KEY_DOWN:
+				case EventType.KEY_UP:
+					switch (event.key) {
+						case KeyboardKey.LEFT:
+							this.leftPressed = event.down;
+							break;
+						case KeyboardKey.RIGHT:
+							this.rightPressed = event.down;
+							break;
+						case KeyboardKey.SPACE:
+							this.jumpPressed = this.jumpPressed || event.down;
+							break;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 		
-		if (this.left_pressed) {
+		if (this.leftPressed) {
 			this.player.dx = -10;
-		} else if (this.right_pressed) {
+		} else if (this.rightPressed) {
 			this.player.dx = 10;
 		}
 		
-		if (this.jump_pressed && this.player.ground != null) {
+		if (this.jumpPressed && this.player.ground != null) {
 			this.player.vy = -30;
 		}
 	}
 	
-	function create_new_row() {
-		this.row_mapper = [[0]] + this.row_mapper;
-		realloc = this.row_mapper.length;
-		// this is a little hacky
+	function createNewRow() {
+		this.rowMapper = [[0]] + this.rowMapper;
+		realloc = this.rowMapper.length;
+		// this is a little hacky --2014
+		// ya don't say... --2016
 		if (realloc > 100) {
 			realloc = 100;
 		}
-		for (i = 0; i < this.row_mapper.length; ++i) {
-			this.row_mapper[i][0] = i;
+		for (i = 0; i < this.rowMapper.length; ++i) {
+			this.rowMapper[i][0] = i;
 		}
 		
-		
-		this.row_count++;
+		this.rowCount++;
 		
 		row = [];
-		opening = $floor($random() * 15) + 2;
+		opening = floor(Random.randomFloat() * 15) + 2;
 		
 		for (x = 0; x < 20; ++x) {
-			is_rock = x == 0 || x == 19;
-			if (!is_rock) {
-				if (this.row_count % 5 == 0) {
+			isRock = x == 0 || x == 19;
+			if (!isRock) {
+				if (this.rowCount % 5 == 0) {
 					is_rock = true;
 					if (x > opening - 3 && x < opening + 3) {
-						is_rock = false;
+						isRock = false;
 					}
 				}
 			}
-			row.add(new Tile(is_rock ? 'rock' : 'bg', this.row_mapper[0], this));
+			row.add(new Tile(isRock ? 'rock' : 'bg', this.rowMapper[0], this));
 		}
 		
 		this.grid = [row] + this.grid;
 		
-		this.logical_grid_top -= 40;
+		this.logicalGridTop -= 40;
 	}
 	
 	function update() {
-		this.lava_level -= this.counter / 150.0 + 2;
+		this.lavaLevel -= this.counter / 150.0 + 2;
 		this.counter++;
 		
-		if (this.player.y > this.lava_level) {
-			this.next = new LoseScene($floor((400 - this.player.y) / 40.0 / 2));
+		if (this.player.y > this.lavaLevel) {
+			this.switchScene(new LoseScene(floor((400 - this.player.y) / 40.0 / 2)));
 		}
 		
-		dy = this.player.y - this.logical_grid_top;
+		dy = this.player.y - this.logicalGridTop;
 		if (dy < 400) {
 			while (dy < 400) {
-				this.create_new_row();
-				//$print('wat ' + this.player.y + ', ' + this.logical_grid_top);
-				dy = this.player.y - this.logical_grid_top;
+				this.createNewRow();
+				dy = this.player.y - this.logicalGridTop;
 			}
 		}
 		
-		for (i = 0; i < this.sprites.length; ++i) {
-			sprite = this.sprites[i];
-			sprite.update(this);
-		}
-		
+		this.player.update(this);
 	}
 	
-	function render(imgLib) {
-		view_top = $floor(this.player.y - 350);
+	function render() {
+		view_top = floor(this.player.y - 350);
 		view_bottom = view_top + 600;
 		
-		
-		diff = view_top - this.logical_grid_top;
-		start_row = $floor(diff / 40.0);
-		//$print('start_row: ' + start_row);
+		diff = view_top - this.logicalGridTop;
+		start_row = floor(diff / 40.0);
 		if (start_row < 0) start_row = 0;
 		
-		draw_at_y = $floor(40 * start_row + this.logical_grid_top - view_top);
+		draw_at_y = floor(40 * start_row + this.logicalGridTop - view_top);
 		
-		lava_y = $floor(this.lava_level - view_top);
+		lava_y = floor(this.lavaLevel - view_top);
 		
-		//$print('view top: ' + view_top + ', draw at y: '+ draw_at_y);
 		row_y = start_row;
 		rc = this.counter / 4;
 		for (y = 0; y < 16; ++y) {
 			if (draw_at_y > lava_y) break;
 			for (x = 0; x < 20; ++x) {
 				t = this.grid[y + start_row][x];
-				t.render(x * 40, draw_at_y, imgLib);
+				t.render(x * 40, draw_at_y);
 			}
 			draw_at_y += 40;
 			row_y++;
 		}
 		
-		for (i = 0; i < this.sprites.length; ++i) {
-			this.sprites[i].render(view_top, imgLib.images);
-		}
+		this.player.render(view_top);
 		
-		lava_y = this.lava_level - view_top;
-		//$print('lava: ' + lava_y);
+		lava_y = this.lavaLevel - view_top;
 		first_row = true;
 		for (y = lava_y; y < 600; y += 40) {
 			for (x = 0; x < 800; x += 40) {
 				if (first_row) {
-					img = imgLib.images['tiles/lava_upper_' + ((rc % 4) + 1)];
+					img = ImageLibrary.get('tiles/lava_upper_' + (rc % 4 + 1) + '.png');
 				} else {
-					img = imgLib.images['tiles/lava_lower'];
+					img = ImageLibrary.get('tiles/lava_lower.png');
 				}
-				
-				$blit_image(img, x, y);
+				img.draw(x, y);
 			}
 			first_row = false;
 		}

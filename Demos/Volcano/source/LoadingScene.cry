@@ -1,29 +1,38 @@
-class LoadingScene : SceneBase {
-	constructor(imageLibrary) : base() {
-		this.imageLibrary = imageLibrary;
-		this.progress = 0.0;
+import GFX;
+import Math;
+
+class LoadingScene : AbstractScene {
+
+	field progress = 0.0;
+	field loader;
+	
+	constructor() : base() {
+		this.loader = ImageSheetLoader.fromIds('everything');
 	}
 	
-	function process_input(events) {
-		
+	function processInput(events) {
+		// nothing to do.
 	}
 	
 	function update() {
-		this.imageLibrary.update();
-		if (this.imageLibrary.done) {
-			this.next = new TitleScene();
-			this.imageLibrary.finalize();
+		if (this.loader.isDone()) {
+			this.switchScene(new TitleScene());
 		}
+		this.progress = this.loader.getProgress();
 	}
 	
-	// because this scene is shown while initializing the 
-	// image library, it can't be used here.
-	function render(imageLib) {
-		x = 10;
-		y = 10;
-		width = 400;
+	function render() {
+		// Draw a progress bar.
 		height = 20;
-		$draw_rectangle(null, x, y, width, height, 128, 128, 128, 255);
+		width = WIDTH * 3 / 4;
+		x = WIDTH / 2 - width / 2;
+		y = HEIGHT / 2 - height / 2;
 		
+		// dark gray background
+		GFX.Draw.rectangle(x, y, width, height, 40, 40, 40);
+		
+		// yellow progress
+		width = floor(width * this.progress);
+		GFX.Draw.rectangle(x, y, width, height, 255, 255, 0);
 	}
 }

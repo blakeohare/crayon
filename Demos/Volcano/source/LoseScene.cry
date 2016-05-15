@@ -1,26 +1,31 @@
-class LoseScene : SceneBase {
+import Math;
+
+class LoseScene : AbstractScene {
+	
+	field counter = 0;
+	field meters;
+
 	constructor(meters) : base() {
-		this.counter = 0;
-		if (meters < 0) meters = 0;
-		this.meters = '' + meters;
+		this.meters = max(0, meters);
 	}
 	
-	function process_input(events) {
+	function processInput(events) {
 		proceed = false;
-		for (i = 0; i < events.length; ++i) {
-			ev = events[i];
-			type = ev[0];
-			if (type == 'mouseleftdown') {
-				proceed = true;
-			} else if (type == 'key' && this.counter > 15) {
-				if (ev[1] && (ev[2] == 'space' || ev[2] == 'enter')) {
+		for (event : events) {
+			switch (event.type) {
+				case EventType.MOUSE_LEFT_DOWN:
 					proceed = true;
-				}
+					break;
+				case EventType.KEY_DOWN:
+					if (event.key == KeyboardKey.SPACE || event.key == KeyboardKey.ENTER) {
+						proceed = true;
+					}
+					break;
 			}
 		}
 		
 		if (proceed) {
-			this.next = new PlayScene();
+			this.switchScene(new PlayScene());
 		}
 	}
 	
@@ -28,13 +33,15 @@ class LoseScene : SceneBase {
 		this.counter++;
 	}
 	
-	function render(imgLib) {
-		$blit_image(imgLib.images['menus/you_ascended'], 0, 0);
+	function render() {
+		ImageLibrary.get('menus/you_ascended.png').draw(0, 0);
 		
-		for (i = 0; i < this.meters.length; ++i) {
-			$blit_image(imgLib.images['menus/num' + this.meters[i]], i * 74 + 100, 150);
+		x = 100;
+		for (char : this.meters + '') {
+			ImageLibrary.get('menus/num' + char + '.png').draw(x, 150);
+			x += 74;
 		}
 		
-		$blit_image(imgLib.images['menus/meters'], 0, 300);
+		ImageLibrary.get('menus/meters.png').draw(0, 300);
 	}
 }

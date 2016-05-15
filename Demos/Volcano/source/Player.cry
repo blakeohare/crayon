@@ -1,0 +1,84 @@
+import Math;
+
+const GRAVITY = 1.5;
+
+class Player {
+	
+	// These X/Y coordinates represent the center-bottom point of the sprite.
+	field x;
+	field y;
+	
+	field dx = 0.0;
+	field dy = 0.0;
+	field vy = 0.0;
+	field ground;
+	
+	field counter = 0;
+	field lastdir = 'right';
+	field moving = false;
+	
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	function update(playScene) {
+		this.counter++;
+		
+		grid = playScene.grid;
+		grid_top = playScene.logicalGridTop;
+		
+		// first, do horizontal movement
+		new_x = this.x + this.dx;
+		this.moving = false;
+		if (this.dx != 0) {
+			this.moving = true;
+			this.lastdir = this.dx < 0 ? 'left' : 'right';
+		}
+		current_tile = playScene.getTile(this.x, this.y - 1);
+		tile = playScene.getTile(new_x, this.y - 1);
+		if (tile == null || tile.passable) {
+			this.x = new_x;
+		}
+		
+		if (current_tile != tile) {
+			this.ground = null;
+		}
+		
+		// now do vertical movement
+		if (this.ground != null && this.vy < 0) {
+			this.ground = null;
+		}
+		
+		if (this.ground == null) {
+			this.vy += GRAVITY;
+			new_y = this.y + this.vy;
+			new_tile = playScene.getTile(this.x, new_y);
+			if (new_tile == null || new_tile.passable) {
+				this.y = new_y;
+			} else if (this.vy < 0) {
+				this.y = new_tile.get_y() + 44;
+				this.vy = 0;
+			} else {
+				this.ground = new_tile;
+			}
+		}
+		
+		if (this.ground != null) {
+			this.vy = 0;
+			this.y = this.ground.getRow() * 40 + grid_top;
+		}
+		
+		this.dx = 0;
+		this.dy = 0;
+	}
+	
+	function render(view_top) {
+		x = floor(this.x) - 20;
+		y = floor(this.y - view_top) - 40;
+		c = (this.counter / 3) % 2 + 1;
+		if (!this.moving) c = 2;
+		if (this.ground == null) c = 'jump';
+		ImageLibrary.get('sprites/player_' + this.lastdir + '_' + c + '.png').draw(x, y);
+	}
+}
