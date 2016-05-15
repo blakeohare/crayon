@@ -13,4 +13,13 @@
 		// performance of this function may potentially be important to the user.
 		return $$lib_random_random_bool();
 	}
+
+	/*
+		Returns a boolean that's weighted
+		2 args: n in d chance that true is returned
+		1 arg: a float from 0 to 1 that indicates the ratio of trues.
+	*/
+	function randomChance(n, d = 1) {
+		return $$lib_random_random_float() * d < n;
+	}
 }
