@@ -10,6 +10,10 @@
 	</spritesheets>
 	
 	<!-- Targets -->
+	<target name="android">
+		<platform>csharp-android</platform>
+	</target>
+	
 	<target name="js_local">
 		<platform>js</platform>
 	</target>

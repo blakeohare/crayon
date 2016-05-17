@@ -1,0 +1,67 @@
+﻿using System;
+using OpenTK;
+using OpenTK.Graphics.ES11;
+using OpenTK.Platform.Android;
+using Android.Content;
+using Android.Util;
+
+namespace %%%PROJECT_ID%%%
+{
+    public class GLView1 : AndroidGameView
+    {
+        public GLView1(Context context) : base(context) { }
+        
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            Run();
+        }
+        
+        protected override void CreateFrameBuffer()
+        {
+            try
+            {
+                Log.Verbose("GLCube", "Loading with default settings");
+                
+                base.CreateFrameBuffer();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Verbose("GLCube", "{0}", ex);
+            }
+            
+            try
+            {
+                Log.Verbose("GLCube", "Loading with custom Android settings (low mode)");
+                GraphicsMode = new AndroidGraphicsMode(0, 0, 0, 0, 0, false);
+                
+                base.CreateFrameBuffer();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Verbose("GLCube", "{0}", ex);
+            }
+            throw new Exception("Can't load egl, aborting");
+        }
+        
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+
+            GL.ClearColor(0f, 0f, 0f, 1f);
+            GL.Clear((uint)All.ColorBufferBit);
+
+            GL.MatrixMode(All.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(0f, 200f, 300f, 0f, -1.0f, 1.0f);
+
+            GL.MatrixMode(All.Modelview);
+            
+            // Interpret the user render events here.
+
+            SwapBuffers();
+        }
+    }
+}

@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace %%%PROJECT_ID%%%
+{
+	public static class CsxaTranslationHelper
+	{
+		public static void InitializeGameWithFps(double fps)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static List<PlatformRelayObject> GetEvents()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static object ImagetteFlushToNativeBitmap(Imagette imagette)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void InitializeScreen(int width, int height)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void SetTitle(string title)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void DownloadImage(string key, string url)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string IoFileReadText(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoFileWriteText(string path, string content, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string[] IoFilesInDirectory(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static bool IoPathExists(string path, bool directoriesOnly, bool checkCase, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoDeleteFile(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoCreateDirectory(string path)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string IoCurrentDirectory()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoDeleteDirectory(string path, bool isRecursive)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void MakeHttpRequestWithHandler(
+			HttpRequest request,
+			string method,
+			string url,
+			string body,
+			string userAgent,
+			string contentType,
+			string contentLength, 
+			List<string> filteredHeaderNames, 
+			List<string> filteredHeaderValues)
+		{
+			throw new NotImplementedException();
+		}
+	}
+}

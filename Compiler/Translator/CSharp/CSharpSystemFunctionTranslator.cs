@@ -10,11 +10,6 @@ namespace Crayon.Translator.CSharp
 	{
 		public CSharpSystemFunctionTranslator() : base() { }
 
-		protected override void TranslateAppDataRoot(List<string> output)
-		{
-			output.Add("TranslationHelper.AppDataRoot");
-		}
-
 		protected override void TranslateAsyncMessageQueuePump(List<string> output)
 		{
 			output.Add("AsyncMessageQueue.PumpMessages()");
@@ -198,15 +193,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-		{
-			output.Add("TranslationHelper.DownloadImageFromInternetTubes(");
-			this.Translator.TranslateExpression(output, key);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
 		protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
 		{
 			output.Add("System.Math.Pow(");
@@ -223,11 +209,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateGetEventsRawList(List<string> output)
-		{
-			output.Add("GameWindow.Instance.GetEvents()");
-		}
-
 		protected override void TranslateGetProgramData(List<string> output)
 		{
 			output.Add("TranslationHelper.ProgramData");
@@ -238,66 +219,16 @@ namespace Crayon.Translator.CSharp
 			output.Add("ResourceReader.ReadByteCodeFile()");
 		}
 
-		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
-		{
-			output.Add("TranslationHelper.MakeHttpRequestWithHandler(");
-			this.Translator.TranslateExpression(output, httpRequest);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, method);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, url);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, body);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, userAgent);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, contentType);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, contentLength);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, headerNameList);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, headerValueList);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
 		{
 			// C# loads resources synchronously.
 			throw new InvalidOperationException();
 		}
 
-		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-		{
-			// This is not used in the OpenTK platform because flipping is simply swapping texture mapping coordinates.
-			throw new NotImplementedException();
-		}
-
-		protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-		{
-			output.Add("TranslationHelper.ImagetteFlushToNativeBitmap(");
-			this.Translator.TranslateExpression(output, imagette);
-			output.Add(")");
-		}
-
 		protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
 		{
 			// C# loads resources synchronously.
 			throw new InvalidOperationException();
-		}
-
-		protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-		{
-			output.Add("((System.Drawing.Bitmap)");
-			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(").Height");
-		}
-
-		protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-		{
-			output.Add("((System.Drawing.Bitmap)");
-			this.Translator.TranslateExpression(output, bitmap);
-			output.Add(").Width");
 		}
 
 		protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
@@ -308,94 +239,10 @@ namespace Crayon.Translator.CSharp
 			if (!prefix) output.Add(op);
 		}
 
-		protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-		{
-			output.Add("GameWindow.FPS = ");
-			this.Translator.TranslateExpression(output, fps);
-		}
-
-		protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-		{
-			output.Add("GameWindow.InitializeScreen(");
-			this.Translator.TranslateExpression(output, gameWidth);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, gameHeight);
-			if (!(screenWidth is NullConstant))
-			{
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, screenWidth);
-				output.Add(", ");
-				this.Translator.TranslateExpression(output, screenHeight);
-			}
-			output.Add(")");
-		}
-
 		protected override void TranslateInt(List<string> output, Expression value)
 		{
 			output.Add("((int)");
 			this.Translator.TranslateExpression(output, value);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
-		{
-			output.Add("TranslationHelper.CreateDirectory(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoCurrentDirectory(List<string> output)
-		{
-			output.Add("System.IO.Directory.GetCurrentDirectory()");
-		}
-
-		protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
-		{
-			output.Add("TranslationHelper.DeleteDirectory(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, isRecursive);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
-		{
-			output.Add("TranslationHelper.DeleteFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
-		{
-			output.Add("TranslationHelper.DoesPathExist(");
-			this.Translator.TranslateExpression(output, canonicalizedPath);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, directoriesOnly);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, performCaseCheck);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
-		{
-			output.Add("TranslationHelper.ReadFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
-		{
-			output.Add("TranslationHelper.FilesInDirectory(");
-			this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
-			output.Add(")");
-		}
-
-		protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
-		{
-			output.Add("TranslationHelper.WriteFile(");
-			this.Translator.TranslateExpression(output, path);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, content);
 			output.Add(")");
 		}
 
@@ -671,13 +518,6 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("TranslationHelper.ProgramData = ");
 			this.Translator.TranslateExpression(output, programData);
-		}
-
-		protected override void TranslateSetTitle(List<string> output, Expression title)
-		{
-			output.Add("GameWindow.Instance.SetTitle(");
-			this.Translator.TranslateExpression(output, title);
-			output.Add(")");
 		}
 
 		protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)

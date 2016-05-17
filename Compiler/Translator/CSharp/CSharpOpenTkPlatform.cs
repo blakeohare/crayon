@@ -12,6 +12,12 @@ namespace Crayon.Translator.CSharp
 
 		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
 		{
+			replacements["PROJECT_FILE_EXTRAS"] = string.Join("\n", 
+				"<OutputType>WinExe</OutputType>",
+				"    <TargetFrameworkProfile>Client</TargetFrameworkProfile>",
+				"    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
+
+
 			replacements["EXTRA_DLLS"] = string.Join("\r\n", new string[] {
 				"    <Reference Include=\"OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL\">",
 				"      <SpecificVersion>False</SpecificVersion>",
@@ -28,7 +34,11 @@ namespace Crayon.Translator.CSharp
 			});
 
 			replacements["COPY_FILES"] = string.Join("\r\n", new string[] {
-				"    <None Include=\"DependencyLicenses.txt\">",
+                // TODO: This is the wrong place for this.
+                // But the Project file is going to be target-specific soon anyway, so it doesn't matter too much.
+                "    <EmbeddedResource Include=\"ByteCode.txt\" />",
+
+                "    <None Include=\"DependencyLicenses.txt\">",
 				"      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",
 				"    </None>",
 			});
@@ -42,24 +52,6 @@ namespace Crayon.Translator.CSharp
 			Dictionary<string, FileOutput> files,
 			Dictionary<string, string> replacements)
 		{
-			compileTargets.Add("GameWindow.cs");
-			files[projectId + "/GameWindow.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/GameWindowOpenTK.txt"),
-					replacements)
-			};
-
-			compileTargets.Add("GlUtil.cs");
-			files[projectId + "/GlUtil.cs"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/GlUtil.txt"),
-					replacements)
-			};
-
 			// TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
 			foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
 			{
@@ -75,6 +67,29 @@ namespace Crayon.Translator.CSharp
 				Type = FileOutputType.Text,
 				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/License.txt")
 			};
+
+            foreach (string filename in new string[] {
+                "GameWindow",
+                "GlUtil",
+                "Program",
+                "AssemblyInfo",
+                "ResourceReader",
+                "OpenTkTranslationHelper",
+
+                // TODO: only inject this when the Gamepad library is imported
+                // It'll require some reworking with the library code.
+                "GamepadTranslationHelper",
+            }) {
+                compileTargets.Add(filename + ".cs");
+                string target = projectId + "/" + (filename == "AssemblyInfo" ? "Properties/" : "") + filename + ".cs";
+                files[target] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = Constants.DoReplacements(
+                        Util.ReadFileInternally("Translator/CSharp/Project/OpenTk/" + filename + ".txt"),
+                        replacements)
+                };
+            }
 		}
 	}
 }

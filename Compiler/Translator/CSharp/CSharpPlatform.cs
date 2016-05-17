@@ -47,6 +47,7 @@ namespace Crayon.Translator.CSharp
 				{ "CURRENT_YEAR", DateTime.Now.Year.ToString() },
 				{ "COPYRIGHT", "©" },
 				{ "EXTRA_DLLS", "" },
+				{ "PROJECT_FILE_EXTRA", "" },
 			};
 			this.ApplyPlatformSpecificReplacements(replacements);
 
@@ -78,16 +79,9 @@ namespace Crayon.Translator.CSharp
 			{
 				{ "SolutionFile.txt", projectId + ".sln" },
 				{ "ProjectFile.txt", projectId + ".csproj" },
-				{ "ProgramCs.txt", "Program.cs" },
-				{ "AssemblyInfo.txt", "Properties/AssemblyInfo.cs" },
 				{ "JsonParser.txt", "JsonParser.cs" },
 				{ "TranslationHelper.txt", "TranslationHelper.cs" },
-				{ "ResourceReader.txt", "ResourceReader.cs" },
 				{ "AsyncMessageQueue.txt", "AsyncMessageQueue.cs" },
-
-				// TODO: only inject this when the Gamepad library is imported
-				// It'll require some reworking with the library code.
-				{ "GamepadTranslationHelper.txt", "GamepadTranslationHelper.cs" },
 			};
 
 			// Create a list of compiled C# files
@@ -100,7 +94,6 @@ namespace Crayon.Translator.CSharp
 					"using System;",
 					"using System.Collections.Generic;",
 					"using System.Linq;",
-					"using OpenTK.Graphics.OpenGL;",
 					"",
 					"namespace " + projectId,
 					"{",
@@ -115,9 +108,6 @@ namespace Crayon.Translator.CSharp
 
 			string crayonFooter = "}" + this.Translator.NL;
 			string crayonWrapperFooter = "\t}" + this.Translator.NL + crayonFooter;
-
-			// Add files for specific C# platform
-			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements);
 
 			string nl = this.Translator.NL;
 
@@ -199,7 +189,7 @@ namespace Crayon.Translator.CSharp
 
 			List<string> compileTargetCode = new List<string>();
 
-			compileTargetCode.Add("    <EmbeddedResource Include=\"ByteCode.txt\" />\r\n");
+			compileTargetCode.Add("    \r\n");
 			foreach (string embeddedResource in embeddedResources)
 			{
 				compileTargetCode.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
@@ -234,6 +224,9 @@ namespace Crayon.Translator.CSharp
 				Type = FileOutputType.Text,
 				TextContent = this.Context.ByteCodeString
 			};
+
+			// Add files for specific C# platform
+			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements);
 
 			return output;
 		}

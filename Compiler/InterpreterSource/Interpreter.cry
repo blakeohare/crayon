@@ -82,7 +82,6 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
 	@type('Array<object>') objArray1 = null;
-	@type('Image') image1 = null;
 	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
@@ -128,6 +127,12 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<Value>') funcArgs = ProgramData$p.funcArgs;
 
 	@type('int') pc = StackFrame$stack.pc;
+
+	// TODO: if (platform == C#) {
+	if (object2 == null || intList1 == null || objArray1 == null)
+	{
+		// Eliminate compilation warnings when there are no imports
+	}
 
 	while (true) {
 		row = $_array_get(args, pc);

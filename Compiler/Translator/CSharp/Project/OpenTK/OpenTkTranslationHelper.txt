@@ -1,0 +1,353 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal static class OpenTkTranslationHelper
+	{
+		private static string appDataRoot = null;
+		public static string AppDataRoot
+		{
+			get
+			{
+				if (appDataRoot == null)
+				{
+					// TODO: test with Mono
+					appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "%%%PROJECT_ID%%%");
+					appDataRoot = appDataRoot.Replace('\\', '/');
+				}
+				return appDataRoot;
+			}
+		}
+
+		public static List<PlatformRelayObject> GetEvents()
+		{
+			return GameWindow.Instance.GetEvents();
+		}
+		
+		public static object ImagetteFlushToNativeBitmap(Imagette img)
+		{
+			System.Drawing.Bitmap target = new System.Drawing.Bitmap(img.width, img.height);
+			target.SetResolution(96, 96);
+			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
+			for (int i = img.nativeBitmaps.Count - 1; i >= 0; i--)
+			{
+				System.Drawing.Bitmap source = (System.Drawing.Bitmap)img.nativeBitmaps[i];
+				int x = img.xs[i];
+				int y = img.ys[i];
+				g.DrawImage(source, x, y);
+			}
+			g.Flush();
+			return target;
+		}
+
+		public static void MakeHttpRequestWithHandler(HttpRequest httpRequest, string method, string url, string body, string userAgent, string contentType, string contentLength, List<string> headerNames, List<string> headerValues)
+		{
+			System.ComponentModel.BackgroundWorker bgRequest = new System.ComponentModel.BackgroundWorker();
+			bgRequest.DoWork += (sender, e) =>
+			{
+				System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
+				request.Method = method;
+				request.UserAgent = userAgent;
+				for (int i = 0; i < headerNames.Count; ++i)
+				{
+					request.Headers.Add(headerNames[i], headerValues[i]);
+				}
+
+				if (body != null)
+				{
+					request.ContentLength = Convert.ToInt64(contentLength);
+					if (contentType != null)
+					{
+						request.ContentType = contentType;
+					}
+					System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
+					streamWriter.Write(body);
+					streamWriter.Flush();
+					streamWriter.Close();
+				}
+
+				System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
+				int statusCode = (int)response.StatusCode;
+				string status = statusCode + " " + response.StatusDescription;
+
+				System.IO.StreamReader streamReader = new System.IO.StreamReader(response.GetResponseStream());
+				string responseBody = streamReader.ReadToEnd();
+				streamReader.Close();
+
+				// Request is not necessarily executed in the main UI thread in all exported C# platforms, and so 
+				// BackgroundWorker's RunWorkerCompleted event may not get fired. This is why this AsyncMessageQueue
+				// thingamajigger is used instead.
+				AsyncMessageQueue.PushMessage(
+					%%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
+					httpRequest,
+					statusCode,
+					status,
+					responseBody,
+					null);
+			};
+			bgRequest.RunWorkerAsync();
+		}
+		
+		public static void DownloadImageFromInternetTubes(string key, string url)
+		{
+			System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();
+			bgWorker.DoWork += (sender, args) =>
+			{
+				System.Net.WebClient wc = new System.Net.WebClient();
+				try
+				{
+					byte[] imageBytes = wc.DownloadData(url);
+					System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(new System.IO.MemoryStream(imageBytes));
+					bmp.SetResolution(96, 96);
+					args.Result = bmp;
+				}
+				catch (Exception)
+				{
+					args.Result = null;
+				}
+			};
+			bgWorker.RunWorkerCompleted += (sender, args) =>
+			{
+				CrayonWrapper.v_imageDownloadCompletionHandler(key, args.Result);
+			};
+			bgWorker.RunWorkerAsync();
+		}
+
+		public static bool DoesPathExist(string path, bool directoriesOnly, bool checkCase)
+		{
+			// TODO: check the case.
+			if (System.IO.Directory.Exists(path))
+			{
+				return true;
+			}
+
+			if (!directoriesOnly && System.IO.File.Exists(path))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public static string[] FilesInDirectory(string path)
+		{
+			if (!path.Contains("\\") && path.Contains(":"))
+			{
+				path += "\\";
+			}
+			List<string> files = new List<string>();
+			files.AddRange(System.IO.Directory.GetFiles(path));
+			files.AddRange(System.IO.Directory.GetDirectories(path));
+			HashSet<string> output = new HashSet<string>(files);
+			return output
+				.Select<string, string>(
+					s => s.Substring((path.EndsWith("\\") ? 0 : 1) + path.Length))
+				.OrderBy(s => s)
+				.ToArray();
+		}
+
+		public static int WriteFile(string path, string contents)
+		{
+			try
+			{
+				System.IO.File.WriteAllText(path, contents);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return 1;
+			}
+			catch (System.IO.PathTooLongException)
+			{
+				return 2;
+			}
+			catch (System.IO.IOException)
+			{
+				return 3;
+			}
+			catch (Exception)
+			{
+				return 4;
+			}
+			return 0;
+		}
+
+		public static string ReadFile(string path)
+		{
+			try
+			{
+				return System.IO.File.ReadAllText(path);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		public static int CreateDirectory(string path)
+		{
+			try
+			{
+				System.IO.Directory.CreateDirectory(path);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+
+		public static int DeleteDirectory(string path, bool recursive)
+		{
+			try
+			{
+				System.IO.Directory.Delete(path, recursive);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (System.ArgumentException) { return %%%IO_ERROR_INVALID_PATH%%%; } // invalid path characters
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+
+		public static int DeleteFile(string path)
+		{
+			try
+			{
+				System.IO.File.Delete(path);
+				return %%%IO_ERROR_NONE%%%;
+			}
+			catch (System.ArgumentException) { return %%%IO_ERROR_INVALID_PATH%%%; } // invalid path characters
+			catch (System.IO.PathTooLongException) { return %%%IO_ERROR_PATH_TOO_LONG%%%; }
+			catch (System.IO.FileNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.IO.DirectoryNotFoundException) { return %%%IO_ERROR_DOES_NOT_EXIST%%%; }
+			catch (System.UnauthorizedAccessException) { return %%%IO_ERROR_READ_ONLY%%%; }
+			catch (System.IO.IOException) { return %%%IO_ERROR_UNKNOWN_ERROR%%%; }
+		}
+		
+		public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
+		{
+			IList<byte> soundBytesList = ResourceReader.ReadBytes(path, true);
+			if (soundBytesList == null) return null;
+			byte[] soundBytes = soundBytesList.ToArray();
+			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
+		}
+
+		public static void AudioPlay(object nativeSound)
+		{
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
+			try
+			{
+				sdlSound.Play();
+			}
+			catch (SdlDotNet.Core.SdlException)
+			{
+				// No free channels or other hardware exceptions should just fail silently (no pun intended).
+			}
+		}
+
+		public static void AudioStop(object nativeSound)
+		{
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
+			try
+			{
+				sdlSound.Stop();
+			}
+			catch (SdlDotNet.Core.SdlException) { }
+		}
+
+		public static void AudioSoundStop(object rawChannel, object rawResource, int resourceId, bool isActivelyPlaying, bool isHardStop)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			SdlDotNet.Audio.Sound resource = (SdlDotNet.Audio.Sound)rawResource;
+
+			if (isHardStop)
+			{
+				channel.Stop();
+			}
+			else if (isActivelyPlaying)
+			{
+				channel.Pause();
+			}
+		}
+
+		public static int AudioSoundGetState(object rawChannel, object rawResource, int resourceId)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			if (channel.IsPlaying())
+			{
+				if (channel.IsPaused())
+				{
+					return 2;
+				}
+				return 1;
+			}
+			return 3;
+		}
+
+		public static void AudioSoundResume(object rawChannel, object rawResource, double volume, double pan)
+		{
+			SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+			if (channel.IsPaused())
+			{
+				channel.Resume();
+				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+			}
+		}
+
+		public static object AudioSoundPlay(object rawRes, double volume, double pan)
+		{
+			SdlDotNet.Audio.Sound sfx = (SdlDotNet.Audio.Sound)rawRes;
+			try
+			{
+				SdlDotNet.Audio.Channel channel = sfx.Play();
+				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+				return channel;
+			}
+			catch (SdlDotNet.Core.SdlException)
+			{
+				return null;
+			}
+		}
+
+		private static void AudioApplyVolumeAndPan(SdlDotNet.Audio.Channel channel, double volume, double pan)
+		{
+			channel.Volume = (int)(255 * volume);
+			// TODO: apply pan using channel.SetPanning(left, right);
+		}
+
+		public static bool MusicSetVolume(double ratio)
+		{
+			SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
+			return true;
+		}
+
+		public static void AudioMusicPlay(object nativeMusicObject, bool loop)
+		{
+			SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
+			if (loop)
+			{
+				music.Play(loop);
+			}
+			else
+			{
+				music.Play(1);
+			}
+		}
+
+		public static object MusicLoadResource(string path)
+		{
+			byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
+			if (musicData == null) return null;
+			return new SdlDotNet.Audio.Music(musicData);
+		}
+
+		public static bool AudioMusicIsPlaying()
+		{
+			return SdlDotNet.Audio.MusicPlayer.IsPlaying;
+		}
+
+	}
+}

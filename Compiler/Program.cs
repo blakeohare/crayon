@@ -27,6 +27,7 @@ namespace Crayon
 			"     Platform choices:",
 			//"        android          Java Project for Android",
 			"        csopengl         C# Project for Desktop (uses OpenTK)",
+			"        csharp-android   C# Project for Android (uses Xamarin/OpenGL ES)",
 			//"        cswindowsphone   C# Project for Windows Phone",
 			//"        cswinforms       C# Project for Desktop (uses WinForms)",
 			"        java             Java Project for Desktop (uses AWT)",
@@ -87,6 +88,7 @@ namespace Crayon
 			{
 				case "android": return new Crayon.Translator.Java.JavaAndroidPlatform();
 				case "cwin": return new Crayon.Translator.COpenGL.COpenGLPlatform();
+				case "csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
 				case "csopengl": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
 				case "java": return new Crayon.Translator.Java.JavaAwtPlatform();
 				case "js": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);

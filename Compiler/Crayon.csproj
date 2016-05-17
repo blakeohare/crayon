@@ -155,6 +155,9 @@
     <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
     <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
     <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinAndroidOpenGlTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinAndroidPlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinAndroidSystemFunctionTranslator.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptMinifier.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
     <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
@@ -199,24 +202,41 @@
   <ItemGroup>
     <EmbeddedResource Include="Translator\CSharp\Project\ProjectFile.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ProgramCs.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowOpenTK.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\JsonParser.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\GameWindowWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\OpenTK.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
+  </ItemGroup>
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GlUtil.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GameWindow.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GamepadTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\ResourceReader.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\AssemblyInfo.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\OpenTkTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\Program.txt" />
+    <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\AssemblyInfo.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\CsxaGlRenderer.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\CsxaTranslationHelper.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\GlView1.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Icon.png" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Main.axml.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\MainActivity.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ResourceDesigner.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ResourceReader.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Strings.xml.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\COpenGL\Project\Header.c" />
