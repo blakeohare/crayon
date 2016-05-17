@@ -215,6 +215,7 @@
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
     <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
   </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GlUtil.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GameWindow.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GamepadTranslationHelper.txt" />
@@ -222,7 +223,6 @@
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\AssemblyInfo.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\OpenTkTranslationHelper.txt" />
     <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\Program.txt" />
-    <ItemGroup>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\AssemblyInfo.txt" />
