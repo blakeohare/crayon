@@ -46,6 +46,16 @@ namespace Crayon.Translator.CSharp
 
 		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries) { }
 
+        public override void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files)
+        {
+            FileOutput openGlRenderer = files[projectId + "/OpenGlPipeline.cs"];
+            openGlRenderer.TextContent = openGlRenderer.TextContent.Replace(
+                // This is quite silly.
+                // Ultimately the OpenGL stuff will be pulled out as a static file resource and this will be a non-issue.
+                "using System.Linq;",
+                "using System.Linq;\r\nusing OpenTK.Graphics.OpenGL;");
+        }
+
 		public override void PlatformSpecificFiles(
 			string projectId,
 			List<string> compileTargets,
@@ -86,7 +96,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadFileInternally("Translator/CSharp/Project/OpenTk/" + filename + ".txt"),
+                        Util.ReadFileInternally("Translator/CSharp/Project/OpenTK/" + filename + ".txt"),
                         replacements)
                 };
             }

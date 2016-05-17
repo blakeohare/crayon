@@ -67,7 +67,7 @@ namespace Crayon.Translator.CSharp
 		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
 		{
 			// same as playing a file directly since OpenTK deals directly with native loaded resources instead of files.
-			output.Add("TranslationHelper.AudioMusicPlay(");
+			output.Add("OpenTkTranslationHelper.AudioMusicPlay(");
 			this.Translator.TranslateExpression(output, nativeResource);
 			output.Add(", ");
 			this.Translator.TranslateExpression(output, isLoop);
@@ -279,7 +279,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
         {
-            output.Add("TranslationHelper.CreateDirectory(");
+            output.Add("OpenTkTranslationHelper.CreateDirectory(");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
@@ -291,7 +291,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
         {
-            output.Add("TranslationHelper.DeleteDirectory(");
+            output.Add("OpenTkTranslationHelper.DeleteDirectory(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isRecursive);
@@ -300,14 +300,14 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
         {
-            output.Add("TranslationHelper.DeleteFile(");
+            output.Add("OpenTkTranslationHelper.DeleteFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
 
         protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
         {
-            output.Add("TranslationHelper.DoesPathExist(");
+            output.Add("OpenTkTranslationHelper.DoesPathExist(");
             this.Translator.TranslateExpression(output, canonicalizedPath);
             output.Add(", ");
             this.Translator.TranslateExpression(output, directoriesOnly);
@@ -318,21 +318,21 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
         {
-            output.Add("TranslationHelper.ReadFile(");
+            output.Add("OpenTkTranslationHelper.ReadFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
 
         protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
         {
-            output.Add("TranslationHelper.FilesInDirectory(");
+            output.Add("OpenTkTranslationHelper.FilesInDirectory(");
             this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
             output.Add(")");
         }
 
         protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
         {
-            output.Add("TranslationHelper.WriteFile(");
+            output.Add("OpenTkTranslationHelper.WriteFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, content);

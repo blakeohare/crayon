@@ -228,7 +228,9 @@ namespace Crayon.Translator.CSharp
 			// Add files for specific C# platform
 			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements);
 
-			return output;
+            this.ApplyPlatformSpecificOverrides(projectId, output);
+            
+            return output;
 		}
 
 		private List<string> GetEmbeddedResources(string projectId, Dictionary<string, FileOutput> output, List<string> filesToCopyOver)
@@ -283,5 +285,7 @@ namespace Crayon.Translator.CSharp
 			}
 			return output;
 		}
-	}
+
+        public virtual void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files) { }
+    }
 }

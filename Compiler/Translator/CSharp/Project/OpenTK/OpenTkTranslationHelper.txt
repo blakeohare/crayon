@@ -293,7 +293,7 @@ namespace %%%PROJECT_ID%%%
 			if (channel.IsPaused())
 			{
 				channel.Resume();
-				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+				OpenTkTranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace %%%PROJECT_ID%%%
 			try
 			{
 				SdlDotNet.Audio.Channel channel = sfx.Play();
-				TranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+				OpenTkTranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
 				return channel;
 			}
 			catch (SdlDotNet.Core.SdlException)
