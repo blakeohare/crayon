@@ -10,15 +10,15 @@ namespace %%%PROJECT_ID%%%
     public class GlView1 : AndroidGameView
     {
         public GlView1(Context context)
-			: base(context)
-		{
-			LogicalWidth = 200;
-			LogicalHeight = 350;
+            : base(context)
+        {
+            LogicalWidth = 200;
+            LogicalHeight = 350;
             LogicalViewInitialized = false;
-		}
-        
-		public static int LogicalWidth { get; set; }
-		public static int LogicalHeight { get; set; }
+        }
+
+        public static int LogicalWidth { get; set; }
+        public static int LogicalHeight { get; set; }
         public static bool LogicalViewInitialized { get; set; }
 
         protected override void OnLoad(EventArgs e)
@@ -26,13 +26,13 @@ namespace %%%PROJECT_ID%%%
             base.OnLoad(e);
             Run();
         }
-        
+
         protected override void CreateFrameBuffer()
         {
             try
             {
                 Log.Verbose("GLCube", "Loading with default settings");
-                
+
                 base.CreateFrameBuffer();
                 return;
             }
@@ -40,12 +40,12 @@ namespace %%%PROJECT_ID%%%
             {
                 Log.Verbose("GLCube", "{0}", ex);
             }
-            
+
             try
             {
                 Log.Verbose("GLCube", "Loading with custom Android settings (low mode)");
                 GraphicsMode = new AndroidGraphicsMode(0, 0, 0, 0, 0, false);
-                
+
                 base.CreateFrameBuffer();
                 return;
             }
@@ -55,32 +55,248 @@ namespace %%%PROJECT_ID%%%
             }
             throw new Exception("Can't load egl, aborting");
         }
-        
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-			
+
             if (!CrayonWrapper.v_runTick())
             {
-				// TODO: force exit app here.
+                // TODO: force exit app here.
             }
 
             GL.ClearColor(0f, 0f, 0f, 1f);
             GL.Clear((uint)All.ColorBufferBit);
+            GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
+            GL.Enable(All.Blend);
 
             GL.MatrixMode(All.Projection);
             GL.LoadIdentity();
             GL.Ortho(0f, GlView1.LogicalWidth * 1f, GlView1.LogicalHeight * 1f, 0f, -1.0f, 1.0f);
 
             GL.MatrixMode(All.Modelview);
-            
-			if (LogicalViewInitialized)
-			{
-				// Interpret the user render events here.
 
-			}
-            
+            if (LogicalViewInitialized)
+            {
+                this.RenderEvents(
+                    CrayonWrapper.v_GL_DATA, CrayonWrapper.v_GL_VIRTUAL_SIZE, CrayonWrapper.v_GL_IMAGES,
+                    GlView1.LogicalWidth, GlView1.LogicalHeight);
+            }
+
             SwapBuffers();
+        }
+
+        private static float[] squareVertices = new float[8];
+        private static float[] textureCoords = new float[8];
+        private static byte[] colors = new byte[16];
+
+        private int LoadTexture(Android.Graphics.Bitmap bitmap)
+        {
+            int[] intPtr = new int[1];
+            GL.GenTextures(1, intPtr);
+            int textureId = intPtr[0];
+            GL.BindTexture(All.Texture2D, textureId);
+
+            // setup texture parameters
+            GL.TexParameterx(All.Texture2D, All.TextureMagFilter, (int)All.Linear);
+            GL.TexParameterx(All.Texture2D, All.TextureMinFilter, (int)All.Linear);
+            GL.TexParameterx(All.Texture2D, All.TextureWrapS, (int)All.ClampToEdge);
+            GL.TexParameterx(All.Texture2D, All.TextureWrapT, (int)All.ClampToEdge);
+
+            Android.Opengl.GLUtils.TexImage2D((int)All.Texture2D, 0, bitmap, 0);
+
+            return textureId;
+        }
+
+        private void RenderEvents(
+            int[] commands,
+            int commandsLength,
+            Image[] images,
+            int screenWidth,
+            int screenHeight)
+        {
+            float left = 0;
+            float top = 0;
+            float bottom = 0;
+            float right = 0;
+
+            int targetX, targetY, sourceX, sourceY, targetWidth, targetHeight, sourceWidth, sourceHeight;
+            float textureWidth, textureHeight, textureLeft, textureTop, textureRight, textureBottom;
+
+            Image image;
+            int imageIndex = 0;
+            int imageWidth, imageHeight;
+            CompositeImage compositeImage;
+
+            byte red, green, blue, alpha;
+            int j;
+
+            for (int i = 0; i < commandsLength; i += 16)
+            {
+                switch (commands[i])
+                {
+                    case 1:
+                        // Render rectangle
+                        left = commands[i | 1];
+                        top = commands[i | 2];
+                        right = left + commands[i | 3];
+                        bottom = top + commands[i | 4];
+
+                        squareVertices[0] = left;
+                        squareVertices[1] = top;
+                        squareVertices[2] = left;
+                        squareVertices[3] = bottom;
+                        squareVertices[4] = right;
+                        squareVertices[5] = top;
+                        squareVertices[6] = right;
+                        squareVertices[7] = bottom;
+
+                        red = (byte)(commands[i | 5] & 255);
+                        green = (byte)(commands[i | 6] & 255);
+                        blue = (byte)(commands[i | 7] & 255);
+                        alpha = (byte)(commands[i | 8] & 255);
+                        for (j = 0; j < 16; j += 4)
+                        {
+                            colors[j | 0] = red;
+                            colors[j | 1] = green;
+                            colors[j | 2] = blue;
+                            colors[j | 3] = alpha;
+                        }
+
+                        GL.Disable(All.Texture2D);
+                        GL.VertexPointer(2, All.Float, 0, squareVertices);
+                        GL.EnableClientState(All.VertexArray);
+                        GL.DisableClientState(All.TextureCoordArray);
+                        GL.ColorPointer(4, All.UnsignedByte, 0, colors);
+                        GL.EnableClientState(All.ColorArray);
+                        GL.DrawArrays(All.TriangleStrip, 0, 4);
+
+                        break;
+
+                    case 2:
+                        // Render ellipse
+                        // TODO: actually implement this. Right now this is just copied code from rectangles.
+                        left = commands[i | 1];
+                        top = commands[i | 2];
+                        right = left + commands[i | 3];
+                        bottom = top + commands[i | 4];
+
+                        squareVertices[0] = left;
+                        squareVertices[1] = top;
+                        squareVertices[2] = left;
+                        squareVertices[3] = bottom;
+                        squareVertices[4] = right;
+                        squareVertices[5] = top;
+                        squareVertices[6] = right;
+                        squareVertices[7] = bottom;
+
+                        red = (byte)(commands[i | 5] & 255);
+                        green = (byte)(commands[i | 6] & 255);
+                        blue = (byte)(commands[i | 7] & 255);
+                        alpha = (byte)(commands[i | 8] & 255);
+                        for (j = 0; j < 16; j += 4)
+                        {
+                            colors[j | 0] = red;
+                            colors[j | 1] = green;
+                            colors[j | 2] = blue;
+                            colors[j | 3] = alpha;
+                        }
+
+                        GL.Disable(All.Texture2D);
+                        GL.VertexPointer(2, All.Float, 0, squareVertices);
+                        GL.EnableClientState(All.VertexArray);
+                        GL.DisableClientState(All.TextureCoordArray);
+                        GL.ColorPointer(4, All.UnsignedByte, 0, colors);
+                        GL.EnableClientState(All.ColorArray);
+                        GL.DrawArrays(All.TriangleStrip, 0, 4);
+
+                        break;
+
+                    case 3:
+                        // Render image
+                        image = images[imageIndex++];
+                        imageWidth = image.width;
+                        imageHeight = image.height;
+                        targetX = commands[i | 1];
+                        targetY = commands[i | 2];
+                        targetWidth = commands[i | 3];
+                        targetHeight = commands[i | 4];
+                        sourceX = commands[i | 5];
+                        sourceY = commands[i | 6];
+                        sourceWidth = commands[i | 7];
+                        sourceHeight = commands[i | 8];
+                        alpha = (byte)(commands[i | 9] & 255);
+
+                        left = targetX;
+                        right = targetX + targetWidth;
+                        top = targetY;
+                        bottom = targetY + targetHeight;
+
+                        if (targetX < screenWidth && targetY < screenHeight && bottom >= 0 && right >= 0)
+                        {
+                            textureWidth = image.textureRight - image.textureLeft;
+                            textureHeight = image.textureBottom - image.textureTop;
+
+                            textureLeft = image.textureLeft + textureWidth * sourceX / image.width;
+                            textureTop = image.textureTop + textureHeight * sourceY / image.height;
+                            textureRight = textureLeft + textureWidth * sourceWidth / image.width;
+                            textureBottom = textureTop + textureHeight * sourceHeight / image.height;
+                            compositeImage = image.compositeResource;
+                            if (!compositeImage.loaded)
+                            {
+                                compositeImage.glTextureId = LoadTexture((Android.Graphics.Bitmap)compositeImage.nativeBitmap);
+                                compositeImage.loaded = true;
+                            }
+
+                            squareVertices[0] = left;
+                            squareVertices[1] = top;
+                            squareVertices[2] = left;
+                            squareVertices[3] = bottom;
+                            squareVertices[4] = right;
+                            squareVertices[5] = top;
+                            squareVertices[6] = right;
+                            squareVertices[7] = bottom;
+
+                            textureCoords[0] = textureLeft;
+                            textureCoords[1] = textureTop;
+                            textureCoords[2] = textureLeft;
+                            textureCoords[3] = textureBottom;
+                            textureCoords[4] = textureRight;
+                            textureCoords[5] = textureTop;
+                            textureCoords[6] = textureRight;
+                            textureCoords[7] = textureBottom;
+
+                            GL.Enable(All.Blend);
+                            GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
+                            GL.Enable(All.Texture2D);
+                            GL.BindTexture(All.Texture2D, compositeImage.glTextureId);
+                            GL.EnableClientState(All.VertexArray);
+                            GL.EnableClientState(All.TextureCoordArray);
+                            GL.DisableClientState(All.ColorArray);
+                            GL.VertexPointer(2, All.Float, 0, squareVertices);
+                            GL.TexCoordPointer(2, All.Float, 0, textureCoords);
+                            GL.DrawArrays(All.TriangleStrip, 0, 4);
+                            GL.Finish();
+                        }
+                        break;
+
+                    case 4:
+                        //throw new NotImplementedException("Render image rotated");
+                        break;
+
+                    case 5:
+                        //throw new NotImplementedException("Render line");
+                        break;
+
+                    case 6:
+                        //throw new NotImplementedException("Render triangle");
+                        break;
+
+                    default:
+                        //throw new NotImplementedException("Unknown render command");
+                        break;
+                }
+            }
         }
     }
 }

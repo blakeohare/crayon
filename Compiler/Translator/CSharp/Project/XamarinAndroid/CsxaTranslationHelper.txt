@@ -18,7 +18,21 @@ namespace %%%PROJECT_ID%%%
 
 		public static object ImagetteFlushToNativeBitmap(Imagette imagette)
 		{
-			throw new NotImplementedException();
+            Android.Graphics.Bitmap output = Android.Graphics.Bitmap.CreateBitmap(
+                imagette.width,
+                imagette.height,
+                Android.Graphics.Bitmap.Config.Argb4444);
+
+            Android.Graphics.Canvas canvas = new Android.Graphics.Canvas(output);
+            int length = imagette.nativeBitmaps.Count;
+            for (int i = 0; i < length; ++i)
+            {
+                int x = imagette.xs[i];
+                int y = imagette.ys[i];
+                canvas.DrawBitmap((Android.Graphics.Bitmap)imagette.nativeBitmaps[i], x, y, null);
+            }
+
+            return output;
 		}
 
 		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight)
@@ -32,6 +46,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			GlView1.LogicalWidth = width;
 			GlView1.LogicalHeight = height;
+			GlView1.LogicalViewInitialized = true;
 		}
 
 		public static void SetTitle(string title)
@@ -41,47 +56,47 @@ namespace %%%PROJECT_ID%%%
 
 		public static void DownloadImage(string key, string url)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Download Image");
 		}
 
 		public static string IoFileReadText(string path, bool isUserData)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoFileReadText");
 		}
 
 		public static int IoFileWriteText(string path, string content, bool isUserData)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoFileWriteText");
 		}
 
 		public static string[] IoFilesInDirectory(string path, bool isUserData)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoFilesInDirectory");
 		}
 
 		public static bool IoPathExists(string path, bool directoriesOnly, bool checkCase, bool isUserData)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoPathExists");
 		}
 
 		public static int IoDeleteFile(string path, bool isUserData)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoDeleteFile");
 		}
 
 		public static int IoCreateDirectory(string path)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoCreateDirectory");
 		}
 
 		public static string IoCurrentDirectory()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoCurrentDirectory");
 		}
 
 		public static int IoDeleteDirectory(string path, bool isRecursive)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("IoDeleteDirectory");
 		}
 
 		public static void MakeHttpRequestWithHandler(
@@ -95,7 +110,7 @@ namespace %%%PROJECT_ID%%%
 			List<string> filteredHeaderNames, 
 			List<string> filteredHeaderValues)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("MakeHttpRequestWithHandler");
 		}
 	}
 }

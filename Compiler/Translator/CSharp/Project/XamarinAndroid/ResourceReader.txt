@@ -54,7 +54,8 @@ namespace %%%PROJECT_ID%%%
 
 		public static Android.Graphics.Bitmap ReadImageFile(string path, bool generatedImage)
 		{
-			throw new System.NotImplementedException();
+            byte[] imageFileBytes = ReadAsset(path);
+            return Android.Graphics.BitmapFactory.DecodeByteArray(imageFileBytes, 0, imageFileBytes.Length);
 		}
 	}
 }

@@ -159,6 +159,8 @@ enum IOErrors {
 	UNKNOWN_ERROR = %%%IO_ERROR_UNKNOWN_ERROR%%%,
 }
 
+// These enum values are duplicated in Xamarin Android's GlView1.cs
+// TODO: auto-replace
 enum OpenGlAction {
 	DRAW_RECTANGLE = 1,
 	DRAW_ELLIPSE = 2,
