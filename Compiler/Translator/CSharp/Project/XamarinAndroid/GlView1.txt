@@ -55,20 +55,26 @@ namespace %%%PROJECT_ID%%%
             }
             throw new Exception("Can't load egl, aborting");
         }
-
-        protected override void OnRenderFrame(FrameEventArgs e)
+		
+        protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            base.OnRenderFrame(e);
+            base.OnUpdateFrame(e);
 
             if (!CrayonWrapper.v_runTick())
             {
                 // TODO: force exit app here.
             }
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
 
             GL.ClearColor(0f, 0f, 0f, 1f);
             GL.Clear((uint)All.ColorBufferBit);
             GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
             GL.Enable(All.Blend);
+            GL.TexParameter(All.Texture2D, All.TextureMagFilter, (int)All.Nearest);
 
             GL.MatrixMode(All.Projection);
             GL.LoadIdentity();
@@ -82,6 +88,8 @@ namespace %%%PROJECT_ID%%%
                     CrayonWrapper.v_GL_DATA, CrayonWrapper.v_GL_VIRTUAL_SIZE, CrayonWrapper.v_GL_IMAGES,
                     GlView1.LogicalWidth, GlView1.LogicalHeight);
             }
+
+			GL.Finish();
 
             SwapBuffers();
         }
@@ -276,7 +284,6 @@ namespace %%%PROJECT_ID%%%
                             GL.VertexPointer(2, All.Float, 0, squareVertices);
                             GL.TexCoordPointer(2, All.Float, 0, textureCoords);
                             GL.DrawArrays(All.TriangleStrip, 0, 4);
-                            GL.Finish();
                         }
                         break;
 
