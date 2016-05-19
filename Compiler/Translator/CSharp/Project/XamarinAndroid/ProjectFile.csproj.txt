@@ -61,5 +61,9 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\ByteCode.txt" />
+	%%%ADDITIONAL_ANDROID_ASSETS%%%
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

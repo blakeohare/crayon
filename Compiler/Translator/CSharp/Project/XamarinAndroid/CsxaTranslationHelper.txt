@@ -7,12 +7,13 @@ namespace %%%PROJECT_ID%%%
 	{
 		public static void InitializeGameWithFps(double fps)
 		{
-			throw new NotImplementedException();
+            // FPS is ignored on Android
 		}
 
 		public static List<PlatformRelayObject> GetEvents()
 		{
-			throw new NotImplementedException();
+			// TODO: get events
+			return new List<PlatformRelayObject>();
 		}
 
 		public static object ImagetteFlushToNativeBitmap(Imagette imagette)
@@ -22,17 +23,20 @@ namespace %%%PROJECT_ID%%%
 
 		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight)
 		{
-			throw new NotImplementedException();
+			// As there is no "window", the screen width and height arguments are ignored.
+			// The view is simply stretched to the logical width and height.
+			InitializeScreen(width, height);
 		}
 
 		public static void InitializeScreen(int width, int height)
 		{
-			throw new NotImplementedException();
+			GlView1.LogicalWidth = width;
+			GlView1.LogicalHeight = height;
 		}
 
 		public static void SetTitle(string title)
 		{
-			throw new NotImplementedException();
+			// Nothing to do here.
 		}
 
 		public static void DownloadImage(string key, string url)

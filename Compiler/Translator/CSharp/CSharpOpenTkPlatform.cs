@@ -60,7 +60,8 @@ namespace Crayon.Translator.CSharp
 			string projectId,
 			List<string> compileTargets,
 			Dictionary<string, FileOutput> files,
-			Dictionary<string, string> replacements)
+			Dictionary<string, string> replacements,
+            SpriteSheetBuilder spriteSheet)
 		{
 			// TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
 			foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
@@ -77,6 +78,12 @@ namespace Crayon.Translator.CSharp
 				Type = FileOutputType.Text,
 				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/License.txt")
 			};
+
+            files[projectId + "/ByteCode.txt"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.Context.ByteCodeString
+            };
 
             foreach (string filename in new string[] {
                 "GameWindow",

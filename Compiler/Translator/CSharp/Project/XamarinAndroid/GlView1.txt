@@ -7,10 +7,20 @@ using Android.Util;
 
 namespace %%%PROJECT_ID%%%
 {
-    public class GLView1 : AndroidGameView
+    public class GlView1 : AndroidGameView
     {
-        public GLView1(Context context) : base(context) { }
+        public GlView1(Context context)
+			: base(context)
+		{
+			LogicalWidth = 200;
+			LogicalHeight = 350;
+            LogicalViewInitialized = false;
+		}
         
+		public static int LogicalWidth { get; set; }
+		public static int LogicalHeight { get; set; }
+        public static bool LogicalViewInitialized { get; set; }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -49,18 +59,27 @@ namespace %%%PROJECT_ID%%%
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+			
+            if (!CrayonWrapper.v_runTick())
+            {
+				// TODO: force exit app here.
+            }
 
             GL.ClearColor(0f, 0f, 0f, 1f);
             GL.Clear((uint)All.ColorBufferBit);
 
             GL.MatrixMode(All.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0f, 200f, 300f, 0f, -1.0f, 1.0f);
+            GL.Ortho(0f, GlView1.LogicalWidth * 1f, GlView1.LogicalHeight * 1f, 0f, -1.0f, 1.0f);
 
             GL.MatrixMode(All.Modelview);
             
-            // Interpret the user render events here.
+			if (LogicalViewInitialized)
+			{
+				// Interpret the user render events here.
 
+			}
+            
             SwapBuffers();
         }
     }

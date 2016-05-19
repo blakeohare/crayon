@@ -22,7 +22,8 @@ namespace Crayon.Translator.CSharp
 			string projectId,
 			List<string> compileTargets,
 			Dictionary<string, FileOutput> files,
-			Dictionary<string, string> replacements);
+			Dictionary<string, string> replacements,
+            SpriteSheetBuilder spriteSheet);
 
 		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
 		public abstract void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries);
@@ -219,14 +220,8 @@ namespace Crayon.Translator.CSharp
 				};
 			}
 
-			output[projectId + "/ByteCode.txt"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = this.Context.ByteCodeString
-			};
-
 			// Add files for specific C# platform
-			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements);
+			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements, spriteSheet);
 
             this.ApplyPlatformSpecificOverrides(projectId, output);
             

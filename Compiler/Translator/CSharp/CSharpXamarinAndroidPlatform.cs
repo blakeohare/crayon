@@ -6,8 +6,10 @@ using System.Text;
 namespace Crayon.Translator.CSharp
 {
 	class CSharpXamarinAndroidPlatform : CSharpPlatform
-	{
-		public CSharpXamarinAndroidPlatform() : base(new CSharpXamarinAndroidSystemFunctionTranslator(), 
+    {
+        public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/Assets/GeneratedFiles"; } }
+
+        public CSharpXamarinAndroidPlatform() : base(new CSharpXamarinAndroidSystemFunctionTranslator(), 
 			new CSharpXamarinAndroidOpenGlTranslator())
 		{
 
@@ -32,7 +34,22 @@ namespace Crayon.Translator.CSharp
 				@"    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>");
 		}
 
-		public override void PlatformSpecificFiles(string projectId, List<string> compileTargets, Dictionary<string, FileOutput> files, Dictionary<string, string> replacements)
+        public override void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files)
+        {
+            // Hack
+            foreach (string key in files.Keys)
+            {
+                if (key.StartsWith(projectId + "/GeneratedFiles/"))
+                {
+                    FileOutput file = files[key];
+                    string newKey = projectId + "/Assets" + key.Substring(projectId.Length);
+                    files.Remove(key);
+                    files.Add(newKey, file);
+                }
+            }
+        }
+
+        public override void PlatformSpecificFiles(string projectId, List<string> compileTargets, Dictionary<string, FileOutput> files, Dictionary<string, string> replacements, SpriteSheetBuilder spriteSheet)
         {
             files[projectId + ".sln"] = new FileOutput()
             {
@@ -41,6 +58,16 @@ namespace Crayon.Translator.CSharp
                     Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/SolutionFile.sln.txt"),
                     replacements)
             };
+            
+            List<string> additionalAndroidAssets = new List<string>();
+            foreach (string spriteSheetImage in spriteSheet.FinalPaths)
+            {
+                // TODO: need a better system of putting things in predefined destinations, rather than hacking it between states
+                // in this fashion.
+                string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
+                additionalAndroidAssets.Add("    <AndroidAsset Include=\"" + path + "\" />\r\n");
+            }
+            replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\n", additionalAndroidAssets);
 
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
 			{
@@ -79,6 +106,12 @@ namespace Crayon.Translator.CSharp
                 TextContent = Constants.DoReplacements(
                     Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/ResourceDesigner.txt"),
                     replacements),
+            };
+
+            files[projectId + "/Assets/ByteCode.txt"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.Context.ByteCodeString
             };
 
             foreach (string filename in new string[] {

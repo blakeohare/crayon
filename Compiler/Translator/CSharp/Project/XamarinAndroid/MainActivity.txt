@@ -14,29 +14,32 @@ namespace %%%PROJECT_ID%%%
         )]
     public class MainActivity : Activity
     {
-        GLView1 view;
+        private GlView1 view;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 			
+            ResourceReader.Assets = this.Assets;
 			string byteCode = ResourceReader.ReadTextResource("ByteCode.txt");
 
 			// Create our OpenGL view, and display it
-			view = new GLView1(this);
-            SetContentView(view);
+			this.view = new GlView1(this);
+            SetContentView(this.view);
+			
+            CrayonWrapper.v_main();
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            view.Pause();
+            this.view.Pause();
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            view.Resume();
+            this.view.Resume();
         }
     }
 }
