@@ -12,8 +12,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static List<PlatformRelayObject> GetEvents()
 		{
-			// TODO: get events
-			return new List<PlatformRelayObject>();
+            return GlView1.GetEvents();
 		}
 
 		public static object ImagetteFlushToNativeBitmap(Imagette imagette)

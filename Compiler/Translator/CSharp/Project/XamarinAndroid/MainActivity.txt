@@ -1,12 +1,14 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Content.PM;
+using Android.Views;
 
 namespace %%%PROJECT_ID%%%
 {
     [Activity(Label = "%%%PROJECT_ID%%%",
         MainLauncher = true,
         Icon = "@drawable/icon",
+        Theme = "@android:style/Theme.NoTitleBar",
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.KeyboardHidden
 #if __ANDROID_11__
 		,HardwareAccelerated=false
@@ -20,6 +22,9 @@ namespace %%%PROJECT_ID%%%
         {
             base.OnCreate(bundle);
 			
+            this.Window.AddFlags(WindowManagerFlags.Fullscreen);
+            this.Window.AddFlags(WindowManagerFlags.KeepScreenOn);
+            
             ResourceReader.Assets = this.Assets;
 			string byteCode = ResourceReader.ReadTextResource("ByteCode.txt");
 

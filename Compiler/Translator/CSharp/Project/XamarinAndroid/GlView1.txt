@@ -1,9 +1,12 @@
 ﻿using System;
 using OpenTK;
 using OpenTK.Graphics.ES11;
+
+using Android.Views;
 using OpenTK.Platform.Android;
 using Android.Content;
 using Android.Util;
+using System.Collections.Generic;
 
 namespace %%%PROJECT_ID%%%
 {
@@ -15,6 +18,41 @@ namespace %%%PROJECT_ID%%%
             LogicalWidth = 200;
             LogicalHeight = 350;
             LogicalViewInitialized = false;
+			
+            this.Touch += (sender, e) =>
+            {
+                this.ApplyTouchEvent(e.Event);
+            };
+        }
+		
+        private static List<PlatformRelayObject> events = new List<PlatformRelayObject>();
+
+        public static List<PlatformRelayObject> GetEvents()
+        {
+            List<PlatformRelayObject> output = new List<PlatformRelayObject>();
+            output.AddRange(events);
+            events.Clear();
+            return output;
+        }
+
+        public void ApplyTouchEvent(MotionEvent e)
+        {
+            int x = (int)(LogicalWidth * e.RawX / this.Width);
+            int y = (int)(LogicalHeight * e.RawY / this.Height);
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                case MotionEventActions.Up:
+                    events.Add(new PlatformRelayObject(
+                        e.Action == MotionEventActions.Down ? 33 : 34,
+                        x, y, 0, 0, null));
+                    break;
+                case MotionEventActions.Move:
+                    events.Add(new PlatformRelayObject(32, x, y, 0, 0, null));
+                    break;
+                default:
+                    break;
+            }
         }
 
         public static int LogicalWidth { get; set; }
@@ -24,6 +62,7 @@ namespace %%%PROJECT_ID%%%
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            
             Run();
         }
 
@@ -59,7 +98,9 @@ namespace %%%PROJECT_ID%%%
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-
+			
+            CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
+            CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
             if (!CrayonWrapper.v_runTick())
             {
                 // TODO: force exit app here.
@@ -135,6 +176,7 @@ namespace %%%PROJECT_ID%%%
             int imageIndex = 0;
             int imageWidth, imageHeight;
             CompositeImage compositeImage;
+			double angle = 0;
 
             byte red, green, blue, alpha;
             int j;
@@ -288,7 +330,30 @@ namespace %%%PROJECT_ID%%%
                         break;
 
                     case 4:
-                        //throw new NotImplementedException("Render image rotated");
+                        // Render image, rotated
+                        image = images[imageIndex++];
+                        targetX = commands[i | 1];
+                        targetY = commands[i | 2];
+                        targetWidth = commands[i | 3];
+                        targetHeight = commands[i | 4];
+                        angle = commands[i | 5] / 1000000.0;
+
+                        // ROFLHACK, overwrite the existing draw command with a non rotated version and then
+						// reset the counter back to the previous command.
+						// TODO: implement rotation for real.
+                        commands[i] = 3;
+                        commands[i | 1] = targetX - image.width / 2;
+                        commands[i | 2] = targetY - image.height / 2;
+                        commands[i | 3] = image.width;
+                        commands[i | 4] = image.height;
+                        commands[i | 5] = 0;
+                        commands[i | 6] = 0;
+                        commands[i | 7] = image.width;
+                        commands[i | 8] = image.height;
+                        commands[i | 9] = 255;
+                        i -= 16;
+						imageIndex--;
+
                         break;
 
                     case 5:
