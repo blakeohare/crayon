@@ -14,12 +14,27 @@ namespace %%%PROJECT_ID%%%
 		{
             return GlView1.GetEvents();
 		}
+		
+        private static int RoundUpToPowerOfTwo(int value)
+        {
+            if ((value & (value - 1)) == 0) return value;
+            int output = value;
+            while (value > 0)
+            {
+                value >>= 1;
+                output |= value;
+            }
+            return output + 1;
+        }
 
 		public static object ImagetteFlushToNativeBitmap(Imagette imagette)
 		{
+            int width = RoundUpToPowerOfTwo(imagette.width);
+            int height = RoundUpToPowerOfTwo(imagette.height);
+
             Android.Graphics.Bitmap output = Android.Graphics.Bitmap.CreateBitmap(
-                imagette.width,
-                imagette.height,
+                width,
+                height,
                 Android.Graphics.Bitmap.Config.Argb4444);
 
             Android.Graphics.Canvas canvas = new Android.Graphics.Canvas(output);
