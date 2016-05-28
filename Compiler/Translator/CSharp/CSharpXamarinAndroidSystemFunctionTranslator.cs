@@ -8,6 +8,11 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpXamarinAndroidSystemFunctionTranslator : CSharpSystemFunctionTranslator
     {
+        protected override void TranslateIsWindowsProgram(List<string> output)
+        {
+            output.Add("TranslationHelper.AlwaysFalse()");
+        }
+
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("CsxaTranslationHelper.ImagetteFlushToNativeBitmap(");
@@ -40,7 +45,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateAppDataRoot(List<string> output)
         {
-            output.Add("\"/\"");
+            output.Add("\".\"");
         }
 
         protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)

@@ -72,15 +72,56 @@ namespace %%%PROJECT_ID%%%
 		{
 			throw new NotImplementedException("Download Image");
 		}
+		
+        private static String PrefixUserDataFolder(string path)
+        {
+            return System.IO.Path.Combine(
+                System.Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                path);
+        }
 
-		public static string IoFileReadText(string path, bool isUserData)
-		{
-			throw new NotImplementedException("IoFileReadText");
-		}
+        public static string IoFileReadText(string path, bool isUserData)
+        {
+            try
+            {
+                return System.IO.File.ReadAllText(PrefixUserDataFolder(path));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
 		public static int IoFileWriteText(string path, string content, bool isUserData)
 		{
-			throw new NotImplementedException("IoFileWriteText");
+            if (isUserData)
+            {
+                try
+                {
+                    System.IO.File.WriteAllText(PrefixUserDataFolder(path), content);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return 1;
+                }
+                catch (System.IO.PathTooLongException)
+                {
+                    return 2;
+                }
+                catch (System.IO.IOException)
+                {
+                    return 3;
+                }
+                catch (Exception)
+                {
+                    return 4;
+                }
+                return 0;
+            }
+            else
+            {
+                throw new NotImplementedException("IoFileWriteText");
+            }
 		}
 
 		public static string[] IoFilesInDirectory(string path, bool isUserData)
@@ -90,7 +131,20 @@ namespace %%%PROJECT_ID%%%
 
 		public static bool IoPathExists(string path, bool directoriesOnly, bool checkCase, bool isUserData)
 		{
-			throw new NotImplementedException("IoPathExists");
+            if (isUserData)
+            {
+                path = PrefixUserDataFolder(path);
+                if (System.IO.Directory.Exists(path)) return true;
+                if (!directoriesOnly)
+                {
+                    if (System.IO.File.Exists(path)) return true;
+                }
+                return false;
+            }
+            else
+            {
+                throw new NotImplementedException("IoPathExists");
+            }
 		}
 
 		public static int IoDeleteFile(string path, bool isUserData)

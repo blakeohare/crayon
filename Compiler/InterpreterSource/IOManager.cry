@@ -4,7 +4,7 @@
 function @type('string') ioErrorToString(@type('int') errorCode) {
 	if (errorCode == IOErrors.NONE) return null;
 	if (errorCode == IOErrors.INVALID_PATH) return "Invalid path.";
-	if (errorCode == IOErrors.PATH_STEPS_ABOVE_DOMAIN) return "Too many parent directory references (..). Path makes reference above allowed root.";
+	if (errorCode == IOErrors.PATH_STEPS_ABOVE_DOMAIN) return "Path has too many parent directory references (..) and makes reference above allowed root.";
 	if (errorCode == IOErrors.DOES_NOT_EXIST) return "Path does not exist.";
 	if (errorCode == IOErrors.BAD_CASING) return "Path does not exist (paths are case sensitive).";
 	if (errorCode == IOErrors.NONEXISTENT_DRIVE) return "Path refers to a non-existent drive letter";
@@ -197,13 +197,15 @@ function @type('int') ioPathFixer(
 			if ($_string_startswith(fullPath, '../')) {
 				return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
 			}
-		} else if (!$_string_startswith(fullPath, $_app_data_root())) {
-			return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
-		} else if (!$_io_does_path_exist($_app_data_root(), true, false, isUserDataPath)) {
-			@type('string') appDataPath = $_app_data_root();
-			if (isWindows) appDataPath = $_string_replace(appDataPath, '/', '\\');
-			@type('int') err = $_io_create_directory(appDataPath);
-			if (err != IOErrors.NONE) return err;
+		} else if (!$_string_equals($_app_data_root(), ".")) {
+			if (!$_string_startswith(fullPath, $_app_data_root())) {
+				return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
+			} else if (!$_io_does_path_exist($_app_data_root(), true, false, isUserDataPath)) {
+				@type('string') appDataPath = $_app_data_root();
+				if (isWindows) appDataPath = $_string_replace(appDataPath, '/', '\\');
+				@type('int') err = $_io_create_directory(appDataPath);
+				if (err != IOErrors.NONE) return err;
+			}
 		}
 	}
 
