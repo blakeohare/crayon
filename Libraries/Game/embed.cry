@@ -103,6 +103,7 @@ namespace Game {
 	enum EventQuitType {
 		ALT_F4 = 0,
 		CLOSE_BUTTON = 1,
+		BACK_BUTTON = 2,
 	}
 
 	enum EventButton {

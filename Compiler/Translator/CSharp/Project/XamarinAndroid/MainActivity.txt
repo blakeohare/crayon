@@ -46,5 +46,10 @@ namespace %%%PROJECT_ID%%%
             base.OnResume();
             this.view.Resume();
         }
+
+        public override void OnBackPressed()
+        {
+            GlView1.InjectBackButtonEvent();
+        }
     }
 }
