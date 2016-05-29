@@ -27,8 +27,29 @@ namespace Crayon.Translator.CSharp
 
 		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
 		public abstract void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries);
+        
+        private static string GetGuid(string seed, string salt)
+        {
+            seed = seed ?? (DateTime.Now.Ticks.ToString() + new Random().NextDouble());
 
-		public override Dictionary<string, FileOutput> Package(
+            byte[] seedBytes = (seed + salt).ToCharArray().Select<char, byte>(c => (byte) c).ToArray();
+            byte[] hash = System.Security.Cryptography.SHA1.Create().ComputeHash(seedBytes);
+
+            List<string> output = new List<string>();
+            for (int i = 0; i < 16; ++i)
+            {
+                if (i == 4 || i == 6 || i == 8 || i == 10)
+                {
+                    output.Add("-");
+                }
+                char a = "0123456789ABCDEF"[hash[i] & 15];
+                char b = "0123456789ABCDEF"[hash[i] >> 4];
+                output.Add("" + a + b);
+            }
+            return string.Join("", output);
+        }
+
+        public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
 			string projectId,
 			Dictionary<string, Executable[]> finalCode,
@@ -37,12 +58,9 @@ namespace Crayon.Translator.CSharp
 			string inputFolder,
 			SpriteSheetBuilder spriteSheet)
 		{
-			string guid = Guid.NewGuid().ToString();
-			string guid2 = Guid.NewGuid().ToString();
-
 			Dictionary<string, string> replacements = new Dictionary<string, string>() {
-				{ "PROJECT_GUID", guid },
-				{ "ASSEMBLY_GUID", guid2 },
+				{ "PROJECT_GUID", GetGuid(buildContext.GuidSeed, "@@project").ToUpper() },
+				{ "ASSEMBLY_GUID", GetGuid(buildContext.GuidSeed, "@@assembly").ToLower() },
 				{ "PROJECT_TITLE", projectId },
 				{ "PROJECT_ID", projectId },
 				{ "CURRENT_YEAR", DateTime.Now.Year.ToString() },

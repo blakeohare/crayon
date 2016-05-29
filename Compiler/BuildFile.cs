@@ -19,6 +19,7 @@ namespace Crayon
 		public string Platform { get; set; }
 		public bool Minified { get; set; }
 		public bool ReadableByteCode { get; set; }
+        public string GuidSeed { get; set; }
 
 		public enum VarType
 		{
@@ -64,6 +65,9 @@ namespace Crayon
 
 			[XmlElement("var")]
 			public BuildVar[] Var { get; set; }
+
+            [XmlElement("guidseed")]
+            public string GuidSeed { get; set; }
 
 			private bool TranslateStringToBoolean(string value)
 			{
@@ -181,6 +185,7 @@ namespace Crayon
 			flattened.SpriteSheets = MergeSpriteSheets(desiredTarget.SpriteSheets, flattened.SpriteSheets);
 			flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
 			flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
+            flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
 
 			return new BuildContext()
 			{
@@ -193,7 +198,8 @@ namespace Crayon
 				SpriteSheetIds = flattened.SpriteSheets.Select<SpriteSheet, string>(s => s.Id).ToArray(),
 				Minified = flattened.Minified,
 				ReadableByteCode = flattened.ExportDebugByteCode,
-				BuildVariableLookup = varLookup
+				BuildVariableLookup = varLookup,
+                GuidSeed = flattened.GuidSeed,
 			};
 		}
 
