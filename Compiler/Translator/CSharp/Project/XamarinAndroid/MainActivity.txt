@@ -9,7 +9,8 @@ namespace %%%PROJECT_ID%%%
         MainLauncher = true,
         Icon = "@drawable/icon",
         Theme = "@android:style/Theme.NoTitleBar",
-        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.KeyboardHidden
+        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.KeyboardHidden,
+        ScreenOrientation = ScreenOrientation.Portrait
 #if __ANDROID_11__
 		,HardwareAccelerated=false
 #endif
