@@ -6,8 +6,37 @@ namespace %%%PROJECT_ID%%%
 	{
 		public static Android.Content.Res.AssetManager Assets { get; set; }
 
-        private static readonly byte[] BUFFER = new byte[1000];
+        private static Dictionary<string, int> pathTranslation = null;
 
+        public static int GetRawResourceId(string originalPath)
+        {
+            if (pathTranslation  == null)
+            {
+                pathTranslation = new Dictionary<string, int>();
+                string resourceLookup = ReadTextResource("resourceLookup.txt");
+                if (resourceLookup != null)
+                {
+                    char[] comma = { ',' };
+                    foreach (string line in resourceLookup.Split('\n'))
+                    {
+                        string[] parts = line.Split(comma, 2);
+                        if (parts.Length == 2)
+                        {
+                            int id = int.Parse(parts[0].Trim());
+                            string path = parts[1].Trim();
+                            pathTranslation[path] = id;
+                        }
+                    }
+                }
+            }
+
+            int output = -1;
+            pathTranslation.TryGetValue(originalPath, out output);
+            return output;
+        }
+        
+        private static readonly byte[] BUFFER = new byte[1000];
+        
 		private static byte[] ReadAsset(string pathInAssetsFolder)
 		{
 			System.IO.Stream stream = Assets.Open(pathInAssetsFolder);
@@ -44,6 +73,10 @@ namespace %%%PROJECT_ID%%%
         public static string ReadTextResource(string path)
         {
             byte[] bytes = ReadAsset(path);
+            if (bytes == null)
+            {
+                return null;
+            }
             return System.Text.UTF8Encoding.UTF8.GetString(bytes);
         }
 

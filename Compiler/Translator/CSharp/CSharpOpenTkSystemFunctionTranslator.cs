@@ -6,6 +6,13 @@ namespace Crayon.Translator.CSharp
 {
 	class CSharpOpenTkSystemFunctionTranslator : CSharpSystemFunctionTranslator
     {
+        protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
+        {
+            output.Add("OpenTkTranslationHelper.GetSoundInstance(");
+            this.Translator.TranslateExpression(output, filePath);
+            output.Add(")");
+        }
+
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("OpenTkTranslationHelper.ImagetteFlushToNativeBitmap(");

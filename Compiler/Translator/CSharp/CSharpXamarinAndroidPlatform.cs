@@ -49,6 +49,25 @@ namespace Crayon.Translator.CSharp
             }
         }
 
+        private List<string> audioResourcePathsRelativeToProjectRoot = new List<string>();
+
+        protected override List<string> FilterEmbeddedResources(List<string> embeddedResources)
+        {
+            List<string> filteredEmbeddedResources = new List<string>();
+            foreach (string resource in embeddedResources)
+            {
+                if (resource.ToLower().EndsWith(".ogg"))
+                {
+                    this.audioResourcePathsRelativeToProjectRoot.Add(resource.Substring("Files/".Length));
+                }
+                else
+                {
+                    filteredEmbeddedResources.Add(resource);
+                }
+            }
+            return filteredEmbeddedResources;
+        }
+
         public override void PlatformSpecificFiles(string projectId, List<string> compileTargets, Dictionary<string, FileOutput> files, Dictionary<string, string> replacements, SpriteSheetBuilder spriteSheet)
         {
             files[projectId + ".sln"] = new FileOutput()
@@ -67,8 +86,54 @@ namespace Crayon.Translator.CSharp
                 string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
                 additionalAndroidAssets.Add("    <AndroidAsset Include=\"" + path + "\" />\r\n");
             }
-            replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\n", additionalAndroidAssets);
 
+            int androidResourceId = 0x7f040000;
+            List<string> androidResourcesForProjectFile = new List<string>();
+            List<string> androidResourceLookupFile = new List<string>();
+            foreach (string audioResourcePath in this.audioResourcePathsRelativeToProjectRoot)
+            {
+                string num = androidResourceId.ToString();
+                string extension = null;
+                if (audioResourcePath.Contains('.'))
+                {
+                    string[] parts = audioResourcePath.Split('.');
+                    extension = parts[parts.Length - 1].ToLower();
+                }
+
+                while (num.Length < 6)
+                {
+                    num = "0" + num;
+                }
+
+                string resFilename = "res" + num + "." + extension;
+
+                files[projectId + "/Resources/raw/" + resFilename] = new FileOutput()
+                {
+                    Type = FileOutputType.Copy,
+                    RelativeInputPath = audioResourcePath,
+                };
+
+                androidResourceLookupFile.Add(androidResourceId + "," + audioResourcePath.Replace('\\', '/'));
+
+                androidResourcesForProjectFile.Add("  <AndroidResource Include=\"Resources\\raw\\" + resFilename + "\" />");
+
+                androidResourceId++;
+            }
+
+            if(androidResourceLookupFile.Count > 0)
+            {
+                files[projectId + "/Assets/resourceLookup.txt"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join("\n", androidResourceLookupFile)
+                };
+                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceLookup.txt\" />\r\n");
+            }
+
+            replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\n", additionalAndroidAssets);
+            replacements["ANDROID_RAW_RESOURCES"] = string.Join("\n", androidResourcesForProjectFile);
+
+            
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
@@ -116,6 +181,7 @@ namespace Crayon.Translator.CSharp
 
             foreach (string filename in new string[] {
                 "AssemblyInfo",
+                "CsxaAudioHelper",
                 "CsxaGlRenderer",
                 "CsxaTranslationHelper",
                 "GlView1",

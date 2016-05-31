@@ -339,15 +339,14 @@ namespace %%%PROJECT_ID%%%
 
 		public static object MusicLoadResource(string path)
 		{
-			byte[] musicData = ResourceReader.ReadBytes(path, true).ToArray();
+            IList<byte> musicData = ResourceReader.ReadBytes(path, true);
 			if (musicData == null) return null;
-			return new SdlDotNet.Audio.Music(musicData);
+			return new SdlDotNet.Audio.Music(musicData.ToArray());
 		}
 
 		public static bool AudioMusicIsPlaying()
 		{
 			return SdlDotNet.Audio.MusicPlayer.IsPlaying;
 		}
-
 	}
 }

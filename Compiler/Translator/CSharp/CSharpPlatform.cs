@@ -49,6 +49,15 @@ namespace Crayon.Translator.CSharp
             return string.Join("", output);
         }
 
+        protected virtual List<string> FilterEmbeddedResources(List<string> embeddedResources)
+        {
+            // Override this no-op method if necessary.
+
+            // Namely this was added so that Xamarin projects (where an embedded resource compilation action makes little sense)
+            // can take things out of here and put them in their respective platform-specific destination.
+            return embeddedResources;
+        }
+
         public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
 			string projectId,
@@ -92,6 +101,8 @@ namespace Crayon.Translator.CSharp
 
 			// Get embedded resource list
 			List<string> embeddedResources = this.GetEmbeddedResources(projectId, output, filesToCopyOver);
+
+            embeddedResources = this.FilterEmbeddedResources(embeddedResources);
 
 			// Code files that are templated
 			Dictionary<string, string> directFileCopies = new Dictionary<string, string>()

@@ -482,13 +482,6 @@ namespace Crayon.Translator.CSharp
 			output.Add(", false)");
 		}
 
-		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-		{
-			output.Add("TranslationHelper.GetSoundInstance(");
-			this.Translator.TranslateExpression(output, filePath);
-			output.Add(")");
-		}
-
 		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
 		{
 			output.Add("ResourceReader.ReadImageFile(\"GeneratedFiles/spritesheets/\" + ");
