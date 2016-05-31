@@ -27,6 +27,8 @@ namespace %%%PROJECT_ID%%%
             this.Window.AddFlags(WindowManagerFlags.KeepScreenOn);
             
             ResourceReader.Assets = this.Assets;
+			ResourceReader.MainActivity = this;
+
 			string byteCode = ResourceReader.ReadTextResource("ByteCode.txt");
 
 			// Create our OpenGL view, and display it

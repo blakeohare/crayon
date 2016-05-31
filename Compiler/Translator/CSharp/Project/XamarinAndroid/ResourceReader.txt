@@ -5,6 +5,7 @@ namespace %%%PROJECT_ID%%%
 	internal static class ResourceReader
 	{
 		public static Android.Content.Res.AssetManager Assets { get; set; }
+		public static MainActivity MainActivity { get; set; }
 
         private static Dictionary<string, int> pathTranslation = null;
 
@@ -30,9 +31,12 @@ namespace %%%PROJECT_ID%%%
                 }
             }
 
-            int output = -1;
-            pathTranslation.TryGetValue(originalPath, out output);
-            return output;
+            int output;
+            if (pathTranslation.TryGetValue(originalPath, out output))
+			{
+				return output;
+			}
+			return -1;
         }
         
         private static readonly byte[] BUFFER = new byte[1000];
