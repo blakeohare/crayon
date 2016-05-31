@@ -29,12 +29,26 @@ namespace %%%PROJECT_ID%%%
 
         public static object AudioSoundPlay(object sfxResource, double volume, double pan)
         {
-            throw new NotImplementedException();
+            Android.Media.MediaPlayer mediaPlayer = (Android.Media.MediaPlayer)sfxResource;
+
+            // TODO: apply pan to left and right volume values:
+            mediaPlayer.SetVolume((float)volume, (float)volume);
+            if (mediaPlayer.IsPlaying)
+            {
+                mediaPlayer.SeekTo(0);
+            }
+            else
+            {
+                mediaPlayer.Start();
+            }
+
+            return mediaPlayer;
         }
 
         public static object GetSoundInstance(string path)
         {
-            throw new NotImplementedException();
+            // Same underlying type as a music object (Android.Media.MediaPlayer).
+            return MusicLoadFromResource(path);
         }
         
         public static bool AudioIsMusicPlaying()
