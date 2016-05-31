@@ -56,6 +56,7 @@ namespace %%%PROJECT_ID%%%
             Android.Media.MediaPlayer mediaPlayer = (Android.Media.MediaPlayer)resource;
             mediaPlayer.Start();
             mediaPlayer.Looping = isLoop;
+            currentMusic = mediaPlayer;
         }
 
         public static bool AudioMusicVerifyFileExists(string path)
