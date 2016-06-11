@@ -43,14 +43,33 @@ namespace Crayon.ParseTree
 				}
 			}
 
-			if (this.Root is DotStep && ((DotStep)this.Root).Root is BaseKeyword)
-			{
-
-			}
-
 			this.Root = this.Root.Resolve(parser);
 
-			return this;
+            // TODO: this is hardcoded just for Math.floor(numeric constant). Eventually, it'd be nice
+            // for a few common functions to have a compile-time codepath here.
+            // e.g. Core.parseInt, Math.sin, etc.
+            if (this.Root is FunctionReference && this.Args.Length == 1)
+            {
+                FunctionDefinition funcDef = ((FunctionReference)this.Root).FunctionDefinition;
+                if (funcDef.LibraryName == "Math" && funcDef.NameToken.Value == "floor")
+                {
+                    Expression arg0 = this.Args[0];
+                    if (arg0 is IntegerConstant)
+                    {
+                        int integerValue = ((IntegerConstant)arg0).Value;
+                        return new IntegerConstant(this.FirstToken, integerValue, this.FunctionOrClassOwner);
+                    }
+
+                    if (arg0 is FloatConstant)
+                    {
+                        double floatValue = ((FloatConstant)arg0).Value;
+                        int integerValue = (int)floatValue;
+                        return new IntegerConstant(this.FirstToken, integerValue, this.FunctionOrClassOwner);
+                    }
+                }
+            }
+
+            return this;
 		}
 
 		internal override void SetLocalIdPass(VariableIdAllocator varIds)
