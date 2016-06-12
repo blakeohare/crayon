@@ -128,6 +128,7 @@
     <Compile Include="ParseTree\SystemFunctionReference.cs" />
     <Compile Include="ParseTree\Ternary.cs" />
     <Compile Include="ParseTree\ThisKeyword.cs" />
+    <Compile Include="ParseTree\TryStatement.cs" />
     <Compile Include="ParseTree\Variable.cs" />
     <Compile Include="ParseTree\WhileLoop.cs" />
     <Compile Include="PrimitiveMethods.cs" />

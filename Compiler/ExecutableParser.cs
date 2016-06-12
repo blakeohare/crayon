@@ -630,7 +630,39 @@ namespace Crayon
 		private static Executable ParseTry(Parser parser, TokenStream tokens, Executable owner)
 		{
 			Token tryToken = tokens.PopExpected("try");
-			throw new NotImplementedException();
+            IList<Executable> tryBlock = Parser.ParseBlock(parser, tokens, true, owner);
+            Token catchToken = null;
+            IList<Executable> catchBlock = null;
+            Token exceptionToken = null;
+            Token finallyToken = null;
+            IList<Executable> finallyBlock = null;
+
+            if (tokens.IsNext("catch"))
+            {
+                catchToken = tokens.Pop();
+                if (tokens.PopIfPresent("("))
+                {
+                    exceptionToken = tokens.Pop();
+                    char firstChar = exceptionToken.Value[0];
+                    if (firstChar != '_' &&
+                        !(firstChar >= 'a' && firstChar <= 'z') &&
+                        !(firstChar >= 'A' && firstChar <= 'Z'))
+                    {
+                        throw new ParserException(exceptionToken, "Invalid name for variable.");
+                    }
+                    tokens.PopExpected(")");
+                }
+
+                catchBlock = Parser.ParseBlock(parser, tokens, true, owner);
+            }
+
+            if (tokens.IsNext("finally"))
+            {
+                finallyToken = tokens.Pop();
+                finallyBlock = Parser.ParseBlock(parser, tokens, true, owner);
+            }
+            
+            return new TryStatement(tryToken, tryBlock, catchToken, exceptionToken, catchBlock, finallyToken, finallyBlock, owner);
 		}
 
 		private static Executable ParseBreak(TokenStream tokens, Executable owner)

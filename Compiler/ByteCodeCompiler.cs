@@ -152,23 +152,30 @@ namespace Crayon
 
 		public void Compile(Parser parser, ByteBuffer buffer, Executable line)
 		{
-			if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
-			else if (line is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)line, false);
-			else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
-			else if (line is WhileLoop) this.CompileWhileLoop(parser, buffer, (WhileLoop)line);
-			else if (line is BreakStatement) this.CompileBreakStatement(parser, buffer, (BreakStatement)line);
-			else if (line is ContinueStatement) this.CompileContinueStatement(parser, buffer, (ContinueStatement)line);
-			else if (line is ForLoop) this.CompileForLoop(parser, buffer, (ForLoop)line);
-			else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
-			else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
-			else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
-			else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
-			else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
-			else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
-			else throw new NotImplementedException("Invalid target for byte code compilation");
+            if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
+            else if (line is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)line, false);
+            else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
+            else if (line is WhileLoop) this.CompileWhileLoop(parser, buffer, (WhileLoop)line);
+            else if (line is BreakStatement) this.CompileBreakStatement(parser, buffer, (BreakStatement)line);
+            else if (line is ContinueStatement) this.CompileContinueStatement(parser, buffer, (ContinueStatement)line);
+            else if (line is ForLoop) this.CompileForLoop(parser, buffer, (ForLoop)line);
+            else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
+            else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
+            else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
+            else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
+            else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
+            else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
+            else if (line is TryStatement) this.CompileTryStatement(parser, buffer, (TryStatement)line);
+            else throw new NotImplementedException("Invalid target for byte code compilation");
 		}
 
-		private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
+        private void CompileTryStatement(Parser parser, ByteBuffer buffer, TryStatement tryStatement)
+        {
+            // TODO: still designing this.
+            throw new ParserException(tryStatement.FirstToken, "Try-catch-finally is not implemented yet.");
+        }
+        
+        private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
 		{
 			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
 			buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId));
