@@ -9,8 +9,8 @@ namespace Crayon
 {
 	internal class SystemLibraryManager
 	{
-
-		private Dictionary<string, ILibraryConfig> importedLibraries = new Dictionary<string, ILibraryConfig>();
+        // object is either an ILibraryConfig or a LibraryLoader
+        private Dictionary<string, ILibraryConfig> importedLibraries = new Dictionary<string, ILibraryConfig>();
 		private Dictionary<string, ILibraryConfig> librariesByKey = new Dictionary<string, ILibraryConfig>();
 
 		private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
@@ -86,6 +86,7 @@ namespace Crayon
 				this.systemLibraryPathsByName = new Dictionary<string, string>();
 
 				List<string> crayonHomeDlls = new List<string>();
+                List<string> crayonHomeNewLibs = new List<string>();
 
 				string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
@@ -105,6 +106,20 @@ namespace Crayon
 						}
 					}
 				}
+
+                if (crayonHome != null)
+                {
+                    string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
+                    foreach (string dir in System.IO.Directory.GetDirectories(crayonHomeLibraries))
+                    {
+                        string libName = System.IO.Path.GetFileName(dir);
+                        string manifestPath = System.IO.Path.Combine(dir, libName + ".manifest.txt");
+                        if (System.IO.File.Exists(manifestPath))
+                        {
+                            crayonHomeNewLibs.Add(manifestPath);
+                        }
+                    }
+                }
 
 				List<string> debugDlls = new List<string>();
 #if DEBUG
@@ -140,10 +155,21 @@ namespace Crayon
 				List<string> allLibrariesInPrecedenceOrder = new List<string>();
 				allLibrariesInPrecedenceOrder.AddRange(crayonHomeDlls);
 				allLibrariesInPrecedenceOrder.AddRange(debugDlls);
+                allLibrariesInPrecedenceOrder.AddRange(crayonHomeNewLibs);
+
 
 				foreach (string file in allLibrariesInPrecedenceOrder)
 				{
-					string libraryName = System.IO.Path.GetFileNameWithoutExtension(file);
+                    string libraryName;
+                    if (file.EndsWith(".dll"))
+                    {
+                        libraryName = System.IO.Path.GetFileNameWithoutExtension(file);
+                    }
+                    else
+                    {
+                        libraryName = System.IO.Path.GetDirectoryName(file);
+                        libraryName = System.IO.Path.GetFileName(libraryName);
+                    }
 					this.systemLibraryPathsByName[libraryName] = file;
 				}
 			}
@@ -167,40 +193,66 @@ namespace Crayon
 
 			alreadyImported.Add(name);
 
+            // this is now either a DLL or a manifest path.
+            // once this has been converted entirely to manifest files, remove all references to DLL loading.
 			string dllPath = this.GetSystemLibraryPath(name);
 
 			if (dllPath == null)
 			{
+                // TODO: figure out why this was here. Shouldn't this be an error?
 				return EMPTY_EXECUTABLE;
 			}
 
-			System.Reflection.Assembly assembly = null;
-			try
-			{
-				assembly = System.Reflection.Assembly.LoadFrom(dllPath);
-			}
-			catch (Exception)
-			{
-				throw new ParserException(throwToken, "Could not import library: " + name);
-			}
+            if (dllPath.EndsWith(".manifest.txt"))
+            {
+                LibraryLoader library = new LibraryLoader(name, dllPath, parser.BuildContext.Platform);
 
-			ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".Config") as ILibraryConfig;
-			if (libraryConfig == null)
-			{
-				throw new ParserException(throwToken, "Error creating LibraryConfig instance in Library '" + name + "'");
-			}
+                this.importedLibraries[name] = library;
+                this.librariesByKey[name.ToLowerInvariant()] = library;
 
-			this.importedLibraries[name] = libraryConfig;
-			this.librariesByKey[name.ToLowerInvariant()] = libraryConfig;
+                string oldSystemLibrary = parser.CurrentSystemLibrary;
+                parser.CurrentSystemLibrary = name;
 
-			string oldSystemLibrary = parser.CurrentSystemLibrary;
-			parser.CurrentSystemLibrary = name;
+                string libraryCode = library.GetEmbeddedCode();
+                Executable[] libraryParseTree = parser.ParseInterpretedCode("[" + name + "]", libraryCode, name);
 
-			string libraryCode = libraryConfig.GetEmbeddedCode();
-			Executable[] libraryParseTree = parser.ParseInterpretedCode("[" + name + "]", libraryCode, name);
+                parser.CurrentSystemLibrary = oldSystemLibrary;
+                return libraryParseTree;
+            }
+            else if (dllPath.EndsWith(".dll"))
+            {
+                System.Reflection.Assembly assembly = null;
+                try
+                {
+                    assembly = System.Reflection.Assembly.LoadFrom(dllPath);
+                }
+                catch (Exception)
+                {
+                    throw new ParserException(throwToken, "Could not import library: " + name);
+                }
 
-			parser.CurrentSystemLibrary = oldSystemLibrary;
-			return libraryParseTree;
+                ILibraryConfig libraryConfig = assembly.CreateInstance(name + ".Config") as ILibraryConfig;
+                if (libraryConfig == null)
+                {
+                    throw new ParserException(throwToken, "Error creating LibraryConfig instance in Library '" + name + "'");
+                }
+
+                this.importedLibraries[name] = libraryConfig;
+                this.librariesByKey[name.ToLowerInvariant()] = libraryConfig;
+
+                string oldSystemLibrary = parser.CurrentSystemLibrary;
+                parser.CurrentSystemLibrary = name;
+
+                string libraryCode = libraryConfig.GetEmbeddedCode();
+                Executable[] libraryParseTree = parser.ParseInterpretedCode("[" + name + "]", libraryCode, name);
+
+                parser.CurrentSystemLibrary = oldSystemLibrary;
+                return libraryParseTree;
+            }
+            else
+            {
+                throw new ParserException(throwToken, "Could not import library: " + name);
+            }
 		}
 	}
 }

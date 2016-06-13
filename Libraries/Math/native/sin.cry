@@ -1,5 +1,4 @@
-﻿
-// $sin(theta)
+
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type == Types.FLOAT) {

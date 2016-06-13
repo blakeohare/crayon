@@ -1,6 +1,6 @@
-﻿namespace Math {
+namespace Math {
 
-	const PI = 3.14159265358979323846;
+	const PI = 3.141592653589793238462;
 	const E = 2.718281828459045235360;
 
 	function arccos(ratio) {

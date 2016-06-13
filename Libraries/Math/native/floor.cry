@@ -1,10 +1,10 @@
-﻿
+
 // $floor(number)
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type == Types.FLOAT) {
 	float1 = $_cast('double', Value$arg1.internalValue);
-	if (%%%INT_IS_FLOOR%%%) {
+	if (%%%MATH_INT_IS_FLOOR%%%) {
 		output = buildInteger($_int(float1));
 	} else {
 		if (float1 < 0 && float1 % 1 != 0) {

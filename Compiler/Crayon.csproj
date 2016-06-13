@@ -61,6 +61,7 @@
     <Compile Include="ExpressionParser.cs" />
     <Compile Include="FileOutput.cs" />
     <Compile Include="IOErrors.cs" />
+    <Compile Include="LibraryLoader.cs" />
     <Compile Include="LiteralLookup.cs" />
     <Compile Include="NativeObjectTypes.cs" />
     <Compile Include="OpCode.cs" />

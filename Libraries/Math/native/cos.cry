@@ -1,4 +1,4 @@
-﻿
+
 import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
 if (Value$arg1.type == Types.FLOAT) {
 	float1 = $_cast('double', Value$arg1.internalValue);
