@@ -10,6 +10,7 @@ namespace Crayon
     {
         private static readonly char[] COLON;
 
+        private string platformName;
         public string Name { get; set; }
         public string RootDirectory { get; set; }
 
@@ -24,6 +25,7 @@ namespace Crayon
             Dictionary<string, string> values = new Dictionary<string, string>();
             Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
 
+            this.platformName = platformName;
             string platformPrefix = "[" + platformName + "]";
 
             foreach (string line in manifest)
@@ -135,9 +137,28 @@ namespace Crayon
             return this.ReadFile("embed.cry", true);
         }
 
+        private Dictionary<string, string> supplementalFiles = null;
+
         public Dictionary<string, string> GetSupplementalTranslatedCode()
         {
-            return new Dictionary<string, string>();
+            if (this.supplementalFiles == null)
+            {
+                this.supplementalFiles = new Dictionary<string, string>();
+                string supplementalFilesDir = System.IO.Path.Combine(this.RootDirectory, "supplemental");
+                if (System.IO.Directory.Exists(supplementalFilesDir))
+                {
+                    foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
+                    {
+                        string name = System.IO.Path.GetFileName(filepath);
+                        if (name.EndsWith(".cry"))
+                        {
+                            string key = name.Substring(0, name.Length - ".cry".Length);
+                            this.supplementalFiles[key] = this.ReadFile(System.IO.Path.Combine("supplemental", name), false);
+                        }
+                    }
+                }
+            }
+            return this.supplementalFiles;
         }
 
         // TODO: once the DLL's are factored out
@@ -157,8 +178,41 @@ namespace Crayon
             return this.ReadFile(System.IO.Path.Combine("native", this.filepathsByFunctionName[shortName]), false);
         }
 
+        Dictionary<string, string> translations = null;
+
         public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
         {
+            if (this.translations == null)
+            {
+                string methodTranslations = this.ReadFile(System.IO.Path.Combine("methods", this.platformName + ".txt"), false);
+                this.translations = new Dictionary<string, string>();
+                foreach (string line in methodTranslations.Split('\n'))
+                {
+                    string[] parts = line.Trim().Split(':');
+                    if (parts.Length > 1)
+                    {
+                        string key = parts[0];
+                        string value = parts[1];
+                        for (int i = 2; i < parts.Length; ++i)
+                        {
+                            value += ":" + parts[i];
+                        }
+                        this.translations[key.Trim()] = value.Trim();
+                    }
+                }
+            }
+
+            if (this.translations.ContainsKey(functionName))
+            {
+                string output = this.translations[functionName];
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    string argAsString = translator.Translate(args[i]);
+                    output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
+                }
+                return output;
+            }
+
             throw new NotImplementedException();
         }
 

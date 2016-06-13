@@ -1,0 +1,1 @@
+$_lib_core_print: R.print([ARG:1])

@@ -1,0 +1,1 @@
+$_lib_core_print: android.util.Log.d("", [arg1])

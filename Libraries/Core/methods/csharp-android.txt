@@ -1,0 +1,1 @@
+$_lib_core_print: System.Console.WriteLine([ARG:1])

@@ -7,7 +7,6 @@
 		1 -> invalid sort keys
 
 */
-
 function @type('int') lib_core_sort_lists(
 	@type('List<Value>') keyList,
 	@type('List<Value>') parallelList, // nullable

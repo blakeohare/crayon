@@ -1,0 +1,1 @@
+$_lib_core_print: print([ARG:1])
