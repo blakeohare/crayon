@@ -1,5 +1,4 @@
 ﻿using System;
-using LibraryConfig;
 
 namespace Crayon.ParseTree
 {
@@ -8,7 +7,7 @@ namespace Crayon.ParseTree
 		public override bool CanAssignTo { get { return false; } }
 		public string Name { get; private set; }
 		public Expression[] Args { get; private set; }
-		public ILibraryConfig AssociatedLibrary { get; private set; }
+		public Library AssociatedLibrary { get; private set; }
 
 		public SystemFunctionCall(Token token, Expression[] args, Executable owner)
 			: base(token, owner)
@@ -27,7 +26,7 @@ namespace Crayon.ParseTree
 			if (this.Name.StartsWith("$_lib_"))
 			{
 				string libraryName = this.Name.Split('_')[2];
-				ILibraryConfig library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName);
+				Library library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName);
 				if (library != null)
 				{
 					this.AssociatedLibrary = library;

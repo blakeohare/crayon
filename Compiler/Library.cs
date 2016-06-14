@@ -1,23 +1,19 @@
-﻿using LibraryConfig;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Crayon
 {
-    internal class LibraryLoader : ILibraryConfig
+    internal class Library
     {
-        private static readonly char[] COLON;
-
         private string platformName;
         public string Name { get; set; }
         public string RootDirectory { get; set; }
 
         private Dictionary<string, string> replacements = new Dictionary<string, string>();
-
-
-        public LibraryLoader(string name, string libraryManifestPath, string platformName)
+        
+        public Library(string name, string libraryManifestPath, string platformName)
         {
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
@@ -162,7 +158,7 @@ namespace Crayon
         }
 
         // TODO: once the DLL's are factored out
-        public string GetTranslationCode(IPlatform platform, string functionName)
+        public string GetTranslationCode(string functionName)
         {
             string prefix = "lib_" + this.Name.ToLower() + "_";
             if (!functionName.StartsWith(prefix))
@@ -180,7 +176,7 @@ namespace Crayon
 
         Dictionary<string, string> translations = null;
 
-        public string TranslateNativeInvocation(IPlatform translator, string functionName, object[] args)
+        public string TranslateNativeInvocation(AbstractPlatform translator, string functionName, object[] args)
         {
             if (this.translations == null)
             {

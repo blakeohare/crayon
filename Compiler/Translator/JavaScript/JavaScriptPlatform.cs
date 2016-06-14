@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Crayon.Translator.JavaScript
 {
-	class JavaScriptPlatform : AbstractPlatform
+    class JavaScriptPlatform : AbstractPlatform
 	{
 		private string jsFolderPrefix;
 
 		public JavaScriptPlatform(bool isMin, string jsFolderPrefix)
-			: base(LibraryConfig.PlatformId.JAVASCRIPT_CANVAS, LibraryConfig.LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null)
+			: base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), null)
 		{
 			this.jsFolderPrefix = jsFolderPrefix;
 		}

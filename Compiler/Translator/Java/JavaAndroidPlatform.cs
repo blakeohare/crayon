@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Crayon.ParseTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
-	internal class JavaAndroidPlatform : JavaPlatform
+    internal class JavaAndroidPlatform : JavaPlatform
 	{
 		public JavaAndroidPlatform()
-			: base(LibraryConfig.PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), new JavaAndroidOpenGlEsTranslator())
+			: base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), new JavaAndroidOpenGlEsTranslator())
 		{
 		}
 

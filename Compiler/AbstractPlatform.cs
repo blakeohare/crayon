@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using Crayon.ParseTree;
 using Crayon.Translator;
-using LibraryConfig;
 
 namespace Crayon
 {
-	internal abstract class AbstractPlatform : IPlatform
+	internal abstract class AbstractPlatform
 	{
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }

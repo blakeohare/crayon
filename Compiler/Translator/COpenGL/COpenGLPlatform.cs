@@ -1,15 +1,12 @@
-﻿using System;
+﻿using Crayon.ParseTree;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Crayon.ParseTree;
 
 namespace Crayon.Translator.COpenGL
 {
-	class COpenGLPlatform : AbstractPlatform
+    class COpenGLPlatform : AbstractPlatform
 	{
 		public COpenGLPlatform()
-			: base(LibraryConfig.PlatformId.C_OPENGL, LibraryConfig.LanguageId.C, false, new CTranslator(), new COpenGLSystemFunctionTranslator(), new COpenGlOpenGlTranslator())
+			: base(PlatformId.C_OPENGL, LanguageId.C, false, new CTranslator(), new COpenGLSystemFunctionTranslator(), new COpenGlOpenGlTranslator())
 		{ }
 
 		public override bool IsAsync { get { return false; } }

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Crayon.ParseTree;
-using LibraryConfig;
 
 namespace Crayon
 {
 	internal class SystemLibraryManager
 	{
         // object is either an ILibraryConfig or a LibraryLoader
-        private Dictionary<string, ILibraryConfig> importedLibraries = new Dictionary<string, ILibraryConfig>();
-		private Dictionary<string, ILibraryConfig> librariesByKey = new Dictionary<string, ILibraryConfig>();
+        private Dictionary<string, Library> importedLibraries = new Dictionary<string, Library>();
+		private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();
 
 		private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
 
@@ -27,15 +26,15 @@ namespace Crayon
 			{
 				output.Add("case " + this.libFunctionIds[name] + ":\n");
 				output.Add("$_comment('" + name + "');");
-				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(platform, name));
+				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
 				output.Add("\nbreak;\n");
 			}
 			return string.Join("\n", output);
 		}
 
-		public ILibraryConfig GetLibraryFromKey(string key)
+		public Library GetLibraryFromKey(string key)
 		{
-			ILibraryConfig output;
+            Library output;
 			return this.librariesByKey.TryGetValue(key, out output) ? output : null;
 		}
 
@@ -66,7 +65,7 @@ namespace Crayon
 		public Dictionary<string, string> GetSupplementalTranslationFiles()
 		{
 			Dictionary<string, string> output = new Dictionary<string, string>();
-			foreach (ILibraryConfig library in this.importedLibraries.Values)
+			foreach (Library library in this.importedLibraries.Values)
 			{
 				Dictionary<string, string> files = library.GetSupplementalTranslatedCode();
 				foreach (string key in files.Keys)
@@ -146,15 +145,15 @@ namespace Crayon
 
             // this is now either a DLL or a manifest path.
             // once this has been converted entirely to manifest files, remove all references to DLL loading.
-            string dllPath = this.GetSystemLibraryPath(name);
+            string libraryManifestPath = this.GetSystemLibraryPath(name);
 
-            if (dllPath == null)
+            if (libraryManifestPath == null)
             {
                 // TODO: figure out why this was here. Shouldn't this be an error?
                 return EMPTY_EXECUTABLE;
             }
 
-            LibraryLoader library = new LibraryLoader(name, dllPath, parser.BuildContext.Platform);
+            Library library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);
 
             this.importedLibraries[name] = library;
             this.librariesByKey[name.ToLowerInvariant()] = library;

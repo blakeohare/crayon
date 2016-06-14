@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Crayon.ParseTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
 {
-	internal class JavaAwtPlatform : JavaPlatform
+    internal class JavaAwtPlatform : JavaPlatform
 	{
-		public JavaAwtPlatform()
-			: base(LibraryConfig.PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), null)
-		{
-		}
+        public JavaAwtPlatform()
+            : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), null)
+        { }
 
 		public override string GeneratedFilesFolder { get { return "resources/generated"; } }
 		public override string PlatformShortId { get { return "javaawt"; } }
