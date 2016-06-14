@@ -107,7 +107,10 @@ namespace Crayon
 
 				command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
 
-				args = command.Split(' ');
+                command = @"C:\things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
+
+
+                args = command.Split(' ');
 			}
 #endif
 
