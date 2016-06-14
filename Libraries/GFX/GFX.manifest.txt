@@ -1,0 +1,8 @@
+NAME: GFX
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/gfx
+DESCRIPTION: Graphics and 2D drawing built-in library.
+
+BOOL_FLAG: IS_OPEN_GL_BASED: false
+[csopengl] BOOL_FLAG: IS_OPEN_GL_BASED: true
+[csharp-android] BOOL_FLAG: IS_OPEN_GL_BASED: true

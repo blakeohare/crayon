@@ -1,0 +1,9 @@
+NAME: Game
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/game
+DESCRIPTION: Basic game infrastructure API.
+
+BOOL_FLAG: SCREEN_BLOCKS_EXECUTION: false
+[copengl] BOOL_FLAG: SCREEN_BLOCKS_EXECUTION: true
+[javaawt] BOOL_FLAG: SCREEN_BLOCKS_EXECUTION: true
+[android] BOOL_FLAG: SCREEN_BLOCKS_EXECUTION: true

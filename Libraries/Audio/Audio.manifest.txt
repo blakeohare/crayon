@@ -1,0 +1,4 @@
+NAME: Audio
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/audio
+DESCRIPTION: Audio related functionality
