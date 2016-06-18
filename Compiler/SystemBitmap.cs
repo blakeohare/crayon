@@ -50,12 +50,10 @@ namespace Crayon
 
 		public class Graphics
 		{
-			private SystemBitmap owner;
 			private System.Drawing.Graphics systemGraphics;
 
 			public Graphics(SystemBitmap owner)
 			{
-				this.owner = owner;
 				this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
 			}
 

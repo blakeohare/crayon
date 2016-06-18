@@ -300,9 +300,6 @@ namespace Crayon
 		// available namespaces.
 		public static List<Executable> CreateVerifiedFunctionCalls(Parser parser, IList<Executable> original)
 		{
-			// All code that doesn't have a function or class surrounding it.
-			List<Executable> looseCode = new List<Executable>();
-
 			// First create a fully-qualified lookup of all functions and classes.
 			Dictionary<string, Executable> functionsAndClasses = new Dictionary<string, Executable>();
 			foreach (Executable exec in original)

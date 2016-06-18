@@ -84,8 +84,6 @@ namespace Crayon
             {
                 this.systemLibraryPathsByName = new Dictionary<string, string>();
 
-                List<string> libraryManifests = new List<string>();
-
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
 #if RELEASE

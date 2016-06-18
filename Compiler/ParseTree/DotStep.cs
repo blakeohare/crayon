@@ -61,7 +61,6 @@ namespace Crayon.ParseTree
 					{
 						// struct casting
 						string structName = parts[0];
-						string realVarName = parts[1];
 						StructDefinition structDef = parser.GetStructDefinition(structName);
 						if (structDef == null)
 						{

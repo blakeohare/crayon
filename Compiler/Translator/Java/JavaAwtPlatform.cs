@@ -110,17 +110,6 @@ namespace Crayon.Translator.Java
 				TextContent = Constants.DoReplacements(string.Join("", crayonWrapper), replacements)
 			};
 
-			string crayonHeader = string.Join(this.Translator.NL, new string[] {
-					"package " + package + ";",
-					"",
-					"import java.util.ArrayList;",
-					"import java.util.HashMap;",
-					"import java.util.Stack;",
-					"",
-					""
-				});
-
-
 			string nl = this.Translator.NL;
 
 			foreach (StructDefinition structDefinition in structDefinitions)

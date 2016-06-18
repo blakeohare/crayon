@@ -27,9 +27,9 @@ namespace Crayon
             foreach (string line in manifest)
             {
                 string trimmedLine = line.Trim();
-                if (line.Length > 0 && line[0] != '#')
+                if (trimmedLine.Length > 0 && line[0] != '#')
                 {
-                    string[] parts = line.Trim().Split(':');
+                    string[] parts = trimmedLine.Split(':');
                     if (parts.Length >= 2)
                     {
                         string key = parts[0].Trim();

@@ -36,7 +36,6 @@ namespace Crayon.ParseTree
 				parser.ConstantAndEnumResolutionState[this] = 1;
 			}
 			HashSet<int> consumed = new HashSet<int>();
-			int[] valuesArray = new int[this.Items.Length];
 
 			for (int i = 0; i < this.Items.Length; ++i)
 			{

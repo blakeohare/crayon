@@ -17,7 +17,6 @@ namespace Crayon.ParseTree
 			: base(token, owner)
 		{
 			string callingLibrary = null;
-			Executable ownerWalker = owner;
 			while (callingLibrary == null && owner != null)
 			{
 				callingLibrary = owner.LibraryName;

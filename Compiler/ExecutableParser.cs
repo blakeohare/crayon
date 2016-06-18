@@ -9,12 +9,6 @@ namespace Crayon
 	{
 		private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>("= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
-		private static readonly HashSet<string> SYSTEM_LIBRARIES = new HashSet<string>(new string[] {
-			"EasingFunctions",
-			"ImageManager",
-			"ZGame",
-		});
-
 		public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot, Executable owner)
 		{
 			string value = tokens.PeekValue();

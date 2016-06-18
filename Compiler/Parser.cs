@@ -185,7 +185,6 @@ namespace Crayon
 		private HashSet<string> things = new HashSet<string>();
 
 		private Dictionary<string, ClassDefinition> classDefinitions = new Dictionary<string, ClassDefinition>();
-		private Dictionary<string, int> classDefinitionOrder = new Dictionary<string, int>();
 
 		public ClassDefinition GetClass(string name)
 		{
@@ -325,8 +324,6 @@ namespace Crayon
 			}
 			return new Resolver(this, output).ResolveInterpretedCode();
 		}
-
-		private HashSet<string> importedFiles = new HashSet<string>();
 
 		public int GetNextFileId()
 		{
@@ -470,8 +467,6 @@ namespace Crayon
 			}
 			return true;
 		}
-
-		private Dictionary<string, int> variableNames = new Dictionary<string, int>();
 
 		internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, Executable owner)
 		{

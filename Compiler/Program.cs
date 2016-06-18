@@ -107,12 +107,7 @@ namespace Crayon
 			{
 				string command;
 
-				command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
-
-                command = @"C:\things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
-
-				command = "/Users/blakeohare/Crayon/crayon/Demos/SquishySquid/SquishySquid.build -target python";
-
+                command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
                 args = command.Split(' ');
 			}
 #endif

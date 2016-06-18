@@ -120,18 +120,15 @@ namespace Crayon
 		private ByteBuffer BuildTokenData(ByteBuffer userCode)
 		{
 			Token[] tokens = userCode.ToTokenList().ToArray();
-			int[][] rows = userCode.ToIntList().ToArray();
 
 			int size = tokens.Length;
 			ByteBuffer output = new ByteBuffer();
 			// TODO: add command line flag for excluding token data. In that case, just return here.
 
 			Token token;
-			int[] row;
 			for (int i = 0; i < size; ++i)
 			{
 				token = tokens[i];
-				row = rows[i];
 
 				if (token != null)
 				{
@@ -1169,7 +1166,6 @@ namespace Crayon
 		private void CompileStringConstant(Parser parser, ByteBuffer buffer, StringConstant stringConstant, bool outputUsed)
 		{
 			if (!outputUsed) throw new ParserException(stringConstant.FirstToken, "This expression does nothing.");
-			int stringId = parser.GetStringConstant(stringConstant.Value);
 			buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
 		}
 
