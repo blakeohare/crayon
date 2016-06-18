@@ -88,15 +88,20 @@ namespace Crayon
 
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
+#if RELEASE
                 if (crayonHome == null)
                 {
                     throw new InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
                 }
+#endif
 
-                string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
                 List<string> directoriesToCheck = new List<string>();
 
-                directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+				if (crayonHome != null)
+				{
+					string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
+					directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+				}
 
 #if DEBUG
                 // Presumably running from source. Walk up to the root directory and find the Libraries directory.
