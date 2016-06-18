@@ -296,29 +296,18 @@ namespace Crayon
 			return new Resolver(this, output).ResolveTranslatedCode();
 		}
 
-		private void GetCodeFilesImpl(string rootFolder, string currentFolder, Dictionary<string, string> filesOutput)
-		{
-			foreach (string file in System.IO.Directory.GetFiles(currentFolder))
-			{
-				if (file.ToLowerInvariant().EndsWith(".cry"))
-				{
-					string contents = System.IO.File.ReadAllText(file);
-					string relativePath = file.Substring(rootFolder.Length + 1);
-					filesOutput[relativePath] = contents;
-				}
-			}
-
-			foreach (string directory in System.IO.Directory.GetDirectories(currentFolder))
-			{
-				GetCodeFilesImpl(rootFolder, directory, filesOutput);
-			}
-		}
-
 		public Dictionary<string, string> GetCodeFiles(string rootFolder)
 		{
-			rootFolder = System.IO.Path.GetFullPath(rootFolder);
+			string[] files = FileUtil.GetAllFilePathsRelativeToRoot(rootFolder);
 			Dictionary<string, string> output = new Dictionary<string, string>();
-			this.GetCodeFilesImpl(rootFolder, rootFolder, output);
+			foreach (string filepath in files)
+			{
+				if (filepath.ToLowerInvariant().EndsWith(".cry"))
+				{
+					string fullpath = FileUtil.JoinPath(rootFolder, filepath);
+					output[filepath] = FileUtil.ReadFileText(fullpath);
+				}
+			}
 			return output;
 		}
 
