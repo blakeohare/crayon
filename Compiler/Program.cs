@@ -6,6 +6,7 @@ namespace Crayon
 {
 	internal class Program
 	{
+		#if RELEASE
 		// TODO:
 		// - flag to append platform to output folder
 		// - nameformatted flag
@@ -42,6 +43,7 @@ namespace Crayon
 			"  -target            When a build file is specified, selects the target within",
 			"                     that build file to build."
 		});
+		#endif
 
 		static void Main(string[] args)
 		{
@@ -109,6 +111,7 @@ namespace Crayon
 
                 command = @"C:\things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
 
+				command = "/Users/blakeohare/Crayon/crayon/Demos/SquishySquid/SquishySquid.build -target python";
 
                 args = command.Split(' ');
 			}
@@ -205,7 +208,7 @@ namespace Crayon
 			buildContext.SourceFolder = System.IO.Path.Combine(workingDirectory, buildContext.SourceFolder).Replace('/', '\\');
 			buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
 
-			if (!System.IO.Directory.Exists(buildContext.SourceFolder))
+			if (!FileUtil.DirectoryExists(buildContext.SourceFolder))
 			{
 				throw new InvalidOperationException("Source folder does not exist.");
 			}

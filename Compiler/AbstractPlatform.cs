@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crayon.ParseTree;
 using Crayon.Translator;
 
@@ -234,88 +235,56 @@ namespace Crayon
 
 			string outputFolder = baseOutputFolder;
 
-			Util.EnsureFolderExists(outputFolder);
-			
-			this.DeleteExistingContents(outputFolder);
+			FileUtil.EnsureParentFolderExists(outputFolder);
+
+			// TODO: delete all files and directories in the output folder that are not in the new output
+			// which is better than deleting everything and re-exporting because the user may have command 
+			// lines and windows open viewing the previous content, which will prevent a full delete from
+			// working, but won't stop a simple overwrite of old content.
 
 			this.GenerateFiles(buildContext, files, outputFolder, inputFolder);
 		}
 
-		private void DeleteExistingContents(string rootDirectory)
-		{
-			// TODO: this
-		}
-
 		private void GenerateFiles(BuildContext buildContext, Dictionary<string, FileOutput> files, string rootDirectory, string inputDirectory)
 		{
+			rootDirectory = rootDirectory.Replace("%PROJECT_ID%", buildContext.ProjectID);
 			foreach (string path in files.Keys)
 			{
 				FileOutput file = files[path];
-				string fullOutputPath = System.IO.Path.Combine(rootDirectory, path).Replace('/', '\\').Replace("%PROJECT_ID%", buildContext.ProjectID);
-				Util.EnsureFolderExists(fullOutputPath);
+				string fullOutputPath = FileUtil.JoinPath(rootDirectory, path);
+				FileUtil.EnsureParentFolderExists(fullOutputPath);
 				switch (file.Type)
 				{
 					case FileOutputType.Text:
-						System.IO.File.WriteAllText(fullOutputPath, file.TextContent);
+						FileUtil.WriteFileText(fullOutputPath, file.TextContent);
 						break;
 
 					case FileOutputType.Binary:
-						System.IO.File.WriteAllBytes(fullOutputPath, file.BinaryContent);
+						FileUtil.WriteFileBytes(fullOutputPath, file.BinaryContent);
 						break;
 
 					case FileOutputType.Copy:
-						string absolutePath = System.IO.Path.Combine(inputDirectory, file.RelativeInputPath);
-						try
-						{
-							System.IO.File.Copy(absolutePath, fullOutputPath, true);
-						}
-						catch (System.IO.IOException ioe)
-						{
-							if (ioe.Message.Contains("it is being used by another process"))
-							{
-								throw new InvalidOperationException("The file '" + file.RelativeInputPath + "' appears to be in use. Please stop playing your game and try again.");
-							}
-							else
-							{
-								throw new InvalidOperationException("The file '" + file.RelativeInputPath + "' could not be copied to the output directory.");
-							}
-						}
+						string absolutePath = FileUtil.JoinPath(inputDirectory, file.RelativeInputPath);
+						FileUtil.CopyFile(absolutePath, fullOutputPath);
 						break;
 
 					case FileOutputType.Image:
-						file.Bitmap.Save(fullOutputPath);
+						FileUtil.WriteFileImage(fullOutputPath, file.Bitmap);
 						break;
 
 					default:
-						throw new NotImplementedException();
+						throw new InvalidOperationException();
 				}
 			}
 		}
 
 		private void GetRelativePaths(string root, string folder, List<string> output)
 		{
-			if (folder == null) folder = root;
-			foreach (string subfolder in System.IO.Directory.GetDirectories(folder))
+			foreach (string path in FileUtil.GetAllFilePathsRelativeToRoot(root))
 			{
-				string lowername = subfolder.ToLowerInvariant();
-				bool ignore = lowername == ".svn";
-				if (!ignore)
+				if (!path.ToLower().EndsWith(".cry"))
 				{
-					GetRelativePaths(root, subfolder, output);
-				}
-			}
-
-			foreach (string file in System.IO.Directory.GetFiles(folder))
-			{
-				string extension = System.IO.Path.GetExtension(file).ToLowerInvariant();
-				bool ignore = (extension == ".cry") ||
-					file == "thumbs.db" ||
-					file == ".ds_store";
-
-				if (!ignore)
-				{
-					string relativePath = file.Substring(root.Length + 1);
-					output.Add(relativePath);
+					output.Add(path);
 				}
 			}
 		}

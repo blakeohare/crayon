@@ -5,20 +5,6 @@ namespace Crayon
 {
 	public static class Util
 	{
-		public static void EnsureFolderExists(string path)
-		{
-			path = path.Trim();
-			if (path.Length > 0)
-			{
-				string folder = System.IO.Path.GetDirectoryName(path);
-				if (folder.Length > 0 && !System.IO.Directory.Exists(folder))
-				{
-					Util.EnsureFolderExists(folder);
-					System.IO.Directory.CreateDirectory(folder);
-				}
-			}
-		}
-
 		/// <summary>
 		/// Override C#'s default float to string behavior of not display the decimal portion if it's a whole number.
 		/// </summary>

@@ -54,7 +54,6 @@
     <Compile Include="ByteCodeEncoder.cs" />
     <Compile Include="CompileContext.cs" />
     <Compile Include="FunctionInvocationType.cs" />
-    <Compile Include="HackUtil.cs" />
     <Compile Include="InterpreterCompiler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EofException.cs" />
@@ -181,6 +180,8 @@
     <Compile Include="Types.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VariableIdAllocator.cs" />
+    <Compile Include="FileUtil.cs" />
+    <Compile Include="SystemBitmap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE.txt">

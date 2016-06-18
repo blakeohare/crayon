@@ -1,6 +1,8 @@
 *.suo
+.DS_Store
 bin
 obj
+/Compiler/Crayon.userprefs
 /Demos/*/output/android
 /Demos/*/output/cwin
 /Demos/*/output/javaawt

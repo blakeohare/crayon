@@ -251,10 +251,10 @@ namespace Crayon.Translator.Java
 
 			foreach (string file in filesToCopyOver)
 			{
-				System.Drawing.Bitmap bmpHack = null;
+				SystemBitmap bmpHack = null;
 				if (file.ToLowerInvariant().EndsWith(".png"))
 				{
-					bmpHack = HackUtil.ReEncodePngImageForJava(System.IO.Path.Combine(inputFolder, file));
+					bmpHack = new SystemBitmap(FileUtil.JoinPath(inputFolder, file));
 				}
 
 				if (bmpHack != null)

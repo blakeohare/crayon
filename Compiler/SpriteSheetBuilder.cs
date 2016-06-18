@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace Crayon
@@ -50,17 +49,16 @@ namespace Crayon
 	class SpriteSheetBuilder
 	{
 		private Dictionary<string, List<Image>> imagesById = new Dictionary<string, List<Image>>();
-		private List<Image> images = new List<Image>();
 		private List<string> spriteGroupIds = new List<string>();
 		private Dictionary<string, List<string>> prefixesForId = new Dictionary<string, List<string>>();
 		// The following mapping can have missing Bitmaps if no image touched that tile.
-		private Dictionary<string, Dictionary<int, Bitmap>> finalTiles = new Dictionary<string, Dictionary<int, Bitmap>>();
+		private Dictionary<string, Dictionary<int, SystemBitmap>> finalTiles = new Dictionary<string, Dictionary<int, SystemBitmap>>();
 		private Dictionary<string, Image> fileFinalDestination = new Dictionary<string, Image>();
 		private List<string> finalTileImagePaths = new List<string>();
 
 		private class Image
 		{
-			public Image(string spriteSheetId, string file, Bitmap bmp)
+			public Image(string spriteSheetId, string file, SystemBitmap bmp)
 			{
 				this.File = file.Replace('\\', '/');
 				this.SheetID = spriteSheetId;
@@ -75,14 +73,14 @@ namespace Crayon
 				}
 			}
 
-			private Bitmap bitmap;
+			private SystemBitmap bitmap;
 
 			public string File { get; private set; }
 
 			// User-assigned sprite sheet group ID.
 			public string SheetID { get; private set; }
 
-			public Bitmap Bitmap { get { return this.bitmap; } }
+			public SystemBitmap Bitmap { get { return this.bitmap; } }
 			public int Width { get; private set; }
 			public int Height { get; private set; }
 
@@ -173,7 +171,7 @@ namespace Crayon
 				{
 					throw new InvalidOperationException("Sprite sheet '" + id + "' had no file matches. Please make sure the sheet prefixes do not contain any typos and point to directories that contain images.");
 				}
-				Dictionary<int, Bitmap> tiles = new Dictionary<int, Bitmap>();
+				Dictionary<int, SystemBitmap> tiles = new Dictionary<int, SystemBitmap>();
 				this.finalTiles[id] = tiles;
 				foreach (Image image in images)
 				{
@@ -199,7 +197,7 @@ namespace Crayon
 				int sheetId = sheetNameToId[sheetName];
 				foreach (int tileId in this.finalTiles[sheetName].Keys)
 				{
-					Bitmap bitmap = this.finalTiles[sheetName][tileId];
+					SystemBitmap bitmap = this.finalTiles[sheetName][tileId];
 					fileOutput[generatedFilesFolder + "/spritesheets/" + sheetId + "_" + tileId + ".png"] = new FileOutput()
 					{
 						 Type = FileOutputType.Image,
@@ -259,9 +257,9 @@ namespace Crayon
 			return sheetNameToId;
 		}
 
-		private void CreateTiles(Dictionary<int, Bitmap> tilesById, ICollection<Image> images)
+		private void CreateTiles(Dictionary<int, SystemBitmap> tilesById, ICollection<Image> images)
 		{
-			Dictionary<int, Graphics> graphicsById = new Dictionary<int, Graphics>();
+			Dictionary<int, SystemBitmap.Graphics> graphicsById = new Dictionary<int, SystemBitmap.Graphics>();
 			List<int> tileIds = new List<int>();
 			List<int> drawX = new List<int>();
 			List<int> drawY = new List<int>();
@@ -305,11 +303,10 @@ namespace Crayon
 
 						if (!tilesById.ContainsKey(id))
 						{
-							tilesById[id] = new Bitmap(256, 256, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-							tilesById[id].SetResolution(96, 96);
-							graphicsById[id] = Graphics.FromImage(tilesById[id]);
+							tilesById[id] = new SystemBitmap(256, 256);
+							graphicsById[id] = tilesById[id].MakeGraphics();
 						}
-						graphicsById[id].DrawImageUnscaled(image.Bitmap, drawX[i], drawY[i]);
+						graphicsById[id].Blit(image.Bitmap, drawX[i], drawY[i]);
 					}
 
 					tileIds.Clear();
@@ -323,10 +320,9 @@ namespace Crayon
 			int spillId = maxSpillId + 1;
 			foreach (Image solitaryImage in solitaries)
 			{
-				Bitmap bmp = new Bitmap(solitaryImage.Width, solitaryImage.Height);
-				bmp.SetResolution(96, 96);
-				Graphics g = Graphics.FromImage(bmp);
-				g.DrawImageUnscaled(solitaryImage.Bitmap, 0, 0);
+				SystemBitmap bmp = new SystemBitmap(solitaryImage.Width, solitaryImage.Height);
+				SystemBitmap.Graphics g = bmp.MakeGraphics();
+				g.Blit(solitaryImage.Bitmap, 0, 0);
 				tilesById[solitaryTileId] = bmp;
 				solitaryImage.TileID = solitaryTileId;
 				solitaryImage.SpillOverID = spillId++;
@@ -363,11 +359,11 @@ namespace Crayon
 					string spriteSheetId = this.GetSpriteSheetIdMatch(file);
 					if (spriteSheetId != null)
 					{
-						Bitmap bmp = null;
+						SystemBitmap bmp = null;
 						try
 						{
-							bmp = new Bitmap(System.IO.Path.Combine(this.buildContext.SourceFolder, file));
-							bmp.SetResolution(96, 96);
+							string bmpPath = FileUtil.JoinPath(this.buildContext.SourceFolder, file);
+							bmp = new SystemBitmap(bmpPath);
 						}
 						catch (Exception)
 						{
