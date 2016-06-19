@@ -142,8 +142,13 @@ namespace Crayon
 
 		public static byte[] ReadBytesInternally(System.Reflection.Assembly assembly, string path)
 		{
-            string canonicalizedPath = path.Replace('/', '.').Replace('-', '_');
-			System.IO.Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + "." + canonicalizedPath);
+			string canonicalizedPath = path.Replace('/', '.');
+#if WINDOWS
+			// a rather odd difference...
+			canonicalizedPath = canonicalizedPath.Replace('-', '_');
+#endif
+			string fullPath = assembly.GetName().Name + "." + canonicalizedPath;
+			System.IO.Stream stream = assembly.GetManifestResourceStream(fullPath);
 			if (stream == null)
 			{
 				throw new System.Exception(path + " not marked as an embedded resource.");

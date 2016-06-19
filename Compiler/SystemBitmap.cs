@@ -7,11 +7,12 @@ namespace Crayon
 	 */
 	public class SystemBitmap
 	{
-		#if WINDOWS
+#if WINDOWS
 		private System.Drawing.Bitmap bitmap;
-		#elif MAC
+#elif OSX
+		private MonoMac.CoreGraphics.CGImage bitmap;
+#endif
 
-		#endif
 		public int Width { get; set; }
 		public int Height { get; set; }
 
@@ -33,7 +34,17 @@ namespace Crayon
 
 			this.bitmap = newBmp;
 #elif OSX
-			throw new System.NotImplementedException();
+			MonoMac.CoreGraphics.CGDataProvider imgDataProvider = 
+				MonoMac.CoreGraphics.CGDataProvider.FromFile(filepath);
+
+			this.bitmap = MonoMac.CoreGraphics.CGImage.FromPNG(
+				imgDataProvider,
+				null,
+				false,
+				MonoMac.CoreGraphics.CGColorRenderingIntent.Default);
+
+			this.Width = this.bitmap.Width;
+			this.Height = this.bitmap.Height;
 #endif
 		}
 
@@ -45,6 +56,19 @@ namespace Crayon
 			this.Width = width;
 			this.Height = height;
 #elif OSX
+			this.bitmap = new MonoMac.CoreGraphics.CGImage(
+				width,
+				height,
+				8,
+				32,
+				width * 4,
+				MonoMac.CoreGraphics.CGColorSpace.Null,
+				MonoMac.CoreGraphics.CGBitmapFlags.None,
+				null,
+				null,
+				false,
+				MonoMac.CoreGraphics.CGColorRenderingIntent.Default);
+			                                                                  
 			throw new System.NotImplementedException();
 #endif
 		}
@@ -54,6 +78,7 @@ namespace Crayon
 #if WINDOWS
 			this.bitmap.Save(path);
 #elif OSX
+
 			throw new System.NotImplementedException();
 #endif
 		}
