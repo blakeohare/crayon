@@ -188,7 +188,8 @@ namespace Crayon
 			List<int[]> spriteSheetOpsIntArgs = new List<int[]>();
 			Dictionary<string, FileOutput> spriteSheetFiles = new Dictionary<string,FileOutput>();
 			HashSet<string> filesAccountedForInSpriteSheet = new HashSet<string>();
-			spriteSheetBuilder.Generate(this.GeneratedFilesFolder, filesToCopyOver, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs, spriteSheetFiles, filesAccountedForInSpriteSheet);
+            string generatedFilesFolder = this.GeneratedFilesFolder.Replace("%PROJECT_ID%", buildContext.ProjectID);
+            spriteSheetBuilder.Generate(generatedFilesFolder, filesToCopyOver, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs, spriteSheetFiles, filesAccountedForInSpriteSheet);
 
 			ByteBuffer byteCodeBuffer = GenerateByteCode(buildContext, inputFolder, spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
 
