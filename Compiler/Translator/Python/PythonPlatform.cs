@@ -72,7 +72,7 @@ namespace Crayon.Translator.Python
 
 		private string GetPyGameCode(string file, Dictionary<string, string> replacements)
 		{
-			string pygameCode = Util.ReadFileInternally("Translator/Python/PyGame/" + file);
+			string pygameCode = Util.ReadResourceFileInternally("python-pygame/" + file);
 			pygameCode = Constants.DoReplacements(pygameCode, replacements);
 			return pygameCode;
 		}

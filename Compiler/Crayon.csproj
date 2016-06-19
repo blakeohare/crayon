@@ -189,123 +189,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\JavaScript\Browser\drawing.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\file_io.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host_html.txt" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Python\PyGame\AsyncHttpFetcher.py" />
-    <EmbeddedResource Include="Translator\Python\PyGame\Footer.py" />
-    <EmbeddedResource Include="Translator\Python\PyGame\Header.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFile.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\JsonParser.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\OpenTK.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GlUtil.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GameWindow.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\ResourceReader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\OpenTkTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\OpenTK\Program.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\CsxaGlRenderer.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\CsxaTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\GlView1.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Icon.png" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Main.axml.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\MainActivity.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ResourceDesigner.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\ResourceReader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\SolutionFile.sln.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\Strings.xml.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\COpenGL\Project\Header.c" />
-    <EmbeddedResource Include="Translator\COpenGL\Project\Footer.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\Project\TranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\Start.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\GameWindow.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\RenderEngine.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\Image.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\JsonParser.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\BuildXml.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\AsyncMessageQueue.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\AndroidProject\GameActivity.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\OpenGlRenderer.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\GlUtil.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlRenderer.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\BuildGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleProperties.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Gradlew.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradlewBat.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ProjectIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\SettingsGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperJar" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppBuildGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableHdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableMdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXhdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXxhdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResLayoutActivityGameXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesAttrsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesColorsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStringsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStylesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesV11StylesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderBase.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHider.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidManifestXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\IcLauncherWeb.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CompilerXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CopyrightProfilesSettingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\DotName.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\EncodingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\GradleXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\LibrariesSupportXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\MiscXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ModulesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ScopeSettingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\VcsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\WorkspaceXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="InterpreterSource\BinaryOpsUtil.cry" />
     <EmbeddedResource Include="InterpreterSource\ByteCodeLoader.cry" />
     <EmbeddedResource Include="InterpreterSource\Constants.cry" />
@@ -425,13 +308,10 @@
     <None Include="InterpreterSource\PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\Python\PyGame\GamepadLibraryHelper.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\JavaScript\Browser\gamepad.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\XamarinAndroid\CsxaAudioHelper.txt" />
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{33d98096-1f92-4c28-ba01-95030cd4eaca}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

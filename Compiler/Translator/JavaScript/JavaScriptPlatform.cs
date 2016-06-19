@@ -59,7 +59,7 @@ namespace Crayon.Translator.JavaScript
 				"interpreter_helpers.js",
 			})
 			{
-				codeJs.Add(Minify(Util.ReadFileInternally("Translator/JavaScript/Browser/" + jsFile)));
+				codeJs.Add(Minify(Util.ReadResourceFileInternally("javascript/" + jsFile)));
 				codeJs.Add(this.Translator.NL);
 			}
 
@@ -237,7 +237,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("<script type=\"text/javascript\" src=\"resources.js\"></script>");
 			output.Add("</head>");
 			output.Add("<body onload=\"v_main()\">");
-			output.Add(Util.ReadFileInternally("Translator/JavaScript/Browser/game_host_html.txt"));
+			output.Add(Util.ReadResourceFileInternally("javascript/game_host_html.txt"));
 			output.Add("</body>");
 			output.Add("</html>");
 

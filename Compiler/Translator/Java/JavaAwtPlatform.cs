@@ -42,7 +42,7 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadFileInternally("Translator/Java/AwtProject/" + awtFile + ".txt"),
+						Util.ReadResourceFileInternally("java-awt/" + awtFile + ".txt"),
 						replacements)
 				};
 			}
@@ -61,7 +61,7 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
+						Util.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
 						replacements)
 				};
 			}
@@ -74,7 +74,7 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadFileInternally("Translator/Java/AwtProject/" + basicFile + ".txt"),
+						Util.ReadResourceFileInternally("java-awt/" + basicFile + ".txt"),
 						replacements)
 				};
 			}
@@ -215,7 +215,7 @@ namespace Crayon.Translator.Java
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/Java/Project/BuildXml.txt"),
+					Util.ReadResourceFileInternally("java-common/BuildXml.txt"),
 					replacements)
 			};
 

@@ -105,12 +105,17 @@ namespace Crayon
 			return contents;
 		}
 
-		internal static string ReadFileInternally(string path)
+        internal static string ReadResourceFileInternally(string path)
+        {
+            return ReadFileInternally(typeof(Resources.ResourceAssembly).Assembly, path);
+        }
+
+        internal static string ReadInterpreterFileInternally(string path)
 		{
 			return ReadFileInternally(typeof(Util).Assembly, path);
 		}
 
-		public static string ReadFileInternally(System.Reflection.Assembly assembly, string path)
+		private static string ReadFileInternally(System.Reflection.Assembly assembly, string path)
 		{
 			return TrimBomIfPresent(
 				string.Join("", Util.ReadBytesInternally(assembly, path).Select<byte, char>(b => (char)b)));
@@ -124,15 +129,21 @@ namespace Crayon
 		}
 
 		private static readonly byte[] BUFFER = new byte[1000];
-
-		internal static byte[] ReadBytesInternally(string path)
+        
+		internal static byte[] ReadResourceBytesInternally(string path)
 		{
-			return Util.ReadBytesInternally(typeof(Util).Assembly, path);
+			return Util.ReadBytesInternally(typeof(Resources.ResourceAssembly).Assembly, path);
 		}
+
+        internal static byte[] ReadInterpreterBytesInternally(string path)
+        {
+            return Util.ReadBytesInternally(typeof(Util).Assembly, path);
+        }
 
 		public static byte[] ReadBytesInternally(System.Reflection.Assembly assembly, string path)
 		{
-			System.IO.Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + "." + path.Replace('/', '.'));
+            string canonicalizedPath = path.Replace('/', '.').Replace('-', '_');
+			System.IO.Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + "." + canonicalizedPath);
 			if (stream == null)
 			{
 				throw new System.Exception(path + " not marked as an embedded resource.");

@@ -74,7 +74,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/SolutionFile.sln.txt"),
+                    Util.ReadResourceFileInternally("csharp-android/SolutionFile.sln.txt"),
                     replacements)
             };
             
@@ -138,14 +138,14 @@ namespace Crayon.Translator.CSharp
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/ProjectFile.csproj.txt"),
+					Util.ReadResourceFileInternally("csharp-android/ProjectFile.csproj.txt"),
 					replacements)
 			};
             
             files[projectId + "/Resources/drawable/Icon.png"] = new FileOutput()
 			{
 				Type = FileOutputType.Binary,
-				BinaryContent = Util.ReadBytesInternally("Translator/CSharp/Project/XamarinAndroid/Icon.png"),
+				BinaryContent = Util.ReadResourceBytesInternally("csharp-android/Icon.png"),
 			};
 
 			// TODO: if not really used, can this be removed from the project?
@@ -153,7 +153,7 @@ namespace Crayon.Translator.CSharp
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/Main.axml.txt"),
+					Util.ReadResourceFileInternally("csharp-android/Main.axml.txt"),
 					replacements),
 			};
 
@@ -161,7 +161,7 @@ namespace Crayon.Translator.CSharp
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(
-					Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/Strings.xml.txt"),
+					Util.ReadResourceFileInternally("csharp-android/Strings.xml.txt"),
 					replacements),
 			};
 
@@ -169,7 +169,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/ResourceDesigner.txt"),
+                    Util.ReadResourceFileInternally("csharp-android/ResourceDesigner.txt"),
                     replacements),
             };
 
@@ -195,7 +195,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadFileInternally("Translator/CSharp/Project/XamarinAndroid/" + filename + ".txt"),
+                        Util.ReadResourceFileInternally("csharp-android/" + filename + ".txt"),
                         replacements)
                 };
             }

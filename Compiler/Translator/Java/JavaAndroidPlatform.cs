@@ -99,12 +99,12 @@ namespace Crayon.Translator.Java
 					output[target] = new FileOutput()
 					{
 						Type = FileOutputType.Binary,
-						BinaryContent = Util.ReadBytesInternally("Translator/Java/" + source)
+						BinaryContent = Util.ReadResourceBytesInternally("java-common/" + source)
 					};
 				}
 				else
 				{
-					string text = Util.ReadFileInternally("Translator/Java/" + source);
+					string text = Util.ReadResourceFileInternally("java-common/" + source);
 					output[target] = new FileOutput()
 					{
 						Type = FileOutputType.Text,
@@ -127,7 +127,7 @@ namespace Crayon.Translator.Java
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadFileInternally("Translator/Java/Project/" + basicFile + ".txt"),
+						Util.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
 						replacements)
 				};
 			}

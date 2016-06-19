@@ -45,14 +45,14 @@ namespace Crayon.Translator.COpenGL
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
 			List<string> mainC = new List<string>();
-			mainC.Add(Util.ReadFileInternally("Translator/COpenGL/Project/Header.c"));
+			mainC.Add(Util.ReadResourceFileInternally("c-opengl/Header.c"));
 			mainC.Add(mainFile["structs"]);
 			mainC.Add(this.Translator.NL);
 			this.Translator.TranslateGlobals(mainC, finalCode);
 			mainC.Add(this.Translator.NL);
 			this.Translator.TranslateFunctions(mainC, finalCode);
 			mainC.Add(this.Translator.NL);
-			mainC.Add(Util.ReadFileInternally("Translator/COpenGL/Project/Footer.c"));
+			mainC.Add(Util.ReadResourceFileInternally("c-opengl/Footer.c"));
 
 			output["main.c"] = new FileOutput()
 			{

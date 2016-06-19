@@ -244,7 +244,7 @@ namespace Crayon.Translator.CSharp
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadFileInternally("Translator/CSharp/Project/" + templateFile),
+						Util.ReadResourceFileInternally("csharp-common/" + templateFile),
 						replacements)
 				};
 			}

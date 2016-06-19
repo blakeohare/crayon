@@ -43,7 +43,7 @@ namespace Crayon
 						if (c != '\'' && c != '"') throw new ParserException(fileToken, "Inline imports are supposed to be strings.");
 						tokens.PopExpected(";");
 						string inlineImportFileName = fileToken.Value.Substring(1, fileToken.Value.Length - 2);
-						string inlineImportFileContents = Util.ReadFileInternally(inlineImportFileName);
+						string inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
 						// TODO: Anti-pattern alert. Clean this up.
 						if (inlineImportFileContents.Contains("%%%"))
 						{

@@ -69,14 +69,14 @@ namespace Crayon.Translator.CSharp
 				files[projectId + "/" + binary + ".dll"] = new FileOutput()
 				{
 					Type = FileOutputType.Binary,
-					BinaryContent = Util.ReadBytesInternally("Translator/CSharp/Binaries/" + binary + ".dll")
+					BinaryContent = Util.ReadResourceBytesInternally("csharp-opentk/binaries/" + binary + ".dll")
 				};
 			}
 
 			files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.ReadFileInternally("Translator/CSharp/Project/License.txt")
+				TextContent = Util.ReadResourceFileInternally("csharp-common/License.txt")
 			};
 
             files[projectId + "/ByteCode.txt"] = new FileOutput()
@@ -103,7 +103,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadFileInternally("Translator/CSharp/Project/OpenTK/" + filename + ".txt"),
+                        Util.ReadResourceFileInternally("csharp-opentk/" + filename + ".txt"),
                         replacements)
                 };
             }
