@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "..\Resources\R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "..\Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrayonMac", "CrayonMac.csproj", "{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrayonOSX", "CrayonOSX.csproj", "{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
