@@ -36,8 +36,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ParseTree\**\*.cs" />
-    <Compile Include="Translator\**\*.cs" />
+    <Compile Include="ParseTree\*.cs" />
+    <Compile Include="Translator\COpenGl\*.cs" />
+    <Compile Include="Translator\CSharp\*.cs" />
+    <Compile Include="Translator\Java\*.cs" />
+    <Compile Include="Translator\JavaScript\*.cs" />
+    <Compile Include="Translator\Python\*.cs" />
+    <Compile Include="Translator\*.cs" />
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
