@@ -1,5 +1,5 @@
 ﻿// $fill_screen(red, green, blue)
-import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+import inline "FrameworkFunctions/5_arg.cry";
 
 if (Value$arg1.type != Types.INTEGER ||
 	Value$arg2.type != Types.INTEGER ||

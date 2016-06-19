@@ -9,7 +9,7 @@ switch ($_array_get(row, 0)) {
 if (lib_func_error_occurred) {
 	return killExecution(stack, pc, lib_func_error_message);
 } else if ($_array_get(row, 2) == 1) { // output used?
-	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	import inline "ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, output);
 	valueStackSize += 1;
 }

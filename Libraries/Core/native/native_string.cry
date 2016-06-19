@@ -9,7 +9,7 @@
 	all fields are always trusted
 */
 
-import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+import inline "FrameworkFunctions/3_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 i = $_cast('int', Value$arg2.internalValue);

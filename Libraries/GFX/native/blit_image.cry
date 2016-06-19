@@ -4,7 +4,7 @@
 		[1] -> int x
 		[2] -> int y
 */
-import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+import inline "FrameworkFunctions/3_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1); // trusted source
 

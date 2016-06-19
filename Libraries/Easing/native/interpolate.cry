@@ -7,7 +7,7 @@
 	2 --> ease in then out
 */
 
-import inline "InterpreterSource/FrameworkFunctions/7_arg.cry";
+import inline "FrameworkFunctions/7_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;

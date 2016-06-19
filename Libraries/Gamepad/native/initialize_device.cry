@@ -9,7 +9,7 @@
 		params[2] -> digital axis count (int)
 		params[3] -> analog axis count (int)
 */
-import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+import inline "FrameworkFunctions/3_arg.cry";
 
 int1 = $_cast('int', Value$arg1.internalValue);
 objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);

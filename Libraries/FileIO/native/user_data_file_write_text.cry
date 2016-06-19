@@ -1,6 +1,6 @@
 ﻿
 // $user_data_file_write_text(path, content)
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";
 
 if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.STRING) {
 	lib_func_error_occurred = true;

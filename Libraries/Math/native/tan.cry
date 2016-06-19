@@ -1,5 +1,5 @@
 
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 // Checking for pi / 2 is not really necessary even though it is not a valid tan value, because 
 // floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.

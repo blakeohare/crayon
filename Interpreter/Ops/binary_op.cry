@@ -411,6 +411,6 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	}
 }
 
-import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+import inline "ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;

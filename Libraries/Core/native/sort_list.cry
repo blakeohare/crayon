@@ -1,5 +1,5 @@
 ﻿
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";
 
 // No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
 // Identical length is also presumed.

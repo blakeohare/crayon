@@ -13,7 +13,7 @@
 	1 - Cannot set content length without a body
 	2 - Cannot set content type without a body
 */
-import inline "InterpreterSource/FrameworkFunctions/7_arg.cry";
+import inline "FrameworkFunctions/7_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 ObjectInstance$objInstance1.nativeData = $_new_array('object', 1);

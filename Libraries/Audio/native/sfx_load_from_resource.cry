@@ -2,7 +2,7 @@
 	args[0] -> blank sound object instance
 	args[1] -> resource path
 */
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";
 
 int1 = lib_audio_load_sfx_from_resource(
 	$_cast('ObjectInstance', Value$arg1.internalValue), 

@@ -2,4 +2,4 @@
 	args[0] -> blank sound object instance
 	args[1] -> file path
 */
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";

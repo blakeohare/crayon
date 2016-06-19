@@ -1,5 +1,5 @@
 ﻿
-import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+import inline "ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, $_array_get(valueStack, valueStackSize - 1));
 $_array_set(valueStack, valueStackSize - 1, $_array_get(valueStack, valueStackSize - 2));
 $_array_set(valueStack, valueStackSize - 2, $_array_get(valueStack, valueStackSize - 3));

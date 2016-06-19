@@ -2,7 +2,7 @@
 	arg[0] -> a re-usable value list to push event fields onto
 */
 
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 libGamePumpEvents($_cast('List<Value>', Value$arg1.internalValue));
 output = arg1;

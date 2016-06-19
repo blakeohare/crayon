@@ -1,5 +1,5 @@
 // $$lib_math_ensure_range(value, min, max);
-import inline "InterpreterSource/FrameworkFunctions/3_arg.cry";
+import inline "FrameworkFunctions/3_arg.cry";
 
 output = arg1;
 

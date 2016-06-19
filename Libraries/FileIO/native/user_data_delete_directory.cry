@@ -1,6 +1,6 @@
 ﻿
 // $user_data_delete_directory(path, recursive_delete_if_folder_non_empty)
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";
 
 if (Value$arg1.type != Types.STRING || Value$arg2.type != Types.BOOLEAN) {
 	lib_func_error_occurred = true;

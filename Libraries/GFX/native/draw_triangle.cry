@@ -1,6 +1,6 @@
 ﻿
 // $draw_triangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha)
-import inline "InterpreterSource/FrameworkFunctions/10_arg.cry";
+import inline "FrameworkFunctions/10_arg.cry";
 
 if (Value$arg1.type != Types.INTEGER ||
 	Value$arg2.type != Types.INTEGER ||

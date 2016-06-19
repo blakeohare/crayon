@@ -4,7 +4,7 @@
 	args[2] -> y
 	args[3] -> alpha
 */
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1); // trusted source
 

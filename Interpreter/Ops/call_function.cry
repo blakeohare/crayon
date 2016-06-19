@@ -68,7 +68,7 @@ if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationTy
 	$_comment('constructor or static method');
 	classInfo = $_array_get(ProgramData$p.classTable, classId);
 
-	import inline "InterpreterSource/InvokeStaticConstructor.cry";
+	import inline "InvokeStaticConstructor.cry";
 }
 
 if (bool1) {
@@ -189,16 +189,16 @@ if (bool1) {
 				$_comment('...on a string');
 				string1 = $_cast('string', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/string_contains.cry'; break;
-					case PrimitiveMethodName.ENDS_WITH: import inline 'InterpreterSource/PrimitiveMethods/string_ends_with.cry'; break;
-					case PrimitiveMethodName.INDEX_OF: import inline 'InterpreterSource/PrimitiveMethods/string_index_of.cry'; break;
-					case PrimitiveMethodName.LOWER: import inline 'InterpreterSource/PrimitiveMethods/string_lower.cry'; break;
-					case PrimitiveMethodName.REPLACE: import inline 'InterpreterSource/PrimitiveMethods/string_replace.cry'; break;
-					case PrimitiveMethodName.REVERSE: import inline 'InterpreterSource/PrimitiveMethods/string_reverse.cry'; break;
-					case PrimitiveMethodName.SPLIT: import inline 'InterpreterSource/PrimitiveMethods/string_split.cry'; break;
-					case PrimitiveMethodName.STARTS_WITH: import inline 'InterpreterSource/PrimitiveMethods/string_starts_with.cry'; break;
-					case PrimitiveMethodName.TRIM: import inline 'InterpreterSource/PrimitiveMethods/string_trim.cry'; break;
-					case PrimitiveMethodName.UPPER: import inline 'InterpreterSource/PrimitiveMethods/string_upper.cry'; break;
+					case PrimitiveMethodName.CONTAINS: import inline 'PrimitiveMethods/string_contains.cry'; break;
+					case PrimitiveMethodName.ENDS_WITH: import inline 'PrimitiveMethods/string_ends_with.cry'; break;
+					case PrimitiveMethodName.INDEX_OF: import inline 'PrimitiveMethods/string_index_of.cry'; break;
+					case PrimitiveMethodName.LOWER: import inline 'PrimitiveMethods/string_lower.cry'; break;
+					case PrimitiveMethodName.REPLACE: import inline 'PrimitiveMethods/string_replace.cry'; break;
+					case PrimitiveMethodName.REVERSE: import inline 'PrimitiveMethods/string_reverse.cry'; break;
+					case PrimitiveMethodName.SPLIT: import inline 'PrimitiveMethods/string_split.cry'; break;
+					case PrimitiveMethodName.STARTS_WITH: import inline 'PrimitiveMethods/string_starts_with.cry'; break;
+					case PrimitiveMethodName.TRIM: import inline 'PrimitiveMethods/string_trim.cry'; break;
+					case PrimitiveMethodName.UPPER: import inline 'PrimitiveMethods/string_upper.cry'; break;
 					default: output = null; break;
 				}
 				break;
@@ -206,21 +206,21 @@ if (bool1) {
 				$_comment('...on a list');
 				list1 = $_cast('List<Value>', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.ADD: import inline 'InterpreterSource/PrimitiveMethods/list_add.cry'; break;
-					case PrimitiveMethodName.CHOICE: import inline 'InterpreterSource/PrimitiveMethods/list_choice.cry'; break;
-					case PrimitiveMethodName.CLEAR: import inline 'InterpreterSource/PrimitiveMethods/list_clear.cry'; break;
-					case PrimitiveMethodName.CLONE: import inline 'InterpreterSource/PrimitiveMethods/list_clone.cry'; break;
-					case PrimitiveMethodName.CONCAT: import inline 'InterpreterSource/PrimitiveMethods/list_concat.cry'; break;
-					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/list_contains.cry'; break;
-					case PrimitiveMethodName.FILTER: import inline 'InterpreterSource/PrimitiveMethods/list_filter.cry'; break;
-					case PrimitiveMethodName.INSERT: import inline 'InterpreterSource/PrimitiveMethods/list_insert.cry'; break;
-					case PrimitiveMethodName.JOIN: import inline 'InterpreterSource/PrimitiveMethods/list_join.cry'; break;
-					case PrimitiveMethodName.MAP: import inline 'InterpreterSource/PrimitiveMethods/list_map.cry'; break;
-					case PrimitiveMethodName.POP: import inline 'InterpreterSource/PrimitiveMethods/list_pop.cry'; break;
-					case PrimitiveMethodName.REMOVE: import inline 'InterpreterSource/PrimitiveMethods/list_remove.cry'; break;
-					case PrimitiveMethodName.REVERSE: import inline 'InterpreterSource/PrimitiveMethods/list_reverse.cry'; break;
-					case PrimitiveMethodName.SHUFFLE: import inline 'InterpreterSource/PrimitiveMethods/list_shuffle.cry'; break;
-					case PrimitiveMethodName.SORT: import inline 'InterpreterSource/PrimitiveMethods/list_sort.cry'; break;
+					case PrimitiveMethodName.ADD: import inline 'PrimitiveMethods/list_add.cry'; break;
+					case PrimitiveMethodName.CHOICE: import inline 'PrimitiveMethods/list_choice.cry'; break;
+					case PrimitiveMethodName.CLEAR: import inline 'PrimitiveMethods/list_clear.cry'; break;
+					case PrimitiveMethodName.CLONE: import inline 'PrimitiveMethods/list_clone.cry'; break;
+					case PrimitiveMethodName.CONCAT: import inline 'PrimitiveMethods/list_concat.cry'; break;
+					case PrimitiveMethodName.CONTAINS: import inline 'PrimitiveMethods/list_contains.cry'; break;
+					case PrimitiveMethodName.FILTER: import inline 'PrimitiveMethods/list_filter.cry'; break;
+					case PrimitiveMethodName.INSERT: import inline 'PrimitiveMethods/list_insert.cry'; break;
+					case PrimitiveMethodName.JOIN: import inline 'PrimitiveMethods/list_join.cry'; break;
+					case PrimitiveMethodName.MAP: import inline 'PrimitiveMethods/list_map.cry'; break;
+					case PrimitiveMethodName.POP: import inline 'PrimitiveMethods/list_pop.cry'; break;
+					case PrimitiveMethodName.REMOVE: import inline 'PrimitiveMethods/list_remove.cry'; break;
+					case PrimitiveMethodName.REVERSE: import inline 'PrimitiveMethods/list_reverse.cry'; break;
+					case PrimitiveMethodName.SHUFFLE: import inline 'PrimitiveMethods/list_shuffle.cry'; break;
+					case PrimitiveMethodName.SORT: import inline 'PrimitiveMethods/list_sort.cry'; break;
 					default: output = null; break;
 				}
 				break;
@@ -228,14 +228,14 @@ if (bool1) {
 				$_comment('...on a dictionary');
 				dictImpl = $_cast('DictImpl', Value$value.internalValue);
 				switch (functionId) {
-					case PrimitiveMethodName.CLEAR: import inline 'InterpreterSource/PrimitiveMethods/dict_clear.cry'; break;
-					case PrimitiveMethodName.CLONE: import inline 'InterpreterSource/PrimitiveMethods/dict_clone.cry'; break;
-					case PrimitiveMethodName.CONTAINS: import inline 'InterpreterSource/PrimitiveMethods/dict_contains.cry'; break;
-					case PrimitiveMethodName.GET: import inline 'InterpreterSource/PrimitiveMethods/dict_get.cry'; break;
-					case PrimitiveMethodName.KEYS: import inline 'InterpreterSource/PrimitiveMethods/dict_keys.cry'; break;
-					case PrimitiveMethodName.MERGE: import inline 'InterpreterSource/PrimitiveMethods/dict_merge.cry'; break;
-					case PrimitiveMethodName.REMOVE: import inline 'InterpreterSource/PrimitiveMethods/dict_remove.cry'; break;
-					case PrimitiveMethodName.VALUES: import inline 'InterpreterSource/PrimitiveMethods/dict_values.cry'; break;
+					case PrimitiveMethodName.CLEAR: import inline 'PrimitiveMethods/dict_clear.cry'; break;
+					case PrimitiveMethodName.CLONE: import inline 'PrimitiveMethods/dict_clone.cry'; break;
+					case PrimitiveMethodName.CONTAINS: import inline 'PrimitiveMethods/dict_contains.cry'; break;
+					case PrimitiveMethodName.GET: import inline 'PrimitiveMethods/dict_get.cry'; break;
+					case PrimitiveMethodName.KEYS: import inline 'PrimitiveMethods/dict_keys.cry'; break;
+					case PrimitiveMethodName.MERGE: import inline 'PrimitiveMethods/dict_merge.cry'; break;
+					case PrimitiveMethodName.REMOVE: import inline 'PrimitiveMethods/dict_remove.cry'; break;
+					case PrimitiveMethodName.VALUES: import inline 'PrimitiveMethods/dict_values.cry'; break;
 					default: output = null; break;
 				}
 				break;
@@ -251,7 +251,7 @@ if (bool1) {
 			}
 		} else {
 			if (returnValueUsed) {
-				import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+				import inline "ValueStackCapacityCheck.cry";
 				$_array_set(valueStack, valueStackSize, output);
 				valueStackSize += 1;
 			}
@@ -329,7 +329,7 @@ if (bool1) {
 					// if the return value is used, push the new constructed object to the stack NOW and then call the function
 					// as though the return value is not used.
 					returnValueUsed = false;
-					import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+					import inline "ValueStackCapacityCheck.cry";
 					$_array_set(valueStack, valueStackSize, value);
 					valueStackSize += 1;
 				}

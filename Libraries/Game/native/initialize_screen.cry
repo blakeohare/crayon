@@ -1,6 +1,6 @@
 ﻿
 // $game_initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 bool1 = false;
 bool2 = false; // 4 args supplied.

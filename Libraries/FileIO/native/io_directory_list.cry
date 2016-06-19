@@ -1,5 +1,5 @@
 ﻿// $io_directory_list(directory)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 if (Value$arg1.type != Types.STRING) {
 	lib_func_error_occurred = true;

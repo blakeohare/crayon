@@ -1,7 +1,7 @@
 ﻿// $$$lib_gfx_image_sheet_load(list_of_ids)
 // list_of_ids is guaranteed to be a non-empty list of string IDs.
 
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 stringList = toStringList(arg1, stringList);
 

@@ -8,7 +8,7 @@ objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 // Therefore it's safe to not check the functionIds array.
 value = $_array_get(ObjectInstance$objInstance1.members, $_array_get(row, 0));
 
-import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+import inline "ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;
 

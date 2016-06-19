@@ -1,6 +1,6 @@
 ﻿
 // $ord(character)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 output = null;
 if (Value$arg1.type == Types.STRING) {

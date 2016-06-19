@@ -1,5 +1,5 @@
 ﻿// $gfx_blit_image_partial_at_scale(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight)
-import inline "InterpreterSource/FrameworkFunctions/9_arg.cry";
+import inline "FrameworkFunctions/9_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
 

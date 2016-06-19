@@ -5,7 +5,7 @@
 	args[3] -> current state (1 -> playing, 2 -> paused, 3 -> stopped)
 	args[4] -> true if the sound should be stopped completely and freed from the channel.
 */
-import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+import inline "FrameworkFunctions/5_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // channel

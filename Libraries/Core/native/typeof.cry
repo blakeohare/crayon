@@ -1,4 +1,4 @@
-﻿import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+﻿import inline "FrameworkFunctions/1_arg.cry";
 
 switch (Value$arg1.type) {
 	// See values in Core.Type enum.

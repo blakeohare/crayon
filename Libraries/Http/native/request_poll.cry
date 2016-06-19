@@ -10,6 +10,6 @@
 	[4] -> Dictionary of lowercase header names to a list of values for that header
 	[5] -> List of actual header names
 */
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 output = lib_http_convert_response_to_list($_cast('ObjectInstance', Value$arg1.internalValue));

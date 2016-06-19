@@ -1,5 +1,5 @@
 ﻿// $game_set_title(string)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 // TODO: disallow empty string?
 string1 = valueToString(arg1);

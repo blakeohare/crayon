@@ -57,6 +57,6 @@ value = new Value(Types.DICTIONARY, new DictImpl(
 	len,
 	type));
 
-import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+import inline "ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;

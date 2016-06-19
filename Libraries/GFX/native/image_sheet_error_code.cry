@@ -1,5 +1,5 @@
 ﻿// $gfx_image_sheet_error_code(idOrIds)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 // Error codes: same as $image_error_code
 

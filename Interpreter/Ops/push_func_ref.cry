@@ -27,7 +27,7 @@ switch ($_array_get(row, 1)) {
 		// note that a static constructor call must occur here.
 		classId = $_array_get(row, 2);
 		classInfo = $_array_get(classTable, classId);
-		import inline "InterpreterSource/InvokeStaticConstructor.cry";
+		import inline "InvokeStaticConstructor.cry";
 		if (bool1) {
 			value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, $_array_get(row, 0)));
 		} else {
@@ -38,7 +38,7 @@ switch ($_array_get(row, 1)) {
 }
 
 if (value != null) {
-	import inline "InterpreterSource/ValueStackCapacityCheck.cry";
+	import inline "ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }

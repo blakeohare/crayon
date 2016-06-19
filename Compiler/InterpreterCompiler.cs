@@ -58,7 +58,7 @@ namespace Crayon
 					continue;
 				}
 
-				string code = Util.ReadInterpreterFileInternally("InterpreterSource/" + file);
+				string code = Util.ReadInterpreterFileInternally(file);
 				filesById[fileId] = code;
 				orderedFileIds.Add(fileId);
 			}

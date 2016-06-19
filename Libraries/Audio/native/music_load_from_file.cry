@@ -3,4 +3,4 @@
 	args[0] -> music instance with unintialized native data
 	args[1] -> filepath
 */
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";
+import inline "FrameworkFunctions/2_arg.cry";

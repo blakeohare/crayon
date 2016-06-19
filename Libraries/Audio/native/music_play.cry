@@ -5,7 +5,7 @@
 	args[3] -> (float) starting volume (not an int type, ever)
 	args[4] -> (boolean) loop
 */
-import inline "InterpreterSource/FrameworkFunctions/5_arg.cry";
+import inline "FrameworkFunctions/5_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 bool1 = $_cast('bool', Value$arg2.internalValue);

@@ -1,5 +1,5 @@
 ﻿// $gfx_flip_image(image, shouldFlipX, shouldFlipY)
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
 object1 = flipImage(object1, $_cast('bool', Value$arg3.internalValue), $_cast('bool', Value$arg4.internalValue));

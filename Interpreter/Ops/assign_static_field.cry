@@ -3,7 +3,7 @@
 // row[1] -> static member ID
 
 classInfo = $_array_get(classTable, $_array_get(row, 0));
-import inline "InterpreterSource/InvokeStaticConstructor.cry";
+import inline "InvokeStaticConstructor.cry";
 
 if (bool1) {
 	valueStackSize -= 1;

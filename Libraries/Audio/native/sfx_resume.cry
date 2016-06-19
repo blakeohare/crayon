@@ -4,7 +4,7 @@
 	args[2] -> volume ratio (0.0 to 1.0)
 	args[3] -> pan ratio (-1.0 to 1.0)
 */
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // sound

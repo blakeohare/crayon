@@ -1,5 +1,5 @@
 ﻿// $io_path_join(path)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 bool1 = true;
 list1 = null;

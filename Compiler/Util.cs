@@ -112,7 +112,7 @@ namespace Crayon
 
         internal static string ReadInterpreterFileInternally(string path)
 		{
-			return ReadFileInternally(typeof(Util).Assembly, path);
+			return ReadFileInternally(typeof(Interpreter.InterpreterAssembly).Assembly, path);
 		}
 
 		private static string ReadFileInternally(System.Reflection.Assembly assembly, string path)

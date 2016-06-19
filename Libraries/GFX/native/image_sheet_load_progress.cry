@@ -1,5 +1,5 @@
 ﻿// $gfx_image_sheet_load_progres(idOrIds)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";
+import inline "FrameworkFunctions/1_arg.cry";
 
 stringList = toStringList(arg1, stringList);
 if (stringList == null) {

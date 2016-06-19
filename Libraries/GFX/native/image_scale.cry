@@ -1,5 +1,5 @@
 ﻿// $gfx_image_scale(image, newEmptyImage, newWidth, newHeight)
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
 object1 = scaleImage(object1, $_cast('int', Value$arg3.internalValue), $_cast('int', Value$arg4.internalValue));

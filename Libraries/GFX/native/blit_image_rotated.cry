@@ -1,5 +1,5 @@
 ﻿// $gfx_blit_image_rotated(image, targetXCenter, targetYCenter, radiansCW)
-import inline "InterpreterSource/FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 object1 = libGfxGetImgFromInstance(arg1);
 int1 = $_cast('int', Value$arg2.internalValue);
