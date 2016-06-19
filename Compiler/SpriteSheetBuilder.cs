@@ -315,6 +315,11 @@ namespace Crayon
 				}
 			}
 
+			foreach (SystemBitmap.Graphics graphics in graphicsById.Values)
+			{
+				graphics.Cleanup();
+			}
+
 			// Add solitary images to the end as if they are their own tile/spill sheet
 			int solitaryTileId = (maxTileId / 16 + 1) * 16;
 			int spillId = maxSpillId + 1;
@@ -323,6 +328,7 @@ namespace Crayon
 				SystemBitmap bmp = new SystemBitmap(solitaryImage.Width, solitaryImage.Height);
 				SystemBitmap.Graphics g = bmp.MakeGraphics();
 				g.Blit(solitaryImage.Bitmap, 0, 0);
+				g.Cleanup();
 				tilesById[solitaryTileId] = bmp;
 				solitaryImage.TileID = solitaryTileId;
 				solitaryImage.SpillOverID = spillId++;
@@ -359,20 +365,16 @@ namespace Crayon
 					string spriteSheetId = this.GetSpriteSheetIdMatch(file);
 					if (spriteSheetId != null)
 					{
-						SystemBitmap bmp = null;
+						string bmpPath = FileUtil.JoinPath(this.buildContext.SourceFolder, file);
+
 						try
 						{
-							string bmpPath = FileUtil.JoinPath(this.buildContext.SourceFolder, file);
-							bmp = new SystemBitmap(bmpPath);
-						}
-						catch (Exception)
-						{
-							// Nope.
-						}
-
-						if (bmp != null)
-						{
+							SystemBitmap bmp = new SystemBitmap(bmpPath);
 							this.imagesById[spriteSheetId].Add(new Image(spriteSheetId, file, bmp));
+						}
+						catch (Exception e)
+						{
+							throw new InvalidOperationException(file + " is not a valid PNG file.", e);
 						}
 					}
 				}

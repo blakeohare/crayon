@@ -10,7 +10,7 @@ namespace Crayon
 #if WINDOWS
 		private System.Drawing.Bitmap bitmap;
 #elif OSX
-		private MonoMac.CoreGraphics.CGImage bitmap;
+		private Cairo.ImageSurface bitmap;
 #endif
 
 		public int Width { get; set; }
@@ -34,15 +34,7 @@ namespace Crayon
 
 			this.bitmap = newBmp;
 #elif OSX
-			MonoMac.CoreGraphics.CGDataProvider imgDataProvider = 
-				MonoMac.CoreGraphics.CGDataProvider.FromFile(filepath);
-
-			this.bitmap = MonoMac.CoreGraphics.CGImage.FromPNG(
-				imgDataProvider,
-				null,
-				false,
-				MonoMac.CoreGraphics.CGColorRenderingIntent.Default);
-
+			this.bitmap = new Cairo.ImageSurface(filepath);
 			this.Width = this.bitmap.Width;
 			this.Height = this.bitmap.Height;
 #endif
@@ -50,26 +42,13 @@ namespace Crayon
 
 		public SystemBitmap(int width, int height)
 		{
+			this.Width = width;
+			this.Height = height;
 #if WINDOWS
 			this.bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			this.bitmap.SetResolution(96, 96);
-			this.Width = width;
-			this.Height = height;
 #elif OSX
-			this.bitmap = new MonoMac.CoreGraphics.CGImage(
-				width,
-				height,
-				8,
-				32,
-				width * 4,
-				MonoMac.CoreGraphics.CGColorSpace.Null,
-				MonoMac.CoreGraphics.CGBitmapFlags.None,
-				null,
-				null,
-				false,
-				MonoMac.CoreGraphics.CGColorRenderingIntent.Default);
-			                                                                  
-			throw new System.NotImplementedException();
+			this.bitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
 #endif
 		}
 
@@ -78,8 +57,7 @@ namespace Crayon
 #if WINDOWS
 			this.bitmap.Save(path);
 #elif OSX
-
-			throw new System.NotImplementedException();
+			this.bitmap.WriteToPng(path);
 #endif
 		}
 
@@ -93,7 +71,7 @@ namespace Crayon
 #if WINDOWS
 			private System.Drawing.Graphics systemGraphics;
 #elif OSX
-
+			private Cairo.Context context;
 #endif
 
 			public Graphics(SystemBitmap owner)
@@ -101,7 +79,7 @@ namespace Crayon
 #if WINDOWS
 				this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
 #elif OSX
-				throw new System.NotImplementedException();
+				this.context = new Cairo.Context(owner.bitmap);
 #endif
 			}
 
@@ -110,7 +88,18 @@ namespace Crayon
 #if WINDOWS
 				this.systemGraphics.DrawImageUnscaled(bmp.bitmap, x, y);
 #elif OSX
-				throw new System.NotImplementedException();
+
+				this.context.SetSource(bmp.bitmap, x, y);
+				this.context.Paint();
+#endif
+			}
+
+			public void Cleanup()
+			{
+#if WINDOWS
+
+#elif OSX
+				this.context.Dispose();
 #endif
 			}
 		}
