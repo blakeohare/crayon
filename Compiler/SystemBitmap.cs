@@ -7,13 +7,17 @@ namespace Crayon
 	 */
 	public class SystemBitmap
 	{
+		#if WINDOWS
 		private System.Drawing.Bitmap bitmap;
+		#elif MAC
 
+		#endif
 		public int Width { get; set; }
 		public int Height { get; set; }
 
 		public SystemBitmap(string filepath)
 		{
+#if WINDOWS
 			this.bitmap = new System.Drawing.Bitmap(filepath);
 			this.bitmap.SetResolution(96, 96);
 			this.Width = this.bitmap.Width;
@@ -28,19 +32,30 @@ namespace Crayon
 			g.Dispose();
 
 			this.bitmap = newBmp;
+#elif OSX
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		public SystemBitmap(int width, int height)
 		{
+#if WINDOWS
 			this.bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			this.bitmap.SetResolution(96, 96);
 			this.Width = width;
 			this.Height = height;
+#elif OSX
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		public void Save(string path)
 		{
+#if WINDOWS
 			this.bitmap.Save(path);
+#elif OSX
+			throw new System.NotImplementedException();
+#endif
 		}
 
 		public Graphics MakeGraphics()
@@ -50,16 +65,28 @@ namespace Crayon
 
 		public class Graphics
 		{
+#if WINDOWS
 			private System.Drawing.Graphics systemGraphics;
+#elif OSX
+
+#endif
 
 			public Graphics(SystemBitmap owner)
 			{
+#if WINDOWS
 				this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
+#elif OSX
+				throw new System.NotImplementedException();
+#endif
 			}
 
 			public void Blit(SystemBitmap bmp, int x, int y)
 			{
+#if WINDOWS
 				this.systemGraphics.DrawImageUnscaled(bmp.bitmap, x, y);
+#elif OSX
+				throw new System.NotImplementedException();
+#endif
 			}
 		}
 	}
