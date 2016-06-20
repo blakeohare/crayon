@@ -44,9 +44,6 @@
     <Compile Include="Translator\Python\*.cs" />
     <Compile Include="Translator\*.cs" />
     <Compile Include="*.cs" />
-    <Compile Include="Translator\CSharp\CSharpXamarinIosPlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpXamarinIosOpenGlTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpXamarinIosSystemFunctionTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">

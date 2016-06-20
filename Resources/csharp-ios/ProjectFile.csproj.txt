@@ -108,10 +108,7 @@
     <None Include="Entitlements.plist" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
-    <Compile Include="GameViewController.cs" />
-    <Compile Include="Graphics2dRenderer.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ByteCode.txt" />

@@ -91,6 +91,7 @@ namespace Crayon
 				case "android": return new Crayon.Translator.Java.JavaAndroidPlatform();
 				case "cwin": return new Crayon.Translator.COpenGL.COpenGLPlatform();
 				case "csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
+				case "csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
 				case "csopengl": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
 				case "java": return new Crayon.Translator.Java.JavaAwtPlatform();
 				case "js": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
@@ -107,7 +108,8 @@ namespace Crayon
 			{
 				string command;
 
-                command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
+				command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
+
                 args = command.Split(' ');
 			}
 #endif

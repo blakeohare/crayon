@@ -11,13 +11,13 @@ Global
 		Debug|iPhone = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Release|iPhone.ActiveCfg = Release|iPhone
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Release|iPhone.Build.0 = Release|iPhone
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{505388E6-00B0-41D4-AFBB-A39E72B96321}.Debug|iPhone.Build.0 = Debug|iPhone
+		{%%%PROJECT_GUID%%%}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{%%%PROJECT_GUID%%%}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{%%%PROJECT_GUID%%%}.Release|iPhone.ActiveCfg = Release|iPhone
+		{%%%PROJECT_GUID%%%}.Release|iPhone.Build.0 = Release|iPhone
+		{%%%PROJECT_GUID%%%}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{%%%PROJECT_GUID%%%}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{%%%PROJECT_GUID%%%}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{%%%PROJECT_GUID%%%}.Debug|iPhone.Build.0 = Debug|iPhone
 	EndGlobalSection
 EndGlobal

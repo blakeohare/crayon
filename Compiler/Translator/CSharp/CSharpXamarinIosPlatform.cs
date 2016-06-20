@@ -38,6 +38,7 @@ namespace Crayon.Translator.CSharp
 				"GameViewController",
 				"Graphics2dRenderer",
 				"Main",
+				"ResourceReader",
 			})
 			{
 				files[projectId + "/" + csFile + ".cs"] = new FileOutput()
@@ -67,6 +68,12 @@ namespace Crayon.Translator.CSharp
 						replacements),
 				};
 			}
+
+			files[projectId + "/Resources/ByteCode.txt"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = this.Context.ByteCodeString
+			};
 
 			files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
 			{

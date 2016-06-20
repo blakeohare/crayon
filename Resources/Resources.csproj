@@ -58,6 +58,7 @@
     <EmbeddedResource Include="csharp-ios\AssetsXcassetsContentsJson.txt" />
     <EmbeddedResource Include="csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
     <EmbeddedResource Include="csharp-ios\CsxiTranslationHelper.txt" />
+    <EmbeddedResource Include="csharp-ios\ResourceReader.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="java-common\AsyncMessageQueue.txt" />

@@ -1,15 +1,108 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 
 namespace %%%PROJECT_ID%%%
 {
 	public static class CsxiTranslationHelper
 	{
+		public static string AppDataRoot { get { return "."; } }
+
 		public static int GetImageWidth(object img)
 		{
 			throw new NotImplementedException();
 		}
 
 		public static int GetImageHeight(object img)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void InitializeGameWithFps(double fps)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void InitializeScreen(int width, int height)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void InitializeScreen(int gameWidth, int gameHeight, int displayWidth, int displayHeight)
+		{
+			// Discard window dimension params. You don't get to pick the physical screen size.
+			InitializeScreen(gameWidth, gameHeight);
+		}
+
+		public static void SetTitle(string title)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static List<PlatformRelayObject> GetEvents()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static object FlushImagetteToNativeBitmap(Imagette imagette)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void DownloadImage(string key, string url)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void HttpRequest(
+			HttpRequest request,
+			string method,
+			string url,
+			string body,
+			string userAgent,
+			string contentType,
+			string contentLength,
+			List<string> filteredHeaderNames,
+			List<string> filteredHeaderValues)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string IoFileReadText(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoFileWriteText(string path, string content, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string[] IoFilesInDirectory(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static bool IoDoesPathExist(string path, bool isDirectoriesOnly, bool isPerformCaseCheck, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoDeleteFile(string path, bool isUserData)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoDeleteDirectory(string path, bool recursive)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string IoCurrentDirectory()
+		{
+			throw new NotImplementedException();
+		}
+
+		public static int IoCreateDirectory(string path)
 		{
 			throw new NotImplementedException();
 		}

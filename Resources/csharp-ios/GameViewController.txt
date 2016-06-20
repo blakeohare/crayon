@@ -121,7 +121,7 @@ namespace %%%PROJECT_ID%%%
 			GL.Finish();
 		}
 
-		string LoadResource(string name, string type)
+		public string LoadResource(string name, string type)
 		{
 			string path = NSBundle.MainBundle.PathForResource(name, type);
 			return System.IO.File.ReadAllText(path);
