@@ -9,11 +9,10 @@ namespace Crayon.Translator.CSharp
     {
         public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/Assets/GeneratedFiles"; } }
 
-        public CSharpXamarinAndroidPlatform() : base(new CSharpXamarinAndroidSystemFunctionTranslator(), 
+		public CSharpXamarinAndroidPlatform() : base(
+			new CSharpXamarinAndroidSystemFunctionTranslator(),
 			new CSharpXamarinAndroidOpenGlTranslator())
-		{
-
-		}
+		{ }
 
 		public override string PlatformShortId { get { return "csharp-android"; } }
 
@@ -133,7 +132,6 @@ namespace Crayon.Translator.CSharp
             replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\n", additionalAndroidAssets);
             replacements["ANDROID_RAW_RESOURCES"] = string.Join("\n", androidResourcesForProjectFile);
 
-            
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,

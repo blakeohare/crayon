@@ -6,7 +6,7 @@
     <ProjectGuid>{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>CrayonMac</RootNamespace>
-    <AssemblyName>CrayonMac</AssemblyName>
+    <AssemblyName>crayon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseMSBuildEngine>false</UseMSBuildEngine>
   </PropertyGroup>
@@ -44,6 +44,9 @@
     <Compile Include="Translator\Python\*.cs" />
     <Compile Include="Translator\*.cs" />
     <Compile Include="*.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinIosPlatform.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinIosOpenGlTranslator.cs" />
+    <Compile Include="Translator\CSharp\CSharpXamarinIosSystemFunctionTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">

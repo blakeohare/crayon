@@ -8,10 +8,16 @@
 			<prefix>*</prefix>
 		</sheet>
 	</spritesheets>
+
+	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->
 	<target name="android">
 		<platform>csharp-android</platform>
+	</target>
+
+	<target name="ios">
+		<platform>csharp-ios</platform>
 	</target>
 	
 	<target name="js_local">
