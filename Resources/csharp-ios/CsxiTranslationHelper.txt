@@ -19,12 +19,16 @@ namespace %%%PROJECT_ID%%%
 
 		public static void InitializeGameWithFps(double fps)
 		{
-			throw new NotImplementedException();
+			// No-op. FPS is ignored.
 		}
+
+		public static GameViewController GVC { get; set; }
 
 		public static void InitializeScreen(int width, int height)
 		{
-			throw new NotImplementedException();
+			GVC.LogicalWidth = width;
+			GVC.LogicalHeight = height;
+			GVC.ScreenInitialized = true;
 		}
 
 		public static void InitializeScreen(int gameWidth, int gameHeight, int displayWidth, int displayHeight)
@@ -35,12 +39,12 @@ namespace %%%PROJECT_ID%%%
 
 		public static void SetTitle(string title)
 		{
-			throw new NotImplementedException();
+			// No-op.
 		}
 
 		public static List<PlatformRelayObject> GetEvents()
 		{
-			throw new NotImplementedException();
+			return new List<PlatformRelayObject>();
 		}
 
 		public static object FlushImagetteToNativeBitmap(Imagette imagette)

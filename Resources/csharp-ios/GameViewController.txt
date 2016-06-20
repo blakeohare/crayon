@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
 using Foundation;
 using GLKit;
 using OpenGLES;
-using OpenTK;
 using OpenTK.Graphics.ES11;
 
 namespace %%%PROJECT_ID%%%
@@ -14,10 +13,18 @@ namespace %%%PROJECT_ID%%%
 	{
 		EAGLContext context { get; set; }
 
+		private bool executionBegun = false;
+
+		public int LogicalWidth { get; set; }
+		public int LogicalHeight { get; set; }
+		public bool ScreenInitialized { get; set; }
+
 		[Export("initWithCoder:")]
 		public GameViewController(NSCoder coder) : base(coder)
 		{
-			string byteCode = this.LoadResource("ByteCode", "txt");
+			this.ScreenInitialized = false;
+			ResourceReader.GVC = this;
+			CsxiTranslationHelper.GVC = this;
 		}
 
 		public override void ViewDidLoad()
@@ -84,25 +91,23 @@ namespace %%%PROJECT_ID%%%
 
 		public override void Update()
 		{
-			// TODO: invoke a cycle of the VM here.
-			// TODO: update COMMANDS
-		}
+			CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
+			CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
 
-		// spoof an instruction to draw an orange rectangle as a placeholder.
-		private static int[] COMMANDS = new int[] {
-			1,
-			10, // x
-			100, // y
-			200, // width
-			600, // height
-			255, // red
-			128, // green
-			0, // blue
-			255, //alpha
-			0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0,
-		};
+			if (!this.executionBegun)
+			{
+            	CrayonWrapper.v_main();
+            	this.executionBegun = false;
+			}
+			else
+			{
+				bool forceExit = !CrayonWrapper.v_runTick();
+				if (forceExit)
+				{
+				    // TODO: force exit app here.
+				}
+			}
+		}
 
 		void IGLKViewDelegate.DrawInRect(GLKView view, CoreGraphics.CGRect rect)
 		{
@@ -113,11 +118,15 @@ namespace %%%PROJECT_ID%%%
 			GL.TexParameter(All.Texture2D, All.TextureMagFilter, (int)All.Nearest);
 			GL.MatrixMode(All.ProjectionMatrix);
 			GL.LoadIdentity();
-			int logicalWidth = 400;
-			int logicalHeight = 800;
+			int logicalWidth = this.LogicalWidth;
+			int logicalHeight = this.LogicalHeight;
 			GL.Ortho(0f, logicalWidth, logicalHeight, 0f, -1f, 1f);
 			GL.MatrixMode(All.Modelview);
-			Graphics2dRenderer.Render(COMMANDS, 16, new object[0], logicalWidth, logicalHeight);
+
+			if (this.ScreenInitialized)
+			{
+				Graphics2dRenderer.Render(CrayonWrapper.v_GL_DATA, CrayonWrapper.v_GL_VIRTUAL_SIZE, CrayonWrapper.v_GL_IMAGES, logicalWidth, logicalHeight);
+			}
 			GL.Finish();
 		}
 
