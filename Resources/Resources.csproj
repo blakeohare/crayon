@@ -45,6 +45,18 @@
     <EmbeddedResource Include="javascript\input.js" />
     <EmbeddedResource Include="javascript\interpreter_helpers.js" />
     <EmbeddedResource Include="javascript\sound.js" />
+    <EmbeddedResource Include="csharp-ios\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="csharp-ios\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="csharp-ios\AppDelegate.txt" />
+    <EmbeddedResource Include="csharp-ios\EntitlementsPlist.txt" />
+    <EmbeddedResource Include="csharp-ios\GameViewController.txt" />
+    <EmbeddedResource Include="csharp-ios\Graphics2dRenderer.txt" />
+    <EmbeddedResource Include="csharp-ios\InfoPlist.txt" />
+    <EmbeddedResource Include="csharp-ios\LaunchScreenStoryboard.txt" />
+    <EmbeddedResource Include="csharp-ios\Main.txt" />
+    <EmbeddedResource Include="csharp-ios\MainStoryboard.txt" />
+    <EmbeddedResource Include="csharp-ios\AssetsXcassetsContentsJson.txt" />
+    <EmbeddedResource Include="csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="java-common\AsyncMessageQueue.txt" />
@@ -151,6 +163,9 @@
     <EmbeddedResource Include="python-pygame\Footer.py" />
     <EmbeddedResource Include="python-pygame\GamepadLibraryHelper.py" />
     <EmbeddedResource Include="python-pygame\Header.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="csharp-ios\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

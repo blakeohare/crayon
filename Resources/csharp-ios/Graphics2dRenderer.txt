@@ -1,0 +1,91 @@
+﻿using System;
+
+using OpenTK.Graphics.ES11;
+
+namespace %%%PROJECT_ID%%%
+{
+	public static class Graphics2dRenderer
+	{
+		private static float[] rectanglePoints = new float[8];
+		private static byte[] colors = new byte[16];
+
+		public static void Render(
+			int[] commands,
+			int commandsLength,
+			object[] images,
+			int logicalWidth,
+			int logicalHeight)
+		{
+			float left, top, width, height, bottom, right;
+			byte red, green, blue, alpha;
+
+			for (int i = 0; i < commandsLength; i += 16)
+			{
+				switch (commands[i])
+				{
+					case 1:
+						// Render rectangle
+						left = commands[i | 1];
+						top = commands[i | 2];
+						width = commands[i | 3];
+						height = commands[i | 4];
+						right = left + width;
+						bottom = top + height;
+
+						rectanglePoints[0] = left;
+						rectanglePoints[1] = top;
+						rectanglePoints[2] = left;
+						rectanglePoints[3] = bottom;
+						rectanglePoints[4] = right;
+						rectanglePoints[5] = top;
+						rectanglePoints[6] = right;
+						rectanglePoints[7] = bottom;
+
+						red = (byte)(commands[i | 5] & 255);
+						green = (byte)(commands[i | 6] & 255);
+						blue = (byte)(commands[i | 7] & 255);
+						alpha = (byte)(commands[i | 8] & 255);
+						for (int j = 0; j < 16; j += 4)
+						{
+							colors[j | 0] = red;
+							colors[j | 1] = green;
+							colors[j | 2] = blue;
+							colors[j | 3] = alpha;
+						}
+						GL.Disable(All.Texture2D);
+						GL.VertexPointer(2, All.Float, 0, rectanglePoints);
+						GL.EnableClientState(All.VertexArray);
+						GL.DisableClientState(All.TextureCoordArray);
+						GL.ColorPointer(4, All.UnsignedByte, 0, colors);
+						GL.EnableClientState(All.ColorArray);
+						GL.DrawArrays(All.TriangleStrip, 0, 4);
+
+						break;
+
+					case 2:
+						// Render ellipse
+						break;
+
+					case 3:
+						// Render image
+						break;
+
+					case 4:
+						// Render image rotated
+						break;
+
+					case 5:
+						// Render line
+						break;
+
+					case 6:
+						// Render triangle
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+	}
+}

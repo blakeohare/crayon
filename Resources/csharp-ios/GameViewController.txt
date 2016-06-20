@@ -1,0 +1,130 @@
+﻿using System;
+using System.Diagnostics;
+
+using Foundation;
+using GLKit;
+using OpenGLES;
+using OpenTK;
+using OpenTK.Graphics.ES11;
+
+namespace %%%PROJECT_ID%%%
+{
+	[Register("GameViewController")]
+	public class GameViewController : GLKViewController, IGLKViewDelegate
+	{
+		EAGLContext context { get; set; }
+
+		[Export("initWithCoder:")]
+		public GameViewController(NSCoder coder) : base(coder)
+		{
+			string byteCode = this.LoadResource("ByteCode", "txt");
+		}
+
+		public override void ViewDidLoad()
+		{
+			base.ViewDidLoad();
+
+			context = new EAGLContext(EAGLRenderingAPI.OpenGLES1);
+
+			if (context == null)
+			{
+				Debug.WriteLine("Failed to create ES context");
+			}
+
+			var view = (GLKView)View;
+			view.Context = context;
+			view.DrawableDepthFormat = GLKViewDrawableDepthFormat.Format24;
+
+			SetupGL();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			TearDownGL();
+
+			if (EAGLContext.CurrentContext == context)
+				EAGLContext.SetCurrentContext(null);
+		}
+
+		public override void DidReceiveMemoryWarning()
+		{
+			base.DidReceiveMemoryWarning();
+
+			if (IsViewLoaded && View.Window == null)
+			{
+				View = null;
+
+				TearDownGL();
+
+				if (EAGLContext.CurrentContext == context)
+				{
+					EAGLContext.SetCurrentContext(null);
+				}
+			}
+
+			// Dispose of any resources that can be recreated.
+		}
+
+		public override bool PrefersStatusBarHidden()
+		{
+			return true;
+		}
+
+		void SetupGL()
+		{
+			EAGLContext.SetCurrentContext(context);
+		}
+
+		void TearDownGL()
+		{
+			EAGLContext.SetCurrentContext(context);
+		}
+
+		public override void Update()
+		{
+			// TODO: invoke a cycle of the VM here.
+			// TODO: update COMMANDS
+		}
+
+		// spoof an instruction to draw an orange rectangle as a placeholder.
+		private static int[] COMMANDS = new int[] {
+			1,
+			10, // x
+			100, // y
+			200, // width
+			600, // height
+			255, // red
+			128, // green
+			0, // blue
+			255, //alpha
+			0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0,
+		};
+
+		void IGLKViewDelegate.DrawInRect(GLKView view, CoreGraphics.CGRect rect)
+		{
+			GL.ClearColor(0.65f, 0.65f, 0.65f, 1.0f);
+			GL.Clear(ClearBufferMask.ColorBufferBit);
+			GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
+			GL.Enable(All.Blend);
+			GL.TexParameter(All.Texture2D, All.TextureMagFilter, (int)All.Nearest);
+			GL.MatrixMode(All.ProjectionMatrix);
+			GL.LoadIdentity();
+			int logicalWidth = 400;
+			int logicalHeight = 800;
+			GL.Ortho(0f, logicalWidth, logicalHeight, 0f, -1f, 1f);
+			GL.MatrixMode(All.Modelview);
+			Graphics2dRenderer.Render(COMMANDS, 16, new object[0], logicalWidth, logicalHeight);
+			GL.Finish();
+		}
+
+		string LoadResource(string name, string type)
+		{
+			string path = NSBundle.MainBundle.PathForResource(name, type);
+			return System.IO.File.ReadAllText(path);
+		}
+	}
+}
