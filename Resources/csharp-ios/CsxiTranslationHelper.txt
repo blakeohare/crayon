@@ -9,12 +9,14 @@ namespace %%%PROJECT_ID%%%
 
 		public static int GetImageWidth(object img)
 		{
-			throw new NotImplementedException();
+			CoreGraphics.CGImage cgImage = (CoreGraphics.CGImage)img;
+			return (int)cgImage.Width;
 		}
 
 		public static int GetImageHeight(object img)
 		{
-			throw new NotImplementedException();
+			CoreGraphics.CGImage cgImage = (CoreGraphics.CGImage)img;
+			return (int)cgImage.Height;
 		}
 
 		public static void InitializeGameWithFps(double fps)

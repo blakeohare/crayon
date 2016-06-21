@@ -135,5 +135,12 @@ namespace %%%PROJECT_ID%%%
 			string path = NSBundle.MainBundle.PathForResource(name, type);
 			return System.IO.File.ReadAllText(path);
 		}
+
+		public CoreGraphics.CGImage LoadImage(string name, string type)
+		{
+			string path = NSBundle.MainBundle.PathForResource(name, type);
+			CoreGraphics.CGImage image = UIKit.UIImage.FromFile(path).CGImage;
+			return image;
+		}
 	}
 }

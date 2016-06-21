@@ -13,7 +13,11 @@ namespace %%%PROJECT_ID%%%
 
 		public static object ReadImageFile(string path, bool isGeneratedImage)
 		{
-			throw new NotImplementedException();
+			int dot = path.LastIndexOf('.');
+			if (dot == -1) return null;
+			string type = path.Substring(dot + 1);
+			path = path.Substring(0, dot);
+			return GVC.LoadResource(path, type);
 		}
 	}
 }

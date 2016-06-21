@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ByteCode.txt" />
+    <BundleResource Include="Resources\GeneratedFiles\**\*.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
