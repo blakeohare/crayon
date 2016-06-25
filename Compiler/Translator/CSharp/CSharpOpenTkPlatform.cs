@@ -2,38 +2,38 @@
 
 namespace Crayon.Translator.CSharp
 {
-	class CSharpOpenTkPlatform : CSharpPlatform
-	{
-		public CSharpOpenTkPlatform()
-			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
-		{ }
+    class CSharpOpenTkPlatform : CSharpPlatform
+    {
+        public CSharpOpenTkPlatform()
+            : base(new CSharpOpenTkSystemFunctionTranslator(), true)
+        { }
 
-		public override string PlatformShortId { get { return "csharp-opentk"; } }
-        
-		public override void PlatformSpecificFiles(
-			string projectId,
-			Dictionary<string, FileOutput> files,
-			Dictionary<string, string> replacements,
+        public override string PlatformShortId { get { return "csharp-opentk"; } }
+
+        public override void PlatformSpecificFiles(
+            string projectId,
+            Dictionary<string, FileOutput> files,
+            Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase)
-		{
-			// TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
-			foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
-			{
-				files[projectId + "/" + binary + ".dll"] = new FileOutput()
-				{
-					Type = FileOutputType.Binary,
-					BinaryContent = Util.ReadResourceBytesInternally("csharp-opentk/binaries/" + binary + ".dll")
-				};
-			}
+        {
+            // TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
+            foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
+            {
+                files[projectId + "/" + binary + ".dll"] = new FileOutput()
+                {
+                    Type = FileOutputType.Binary,
+                    BinaryContent = Util.ReadResourceBytesInternally("csharp-opentk/binaries/" + binary + ".dll")
+                };
+            }
 
-			files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Util.ReadResourceFileInternally("csharp-opentk/License.txt")
-			};
+            files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Util.ReadResourceFileInternally("csharp-opentk/License.txt")
+            };
 
             List<string> embeddedResources = new List<string>();
-            
+
             files[projectId + "/Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             embeddedResources.Add("Resources\\ByteCode.txt");
 
@@ -54,7 +54,7 @@ namespace Crayon.Translator.CSharp
                     embeddedResources.Add("Resources\\Images\\" + fileOutput.CanonicalFileName);
                 }
             }
-            
+
             foreach (FileOutput fileOutput in resourceDatabase.AudioResources)
             {
                 files[projectId + "/Resources/Audio/" + fileOutput.CanonicalFileName] = fileOutput;
@@ -85,7 +85,7 @@ namespace Crayon.Translator.CSharp
             {
                 "SolutionFile.sln.txt,%%%PROJECT_ID%%%.sln",
                 "ProjectFile.csproj.txt,%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.csproj",
-                
+
                 "AssemblyInfo.txt,%%%PROJECT_ID%%%/Properties/AssemblyInfo.cs",
                 "GamepadTranslationHelper.txt,%%%PROJECT_ID%%%/GamepadTranslationHelper.cs",
                 "GameWindow.txt,%%%PROJECT_ID%%%/GameWindow.cs",
@@ -106,6 +106,6 @@ namespace Crayon.Translator.CSharp
                     TextContent = content,
                 };
             }
-		}
-	}
+        }
+    }
 }

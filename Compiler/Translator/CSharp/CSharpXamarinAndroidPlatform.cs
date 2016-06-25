@@ -10,8 +10,7 @@ namespace Crayon.Translator.CSharp
         public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/Assets/GeneratedFiles"; } }
 
 		public CSharpXamarinAndroidPlatform() : base(
-			new CSharpXamarinAndroidSystemFunctionTranslator(),
-			new CSharpXamarinAndroidOpenGlTranslator())
+			new CSharpXamarinAndroidSystemFunctionTranslator(), true)
 		{ }
 
 		public override string PlatformShortId { get { return "csharp-android"; } }

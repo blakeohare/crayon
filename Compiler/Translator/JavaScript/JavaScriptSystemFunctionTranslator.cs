@@ -1094,5 +1094,10 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, denominator);
 			output.Add(")");
 		}
-	}
+
+        protected override void TranslateGlMaxTextureSize(List<string> output)
+        {
+            throw new InvalidOperationException();
+        }
+    }
 }

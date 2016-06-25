@@ -11,7 +11,6 @@ namespace Crayon
 		public bool IsMin { get; private set; }
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
-		public AbstractOpenGlTranslator OpenGlTranslator { get; private set; } // null if IsOpenGlBased is false
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
 
 		public PlatformId PlatformId { get; private set; }
@@ -27,7 +26,7 @@ namespace Crayon
 
 		public string LibraryBigSwitchStatement { get; set; }
 
-		public bool IsOpenGlBased { get { return this.OpenGlTranslator != null; } }
+		public bool IsOpenGlBased { get; private set; }
 
 		public virtual bool RemoveBreaksFromSwitch { get { return false; } }
         
@@ -37,7 +36,7 @@ namespace Crayon
 			bool isMin,
 			AbstractTranslator translator,
 			AbstractSystemFunctionTranslator systemFunctionTranslator,
-			AbstractOpenGlTranslator nullableOpenGlTranslator)
+			bool isOpenGlBased)
 		{
 			this.PlatformId = platform;
 			this.LanguageId = language;
@@ -45,16 +44,10 @@ namespace Crayon
 			this.IsMin = isMin;
 			this.Translator = translator;
 			this.SystemFunctionTranslator = systemFunctionTranslator;
-			this.OpenGlTranslator = nullableOpenGlTranslator;
+            this.IsOpenGlBased = isOpenGlBased;
 			this.Translator.Platform = this;
 			this.SystemFunctionTranslator.Platform = this;
 			this.SystemFunctionTranslator.Translator = translator;
-
-			if (this.OpenGlTranslator != null)
-			{
-				this.OpenGlTranslator.Platform = this;
-				this.OpenGlTranslator.Translator = this.Translator;
-			}
 		}
 
 		public string Translate(object expressionObj)

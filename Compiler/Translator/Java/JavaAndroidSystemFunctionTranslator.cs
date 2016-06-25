@@ -333,5 +333,10 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
-	}
+
+        protected override void TranslateGlMaxTextureSize(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -8,7 +8,7 @@ namespace Crayon.Translator.Java
     internal class JavaAwtPlatform : JavaPlatform
 	{
         public JavaAwtPlatform()
-            : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), null)
+            : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
         { }
 
 		public override string GeneratedFilesFolder { get { return "resources/generated"; } }

@@ -6,7 +6,7 @@ using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
 {
-	class CSharpXamarinAndroidSystemFunctionTranslator : CSharpSystemFunctionTranslator
+    class CSharpXamarinAndroidSystemFunctionTranslator : CSharpSystemFunctionTranslator
     {
         protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
         {
@@ -93,9 +93,9 @@ namespace Crayon.Translator.CSharp
         }
 
         protected override void TranslateAudioMusicIsPlaying(List<string> output)
-		{
-			output.Add("CsxaAudioHelper.AudioIsMusicPlaying()");
-		}
+        {
+            output.Add("CsxaAudioHelper.AudioIsMusicPlaying()");
+        }
 
         protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
         {
@@ -120,7 +120,7 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
+        protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
         {
             output.Add("CsxaAudioHelper.AudioMusicPlayResource(");
             this.Translator.TranslateExpression(output, nativeResource);
@@ -129,14 +129,14 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
+        protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
         {
             output.Add("CsxaAudioHelper.AudioMusicVerifyFileExists(");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
 
-		protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
+        protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
         {
             output.Add("CsxaAudioHelper.AudioSoundGetState(");
             this.Translator.TranslateExpression(output, channel);
@@ -147,7 +147,7 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
+        protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
         {
             output.Add("CsxaAudioHelper.AudioSoundPlay(");
             this.Translator.TranslateExpression(output, resource);
@@ -158,7 +158,7 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
+        protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
         {
             output.Add("CsxaAudioHelper.AudioSoundResume(");
             this.Translator.TranslateExpression(output, channel);
@@ -171,7 +171,7 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
+        protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
         {
             output.Add("CsxaAudioHelper.AudioSoundStop(");
             this.Translator.TranslateExpression(output, channel);
@@ -186,83 +186,83 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
+        protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
         {
             output.Add("CsxaAudioHelper.AudioStop(");
             this.Translator.TranslateExpression(output, soundInstance);
             output.Add(")");
         }
 
-		protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-		{
-			throw new NotImplementedException();
-		}
+        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
+        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             // Not used in OpenGL-based platforms.
             throw new NotImplementedException();
-		}
+        }
 
-		protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
+        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
         {
             // Not used in OpenGL-based platforms.
             throw new NotImplementedException();
-		}
+        }
 
-		protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
+        protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
         {
             output.Add("CsxaAudioHelper.MusicLoadFromResource(");
             this.Translator.TranslateExpression(output, filename);
             output.Add(")");
         }
 
-		protected override void TranslateMusicPause(List<string> output)
+        protected override void TranslateMusicPause(List<string> output)
         {
             output.Add("CsxaAudioHelper.MusicPause()");
         }
 
-		protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
+        protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
         {
             output.Add("CsxaAudioHelper.MusicPlayNow(");
             this.Translator.TranslateExpression(output, musicNativeObject);
@@ -271,12 +271,12 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-		protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
-		{
+        protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
+        {
             output.Add("CsxaAudioHelper.MusicSetVolume(");
             this.Translator.TranslateExpression(output, ratio);
             output.Add(")");
-		}
+        }
 
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
@@ -355,6 +355,11 @@ namespace Crayon.Translator.CSharp
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
+        }
+
+        protected override void TranslateGlMaxTextureSize(List<string> output)
+        {
+            output.Add("GlUtil.getMaxTextureSize()");
         }
     }
 }
