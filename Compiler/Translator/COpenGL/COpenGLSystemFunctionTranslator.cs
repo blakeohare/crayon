@@ -323,11 +323,9 @@ namespace Crayon.Translator.COpenGL
 			output.Add("TODO_get_program_data()");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
-			output.Add("\"");
-			output.Add(theString);
-			output.Add("\"");
+			output.Add("TODO_get_byte_code_string()");
 		}
 
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
@@ -704,14 +702,7 @@ namespace Crayon.Translator.COpenGL
 		{
 			throw new NotImplementedException();
 		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("TODO_read_local_tile_resource(");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(")");
-		}
-
+        
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			throw new NotImplementedException();

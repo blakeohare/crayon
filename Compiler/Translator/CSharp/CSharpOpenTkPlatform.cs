@@ -8,60 +8,13 @@ namespace Crayon.Translator.CSharp
 			: base(new CSharpOpenTkSystemFunctionTranslator(), new CSharpOpenTkOpenGlTranslator())
 		{ }
 
-		public override string PlatformShortId { get { return "csotk"; } }
-
-		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
-		{
-			replacements["PROJECT_FILE_EXTRAS"] = string.Join("\n", 
-				"<OutputType>WinExe</OutputType>",
-				"    <TargetFrameworkProfile>Client</TargetFrameworkProfile>",
-				"    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
-
-
-			replacements["EXTRA_DLLS"] = string.Join("\r\n", new string[] {
-				"    <Reference Include=\"OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL\">",
-				"      <SpecificVersion>False</SpecificVersion>",
-				"      <HintPath>.\\OpenTK.dll</HintPath>",
-				"    </Reference>",
-				"    <Reference Include=\"SdlDotNet, Version=6.1.0.0, Culture=neutral, PublicKeyToken=26ad4f7e10c61408, processorArchitecture=MSIL\">",
-				"      <SpecificVersion>False</SpecificVersion>",
-				"      <HintPath>.\\SdlDotNet.dll</HintPath>",
-				"    </Reference>",
-				"    <Reference Include=\"Tao.Sdl, Version=1.2.13.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e, processorArchitecture=MSIL\">",
-				"      <SpecificVersion>False</SpecificVersion>",
-				"      <HintPath>.\\Tao.Sdl.dll</HintPath>",
-				"    </Reference>"
-			});
-
-			replacements["COPY_FILES"] = string.Join("\r\n", new string[] {
-                // TODO: This is the wrong place for this.
-                // But the Project file is going to be target-specific soon anyway, so it doesn't matter too much.
-                "    <EmbeddedResource Include=\"ByteCode.txt\" />",
-
-                "    <None Include=\"DependencyLicenses.txt\">",
-				"      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",
-				"    </None>",
-			});
-		}
-
-		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries) { }
-
-        public override void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files)
-        {
-            FileOutput openGlRenderer = files[projectId + "/OpenGlPipeline.cs"];
-            openGlRenderer.TextContent = openGlRenderer.TextContent.Replace(
-                // This is quite silly.
-                // Ultimately the OpenGL stuff will be pulled out as a static file resource and this will be a non-issue.
-                "using System.Linq;",
-                "using System.Linq;\r\nusing OpenTK.Graphics.OpenGL;");
-        }
-
+		public override string PlatformShortId { get { return "csharp-opentk"; } }
+        
 		public override void PlatformSpecificFiles(
 			string projectId,
-			List<string> compileTargets,
 			Dictionary<string, FileOutput> files,
 			Dictionary<string, string> replacements,
-            SpriteSheetBuilder spriteSheet)
+            ResourceDatabase resourceDatabase)
 		{
 			// TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
 			foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
@@ -76,35 +29,81 @@ namespace Crayon.Translator.CSharp
 			files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = Util.ReadResourceFileInternally("csharp-common/License.txt")
+				TextContent = Util.ReadResourceFileInternally("csharp-opentk/License.txt")
 			};
 
-            files[projectId + "/ByteCode.txt"] = new FileOutput()
+            List<string> embeddedResources = new List<string>();
+            
+            files[projectId + "/Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            embeddedResources.Add("Resources\\ByteCode.txt");
+
+            files[projectId + "/Resources/ResourceMapping.txt"] = resourceDatabase.ResourceManifestFile;
+            embeddedResources.Add("Resources\\ResourceMapping.txt");
+
+            foreach (FileOutput fileOutput in resourceDatabase.TextResources)
             {
-                Type = FileOutputType.Text,
-                TextContent = this.Context.ByteCodeString
-            };
+                files[projectId + "/Resources/Text/" + fileOutput.CanonicalFileName] = fileOutput;
+                embeddedResources.Add("Resources\\Text\\" + fileOutput.CanonicalFileName);
+            }
 
-            foreach (string filename in new string[] {
-                "GameWindow",
-                "GlUtil",
-                "Program",
-                "AssemblyInfo",
-                "ResourceReader",
-                "OpenTkTranslationHelper",
+            foreach (FileOutput fileOutput in resourceDatabase.ImageResources)
+            {
+                if (fileOutput.Type != FileOutputType.Ghost)
+                {
+                    files[projectId + "/Resources/Images/" + fileOutput.CanonicalFileName] = fileOutput;
+                    embeddedResources.Add("Resources\\Images\\" + fileOutput.CanonicalFileName);
+                }
+            }
+            
+            foreach (FileOutput fileOutput in resourceDatabase.AudioResources)
+            {
+                files[projectId + "/Resources/Audio/" + fileOutput.CanonicalFileName] = fileOutput;
+                embeddedResources.Add("Resources\\Audio\\" + fileOutput.CanonicalFileName);
+            }
 
-                // TODO: only inject this when the Gamepad library is imported
-                // It'll require some reworking with the library code.
-                "GamepadTranslationHelper",
-            }) {
-                compileTargets.Add(filename + ".cs");
-                string target = projectId + "/" + (filename == "AssemblyInfo" ? "Properties/" : "") + filename + ".cs";
-                files[target] = new FileOutput()
+            if (resourceDatabase.SpriteSheetManifestFile != null)
+            {
+                files[projectId + "/Resources/SpriteSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                embeddedResources.Add("Resources\\SpriteSheetManifest.txt");
+
+                foreach (string spriteSheetFile in resourceDatabase.SpriteSheetFiles.Keys)
+                {
+                    FileOutput fileOutput = resourceDatabase.SpriteSheetFiles[spriteSheetFile];
+                    files[projectId + "/Resources/ImageSheets/" + spriteSheetFile] = fileOutput;
+                    embeddedResources.Add("Resources\\ImageSheets\\" + spriteSheetFile);
+                }
+            }
+
+            List<string> embeddedResourceReplacement = new List<string>();
+            foreach (string embeddedResource in embeddedResources)
+            {
+                embeddedResourceReplacement.Add("    <EmbeddedResource Include=\"" + embeddedResource + "\" />");
+            }
+            replacements["EMBEDDED_RESOURCES"] = string.Join("\r\n", embeddedResourceReplacement);
+
+            foreach (string file in new string[]
+            {
+                "SolutionFile.sln.txt,%%%PROJECT_ID%%%.sln",
+                "ProjectFile.csproj.txt,%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.csproj",
+                
+                "AssemblyInfo.txt,%%%PROJECT_ID%%%/Properties/AssemblyInfo.cs",
+                "GamepadTranslationHelper.txt,%%%PROJECT_ID%%%/GamepadTranslationHelper.cs",
+                "GameWindow.txt,%%%PROJECT_ID%%%/GameWindow.cs",
+                "GlUtil.txt,%%%PROJECT_ID%%%/GlUtil.cs",
+                "OpenTkRenderer.txt,%%%PROJECT_ID%%%/OpenTkRenderer.cs",
+                "OpenTkTranslationHelper.txt,%%%PROJECT_ID%%%/OpenTkTranslationHelper.cs",
+                "Program.txt,%%%PROJECT_ID%%%/Program.cs",
+                "ResourceReader.txt,%%%PROJECT_ID%%%/ResourceReader.cs",
+            })
+            {
+                string[] parts = file.Split(',');
+                string source = "csharp-opentk/" + parts[0];
+                string destination = Constants.DoReplacements(parts[1], replacements);
+                string content = Constants.DoReplacements(Util.ReadResourceFileInternally(source), replacements);
+                files[destination] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("csharp-opentk/" + filename + ".txt"),
-                        replacements)
+                    TextContent = content,
                 };
             }
 		}

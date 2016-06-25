@@ -8,31 +8,69 @@ namespace %%%PROJECT_ID%%%
 {
 	internal static class ResourceReader
 	{
+        private static Dictionary<string, string> resourceMapping = null;
+        
 		public static string ReadTextResource(string path)
 		{
-			return ReadTextFile(path, true);
+            // TODO: user path translation
+			return ReadTextFile(path);
 		}
 
-		public static string ReadTextFile(string path, bool filePrefix)
+        private static string GetResourcePath(string userDefinedPath)
+        {
+            if (resourceMapping == null)
+            {
+                // also create a type lookup dictionry
+                resourceMapping = new Dictionary<string, string>();
+                foreach (string line in ReadTextFile("Resources/ResourceMapping.txt").Split('\n'))
+                {
+                    string[] parts = line.Split(',');
+                    switch (parts[0].Trim())
+                    {
+                        case "TXT":
+                            if (parts.Length >= 3)
+                            {
+                                string resourceName = "Resources/Text/" + parts[1].Trim();
+                                string originalName = parts[2];
+                                for (int i = 3; i < parts.Length; ++i)
+                                {
+                                    originalName += "," + parts[i];
+                                }
+                                originalName = originalName.Trim();
+                                resourceMapping[originalName] = resourceName;
+                                resourceMapping["/" + originalName] = resourceName;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            userDefinedPath = userDefinedPath.Replace('\\', '/');
+            if (resourceMapping.ContainsKey(userDefinedPath))
+            {
+                return resourceMapping[userDefinedPath];
+            }
+            return null;
+        }
+
+		public static string ReadTextFile(string path)
 		{
-			IList<byte> bytes = ReadBytes(path, filePrefix);
-			if (bytes == null)
-			{
-				return null;
-			}
+			IList<byte> bytes = ReadBytes(path);
+            if (bytes == null) return null;
+            bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
 			StringBuilder output = new StringBuilder(bytes.Count); 
-			output.Append(ReadBytes(path, filePrefix).Select<byte, char>(b => (char)b).ToArray<char>());
+			output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
 			return output.ToString();
 		}
 
 		public static string ReadByteCodeFile()
 		{
-			return ReadTextFile("ByteCode.txt", false);
+			return ReadTextFile("Resources/ByteCode.txt");
 		}
 
-		public static System.Drawing.Bitmap ReadImageFile(string path, bool generatedImage)
+		public static System.Drawing.Bitmap ReadImageFile(string path)
 		{
-			IList<byte> data = ReadBytes(path, !generatedImage);
+			IList<byte> data = ReadBytes(path);
 			if (data == null)
 			{
 				return null;
@@ -40,33 +78,19 @@ namespace %%%PROJECT_ID%%%
 			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
 		}
 
-		public static System.IO.Stream GetResourceStream(string path, bool useFilePrefix)
+		public static System.IO.Stream GetResourceStream(string path)
 		{
-			// TODO: C# likes to replace non alphanumerics in the path with underscores but 
-			// only in the directories, not in the actual file name. Will need to come up
-			// with some original resource mapping to generated file names.
-			path = path.Replace('\\', '/');
-			string[] parts = path.Split('/');
-			string original_file = parts[parts.Length - 1];
-			List<string> final_file = new List<string>();
-			for (int i = 0; i < parts.Length - 1; ++i)
-			{
-				final_file.Add(parts[i].Replace('-', '_'));
-			}
-			final_file.Add(original_file);
-			string canonicalizedPath = string.Join(".", final_file);
-			string prefix = "%%%PROJECT_ID%%%" + (useFilePrefix ? ".Files" : "") + (canonicalizedPath.StartsWith(".") ? "" : ".");
-			canonicalizedPath = prefix + canonicalizedPath;
-
-			return typeof(ResourceReader).Assembly.GetManifestResourceStream(canonicalizedPath);
+            System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
+			path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
+			return assembly.GetManifestResourceStream(path);
 		}
 
-		private const int BUFFER_LENGTH = 128;
+		private const int BUFFER_LENGTH = 1000;
 		private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
 
-		public static IList<byte> ReadBytes(string path, bool filePrefix)
+		public static List<byte> ReadBytes(string path)
 		{
-			System.IO.Stream stream = GetResourceStream(path, filePrefix);
+			System.IO.Stream stream = GetResourceStream(path);
 			if (stream == null)
 			{
 				return null;

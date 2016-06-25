@@ -433,7 +433,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("R.ProgramData");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
 			output.Add("CRAYON.getByteCode()");
 		}
@@ -861,12 +861,7 @@ namespace Crayon.Translator.JavaScript
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			throw new Exception("Not supported in JavaScript");
-		}
-
+        
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			// Nope.

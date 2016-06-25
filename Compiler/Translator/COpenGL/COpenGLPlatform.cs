@@ -17,7 +17,13 @@ namespace Crayon.Translator.COpenGL
 		public override string GeneratedFilesFolder { get { return "generated_files"; } }
 		public override string PlatformShortId { get { return "copengl"; } }
 
-		public override Dictionary<string, FileOutput> Package(BuildContext buildContext, string projectId, Dictionary<string, ParseTree.Executable[]> finalCode, List<string> filesToCopyOver, ICollection<ParseTree.StructDefinition> structDefinitions, string fileCopySourceRoot, SpriteSheetBuilder spriteSheet)
+		public override Dictionary<string, FileOutput> Package(
+            BuildContext buildContext, 
+            string projectId, 
+            Dictionary<string, ParseTree.Executable[]> finalCode, 
+            ICollection<ParseTree.StructDefinition> structDefinitions, 
+            string fileCopySourceRoot, 
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, string> mainFile = new Dictionary<string, string>();
 			

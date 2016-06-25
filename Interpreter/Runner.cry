@@ -53,7 +53,8 @@ function main() {
 			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
 			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
 			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
-			$_new_dictionary('string', 'int') // group name --> group ID
+			$_new_dictionary('string', 'int'), // group name --> group ID
+			false // initialized
 		),
 		new ImageSheetStatus(
 			$_new_dictionary('string', 'string'),

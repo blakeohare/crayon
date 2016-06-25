@@ -114,7 +114,7 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, fps);
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
 			output.Add("AwtTranslationHelper.getRawByteCodeString()");
 		}
@@ -279,13 +279,6 @@ namespace Crayon.Translator.Java
 		protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
 		{
 			output.Add("TranslationHelper.NoopWithReturnNull()");
-		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("AwtTranslationHelper.readLocalTileResource(");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(")");
 		}
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)

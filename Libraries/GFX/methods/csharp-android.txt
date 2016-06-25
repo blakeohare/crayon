@@ -1,0 +1,1 @@
+$_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("Data/ImageSheetManifest.txt")

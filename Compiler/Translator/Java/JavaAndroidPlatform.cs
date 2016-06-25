@@ -16,13 +16,12 @@ namespace Crayon.Translator.Java
 		public override string PlatformShortId { get { return "javaandroid"; } }
 
 		public override Dictionary<string, FileOutput> Package(
-			BuildContext buildContext,
-			string projectId,
-			Dictionary<string, ParseTree.Executable[]> finalCode,
-			List<string> filesToCopyOver,
-			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder,
-			SpriteSheetBuilder spriteSheet)
+            BuildContext buildContext,
+            string projectId,
+            Dictionary<string, ParseTree.Executable[]> finalCode,
+            ICollection<ParseTree.StructDefinition> structDefinitions,
+            string fileCopySourceRoot,
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			string package = "com." + projectId.ToLowerInvariant() + ".app";
@@ -116,9 +115,6 @@ namespace Crayon.Translator.Java
 			foreach (string basicFile in new string[] { 
 				"AsyncMessageQueue",
 				"TranslationHelper",
-				//"Start",
-				//"GameWindow",
-				//"RenderEngine",
 				"Image",
 				"JsonParser"
 			})
@@ -231,13 +227,9 @@ namespace Crayon.Translator.Java
 					TextContent = fileContents
 				};
 
-				output["app/src/main/res/bytecode/ByteCode.txt"] = new FileOutput()
-				{
-					Type = FileOutputType.Text,
-					TextContent = this.Context.ByteCodeString
-				};
+                output["app/src/main/res/bytecode/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
 			}
-
+            /*
 			foreach (string file in filesToCopyOver)
 			{
 				SystemBitmap bmpHack = null;
@@ -263,12 +255,9 @@ namespace Crayon.Translator.Java
 					};
 				}
 			}
+            ///*/
 
-			output["app/src/main/res/raw/bytes.txt"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = this.Context.ByteCodeString
-			};
+            output["app/src/main/res/raw/bytes.txt"] = resourceDatabase.ByteCodeFile;
 
 			return output;
 		}

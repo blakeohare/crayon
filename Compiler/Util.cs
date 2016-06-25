@@ -151,7 +151,7 @@ namespace Crayon
 			System.IO.Stream stream = assembly.GetManifestResourceStream(fullPath);
 			if (stream == null)
 			{
-				throw new System.Exception(path + " not marked as an embedded resource.");
+            	throw new System.Exception(path + " not marked as an embedded resource.");
 			}
 			List<byte> output = new List<byte>();
 			int bytesRead = 1;

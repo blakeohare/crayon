@@ -229,7 +229,7 @@ namespace %%%PROJECT_ID%%%
 		
 		public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
 		{
-			IList<byte> soundBytesList = ResourceReader.ReadBytes(path, true);
+			IList<byte> soundBytesList = ResourceReader.ReadBytes(path);
 			if (soundBytesList == null) return null;
 			byte[] soundBytes = soundBytesList.ToArray();
 			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
@@ -339,7 +339,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static object MusicLoadResource(string path)
 		{
-            IList<byte> musicData = ResourceReader.ReadBytes(path, true);
+            IList<byte> musicData = ResourceReader.ReadBytes(path);
 			if (musicData == null) return null;
 			return new SdlDotNet.Audio.Music(musicData.ToArray());
 		}

@@ -23,13 +23,12 @@ namespace Crayon.Translator.JavaScript
 		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
 
 		public override Dictionary<string, FileOutput> Package(
-			BuildContext buildContext,
-			string projectId,
-			Dictionary<string, ParseTree.Executable[]> finalCode,
-			List<string> filesToCopyOver,
-			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder,
-			SpriteSheetBuilder spriteSheet)
+            BuildContext buildContext,
+            string projectId,
+            Dictionary<string, ParseTree.Executable[]> finalCode,
+            ICollection<ParseTree.StructDefinition> structDefinitions,
+            string fileCopySourceRoot,
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
@@ -90,37 +89,19 @@ namespace Crayon.Translator.JavaScript
 				TextContent = string.Join("\n", new string[] {
 					"var CRAYON = {};",
 					"CRAYON.getByteCode = function() {",
-					"\treturn \"" + this.Context.ByteCodeString + "\";",
+					"\treturn \"" + resourceDatabase.ByteCodeFile.TextContent + "\";",
 					"};",
 					""
 				})
 			};
-
-			HashSet<string> binaryFileTypes = new HashSet<string>(
-				"JPG PNG GIF JPEG BMP MP3 OGG".Split(' '));
-
+            
 			Dictionary<string, string> textResources = new Dictionary<string, string>();
+            foreach (FileOutput textFile in resourceDatabase.TextResources)
+            {
+                textResources[textFile.OriginalPath] = textFile.TextContent;
+            }
 
-			foreach (string file in filesToCopyOver)
-			{
-				string[] parts = file.Split('.');
-				bool isBinary = file.Length > 1 && binaryFileTypes.Contains(parts[parts.Length - 1].ToUpperInvariant());
-
-				if (isBinary)
-				{
-					output[file] = new FileOutput()
-					{
-						Type = FileOutputType.Copy,
-						RelativeInputPath = file
-					};
-					textResources[file] = null;
-				}
-				else
-				{
-					textResources[file] = Util.ReadFileExternally(System.IO.Path.Combine(inputFolder, file), false);
-				}
-			}
-
+            
 			// TODO: don't generate resources file if there are no resources.
 			// But you'll also have to unlink it from the generated HTML.
 			output["resources.js"] = new FileOutput()
@@ -131,21 +112,7 @@ namespace Crayon.Translator.JavaScript
 
 			return output;
 		}
-
-
-		private static readonly HashSet<string> KNOWN_BINARY_FILES = new HashSet<string>()
-		{
-			"MP3",
-			"WAV",
-			"OGG",
-			"BMP",
-			"GIF",
-			"PNG",
-			"TIFF",
-			"JPEG",
-			"JPG"
-		};
-
+        
 		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
 		{
 			List<string> output = new List<string>();
@@ -154,12 +121,6 @@ namespace Crayon.Translator.JavaScript
 			for (int i = 0; i < keys.Length; ++i)
 			{
 				string filename = keys[i];
-				string[] filenamePieces = filename.Split('.');
-				string extension = filenamePieces[filenamePieces.Length - 1].ToUpperInvariant();
-				if (KNOWN_BINARY_FILES.Contains(extension))
-				{
-					continue;
-				}
 				output.Add("\t\"");
 				output.Add(filename.Replace('\\', '/'));
 				output.Add("\": ");

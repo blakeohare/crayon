@@ -282,7 +282,11 @@ namespace %%%PROJECT_ID%%%
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
 
-			CrayonWrapper.v_glRender(null, this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
+			OpenTkRenderer.render(
+                CrayonWrapper.v_GL_DATA,
+                CrayonWrapper.v_GL_IMAGES,
+                CrayonWrapper.v_GL_VIRTUAL_SIZE,
+                this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
 
 			this.SwapBuffers();
 		}

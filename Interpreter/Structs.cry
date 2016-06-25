@@ -33,9 +33,15 @@ struct SpriteSheetData {
 	@type('Dictionary<string, SpriteSheetItemDescriptor>') files,
 	@type('Dictionary<int, List<string>>') filesByGroupId,
 	@type('Dictionary<int, Dictionary<int, bool>>') tileIdsByGroupId,
-	@type('Dictionary<string, int>') groupIdsByName
+	@type('Dictionary<string, int>') groupIdsByName,
+	@type('bool') initialized,
 }
 
+// TODO: This needs to be more extensible and cleaned up.
+// Things like image sheet stuff should still be applied to ProgramData, but needs to be done so in a way
+// that doesn't clutter up the schema and can be leveraged by other custom libraries. For example, creating
+// some sort of Dictionary keyed off of a library namespace string that can point to an arbitrary type and
+// having a model for defining structs in the libraries.
 struct ProgramData {
 	@type('StackFrame') stackTop,
 	@type('Array<int>') ops,

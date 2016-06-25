@@ -214,7 +214,7 @@ namespace Crayon.Translator.CSharp
 			output.Add("TranslationHelper.ProgramData");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
 			output.Add("ResourceReader.ReadByteCodeFile()");
 		}
@@ -479,16 +479,9 @@ namespace Crayon.Translator.CSharp
 		{
 			output.Add("ResourceReader.ReadImageFile(");
 			this.Translator.TranslateExpression(output, filePath);
-			output.Add(", false)");
+			output.Add(")");
 		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("ResourceReader.ReadImageFile(\"GeneratedFiles/spritesheets/\" + ");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(" + \".png\", true)");
-		}
-
+        
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			// Nope

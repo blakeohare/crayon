@@ -30,7 +30,7 @@
 	</target>
 	
 	<target name="windows">
-		<platform>csopengl</platform>
+		<platform>csharp-opentk</platform>
 	</target>
 	
 	<target name="javaawt">

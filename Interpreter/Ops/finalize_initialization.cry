@@ -20,6 +20,4 @@ stringSwitches = ProgramData$p.stringSwitchLookups;
 globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
 funcArgs = ProgramData$p.funcArgs;
 
-imageSheetStatusInitialization();
-
 ProgramData$p.initializationComplete = true;

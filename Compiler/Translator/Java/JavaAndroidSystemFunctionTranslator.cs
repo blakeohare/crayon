@@ -121,7 +121,7 @@ namespace Crayon.Translator.Java
 			output.Add(")");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
 			output.Add("AndroidTranslationHelper.getRawByteCodeString()");
 		}
@@ -291,14 +291,7 @@ namespace Crayon.Translator.Java
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("AndroidTranslationHelper.readLocalTileResource(");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(")");
-		}
-
+        
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
 			output.Add("AndroidTranslationHelper.resourceReadText(");

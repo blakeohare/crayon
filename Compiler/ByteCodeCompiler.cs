@@ -7,7 +7,7 @@ namespace Crayon
 {
 	internal class ByteCodeCompiler
 	{
-		public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines, IList<string> spriteSheetOpsStringArgs, IList<int[]> spriteSheetOpsIntArgs)
+		public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines)
 		{
 			FunctionDefinition mainFunction = lines
 				.OfType<FunctionDefinition>()
@@ -30,15 +30,12 @@ namespace Crayon
 			ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
 
 			ByteBuffer switchStatements = this.BuildSwitchStatementTables(parser);
-
-			ByteBuffer spriteSheetStuff = this.BuildSpriteSheetStuff(spriteSheetOpsStringArgs, spriteSheetOpsIntArgs);
-
+            
 			ByteBuffer header = new Crayon.ByteBuffer();
 			header.Concat(literalsTable);
 			header.Concat(tokenData);
 			header.Concat(fileContent);
 			header.Concat(switchStatements);
-			header.Concat(spriteSheetStuff);
 			header.Add(null, OpCode.FINALIZE_INITIALIZATION);
 
 			ByteBuffer output = new Crayon.ByteBuffer();
@@ -60,18 +57,7 @@ namespace Crayon
 
 			return output;
 		}
-
-		private ByteBuffer BuildSpriteSheetStuff(IList<string> stringArgs, IList<int[]> intArgs)
-		{
-			ByteBuffer buffer = new ByteBuffer();
-			int length = stringArgs.Count;
-			for (int i = 0; i < length; ++i)
-			{
-				buffer.Add(null, OpCode.SPRITE_SHEET_BUILDER, stringArgs[i], intArgs[i]);
-			}
-			return buffer;
-		}
-
+        
 		private ByteBuffer BuildSwitchStatementTables(Parser parser)
 		{
 			ByteBuffer output = new Crayon.ByteBuffer();

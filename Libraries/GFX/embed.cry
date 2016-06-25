@@ -169,6 +169,14 @@ namespace GFX {
 			this._ids = _ids;
 		}
 
+		static constructor() {
+			Game.GameWindow._frameBeginHandlers.add(ImageSheetLoader._framePreHandler);
+			Game.GameWindow._frameBeginHandlers.add(ImageSheetLoader._framePostHandler);
+		}
+
+		static function _framePreHandler() { return $$lib_gfx_image_sheet_pre_frame_handler(); }
+		static function _framePostHandler() { return $$lib_gfx_image_sheet_post_frame_handler(); }
+
 		static function fromIds(ids) {
 			t = [];
 			e = "Image sheet ID must be a string or non-empty list of strings.";

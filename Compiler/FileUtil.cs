@@ -7,10 +7,18 @@ namespace Crayon
 	{
 		private static string DIR_SEP = "" + System.IO.Path.DirectorySeparatorChar;
 
-		public static void WriteFileText(string path, string content)
+        public static string GetCanonicalExtension(string path)
+        {
+            string output = System.IO.Path.GetExtension(path);
+            if (output.Length == 0) return null;
+            return output.Substring(1).ToLowerInvariant();
+        }
+
+
+        public static void WriteFileText(string path, string content)
 		{
 			path = NormalizePath(path);
-			System.IO.File.WriteAllText(path, content);
+			System.IO.File.WriteAllText(path, content, System.Text.Encoding.UTF8);
 		}
 
 		public static string ReadFileText(string path)

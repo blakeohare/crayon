@@ -120,13 +120,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="csharp-common\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="csharp-common\GameWindowWinForms.txt" />
-    <EmbeddedResource Include="csharp-common\ImageWinForms.txt" />
     <EmbeddedResource Include="csharp-common\JsonParser.txt" />
-    <EmbeddedResource Include="csharp-common\License.txt" />
-    <EmbeddedResource Include="csharp-common\ProjectFile.txt" />
-    <EmbeddedResource Include="csharp-common\RendererWinForms.txt" />
-    <EmbeddedResource Include="csharp-common\SolutionFile.txt" />
+    <EmbeddedResource Include="csharp-opentk\License.txt" />
+    <EmbeddedResource Include="csharp-opentk\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="csharp-opentk\SolutionFile.sln.txt" />
     <EmbeddedResource Include="csharp-common\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +164,7 @@
     <EmbeddedResource Include="python-pygame\Header.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csharp-ios\" />
+    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

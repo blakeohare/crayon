@@ -19,13 +19,12 @@ namespace Crayon.Translator.Python
 		public override string PlatformShortId { get { return "pygame"; } }
 
 		public override Dictionary<string, FileOutput> Package(
-			BuildContext buildContext,
-			string projectId,
-			Dictionary<string, ParseTree.Executable[]> finalCode,
-			List<string> filesToCopyOver,
-			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder,
-			SpriteSheetBuilder spriteSheet)
+            BuildContext buildContext,
+            string projectId,
+            Dictionary<string, ParseTree.Executable[]> finalCode,
+            ICollection<ParseTree.StructDefinition> structDefinitions,
+            string fileCopySourceRoot,
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			List<string> concatenatedCode = new List<string>();
@@ -58,6 +57,8 @@ namespace Crayon.Translator.Python
 				TextContent = string.Join("", concatenatedCode)
 			};
 
+            throw new System.NotImplementedException();
+            /*
 			foreach (string file in filesToCopyOver)
 			{
 				output[file] = new FileOutput()
@@ -65,7 +66,7 @@ namespace Crayon.Translator.Python
 					Type = FileOutputType.Copy,
 					RelativeInputPath = file,
 				};
-			}
+			}//*/
 
 			return output;
 		}

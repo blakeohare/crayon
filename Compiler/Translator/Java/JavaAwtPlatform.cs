@@ -15,13 +15,12 @@ namespace Crayon.Translator.Java
 		public override string PlatformShortId { get { return "javaawt"; } }
 
 		public override Dictionary<string, FileOutput> Package(
-			BuildContext buildContext,
-			string projectId,
-			Dictionary<string, ParseTree.Executable[]> finalCode,
-			List<string> filesToCopyOver,
-			ICollection<ParseTree.StructDefinition> structDefinitions,
-			string inputFolder,
-			SpriteSheetBuilder spriteSheet)
+            BuildContext buildContext,
+            string projectId,
+            Dictionary<string, ParseTree.Executable[]> finalCode,
+            ICollection<ParseTree.StructDefinition> structDefinitions,
+            string fileCopySourceRoot,
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 			string package = projectId.ToLowerInvariant();
@@ -179,14 +178,13 @@ namespace Crayon.Translator.Java
 				};
 			}
 
-			output["data/ByteCode.txt"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = this.Context.ByteCodeString
-			};
+            output["data/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
 
+            throw new System.NotImplementedException();
+            /*
 			foreach (string file in filesToCopyOver)
 			{
+                // TODO: This was fixed. Remove.
 				SystemBitmap bmpHack = null;
 				if (file.ToLowerInvariant().EndsWith(".png"))
 				{
@@ -209,7 +207,7 @@ namespace Crayon.Translator.Java
 						RelativeInputPath = file
 					};
 				}
-			}
+			}//*/
 
 			output["build.xml"] = new FileOutput()
 			{

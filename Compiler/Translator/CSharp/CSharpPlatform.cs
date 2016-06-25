@@ -20,13 +20,9 @@ namespace Crayon.Translator.CSharp
 
 		public abstract void PlatformSpecificFiles(
 			string projectId,
-			List<string> compileTargets,
 			Dictionary<string, FileOutput> files,
 			Dictionary<string, string> replacements,
-            SpriteSheetBuilder spriteSheet);
-
-		public abstract void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements);
-		public abstract void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries);
+            ResourceDatabase resourceDatabase);
         
         private static string GetGuid(string seed, string salt)
         {
@@ -48,24 +44,14 @@ namespace Crayon.Translator.CSharp
             }
             return string.Join("", output);
         }
-
-        protected virtual List<string> FilterEmbeddedResources(List<string> embeddedResources)
-        {
-            // Override this no-op method if necessary.
-
-            // Namely this was added so that Xamarin projects (where an embedded resource compilation action makes little sense)
-            // can take things out of here and put them in their respective platform-specific destination.
-            return embeddedResources;
-        }
-
+        
         public override Dictionary<string, FileOutput> Package(
-			BuildContext buildContext,
-			string projectId,
-			Dictionary<string, Executable[]> finalCode,
-			List<string> filesToCopyOver,
-			ICollection<StructDefinition> structDefinitions,
-			string inputFolder,
-			SpriteSheetBuilder spriteSheet)
+            BuildContext buildContext,
+            string projectId,
+            Dictionary<string, ParseTree.Executable[]> finalCode,
+            ICollection<ParseTree.StructDefinition> structDefinitions,
+            string fileCopySourceRoot,
+            ResourceDatabase resourceDatabase)
 		{
 			Dictionary<string, string> replacements = new Dictionary<string, string>() {
 				{ "PROJECT_GUID", GetGuid(buildContext.GuidSeed, "@@project").ToUpper() },
@@ -74,11 +60,8 @@ namespace Crayon.Translator.CSharp
 				{ "PROJECT_ID", projectId },
 				{ "CURRENT_YEAR", DateTime.Now.Year.ToString() },
 				{ "COPYRIGHT", "©" },
-				{ "EXTRA_DLLS", "" },
-				{ "PROJECT_FILE_EXTRA", "" },
 			};
-			this.ApplyPlatformSpecificReplacements(replacements);
-
+			
 			HashSet<string> systemLibraries = new HashSet<string>(new string[] {
 				"System",
 				"System.Core",
@@ -87,39 +70,9 @@ namespace Crayon.Translator.CSharp
 				"System.Xml.Linq",
 				"Microsoft.CSharp"
 			});
-
-			this.AddPlatformSpecificSystemLibraries(systemLibraries);
-			List<string> systemLibrariesStringBuilder = new List<string>();
-			foreach (string library in systemLibraries.OrderBy<string, string>(s => s.ToLowerInvariant()))
-			{
-				systemLibrariesStringBuilder.Add("    <Reference Include=\"" + library + "\" />");
-			}
-			replacements["SYSTEM_LIBRARIES"] = string.Join("\r\n", systemLibrariesStringBuilder);
-
+            
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-			List<string> compileTargets = new List<string>();
-
-			// Get embedded resource list
-			List<string> embeddedResources = this.GetEmbeddedResources(projectId, output, filesToCopyOver);
-
-            embeddedResources = this.FilterEmbeddedResources(embeddedResources);
-
-			// Code files that are templated
-			Dictionary<string, string> directFileCopies = new Dictionary<string, string>()
-			{
-				{ "SolutionFile.txt", projectId + ".sln" },
-				{ "ProjectFile.txt", projectId + ".csproj" },
-				{ "JsonParser.txt", "JsonParser.cs" },
-				{ "TranslationHelper.txt", "TranslationHelper.cs" },
-				{ "AsyncMessageQueue.txt", "AsyncMessageQueue.cs" },
-			};
-
-			// Create a list of compiled C# files
-			foreach (string finalFilePath in directFileCopies.Values.Where<string>(f => f.EndsWith(".cs")))
-			{
-				compileTargets.Add(finalFilePath.Replace('/', '\\'));
-			}
-
+            
 			string crayonHeader = string.Join(this.Translator.NL, new string[] {
 					"using System;",
 					"using System.Collections.Generic;",
@@ -145,7 +98,6 @@ namespace Crayon.Translator.CSharp
 			{
 				string structName = structDefinition.Name.Value;
 				string filename = structName + ".cs";
-				compileTargets.Add(filename);
 				List<string> codeContents = new List<string>();
 				codeContents.Add(crayonHeader);
 				codeContents.Add("\tpublic class " + structName + nl);
@@ -209,50 +161,31 @@ namespace Crayon.Translator.CSharp
 				codeContents.Add(crayonWrapperFooter);
 
 				string filename = codefile + ".cs";
-				compileTargets.Add(filename);
 				output[projectId + "/" + filename] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
 					TextContent = string.Join("", codeContents)
 				};
 			}
-
-			List<string> compileTargetCode = new List<string>();
-
-			compileTargetCode.Add("    \r\n");
-			foreach (string embeddedResource in embeddedResources)
+            
+            // Copy templated files over with proper replacements
+            foreach (string templateFile in new string[] {
+                "JsonParser",
+                "TranslationHelper",
+                "AsyncMessageQueue",
+            })
 			{
-				compileTargetCode.Add("    <EmbeddedResource Include=\"" + embeddedResource.Replace('/', '\\') + "\" />\r\n");
-			}
-
-			foreach (string spriteSheetImage in spriteSheet.FinalPaths)
-			{
-				// TODO: need a better system of putting things in predefined destinations, rather than hacking it between states
-				// in this fashion.
-				string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
-				compileTargetCode.Add("    <EmbeddedResource Include=\"" + path + "\" />\r\n");
-			}
-
-			replacements["COMPILE_TARGETS"] = string.Join("", compileTargetCode);
-
-			// Copy templated files over with proper replacements
-			foreach (string templateFile in directFileCopies.Keys)
-			{
-				string finalFilePath = directFileCopies[templateFile];
-				string outputFilePath = finalFilePath.EndsWith(".sln") ? finalFilePath : (projectId + "/" + finalFilePath);
-				output[outputFilePath] = new FileOutput()
+				output[projectId + "/" + templateFile + ".cs"] = new FileOutput()
 				{
 					Type = FileOutputType.Text,
 					TextContent = Constants.DoReplacements(
-						Util.ReadResourceFileInternally("csharp-common/" + templateFile),
+						Util.ReadResourceFileInternally("csharp-common/" + templateFile + ".txt"),
 						replacements)
 				};
 			}
 
 			// Add files for specific C# platform
-			this.PlatformSpecificFiles(projectId, compileTargets, output, replacements, spriteSheet);
-
-            this.ApplyPlatformSpecificOverrides(projectId, output);
+			this.PlatformSpecificFiles(projectId, output, replacements, resourceDatabase);
             
             return output;
 		}
@@ -309,7 +242,5 @@ namespace Crayon.Translator.CSharp
 			}
 			return output;
 		}
-
-        public virtual void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files) { }
     }
 }

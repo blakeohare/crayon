@@ -463,11 +463,9 @@ namespace Crayon.Translator.Python
 			output.Add("program_data[0]");
 		}
 
-		protected override void TranslateGetRawByteCodeString(List<string> output, string theString)
+		protected override void TranslateGetRawByteCodeString(List<string> output)
 		{
-			output.Add("\"");
-			output.Add(theString);
-			output.Add("\"");
+			output.Add("get_byte_code()");
 		}
 
 		protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
@@ -907,14 +905,7 @@ namespace Crayon.Translator.Python
 			this.Translator.TranslateExpression(output, filePath);
 			output.Add(")");
 		}
-
-		protected override void TranslateReadLocalTileResource(List<string> output, Expression tileGenName)
-		{
-			output.Add("load_local_tile_resource(");
-			this.Translator.TranslateExpression(output, tileGenName);
-			output.Add(")");
-		}
-
+        
 		protected override void TranslateRegisterTicker(List<string> output)
 		{
 			throw new Exception("This code path should be optimized out of the python translation.");

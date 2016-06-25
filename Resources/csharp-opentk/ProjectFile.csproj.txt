@@ -10,7 +10,9 @@
     <RootNamespace>%%%PROJECT_ID%%%</RootNamespace>
     <AssemblyName>%%%PROJECT_ID%%%</AssemblyName>
     <FileAlignment>512</FileAlignment>
-	%%%PROJECT_FILE_EXTRAS%%%
+	<OutputType>WinExe</OutputType>
+	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,15 +37,36 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-%%%EXTRA_DLLS%%%%%%SYSTEM_LIBRARIES%%%
+    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SdlDotNet, Version=6.1.0.0, Culture=neutral, PublicKeyToken=26ad4f7e10c61408, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\SdlDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl, Version=1.2.13.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Tao.Sdl.dll</HintPath>
+    </Reference>
+	<Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="**\*.cs" />
-%%%COMPILE_TARGETS%%%  </ItemGroup>
-  <ItemGroup>
-%%%COPY_FILES%%%
+    <Compile Include="Properties/AssemblyInfo.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
+%%%EMBEDDED_RESOURCES%%%
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DependencyLicenses.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="OpenTK.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

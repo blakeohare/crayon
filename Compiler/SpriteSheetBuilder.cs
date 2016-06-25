@@ -54,7 +54,6 @@ namespace Crayon
 		// The following mapping can have missing Bitmaps if no image touched that tile.
 		private Dictionary<string, Dictionary<int, SystemBitmap>> finalTiles = new Dictionary<string, Dictionary<int, SystemBitmap>>();
 		private Dictionary<string, Image> fileFinalDestination = new Dictionary<string, Image>();
-		private List<string> finalTileImagePaths = new List<string>();
 
 		private class Image
 		{
@@ -159,9 +158,9 @@ namespace Crayon
 			prefixes.Add(prefix);
 		}
 
-		public void Generate(string generatedFilesFolder, ICollection<string> allFiles, List<string> outStringArgs, List<int[]> outIntArgs, Dictionary<string, FileOutput> fileOutput, HashSet<string> outFilesInSpriteSheet)
+		public void Generate(ResourceDatabase resDB)
 		{
-			this.MatchAndCreateFiles(allFiles);
+			this.MatchAndCreateFiles(resDB.ImageResources);
 			this.AssignGlobalPositions();
 
 			foreach (string id in this.spriteGroupIds)
@@ -180,37 +179,40 @@ namespace Crayon
 				this.CreateTiles(tiles, images);
 			}
 
-			Dictionary<string, int> sheetNameToId = this.GenerateManifestAndProduceSheetNameIdMapping(outStringArgs, outIntArgs);
+			Dictionary<string, int> sheetNameToId = this.GenerateManifestAndProduceSheetNameIdMapping();
+            resDB.SpriteSheetManifestFile = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.FileManifest,
+                EnsureUtf8 = false,
+            };
 
-			foreach (string file in this.fileFinalDestination.Keys)
-			{
-				outFilesInSpriteSheet.Add(file);
-			}
-
-			this.GenerateFiles(generatedFilesFolder, sheetNameToId, fileOutput);
+			this.GenerateFiles(sheetNameToId, resDB);
 		}
 
-		private void GenerateFiles(string generatedFilesFolder, Dictionary<string, int> sheetNameToId, Dictionary<string, FileOutput> fileOutput)
+		private void GenerateFiles(Dictionary<string, int> sheetNameToId, ResourceDatabase resDb)
 		{
 			foreach (string sheetName in sheetNameToId.Keys)
 			{
 				int sheetId = sheetNameToId[sheetName];
 				foreach (int tileId in this.finalTiles[sheetName].Keys)
 				{
-					SystemBitmap bitmap = this.finalTiles[sheetName][tileId];
-					fileOutput[generatedFilesFolder + "/spritesheets/" + sheetId + "_" + tileId + ".png"] = new FileOutput()
+                    resDb.SpriteSheetFiles[sheetId + "_" + tileId + ".png"] = new FileOutput()
 					{
 						 Type = FileOutputType.Image,
-						 Bitmap = bitmap
-					};
+						 Bitmap = this.finalTiles[sheetName][tileId],
+                    };
 				}
 			}
-
-			this.finalTileImagePaths.AddRange(fileOutput.Keys.OrderBy<string, string>(key => key.ToLowerInvariant()));
 		}
 
-		private Dictionary<string, int> GenerateManifestAndProduceSheetNameIdMapping(List<string> stringArgs, List<int[]> intArgs)
+        public string FileManifest { get; private set; }
+
+		private Dictionary<string, int> GenerateManifestAndProduceSheetNameIdMapping()
 		{
+            // TODO: update this documentation comment. Everything is now in a sprite sheet manifest file that
+            // expresses the same information and the byte code is now free of sprite sheet stuff.
+
 			// The manifest is actually compiled as byte code.
 			// There is only one sprite sheet manifest byte code command which has a string argument.
 			// However the interpreter has a sub interpreter for each string command
@@ -228,17 +230,20 @@ namespace Crayon
 
 			Dictionary<string, int> sheetNameToId = new Dictionary<string, int>();
 
+            List<string> output = new List<string>();
+
 			int id = 0;
 			foreach (string name in this.spriteGroupIds)
 			{
 				sheetNameToId[name] = id;
-				intArgs.Add(new int[] { 0, id });
-				stringArgs.Add(name);
+                output.Add("0," + id + "," + name);
+				//intArgs.Add(new int[] { 0, id });
+				//stringArgs.Add(name);
 
 				foreach (Image image in this.imagesById[name])
 				{
-					stringArgs.Add(image.File);
 					int tileId = image.TileID;
+                    /*
 					intArgs.Add(new int[] { 
 						1,
 						id,
@@ -249,10 +254,17 @@ namespace Crayon
 						image.TileY,
 						image.Solitary ? 1 : 0
 					});
-				}
+                    stringArgs.Add(image.File);
+                    //*/
+                    // TODO: there is an opportunity to optimize here by using a series of directory name pushes and pops.
+                    output.Add("1," + id + "," + tileId + "," + image.Width + "," + image.Height + "," +
+                        image.TileX + "," + image.TileY + "," + (image.Solitary ? 1 : 0) + "," + image.File);
+                }
 
 				++id;
 			}
+
+            this.FileManifest = string.Join("\n", output);
 
 			return sheetNameToId;
 		}
@@ -351,31 +363,23 @@ namespace Crayon
 			return null;
 		}
 
-		public void MatchAndCreateFiles(ICollection<string> files)
+		public void MatchAndCreateFiles(ICollection<FileOutput> imageFiles)
 		{
 			foreach (string id in this.spriteGroupIds)
 			{
 				this.imagesById.Add(id, new List<Image>());
 			}
 
-			foreach (string file in files)
+			foreach (FileOutput file in imageFiles)
 			{
-				if (file.ToLowerInvariant().EndsWith(".png"))
+				if (file.Type == FileOutputType.Image)
 				{
-					string spriteSheetId = this.GetSpriteSheetIdMatch(file);
+					string spriteSheetId = this.GetSpriteSheetIdMatch(file.OriginalPath);
 					if (spriteSheetId != null)
 					{
-						string bmpPath = FileUtil.JoinPath(this.buildContext.SourceFolder, file);
-
-						try
-						{
-							SystemBitmap bmp = new SystemBitmap(bmpPath);
-							this.imagesById[spriteSheetId].Add(new Image(spriteSheetId, file, bmp));
-						}
-						catch (Exception e)
-						{
-							throw new InvalidOperationException(file + " is not a valid PNG file.", e);
-						}
+						this.imagesById[spriteSheetId].Add(new Image(spriteSheetId, file.OriginalPath, file.Bitmap));
+                        file.SpriteSheetId = spriteSheetId;
+                        file.Type = FileOutputType.Ghost;
 					}
 				}
 			}
@@ -427,11 +431,6 @@ namespace Crayon
 					rowMaxY = bottom;
 				}
 			}
-		}
-
-		public string[] FinalPaths
-		{
-			get { return this.finalTileImagePaths.ToArray(); }
 		}
 	}
 }

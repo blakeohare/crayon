@@ -15,59 +15,14 @@ namespace Crayon.Translator.CSharp
 		{ }
 
 		public override string PlatformShortId { get { return "csharp-android"; } }
-
-		public override void AddPlatformSpecificSystemLibraries(HashSet<string> systemLibraries)
-		{
-			// Nope
-		}
-
-		public override void ApplyPlatformSpecificReplacements(Dictionary<string, string> replacements)
-		{
-			replacements["PROJECT_FILE_EXTRAS"] = string.Join("\n",
-				@"<ProjectTypeGuid>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuid>",
-				@"    <OutputType>Library</OutputType>",
-				@"    <AndroidApplication>true</AndroidApplication>",
-				@"    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>",
-				@"    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>",
-				@"    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>",
-				@"    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>");
-		}
-
-        public override void ApplyPlatformSpecificOverrides(string projectId, Dictionary<string, FileOutput> files)
-        {
-            // Hack
-            foreach (string key in files.Keys)
-            {
-                if (key.StartsWith(projectId + "/GeneratedFiles/"))
-                {
-                    FileOutput file = files[key];
-                    string newKey = projectId + "/Assets" + key.Substring(projectId.Length);
-                    files.Remove(key);
-                    files.Add(newKey, file);
-                }
-            }
-        }
-
+        
         private List<string> audioResourcePathsRelativeToProjectRoot = new List<string>();
-
-        protected override List<string> FilterEmbeddedResources(List<string> embeddedResources)
-        {
-            List<string> filteredEmbeddedResources = new List<string>();
-            foreach (string resource in embeddedResources)
-            {
-                if (resource.ToLower().EndsWith(".ogg"))
-                {
-                    this.audioResourcePathsRelativeToProjectRoot.Add(resource.Substring("Files/".Length));
-                }
-                else
-                {
-                    filteredEmbeddedResources.Add(resource);
-                }
-            }
-            return filteredEmbeddedResources;
-        }
-
-        public override void PlatformSpecificFiles(string projectId, List<string> compileTargets, Dictionary<string, FileOutput> files, Dictionary<string, string> replacements, SpriteSheetBuilder spriteSheet)
+        
+        public override void PlatformSpecificFiles(
+            string projectId,
+            Dictionary<string, FileOutput> files,
+            Dictionary<string, string> replacements,
+            ResourceDatabase resourceDatabase)
         {
             files[projectId + ".sln"] = new FileOutput()
             {
@@ -78,13 +33,15 @@ namespace Crayon.Translator.CSharp
             };
             
             List<string> additionalAndroidAssets = new List<string>();
+            /*
             foreach (string spriteSheetImage in spriteSheet.FinalPaths)
             {
                 // TODO: need a better system of putting things in predefined destinations, rather than hacking it between states
                 // in this fashion.
                 string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
                 additionalAndroidAssets.Add("    <AndroidAsset Include=\"" + path + "\" />\r\n");
-            }
+            }//*/
+            throw new System.NotImplementedException(); // ^
 
             int androidResourceId = 0x7f040000;
             List<string> androidResourcesForProjectFile = new List<string>();
@@ -171,11 +128,7 @@ namespace Crayon.Translator.CSharp
                     replacements),
             };
 
-            files[projectId + "/Assets/ByteCode.txt"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = this.Context.ByteCodeString
-            };
+            files[projectId + "/Assets/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
 
             foreach (string filename in new string[] {
                 "AssemblyInfo",
@@ -187,7 +140,6 @@ namespace Crayon.Translator.CSharp
                 "ResourceReader",
             })
             {
-                compileTargets.Add(filename + ".cs");
                 string target = projectId + "/" + (filename == "AssemblyInfo" ? "Properties/" : "") + filename + ".cs";
                 files[target] = new FileOutput()
                 {

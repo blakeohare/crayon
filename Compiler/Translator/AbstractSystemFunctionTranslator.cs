@@ -127,7 +127,7 @@ namespace Crayon.Translator
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
 				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
-				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output, this.Platform.Context.ByteCodeString); break;
+				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
 				case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
 				case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
@@ -180,7 +180,6 @@ namespace Crayon.Translator
 				case "_prefix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, true); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
 				case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
-				case "_read_local_tile_resource": VerifyCount(functionCall, 1); TranslateReadLocalTileResource(output, args[0]); break;
 				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
 				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
 				case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
@@ -263,7 +262,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateForceParens(List<string> output, Expression expression);
 		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);
-		protected abstract void TranslateGetRawByteCodeString(List<string> output, string theString);
+		protected abstract void TranslateGetRawByteCodeString(List<string> output);
 		protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList);
 		protected abstract void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey);
 		protected abstract void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY);
@@ -317,9 +316,8 @@ namespace Crayon.Translator
 		protected abstract void TranslatePauseForFrame(List<string> output);
 		protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
 		protected abstract void TranslateRandomFloat(List<string> output);
-		protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);
-		protected abstract void TranslateReadLocalSoundResource(List<string> output, Expression filePath);
-		protected abstract void TranslateReadLocalTileResource(List<string> output, Expression tileGenName);
+        protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);
+        protected abstract void TranslateReadLocalSoundResource(List<string> output, Expression filePath);
 		protected abstract void TranslateRegisterTicker(List<string> output);
 		protected abstract void TranslateRegisterTimeout(List<string> output);
 		protected abstract void TranslateResourceReadText(List<string> output, Expression path);

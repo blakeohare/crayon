@@ -17,10 +17,6 @@ function @omitReturn @type('string') interpret() {
 	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
 	@type('int') valueStackCapacity = $_array_length(valueStack);
 
-	if (ProgramData$p.initializationComplete) {
-		performWorkNuggetPreFrame();
-	}
-
 	// declare types...
 	@type('int') type = 0;
 	@type('int') nameId = 0;
@@ -117,8 +113,6 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<int>') intOutParam = $_new_array('int', 4);
 	@type('Array<string>') stringOutParam = $_new_array('string', 4);
 
-	@type('SpriteSheetData') spriteSheetData = ProgramData$p.spriteSheetData;
-
 	@type('Array<Value>') localsStack = ProgramData$p.localsStack;
 	@type('Array<int>') localsStackSet = ProgramData$p.localsStackSet;
 	@type('int') localsStackSetToken = StackFrame$stack.localsStackSetToken;
@@ -176,7 +170,6 @@ function @omitReturn @type('string') interpret() {
 			case OpCodes.POP_IF_NULL_OR_JUMP: $_comment('POP_IF_NULL_OR_JUMP'); import inline 'Ops/pop_if_null_or_jump.cry'; break;
 			case OpCodes.PUSH_FUNC_REF: $_comment('PUSH_FUNC_REF'); import inline 'Ops/push_func_ref.cry'; break;
 			case OpCodes.RETURN: $_comment('RETURN'); import inline 'Ops/return.cry'; break;
-			case OpCodes.SPRITE_SHEET_BUILDER: $_comment('SPRITE_SHEET_BUILDER'); import inline 'Ops/sprite_sheet_builder.cry'; break;
 			case OpCodes.STACK_INSERTION_FOR_INCREMENT: $_comment('STACK_INSERTION_FOR_INCREMENT'); import inline 'Ops/stack_insertion_for_increment.cry'; break;
 			case OpCodes.STACK_SWAP_POP: $_comment('STACK_SWAP_POP'); import inline 'Ops/stack_swap_pop.cry'; break;
 			case OpCodes.SWITCH_INT: $_comment('SWITCH_INT'); import inline 'Ops/switch_int.cry'; break;
@@ -196,45 +189,6 @@ function @omitReturn @type('string') interpret() {
 			pc += 1;
 		}
 	}
-}
-
-function @type('int') declareSpriteSheetImage(
-		@type('SpriteSheetData') spriteSheetData,
-		@type('int') groupId,
-		@type('string') imagePath,
-		@type('int') tileId, // top left corner
-		@type('int') width,
-		@type('int') height,
-		@type('int') x,
-		@type('int') y,
-		@type('bool') solitary) {
-
-	@type('SpriteSheetItemDescriptor') ssid = new SpriteSheetItemDescriptor(
-		imagePath,
-		groupId,
-		0, // this may be unncessary
-		tileId,
-		solitary,
-		x,
-		y,
-		width,
-		height);
-
-	$_dictionary_set(SpriteSheetData$spriteSheetData.files, imagePath, ssid);
-
-	@type('Dictionary<int, bool>') tileIds = $_dictionary_get_guaranteed(SpriteSheetData$spriteSheetData.tileIdsByGroupId, groupId);
-	@type('int') colSpan = $_int($_unsafe_integer_division(x % 256 + width - 1, 256)) + 1;
-	@type('int') rowSpan = $_int($_unsafe_integer_division(y % 256 + height - 1, 256)) + 1;
-	if (solitary) {
-		colSpan = 1;
-		rowSpan = 1;
-	}
-	for (@type('int') row = 0; row < rowSpan; row += 1) {
-		for (@type('int') col = 0; col < colSpan; col += 1) {
-			$_dictionary_set(tileIds, tileId + row * 4 + col, true);
-		}
-	}
-	return 0;
 }
 
 // returns a status code:
@@ -386,18 +340,7 @@ function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	StackFrame$stack.pc += 1;
 }
 
-// Work nuggets are only performed if the ProgramData.initializationComplete field is set to true
-
-// TODO: move the image sheet work nuggest stuff into the generic thread safe message pump system.
-// change $_async_message_queue_pump() to take in a boolean indicating whether it should fetch pre or post frame work nuggets.
-
-function performWorkNuggetPreFrame() {
-	imageSheetPerformWorkNuggetPreFrame();
-}
-
 function performWorkNuggetPostFrame() {
-	
-	imageSheetPerformWorkNuggetPostFrame();
 
 	/*
 		This array contains multiple messages in one flat array.
@@ -428,7 +371,6 @@ function performWorkNuggetPostFrame() {
 		}
 	}
 }
-
 
 function valueStackIncreaseCapacity() {
 	@type('ProgramData') p = $_get_program_data();

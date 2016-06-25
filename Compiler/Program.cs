@@ -27,8 +27,9 @@ namespace Crayon
 			"  -platform          Platform to compile to.",
 			"     Platform choices:",
 			//"        android          Java Project for Android",
-			"        csopengl         C# Project for Desktop (uses OpenTK)",
+			"        csharp-opentk         C# Project for Desktop (uses OpenTK)",
 			"        csharp-android   C# Project for Android (uses Xamarin/OpenGL ES)",
+            "        csharp-ios       C# Project for iOS (uses Xamarin/OpenGL ES)",
 			//"        cswindowsphone   C# Project for Windows Phone",
 			//"        cswinforms       C# Project for Desktop (uses WinForms)",
 			"        java             Java Project for Desktop (uses AWT)",
@@ -91,8 +92,8 @@ namespace Crayon
 				case "android": return new Crayon.Translator.Java.JavaAndroidPlatform();
 				case "cwin": return new Crayon.Translator.COpenGL.COpenGLPlatform();
 				case "csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
-				case "csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
-				case "csopengl": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
+                case "csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
+                case "csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
 				case "java": return new Crayon.Translator.Java.JavaAwtPlatform();
 				case "js": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
 				case "python": return new Crayon.Translator.Python.PythonPlatform();
@@ -108,7 +109,7 @@ namespace Crayon
 			{
 				string command;
 
-				command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
+                command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
 
                 args = command.Split(' ');
 			}
