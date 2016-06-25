@@ -169,11 +169,6 @@ def load_local_image_resource(path):
 	except:
 		return None
 
-def get_image_impl(key):
-	surf = _images_downloaded.get(key, None)
-	if surf == None: return None
-	return (%%%TYPE_NATIVE_OBJECT_IMAGE%%%, surf)
-
 def blit_partial(surface, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight):
 	if sourceWidth == targetWidth and sourceHeight == targetHeight:
 		_global_vars['virtual_screen'].blit(surface, (targetX, targetY), _PR(sourceX, sourceY, sourceWidth, sourceHeight))

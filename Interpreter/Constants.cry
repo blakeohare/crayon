@@ -97,11 +97,6 @@ enum FunctionPointerType {
 	PRIMITIVE_METHOD,
 }
 
-enum NativeObjectTypes {
-	SCREEN = %%%TYPE_NATIVE_OBJECT_SCREEN%%%,
-	IMAGE = %%%TYPE_NATIVE_OBJECT_IMAGE%%%,
-}
-
 enum Types {
 	NULL = %%%TYPE_ID_NULL%%%,
 	BOOLEAN = %%%TYPE_ID_BOOLEAN%%%,
@@ -112,9 +107,8 @@ enum Types {
 	DICTIONARY = %%%TYPE_ID_DICTIONARY%%%,
 	INSTANCE = %%%TYPE_ID_INSTANCE%%%,
 	FUNCTION = %%%TYPE_ID_FUNCTION%%%,
-	NATIVE_OBJECT = %%%TYPE_ID_NATIVE_OBJECT%%%,
 }
-const MAX_TYPE = Types.NATIVE_OBJECT + 1;
+const MAX_TYPE = Types.FUNCTION + 1;
 
 enum NativeObjectSubType {
 	EVENT = %%%SUBTYPE_ID_EVENT%%%,

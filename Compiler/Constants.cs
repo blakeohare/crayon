@@ -24,7 +24,6 @@ namespace Crayon
 				{ "PRIMITIVE_METHOD", typeof(PrimitiveMethods) },
 				{ "SUBTYPE_ID", typeof(SubTypes) },
 				{ "TYPE_ID", typeof(Types) },
-				{ "TYPE_NATIVE_OBJECT", typeof(NativeObjectTypes) },
 			};
 
 			foreach (string key in enumReplacementsByPrefix.Keys)

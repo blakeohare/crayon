@@ -11,6 +11,5 @@
 		DICTIONARY = 7,
 		INSTANCE = 8,
 		FUNCTION = 9,
-		NATIVE_OBJECT = 10,
 	}
 }

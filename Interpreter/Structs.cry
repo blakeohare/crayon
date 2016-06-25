@@ -291,16 +291,6 @@ struct Imagette {
 	@type('List<int>') ys,
 }
 
-/*
- * All native objects have this as an internal value.
- * The value field here is the actual native object.
- * This allows the native object to be consistently identified with the subtype marker.
- */
-struct NativeObjectWrapper {
-	@type('int') subType,
-	@type('object') value,
-}
-
 struct PlatformRelayObject {
 	@type('int') type,
 	@type('int') iarg1,

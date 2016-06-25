@@ -7,10 +7,6 @@ R.now = function () {
 	return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
 };
 
-R.get_image_impl = function(key) {
-	return [%%%TYPE_NATIVE_OBJECT_IMAGE%%%, R._global_vars.image_downloads[key]];
-};
-
 R._global_vars = {
 	'width': 0,
 	'height': 0,

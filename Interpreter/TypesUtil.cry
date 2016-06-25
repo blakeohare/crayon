@@ -9,6 +9,5 @@
 		case Types.DICTIONARY: return "dictionary";
 		case Types.INSTANCE: return "instance"; // TODO: make this more specific
 		case Types.FUNCTION: return "function";
-		case Types.NATIVE_OBJECT: return "native object";
 	}
 }
