@@ -131,6 +131,7 @@
     <EmbeddedResource Include="csharp-opentk\GamepadTranslationHelper.txt" />
     <EmbeddedResource Include="csharp-opentk\GameWindow.txt" />
     <EmbeddedResource Include="csharp-opentk\GlUtil.txt" />
+    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
     <EmbeddedResource Include="csharp-opentk\OpenTkTranslationHelper.txt" />
     <EmbeddedResource Include="csharp-opentk\Program.txt" />
     <EmbeddedResource Include="csharp-opentk\ResourceReader.txt" />
@@ -162,9 +163,8 @@
     <EmbeddedResource Include="python-pygame\Footer.py" />
     <EmbeddedResource Include="python-pygame\GamepadLibraryHelper.py" />
     <EmbeddedResource Include="python-pygame\Header.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
+    <EmbeddedResource Include="python-pygame\Imports.py" />
+    <EmbeddedResource Include="python-pygame\ResourceReader.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

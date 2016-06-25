@@ -1,12 +1,4 @@
-﻿import pygame
-import os
-import math
-import time
-import random
-import sys
-import shutil
-import threading
-
+﻿
 _global_vars = {
 	'width': 400,
 	'height': 300,
@@ -176,9 +168,6 @@ def load_local_image_resource(path):
 		return pygame.image.load(path)
 	except:
 		return None
-
-def load_local_tile_resource(genName):
-	return load_local_image_resource(os.path.join('_generated_files', 'spritesheets', genName + '.png'))
 
 def get_image_impl(key):
 	surf = _images_downloaded.get(key, None)

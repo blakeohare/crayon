@@ -209,7 +209,7 @@ namespace Crayon
                 return output;
             }
 
-            throw new NotImplementedException();
+            throw new InvalidOperationException("No native translation provided for " + functionName);
         }
 
         private string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)

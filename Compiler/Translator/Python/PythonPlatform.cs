@@ -33,14 +33,17 @@ namespace Crayon.Translator.Python
 				{ "PROJECT_ID", projectId },
 			};
 
-			concatenatedCode.Add(this.GetPyGameCode("Header.py", replacements));
-			concatenatedCode.Add(this.Translator.NL);
-
-			// TODO: conditional includes based on library imports.
-			concatenatedCode.Add(this.GetPyGameCode("GamepadLibraryHelper.py", replacements)); 
-			concatenatedCode.Add(this.Translator.NL);
-			concatenatedCode.Add(this.GetPyGameCode("AsyncHttpFetcher.py", replacements));
-			concatenatedCode.Add(this.Translator.NL);
+            foreach (string file in new string[] {
+                "Imports.py",
+                "Header.py",
+                "ResourceReader.py",
+                "GamepadLibraryHelper.py", // TODO: conditionally include
+                "AsyncHttpFetcher.py", // TODO: conditionally include
+            })
+            {
+                concatenatedCode.Add(this.GetPyGameCode(file, replacements));
+                concatenatedCode.Add(this.Translator.NL);
+            }
 
 			this.Translator.TranslateGlobals(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
@@ -48,6 +51,7 @@ namespace Crayon.Translator.Python
 			concatenatedCode.Add(this.Translator.NL);
 			this.Translator.TranslateFunctions(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
+
 			concatenatedCode.Add(this.GetPyGameCode("Footer.py", replacements));
 			concatenatedCode.Add(this.Translator.NL);
 
@@ -57,16 +61,23 @@ namespace Crayon.Translator.Python
 				TextContent = string.Join("", concatenatedCode)
 			};
 
-            throw new System.NotImplementedException();
-            /*
-			foreach (string file in filesToCopyOver)
-			{
-				output[file] = new FileOutput()
-				{
-					Type = FileOutputType.Copy,
-					RelativeInputPath = file,
-				};
-			}//*/
+            output["resources/byte_code.txt"] = resourceDatabase.ByteCodeFile;
+            output["resources/image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+            output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
+
+            foreach (FileOutput textFile in resourceDatabase.TextResources)
+            {
+                output["resources/text/" + textFile.CanonicalFileName] = textFile;
+            }
+            
+            Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.SpriteSheetFiles;
+            if (imageSheetTiles != null)
+            {
+                foreach (string tileName in imageSheetTiles.Keys)
+                {
+                    output["resources/image_sheets/" + tileName] = imageSheetTiles[tileName];
+                }
+            }
 
 			return output;
 		}

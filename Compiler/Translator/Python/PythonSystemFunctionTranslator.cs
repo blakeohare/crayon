@@ -465,7 +465,7 @@ namespace Crayon.Translator.Python
 
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
-            output.Add("get_byte_code()");
+            output.Add("RESOURCES.readTextFile('resources/byte_code.txt')");
         }
 
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
