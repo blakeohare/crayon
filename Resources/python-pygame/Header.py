@@ -241,15 +241,6 @@ def _pygame_end_of_frame():
 def _pygame_flip_image(img, flipx, flipy):
 	return pygame.transform.flip(img, flipx, flipy)
 
-def _read_resource_text(path):
-	if os.path.exists(path):
-		if not os.path.isdir(path):
-			f = open(path, 'rt')
-			text = f.read()
-			f.close()
-			return text
-	return None
-
 def _parse_json(raw):
 	import json
 	try:

@@ -919,7 +919,7 @@ namespace Crayon.Translator.Python
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
-            output.Add("_read_resource_text(");
+            output.Add("RESOURCES.readTextFile('resources/text/' + ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }

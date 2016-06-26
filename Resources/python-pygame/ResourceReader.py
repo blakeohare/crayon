@@ -1,6 +1,11 @@
 ﻿
 class ResourceReader:
 
+	def getManifest(self):
+		output = self.readTextFile("resources/manifest.txt")
+		if output == None: return ''
+		return output
+
 	def readTextFile(self, path):
 		path = self.canonicalizeAndVerifyPath(path)
 		if path == None: return None
