@@ -639,14 +639,7 @@ namespace Crayon.Translator.JavaScript
             // %%% platform parameter that can be used to short circuit interpreter code.
             output.Add("false");
         }
-
-        protected override void TranslateLaunchBrowser(List<string> output, Expression url)
-        {
-            output.Add("window.open(");
-            this.Translator.TranslateExpression(output, url);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateListClear(List<string> output, Expression list)
         {
             output.Add("clear_list(");

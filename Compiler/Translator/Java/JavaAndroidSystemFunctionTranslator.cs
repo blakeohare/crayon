@@ -89,14 +89,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AndroidTranslationHelper.isWindows()");
         }
-
-        protected override void TranslateLaunchBrowser(List<string> output, Expression url)
-        {
-            output.Add("AndroidTranslationHelper.launchBrowser(");
-            this.Translator.TranslateExpression(output, url);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             output.Add("AndroidTranslationHelper.flipImage(");

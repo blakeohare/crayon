@@ -1,17 +1,3 @@
 ﻿// $launch_browser(url)
 import inline "FrameworkFunctions/1_arg.cry";
-
-if (Value$arg1.type != Types.STRING) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$launch_browser requires a string argument.";
-} else {
-	string1 = $_cast('string', Value$arg1.internalValue);
-	string2 = $_string_lower(string1);
-	if ($_string_startswith(string2, 'http://') ||
-		$_string_startswith(string2, 'https://')) {
-		$_launch_browser(string1);
-	} else {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "$launch_browser can only open URLs that begin with http:// and https://";
-	}
-}
+$_lib_web_launchBrowser($_cast('string', Value$arg1.internalValue));
