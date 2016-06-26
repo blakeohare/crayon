@@ -55,7 +55,15 @@ namespace Crayon.Translator.Java
 
         protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
         {
-            output.Add("TranslationHelper.Noop()");
+            output.Add("RenderEngine.blitImageRotated(");
+            this.Translator.TranslateExpression(output, image);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, centerX);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, centerY);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, angle);
+            output.Add(")");
         }
 
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)

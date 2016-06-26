@@ -1,5 +1,6 @@
 ﻿package %%%PACKAGE%%%;
 
+import java.awt.geom.AffineTransform;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,11 +10,12 @@ public final class RenderEngine {
     private static final int BLIT_IMAGE = 1;
     private static final int BLIT_IMAGE_PARTIAL = 2;
     private static final int BLIT_IMAGE_ALPHA = 3;
-    private static final int DRAW_ELLIPSE = 4;
-    private static final int DRAW_LINE = 5;
-    private static final int DRAW_RECTANGLE = 6;
-    private static final int DRAW_TRIANGLE = 7;
-    private static final int FILL_SCREEN = 8;
+    private static final int BLIT_IMAGE_ROTATED = 4;
+    private static final int DRAW_ELLIPSE = 5;
+    private static final int DRAW_LINE = 6;
+    private static final int DRAW_RECTANGLE = 7;
+    private static final int DRAW_TRIANGLE = 8;
+    private static final int FILL_SCREEN = 9;
 
     private static int[] renderArgs = new int[1000];
     private static int renderArgsVirtualLength = 0;
@@ -98,6 +100,24 @@ public final class RenderEngine {
 
         images[imagesVirtualLength++] = (Image) imageObject;
     }
+    
+    public static void blitImageRotated(Object imageObject, int centerX, int centerY, double angle) {
+        if (renderArgsVirtualLength + 4 >= renderArgsRealLength) {
+            expandArgsCapacity();
+        }
+
+        if (imagesVirtualLength + 1 >= imagesRealLength) {
+            expandImagesCapacity();
+        }
+
+		double twopi = 3.14159265358979323 * 2;
+        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_ROTATED;
+        renderArgs[renderArgsVirtualLength++] = centerX;
+        renderArgs[renderArgsVirtualLength++] = centerY;
+        renderArgs[renderArgsVirtualLength++] = (int) (1000000 * (angle % twopi + twopi));
+        
+        images[imagesVirtualLength++] = (Image) imageObject;
+    }
 
     public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
         if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
@@ -180,7 +200,9 @@ public final class RenderEngine {
         int ax, ay, bx, by, cx, cy;
         int[] xs = new int[3];
         int[] ys = new int[3];
+        double angle;
         Image image;
+		AffineTransform at;
         while (index < renderArgsVirtualLength) {
             switch (renderArgs[index++]) {
                 case FILL_SCREEN:
@@ -210,6 +232,21 @@ public final class RenderEngine {
                     g.setComposite(alphaComposite[255]);
                     break;
 
+				case BLIT_IMAGE_ROTATED:
+                    image = images[imagesIndex++];
+                    x = renderArgs[index++];
+                    y = renderArgs[index++];
+                    angle = renderArgs[index++] / 1000000.0;
+					at = new AffineTransform();
+					width = image.width;
+					height = image.height;
+					at.translate(x - width / 2, y - height / 2);
+					at.translate(width / 2, height / 2);
+					at.rotate(angle);
+					at.translate(width / -2, height / -2);
+					g.drawImage((java.awt.Image) image.rawResource, at, null);
+					break;
+					
                 case BLIT_IMAGE_PARTIAL:
                     image = images[imagesIndex++];
                     x = renderArgs[index++];
