@@ -7,6 +7,8 @@ namespace Crayon.Translator.Java
 {
     internal class JavaAwtPlatform : JavaPlatform
 	{
+        public override bool TrimBom { get { return true; } } // Seriously, Oracle?
+
         public JavaAwtPlatform()
             : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
         { }
@@ -177,36 +179,22 @@ namespace Crayon.Translator.Java
 				};
 			}
 
-            output["data/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            foreach (string tileFile in resourceDatabase.SpriteSheetFiles.Keys)
+            {
+                output["resources/imagesheets/" + tileFile] = resourceDatabase.SpriteSheetFiles[tileFile];
+            }
 
-            throw new System.NotImplementedException();
-            /*
-			foreach (string file in filesToCopyOver)
-			{
-                // TODO: This was fixed. Remove.
-				SystemBitmap bmpHack = null;
-				if (file.ToLowerInvariant().EndsWith(".png"))
-				{
-					bmpHack = new SystemBitmap(FileUtil.JoinPath(inputFolder, file));
-				}
+            foreach (FileOutput textFile in resourceDatabase.TextResources)
+            {
+                output["resources/text/" + textFile.CanonicalFileName] = textFile;
+            }
 
-				if (bmpHack != null)
-				{
-					output["resources/" + file] = new FileOutput()
-					{
-						Type = FileOutputType.Image,
-						Bitmap = bmpHack
-					};
-				}
-				else
-				{
-					output["resources/" + file] = new FileOutput()
-					{
-						Type = FileOutputType.Copy,
-						RelativeInputPath = file
-					};
-				}
-			}//*/
+            output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+            output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
+            if (resourceDatabase.SpriteSheetManifestFile != null)
+            {
+                output["resources/imagesheetmanifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+            }
 
 			output["build.xml"] = new FileOutput()
 			{

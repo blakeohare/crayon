@@ -34,8 +34,12 @@ class AwtTranslationHelper {
     private AwtTranslationHelper() {}
 
     public static String getRawByteCodeString() {
-        return readFileText("data/bytecode.txt");
+        return readFileText("resources/bytecode.txt");
     }
+	
+	public static String getResourceManifest() {
+		return readFileText("resources/manifest.txt");
+	}
 
     public static String getTextResource(String path) {
         return readFileText("resources/" + path);
@@ -47,7 +51,7 @@ class AwtTranslationHelper {
         try {
             fileReader = new FileReader(path);
         } catch (FileNotFoundException e) {
-            return null;
+            throw new RuntimeException("File not found: " + path);
         }
 
         BufferedReader br = new BufferedReader(fileReader);
@@ -147,10 +151,6 @@ class AwtTranslationHelper {
             }
         }
         return output;
-    }
-
-    public static BufferedImage readLocalTileResource(String generatedTileId) {
-        return loadImageFromLocalFile("generated/spritesheets/" + generatedTileId + ".png");
     }
 
     public static String[] directoryListing(String path) {

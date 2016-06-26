@@ -12,6 +12,7 @@ namespace Crayon
 		public AbstractTranslator Translator { get; private set; }
 		public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
 		public InterpreterCompiler InterpreterCompiler { get; private set; }
+        public virtual bool TrimBom { get { return false; } }
 
 		public PlatformId PlatformId { get; private set; }
 		public LanguageId LanguageId { get; private set; }
@@ -228,7 +229,15 @@ namespace Crayon
 				switch (file.Type)
 				{
 					case FileOutputType.Text:
-						FileUtil.WriteFileText(fullOutputPath, file.TextContent);
+                        if (this.TrimBom)
+                        {
+                            byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(file.TextContent);
+                            FileUtil.WriteFileBytes(fullOutputPath, bytes);
+                        }
+                        else
+                        {
+                            FileUtil.WriteFileText(fullOutputPath, file.TextContent);
+                        }
 						break;
 
 					case FileOutputType.Binary:

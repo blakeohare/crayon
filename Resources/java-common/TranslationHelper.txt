@@ -156,9 +156,15 @@ final class TranslationHelper {
     public static void assertion(String message) {
         throw new IllegalStateException(message);
     }
-
+	
     public static int[] sortedCopyOfIntArray(int[] nums) {
         int[] output = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(output);
+        return output;
+    }
+
+    public static String[] sortedCopyOfStringArray(String[] values) {
+        String[] output = Arrays.copyOf(values, values.length);
         Arrays.sort(output);
         return output;
     }

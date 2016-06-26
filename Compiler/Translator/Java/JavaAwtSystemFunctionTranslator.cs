@@ -8,7 +8,7 @@ namespace Crayon.Translator.Java
     {
         protected override void TranslateResourceGetManifest(List<string> output)
         {
-            throw new NotImplementedException();
+            output.Add("AwtTranslationHelper.getResourceManifest()");
         }
 
         protected override void TranslateAudioMusicIsPlaying(List<string> output)
@@ -288,7 +288,7 @@ namespace Crayon.Translator.Java
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
-            output.Add("AwtTranslationHelper.getTextResource(");
+            output.Add("AwtTranslationHelper.getTextResource(\"text/\" + ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
