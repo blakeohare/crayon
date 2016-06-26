@@ -7,6 +7,26 @@ namespace %%%PROJECT_ID%%%
 {
     public static class OpenTkRenderer
     {
+		private class GlRenderState
+		{
+			public GlRenderState(int mode, int textureId, int r, int g, int b, int a)
+			{
+				this.mode = mode;
+				this.textureId = textureId;
+				this.r = r;
+				this.g = g;
+				this.b = b;
+				this.a = a;
+			}
+
+			public int mode;
+			public int textureId;
+			public int r;
+			public int g;
+			public int b;
+			public int a;
+		}
+
         public static void render(int[] commands, Image[] images, int length, int VW, int VH, int RW, int RH)
         {
             bool scaled = VW != RW || VH != RH;

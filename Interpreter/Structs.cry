@@ -308,15 +308,6 @@ struct HttpRequest {
 	@type('string') body,
 }
 
-struct GlRenderState {
-	@type('int') mode,
-	@type('int') textureId,
-	@type('int') r,
-	@type('int') g,
-	@type('int') b,
-	@type('int') a
-}
-
 struct ResourceInfo {
 	@type('string') userPath,
 	@type('string') internalPath,
