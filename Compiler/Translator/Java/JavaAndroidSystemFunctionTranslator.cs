@@ -282,14 +282,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-
-        protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
-        {
-            output.Add("AndroidTranslationHelper.playSound(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
         {
             output.Add("AndroidTranslationHelper.stopSound(");

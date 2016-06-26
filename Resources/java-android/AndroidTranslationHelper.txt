@@ -31,10 +31,6 @@ class AndroidTranslationHelper {
 		return null;
     }
 
-    public static void playSound(Object soundInstance) {
-        TODO("Also use a more specific type.");
-    }
-
     private static String rawByteCodeString = null;
     public static String getRawByteCodeString() {
         return rawByteCodeString;

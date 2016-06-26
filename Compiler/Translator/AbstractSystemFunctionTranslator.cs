@@ -33,8 +33,7 @@ namespace Crayon.Translator
 			switch (name)
 			{
 				// TODO: migrate these to the Audio library.
-				case "_audio_play": VerifyCount(functionCall, 1); TranslateAudioPlay(output, args[0]); break;
-				case "_audio_stop": VerifyCount(functionCall, 1); TranslateAudioStop(output, args[0]); break;
+			    case "_audio_stop": VerifyCount(functionCall, 1); TranslateAudioStop(output, args[0]); break;
 				
 				case "_audio_read_local_sound_resource": VerifyCount(functionCall, 1); TranslateReadLocalSoundResource(output, args[0]); break;
 				case "_audio_sfx_get_state": VerifyCount(functionCall, 3); TranslateAudioSoundGetState(output, args[0], args[1], args[2]); break;
@@ -182,14 +181,16 @@ namespace Crayon.Translator
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateAssert(List<string> output, Expression message);
-		protected abstract void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop);
+        protected abstract void TranslateAudioMusicIsPlaying(List<string> output);
+        protected abstract void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop);
 		protected abstract void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop);
 		protected abstract void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path);
-		protected abstract void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId);
+        protected abstract void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId);
 		protected abstract void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan);
 		protected abstract void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio);
 		protected abstract void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop);
-		protected abstract void TranslateBeginFrame(List<string> output);
+        protected abstract void TranslateAudioStop(List<string> output, Expression soundInstance);
+        protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
@@ -248,8 +249,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateListSet(List<string> output, Expression list, Expression index, Expression value);
 		protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
 		protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
-		protected abstract void TranslateAudioMusicIsPlaying(List<string> output);
-		protected abstract void TranslateMusicLoadFromResource(List<string> output, Expression filename);
+        protected abstract void TranslateMusicLoadFromResource(List<string> output, Expression filename);
 		protected abstract void TranslateMusicPause(List<string> output);
 		protected abstract void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping);
 		protected abstract void TranslateMusicSetVolume(List<string> output, Expression ratio);
@@ -273,8 +273,6 @@ namespace Crayon.Translator
         protected abstract void TranslateResourceReadText(List<string> output, Expression path);
 		protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
 		protected abstract void TranslateSetTitle(List<string> output, Expression title);
-		protected abstract void TranslateAudioPlay(List<string> output, Expression soundInstance);
-		protected abstract void TranslateAudioStop(List<string> output, Expression soundInstance);
 		protected abstract void TranslateSin(List<string> output, Expression value);
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);

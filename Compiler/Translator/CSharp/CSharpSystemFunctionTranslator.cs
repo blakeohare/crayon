@@ -497,13 +497,6 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, programData);
 		}
 
-		protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
-		{
-			output.Add("TranslationHelper.SfxPlay(");
-			this.Translator.TranslateExpression(output, soundInstance);
-			output.Add(")");
-		}
-
 		protected override void TranslateSin(List<string> output, Expression value)
 		{
 			output.Add("Math.Sin(");

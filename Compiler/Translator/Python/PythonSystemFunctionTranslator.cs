@@ -769,14 +769,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-
-        protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
-        {
-            output.Add("playSoundImpl(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
         {
             output.Add("stopSoundImpl(");

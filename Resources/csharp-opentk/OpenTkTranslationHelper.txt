@@ -235,6 +235,7 @@ namespace %%%PROJECT_ID%%%
 			return SdlDotNet.Audio.Mixer.Sound(soundBytes);
 		}
 
+		/*
 		public static void AudioPlay(object nativeSound)
 		{
 			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
@@ -246,7 +247,7 @@ namespace %%%PROJECT_ID%%%
 			{
 				// No free channels or other hardware exceptions should just fail silently (no pun intended).
 			}
-		}
+		}//*/
 
 		public static void AudioStop(object nativeSound)
 		{

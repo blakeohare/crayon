@@ -15,7 +15,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("CsxiTranslationHelper.AppDataRoot");
         }
-
+        
         protected override void TranslateAudioMusicIsPlaying(List<string> output)
         {
             throw new NotImplementedException();

@@ -200,14 +200,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, ratio);
             output.Add(")");
         }
-
-        protected override void TranslateAudioPlay(List<string> output, Expression soundInstance)
-        {
-            output.Add("OpenTkTranslationHelper.AudioPlay(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
         {
             output.Add("OpenTkTranslationHelper.AudioStop(");
