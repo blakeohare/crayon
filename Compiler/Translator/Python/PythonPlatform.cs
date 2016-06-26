@@ -69,6 +69,11 @@ namespace Crayon.Translator.Python
                 output["resources/text/" + textFile.CanonicalFileName] = textFile;
             }
             
+            foreach (FileOutput audioFile in resourceDatabase.AudioResources)
+            {
+                output["resources/audio/" + audioFile.CanonicalFileName] = audioFile;
+            }
+
             Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.SpriteSheetFiles;
             if (imageSheetTiles != null)
             {

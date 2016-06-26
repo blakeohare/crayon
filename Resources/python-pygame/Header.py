@@ -250,10 +250,12 @@ def _parse_json(raw):
 
 def _parse_json_thing(item):
 	if item == None: return v_VALUE_NULL
-	if item == True: return v_VALUE_TRUE
-	if item == False: return v_VALUE_FALSE
 	if item == "": return v_VALUE_EMPTY_STRING
 	t = str(type(item))
+	if "'bool'" in t:
+		if item == True:
+			return VALUE_TRUE
+		return VALUE_FALSE
 	if "'int'" in t or "'long'" in t:
 		return v_buildInteger(item)
 	if "'float'" in t:
@@ -488,10 +490,12 @@ def _audio_music_set_volume(ratio):
 	pygame.mixer.music.set_volume(ratio)
 
 def _audio_music_play_resource(path, loop):
+	path = 'resources/audio/' + path
 	pygame.mixer.music.load(path.replace('/', os.sep))
 	pygame.mixer.music.play(-1 if loop else 0)
 	
 def readLocalSoundResource(path):
+	path = 'resources/audio/' + path
 	path = path.replace('/', os.sep)
 	if os.path.exists(path):
 		try:
