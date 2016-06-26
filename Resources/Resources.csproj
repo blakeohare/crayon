@@ -45,7 +45,6 @@
     <EmbeddedResource Include="javascript\http.js" />
     <EmbeddedResource Include="javascript\input.js" />
     <EmbeddedResource Include="javascript\interpreter_helpers.js" />
-    <EmbeddedResource Include="javascript\resources.js" />
     <EmbeddedResource Include="javascript\sound.js" />
   </ItemGroup>
   <ItemGroup>

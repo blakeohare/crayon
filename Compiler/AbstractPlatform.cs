@@ -20,7 +20,6 @@ namespace Crayon
 		public abstract bool SupportsListClear { get; }
 		public abstract bool IsStronglyTyped { get; }
 		public abstract bool ImagesLoadInstantly { get; }
-		public abstract string GeneratedFilesFolder { get; }
 		public abstract bool IsArraySameAsList { get; }
 		public abstract string PlatformShortId { get; }
 

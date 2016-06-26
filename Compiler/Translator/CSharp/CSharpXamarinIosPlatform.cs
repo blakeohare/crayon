@@ -5,8 +5,6 @@ namespace Crayon.Translator.CSharp
 {
     internal class CSharpXamarinIosPlatform : CSharpPlatform
     {
-        public override string GeneratedFilesFolder { get { return "%PROJECT_ID%/Resources/GeneratedFiles"; } }
-
         public CSharpXamarinIosPlatform()
             : base(new CSharpXamarinIosSystemFunctionTranslator(), true)
         { }

@@ -14,8 +14,7 @@ namespace Crayon.Translator.Python
 		public override bool IsStronglyTyped { get { return false; } }
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool IsArraySameAsList { get { return true; } }
-
-		public override string GeneratedFilesFolder { get { return "_generated_files"; } }
+        
 		public override string PlatformShortId { get { return "pygame"; } }
 
 		public override Dictionary<string, FileOutput> Package(

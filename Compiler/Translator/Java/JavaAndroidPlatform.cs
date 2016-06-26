@@ -7,12 +7,10 @@ namespace Crayon.Translator.Java
 {
     internal class JavaAndroidPlatform : JavaPlatform
 	{
-		public JavaAndroidPlatform()
-			: base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), true)
-		{
-		}
-
-		public override string GeneratedFilesFolder { get { return "app/src/main/assets/generated"; } }
+        public JavaAndroidPlatform()
+            : base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), true)
+        { }
+        
 		public override string PlatformShortId { get { return "javaandroid"; } }
 
 		public override Dictionary<string, FileOutput> Package(

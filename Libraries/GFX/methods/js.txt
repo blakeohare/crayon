@@ -1,1 +1,2 @@
-$_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("Data/ImageSheetManifest.txt")
+$_lib_gfx_image_sheet_get_manifest_file: R.getTextRes("image_sheet_manifest.txt")
+$_lib_gfx_getTileDirectory: "resources/imagesheets/"

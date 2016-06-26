@@ -19,9 +19,7 @@ namespace Crayon.Translator.JavaScript
 		public override bool ImagesLoadInstantly { get { return false; } }
 		public override bool IsArraySameAsList { get { return true; } }
 		public override string PlatformShortId { get { return "javascript"; } }
-
-		public override string GeneratedFilesFolder { get { return "generated_resources"; } }
-
+        
 		public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,
             string projectId,
@@ -32,16 +30,21 @@ namespace Crayon.Translator.JavaScript
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
-			Dictionary<string, string> replacements = new Dictionary<string, string>()
-			{
-				{ "JS_FILE_PREFIX", "'" + this.jsFolderPrefix + "'" },
-				{ "PROJECT_ID", projectId },
-			};
+            Dictionary<string, string> replacements = new Dictionary<string, string>()
+            {
+                { "JS_FILE_PREFIX", "'" + this.jsFolderPrefix + "'" },
+                { "JS_BYTE_CODE", Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent, true) },
+                { "JS_RESOURCE_MANIFEST", Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent, true) },
+                { "PROJECT_ID", projectId },
 
-			output["index.html"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = this.GenerateHtmlFile()
+                // TODO: create a field in the build file
+                { "BUILD_FILE_DEFINED_TITLE", "Untitled" },
+            };
+
+            output["index.html"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
 			};
 
 			List<string> codeJs = new List<string>();
@@ -81,64 +84,48 @@ namespace Crayon.Translator.JavaScript
 				TextContent = codeJsText
 			};
 
-
-
 			output["bytecode.js"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
-				TextContent = string.Join("\n", new string[] {
-					"var CRAYON = {};",
-					"CRAYON.getByteCode() = function() {",
-					"\treturn \"" + resourceDatabase.ByteCodeFile.TextContent + "\";",
-					"};",
-					""
-				})
+				TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("javascript/bytecode.js"), replacements),
 			};
             
 			Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
-                textResources[textFile.OriginalPath] = textFile.TextContent;
+                textResources["text/" + textFile.OriginalPath] = textFile.TextContent;
             }
 
-            output["resources.js"] = new FileOutput()
-			{
-				TextContent = BuildTextResourcesCodeFile(textResources),
-				Type = FileOutputType.Text
-			};
+            foreach (string filename in resourceDatabase.SpriteSheetFiles.Keys)
+            {
+                FileOutput imageSheetFile = resourceDatabase.SpriteSheetFiles[filename];
+                output["resources/imagesheets/" + filename] = imageSheetFile;
+            }
 
-			return output;
+            textResources["image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile.TextContent;
+
+            output["resources.js"] = new FileOutput()
+            {
+                TextContent = BuildTextResourcesCodeFile(textResources),
+                Type = FileOutputType.Text
+            };
+
+            return output;
 		}
         
 		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
         {
-            string resourcesTemplate = Util.ReadResourceFileInternally("javascript/resources.js");
-
             List<string> output = new List<string>();
-			output.Add("CRAYON.resources = {\n");
 			string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 			for (int i = 0; i < keys.Length; ++i)
 			{
 				string filename = keys[i];
-				output.Add("\t\"");
-				output.Add(filename.Replace('\\', '/'));
-				output.Add("\": ");
-
-				if (files[filename] != null)
-				{
-					output.Add(Util.ConvertStringValueToCode(files[filename], true));
-				}
-				else
-				{
-					output.Add("null");
-				}
-				if (i != keys.Length - 1)
-				{
-					output.Add(",");
-				}
-				output.Add("\n");
+				output.Add("R.addTextRes(");
+                output.Add(Util.ConvertStringValueToCode(filename, true));
+                output.Add(", ");
+                output.Add(Util.ConvertStringValueToCode(files[filename], true));
+                output.Add(");\n");
 			}
-			output.Add("};\n");
 			return string.Join("", output);
 		}
 
@@ -185,23 +172,7 @@ namespace Crayon.Translator.JavaScript
 
 		public string GenerateHtmlFile()
 		{
-			List<string> output = new List<string>();
-
-			output.Add("<!doctype html>\n<html lang=\"en-US\" dir=\"ltr\">");
-			output.Add("<head>");
-			output.Add("<meta charset=\"utf-8\">");
-			output.Add("<title>Crayon JS output</title>");
-			output.Add("<style type=\"text/css\"> body { background-color:#000; text-align:center; }</style>");
-			output.Add("<script type=\"text/javascript\" src=\"bytecode.js\"></script>");
-			output.Add("<script type=\"text/javascript\" src=\"code.js\"></script>");
-			output.Add("<script type=\"text/javascript\" src=\"resources.js\"></script>");
-			output.Add("</head>");
-			output.Add("<body onload=\"v_main()\">");
-			output.Add(Util.ReadResourceFileInternally("javascript/game_host_html.txt"));
-			output.Add("</body>");
-			output.Add("</html>");
-
-			return string.Join(this.IsMin ? "" : "\n", output);
-		}
+            return Util.ReadResourceFileInternally("javascript/game_host_html.txt");
+        }
 	}
 }

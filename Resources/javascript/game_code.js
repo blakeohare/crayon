@@ -24,8 +24,18 @@ R._global_vars = {
 	'last_frame_began': R.now(),
 	'image_downloads': {},
 	'image_download_counter': 0,
-	'image_keys_by_index': [null]
+	'image_keys_by_index': [null],
+	textResources: {},
 };
+
+R.addTextRes = function (path, value) {
+    R._global_vars.textResources[path] = value;
+};
+
+R.getTextRes = function(path) {
+    return R._global_vars.textResources[path];
+};
+
 
 R.is_image_loaded = function(key) {
 	return R._global_vars.image_downloads[key] !== undefined;

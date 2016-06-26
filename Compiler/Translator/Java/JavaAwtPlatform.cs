@@ -10,8 +10,7 @@ namespace Crayon.Translator.Java
         public JavaAwtPlatform()
             : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
         { }
-
-		public override string GeneratedFilesFolder { get { return "resources/generated"; } }
+        
 		public override string PlatformShortId { get { return "javaawt"; } }
 
 		public override Dictionary<string, FileOutput> Package(

@@ -288,7 +288,7 @@ function @type('bool') lib_gfx_initiateTileLoading(@type('TileLoadRequest') requ
 		// ...and so you immediately want to mark the status as loaded.
 		TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADED;
 	} else {
-		@type('string') key = $_image_initiate_async_download_of_resource('%%%GENERATED_TILE_DIRECTORY%%%/' + TileLoadRequest$request.path + '.png');
+		@type('string') key = $_image_initiate_async_download_of_resource($_lib_gfx_getTileDirectory() + '/' + TileLoadRequest$request.path + '.png');
 		TileLoadRequest$request.asyncReferenceKey = key;
 		TileLoadRequest$request.status = IMAGE_SHEET_STATUS_LOADING;
 	}

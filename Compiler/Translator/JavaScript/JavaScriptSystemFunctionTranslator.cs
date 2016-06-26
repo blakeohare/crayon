@@ -875,7 +875,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
-            output.Add("R.readResourceText(");
+            output.Add("R.getTextRes('text/' + ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
