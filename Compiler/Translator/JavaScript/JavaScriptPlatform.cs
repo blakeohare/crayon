@@ -88,7 +88,7 @@ namespace Crayon.Translator.JavaScript
 				Type = FileOutputType.Text,
 				TextContent = string.Join("\n", new string[] {
 					"var CRAYON = {};",
-					"CRAYON.getByteCode = function() {",
+					"CRAYON.getByteCode() = function() {",
 					"\treturn \"" + resourceDatabase.ByteCodeFile.TextContent + "\";",
 					"};",
 					""
@@ -101,10 +101,7 @@ namespace Crayon.Translator.JavaScript
                 textResources[textFile.OriginalPath] = textFile.TextContent;
             }
 
-            
-			// TODO: don't generate resources file if there are no resources.
-			// But you'll also have to unlink it from the generated HTML.
-			output["resources.js"] = new FileOutput()
+            output["resources.js"] = new FileOutput()
 			{
 				TextContent = BuildTextResourcesCodeFile(textResources),
 				Type = FileOutputType.Text
@@ -114,9 +111,11 @@ namespace Crayon.Translator.JavaScript
 		}
         
 		private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
-		{
-			List<string> output = new List<string>();
-			output.Add("R.resources = {\n");
+        {
+            string resourcesTemplate = Util.ReadResourceFileInternally("javascript/resources.js");
+
+            List<string> output = new List<string>();
+			output.Add("CRAYON.resources = {\n");
 			string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
 			for (int i = 0; i < keys.Length; ++i)
 			{

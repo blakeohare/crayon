@@ -8,49 +8,9 @@ namespace %%%PROJECT_ID%%%
 {
 	internal static class ResourceReader
 	{
-        private static Dictionary<string, string> resourceMapping = null;
-        
-		public static string ReadTextResource(string path)
-		{
-            // TODO: user path translation
-			return ReadTextFile(path);
-		}
-
-        private static string GetResourcePath(string userDefinedPath)
+        public static string GetResourceManifest()
         {
-            if (resourceMapping == null)
-            {
-                // also create a type lookup dictionry
-                resourceMapping = new Dictionary<string, string>();
-                foreach (string line in ReadTextFile("Resources/ResourceMapping.txt").Split('\n'))
-                {
-                    string[] parts = line.Split(',');
-                    switch (parts[0].Trim())
-                    {
-                        case "TXT":
-                            if (parts.Length >= 3)
-                            {
-                                string resourceName = "Resources/Text/" + parts[1].Trim();
-                                string originalName = parts[2];
-                                for (int i = 3; i < parts.Length; ++i)
-                                {
-                                    originalName += "," + parts[i];
-                                }
-                                originalName = originalName.Trim();
-                                resourceMapping[originalName] = resourceName;
-                                resourceMapping["/" + originalName] = resourceName;
-                            }
-                            break;
-                    }
-                }
-            }
-
-            userDefinedPath = userDefinedPath.Replace('\\', '/');
-            if (resourceMapping.ContainsKey(userDefinedPath))
-            {
-                return resourceMapping[userDefinedPath];
-            }
-            return null;
+            return ReadTextFile("Resources/ResourceMapping.txt") ?? "";
         }
 
 		public static string ReadTextFile(string path)

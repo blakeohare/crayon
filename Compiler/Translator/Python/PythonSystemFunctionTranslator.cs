@@ -6,9 +6,10 @@ namespace Crayon.Translator.Python
 {
     internal class PythonSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        public PythonSystemFunctionTranslator()
-            : base()
-        { }
+        protected override void TranslateResourceGetManifest(List<string> output)
+        {
+            output.Add("RESOURCES.getManifest()");
+        }
 
         protected override void TranslateAppDataRoot(List<string> output)
         {
@@ -964,6 +965,13 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
+        protected override void TranslateSortedCopyOfStringArray(List<string> output, Expression list)
+        {
+            output.Add("create_sorted_copy_of_list(");
+            this.Translator.TranslateExpression(output, list);
+            output.Add(")");
+        }
+
         protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
         {
             this.Translator.TranslateExpression(output, stringConstant);
@@ -1001,7 +1009,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, haystack);
             output.Add(")");
         }
-
+        
         protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
             this.Translator.TranslateExpression(output, stringExpr);

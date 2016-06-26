@@ -82,6 +82,7 @@ struct ProgramData {
 
 	@type('int') lengthId,
 	@type('Array<int>') primitiveMethodFunctionIdFallbackLookup,
+	@type('ResourceDB') resourceDatabase,
 }
 
 struct StackFrame {
@@ -314,4 +315,17 @@ struct GlRenderState {
 	@type('int') g,
 	@type('int') b,
 	@type('int') a
+}
+
+struct ResourceInfo {
+	@type('string') userPath,
+	@type('string') internalPath,
+	@type('bool') isText,
+	@type('string') type, // e.g. SND, IMG, IMGSH, etc. Don't convert this to an enum. Want this to be extensible.
+	@type('string') manifestParam, // e.g. the image sheet ID, multiple values here must be encoded if extended.
+}
+
+struct ResourceDB {
+	@type('Dictionary<string, Array<string>>') filesPerDirectory,
+	@type('Dictionary<string, ResourceInfo>') fileInfo,
 }

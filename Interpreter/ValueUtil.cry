@@ -428,6 +428,25 @@ function @type('Value') multiplyString(@type('Value') strValue, @type('string') 
 	return buildString(str);
 }
 
+function @type('string') stringDecode(@type('string') encoded) {
+	if (!$_string_contains(encoded, '%')) {
+		@type('int') length = $_string_length(encoded);
+		@type('char') per = $_string_char_at('%', 0);
+		@type('List<string>') builder = $_new_list('string');
+		for (@type('int') i = 0; i < length; i += 1) {
+			@type('char') c = $_string_char_at(encoded, i);
+			if (c == per && i + 2 < length) {
+				$_list_push(builder, stringFromHex("" + $_string_char_at(encoded, i + 1) + $_string_char_at(encoded, i + 2)));
+			} else {
+				$_list_push(builder, "" + c);
+			}
+		}
+
+		return $_list_join(builder, "");
+	}
+	return encoded;
+}
+
 function @type('string') stringFromHex(@type('string') encoded) {
 	encoded = $_string_upper(encoded);
 	@type('List<string>') output = $_new_list('string');

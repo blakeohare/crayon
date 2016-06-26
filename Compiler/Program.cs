@@ -107,6 +107,9 @@ namespace Crayon
                 string command;
 
                 command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target python";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target js_remote";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
 
                 args = command.Split(' ');
             }

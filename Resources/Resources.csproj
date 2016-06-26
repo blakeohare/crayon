@@ -35,6 +35,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="javascript\bytecode.js" />
     <EmbeddedResource Include="javascript\drawing.js" />
     <EmbeddedResource Include="javascript\fake_disk.js" />
     <EmbeddedResource Include="javascript\file_io.js" />
@@ -44,21 +45,8 @@
     <EmbeddedResource Include="javascript\http.js" />
     <EmbeddedResource Include="javascript\input.js" />
     <EmbeddedResource Include="javascript\interpreter_helpers.js" />
+    <EmbeddedResource Include="javascript\resources.js" />
     <EmbeddedResource Include="javascript\sound.js" />
-    <EmbeddedResource Include="csharp-ios\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="csharp-ios\SolutionFile.sln.txt" />
-    <EmbeddedResource Include="csharp-ios\AppDelegate.txt" />
-    <EmbeddedResource Include="csharp-ios\EntitlementsPlist.txt" />
-    <EmbeddedResource Include="csharp-ios\GameViewController.txt" />
-    <EmbeddedResource Include="csharp-ios\Graphics2dRenderer.txt" />
-    <EmbeddedResource Include="csharp-ios\InfoPlist.txt" />
-    <EmbeddedResource Include="csharp-ios\LaunchScreenStoryboard.txt" />
-    <EmbeddedResource Include="csharp-ios\Main.txt" />
-    <EmbeddedResource Include="csharp-ios\MainStoryboard.txt" />
-    <EmbeddedResource Include="csharp-ios\AssetsXcassetsContentsJson.txt" />
-    <EmbeddedResource Include="csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
-    <EmbeddedResource Include="csharp-ios\CsxiTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-ios\ResourceReader.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="java-common\AsyncMessageQueue.txt" />
@@ -80,6 +68,7 @@
     <EmbeddedResource Include="java-android\boilerplate\GradleProperties.txt" />
     <EmbeddedResource Include="java-android\boilerplate\Gradlew.txt" />
     <EmbeddedResource Include="java-android\boilerplate\GradlewBat.txt" />
+    <EmbeddedResource Include="java-android\boilerplate\GradleWrapperJar" />
     <EmbeddedResource Include="java-android\boilerplate\GradleWrapperProperties.txt" />
     <EmbeddedResource Include="java-android\boilerplate\IcLauncherWeb.png" />
     <EmbeddedResource Include="java-android\boilerplate\idea\CompilerXml.txt" />
@@ -113,28 +102,14 @@
     <EmbeddedResource Include="java-android\GameActivity.txt" />
     <EmbeddedResource Include="java-android\GlUtil.txt" />
     <EmbeddedResource Include="java-android\OpenGlRenderer.txt" />
-    <EmbeddedResource Include="java-awt\AwtTranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-android\boilerplate\GradleWrapperJar" />
+    <EmbeddedResource Include="java-awt\AwtTranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="csharp-common\AsyncMessageQueue.txt" />
     <EmbeddedResource Include="csharp-common\JsonParser.txt" />
-    <EmbeddedResource Include="csharp-opentk\License.txt" />
-    <EmbeddedResource Include="csharp-opentk\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="csharp-opentk\SolutionFile.sln.txt" />
     <EmbeddedResource Include="csharp-common\TranslationHelper.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="csharp-opentk\AssemblyInfo.txt" />
-    <EmbeddedResource Include="csharp-opentk\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-opentk\GameWindow.txt" />
-    <EmbeddedResource Include="csharp-opentk\GlUtil.txt" />
-    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
-    <EmbeddedResource Include="csharp-opentk\OpenTkTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-opentk\Program.txt" />
-    <EmbeddedResource Include="csharp-opentk\ResourceReader.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="csharp-android\AssemblyInfo.txt" />
@@ -152,11 +127,38 @@
     <EmbeddedResource Include="csharp-android\Strings.xml.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="csharp-ios\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="csharp-ios\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="csharp-ios\AppDelegate.txt" />
+    <EmbeddedResource Include="csharp-ios\EntitlementsPlist.txt" />
+    <EmbeddedResource Include="csharp-ios\GameViewController.txt" />
+    <EmbeddedResource Include="csharp-ios\Graphics2dRenderer.txt" />
+    <EmbeddedResource Include="csharp-ios\InfoPlist.txt" />
+    <EmbeddedResource Include="csharp-ios\LaunchScreenStoryboard.txt" />
+    <EmbeddedResource Include="csharp-ios\Main.txt" />
+    <EmbeddedResource Include="csharp-ios\MainStoryboard.txt" />
+    <EmbeddedResource Include="csharp-ios\AssetsXcassetsContentsJson.txt" />
+    <EmbeddedResource Include="csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
+    <EmbeddedResource Include="csharp-ios\CsxiTranslationHelper.txt" />
+    <EmbeddedResource Include="csharp-ios\ResourceReader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="csharp-opentk\AssemblyInfo.txt" />
     <EmbeddedResource Include="csharp-opentk\binaries\OpenTK.dll" />
     <EmbeddedResource Include="csharp-opentk\binaries\SDL.dll" />
     <EmbeddedResource Include="csharp-opentk\binaries\SdlDotNet.dll" />
     <EmbeddedResource Include="csharp-opentk\binaries\SDL_mixer.dll" />
     <EmbeddedResource Include="csharp-opentk\binaries\Tao.Sdl.dll" />
+    <EmbeddedResource Include="csharp-opentk\GamepadTranslationHelper.txt" />
+    <EmbeddedResource Include="csharp-opentk\GameWindow.txt" />
+    <EmbeddedResource Include="csharp-opentk\GlUtil.txt" />
+    <EmbeddedResource Include="csharp-opentk\License.txt" />
+    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
+    <EmbeddedResource Include="csharp-opentk\OpenTkTranslationHelper.txt" />
+    <EmbeddedResource Include="csharp-opentk\Program.txt" />
+    <EmbeddedResource Include="csharp-opentk\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="csharp-opentk\ResourceReader.txt" />
+    <EmbeddedResource Include="csharp-opentk\SolutionFile.sln.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="python-pygame\AsyncHttpFetcher.py" />

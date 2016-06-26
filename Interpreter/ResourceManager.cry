@@ -1,0 +1,75 @@
+﻿function @type('ResourceDB') resource_manager_initialize() {
+
+	@type('Dictionary<string, List<string>>') filesPerDirectoryBuilder = $_new_dictionary('string', 'List<string>');
+	@type('Dictionary<string, ResourceInfo>') fileInfo = $_new_dictionary('string', 'ResourceInfo');
+
+	@type('string') manifest = $_resource_get_manifest();
+	@type('Array<string>') items = $_string_split(manifest, '\n');
+	@type('ResourceInfo') resourceInfo = null;
+	@type('string') type = "";
+	@type('string') userPath = "";
+	@type('string') internalPath = "";
+	@type('string') argument = "";
+	@type('bool') isText = false;
+	@type('int') i = 0;
+	while (i < $_array_length(items)) {
+		@type('Array<string>') itemData = $_string_split($_array_get(items, i), ',');
+		if ($_array_length(itemData) >= 3) {
+			type = $_array_get(itemData, 0);
+			isText = $_string_equals("TXT", type);
+			userPath = stringDecode($_array_get(itemData, 1));
+			internalPath = $_array_get(itemData, 2);
+			argument = "";
+			if ($_array_length(itemData) > 3) {
+				argument = stringDecode($_array_get(itemData, 3));
+			}
+
+			resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
+			$_dictionary_set(fileInfo, userPath, resourceInfo);
+
+			resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
+		}
+		i += 1;
+	}
+	
+	@type('Array<string>') dirs = $_dictionary_get_keys('string', filesPerDirectoryBuilder);
+	@type('Dictionary<string, Array<string>>') filesPerDirectorySorted = $_new_dictionary('string', 'Array<string>');
+	for (i = 0; i < $_array_length(dirs); i += 1) {
+		@type('string') dir = $_array_get(dirs, i);
+		@type('List<string>') unsortedDirs = $_dictionary_get_guaranteed(filesPerDirectoryBuilder, dir);
+		@type('Array<string>') dirsSorted = $_convert_list_to_array('string', unsortedDirs);
+		dirsSorted = $_sorted_copy_of_string_array(dirsSorted);
+		$_dictionary_set(filesPerDirectorySorted, dir, dirsSorted);
+	}
+
+	return new ResourceDB(filesPerDirectorySorted, fileInfo);
+}
+
+function @type('int') resource_manager_populate_directory_lookup(
+		@type('Dictionary<string, List<string>>') dirs,
+		@type('string') path) {
+	
+	@type('Array<string>') parts = $_string_split(path, '/');
+	@type('string') pathBuilder = '';
+	@type('string') file = '';
+	for (@type('int') i = 0; i < $_array_length(parts); i += 1) {
+		file = $_array_get(parts, i);
+		@type('List<string>') files = null;
+		if (!$_dictionary_contains(dirs, pathBuilder)) {
+			files = $_new_list('string');
+			$_dictionary_set(dirs, pathBuilder, files);
+		} else {
+			files = $_dictionary_get_guaranteed(dirs, pathBuilder);
+		}
+
+		$_list_push(files, file);
+
+		if (i > 0) {
+			pathBuilder += '/' + file;
+		} else {
+			pathBuilder = file;
+		}
+	}
+
+	return 0;
+}

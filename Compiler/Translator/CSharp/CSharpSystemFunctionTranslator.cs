@@ -494,8 +494,7 @@ namespace Crayon.Translator.CSharp
 
 		protected override void TranslateResourceReadText(List<string> output, Expression path)
 		{
-			// TODO: this
-			output.Add("ResourceReader.ReadTextResource(");
+			output.Add("ResourceReader.ReadTextFile(\"Resources/Text/\" + ");
 			this.Translator.TranslateExpression(output, path);
 			output.Add(")");
 		}
@@ -526,7 +525,13 @@ namespace Crayon.Translator.CSharp
 			output.Add(".OrderBy<int, int>(k => k).ToArray()");
 		}
 
-		protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
+        protected override void TranslateSortedCopyOfStringArray(List<string> output, Expression list)
+        {
+            this.Translator.TranslateExpression(output, list);
+            output.Add(".OrderBy<string, string>(k => k).ToArray()");
+        }
+
+        protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
 		{
 			char c = stringConstant.Value[0];
 			string value;
@@ -636,8 +641,8 @@ namespace Crayon.Translator.CSharp
 			this.Translator.TranslateExpression(output, value);
 			output.Add(")");
 		}
-
-		protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
+        
+        protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
 		{
 			this.Translator.TranslateExpression(output, stringValue);
 			output.Add(".Replace(");

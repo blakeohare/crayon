@@ -205,7 +205,7 @@ namespace Crayon
             foreach (FileOutput textFile in this.TextResources)
             {
                 textFile.CanonicalFileName = "txt" + (i++) + ".txt";
-                manifest.Add("TXT," + textFile.CanonicalFileName + "," + textFile.OriginalPath);
+                manifest.Add("TXT," + textFile.OriginalPath + "," + textFile.CanonicalFileName);
             }
 
             i = 1;
@@ -213,13 +213,13 @@ namespace Crayon
             {
                 if (imageFile.Type == FileOutputType.Ghost)
                 {
-                    manifest.Add("IMGSH," + imageFile.SpriteSheetId + "," + imageFile.OriginalPath);
+                    manifest.Add("IMGSH," + imageFile.OriginalPath + ",," + imageFile.SpriteSheetId);
                 }
                 else
                 {
                     bool isPng = imageFile.OriginalPath.ToLower().EndsWith(".png");
                     imageFile.CanonicalFileName = "i" + (i++) + (isPng ? ".png" : ".jpg");
-                    manifest.Add("IMG," + imageFile.CanonicalFileName + "," + imageFile.OriginalPath);
+                    manifest.Add("IMG," + imageFile.OriginalPath + "," + imageFile.CanonicalFileName);
                 }
             }
 
@@ -227,7 +227,7 @@ namespace Crayon
             foreach (FileOutput audioFile in this.AudioResources)
             {
                 audioFile.CanonicalFileName = "snd" + (i++) + ".ogg";
-                manifest.Add("SND," + audioFile.CanonicalFileName + "," + audioFile.OriginalPath);
+                manifest.Add("SND," + audioFile.OriginalPath + "," + audioFile.CanonicalFileName);
             }
 
             this.ResourceManifestFile = new FileOutput()

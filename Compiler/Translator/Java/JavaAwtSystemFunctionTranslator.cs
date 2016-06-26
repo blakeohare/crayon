@@ -6,6 +6,11 @@ namespace Crayon.Translator.Java
 {
     internal class JavaAwtSystemFunctionTranslator : JavaSystemFunctionTranslator
     {
+        protected override void TranslateResourceGetManifest(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void TranslateAudioMusicIsPlaying(List<string> output)
         {
             output.Add("false");

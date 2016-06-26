@@ -2,6 +2,7 @@
 function main() {
 
 	initialize_constant_values();
+	@type('ResourceDB') resources = resource_manager_initialize();
 
 	@type('Code') byteCode = loadByteCode();
 	@type('Array<int>') ops = Code$byteCode.ops;
@@ -49,6 +50,8 @@ function main() {
 		null, // string switch lookups
 		$_new_list('Dictionary<string, int>'), // string switch lookups builder
 		0, // instance counter
+
+		// TODO: move this out of here.
 		new SpriteSheetData(
 			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
 			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
@@ -93,7 +96,8 @@ function main() {
 		null, // funcArgs (set in FINALIZE_INITIALIZATION)
 
 		-1, // the global name ID for "length"
-		$_new_array('int', 10) // primitive method to function ID fallback lookup
+		$_new_array('int', 10), // primitive method to function ID fallback lookup
+		resources // resource database
 		));
 
 	runTick();

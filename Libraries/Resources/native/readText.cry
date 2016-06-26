@@ -1,0 +1,8 @@
+﻿/*
+	arg[0]: Internal file path relative to where text files are stored. Not a user-defined path. 
+*/
+import inline "FrameworkFunctions/1_arg.cry";
+
+string1 = $_resource_read_text_file($_cast('string', Value$arg1.internalValue));
+
+output = new Value(Types.STRING, string1);

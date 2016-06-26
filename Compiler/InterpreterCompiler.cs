@@ -25,6 +25,7 @@ namespace Crayon
 			"NetworkManager.cry",
 			"OpenGlPipeline.cry", // conditionally excluded below based on platform.
 			"PrimitiveMethods.cry",
+            "ResourceManager.cry",
 			"Runner.cry",
 			"TypesUtil.cry",
 			"ValueUtil.cry",

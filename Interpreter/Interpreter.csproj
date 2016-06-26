@@ -138,6 +138,7 @@
     <EmbeddedResource Include="PrimitiveMethods\string_starts_with.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_trim.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_upper.cry" />
+    <EmbeddedResource Include="ResourceManager.cry" />
     <EmbeddedResource Include="Runner.cry" />
     <EmbeddedResource Include="Structs.cry" />
     <EmbeddedResource Include="TypesUtil.cry" />

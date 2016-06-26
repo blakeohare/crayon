@@ -6,6 +6,11 @@ namespace Crayon.Translator.CSharp
 {
     class CSharpOpenTkSystemFunctionTranslator : CSharpSystemFunctionTranslator
     {
+        protected override void TranslateResourceGetManifest(List<string> output)
+        {
+            output.Add("ResourceReader.GetResourceManifest()");
+        }
+
         protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
         {
             output.Add("OpenTkTranslationHelper.GetSoundInstance(");

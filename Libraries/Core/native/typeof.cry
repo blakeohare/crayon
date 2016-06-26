@@ -12,10 +12,6 @@ switch (Value$arg1.type) {
 	case Types.INSTANCE: int1 = 7; break;
 	case Types.FUNCTION: int1 = 8; break;
 
-	// TODO: remove this enum value definition altogether.
-	// All references should have been removed by now, I think.
-	case Types.NATIVE_OBJECT: int1 = 9; break;
-
 	// This should never happen.
 	default: int1 = 10; break;
 }

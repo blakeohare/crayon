@@ -6,8 +6,9 @@ namespace Crayon.Translator.CSharp
 {
     internal class CSharpXamarinIosSystemFunctionTranslator : CSharpSystemFunctionTranslator
     {
-        public CSharpXamarinIosSystemFunctionTranslator()
+        protected override void TranslateResourceGetManifest(List<string> output)
         {
+            throw new NotImplementedException();
         }
 
         protected override void TranslateAppDataRoot(List<string> output)

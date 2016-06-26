@@ -1,5 +1,13 @@
 ﻿namespace Resources {
 	function readText(filepath) {
-		return $$lib_resources_read_text(filepath);
+		p = $$lib_resources_getFileInfo(filepath);
+		/*
+			p[0] = isText
+			p[1] = path
+		*/
+		if (p == null) Core.assert(false, "Resource not found: " + filepath);
+		if (!p[0]) Core.assert(false, "Resource not a text file: " + filepath);
+		
+		return $$lib_resources_readText(p[1]);
 	}
 }
