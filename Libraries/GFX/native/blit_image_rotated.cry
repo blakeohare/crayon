@@ -13,7 +13,7 @@ if (%%%IS_OPEN_GL_BASED%%%) {
 		int2,
 		float1);
 } else {
-	$_blit_image_rotated(
+	$_lib_gfx_blitImageRotated(
 		$_cast('Image', object1),
 		int1,
 		int2,

@@ -60,27 +60,7 @@ namespace Crayon.Translator.CSharp
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
         {
             output.Add("CsxiTranslationHelper.DownloadImage(");
@@ -89,32 +69,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-
-        protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateGetEventsRawList(List<string> output)
         {
             output.Add("CsxiTranslationHelper.GetEvents()");

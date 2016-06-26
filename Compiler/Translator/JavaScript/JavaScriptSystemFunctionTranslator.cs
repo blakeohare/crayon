@@ -130,68 +130,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("R.beginFrame()");
         }
-
-        protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
-        {
-            output.Add("R._global_vars.ctx.drawImage(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(this.Shorten("[1], "));
-            this.Translator.TranslateExpression(output, x);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, y);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-        {
-            output.Add("R.drawImageWithAlpha(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(this.Shorten("[1], "));
-            this.Translator.TranslateExpression(output, x);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, y);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
-        {
-            output.Add("R.blitPartial(");
-            this.Translator.TranslateExpression(output, image);
-            // TODO: make this next line not silly
-            output.Add(this.Shorten("[1], "));
-            this.Translator.TranslateExpression(output, targetX);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, targetY);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, targetWidth);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, targetHeight);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, sourceX);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, sourceY);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, sourceWidth);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, sourceHeight);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-        {
-            output.Add("R.blitRotated(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(this.Shorten("[1], "));
-            this.Translator.TranslateExpression(output, centerX);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, centerY);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, angle);
-            output.Add(this.Shorten(")"));
-        }
-
+        
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             this.Translator.TranslateExpression(output, expression);
@@ -306,97 +245,7 @@ namespace Crayon.Translator.JavaScript
         {
             TranslateAssert(output, new StringConstant(null, "TODO: web image downloads", key.FunctionOrClassOwner));
         }
-
-        protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("R.drawEllipse(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, top);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, width);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, height);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, red);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, green);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("R.drawLine(");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, ay);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, by);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, lineWidth);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, red);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, green);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("R.drawRect(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, top);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, width);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, height);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, red);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, green);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("R.drawTriangle(");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, ay);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, by);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, cx);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, cy);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, red);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, green);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -405,18 +254,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
-
-        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-        {
-            output.Add("R.fillScreen(");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, green);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");

@@ -14,5 +14,8 @@ if (Value$arg1.type != Types.INTEGER ||
 		$_cast('int', Value$arg4.internalValue),
 		$_cast('int', Value$arg5.internalValue));
 } else {
-	$_fill_screen($_cast('int', Value$arg1.internalValue), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+	$_lib_gfx_fillScreen(
+		$_cast('int', Value$arg1.internalValue),
+		$_cast('int', Value$arg2.internalValue),
+		$_cast('int', Value$arg3.internalValue));
 }

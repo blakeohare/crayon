@@ -24,7 +24,7 @@ if (Value$arg2.type != Types.INTEGER ||
 		$_cast('int', Value$arg7.internalValue), // h
 		255);
 } else {
-	$_blit_image_partial(
+	$_lib_gfx_blitImagePartial(
 		$_cast('Image', object1),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),

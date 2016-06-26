@@ -53,17 +53,7 @@ namespace Crayon.Translator.Java
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("AndroidTranslationHelper.makeHttpRequest(");
@@ -100,18 +90,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, flipY);
             output.Add(")");
         }
-
-        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-        {
-            output.Add("AndroidTranslationHelper.fillScreen(");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
         {
             output.Add("AndroidTranslationHelper.initializeGame(");

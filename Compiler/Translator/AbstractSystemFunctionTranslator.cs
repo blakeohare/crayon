@@ -50,9 +50,13 @@ namespace Crayon.Translator
 				
 				case "_music_play_now": VerifyCount(functionCall, 3); TranslateMusicPlayNow(output, args[0], args[1], args[2]); break;
 				case "_audio_music_set_volume": VerifyCount(functionCall, 1); TranslateMusicSetVolume(output, args[0]); break;
-				
+                    
+                case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
+                case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
+                case "_image_scale_native_resource": VerifyCount(functionCall, 3); TranslateImageScaleNativeResource(output, args[0], args[1], args[2]); break;
+                case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); return;
 
-				case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
+                case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
 				case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
 				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
@@ -62,10 +66,6 @@ namespace Crayon.Translator
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
 				case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
-				case "_blit_image": VerifyCount(functionCall, 3); TranslateBlitImage(output, args[0], args[1], args[2]); break;
-				case "_blit_image_alpha": VerifyCount(functionCall, 4); TranslateBlitImageAlpha(output, args[0], args[1], args[2], args[3]); break;
-				case "_blit_image_partial": VerifyCount(functionCall, 9); TranslateBlitImagePartial(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
-				case "_blit_image_rotated": VerifyCount(functionCall, 4); TranslateBlitImageRotated(output, args[0], args[1], args[2], args[3]); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
@@ -83,25 +83,16 @@ namespace Crayon.Translator
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
 				case "_download_image": VerifyCount(functionCall, 2); TranslateDownloadImage(output, args[0], args[1]); break;
-				case "_draw_ellipse": VerifyCount(functionCall, 8); TranslateDrawEllipse(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
-				case "_draw_line": VerifyCount(functionCall, 9); TranslateDrawLine(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
-				case "_draw_rectangle": VerifyCount(functionCall, 8); TranslateDrawRectangle(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]); break;
-				case "_draw_triangle": VerifyCount(functionCall, 10); TranslateDrawTriangle(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
-				case "_fill_screen": VerifyCount(functionCall, 3); TranslateFillScreen(output, args[0], args[1], args[2]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
 				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
-                case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); return;
                 case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 				case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
 				case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
 				case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
 				case "_image_initiate_async_download_of_resource": VerifyCount(functionCall, 1); TranslateImageInitiateAsyncDownloadOfResource(output, args[0]); break;
-				case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
-				case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
-				case "_image_scale_native_resource": VerifyCount(functionCall, 3); TranslateImageScaleNativeResource(output, args[0], args[1], args[2]); break;
 				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
 				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
 				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
@@ -199,10 +190,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio);
 		protected abstract void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop);
 		protected abstract void TranslateBeginFrame(List<string> output);
-		protected abstract void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y);
-		protected abstract void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha);
-		protected abstract void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight);
-		protected abstract void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
@@ -220,12 +207,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
 		protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path);
-		protected abstract void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
-		protected abstract void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha);
-		protected abstract void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha);
-		protected abstract void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
-		protected abstract void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue);
 		protected abstract void TranslateForceParens(List<string> output, Expression expression);
 		protected abstract void TranslateGetEventsRawList(List<string> output);
 		protected abstract void TranslateGetProgramData(List<string> output);

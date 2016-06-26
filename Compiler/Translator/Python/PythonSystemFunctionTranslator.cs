@@ -162,66 +162,6 @@ namespace Crayon.Translator.Python
             throw new Exception("This code path should be optimized out of the python translation.");
         }
 
-        protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
-        {
-            output.Add("_global_vars['virtual_screen'].blit(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add("[1], (");
-            this.Translator.TranslateExpression(output, x);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, y);
-            output.Add("))");
-        }
-
-        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-        {
-            output.Add("_blit_image_with_alpha(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add("[1], ");
-            this.Translator.TranslateExpression(output, x);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, y);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
-        {
-            output.Add("blit_partial(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add("[1], ");
-            this.Translator.TranslateExpression(output, targetX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetHeight);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceHeight);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-        {
-            output.Add("blit_rotated(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, centerX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, centerY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, angle);
-            output.Add(")");
-        }
-
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             this.Translator.TranslateExpression(output, expression);
@@ -337,96 +277,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-
-        protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            // TODO: use alpha
-            output.Add("draw_ellipse(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, top);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("_PDL(_global_vars['virtual_screen'], (");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add("), (");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, ay);
-            output.Add("), (");
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, by);
-            output.Add("), ");
-            this.Translator.TranslateExpression(output, lineWidth);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("draw_rectangle(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, top);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("draw_triangle(");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, ay);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, by);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, cx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, cy);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("float(");
@@ -435,18 +286,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
-
-        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-        {
-            output.Add("_global_vars['virtual_screen'].fill((");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add("))");
-        }
-
+        
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");

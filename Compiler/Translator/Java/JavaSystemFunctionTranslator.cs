@@ -70,54 +70,7 @@ namespace Crayon.Translator.Java
         {
             // Nope
         }
-
-        protected override void TranslateBlitImage(List<string> output, Expression image, Expression x, Expression y)
-        {
-            output.Add("RenderEngine.blitImage(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, x);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, y);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImageAlpha(List<string> output, Expression image, Expression x, Expression y, Expression alpha)
-        {
-            output.Add("RenderEngine.blitImageAlpha(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, x);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, y);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateBlitImagePartial(List<string> output, Expression image, Expression targetX, Expression targetY, Expression targetWidth, Expression targetHeight, Expression sourceX, Expression sourceY, Expression sourceWidth, Expression sourceHeight)
-        {
-            output.Add("RenderEngine.blitImagePartial(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, targetHeight);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sourceHeight);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             output.Add("((");
@@ -262,97 +215,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.assertion(\"Image download from web not implemented.\")");
         }
-
-        protected override void TranslateDrawEllipse(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("RenderEngine.drawEllipse(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, top);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawLine(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression lineWidth, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("RenderEngine.drawLine(");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, ay);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, by);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, lineWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawRectangle(List<string> output, Expression left, Expression top, Expression width, Expression height, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("RenderEngine.drawRectangle(");
-            this.Translator.TranslateExpression(output, left);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, top);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
-        protected override void TranslateDrawTriangle(List<string> output, Expression ax, Expression ay, Expression bx, Expression by, Expression cx, Expression cy, Expression red, Expression green, Expression blue, Expression alpha)
-        {
-            output.Add("RenderEngine.drawTriangle(");
-            this.Translator.TranslateExpression(output, ax);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, ay);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, bx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, by);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, cx);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, cy);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, alpha);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");

@@ -29,7 +29,7 @@ if (Value$arg1.type != Types.INTEGER ||
 				$_cast('int', Value$arg7.internalValue),
 				$_cast('int', int1));
 		} else {
-			$_draw_rectangle(
+			$_lib_gfx_drawRectangle(
 				$_cast('int', Value$arg1.internalValue),
 				$_cast('int', Value$arg2.internalValue),
 				int2,

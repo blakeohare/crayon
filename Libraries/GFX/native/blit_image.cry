@@ -14,5 +14,5 @@ if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 } else if (%%%IS_OPEN_GL_BASED%%%) {
 	glDrawImageSimple($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 } else {
-	$_blit_image($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
+	$_lib_gfx_blitImage($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue));
 }

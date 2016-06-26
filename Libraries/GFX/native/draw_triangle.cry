@@ -29,7 +29,7 @@ if (Value$arg1.type != Types.INTEGER ||
 		$_cast('int', Value$arg9.internalValue),
 		$_cast('int', Value$arg10.internalValue));
 } else {
-	$_draw_triangle(
+	$_lib_gfx_drawTriangle(
 		$_cast('int', Value$arg1.internalValue),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),

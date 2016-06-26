@@ -27,7 +27,7 @@ if (object1 == null ||
 		$_cast('int', Value$arg9.internalValue),
 		255);
 } else {
-	$_blit_image_partial(
+	$_lib_gfx_blitImagePartial(
 		$_cast('Image', object1),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),

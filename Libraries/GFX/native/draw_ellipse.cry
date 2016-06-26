@@ -23,7 +23,7 @@ if (Value$arg1.type != Types.INTEGER ||
 		$_cast('int', Value$arg7.internalValue),
 		$_cast('int', Value$arg8.internalValue));
 } else {
-	$_draw_ellipse(
+	$_lib_gfx_drawEllipse(
 		$_cast('int', Value$arg1.internalValue),
 		$_cast('int', Value$arg2.internalValue),
 		$_cast('int', Value$arg3.internalValue),

@@ -1,3 +1,12 @@
+$_lib_gfx_blitImage: RenderEngine.blitImage([ARG:1], [ARG:2], [ARG:3])
+$_lib_gfx_blitImageAlpha: RenderEngine.blitImageAlpha([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_gfx_blitImagePartial: RenderEngine.blitImagePartial([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
+$_lib_gfx_blitImageRotated: RenderEngine.blitImageRotated([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_gfx_drawEllipse: RenderEngine.drawEllipse([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+$_lib_gfx_drawLine: RenderEngine.drawLine([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
+$_lib_gfx_drawRectangle: RenderEngine.drawRectangle([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+$_lib_gfx_drawTriangle: RenderEngine.drawTriangle([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
+$_lib_gfx_fillScreen: RenderEngine.fillScreen([ARG:1], [ARG:2], [ARG:3])
 $_lib_gfx_image_sheet_get_manifest_file: AwtTranslationHelper.readFileText("resources/imagesheetmanifest.txt")
 $_lib_gfx_read_tile_resource: AwtTranslationHelper.loadImageFromLocalFile("imagesheets/" + [ARG:1] + ".png")
 

@@ -52,20 +52,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.Noop()");
         }
-
-        protected override void TranslateBlitImageRotated(List<string> output, Expression image, Expression centerX, Expression centerY, Expression angle)
-        {
-            output.Add("RenderEngine.blitImageRotated(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, centerX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, centerY);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, angle);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("AwtTranslationHelper.makeHttpRequest(");
@@ -102,18 +89,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, flipY);
             output.Add(")");
         }
-
-        protected override void TranslateFillScreen(List<string> output, Expression red, Expression green, Expression blue)
-        {
-            output.Add("RenderEngine.fillScreen(");
-            this.Translator.TranslateExpression(output, red);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, green);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, blue);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
         {
             output.Add("GameWindow.FPS = ");

@@ -23,7 +23,7 @@ if (Value$arg2.type != Types.INTEGER || Value$arg3.type != Types.INTEGER) {
 		if (%%%IS_OPEN_GL_BASED%%%) {
 			glDrawImageWithAlpha($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
 		} else {
-			$_blit_image_alpha($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
+			$_lib_gfx_blitImageAlpha($_cast('Image', object1), $_cast('int', Value$arg2.internalValue), $_cast('int', Value$arg3.internalValue), int1);
 		}
 	}
 }
