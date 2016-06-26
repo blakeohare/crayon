@@ -47,7 +47,7 @@ R.musicIsPlaying = function () {
 };
 
 R.musicLoad = function (filepath) {
-	var audioObject = new Audio(%%%JS_FILE_PREFIX%%% + filepath);
+	var audioObject = new Audio(%%%JS_FILE_PREFIX%%% + 'resources/audio/' + filepath);
 	var m = [
 		audioObject,
 		filepath,
@@ -95,7 +95,7 @@ R.prepSoundForLoading = function (filepath) {
 	var index = R.soundObjectIndexByFilename[filepath];
 	if (index === undefined) {
 		index = R.soundObjectsByIndex.length;
-		var data = [[new Audio(%%%JS_FILE_PREFIX%%% + filepath)], filepath, index];
+		var data = [[new Audio(%%%JS_FILE_PREFIX%%% + 'resources/audio/' + filepath)], filepath, index];
 		R.soundObjectIndexByFilename[filepath] = index;
 		R.soundObjectsByIndex.push(data);
 	}

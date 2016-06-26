@@ -104,6 +104,11 @@ namespace Crayon.Translator.JavaScript
 
             textResources["image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile.TextContent;
 
+            foreach (FileOutput audioFile in resourceDatabase.AudioResources)
+            {
+                output["resources/audio/" + audioFile.CanonicalFileName] = audioFile;
+            }
+
             output["resources.js"] = new FileOutput()
             {
                 TextContent = BuildTextResourcesCodeFile(textResources),

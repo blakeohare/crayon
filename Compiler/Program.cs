@@ -107,9 +107,16 @@ namespace Crayon
                 string command;
 
                 command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target python";
                 command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target js_remote";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target javaawt";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target python";
+                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target js_tinker";
                 command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
+
+                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target windows";
+                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target python";
+                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target java";
+                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target js_deleteme";
 
                 args = command.Split(' ');
             }
