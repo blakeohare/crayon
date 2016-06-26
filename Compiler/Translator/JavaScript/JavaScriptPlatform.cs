@@ -93,7 +93,7 @@ namespace Crayon.Translator.JavaScript
 			Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
-                textResources["text/" + textFile.OriginalPath] = textFile.TextContent;
+                textResources["text/" + textFile.CanonicalFileName] = textFile.TextContent;
             }
 
             foreach (string filename in resourceDatabase.SpriteSheetFiles.Keys)
