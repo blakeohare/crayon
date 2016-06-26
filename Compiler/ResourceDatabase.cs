@@ -134,7 +134,7 @@ namespace Crayon
                         this.AudioResources.Add(new FileOutput()
                         {
                             Type = FileOutputType.Copy,
-                            RelativeInputPath = FileUtil.JoinPath(sourceRoot, originalFilepath),
+                            RelativeInputPath = originalFilepath,
                             OriginalPath = originalFilepath,
                         });
                         break;
@@ -143,7 +143,7 @@ namespace Crayon
                         this.AudioResources.Add(new FileOutput()
                         {
                             Type = FileOutputType.Copy,
-                            RelativeInputPath = FileUtil.JoinPath(sourceRoot, originalFilepath),
+                            RelativeInputPath = originalFilepath,
                             OriginalPath = originalFilepath,
                         });
                         break;

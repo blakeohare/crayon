@@ -73,3 +73,28 @@ function @type('int') resource_manager_populate_directory_lookup(
 
 	return 0;
 }
+
+/*
+	Takes in a path and a type.
+	Returns null if it is not a user resource.
+	Returns a Crayon Value list if it is...
+	output[0] -> boolean if it's the correct type.
+	output[1] -> actual resource path relative to the root of where these sorts of files are stored. (value ommitted if previous boolean is false)
+*/
+function @type('Value') resource_manager_getResourceOfType(@type('string') userPath, @type('string') type) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ResourceDB') db = ProgramData$p.resourceDatabase;
+	@type('Dictionary<string, ResourceInfo>') lookup = ResourceDB$db.fileInfo;
+	if ($_dictionary_contains(lookup, userPath)) {
+		@type('List<Value>') output = $_new_list('Value');
+		@type('ResourceInfo') file = $_dictionary_get_guaranteed(lookup, userPath);
+		if ($_string_equals(ResourceInfo$file.type, type)) {
+			$_list_push(output, VALUE_TRUE);
+			$_list_push(output, buildString(ResourceInfo$file.internalPath));
+		} else {
+			$_list_push(output, VALUE_FALSE);
+		}
+		return new Value(Types.LIST, output);
+	}
+	return VALUE_NULL;
+}

@@ -13,7 +13,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
         {
-            output.Add("OpenTkTranslationHelper.GetSoundInstance(");
+            output.Add("OpenTkTranslationHelper.GetSoundInstance(\"Resources/Audio/\" + ");
             this.Translator.TranslateExpression(output, filePath);
             output.Add(")");
         }
@@ -175,7 +175,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
         {
-            output.Add("OpenTkTranslationHelper.MusicLoadResource(");
+            output.Add("OpenTkTranslationHelper.MusicLoadResource(\"Resources/Audio/\" + ");
             this.Translator.TranslateExpression(output, filename);
             output.Add(")");
         }

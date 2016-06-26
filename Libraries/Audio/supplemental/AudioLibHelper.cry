@@ -46,9 +46,6 @@ function @type('int') lib_audio_sfx_launch(
 
 function @type('int') lib_audio_load_sfx_from_resource(@type('ObjectInstance') obj, @type('string') path) {
 	@type('object') sfx = $_audio_read_local_sound_resource(path);
-	if (sfx == null) {
-		return 0;
-	}
 	ObjectInstance$obj.nativeData = $_new_array('object', 1);
 	$_array_set(ObjectInstance$obj.nativeData, 0, sfx);
 	return 1;

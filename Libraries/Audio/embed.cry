@@ -26,13 +26,25 @@ namespace Audio {
 			// Initialized by factory methods.
 		}
 
+		static function _convertPath(path) {
+			fileinfo = $$lib_audio_getAudioResourcePath(path + '');
+			if (fileinfo == null) {
+				Core.assert(false, "Audio resource not found.");
+			} else if (!fileinfo[0]) {
+				Core.assert(false, "Resource is not an audio file.");
+			}
+			return fileinfo[1];
+		}
+
 		static function loadFromResource(path) {
 			if (!Music._isSupported) return null;
 
+			path = Music._convertPath(path);
+
 			music = new Music();
 			music._isResource = true;
-			music._path = path + '';
-			if (!$$lib_audio_music_load_from_resource(music, music._path)) {
+			music._path = path;
+			if (!$$lib_audio_music_load_from_resource(music, path)) {
 				Core.assert(false, "Music resource not found.");
 			}
 			return music;
@@ -334,7 +346,7 @@ namespace Audio {
 			if (!Music._isSupported) return null;
 
 			s = new SoundResource();
-			$$lib_audio_sfx_load_from_file(s, path + '');
+			$$lib_audio_sfx_load_from_file(s, path);
 			s._p = path;
 			s._e = false;
 			return s;
@@ -349,6 +361,7 @@ namespace Audio {
 				s = SoundResource._cache.get(path);
 			}
 			if (s == null) {
+				path = Music._convertPath(path);
 				s = new SoundResource();
 				$$lib_audio_sfx_load_from_resource(s, path);
 				s._p = path;

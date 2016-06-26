@@ -7,4 +7,4 @@
 */
 import inline "FrameworkFunctions/1_arg.cry";
 
-output = lib_resources_getFileDescriptor($_cast('string', Value$arg1.internalValue));
+output = resource_manager_getResourceOfType($_cast('string', Value$arg1.internalValue), 'TXT');
