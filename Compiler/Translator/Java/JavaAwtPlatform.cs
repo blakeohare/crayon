@@ -179,6 +179,37 @@ namespace Crayon.Translator.Java
 				};
 			}
 
+            // TODO: move this all to the JSON library somehow
+            foreach (string jsonFile in new string[]
+            {
+                "CDL.java",
+                "Cookie.java",
+                "CookieList.java",
+                "HTTP.java",
+                "HTTPTokener.java",
+                "JSONArray.java",
+                "JSONException.java",
+                "JSONML.java",
+                "JSONObject.java",
+                "JSONPointer.java",
+                "JSONPointerException.java",
+                "JSONString.java",
+                "JSONStringer.java",
+                "JSONTokener.java",
+                "JSONWriter.java",
+                "Property.java",
+                "README",
+                "XML.java",
+                "XMLTokener.java",
+            })
+            {
+                output["src/org/json/" + jsonFile] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = Util.ReadResourceFileInternally("java-common/org-json/" + jsonFile),
+                };
+            }
+
             foreach (string tileFile in resourceDatabase.SpriteSheetFiles.Keys)
             {
                 output["resources/imagesheets/" + tileFile] = resourceDatabase.SpriteSheetFiles[tileFile];

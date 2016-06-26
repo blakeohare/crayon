@@ -236,6 +236,10 @@ function @type('int') setStringKvpToDict(@type('DictImpl') d, @type('string') k,
 	return 0;
 }
 
+function @type('Value') buildList(@type('List<Value>') valueList) {
+	return new Value(Types.LIST, valueList);
+}
+
 function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Array<Value>') values) {
 	@type('Dictionary<string, Value>') keyLookup = $_new_dictionary('string', 'Value');
 	@type('Dictionary<string, Value>') valueLookup = $_new_dictionary('string', 'Value');
