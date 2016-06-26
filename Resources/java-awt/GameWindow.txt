@@ -42,6 +42,10 @@ class GameWindow {
 
         INSTANCE = this;
 
+		int dpi = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
+		pixelWidth = pixelWidth * dpi / 96;
+		pixelHeight = pixelHeight * dpi / 96;
+
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
         this.screenWidth = -1;
@@ -56,7 +60,7 @@ class GameWindow {
         canvasHost.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
         canvasHost.setLayout(null);
 
-        frame.pack();
+        //frame.pack();
         frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() { 

@@ -50,10 +50,6 @@ namespace Crayon.Translator.Java
 			foreach (string basicFile in new string[] { 
 				"AsyncMessageQueue",
 				"TranslationHelper",
-				"Start",
-				"GameWindow",
-				"RenderEngine",
-				"Image",
 				"JsonParser"
 			})
 			{
@@ -68,7 +64,11 @@ namespace Crayon.Translator.Java
 
 			foreach (string basicFile in new string[] { 
 				"AwtTranslationHelper",
-			})
+                "Start",
+                "GameWindow",
+                "Image",
+                "RenderEngine",
+            })
 			{
 				output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
 				{
@@ -200,7 +200,7 @@ namespace Crayon.Translator.Java
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(
-					Util.ReadResourceFileInternally("java-common/BuildXml.txt"),
+					Util.ReadResourceFileInternally("java-awt/BuildXml.txt"),
 					replacements)
 			};
 
