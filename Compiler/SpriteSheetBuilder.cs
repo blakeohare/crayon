@@ -137,13 +137,6 @@ namespace Crayon
 			public int TileY { get { return this.GlobalY % 256; } }
 		}
 
-		private BuildContext buildContext;
-
-		public SpriteSheetBuilder(BuildContext buildContext)
-		{
-			this.buildContext = buildContext;
-		}
-
 		// ID's will be checked in the order that they are initially passed in to this function.
 		public void AddPrefix(string id, string prefix)
 		{

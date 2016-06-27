@@ -30,8 +30,8 @@ namespace Crayon.Translator.JavaScript
 		{
 			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
-            Dictionary<string, string> replacements = new Dictionary<string, string>()
-            {
+			Dictionary<string, string> replacements = new Dictionary<string, string>()
+			{
                 { "JS_FILE_PREFIX", "'" + this.jsFolderPrefix + "'" },
                 { "JS_BYTE_CODE", Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent, true) },
                 { "JS_RESOURCE_MANIFEST", Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent, true) },

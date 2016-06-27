@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Crayon
+﻿namespace Crayon
 {
 	/**
 	 * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
@@ -10,7 +8,7 @@ namespace Crayon
 #if WINDOWS
 		private System.Drawing.Bitmap bitmap;
 #elif OSX
-		private Cairo.ImageSurface bitmap;
+		private readonly Cairo.ImageSurface bitmap;
 #endif
 
 		public int Width { get; set; }
@@ -71,7 +69,7 @@ namespace Crayon
 #if WINDOWS
 			private System.Drawing.Graphics systemGraphics;
 #elif OSX
-			private Cairo.Context context;
+			private readonly Cairo.Context context;
 #endif
 
 			public Graphics(SystemBitmap owner)

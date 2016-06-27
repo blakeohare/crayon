@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Crayon
 {
@@ -11,7 +10,7 @@ namespace Crayon
         public string Name { get; set; }
         public string RootDirectory { get; set; }
 
-        private Dictionary<string, string> replacements = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
         
         public Library(string name, string libraryManifestPath, string platformName)
         {
@@ -157,21 +156,20 @@ namespace Crayon
             return this.supplementalFiles;
         }
 
-        // TODO: once the DLL's are factored out
         public string GetTranslationCode(string functionName)
         {
             string prefix = "lib_" + this.Name.ToLower() + "_";
             if (!functionName.StartsWith(prefix))
             {
-                throw new Exception();
+				throw new InvalidOperationException("Cannot call library function '" + functionName + "' from the '" + this.Name + "' library.");
             }
             string shortName = functionName.Substring(prefix.Length);
             if (!this.filepathsByFunctionName.ContainsKey(shortName))
             {
-                throw new Exception();
+				throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
             }
             
-            return this.ReadFile(System.IO.Path.Combine("native", this.filepathsByFunctionName[shortName]), false);
+			return this.ReadFile(FileUtil.JoinPath("native", this.filepathsByFunctionName[shortName]), false);
         }
 
         Dictionary<string, string> translations = null;
@@ -214,7 +212,7 @@ namespace Crayon
 
         private string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
         {
-            string fullPath = System.IO.Path.Combine(this.RootDirectory, pathRelativeToLibraryRoot);
+			string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
             {
                 string text = System.IO.File.ReadAllText(fullPath);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator
@@ -294,12 +293,12 @@ namespace Crayon.Translator
 			output.Add(this.GetVariableName(expr.Name));
 		}
 
-		protected override void TranslateForLoop(List<string> output, ForLoop exec)
+		protected override void TranslateForLoop(List<string> output, ForLoop forLoop)
 		{
-			this.Translate(output, exec.Init);
+			this.Translate(output, forLoop.Init);
 			output.Add(this.CurrentTabIndention);
 			output.Add("while (");
-			this.TranslateExpression(output, exec.Condition);
+			this.TranslateExpression(output, forLoop.Condition);
 			if (this.isEgyptian)
 			{
 				output.Add(") {" + this.NL);
@@ -313,8 +312,8 @@ namespace Crayon.Translator
 				output.Add(this.NL);
 			}
 			this.CurrentIndention++;
-			this.Translate(output, exec.Code);
-			this.Translate(output, exec.Step);
+			this.Translate(output, forLoop.Code);
+			this.Translate(output, forLoop.Step);
 			this.CurrentIndention--;
 			output.Add(this.CurrentTabIndention);
 			output.Add("}" + this.NL);

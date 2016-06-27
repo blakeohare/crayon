@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon
@@ -16,8 +13,6 @@ namespace Crayon
 
 		private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
 		private List<string> orderedListOfFunctionNames = new List<string>();
-
-		public SystemLibraryManager() { }
 
 		public string GetLibrarySwitchStatement(AbstractPlatform platform)
 		{
@@ -105,7 +100,7 @@ namespace Crayon
                 // Presumably running from source. Walk up to the root directory and find the Libraries directory.
                 // From there use the list of folders.
                 string currentDirectory = System.IO.Path.GetFullPath(".");
-                while (currentDirectory != null && currentDirectory.Length > 0)
+				while (!string.IsNullOrEmpty(currentDirectory))
                 {
                     string path = System.IO.Path.Combine(currentDirectory, "Libraries");
                     if (System.IO.Directory.Exists(path))
@@ -133,7 +128,7 @@ namespace Crayon
                 : null;
         }
 
-		private HashSet<string> alreadyImported = new HashSet<string>();
+		private readonly HashSet<string> alreadyImported = new HashSet<string>();
 		private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
 
         public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)

@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
     {
         protected override void TranslateResourceGetManifest(List<string> output)
         {
-            throw new NotImplementedException();
+			output.Add("ResourceReader.GetResourceManifest()");
         }
 
         protected override void TranslateAppDataRoot(List<string> output)

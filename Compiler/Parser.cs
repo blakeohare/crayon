@@ -62,10 +62,13 @@ namespace Crayon
 
 		public bool PreserveTranslationComments
 		{
-			get { return this.NullablePlatform == null ? false : !this.NullablePlatform.IsMin; }
+			get { return this.NullablePlatform != null && !this.NullablePlatform.IsMin; }
 		}
 
-		public bool RemoveBreaksFromSwitch { get { return this.NullablePlatform == null ? false : this.NullablePlatform.RemoveBreaksFromSwitch; } }
+		public bool RemoveBreaksFromSwitch
+		{
+			get { return this.NullablePlatform != null && this.NullablePlatform.RemoveBreaksFromSwitch; }
+		}
 
 		public LiteralLookup LiteralLookup { get { return this.literalLookup; } }
 		private LiteralLookup literalLookup = new LiteralLookup();

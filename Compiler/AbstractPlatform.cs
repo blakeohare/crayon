@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crayon.ParseTree;
 using Crayon.Translator;
 
@@ -163,7 +162,7 @@ namespace Crayon
 
             ResourceDatabase resourceDatabase = new ResourceDatabase(allFiles, inputFolder);
 
-			SpriteSheetBuilder spriteSheetBuilder = new SpriteSheetBuilder(buildContext);
+			SpriteSheetBuilder spriteSheetBuilder = new SpriteSheetBuilder();
 			if (buildContext.SpriteSheetIds != null)
 			{
 				foreach (string spriteSheetId in buildContext.SpriteSheetIds)
@@ -234,7 +233,7 @@ namespace Crayon
 					case FileOutputType.Text:
                         if (this.TrimBom)
                         {
-                            byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(file.TextContent);
+                            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(file.TextContent);
                             FileUtil.WriteFileBytes(fullOutputPath, bytes);
                         }
                         else

@@ -59,7 +59,7 @@ namespace Crayon
 		{
 			int uValue, d1, d2, d3, d4;
 			List<string> output = new List<string>() { "\"" };
-			foreach (char c in rawValue.ToCharArray())
+			foreach (char c in rawValue)
 			{
 				if (includeUnicodeEscape && c > ASCII_MAX)
 				{

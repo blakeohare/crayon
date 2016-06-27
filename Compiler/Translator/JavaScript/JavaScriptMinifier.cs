@@ -2,7 +2,7 @@
 
 namespace Crayon.Translator.JavaScript
 {
-	internal class JavaScriptMinifier
+	internal static class JavaScriptMinifier
 	{
 		public static string Minify(string originalCode)
 		{

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Crayon
 {
 	internal class LiteralLookup
 	{
-		private List<Types> literalTypes;
-		private List<object> literalValues;
+		private readonly List<Types> literalTypes;
+		private readonly List<object> literalValues;
 		private Dictionary<string, int> literalIndexByKey;
 
-		private List<string> names;
+		private readonly List<string> names;
 		private Dictionary<string, int> nameIndexByName;
 
 		public LiteralLookup()

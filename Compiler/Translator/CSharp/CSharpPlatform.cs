@@ -61,15 +61,6 @@ namespace Crayon.Translator.CSharp
                 { "COPYRIGHT", "©" },
             };
 
-            HashSet<string> systemLibraries = new HashSet<string>(new string[] {
-                "System",
-                "System.Core",
-                "System.Drawing",
-                "System.Xml",
-                "System.Xml.Linq",
-                "Microsoft.CSharp"
-            });
-
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
             string crayonHeader = string.Join(this.Translator.NL, new string[] {

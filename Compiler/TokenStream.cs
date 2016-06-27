@@ -5,8 +5,8 @@ namespace Crayon
 {
 	internal class TokenStream
 	{
-		private List<Token[]> tokenLayers = new List<Token[]>();
-		private List<int> indexes = new List<int>();
+		private readonly List<Token[]> tokenLayers = new List<Token[]>();
+		private readonly List<int> indexes = new List<int>();
 		private Token[] topTokens;
 		private int topIndex;
 		private int topLength;

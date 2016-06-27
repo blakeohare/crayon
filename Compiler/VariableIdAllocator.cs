@@ -4,11 +4,8 @@ namespace Crayon
 {
 	internal class VariableIdAllocator
 	{
-		private Dictionary<string, int> idsByVar = new Dictionary<string, int>();
+		private readonly Dictionary<string, int> idsByVar = new Dictionary<string, int>();
 		private List<string> varsById = new List<string>();
-
-		public VariableIdAllocator()
-		{ }
 
 		public int Size { get { return this.idsByVar.Count; } }
 
