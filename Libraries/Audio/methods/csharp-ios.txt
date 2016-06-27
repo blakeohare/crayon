@@ -1,1 +1,14 @@
-$_lib_audio_is_supported: TranslationHelper.AlwaysTrue()
+$_lib_audio_isAudioSupported: TranslationHelper.AlwaysTrue()
+$_lib_audio_musicIsPlaying: /* TODO */
+$_lib_audio_musicLoadFromResource: /* TODO */
+$_lib_audio_musicPause: /* TODO */
+$_lib_audio_musicPlayFile: /* TODO */
+$_lib_audio_musicPlayResource: /* TODO */
+$_lib_audio_musicSetVolume: /* TODO */
+$_lib_audio_musicVerifyFileExists: /* TODO */
+$_lib_audio_readLocalSoundResource: /* TODO */
+$_lib_audio_sfxGetState: /* TODO */
+$_lib_audio_sfxPlay: /* TODO */
+$_lib_audio_sfxResume: /* TODO */
+$_lib_audio_sfxStop: /* TODO */
+$_lib_audio_audioStop: /* TODO */

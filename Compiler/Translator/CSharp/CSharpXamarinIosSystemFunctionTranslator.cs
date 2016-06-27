@@ -16,51 +16,6 @@ namespace Crayon.Translator.CSharp
             output.Add("CsxiTranslationHelper.AppDataRoot");
         }
         
-        protected override void TranslateAudioMusicIsPlaying(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
-        {
-            throw new NotImplementedException();
-        }
-        
         protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
         {
             output.Add("CsxiTranslationHelper.DownloadImage(");
@@ -233,32 +188,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
         }
-
-        protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateMusicPause(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
             output.Add("CsxiTranslationHelper.SetTitle(");

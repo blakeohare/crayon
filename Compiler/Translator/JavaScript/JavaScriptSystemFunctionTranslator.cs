@@ -72,60 +72,7 @@ namespace Crayon.Translator.JavaScript
             output.Add("throw ");
             this.Translator.TranslateExpression(output, message);
         }
-
-        protected override void TranslateAudioMusicIsPlaying(List<string> output)
-        {
-            output.Add("R.musicIsPlaying()");
-        }
-
-        protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            output.Add("R.alwaysTrue()");
-        }
-
-        protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            output.Add("R.musicPlay(");
-            this.Translator.TranslateExpression(output, nativeResource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isLoop);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
-        {
-            output.Add("false");
-        }
-
-        protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
-        {
-            // TODO: well this was silly. Go back and change the flag values in the JavaScript code so I don't have to do this silly +1 business.
-            output.Add("(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add("[2] + 1)");
-        }
-
-        protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
-        {
-            output.Add("R.playSound(");
-            this.Translator.TranslateExpression(output, resource);
-            output.Add(", 0)");
-        }
-
-        protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
-        {
-            output.Add("R.resumeSound(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
-        {
-            output.Add("R.stopSound(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add(", true)");
-        }
-
+        
         protected override void TranslateBeginFrame(List<string> output)
         {
             output.Add("R.beginFrame()");
@@ -590,35 +537,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, num);
             output.Add(")");
         }
-
-        protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
-        {
-            output.Add("R.musicLoad(");
-            this.Translator.TranslateExpression(output, filename);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicPause(List<string> output)
-        {
-            output.Add("R.musicStop()");
-        }
-
-        protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
-        {
-            output.Add("R.musicPlay(");
-            this.Translator.TranslateExpression(output, musicNativeObject);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, isLooping);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
-        {
-            output.Add("R.musicSetVolume(");
-            this.Translator.TranslateExpression(output, ratio);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
             output.Add("create_new_array(");
@@ -686,14 +605,7 @@ namespace Crayon.Translator.JavaScript
         {
             throw new Exception("Not supported in JavaScript");
         }
-
-        protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-        {
-            output.Add("R.prepSoundForLoading(");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateRegisterTicker(List<string> output)
         {
             // Nope.
@@ -724,13 +636,6 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
         
-        protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
-        {
-            output.Add("R.stopSound(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
         protected override void TranslateSin(List<string> output, Expression value)
         {
             output.Add("Math.sin(");

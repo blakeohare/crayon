@@ -5,4 +5,4 @@ import inline "FrameworkFunctions/1_arg.cry";
 
 float1 = $_cast('double', Value$arg1.internalValue);
 
-$_audio_music_set_volume(float1);
+$_lib_audio_musicSetVolume(float1);

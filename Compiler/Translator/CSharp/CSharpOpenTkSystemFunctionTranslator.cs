@@ -10,14 +10,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.GetResourceManifest()");
         }
-
-        protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-        {
-            output.Add("OpenTkTranslationHelper.GetSoundInstance(\"Resources/Audio/\" + ");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("OpenTkTranslationHelper.ImagetteFlushToNativeBitmap(");
@@ -61,87 +54,6 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-
-        protected override void TranslateAudioMusicIsPlaying(List<string> output)
-        {
-            output.Add("OpenTkTranslationHelper.AudioMusicIsPlaying()");
-        }
-
-        protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            output.Add("OpenTkTranslationHelper.AudioMusicPlay(");
-            this.Translator.TranslateExpression(output, nativeResource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isLoop);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            // same as playing a file directly since OpenTK deals directly with native loaded resources instead of files.
-            output.Add("OpenTkTranslationHelper.AudioMusicPlay(");
-            this.Translator.TranslateExpression(output, nativeResource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isLoop);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
-        {
-            output.Add("System.IO.File.Exists(");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
-        {
-            output.Add("OpenTkTranslationHelper.AudioSoundGetState(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, resource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, resourceId);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
-        {
-            output.Add("OpenTkTranslationHelper.AudioSoundPlay(");
-            this.Translator.TranslateExpression(output, resource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, volume);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, pan);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
-        {
-            output.Add("OpenTkTranslationHelper.AudioSoundResume(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, resource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, volumeRatio);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, panRatio);
-            output.Add(")");
-        }
-
-        protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
-        {
-            output.Add("OpenTkTranslationHelper.AudioSoundStop(");
-            this.Translator.TranslateExpression(output, channel);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, resource);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, resourceId);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isActivelyPlaying);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isHardStop);
-            output.Add(")");
-        }
         
         protected override void TranslateGetEventsRawList(List<string> output)
         {
@@ -172,42 +84,7 @@ namespace Crayon.Translator.CSharp
         {
             throw new InvalidOperationException();
         }
-
-        protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
-        {
-            output.Add("OpenTkTranslationHelper.MusicLoadResource(\"Resources/Audio/\" + ");
-            this.Translator.TranslateExpression(output, filename);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicPause(List<string> output)
-        {
-            output.Add("OpenTkTranslationHelper.MusicPause()");
-        }
-
-        protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
-        {
-            output.Add("OpenTkTranslationHelper.MusicPlayNow(");
-            this.Translator.TranslateExpression(output, musicNativeObject);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isLooping);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
-        {
-            output.Add("OpenTkTranslationHelper.MusicSetVolume(");
-            this.Translator.TranslateExpression(output, ratio);
-            output.Add(")");
-        }
         
-        protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
-        {
-            output.Add("OpenTkTranslationHelper.AudioStop(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
             output.Add("GameWindow.Instance.SetTitle(");

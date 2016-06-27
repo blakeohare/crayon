@@ -12,47 +12,6 @@ namespace Crayon.Translator.Java
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateAudioMusicIsPlaying(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicPlayFile(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicPlayResource(List<string> output, Expression nativeResource, Expression path, Expression isLoop)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioMusicVerifyFileExists(List<string> output, Expression path)
-        {
-            // cannot play files from disk on Android.
-            output.Add("false");
-        }
-
-        protected override void TranslateAudioSoundGetState(List<string> output, Expression channel, Expression resource, Expression resourceId)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundPlay(List<string> output, Expression resource, Expression volume, Expression pan)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundResume(List<string> output, Expression channel, Expression resource, Expression volumeRatio, Expression panRatio)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateAudioSoundStop(List<string> output, Expression channel, Expression resource, Expression resourceId, Expression isActivelyPlaying, Expression isHardStop)
-        {
-            throw new NotImplementedException();
-        }
         
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
@@ -226,49 +185,14 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
         }
-
-        protected override void TranslateMusicLoadFromResource(List<string> output, Expression filename)
-        {
-            output.Add("AndroidTranslationHelper.loadMusicFromResource(");
-            this.Translator.TranslateExpression(output, filename);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicPause(List<string> output)
-        {
-            output.Add("AndroidTranslationHelper.pauseMusic()");
-        }
-
-        protected override void TranslateMusicPlayNow(List<string> output, Expression musicNativeObject, Expression musicRealPath, Expression isLooping)
-        {
-            output.Add("AndroidTranslationHelper.playMusicNow(");
-            this.Translator.TranslateExpression(output, musicNativeObject);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, isLooping);
-            output.Add(")");
-        }
-
-        protected override void TranslateMusicSetVolume(List<string> output, Expression ratio)
-        {
-            output.Add("AndroidTranslationHelper.setMusicVolume(");
-            this.Translator.TranslateExpression(output, ratio);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
         {
             output.Add("AndroidTranslationHelper.readLocalImageResource(");
             this.Translator.TranslateExpression(output, filePath);
             output.Add(")");
         }
-
-        protected override void TranslateReadLocalSoundResource(List<string> output, Expression filePath)
-        {
-            output.Add("AndroidTranslationHelper.readLocalSoundResource(");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AndroidTranslationHelper.resourceReadText(");
@@ -283,13 +207,6 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
         
-        protected override void TranslateAudioStop(List<string> output, Expression soundInstance)
-        {
-            output.Add("AndroidTranslationHelper.stopSound(");
-            this.Translator.TranslateExpression(output, soundInstance);
-            output.Add(")");
-        }
-
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("AndroidTranslationHelper.flushImagetteToBitmap(");

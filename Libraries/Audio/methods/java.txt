@@ -1,1 +1,14 @@
-$_lib_audio_is_supported: TranslationHelper.alwaysFalse()
+$_lib_audio_isAudioSupported: TranslationHelper.alwaysFalse()
+$_lib_audio_musicIsPlaying: false
+$_lib_audio_musicLoadFromResource: AwtTranslationHelper.loadMusicFromResource()
+$_lib_audio_musicPause: TranslationHelper.Noop()
+$_lib_audio_musicPlayFile: TranslationHelper.NoopWithReturnNull()
+$_lib_audio_musicPlayResource: TranslationHelper.Noop()
+$_lib_audio_musicSetVolume: TranslationHelper.Noop()
+$_lib_audio_musicVerifyFileExists: AwtTranslationHelper.checkPathExistence([ARG:1], false, false)
+$_lib_audio_readLocalSoundResource: TranslationHelper.NoopWithReturnNull()
+$_lib_audio_sfxGetState: 3
+$_lib_audio_sfxPlay: TranslationHelper.NoopWithReturnNull()
+$_lib_audio_sfxResume: TranslationHelper.Noop()
+$_lib_audio_sfxStop: TranslationHelper.Noop()
+$_lib_audio_audioStop: TranslationHelper.Noop()
