@@ -37,9 +37,43 @@ namespace Crayon.Translator
                 case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
                 case "_image_scale_native_resource": VerifyCount(functionCall, 3); TranslateImageScaleNativeResource(output, args[0], args[1], args[2]); break;
                 case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); return;
+                case "_download_image": VerifyCount(functionCall, 2); TranslateDownloadImage(output, args[0], args[1]); break;
+                case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
+                case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
+                case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
+                case "_image_initiate_async_download_of_resource": VerifyCount(functionCall, 1); TranslateImageInitiateAsyncDownloadOfResource(output, args[0]); break;
+                case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
+
+                // TODO: migrate these to the Game library
+                case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
+                case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
+                case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
+                case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
+
+                // TODO: migrate this to the HTTP library
+                case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
+
+                // TODO: migrate these to the FileIO library
+                case "_io_create_directory": VerifyCount(functionCall, 1); TranslateIoCreateDirectory(output, args[0]); break;
+                case "_io_current_directory": VerifyCount(functionCall, 0); TranslateIoCurrentDirectory(output); break;
+                case "_io_delete_directory": VerifyCount(functionCall, 2); TranslateIoDeleteDirectory(output, args[0], args[1]); break;
+                case "_io_delete_file": VerifyCount(functionCall, 2); TranslateIoDeleteFile(output, args[0], args[1]); break;
+                case "_io_does_path_exist": VerifyCount(functionCall, 4); TranslateIoDoesPathExist(output, args[0], args[1], args[2], args[3]); break;
+                case "_io_file_read_text": VerifyCount(functionCall, 2); TranslateIoFileReadText(output, args[0], args[1]); break;
+                case "_io_files_in_directory": VerifyCount(functionCall, 2); TranslateIoFilesInDirectory(output, args[0], args[1]); break;
+                case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
+                case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
+
+                // TODO: redo this nonsense
+                case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
+                case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
+                case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
+                case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
+
+                // TODO: redo this too. preferably when you refactor the HTTP stuff that depends on this
+                case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 
                 case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
-				case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 				case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
 				case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
 				case "_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
@@ -64,30 +98,12 @@ namespace Crayon.Translator
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
 				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
-				case "_download_image": VerifyCount(functionCall, 2); TranslateDownloadImage(output, args[0], args[1]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
-				case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
 				case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
 				case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
-                case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
-				case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
-				case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
-				case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
-				case "_image_initiate_async_download_of_resource": VerifyCount(functionCall, 1); TranslateImageInitiateAsyncDownloadOfResource(output, args[0]); break;
-				case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
-				case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
-				case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
-				case "_io_create_directory": VerifyCount(functionCall, 1); TranslateIoCreateDirectory(output, args[0]); break;
-				case "_io_current_directory": VerifyCount(functionCall, 0); TranslateIoCurrentDirectory(output); break;
-				case "_io_delete_directory": VerifyCount(functionCall, 2); TranslateIoDeleteDirectory(output, args[0], args[1]); break;
-				case "_io_delete_file": VerifyCount(functionCall, 2); TranslateIoDeleteFile(output, args[0], args[1]); break;
-				case "_io_does_path_exist": VerifyCount(functionCall, 4); TranslateIoDoesPathExist(output, args[0], args[1], args[2], args[3]); break;
-				case "_io_file_read_text": VerifyCount(functionCall, 2); TranslateIoFileReadText(output, args[0], args[1]); break;
-				case "_io_files_in_directory": VerifyCount(functionCall, 2); TranslateIoFilesInDirectory(output, args[0], args[1]); break;
-				case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
+                case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
 				case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
-				case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
 				case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
 				case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
 				case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
@@ -111,19 +127,14 @@ namespace Crayon.Translator
 				case "_parse_float": VerifyCount(functionCall, 2); TranslateParseFloat(output, args[0], args[1]); break;
 				case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
 				case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
-				case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
 				case "_postfix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, false); break;
 				case "_postfix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, false); break;
 				case "_prefix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, true); break;
 				case "_prefix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, true); break;
 				case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
-				case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
-				case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
-				case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
-                case "_resource_get_manifest": VerifyCount(functionCall, 0); TranslateResourceGetManifest(output); break;
+				case "_resource_get_manifest": VerifyCount(functionCall, 0); TranslateResourceGetManifest(output); break;
                 case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
 				case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
-				case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
 				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
                 case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
                 case "_sorted_copy_of_string_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfStringArray(output, args[0]); break;
@@ -148,7 +159,6 @@ namespace Crayon.Translator
 				case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
 				case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
 				case "_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
-				case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
 				case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
 				case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
 				default: throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);

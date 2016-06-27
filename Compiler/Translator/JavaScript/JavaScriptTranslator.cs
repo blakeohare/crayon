@@ -24,7 +24,7 @@ namespace Crayon.Translator.JavaScript
 			output.Add("[");
 			for (int i = 0; i < structInstance.Args.Length; ++i)
 			{
-				if (i > 0) output.Add(this.Shorten(", "));
+				if (i > 0) output.Add(", ");
 				this.TranslateExpression(output, structInstance.Args[i]);
 			}
 			output.Add("]");
@@ -34,9 +34,9 @@ namespace Crayon.Translator.JavaScript
 		{
 			output.Add(this.CurrentTabIndention);
 			this.TranslateExpression(output, assignment.Target);
-			output.Add(this.Shorten(" "));
+			output.Add(" ");
 			output.Add(assignment.AssignmentOp);
-			output.Add(this.Shorten(" "));
+			output.Add(" ");
 			this.TranslateExpression(output, assignment.Value);
 			output.Add(";" + this.NL);
 		}
@@ -50,17 +50,17 @@ namespace Crayon.Translator.JavaScript
 			output.Add("(");
 			for (int i = 0; i < functionDef.ArgNames.Length; ++i)
 			{
-				if (i > 0) output.Add(this.Shorten(", "));
+				if (i > 0) output.Add(", ");
 				string argName = functionDef.ArgNames[i].Value;
 				output.Add("v_" + argName);
 			}
-			output.Add(this.Shorten(") {") + this.NL);
+			output.Add(") {" + this.NL);
 			this.CurrentIndention++;
 
 			foreach (string varName in functionDef.GetVariableDeclarationList())
 			{
 				output.Add(this.CurrentTabIndention);
-				output.Add("var v_" + varName + this.Shorten(" = null;") + this.NL);
+				output.Add("var v_" + varName + " = null;" + this.NL);
 			}
 
 			Translate(output, functionDef.Code);

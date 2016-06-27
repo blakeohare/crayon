@@ -10,7 +10,9 @@ namespace Crayon.Translator.CSharp
 			: base(false)
 		{ }
 
-		public CSharpPlatform CSharpPlatform { get { return (CSharpPlatform)this.Platform; } }
+        public override string NL { get { return "\r\n"; } }
+
+        public CSharpPlatform CSharpPlatform { get { return (CSharpPlatform)this.Platform; } }
 
 		protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
 		{

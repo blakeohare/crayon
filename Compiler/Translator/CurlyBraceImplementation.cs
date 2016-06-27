@@ -34,9 +34,9 @@ namespace Crayon.Translator
 		protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add(this.Shorten("switch ("));
+			output.Add("switch (");
 			this.TranslateExpression(output, switchStatement.Condition);
-			output.Add(this.Shorten(") {") + this.NL);
+			output.Add(") {" + this.NL);
 			this.CurrentIndention++;
 
 			foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
@@ -97,11 +97,11 @@ namespace Crayon.Translator
 			{
 				if (booleanCombination.Ops[i].Value == "&&")
 				{
-					output.Add(this.Shorten(" && "));
+					output.Add(" && ");
 				}
 				else
 				{
-					output.Add(this.Shorten(" || "));
+					output.Add(" || ");
 				}
 
 				output.Add("(");
@@ -135,15 +135,15 @@ namespace Crayon.Translator
 		protected override void TranslateIfStatement(List<string> output, IfStatement ifStatement)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add(this.Shorten("if ("));
+			output.Add("if (");
 			this.TranslateExpression(output, ifStatement.Condition);
 			if (isEgyptian)
 			{
-				output.Add(this.Shorten(") {") + this.NL);
+				output.Add(") {" + this.NL);
 			}
 			else
 			{
-				output.Add(this.Shorten(")"));
+				output.Add(")");
 				output.Add(this.NL);
 				output.Add(this.CurrentTabIndention);
 				output.Add("{");
@@ -159,7 +159,7 @@ namespace Crayon.Translator
 			{
 				if (this.isEgyptian)
 				{
-					output.Add(this.Shorten(" else {") + this.NL);
+					output.Add(" else {" + this.NL);
 				}
 				else
 				{
@@ -236,7 +236,7 @@ namespace Crayon.Translator
 			output.Add("(");
 			for (int i = 0; i < functionCall.Args.Length; ++i)
 			{
-				if (i > 0) output.Add(this.Shorten(", "));
+				if (i > 0) output.Add(", ");
 				TranslateExpression(output, functionCall.Args[i]);
 			}
 			output.Add(")");
@@ -268,11 +268,11 @@ namespace Crayon.Translator
 		protected override void TranslateWhileLoop(List<string> output, WhileLoop whileLoop)
 		{
 			output.Add(this.CurrentTabIndention);
-			output.Add(this.Shorten("while ("));
+			output.Add("while (");
 			this.TranslateExpression(output, whileLoop.Condition);
 			if (this.isEgyptian)
 			{
-				output.Add(this.Shorten(") {") + this.NL);
+				output.Add(") {" + this.NL);
 			}
 			else
 			{
@@ -298,11 +298,11 @@ namespace Crayon.Translator
 		{
 			this.Translate(output, exec.Init);
 			output.Add(this.CurrentTabIndention);
-			output.Add(this.Shorten("while ("));
+			output.Add("while (");
 			this.TranslateExpression(output, exec.Condition);
 			if (this.isEgyptian)
 			{
-				output.Add(this.Shorten(") {") + this.NL);
+				output.Add(") {" + this.NL);
 			}
 			else
 			{

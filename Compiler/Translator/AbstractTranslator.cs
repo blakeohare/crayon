@@ -10,12 +10,8 @@ namespace Crayon.Translator
 		public AbstractPlatform Platform { get; set; }
 		protected bool IsMin { get { return this.Platform.IsMin; } }
 
-		public string NL { get { return this.IsMin ? "" : "\r\n"; } }
-		public string Shorten(string value)
-		{
-			return this.IsMin ? value.Replace(" ", "") : value;
-		}
-
+		public virtual string NL { get { return "\n"; } }
+		
 		public AbstractTranslator()
 		{
 			this.CurrentIndention = 0;
@@ -127,9 +123,9 @@ namespace Crayon.Translator
 		{
 			output.Add("(");
 			this.TranslateExpression(output, binOp.Left);
-			output.Add(this.Shorten(" "));
+			output.Add(" ");
 			output.Add(binOp.Op.Value);
-			output.Add(this.Shorten(" "));
+			output.Add(" ");
 			this.TranslateExpression(output, binOp.Right);
 			output.Add(")");
 		}
