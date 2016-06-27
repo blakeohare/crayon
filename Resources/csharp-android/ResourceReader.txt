@@ -8,10 +8,15 @@ namespace %%%PROJECT_ID%%%
 		public static MainActivity MainActivity { get; set; }
 
         private static Dictionary<string, int> pathTranslation = null;
+		
+        public static string GetResourceManifest()
+        {
+            return ReadTextResource("resourceManifest.txt");
+        }
 
         public static int GetRawResourceId(string originalPath)
         {
-            if (pathTranslation  == null)
+            if (pathTranslation == null)
             {
                 pathTranslation = new Dictionary<string, int>();
                 string resourceLookup = ReadTextResource("resourceLookup.txt");
@@ -81,7 +86,12 @@ namespace %%%PROJECT_ID%%%
             {
                 return null;
             }
-            return System.Text.UTF8Encoding.UTF8.GetString(bytes);
+            string output = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+            if (output[0] == 65279)
+            {
+                output = output.Substring(1);
+            }
+            return output;
         }
 
 		public static string ReadByteCodeFile()
@@ -89,7 +99,7 @@ namespace %%%PROJECT_ID%%%
 			return ReadTextResource("ByteCode.txt");
 		}
 
-		public static Android.Graphics.Bitmap ReadImageFile(string path, bool generatedImage)
+		public static Android.Graphics.Bitmap ReadImageFile(string path)
 		{
             byte[] imageFileBytes = ReadAsset(path);
             return Android.Graphics.BitmapFactory.DecodeByteArray(imageFileBytes, 0, imageFileBytes.Length);

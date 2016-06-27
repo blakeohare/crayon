@@ -14,7 +14,7 @@ namespace Crayon.Translator.CSharp
 		public override string PlatformShortId { get { return "csharp-android"; } }
         
         private List<string> audioResourcePathsRelativeToProjectRoot = new List<string>();
-        
+
         public override void PlatformSpecificFiles(
             string projectId,
             Dictionary<string, FileOutput> files,
@@ -30,30 +30,36 @@ namespace Crayon.Translator.CSharp
             };
             
             List<string> additionalAndroidAssets = new List<string>();
-            /*
-            foreach (string spriteSheetImage in spriteSheet.FinalPaths)
-            {
-                // TODO: need a better system of putting things in predefined destinations, rather than hacking it between states
-                // in this fashion.
-                string path = spriteSheetImage.Substring("%PROJECT_ID%".Length + 1).Replace('/', '\\');
-                additionalAndroidAssets.Add("    <AndroidAsset Include=\"" + path + "\" />\r\n");
-            }//*/
-            throw new System.NotImplementedException(); // ^
 
+            if (resourceDatabase.SpriteSheetManifestFile != null)
+            {
+                foreach (string tileName in resourceDatabase.SpriteSheetFiles.Keys)
+                {
+                    additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\ImageSheets\\" + tileName + "\" />");
+                    files[projectId + "/Assets/ImageSheets/" + tileName] = resourceDatabase.SpriteSheetFiles[tileName];
+                }
+
+                files[projectId + "/Assets/imageSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\imageSheetManifest.txt\" />");
+            }
+
+            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceManifest.txt\" />");
+            files[projectId + "/Assets/resourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+
+            /*
+                There's another layer of file resource indirection here since Android makes a distinction between
+                "Assets" and "Resources" and resources are assigned a magic ID# that starts at 0x7f040000 and increments
+                through the files in alphabetical order.
+            */
             int androidResourceId = 0x7f040000;
             List<string> androidResourcesForProjectFile = new List<string>();
             List<string> androidResourceLookupFile = new List<string>();
             foreach (string audioResourcePath in this.audioResourcePathsRelativeToProjectRoot)
             {
                 string num = androidResourceId.ToString();
-                string extension = null;
-                if (audioResourcePath.Contains('.'))
-                {
-                    string[] parts = audioResourcePath.Split('.');
-                    extension = parts[parts.Length - 1].ToLower();
-                }
+                string extension = FileUtil.GetCanonicalExtension(audioResourcePath);
 
-                while (num.Length < 6)
+                while (num.Length < 11)
                 {
                     num = "0" + num;
                 }
@@ -68,40 +74,39 @@ namespace Crayon.Translator.CSharp
 
                 androidResourceLookupFile.Add(androidResourceId + "," + audioResourcePath.Replace('\\', '/'));
 
-                androidResourcesForProjectFile.Add("  <AndroidResource Include=\"Resources\\raw\\" + resFilename + "\" />");
+                androidResourcesForProjectFile.Add("    <AndroidResource Include=\"Resources\\raw\\" + resFilename + "\" />");
 
                 androidResourceId++;
             }
-
-            if(androidResourceLookupFile.Count > 0)
-            {
-                files[projectId + "/Assets/resourceLookup.txt"] = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = string.Join("\n", androidResourceLookupFile)
-                };
-                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceLookup.txt\" />\r\n");
-            }
-
-            replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\n", additionalAndroidAssets);
-            replacements["ANDROID_RAW_RESOURCES"] = string.Join("\n", androidResourcesForProjectFile);
-
-            files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Constants.DoReplacements(
-					Util.ReadResourceFileInternally("csharp-android/ProjectFile.csproj.txt"),
-					replacements)
-			};
             
+            files[projectId + "/Assets/resourceLookup.txt"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\n", androidResourceLookupFile)
+            };
+            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceLookup.txt\" />");
+
+            files[projectId + "/Assets/resourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+
+            replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\r\n", additionalAndroidAssets);
+            replacements["ANDROID_RAW_RESOURCES"] = "\r\n" + string.Join("\r\n", androidResourcesForProjectFile);
+
             files[projectId + "/Resources/drawable/Icon.png"] = new FileOutput()
 			{
 				Type = FileOutputType.Binary,
 				BinaryContent = Util.ReadResourceBytesInternally("csharp-android/Icon.png"),
 			};
 
-			// TODO: if not really used, can this be removed from the project?
-			files[projectId + "/Resources/layout/Main.axml"] = new FileOutput()
+            files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(
+                    Util.ReadResourceFileInternally("csharp-android/ProjectFile.csproj.txt"),
+                    replacements)
+            };
+
+            // TODO: if not really used, can this be removed from the project?
+            files[projectId + "/Resources/layout/Main.axml"] = new FileOutput()
 			{
 				Type = FileOutputType.Text,
 				TextContent = Constants.DoReplacements(

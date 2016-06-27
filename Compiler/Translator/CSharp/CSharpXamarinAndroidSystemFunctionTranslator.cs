@@ -197,7 +197,7 @@ namespace Crayon.Translator.CSharp
 
         protected override void TranslateGlMaxTextureSize(List<string> output)
         {
-            output.Add("GlUtil.getMaxTextureSize()");
+            output.Add("CsxaTranslationHelper.GetMaxTextureSize()");
         }
     }
 }

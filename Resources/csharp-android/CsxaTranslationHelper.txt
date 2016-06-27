@@ -5,6 +5,10 @@ namespace %%%PROJECT_ID%%%
 {
 	public static class CsxaTranslationHelper
 	{
+		public static int GetMaxTextureSize() {
+			return 1024;
+		}
+
 		public static void InitializeGameWithFps(double fps)
 		{
             // FPS is ignored on Android
