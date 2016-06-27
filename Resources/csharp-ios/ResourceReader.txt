@@ -8,16 +8,27 @@ namespace %%%PROJECT_ID%%%
 
 		public static string ReadByteCodeFile()
 		{
-			return GVC.LoadResource("ByteCode", "txt");
+			return ReadTextFile("ByteCode.txt");
 		}
 
-		public static object ReadImageFile(string path, bool isGeneratedImage)
+		public static string GetResourceManifest()
+		{
+			return ReadTextFile("ResourceManifest.txt");
+		}
+
+		public static object ReadImageFile(string path)
 		{
 			int dot = path.LastIndexOf('.');
 			if (dot == -1) return null;
 			string type = path.Substring(dot + 1);
 			path = path.Substring(0, dot);
-			return GVC.LoadResource(path, type);
+			return GVC.LoadImage(path, type);
+		}
+
+		public static string ReadTextFile(string path)
+		{
+			string justTheName = path.Substring(0, path.Length - 4);
+			return GVC.LoadResource(justTheName, "txt");
 		}
 	}
 }

@@ -97,7 +97,7 @@ namespace %%%PROJECT_ID%%%
 			if (!this.executionBegun)
 			{
             	CrayonWrapper.v_main();
-            	this.executionBegun = false;
+            	this.executionBegun = true;
 			}
 			else
 			{
@@ -111,7 +111,7 @@ namespace %%%PROJECT_ID%%%
 
 		void IGLKViewDelegate.DrawInRect(GLKView view, CoreGraphics.CGRect rect)
 		{
-			GL.ClearColor(0.65f, 0.65f, 0.65f, 1.0f);
+			GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			GL.Clear(ClearBufferMask.ColorBufferBit);
 			GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
 			GL.Enable(All.Blend);

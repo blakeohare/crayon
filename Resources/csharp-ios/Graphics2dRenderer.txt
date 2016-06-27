@@ -1,5 +1,3 @@
-﻿using System;
-
 using OpenTK.Graphics.ES11;
 
 namespace %%%PROJECT_ID%%%
@@ -7,6 +5,7 @@ namespace %%%PROJECT_ID%%%
 	public static class Graphics2dRenderer
 	{
 		private static float[] rectanglePoints = new float[8];
+		private static float[] textureCoords = new float[8];
 		private static byte[] colors = new byte[16];
 
 		public static void Render(
@@ -18,6 +17,13 @@ namespace %%%PROJECT_ID%%%
 		{
 			float left, top, width, height, bottom, right;
 			byte red, green, blue, alpha;
+			float textureLeft, textureTop, textureRight, textureBottom, textureWidth, textureHeight;
+			Image image;
+			int imageWidth, imageHeight;
+			int targetX, targetY, sourceX, sourceY, targetWidth, targetHeight, sourceWidth, sourceHeight;
+
+			int imageIndex = 0;
+			CompositeImage compositeImage;
 
 			for (int i = 0; i < commandsLength; i += 16)
 			{
@@ -64,10 +70,108 @@ namespace %%%PROJECT_ID%%%
 
 					case 2:
 						// Render ellipse
+						left = commands[i | 1];
+						top = commands[i | 2];
+						width = commands[i | 3];
+						height = commands[i | 4];
+						right = left + width;
+						bottom = top + height;
+
+						rectanglePoints[0] = left;
+						rectanglePoints[1] = top;
+						rectanglePoints[2] = left;
+						rectanglePoints[3] = bottom;
+						rectanglePoints[4] = right;
+						rectanglePoints[5] = top;
+						rectanglePoints[6] = right;
+						rectanglePoints[7] = bottom;
+
+						red = (byte)(commands[i | 5] & 255);
+						green = (byte)(commands[i | 6] & 255);
+						blue = (byte)(commands[i | 7] & 255);
+						alpha = (byte)(commands[i | 8] & 255);
+						for (int j = 0; j < 16; j += 4)
+						{
+							colors[j | 0] = red;
+							colors[j | 1] = green;
+							colors[j | 2] = blue;
+							colors[j | 3] = alpha;
+						}
+						GL.Disable(All.Texture2D);
+						GL.VertexPointer(2, All.Float, 0, rectanglePoints);
+						GL.EnableClientState(All.VertexArray);
+						GL.DisableClientState(All.TextureCoordArray);
+						GL.ColorPointer(4, All.UnsignedByte, 0, colors);
+						GL.EnableClientState(All.ColorArray);
+						GL.DrawArrays(All.TriangleStrip, 0, 4);
+
 						break;
 
 					case 3:
 						// Render image
+						image = (Image)images[imageIndex++];
+						imageWidth = image.width;
+						imageHeight = image.height;
+						targetX = commands[i | 1];
+						targetY = commands[i | 2];
+						targetWidth = commands[i | 3];
+						targetHeight = commands[i | 4];
+						sourceX = commands[i | 5];
+						sourceY = commands[i | 6];
+						sourceWidth = commands[i | 7];
+						sourceHeight = commands[i | 8];
+						alpha = (byte)(commands[i | 9] & 255);
+
+						left = targetX;
+						right = targetX + targetWidth;
+						top = targetY;
+						bottom = targetY + targetHeight;
+
+						if (targetX < logicalWidth && targetY < logicalHeight && bottom >= 0 && right >= 0)
+						{
+							textureWidth = image.textureRight - image.textureLeft;
+							textureHeight = image.textureBottom - image.textureTop;
+
+							textureLeft = image.textureLeft + textureWidth * sourceX / image.width;
+							textureTop = image.textureTop + textureHeight * sourceY / image.height;
+							textureRight = textureLeft + textureWidth * sourceWidth / image.width;
+							textureBottom = textureTop + textureHeight * sourceHeight / image.height;
+							compositeImage = image.compositeResource;
+							if (!compositeImage.loaded)
+							{
+								compositeImage.glTextureId = LoadTexture((CoreGraphics.CGImage)compositeImage.nativeBitmap);
+								compositeImage.loaded = true;
+							}
+
+							rectanglePoints[0] = left;
+							rectanglePoints[1] = top;
+							rectanglePoints[2] = left;
+							rectanglePoints[3] = bottom;
+							rectanglePoints[4] = right;
+							rectanglePoints[5] = top;
+							rectanglePoints[6] = right;
+							rectanglePoints[7] = bottom;
+
+							textureCoords[0] = textureLeft;
+							textureCoords[1] = textureTop;
+							textureCoords[2] = textureLeft;
+							textureCoords[3] = textureBottom;
+							textureCoords[4] = textureRight;
+							textureCoords[5] = textureTop;
+							textureCoords[6] = textureRight;
+							textureCoords[7] = textureBottom;
+
+							GL.Enable(All.Blend);
+							GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
+							GL.Enable(All.Texture2D);
+							GL.BindTexture(All.Texture2D, compositeImage.glTextureId);
+							GL.EnableClientState(All.VertexArray);
+							GL.EnableClientState(All.TextureCoordArray);
+							GL.DisableClientState(All.ColorArray);
+							GL.VertexPointer(2, All.Float, 0, rectanglePoints);
+							GL.TexCoordPointer(2, All.Float, 0, textureCoords);
+							GL.DrawArrays(All.TriangleStrip, 0, 4);
+						}
 						break;
 
 					case 4:
@@ -86,6 +190,35 @@ namespace %%%PROJECT_ID%%%
 						break;
 				}
 			}
+		}
+
+		private static int LoadTexture(CoreGraphics.CGImage bitmap)
+		{
+			int[] intPtr = new int[1];
+			GL.GenTextures(1, intPtr);
+			int textureId = intPtr[0];
+			GL.BindTexture(All.Texture2D, textureId);
+
+			// setup texture parameters
+			GL.TexParameterx(All.Texture2D, All.TextureMagFilter, (int)All.Linear);
+			GL.TexParameterx(All.Texture2D, All.TextureMinFilter, (int)All.Linear);
+			GL.TexParameterx(All.Texture2D, All.TextureWrapS, (int)All.ClampToEdge);
+			GL.TexParameterx(All.Texture2D, All.TextureWrapT, (int)All.ClampToEdge);
+
+			Foundation.NSData data = bitmap.DataProvider.CopyData();
+
+			GL.TexImage2D(
+				All.Texture2D, 
+				0, 
+				(int)All.Rgba, 
+				(int)bitmap.Width, 
+				(int)bitmap.Height, 
+				0, 
+				All.Rgba, 
+				All.UnsignedByte, 
+				data.Bytes);
+			
+			return textureId;
 		}
 	}
 }

@@ -1,1 +1,2 @@
-$_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("Data/ImageSheetManifest.txt")
+$_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("ImageSheetManifest.txt")
+$_lib_gfx_read_tile_resource: ResourceReader.ReadImageFile("ImageSheets/" + [ARG:1] + ".png")

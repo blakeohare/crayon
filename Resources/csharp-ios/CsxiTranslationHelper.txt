@@ -51,7 +51,45 @@ namespace %%%PROJECT_ID%%%
 
 		public static object FlushImagetteToNativeBitmap(Imagette imagette)
 		{
-			throw new NotImplementedException();
+			int width = imagette.width;
+			int height = imagette.height;
+			byte[] bitmapData = new byte[width * height * 4];
+
+			for (int i = 0; i < imagette.nativeBitmaps.Count; ++i)
+			{
+				CoreGraphics.CGImage component = (CoreGraphics.CGImage)imagette.nativeBitmaps[i];
+				int leftX = imagette.xs[i];
+				int topY = imagette.ys[i];
+				int cWidth = (int)component.Width;
+				int cHeight = (int)component.Height;
+				IntPtr componentData = component.DataProvider.CopyData().Bytes;
+				byte[] componentPixels = new byte[cWidth * cHeight * 4];
+				System.Runtime.InteropServices.Marshal.Copy(componentData, componentPixels, 0, componentPixels.Length);
+				for (int y = 0; y < cHeight; ++y)
+				{
+					int targetY = topY + y;
+					int targetIndex = (targetY * width + leftX) * 4;
+					int sourceIndex = y * cWidth * 4;
+					int length = cWidth * 4;
+					System.Array.Copy(componentPixels, sourceIndex, bitmapData, targetIndex, length);
+				}
+			}
+
+			using (CoreGraphics.CGColorSpace colorSpace = CoreGraphics.CGColorSpace.CreateDeviceRGB())
+			{
+				IntPtr ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(bitmapData.Length);
+				System.Runtime.InteropServices.Marshal.Copy(bitmapData, 0, ptr, bitmapData.Length);
+				Foundation.NSData data = Foundation.NSData.FromBytes(ptr, (nuint)bitmapData.Length);
+				CoreGraphics.CGDataProvider dataProvider = new CoreGraphics.CGDataProvider(data);
+				CoreGraphics.CGImage output = new CoreGraphics.CGImage(
+					imagette.width,
+				imagette.height, 8, 32, 4 * imagette.width, colorSpace,
+					CoreGraphics.CGBitmapFlags.ByteOrderDefault,
+					dataProvider, null, false, CoreGraphics.CGColorRenderingIntent.Default);
+				
+				System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
+				return output;
+			}
 		}
 
 		public static void DownloadImage(string key, string url)
