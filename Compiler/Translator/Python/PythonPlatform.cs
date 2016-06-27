@@ -15,7 +15,7 @@ namespace Crayon.Translator.Python
 		public override bool ImagesLoadInstantly { get { return true; } }
 		public override bool IsArraySameAsList { get { return true; } }
         
-		public override string PlatformShortId { get { return "pygame"; } }
+		public override string PlatformShortId { get { return "pygame-pygame"; } }
 
 		public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,

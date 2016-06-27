@@ -21,11 +21,11 @@
 	</target>
 	
 	<target name="js_local">
-		<platform>js</platform>
+		<platform>javascript</platform>
 	</target>
 	
 	<target name="js_remote">
-		<platform>js</platform>
+		<platform>javascript</platform>
 		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
 	</target>
 	
@@ -34,10 +34,10 @@
 	</target>
 	
 	<target name="javaawt">
-		<platform>java</platform>
+		<platform>java-awt</platform>
 	</target>
 	
 	<target name="python">
-		<platform>python</platform>
+		<platform>python-pygame</platform>
 	</target>
 </build>

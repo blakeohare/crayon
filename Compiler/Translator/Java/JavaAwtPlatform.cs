@@ -13,7 +13,7 @@ namespace Crayon.Translator.Java
             : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
         { }
         
-		public override string PlatformShortId { get { return "javaawt"; } }
+		public override string PlatformShortId { get { return "java-awt"; } }
 
 		public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,

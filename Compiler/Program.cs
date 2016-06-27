@@ -87,13 +87,13 @@ namespace Crayon
         {
             switch (buildContext.Platform.ToLowerInvariant())
             {
-                case "android": return new Crayon.Translator.Java.JavaAndroidPlatform();
                 case "csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
                 case "csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
                 case "csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
-                case "java": return new Crayon.Translator.Java.JavaAwtPlatform();
-                case "js": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
-                case "python": return new Crayon.Translator.Python.PythonPlatform();
+                case "java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
+                case "java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
+                case "javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
+                case "python-pygame": return new Crayon.Translator.Python.PythonPlatform();
                 default:
                     throw new InvalidOperationException("Unrecognized platform. See usage.");
             }
@@ -107,16 +107,6 @@ namespace Crayon
                 string command;
 
                 command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target js_remote";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target javaawt";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target python";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target js_tinker";
-                command = @"C:\Things\Crayon\Demos\SquishySquid\SquishySquid.build -target windows";
-
-                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target windows";
-                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target python";
-                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target java";
-                command = @"C:\Things\GeoGearshift\GeoGearshift.build -target js_deleteme";
 
                 args = command.Split(' ');
             }
