@@ -7,40 +7,17 @@ namespace Crayon
     internal class Program
     {
 #if RELEASE
-		// TODO:
-		// - flag to append platform to output folder
-		// - nameformatted flag
 		private static readonly string USAGE = string.Join("\n", new string[] {
-			"Usage: [path_to_build_file -target targetname] [flags]",
+			"Usage:",
+            "  crayon BUILD-FILE -target BUILD-TARGET-NAME [OPTIONS...]",
 			"",
 			"Flags:",
 			"",
-			"  -jsfileprefix      Prefix to add to file references in JavaScript projects.",
-			"                     Can be absolute.",
+			"  -target            (REQUIRED) When a build file is specified, selects the",
+			"                     target within that build file to build.",
 			"",
-			"  -min               Minify the code (JavaScript platform only).",
-			"",
-			"  -output            Output directory. Compiled output will go here.",
-			"",
-			"  -name              Project name (project ID).",
-			"",
-			"  -platform          Platform to compile to.",
-			"     Platform choices:",
-			//"        android          Java Project for Android",
-			"        csharp-opentk         C# Project for Desktop (uses OpenTK)",
-			"        csharp-android   C# Project for Android (uses Xamarin/OpenGL ES)",
-            "        csharp-ios       C# Project for iOS (uses Xamarin/OpenGL ES)",
-			"        java             Java Project for Desktop (uses AWT)",
-			"        js               JavaScript project",
-			"        python           Python project (uses PyGame)",
-			"",
-			//"  -readablebytecode  Output a file of the final byte code in a semi-readable",
-			//"                     fashion for debugging purposes.",
-			//"",
-			"  -source            Source directory. Must contain a start.cry file.",
-			"",
-			"  -target            When a build file is specified, selects the target within",
-			"                     that build file to build."
+			"  -readablebytecode  (OPTIONAL) Output a file of the final byte code in a",
+			"                     semi-readable fashion for debugging purposes.",
 		});
 #endif
 
@@ -77,10 +54,7 @@ namespace Crayon
         {
             BuildContext buildContext = Program.GetBuildContext(args);
             AbstractPlatform platform = GetPlatformInstance(buildContext);
-            string readableByteCodeFile = buildContext.ReadableByteCode
-                ? "byte_code_dump.txt"
-                : null;
-            platform.Compile(buildContext, buildContext.SourceFolder, buildContext.OutputFolder, readableByteCodeFile);
+            platform.Compile(buildContext, buildContext.SourceFolder, buildContext.OutputFolder);
         }
 
         private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)

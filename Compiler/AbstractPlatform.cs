@@ -85,7 +85,7 @@ namespace Crayon
 			return buffer;
 		}
 
-		private void GenerateReadableByteCode(string path, ByteBuffer byteCode)
+		private string GenerateReadableByteCode(ByteBuffer byteCode)
 		{
 			List<string> output = new List<string>();
 			List<int[]> rows = byteCode.ToIntList();
@@ -120,7 +120,7 @@ namespace Crayon
 				rowOutput.Clear();
 			}
 
-			System.IO.File.WriteAllText(path, string.Join("\r\n", output));
+			return string.Join("\r\n", output);
 		}
 
 		private static readonly string PROJECT_ID_VERIFICATION_ERROR_EMPTY = "Project ID is blank or missing.";
@@ -150,8 +150,7 @@ namespace Crayon
 		public void Compile(
 			BuildContext buildContext, 
 			string inputFolder, 
-			string baseOutputFolder, 
-			string nullableReadableByteCodeOutputPath)
+			string baseOutputFolder)
 		{
 			Parser.IsTranslateMode_STATIC_HACK = false;
 
@@ -181,11 +180,6 @@ namespace Crayon
 
 			ByteBuffer byteCodeBuffer = GenerateByteCode(buildContext, inputFolder);
 
-			if (nullableReadableByteCodeOutputPath != null)
-			{
-				this.GenerateReadableByteCode(nullableReadableByteCodeOutputPath, byteCodeBuffer);
-			}
-            
             resourceDatabase.ByteCodeFile = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -205,8 +199,17 @@ namespace Crayon
 				structs,
 				inputFolder,
 				resourceDatabase);
+
+            if (buildContext.ReadableByteCode)
+            {
+                files["readable_byte_code.txt"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = this.GenerateReadableByteCode(byteCodeBuffer),
+                };
+            }
             
-			string outputFolder = baseOutputFolder;
+            string outputFolder = baseOutputFolder;
 
 			FileUtil.EnsureParentFolderExists(outputFolder);
 
