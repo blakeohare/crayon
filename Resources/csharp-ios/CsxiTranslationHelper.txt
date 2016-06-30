@@ -46,7 +46,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static List<PlatformRelayObject> GetEvents()
 		{
-			return new List<PlatformRelayObject>();
+			return new List<PlatformRelayObject>(GVC.GetEvents());
 		}
 
 		public static object FlushImagetteToNativeBitmap(Imagette imagette)

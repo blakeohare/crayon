@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Foundation;
@@ -25,6 +25,50 @@ namespace %%%PROJECT_ID%%%
 			this.ScreenInitialized = false;
 			ResourceReader.GVC = this;
 			CsxiTranslationHelper.GVC = this;
+		}
+
+		private List<PlatformRelayObject> events = new List<PlatformRelayObject>();
+
+		public override void TouchesBegan(NSSet touches, UIKit.UIEvent evt)
+		{
+			int[] coord = this.GetTouchCoord(touches, evt);
+			this.events.Add(new PlatformRelayObject(33, coord[0], coord[1], 0, 0, null));
+		}
+
+		public override void TouchesEnded(NSSet touches, UIKit.UIEvent evt)
+		{
+			int[] coord = this.GetTouchCoord(touches, evt);
+			this.events.Add(new PlatformRelayObject(34, coord[0], coord[1], 0, 0, null));
+		}
+
+		public override void TouchesMoved(NSSet touches, UIKit.UIEvent evt)
+		{
+			int[] coord = this.GetTouchCoord(touches, evt);
+			this.events.Add(new PlatformRelayObject(32, coord[0], coord[1], 0, 0, null));
+		}
+
+		public PlatformRelayObject[] GetEvents()
+		{
+			PlatformRelayObject[] output = this.events.ToArray();
+			this.events.Clear();
+			return output;
+		}
+
+		private int[] reusableCoord = new int[2];
+		private int[] GetTouchCoord(NSSet touches, UIKit.UIEvent e)
+		{
+			UIKit.UITouch[] touch = touches.ToArray<UIKit.UITouch>();
+			UIKit.UIView view = touch[0].View;
+			CoreGraphics.CGPoint pt = touch[0].GetPreciseLocation(view);
+			double x = (float)pt.X;
+			double y = (float)pt.Y;
+			double width = (float)view.Bounds.Width;
+			double height = (float)view.Bounds.Height;
+			int logicalX = (int)(this.LogicalWidth * x / width);
+			int logicalY = (int)(this.LogicalHeight * y / height);
+			reusableCoord[0] = logicalX;
+			reusableCoord[1] = logicalY;
+			return reusableCoord;
 		}
 
 		public override void ViewDidLoad()
