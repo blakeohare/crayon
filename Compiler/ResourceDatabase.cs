@@ -52,6 +52,7 @@ namespace Crayon
         });
 
         public FileOutput ByteCodeFile { get; set; }
+        public ByteBuffer ByteCodeRawData { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
         public FileOutput SpriteSheetManifestFile { get; set; }
 

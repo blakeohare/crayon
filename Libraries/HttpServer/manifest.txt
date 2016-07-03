@@ -1,0 +1,4 @@
+NAME: HttpServer
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/httpserver
+DESCRIPTION: Library for running an HTTP Server

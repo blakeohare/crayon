@@ -1,0 +1,24 @@
+﻿namespace HttpServer {
+	
+	function getRequest() {
+		/*
+			vars[0] -> method
+			vars[1] -> path
+			vars[2] -> ip
+		*/
+		vars = [];
+		$$lib_httpserver_getRequest(vars);
+		return new HttpRequest(vars);
+	}
+	
+	class HttpRequest {
+		field _basic_vars;
+		field _request_body = null;
+		field _headers = null;
+		field _cookies = null;
+		
+		constructor(vars) {
+			this._basic_vars = vars;
+		}
+	}
+}

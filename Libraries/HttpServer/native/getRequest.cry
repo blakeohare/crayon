@@ -1,0 +1,17 @@
+/*
+	args[0] -> an output param. An empty list.
+	
+	Output:
+	list[0] -> method
+	list[1] -> string path
+	list[2] -> User IP
+	list[3] -> User Agent
+*/
+import inline "FrameworkFunctions/1_arg.cry";
+
+$_lib_httpserver_getRequest(stringOutParam);
+list1 = $_cast('List<Value>', Value$arg1.internalValue);
+$_list_push(list1, buildString($_array_get(stringOutParam, 0)));
+$_list_push(list1, buildString($_array_get(stringOutParam, 1)));
+$_list_push(list1, buildString($_array_get(stringOutParam, 2)));
+$_list_push(list1, buildString($_array_get(stringOutParam, 3)));

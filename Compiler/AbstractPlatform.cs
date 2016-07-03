@@ -179,6 +179,8 @@ namespace Crayon
 
 			ByteBuffer byteCodeBuffer = GenerateByteCode(buildContext, inputFolder);
 
+            resourceDatabase.ByteCodeRawData = byteCodeBuffer;
+
             resourceDatabase.ByteCodeFile = new FileOutput()
             {
                 Type = FileOutputType.Text,

@@ -34,8 +34,79 @@ namespace Crayon.Translator.Php
 			string fileCopySourceRoot,
 			ResourceDatabase resourceDatabase)
 		{
-			throw new NotImplementedException();
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            FileOutput byteCodeFile = this.GenerateByteCodeFile(resourceDatabase.ByteCodeRawData);
+            output["bytecode.php"] = byteCodeFile;
+
+
+            List<string> codePhp = new List<string>();
+
+            codePhp.Add("<?php");
+            codePhp.Add("");
+            foreach (string component in finalCode.Keys)
+            {
+                this.Translator.Translate(codePhp, finalCode[component]);
+                codePhp.Add(this.Translator.NL);
+            }
+            codePhp.Add("");
+            codePhp.Add("?>");
+
+            output["crayon.php"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("", codePhp),
+            };
+
+            return output;
 		}
+
+        private FileOutput GenerateByteCodeFile(ByteBuffer byteCodeBuffer)
+        {
+            List<string> output = new List<string>();
+            output.Add("<?php");
+            output.Add("$byteCode = array(");
+            List<int[]> integers = byteCodeBuffer.ToIntList();
+            List<string> line = new List<string>();
+            for (int rowIndex = 0; rowIndex < integers.Count; ++rowIndex)
+            {
+                int[] row = integers[rowIndex];
+                line.Add("array(");
+                for (int i = 0; i < row.Length; ++i)
+                {
+                    if (i > 0) line.Add(",");
+                    line.Add(row[i].ToString());
+                }
+                line.Add(")");
+                if (rowIndex + 1 < integers.Count)
+                {
+                    line.Add("),");
+                }
+                else
+                {
+                    line.Add("));");
+                }
+                output.Add(string.Join("", line));
+                line.Clear();
+            }
+            output.Add("$byteCodeStrings = array();");
+            output.Add("for ($i = count($byteCode); $i > 0; --$i) array_push($byteCodeStrings, null);");
+            output.Add("$d = '$';");
+            List<string> strings = byteCodeBuffer.ToStringList();
+            for (int i = 0; i < strings.Count; ++i)
+            {
+                if (strings[i] != null)
+                {
+                    output.Add("$byteCodeStrings[" + i + "] = " + Util.ConvertStringValueToCode(strings[i]).Replace("$", "$d") + ";");
+                }
+            }
+            output.Add("?>");
+
+            return new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\n", output),
+            };
+        }
 	}
 }
 
