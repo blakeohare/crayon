@@ -6,4 +6,4 @@ if (argCount == 0) {
 for (i = 0; i < argCount; i += 1) {
 	$_list_push(list1, $_array_get(funcArgs, i));
 }
-output = VALUE_NULL;
+output := VALUE_NULL;

@@ -15,4 +15,4 @@ switch (Value$arg1.type) {
 	// This should never happen.
 	default: int1 = 10; break;
 }
-output = buildInteger(int1);
+output := buildInteger(int1);

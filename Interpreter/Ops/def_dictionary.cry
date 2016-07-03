@@ -9,8 +9,8 @@ first = true;
 i = len; // size
 while (i > 0) {
 	valueStackSize -= 2;
-	value = $_array_get(valueStack, valueStackSize + 1); // value
-	value2 = $_array_get(valueStack, valueStackSize); // key
+	value := $_array_get(valueStack, valueStackSize + 1); // value
+	value2 := $_array_get(valueStack, valueStackSize); // key
 	if (first) {
 		type = Value$value2.type;
 		first = false;
@@ -23,7 +23,7 @@ while (i > 0) {
 	} else if (type == Types.STRING) {
 		stringKey = $_cast('string', Value$value2.internalValue);
 	} else if (type == Types.INSTANCE) {
-		objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
+		objInstance1 := $_cast('ObjectInstance', Value$value2.internalValue);
 		intKey = ObjectInstance$objInstance1.objectId;
 	} else {
 		return killExecution(stack, pc, "Only integers, strings, and objects can be used as dictionary keys.");

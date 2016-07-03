@@ -1,6 +1,6 @@
 ﻿
 if (valueStackSize == valueStackCapacity) {
 	valueStackIncreaseCapacity();
-	valueStack = ProgramData$p.valueStack;
+	valueStack := ProgramData$p.valueStack;
 	valueStackCapacity = $_array_length(valueStack);
 }

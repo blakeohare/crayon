@@ -9,7 +9,7 @@ if (StackFrame$stack.previous == null) {
 
 // is this the static constructor returning?
 if (StackFrame$stack.markClassAsInitialized != 0) {
-	classInfo = $_array_get(classTable, StackFrame$stack.markClassAsInitialized);
+	classInfo := $_array_get(classTable, StackFrame$stack.markClassAsInitialized);
 	ClassInfo$classInfo.staticInitializationState = 2; // mark class as completely ready to use.
 	$_list_pop(ProgramData$p.classStaticInitializationStack);
 }
@@ -18,13 +18,13 @@ if (StackFrame$stack.returnValueUsed) {
 	if ($_array_get(row, 0) == 0) {
 		// returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
 		valueStackSize = StackFrame$stack.valueStackPopSize;
-		stack = StackFrame$stack.previous;
+		stack := StackFrame$stack.previous;
 		import inline "ValueStackCapacityCheck.cry"; // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
 		$_array_set_ref(valueStack, valueStackSize, VALUE_NULL);
 	} else {
-		value = $_array_get(valueStack, valueStackSize - 1);
+		value := $_array_get(valueStack, valueStackSize - 1);
 		valueStackSize = StackFrame$stack.valueStackPopSize;
-		stack = StackFrame$stack.previous;
+		stack := StackFrame$stack.previous;
 		// no capacity check needed since the value was already on the stack.
 		$_array_set_ref(valueStack, valueStackSize, value);
 	}
@@ -32,7 +32,7 @@ if (StackFrame$stack.returnValueUsed) {
 } else {
 	// discard the return value. Set the value stack size back the way it was.
 	valueStackSize = StackFrame$stack.valueStackPopSize;
-	stack = StackFrame$stack.previous;
+	stack := StackFrame$stack.previous;
 }
 
 pc = StackFrame$stack.pc;

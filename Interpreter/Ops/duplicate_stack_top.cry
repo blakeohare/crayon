@@ -1,13 +1,13 @@
 ﻿
 if ($_array_get(row, 0) == 1) {
-	value = $_array_get(valueStack, valueStackSize - 1);
+	value := $_array_get(valueStack, valueStackSize - 1);
 	import inline "ValueStackCapacityCheck.cry";
 	$_array_set_ref(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 } else if ($_array_get(row, 0) == 2) {
 	if (valueStackSize + 1 > valueStackCapacity) {
 		valueStackIncreaseCapacity();
-		valueStack = ProgramData$p.valueStack;
+		valueStack := ProgramData$p.valueStack;
 		valueStackCapacity = $_array_length(valueStack);
 	}
 

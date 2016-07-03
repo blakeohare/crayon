@@ -3,7 +3,7 @@ if (argCount != 1) {
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list filter method", 1, argCount));
 }
 
-value2 = $_array_get(funcArgs, 0);
+value2 := $_array_get(funcArgs, 0);
 if (Value$value2.type != Types.FUNCTION) {
 	return killExecution(stack, pc, "list filter method requires a function pointer as its argument.");
 }

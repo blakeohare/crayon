@@ -5,31 +5,31 @@ if (argCount < 1 || argCount > 2) {
 
 // fallback
 if (argCount == 2) {
-	output = $_array_get(funcArgs, 1);
+	output := $_array_get(funcArgs, 1);
 } else {
-	output = VALUE_NULL;
+	output := VALUE_NULL;
 }
 
-value = $_array_get(funcArgs, 0); // key
+value := $_array_get(funcArgs, 0); // key
 
 switch (Value$value.type) {
 	case Types.INTEGER:
 		int1 = $_cast('int', Value$value.internalValue);
 		if ($_dictionary_contains(DictImpl$dictImpl.keyIntLookup, int1)) {
-			output = $_dictionary_get_guaranteed(DictImpl$dictImpl.valueIntLookup, int1);
+			output := $_dictionary_get_guaranteed(DictImpl$dictImpl.valueIntLookup, int1);
 		}
 		break;
 	case Types.INSTANCE:
-		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+		objInstance1 := $_cast('ObjectInstance', Value$value.internalValue);
 		int1 = ObjectInstance$objInstance1.objectId;
 		if ($_dictionary_contains(DictImpl$dictImpl.keyIntLookup, int1)) {
-			output = $_dictionary_get_guaranteed(DictImpl$dictImpl.valueIntLookup, int1);
+			output := $_dictionary_get_guaranteed(DictImpl$dictImpl.valueIntLookup, int1);
 		}
 		break;
 	case Types.STRING:
 		string1 = $_cast('string', Value$value.internalValue);
 		if ($_dictionary_contains(DictImpl$dictImpl.keyStringLookup, string1)) {
-			output = $_dictionary_get_guaranteed(DictImpl$dictImpl.valueStringLookup, string1);
+			output := $_dictionary_get_guaranteed(DictImpl$dictImpl.valueStringLookup, string1);
 		}
 		break;
 	default: 

@@ -2,16 +2,16 @@
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount));
 }
 
-value2 = $_array_get(funcArgs, 0);
+value2 := $_array_get(funcArgs, 0);
 if (Value$value2.type != Types.DICTIONARY) {
 	return killExecution(stack, pc, "dictionary merge method requires another dictionary as a parameeter.");
 }
 
-dictImpl2 = $_cast('DictImpl', Value$value2.internalValue);
+dictImpl2 := $_cast('DictImpl', Value$value2.internalValue);
 
 if (DictImpl$dictImpl2.size > 0) {
 	if (DictImpl$dictImpl.size == 0) {
-		Value$value.internalValue = cloneDictionary(dictImpl2, null);
+		Value$value.internalValue := cloneDictionary(dictImpl2, null);
 	} else if (DictImpl$dictImpl2.keyType != DictImpl$dictImpl.keyType) {
 		return killExecution(stack, pc, "dictionaries with different key types cannot be merged.");
 	} else {
@@ -19,4 +19,4 @@ if (DictImpl$dictImpl2.size > 0) {
 	}
 }
 
-output = VALUE_NULL;
+output := VALUE_NULL;

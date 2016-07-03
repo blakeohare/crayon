@@ -3,8 +3,8 @@ if (argCount != 2) {
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
 }
 
-value = $_array_get(funcArgs, 0);
-value2 = $_array_get(funcArgs, 1);
+value := $_array_get(funcArgs, 0);
+value2 := $_array_get(funcArgs, 1);
 if (Value$value.type != Types.INTEGER) {
 	return killExecution(stack, pc, "First argument of list.insert must be an integer index.");
 }

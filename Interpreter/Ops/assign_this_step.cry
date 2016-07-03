@@ -3,9 +3,9 @@
 
 // Assignments that override methods are blocked at compile-time.
 
-value2 = StackFrame$stack.objectContext; // use of 'this' is blocked at compile time outside of non-static methods.
+value2 := StackFrame$stack.objectContext; // use of 'this' is blocked at compile time outside of non-static methods.
 
-objInstance2 = $_cast('ObjectInstance', Value$value2.internalValue);
+objInstance2 := $_cast('ObjectInstance', Value$value2.internalValue);
 valueStackSize -= 1;
 $_array_set_ref(
 	ObjectInstance$objInstance2.members,

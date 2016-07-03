@@ -9,7 +9,7 @@ if (len < 1) {
 }
 
 if (returnValueUsed) {
-	output = $_list_get(list1, len - 1);
+	output := $_list_get(list1, len - 1);
 }
 
 $_list_pop(list1);

@@ -8,8 +8,8 @@ if (Value$arg1.type != Types.STRING) {
 } else {
 	string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
 	if ($_is_valid_integer(string1)) {
-		output = buildInteger($_parse_int(string1));
+		output := buildInteger($_parse_int(string1));
 	} else {
-		output = VALUE_NULL;
+		output := VALUE_NULL;
 	}
 }

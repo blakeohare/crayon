@@ -1,15 +1,15 @@
 ﻿
 valueStackSize -= 3;
-value = $_array_get(valueStack, valueStackSize + 2);
-value2 = $_array_get(valueStack, valueStackSize + 1); // index
-root = $_array_get(valueStack, valueStackSize);
+value := $_array_get(valueStack, valueStackSize + 2);
+value2 := $_array_get(valueStack, valueStackSize + 1); // index
+root := $_array_get(valueStack, valueStackSize);
 
 type = Value$root.type;
 bool1 = row[0] == 1; // re-push this onto the stack once it is assigned
 if (type == Types.LIST) {
 	if (Value$value2.type == Types.INTEGER) {
 		i = $_cast('int', Value$value2.internalValue);
-		list1 = $_cast('List<Value>', Value$root.internalValue);
+		list1 := $_cast('List<Value>', Value$root.internalValue);
 		if (i < 0) {
 			i += $_list_length(list1);
 			if (i < 0) {
@@ -32,13 +32,13 @@ if (type == Types.LIST) {
 	} else if (keyType == Types.STRING) {
 		stringKey = $_cast('string', Value$value2.internalValue);
 	} else if (keyType == Types.INSTANCE) {
-		objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
+		objInstance1 := $_cast('ObjectInstance', Value$value2.internalValue);
 		intKey = ObjectInstance$objInstance1.objectId;
 	} else {
 		return killExecution(stack, pc, "Invalid key for a dictionary.");
 	}
 
-	dictImpl = $_cast('DictImpl', Value$root.internalValue);
+	dictImpl := $_cast('DictImpl', Value$root.internalValue);
 	bool2 = DictImpl$dictImpl.size > 0; // already contains stuff
 	if (bool2 && DictImpl$dictImpl.keyType != keyType) {
 		return killExecution(stack, pc, "Cannot have multiple keys in one dictionary with different types.");

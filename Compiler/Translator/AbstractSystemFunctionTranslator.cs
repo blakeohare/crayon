@@ -97,7 +97,8 @@ namespace Crayon.Translator
 				case "_dictionary_get_values": VerifyCount(functionCall, 1); TranslateDictionaryGetValues(output, args[0]); break;
 				case "_dictionary_remove": VerifyCount(functionCall, 2); TranslateDictionaryRemove(output, args[0], args[1]); break;
 				case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
-				case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
+                case "_dictionary_set_ref": VerifyCount(functionCall, 3); TranslateDictionarySetRef(output, args[0], args[1], args[2]); break;
+                case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
 				case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
 				case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
 				case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
@@ -118,7 +119,8 @@ namespace Crayon.Translator
 				case "_list_remove_at": VerifyCount(functionCall, 2); TranslateListRemoveAt(output, args[0], args[1]); break;
 				case "_list_reverse_in_place": VerifyCount(functionCall, 1); TranslateListReverseInPlace(output, args[0]); break;
 				case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
-				case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
+                case "_list_set_ref": VerifyCount(functionCall, 3); TranslateListSetRef(output, args[0], args[1], args[2]); break;
+                case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
 				case "_multiply_list": VerifyCount(functionCall, 2); TranslateMultiplyList(output, args[0], args[1]); break;
 				case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, (StringConstant)args[0], args[1]); break;
 				case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
@@ -190,7 +192,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
 		protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);
 		protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);
-		protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
+        protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
 		protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
 		protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path);
 		protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
@@ -264,7 +266,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe);
 		protected abstract void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b);
 		protected abstract void TranslateStringFromCode(List<string> output, Expression characterCode);
-		protected abstract void TranslateStringIndexOf(List<string> output, ParseTree.Expression haystack, ParseTree.Expression needle);
+		protected abstract void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle);
 		protected abstract void TranslateStringLength(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
 		protected abstract void TranslateStringParseFloat(List<string> output, Expression stringValue);
@@ -288,9 +290,19 @@ namespace Crayon.Translator
 			}
 		}
 
-        protected virtual void TranslateArraySetRef(List<string> output, Expression list, Expression index, Expression value)
+        protected virtual void TranslateArraySetRef(List<string> output, Expression array, Expression index, Expression value)
         {
-            this.TranslateArraySet(output, list, index, value);
+            this.TranslateArraySet(output, array, index, value);
+        }
+
+        protected virtual void TranslateListSetRef(List<string> output, Expression list, Expression index, Expression value)
+        {
+            this.TranslateListSet(output, list, index, value);
+        }
+
+        protected virtual void TranslateDictionarySetRef(List<string> output, Expression dictionary, Expression key, Expression value)
+        {
+            this.TranslateDictionarySet(output, dictionary, key, value);
         }
     }
 }

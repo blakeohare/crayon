@@ -6,7 +6,7 @@ output = null;
 if (Value$arg1.type == Types.STRING) {
 	string1 = $_cast('string', Value$arg1.internalValue);
 	if ($_string_length(string1) == 1) {
-		output = buildInteger($_ord(string1));
+		output := buildInteger($_ord(string1));
 	}
 }
 if (output == null) {

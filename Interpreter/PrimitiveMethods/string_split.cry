@@ -3,7 +3,7 @@ if (argCount != 1) {
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("string split method", 1, argCount));
 }
 
-value2 = $_array_get(funcArgs, 0);
+value2 := $_array_get(funcArgs, 0);
 if (Value$value2.type != Types.STRING) {
 	return killExecution(stack, pc, "string split method requires another string as input.");
 }

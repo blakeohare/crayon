@@ -265,8 +265,8 @@ function @type('int') resetLocalsStackTokens(@type('ProgramData') p, @type('Stac
 }
 
 function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type('int') newScopeSize) {
-	@type('Array<Value>') oldLocals = ProgramData$p.localsStack;
-	@type('Array<int>') oldSetIndicator = ProgramData$p.localsStackSet;
+	@type('Array<Value>') oldLocals := ProgramData$p.localsStack;
+	@type('Array<int>') oldSetIndicator := ProgramData$p.localsStackSet;
 
 	@type('int') oldCapacity = $_array_length(oldLocals);
 	@type('int') newCapacity = oldCapacity * 2 + newScopeSize;
@@ -279,8 +279,8 @@ function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type(
 		$_array_set(newSetIndicator, i, $_array_get(oldSetIndicator, i));
 	}
 
-	ProgramData$p.localsStack = newLocals;
-	ProgramData$p.localsStackSet = newSetIndicator;
+	ProgramData$p.localsStack := newLocals;
+	ProgramData$p.localsStackSet := newSetIndicator;
 
 	return 0;
 }
@@ -296,7 +296,7 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 	@type('int') classId = ClassInfo$classInfo.id;
 	if (ClassInfo$classInfo.staticInitializationState == 1) {
 		// check to make sure it's the last item on the static init stack
-		@type('List<int>') classIdsBeingInitialized = ProgramData$p.classStaticInitializationStack;
+		@type('List<int>') classIdsBeingInitialized := ProgramData$p.classStaticInitializationStack;
 		if ($_list_get(classIdsBeingInitialized, $_list_length(classIdsBeingInitialized) - 1) != classId) {
 			$_array_set(intOutParam, 0, 1);
 		}

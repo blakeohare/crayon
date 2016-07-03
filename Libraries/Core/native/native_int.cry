@@ -8,6 +8,6 @@
 
 import inline "FrameworkFunctions/2_arg.cry";
 
-objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objInstance1 := $_cast('ObjectInstance', Value$arg1.internalValue);
 i = $_cast('int', Value$arg2.internalValue);
-output = buildInteger($_cast('int', $_array_get(ObjectInstance$objInstance1.nativeData, i)));
+output := buildInteger($_cast('int', $_array_get(ObjectInstance$objInstance1.nativeData, i)));

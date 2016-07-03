@@ -3,15 +3,15 @@
 // row[1] -> push the assigned value back to the stack if this is 1.
 
 valueStackSize -= 2;
-value = $_array_get(valueStack, valueStackSize + 1); // value to assign
-value2 = $_array_get(valueStack, valueStackSize); // target root
+value := $_array_get(valueStack, valueStackSize + 1); // value to assign
+value2 := $_array_get(valueStack, valueStackSize); // target root
 nameId = $_array_get(row, 0);
 
 if (Value$value2.type == Types.INSTANCE) {
-	objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
+	objInstance1 := $_cast('ObjectInstance', Value$value2.internalValue);
 	classId = ObjectInstance$objInstance1.classId;
-	classInfo = $_array_get(classTable, classId);
-	intIntDict1 = ClassInfo$classInfo.globalIdToMemberId;
+	classInfo := $_array_get(classTable, classId);
+	intIntDict1 := ClassInfo$classInfo.globalIdToMemberId;
 	if ($_dictionary_contains(intIntDict1, nameId)) {
 		int1 = $_dictionary_get_guaranteed(intIntDict1, nameId); // member ID
 		int2 = $_array_get(ClassInfo$classInfo.functionIds, int1);

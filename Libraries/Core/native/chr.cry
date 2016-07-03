@@ -5,7 +5,7 @@ output = null;
 if (Value$arg1.type == Types.INTEGER) {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	if (int1 >= 0 && int1 < 256) {
-		output = buildCommonString($_chr(int1));
+		output := buildCommonString($_chr(int1));
 	}
 }
 

@@ -1,13 +1,10 @@
 ﻿
 valueStackSize -= 2;
-rightValue = $_array_get(valueStack, valueStackSize + 1);
-leftValue = $_array_get(valueStack, valueStackSize);
+rightValue := $_array_get(valueStack, valueStackSize + 1);
+leftValue := $_array_get(valueStack, valueStackSize);
 
 leftType = Value$leftValue.type;
 rightType = Value$rightValue.type;
-
-left = Value$leftValue.internalValue;
-right = Value$rightValue.internalValue;
 
 // TODO: special switch for when left == right
 op = $_array_get(row, 0);
@@ -22,27 +19,27 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	} else {
 		if (leftType == rightType) {
 			if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
-				if (left == right) { // may have to change if a platform doesn't support == for strings
+				if (Value$leftValue.internalValue == Value$rightValue.internalValue) { // may have to change if a platform doesn't support == for strings
 					bool1 = true;
 				} else {
 					bool1 = false;
 				}
 			} else if (leftType == Types.INSTANCE) {
-				objInstance1 = $_cast('ObjectInstance', left);
-				objInstance2 = $_cast('ObjectInstance', right);
+				objInstance1 := $_cast('ObjectInstance', Value$leftValue.internalValue);
+				objInstance2 := $_cast('ObjectInstance', Value$rightValue.internalValue);
 				if (ObjectInstance$objInstance1.objectId == ObjectInstance$objInstance2.objectId) {
 					bool1 = true;
 				} else {
 					bool1 = false;
 				}
 			} else {
-				return killExecution(stack, pc, "== and != not defined here yet.");
+				return killExecution(stack, pc, "== and != not defined here.");
 			}
 		} else {
 			if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 				// does this work on c#? 
 				// (object)0.0 == (object)0
-				if (left == right) {
+				if (Value$leftValue.internalValue == Value$rightValue.internalValue) {
 					bool1 = true;
 				} else {
 					bool1 = false;
@@ -60,8 +57,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	if (bool1) value = VALUE_TRUE;
 	else value = VALUE_FALSE;
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
-	value = new Value(Types.STRING, valueToString(leftValue) + valueToString(rightValue));
+	value = new Value(Types.STRING, valueToString(Value$leftValue.internalValue) + valueToString(Value$rightValue.internalValue));
 } else {
+	// At this point the remaining ops will be primitive types or if they are reference types, won't 
+	// matter if a copy is made, hence = being safe instead of :=
+	left = Value$leftValue.internalValue;
+	right = Value$rightValue.internalValue;
 	switch
 		{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
 		((((Value$leftValue.type * MAX_OP) + op) * MAX_TYPE) + Value$rightValue.type) {
@@ -69,30 +70,30 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// int ** int
 		case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int ** int');
-			if ($_cast('int', right) == 0) value = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
+			if ($_cast('int', right) == 0) value := $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
 			else if ($_cast('int', right) > 0)
-				value = buildInteger($_int($_exponent($_cast('int', left), $_cast('int', right))));
+				value := buildInteger($_int($_exponent($_cast('int', left), $_cast('int', right))));
 			else
-				value = buildFloat($_exponent($_cast('int', left), $_cast('int', right)));
+				value := buildFloat($_exponent($_cast('int', left), $_cast('int', right)));
 			break;
 
 		// int ** float
 		case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 			$_comment('int ** float');
-			value = buildFloat(0.0 + $_exponent($_cast('int', left), $_cast('double', right)));
+			value := buildFloat(0.0 + $_exponent($_cast('int', left), $_cast('double', right)));
 			break;
 
 		// float ** int
 		case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 			$_comment('float ** int');
 			// add 0.0 just in case underlying platform likes to fall back to integer when possible
-			value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('int', right)));
+			value := buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('int', right)));
 			break;
 
 		// float ** float
 		case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 			$_comment('float ** float');
-			value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('double', right)));
+			value := buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('double', right)));
 			break;
 						
 		// float % float
@@ -101,7 +102,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float3 = $_cast('double', left) % $_cast('double', right);
 			if (float3 < 0) float3 += $_cast('double', right);
-			value = buildFloat(float3);
+			value := buildFloat(float3);
 			break;
 
 		// float % int
@@ -110,7 +111,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float1 = $_cast('double', left) % $_cast('int', right);
 			if (float1 < 0) float1 += $_cast('int', right);
-			value = buildFloat(float1);
+			value := buildFloat(float1);
 			break;
 
 		// int % float
@@ -119,7 +120,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			float1 = $_cast('int', left) % $_cast('double', right);
 			if (float1 < 0) float1 += $_cast('double', right);
-			value = buildFloat(float1);
+			value := buildFloat(float1);
 			break;
 
 		// int % int
@@ -128,7 +129,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Modulo by 0");
 			int1 = $_cast('int', left) % $_cast('int', right);
 			if (int1 < 0) int1 += $_cast('int', right);
-			value = buildInteger(int1);
+			value := buildInteger(int1);
 			break;
 
 		// list + list
@@ -146,12 +147,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) + $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value := INTEGERS_CACHE[1][-int1];
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value := INTEGERS_CACHE[0][int1];
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -163,12 +164,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) - $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value := INTEGERS_CACHE[1][-int1];
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value := INTEGERS_CACHE[0][int1];
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -180,12 +181,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) * $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value := INTEGERS_CACHE[1][-int1];
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value := INTEGERS_CACHE[0][int1];
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -198,12 +199,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_unsafe_integer_division($_cast('int', left), $_cast('int', right));
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value := INTEGERS_CACHE[1][-int1];
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value := INTEGERS_CACHE[0][int1];
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -212,190 +213,190 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		// float + int
 		case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float + int');
-			value = buildFloat($_cast('double', left) + $_cast('int', right)); break;
+			value := buildFloat($_cast('double', left) + $_cast('int', right)); break;
 
 		// int + float
 		case (Types.INTEGER * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int + float');
-			value = buildFloat($_cast('int', left) + $_cast('double', right)); break;
+			value := buildFloat($_cast('int', left) + $_cast('double', right)); break;
 
 		// float + float
 		case (Types.FLOAT * MAX_OP + BinaryOps.ADDITION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float + float');
-			value = buildFloat($_cast('double', left) + $_cast('double', right)); break;
+			value := buildFloat($_cast('double', left) + $_cast('double', right)); break;
 
 		// int - float
 		case (Types.INTEGER * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int - float');
-			value = buildFloat($_cast('int', left) - $_cast('double', right)); break;
+			value := buildFloat($_cast('int', left) - $_cast('double', right)); break;
 
 		// float - int
 		case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float - int');
-			value = buildFloat($_cast('double', left) - $_cast('int', right)); break;
+			value := buildFloat($_cast('double', left) - $_cast('int', right)); break;
 
 		// float - float
 		case (Types.FLOAT * MAX_OP + BinaryOps.SUBTRACTION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float - float');
-			value = buildFloat($_cast('double', left) - $_cast('double', right)); break;
+			value := buildFloat($_cast('double', left) - $_cast('double', right)); break;
 
 		// float * int
 		case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float * int');
-			value = buildFloat($_cast('double', left) * $_cast('int', right)); break;
+			value := buildFloat($_cast('double', left) * $_cast('int', right)); break;
 
 		// int * float
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int * float');
-			value = buildFloat($_cast('int', left) * $_cast('double', right)); break;
+			value := buildFloat($_cast('int', left) * $_cast('double', right)); break;
 
 		// float * float
 		case (Types.FLOAT * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float * float');
-			value = buildFloat($_cast('double', left) * $_cast('double', right)); break;
+			value := buildFloat($_cast('double', left) * $_cast('double', right)); break;
 
 		// int / float
 		case (Types.INTEGER * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('int / float');
 			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0");
-			value = buildFloat($_unsafe_float_division($_cast('int', left), $_cast('double', right))); break;
+			value := buildFloat($_unsafe_float_division($_cast('int', left), $_cast('double', right))); break;
 
 		// float / int
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float / int');
 			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0"); 
-			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
+			value := buildFloat($_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
 
 		// float / float
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float / float');
 			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0"); 
-			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
+			value := buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
 
 		// int & int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_AND) * MAX_TYPE + Types.INTEGER:
 			$_comment('int & int');
-			value = buildInteger($_cast('int', left) & $_cast('int', right)); break;
+			value := buildInteger($_cast('int', left) & $_cast('int', right)); break;
 
 		// int | int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_OR) * MAX_TYPE + Types.INTEGER:
 			$_comment('int & int');
-			value = buildInteger($_cast('int', left) | $_cast('int', right)); break;
+			value := buildInteger($_cast('int', left) | $_cast('int', right)); break;
 
 		// int ^ int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BITWISE_XOR) * MAX_TYPE + Types.INTEGER:
 			$_comment('int & int');
-			value = buildInteger($_cast('int', left) ^ $_cast('int', right)); break;
+			value := buildInteger($_cast('int', left) ^ $_cast('int', right)); break;
 
 		// int << int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int << int');
 			int1 = $_cast('int', right);
 			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
-			value = buildInteger($_cast('int', left) << int1); break;
+			value := buildInteger($_cast('int', left) << int1); break;
 
 		// int >> int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int >> int');
 			int1 = $_cast('int', right);
 			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
-			value = buildInteger($_cast('int', left) >> int1); break;
+			value := buildInteger($_cast('int', left) >> int1); break;
 
 		// int < int
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 			$_comment('int < int');
-			if ($_cast('int', left) < $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) < $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int <= int
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('int <= int');
-			if ($_cast('int', left) <= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) <= $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 							
 		// float < int
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 			$_comment('float < int');
-			if ($_cast('double', left) < $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) < $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float <= int
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('float <= int');
-			if ($_cast('double', left) <= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) <= $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 							
 		// int < float
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
 			$_comment('int < float');
-			if ($_cast('int', left) < $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) < $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int <= float
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 			$_comment('int <= float');
-			if ($_cast('int', left) <= $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) <= $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float < float
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
 			$_comment('float < float');
-			if ($_cast('double', left) < $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) < $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float <= float
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 			$_comment('float <= float');
-			if ($_cast('double', left) <= $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) <= $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int >= int
 		case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('int >= int');
-			if ($_cast('int', left) >= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) >= $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int > int
 		case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 			$_comment('int > int');
-			if ($_cast('int', left) > $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) > $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float >= int
 		case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('float >= int');
-			if ($_cast('double', left) >= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) >= $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float > int
 		case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.INTEGER:
 			$_comment('float > int');
-			if ($_cast('double', left) > $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) > $_cast('int', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int >= float
 		case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 			$_comment('int >= float');
-			if ($_cast('int', left) >= $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) >= $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// int > float
 		case (Types.INTEGER * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 			$_comment('int > float');
-			if ($_cast('int', left) > $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('int', left) > $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float >= float
 		case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE + Types.FLOAT:
 			$_comment('float >= float');
-			if ($_cast('double', left) >= $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) >= $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// float > float
 		case (Types.FLOAT * MAX_OP + BinaryOps.GREATER_THAN) * MAX_TYPE + Types.FLOAT:
 			$_comment('float > float');
-			if ($_cast('double', left) > $_cast('double', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
+			if ($_cast('double', left) > $_cast('double', right)) value := VALUE_TRUE; else value := VALUE_FALSE; break;
 
 		// string * int
 		case (Types.STRING * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('string * int');
-			value = multiplyString(leftValue, $_cast('string', left), $_cast('int', right)); break;
+			value := multiplyString(leftValue, $_cast('string', left), $_cast('int', right)); break;
 
 		// int * string
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.STRING:
 			$_comment('int * string');
-			value = multiplyString(rightValue, $_cast('string', right), $_cast('int', left)); break;
+			value := multiplyString(rightValue, $_cast('string', right), $_cast('int', left)); break;
 
 		// list * int
 		case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('list * int');
 			// TODO: throw error if int is negative
-			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
+			value := new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
 			break;
 							
 		// int * list
