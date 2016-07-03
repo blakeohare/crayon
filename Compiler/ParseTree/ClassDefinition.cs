@@ -370,5 +370,7 @@ namespace Crayon.ParseTree
 
 			this.memberIdsResolved = true;
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

@@ -84,5 +84,7 @@ namespace Crayon.ParseTree
 		{
 			return new IntegerConstant(token, this.Value, owner);
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

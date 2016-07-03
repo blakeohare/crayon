@@ -62,6 +62,15 @@ namespace Crayon.ParseTree
 			this.IterationExpression = this.IterationExpression.ResolveNames(parser, lookup, imports);
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.IterationExpression.GetAllVariablesReferenced(vars);
+            for (int i = 0; i < this.Code.Length; ++i)
+            {
+                this.Code[i].GetAllVariablesReferenced(vars);
+            }
+        }
+    }
 }

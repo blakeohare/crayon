@@ -125,6 +125,17 @@ namespace Crayon.ParseTree
 			}
 
 			throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            // Don't check the root. This is a function definition, but looks like a variable.
+            // this.Root.GetAllVariablesReferenced(vars);
+
+            foreach (Expression arg in this.Args)
+            {
+                arg.GetAllVariablesReferenced(vars);
+            }
+        }
+    }
 }

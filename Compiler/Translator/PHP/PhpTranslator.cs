@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.Php
@@ -80,6 +80,25 @@ namespace Crayon.Translator.Php
             }
             output.Add(") {\n");
             this.CurrentIndention++;
+
+            HashSet<Variable> variablesUsed = new HashSet<Variable>();
+            foreach (Executable line in functionDef.Code)
+            {
+                line.GetAllVariablesReferenced(variablesUsed);
+            }
+
+            foreach (string variable in variablesUsed
+                .Select<Variable, string>(v => v.Name)
+                .Where<string>(s => s.ToUpper() == s)
+                .Distinct<string>()
+                .OrderBy<string, string>(s => s))
+            {
+                output.Add(this.CurrentTabIndention);
+                output.Add("global $v_");
+                output.Add(variable);
+                output.Add(";\n");
+            }
+
             foreach (Executable line in functionDef.Code)
             {
                 this.Translate(output, line);

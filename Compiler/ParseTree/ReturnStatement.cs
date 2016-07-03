@@ -44,7 +44,12 @@ namespace Crayon.ParseTree
 
 		internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
 		{
-			// no assignments
-		}
-	}
+            // no assignments
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            if (this.Expression != null) this.Expression.GetAllVariablesReferenced(vars);
+        }
+    }
 }

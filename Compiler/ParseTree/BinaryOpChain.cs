@@ -280,6 +280,12 @@ namespace Crayon.ParseTree
 			this.Left = this.Left.ResolveNames(parser, lookup, imports);
 			this.Right = this.Right.ResolveNames(parser, lookup, imports);
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Left.GetAllVariablesReferenced(vars);
+            this.Right.GetAllVariablesReferenced(vars);
+        }
+    }
 }

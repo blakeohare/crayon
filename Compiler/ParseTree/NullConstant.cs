@@ -28,5 +28,7 @@ namespace Crayon.ParseTree
 		{
 			return new NullConstant(token, owner);
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

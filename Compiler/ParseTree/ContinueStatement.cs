@@ -26,5 +26,7 @@ namespace Crayon.ParseTree
 		{
 			// no assignments
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

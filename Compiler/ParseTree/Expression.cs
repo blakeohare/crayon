@@ -32,5 +32,7 @@ namespace Crayon.ParseTree
 			}
 			return null;
 		}
-	}
+
+        internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
+    }
 }

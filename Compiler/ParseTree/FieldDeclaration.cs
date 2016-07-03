@@ -55,5 +55,7 @@ namespace Crayon.ParseTree
 		{
 			varIds.RegisterVariable(this.NameToken.Value);
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

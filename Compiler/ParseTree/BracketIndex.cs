@@ -1,4 +1,6 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class BracketIndex : Expression
 	{
@@ -72,6 +74,12 @@
 			this.Root = this.Root.ResolveNames(parser, lookup, imports);
 			this.Index = this.Index.ResolveNames(parser, lookup, imports);
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Root.GetAllVariablesReferenced(vars);
+            this.Index.GetAllVariablesReferenced(vars);
+        }
+    }
 }

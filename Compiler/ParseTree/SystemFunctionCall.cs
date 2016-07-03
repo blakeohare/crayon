@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -63,6 +64,14 @@ namespace Crayon.ParseTree
 		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			throw new InvalidOperationException(); // translate mode only
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            foreach (Expression ex in this.Args)
+            {
+                ex.GetAllVariablesReferenced(vars);
+            }
+        }
+    }
 }

@@ -41,15 +41,13 @@ namespace Crayon.Translator.Php
 
             List<string> codePhp = new List<string>();
 
-            codePhp.Add("<?php");
-            codePhp.Add("");
+            codePhp.Add("<?php\n\n");
             foreach (string component in finalCode.Keys)
             {
                 this.Translator.Translate(codePhp, finalCode[component]);
                 codePhp.Add(this.Translator.NL);
             }
-            codePhp.Add("");
-            codePhp.Add("?>");
+            codePhp.Add("\n\n?>");
 
             output["crayon.php"] = new FileOutput()
             {

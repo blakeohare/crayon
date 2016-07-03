@@ -1,4 +1,7 @@
-﻿namespace Crayon.ParseTree
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class BaseKeyword : Expression
 	{
@@ -20,5 +23,7 @@
 		{
 			return this;
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

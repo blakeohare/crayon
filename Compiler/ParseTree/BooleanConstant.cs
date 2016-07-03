@@ -31,6 +31,8 @@ namespace Crayon.ParseTree
 		public Expression CloneValue(Token token, Executable owner)
 		{
 			return new BooleanConstant(token, this.Value, owner);
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

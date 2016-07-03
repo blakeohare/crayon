@@ -33,6 +33,8 @@ namespace Crayon.ParseTree
 		internal override void SetLocalIdPass(VariableIdAllocator varIds)
 		{
 			throw new NotImplementedException(); // optimized out
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }
