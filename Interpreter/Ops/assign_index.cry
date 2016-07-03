@@ -21,7 +21,7 @@ if (type == Types.LIST) {
 			return killExecution(stack, pc, "Index is out of range.");
 		}
 
-		$_list_set(list1, i, value);
+		$_list_set_ref(list1, i, value);
 	} else {
 		return killExecution(stack, pc, "List index must be an integer.");
 	}
@@ -45,22 +45,22 @@ if (type == Types.LIST) {
 	}
 	if (keyType == Types.STRING) {
 		if (!$_dictionary_contains(DictImpl$dictImpl.keyStringLookup, stringKey)) {
-			$_dictionary_set(DictImpl$dictImpl.keyStringLookup, stringKey, value2);
+			$_dictionary_set_ref(DictImpl$dictImpl.keyStringLookup, stringKey, value2);
 			DictImpl$dictImpl.size += 1;
 			if (!bool2) { // is empty?
 				DictImpl$dictImpl.keyType = keyType;
 			}
 		}
-		$_dictionary_set(DictImpl$dictImpl.valueStringLookup, stringKey, value);
+		$_dictionary_set_ref(DictImpl$dictImpl.valueStringLookup, stringKey, value);
 	} else {
 		if (!$_dictionary_contains(DictImpl$dictImpl.keyIntLookup, intKey)) {
-			$_dictionary_set(DictImpl$dictImpl.keyIntLookup, intKey, value2);
+			$_dictionary_set_ref(DictImpl$dictImpl.keyIntLookup, intKey, value2);
 			DictImpl$dictImpl.size += 1;
 			if (!bool2) { // is empty?
 				DictImpl$dictImpl.keyType = keyType;
 			}
 		}
-		$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
+		$_dictionary_set_ref(DictImpl$dictImpl.valueIntLookup, intKey, value);
 	}
 } else {
 	return killExecution(stack, pc, getTypeFromId(type) + " type does not support assigning to an index.");

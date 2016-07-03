@@ -24,7 +24,7 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 	return $_list_join_chars(output);
 }
 
-function @type('int') read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
+function @type('int') read_integer(@type('Array<int>') pindex, @type('string') raw, @type('int') length, @type('string') alphaNums) {
 	@type('char') c = $_string_char_at(raw, $_array_get(pindex, 0));
 	@type('int') num = 0;
 	pindex[0] += 1;
@@ -32,19 +32,19 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 		@type('string') value = read_till(pindex, raw, length, $_string_as_char('%'));
 		num = $_string_parse_int(value);
 	} else if (c == $_string_as_char('@')) {
-		num = read_integer(pindex, raw, length);
+		num = read_integer(pindex, raw, length, alphaNums);
 		num *= 62;
-		num += read_integer(pindex, raw, length);
+		num += read_integer(pindex, raw, length, alphaNums);
 	} else if (c == $_string_as_char('#')) {
-		num = read_integer(pindex, raw, length);
+		num = read_integer(pindex, raw, length, alphaNums);
 		num *= 62;
-		num += read_integer(pindex, raw, length);
+		num += read_integer(pindex, raw, length, alphaNums);
 		num *= 62;
-		num += read_integer(pindex, raw, length);
+		num += read_integer(pindex, raw, length, alphaNums);
 	} else if (c == $_string_as_char('^')) {
-		num = -1 * read_integer(pindex, raw, length);
+		num = -1 * read_integer(pindex, raw, length, alphaNums);
 	} else {
-		num = $_string_index_of(ALPHA_NUMS, c);
+		num = $_string_index_of(alphaNums, c);
 		if (num == -1) {
 			// TODO: assert
 		}
@@ -60,22 +60,22 @@ function @type('string') read_string(@type('Array<int>') pindex, @type('string')
 		c = $_string_char_at(raw, $_array_get(pindex, 0));
 		$_array_set(pindex, 0, $_array_get(pindex, 0) + 1);
 		if (c == $_string_as_char('@')) {
-			@type('int') repeat = read_integer(pindex, raw, length);
+			@type('int') repeat = read_integer(pindex, raw, length, alphaNums);
 			@type('string') last = $_list_get(output, $_list_length(output) - 1);
 			while (repeat > 0) {
 				$_list_push(output, last);
 				repeat -= 1;
 			}
 		} else if (c == $_string_as_char('~')) {
-			@type('int') d1 = read_integer(pindex, raw, length);
-			@type('int') d2 = read_integer(pindex, raw, length);
+			@type('int') d1 = read_integer(pindex, raw, length, alphaNums);
+			@type('int') d2 = read_integer(pindex, raw, length, alphaNums);
 			@type('int') charcode = d1 * 62 + d2;
 			$_list_push(output, $_string_from_code(charcode));
 		} else if (c == $_string_as_char('`')) {
-			@type('int') d1 = read_integer(pindex, raw, length);
-			@type('int') d2 = read_integer(pindex, raw, length);
-			@type('int') d3 = read_integer(pindex, raw, length);
-			@type('int') d4 = read_integer(pindex, raw, length);
+			@type('int') d1 = read_integer(pindex, raw, length, alphaNums);
+			@type('int') d2 = read_integer(pindex, raw, length, alphaNums);
+			@type('int') d3 = read_integer(pindex, raw, length, alphaNums);
+			@type('int') d4 = read_integer(pindex, raw, length, alphaNums);
 			@type('int') charcode = ((d1 * 62 + d2) * 62 + d3) * 62 + d4;
 			$_list_push(output, $_string_from_code(charcode));
 		} else if (c == $_string_as_char('%')) {
@@ -98,8 +98,9 @@ function @type('Code') loadByteCode() {
 	if (header != 'CRAYON') {
 		// TODO: assert
 	}
-
-	@type('int') opCount = read_integer(index, raw, length);
+	
+	@type('string') alphaNums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+	@type('int') opCount = read_integer(index, raw, length, alphaNums);
 
 	@type('Array<int>') ops = $_new_array('int', opCount);
 	@type('Array<Array<int>>') iargs = $_new_array('Array<int>', opCount);
@@ -125,12 +126,12 @@ function @type('Code') loadByteCode() {
 				stringPresent = false;
 				$_array_set(index, 0, $_array_get(index, 0) - 1);
 			}
-			argc = read_integer(index, raw, length);
+			argc = read_integer(index, raw, length, alphaNums);
 		}
 
 		iarglist = $_new_array('int', argc - 1);
 		for (j = 0; j < argc; j += 1) {
-			iarg = read_integer(index, raw, length);
+			iarg = read_integer(index, raw, length, alphaNums);
 			if (j == 0) {
 				$_array_set(ops, i, iarg);
 			} else {

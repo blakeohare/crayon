@@ -227,8 +227,8 @@ function @type('DictImpl') createEmptyDictionary(@type('int') type) {
 }
 
 function @type('int') setStringKvpToDict(@type('DictImpl') d, @type('string') k, @type('Value') v) {
-	$_dictionary_set(DictImpl$d.keyStringLookup, k, buildString(k));
-	$_dictionary_set(DictImpl$d.valueStringLookup, k, v);
+	$_dictionary_set_ref(DictImpl$d.keyStringLookup, k, buildString(k));
+	$_dictionary_set_ref(DictImpl$d.valueStringLookup, k, v);
 	DictImpl$d.size = $_dictionary_size(DictImpl$d.keyStringLookup);
 	return 0;
 }
@@ -247,8 +247,8 @@ function @type('Value') buildDictionary(@type('Array<string>') keys, @type('Arra
 	while (i >= 0) {
 		key = $_array_get(keys, i);
 		keyValue = new Value(Types.STRING, key);
-		$_dictionary_set(keyLookup, key, keyValue);
-		$_dictionary_set(valueLookup, key, $_array_get(values, i));
+		$_dictionary_set_ref(keyLookup, key, keyValue);
+		$_dictionary_set_ref(valueLookup, key, $_array_get(values, i));
 		i -= 1;
 	}
 
@@ -407,7 +407,7 @@ function @type('PlatformRelayObject') buildRelayObj(
 function @type('Value') buildCommonString(@type('string') s) {
 	if (!$_dictionary_contains(COMMON_STRINGS, s)) {
 		@type('Value') value := buildString(s);
-		$_dictionary_set(COMMON_STRINGS, s, value);
+		$_dictionary_set_ref(COMMON_STRINGS, s, value);
 	}
 	return $_dictionary_get_guaranteed(COMMON_STRINGS, s);
 }
@@ -511,14 +511,14 @@ function @type('DictImpl') cloneDictionary(@type('DictImpl') original, @type('Di
 
 	for (i = $_array_length(intKeys) - 1; i >= 0; i -= 1) {
 		iKey = $_array_get(intKeys, i);
-		$_dictionary_set(keyIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.keyIntLookup, iKey));
-		$_dictionary_set(valueIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.valueIntLookup, iKey));
+		$_dictionary_set_ref(keyIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.keyIntLookup, iKey));
+		$_dictionary_set_ref(valueIntLookup_clone, iKey, $_dictionary_get_guaranteed(DictImpl$original.valueIntLookup, iKey));
 	}
 
 	for (i = $_array_length(stringKeys) - 1; i >= 0; i -= 1) {
 		sKey = $_array_get(stringKeys, i);
-		$_dictionary_set(keyStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.keyStringLookup, sKey));
-		$_dictionary_set(valueStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.valueStringLookup, sKey));
+		$_dictionary_set_ref(keyStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.keyStringLookup, sKey));
+		$_dictionary_set_ref(valueStringLookup_clone, sKey, $_dictionary_get_guaranteed(DictImpl$original.valueStringLookup, sKey));
 	}
 
 	DictImpl$clone.size = $_dictionary_size(keyStringLookup_clone) + $_dictionary_size(keyIntLookup_clone);

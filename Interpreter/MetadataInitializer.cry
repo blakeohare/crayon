@@ -197,9 +197,9 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 			$_list_set(fieldInitializationCommand, memberId, $_array_get(args, i + 3));
 			t = $_array_get(args, i + 4); // literal ID or -1 for NULL
 			if (t == -1) {
-				$_list_set(fieldInitializationLiteral, memberId, VALUE_NULL);
+				$_list_set_ref(fieldInitializationLiteral, memberId, VALUE_NULL);
 			} else {
-				$_list_set(fieldInitializationLiteral, memberId, $_array_get(ProgramData$p.literalTable, t));
+				$_list_set_ref(fieldInitializationLiteral, memberId, $_array_get(ProgramData$p.literalTable, t));
 			}
 		} else { // method
 			functionId = $_array_get(args, i + 3);

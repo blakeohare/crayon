@@ -25,7 +25,7 @@
 			}
 
 			resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
-			$_dictionary_set(fileInfo, userPath, resourceInfo);
+			$_dictionary_set_ref(fileInfo, userPath, resourceInfo);
 
 			resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
 		}
@@ -39,7 +39,7 @@
 		@type('List<string>') unsortedDirs := $_dictionary_get_guaranteed(filesPerDirectoryBuilder, dir);
 		@type('Array<string>') dirsSorted := $_convert_list_to_array('string', unsortedDirs);
 		dirsSorted := $_sorted_copy_of_string_array(dirsSorted);
-		$_dictionary_set(filesPerDirectorySorted, dir, dirsSorted);
+		$_dictionary_set_ref(filesPerDirectorySorted, dir, dirsSorted);
 	}
 
 	return new ResourceDB(filesPerDirectorySorted, fileInfo);
@@ -57,7 +57,7 @@ function @type('int') resource_manager_populate_directory_lookup(
 		@type('List<string>') files = null;
 		if (!$_dictionary_contains(dirs, pathBuilder)) {
 			files = $_new_list('string');
-			$_dictionary_set(dirs, pathBuilder, files);
+			$_dictionary_set_ref(dirs, pathBuilder, files);
 		} else {
 			files := $_dictionary_get_guaranteed(dirs, pathBuilder);
 		}
