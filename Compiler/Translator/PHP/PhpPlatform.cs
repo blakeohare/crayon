@@ -64,42 +64,86 @@ namespace Crayon.Translator.Php
         {
             List<string> output = new List<string>();
             output.Add("<?php");
-            output.Add("$byteCode = array(");
+
             List<int[]> integers = byteCodeBuffer.ToIntList();
+            List<string> strings = byteCodeBuffer.ToStringList();
             List<string> line = new List<string>();
-            for (int rowIndex = 0; rowIndex < integers.Count; ++rowIndex)
+
+            output.Add("$bc_ops = array(");
+            
+            for (int i = 0; i < integers.Count; i += 30)
             {
-                int[] row = integers[rowIndex];
-                line.Add("array(");
-                for (int i = 0; i < row.Length; ++i)
+                for (int j = 0; j < 30; ++j)
                 {
-                    if (i > 0) line.Add(",");
-                    line.Add(row[i].ToString());
-                }
-                line.Add(")");
-                if (rowIndex + 1 < integers.Count)
-                {
-                    line.Add("),");
-                }
-                else
-                {
-                    line.Add("));");
+                    int index = i + j;
+                    if (index < integers.Count)
+                    {
+                        line.Add(integers[index][0] + ", ");
+                    }
                 }
                 output.Add(string.Join("", line));
                 line.Clear();
             }
-            output.Add("$byteCodeStrings = array();");
-            output.Add("for ($i = count($byteCode); $i > 0; --$i) array_push($byteCodeStrings, null);");
+            output.Add(");");
+
+            output.Add("$e = array();");
+            output.Add("$z = array(0);");
+            output.Add("$o = array(1);");
+            output.Add("$bc_iargs = array(");
+            for (int rowIndex = 0; rowIndex < integers.Count; ++rowIndex)
+            {
+                int[] row = integers[rowIndex];
+                if (row.Length == 1)
+                {
+                    line.Add("$e,");
+                }
+                else if (row.Length == 2 && (row[1] == 0 || row[1] == 1))
+                {
+                    line.Add(row[1] == 0 ? "$z," : "$o,");
+                }
+                else
+                {
+                    line.Add("array(");
+                    for (int i = 1; i < row.Length; ++i)
+                    {
+                        if (i > 1) line.Add(",");
+                        line.Add(row[i].ToString());
+                    }
+                    line.Add("),");
+                }
+                output.Add(string.Join("", line));
+                line.Clear();
+            }
+            output.Add(");");
+            output.Add("$bc_sargs = array();");
+            output.Add("for ($i = count($byteCode); $i > 0; --$i) array_push($bc_ops, null);");
             output.Add("$d = '$';");
-            List<string> strings = byteCodeBuffer.ToStringList();
             for (int i = 0; i < strings.Count; ++i)
             {
                 if (strings[i] != null)
                 {
-                    output.Add("$byteCodeStrings[" + i + "] = " + Util.ConvertStringValueToCode(strings[i]).Replace("$", "$d") + ";");
+                    output.Add("$bc_sargs[" + i + "] = " + Util.ConvertStringValueToCode(strings[i]).Replace("$", "$d") + ";");
                 }
             }
-            output.Add("?>");
+
+            output.AddRange(new string[] {
+                "function &bytecode_get_iargs() {",
+                " global $bc_iargs;",
+                " return $bc_iargs;",
+                "}",
+
+                "function &bytecode_get_sargs() {",
+                " global $bc_iargs;",
+                " return $bc_iargs;",
+                "}",
+
+                "function &bytecode_get_ops() {",
+                " global $bc_ops;",
+                " return $bc_ops;",
+                "}"
+            });
+
+            output.Add("\n?>");
 
             return new FileOutput()
             {

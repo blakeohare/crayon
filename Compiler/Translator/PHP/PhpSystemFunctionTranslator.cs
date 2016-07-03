@@ -78,17 +78,17 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
-            output.Add("pth_bytecode_get_int_args()");
+            output.Add("bytecode_get_iargs()");
         }
 
         protected override void TranslateByteCodeGetOps(List<string> output)
         {
-            output.Add("pth_bytecode_get_ops()");
+            output.Add("bytecode_get_ops()");
         }
 
         protected override void TranslateByteCodeGetStringArgs(List<string> output)
         {
-            output.Add("pth_bytecode_get_string_args()");
+            output.Add("bytecode_get_sargs()");
         }
 
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
