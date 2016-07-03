@@ -97,8 +97,8 @@ namespace Crayon.Translator.CSharp
 
 			this.TranslateExpression(output, target);
 			output.Add(" ");
-			output.Add(assignment.AssignmentOp);
-			output.Add(" ");
+            output.Add(this.GetAssignmentOp(assignment));
+            output.Add(" ");
 			this.TranslateExpression(output, assignment.Value);
 			output.Add(";");
 			output.Add(this.NL);

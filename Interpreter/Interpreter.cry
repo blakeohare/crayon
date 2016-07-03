@@ -1,19 +1,19 @@
 ﻿
 function @omitReturn @type('string') interpret() {
 
-	@type('ProgramData') p = $_get_program_data();
+	@type('ProgramData') p := $_get_program_data();
 
-	@type('StackFrame') stack = ProgramData$p.stackTop;
-	@type('Array<int>') ops = ProgramData$p.ops;
-	@type('Array<Array<int>>') args = ProgramData$p.args;
-	@type('Array<string>') stringArgs = ProgramData$p.stringArgs;
+	@type('StackFrame') stack := ProgramData$p.stackTop;
+	@type('Array<int>') ops := ProgramData$p.ops;
+	@type('Array<Array<int>>') args := ProgramData$p.args;
+	@type('Array<string>') stringArgs := ProgramData$p.stringArgs;
 
-	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
-	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;
-	@type('Array<Value>') literalTable = ProgramData$p.literalTable;
-	@type('Array<string>') identifiers = ProgramData$p.identifiers;
+	@type('Array<ClassInfo>') classTable := ProgramData$p.classTable;
+	@type('Array<FunctionInfo>') functionTable := ProgramData$p.functionTable;
+	@type('Array<Value>') literalTable := ProgramData$p.literalTable;
+	@type('Array<string>') identifiers := ProgramData$p.identifiers;
 
-	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
+	@type('Array<Value>') valueStack := ProgramData$p.valueStack;
 	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
 	@type('int') valueStackCapacity = $_array_length(valueStack);
 
@@ -104,9 +104,9 @@ function @omitReturn @type('string') interpret() {
 	@type('Value') arg9 = null;
 	@type('Value') arg10 = null;
 
-	@type('Array<int>') globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
-	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
-	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
+	@type('Array<int>') globalNameIdToPrimitiveMethodName := ProgramData$p.globalNameIdToPrimitiveMethodName;
+	@type('Array<Dictionary<int, int>>') integerSwitches := ProgramData$p.integerSwitchLookups;
+	@type('Array<Dictionary<string, int>>') stringSwitches := ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
 
@@ -333,14 +333,14 @@ function @type('string') killExecutionWithTokenOverride(
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
+function @type('object') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	@type('ProgramData') p = $_get_program_data();
 	ProgramData$p.stackTop = stack;
 	ProgramData$p.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
 }
 
-function performWorkNuggetPostFrame() {
+function @type('int')  performWorkNuggetPostFrame() {
 
 	/*
 		This array contains multiple messages in one flat array.
@@ -370,9 +370,10 @@ function performWorkNuggetPostFrame() {
 			}
 		}
 	}
+	return 0;
 }
 
-function valueStackIncreaseCapacity() {
+function @type('int') valueStackIncreaseCapacity() {
 	@type('ProgramData') p = $_get_program_data();
 	@type('Array<Value>') stack = ProgramData$p.valueStack;
 	@type('int') oldCapacity = $_array_length(stack);
@@ -381,5 +382,6 @@ function valueStackIncreaseCapacity() {
 	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
 		$_array_set(newStack, i, $_array_get(stack, i));
 	}
-	ProgramData$p.valueStack = newStack;
+	ProgramData$p.valueStack := newStack;
+	return 0;
 }

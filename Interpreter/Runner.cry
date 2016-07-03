@@ -1,5 +1,5 @@
 ﻿
-function main() {
+function @type('int') main() {
 
 	initialize_constant_values();
 	@type('ResourceDB') resources = resource_manager_initialize();
@@ -101,6 +101,7 @@ function main() {
 		));
 
 	runTick();
+	return 0;
 }
 
 function @type('bool') runTick() {

@@ -70,7 +70,7 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 	return "TODO: toString for " + getTypeFromId(type);
 }
 
-function initialize_constant_values() {
+function @type('int') initialize_constant_values() {
 	@type('int') i = 0;
 	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
 	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
@@ -82,6 +82,7 @@ function initialize_constant_values() {
 	}
 	$_array_set(INTEGERS_CACHE, 0, positive_integers);
 	$_array_set(INTEGERS_CACHE, 1, negative_integers);
+	return 0;
 }
 
 function @type('Value') buildInteger(@type('int') num) {
@@ -104,7 +105,7 @@ function @type('Value') buildString(@type('string') s) {
 	return new Value(Types.STRING, s);
 }
 
-function @type('Value') buildListByWrappingInput(list) {
+function @type('Value') buildListByWrappingInput(@type('List<Value>') list) {
 	return new Value(Types.LIST, list);
 }
 

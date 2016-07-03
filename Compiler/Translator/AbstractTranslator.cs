@@ -29,7 +29,14 @@ namespace Crayon.Translator
 			return "v_" + originalName;
 		}
 
-		private int intCounter = 0;
+        public virtual string GetAssignmentOp(Assignment assignment)
+        {
+            string output = assignment.AssignmentOp;
+            if (output == ":=") return "=";
+            return output;
+        }
+
+        private int intCounter = 0;
 		public int GetNextInt()
 		{
 			return ++intCounter;

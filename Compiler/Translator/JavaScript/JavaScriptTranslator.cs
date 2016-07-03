@@ -33,8 +33,8 @@ namespace Crayon.Translator.JavaScript
 			output.Add(this.CurrentTabIndention);
 			this.TranslateExpression(output, assignment.Target);
 			output.Add(" ");
-			output.Add(assignment.AssignmentOp);
-			output.Add(" ");
+            output.Add(this.GetAssignmentOp(assignment));
+            output.Add(" ");
 			this.TranslateExpression(output, assignment.Value);
 			output.Add(";" + this.NL);
 		}
