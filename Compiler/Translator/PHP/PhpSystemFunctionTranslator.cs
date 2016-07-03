@@ -140,7 +140,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, dictionary);
             output.Add("[");
             this.Translator.TranslateExpression(output, key);
-            output.Add("]");
+            output.Add("])");
         }
 
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
@@ -427,6 +427,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, list);
             output.Add(", ");
             this.Translator.TranslateExpression(output, value);
+            output.Add(")");
         }
 
         protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)

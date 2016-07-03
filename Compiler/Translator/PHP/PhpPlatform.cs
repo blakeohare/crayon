@@ -40,6 +40,7 @@ namespace Crayon.Translator.Php
             FileOutput byteCodeFile = this.GenerateByteCodeFile(resourceDatabase.ByteCodeRawData);
             output["bytecode.php"] = byteCodeFile;
 
+            Dictionary<string, string> replacements = new Dictionary<string, string>();
 
             List<string> codePhp = new List<string>();
 
@@ -55,6 +56,18 @@ namespace Crayon.Translator.Php
             {
                 Type = FileOutputType.Text,
                 TextContent = string.Join("", codePhp),
+            };
+
+            output["cryutil.php"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("php-server/cryutil.php"), replacements),
+            };
+
+            output["index.php"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("php-server/index.php"), replacements),
             };
 
             return output;

@@ -396,7 +396,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('list * int');
 			// TODO: throw error if int is negative
-			value := new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
+			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
 			break;
 							
 		// int * list
