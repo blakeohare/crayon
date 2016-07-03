@@ -99,7 +99,8 @@ namespace Crayon
 			replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
 			replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
 			replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
-			replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
+            replacements.Add("IS_BYTECODE_LOADED_DIRECTLY", this.platform.IsByteCodeLoadedDirectly ? "true" : "false");
+            replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
 			replacements.Add("LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT", this.platform.LibraryBigSwitchStatement);
 			return replacements;
 		}

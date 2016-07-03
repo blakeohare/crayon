@@ -76,6 +76,21 @@ namespace Crayon.Translator.Php
             output.Add("TODO_optimize_out()");
         }
 
+        protected override void TranslateByteCodeGetIntArgs(List<string> output)
+        {
+            output.Add("pth_bytecode_get_int_args()");
+        }
+
+        protected override void TranslateByteCodeGetOps(List<string> output)
+        {
+            output.Add("pth_bytecode_get_ops()");
+        }
+
+        protected override void TranslateByteCodeGetStringArgs(List<string> output)
+        {
+            output.Add("pth_bytecode_get_string_args()");
+        }
+
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             this.Translator.TranslateExpression(output, expression);

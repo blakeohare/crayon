@@ -70,7 +70,22 @@ namespace Crayon.Translator.Java
         {
             // Nope
         }
-        
+
+        protected override void TranslateByteCodeGetIntArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetOps(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetStringArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             output.Add("((");

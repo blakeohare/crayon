@@ -83,7 +83,10 @@ namespace Crayon.Translator
                 case "_array_set_ref": VerifyCount(functionCall, 3); TranslateArraySetRef(output, args[0], args[1], args[2]); break;
                 case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
-				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
+                case "_byte_code_get_int_args": VerifyCount(functionCall, 0); TranslateByteCodeGetIntArgs(output); break;
+                case "_byte_code_get_ops": VerifyCount(functionCall, 0); TranslateByteCodeGetOps(output); break;
+                case "_byte_code_get_string_args": VerifyCount(functionCall, 0); TranslateByteCodeGetStringArgs(output); break;
+                case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
 				case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
 				case "_chr": VerifyCount(functionCall, 1); TranslateChr(output, args[0]); break;
@@ -178,7 +181,10 @@ namespace Crayon.Translator
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateAssert(List<string> output, Expression message);
         protected abstract void TranslateBeginFrame(List<string> output);
-		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
+        protected abstract void TranslateByteCodeGetIntArgs(List<string> output);
+        protected abstract void TranslateByteCodeGetOps(List<string> output);
+        protected abstract void TranslateByteCodeGetStringArgs(List<string> output);
+        protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
 		protected abstract void TranslateCharToString(List<string> output, Expression charValue);
 		protected abstract void TranslateChr(List<string> output, Expression asciiValue);

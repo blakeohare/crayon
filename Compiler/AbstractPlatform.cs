@@ -21,7 +21,8 @@ namespace Crayon
 		public abstract bool IsStronglyTyped { get; }
 		public abstract bool ImagesLoadInstantly { get; }
 		public abstract bool IsArraySameAsList { get; }
-		public abstract string PlatformShortId { get; }
+        public virtual bool IsByteCodeLoadedDirectly { get { return false; } }
+        public abstract string PlatformShortId { get; }
 
 		public string LibraryBigSwitchStatement { get; set; }
 

@@ -26,7 +26,9 @@ namespace Crayon.Translator.Php
 
 		public override bool SupportsListClear { get { return false; } }
 
-		public override Dictionary<string, FileOutput> Package(
+        public override bool IsByteCodeLoadedDirectly { get { return true; } }
+
+        public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext,
 			string projectId,
 			Dictionary<string, Executable[]> finalCode,
