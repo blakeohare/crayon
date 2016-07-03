@@ -2,5 +2,5 @@
 // will never be called outside of a method.
 
 import inline "ValueStackCapacityCheck.cry";
-$_array_set(valueStack, valueStackSize, StackFrame$stack.objectContext);
+$_array_set_ref(valueStack, valueStackSize, StackFrame$stack.objectContext);
 valueStackSize += 1;

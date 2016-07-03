@@ -20,13 +20,13 @@ if (StackFrame$stack.returnValueUsed) {
 		valueStackSize = StackFrame$stack.valueStackPopSize;
 		stack = StackFrame$stack.previous;
 		import inline "ValueStackCapacityCheck.cry"; // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
-		$_array_set(valueStack, valueStackSize, VALUE_NULL);
+		$_array_set_ref(valueStack, valueStackSize, VALUE_NULL);
 	} else {
 		value = $_array_get(valueStack, valueStackSize - 1);
 		valueStackSize = StackFrame$stack.valueStackPopSize;
 		stack = StackFrame$stack.previous;
 		// no capacity check needed since the value was already on the stack.
-		$_array_set(valueStack, valueStackSize, value);
+		$_array_set_ref(valueStack, valueStackSize, value);
 	}
 	valueStackSize += 1;
 } else {

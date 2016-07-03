@@ -55,7 +55,7 @@ function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @
 
 	@type('Array<FunctionInfo>') newTable = $_new_array('FunctionInfo', newLength);
 	for (@type('int') i = 0; i < oldLength; i += 1) {
-		$_array_set(newTable, i, $_array_get(oldTable, i));
+		$_array_set_ref(newTable, i, $_array_get(oldTable, i));
 	}
 
 	ProgramData$p.functionTable = newTable;
@@ -110,7 +110,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 
 	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
 	for (i = 0; i < staticFieldCount; i += 1) {
-		$_array_set(staticFields, i, VALUE_NULL);
+		$_array_set_ref(staticFields, i, VALUE_NULL);
 	}
 
 	@type('ClassInfo') classInfo = new ClassInfo(
@@ -130,7 +130,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	
 	@type('Array<ClassInfo>') classTable = getClassTable(p, classId);
 
-	$_array_set(classTable, classId, classInfo);
+	$_array_set_ref(classTable, classId, classInfo);
 
 	@type('List<ClassInfo>') classChain = $_new_list('ClassInfo');
 	$_list_push(classChain, classInfo);
@@ -226,7 +226,7 @@ function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('
 
 	@type('Array<ClassInfo>') newTable = $_new_array('ClassInfo', newLength);
 	for (@type('int') i = oldLength - 1; i >= 0; i -= 1) {
-		$_array_set(newTable, i, $_array_get(oldTable, i));
+		$_array_set_ref(newTable, i, $_array_get(oldTable, i));
 	}
 
 	ProgramData$p.classTable = newTable;
@@ -275,7 +275,7 @@ function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type(
 	@type('Array<int>') newSetIndicator = $_new_array('int', newCapacity);
 
 	for (@type('int') i = 0; i < oldCapacity; i += 1) {
-		$_array_set(newLocals, i, $_array_get(oldLocals, i));
+		$_array_set_ref(newLocals, i, $_array_get(oldLocals, i));
 		$_array_set(newSetIndicator, i, $_array_get(oldSetIndicator, i));
 	}
 

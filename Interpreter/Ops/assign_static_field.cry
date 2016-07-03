@@ -7,7 +7,7 @@ import inline "InvokeStaticConstructor.cry";
 
 if (bool1) {
 	valueStackSize -= 1;
-	$_array_set(
+	$_array_set_ref(
 		ClassInfo$classInfo.staticFields,
 		$_array_get(row, 1),
 		$_array_get(valueStack, valueStackSize));

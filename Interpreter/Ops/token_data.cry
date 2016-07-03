@@ -7,6 +7,6 @@ int3 = $_array_get(row, 3); // File ID
 tokens = $_array_get(tokensByPc, i);
 if (tokens == null) {
 	tokens = $_new_list('Token');
-	$_array_set(tokensByPc, i, tokens);
+	$_array_set_ref(tokensByPc, i, tokens);
 }
 $_list_push(tokens, new Token(int1, int2, int3));

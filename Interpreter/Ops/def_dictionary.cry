@@ -58,5 +58,5 @@ value = new Value(Types.DICTIONARY, new DictImpl(
 	type));
 
 import inline "ValueStackCapacityCheck.cry";
-$_array_set(valueStack, valueStackSize, value);
+$_array_set_ref(valueStack, valueStackSize, value);
 valueStackSize += 1;

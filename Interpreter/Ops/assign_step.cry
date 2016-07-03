@@ -16,7 +16,7 @@ if (Value$value2.type == Types.INSTANCE) {
 		int1 = $_dictionary_get_guaranteed(intIntDict1, nameId); // member ID
 		int2 = $_array_get(ClassInfo$classInfo.functionIds, int1);
 		if (int2 == -1) {
-			$_array_set(ObjectInstance$objInstance1.members, int1, value);
+			$_array_set_ref(ObjectInstance$objInstance1.members, int1, value);
 		} else {
 			return killExecution(stack, pc, "Cannot override a method.");
 		}
@@ -26,6 +26,6 @@ if (Value$value2.type == Types.INSTANCE) {
 }
 
 if ($_array_get(row, 1) == 1) {
-	$_array_set(valueStack, valueStackSize, value);
+	$_array_set_ref(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }

@@ -9,7 +9,7 @@ if (argCount == 0) {
 	if (Value$value2.type == Types.FUNCTION) {
 		primitiveMethodToCoreLibraryFallback = true;
 		functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2); // MAGIC NUMBER: 2
-		$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
+		$_array_set_ref(funcArgs, 1, value); // funcArgs is allocated very big.
 		argCount = 2;
 	} else {
 		return killExecution(stack, pc, "list.sort(get_key_function) requires a function pointer as its argument.");

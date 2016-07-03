@@ -23,11 +23,11 @@ if (int1 < len) {
 		value = buildCommonString($_char_to_string($_string_char_at(string2, int1)));
 	}
 	int3 = localsStackOffset + int2;
-	$_array_set(localsStack, int3, value);
+	$_array_set_ref(localsStack, int3, value);
 	$_array_set(localsStackSet, int3, localsStackSetToken);
 } else {
 	pc += $_array_get(row, 0);
 }
 
 // This feels cheesey, but all other solutions I can think of are cheesier.
-$_array_set(valueStack, valueStackSize - 3, buildInteger(int1 + 1));
+$_array_set_ref(valueStack, valueStackSize - 3, buildInteger(int1 + 1));

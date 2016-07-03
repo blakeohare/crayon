@@ -80,8 +80,8 @@ function @type('int') initialize_constant_values() {
 	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
 		$_array_set(negative_integers, i, new Value(Types.INTEGER, -i));
 	}
-	$_array_set(INTEGERS_CACHE, 0, positive_integers);
-	$_array_set(INTEGERS_CACHE, 1, negative_integers);
+	$_array_set_ref(INTEGERS_CACHE, 0, positive_integers);
+	$_array_set_ref(INTEGERS_CACHE, 1, negative_integers);
 	return 0;
 }
 
@@ -309,14 +309,14 @@ function @type('bool') sortValues(
 				doSwap = numberCompare($_array_get(input, startIndex), $_array_get(input, startIndex + 1));
 			}
 			if (doSwap) {
-				$_array_set(output, startIndex, $_array_get(input, startIndex + 1));
-				$_array_set(output, startIndex + 1, $_array_get(input, startIndex));
+				$_array_set_ref(output, startIndex, $_array_get(input, startIndex + 1));
+				$_array_set_ref(output, startIndex + 1, $_array_get(input, startIndex));
 			} else {
-				$_array_set(output, startIndex, $_array_get(input, startIndex));
-				$_array_set(output, startIndex + 1, $_array_get(input, startIndex + 1));
+				$_array_set_ref(output, startIndex, $_array_get(input, startIndex));
+				$_array_set_ref(output, startIndex + 1, $_array_get(input, startIndex + 1));
 			}
 		} else if (length == 1) {
-			$_array_set(output, startIndex, $_array_get(input, startIndex));
+			$_array_set_ref(output, startIndex, $_array_get(input, startIndex));
 		}
 		return true;
 	}
@@ -330,10 +330,10 @@ function @type('bool') sortValues(
 		for (@type('int') i = startIndex; i < endIndex; i += 1) {
 			item = $_array_get(input, i);
 			if (stringCompare(pivot, item)) {
-				$_array_set(output, endPointer, item);
+				$_array_set_ref(output, endPointer, item);
 				endPointer -= 1;
 			} else {
-				$_array_set(output, startPointer, item);
+				$_array_set_ref(output, startPointer, item);
 				startPointer += 1;
 			}
 		}
@@ -341,10 +341,10 @@ function @type('bool') sortValues(
 		for (@type('int') i = startIndex; i < endIndex; i += 1) {
 			item = $_array_get(input, i);
 			if (numberCompare(pivot, item)) {
-				$_array_set(output, endPointer, item);
+				$_array_set_ref(output, endPointer, item);
 				endPointer -= 1;
 			} else {
-				$_array_set(output, startPointer, item);
+				$_array_set_ref(output, startPointer, item);
 				startPointer += 1;
 			}
 		}

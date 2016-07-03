@@ -7,7 +7,7 @@ value2 = StackFrame$stack.objectContext; // use of 'this' is blocked at compile 
 
 objInstance2 = $_cast('ObjectInstance', Value$value2.internalValue);
 valueStackSize -= 1;
-$_array_set(
+$_array_set_ref(
 	ObjectInstance$objInstance2.members,
 	$_array_get(row, 0),
 	$_array_get(valueStack, valueStackSize));

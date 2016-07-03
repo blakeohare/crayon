@@ -10,6 +10,6 @@ if (valueStackSize + int1 > valueStackCapacity) {
 }
 
 for (i = int1 - 1; i >= 0; i -= 1) {
-	$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, i)));
+	$_array_set_ref(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, i)));
 	valueStackSize += 1;
 }

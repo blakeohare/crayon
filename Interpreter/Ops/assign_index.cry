@@ -68,6 +68,6 @@ if (type == Types.LIST) {
 
 if (bool1) {
 	// No capacity check necessary. Things were already popped off.
-	$_array_set(valueStack, valueStackSize, value);
+	$_array_set_ref(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }

@@ -10,6 +10,6 @@ if (lib_func_error_occurred) {
 	return killExecution(stack, pc, lib_func_error_message);
 } else if ($_array_get(row, 2) == 1) { // output used?
 	import inline "ValueStackCapacityCheck.cry";
-	$_array_set(valueStack, valueStackSize, output);
+	$_array_set_ref(valueStack, valueStackSize, output);
 	valueStackSize += 1;
 }

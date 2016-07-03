@@ -110,15 +110,15 @@ function @omitReturn @type('string') interpret() {
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
 
-	@type('Array<int>') intOutParam = $_new_array('int', 4);
-	@type('Array<string>') stringOutParam = $_new_array('string', 4);
+	@type('Array<int>') intOutParam := $_new_array('int', 4);
+	@type('Array<string>') stringOutParam := $_new_array('string', 4);
 
-	@type('Array<Value>') localsStack = ProgramData$p.localsStack;
-	@type('Array<int>') localsStackSet = ProgramData$p.localsStackSet;
+	@type('Array<Value>') localsStack := ProgramData$p.localsStack;
+	@type('Array<int>') localsStackSet := ProgramData$p.localsStackSet;
 	@type('int') localsStackSetToken = StackFrame$stack.localsStackSetToken;
 	@type('int') localsStackCapacity = $_array_length(localsStack);
 	@type('int') localsStackOffset = StackFrame$stack.localsStackOffset;
-	@type('Array<Value>') funcArgs = ProgramData$p.funcArgs;
+	@type('Array<Value>') funcArgs := ProgramData$p.funcArgs;
 
 	@type('int') pc = StackFrame$stack.pc;
 
@@ -246,11 +246,11 @@ function @type('string') killExecutionWithTokenOverride(
 		@type('Token') firstTokenOverride, 
 		@type('string') message) {
 	@type('string') fullMessage = '';
-	@type('ProgramData') programData = $_get_program_data(); 
-	@type('Array<List<Token>>') allTokens = ProgramData$programData.tokenData;
+	@type('ProgramData') programData := $_get_program_data(); 
+	@type('Array<List<Token>>') allTokens := ProgramData$programData.tokenData;
 	@type('List<Token>') tokenList = null;
 	@type('Token') token = null;
-	@type('Array<string>') allFiles = generateSourceFiles();
+	@type('Array<string>') allFiles := generateSourceFiles();
 	@type('bool') first = true;
 	@type('int') line = 0;
 	@type('int') col = 0;
@@ -260,16 +260,16 @@ function @type('string') killExecutionWithTokenOverride(
 
 	while (stack != null) {
 		pc = StackFrame$stack.pc;
-		stack = StackFrame$stack.previous;
+		stack := StackFrame$stack.previous;
 
 		token = null;
 
-		tokenList = $_array_get(allTokens, pc);
+		tokenList := $_array_get(allTokens, pc);
 		if (tokenList != null) {
-			token = $_list_get(tokenList, 0);
+			token := $_list_get(tokenList, 0);
 		}
 		if (first && firstTokenOverride != null) {
-			token = firstTokenOverride;
+			token := firstTokenOverride;
 		}
 
 		if (token != null) {
@@ -278,7 +278,7 @@ function @type('string') killExecutionWithTokenOverride(
 			fileId = Token$token.fileId;
 			if (fileId < $_array_length(allFiles)) {
 				@type('string') fileData = $_array_get(allFiles, fileId);
-				@type('Array<string>') lines = $_string_split(fileData, '\n');
+				@type('Array<string>') lines := $_string_split(fileData, '\n');
 				@type('string') filename = $_array_get(lines, 0);
 				@type('string') linevalue = $_array_get(lines, line + 1);
 				fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
@@ -334,8 +334,8 @@ function @type('string') killExecutionWithTokenOverride(
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
 function @type('object') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
-	@type('ProgramData') p = $_get_program_data();
-	ProgramData$p.stackTop = stack;
+	@type('ProgramData') p := $_get_program_data();
+	ProgramData$p.stackTop := stack;
 	ProgramData$p.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
 }
@@ -347,7 +347,7 @@ function @type('int')  performWorkNuggetPostFrame() {
 		The first item in the array is an integer indicating the number of total messages.
 		Each message type has a set number of values. The first value is always the AsyncMessageType enum value.
 	*/
-	@type('Array<object>') messages = $_async_message_queue_pump();
+	@type('Array<object>') messages := $_async_message_queue_pump();
 
 	if (messages != null) {
 		@type('int') index = 1;
@@ -374,13 +374,13 @@ function @type('int')  performWorkNuggetPostFrame() {
 }
 
 function @type('int') valueStackIncreaseCapacity() {
-	@type('ProgramData') p = $_get_program_data();
-	@type('Array<Value>') stack = ProgramData$p.valueStack;
+	@type('ProgramData') p := $_get_program_data();
+	@type('Array<Value>') stack := ProgramData$p.valueStack;
 	@type('int') oldCapacity = $_array_length(stack);
 	@type('int') newCapacity = oldCapacity * 2;
 	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
 	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
-		$_array_set(newStack, i, $_array_get(stack, i));
+		$_array_set_ref(newStack, i, $_array_get(stack, i));
 	}
 	ProgramData$p.valueStack := newStack;
 	return 0;

@@ -50,6 +50,15 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, value);
         }
 
+        protected override void TranslateArraySetRef(List<string> output, Expression list, Expression index, Expression value)
+        {
+            this.Translator.TranslateExpression(output, list);
+            output.Add("[");
+            this.Translator.TranslateExpression(output, index);
+            output.Add("] = &");
+            this.Translator.TranslateExpression(output, value);
+        }
+
         protected override void TranslateAssert(List<string> output, Expression message)
         {
             output.Add("pth_assert(");

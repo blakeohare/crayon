@@ -1,4 +1,4 @@
 ﻿
 import inline "ValueStackCapacityCheck.cry";
-$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, 0)));
+$_array_set_ref(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, 0)));
 valueStackSize += 1;

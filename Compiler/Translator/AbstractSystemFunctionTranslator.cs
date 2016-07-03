@@ -80,7 +80,8 @@ namespace Crayon.Translator
 				case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
 				case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
 				case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
-				case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
+                case "_array_set_ref": VerifyCount(functionCall, 3); TranslateArraySetRef(output, args[0], args[1], args[2]); break;
+                case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
 				case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
 				case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
 				case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
@@ -173,7 +174,7 @@ namespace Crayon.Translator
 		protected abstract void TranslateArrayGet(List<string> output, Expression list, Expression index);
 		protected abstract void TranslateArrayLength(List<string> output, Expression list);
 		protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
-		protected abstract void TranslateAssert(List<string> output, Expression message);
+        protected abstract void TranslateAssert(List<string> output, Expression message);
         protected abstract void TranslateBeginFrame(List<string> output);
 		protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
 		protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
@@ -286,5 +287,10 @@ namespace Crayon.Translator
 				throw new ParserException(functionCall.FirstToken, "Wrong number of args. Expected: " + argCount);
 			}
 		}
-	}
+
+        protected virtual void TranslateArraySetRef(List<string> output, Expression list, Expression index, Expression value)
+        {
+            this.TranslateArraySet(output, list, index, value);
+        }
+    }
 }

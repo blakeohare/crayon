@@ -12,7 +12,7 @@ if (Value$value2.type != Types.FUNCTION) {
 
 primitiveMethodToCoreLibraryFallback = true;
 functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 1); // MAGIC NUMBER: 1
-$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
+$_array_set_ref(funcArgs, 1, value); // funcArgs is allocated very big.
 argCount = 2;
 
 output = null; // This is required. Triggers function fallback.
