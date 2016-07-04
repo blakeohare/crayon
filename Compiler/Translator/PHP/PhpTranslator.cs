@@ -110,6 +110,30 @@ namespace Crayon.Translator.Php
             output.Add("}\n");
         }
 
+        public void ArgSafeTranslateExpression(List<string> output, Expression expression)
+        {
+            if (expression is NullConstant)
+            {
+                output.Add("$nullhack");
+            }
+            else
+            {
+                List<string> buffer = new List<string>();
+                this.TranslateExpression(buffer, expression);
+                string value = string.Join("", buffer);
+                if (value.StartsWith("array(") && value.EndsWith(")"))
+                {
+                    output.Add("array_hack(");
+                    output.Add(value);
+                    output.Add(")");
+                }
+                else
+                {
+                    output.Add(value);
+                }
+            }
+        }
+
         protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
         {
             Variable func = (Variable)functionCall.Root;
@@ -118,15 +142,7 @@ namespace Crayon.Translator.Php
             for (int i = 0; i < functionCall.Args.Length; ++i)
             {
                 if (i > 0) output.Add(", ");
-                Expression arg = functionCall.Args[i];
-                if (arg is NullConstant)
-                {
-                    output.Add("$nullhack");
-                }
-                else
-                {
-                    TranslateExpression(output, functionCall.Args[i]);
-                }
+                this.ArgSafeTranslateExpression(output, functionCall.Args[i]);
             }
             output.Add(")");
         }

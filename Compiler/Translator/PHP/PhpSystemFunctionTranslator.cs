@@ -6,6 +6,8 @@ namespace Crayon.Translator.Php
 {
     internal class PhpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
+        private PhpTranslator PhpTranslator { get { return (PhpTranslator) this.Translator; } }
+
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("TODO_optimize_out()");
@@ -154,14 +156,14 @@ namespace Crayon.Translator.Php
         protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
         {
             output.Add("pth_dictionary_get_keys(");
-            this.Translator.TranslateExpression(output, dictionary);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, dictionary);
             output.Add(")");
         }
 
         protected override void TranslateDictionaryGetValues(List<string> output, Expression dictionary)
         {
             output.Add("pth_dictionary_get_values(");
-            this.Translator.TranslateExpression(output, dictionary);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, dictionary);
             output.Add(")");
         }
 
@@ -344,7 +346,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateIsValidInteger(List<string> output, Expression number)
         {
             output.Add("pth_is_valid_integer(");
-            this.Translator.TranslateExpression(output, number);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, number);
             output.Add(")");
         }
 
@@ -442,7 +444,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateListReverseInPlace(List<string> output, Expression list)
         {
             output.Add("pth_list_reverse(");
-            this.Translator.TranslateExpression(output, list);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, list);
             output.Add(")");
         }
 
@@ -465,16 +467,16 @@ namespace Crayon.Translator.Php
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("pth_multiply_list(");
-            this.Translator.TranslateExpression(output, list);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, list);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, num);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, num);
             output.Add(")");
         }
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
             output.Add("pth_new_array(");
-            this.Translator.TranslateExpression(output, size);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, size);
             output.Add(")");
         }
 
@@ -491,7 +493,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
         {
             output.Add("pth_new_array(");
-            this.Translator.TranslateExpression(output, length);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, length);
             output.Add(")");
         }
 
@@ -505,9 +507,9 @@ namespace Crayon.Translator.Php
         protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
         {
             output.Add("pth_parse_float(");
-            this.Translator.TranslateExpression(output, outParam);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, outParam);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, rawString);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, rawString);
             output.Add(")");
         }
 
@@ -521,7 +523,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateParseJson(List<string> output, Expression rawString)
         {
             output.Add("pth_parse_json(");
-            this.Translator.TranslateExpression(output, rawString);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, rawString);
             output.Add(")");
         }
 
@@ -563,7 +565,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateSetProgramData(List<string> output, Expression programData)
         {
             output.Add("pth_set_program_data(");
-            this.Translator.TranslateExpression(output, programData);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, programData);
             output.Add(")");
         }
 
@@ -580,14 +582,14 @@ namespace Crayon.Translator.Php
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             output.Add("pth_sorted_copy_ints(");
-            this.Translator.TranslateExpression(output, list);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, list);
             output.Add(")");
         }
 
         protected override void TranslateSortedCopyOfStringArray(List<string> output, Expression list)
         {
             output.Add("pth_sorted_copy_strings(");
-            this.Translator.TranslateExpression(output, list);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, list);
             output.Add(")");
         }
 
@@ -655,18 +657,18 @@ namespace Crayon.Translator.Php
         protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
         {
             output.Add("pth_string_contains(");
-            this.Translator.TranslateExpression(output, haystack);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, haystack);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, needle);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, needle);
             output.Add(")");
         }
 
         protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
             output.Add("pth_string_ends_with(");
-            this.Translator.TranslateExpression(output, stringExpr);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, stringExpr);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, findMe);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, findMe);
             output.Add(")");
         }
 
@@ -689,9 +691,9 @@ namespace Crayon.Translator.Php
         protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
         {
             output.Add("pth_string_index_of(");
-            this.Translator.TranslateExpression(output, haystack);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, haystack);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, needle);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, needle);
             output.Add(")");
         }
 
@@ -754,9 +756,9 @@ namespace Crayon.Translator.Php
         protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
             output.Add("pth_string_starts_with(");
-            this.Translator.TranslateExpression(output, stringExpr);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, stringExpr);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, findMe);
+            this.PhpTranslator.ArgSafeTranslateExpression(output, findMe);
             output.Add(")");
         }
 
