@@ -18,13 +18,11 @@
   }
   
   $pth_program_data = null;
-  function pth_set_program_data(&$pd) {
-    global $pth_program_data;
-    $pth_program_data = &$pd;
+  function pth_setProgramData(&$pd) {
+    $GLOBALS['pth_program_data'] = &$pd;
   }
   
-  function &pth_getprogramdata() {
-    global $pth_program_data;
-    return $pth_program_data;
+  function &pth_getProgramData() {
+    return $GLOBALS['pth_program_data'];
   }
 ?>

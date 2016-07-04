@@ -564,7 +564,7 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateSetProgramData(List<string> output, Expression programData)
         {
-            output.Add("pth_set_program_data(");
+            output.Add("pth_setProgramData(");
             this.PhpTranslator.ArgSafeTranslateExpression(output, programData);
             output.Add(")");
         }

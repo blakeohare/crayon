@@ -146,8 +146,8 @@ namespace Crayon.Translator.Php
                 "}",
 
                 "function &bytecode_get_sargs() {",
-                " global $bc_iargs;",
-                " return $bc_iargs;",
+                " global $bc_sargs;",
+                " return $bc_sargs;",
                 "}",
 
                 "function &bytecode_get_ops() {",
