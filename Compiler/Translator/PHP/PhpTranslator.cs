@@ -98,6 +98,8 @@ namespace Crayon.Translator.Php
                 output.Add(variable);
                 output.Add(";\n");
             }
+            output.Add(this.CurrentTabIndention);
+            output.Add("global $nullhack;\n");
 
             foreach (Executable line in functionDef.Code)
             {
@@ -106,6 +108,27 @@ namespace Crayon.Translator.Php
             this.CurrentIndention--;
             output.Add(this.CurrentTabIndention);
             output.Add("}\n");
+        }
+
+        protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
+        {
+            Variable func = (Variable)functionCall.Root;
+            output.Add(this.GetVariableName(func.Name));
+            output.Add("(");
+            for (int i = 0; i < functionCall.Args.Length; ++i)
+            {
+                if (i > 0) output.Add(", ");
+                Expression arg = functionCall.Args[i];
+                if (arg is NullConstant)
+                {
+                    output.Add("$nullhack");
+                }
+                else
+                {
+                    TranslateExpression(output, functionCall.Args[i]);
+                }
+            }
+            output.Add(")");
         }
 
         protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
