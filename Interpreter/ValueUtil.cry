@@ -60,7 +60,7 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 				if (i > 0) output += ', ';
 				else output += ' ';
 				stringKey = $_array_get(stringKeys, i);
-				$_string__append(output, $_string_concat(stringKey, ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey))));
+				$_string_append(output, $_string_concat(stringKey, ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey))));
 			}
 		}
 		output += ' }';
