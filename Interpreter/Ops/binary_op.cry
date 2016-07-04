@@ -407,7 +407,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 
 		default:
 			$_comment('unrecognized op');
-			return killExecution(stack, pc, "The '" + getBinaryOpFromId($_array_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftValue.type) + " and " + getTypeFromId(Value$rightValue.type));
+			return killExecution(stack, pc, $_string_concat("The '", getBinaryOpFromId($_array_get(row, 0)), "' operator is not supported for these types: ", getTypeFromId(Value$leftValue.type), " and ", getTypeFromId(Value$rightValue.type)));
 			break;
 	}
 }

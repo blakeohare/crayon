@@ -281,7 +281,7 @@ function @type('string') killExecutionWithTokenOverride(
 				@type('Array<string>') lines := $_string_split(fileData, '\n');
 				@type('string') filename = $_array_get(lines, 0);
 				@type('string') linevalue = $_array_get(lines, line + 1);
-				fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
+				fullMessage = $_string_concat(filename, ", Line: ", $_string_cast_weak(line + 1), ", Col: ", $_string_cast_weak(col + 1), "\n", fullMessage);
 				if (first) {
 					@type('string') linedisplay = '';
 					@type('string') arrowdisplay = '';
@@ -297,19 +297,19 @@ function @type('string') killExecutionWithTokenOverride(
 							}
 						} else {
 							if (col == 0) {
-								arrowdisplay += '^';
-								linedisplay += c;
+								$_string_append(arrowdisplay, '^');
+								$_string_append(linedisplay, c);
 							} else if (c == $_string_as_char('\t')) {
-								arrowdisplay += '    ';
-								linedisplay += '    ';
+								$_string_append(arrowdisplay, '    ');
+								$_string_append(linedisplay, '    ');
 							} else {
-								arrowdisplay += ' ';
-								linedisplay += c;
+								$_string_append(arrowdisplay, ' ');
+								$_string_append(linedisplay, c);
 							}
 							col -= 1;
 						}
 					}
-					fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+					$_string_append(fullMessage, $_string_concat("\n  ", message, "\n\n", linedisplay, "\n", arrowdisplay));
 				}
 			} else {
 				token = null; // execution killed before file data was loaded
@@ -317,16 +317,16 @@ function @type('string') killExecutionWithTokenOverride(
 		}
 
 		if (token == null) {
-			fullMessage = "[No Stack Info]\n" + fullMessage;
+			fullMessage = $_string_concat("[No Stack Info]\n", fullMessage);
 			if (first) {
-				fullMessage += "[No Stack Info]\n  " + message + "\n";
+				$_string_append(fullMessage, $_string_concat("[No Stack Info]\n  ", message, "\n"));
 			}
 		}
 
 		first = false;
 		token = null;
 	}
-	return "Error:\n" + fullMessage;
+	return $_string_concat("Error:\n", fullMessage);
 }
 
 // This saves the state of the interpreter so that it's ready to have

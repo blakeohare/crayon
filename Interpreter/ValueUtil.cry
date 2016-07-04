@@ -35,7 +35,7 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		@type('ClassInfo') classInfo := $_array_get(ProgramData$pd.classTable, classId);
 		@type('int') nameId = ClassInfo$classInfo.nameId;
 		@type('string') className = $_array_get(ProgramData$pd.identifiers, nameId);
-		return "Instance<" + className + "#" + $_string_cast_strong(ptr) + ">";
+		return $_string_concat("Instance<", className, "#", $_string_cast_strong(ptr), ">");
 	}
 	if (type == Types.DICTIONARY) {
 		// This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
@@ -51,7 +51,7 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 				if (i > 0) output += ', ';
 				else output += ' ';
 				intKey = $_array_get(intKeys, i);
-				output += $_string_cast_weak(intKey) + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey));
+				$_string_append(output, $_string_concat($_string_cast_weak(intKey), ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey))));
 			}
 		} else {
 			@type('Array<string>') stringKeys := $_dictionary_get_keys('string', DictImpl$internalDict.keyStringLookup);
@@ -60,7 +60,7 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 				if (i > 0) output += ', ';
 				else output += ' ';
 				stringKey = $_array_get(stringKeys, i);
-				output += stringKey + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey));
+				$_string__append(output, $_string_concat(stringKey, ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey))));
 			}
 		}
 		output += ' }';

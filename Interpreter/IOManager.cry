@@ -144,10 +144,10 @@ function @type('int') ioPathFixer(
 		if (isUserDataPath) {
 			if ($_is_javascript()) { }
 			else {
-				absoluteExpandedPath = $_app_data_root() + '/' + slashyPath;
+				absoluteExpandedPath = $_string_concat($_app_data_root(), '/', slashyPath);
 			}
 		} else {
-			absoluteExpandedPath = $_io_current_directory() + '/' + slashyPath;
+			absoluteExpandedPath = $_string_concat($_io_current_directory(), '/', slashyPath);
 		}
 	}
 

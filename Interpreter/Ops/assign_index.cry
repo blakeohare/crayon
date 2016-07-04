@@ -63,7 +63,7 @@ if (type == Types.LIST) {
 		$_dictionary_set_ref(DictImpl$dictImpl.valueIntLookup, intKey, value);
 	}
 } else {
-	return killExecution(stack, pc, getTypeFromId(type) + " type does not support assigning to an index.");
+	return killExecution(stack, pc, $_string_concat(getTypeFromId(type), " type does not support assigning to an index."));
 }
 
 if (bool1) {

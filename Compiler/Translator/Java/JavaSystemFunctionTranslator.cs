@@ -505,6 +505,13 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
+        protected override void TranslateStringAppend(List<string> output, Expression target, Expression valueToAppend)
+        {
+            this.Translator.TranslateExpression(output, target);
+            output.Add(" += ");
+            this.Translator.TranslateExpression(output, valueToAppend);
+        }
+
         protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
         {
             char c = stringConstant.Value[0];
@@ -550,6 +557,15 @@ namespace Crayon.Translator.Java
             output.Add(".compareTo(");
             this.Translator.TranslateExpression(output, b);
             output.Add(")");
+        }
+
+        protected override void TranslateStringConcat(List<string> output, Expression[] values)
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                if (i > 0) output.Add(" + ");
+                this.Translator.TranslateExpression(output, values[i]);
+            }
         }
 
         protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)

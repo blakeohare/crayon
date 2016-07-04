@@ -144,11 +144,13 @@ namespace Crayon.Translator
 				case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
                 case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
                 case "_sorted_copy_of_string_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfStringArray(output, args[0]); break;
+                case "_string_append": VerifyCount(functionCall, 2); TranslateStringAppend(output, args[0], args[1]); break;
                 case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
 				case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
 				case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
 				case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
 				case "_string_compare": VerifyCount(functionCall, 2); TranslateStringCompare(output, args[0], args[1]); break;
+                case "_string_concat": VerifyCountAtLeast(functionCall, 2); TranslateStringConcat(output, args); break;
 				case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
                 case "_string_endswith": VerifyCount(functionCall, 2); TranslateStringEndsWith(output, args[0], args[1]); break;
 				case "_string_equals": VerifyCount(functionCall, 2); TranslateStringEquals(output, args[0], args[1]); break;
@@ -265,9 +267,11 @@ namespace Crayon.Translator
 		protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);
 		protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
-		protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
+        protected abstract void TranslateStringAppend(List<string> output, Expression target, Expression valueToAppend);
+        protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
 		protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
 		protected abstract void TranslateStringCompare(List<string> output, Expression a, Expression b);
+        protected abstract void TranslateStringConcat(List<string> output, Expression[] values);
 		protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);
 		protected abstract void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe);
 		protected abstract void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b);
@@ -287,6 +291,14 @@ namespace Crayon.Translator
 		protected abstract void TranslateUnregisterTicker(List<string> output);
 		protected abstract void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator);
 		protected abstract void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator);
+
+        private void VerifyCountAtLeast(SystemFunctionCall functionCall, int minArgCount)
+        {
+            if (functionCall.Args.Length < minArgCount)
+            {
+                throw new ParserException(functionCall.FirstToken, "Not enough args. Expected at least " + minArgCount);
+            }
+        }
 
 		private void VerifyCount(SystemFunctionCall functionCall, int argCount)
 		{

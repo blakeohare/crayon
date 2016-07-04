@@ -58,7 +58,7 @@ if (Value$value.type == Types.STRING) {
 	list1 := $_cast('List<Value>', Value$value.internalValue);
 	int4 = $_list_length(list1);
 } else {
-	return killExecution(stack, pc, "Cannot apply slicing to " + getTypeFromId(Value$value.type) + ". Must be string or list.");
+	return killExecution(stack, pc, $_string_concat("Cannot apply slicing to ", getTypeFromId(Value$value.type), ". Must be string or list."));
 }
 
 // Something is wrong. But we want to display an error of the first item that is wrong (stack is backwards) so go through
@@ -70,13 +70,13 @@ if (int5 >= 2) {
 		string1 = "List";
 	}
 	if (int5 == 3) {
-		string1 += "slice indexes must be integers. Found ";
-		if (arg1 != null && Value$arg1.type != Types.INTEGER) return killExecution(stack, pc, string1 + getTypeFromId(Value$arg1.type) + " for begin index.");
-		if (arg2 != null && Value$arg2.type != Types.INTEGER) return killExecution(stack, pc, string1 + getTypeFromId(Value$arg2.type) + " for end index.");
-		if (arg3 != null && Value$arg3.type != Types.INTEGER) return killExecution(stack, pc, string1 + getTypeFromId(Value$arg3.type) + " for step amount.");
+		$_string_append(string1, "slice indexes must be integers. Found ");
+		if (arg1 != null && Value$arg1.type != Types.INTEGER) return killExecution(stack, pc, $_string_concat(string1, getTypeFromId(Value$arg1.type), " for begin index."));
+		if (arg2 != null && Value$arg2.type != Types.INTEGER) return killExecution(stack, pc, $_string_concat(string1, getTypeFromId(Value$arg2.type), " for end index."));
+		if (arg3 != null && Value$arg3.type != Types.INTEGER) return killExecution(stack, pc, $_string_concat(string1, getTypeFromId(Value$arg3.type), " for step amount."));
 		return killExecution(stack, pc, "Invalid slice arguments."); // this shouldn't happen.
 	} else { // int5 == 2
-		return killExecution(stack, pc, string1 + " slice step cannot be 0.");
+		return killExecution(stack, pc, $_string_concat(string1, " slice step cannot be 0."));
 	}
 }
 
@@ -143,12 +143,12 @@ if (int5 == 1) {
 		string1 = "List";
 	}
 	if (int5 == 3) {
-		string1 += " slice begin index is out of range.";
+		$_string_append(string1, " slice begin index is out of range.");
 	} else { // int5 == 4
 		if (bool1) {
-			string1 += " slice begin index must occur before the end index when step is positive.";
+			$_string_append(string1, " slice begin index must occur before the end index when step is positive.");
 		} else {
-			string1 += " slice begin index must occur after the end index when the step is negative.";
+			$_string_append(string1, " slice begin index must occur after the end index when the step is negative.");
 		}
 		return killExecution(stack, pc, string1);
 	}
