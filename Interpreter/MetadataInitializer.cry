@@ -15,7 +15,7 @@
 		$_array_set(pcOffsetsForOptionalArgs, i + 1, $_array_get(args, 9 + i));
 	}
 
-	@type('Array<FunctionInfo>') functionTable = getFunctionTable(p, functionId);
+	@type('Array<FunctionInfo>') functionTable := getFunctionTable(p, functionId);
 	$_array_set(functionTable, functionId, new FunctionInfo(
 		functionId,
 		nameId,
@@ -45,7 +45,7 @@
 }
 
 function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @type('int') functionId) {
-	@type('Array<FunctionInfo>') oldTable = ProgramData$p.functionTable;
+	@type('Array<FunctionInfo>') oldTable := ProgramData$p.functionTable;
 	@type('int') oldLength = $_array_length(oldTable);
 
 	if (functionId < oldLength) return oldTable;
@@ -58,7 +58,7 @@ function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @
 		$_array_set_ref(newTable, i, $_array_get(oldTable, i));
 	}
 
-	ProgramData$p.functionTable = newTable;
+	ProgramData$p.functionTable := newTable;
 	return newTable;
 }
 
@@ -128,7 +128,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		null, // Literal starting value by member ID
 		globalNameIdToMemberId);
 	
-	@type('Array<ClassInfo>') classTable = getClassTable(p, classId);
+	@type('Array<ClassInfo>') classTable := getClassTable(p, classId);
 
 	$_array_set_ref(classTable, classId, classInfo);
 
@@ -136,14 +136,14 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	$_list_push(classChain, classInfo);
 	@type('int') classIdWalker = baseClassId;
 	while (classIdWalker != -1) {
-		@type('ClassInfo') walkerClass = $_array_get(classTable, classIdWalker);
+		@type('ClassInfo') walkerClass := $_array_get(classTable, classIdWalker);
 		$_list_push(classChain, walkerClass);
 		classIdWalker = ClassInfo$walkerClass.baseClassId;
 	}
 
 	@type('ClassInfo') baseClass = null;
 	if (baseClassId != -1) {
-		baseClass = $_list_get(classChain, 1);
+		baseClass := $_list_get(classChain, 1);
 	}
 
 	// create the field initializer PC list
@@ -152,7 +152,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		$_list_push(fieldInitializerPcs, pc);
 	}
 	if (baseClass != null) {
-		@type('Array<int>') baseFieldInitializerPcs = ClassInfo$baseClass.fieldInitializerPcs;
+		@type('Array<int>') baseFieldInitializerPcs := ClassInfo$baseClass.fieldInitializerPcs;
 		for (i = 0; i < $_array_length(baseFieldInitializerPcs); i += 1) {
 			$_list_push(fieldInitializerPcs, $_array_get(baseFieldInitializerPcs, i));
 		}
@@ -176,7 +176,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 			$_list_push(fieldInitializationLiteral, $_array_get(ClassInfo$baseClass.fieldInitializationLiteral, i));
 		}
 
-		@type('Array<int>') keys = $_dictionary_get_keys('int', ClassInfo$baseClass.globalIdToMemberId);
+		@type('Array<int>') keys := $_dictionary_get_keys('int', ClassInfo$baseClass.globalIdToMemberId);
 		for (i = 0; i < $_array_length(keys); i += 1) {
 			t = $_array_get(keys, i);
 			$_dictionary_set(globalNameIdToMemberId, t, $_dictionary_get_guaranteed(ClassInfo$baseClass.globalIdToMemberId, t));
@@ -207,9 +207,9 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		}
 	}
 
-	ClassInfo$classInfo.functionIds = $_convert_list_to_array('int', functionIds);
-	ClassInfo$classInfo.fieldInitializationCommand = $_convert_list_to_array('int', fieldInitializationCommand);
-	ClassInfo$classInfo.fieldInitializationLiteral = $_convert_list_to_array('Value', fieldInitializationLiteral);
+	ClassInfo$classInfo.functionIds := $_convert_list_to_array('int', functionIds);
+	ClassInfo$classInfo.fieldInitializationCommand := $_convert_list_to_array('int', fieldInitializationCommand);
+	ClassInfo$classInfo.fieldInitializationLiteral := $_convert_list_to_array('Value', fieldInitializationLiteral);
 	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
 
 	return pcJumpAfterDone;

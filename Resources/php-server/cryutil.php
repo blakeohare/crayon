@@ -25,4 +25,22 @@
   function &pth_getProgramData() {
     return $GLOBALS['pth_program_data'];
   }
+  
+  function pth_list_reverse(&$list) {
+    $length = count($list);
+    for ($i = intval($length / 2) - 1; $i >= 0; --$i) {
+      $j = $length - $i;
+      $refLeft = is_array($list[$i]);
+      $refRight = is_array($list[$j]);
+      if ($refLeft) $t = &$list[$i]; else $t = $list[$i];
+      if ($refRight) $list[$i] = &$list[$j]; else $list[$i] = $list[$j];
+      if ($refLeft) $list[$j] = &$t; else $list[$j] = $t;
+    }
+  }
+  
+  function pth_getHttpRequest(&$stringOut) {
+    $stringOut[0] = $_SERVER['REQUEST_METHOD'];
+    $stringOut[1] = $_SERVER['REQUEST_URI'];
+    $stringOut[2] = $_SERVER['REMOTE_HOST'];
+  }
 ?>

@@ -10,7 +10,7 @@
 import inline "FrameworkFunctions/1_arg.cry";
 
 $_lib_httpserver_getRequest(stringOutParam);
-list1 = $_cast('List<Value>', Value$arg1.internalValue);
+list1 := $_cast('List<Value>', Value$arg1.internalValue);
 $_list_push(list1, buildString($_array_get(stringOutParam, 0)));
 $_list_push(list1, buildString($_array_get(stringOutParam, 1)));
 $_list_push(list1, buildString($_array_get(stringOutParam, 2)));

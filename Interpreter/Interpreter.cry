@@ -333,14 +333,15 @@ function @type('string') killExecutionWithTokenOverride(
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function @type('object') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
+function @type('int') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	@type('ProgramData') p := $_get_program_data();
 	ProgramData$p.stackTop := stack;
 	ProgramData$p.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
+	return 0;
 }
 
-function @type('int')  performWorkNuggetPostFrame() {
+function @type('int') performWorkNuggetPostFrame() {
 
 	/*
 		This array contains multiple messages in one flat array.
