@@ -106,7 +106,6 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		staticInitializationState = 2;
 	}
 	@type('int') staticFieldCount = $_array_get(args, 6); // just static fields. no static methods. those function IDs are resolved inline at compile time
-	@type('Dictionary<int, int>') globalNameIdToMemberId = $_new_dictionary('int', 'int');
 
 	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
 	for (i = 0; i < staticFieldCount; i += 1) {
@@ -126,7 +125,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		null, // Array of member ID -> function IDs (with -1 fallback)
 		null, // Field initialization command by member ID
 		null, // Literal starting value by member ID
-		globalNameIdToMemberId);
+		null); // Global nameID -> member ID
 	
 	@type('Array<ClassInfo>') classTable := getClassTable(p, classId);
 
@@ -167,6 +166,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	@type('List<int>') functionIds = $_new_list('int');
 	@type('List<int>') fieldInitializationCommand = $_new_list('int');
 	@type('List<Value>') fieldInitializationLiteral = $_new_list('Value');
+	@type('Dictionary<int, int>') globalNameIdToMemberId = $_new_dictionary('int', 'int');
 
 	// copy from base class
 	if (baseClass != null) {
@@ -207,16 +207,17 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		}
 	}
 
-	ClassInfo$classInfo.functionIds := $_convert_list_to_array('int', functionIds);
-	ClassInfo$classInfo.fieldInitializationCommand := $_convert_list_to_array('int', fieldInitializationCommand);
-	ClassInfo$classInfo.fieldInitializationLiteral := $_convert_list_to_array('Value', fieldInitializationLiteral);
+	ClassInfo$classInfo.functionIds = $_convert_list_to_array('int', functionIds);
+	ClassInfo$classInfo.fieldInitializationCommand = $_convert_list_to_array('int', fieldInitializationCommand);
+	ClassInfo$classInfo.fieldInitializationLiteral = $_convert_list_to_array('Value', fieldInitializationLiteral);
 	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
+	ClassInfo$classInfo.globalIdToMemberId := globalNameIdToMemberId;
 
 	return pcJumpAfterDone;
 }
 
 function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('int') classId) {
-	@type('Array<ClassInfo>') oldTable = ProgramData$p.classTable;
+	@type('Array<ClassInfo>') oldTable := ProgramData$p.classTable;
 	@type('int') oldLength = $_array_length(oldTable);
 	if (classId < oldLength) return oldTable;
 	@type('int') newLength = oldLength * 2;
@@ -229,7 +230,7 @@ function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('
 		$_array_set_ref(newTable, i, $_array_get(oldTable, i));
 	}
 
-	ProgramData$p.classTable = newTable;
+	ProgramData$p.classTable := newTable;
 	return newTable;
 }
 
@@ -306,7 +307,7 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 	ClassInfo$classInfo.staticInitializationState = 1;
 	$_list_push(ProgramData$p.classStaticInitializationStack, classId);
 	
-	@type('FunctionInfo') functionInfo = $_array_get(
+	@type('FunctionInfo') functionInfo := $_array_get(
 		ProgramData$p.functionTable,
 		ClassInfo$classInfo.staticConstructorFunctionId);
 

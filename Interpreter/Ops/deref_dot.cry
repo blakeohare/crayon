@@ -48,7 +48,7 @@ switch (Value$value.type) {
 
 	case Types.DICTIONARY:
 		if (ProgramData$p.lengthId == nameId) {
-			dictImpl = $_cast('DictImpl', Value$value.internalValue);
+			dictImpl := $_cast('DictImpl', Value$value.internalValue);
 			output := buildInteger(DictImpl$dictImpl.size);
 		} else {
 			string1 = "dictionary";
