@@ -21,7 +21,7 @@ namespace Crayon.Translator.Php
             // I'll eat my pride when this breaks royally a year down the road.
             return type[0] < 'a' || type[0] > 'z';
         }
-
+        
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
             output.Add(this.CurrentTabIndention);

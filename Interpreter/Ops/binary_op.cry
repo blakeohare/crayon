@@ -57,7 +57,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	if (bool1) value := VALUE_TRUE;
 	else value := VALUE_FALSE;
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
-	value = new Value(Types.STRING, valueToString(Value$leftValue.internalValue) + valueToString(Value$rightValue.internalValue));
+	value = new Value(Types.STRING, $_string_concat(valueToString(leftValue), valueToString(rightValue)));
 } else {
 	// At this point the remaining ops will be primitive types or if they are reference types, won't 
 	// matter if a copy is made, hence = being safe instead of :=

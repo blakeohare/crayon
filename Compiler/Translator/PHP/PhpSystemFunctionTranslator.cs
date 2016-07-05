@@ -58,7 +58,16 @@ namespace Crayon.Translator.Php
             output.Add("[");
             this.Translator.TranslateExpression(output, index);
             output.Add("] = &");
-            this.Translator.TranslateExpression(output, value);
+            if (value is Variable)
+            {
+                output.Add("array_hack(");
+                this.Translator.TranslateExpression(output, value);
+                output.Add(")");
+            }
+            else
+            {
+                this.Translator.TranslateExpression(output, value);
+            }
         }
 
         protected override void TranslateAssert(List<string> output, Expression message)
@@ -183,6 +192,24 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, key);
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
+        }
+
+        protected override void TranslateDictionarySetRef(List<string> output, Expression dictionary, Expression key, Expression value)
+        {
+            this.Translator.TranslateExpression(output, dictionary);
+            output.Add("[");
+            this.Translator.TranslateExpression(output, key);
+            output.Add("] = &");
+            if (value is Variable)
+            {
+                output.Add("array_hack(");
+                this.Translator.TranslateExpression(output, value);
+                output.Add(")");
+            }
+            else
+            {
+                this.Translator.TranslateExpression(output, value);
+            }
         }
 
         protected override void TranslateDictionarySize(List<string> output, Expression dictionary)
