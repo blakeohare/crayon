@@ -31,7 +31,7 @@
   function pth_list_reverse(&$list) {
     $length = count($list);
     for ($i = intval($length / 2) - 1; $i >= 0; --$i) {
-      $j = $length - $i;
+      $j = $length - $i - 1;
       $refLeft = is_array($list[$i]);
       $refRight = is_array($list[$j]);
       if ($refLeft) $t = &$list[$i]; else $t = $list[$i];
