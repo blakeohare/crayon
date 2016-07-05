@@ -529,7 +529,7 @@ namespace Crayon.Translator.Php
 
         protected override void TranslatePauseForFrame(List<string> output)
         {
-            output.Add("TODO_optimize_this_out()");
+            output.Add("return false");
         }
 
         protected override void TranslateRandomFloat(List<string> output)

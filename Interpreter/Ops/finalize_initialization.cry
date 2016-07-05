@@ -1,9 +1,9 @@
 ﻿
-ProgramData$p.identifiers := $_convert_list_to_array('string', ProgramData$p.identifiersBuilder);
-ProgramData$p.literalTable := $_convert_list_to_array('Value', ProgramData$p.literalTableBuilder);
-ProgramData$p.integerSwitchLookups := $_convert_list_to_array('Dictionary<int, int>', ProgramData$p.integerSwitchLookupsBuilder);
-ProgramData$p.stringSwitchLookups := $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
-ProgramData$p.sourceCode := $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
+ProgramData$p.identifiers = $_convert_list_to_array('string', ProgramData$p.identifiersBuilder);
+ProgramData$p.literalTable = $_convert_list_to_array('Value', ProgramData$p.literalTableBuilder);
+ProgramData$p.integerSwitchLookups = $_convert_list_to_array('Dictionary<int, int>', ProgramData$p.integerSwitchLookupsBuilder);
+ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
+ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
 ProgramData$p.globalNameIdToPrimitiveMethodName := primitiveMethodsInitializeLookup(ProgramData$p.invIdentifiers);
 ProgramData$p.funcArgs := $_new_array('Value', $_array_length(ProgramData$p.identifiers)); // over allocated but that's okay
 

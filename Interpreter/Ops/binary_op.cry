@@ -54,8 +54,8 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 		bool1 = !bool1;
 	}
 
-	if (bool1) value = VALUE_TRUE;
-	else value = VALUE_FALSE;
+	if (bool1) value := VALUE_TRUE;
+	else value := VALUE_FALSE;
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, valueToString(Value$leftValue.internalValue) + valueToString(Value$rightValue.internalValue));
 } else {

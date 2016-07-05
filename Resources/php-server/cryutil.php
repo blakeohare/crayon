@@ -3,6 +3,8 @@
   
   function &array_hack($array) { return $array; }
   
+  function pth_noop() { }
+  
 	function &pth_new_array($size) {
     $output = array();
     while ($size-- > 0) array_push($output, null);

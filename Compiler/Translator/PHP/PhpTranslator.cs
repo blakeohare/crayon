@@ -28,7 +28,22 @@ namespace Crayon.Translator.Php
             this.TranslateExpression(output, assignment.Target);
             output.Add(" ");
             output.Add(this.GetAssignmentOp(assignment));
-            this.TranslateExpression(output, assignment.Value);
+            if (assignment.Value is NullConstant)
+            {
+                output.Add("&$nullhack");
+            }
+            else if (assignment.Value is Variable)
+            {
+                // TODO: I honestly don't know if this is necessary. Once this is all in a more
+                // stable state, remove this and see if everything still works.
+                output.Add("array_hack(");
+                this.TranslateExpression(output, assignment.Value);
+                output.Add(")");
+            }
+            else
+            {
+                this.TranslateExpression(output, assignment.Value);
+            }
             output.Add(";");
             output.Add(this.NL);
         }

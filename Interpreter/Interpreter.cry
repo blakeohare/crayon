@@ -87,8 +87,8 @@ function @omitReturn @type('string') interpret() {
 	@type('int') op = 0;
 	@type('Value') leftValue = null;
 	@type('Value') rightValue = null;
-	@type('object') left = null;
-	@type('object') right = null;
+	@type('object') left = 0;
+	@type('object') right = 0;
 	@type('int') leftType = 0;
 	@type('int') rightType = 0;
 
