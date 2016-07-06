@@ -413,5 +413,5 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 }
 
 import inline "ValueStackCapacityCheck.cry";
-$_array_set_ref(valueStack, valueStackSize, value);
+$_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;

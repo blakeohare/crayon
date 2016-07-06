@@ -6,6 +6,6 @@ import inline "InvokeStaticConstructor.cry";
 
 if (bool1) {
 	import inline "ValueStackCapacityCheck.cry";
-	$_array_set_ref(valueStack, valueStackSize, $_array_get(ClassInfo$classInfo.staticFields, $_array_get(row, 1)));
+	$_array_set(valueStack, valueStackSize, $_array_get(ClassInfo$classInfo.staticFields, $_array_get(row, 1)));
 	valueStackSize += 1;
 }

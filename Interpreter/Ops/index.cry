@@ -13,7 +13,7 @@ if (Value$root.type == Types.LIST) {
 		if (i < 0) i += $_list_length(list1);
 		if (i < 0 || i >= $_list_length(list1)) return killExecution(stack, pc, "List index is out of bounds");
 		else {
-			$_array_set_ref(valueStack, valueStackSize - 1, $_list_get(list1, i));
+			$_array_set(valueStack, valueStackSize - 1, $_list_get(list1, i));
 		}
 	}
 } else if (Value$root.type == Types.DICTIONARY) {
@@ -58,7 +58,7 @@ if (Value$root.type == Types.LIST) {
 
 		if (output == null) return killExecution(stack, pc, "Key not found.");
 
-		$_array_set_ref(valueStack, valueStackSize - 1, output);
+		$_array_set(valueStack, valueStackSize - 1, output);
 	}
 } else if (Value$root.type == Types.STRING) {
 	string1 = $_cast('string', Value$root.internalValue);
@@ -71,7 +71,7 @@ if (Value$root.type == Types.LIST) {
 		return killExecution(stack, pc, "String index out of range.");
 	}
 	// Single char strings are common.
-	$_array_set_ref(valueStack, valueStackSize - 1, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
+	$_array_set(valueStack, valueStackSize - 1, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
 } else {
 	return killExecution(stack, pc, "Cannot index into this type: " + getTypeFromId(Value$root.type));
 }

@@ -39,6 +39,6 @@ switch ($_array_get(row, 1)) {
 
 if (value != null) {
 	import inline "ValueStackCapacityCheck.cry";
-	$_array_set_ref(valueStack, valueStackSize, value);
+	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
 }

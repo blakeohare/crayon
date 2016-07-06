@@ -77,4 +77,4 @@ if (output == null) {
 	return killExecution(stack, pc, $_string_concat(string1, " does not have that field."));
 }
 
-$_array_set_ref(valueStack, valueStackSize - 1, output);
+$_array_set(valueStack, valueStackSize - 1, output);

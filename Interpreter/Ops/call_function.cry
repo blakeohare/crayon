@@ -78,7 +78,7 @@ if (bool1) {
 
 	for (i = argCount - 1; i >= 0; i -= 1) {
 		valueStackSize -= 1;
-		$_array_set_ref(funcArgs, i, $_array_get(valueStack, valueStackSize));
+		$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
 	}
 
 	if (type == FunctionInvocationType.LOCAL_METHOD) {
@@ -120,7 +120,7 @@ if (bool1) {
 						value = $_array_get(ObjectInstance$objInstance1.members, int1);
 						type = FunctionInvocationType.POINTER_PROVIDED;
 
-						$_array_set_ref(valueStack, valueStackSize, value);
+						$_array_set(valueStack, valueStackSize, value);
 						valueStackSize += 1;
 					}
 				} else {
@@ -252,7 +252,7 @@ if (bool1) {
 		} else {
 			if (returnValueUsed) {
 				import inline "ValueStackCapacityCheck.cry";
-				$_array_set_ref(valueStack, valueStackSize, output);
+				$_array_set(valueStack, valueStackSize, output);
 				valueStackSize += 1;
 			}
 			bool1 = false;
@@ -299,7 +299,7 @@ if (bool1) {
 				for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
 					switch ($_array_get(ClassInfo$classInfo.fieldInitializationCommand, i)) {
 						case 0:
-							$_array_set_ref(valueArray1, i, $_array_get(ClassInfo$classInfo.fieldInitializationLiteral, i));
+							$_array_set(valueArray1, i, $_array_get(ClassInfo$classInfo.fieldInitializationLiteral, i));
 							break;
 						case 1:
 							$_array_set(valueArray1, i, new Value(Types.LIST, $_new_list('Value')));
@@ -330,7 +330,7 @@ if (bool1) {
 					// as though the return value is not used.
 					returnValueUsed = false;
 					import inline "ValueStackCapacityCheck.cry";
-					$_array_set_ref(valueStack, valueStackSize, value);
+					$_array_set(valueStack, valueStackSize, value);
 					valueStackSize += 1;
 				}
 
@@ -388,7 +388,7 @@ if (bool1) {
 		// ID's are allocated with args first.
 		for (i = 0; i < argCount; i += 1) {
 			int1 = localsStackOffset + i;
-			$_array_set_ref(localsStack, int1, $_array_get(funcArgs, i));
+			$_array_set(localsStack, int1, $_array_get(funcArgs, i));
 			$_array_set(localsStackSet, int1, localsStackSetToken);
 		}
 

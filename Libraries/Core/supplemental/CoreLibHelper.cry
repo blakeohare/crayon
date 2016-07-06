@@ -130,8 +130,8 @@ function @type('int') lib_core_sort_helper_swap(
 
 	if (values != null) {
 		@type('Value') t = $_list_get(values, index1);
-		$_list_set_ref(values, index1, $_list_get(values, index2));
-		$_list_set_ref(values, index2, t);
+		$_list_set(values, index1, $_list_get(values, index2));
+		$_list_set(values, index2, t);
 	}
 
 	if (isString) {

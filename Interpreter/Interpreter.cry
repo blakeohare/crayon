@@ -380,7 +380,7 @@ function @type('int') valueStackIncreaseCapacity() {
 	@type('int') newCapacity = oldCapacity * 2;
 	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
 	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
-		$_array_set_ref(newStack, i, $_array_get(stack, i));
+		$_array_set(newStack, i, $_array_get(stack, i));
 	}
 	ProgramData$p.valueStack = newStack;
 	return 0;

@@ -30,11 +30,11 @@ while (i > 0) {
 	}
 
 	if (type == Types.STRING) {
-		$_dictionary_set_ref(dictStringKeyLookup, stringKey, value2);
-		$_dictionary_set_ref(dictStringValueLookup, stringKey, value);
+		$_dictionary_set(dictStringKeyLookup, stringKey, value2);
+		$_dictionary_set(dictStringValueLookup, stringKey, value);
 	} else {
-		$_dictionary_set_ref(dictIntKeyLookup, intKey, value2);
-		$_dictionary_set_ref(dictIntValueLookup, intKey, value);
+		$_dictionary_set(dictIntKeyLookup, intKey, value2);
+		$_dictionary_set(dictIntValueLookup, intKey, value);
 	}
 	i -= 1;
 }
@@ -58,5 +58,5 @@ value = new Value(Types.DICTIONARY, new DictImpl(
 	type));
 
 import inline "ValueStackCapacityCheck.cry";
-$_array_set_ref(valueStack, valueStackSize, value);
+$_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;
