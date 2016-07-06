@@ -5,7 +5,7 @@ value2 := $_array_get(valueStack, valueStackSize + 1); // index
 root := $_array_get(valueStack, valueStackSize);
 
 type = Value$root.type;
-bool1 = row[0] == 1; // re-push this onto the stack once it is assigned
+bool1 = $_array_get(row, 0) == 1; // re-push this onto the stack once it is assigned
 if (type == Types.LIST) {
 	if (Value$value2.type == Types.INTEGER) {
 		i = $_cast('int', Value$value2.internalValue);

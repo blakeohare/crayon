@@ -1,11 +1,11 @@
 /*
-	args[0] -> Database object.
-	args[1] -> Result object (out param). Add result to native_data[0].
-	args[2] -> string: SQL query
-	args[3] -> out list for numeric data.
+	arg 1 -> Database object.
+	arg 2 -> Result object (out param). Add result to native_data[0].
+	arg 3 -> string: SQL query
+	arg 4 -> out list for numeric data.
 	  list[0] -> insert ID, if applicable, or null
 	  list[1] -> num rows of result
-	args[4] -> out list for column data
+	arg 5 -> out list for column data
 	  list[2n + 0] -> column name as a value string
 	  list[2n + 1] -> column type as an integer (0: bool, 1: int, 2: float, 3: string)
 	
@@ -30,9 +30,10 @@ if (string1 == null) {
 	list2 = $_cast('List<Value>', Value$arg5.internalValue);
 	output = VALUE_NULL;
 	if (object2 != null) {
-		ObjectInstance$objInstance1.nativeData = $_new_array('object', 1);
-		$_array_set(ObjectInstance$objInstance1.nativeData, 0, object2);
-		$_list_set(list1, 1, buildInteger($_lib_mysql_num_rows(object1)));
+		objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
+		ObjectInstance$objInstance2.nativeData = $_new_array('object', 1);
+		$_array_set(ObjectInstance$objInstance2.nativeData, 0, object2);
+		$_list_set(list1, 1, buildInteger($_lib_mysql_num_rows(object2)));
 		
 		for (int1 = 0; int1 < $_list_length(stringList1); int1 += 1) {
 			$_list_push(list2, buildString($_list_get(stringList1, int1)));
@@ -50,7 +51,6 @@ if (string1 == null) {
 		value = buildInteger(int1);
 	}
 	$_list_set(list1, 0, value);
-	
 } else {
 	output = buildString(string1);
 }

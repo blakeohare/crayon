@@ -41,6 +41,10 @@ function pth_list_reverse($list) {
     $list->r[$j] = $t;
   }
 }
+
+function pth_string_contains($haystack, $needle) {
+  return strpos($haystack, $needle) !== false;
+}
   
 function pth_getHttpRequest($stringOut) {
   $stringOut->r[0] = $_SERVER['REQUEST_METHOD'];
@@ -114,7 +118,34 @@ function pth_mysql_query($db, $query, $stringOut, $intOut, $columnsOut, $typesOu
 }
 
 function pth_mysql_num_rows($result) {
-  return $result->num_rows;
+  return intval($result->num_rows);
+}
+
+function pth_mysql_get_next($result, $outList, $typeList) {
+  global $v_VALUE_TRUE;
+  global $v_VALUE_FALSE;
+  global $v_VALUE_NULL;
+  $row = $result->fetch_row();
+  $length = count($row);
+  for ($i = 0; $i < $length; ++$i) {
+    switch ($typeList->r[$i]) {
+      case 0:
+        array_push($outList->r, intval($row[$i]) == 1 ? $v_VALUE_TRUE : $v_VALUE_FALSE);
+        break;
+      case 1:
+        array_push($outList->r, v_buildInteger(intval($row[$i])));
+        break;
+      case 2:
+        array_push($outList->r, v_buildFloat(floatval($row[$i])));
+        break;
+      case 3:
+        array_push($outList->r, v_buildString('' . $row[$i]));
+        break;
+      default:
+        array_push($outList->r, $v_VALUE_NULL);
+        break;
+    }
+  }
 }
 
 ?>

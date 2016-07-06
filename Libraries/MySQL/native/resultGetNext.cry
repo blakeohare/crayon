@@ -1,14 +1,32 @@
 /*
-	args[0] -> Result object. Result resource is in native_data[0].
-	args[1] -> Empty value list. Put column values in order here.
+	arg 1 -> Result object. Result resource is in native_data[0].
+	arg 2 -> Value string list of column names
+	arg 3 -> Value int list of column types (0: bool, 1: int, 2: float, 3: string)
+	arg 4 -> Empty value list. Put column values in order here with correct value type.
 	
-	Output is an error, if one occurs, or null.
+	No output.
 */
-import inline "FrameworkFunctions/3_arg.cry";
+import inline "FrameworkFunctions/4_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0);
-list1 = $_cast('List<Value>', Value$arg2.internalValue);
 
-// TODO: this
+list1 = $_cast('List<Value>', Value$arg2.internalValue);
+len = $_list_length(list1);
+stringList1 = $_new_list('string');
+for (i = 0; i < len; i += 1) {
+	value = $_list_get(list1, i);
+	$_list_push(stringList1, $_cast('string', Value$value.internalValue));
+}
+list1 = $_cast('List<Value>', Value$arg3.internalValue);
+intList1 = $_new_list('int');
+for (i = 0; i < len; i += 1) {
+	value = $_list_get(list1, i);
+	$_list_push(intList1, $_cast('int', Value$value.internalValue));
+}
+
+list1 = $_cast('List<Value>', Value$arg4.internalValue);
+$_lib_mysql_getNext(object1, list1, stringList1, intList1);
+
+
 output = VALUE_NULL;

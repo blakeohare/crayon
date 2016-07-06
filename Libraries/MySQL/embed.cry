@@ -21,8 +21,6 @@
 			
 			if (output != null) {
 				output._results = MySQL.Connection._reusableOut[1];
-				print("NUM ROWS: ");
-				print(output._results);
 				output._colCount = columnsOut.length / 2;
 				if (output._colCount != 0) {
 					output._columns = columnsOut[::2];
@@ -72,7 +70,7 @@
 	}
 	
 	class MySqlSelectResult {
-		field _results;
+		field _results = null;
 		field _current = 0;
 		field _columns = null;
 		field _columnTypes = null;
