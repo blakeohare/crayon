@@ -1,0 +1,56 @@
+/*
+	args[0] -> Database object.
+	args[1] -> Result object (out param). Add result to native_data[0].
+	args[2] -> string: SQL query
+	args[3] -> out list for numeric data.
+	  list[0] -> insert ID, if applicable, or null
+	  list[1] -> num rows of result
+	args[4] -> out list for column data
+	  list[2n + 0] -> column name as a value string
+	  list[2n + 1] -> column type as an integer (0: bool, 1: int, 2: float, 3: string)
+	
+	Output is an error, if one occurs, or null.
+*/
+import inline "FrameworkFunctions/5_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0);
+intList1 = $_new_list('int');
+stringList1 = $_new_list('string');
+object2 = $_lib_mysql_query(
+	object1,
+	$_cast('string', Value$arg3.internalValue),
+	stringOutParam,
+	intOutParam,
+	stringList1,
+	intList1);
+string1 = $_array_get(stringOutParam, 0);
+if (string1 == null) {
+	list1 = $_cast('List<Value>', Value$arg4.internalValue);
+	list2 = $_cast('List<Value>', Value$arg5.internalValue);
+	output = VALUE_NULL;
+	if (object2 != null) {
+		ObjectInstance$objInstance1.nativeData = $_new_array('object', 1);
+		$_array_set(ObjectInstance$objInstance1.nativeData, 0, object2);
+		$_list_set(list1, 1, buildInteger($_lib_mysql_num_rows(object1)));
+		
+		for (int1 = 0; int1 < $_list_length(stringList1); int1 += 1) {
+			$_list_push(list2, buildString($_list_get(stringList1, int1)));
+			$_list_push(list2, buildInteger($_list_get(intList1, int1)));
+		}
+	} else {
+		$_list_set(list1, 1, VALUE_NULL);
+	}
+	
+	// size is already guaranteed to be 1
+	int1 = $_array_get(intOutParam, 0);
+	if (int1 == -1) {
+		value = VALUE_NULL;
+	} else {
+		value = buildInteger(int1);
+	}
+	$_list_set(list1, 0, value);
+	
+} else {
+	output = buildString(string1);
+}

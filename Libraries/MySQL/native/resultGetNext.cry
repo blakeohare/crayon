@@ -1,0 +1,14 @@
+/*
+	args[0] -> Result object. Result resource is in native_data[0].
+	args[1] -> Empty value list. Put column values in order here.
+	
+	Output is an error, if one occurs, or null.
+*/
+import inline "FrameworkFunctions/3_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0);
+list1 = $_cast('List<Value>', Value$arg2.internalValue);
+
+// TODO: this
+output = VALUE_NULL;
