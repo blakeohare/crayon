@@ -80,7 +80,6 @@ namespace Crayon.Translator
 		protected abstract void TranslateBooleanCombination(List<string> output, BooleanCombination booleanCombination);
 		protected abstract void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant);
 		protected abstract void TranslateBooleanNot(List<string> output, BooleanNot booleanNot);
-		protected abstract void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex);
 		protected abstract void TranslateDotStep(List<string> output, DotStep dotStep);
 		protected abstract void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct);
 		protected abstract void TranslateFloatConstant(List<string> output, FloatConstant floatConstant);
@@ -214,25 +213,25 @@ namespace Crayon.Translator
 
 		public void TranslateExpression(List<string> output, Expression expr)
 		{
-			if (expr is BinaryOpChain) this.TranslateBinaryOpChain(output, (BinaryOpChain)expr);
-			else if (expr is Variable) this.TranslateVariable(output, (Variable)expr);
-			else if (expr is IntegerConstant) this.TranslateIntegerConstant(output, (IntegerConstant)expr);
-			else if (expr is StructInstance) this.TranslateStructInstance(output, (StructInstance)expr);
-			else if (expr is NullConstant) this.TranslateNullConstant(output, (NullConstant)expr);
-			else if (expr is FunctionCall) this.TranslateFunctionCall(output, (FunctionCall)expr);
-			else if (expr is BracketIndex) this.TranslateBracketIndex(output, (BracketIndex)expr);
-			else if (expr is BooleanConstant) this.TranslateBooleanConstant(output, (BooleanConstant)expr);
-			else if (expr is DotStep) this.TranslateDotStep(output, (DotStep)expr);
-			else if (expr is Increment) throw new ParserException(expr.FirstToken, "++ and -- aren't allowed in translation mode.");
-			else if (expr is StringConstant) this.TranslateStringConstant(output, (StringConstant)expr);
-			else if (expr is SystemFunctionCall) this.TranslateSystemFunctionCall(output, (SystemFunctionCall)expr);
-			else if (expr is NegativeSign) this.TranslateNegativeSign(output, (NegativeSign)expr);
-			else if (expr is BooleanCombination) this.TranslateBooleanCombination(output, (BooleanCombination)expr);
-			else if (expr is BooleanNot) this.TranslateBooleanNot(output, (BooleanNot)expr);
-			else if (expr is FloatConstant) this.TranslateFloatConstant(output, (FloatConstant)expr);
-			else if (expr is DotStepStruct) this.TranslateDotStepStruct(output, (DotStepStruct)expr);
-			else if (expr is ListDefinition) ((Crayon.Translator.Python.PythonTranslator)this).TranslateListDefinition(output, (ListDefinition)expr); // this is used by Python switch code
-			else throw new Exception("Expression type not handled: " + expr.GetType());
+            if (expr is BinaryOpChain) this.TranslateBinaryOpChain(output, (BinaryOpChain)expr);
+            else if (expr is Variable) this.TranslateVariable(output, (Variable)expr);
+            else if (expr is IntegerConstant) this.TranslateIntegerConstant(output, (IntegerConstant)expr);
+            else if (expr is StructInstance) this.TranslateStructInstance(output, (StructInstance)expr);
+            else if (expr is NullConstant) this.TranslateNullConstant(output, (NullConstant)expr);
+            else if (expr is FunctionCall) this.TranslateFunctionCall(output, (FunctionCall)expr);
+            else if (expr is BracketIndex) throw new ParserException(expr.FirstToken, "square brackets not supported. Use $_array_get, etc.");
+            else if (expr is BooleanConstant) this.TranslateBooleanConstant(output, (BooleanConstant)expr);
+            else if (expr is DotStep) this.TranslateDotStep(output, (DotStep)expr);
+            else if (expr is Increment) throw new ParserException(expr.FirstToken, "++ and -- aren't allowed in translation mode.");
+            else if (expr is StringConstant) this.TranslateStringConstant(output, (StringConstant)expr);
+            else if (expr is SystemFunctionCall) this.TranslateSystemFunctionCall(output, (SystemFunctionCall)expr);
+            else if (expr is NegativeSign) this.TranslateNegativeSign(output, (NegativeSign)expr);
+            else if (expr is BooleanCombination) this.TranslateBooleanCombination(output, (BooleanCombination)expr);
+            else if (expr is BooleanNot) this.TranslateBooleanNot(output, (BooleanNot)expr);
+            else if (expr is FloatConstant) this.TranslateFloatConstant(output, (FloatConstant)expr);
+            else if (expr is DotStepStruct) this.TranslateDotStepStruct(output, (DotStepStruct)expr);
+            else if (expr is ListDefinition) ((Crayon.Translator.Python.PythonTranslator)this).TranslateListDefinition(output, (ListDefinition)expr); // this is used by Python switch code
+            else throw new Exception("Expression type not handled: " + expr.GetType());
 		}
 	}
 }

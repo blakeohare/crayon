@@ -385,15 +385,7 @@ namespace Crayon.Translator.Python
 			TranslateExpression(output, exprAsExec.Expression);
 			output.Add("\r\n");
 		}
-
-		protected override void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex)
-		{
-			TranslateExpression(output, bracketIndex.Root);
-			output.Add("[");
-			TranslateExpression(output, bracketIndex.Index);
-			output.Add("]");
-		}
-
+        
 		protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
 		{
 			TranslateExpression(output, functionCall.Root);
