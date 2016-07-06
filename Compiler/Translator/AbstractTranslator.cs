@@ -126,17 +126,21 @@ namespace Crayon.Translator
 			}
 		}
 
-		private void TranslateDefaultBinaryOp(List<string> output, BinaryOpChain binOp)
-		{
-			output.Add("(");
-			this.TranslateExpression(output, binOp.Left);
-			output.Add(" ");
-			output.Add(binOp.Op.Value);
-			output.Add(" ");
-			this.TranslateExpression(output, binOp.Right);
-			output.Add(")");
-		}
+        private void TranslateDefaultBinaryOp(List<string> output, BinaryOpChain binOp)
+        {
+            output.Add("(");
+            this.TranslateExpression(output, binOp.Left);
+            output.Add(" ");
+            this.TranslateBinaryOpSyntax(output, binOp.Op.Value);
+            output.Add(" ");
+            this.TranslateExpression(output, binOp.Right);
+            output.Add(")");
+        }
 
+        protected virtual void TranslateBinaryOpSyntax(List<string> output, string tokenValue)
+        {
+            output.Add(tokenValue);
+        }
 
 		private void TranslateSystemFunctionCall(List<string> output, SystemFunctionCall systemFunctionCall)
 		{

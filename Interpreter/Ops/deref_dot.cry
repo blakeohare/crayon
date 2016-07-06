@@ -38,7 +38,12 @@ switch (Value$value.type) {
 
 	case Types.LIST:
 		if (ProgramData$p.lengthId == nameId) {
-			int2 = $_list_length($_force_parens($_cast('List<Value>', Value$value.internalValue)));
+			if (%%%IS_PHP%%%) {
+				// The harmless force_parens confuses PHP because YOU CAN'T DEREFERENCE A LIST IF IT'S IN PARENTHESIS IN PHP.
+				int2 = $_list_length($_cast('List<Value>', Value$value.internalValue));
+			} else {
+				int2 = $_list_length($_force_parens($_cast('List<Value>', Value$value.internalValue)));
+			}
 			output := buildInteger(int2);
 		} else {
 			string1 = "list";

@@ -7,20 +7,6 @@ namespace Crayon.Translator.Php
     internal class PhpTranslator : CurlyBraceImplementation
     {
         public PhpTranslator() : base(true) { }
-
-        public override string GetAssignmentOp(Assignment assignment)
-        {
-            string output = assignment.AssignmentOp;
-            if (output == ":=") return "= &";
-            return output + " ";
-        }
-
-        public bool IsTypeReference(string type)
-        {
-            // I should be embarrassed, but oddly proud of this one-liner.
-            // I'll eat my pride when this breaks royally a year down the road.
-            return type[0] < 'a' || type[0] > 'z';
-        }
         
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
@@ -28,31 +14,28 @@ namespace Crayon.Translator.Php
             this.TranslateExpression(output, assignment.Target);
             output.Add(" ");
             output.Add(this.GetAssignmentOp(assignment));
-            if (assignment.Value is NullConstant)
-            {
-                output.Add("&$nullhack");
-            }
-            else if (assignment.Value is Variable)
-            {
-                // TODO: I honestly don't know if this is necessary. Once this is all in a more
-                // stable state, remove this and see if everything still works.
-                output.Add("array_hack(");
-                this.TranslateExpression(output, assignment.Value);
-                output.Add(")");
-            }
-            else
-            {
-                this.TranslateExpression(output, assignment.Value);
-            }
+            output.Add(" ");
+            this.TranslateExpression(output, assignment.Value);
             output.Add(";");
             output.Add(this.NL);
+        }
+
+        protected override void TranslateBinaryOpSyntax(List<string> output, string tokenValue)
+        {
+            switch (tokenValue)
+            {
+                case "==": tokenValue = "==="; break;
+                case "!=": tokenValue = "!=="; break;
+                default: break;
+            }
+            output.Add(tokenValue);
         }
 
         protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
         {
             output.Add("$");
             output.Add(dotStepStruct.RootVar);
-            output.Add("[");
+            output.Add("->r[");
             output.Add(dotStepStruct.StructDefinition.IndexByField[dotStepStruct.FieldName].ToString());
             output.Add("]");
         }
@@ -71,10 +54,6 @@ namespace Crayon.Translator.Php
             {
                 throw new ParserException(functionDef.FirstToken, "Need return type.");
             }
-            if (this.IsTypeReference(type))
-            {
-                output.Add("&");
-            }
             output.Add("v_");
             output.Add(functionDef.NameToken.Value);
             output.Add("(");
@@ -85,11 +64,6 @@ namespace Crayon.Translator.Php
                 if (annotation == null)
                 {
                     throw new ParserException(functionDef.FirstToken, "Arg needs a type.");
-                }
-                string argType = annotation == null ? "Object" : annotation.GetSingleArgAsString(null);
-                if (this.IsTypeReference(argType))
-                {
-                    output.Add("&");
                 }
                 output.Add("$v_" + functionDef.ArgNames[i].Value);
             }
@@ -113,8 +87,6 @@ namespace Crayon.Translator.Php
                 output.Add(variable);
                 output.Add(";\n");
             }
-            output.Add(this.CurrentTabIndention);
-            output.Add("global $nullhack;\n");
 
             foreach (Executable line in functionDef.Code)
             {
@@ -124,31 +96,7 @@ namespace Crayon.Translator.Php
             output.Add(this.CurrentTabIndention);
             output.Add("}\n");
         }
-
-        public void ArgSafeTranslateExpression(List<string> output, Expression expression)
-        {
-            if (expression is NullConstant)
-            {
-                output.Add("$nullhack");
-            }
-            else
-            {
-                List<string> buffer = new List<string>();
-                this.TranslateExpression(buffer, expression);
-                string value = string.Join("", buffer);
-                if (value.StartsWith("array(") && value.EndsWith(")"))
-                {
-                    output.Add("array_hack(");
-                    output.Add(value);
-                    output.Add(")");
-                }
-                else
-                {
-                    output.Add(value);
-                }
-            }
-        }
-
+        
         protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
         {
             Variable func = (Variable)functionCall.Root;
@@ -157,20 +105,20 @@ namespace Crayon.Translator.Php
             for (int i = 0; i < functionCall.Args.Length; ++i)
             {
                 if (i > 0) output.Add(", ");
-                this.ArgSafeTranslateExpression(output, functionCall.Args[i]);
+                this.TranslateExpression(output, functionCall.Args[i]);
             }
             output.Add(")");
         }
 
         protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
         {
-            output.Add("array(");
+            output.Add("new Rf(array(");
             for (int i = 0; i < structInstance.Args.Length; ++i)
             {
                 if (i > 0) output.Add(", ");
                 this.TranslateExpression(output, structInstance.Args[i]);
             }
-            output.Add(")");
+            output.Add("))");
         }
 
         protected override void TranslateVariable(List<string> output, Variable expr)

@@ -87,11 +87,11 @@ function @type('int') initialize_constant_values() {
 function @type('Value') buildInteger(@type('int') num) {
 	if (num < 0) {
 		if (num > -INTEGER_NEGATIVE_CACHE) {
-			return INTEGERS_CACHE[1][-num];
+			return $_array_get($_array_get(INTEGERS_CACHE, 1), -num);
 		}
 	} else {
 		if (num < INTEGER_POSITIVE_CACHE) {
-			return INTEGERS_CACHE[0][num];
+			return $_array_get($_array_get(INTEGERS_CACHE, 0), num);
 		}
 	}
 	return new Value(Types.INTEGER, num);
