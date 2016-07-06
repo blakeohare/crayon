@@ -31,7 +31,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, index);
             output.Add("]");
         }
@@ -40,13 +40,13 @@ namespace Crayon.Translator.Php
         {
             output.Add("count(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add("[");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, index);
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
@@ -119,9 +119,9 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
         {
-            output.Add("array(array_merge(array(), ");
+            output.Add("new Rf(array_merge(array(), ");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0]))");
+            output.Add("->r))");
         }
 
         protected override void TranslateCos(List<string> output, Expression value)
@@ -138,7 +138,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("isset(");
             this.Translator.TranslateExpression(output, dictionary);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, key);
             output.Add("])");
         }
@@ -146,7 +146,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, key);
             output.Add("]");
         }
@@ -169,7 +169,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("unset(");
             this.Translator.TranslateExpression(output, dictionary);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, key);
             output.Add("])");
         }
@@ -177,7 +177,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value)
         {
             this.Translator.TranslateExpression(output, dictionary);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, key);
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
@@ -192,7 +192,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("count(");
             this.Translator.TranslateExpression(output, dictionary);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
@@ -365,26 +365,26 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
         {
-            output.Add("array(array_merge(");
+            output.Add("new Rf(array_merge(");
             this.Translator.TranslateExpression(output, listA);
-            output.Add("[0], ");
+            output.Add("->r, ");
             this.Translator.TranslateExpression(output, listB);
-            output.Add("[0]))");
+            output.Add("->r))");
         }
 
         protected override void TranslateListGet(List<string> output, Expression list, Expression index)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, index);
             output.Add("]");
         }
 
         protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
         {
-            output.Add("array(array_splice(");
+            output.Add("new Rf(array_splice(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0], ");
+            output.Add("->r, ");
             this.Translator.TranslateExpression(output, index);
             output.Add(", 0, array(");
             this.Translator.TranslateExpression(output, value);
@@ -397,14 +397,14 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, sep);
             output.Add(", ");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateListJoinChars(List<string> output, Expression list)
         {
             output.Add("implode('', ");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateListLastIndex(List<string> output, Expression list)
@@ -416,21 +416,21 @@ namespace Crayon.Translator.Php
         {
             output.Add("count(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateListPop(List<string> output, Expression list)
         {
             output.Add("array_pop(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateListPush(List<string> output, Expression list, Expression value)
         {
             output.Add("array_push(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0], ");
+            output.Add("->r, ");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
@@ -439,7 +439,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("array_splice(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0], ");
+            output.Add("->r, ");
             this.Translator.TranslateExpression(output, index);
             output.Add(", 1)");
         }
@@ -454,7 +454,7 @@ namespace Crayon.Translator.Php
         protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0][");
+            output.Add("->r[");
             this.Translator.TranslateExpression(output, index);
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
@@ -464,7 +464,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("shuffle(");
             this.Translator.TranslateExpression(output, list);
-            output.Add("[0])");
+            output.Add("->r)");
         }
 
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
@@ -485,12 +485,12 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
         {
-            output.Add("array(array())");
+            output.Add("new Rf(array())");
         }
 
         protected override void TranslateNewList(List<string> output, StringConstant type)
         {
-            output.Add("array(array())");
+            output.Add("new Rf(array())");
         }
 
         protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
@@ -749,7 +749,7 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
         {
-            output.Add("array(explode(");
+            output.Add("new Rf(explode(");
             this.Translator.TranslateExpression(output, sep);
             output.Add(", ");
             this.Translator.TranslateExpression(output, stringExpr);

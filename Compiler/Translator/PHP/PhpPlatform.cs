@@ -99,9 +99,9 @@ namespace Crayon.Translator.Php
             }
             output.Add(");");
 
-            output.Add("$e = array(array());");
-            output.Add("$z = array(array(0));");
-            output.Add("$o = array(array(1));");
+            output.Add("$e = new Rf(array());");
+            output.Add("$z = new Rf(array(0));");
+            output.Add("$o = new Rf(array(1));");
             output.Add("$bc_iargs = array(");
             for (int rowIndex = 0; rowIndex < integers.Count; ++rowIndex)
             {
@@ -116,7 +116,7 @@ namespace Crayon.Translator.Php
                 }
                 else
                 {
-                    line.Add("array(array(");
+                    line.Add("new Rf(array(");
                     for (int i = 1; i < row.Length; ++i)
                     {
                         if (i > 1) line.Add(",");
@@ -142,17 +142,17 @@ namespace Crayon.Translator.Php
             output.AddRange(new string[] {
                 "function bytecode_get_iargs() {",
                 " global $bc_iargs;",
-                " return array($bc_iargs);",
+                " return new Rf($bc_iargs);",
                 "}",
 
                 "function bytecode_get_sargs() {",
                 " global $bc_sargs;",
-                " return array($bc_sargs);",
+                " return new Rf($bc_sargs);",
                 "}",
 
                 "function bytecode_get_ops() {",
                 " global $bc_ops;",
-                " return array($bc_ops);",
+                " return new Rf($bc_ops);",
                 "}"
             });
 

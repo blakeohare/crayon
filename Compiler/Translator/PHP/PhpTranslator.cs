@@ -35,7 +35,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("$");
             output.Add(dotStepStruct.RootVar);
-            output.Add("[0][");
+            output.Add("->r[");
             output.Add(dotStepStruct.StructDefinition.IndexByField[dotStepStruct.FieldName].ToString());
             output.Add("]");
         }
@@ -112,7 +112,7 @@ namespace Crayon.Translator.Php
 
         protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
         {
-            output.Add("array(array(");
+            output.Add("new Rf(array(");
             for (int i = 0; i < structInstance.Args.Length; ++i)
             {
                 if (i > 0) output.Add(", ");

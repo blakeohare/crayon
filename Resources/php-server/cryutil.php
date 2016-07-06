@@ -1,19 +1,26 @@
 ﻿<?php
   
+  class Rf {
+    public $r;
+    function __construct($value) {
+      $this->r = $value;
+    }
+  }
+  
   function pth_noop() { }
   
 	function pth_new_array($size) {
     $output = array();
     while ($size-- > 0) array_push($output, null);
-    return array($output);
+    return new Rf($output);
   }
   
   function pth_dictionary_get_keys($dictionary) {
     $output = array();
-    foreach ($dictionary[0] as $key => $ignored) {
+    foreach ($dictionary->r as $key => $ignored) {
       array_push($output, $key);
     }
-    return array($output);
+    return new Rf($output);
   }
   
   $pth_program_data = null;
@@ -26,18 +33,18 @@
   }
   
   function pth_list_reverse($list) {
-    $length = count($list[0]);
+    $length = count($list->r);
     for ($i = intval($length / 2) - 1; $i >= 0; --$i) {
       $j = $length - $i - 1;
-      $t = $list[0][$i];
-      $list[0][$i] = $list[0][$j];
-      $list[0][$j] = $t;
+      $t = $list->r[$i];
+      $list->r[$i] = $list->r[$j];
+      $list->r[$j] = $t;
     }
   }
   
   function pth_getHttpRequest($stringOut) {
-    $stringOut[0][0] = $_SERVER['REQUEST_METHOD'];
-    $stringOut[0][1] = $_SERVER['REQUEST_URI'];
-    $stringOut[0][2] = $_SERVER['REMOTE_HOST'];
+    $stringOut->r[0] = $_SERVER['REQUEST_METHOD'];
+    $stringOut->r[1] = $_SERVER['REQUEST_URI'];
+    $stringOut->r[2] = $_SERVER['REMOTE_HOST'];
   }
 ?>
