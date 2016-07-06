@@ -55,7 +55,7 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 	return num;
 }
 
-function @type('string') read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length) {
+function @type('string') read_string(@type('Array<int>') pindex, @type('string') raw, @type('int') length, @type('string') alphaNums) {
 	@type('List<string>') output = $_new_list('string');
 	if (!%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {
 		@type('bool') cont = true;
@@ -153,7 +153,7 @@ function @type('Code') loadByteCode() {
 			}
 			$_array_set(iargs, i, iarglist);
 			if (stringPresent) {
-				stringarg = read_string(index, raw, length);
+				stringarg = read_string(index, raw, length, alphaNums);
 			} else {
 				stringarg = null;
 			}
