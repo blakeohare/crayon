@@ -2,18 +2,18 @@
 function @type('int') main() {
 
 	initialize_constant_values();
-	@type('ResourceDB') resources := resource_manager_initialize();
+	@type('ResourceDB') resources = resource_manager_initialize();
 
-	@type('Code') byteCode := loadByteCode();
-	@type('Array<int>') ops := Code$byteCode.ops;
+	@type('Code') byteCode = loadByteCode();
+	@type('Array<int>') ops = Code$byteCode.ops;
 	@type('int') opsLength = $_array_length(ops);
-	@type('Array<Array<int>>') opArgs := Code$byteCode.args;
-	@type('Array<string>') stringArgs := Code$byteCode.stringArgs;
+	@type('Array<Array<int>>') opArgs = Code$byteCode.args;
+	@type('Array<string>') stringArgs = Code$byteCode.stringArgs;
 
 	@type('int') i = 0;
 
-	@type('Array<Value>') localsStack := $_new_array('Value', 1000);
-	@type('Array<int>') localsStackSet := $_new_array('int', 1000);
+	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
+	@type('Array<int>') localsStackSet = $_new_array('int', 1000);
 	for (i = $_array_length(localsStack) - 1; i >= 0; i -= 1) {
 		$_array_set(localsStack, i, null);
 		$_array_set(localsStackSet, i, 0);
@@ -105,7 +105,7 @@ function @type('int') main() {
 }
 
 function @type('bool') runTick() {
-	@type('ProgramData') p := $_get_program_data();
+	@type('ProgramData') p = $_get_program_data();
 
 	if (%%%PLATFORM_IS_ASYNC%%%) {
 		if (!ProgramData$p.tickerRegistered) {

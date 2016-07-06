@@ -8,4 +8,4 @@ if (len == 0) {
 	return killExecution(stack, pc, "Cannot use list.choice() method on an empty list.");
 }
 
-output := $_list_get(list1, $_int($_force_parens($_random_float() * len)));
+output = $_list_get(list1, $_int($_force_parens($_random_float() * len)));

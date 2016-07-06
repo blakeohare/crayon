@@ -31,9 +31,8 @@ namespace Crayon.Translator
 
         public virtual string GetAssignmentOp(Assignment assignment)
         {
-            string output = assignment.AssignmentOp;
-            if (output == ":=") return "=";
-            return output;
+            // You can override this for specific languages.
+            return assignment.AssignmentOp;
         }
 
         private int intCounter = 0;

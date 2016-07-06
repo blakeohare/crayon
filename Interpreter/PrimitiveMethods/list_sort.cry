@@ -5,7 +5,7 @@ if (argCount == 0) {
 		return killExecution(stack, pc, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 	}
 } else if (argCount == 1) {
-	value2 := $_array_get(funcArgs, 0);
+	value2 = $_array_get(funcArgs, 0);
 	if (Value$value2.type == Types.FUNCTION) {
 		primitiveMethodToCoreLibraryFallback = true;
 		functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2); // MAGIC NUMBER: 2

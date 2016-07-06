@@ -1,12 +1,12 @@
 ﻿
 if (argCount != 1) {
 	if (argCount == 0) {
-		value2 := VALUE_EMPTY_STRING;
+		value2 = VALUE_EMPTY_STRING;
 	} else {
 		return killExecution(stack, pc, primitiveMethodWrongArgCountError("list join method", 1, argCount));
 	}
 } else {
-	value2 := $_array_get(funcArgs, 0);
+	value2 = $_array_get(funcArgs, 0);
 	if (Value$value2.type != Types.STRING) {
 		return killExecution(stack, pc, "Argument of list.join needs to be a string.");
 	}
@@ -19,4 +19,4 @@ for (i = 0; i < len; i += 1) {
 	$_list_push(stringList1, valueToString($_list_get(list1, i)));
 }
 string1 = $_list_join(stringList1, string1);
-output := buildString(string1);
+output = buildString(string1);

@@ -1,6 +1,6 @@
 ﻿lib_func_error_occurred = false; // error occurred
 
-output := VALUE_NULL;
+output = VALUE_NULL;
 
 switch ($_array_get(row, 0)) {
 	%%%LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT%%%

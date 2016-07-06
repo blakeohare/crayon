@@ -17,7 +17,7 @@ function @type('int') lib_core_sort_lists(
 	if (length < 2) return 0;
 
 	@type('int') i = 0;
-	@type('Value') item := $_list_get(keyList, 0);
+	@type('Value') item = $_list_get(keyList, 0);
 	@type('bool') isString = Value$item.type == Types.STRING;
 	@type('Array<string>') stringKeys = null;
 	@type('Array<double>') numKeys = null;
@@ -27,7 +27,7 @@ function @type('int') lib_core_sort_lists(
 		numKeys = $_new_array('double', length);
 	}
 	for (i = $_list_length(keyList) - 1; i >= 0; i -= 1) {
-		item := $_list_get(keyList, i);
+		item = $_list_get(keyList, i);
 		switch (Value$item.type) {
 			case Types.INTEGER:
 				if (isString) {
@@ -129,7 +129,7 @@ function @type('int') lib_core_sort_helper_swap(
 	if (index1 == index2) return 0;
 
 	if (values != null) {
-		@type('Value') t := $_list_get(values, index1);
+		@type('Value') t = $_list_get(values, index1);
 		$_list_set_ref(values, index1, $_list_get(values, index2));
 		$_list_set_ref(values, index2, t);
 	}

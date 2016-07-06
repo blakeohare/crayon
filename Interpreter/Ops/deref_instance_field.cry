@@ -1,12 +1,12 @@
 ﻿// row[0] -> member ID
 // stack.objectContext -> this
 
-value := StackFrame$stack.objectContext;
-objInstance1 := $_cast('ObjectInstance', Value$value.internalValue);
+value = StackFrame$stack.objectContext;
+objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 
 // Note: Methods do not go through this codepath. They are compiled into PUSH_FUNC_REF
 // Therefore it's safe to not check the functionIds array.
-value := $_array_get(ObjectInstance$objInstance1.members, $_array_get(row, 0));
+value = $_array_get(ObjectInstance$objInstance1.members, $_array_get(row, 0));
 
 import inline "ValueStackCapacityCheck.cry";
 $_array_set_ref(valueStack, valueStackSize, value);

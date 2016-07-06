@@ -3,12 +3,12 @@ if (argCount != 1) {
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 }
 
-value2 := $_array_get(funcArgs, 0);
+value2 = $_array_get(funcArgs, 0);
 len = $_list_length(list1);
-output := VALUE_FALSE;
+output = VALUE_FALSE;
 for (i = 0; i < len; i += 1) {
 	if (doEqualityComparisonAndReturnCode(value2, $_list_get(list1, i)) == 1) {
-		output := VALUE_TRUE;
+		output = VALUE_TRUE;
 		i += len; // cheesey break;
 	}
 }

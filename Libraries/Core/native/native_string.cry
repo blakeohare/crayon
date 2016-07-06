@@ -11,11 +11,11 @@
 
 import inline "FrameworkFunctions/3_arg.cry";
 
-objInstance1 := $_cast('ObjectInstance', Value$arg1.internalValue);
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 i = $_cast('int', Value$arg2.internalValue);
 string1 = $_cast('string', $_array_get(ObjectInstance$objInstance1.nativeData, i));
 if ($_cast('bool', Value$arg3.internalValue)) {
-	output := buildCommonString(string1);
+	output = buildCommonString(string1);
 } else {
-	output := buildString(string1);
+	output = buildString(string1);
 }

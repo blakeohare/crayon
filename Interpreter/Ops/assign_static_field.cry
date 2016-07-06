@@ -2,7 +2,7 @@
 // row[0] -> class ID
 // row[1] -> static member ID
 
-classInfo := $_array_get(classTable, $_array_get(row, 0));
+classInfo = $_array_get(classTable, $_array_get(row, 0));
 import inline "InvokeStaticConstructor.cry";
 
 if (bool1) {

@@ -1,5 +1,5 @@
 ﻿
-value := $_array_get(valueStack, valueStackSize - 1);
+value = $_array_get(valueStack, valueStackSize - 1);
 type = Value$value.type;
 if (type == Types.INTEGER) {
 	$_array_set_ref(valueStack, valueStackSize - 1, buildInteger(-$_cast('int', Value$value.internalValue)));

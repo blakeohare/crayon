@@ -26,7 +26,7 @@ switch ($_array_get(row, 1)) {
 	case 2: // static method
 		// note that a static constructor call must occur here.
 		classId = $_array_get(row, 2);
-		classInfo := $_array_get(classTable, classId);
+		classInfo = $_array_get(classTable, classId);
 		import inline "InvokeStaticConstructor.cry";
 		if (bool1) {
 			value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, $_array_get(row, 0)));

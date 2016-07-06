@@ -3,7 +3,7 @@ if (argCount != 1) {
 	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
 }
 
-value := $_array_get(funcArgs, 0);
+value = $_array_get(funcArgs, 0);
 if (Value$value.type != Types.INTEGER) {
 	return killExecution(stack, pc, "Argument of list.remove must be an integer index.");
 }
@@ -18,7 +18,7 @@ if (int1 < 0 || int1 >= len) {
 }
 
 if (returnValueUsed) {
-	output := $_list_get(list1, int1);
+	output = $_list_get(list1, int1);
 }
 
 $_list_remove_at(list1, int1);

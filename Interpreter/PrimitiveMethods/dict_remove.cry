@@ -16,7 +16,7 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 			}
 			break;
 		case Types.INSTANCE:
-			objInstance1 := $_cast('ObjectInstance', Value$value2.internalValue);
+			objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
 			int1 = $_cast('int', ObjectInstance$objInstance1.objectId);
 			if ($_dictionary_contains(DictImpl$dictImpl.keyIntLookup, int1)) {
 				bool2 = false;

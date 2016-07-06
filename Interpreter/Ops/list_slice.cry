@@ -10,7 +10,7 @@
 int5 = 0;
 if ($_array_get(row, 2) == 1) {
 	valueStackSize -= 1;
-	arg3 := $_array_get(valueStack, valueStackSize);
+	arg3 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg3.type == Types.INTEGER) {
 		int3 = $_cast('int', Value$arg3.internalValue);
 		if (int3 == 0) int5 = 2;
@@ -25,7 +25,7 @@ bool1 = int3 > 0;
 
 if ($_array_get(row, 1) == 1) {
 	valueStackSize -= 1;
-	arg2 := $_array_get(valueStack, valueStackSize);
+	arg2 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg2.type == Types.INTEGER) {
 		int2 = $_cast('int', Value$arg2.internalValue);
 	} else {
@@ -37,7 +37,7 @@ if ($_array_get(row, 1) == 1) {
 
 if ($_array_get(row, 0) == 1) {
 	valueStackSize -= 1;
-	arg1 := $_array_get(valueStack, valueStackSize);
+	arg1 = $_array_get(valueStack, valueStackSize);
 	if (Value$arg1.type == Types.INTEGER) {
 		int1 = $_cast('int', Value$arg1.internalValue);
 	} else {
@@ -47,7 +47,7 @@ if ($_array_get(row, 0) == 1) {
 	arg1 = null;
 }
 
-value := $_array_get(valueStack, valueStackSize - 1);
+value = $_array_get(valueStack, valueStackSize - 1);
 
 if (Value$value.type == Types.STRING) {
 	bool2 = true;
@@ -55,7 +55,7 @@ if (Value$value.type == Types.STRING) {
 	int4 = $_string_length(string1);
 } else if (Value$value.type == Types.LIST) {
 	bool2 = false;
-	list1 := $_cast('List<Value>', Value$value.internalValue);
+	list1 = $_cast('List<Value>', Value$value.internalValue);
 	int4 = $_list_length(list1);
 } else {
 	return killExecution(stack, pc, $_string_concat("Cannot apply slicing to ", getTypeFromId(Value$value.type), ". Must be string or list."));
@@ -101,7 +101,7 @@ if (int5 == 1) {
 				int1 += int3;
 			}
 		}
-		value := buildString($_list_join(stringList1, ""));
+		value = buildString($_list_join(stringList1, ""));
 	} else {
 		// List slice
 		list2 = $_new_list('Value');
@@ -122,7 +122,7 @@ if (int5 == 1) {
 	}
 } else if (int5 == 0) {
 	if (bool2) {
-		value := VALUE_EMPTY_STRING;
+		value = VALUE_EMPTY_STRING;
 	} else {
 		value = new Value(Types.LIST, $_new_list('Value'));
 	}

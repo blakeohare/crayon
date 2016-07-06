@@ -66,7 +66,7 @@ classId = $_array_get(row, 4);
 bool1 = true;
 if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
 	$_comment('constructor or static method');
-	classInfo := $_array_get(ProgramData$p.classTable, classId);
+	classInfo = $_array_get(ProgramData$p.classTable, classId);
 
 	import inline "InvokeStaticConstructor.cry";
 }
@@ -82,12 +82,12 @@ if (bool1) {
 	}
 
 	if (type == FunctionInvocationType.LOCAL_METHOD) {
-		value := StackFrame$stack.objectContext;
-		objInstance1 := $_cast('ObjectInstance', Value$value.internalValue);
+		value = StackFrame$stack.objectContext;
+		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 		if (ObjectInstance$objInstance1.classId != classId) {
 			int2 = $_array_get(row, 5);
 			if (int2 != -1) {
-				classInfo := $_array_get(classTable, ObjectInstance$objInstance1.classId);
+				classInfo = $_array_get(classTable, ObjectInstance$objInstance1.classId);
 				functionId = $_array_get(ClassInfo$classInfo.functionIds, int2);
 			}
 		}
@@ -98,14 +98,14 @@ if (bool1) {
 
 		// Pop the stack and see what we have.
 		valueStackSize -= 1;
-		value := $_array_get(valueStack, valueStackSize);
+		value = $_array_get(valueStack, valueStackSize);
 
 		switch (Value$value.type) {
 			case Types.INSTANCE:
 				$_comment('field invoked on an object instance.');
-				objInstance1 := $_cast('ObjectInstance', Value$value.internalValue);
+				objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 				int1 = ObjectInstance$objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
-				classInfo := $_array_get(classTable, int1);
+				classInfo = $_array_get(classTable, int1);
 				if ($_dictionary_contains(ClassInfo$classInfo.globalIdToMemberId, classId)) {
 					int1 = $_dictionary_get_guaranteed(ClassInfo$classInfo.globalIdToMemberId, classId); // int1 is now the member ID.
 					// now that we have the member ID, check to see if this is a field or a known method.
@@ -117,7 +117,7 @@ if (bool1) {
 						// This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
 						// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here 
 						// as it will be done redundantly later.
-						value := $_array_get(ObjectInstance$objInstance1.members, int1);
+						value = $_array_get(ObjectInstance$objInstance1.members, int1);
 						type = FunctionInvocationType.POINTER_PROVIDED;
 
 						$_array_set_ref(valueStack, valueStackSize, value);
@@ -146,10 +146,10 @@ if (bool1) {
 		$_comment('pointer provided');
 		
 		valueStackSize -= 1;
-		value := $_array_get(valueStack, valueStackSize);
+		value = $_array_get(valueStack, valueStackSize);
 
 		if (Value$value.type == Types.FUNCTION) {
-			functionPointer1 := $_cast('FunctionPointer', Value$value.internalValue);
+			functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
 			switch (FunctionPointer$functionPointer1.type) {
 				case FunctionPointerType.FUNCTION:
 					$_comment('pointer to a function');
@@ -159,7 +159,7 @@ if (bool1) {
 				case FunctionPointerType.METHOD:
 					$_comment('pointer to a method');
 					functionId = FunctionPointer$functionPointer1.functionId;
-					value := FunctionPointer$functionPointer1.context;
+					value = FunctionPointer$functionPointer1.context;
 					type = FunctionInvocationType.LOCAL_METHOD;
 					break;
 				case FunctionPointerType.STATIC_METHOD:
@@ -170,7 +170,7 @@ if (bool1) {
 					break;
 				case FunctionPointerType.PRIMITIVE_METHOD:
 					$_comment('pointer to a primitive method');
-					value := FunctionPointer$functionPointer1.context;
+					value = FunctionPointer$functionPointer1.context;
 					functionId = FunctionPointer$functionPointer1.functionId;
 					type = FunctionInvocationType.PRIMITIVE_METHOD;
 					break;
@@ -182,7 +182,7 @@ if (bool1) {
 	
 	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 		$_comment('primitive method invocation');
-		output := VALUE_NULL;
+		output = VALUE_NULL;
 		primitiveMethodToCoreLibraryFallback = false;
 		switch (Value$value.type) {
 			case Types.STRING:
@@ -204,7 +204,7 @@ if (bool1) {
 				break;
 			case Types.LIST:
 				$_comment('...on a list');
-				list1 := $_cast('List<Value>', Value$value.internalValue);
+				list1 = $_cast('List<Value>', Value$value.internalValue);
 				switch (functionId) {
 					case PrimitiveMethodName.ADD: import inline 'PrimitiveMethods/list_add.cry'; break;
 					case PrimitiveMethodName.CHOICE: import inline 'PrimitiveMethods/list_choice.cry'; break;
@@ -226,7 +226,7 @@ if (bool1) {
 				break;
 			case Types.DICTIONARY:
 				$_comment('...on a dictionary');
-				dictImpl := $_cast('DictImpl', Value$value.internalValue);
+				dictImpl = $_cast('DictImpl', Value$value.internalValue);
 				switch (functionId) {
 					case PrimitiveMethodName.CLEAR: import inline 'PrimitiveMethods/dict_clear.cry'; break;
 					case PrimitiveMethodName.CLONE: import inline 'PrimitiveMethods/dict_clone.cry'; break;
@@ -272,21 +272,21 @@ if (bool1) {
 		switch (type) {
 			case FunctionInvocationType.NORMAL_FUNCTION:
 				$_comment('function');
-				functionInfo := $_array_get(functionTable, functionId);
+				functionInfo = $_array_get(functionTable, functionId);
 				pc = FunctionInfo$functionInfo.pc;
 				value = null;
 				classId = 0;
 				break;
 			case FunctionInvocationType.STATIC_METHOD:
 				$_comment('static method');
-				functionInfo := $_array_get(functionTable, functionId);
+				functionInfo = $_array_get(functionTable, functionId);
 				pc = FunctionInfo$functionInfo.pc;
 				value = null;
 				classId = 0;
 				break;
 			case FunctionInvocationType.LOCAL_METHOD:
 				$_comment('non-static method');
-				functionInfo := $_array_get(functionTable, functionId);
+				functionInfo = $_array_get(functionTable, functionId);
 				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				// value already set
@@ -294,8 +294,8 @@ if (bool1) {
 			case FunctionInvocationType.CONSTRUCTOR:
 				$_comment('constructor');
 				ProgramData$p.instanceCounter += 1;
-				classInfo := $_array_get(classTable, classId);
-				valueArray1 := $_new_array('Value', ClassInfo$classInfo.memberCount);
+				classInfo = $_array_get(classTable, classId);
+				valueArray1 = $_new_array('Value', ClassInfo$classInfo.memberCount);
 				for (i = $_array_length(valueArray1) - 1; i >= 0; i -= 1) {
 					switch ($_array_get(ClassInfo$classInfo.fieldInitializationCommand, i)) {
 						case 0:
@@ -322,7 +322,7 @@ if (bool1) {
 					null);
 				value = new Value(Types.INSTANCE, objInstance1);
 				functionId = ClassInfo$classInfo.constructorFunctionId;
-				functionInfo := $_array_get(functionTable, functionId);
+				functionInfo = $_array_get(functionTable, functionId);
 				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				if (returnValueUsed) {
@@ -334,15 +334,15 @@ if (bool1) {
 					valueStackSize += 1;
 				}
 
-				intArray1 := ClassInfo$classInfo.fieldInitializerPcs;
+				intArray1 = ClassInfo$classInfo.fieldInitializerPcs;
 				bool1 = true;
 				break;
 			case FunctionInvocationType.BASE_CONSTRUCTOR:
 				$_comment('base constructor');
-				value := StackFrame$stack.objectContext;
-				classInfo := $_array_get(classTable, classId);
+				value = StackFrame$stack.objectContext;
+				classInfo = $_array_get(classTable, classId);
 				functionId = ClassInfo$classInfo.constructorFunctionId;
-				functionInfo := $_array_get(functionTable, functionId);
+				functionInfo = $_array_get(functionTable, functionId);
 				pc = FunctionInfo$functionInfo.pc;
 				classId = 0;
 				break;
@@ -357,7 +357,7 @@ if (bool1) {
 		int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
 		if (localsStackCapacity <= int2 + int1) {
 			increaseLocalsStackCapacity(p, int1);
-			localsStack := ProgramData$p.localsStack;
+			localsStack = ProgramData$p.localsStack;
 			localsStackSet = ProgramData$p.localsStackSet;
 			localsStackCapacity = $_array_length(localsStack);
 		}

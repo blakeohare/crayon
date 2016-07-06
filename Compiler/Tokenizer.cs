@@ -6,7 +6,7 @@ namespace Crayon
 	internal static class Tokenizer
 	{
 		private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
-            "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ?? :=".Split(' '));
+            "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ??".Split(' '));
 		private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
 		private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
 

@@ -3,7 +3,7 @@
 // by passing in a reference to an integer array of length 1.
 
 function @type('Array<string>') generateSourceFiles() {
-	@type('ProgramData') p := $_get_program_data();
+	@type('ProgramData') p = $_get_program_data();
 	return ProgramData$p.sourceCode;
 }
 
