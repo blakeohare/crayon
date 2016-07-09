@@ -54,12 +54,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("OpenTkTranslationHelper.GetEvents()");
-        }
-
+        
         protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             // This is not used in the OpenTK platform because flipping is simply swapping texture mapping coordinates.
@@ -84,36 +79,7 @@ namespace Crayon.Translator.CSharp
         {
             throw new InvalidOperationException();
         }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("GameWindow.Instance.SetTitle(");
-            this.Translator.TranslateExpression(output, title);
-            output.Add(")");
-        }
-
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("GameWindow.FPS = ");
-            this.Translator.TranslateExpression(output, fps);
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("GameWindow.InitializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            if (!(screenWidth is NullConstant))
-            {
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenHeight);
-            }
-            output.Add(")");
-        }
-
+        
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
         {
             output.Add("OpenTkTranslationHelper.CreateDirectory(");

@@ -44,12 +44,6 @@ namespace Crayon.Translator
                 case "_image_initiate_async_download_of_resource": VerifyCount(functionCall, 1); TranslateImageInitiateAsyncDownloadOfResource(output, args[0]); break;
                 case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
 
-                // TODO: migrate these to the Game library
-                case "_get_events_raw_list": VerifyCount(functionCall, 0); TranslateGetEventsRawList(output); break;
-                case "_initialize_game_with_fps": VerifyCount(functionCall, 1); TranslateInitializeGameWithFps(output, args[0]); break;
-                case "_initialize_screen": VerifyCount(functionCall, 4); TranslateInitializeScreen(output, args[0], args[1], args[2], args[3]); break;
-                case "_set_title": VerifyCount(functionCall, 1); TranslateSetTitle(output, args[0]); break;
-
                 // TODO: migrate this to the HTTP library
                 case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 
@@ -204,7 +198,6 @@ namespace Crayon.Translator
         protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path);
         protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
         protected abstract void TranslateForceParens(List<string> output, Expression expression);
-        protected abstract void TranslateGetEventsRawList(List<string> output);
         protected abstract void TranslateGetProgramData(List<string> output);
         protected abstract void TranslateGetRawByteCodeString(List<string> output);
         protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList);
@@ -215,8 +208,6 @@ namespace Crayon.Translator
         protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
         protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
         protected abstract void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height);
-        protected abstract void TranslateInitializeGameWithFps(List<string> output, Expression fps);
-        protected abstract void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight);
         protected abstract void TranslateInt(List<string> output, Expression value);
         protected abstract void TranslateIoCreateDirectory(List<string> output, Expression path);
         protected abstract void TranslateIoCurrentDirectory(List<string> output);
@@ -261,7 +252,6 @@ namespace Crayon.Translator
         protected abstract void TranslateResourceGetManifest(List<string> output);
         protected abstract void TranslateResourceReadText(List<string> output, Expression path);
         protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
-        protected abstract void TranslateSetTitle(List<string> output, Expression title);
         protected abstract void TranslateSin(List<string> output, Expression value);
         protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);

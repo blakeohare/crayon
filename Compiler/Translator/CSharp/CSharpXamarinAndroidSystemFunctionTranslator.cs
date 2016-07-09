@@ -51,29 +51,6 @@ namespace Crayon.Translator.CSharp
             output.Add("\".\"");
         }
 
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("CsxaTranslationHelper.InitializeGameWithFps(");
-            this.Translator.TranslateExpression(output, fps);
-            output.Add(")");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("CsxaTranslationHelper.InitializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            if (!(screenWidth is NullConstant))
-            {
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenHeight);
-            }
-            output.Add(")");
-        }
-
         protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
         {
             output.Add("CsxaTranslationHelper.DownloadImage(");
@@ -81,11 +58,6 @@ namespace Crayon.Translator.CSharp
             output.Add(", ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
-        }
-
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("CsxaTranslationHelper.GetEvents()");
         }
 
         protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
@@ -112,13 +84,6 @@ namespace Crayon.Translator.CSharp
         {
             // Not used in OpenGL-based platforms.
             throw new NotImplementedException();
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("CsxaTranslationHelper.SetTitle(");
-            this.Translator.TranslateExpression(output, title);
-            output.Add(")");
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)

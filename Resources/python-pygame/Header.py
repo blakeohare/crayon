@@ -103,7 +103,7 @@ def platform_begin(fps):
 def _pygame_initialize_screen(width, height, pixel_dimensions):
 	_global_vars['width'] = width
 	_global_vars['height'] = height
-	scaled_mode = pixel_dimensions != None
+	scaled_mode = pixel_dimensions != None and (width != pixel_dimensions[0] or height != pixel_dimensions[1])
 	if scaled_mode:
 		real_screen = pygame.display.set_mode(pixel_dimensions)
 		virtual_screen = pygame.Surface((width, height)).convert()

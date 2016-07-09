@@ -41,16 +41,16 @@ if (bool1) {
 		yieldControl(stack, valueStackSize);
 		pc = StackFrame$stack.pc;
 		if (bool2) {
-			$_initialize_screen(int1, int2, int3, int4);
+			$_lib_game_initialize_screen(int1, int2, int3, int4);
 		} else {
-			$_initialize_screen(int1, int2, null, null);
+			$_lib_game_initialize_screen(int1, int2, int1, int2);
 		}
 		return '';
 	} else {
 		if (bool2) {
-			$_initialize_screen(int1, int2, int3, int4);
+			$_lib_game_initialize_screen(int1, int2, int3, int4);
 		} else {
-			$_initialize_screen(int1, int2, null, null);
+			$_lib_game_initialize_screen(int1, int2, int1, int2);
 		}
 	}
 }

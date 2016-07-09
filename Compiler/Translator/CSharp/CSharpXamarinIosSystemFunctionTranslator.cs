@@ -25,11 +25,6 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("CsxiTranslationHelper.GetEvents()");
-        }
-
         protected override void TranslateHttpRequest(
             List<string> output,
             Expression httpRequest,
@@ -92,29 +87,6 @@ namespace Crayon.Translator.CSharp
         protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
         {
             throw new NotImplementedException();
-        }
-
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("CsxiTranslationHelper.InitializeGameWithFps(");
-            this.Translator.TranslateExpression(output, fps);
-            output.Add(")");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("CsxiTranslationHelper.InitializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            if (!(screenWidth is NullConstant))
-            {
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenHeight);
-            }
-            output.Add(")");
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
@@ -186,13 +158,6 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, content);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
-            output.Add(")");
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("CsxiTranslationHelper.SetTitle(");
-            this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
 

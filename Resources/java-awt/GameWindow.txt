@@ -113,10 +113,6 @@ class GameWindow {
         screenHeight = actualHeight;
     }
 
-    public static void initializeScreen(int gameWidth, int gameHeight) {
-        initializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
-    }
-
     public static void initializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight) {
         GameWindow window = new GameWindow(FPS, gameWidth, gameHeight, screenWidth, screenHeight);
         window.show();

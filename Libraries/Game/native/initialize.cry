@@ -15,6 +15,6 @@ if (!lib_func_error_occurred) {
 		lib_func_error_occurred = true;
 		lib_func_error_message = "fps must be a positive number.";
 	} else {
-		$_initialize_game_with_fps(float1);
+		$_lib_game_initialize_game_with_fps(float1);
 	}
 }

@@ -5,7 +5,6 @@ namespace Crayon
 {
     internal class SystemLibraryManager
     {
-        // object is either an ILibraryConfig or a LibraryLoader
         private Dictionary<string, Library> importedLibraries = new Dictionary<string, Library>();
         private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();
 

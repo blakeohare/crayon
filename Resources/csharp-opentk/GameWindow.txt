@@ -59,11 +59,6 @@ namespace %%%PROJECT_ID%%%
 			this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
 		}
 
-		public static bool InitializeScreen(int gameWidth, int gameHeight)
-		{
-			return InitializeScreen(gameWidth, gameHeight, gameWidth, gameHeight);
-		}
-
 		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
 		{
 			GameWindow gw = new GameWindow(fps, gameWidth, gameHeight, screenWidth, screenHeight);

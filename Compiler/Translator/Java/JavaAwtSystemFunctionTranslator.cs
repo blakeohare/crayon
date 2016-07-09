@@ -48,12 +48,6 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("GameWindow.FPS = ");
-            this.Translator.TranslateExpression(output, fps);
-        }
-
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
             output.Add("AwtTranslationHelper.getRawByteCodeString()");
@@ -75,11 +69,6 @@ namespace Crayon.Translator.Java
         {
             // Client-side Java loads resources synchronously.
             throw new InvalidOperationException();
-        }
-
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("GameWindow.INSTANCE.pumpEventQueue()");
         }
 
         protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
@@ -105,26 +94,6 @@ namespace Crayon.Translator.Java
             output.Add(", ");
             this.Translator.TranslateExpression(output, height);
             output.Add(")");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("GameWindow.initializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            if (screenWidth is NullConstant)
-            {
-                output.Add(")");
-            }
-            else
-            {
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenHeight);
-                output.Add(")");
-            }
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
@@ -200,13 +169,6 @@ namespace Crayon.Translator.Java
         {
             output.Add("AwtTranslationHelper.getTextResource(\"text/\" + ");
             this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("GameWindow.INSTANCE.setTitle(");
-            this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
 

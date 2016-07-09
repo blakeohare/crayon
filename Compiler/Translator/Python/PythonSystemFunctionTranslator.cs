@@ -227,11 +227,6 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("_pygame_pump_events()");
-        }
-
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("program_data[0]");
@@ -321,35 +316,6 @@ namespace Crayon.Translator.Python
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             throw new InvalidOperationException("Should have been optimized out.");
-        }
-
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("platform_begin(");
-            this.Translator.TranslateExpression(output, fps);
-            output.Add(")");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("_pygame_initialize_screen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            output.Add(", ");
-            if (screenWidth is NullConstant)
-            {
-                output.Add("None");
-            }
-            else
-            {
-                output.Add("(");
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(this.Shorten(", "));
-                this.Translator.TranslateExpression(output, screenHeight);
-                output.Add(")");
-            }
-            output.Add(")");
         }
 
         protected override void TranslateInt(List<string> output, Expression value)
@@ -660,13 +626,6 @@ namespace Crayon.Translator.Python
         {
             output.Add("program_data[0] = ");
             this.Translator.TranslateExpression(output, programData);
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("pygame.display.set_caption(");
-            this.Translator.TranslateExpression(output, title);
-            output.Add(")");
         }
 
         protected override void TranslateSin(List<string> output, Expression value)

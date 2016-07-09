@@ -48,13 +48,6 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("AndroidTranslationHelper.initializeGame(");
-            this.Translator.TranslateExpression(output, fps);
-            output.Add(")");
-        }
-
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
             output.Add("AndroidTranslationHelper.getRawByteCodeString()");
@@ -63,11 +56,6 @@ namespace Crayon.Translator.Java
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("AndroidTranslationHelper.getAppDataRoot()");
-        }
-
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("AndroidTranslationHelper.getEventsRawList()");
         }
 
         protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
@@ -87,29 +75,6 @@ namespace Crayon.Translator.Java
         protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
         {
             throw new NotImplementedException();
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("AndroidTranslationHelper.initializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, gameHeight);
-            output.Add(", ");
-            if (screenWidth is NullConstant)
-            {
-                // TODO: this is silly and now duplicated in JavaAwt. refactor this.
-                this.Translator.TranslateExpression(output, gameWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, gameHeight);
-            }
-            else
-            {
-                this.Translator.TranslateExpression(output, screenWidth);
-                output.Add(", ");
-                this.Translator.TranslateExpression(output, screenHeight);
-            }
-            output.Add(")");
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
@@ -195,13 +160,6 @@ namespace Crayon.Translator.Java
         {
             output.Add("AndroidTranslationHelper.resourceReadText(");
             this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("AndroidTranslationHelper.setTitle(");
-            this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
 

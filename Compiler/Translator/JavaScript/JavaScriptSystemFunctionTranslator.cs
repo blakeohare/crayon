@@ -224,11 +224,6 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("R.pump_event_objects()");
-        }
-
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("R.ProgramData");
@@ -327,26 +322,6 @@ namespace Crayon.Translator.JavaScript
             if (prefix) output.Add(op);
             this.Translator.TranslateExpression(output, expression);
             if (!prefix) output.Add(op);
-        }
-
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("R.initializeGame(");
-            this.Translator.TranslateExpression(output, fps);
-            output.Add(")");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("R.initializeScreen(");
-            this.Translator.TranslateExpression(output, gameWidth);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, gameHeight);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, screenWidth);
-            output.Add(this.Shorten(", "));
-            this.Translator.TranslateExpression(output, screenHeight);
-            output.Add(this.Shorten(")"));
         }
 
         protected override void TranslateInt(List<string> output, Expression value)
@@ -642,13 +617,6 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("R.ProgramData = ");
             this.Translator.TranslateExpression(output, programData);
-        }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            output.Add("R.setTitle(");
-            this.Translator.TranslateExpression(output, title);
-            output.Add(")");
         }
 
         protected override void TranslateSin(List<string> output, Expression value)

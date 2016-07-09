@@ -210,12 +210,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, expression);
             output.Add(")");
         }
-
-        protected override void TranslateGetEventsRawList(List<string> output)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("pth_getProgramData()");
@@ -278,17 +273,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, expression);
             if (!prefix) output.Add(token);
         }
-
-        protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateInitializeScreen(List<string> output, Expression gameWidth, Expression gameHeight, Expression screenWidth, Expression screenHeight)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("intval(");
@@ -561,12 +546,7 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, programData);
             output.Add(")");
         }
-
-        protected override void TranslateSetTitle(List<string> output, Expression title)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateSin(List<string> output, Expression value)
         {
             throw new NotImplementedException();

@@ -1,6 +1,6 @@
 ﻿
 function @type('int') libGamePumpEvents(@type('List<Value>') output) {
-	@type('List<PlatformRelayObject>') eventList = $_get_events_raw_list();
+	@type('List<PlatformRelayObject>') eventList = $_lib_game_get_events_raw_list();
 	$_list_clear(output);
 	@type('int') len = $_list_length(eventList);
 	if (len > 0) {
