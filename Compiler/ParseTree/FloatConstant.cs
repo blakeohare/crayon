@@ -1,4 +1,6 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class FloatConstant : Expression, IConstantValue
 	{
@@ -40,5 +42,7 @@
 		{
 			return new FloatConstant(token, this.Value, owner);
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

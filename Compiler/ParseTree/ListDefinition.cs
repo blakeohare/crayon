@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -37,5 +38,10 @@ namespace Crayon.ParseTree
 				item.SetLocalIdPass(varIds);
 			}
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

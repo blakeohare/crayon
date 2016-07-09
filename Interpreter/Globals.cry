@@ -7,7 +7,6 @@
 @uncontained @type('Value') VALUE_FLOAT_ONE = new Value(Types.FLOAT, 1.0);
 @uncontained @type('Value') VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);
 
-@uncontained @type('string') ALPHA_NUMS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 @uncontained @type('string') HEX_UPPERCASE = '0123456789ABCDEF';
 @uncontained @type('Dictionary<string, Value>') COMMON_STRINGS = $_new_dictionary('string', 'Value');
 

@@ -181,6 +181,10 @@
     <EmbeddedResource Include="csharp-opentk\SolutionFile.sln.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="php-server\cryutil.php" />
+    <EmbeddedResource Include="php-server\index.php" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="python-pygame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="python-pygame\Footer.py" />
     <EmbeddedResource Include="python-pygame\GamepadLibraryHelper.py" />

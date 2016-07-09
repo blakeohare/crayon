@@ -1,4 +1,6 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class NegativeSign : Expression
 	{
@@ -37,6 +39,11 @@
 		{
 			this.Root = this.Root.ResolveNames(parser, lookup, imports);
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Root.GetAllVariablesReferenced(vars);
+        }
+    }
 }

@@ -133,5 +133,13 @@ namespace Crayon.ParseTree
                 ex.SetLocalIdPass(varIds);
             }
         }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            foreach (Executable ex in this.TryBlock.Concat(this.CatchBlock).Concat(this.FinallyBlock))
+            {
+                ex.GetAllVariablesReferenced(vars);
+            }
+        }
     }
 }

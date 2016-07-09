@@ -1,6 +1,6 @@
 ﻿
-list1 = $_new_list('Value');
 int1 = $_array_get(row, 0);
+list1 = $_new_list('Value');
 while (int1 > 0) {
 	valueStackSize -= 1;
 	$_list_push(list1, $_array_get(valueStack, valueStackSize));

@@ -59,6 +59,11 @@ namespace Crayon.ParseTree
 			{
 				this.Args[i].SetLocalIdPass(varIds);
 			}
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

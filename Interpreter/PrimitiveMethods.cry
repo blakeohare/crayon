@@ -87,12 +87,12 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 function @type('string') primitiveMethodWrongArgCountError(@type('string') name, @type('int') expected, @type('int') actual) {
 	@type('string') output = "";
 	if (expected == 0) {
-		output = name + " does not accept any arguments.";
+		output = $_string_concat(name, " does not accept any arguments.");
 	} else if (expected == 1) {
-		output = name + " accepts exactly 1 argument.";
+		output = $_string_concat(name, " accepts exactly 1 argument.");
 	} else {
-		output = name + " requires " + $_string_cast_weak(expected) + " arguments.";
+		output = $_string_concat(name, " requires ", $_string_cast_weak(expected), " arguments.");
 	}
 
-	return output + " Found: " + $_string_cast_weak(actual);
+	return $_string_concat(output, " Found: ", $_string_cast_weak(actual));
 }

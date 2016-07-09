@@ -4,44 +4,43 @@
 // like dictionaries or lists.
 function @type('string') valueToString(@type('Value') wrappedValue) {
 	@type('int') type = Value$wrappedValue.type;
-	@type('object') value = Value$wrappedValue.internalValue;
 	if (type == Types.NULL) return "null";
 	if (type == Types.BOOLEAN) {
-		if ($_cast('bool', value)) return "true";
+		if ($_cast('bool', Value$wrappedValue.internalValue)) return "true";
 		return "false";
 	}
 	if (type == Types.FLOAT) {
-		@type('string') floatStr = $_string_cast_strong(value);
+		@type('string') floatStr = $_string_cast_strong(Value$wrappedValue.internalValue);
 		if (!$_string_contains(floatStr, '.')) {
-			floatStr += '.0';
+			$_string_append(floatStr, '.0');
 		}
 		return floatStr;
 	}
-	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(value);
+	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(Value$wrappedValue.internalValue);
 	if (type == Types.LIST) {
-		@type('List<Value>') internalList = $_cast('List<Value>', value);
+		@type('List<Value>') internalList = $_cast('List<Value>', Value$wrappedValue.internalValue);
 		@type('string') output = "[";
 		for (@type('int') i = 0; i < $_list_length(internalList); i += 1) {
-			if (i > 0) output += ", ";
-			output += valueToString($_list_get(internalList, i));
+			if (i > 0) $_string_append(output, ", ");
+			$_string_append(output, valueToString($_list_get(internalList, i)));
 		}
-		output += "]";
+		$_string_append(output, "]");
 		return output;
 	}
 	if (type == Types.INSTANCE) {
-		@type('ObjectInstance') objInstance = $_cast('ObjectInstance', value);
+		@type('ObjectInstance') objInstance = $_cast('ObjectInstance', Value$wrappedValue.internalValue);
 		@type('int') classId = ObjectInstance$objInstance.classId;
 		@type('int') ptr = ObjectInstance$objInstance.objectId;
 		@type('ProgramData') pd = $_get_program_data();
 		@type('ClassInfo') classInfo = $_array_get(ProgramData$pd.classTable, classId);
 		@type('int') nameId = ClassInfo$classInfo.nameId;
 		@type('string') className = $_array_get(ProgramData$pd.identifiers, nameId);
-		return "Instance<" + className + "#" + $_string_cast_strong(ptr) + ">";
+		return $_string_concat("Instance<", className, "#", $_string_cast_strong(ptr), ">");
 	}
 	if (type == Types.DICTIONARY) {
 		// This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
 		// Therefore this is also prone to infinite recursion.
-		@type('DictImpl') internalDict = $_cast('DictImpl', value);
+		@type('DictImpl') internalDict = $_cast('DictImpl', Value$wrappedValue.internalValue);
 		@type('int') size = DictImpl$internalDict.size;
 		if (size == 0) return "{}";
 		@type('string') output = "{";
@@ -49,28 +48,28 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 			@type('Array<int>') intKeys = $_dictionary_get_keys('int', DictImpl$internalDict.keyIntLookup);
 			@type('int') intKey = 0;
 			for (@type('int') i = 0; i < size; i += 1) {
-				if (i > 0) output += ', ';
-				else output += ' ';
+				if (i > 0) $_string_append(output, ', ');
+				else $_string_append(output, ' ');
 				intKey = $_array_get(intKeys, i);
-				output += $_string_cast_weak(intKey) + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey));
+				$_string_append(output, $_string_concat($_string_cast_weak(intKey), ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueIntLookup, intKey))));
 			}
 		} else {
 			@type('Array<string>') stringKeys = $_dictionary_get_keys('string', DictImpl$internalDict.keyStringLookup);
 			@type('string') stringKey = '';
 			for (@type('int') i = 0; i < size; i += 1) {
-				if (i > 0) output += ', ';
-				else output += ' ';
+				if (i > 0) $_string_append(output, ', ');
+				else $_string_append(output, ' ');
 				stringKey = $_array_get(stringKeys, i);
-				output += stringKey + ': ' + valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey));
+				$_string_append(output, $_string_concat(stringKey, ': ', valueToString($_dictionary_get_guaranteed(DictImpl$internalDict.valueStringLookup, stringKey))));
 			}
 		}
-		output += ' }';
+		$_string_append(output, ' }');
 		return output;
 	}
-	return "TODO: toString for " + getTypeFromId(type);
+	return $_string_concat("TODO: toString for ", getTypeFromId(type));
 }
 
-function initialize_constant_values() {
+function @type('int') initialize_constant_values() {
 	@type('int') i = 0;
 	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
 	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
@@ -82,16 +81,17 @@ function initialize_constant_values() {
 	}
 	$_array_set(INTEGERS_CACHE, 0, positive_integers);
 	$_array_set(INTEGERS_CACHE, 1, negative_integers);
+	return 0;
 }
 
 function @type('Value') buildInteger(@type('int') num) {
 	if (num < 0) {
 		if (num > -INTEGER_NEGATIVE_CACHE) {
-			return INTEGERS_CACHE[1][-num];
+			return $_array_get($_array_get(INTEGERS_CACHE, 1), -num);
 		}
 	} else {
 		if (num < INTEGER_POSITIVE_CACHE) {
-			return INTEGERS_CACHE[0][num];
+			return $_array_get($_array_get(INTEGERS_CACHE, 0), num);
 		}
 	}
 	return new Value(Types.INTEGER, num);
@@ -104,7 +104,7 @@ function @type('Value') buildString(@type('string') s) {
 	return new Value(Types.STRING, s);
 }
 
-function @type('Value') buildListByWrappingInput(list) {
+function @type('Value') buildListByWrappingInput(@type('List<Value>') list) {
 	return new Value(Types.LIST, list);
 }
 
@@ -129,7 +129,7 @@ function @type('Value') buildFloat(@type('double') value) {
 // This returns a numerical code rather than a boolean
 //  0 = false
 //  1 = true
-//  2 = == operation not defined
+//  2 = The "==" operation is not defined
 function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type('Value') b) {
 	@type('int') leftType = Value$a.type;
 	@type('int') rightType = Value$b.type;
@@ -178,24 +178,21 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 				}
 			}
 			return 0;
-			
 		}
 		return 0;
 	} else {
 		if (leftType == rightType || 
 			(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
 			(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
-			left = Value$a.internalValue;
-			right = Value$b.internalValue;
 			if (leftType < Types.LIST) {
-				if (left == right) {
+				if (Value$a.internalValue == Value$b.internalValue) {
 					return 1;
 				}
 				return 0;
 			}
 
 			if (leftType == Types.INSTANCE) {
-				if ($_list_get(left, 2) == $_list_get(right, 2)) {
+				if ($_list_get(Value$a.internalValue, 2) == $_list_get(Value$b.internalValue, 2)) {
 					return 1;
 				}
 				return 0;

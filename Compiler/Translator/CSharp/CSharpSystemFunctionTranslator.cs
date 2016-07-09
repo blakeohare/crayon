@@ -69,7 +69,22 @@ namespace Crayon.Translator.CSharp
 			// Nope
 		}
 
-		protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
+        protected override void TranslateByteCodeGetIntArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetOps(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetStringArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
 		{
 			CSharpPlatform platform = (CSharpPlatform)this.Platform;
 			string typeString = platform.GetTypeStringFromAnnotation(typeValue.FirstToken, typeValue.Value);
@@ -512,6 +527,13 @@ namespace Crayon.Translator.CSharp
             output.Add(".OrderBy<string, string>(k => k).ToArray()");
         }
 
+        protected override void TranslateStringAppend(List<string> output, Expression target, Expression valueToAppend)
+        {
+            this.Translator.TranslateExpression(output, target);
+            output.Add(" += ");
+            this.Translator.TranslateExpression(output, valueToAppend);
+        }
+
         protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
 		{
 			char c = stringConstant.Value[0];
@@ -559,7 +581,16 @@ namespace Crayon.Translator.CSharp
 			output.Add(")");
 		}
 
-		protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
+        protected override void TranslateStringConcat(List<string> output, Expression[] values)
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                if (i > 0) output.Add(" + ");
+                this.Translator.TranslateExpression(output, values[i]);
+            }
+        }
+
+        protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
 		{
 			this.Translator.TranslateExpression(output, haystack);
 			output.Add(".Contains(");

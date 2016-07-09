@@ -220,15 +220,7 @@ namespace Crayon.Translator
 			TranslateExpression(output, exprAsExec.Expression);
 			output.Add(";" + this.NL);
 		}
-
-		protected override void TranslateBracketIndex(List<string> output, BracketIndex bracketIndex)
-		{
-			TranslateExpression(output, bracketIndex.Root);
-			output.Add("[");
-			TranslateExpression(output, bracketIndex.Index);
-			output.Add("]");
-		}
-
+        
 		protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
 		{
 			TranslateExpression(output, functionCall.Root);

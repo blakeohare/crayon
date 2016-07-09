@@ -207,7 +207,7 @@ function @type('List<SpriteSheetItemDescriptor>') getSpriteSheetMembers(
 	return $_dictionary_get_guaranteed(ImageSheetStatus$sheetStatus.spriteSheetItemDescriptorsByGroupId, groupId);
 }
 
-function getImageByKey(@type('string') key) {
+function @type('object') getImageByKey(@type('string') key) {
 	@type('ProgramData') p = $_get_program_data();
 	@type('ImageSheetStatus') imageUtil = ProgramData$p.imageSheetStatus;
 	if ($_dictionary_contains(ImageSheetStatus$imageUtil.resourceImagesByKeys, key)) {
@@ -228,7 +228,7 @@ function getImageByKey(@type('string') key) {
 	return null;
 }
 
-function @type('CompositeImage') createCompositeImage(nativeBitmap) {
+function @type('CompositeImage') createCompositeImage(@type('object') nativeBitmap) {
 	return new CompositeImage(
 		nativeBitmap,
 		$_image_native_bitmap_width(nativeBitmap),
@@ -247,7 +247,7 @@ function @type('bool') areAllTilesLoadedForGroupId(
 	@type('Dictionary<string, object>') tilesByName = ImageSheetStatus$iss.tilesByName;
 	for (@type('int') i = $_array_length(tileIds) - 1; i >= 0; i -= 1) {
 		@type('int') tileId = $_array_get(tileIds, i);
-		@type('string') genName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		@type('string') genName = $_string_concat($_string_cast_weak(groupId), "_", $_string_cast_weak(tileId));
 		if (!$_dictionary_contains(tilesByName, genName)) {
 			return false;
 		}
@@ -287,7 +287,7 @@ function @type('int') getNumTilesLoaded(@type('string') groupName) {
 	@type('Array<int>') tileIds = $_dictionary_get_guaranteed(ImageSheetStatus$iss.tilesPerId, groupId);
 	for (@type('int') i = 0; i < $_array_length(tileIds); i += 1) {
 		@type('int') tileId = $_array_get(tileIds, i);
-		if ($_dictionary_contains(ImageSheetStatus$iss.tilesByName, $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId))) {
+		if ($_dictionary_contains(ImageSheetStatus$iss.tilesByName, $_string_concat($_string_cast_weak(groupId), "_", $_string_cast_weak(tileId)))) {
 			tileCount += 1;
 		}
 	}
@@ -323,7 +323,7 @@ function @type('int') isImageSheetLoaded(@type('string') groupName) {
 	return 2;
 }
 
-function @type('Imagette') createImagetteFromBitmap(nativeBitmap) {
+function @type('Imagette') createImagetteFromBitmap(@type('object') nativeBitmap) {
 	@type('List<object>') images = $_new_list('object');
 	@type('List<int>') xs = $_new_list('int');
 	@type('List<int>') ys = $_new_list('int');
@@ -348,18 +348,20 @@ function @type('Imagette') createImagetteFromDimensions(@type('int') width, @typ
 		$_new_list('int'));
 }
 
-function imagetteBlitRaw(@type('Imagette') target, nativeBitmap, @type('int') x, @type('int') y) {
+function @type('int') imagetteBlitRaw(@type('Imagette') target, @type('object') nativeBitmap, @type('int') x, @type('int') y) {
 	$_list_push(Imagette$target.nativeBitmaps, nativeBitmap);
 	$_list_push(Imagette$target.xs, x);
 	$_list_push(Imagette$target.ys, y);
+	return 0;
 }
 
-function imagetteBlitFellowImagette(@type('Imagette') target, @type('Imagette') source, @type('int') x, @type('int') y) {
+function @type('int') imagetteBlitFellowImagette(@type('Imagette') target, @type('Imagette') source, @type('int') x, @type('int') y) {
 	for (@type('int') i = $_list_length(Imagette$source.nativeBitmaps) - 1; i >= 0; i -= 1) {
 		$_list_push(Imagette$target.nativeBitmaps, $_list_get(Imagette$source.nativeBitmaps, i));
 		$_list_push(Imagette$target.xs, $_list_get(Imagette$source.xs, i) + x);
 		$_list_push(Imagette$target.ys, $_list_get(Imagette$source.ys, i) + y);
 	}
+	return 0;
 }
 
 // Returns biggest sheet ID for reasons.
@@ -388,7 +390,7 @@ function @type('int') virtualizationGridDoBasicConsolidations(
 		if (tileId > biggestSheetId) {
 			biggestSheetId = tileId;
 		}
-		@type('string') generatedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(tileId);
+		@type('string') generatedName = $_string_concat($_string_cast_weak(groupId), "_", $_string_cast_weak(tileId));
 		@type('Array<int>') locationData = null;
 		if (SpriteSheetItemDescriptor$item.solitary) {
 			$_dictionary_set(solitarySheets, tileId, createImagetteFromBitmap($_dictionary_get_guaranteed(nativeTileBitmapsByGeneratedName, generatedName)));
@@ -408,7 +410,7 @@ function @type('int') virtualizationGridDoBasicConsolidations(
 
 				for (@type('int') i = 0; i < 16; i += 1) {
 					@type('int') interiorTileId = roundedId + i;
-					@type('string') interiorTileGeneratedName = $_string_cast_weak(groupId) + "_" + $_string_cast_weak(interiorTileId);
+					@type('string') interiorTileGeneratedName = $_string_concat($_string_cast_weak(groupId), "_", $_string_cast_weak(interiorTileId));
 					col = i % 4;
 					row = $_unsafe_integer_division(i, 4);
 					if ($_dictionary_contains(nativeTileBitmapsByGeneratedName, interiorTileGeneratedName)) {
@@ -596,7 +598,7 @@ function @type('ImageSheetVirtualizationGrid') instantiateVirtualizationGrid(
 		false);
 }
 
-function finalizeGroupLoading(
+function @type('int') finalizeGroupLoading(
 	@type('int') groupId,
 	@type('string') groupName) {
 
@@ -629,6 +631,7 @@ function finalizeGroupLoading(
 	}
 
 	$_dictionary_set(ImageSheetStatus$iss.sheetStatus, groupId, IMAGE_SHEET_STATUS_LOADED);
+	return 0;
 }
 
 /*
@@ -678,7 +681,7 @@ function @type('int') loadImageFromLocalResources(@type('string') key, @type('st
 }
 
 // TODO: retry counter support
-function imageDownloadCompletionHandler(@type('string') key, bitmap) {
+function @type('int') imageDownloadCompletionHandler(@type('string') key, @type('object') bitmap) {
 
 	@type('ImageSheetStatus') iss = getImageSheetStatus();
 
@@ -689,6 +692,7 @@ function imageDownloadCompletionHandler(@type('string') key, bitmap) {
 	}
 	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesByKey, key, bitmap);
 	$_dictionary_set(ImageSheetStatus$iss.downloadedImagesErrorCodes, key, status);
+	return 0;
 }
 
 function @type('int') getImageErrorCode(@type('string') key) {
@@ -713,7 +717,7 @@ function @type('int') getImageErrorCode(@type('string') key) {
 	return 0;
 }
 
-function loadImageFromUserData(@type('string') key, @type('string') path) {
+function @type('object') loadImageFromUserData(@type('string') key, @type('string') path) {
 	$_assert("Not implemented.");
 }
 

@@ -6,5 +6,5 @@ if (Value$arg1.type != Types.BOOLEAN) {
 	lib_func_error_message = "Assertion expression must be a boolean.";
 } else if (!$_cast('bool', Value$arg1.internalValue)) {
 	lib_func_error_occurred = true;
-	lib_func_error_message = "Assertion failed: " + valueToString(arg2);
+	lib_func_error_message = $_string_concat("Assertion failed: ", valueToString(arg2));
 }

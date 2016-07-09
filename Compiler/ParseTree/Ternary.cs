@@ -1,4 +1,6 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
 	internal class Ternary : Expression
 	{
@@ -44,6 +46,13 @@
 			this.Condition.SetLocalIdPass(varIds);
 			this.TrueValue.SetLocalIdPass(varIds);
 			this.FalseValue.SetLocalIdPass(varIds);
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Condition.GetAllVariablesReferenced(vars);
+            this.TrueValue.GetAllVariablesReferenced(vars);
+            this.FalseValue.GetAllVariablesReferenced(vars);
+        }
+    }
 }

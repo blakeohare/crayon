@@ -169,5 +169,13 @@ namespace Crayon.ParseTree
 				ex.SetLocalIdPass(variableIds);
 			}
 		}
-	}
+
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            // Currently only used to get the variables declared in a function in translation mode. This shouldn't
+            // be called directly.
+            throw new System.NotImplementedException();
+        }
+    }
 }

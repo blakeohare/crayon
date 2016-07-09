@@ -23,7 +23,8 @@ if (Value$root.type == Types.LIST) {
 		if (DictImpl$dictImpl.size == 0) {
 			return killExecution(stack, pc, "Key not found. Dictionary is empty.");
 		}
-		return killExecution(stack, pc, "Incorrect key type. This dictionary contains " + getTypeFromId(DictImpl$dictImpl.keyType) + " keys. Provided key is a " + getTypeFromId(keyType) + ".");
+		return killExecution(stack, pc, 
+			$_string_concat("Incorrect key type. This dictionary contains ", getTypeFromId(DictImpl$dictImpl.keyType), " keys. Provided key is a ", getTypeFromId(keyType), "."));
 	} else {
 		if (keyType == Types.INTEGER) {
 			intKey = $_cast('int', Value$value.internalValue);
@@ -44,7 +45,7 @@ if (Value$root.type == Types.LIST) {
 			if ($_dictionary_contains(dictStringValueLookup, stringKey)) {
 				output = $_dictionary_get_guaranteed(dictStringValueLookup, stringKey);
 			} else {
-				return killExecution(stack, pc, "Key not found: '" + stringKey + "'");
+				return killExecution(stack, pc, $_string_concat("Key not found: '", stringKey, "'"));
 			}
 		} else {
 			dictIntValueLookup = $_cast('Dictionary<int, Value>', DictImpl$dictImpl.valueIntLookup);

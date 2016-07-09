@@ -39,5 +39,7 @@ namespace Crayon.ParseTree
 		{
 			throw new InvalidOperationException(); // translate mode only
 		}
-	}
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

@@ -6,9 +6,6 @@ leftValue = $_array_get(valueStack, valueStackSize);
 leftType = Value$leftValue.type;
 rightType = Value$rightValue.type;
 
-left = Value$leftValue.internalValue;
-right = Value$rightValue.internalValue;
-
 // TODO: special switch for when left == right
 op = $_array_get(row, 0);
 value = null;
@@ -22,27 +19,27 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	} else {
 		if (leftType == rightType) {
 			if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
-				if (left == right) { // may have to change if a platform doesn't support == for strings
+				if (Value$leftValue.internalValue == Value$rightValue.internalValue) { // may have to change if a platform doesn't support == for strings
 					bool1 = true;
 				} else {
 					bool1 = false;
 				}
 			} else if (leftType == Types.INSTANCE) {
-				objInstance1 = $_cast('ObjectInstance', left);
-				objInstance2 = $_cast('ObjectInstance', right);
+				objInstance1 = $_cast('ObjectInstance', Value$leftValue.internalValue);
+				objInstance2 = $_cast('ObjectInstance', Value$rightValue.internalValue);
 				if (ObjectInstance$objInstance1.objectId == ObjectInstance$objInstance2.objectId) {
 					bool1 = true;
 				} else {
 					bool1 = false;
 				}
 			} else {
-				return killExecution(stack, pc, "== and != not defined here yet.");
+				return killExecution(stack, pc, "== and != not defined here.");
 			}
 		} else {
 			if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 				// does this work on c#? 
 				// (object)0.0 == (object)0
-				if (left == right) {
+				if (Value$leftValue.internalValue == Value$rightValue.internalValue) {
 					bool1 = true;
 				} else {
 					bool1 = false;
@@ -60,8 +57,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 	if (bool1) value = VALUE_TRUE;
 	else value = VALUE_FALSE;
 } else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
-	value = new Value(Types.STRING, valueToString(leftValue) + valueToString(rightValue));
+	value = new Value(Types.STRING, $_string_concat(valueToString(leftValue), valueToString(rightValue)));
 } else {
+	// At this point the remaining ops will be primitive types or if they are reference types, won't 
+	// matter if a copy is made, hence = being safe instead of =
+	left = Value$leftValue.internalValue;
+	right = Value$rightValue.internalValue;
 	switch
 		{((MAX_TYPE * MAX_OP + MAX_OP) * MAX_TYPE + MAX_TYPE)} // maximum possible value
 		((((Value$leftValue.type * MAX_OP) + op) * MAX_TYPE) + Value$rightValue.type) {
@@ -146,12 +147,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) + $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -163,12 +164,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) - $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -180,12 +181,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_cast('int', left) * $_cast('int', right);
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -198,12 +199,12 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			int1 = $_unsafe_integer_division($_cast('int', left), $_cast('int', right));
 			if (int1 < 0) {
 				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = INTEGERS_CACHE[1][-int1];
+					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
 			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = INTEGERS_CACHE[0][int1];
+				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -406,7 +407,7 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 
 		default:
 			$_comment('unrecognized op');
-			return killExecution(stack, pc, "The '" + getBinaryOpFromId($_array_get(row, 0)) + "' operator is not supported for these types: " + getTypeFromId(Value$leftValue.type) + " and " + getTypeFromId(Value$rightValue.type));
+			return killExecution(stack, pc, $_string_concat("The '", getBinaryOpFromId($_array_get(row, 0)), "' operator is not supported for these types: ", getTypeFromId(Value$leftValue.type), " and ", getTypeFromId(Value$rightValue.type)));
 			break;
 	}
 }

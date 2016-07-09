@@ -67,6 +67,7 @@ namespace Crayon
                 case "java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
                 case "java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
                 case "javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
+				case "php-server": return new Crayon.Translator.Php.PhpPlatform();
                 case "python-pygame": return new Crayon.Translator.Python.PythonPlatform();
                 default:
                     throw new InvalidOperationException("Unrecognized platform. See usage.");

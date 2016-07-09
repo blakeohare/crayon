@@ -107,7 +107,7 @@ function @type('bool') lib_core_sort_helper_is_rev_order(
 	@type('bool') isString,
 	@type('int') indexLeft,
 	@type('int') indexRight) {
-		
+
 	if (isString) {
 		if ($_string_compare($_array_get(keyStringList, indexLeft), $_array_get(keyStringList, indexRight)) > 0) {
 			return true;

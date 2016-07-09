@@ -83,6 +83,15 @@ namespace Crayon.ParseTree
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Step);
 			this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Condition.GetAllVariablesReferenced(vars);
+            foreach (Executable ex in this.Init.Concat(this.Step).Concat(this.Code))
+            {
+                ex.GetAllVariablesReferenced(vars);
+            }
+        }
+    }
 }

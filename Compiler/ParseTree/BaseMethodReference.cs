@@ -47,6 +47,8 @@ namespace Crayon.ParseTree
 		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
 		{
 			return this;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+    }
 }

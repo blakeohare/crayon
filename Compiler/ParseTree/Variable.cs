@@ -125,6 +125,11 @@ namespace Crayon.ParseTree
 		public override string ToString()
 		{
 			return "<Variable> " + this.Name;
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            vars.Add(this);
+        }
+    }
 }

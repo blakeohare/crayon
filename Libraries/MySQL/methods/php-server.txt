@@ -1,0 +1,5 @@
+$_lib_mysql_connect: pth_mysql_connect([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+$_lib_mysql_query: pth_mysql_query([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+$_lib_mysql_sanitize: pth_mysql_sanitize([ARG:1], [ARG:2])
+$_lib_mysql_num_rows: pth_mysql_num_rows([ARG:1])
+$_lib_mysql_getNext: pth_mysql_get_next([ARG:1], [ARG:2], [ARG:4])

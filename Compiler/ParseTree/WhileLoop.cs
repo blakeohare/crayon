@@ -60,6 +60,15 @@ namespace Crayon.ParseTree
 			{
 				this.Code[i].SetLocalIdPass(varIds);
 			}
-		}
-	}
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Condition.GetAllVariablesReferenced(vars);
+            foreach (Executable ex in this.Code)
+            {
+                ex.GetAllVariablesReferenced(vars);
+            }
+        }
+    }
 }

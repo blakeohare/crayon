@@ -59,6 +59,8 @@ function @omitReturn @type('string') interpret() {
 	@type('double') float1 = 0.0;
 	@type('double') float2 = 0.0;
 	@type('double') float3 = 0.0;
+	@type('Array<double>') floatList1 = $_new_array('double', 2);
+
 	@type('Value') value = null;
 	@type('Value') value2 = null;
 	@type('Value') value3 = null;
@@ -78,21 +80,18 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
 	@type('Array<object>') objArray1 = null;
-	@type('Array<double>') floatList1 = $_new_array('double', 2);
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
 	@type('StackFrame') stackFrame2 = null;
-
-	// binary op variables...
-	@type('int') op = 0;
 	@type('Value') leftValue = null;
 	@type('Value') rightValue = null;
-	@type('object') left = null;
-	@type('object') right = null;
+
+	@type('int') op = 0;
+	@type('object') left = 0;
+	@type('object') right = 0;
 	@type('int') leftType = 0;
 	@type('int') rightType = 0;
 
-	// args...
 	@type('Value') arg1 = null;
 	@type('Value') arg2 = null;
 	@type('Value') arg3 = null;
@@ -281,7 +280,7 @@ function @type('string') killExecutionWithTokenOverride(
 				@type('Array<string>') lines = $_string_split(fileData, '\n');
 				@type('string') filename = $_array_get(lines, 0);
 				@type('string') linevalue = $_array_get(lines, line + 1);
-				fullMessage = filename + ", Line: " + $_string_cast_weak(line + 1) + ", Col: " + $_string_cast_weak(col + 1) + "\n" + fullMessage;
+				fullMessage = $_string_concat(filename, ", Line: ", $_string_cast_weak(line + 1), ", Col: ", $_string_cast_weak(col + 1), "\n", fullMessage);
 				if (first) {
 					@type('string') linedisplay = '';
 					@type('string') arrowdisplay = '';
@@ -297,19 +296,19 @@ function @type('string') killExecutionWithTokenOverride(
 							}
 						} else {
 							if (col == 0) {
-								arrowdisplay += '^';
-								linedisplay += c;
+								$_string_append(arrowdisplay, '^');
+								$_string_append(linedisplay, c);
 							} else if (c == $_string_as_char('\t')) {
-								arrowdisplay += '    ';
-								linedisplay += '    ';
+								$_string_append(arrowdisplay, '    ');
+								$_string_append(linedisplay, '    ');
 							} else {
-								arrowdisplay += ' ';
-								linedisplay += c;
+								$_string_append(arrowdisplay, ' ');
+								$_string_append(linedisplay, c);
 							}
 							col -= 1;
 						}
 					}
-					fullMessage = fullMessage + "\n  " + message + "\n\n" + linedisplay + "\n" + arrowdisplay;
+					$_string_append(fullMessage, $_string_concat("\n  ", message, "\n\n", linedisplay, "\n", arrowdisplay));
 				}
 			} else {
 				token = null; // execution killed before file data was loaded
@@ -317,30 +316,31 @@ function @type('string') killExecutionWithTokenOverride(
 		}
 
 		if (token == null) {
-			fullMessage = "[No Stack Info]\n" + fullMessage;
+			fullMessage = $_string_concat("[No Stack Info]\n", fullMessage);
 			if (first) {
-				fullMessage += "[No Stack Info]\n  " + message + "\n";
+				$_string_append(fullMessage, $_string_concat("[No Stack Info]\n  ", message, "\n"));
 			}
 		}
 
 		first = false;
 		token = null;
 	}
-	return "Error:\n" + fullMessage;
+	return $_string_concat("Error:\n", fullMessage);
 }
 
 // This saves the state of the interpreter so that it's ready to have
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
+function @type('int') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
 	@type('ProgramData') p = $_get_program_data();
 	ProgramData$p.stackTop = stack;
 	ProgramData$p.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
+	return 0;
 }
 
-function performWorkNuggetPostFrame() {
+function @type('int') performWorkNuggetPostFrame() {
 
 	/*
 		This array contains multiple messages in one flat array.
@@ -370,9 +370,10 @@ function performWorkNuggetPostFrame() {
 			}
 		}
 	}
+	return 0;
 }
 
-function valueStackIncreaseCapacity() {
+function @type('int') valueStackIncreaseCapacity() {
 	@type('ProgramData') p = $_get_program_data();
 	@type('Array<Value>') stack = ProgramData$p.valueStack;
 	@type('int') oldCapacity = $_array_length(stack);
@@ -382,4 +383,5 @@ function valueStackIncreaseCapacity() {
 		$_array_set(newStack, i, $_array_get(stack, i));
 	}
 	ProgramData$p.valueStack = newStack;
+	return 0;
 }

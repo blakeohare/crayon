@@ -38,7 +38,12 @@ switch (Value$value.type) {
 
 	case Types.LIST:
 		if (ProgramData$p.lengthId == nameId) {
-			int2 = $_list_length($_force_parens($_cast('List<Value>', Value$value.internalValue)));
+			if (%%%IS_PHP%%%) {
+				// The harmless force_parens confuses PHP because YOU CAN'T DEREFERENCE A LIST IF IT'S IN PARENTHESIS IN PHP.
+				int2 = $_list_length($_cast('List<Value>', Value$value.internalValue));
+			} else {
+				int2 = $_list_length($_force_parens($_cast('List<Value>', Value$value.internalValue)));
+			}
 			output = buildInteger(int2);
 		} else {
 			string1 = "list";
@@ -64,12 +69,12 @@ switch (Value$value.type) {
 			case Types.FLOAT: string1 = "a float"; break;
 			default: string1 = "this value"; break;
 		}
-		return killExecution(stack, pc, "Cannot dereference a field from " + string1 + ".");
+		return killExecution(stack, pc, $_string_concat("Cannot dereference a field from ", string1, "."));
 		break;
 }
 
 if (output == null) {
-	return killExecution(stack, pc, string1 + " does not have that field.");
+	return killExecution(stack, pc, $_string_concat(string1, " does not have that field."));
 }
 
 $_array_set(valueStack, valueStackSize - 1, output);

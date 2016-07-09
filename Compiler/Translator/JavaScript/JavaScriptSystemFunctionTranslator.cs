@@ -77,7 +77,22 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("R.beginFrame()");
         }
-        
+
+        protected override void TranslateByteCodeGetIntArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetOps(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateByteCodeGetStringArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             this.Translator.TranslateExpression(output, expression);
@@ -657,6 +672,13 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
+        protected override void TranslateStringAppend(List<string> output, Expression target, Expression valueToAppend)
+        {
+            this.Translator.TranslateExpression(output, target);
+            output.Add(" += ");
+            this.Translator.TranslateExpression(output, valueToAppend);
+        }
+
         protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
         {
             this.Translator.TranslateExpression(output, stringConstant);
@@ -691,6 +713,15 @@ namespace Crayon.Translator.JavaScript
             output.Add(".compareTo(");
             this.Translator.TranslateExpression(output, b);
             output.Add(")");
+        }
+
+        protected override void TranslateStringConcat(List<string> output, Expression[] values)
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                if (i > 0) output.Add(" + ");
+                this.Translator.TranslateExpression(output, values[i]);
+            }
         }
 
         protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
