@@ -21,7 +21,7 @@ namespace Crayon.Translator.Php
 
         public override bool IsStronglyTyped { get { return false; } }
 
-        public override string PlatformShortId { get { return "php-server"; } }
+        public override string PlatformShortId { get { return "server-php"; } }
 
         public override bool SupportsListClear { get { return false; } }
 
@@ -60,13 +60,13 @@ namespace Crayon.Translator.Php
             output["cryutil.php"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("php-server/cryutil.php"), replacements),
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("server-php/cryutil.php"), replacements),
             };
 
             output["index.php"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("php-server/index.php"), replacements),
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("server-php/index.php"), replacements),
             };
 
             return output;

@@ -13,7 +13,7 @@ namespace Crayon.Translator.Java
             : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
         { }
 
-        public override string PlatformShortId { get { return "java-awt"; } }
+        public override string PlatformShortId { get { return "game-java-awt"; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,
@@ -42,7 +42,7 @@ namespace Crayon.Translator.Java
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("java-awt/" + awtFile + ".txt"),
+                        Util.ReadResourceFileInternally("game-java-awt/" + awtFile + ".txt"),
                         replacements)
                 };
             }
@@ -74,7 +74,7 @@ namespace Crayon.Translator.Java
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("java-awt/" + basicFile + ".txt"),
+                        Util.ReadResourceFileInternally("game-java-awt/" + basicFile + ".txt"),
                         replacements)
                 };
             }
@@ -231,7 +231,7 @@ namespace Crayon.Translator.Java
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("java-awt/BuildXml.txt"),
+                    Util.ReadResourceFileInternally("game-java-awt/BuildXml.txt"),
                     replacements)
             };
 

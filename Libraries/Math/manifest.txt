@@ -5,5 +5,5 @@ DESCRIPTION: Common basic math functions.
 
 # Description of the behavior of $_int on each platform...
 BOOL_FLAG: MATH_INT_IS_FLOOR: false
-[java-awt] BOOL_FLAG: MATH_INT_IS_FLOOR: true
-[javascript] BOOL_FLAG: MATH_INT_IS_FLOOR: true
+[game-java-awt] BOOL_FLAG: MATH_INT_IS_FLOOR: true
+[game-javascript] BOOL_FLAG: MATH_INT_IS_FLOOR: true

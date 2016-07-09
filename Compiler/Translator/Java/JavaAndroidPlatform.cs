@@ -11,7 +11,7 @@ namespace Crayon.Translator.Java
             : base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), true)
         { }
 
-        public override string PlatformShortId { get { return "java-android"; } }
+        public override string PlatformShortId { get { return "game-java-android"; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,

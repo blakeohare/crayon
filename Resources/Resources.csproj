@@ -35,17 +35,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="javascript\bytecode.js" />
-    <EmbeddedResource Include="javascript\drawing.js" />
-    <EmbeddedResource Include="javascript\fake_disk.js" />
-    <EmbeddedResource Include="javascript\file_io.js" />
-    <EmbeddedResource Include="javascript\gamepad.js" />
-    <EmbeddedResource Include="javascript\game_code.js" />
-    <EmbeddedResource Include="javascript\game_host_html.txt" />
-    <EmbeddedResource Include="javascript\http.js" />
-    <EmbeddedResource Include="javascript\input.js" />
-    <EmbeddedResource Include="javascript\interpreter_helpers.js" />
-    <EmbeddedResource Include="javascript\sound.js" />
+    <EmbeddedResource Include="javascript-common\bytecode.js" />
+    <EmbeddedResource Include="javascript-common\fake_disk.js" />
+    <EmbeddedResource Include="javascript-common\file_io.js" />
+    <EmbeddedResource Include="javascript-common\interpreter_helpers.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="game-javascript\drawing.js" />
+    <EmbeddedResource Include="game-javascript\gamepad.js" />
+    <EmbeddedResource Include="game-javascript\game_code.js" />
+    <EmbeddedResource Include="game-javascript\game_host_html.txt" />
+    <EmbeddedResource Include="game-javascript\http.js" />
+    <EmbeddedResource Include="game-javascript\input.js" />
+    <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="java-common\AsyncMessageQueue.txt" />
@@ -74,57 +76,57 @@
     <EmbeddedResource Include="java-common\org-json\XMLTokener.java" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-android\AndroidTranslationHelper.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\AndroidIml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\AndroidManifestXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\AppBuildGradle.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\AppIml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\BuildGradle.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\GradleProperties.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\Gradlew.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\GradlewBat.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\GradleWrapperJar" />
-    <EmbeddedResource Include="java-android\boilerplate\GradleWrapperProperties.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\IcLauncherWeb.png" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\CompilerXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\CopyrightProfilesSettingsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\DotName.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\EncodingsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\GradleXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\LibrariesSupportXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\MiscXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\ModulesXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\ScopeSettingsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\VcsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\idea\WorkspaceXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\JavaUtilSystemUiHider.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\JavaUtilSystemUiHiderBase.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ProjectIml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResDrawableHdpiIcLauncher.png" />
-    <EmbeddedResource Include="java-android\boilerplate\ResDrawableMdpiIcLauncher.png" />
-    <EmbeddedResource Include="java-android\boilerplate\ResDrawableXhdpiIcLauncher.png" />
-    <EmbeddedResource Include="java-android\boilerplate\ResDrawableXxhdpiIcLauncher.png" />
-    <EmbeddedResource Include="java-android\boilerplate\ResLayoutActivityGameXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResValuesAttrsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResValuesColorsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResValuesStringsXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResValuesStylesXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\ResValuesV11StylesXml.txt" />
-    <EmbeddedResource Include="java-android\boilerplate\SettingsGradle.txt" />
-    <EmbeddedResource Include="java-android\CrayonGlRenderer.txt" />
-    <EmbeddedResource Include="java-android\CrayonGlSurfaceView.txt" />
-    <EmbeddedResource Include="java-android\GameActivity.txt" />
-    <EmbeddedResource Include="java-android\GlUtil.txt" />
-    <EmbeddedResource Include="java-android\OpenGlRenderer.txt" />
+    <EmbeddedResource Include="game-java-android\AndroidTranslationHelper.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\AndroidIml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\AppBuildGradle.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\AppIml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\BuildGradle.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\GradleProperties.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\Gradlew.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\GradlewBat.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\GradleWrapperJar" />
+    <EmbeddedResource Include="game-java-android\boilerplate\GradleWrapperProperties.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\IcLauncherWeb.png" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\CompilerXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\CopyrightProfilesSettingsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\DotName.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\EncodingsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\GradleXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\LibrariesSupportXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\MiscXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\ModulesXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\ScopeSettingsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\VcsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\idea\WorkspaceXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\JavaUtilSystemUiHider.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\JavaUtilSystemUiHiderBase.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ProjectIml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResDrawableHdpiIcLauncher.png" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResDrawableMdpiIcLauncher.png" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResDrawableXhdpiIcLauncher.png" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResDrawableXxhdpiIcLauncher.png" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResLayoutActivityGameXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResValuesAttrsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResValuesColorsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResValuesStringsXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResValuesStylesXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\ResValuesV11StylesXml.txt" />
+    <EmbeddedResource Include="game-java-android\boilerplate\SettingsGradle.txt" />
+    <EmbeddedResource Include="game-java-android\CrayonGlRenderer.txt" />
+    <EmbeddedResource Include="game-java-android\CrayonGlSurfaceView.txt" />
+    <EmbeddedResource Include="game-java-android\GameActivity.txt" />
+    <EmbeddedResource Include="game-java-android\GlUtil.txt" />
+    <EmbeddedResource Include="game-java-android\OpenGlRenderer.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-awt\AwtTranslationHelper.txt" />
-    <EmbeddedResource Include="java-awt\BuildXml.txt" />
-    <EmbeddedResource Include="java-awt\GameWindow.txt" />
-    <EmbeddedResource Include="java-awt\Image.txt" />
-    <EmbeddedResource Include="java-awt\RenderEngine.txt" />
-    <EmbeddedResource Include="java-awt\Start.txt" />
+    <EmbeddedResource Include="game-java-awt\AwtTranslationHelper.txt" />
+    <EmbeddedResource Include="game-java-awt\BuildXml.txt" />
+    <EmbeddedResource Include="game-java-awt\GameWindow.txt" />
+    <EmbeddedResource Include="game-java-awt\Image.txt" />
+    <EmbeddedResource Include="game-java-awt\RenderEngine.txt" />
+    <EmbeddedResource Include="game-java-awt\Start.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="csharp-common\AsyncMessageQueue.txt" />
@@ -132,65 +134,65 @@
     <EmbeddedResource Include="csharp-common\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="csharp-android\AssemblyInfo.txt" />
-    <EmbeddedResource Include="csharp-android\CsxaAudioHelper.txt" />
-    <EmbeddedResource Include="csharp-android\CsxaGlRenderer.txt" />
-    <EmbeddedResource Include="csharp-android\CsxaTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-android\GlView1.txt" />
-    <EmbeddedResource Include="csharp-android\Icon.png" />
-    <EmbeddedResource Include="csharp-android\Main.axml.txt" />
-    <EmbeddedResource Include="csharp-android\MainActivity.txt" />
-    <EmbeddedResource Include="csharp-android\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="csharp-android\ResourceDesigner.txt" />
-    <EmbeddedResource Include="csharp-android\ResourceReader.txt" />
-    <EmbeddedResource Include="csharp-android\SolutionFile.sln.txt" />
-    <EmbeddedResource Include="csharp-android\Strings.xml.txt" />
+    <EmbeddedResource Include="game-csharp-android\AssemblyInfo.txt" />
+    <EmbeddedResource Include="game-csharp-android\CsxaAudioHelper.txt" />
+    <EmbeddedResource Include="game-csharp-android\CsxaGlRenderer.txt" />
+    <EmbeddedResource Include="game-csharp-android\CsxaTranslationHelper.txt" />
+    <EmbeddedResource Include="game-csharp-android\GlView1.txt" />
+    <EmbeddedResource Include="game-csharp-android\Icon.png" />
+    <EmbeddedResource Include="game-csharp-android\Main.axml.txt" />
+    <EmbeddedResource Include="game-csharp-android\MainActivity.txt" />
+    <EmbeddedResource Include="game-csharp-android\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="game-csharp-android\ResourceDesigner.txt" />
+    <EmbeddedResource Include="game-csharp-android\ResourceReader.txt" />
+    <EmbeddedResource Include="game-csharp-android\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="game-csharp-android\Strings.xml.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="csharp-ios\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="csharp-ios\SolutionFile.sln.txt" />
-    <EmbeddedResource Include="csharp-ios\AppDelegate.txt" />
-    <EmbeddedResource Include="csharp-ios\EntitlementsPlist.txt" />
-    <EmbeddedResource Include="csharp-ios\GameViewController.txt" />
-    <EmbeddedResource Include="csharp-ios\Graphics2dRenderer.txt" />
-    <EmbeddedResource Include="csharp-ios\InfoPlist.txt" />
-    <EmbeddedResource Include="csharp-ios\LaunchScreenStoryboard.txt" />
-    <EmbeddedResource Include="csharp-ios\Main.txt" />
-    <EmbeddedResource Include="csharp-ios\MainStoryboard.txt" />
-    <EmbeddedResource Include="csharp-ios\AssetsXcassetsContentsJson.txt" />
-    <EmbeddedResource Include="csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
-    <EmbeddedResource Include="csharp-ios\CsxiTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-ios\ResourceReader.txt" />
+    <EmbeddedResource Include="game-csharp-ios\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="game-csharp-ios\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="game-csharp-ios\AppDelegate.txt" />
+    <EmbeddedResource Include="game-csharp-ios\EntitlementsPlist.txt" />
+    <EmbeddedResource Include="game-csharp-ios\GameViewController.txt" />
+    <EmbeddedResource Include="game-csharp-ios\Graphics2dRenderer.txt" />
+    <EmbeddedResource Include="game-csharp-ios\InfoPlist.txt" />
+    <EmbeddedResource Include="game-csharp-ios\LaunchScreenStoryboard.txt" />
+    <EmbeddedResource Include="game-csharp-ios\Main.txt" />
+    <EmbeddedResource Include="game-csharp-ios\MainStoryboard.txt" />
+    <EmbeddedResource Include="game-csharp-ios\AssetsXcassetsContentsJson.txt" />
+    <EmbeddedResource Include="game-csharp-ios\AssetsXcassetsAppIconsAppIconSetContentsJson.txt" />
+    <EmbeddedResource Include="game-csharp-ios\CsxiTranslationHelper.txt" />
+    <EmbeddedResource Include="game-csharp-ios\ResourceReader.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="csharp-opentk\AssemblyInfo.txt" />
-    <EmbeddedResource Include="csharp-opentk\binaries\OpenTK.dll" />
-    <EmbeddedResource Include="csharp-opentk\binaries\SDL.dll" />
-    <EmbeddedResource Include="csharp-opentk\binaries\SdlDotNet.dll" />
-    <EmbeddedResource Include="csharp-opentk\binaries\SDL_mixer.dll" />
-    <EmbeddedResource Include="csharp-opentk\binaries\Tao.Sdl.dll" />
-    <EmbeddedResource Include="csharp-opentk\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-opentk\GameWindow.txt" />
-    <EmbeddedResource Include="csharp-opentk\GlUtil.txt" />
-    <EmbeddedResource Include="csharp-opentk\License.txt" />
-    <EmbeddedResource Include="csharp-opentk\OpenTkRenderer.txt" />
-    <EmbeddedResource Include="csharp-opentk\OpenTkTranslationHelper.txt" />
-    <EmbeddedResource Include="csharp-opentk\Program.txt" />
-    <EmbeddedResource Include="csharp-opentk\ProjectFile.csproj.txt" />
-    <EmbeddedResource Include="csharp-opentk\ResourceReader.txt" />
-    <EmbeddedResource Include="csharp-opentk\SolutionFile.sln.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\AssemblyInfo.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\OpenTK.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\SDL.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\SdlDotNet.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\SDL_mixer.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\Tao.Sdl.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\GamepadTranslationHelper.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\GameWindow.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\GlUtil.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\License.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\OpenTkRenderer.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\OpenTkTranslationHelper.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\Program.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\ProjectFile.csproj.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\ResourceReader.txt" />
+    <EmbeddedResource Include="game-csharp-opentk\SolutionFile.sln.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="php-server\cryutil.php" />
-    <EmbeddedResource Include="php-server\index.php" />
+    <EmbeddedResource Include="server-php\cryutil.php" />
+    <EmbeddedResource Include="server-php\index.php" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="python-pygame\AsyncHttpFetcher.py" />
-    <EmbeddedResource Include="python-pygame\Footer.py" />
-    <EmbeddedResource Include="python-pygame\GamepadLibraryHelper.py" />
-    <EmbeddedResource Include="python-pygame\Header.py" />
-    <EmbeddedResource Include="python-pygame\Imports.py" />
-    <EmbeddedResource Include="python-pygame\ResourceReader.py" />
+    <EmbeddedResource Include="game-python-pygame\AsyncHttpFetcher.py" />
+    <EmbeddedResource Include="game-python-pygame\Footer.py" />
+    <EmbeddedResource Include="game-python-pygame\GamepadLibraryHelper.py" />
+    <EmbeddedResource Include="game-python-pygame\Header.py" />
+    <EmbeddedResource Include="game-python-pygame\Imports.py" />
+    <EmbeddedResource Include="game-python-pygame\ResourceReader.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

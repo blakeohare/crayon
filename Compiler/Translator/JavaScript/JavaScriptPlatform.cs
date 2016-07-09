@@ -18,7 +18,7 @@ namespace Crayon.Translator.JavaScript
         public override bool IsStronglyTyped { get { return false; } }
         public override bool ImagesLoadInstantly { get { return false; } }
         public override bool IsArraySameAsList { get { return true; } }
-        public override string PlatformShortId { get { return "javascript"; } }
+        public override string PlatformShortId { get { return "game-javascript"; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,
@@ -50,18 +50,25 @@ namespace Crayon.Translator.JavaScript
             List<string> codeJs = new List<string>();
 
             foreach (string jsFile in new string[] {
+                "file_io.js",
+                "fake_disk.js",
+                "interpreter_helpers.js",
+            })
+            {
+                codeJs.Add(Minify(Util.ReadResourceFileInternally("javascript-common/" + jsFile)));
+                codeJs.Add(this.Translator.NL);
+            }
+
+            foreach (string jsFile in new string[] {
                 "game_code.js",
                 "input.js",
                 "drawing.js",
                 "sound.js",
-                "file_io.js",
-                "fake_disk.js",
                 "gamepad.js",
                 "http.js",
-                "interpreter_helpers.js",
             })
             {
-                codeJs.Add(Minify(Util.ReadResourceFileInternally("javascript/" + jsFile)));
+                codeJs.Add(Minify(Util.ReadResourceFileInternally("game-javascript/" + jsFile)));
                 codeJs.Add(this.Translator.NL);
             }
 
@@ -87,7 +94,7 @@ namespace Crayon.Translator.JavaScript
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("javascript/bytecode.js"), replacements),
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("javascript-common/bytecode.js"), replacements),
             };
 
             Dictionary<string, string> textResources = new Dictionary<string, string>();
@@ -177,7 +184,7 @@ namespace Crayon.Translator.JavaScript
 
         public string GenerateHtmlFile()
         {
-            return Util.ReadResourceFileInternally("javascript/game_host_html.txt");
+            return Util.ReadResourceFileInternally("game-javascript/game_host_html.txt");
         }
     }
 }

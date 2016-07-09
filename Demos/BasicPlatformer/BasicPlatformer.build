@@ -11,23 +11,23 @@
 	
 	<!-- Targets -->
 	<target name="js_local">
-		<platform>javascript</platform>
+		<platform>game-javascript</platform>
 	</target>
 	
 	<target name="js_remote">
-		<platform>javascript</platform>
+		<platform>game-javascript</platform>
 		<jsfileprefix>/demos/platformer/</jsfileprefix>
 	</target>
 	
 	<target name="windows">
-		<platform>csharp-opentk</platform>
+		<platform>game-csharp-opentk</platform>
 	</target>
 	
 	<target name="javaawt">
-		<platform>java-awt</platform>
+		<platform>game-java-awt</platform>
 	</target>
 	
 	<target name="python">
-		<platform>python-pygame</platform>
+		<platform>game-python-pygame</platform>
 	</target>
 </build>

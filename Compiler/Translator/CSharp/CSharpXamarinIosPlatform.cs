@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
             : base(new CSharpXamarinIosSystemFunctionTranslator(), true)
         { }
 
-        public override string PlatformShortId { get { return "csharp-ios"; } }
+        public override string PlatformShortId { get { return "game-csharp-ios"; } }
 
         public override void PlatformSpecificFiles(
             string projectId,
@@ -20,7 +20,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-ios/SolutionFile.sln.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-ios/SolutionFile.sln.txt"),
                     replacements),
             };
 
@@ -37,7 +37,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("csharp-ios/" + csFile + ".txt"),
+                        Util.ReadResourceFileInternally("game-csharp-ios/" + csFile + ".txt"),
                         replacements),
                 };
             }
@@ -56,7 +56,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("csharp-ios/" + parts[0]),
+                        Util.ReadResourceFileInternally("game-csharp-ios/" + parts[0]),
                         replacements),
                 };
             }
@@ -90,7 +90,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-ios/ProjectFile.csproj.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-ios/ProjectFile.csproj.txt"),
                     replacements),
             };
         }

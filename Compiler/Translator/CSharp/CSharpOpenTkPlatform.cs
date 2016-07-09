@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
             : base(new CSharpOpenTkSystemFunctionTranslator(), true)
         { }
 
-        public override string PlatformShortId { get { return "csharp-opentk"; } }
+        public override string PlatformShortId { get { return "game-csharp-opentk"; } }
 
         public override void PlatformSpecificFiles(
             string projectId,
@@ -22,14 +22,14 @@ namespace Crayon.Translator.CSharp
                 files[projectId + "/" + binary + ".dll"] = new FileOutput()
                 {
                     Type = FileOutputType.Binary,
-                    BinaryContent = Util.ReadResourceBytesInternally("csharp-opentk/binaries/" + binary + ".dll")
+                    BinaryContent = Util.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + binary + ".dll")
                 };
             }
 
             files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Util.ReadResourceFileInternally("csharp-opentk/License.txt")
+                TextContent = Util.ReadResourceFileInternally("game-csharp-opentk/License.txt")
             };
 
             List<string> embeddedResources = new List<string>();
@@ -97,7 +97,7 @@ namespace Crayon.Translator.CSharp
             })
             {
                 string[] parts = file.Split(',');
-                string source = "csharp-opentk/" + parts[0];
+                string source = "game-csharp-opentk/" + parts[0];
                 string destination = Constants.DoReplacements(parts[1], replacements);
                 string content = Constants.DoReplacements(Util.ReadResourceFileInternally(source), replacements);
                 files[destination] = new FileOutput()

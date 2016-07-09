@@ -15,7 +15,7 @@ namespace Crayon.Translator.Python
         public override bool ImagesLoadInstantly { get { return true; } }
         public override bool IsArraySameAsList { get { return true; } }
 
-        public override string PlatformShortId { get { return "pygame-pygame"; } }
+        public override string PlatformShortId { get { return "game-python-pygame"; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,
@@ -88,7 +88,7 @@ namespace Crayon.Translator.Python
 
         private string GetPyGameCode(string file, Dictionary<string, string> replacements)
         {
-            string pygameCode = Util.ReadResourceFileInternally("python-pygame/" + file);
+            string pygameCode = Util.ReadResourceFileInternally("game-python-pygame/" + file);
             pygameCode = Constants.DoReplacements(pygameCode, replacements);
             return pygameCode;
         }

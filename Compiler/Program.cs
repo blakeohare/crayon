@@ -61,14 +61,16 @@ namespace Crayon
         {
             switch (buildContext.Platform.ToLowerInvariant())
             {
-                case "csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
-                case "csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
-                case "csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
-                case "java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
-                case "java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
-                case "javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
-                case "php-server": return new Crayon.Translator.Php.PhpPlatform();
-                case "python-pygame": return new Crayon.Translator.Python.PythonPlatform();
+                case "game-csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
+                case "game-csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
+                case "game-csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
+                case "game-java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
+                case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
+                case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
+                case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
+                case "server-php": return new Crayon.Translator.Php.PhpPlatform();
+                case "ui-csharp-winforms": throw new NotImplementedException();
+                case "ui-javascript": throw new NotImplementedException();
                 default:
                     throw new InvalidOperationException("Unrecognized platform. See usage.");
             }

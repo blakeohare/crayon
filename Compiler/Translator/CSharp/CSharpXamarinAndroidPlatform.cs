@@ -8,7 +8,7 @@ namespace Crayon.Translator.CSharp
             new CSharpXamarinAndroidSystemFunctionTranslator(), true)
         { }
 
-        public override string PlatformShortId { get { return "csharp-android"; } }
+        public override string PlatformShortId { get { return "game-csharp-android"; } }
 
         private List<string> audioResourcePathsRelativeToProjectRoot = new List<string>();
 
@@ -22,7 +22,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-android/SolutionFile.sln.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-android/SolutionFile.sln.txt"),
                     replacements)
             };
 
@@ -91,14 +91,14 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/Resources/drawable/Icon.png"] = new FileOutput()
             {
                 Type = FileOutputType.Binary,
-                BinaryContent = Util.ReadResourceBytesInternally("csharp-android/Icon.png"),
+                BinaryContent = Util.ReadResourceBytesInternally("game-csharp-android/Icon.png"),
             };
 
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-android/ProjectFile.csproj.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-android/ProjectFile.csproj.txt"),
                     replacements)
             };
 
@@ -107,7 +107,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-android/Main.axml.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-android/Main.axml.txt"),
                     replacements),
             };
 
@@ -115,7 +115,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-android/Strings.xml.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-android/Strings.xml.txt"),
                     replacements),
             };
 
@@ -123,7 +123,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(
-                    Util.ReadResourceFileInternally("csharp-android/ResourceDesigner.txt"),
+                    Util.ReadResourceFileInternally("game-csharp-android/ResourceDesigner.txt"),
                     replacements),
             };
 
@@ -144,7 +144,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(
-                        Util.ReadResourceFileInternally("csharp-android/" + filename + ".txt"),
+                        Util.ReadResourceFileInternally("game-csharp-android/" + filename + ".txt"),
                         replacements)
                 };
             }
