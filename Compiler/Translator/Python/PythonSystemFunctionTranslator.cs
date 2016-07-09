@@ -74,7 +74,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, message);
             output.Add(")");
         }
-        
+
         protected override void TranslateBeginFrame(List<string> output)
         {
             throw new Exception("This code path should be optimized out of the python translation.");
@@ -210,7 +210,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-        
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("float(");
@@ -219,7 +219,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
-        
+
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -432,7 +432,7 @@ namespace Crayon.Translator.Python
         {
             output.Add("(sys.platform == 'win32')");
         }
-        
+
         protected override void TranslateListClear(List<string> output, Expression list)
         {
             output.Add("_clear_list(");
@@ -544,7 +544,7 @@ namespace Crayon.Translator.Python
             output.Add(this.Shorten(" * "));
             this.Translator.TranslateExpression(output, num);
         }
-        
+
         private void TranslateNewPythonList(List<string> output, Expression size)
         {
             if (size is IntegerConstant)
@@ -638,7 +638,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, filePath);
             output.Add(")");
         }
-        
+
         protected override void TranslateRegisterTicker(List<string> output)
         {
             throw new Exception("This code path should be optimized out of the python translation.");
@@ -668,7 +668,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-        
+
         protected override void TranslateSin(List<string> output, Expression value)
         {
             output.Add("math.sin(");
@@ -743,7 +743,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, haystack);
             output.Add(")");
         }
-        
+
         protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
             this.Translator.TranslateExpression(output, stringExpr);

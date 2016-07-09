@@ -2,35 +2,35 @@
 
 namespace Crayon.Translator.Python
 {
-	class PythonPlatform : AbstractPlatform
-	{
-		public PythonPlatform()
-			: base(PlatformId.PYTHON_PYGAME, LanguageId.PYTHON, false, new PythonTranslator(), new PythonSystemFunctionTranslator(), false)
-		{ }
+    class PythonPlatform : AbstractPlatform
+    {
+        public PythonPlatform()
+            : base(PlatformId.PYTHON_PYGAME, LanguageId.PYTHON, false, new PythonTranslator(), new PythonSystemFunctionTranslator(), false)
+        { }
 
-		public override bool IsAsync { get { return false; } }
-		public override bool RemoveBreaksFromSwitch { get { return true; } }
-		public override bool SupportsListClear { get { return false; } }
-		public override bool IsStronglyTyped { get { return false; } }
-		public override bool ImagesLoadInstantly { get { return true; } }
-		public override bool IsArraySameAsList { get { return true; } }
-        
-		public override string PlatformShortId { get { return "pygame-pygame"; } }
+        public override bool IsAsync { get { return false; } }
+        public override bool RemoveBreaksFromSwitch { get { return true; } }
+        public override bool SupportsListClear { get { return false; } }
+        public override bool IsStronglyTyped { get { return false; } }
+        public override bool ImagesLoadInstantly { get { return true; } }
+        public override bool IsArraySameAsList { get { return true; } }
 
-		public override Dictionary<string, FileOutput> Package(
+        public override string PlatformShortId { get { return "pygame-pygame"; } }
+
+        public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,
             string projectId,
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
             string fileCopySourceRoot,
             ResourceDatabase resourceDatabase)
-		{
-			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-			List<string> concatenatedCode = new List<string>();
-			Dictionary<string, string> replacements = new Dictionary<string, string>()
-			{
-				{ "PROJECT_ID", projectId },
-			};
+        {
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            List<string> concatenatedCode = new List<string>();
+            Dictionary<string, string> replacements = new Dictionary<string, string>()
+            {
+                { "PROJECT_ID", projectId },
+            };
 
             foreach (string file in new string[] {
                 "Imports.py",
@@ -44,21 +44,21 @@ namespace Crayon.Translator.Python
                 concatenatedCode.Add(this.Translator.NL);
             }
 
-			this.Translator.TranslateGlobals(concatenatedCode, finalCode);
-			concatenatedCode.Add(this.Translator.NL);
-			this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);
-			concatenatedCode.Add(this.Translator.NL);
-			this.Translator.TranslateFunctions(concatenatedCode, finalCode);
-			concatenatedCode.Add(this.Translator.NL);
+            this.Translator.TranslateGlobals(concatenatedCode, finalCode);
+            concatenatedCode.Add(this.Translator.NL);
+            this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);
+            concatenatedCode.Add(this.Translator.NL);
+            this.Translator.TranslateFunctions(concatenatedCode, finalCode);
+            concatenatedCode.Add(this.Translator.NL);
 
-			concatenatedCode.Add(this.GetPyGameCode("Footer.py", replacements));
-			concatenatedCode.Add(this.Translator.NL);
+            concatenatedCode.Add(this.GetPyGameCode("Footer.py", replacements));
+            concatenatedCode.Add(this.Translator.NL);
 
-			output["run.py"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = string.Join("", concatenatedCode)
-			};
+            output["run.py"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("", concatenatedCode)
+            };
 
             output["resources/byte_code.txt"] = resourceDatabase.ByteCodeFile;
             output["resources/image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
@@ -68,7 +68,7 @@ namespace Crayon.Translator.Python
             {
                 output["resources/text/" + textFile.CanonicalFileName] = textFile;
             }
-            
+
             foreach (FileOutput audioFile in resourceDatabase.AudioResources)
             {
                 output["resources/audio/" + audioFile.CanonicalFileName] = audioFile;
@@ -83,14 +83,14 @@ namespace Crayon.Translator.Python
                 }
             }
 
-			return output;
-		}
+            return output;
+        }
 
-		private string GetPyGameCode(string file, Dictionary<string, string> replacements)
-		{
-			string pygameCode = Util.ReadResourceFileInternally("python-pygame/" + file);
-			pygameCode = Constants.DoReplacements(pygameCode, replacements);
-			return pygameCode;
-		}
-	}
+        private string GetPyGameCode(string file, Dictionary<string, string> replacements)
+        {
+            string pygameCode = Util.ReadResourceFileInternally("python-pygame/" + file);
+            pygameCode = Constants.DoReplacements(pygameCode, replacements);
+            return pygameCode;
+        }
+    }
 }

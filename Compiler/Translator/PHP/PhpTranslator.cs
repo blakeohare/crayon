@@ -7,7 +7,7 @@ namespace Crayon.Translator.Php
     internal class PhpTranslator : CurlyBraceImplementation
     {
         public PhpTranslator() : base(true) { }
-        
+
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
             output.Add(this.CurrentTabIndention);
@@ -96,7 +96,7 @@ namespace Crayon.Translator.Php
             output.Add(this.CurrentTabIndention);
             output.Add("}\n");
         }
-        
+
         protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
         {
             Variable func = (Variable)functionCall.Root;
@@ -128,4 +128,3 @@ namespace Crayon.Translator.Php
         }
     }
 }
-

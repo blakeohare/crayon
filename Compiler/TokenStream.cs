@@ -3,169 +3,169 @@ using System.Linq;
 
 namespace Crayon
 {
-	internal class TokenStream
-	{
-		private readonly List<Token[]> tokenLayers = new List<Token[]>();
-		private readonly List<int> indexes = new List<int>();
-		private Token[] topTokens;
-		private int topIndex;
-		private int topLength;
-		private bool empty;
+    internal class TokenStream
+    {
+        private readonly List<Token[]> tokenLayers = new List<Token[]>();
+        private readonly List<int> indexes = new List<int>();
+        private Token[] topTokens;
+        private int topIndex;
+        private int topLength;
+        private bool empty;
 
-		public TokenStream(IList<Token> tokens)
-		{
-			this.topIndex = 0;
-			this.topTokens = tokens.ToArray();
-			this.topLength = this.topTokens.Length;
+        public TokenStream(IList<Token> tokens)
+        {
+            this.topIndex = 0;
+            this.topTokens = tokens.ToArray();
+            this.topLength = this.topTokens.Length;
 
-			this.indexes.Add(0);
-			this.tokenLayers.Add(this.topTokens);
-			this.empty = false;
-		}
+            this.indexes.Add(0);
+            this.tokenLayers.Add(this.topTokens);
+            this.empty = false;
+        }
 
-		private Token SafePeek()
-		{
-			if (this.empty) throw new EofException();
+        private Token SafePeek()
+        {
+            if (this.empty) throw new EofException();
 
-			if (this.topIndex < this.topLength)
-			{
-				return this.topTokens[this.topIndex];
-			}
+            if (this.topIndex < this.topLength)
+            {
+                return this.topTokens[this.topIndex];
+            }
 
-			this.SafePopLayer();
+            this.SafePopLayer();
 
-			return this.SafePeek();
-		}
+            return this.SafePeek();
+        }
 
-		private Token SafePop()
-		{
-			Token token = this.SafePeek();
-			this.topIndex++;
-			return token;
-		}
+        private Token SafePop()
+        {
+            Token token = this.SafePeek();
+            this.topIndex++;
+            return token;
+        }
 
-		private bool SafeHasMore()
-		{
-			if (this.empty) return false;
-			if (this.topIndex < this.topLength) return true;
-			this.SafePopLayer();
-			return this.SafeHasMore();
-		}
+        private bool SafeHasMore()
+        {
+            if (this.empty) return false;
+            if (this.topIndex < this.topLength) return true;
+            this.SafePopLayer();
+            return this.SafeHasMore();
+        }
 
-		private void SafePopLayer()
-		{
-			this.indexes.RemoveAt(this.indexes.Count - 1);
-			this.tokenLayers.RemoveAt(this.indexes.Count);
+        private void SafePopLayer()
+        {
+            this.indexes.RemoveAt(this.indexes.Count - 1);
+            this.tokenLayers.RemoveAt(this.indexes.Count);
 
-			int i = this.indexes.Count - 1;
-			if (i == -1)
-			{
-				this.empty = true;
-			}
-			else
-			{
-				this.topIndex = this.indexes[i];
-				this.topTokens = this.tokenLayers[i];
-				this.topLength = this.topTokens.Length;
-			}
-		}
+            int i = this.indexes.Count - 1;
+            if (i == -1)
+            {
+                this.empty = true;
+            }
+            else
+            {
+                this.topIndex = this.indexes[i];
+                this.topTokens = this.tokenLayers[i];
+                this.topLength = this.topTokens.Length;
+            }
+        }
 
-		public bool IsNext(string token)
-		{
-			return this.PeekValue() == token;
-		}
+        public bool IsNext(string token)
+        {
+            return this.PeekValue() == token;
+        }
 
-		public bool AreNext(string token1, string token2)
-		{
-			if (this.empty) return false;
+        public bool AreNext(string token1, string token2)
+        {
+            if (this.empty) return false;
 
-			if (!this.IsNext(token1)) return false;
+            if (!this.IsNext(token1)) return false;
 
-			// only check the top stack as multi-stream results are never contextually relevant.
-			if (this.topIndex + 1 < this.topLength)
-			{
-				return this.topTokens[this.topIndex + 1].Value == token2;
-			}
+            // only check the top stack as multi-stream results are never contextually relevant.
+            if (this.topIndex + 1 < this.topLength)
+            {
+                return this.topTokens[this.topIndex + 1].Value == token2;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public Token Peek()
-		{
-			return this.SafeHasMore() ? this.SafePeek() : null;
-		}
+        public Token Peek()
+        {
+            return this.SafeHasMore() ? this.SafePeek() : null;
+        }
 
-		public Token Pop()
-		{
-			return this.SafePop();
-		}
+        public Token Pop()
+        {
+            return this.SafePop();
+        }
 
-		public string PeekValue()
-		{
-			return this.SafeHasMore() ? this.SafePeek().Value : null;
-		}
+        public string PeekValue()
+        {
+            return this.SafeHasMore() ? this.SafePeek().Value : null;
+        }
 
-		public string PeekValue(int offset)
-		{
-			// only check the top stack as multi-stream results are never contextually relevant.
-			int index = this.topIndex + offset;
-			if (index < this.topLength)
-			{
-				return this.topTokens[index].Value;
-			}
-			return null;
-		}
+        public string PeekValue(int offset)
+        {
+            // only check the top stack as multi-stream results are never contextually relevant.
+            int index = this.topIndex + offset;
+            if (index < this.topLength)
+            {
+                return this.topTokens[index].Value;
+            }
+            return null;
+        }
 
-		public string PopValue()
-		{
-			return this.Pop().Value;
-		}
+        public string PopValue()
+        {
+            return this.Pop().Value;
+        }
 
-		public bool PopIfPresent(string value)
-		{
-			if (this.PeekValue() == value)
-			{
-				this.Pop();
-				return true;
-			}
-			return false;
-		}
+        public bool PopIfPresent(string value)
+        {
+            if (this.PeekValue() == value)
+            {
+                this.Pop();
+                return true;
+            }
+            return false;
+        }
 
-		public Token PopExpected(string value)
-		{
-			Token token = this.Pop();
-			if (token.Value != value)
-			{
-				throw new ParserException(token, " Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'");
-			}
-			return token;
-		}
+        public Token PopExpected(string value)
+        {
+            Token token = this.Pop();
+            if (token.Value != value)
+            {
+                throw new ParserException(token, " Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'");
+            }
+            return token;
+        }
 
-		public bool HasMore
-		{
-			get
-			{
-				return this.SafeHasMore();
-			}
-		}
+        public bool HasMore
+        {
+            get
+            {
+                return this.SafeHasMore();
+            }
+        }
 
-		public bool NextHasNoWhitespacePrefix
-		{
-			get
-			{
-				return this.SafeHasMore() && this.SafePeek().HasWhitespacePrefix;
-			}
-		}
+        public bool NextHasNoWhitespacePrefix
+        {
+            get
+            {
+                return this.SafeHasMore() && this.SafePeek().HasWhitespacePrefix;
+            }
+        }
 
-		// Inline imports, implicit core import statements...
-		public void InsertTokens(IList<Token> tokens)
-		{
-			this.indexes[this.indexes.Count - 1] = this.topIndex;
-			this.topTokens = tokens.ToArray();
-			this.topIndex = 0;
-			this.topLength = this.topTokens.Length;
-			this.tokenLayers.Add(this.topTokens);
-			this.indexes.Add(0);
-		}
-	}
+        // Inline imports, implicit core import statements...
+        public void InsertTokens(IList<Token> tokens)
+        {
+            this.indexes[this.indexes.Count - 1] = this.topIndex;
+            this.topTokens = tokens.ToArray();
+            this.topIndex = 0;
+            this.topLength = this.topTokens.Length;
+            this.tokenLayers.Add(this.topTokens);
+            this.indexes.Add(0);
+        }
+    }
 }

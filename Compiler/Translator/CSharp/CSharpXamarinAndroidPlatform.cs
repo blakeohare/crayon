@@ -2,14 +2,14 @@
 
 namespace Crayon.Translator.CSharp
 {
-	class CSharpXamarinAndroidPlatform : CSharpPlatform
+    class CSharpXamarinAndroidPlatform : CSharpPlatform
     {
-		public CSharpXamarinAndroidPlatform() : base(
-			new CSharpXamarinAndroidSystemFunctionTranslator(), true)
-		{ }
+        public CSharpXamarinAndroidPlatform() : base(
+            new CSharpXamarinAndroidSystemFunctionTranslator(), true)
+        { }
 
-		public override string PlatformShortId { get { return "csharp-android"; } }
-        
+        public override string PlatformShortId { get { return "csharp-android"; } }
+
         private List<string> audioResourcePathsRelativeToProjectRoot = new List<string>();
 
         public override void PlatformSpecificFiles(
@@ -25,7 +25,7 @@ namespace Crayon.Translator.CSharp
                     Util.ReadResourceFileInternally("csharp-android/SolutionFile.sln.txt"),
                     replacements)
             };
-            
+
             List<string> additionalAndroidAssets = new List<string>();
 
             if (resourceDatabase.SpriteSheetManifestFile != null)
@@ -75,7 +75,7 @@ namespace Crayon.Translator.CSharp
 
                 androidResourceId++;
             }
-            
+
             files[projectId + "/Assets/resourceLookup.txt"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -89,10 +89,10 @@ namespace Crayon.Translator.CSharp
             replacements["ANDROID_RAW_RESOURCES"] = "\r\n" + string.Join("\r\n", androidResourcesForProjectFile);
 
             files[projectId + "/Resources/drawable/Icon.png"] = new FileOutput()
-			{
-				Type = FileOutputType.Binary,
-				BinaryContent = Util.ReadResourceBytesInternally("csharp-android/Icon.png"),
-			};
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = Util.ReadResourceBytesInternally("csharp-android/Icon.png"),
+            };
 
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
             {
@@ -104,20 +104,20 @@ namespace Crayon.Translator.CSharp
 
             // TODO: if not really used, can this be removed from the project?
             files[projectId + "/Resources/layout/Main.axml"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Constants.DoReplacements(
-					Util.ReadResourceFileInternally("csharp-android/Main.axml.txt"),
-					replacements),
-			};
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(
+                    Util.ReadResourceFileInternally("csharp-android/Main.axml.txt"),
+                    replacements),
+            };
 
-			files[projectId + "/Resources/values/strings.xml"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = Constants.DoReplacements(
-					Util.ReadResourceFileInternally("csharp-android/Strings.xml.txt"),
-					replacements),
-			};
+            files[projectId + "/Resources/values/strings.xml"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(
+                    Util.ReadResourceFileInternally("csharp-android/Strings.xml.txt"),
+                    replacements),
+            };
 
             files[projectId + "/Resources/Resource.Designer.cs"] = new FileOutput()
             {
@@ -148,6 +148,6 @@ namespace Crayon.Translator.CSharp
                         replacements)
                 };
             }
-		}
-	}
+        }
+    }
 }

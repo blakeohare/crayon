@@ -10,7 +10,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.GetResourceManifest()");
         }
-        
+
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("OpenTkTranslationHelper.ImagetteFlushToNativeBitmap(");
@@ -54,7 +54,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-        
+
         protected override void TranslateGetEventsRawList(List<string> output)
         {
             output.Add("OpenTkTranslationHelper.GetEvents()");
@@ -84,7 +84,7 @@ namespace Crayon.Translator.CSharp
         {
             throw new InvalidOperationException();
         }
-        
+
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
             output.Add("GameWindow.Instance.SetTitle(");

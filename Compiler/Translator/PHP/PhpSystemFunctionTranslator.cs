@@ -6,7 +6,7 @@ namespace Crayon.Translator.Php
 {
     internal class PhpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        private PhpTranslator PhpTranslator { get { return (PhpTranslator) this.Translator; } }
+        private PhpTranslator PhpTranslator { get { return (PhpTranslator)this.Translator; } }
 
         protected override void TranslateAppDataRoot(List<string> output)
         {
@@ -51,7 +51,7 @@ namespace Crayon.Translator.Php
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
-        
+
         protected override void TranslateAssert(List<string> output, Expression message)
         {
             output.Add("pth_assert(");
@@ -177,7 +177,7 @@ namespace Crayon.Translator.Php
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
-        
+
         protected override void TranslateDictionarySize(List<string> output, Expression dictionary)
         {
             output.Add("count(");

@@ -3,75 +3,75 @@ using Crayon.ParseTree;
 
 namespace Crayon
 {
-	internal class SystemLibraryManager
-	{
+    internal class SystemLibraryManager
+    {
         // object is either an ILibraryConfig or a LibraryLoader
         private Dictionary<string, Library> importedLibraries = new Dictionary<string, Library>();
-		private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();
+        private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();
 
-		private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
+        private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
 
-		private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
-		private List<string> orderedListOfFunctionNames = new List<string>();
+        private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
+        private List<string> orderedListOfFunctionNames = new List<string>();
 
-		public string GetLibrarySwitchStatement(AbstractPlatform platform)
-		{
-			List<string> output = new List<string>();
-			foreach (string name in this.orderedListOfFunctionNames)
-			{
-				output.Add("case " + this.libFunctionIds[name] + ":\n");
-				output.Add("$_comment('" + name + "');");
-				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
-				output.Add("\nbreak;\n");
-			}
-			return string.Join("\n", output);
-		}
+        public string GetLibrarySwitchStatement(AbstractPlatform platform)
+        {
+            List<string> output = new List<string>();
+            foreach (string name in this.orderedListOfFunctionNames)
+            {
+                output.Add("case " + this.libFunctionIds[name] + ":\n");
+                output.Add("$_comment('" + name + "');");
+                output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
+                output.Add("\nbreak;\n");
+            }
+            return string.Join("\n", output);
+        }
 
-		public Library GetLibraryFromKey(string key)
-		{
+        public Library GetLibraryFromKey(string key)
+        {
             Library output;
-			return this.librariesByKey.TryGetValue(key, out output) ? output : null;
-		}
+            return this.librariesByKey.TryGetValue(key, out output) ? output : null;
+        }
 
-		public int GetIdForFunction(string name, string library)
-		{
-			if (this.libFunctionIds.ContainsKey(name))
-			{
-				return this.libFunctionIds[name];
-			}
+        public int GetIdForFunction(string name, string library)
+        {
+            if (this.libFunctionIds.ContainsKey(name))
+            {
+                return this.libFunctionIds[name];
+            }
 
-			if (library != "Core" && name.StartsWith("lib_core_"))
-			{
-				library = "Core";
-			}
+            if (library != "Core" && name.StartsWith("lib_core_"))
+            {
+                library = "Core";
+            }
 
-			this.functionNameToLibraryName[name] = library;
-			this.orderedListOfFunctionNames.Add(name);
-			int id = this.orderedListOfFunctionNames.Count;
-			this.libFunctionIds[name] = id;
-			return id;
-		}
+            this.functionNameToLibraryName[name] = library;
+            this.orderedListOfFunctionNames.Add(name);
+            int id = this.orderedListOfFunctionNames.Count;
+            this.libFunctionIds[name] = id;
+            return id;
+        }
 
-		public string GetEmbeddedCode(string libraryName)
-		{
-			return this.importedLibraries[libraryName].GetEmbeddedCode();
-		}
+        public string GetEmbeddedCode(string libraryName)
+        {
+            return this.importedLibraries[libraryName].GetEmbeddedCode();
+        }
 
-		public Dictionary<string, string> GetSupplementalTranslationFiles()
-		{
-			Dictionary<string, string> output = new Dictionary<string, string>();
-			foreach (Library library in this.importedLibraries.Values)
-			{
-				Dictionary<string, string> files = library.GetSupplementalTranslatedCode();
-				foreach (string key in files.Keys)
-				{
-					output[key] = files[key];
-				}
-			}
-			return output;
-		}
+        public Dictionary<string, string> GetSupplementalTranslationFiles()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (Library library in this.importedLibraries.Values)
+            {
+                Dictionary<string, string> files = library.GetSupplementalTranslatedCode();
+                foreach (string key in files.Keys)
+                {
+                    output[key] = files[key];
+                }
+            }
+            return output;
+        }
 
-		private Dictionary<string, string> systemLibraryPathsByName = null;
+        private Dictionary<string, string> systemLibraryPathsByName = null;
 
         private string GetSystemLibraryPath(string name)
         {
@@ -90,17 +90,17 @@ namespace Crayon
 
                 List<string> directoriesToCheck = new List<string>();
 
-				if (crayonHome != null)
-				{
-					string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
-					directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
-				}
+                if (crayonHome != null)
+                {
+                    string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
+                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+                }
 
 #if DEBUG
                 // Presumably running from source. Walk up to the root directory and find the Libraries directory.
                 // From there use the list of folders.
                 string currentDirectory = System.IO.Path.GetFullPath(".");
-				while (!string.IsNullOrEmpty(currentDirectory))
+                while (!string.IsNullOrEmpty(currentDirectory))
                 {
                     string path = System.IO.Path.Combine(currentDirectory, "Libraries");
                     if (System.IO.Directory.Exists(path))
@@ -128,8 +128,8 @@ namespace Crayon
                 : null;
         }
 
-		private readonly HashSet<string> alreadyImported = new HashSet<string>();
-		private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
+        private readonly HashSet<string> alreadyImported = new HashSet<string>();
+        private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
 
         public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
         {
@@ -165,5 +165,5 @@ namespace Crayon
             parser.CurrentSystemLibrary = oldSystemLibrary;
             return libraryParseTree;
         }
-	}
+    }
 }

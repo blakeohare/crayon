@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Crayon
+﻿namespace Crayon
 {
-	enum FileOutputType
-	{
-		Text,
-		Binary,
-		Copy,
-		Image,
+    enum FileOutputType
+    {
+        Text,
+        Binary,
+        Copy,
+        Image,
 
         // A stub indicating the original file path of a file that was once here but is no longer
         // present at this location. This is for things like images that are in sprite sheets.
         Ghost,
-	}
+    }
 
-	class FileOutput
-	{
-		public FileOutputType Type { get; set; }
+    class FileOutput
+    {
+        public FileOutputType Type { get; set; }
 
-		public string RelativeInputPath { get; set; }
-		public string TextContent { get; set; }
-		public byte[] BinaryContent { get; set; }
-		public SystemBitmap Bitmap { get; set; }
+        public string RelativeInputPath { get; set; }
+        public string TextContent { get; set; }
+        public byte[] BinaryContent { get; set; }
+        public SystemBitmap Bitmap { get; set; }
 
         // Re-encode all text files as UTF-8 for consistent readback. If re-encoding fails, then this 
         // is likely a binary format that was erroneously included as a text resource and will not be

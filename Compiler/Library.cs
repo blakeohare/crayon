@@ -11,7 +11,7 @@ namespace Crayon
         public string RootDirectory { get; set; }
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
-        
+
         public Library(string name, string libraryManifestPath, string platformName)
         {
             this.Name = name;
@@ -161,15 +161,15 @@ namespace Crayon
             string prefix = "lib_" + this.Name.ToLower() + "_";
             if (!functionName.StartsWith(prefix))
             {
-				throw new InvalidOperationException("Cannot call library function '" + functionName + "' from the '" + this.Name + "' library.");
+                throw new InvalidOperationException("Cannot call library function '" + functionName + "' from the '" + this.Name + "' library.");
             }
             string shortName = functionName.Substring(prefix.Length);
             if (!this.filepathsByFunctionName.ContainsKey(shortName))
             {
-				throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
+                throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
             }
-            
-			return this.ReadFile(FileUtil.JoinPath("native", this.filepathsByFunctionName[shortName]), false);
+
+            return this.ReadFile(FileUtil.JoinPath("native", this.filepathsByFunctionName[shortName]), false);
         }
 
         Dictionary<string, string> translations = null;
@@ -212,11 +212,11 @@ namespace Crayon
 
         private string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
         {
-			string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
+            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
             {
                 string text = System.IO.File.ReadAllText(fullPath);
-                
+
                 return Constants.DoReplacements(text, this.replacements);
             }
 

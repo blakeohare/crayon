@@ -10,7 +10,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.GetResourceManifest()");
         }
-        
+
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
             output.Add("TranslationHelper.AlwaysFalse()");
@@ -87,7 +87,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("CsxaTranslationHelper.GetEvents()");
         }
-        
+
         protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
         {
             output.Add("((Android.Graphics.Bitmap)");
@@ -101,7 +101,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, bitmap);
             output.Add(").Width");
         }
-        
+
         protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             // Not used in OpenGL-based platforms.
@@ -113,7 +113,7 @@ namespace Crayon.Translator.CSharp
             // Not used in OpenGL-based platforms.
             throw new NotImplementedException();
         }
-        
+
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
             output.Add("CsxaTranslationHelper.SetTitle(");

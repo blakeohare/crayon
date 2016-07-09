@@ -10,7 +10,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AwtTranslationHelper.getResourceManifest()");
         }
-        
+
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("AwtTranslationHelper.makeHttpRequest(");
@@ -36,7 +36,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AwtTranslationHelper.isWindows()");
         }
-        
+
         protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             output.Add("AwtTranslationHelper.flipImage(");
@@ -47,7 +47,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, flipY);
             output.Add(")");
         }
-        
+
         protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
         {
             output.Add("GameWindow.FPS = ");
@@ -195,7 +195,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, filePath);
             output.Add(")");
         }
-        
+
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AwtTranslationHelper.getTextResource(\"text/\" + ");
@@ -209,7 +209,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-        
+
         protected override void TranslateGlMaxTextureSize(List<string> output)
         {
             throw new InvalidOperationException();

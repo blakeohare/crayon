@@ -10,7 +10,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("CRAYON.getResourceManifest()");
         }
-        
+
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("'/'");
@@ -72,7 +72,7 @@ namespace Crayon.Translator.JavaScript
             output.Add("throw ");
             this.Translator.TranslateExpression(output, message);
         }
-        
+
         protected override void TranslateBeginFrame(List<string> output)
         {
             output.Add("R.beginFrame()");
@@ -207,7 +207,7 @@ namespace Crayon.Translator.JavaScript
         {
             TranslateAssert(output, new StringConstant(null, "TODO: web image downloads", key.FunctionOrClassOwner));
         }
-        
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -216,7 +216,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
-        
+
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -439,7 +439,7 @@ namespace Crayon.Translator.JavaScript
             // %%% platform parameter that can be used to short circuit interpreter code.
             output.Add("false");
         }
-        
+
         protected override void TranslateListClear(List<string> output, Expression list)
         {
             output.Add("clear_list(");
@@ -552,7 +552,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, num);
             output.Add(")");
         }
-        
+
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
             output.Add("create_new_array(");
@@ -620,7 +620,7 @@ namespace Crayon.Translator.JavaScript
         {
             throw new Exception("Not supported in JavaScript");
         }
-        
+
         protected override void TranslateRegisterTicker(List<string> output)
         {
             // Nope.
@@ -650,7 +650,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-        
+
         protected override void TranslateSin(List<string> output, Expression value)
         {
             output.Add("Math.sin(");

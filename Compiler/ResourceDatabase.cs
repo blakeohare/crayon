@@ -9,11 +9,11 @@ namespace Crayon
     class ResourceDatabase
     {
         private static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
-            
+
             { "cry", FileCategory.IGNORE_SILENT }, // Not interested in source code.
 
             { "ogg", FileCategory.AUDIO },
-            
+
             { "jpg", FileCategory.IMAGE },
             { "jpeg", FileCategory.IMAGE },
             { "png", FileCategory.IMAGE },
@@ -64,7 +64,7 @@ namespace Crayon
         public List<FileOutput> TextResources { get; set; }
         public List<FileOutput> BinaryResources { get; set; }
         public List<FileOutput> FontResources { get; set; }
-        
+
         private enum FileCategory
         {
             TEXT,
@@ -88,13 +88,13 @@ namespace Crayon
             this.FontResources = new List<FileOutput>();
             this.SpriteSheetFiles = new Dictionary<string, FileOutput>();
             this.FontSheetFiles = new List<FileOutput>();
-            
+
             // Everything is just a basic copy resource at first.
             foreach (string originalRawFilepath in files)
             {
                 string originalFilepath = originalRawFilepath.Replace('\\', '/');
                 string extension = FileUtil.GetCanonicalExtension(originalFilepath) ?? "";
-                
+
                 FileCategory category;
                 if (IGNORABLE_FILES.Contains(System.IO.Path.GetFileName(originalFilepath).ToLowerInvariant()))
                 {
@@ -164,7 +164,8 @@ namespace Crayon
                             // with obscure format PNGs on some platforms. Luckily the compiler is pretty good with
                             // reading these. Besides, you're going to be opening most of these files anyway since
                             // the user should be using image sheets.
-                            this.ImageResources.Add(new FileOutput() {
+                            this.ImageResources.Add(new FileOutput()
+                            {
                                 Type = FileOutputType.Image,
                                 Bitmap = new SystemBitmap(FileUtil.JoinPath(sourceRoot, originalFilepath)),
                                 OriginalPath = originalFilepath,

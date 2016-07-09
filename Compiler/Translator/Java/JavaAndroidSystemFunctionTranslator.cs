@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
@@ -12,7 +10,7 @@ namespace Crayon.Translator.Java
         {
             throw new NotImplementedException();
         }
-        
+
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("AndroidTranslationHelper.makeHttpRequest(");
@@ -38,7 +36,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AndroidTranslationHelper.isWindows()");
         }
-        
+
         protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
         {
             output.Add("AndroidTranslationHelper.flipImage(");
@@ -49,7 +47,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, flipY);
             output.Add(")");
         }
-        
+
         protected override void TranslateInitializeGameWithFps(List<string> output, Expression fps)
         {
             output.Add("AndroidTranslationHelper.initializeGame(");
@@ -185,14 +183,14 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
         }
-        
+
         protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
         {
             output.Add("AndroidTranslationHelper.readLocalImageResource(");
             this.Translator.TranslateExpression(output, filePath);
             output.Add(")");
         }
-        
+
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AndroidTranslationHelper.resourceReadText(");
@@ -206,7 +204,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, title);
             output.Add(")");
         }
-        
+
         protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
         {
             output.Add("AndroidTranslationHelper.flushImagetteToBitmap(");

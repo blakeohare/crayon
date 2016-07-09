@@ -230,7 +230,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.assertion(\"Image download from web not implemented.\")");
         }
-        
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");

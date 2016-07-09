@@ -8,14 +8,14 @@ namespace Crayon.Translator.CSharp
     {
         protected override void TranslateResourceGetManifest(List<string> output)
         {
-			output.Add("ResourceReader.GetResourceManifest()");
+            output.Add("ResourceReader.GetResourceManifest()");
         }
 
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("CsxiTranslationHelper.AppDataRoot");
         }
-        
+
         protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
         {
             output.Add("CsxiTranslationHelper.DownloadImage(");
@@ -24,7 +24,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-        
+
         protected override void TranslateGetEventsRawList(List<string> output)
         {
             output.Add("CsxiTranslationHelper.GetEvents()");
@@ -188,7 +188,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
         }
-        
+
         protected override void TranslateSetTitle(List<string> output, Expression title)
         {
             output.Add("CsxiTranslationHelper.SetTitle(");
@@ -202,4 +202,3 @@ namespace Crayon.Translator.CSharp
         }
     }
 }
-

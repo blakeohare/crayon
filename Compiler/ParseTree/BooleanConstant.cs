@@ -2,35 +2,35 @@
 
 namespace Crayon.ParseTree
 {
-	internal class BooleanConstant : Expression, IConstantValue
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class BooleanConstant : Expression, IConstantValue
+    {
+        public override bool CanAssignTo { get { return false; } }
 
-		public bool Value { get; private set; }
+        public bool Value { get; private set; }
 
-		public override bool IsLiteral { get { return true; } }
+        public override bool IsLiteral { get { return true; } }
 
-		public BooleanConstant(Token token, bool value, Executable owner)
-			: base(token, owner)
-		{
-			this.Value = value;
-		}
+        public BooleanConstant(Token token, bool value, Executable owner)
+            : base(token, owner)
+        {
+            this.Value = value;
+        }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			return this;
-		}
+        internal override Expression Resolve(Parser parser)
+        {
+            return this;
+        }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
+        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			return this;
-		}
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            return this;
+        }
 
-		public Expression CloneValue(Token token, Executable owner)
-		{
-			return new BooleanConstant(token, this.Value, owner);
+        public Expression CloneValue(Token token, Executable owner)
+        {
+            return new BooleanConstant(token, this.Value, owner);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }

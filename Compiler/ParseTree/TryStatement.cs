@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Crayon.ParseTree
 {
@@ -17,8 +15,8 @@ namespace Crayon.ParseTree
         public int ExceptionVariableLocalScopeId { get; set; }
 
         public TryStatement(
-            Token tryToken, 
-            IList<Executable> tryBlock, 
+            Token tryToken,
+            IList<Executable> tryBlock,
             Token catchToken,
             Token exceptionVariableToken,
             IList<Executable> catchBlock,
@@ -88,7 +86,7 @@ namespace Crayon.ParseTree
                 builder.AddRange(ex.Resolve(parser));
             }
             this.TryBlock = builder.ToArray();
-            
+
             if (this.CatchBlock != null)
             {
                 builder.Clear();

@@ -2,7 +2,7 @@
 
 namespace Crayon
 {
-	internal class EofException : Exception
-	{
-	}
+    internal class EofException : Exception
+    {
+    }
 }

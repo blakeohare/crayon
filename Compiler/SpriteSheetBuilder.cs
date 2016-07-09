@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Crayon
 {
-	/*
+    /*
 	 * Sprite sheets are an internal optimization. It is strongly recommended for JavaScript and OpenGL projects.
 	 * For JavaScript, it makes downloads go much faster if there are a bunch of small images and for OpenGL it
 	 * makes rendering much faster since the sprite sheet is used as a texture and less texture swaps are needed.
@@ -46,133 +46,133 @@ namespace Crayon
 	 * as its own spillover sprite sheet. Images that have a dimension that is larger than 1024 on either side is also treated
 	 * as a spillover sprite sheet. If tiling is enabled these larger images are not partitioned.
 	 */
-	class SpriteSheetBuilder
-	{
-		private Dictionary<string, List<Image>> imagesById = new Dictionary<string, List<Image>>();
-		private List<string> spriteGroupIds = new List<string>();
-		private Dictionary<string, List<string>> prefixesForId = new Dictionary<string, List<string>>();
-		// The following mapping can have missing Bitmaps if no image touched that tile.
-		private Dictionary<string, Dictionary<int, SystemBitmap>> finalTiles = new Dictionary<string, Dictionary<int, SystemBitmap>>();
-		private Dictionary<string, Image> fileFinalDestination = new Dictionary<string, Image>();
+    class SpriteSheetBuilder
+    {
+        private Dictionary<string, List<Image>> imagesById = new Dictionary<string, List<Image>>();
+        private List<string> spriteGroupIds = new List<string>();
+        private Dictionary<string, List<string>> prefixesForId = new Dictionary<string, List<string>>();
+        // The following mapping can have missing Bitmaps if no image touched that tile.
+        private Dictionary<string, Dictionary<int, SystemBitmap>> finalTiles = new Dictionary<string, Dictionary<int, SystemBitmap>>();
+        private Dictionary<string, Image> fileFinalDestination = new Dictionary<string, Image>();
 
-		private class Image
-		{
-			public Image(string spriteSheetId, string file, SystemBitmap bmp)
-			{
-				this.File = file.Replace('\\', '/');
-				this.SheetID = spriteSheetId;
-				this.bitmap = bmp;
-				this.Width = bmp.Width;
-				this.Height = bmp.Height;
-				this.Solitary = this.Width > 1024 || this.Height > 1024 || (this.Width > 256 && this.Height > 256);
-				if (this.Solitary)
-				{
-					this.GlobalX = 0;
-					this.GlobalY = 0;
-				}
-			}
+        private class Image
+        {
+            public Image(string spriteSheetId, string file, SystemBitmap bmp)
+            {
+                this.File = file.Replace('\\', '/');
+                this.SheetID = spriteSheetId;
+                this.bitmap = bmp;
+                this.Width = bmp.Width;
+                this.Height = bmp.Height;
+                this.Solitary = this.Width > 1024 || this.Height > 1024 || (this.Width > 256 && this.Height > 256);
+                if (this.Solitary)
+                {
+                    this.GlobalX = 0;
+                    this.GlobalY = 0;
+                }
+            }
 
-			private SystemBitmap bitmap;
+            private SystemBitmap bitmap;
 
-			public string File { get; private set; }
+            public string File { get; private set; }
 
-			// User-assigned sprite sheet group ID.
-			public string SheetID { get; private set; }
+            // User-assigned sprite sheet group ID.
+            public string SheetID { get; private set; }
 
-			public SystemBitmap Bitmap { get { return this.bitmap; } }
-			public int Width { get; private set; }
-			public int Height { get; private set; }
+            public SystemBitmap Bitmap { get { return this.bitmap; } }
+            public int Width { get; private set; }
+            public int Height { get; private set; }
 
-			// Do not include in the sprite sheet images. However it should be treated as though it belongs 
-			// to this sprite sheet ID group.
-			public bool Solitary { get; private set; }
+            // Do not include in the sprite sheet images. However it should be treated as though it belongs 
+            // to this sprite sheet ID group.
+            public bool Solitary { get; private set; }
 
-			// When these are created they are treated like an image that is 1024 pixels wide and infinite pixels tall.
-			// Then the sprite sheet is split into Ceiling(Height / 1024) individual sheets. 
-			// Images are NEVER placed in such a way that they would straddle a split.
-			// This is why there is a 1024 pixel hard limitation.
-			public int GlobalX { get; private set; }
-			public int GlobalY { get; private set; }
-			public void SetGlobalPosition(int x, int y)
-			{
-				this.GlobalX = x;
-				this.GlobalY = y;
-			}
+            // When these are created they are treated like an image that is 1024 pixels wide and infinite pixels tall.
+            // Then the sprite sheet is split into Ceiling(Height / 1024) individual sheets. 
+            // Images are NEVER placed in such a way that they would straddle a split.
+            // This is why there is a 1024 pixel hard limitation.
+            public int GlobalX { get; private set; }
+            public int GlobalY { get; private set; }
+            public void SetGlobalPosition(int x, int y)
+            {
+                this.GlobalX = x;
+                this.GlobalY = y;
+            }
 
-			private int spillOverIdOverride = -1;
-			public int SpillOverID
-			{
-				get
-				{
-					if (this.spillOverIdOverride != -1) return this.spillOverIdOverride;
-					return this.GlobalY / 1024;
-				}
-				set
-				{
-					this.spillOverIdOverride = value;
-				}
-			}
+            private int spillOverIdOverride = -1;
+            public int SpillOverID
+            {
+                get
+                {
+                    if (this.spillOverIdOverride != -1) return this.spillOverIdOverride;
+                    return this.GlobalY / 1024;
+                }
+                set
+                {
+                    this.spillOverIdOverride = value;
+                }
+            }
 
-			public int SheetX { get { return this.GlobalX; } }
-			public int SheetY { get { return this.GlobalY % 1024; } }
+            public int SheetX { get { return this.GlobalX; } }
+            public int SheetY { get { return this.GlobalY % 1024; } }
 
-			private int tileIdOverride = -1;
-			public int TileID
-			{
-				get
-				{
-					if (tileIdOverride != -1) return tileIdOverride;
+            private int tileIdOverride = -1;
+            public int TileID
+            {
+                get
+                {
+                    if (tileIdOverride != -1) return tileIdOverride;
 
-					int row = this.GlobalY / 256;
-					int col = this.GlobalX / 256;
-					return col + row * 4;
-				}
-				set
-				{
-					this.tileIdOverride = value;
-				}
-			}
+                    int row = this.GlobalY / 256;
+                    int col = this.GlobalX / 256;
+                    return col + row * 4;
+                }
+                set
+                {
+                    this.tileIdOverride = value;
+                }
+            }
 
-			public int TileX { get { return this.GlobalX % 256; } }
-			public int TileY { get { return this.GlobalY % 256; } }
-		}
+            public int TileX { get { return this.GlobalX % 256; } }
+            public int TileY { get { return this.GlobalY % 256; } }
+        }
 
-		// ID's will be checked in the order that they are initially passed in to this function.
-		public void AddPrefix(string id, string prefix)
-		{
-			List<string> prefixes;
-			if (!this.prefixesForId.TryGetValue(id, out prefixes))
-			{
-				prefixes = new List<string>();
-				this.prefixesForId.Add(id, prefixes);
-				this.spriteGroupIds.Add(id);
-			}
+        // ID's will be checked in the order that they are initially passed in to this function.
+        public void AddPrefix(string id, string prefix)
+        {
+            List<string> prefixes;
+            if (!this.prefixesForId.TryGetValue(id, out prefixes))
+            {
+                prefixes = new List<string>();
+                this.prefixesForId.Add(id, prefixes);
+                this.spriteGroupIds.Add(id);
+            }
 
-			prefixes.Add(prefix);
-		}
+            prefixes.Add(prefix);
+        }
 
-		public void Generate(ResourceDatabase resDB)
-		{
-			this.MatchAndCreateFiles(resDB.ImageResources);
-			this.AssignGlobalPositions();
+        public void Generate(ResourceDatabase resDB)
+        {
+            this.MatchAndCreateFiles(resDB.ImageResources);
+            this.AssignGlobalPositions();
 
-			foreach (string id in this.spriteGroupIds)
-			{
-				List<Image> images = this.imagesById[id];
-				if (images.Count == 0)
-				{
-					throw new InvalidOperationException("Sprite sheet '" + id + "' had no file matches. Please make sure the sheet prefixes do not contain any typos and point to directories that contain images.");
-				}
-				Dictionary<int, SystemBitmap> tiles = new Dictionary<int, SystemBitmap>();
-				this.finalTiles[id] = tiles;
-				foreach (Image image in images)
-				{
-					this.fileFinalDestination[image.File] = image;
-				}
-				this.CreateTiles(tiles, images);
-			}
+            foreach (string id in this.spriteGroupIds)
+            {
+                List<Image> images = this.imagesById[id];
+                if (images.Count == 0)
+                {
+                    throw new InvalidOperationException("Sprite sheet '" + id + "' had no file matches. Please make sure the sheet prefixes do not contain any typos and point to directories that contain images.");
+                }
+                Dictionary<int, SystemBitmap> tiles = new Dictionary<int, SystemBitmap>();
+                this.finalTiles[id] = tiles;
+                foreach (Image image in images)
+                {
+                    this.fileFinalDestination[image.File] = image;
+                }
+                this.CreateTiles(tiles, images);
+            }
 
-			Dictionary<string, int> sheetNameToId = this.GenerateManifestAndProduceSheetNameIdMapping();
+            Dictionary<string, int> sheetNameToId = this.GenerateManifestAndProduceSheetNameIdMapping();
             resDB.SpriteSheetManifestFile = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -180,62 +180,62 @@ namespace Crayon
                 EnsureUtf8 = false,
             };
 
-			this.GenerateFiles(sheetNameToId, resDB);
-		}
+            this.GenerateFiles(sheetNameToId, resDB);
+        }
 
-		private void GenerateFiles(Dictionary<string, int> sheetNameToId, ResourceDatabase resDb)
-		{
-			foreach (string sheetName in sheetNameToId.Keys)
-			{
-				int sheetId = sheetNameToId[sheetName];
-				foreach (int tileId in this.finalTiles[sheetName].Keys)
-				{
+        private void GenerateFiles(Dictionary<string, int> sheetNameToId, ResourceDatabase resDb)
+        {
+            foreach (string sheetName in sheetNameToId.Keys)
+            {
+                int sheetId = sheetNameToId[sheetName];
+                foreach (int tileId in this.finalTiles[sheetName].Keys)
+                {
                     resDb.SpriteSheetFiles[sheetId + "_" + tileId + ".png"] = new FileOutput()
-					{
-						 Type = FileOutputType.Image,
-						 Bitmap = this.finalTiles[sheetName][tileId],
+                    {
+                        Type = FileOutputType.Image,
+                        Bitmap = this.finalTiles[sheetName][tileId],
                     };
-				}
-			}
-		}
+                }
+            }
+        }
 
         public string FileManifest { get; private set; }
 
-		private Dictionary<string, int> GenerateManifestAndProduceSheetNameIdMapping()
-		{
+        private Dictionary<string, int> GenerateManifestAndProduceSheetNameIdMapping()
+        {
             // TODO: update this documentation comment. Everything is now in a sprite sheet manifest file that
             // expresses the same information and the byte code is now free of sprite sheet stuff.
 
-			// The manifest is actually compiled as byte code.
-			// There is only one sprite sheet manifest byte code command which has a string argument.
-			// However the interpreter has a sub interpreter for each string command
-			// Commands:
-			//   Sheet declaration:
-			//     0, {sprite sheet ID}
-			//     string: {sprite sheet name}
-			//
-			//   Image declaration:
-			//     1, {sprite sheet ID}, {tile ID}, {width}, {height}, {tileX}, {tileY}, {0|1 - solitary bit}
-			//     string: {file path}
+            // The manifest is actually compiled as byte code.
+            // There is only one sprite sheet manifest byte code command which has a string argument.
+            // However the interpreter has a sub interpreter for each string command
+            // Commands:
+            //   Sheet declaration:
+            //     0, {sprite sheet ID}
+            //     string: {sprite sheet name}
+            //
+            //   Image declaration:
+            //     1, {sprite sheet ID}, {tile ID}, {width}, {height}, {tileX}, {tileY}, {0|1 - solitary bit}
+            //     string: {file path}
 
-			// Images are saved as the sprite sheet ID (the incrementally allocated one) followed by an underscore followed by Tile ID.
-			// These images are saved in a _crayon_gen_files folder.
+            // Images are saved as the sprite sheet ID (the incrementally allocated one) followed by an underscore followed by Tile ID.
+            // These images are saved in a _crayon_gen_files folder.
 
-			Dictionary<string, int> sheetNameToId = new Dictionary<string, int>();
+            Dictionary<string, int> sheetNameToId = new Dictionary<string, int>();
 
             List<string> output = new List<string>();
 
-			int id = 0;
-			foreach (string name in this.spriteGroupIds)
-			{
-				sheetNameToId[name] = id;
+            int id = 0;
+            foreach (string name in this.spriteGroupIds)
+            {
+                sheetNameToId[name] = id;
                 output.Add("0," + id + "," + name);
-				//intArgs.Add(new int[] { 0, id });
-				//stringArgs.Add(name);
+                //intArgs.Add(new int[] { 0, id });
+                //stringArgs.Add(name);
 
-				foreach (Image image in this.imagesById[name])
-				{
-					int tileId = image.TileID;
+                foreach (Image image in this.imagesById[name])
+                {
+                    int tileId = image.TileID;
                     /*
 					intArgs.Add(new int[] { 
 						1,
@@ -254,176 +254,176 @@ namespace Crayon
                         image.TileX + "," + image.TileY + "," + (image.Solitary ? 1 : 0) + "," + image.File);
                 }
 
-				++id;
-			}
+                ++id;
+            }
 
             this.FileManifest = string.Join("\n", output);
 
-			return sheetNameToId;
-		}
+            return sheetNameToId;
+        }
 
-		private void CreateTiles(Dictionary<int, SystemBitmap> tilesById, ICollection<Image> images)
-		{
-			Dictionary<int, SystemBitmap.Graphics> graphicsById = new Dictionary<int, SystemBitmap.Graphics>();
-			List<int> tileIds = new List<int>();
-			List<int> drawX = new List<int>();
-			List<int> drawY = new List<int>();
-			List<Image> solitaries = new List<Image>();
+        private void CreateTiles(Dictionary<int, SystemBitmap> tilesById, ICollection<Image> images)
+        {
+            Dictionary<int, SystemBitmap.Graphics> graphicsById = new Dictionary<int, SystemBitmap.Graphics>();
+            List<int> tileIds = new List<int>();
+            List<int> drawX = new List<int>();
+            List<int> drawY = new List<int>();
+            List<Image> solitaries = new List<Image>();
 
-			int maxTileId = 0;
-			int maxSpillId = -1;
-			foreach (Image image in images)
-			{
-				if (image.Solitary)
-				{
-					solitaries.Add(image);
-				}
-				else
-				{
-					int tileId = image.TileID;
-					if (tileId > maxTileId) maxTileId = tileId;
-					if (image.SpillOverID > maxSpillId) maxSpillId = image.SpillOverID;
+            int maxTileId = 0;
+            int maxSpillId = -1;
+            foreach (Image image in images)
+            {
+                if (image.Solitary)
+                {
+                    solitaries.Add(image);
+                }
+                else
+                {
+                    int tileId = image.TileID;
+                    if (tileId > maxTileId) maxTileId = tileId;
+                    if (image.SpillOverID > maxSpillId) maxSpillId = image.SpillOverID;
 
-					int tileColStart = image.SheetX / 256;
-					int tileRowStart = image.SheetY / 256;
-					int tileColEnd = (image.SheetX + image.Width - 1) / 256;
-					int tileRowEnd = (image.SheetY + image.Height - 1) / 256;
+                    int tileColStart = image.SheetX / 256;
+                    int tileRowStart = image.SheetY / 256;
+                    int tileColEnd = (image.SheetX + image.Width - 1) / 256;
+                    int tileRowEnd = (image.SheetY + image.Height - 1) / 256;
 
-					int rowOffset = 0;
-					for (int y = tileRowStart; y <= tileRowEnd; ++y, ++rowOffset)
-					{
-						int colOffset = 0;
-						for (int x = tileColStart; x <= tileColEnd; ++x, ++colOffset)
-						{
-							int thisTileId = tileId + rowOffset * 4 + colOffset;
-							tileIds.Add(thisTileId);
-							drawX.Add(image.SheetX - 256 * x);
-							drawY.Add(image.SheetY - 256 * y);
-						}
-					}
+                    int rowOffset = 0;
+                    for (int y = tileRowStart; y <= tileRowEnd; ++y, ++rowOffset)
+                    {
+                        int colOffset = 0;
+                        for (int x = tileColStart; x <= tileColEnd; ++x, ++colOffset)
+                        {
+                            int thisTileId = tileId + rowOffset * 4 + colOffset;
+                            tileIds.Add(thisTileId);
+                            drawX.Add(image.SheetX - 256 * x);
+                            drawY.Add(image.SheetY - 256 * y);
+                        }
+                    }
 
-					for (int i = 0; i < tileIds.Count; ++i)
-					{
-						int id = tileIds[i];
+                    for (int i = 0; i < tileIds.Count; ++i)
+                    {
+                        int id = tileIds[i];
 
-						if (!tilesById.ContainsKey(id))
-						{
-							tilesById[id] = new SystemBitmap(256, 256);
-							graphicsById[id] = tilesById[id].MakeGraphics();
-						}
-						graphicsById[id].Blit(image.Bitmap, drawX[i], drawY[i]);
-					}
+                        if (!tilesById.ContainsKey(id))
+                        {
+                            tilesById[id] = new SystemBitmap(256, 256);
+                            graphicsById[id] = tilesById[id].MakeGraphics();
+                        }
+                        graphicsById[id].Blit(image.Bitmap, drawX[i], drawY[i]);
+                    }
 
-					tileIds.Clear();
-					drawX.Clear();
-					drawY.Clear();
-				}
-			}
+                    tileIds.Clear();
+                    drawX.Clear();
+                    drawY.Clear();
+                }
+            }
 
-			foreach (SystemBitmap.Graphics graphics in graphicsById.Values)
-			{
-				graphics.Cleanup();
-			}
+            foreach (SystemBitmap.Graphics graphics in graphicsById.Values)
+            {
+                graphics.Cleanup();
+            }
 
-			// Add solitary images to the end as if they are their own tile/spill sheet
-			int solitaryTileId = (maxTileId / 16 + 1) * 16;
-			int spillId = maxSpillId + 1;
-			foreach (Image solitaryImage in solitaries)
-			{
-				SystemBitmap bmp = new SystemBitmap(solitaryImage.Width, solitaryImage.Height);
-				SystemBitmap.Graphics g = bmp.MakeGraphics();
-				g.Blit(solitaryImage.Bitmap, 0, 0);
-				g.Cleanup();
-				tilesById[solitaryTileId] = bmp;
-				solitaryImage.TileID = solitaryTileId;
-				solitaryImage.SpillOverID = spillId++;
-				solitaryTileId++;
-			}
-		}
+            // Add solitary images to the end as if they are their own tile/spill sheet
+            int solitaryTileId = (maxTileId / 16 + 1) * 16;
+            int spillId = maxSpillId + 1;
+            foreach (Image solitaryImage in solitaries)
+            {
+                SystemBitmap bmp = new SystemBitmap(solitaryImage.Width, solitaryImage.Height);
+                SystemBitmap.Graphics g = bmp.MakeGraphics();
+                g.Blit(solitaryImage.Bitmap, 0, 0);
+                g.Cleanup();
+                tilesById[solitaryTileId] = bmp;
+                solitaryImage.TileID = solitaryTileId;
+                solitaryImage.SpillOverID = spillId++;
+                solitaryTileId++;
+            }
+        }
 
-		private string GetSpriteSheetIdMatch(string filename)
-		{
-			foreach (string id in this.spriteGroupIds)
-			{
-				foreach (string prefix in this.prefixesForId[id])
-				{
-					if (filename.Replace('\\', '/').StartsWith(prefix) || prefix == "*")
-					{
-						return id;
-					}
-				}
-			}
-			return null;
-		}
+        private string GetSpriteSheetIdMatch(string filename)
+        {
+            foreach (string id in this.spriteGroupIds)
+            {
+                foreach (string prefix in this.prefixesForId[id])
+                {
+                    if (filename.Replace('\\', '/').StartsWith(prefix) || prefix == "*")
+                    {
+                        return id;
+                    }
+                }
+            }
+            return null;
+        }
 
-		public void MatchAndCreateFiles(ICollection<FileOutput> imageFiles)
-		{
-			foreach (string id in this.spriteGroupIds)
-			{
-				this.imagesById.Add(id, new List<Image>());
-			}
+        public void MatchAndCreateFiles(ICollection<FileOutput> imageFiles)
+        {
+            foreach (string id in this.spriteGroupIds)
+            {
+                this.imagesById.Add(id, new List<Image>());
+            }
 
-			foreach (FileOutput file in imageFiles)
-			{
-				if (file.Type == FileOutputType.Image)
-				{
-					string spriteSheetId = this.GetSpriteSheetIdMatch(file.OriginalPath);
-					if (spriteSheetId != null)
-					{
-						this.imagesById[spriteSheetId].Add(new Image(spriteSheetId, file.OriginalPath, file.Bitmap));
+            foreach (FileOutput file in imageFiles)
+            {
+                if (file.Type == FileOutputType.Image)
+                {
+                    string spriteSheetId = this.GetSpriteSheetIdMatch(file.OriginalPath);
+                    if (spriteSheetId != null)
+                    {
+                        this.imagesById[spriteSheetId].Add(new Image(spriteSheetId, file.OriginalPath, file.Bitmap));
                         file.SpriteSheetId = spriteSheetId;
                         file.Type = FileOutputType.Ghost;
-					}
-				}
-			}
-		}
+                    }
+                }
+            }
+        }
 
-		private void AssignGlobalPositions()
-		{
-			foreach (string id in this.spriteGroupIds)
-			{
-				this.AssignCoordinates(this.imagesById[id].Where<Image>(img => !img.Solitary));
-			}
-		}
+        private void AssignGlobalPositions()
+        {
+            foreach (string id in this.spriteGroupIds)
+            {
+                this.AssignCoordinates(this.imagesById[id].Where<Image>(img => !img.Solitary));
+            }
+        }
 
-		private void AssignCoordinates(IEnumerable<Image> images)
-		{
-			// Fill a 1024xN space with images.
-			// Start in top left and and add images row by row left to right, top to bottom
-			// Images are sorted by height.
+        private void AssignCoordinates(IEnumerable<Image> images)
+        {
+            // Fill a 1024xN space with images.
+            // Start in top left and and add images row by row left to right, top to bottom
+            // Images are sorted by height.
 
-			int rowMaxY = 0;
-			int x = 0;
-			int y = 0;
-			int bottom = 0;
-			foreach (Image image in images.OrderBy<Image, int>(img => img.Height))
-			{
-				// run out of room on the right? move to next row
-				if (x + image.Width >= 1024)
-				{
-					y = rowMaxY;
-					x = 0;
-				}
+            int rowMaxY = 0;
+            int x = 0;
+            int y = 0;
+            int bottom = 0;
+            foreach (Image image in images.OrderBy<Image, int>(img => img.Height))
+            {
+                // run out of room on the right? move to next row
+                if (x + image.Width >= 1024)
+                {
+                    y = rowMaxY;
+                    x = 0;
+                }
 
-				// does the next image spill into the next sheet?
-				// move to the next spill sheet
-				bottom = y + image.Height;
-				if (bottom % 1024 < y % 1024 && bottom % 1024 != 0)
-				{
-					y = bottom - bottom % 1024;
-					bottom = y + image.Height;
-					x = 0;
-					rowMaxY = bottom;
-				}
+                // does the next image spill into the next sheet?
+                // move to the next spill sheet
+                bottom = y + image.Height;
+                if (bottom % 1024 < y % 1024 && bottom % 1024 != 0)
+                {
+                    y = bottom - bottom % 1024;
+                    bottom = y + image.Height;
+                    x = 0;
+                    rowMaxY = bottom;
+                }
 
-				image.SetGlobalPosition(x, y);
-				x += image.Width;
+                image.SetGlobalPosition(x, y);
+                x += image.Width;
 
-				if (bottom > rowMaxY)
-				{
-					rowMaxY = bottom;
-				}
-			}
-		}
-	}
+                if (bottom > rowMaxY)
+                {
+                    rowMaxY = bottom;
+                }
+            }
+        }
+    }
 }

@@ -62,29 +62,29 @@ namespace Crayon.Translator.CSharp
             }
 
             files[projectId + "/Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
-			files[projectId + "/Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            files[projectId + "/Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
 
-			List<string> bundleResources = new List<string>();
-			foreach (FileOutput textFile in resourceDatabase.TextResources)
-			{
-				files[projectId + "/Resources/Text/" + textFile.CanonicalFileName] = textFile;
-				bundleResources.Add("    <BundleResource Include=\"Resources\\Text\\" + textFile.CanonicalFileName + "\" />\r\n");
-			}
+            List<string> bundleResources = new List<string>();
+            foreach (FileOutput textFile in resourceDatabase.TextResources)
+            {
+                files[projectId + "/Resources/Text/" + textFile.CanonicalFileName] = textFile;
+                bundleResources.Add("    <BundleResource Include=\"Resources\\Text\\" + textFile.CanonicalFileName + "\" />\r\n");
+            }
 
-			if (resourceDatabase.SpriteSheetManifestFile != null)
-			{
-				files[projectId + "/Resources/ImageSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
-				bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheetManifest.txt\" />\r\n");
+            if (resourceDatabase.SpriteSheetManifestFile != null)
+            {
+                files[projectId + "/Resources/ImageSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheetManifest.txt\" />\r\n");
 
-				foreach (string tileName in resourceDatabase.SpriteSheetFiles.Keys)
-				{
-					FileOutput tile = resourceDatabase.SpriteSheetFiles[tileName];
-					files[projectId + "/Resources/ImageSheets/" + tileName] = tile;
-					bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheets\\" + tileName + "\" />\r\n");
-				}
-			}
+                foreach (string tileName in resourceDatabase.SpriteSheetFiles.Keys)
+                {
+                    FileOutput tile = resourceDatabase.SpriteSheetFiles[tileName];
+                    files[projectId + "/Resources/ImageSheets/" + tileName] = tile;
+                    bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheets\\" + tileName + "\" />\r\n");
+                }
+            }
 
-			replacements["IOS_BUNDLE_RESOURCES"] = string.Join("", bundleResources);
+            replacements["IOS_BUNDLE_RESOURCES"] = string.Join("", bundleResources);
 
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
             {
