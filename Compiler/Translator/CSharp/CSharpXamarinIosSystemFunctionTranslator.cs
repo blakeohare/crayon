@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
@@ -14,15 +13,6 @@ namespace Crayon.Translator.CSharp
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("CsxiTranslationHelper.AppDataRoot");
-        }
-
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            output.Add("CsxiTranslationHelper.DownloadImage(");
-            this.Translator.TranslateExpression(output, key);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
         }
 
         protected override void TranslateHttpRequest(
@@ -56,37 +46,6 @@ namespace Crayon.Translator.CSharp
             output.Add(", ");
             this.Translator.TranslateExpression(output, headerValueList);
             output.Add(")");
-        }
-
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            output.Add("CsxiTranslationHelper.FlushImagetteToNativeBitmap(");
-            this.Translator.TranslateExpression(output, imagette);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            output.Add("CsxiTranslationHelper.GetImageHeight(");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            output.Add("CsxiTranslationHelper.GetImageWidth(");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
@@ -159,11 +118,6 @@ namespace Crayon.Translator.CSharp
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
-        }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            output.Add("2048");
         }
     }
 }

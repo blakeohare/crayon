@@ -32,18 +32,6 @@ namespace Crayon.Translator
 
             switch (name)
             {
-                // TODO: migrate these to the GFX library
-                case "_image_native_bitmap_height": VerifyCount(functionCall, 1); TranslateImageNativeBitmapHeight(output, args[0]); break;
-                case "_image_native_bitmap_width": VerifyCount(functionCall, 1); TranslateImageNativeBitmapWidth(output, args[0]); break;
-                case "_image_scale_native_resource": VerifyCount(functionCall, 3); TranslateImageScaleNativeResource(output, args[0], args[1], args[2]); break;
-                case "_gl_max_texture_size": VerifyCount(functionCall, 0); TranslateGlMaxTextureSize(output); return;
-                case "_download_image": VerifyCount(functionCall, 2); TranslateDownloadImage(output, args[0], args[1]); break;
-                case "_image_async_download_completed_payload": VerifyCount(functionCall, 1); TranslateImageAsyncDownloadCompletedPayload(output, args[0]); break;
-                case "_image_create_flipped_copy_of_native_bitmap": VerifyCount(functionCall, 3); TranslateImageCreateFlippedCopyOfNativeBitmap(output, args[0], args[1], args[2]); break;
-                case "_image_imagette_flush_to_native_bitmap": VerifyCount(functionCall, 1); TranslateImageImagetteFlushToNativeBitmap(output, args[0]); break;
-                case "_image_initiate_async_download_of_resource": VerifyCount(functionCall, 1); TranslateImageInitiateAsyncDownloadOfResource(output, args[0]); break;
-                case "_read_local_image_resource": VerifyCount(functionCall, 1); TranslateReadLocalImageResource(output, args[0]); break;
-
                 // TODO: migrate this to the HTTP library
                 case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
 
@@ -195,19 +183,11 @@ namespace Crayon.Translator
         protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);
         protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
         protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
-        protected abstract void TranslateDownloadImage(List<string> output, Expression key, Expression path);
         protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
         protected abstract void TranslateForceParens(List<string> output, Expression expression);
         protected abstract void TranslateGetProgramData(List<string> output);
         protected abstract void TranslateGetRawByteCodeString(List<string> output);
         protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList);
-        protected abstract void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey);
-        protected abstract void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY);
-        protected abstract void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette);
-        protected abstract void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path);
-        protected abstract void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap);
-        protected abstract void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap);
-        protected abstract void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height);
         protected abstract void TranslateInt(List<string> output, Expression value);
         protected abstract void TranslateIoCreateDirectory(List<string> output, Expression path);
         protected abstract void TranslateIoCurrentDirectory(List<string> output);
@@ -238,7 +218,6 @@ namespace Crayon.Translator
         protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);
         protected abstract void TranslateNewList(List<string> output, StringConstant type);
         protected abstract void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length);
-        protected abstract void TranslateGlMaxTextureSize(List<string> output);
         protected abstract void TranslateOrd(List<string> output, Expression character);
         protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
@@ -246,7 +225,6 @@ namespace Crayon.Translator
         protected abstract void TranslatePauseForFrame(List<string> output);
         protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
         protected abstract void TranslateRandomFloat(List<string> output);
-        protected abstract void TranslateReadLocalImageResource(List<string> output, Expression filePath);
         protected abstract void TranslateRegisterTicker(List<string> output);
         protected abstract void TranslateRegisterTimeout(List<string> output);
         protected abstract void TranslateResourceGetManifest(List<string> output);

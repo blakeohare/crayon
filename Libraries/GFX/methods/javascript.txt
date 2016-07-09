@@ -2,10 +2,18 @@ $_lib_gfx_blitImage: R._global_vars.ctx.drawImage([ARG:1][1], [ARG:2], [ARG:3])
 $_lib_gfx_blitImageAlpha: R.drawImageWithAlpha([ARG:1][1], [ARG:2], [ARG:3], [ARG:4])
 $_lib_gfx_blitImagePartial: R.blitPartial([ARG:1][1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
 $_lib_gfx_blitImageRotated: R.blitRotated([ARG:1][1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_gfx_download_image: R.downloadImage([ARG:1], [ARG:2])
 $_lib_gfx_drawEllipse: R.drawEllipse([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
 $_lib_gfx_drawLine: R.drawLine([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
 $_lib_gfx_drawRectangle: R.drawRect([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
 $_lib_gfx_drawTriangle: R.drawTriangle([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
 $_lib_gfx_fillScreen: R.fillScreen([ARG:1], [ARG:2], [ARG:3])
 $_lib_gfx_getTileDirectory: "resources/imagesheets/"
+$_lib_gfx_image_async_download_completed_payload: R.get_completed_image_if_downloaded([ARG:1])
+$_lib_gfx_image_create_flipped_copy_of_native_bitmap: R.flipImage([ARG:1], [ARG:2], [ARG:3])
+$_lib_gfx_image_imagette_flush_to_native_bitmap: R.flushImagette([ARG:1])
+$_lib_gfx_image_initiate_async_download_of_resource: R.better_enqueue_image_download([ARG:1])
+$_lib_gfx_image_native_bitmap_height: [ARG:1].height
+$_lib_gfx_image_native_bitmap_width: [ARG:1].width
+$_lib_gfx_image_scale_native_resource: R.scaleImage.scale([ARG:1], ([ARG:2], [ARG:3]))
 $_lib_gfx_image_sheet_get_manifest_file: R.getTextRes("image_sheet_manifest.txt")

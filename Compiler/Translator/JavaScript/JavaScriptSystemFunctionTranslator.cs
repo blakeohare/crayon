@@ -203,11 +203,6 @@ namespace Crayon.Translator.JavaScript
             throw new Exception("This should have been optimized out.");
         }
 
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            TranslateAssert(output, new StringConstant(null, "TODO: web image downloads", key.FunctionOrClassOwner));
-        }
-
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -254,65 +249,6 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, headerNameList);
             output.Add(", ");
             this.Translator.TranslateExpression(output, headerValueList);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
-        {
-            output.Add("R.get_completed_image_if_downloaded(");
-            this.Translator.TranslateExpression(output, asyncReferenceKey);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            output.Add("R.flipImage(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipY);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            // TODO: I don't feel comfortable passing in the raw struct to the native function. Should pass in each field
-            // individually, despite it creating 5 args. This way list-based struct platforms aren't so brittle to changes.
-            output.Add("R.flushImagette(");
-            this.Translator.TranslateExpression(output, imagette);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-        {
-            // returns the string ID
-            output.Add("R.better_enqueue_image_download(");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
-        // These width and height functions operate on canvas instances.
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(".height");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(".width");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            output.Add("R.scaleImage(");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
             output.Add(")");
         }
 
@@ -591,11 +527,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("Math.random()");
         }
 
-        protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-        {
-            throw new Exception("Not supported in JavaScript");
-        }
-
         protected override void TranslateRegisterTicker(List<string> output)
         {
             // Nope.
@@ -829,11 +760,6 @@ namespace Crayon.Translator.JavaScript
             output.Add(this.Shorten(" / "));
             this.Translator.TranslateExpression(output, denominator);
             output.Add(")");
-        }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            throw new InvalidOperationException();
         }
     }
 }

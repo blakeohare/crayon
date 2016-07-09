@@ -49,7 +49,6 @@
     <EmbeddedResource Include="FrameworkFunctions\8_arg.cry" />
     <EmbeddedResource Include="FrameworkFunctions\9_arg.cry" />
     <EmbeddedResource Include="Globals.cry" />
-    <EmbeddedResource Include="Graphics.cry" />
     <EmbeddedResource Include="Interpreter.cry" />
     <EmbeddedResource Include="InvokeStaticConstructor.cry" />
     <EmbeddedResource Include="IOManager.cry" />

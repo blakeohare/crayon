@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.Java
@@ -37,17 +36,6 @@ namespace Crayon.Translator.Java
             output.Add("AwtTranslationHelper.isWindows()");
         }
 
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            output.Add("AwtTranslationHelper.flipImage(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipY);
-            output.Add(")");
-        }
-
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
             output.Add("AwtTranslationHelper.getRawByteCodeString()");
@@ -56,44 +44,6 @@ namespace Crayon.Translator.Java
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("AwtTranslationHelper.getAppDataRoot()");
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            output.Add("AwtTranslationHelper.flushImagetteToBitmap(");
-            this.Translator.TranslateExpression(output, imagette);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-        {
-            // Client-side Java loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            output.Add("((java.awt.image.BufferedImage) ");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(").getHeight()");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            output.Add("((java.awt.image.BufferedImage) ");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(").getWidth()");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            output.Add("AwtTranslationHelper.scaleImage((java.awt.image.BufferedImage) ");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add(")");
         }
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
@@ -158,23 +108,11 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
-        protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-        {
-            output.Add("AwtTranslationHelper.loadImageFromLocalFile(");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AwtTranslationHelper.getTextResource(\"text/\" + ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
-        }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            throw new InvalidOperationException();
         }
     }
 }

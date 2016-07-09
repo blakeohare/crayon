@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Crayon.ParseTree;
 
 namespace Crayon.Translator.CSharp
@@ -9,13 +8,6 @@ namespace Crayon.Translator.CSharp
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("ResourceReader.GetResourceManifest()");
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            output.Add("OpenTkTranslationHelper.ImagetteFlushToNativeBitmap(");
-            this.Translator.TranslateExpression(output, imagette);
-            output.Add(")");
         }
 
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
@@ -46,40 +38,6 @@ namespace Crayon.Translator.CSharp
             output.Add("OpenTkTranslationHelper.AppDataRoot");
         }
 
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            output.Add("OpenTkTranslationHelper.DownloadImageFromInternetTubes(");
-            this.Translator.TranslateExpression(output, key);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-        
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            // This is not used in the OpenTK platform because flipping is simply swapping texture mapping coordinates.
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            output.Add("((System.Drawing.Bitmap)");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(").Height");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            output.Add("((System.Drawing.Bitmap)");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(").Width");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            throw new InvalidOperationException();
-        }
-        
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
         {
             output.Add("OpenTkTranslationHelper.CreateDirectory(");
@@ -140,11 +98,6 @@ namespace Crayon.Translator.CSharp
             output.Add(", ");
             this.Translator.TranslateExpression(output, content);
             output.Add(")");
-        }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            output.Add("GlUtil.MaxTextureSize");
         }
     }
 }

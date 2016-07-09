@@ -1,2 +1,8 @@
+$_lib_gfx_download_image: CsxiTranslationHelper.DownloadImage([ARG:1], [ARG:2])
+$_lib_gfx_gl_max_texture_size: 2048
+$_lib_gfx_image_imagette_flush_to_native_bitmap: CsxiTranslationHelper.FlushImagetteToNativeBitmap([ARG:1])
+$_lib_gfx_image_native_bitmap_height: CsxiTranslationHelper.GetImageHeight([ARG:1])
+$_lib_gfx_image_native_bitmap_width: CsxiTranslationHelper.GetImageWidth([ARG:1])
 $_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("ImageSheetManifest.txt")
+$_lib_gfx_read_local_image_resource: ResourceReader.ReadImageFile([ARG:1])
 $_lib_gfx_read_tile_resource: ResourceReader.ReadImageFile("ImageSheets/" + [ARG:1] + ".png")

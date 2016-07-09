@@ -1,1 +1,8 @@
+$_lib_gfx_download_image: AndroidTranslationHelper.DownloadImage([ARG:1], [ARG:2])
+$_lib_gfx_image_create_flipped_copy_of_native_bitmap: AndroidTranslationHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
+$_lib_gfx_image_imagette_flush_to_native_bitmap: AndroidTranslationHelper.flushImagetteToBitmap([ARG:1])
+$_lib_gfx_image_initiate_async_download_of_resource: AndroidTranslationHelper.imageInitializeAsyncDownloadOfResource([ARG:1])
+$_lib_gfx_image_native_bitmap_height: ((android.graphics.Bitmap)[ARG:1]).getHeight()
+$_lib_gfx_image_native_bitmap_width: ((android.graphics.Bitmap)[ARG:1]).getWidth()
 $_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("Data/ImageSheetManifest.txt")
+$_lib_gfx_read_local_image_resource: AndroidTranslationHelper.readLocalImageResource([ARG:1])

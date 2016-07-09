@@ -229,19 +229,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.ReadByteCodeFile()");
         }
-
-        protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
-        {
-            // C# loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
-        protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-        {
-            // C# loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
+        
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string op = increment ? "++" : "--";
@@ -477,14 +465,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("TranslationHelper.GetRandomNumber()");
         }
-
-        protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-        {
-            output.Add("ResourceReader.ReadImageFile(");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateRegisterTicker(List<string> output)
         {
             // Nope

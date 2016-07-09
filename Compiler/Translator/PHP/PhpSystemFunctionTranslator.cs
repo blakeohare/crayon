@@ -189,12 +189,7 @@ namespace Crayon.Translator.Php
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("pow(");
@@ -220,52 +215,12 @@ namespace Crayon.Translator.Php
         {
             output.Add("TODO_optimize_this_out()");
         }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("TODO_optimize_out()");
         }
-
-        protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string token = increment ? "++" : "--";
@@ -514,12 +469,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("pth_random_float()");
         }
-
-        protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-        {
-            output.Add("TODO_optimize_this_out()");
-        }
-
+        
         protected override void TranslateRegisterTicker(List<string> output)
         {
             throw new NotImplementedException();

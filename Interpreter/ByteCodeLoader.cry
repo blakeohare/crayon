@@ -13,13 +13,13 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 		@type('bool') ctn = true;
 		@type('char') c = $_string_as_char('\0');
 		while (ctn) {
-			c = $_string_char_at(raw, index[0]);
+			c = $_string_char_at(raw, $_array_get(index, 0));
 			if (c == char) {
 				ctn = false;
 			} else {
 				$_list_push(output, c);
 			}
-			index[0] += 1;
+			$_array_set(index, 0, $_array_get(index, 0) + 1);
 		}
 	}
 	return $_list_join_chars(output);
@@ -29,7 +29,7 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 	if (!%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {
 		@type('int') num = 0;
 		@type('char') c = $_string_char_at(raw, $_array_get(pindex, 0));
-		pindex[0] += 1;
+		$_array_set(pindex, 0, $_array_get(pindex, 0) + 1);
 		if (c == $_string_as_char('%')) {
 			@type('string') value = read_till(pindex, raw, length, $_string_as_char('%'));
 			num = $_string_parse_int(value);
@@ -128,7 +128,7 @@ function @type('Code') loadByteCode() {
 
 		for (@type('int') i = 0; i < opCount; i += 1) {
 			c = $_string_char_at(raw, $_array_get(index, 0));
-			index[0] += 1;
+			$_array_set(index, 0, $_array_get(index, 0) + 1);
 			argc = 0;
 			stringPresent = true;
 			if (c == $_string_as_char('!')) argc = 1;

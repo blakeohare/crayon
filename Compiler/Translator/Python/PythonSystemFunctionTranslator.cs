@@ -201,16 +201,7 @@ namespace Crayon.Translator.Python
         {
             throw new Exception("This should have been optimized out.");
         }
-
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            output.Add("download_image_from_internet(");
-            this.Translator.TranslateExpression(output, key);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("float(");
@@ -259,60 +250,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, headerValueList);
             output.Add(")");
         }
-
-        protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
-        {
-            // Python loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
-        protected override void TranslateImageCreateFlippedCopyOfNativeBitmap(List<string> output, Expression image, Expression flipX, Expression flipY)
-        {
-            output.Add("_pygame_flip_image(");
-            this.Translator.TranslateExpression(output, image);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipX);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, flipY);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageImagetteFlushToNativeBitmap(List<string> output, Expression imagette)
-        {
-            output.Add("flush_imagette(");
-            this.Translator.TranslateExpression(output, imagette);
-            output.Add(")");
-        }
-
-        protected override void TranslateImageInitiateAsyncDownloadOfResource(List<string> output, Expression path)
-        {
-            // Python loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
-        protected override void TranslateImageNativeBitmapHeight(List<string> output, Expression bitmap)
-        {
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(".get_height()");
-        }
-
-        protected override void TranslateImageNativeBitmapWidth(List<string> output, Expression bitmap)
-        {
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(".get_width()");
-        }
-
-        protected override void TranslateImageScaleNativeResource(List<string> output, Expression bitmap, Expression width, Expression height)
-        {
-            output.Add("pygame.transform.scale(");
-            this.Translator.TranslateExpression(output, bitmap);
-            output.Add(", (");
-            this.Translator.TranslateExpression(output, width);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, height);
-            output.Add("))");
-        }
-
+        
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             throw new InvalidOperationException("Should have been optimized out.");
@@ -598,13 +536,6 @@ namespace Crayon.Translator.Python
             output.Add("random.random()");
         }
 
-        protected override void TranslateReadLocalImageResource(List<string> output, Expression filePath)
-        {
-            output.Add("load_local_image_resource(");
-            this.Translator.TranslateExpression(output, filePath);
-            output.Add(")");
-        }
-
         protected override void TranslateRegisterTicker(List<string> output)
         {
             throw new Exception("This code path should be optimized out of the python translation.");
@@ -829,11 +760,6 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, numerator);
             output.Add(" // ");
             this.Translator.TranslateExpression(output, denominator);
-        }
-
-        protected override void TranslateGlMaxTextureSize(List<string> output)
-        {
-            throw new InvalidOperationException();
         }
     }
 }

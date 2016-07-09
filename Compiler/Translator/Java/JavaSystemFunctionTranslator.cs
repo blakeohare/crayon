@@ -225,12 +225,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, compareTo);
             output.Add(")");
         }
-
-        protected override void TranslateDownloadImage(List<string> output, Expression key, Expression path)
-        {
-            output.Add("TranslationHelper.assertion(\"Image download from web not implemented.\")");
-        }
-
+        
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -251,13 +246,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.getProgramData()");
         }
-
-        protected override void TranslateImageAsyncDownloadCompletedPayload(List<string> output, Expression asyncReferenceKey)
-        {
-            // Java loads resources synchronously.
-            throw new InvalidOperationException();
-        }
-
+        
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string op = increment ? "++" : "--";
