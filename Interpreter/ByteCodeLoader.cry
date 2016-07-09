@@ -101,7 +101,7 @@ function @type('Code') loadByteCode() {
 		@type('Array<int>') iargs = $_byte_code_get_int_args();
 		@type('Array<string>') sargs = $_byte_code_get_string_args();
 	} else {
-		@type('string') raw = $_get_raw_byte_code_string();
+		@type('string') raw = $_byte_code_get_raw_string();
 
 		@type('Array<int>') index = $_new_array('int', 1);
 		$_array_set(index, 0, 0);

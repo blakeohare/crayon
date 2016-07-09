@@ -64,6 +64,9 @@ namespace Crayon.Translator
                 case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
                 case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
 
+                // TODO: to the JSON library
+                case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
+
                 // TODO: redo this nonsense
                 case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
                 case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
@@ -74,9 +77,6 @@ namespace Crayon.Translator
                 case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 
                 case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
-                case "_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
-                case "_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
-                case "_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
                 case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
                 case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
                 case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
@@ -85,13 +85,13 @@ namespace Crayon.Translator
                 case "_byte_code_get_int_args": VerifyCount(functionCall, 0); TranslateByteCodeGetIntArgs(output); break;
                 case "_byte_code_get_ops": VerifyCount(functionCall, 0); TranslateByteCodeGetOps(output); break;
                 case "_byte_code_get_string_args": VerifyCount(functionCall, 0); TranslateByteCodeGetStringArgs(output); break;
+                case "_byte_code_get_raw_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
                 case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
                 case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
                 case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
                 case "_chr": VerifyCount(functionCall, 1); TranslateChr(output, args[0]); break;
                 case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
                 case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
-                case "_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
                 case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
                 case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
                 case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
@@ -101,10 +101,8 @@ namespace Crayon.Translator
                 case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
                 case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
                 case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
-                case "_exponent": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
                 case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
                 case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
-                case "_get_raw_byte_code_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
                 case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
                 case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
                 case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
@@ -121,6 +119,13 @@ namespace Crayon.Translator
                 case "_list_reverse_in_place": VerifyCount(functionCall, 1); TranslateListReverseInPlace(output, args[0]); break;
                 case "_list_set": VerifyCount(functionCall, 3); TranslateListSet(output, args[0], args[1], args[2]); break;
                 case "_list_shuffle_in_place": VerifyCount(functionCall, 1); TranslateListShuffleInPlace(output, args[0]); break;
+                case "_math_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
+                case "_math_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
+                case "_math_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
+                case "_math_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
+                case "_math_pow": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
+                case "_math_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
+                case "_math_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
                 case "_multiply_list": VerifyCount(functionCall, 2); TranslateMultiplyList(output, args[0], args[1]); break;
                 case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, (StringConstant)args[0], args[1]); break;
                 case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
@@ -129,7 +134,6 @@ namespace Crayon.Translator
                 case "_ord": VerifyCount(functionCall, 1); TranslateOrd(output, args[0]); break;
                 case "_parse_float": VerifyCount(functionCall, 2); TranslateParseFloat(output, args[0], args[1]); break;
                 case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
-                case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
                 case "_postfix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, false); break;
                 case "_postfix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, false); break;
                 case "_prefix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, true); break;
@@ -138,7 +142,6 @@ namespace Crayon.Translator
                 case "_resource_get_manifest": VerifyCount(functionCall, 0); TranslateResourceGetManifest(output); break;
                 case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
                 case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
-                case "_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
                 case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
                 case "_sorted_copy_of_string_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfStringArray(output, args[0]); break;
                 case "_string_append": VerifyCount(functionCall, 2); TranslateStringAppend(output, args[0], args[1]); break;
@@ -163,7 +166,6 @@ namespace Crayon.Translator
                 case "_string_startswith": VerifyCount(functionCall, 2); TranslateStringStartsWith(output, args[0], args[1]); break;
                 case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
                 case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
-                case "_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
                 case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
                 case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
                 default: throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);

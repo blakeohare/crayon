@@ -22,5 +22,5 @@ if (bool1) {
 	lib_func_error_occurred = true;
 	lib_func_error_message = "arctan requires numeric arguments.";
 } else {
-	output = buildFloat($_arc_tan(float1, float2));
+	output = buildFloat($_math_arc_tan(float1, float2));
 }

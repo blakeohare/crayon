@@ -72,28 +72,28 @@ if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
 			$_comment('int ** int');
 			if ($_cast('int', right) == 0) value = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
 			else if ($_cast('int', right) > 0)
-				value = buildInteger($_int($_exponent($_cast('int', left), $_cast('int', right))));
+				value = buildInteger($_int($_math_pow($_cast('int', left), $_cast('int', right))));
 			else
-				value = buildFloat($_exponent($_cast('int', left), $_cast('int', right)));
+				value = buildFloat($_math_pow($_cast('int', left), $_cast('int', right)));
 			break;
 
 		// int ** float
 		case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 			$_comment('int ** float');
-			value = buildFloat(0.0 + $_exponent($_cast('int', left), $_cast('double', right)));
+			value = buildFloat(0.0 + $_math_pow($_cast('int', left), $_cast('double', right)));
 			break;
 
 		// float ** int
 		case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 			$_comment('float ** int');
 			// add 0.0 just in case underlying platform likes to fall back to integer when possible
-			value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('int', right)));
+			value = buildFloat(0.0 + $_math_pow($_cast('double', left), $_cast('int', right)));
 			break;
 
 		// float ** float
 		case (Types.FLOAT * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.FLOAT:
 			$_comment('float ** float');
-			value = buildFloat(0.0 + $_exponent($_cast('double', left), $_cast('double', right)));
+			value = buildFloat(0.0 + $_math_pow($_cast('double', left), $_cast('double', right)));
 			break;
 						
 		// float % float

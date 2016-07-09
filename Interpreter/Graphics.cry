@@ -446,7 +446,7 @@ function @type('Imagette') virtualizationGridBuildAMegaSheet(
 	@type('Dictionary<int, Array<int>>') oldSheetOffsetInformation) {
 
 	@type('int') totalMembers = $_list_length(megaSheetMemberSheetIds);
-	@type('int') imageUnitWidth = $_int($_exponent($_force_parens(totalMembers - 1), 0.5) + 1);
+	@type('int') imageUnitWidth = $_int($_math_pow($_force_parens(totalMembers - 1), 0.5) + 1);
 	@type('int') imageWidth = nextPowerOf2(imageUnitWidth * 1024);
 	@type('Imagette') megaSheetBitmap = createImagetteFromDimensions(imageWidth, imageWidth);
 
@@ -460,7 +460,7 @@ function @type('Imagette') virtualizationGridBuildAMegaSheet(
 		// etc
 		// "gen"eration refers to the layer # of the L shape that the sheet is occupying. You can find it by flooring the square root of the number in that cell.
 		// Arithmetic magic.
-		@type('int') gen = $_int($_exponent(i, 0.5)); // floor(sqrt(i))
+		@type('int') gen = $_int($_math_pow(i, 0.5)); // floor(sqrt(i))
 		@type('int') col = gen;
 		@type('int') row = i - gen * gen;
 		if (row > gen) {

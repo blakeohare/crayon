@@ -17,6 +17,6 @@ if (!lib_func_error_occurred) {
 		lib_func_error_occurred = true;
 		lib_func_error_message = "arcsin requires a number in the range of -1 to 1.";
 	} else {
-		output = buildFloat($_arc_sin(float1));
+		output = buildFloat($_math_arc_sin(float1));
 	}
 }
