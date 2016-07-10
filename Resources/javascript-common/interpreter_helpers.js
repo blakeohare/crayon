@@ -36,10 +36,10 @@ function shuffle(list) {
 	}
 }
 
-function create_new_array(size) {
-	var output = [];
-	while (size-- > 0) output.push(null);
-	return output;
+function create_new_array(s) {
+	var o = [];
+	while (s-- > 0) o.push(null);
+	return o;
 }
 
 function multiply_list(list, size) {
@@ -57,3 +57,7 @@ function multiply_list(list, size) {
 function clear_list(list) {
 	list.length = 0;
 }
+
+function getElement(id) {
+    return document.getElementById(id);
+};

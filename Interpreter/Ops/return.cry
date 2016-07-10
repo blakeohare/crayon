@@ -4,7 +4,7 @@
 
 if (StackFrame$stack.previous == null) {
 	// returning from the root stack
-	return '';
+	return interpreterFinished();
 }
 
 // is this the static constructor returning?

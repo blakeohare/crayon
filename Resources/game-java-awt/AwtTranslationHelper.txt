@@ -285,4 +285,8 @@ class AwtTranslationHelper {
         g.dispose();
         return newImage;
     }
+
+	public static void downloadImage(String key, String url) {
+		throw new RuntimeException();
+	}
 }

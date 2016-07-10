@@ -229,7 +229,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.ReadByteCodeFile()");
         }
-        
+
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string op = increment ? "++" : "--";
@@ -456,24 +456,9 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            // Nope
-        }
-
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.GetRandomNumber()");
-        }
-        
-        protected override void TranslateRegisterTicker(List<string> output)
-        {
-            // Nope
-        }
-
-        protected override void TranslateRegisterTimeout(List<string> output)
-        {
-            // Nope
         }
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
@@ -686,11 +671,6 @@ namespace Crayon.Translator.CSharp
             output.Add("Math.Tan(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateUnregisterTicker(List<string> output)
-        {
-            // Nope
         }
 
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)

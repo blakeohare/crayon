@@ -356,9 +356,9 @@ if (bool1) {
 		int1 = FunctionInfo$functionInfo.localsSize;
 		int2 = StackFrame$stack.localsStackOffsetEnd; // where the current locals stack ends (will be the new locals stack begin)
 		if (localsStackCapacity <= int2 + int1) {
-			increaseLocalsStackCapacity(p, int1);
-			localsStack = ProgramData$p.localsStack;
-			localsStackSet = ProgramData$p.localsStackSet;
+			increaseLocalsStackCapacity(ec, int1);
+			localsStack = ExecutionContext$ec.localsStack;
+			localsStackSet = ExecutionContext$ec.localsStackSet;
 			localsStackCapacity = $_array_length(localsStack);
 		}
 
@@ -366,7 +366,7 @@ if (bool1) {
 		// TODO: set this to 100 to test.
 		// If this comment is still here, then that means I haven't tested this.
 		if (localsStackSetToken > 2000000000) {
-			resetLocalsStackTokens(p, stack);
+			resetLocalsStackTokens(ec, stack);
 			localsStackSetToken = 2;
 		}
 

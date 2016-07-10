@@ -30,6 +30,7 @@ class GameWindow {
     private BufferStrategy strategy = null;
     private int gameWidth;
     private int gameHeight;
+	private int executionContextId;
 
     private int screenWidth;
     private int screenHeight;
@@ -38,9 +39,10 @@ class GameWindow {
     private KeyAdapter keyAdapter;
     private GameWindowMouseListener mouseListener;
 
-    private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight) {
+    private GameWindow(double fps, int gameWidth, int gameHeight, int pixelWidth, int pixelHeight, int executionContextId) {
 
         INSTANCE = this;
+		this.executionContextId = executionContextId;
 
 		int dpi = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
 		pixelWidth = pixelWidth * dpi / 96;
@@ -113,8 +115,8 @@ class GameWindow {
         screenHeight = actualHeight;
     }
 
-    public static void initializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight) {
-        GameWindow window = new GameWindow(FPS, gameWidth, gameHeight, screenWidth, screenHeight);
+    public static void initializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight, int executionContextId) {
+        GameWindow window = new GameWindow(FPS, gameWidth, gameHeight, screenWidth, screenHeight, executionContextId);
         window.show();
     }
 
@@ -182,7 +184,7 @@ class GameWindow {
 
     private void timerTick() {
         RenderEngine.reset();
-        boolean continueExecution = CrayonWrapper.v_runTick();
+        boolean continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
         if (!continueExecution) {
             frame.setVisible(false);
             System.exit(0);

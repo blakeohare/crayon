@@ -213,7 +213,14 @@ namespace Crayon.Translator
         public void TranslateExpression(List<string> output, Expression expr)
         {
             if (expr is BinaryOpChain) this.TranslateBinaryOpChain(output, (BinaryOpChain)expr);
-            else if (expr is Variable) this.TranslateVariable(output, (Variable)expr);
+            else if (expr is Variable)
+            {
+                if (((Variable)expr).Name.Contains("$"))
+                {
+                    throw new ParserException(expr.FirstToken, "Invalid struct field.");
+                }
+                this.TranslateVariable(output, (Variable)expr);
+            }
             else if (expr is IntegerConstant) this.TranslateIntegerConstant(output, (IntegerConstant)expr);
             else if (expr is StructInstance) this.TranslateStructInstance(output, (StructInstance)expr);
             else if (expr is NullConstant) this.TranslateNullConstant(output, (NullConstant)expr);

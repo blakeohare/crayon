@@ -36,22 +36,17 @@ if (bool1) {
 		lib_func_error_message = "screen dimensions must be positive.";
 	}
 
-	if (%%%SCREEN_BLOCKS_EXECUTION%%%) {
-		StackFrame$stack.pc = pc;
-		yieldControl(stack, valueStackSize);
-		pc = StackFrame$stack.pc;
-		if (bool2) {
-			$_lib_game_initialize_screen(int1, int2, int3, int4);
-		} else {
-			$_lib_game_initialize_screen(int1, int2, int1, int2);
-		}
-		return '';
-	} else {
-		if (bool2) {
-			$_lib_game_initialize_screen(int1, int2, int3, int4);
-		} else {
-			$_lib_game_initialize_screen(int1, int2, int1, int2);
-		}
+	StackFrame$stack.pc = pc;
+	prepareToSuspend(ec, stack, valueStackSize);
+	if (!bool2) {
+		int3 = int1;
+		int4 = int2;
 	}
+	$_lib_game_initialize_screen(int1, int2, int3, int4, ExecutionContext$ec.id);
+	
+	// It's possible that the above call will block entirely and not yield until the game is closed.
+	// It will, however, simply call the same executionContextId and the stack information will be updated.
+	// In which case, the following return will not have any effect when suddnely re-invoked.
+	return suspendInterpreter();
 }
  

@@ -1,4 +1,5 @@
 $_lib_game_get_events_raw_list: R.pump_event_objects()
 $_lib_game_initialize_game_with_fps: R.initializeGame([ARG:1])
-$_lib_game_initialize_screen: R.initializeScreen([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_game_initialize_screen: R.initializeScreen([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 $_lib_game_set_title: R.setTitle([ARG:1])
+$_lib_game_clockTick: R.alwaysTrue()

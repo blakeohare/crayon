@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.cs" />
+    <Compile Include="Crayon\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ByteCode.txt" />

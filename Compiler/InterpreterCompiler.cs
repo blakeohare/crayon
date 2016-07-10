@@ -91,7 +91,6 @@ namespace Crayon
         public Dictionary<string, string> BuildReplacementsDictionary()
         {
             Dictionary<string, string> replacements = new Dictionary<string, string>();
-            replacements.Add("PLATFORM_IS_ASYNC", this.platform.IsAsync ? "true" : "false");
             replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
             replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
             replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");

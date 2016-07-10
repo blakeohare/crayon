@@ -93,7 +93,6 @@ namespace Crayon.Translator.CSharp
                 "OpenTkRenderer.txt,%%%PROJECT_ID%%%/OpenTkRenderer.cs",
                 "OpenTkTranslationHelper.txt,%%%PROJECT_ID%%%/OpenTkTranslationHelper.cs",
                 "Program.txt,%%%PROJECT_ID%%%/Program.cs",
-                "ResourceReader.txt,%%%PROJECT_ID%%%/ResourceReader.cs",
             })
             {
                 string[] parts = file.Split(',');
@@ -106,6 +105,12 @@ namespace Crayon.Translator.CSharp
                     TextContent = content,
                 };
             }
+
+            files[Constants.DoReplacements("%%%PROJECT_ID%%%/ResourceReader.cs", replacements)] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
+            };
         }
     }
 }

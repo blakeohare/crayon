@@ -1,9 +1,27 @@
 ﻿
-function @omitReturn @type('string') interpret() {
+function @type('InterpreterResult') errorResult(@type('string') error) {
+	return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error);
+}
+
+function @type('InterpreterResult') suspendInterpreter() {
+	return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null);
+}
+
+function @type('InterpreterResult') interpreterFinished() {
+	return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
+}
+
+function @omitReturn @type('InterpreterResult') interpret(@type('int') executionContextId) {
 
 	@type('ProgramData') p = $_get_program_data();
+	@type('Dictionary<int, ExecutionContext>') executionContexts = ProgramData$p.executionContexts;
+	if (!$_dictionary_contains(executionContexts, executionContextId)) {
+		// Stale context ID's may possibly be invoked. Pretend that they run and finish.
+		return interpreterFinished();
+	}
+	@type('ExecutionContext') ec = $_dictionary_get_guaranteed(executionContexts, executionContextId);
 
-	@type('StackFrame') stack = ProgramData$p.stackTop;
+	@type('StackFrame') stack = ExecutionContext$ec.stackTop;
 	@type('Array<int>') ops = ProgramData$p.ops;
 	@type('Array<Array<int>>') args = ProgramData$p.args;
 	@type('Array<string>') stringArgs = ProgramData$p.stringArgs;
@@ -13,8 +31,8 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<Value>') literalTable = ProgramData$p.literalTable;
 	@type('Array<string>') identifiers = ProgramData$p.identifiers;
 
-	@type('Array<Value>') valueStack = ProgramData$p.valueStack;
-	@type('int') valueStackSize = ProgramData$p.currentValueStackSize;
+	@type('Array<Value>') valueStack = ExecutionContext$ec.valueStack;
+	@type('int') valueStackSize = ExecutionContext$ec.currentValueStackSize;
 	@type('int') valueStackCapacity = $_array_length(valueStack);
 
 	// declare types...
@@ -112,8 +130,8 @@ function @omitReturn @type('string') interpret() {
 	@type('Array<int>') intOutParam = $_new_array('int', 4);
 	@type('Array<string>') stringOutParam = $_new_array('string', 4);
 
-	@type('Array<Value>') localsStack = ProgramData$p.localsStack;
-	@type('Array<int>') localsStackSet = ProgramData$p.localsStackSet;
+	@type('Array<Value>') localsStack = ExecutionContext$ec.localsStack;
+	@type('Array<int>') localsStackSet = ExecutionContext$ec.localsStackSet;
 	@type('int') localsStackSetToken = StackFrame$stack.localsStackSetToken;
 	@type('int') localsStackCapacity = $_array_length(localsStack);
 	@type('int') localsStackOffset = StackFrame$stack.localsStackOffset;
@@ -235,11 +253,11 @@ function @type('int') canonicalizeListSliceArgs(
 	return 1;
 }
 
-function @type('string') killExecution(@type('StackFrame') stack, @type('int') pc, @type('string') message) {
+function @type('InterpreterResult') killExecution(@type('StackFrame') stack, @type('int') pc, @type('string') message) {
 	return killExecutionWithTokenOverride(stack, pc, null, message);
 }
 
-function @type('string') killExecutionWithTokenOverride(
+function @type('InterpreterResult') killExecutionWithTokenOverride(
 		@type('StackFrame') stack,
 		@type('int') pc,
 		@type('Token') firstTokenOverride, 
@@ -325,17 +343,16 @@ function @type('string') killExecutionWithTokenOverride(
 		first = false;
 		token = null;
 	}
-	return $_string_concat("Error:\n", fullMessage);
+	return errorResult($_string_concat("Error:\n", fullMessage));
 }
 
 // This saves the state of the interpreter so that it's ready to have
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function @type('int') yieldControl(@type('StackFrame') stack, @type('int') valueStackSize) {
-	@type('ProgramData') p = $_get_program_data();
-	ProgramData$p.stackTop = stack;
-	ProgramData$p.currentValueStackSize = valueStackSize;
+function @type('int') prepareToSuspend(@type('ExecutionContext') ec, @type('StackFrame') stack, @type('int') valueStackSize) {
+	ExecutionContext$ec.stackTop = stack;
+	ExecutionContext$ec.currentValueStackSize = valueStackSize;
 	StackFrame$stack.pc += 1;
 	return 0;
 }
@@ -373,15 +390,14 @@ function @type('int') performWorkNuggetPostFrame() {
 	return 0;
 }
 
-function @type('int') valueStackIncreaseCapacity() {
-	@type('ProgramData') p = $_get_program_data();
-	@type('Array<Value>') stack = ProgramData$p.valueStack;
+function @type('int') valueStackIncreaseCapacity(@type('ExecutionContext') ec) {
+	@type('Array<Value>') stack = ExecutionContext$ec.valueStack;
 	@type('int') oldCapacity = $_array_length(stack);
 	@type('int') newCapacity = oldCapacity * 2;
 	@type('Array<Value>') newStack = $_new_array('Value', newCapacity);
 	for (@type('int') i = oldCapacity - 1; i >= 0; i -= 1) {
 		$_array_set(newStack, i, $_array_get(stack, i));
 	}
-	ProgramData$p.valueStack = newStack;
+	ExecutionContext$ec.valueStack = newStack;
 	return 0;
 }

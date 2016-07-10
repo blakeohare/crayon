@@ -49,12 +49,6 @@ namespace Crayon.Translator
                 // TODO: to the JSON library
                 case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
 
-                // TODO: redo this nonsense
-                case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
-                case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
-                case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
-                case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
-
                 // TODO: redo this too. preferably when you refactor the HTTP stuff that depends on this
                 case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 
@@ -222,11 +216,8 @@ namespace Crayon.Translator
         protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
         protected abstract void TranslateParseJson(List<string> output, Expression rawString);
-        protected abstract void TranslatePauseForFrame(List<string> output);
         protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
         protected abstract void TranslateRandomFloat(List<string> output);
-        protected abstract void TranslateRegisterTicker(List<string> output);
-        protected abstract void TranslateRegisterTimeout(List<string> output);
         protected abstract void TranslateResourceGetManifest(List<string> output);
         protected abstract void TranslateResourceReadText(List<string> output, Expression path);
         protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
@@ -255,7 +246,6 @@ namespace Crayon.Translator
         protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
         protected abstract void TranslateTan(List<string> output, Expression value);
-        protected abstract void TranslateUnregisterTicker(List<string> output);
         protected abstract void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator);
         protected abstract void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator);
 

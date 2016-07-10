@@ -1,0 +1,75 @@
+import Math;
+
+namespace Nori {
+
+	/*
+		nativeData[0] -> root UI element
+		nativeData[1] -> platform window object
+	*/
+
+	class Window {
+		field content = null;
+		
+		field bounds = [0, 0, 600, 400];
+		field result = null;
+		field _isShown = false;
+		
+		constructor() { }
+		
+		function close() {
+			// The native window instance is in charge of tracking the suspend token.
+			// If one is present, it should induce it appropriately after the window 
+			// closes and no longer blocks in such a way that the app may close once
+			// execution gets to the end.
+			$_lib_nori_closeWindowAndMaybeResumeExecution(this);
+		}
+		
+		function show() { return this._showImpl(true); }
+		function showNonBlocking() { return this._showImpl(false); }
+		
+		function _showImpl(blocking) {
+			if (this._isShown)
+				Core.assert(false, "Window is already shown.");
+			this._isShown = true;
+			
+			token = $_lib_core_getExecutionSuspenseToken();
+			instantResumeToken = null;
+			closeTimeResumeToken = null;
+			if (blocking) {
+				closeTimeResumeToken = token;
+			} else {
+				instantResumeToken = token;
+			}
+			
+			$_lib_nori_openWindowAndSuspendExecution(
+				this,
+				this.bounds[2],
+				this.bounds[3],
+				this._internalRender,
+				token,
+				closeTimeResumeToken,
+				instantResumeToken);
+			
+			return this.blocking ? this.result : null;
+		}
+		
+		function setSize(width, height) {
+			this.bounds[2] = Math.floor(width);
+			this.bounds[3] = Math.floor(height);
+			return this;
+		}
+		
+		function setContent(element) {
+			this.content = element;
+			return this;
+		}
+		
+		field boundsOut = [null] * 4;
+		
+		function _internalRender() {
+			if (content != null) {
+				content._internalRender(this, this.bounds, this.boundsOut);
+			}
+		}
+	}
+}

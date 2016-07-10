@@ -51,7 +51,7 @@ namespace Crayon
             return id;
         }
 
-        public string GetEmbeddedCode(string libraryName)
+        public Dictionary<string, string> GetEmbeddedCode(string libraryName)
         {
             return this.importedLibraries[libraryName].GetEmbeddedCode();
         }
@@ -158,11 +158,17 @@ namespace Crayon
             string oldSystemLibrary = parser.CurrentSystemLibrary;
             parser.CurrentSystemLibrary = name;
 
-            string libraryCode = library.GetEmbeddedCode();
-            Executable[] libraryParseTree = parser.ParseInterpretedCode("[" + name + "]", libraryCode, name);
+            List<Executable> output = new List<Executable>();
+            Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
+            foreach (string embeddedFile in embeddedCode.Keys)
+            {
+                string fakeName = "[" + name + ":" + embeddedFile + "]";
+                string code = embeddedCode[embeddedFile];
+                output.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
+            }
 
             parser.CurrentSystemLibrary = oldSystemLibrary;
-            return libraryParseTree;
+            return output.ToArray();
         }
     }
 }
