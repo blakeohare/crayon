@@ -53,18 +53,19 @@ namespace %%%PROJECT_ID%%%
             return output;
 		}
 
-		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight)
+		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight, int executionContextId)
 		{
 			// As there is no "window", the screen width and height arguments are ignored.
 			// The view is simply stretched to the logical width and height.
-			InitializeScreen(width, height);
+			InitializeScreen(width, height, executionContextId);
 		}
 
-		public static void InitializeScreen(int width, int height)
+		public static void InitializeScreen(int width, int height, int executionContextId)
 		{
 			GlView1.LogicalWidth = width;
 			GlView1.LogicalHeight = height;
 			GlView1.LogicalViewInitialized = true;
+			GlView1.ExecutionContextId = executionContextId;
 		}
 
 		public static void SetTitle(string title)

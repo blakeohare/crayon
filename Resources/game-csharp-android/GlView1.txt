@@ -18,6 +18,7 @@ namespace %%%PROJECT_ID%%%
             LogicalWidth = 200;
             LogicalHeight = 350;
             LogicalViewInitialized = false;
+			ExecutionContextId = 0;
 			
             this.Touch += (sender, e) =>
             {
@@ -63,6 +64,7 @@ namespace %%%PROJECT_ID%%%
         public static int LogicalWidth { get; set; }
         public static int LogicalHeight { get; set; }
         public static bool LogicalViewInitialized { get; set; }
+		public static int ExecutionContextId { get; set; }
 
         protected override void OnLoad(EventArgs e)
         {
@@ -106,7 +108,7 @@ namespace %%%PROJECT_ID%%%
 			
             CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
             CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
-            if (!CrayonWrapper.v_runTick())
+            if (!CrayonWrapper.v_runInterpreter(ExecutionContextId))
             {
                 // TODO: force exit app here.
             }
