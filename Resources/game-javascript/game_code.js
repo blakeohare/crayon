@@ -5,47 +5,47 @@ R.now = function () {
 	return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
 };
 
-R._global_vars = {
-	'width': 0,
-	'height': 0,
-	'pwidth': 0,
-	'pheight': 0,
-	'fps': 60,
-	'real_canvas': null,
-	'virtual_canvas': null,
-	'scaled_mode': false,
-	'image_loader': null,
-	'image_store': null,
-	'temp_image': null,
-	'print_output': null,
-	'ctx': null,
-	'last_frame_began': R.now(),
-	'image_downloads': {},
-	'image_download_counter': 0,
-	'image_keys_by_index': [null],
+R.globals = {
+	width: 0,
+	height: 0,
+	pwidth: 0,
+	pheight: 0,
+	fps: 60,
+	real_canvas: null,
+	virtual_canvas: null,
+	scaled_mode: false,
+	image_loader: null,
+	image_store: null,
+	temp_image: null,
+	print_output: null,
+	ctx: null,
+	last_frame_began: R.now(),
+	image_downloads: {},
+	image_download_counter: 0,
+	image_keys_by_index: [null],
 	textResources: {},
 };
 
 R.addTextRes = function (path, value) {
-    R._global_vars.textResources[path] = value;
+    R.globals.textResources[path] = value;
 };
 
 R.getTextRes = function(path) {
-    return R._global_vars.textResources[path];
+    return R.globals.textResources[path];
 };
 
 
 R.is_image_loaded = function(key) {
-	return R._global_vars.image_downloads[key] !== undefined;
+    return R.globals.image_downloads[key] !== undefined;
 };
 
 R.enqueue_image_download = function(key, url) {
-	var id = ++R._global_vars.image_download_counter;
-	R._global_vars.image_keys_by_index.push(key);
-	var loader_queue = document.getElementById('crayon_image_loader_queue');
+    var id = ++R.globals.image_download_counter;
+    R.globals.image_keys_by_index.push(key);
+	var loader_queue = getElement('crayon_image_loader_queue');
 	loader_queue.innerHTML += '<img id="image_loader_img_' + id + '" onload="R.finish_load_image(' + id + ')" crossOrigin="anonymous" />' +
 		'<canvas id="image_loader_canvas_' + id + '" />';
-	var img = document.getElementById('image_loader_img_' + id);
+	var img = getElement('image_loader_img_' + id);
 	img.src = %%%JS_FILE_PREFIX%%% + url;
 	return true;
 };
@@ -53,10 +53,10 @@ R.enqueue_image_download = function(key, url) {
 R.autogenDownloaderKey = 1;
 R.better_enqueue_image_download = function(url) {
 	var key = 'k' + R.autogenDownloaderKey++;
-	var loader_queue = document.getElementById('crayon_image_loader_queue');
+	var loader_queue = getElement('crayon_image_loader_queue');
 	loader_queue.innerHTML += '<img id="better_downloader_' + key + '" onload="R.better_finish_load_image(&quot;' + key + '&quot;)" crossOrigin="anonymous" />' +
 		'<canvas id="better_image_loader_canvas_' + key + '" />';
-	var img = document.getElementById('better_downloader_' + key);
+	var img = getElement('better_downloader_' + key);
 	img.src = %%%JS_FILE_PREFIX%%% + url;
 	return key;
 };
@@ -64,12 +64,12 @@ R.better_enqueue_image_download = function(url) {
 // TODO: blit to a canvas that isn't in the DOM and then delete the img and canvas when completed.
 // TODO: figure out if there are any in flight downloads, and if not, clear out the load queue DOM.
 R.better_finish_load_image = function(key) {
-	var img = document.getElementById('better_downloader_' + key);
-	var canvas = document.getElementById('better_image_loader_canvas_' + key);
+    var img = getElement('better_downloader_' + key);
+    var canvas = getElement('better_image_loader_canvas_' + key);
 	canvas.width = img.width;
 	canvas.height = img.height;
-	var context = canvas.getContext('2d');
-	context.drawImage(img, 0, 0);
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage(img, 0, 0);
 	R.better_completed_image_lookup[key] = canvas;
 };
 
@@ -82,14 +82,13 @@ R.get_completed_image_if_downloaded = function(key) {
 R.better_completed_image_lookup = {};
 
 R.finish_load_image = function(id) {
-	var key = R._global_vars.image_keys_by_index[id];
-	var img = document.getElementById('image_loader_img_' + id);
-	var canvas = document.getElementById('image_loader_canvas_' + id);
+    var key = R.globals.image_keys_by_index[id];
+	var img = getElement('image_loader_img_' + id);
+	var canvas = getElement('image_loader_canvas_' + id);
 	canvas.width = img.width;
 	canvas.height = img.height;
-	var context = canvas.getContext('2d');
-	context.drawImage(img, 0, 0);
-	R._global_vars.image_downloads[key] = canvas;
+	canvas.getContext('2d').drawImage(img, 0, 0);
+	R.globals.image_downloads[key] = canvas;
 };
 
 R.flushImagette = function(imagette) {
@@ -98,60 +97,55 @@ R.flushImagette = function(imagette) {
 	var images = imagette[2];
 	var xs = imagette[3];
 	var ys = imagette[4];
-	var length = images.length;
 	var canvasAndContext = R.createCanvasAndContext(width, height);
 	var canvas = canvasAndContext[0];
-	var context = canvasAndContext[1];
-	for (var i = 0; i < length; ++i) {
-		context.drawImage(images[i], xs[i], ys[i]);
+	var ctx = canvasAndContext[1];
+	for (var i = 0; i < images.length; ++i) {
+	    ctx.drawImage(images[i], xs[i], ys[i]);
 	}
 	return canvas;
 };
 
 R.createCanvasAndContext = function(width, height) {
-	R._global_vars.temp_image.innerHTML = '<canvas id="temp_image_canvas"></canvas>';
-	var canvas = document.getElementById('temp_image_canvas');
+    R.globals.temp_image.innerHTML = '<canvas id="temp_image_canvas"></canvas>';
+	var canvas = getElement('temp_image_canvas');
 	canvas.width = width;
 	canvas.height = height;
-	var context = canvas.getContext('2d');
-	R._global_vars.temp_image.innerHTML = '';
-	return [canvas, context];
+	var ctx = canvas.getContext('2d');
+	R.globals.temp_image.innerHTML = '';
+	return [canvas, ctx];
 };
 
 R.beginFrame = function() {
-	R._global_vars.last_frame_began = R.now();
-	if (R._global_vars.ctx) {
-		R.drawRect(0, 0, R._global_vars.width, R._global_vars.height, 0, 0, 0, 255);
+    R.globals.last_frame_began = R.now();
+    if (R.globals.ctx) {
+        R.drawRect(0, 0, R.globals.width, R.globals.height, 0, 0, 0, 255);
 	}
 };
 
 R.endFrame = function() {
-	var gb = R._global_vars;
+    var gb = R.globals;
 	if (gb.scaled_mode) {
-		var rc = gb.real_canvas;
-		var vc = gb.virtual_canvas;
-		var rctx = rc.getContext('2d');
-		rctx.drawImage(vc, 0, 0);
+		gb.real_canvas.getContext('2d').drawImage(gb.virtual_canvas, 0, 0);
 	}
 	window.setTimeout(R.runFrame, R.computeDelayMillis());
 };
 
 R.runFrame = function() {
     R.beginFrame();
-    var c = v_runInterpreter(R._global_vars.execId);
-    if (!c) return;
+    var cont = v_runInterpreter(R.globals.execId);
+    if (!cont) return;
     R.endFrame();
 };
 
 R.computeDelayMillis = function () {
-	var ideal = 1.0 / R._global_vars.fps;
-	var diff = R.now() - R._global_vars.last_frame_began;
-	var delay = ideal - diff;
-	return Math.floor(delay * 1000);
+    var ideal = 1.0 / R.globals.fps;
+    var diff = R.now() - R.globals.last_frame_began;
+	return Math.floor((ideal - diff) * 1000);
 };
 
 R.initializeGame = function (fps) {
-	R._global_vars['fps'] = fps;
+    R.globals.fps = fps;
 };
 
 R.pump_event_objects = function () {
@@ -176,11 +170,11 @@ R.initializeScreen = function (width, height, pwidth, pheight, execId) {
 		scaledMode = true;
 		canvasWidth = pwidth;
 		canvasHeight = pheight;
-		virtualCanvas = document.createElement('canvas');
+		virtualCanvas = getElement('canvas');
 		virtualCanvas.width = width;
 		virtualCanvas.height = height;
 	}
-	var canvasHost = document.getElementById('crayon_host');
+	var canvasHost = getElement('crayon_host');
 	canvasHost.innerHTML =
 		'<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
 		'<div style="display:none;">' +
@@ -189,17 +183,18 @@ R.initializeScreen = function (width, height, pwidth, pheight, execId) {
 			'<div id="crayon_image_store"></div>' +
 			'<div id="crayon_temp_image"></div>' +
 		'</div>';
-	var canvas = document.getElementById('crayon_screen');
-	R._global_vars['scaled_mode'] = scaledMode;
-	R._global_vars['real_canvas'] = canvas;
-	R._global_vars['virtual_canvas'] = scaledMode ? virtualCanvas : canvas;
-	R._global_vars['image_loader'] = document.getElementById('crayon_image_loader');
-	R._global_vars['image_store'] = document.getElementById('crayon_image_store');
-	R._global_vars['temp_image'] = document.getElementById('crayon_temp_image');
-	R._global_vars['ctx'] = canvas.getContext('2d');
-	R._global_vars['width'] = width;
-	R._global_vars['height'] = height;
-	R._global_vars.execId = execId;
+	var canvas = getElement('crayon_screen');
+	var ctx = canvas.getContext('2d');
+	R.globals.scaled_mode = scaledMode;
+	R.globals.real_canvas = canvas;
+	R.globals.virtual_canvas = scaledMode ? virtualCanvas : canvas;
+	R.globals.image_loader = getElement('crayon_image_loader');
+	R.globals.image_store = getElement('crayon_image_store');
+	R.globals.temp_image = getElement('crayon_temp_image');
+	R.globals.ctx = ctx;
+	R.globals.width = width;
+	R.globals.height = height;
+	R.globals.execId = execId;
 
 	document.onkeydown = R._keydown;
 	document.onkeyup = R._keyup;
@@ -208,13 +203,13 @@ R.initializeScreen = function (width, height, pwidth, pheight, execId) {
 	canvas.addEventListener('mouseup', R._mouseup);
 	canvas.addEventListener('mousemove', R._mousemove);
 
-	R._global_vars['ctx'].imageSmoothingEnabled = false;
-	R._global_vars['ctx'].mozImageSmoothingEnabled = false;
-	R._global_vars['ctx'].msImageSmoothingEnabled = false;
-	R._global_vars['ctx'].webkitImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = false;
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.msImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
 
 	if (scaledMode) {
-		R._global_vars['ctx'].scale(pwidth / width, pheight / height);
+	    ctx.scale(pwidth / width, pheight / height);
 	}
 
 	R.runFrame();
@@ -228,9 +223,7 @@ R.is_valid_integer = function (value) {
 	var test = parseInt(value);
 	// NaN produces a paradocical value that fails the following tests...
 	// TODO: verify this on all browsers
-	if (value < 0) return true;
-	if (value >= 0) return true;
-	return false;
+	return test < 0 || test >= 0;
 };
 
 R.setTitle = function (title) {
@@ -290,16 +283,15 @@ R.convertJsonThing = function(thing) {
 	}
 };
 
-R.typeClassify = function(thing) {
-	if (thing === null) return 'null';
-	if (thing === true) return 'bool';
-	if (thing === false) return 'bool';
-	if (typeof thing == "string") return 'string';
-	if (typeof thing == "number") {
-		if (thing % 1 == 0) return 'int';
+R.typeClassify = function(t) {
+	if (t === null) return 'null';
+	if (t === true || t === false) return 'bool';
+	if (typeof t == "string") return 'string';
+	if (typeof t == "number") {
+		if (t % 1 == 0) return 'int';
 		return 'float';
 	}
-	ts = Object.prototype.toString.call(thing);
+	ts = Object.prototype.toString.call(t);
 	if (ts == '[object Array]') {
 		return 'list';
 	}

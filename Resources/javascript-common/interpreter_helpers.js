@@ -58,5 +58,6 @@ function clear_list(list) {
 	list.length = 0;
 }
 
-function noop() {
-}
+function getElement(id) {
+    return document.getElementById(id);
+};
