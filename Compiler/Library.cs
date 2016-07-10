@@ -90,7 +90,11 @@ namespace Crayon
             // android.myFunction.cry
             // on Python, myFunction will be included for lib_foo_myFunction(), but on Android, android.myFunction.cry will be included instead.
 
-            string[] files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.RootDirectory, "native"));
+            string[] files = new string[0];
+            if (FileUtil.DirectoryExists(this.RootDirectory + "/native"))
+            {
+                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.RootDirectory, "native"));
+            }
             Dictionary<string, string> moreSpecificFiles = new Dictionary<string, string>();
             foreach (string fileWithDirectory in files)
             {
@@ -127,9 +131,13 @@ namespace Crayon
 
         private Dictionary<string, string> filepathsByFunctionName;
 
-        public string GetEmbeddedCode()
+        public Dictionary<string, string> GetEmbeddedCode()
         {
-            return this.ReadFile("embed.cry", true);
+            Dictionary<string, string> output = new Dictionary<string, string>() {
+                { this.Name, this.ReadFile("embed.cry", true) }
+            };
+
+            return output;
         }
 
         private Dictionary<string, string> supplementalFiles = null;
