@@ -1,0 +1,9 @@
+/*
+	arg 1: rectangle instance. native UI instance is located at nativeData[0]
+	arg 2: currentBounds - int value list [LEFT, TOP, RIGHT, BOTTOM]
+	arg 3: color - [R, G, B, A]
+*/
+import inline "FrameworkFunctions/3_arg.cry";
+
+$_lib_nori_renderRectangleSolid(null, lib_nori_getNativeData0(arg1), arg2, arg3);
+

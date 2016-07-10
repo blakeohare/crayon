@@ -26,7 +26,7 @@ namespace Nori {
 		}
 		
 		switch (elementBounds[_PositioningIndex.VERTICAL_ALIGNMENT]) {
-			case HorizontalAlignment.TOP:
+			case VerticalAlignment.TOP:
 				topOut = elementBounds[_PositioningIndex.TOP_MARGIN] + availableBounds[1];
 				if (elementHeight == null) {
 					bottomOut = availableBounds[3];

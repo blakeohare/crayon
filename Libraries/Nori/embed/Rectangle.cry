@@ -29,17 +29,17 @@ namespace Nori {
 			return this;
 		}
 		
-		function _internalRenderCreate(currentBounds) {
-			if (fillType == Nori.FillStyle.SOLID) {
-				Element.NORI_NATIVE_rectangle_solid_render_create(uiRoot, this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
+		function _internalRenderCreate(uiRoot, currentBounds) {
+			if (this.fillType == Nori.FillStyle.SOLID) {
+				$$lib_nori_rectangleSolidRenderCreate(uiRoot, this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
 			} else {
 				Core.assert(false); // Not implemented
 			}
 		}
 		
 		function _internalRenderUpdate(currentBounds) {
-			if (fillType == Nori.FillStyle.SOLID) {
-				Element.NORI_NATIVE_rectangle_solid_render_update(this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
+			if (this.fillType == Nori.FillStyle.SOLID) {
+				$$lib_nori_rectangleSolidRenderUpdate(this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
 			} else {
 				Core.assert(false); // Not implemented
 			}

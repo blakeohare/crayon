@@ -84,6 +84,7 @@ namespace Crayon.Translator.CSharp
                 "SettingsDesigner.txt,%%%PROJECT_ID%%%/Properties/Settings.Designer.cs",
                 "SettingsSettings.txt,%%%PROJECT_ID%%%/Properties/Settings.settings",
                 "WinFormsTranslationHelper.txt,%%%PROJECT_ID%%%/WinFormsTranslationHelper.cs",
+                "NoriRenderer.txt,%%%PROJECT_ID%%%/NoriRenderer.cs",
             })
             {
                 string[] parts = file.Split(',');

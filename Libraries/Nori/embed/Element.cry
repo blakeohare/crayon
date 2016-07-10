@@ -47,17 +47,25 @@ namespace Nori {
 			return this;
 		}
 		
+		function _internalRenderUpdate(bounds) {
+			Core.assert(false);
+		}
+		
+		function _internalRenderCreate(uiRoot, bounds) {
+			Core.assert(false);
+		}
+		
 		function _internalRender(uiRoot, availableBounds, boundsOut) {
-			Element.NORI_NATIVE_getBounds(
+			NORI_NATIVE_getBounds(
 				this.positioning ?? Element.DEFAULT_POSITIONING,
 				availableBounds,
 				boundsOut);
 			
 			if (this.inTree) {
-				this._internalRenderUpdate(uiRoot, this, boundsOut);
+				this._internalRenderUpdate(boundsOut);
 			} else {
 				this.inTree = true;
-				this._internalRenderCreate(this, boundsOut);
+				this._internalRenderCreate(uiRoot, boundsOut);
 			}
 		}
 		

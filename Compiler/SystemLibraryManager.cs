@@ -162,7 +162,7 @@ namespace Crayon
             Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
             foreach (string embeddedFile in embeddedCode.Keys)
             {
-                string fakeName = "[" + name + ":" + embeddedFile + "]";
+                string fakeName = "[" + embeddedFile + "]";
                 string code = embeddedCode[embeddedFile];
                 output.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
             }

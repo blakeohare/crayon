@@ -1,0 +1,3 @@
+$_lib_nori_renderRectangleSolid: NoriRenderer.RenderSolidRectangle([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_nori_openWindowAndSuspendExecution: NoriRenderer.OpenWindow([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+$_lib_nori_closeWindow: NoriRenderer.CloseWindow([ARG:1], [ARG:2], [ARG:3])

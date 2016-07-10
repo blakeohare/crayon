@@ -84,4 +84,8 @@
 		}
 		return output;
 	}
+	
+	function getCurrentExecutionToken() {
+		return $$lib_core_getCurrentExecutionToken();
+	}
 }

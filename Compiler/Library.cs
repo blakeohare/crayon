@@ -136,7 +136,16 @@ namespace Crayon
             Dictionary<string, string> output = new Dictionary<string, string>() {
                 { this.Name, this.ReadFile("embed.cry", true) }
             };
-
+            string embedDir = FileUtil.JoinPath(this.RootDirectory, "embed");
+            if (FileUtil.DirectoryExists(embedDir))
+            {
+                string[] additionalFiles = FileUtil.GetAllFilePathsRelativeToRoot(embedDir);
+                foreach (string additionalFile in additionalFiles)
+                {
+                    string embedCode = this.ReadFile("embed/" + additionalFile, false);
+                    output[this.Name + ":" + additionalFile] = embedCode;
+                }
+            }
             return output;
         }
 

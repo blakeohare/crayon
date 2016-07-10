@@ -1,0 +1,13 @@
+function @type('object') lib_nori_getNativeData0(@type('Value') objValue) {
+	@type('ObjectInstance') obj = $_cast('ObjectInstance', Value$objValue.internalValue);
+	return $_array_get(ObjectInstance$obj.nativeData, 0);
+}
+
+function @type('int') lib_nori_applyNativeData0(@type('Value') objValue, @type('object') uiObj) {
+	@type('ObjectInstance') obj = $_cast('ObjectInstance', Value$objValue.internalValue);
+	if (ObjectInstance$obj.nativeData == null) {
+		ObjectInstance$obj.nativeData = $_new_array('object', 1);
+	}
+	$_array_set(ObjectInstance$obj.nativeData, 0, uiObj);
+	return 0;
+}

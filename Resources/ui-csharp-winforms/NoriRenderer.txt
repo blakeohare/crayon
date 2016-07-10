@@ -1,0 +1,27 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace %%%PROJECT_ID%%%
+{
+    public static class NoriRenderer
+    {
+		public static object RenderSolidRectangle(object uiHost, object rectInstance, Value bounds, Value color)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void OpenWindow(
+			object[] nativeDataOut,
+			int width, int height,
+			int closeExecutionContextId, int openExecutionContextId,
+			Value initFunctionPointer)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void CloseWindow(object uiHost, object windowObj, int resumeExecutionContextId)
+		{
+			throw new NotImplementedException();
+		}
+    }
+}
