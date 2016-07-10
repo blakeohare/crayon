@@ -26,7 +26,7 @@
 	
 	<target name="js_remote">
 		<platform>game-javascript</platform>
-		<jsfileprefix>/demos/squishysquid2/</jsfileprefix>
+		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
 	</target>
 	
 	<target name="windows">
