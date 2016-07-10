@@ -459,12 +459,7 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            output.Add("return false");
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("pth_random_float()");

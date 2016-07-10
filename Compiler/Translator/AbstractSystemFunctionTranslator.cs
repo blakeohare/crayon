@@ -50,7 +50,6 @@ namespace Crayon.Translator
                 case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
 
                 // TODO: redo this nonsense
-                case "_pause_for_frame": VerifyCount(functionCall, 0); TranslatePauseForFrame(output); break;
                 case "_register_ticker": VerifyCount(functionCall, 0); TranslateRegisterTicker(output); break;
                 case "_register_timeout": VerifyCount(functionCall, 0); TranslateRegisterTimeout(output); break;
                 case "_unregister_ticker": VerifyCount(functionCall, 0); TranslateUnregisterTicker(output); break;
@@ -222,7 +221,6 @@ namespace Crayon.Translator
         protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
         protected abstract void TranslateParseJson(List<string> output, Expression rawString);
-        protected abstract void TranslatePauseForFrame(List<string> output);
         protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
         protected abstract void TranslateRandomFloat(List<string> output);
         protected abstract void TranslateRegisterTicker(List<string> output);

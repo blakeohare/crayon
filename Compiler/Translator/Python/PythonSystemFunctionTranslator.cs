@@ -502,12 +502,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, character);
             output.Add(")");
         }
-
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            output.Add("_pygame_end_of_frame()");
-        }
-
+        
         protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
         {
             output.Add("_parse_float_helper(");

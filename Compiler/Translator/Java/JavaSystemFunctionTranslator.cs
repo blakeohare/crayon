@@ -445,12 +445,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.random.nextDouble()");

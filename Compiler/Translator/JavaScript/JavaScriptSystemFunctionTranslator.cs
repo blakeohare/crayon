@@ -516,12 +516,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            throw new Exception("This should have been optimized out.");
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("Math.random()");

@@ -455,12 +455,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslatePauseForFrame(List<string> output)
-        {
-            // Nope
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.GetRandomNumber()");
