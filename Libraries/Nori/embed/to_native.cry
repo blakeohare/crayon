@@ -1,0 +1,48 @@
+namespace Nori {
+
+	// TODO: move all this to native functions.
+
+	function NORI_NATIVE_getBounds(elementBounds, availableBounds, boundsOut) {
+		width = availableBounds[2] - availableBounds[0];
+		height = availableBounds[3] - availableBounds[1];
+		
+		// these can be null for infinity
+		elementWidth = elementBounds[_PositioningIndex.WIDTH];
+		elementHeight = elementBounds[_PositioningIndex.HEIGHT];
+		
+		switch (elementBounds[_PositioningIndex.HORIZONTAL_ALIGNMENT]) {
+			case HorizontalAlignment.LEFT:
+				leftOut = elementBounds[_PositioningIndex.LEFT_MARGIN] + availableBounds[0];
+				if (elementWidth == null) {
+					rightOut = availableBounds[2];
+					if (rightOut < leftOut) rightOut = leftOut;
+				} else {
+					rightOut = leftOut + elementWidth;
+				}
+				break;
+			default:
+				Core.assert(false, "TODO: other horizontal alignments");
+				break;
+		}
+		
+		switch (elementBounds[_PositioningIndex.VERTICAL_ALIGNMENT]) {
+			case HorizontalAlignment.TOP:
+				topOut = elementBounds[_PositioningIndex.TOP_MARGIN] + availableBounds[1];
+				if (elementHeight == null) {
+					bottomOut = availableBounds[3];
+					if (bottomOut < topOut) bottomOut = topOut;
+				} else {
+					bottomOut = topOut + elementHeight;
+				}
+				break;
+			default:
+				Core.assert(false, "TODO: other vertical alignments");
+				break;
+		}
+		
+		boundsOut[0] = leftOut;
+		boundsOut[1] = topOut;
+		boundsOut[2] = rightOut;
+		boundsOut[3] = bottomOut;
+	}
+}

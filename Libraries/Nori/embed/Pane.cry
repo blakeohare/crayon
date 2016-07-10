@@ -1,0 +1,26 @@
+namespace Nori {
+
+	class Pane : Nori.Element {
+		constructor() : base() {
+			
+		}
+		
+		field _reusableAvailableBounds = [0] * 4;
+		
+		function _internalRender(uiRoot, availableBounds, boundsOut) {
+			NORI_NATIVE_getBounds(this.bounds, availableBounds, boundsOut);
+			
+			// TODO: a native implementation of this.
+			this._reusableAvailableBounds[0] = boundsOut[0];
+			this._reusableAvailableBounds[1] = boundsOut[1];
+			this._reusableAvailableBounds[2] = boundsOut[2];
+			this._reusableAvailableBounds[3] = boundsOut[3];
+			
+			if (this.children != null) {
+				for (child : this.children) {
+					this._internalRender(uiRoot, this._reusableAvailableBounds, boundsOut);
+				}
+			}
+		}
+	}
+}

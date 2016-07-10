@@ -1,0 +1,65 @@
+namespace Nori {
+
+	/*
+		nativeData[0] -> native UI tree object
+	*/
+
+	class Element {
+		
+		// TODO: This isn't a very good mechanism.
+		// Should use a render-pass counter or something.
+		field inTree = false;
+		
+		field renderTemplate = null;
+		field children = null;
+		
+		/*
+			If null, use all default values.
+			Otherwise, this is a list of (possibly nullable) integers whose index
+			are described by _PositioningIndex
+		*/
+		field positioning = null;
+		static field DEFAULT_POSITIONING = [0, 0, 0, null, 0, 0, 0, null]; // call .clone on this when needed or just use ?? operator when derferencing positioning.
+		
+		field mouseEnter;
+		field mouseLeave;
+		field mouseDown;
+		field mouseUp;
+		
+		constructor() { }
+		
+		function setLeft(x) {
+			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
+			this.positioning[_PositioningIndex.LEFT_MARGIN] = x;
+			return this;
+		}
+		
+		function setTop(y) {
+			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
+			this.positioning[_PositioningIndex.TOP_MARGIN] = y;
+			return this;
+		}
+		
+		function setSize(width, height) {
+			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
+			this.positioning[_PositioningIndex.WIDTH] = width;
+			this.positioning[_PositioningIndex.HEIGHT] = height;
+			return this;
+		}
+		
+		function _internalRender(uiRoot, availableBounds, boundsOut) {
+			Element.NORI_NATIVE_getBounds(
+				this.positioning ?? Element.DEFAULT_POSITIONING,
+				availableBounds,
+				boundsOut);
+			
+			if (this.inTree) {
+				this._internalRenderUpdate(uiRoot, this, boundsOut);
+			} else {
+				this.inTree = true;
+				this._internalRenderCreate(this, boundsOut);
+			}
+		}
+		
+	}
+}
