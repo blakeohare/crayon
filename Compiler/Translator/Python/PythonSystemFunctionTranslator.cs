@@ -530,17 +530,7 @@ namespace Crayon.Translator.Python
         {
             output.Add("random.random()");
         }
-
-        protected override void TranslateRegisterTicker(List<string> output)
-        {
-            throw new Exception("This code path should be optimized out of the python translation.");
-        }
-
-        protected override void TranslateRegisterTimeout(List<string> output)
-        {
-            throw new Exception("This code path should be optimized out of the python translation.");
-        }
-
+        
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("RESOURCES.readTextFile('resources/text/' + ");
@@ -736,12 +726,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-
-        protected override void TranslateUnregisterTicker(List<string> output)
-        {
-            throw new Exception("This code path should be optimized out of the python translation.");
-        }
-
+        
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             output.Add("1.0 * ");

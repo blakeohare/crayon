@@ -516,20 +516,10 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-        
+
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("Math.random()");
-        }
-
-        protected override void TranslateRegisterTicker(List<string> output)
-        {
-            // Nope.
-        }
-
-        protected override void TranslateRegisterTimeout(List<string> output)
-        {
-            output.Add("R.endFrame()");
         }
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
@@ -734,11 +724,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("Math.tan(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateUnregisterTicker(List<string> output)
-        {
-            // Nope.
         }
 
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)

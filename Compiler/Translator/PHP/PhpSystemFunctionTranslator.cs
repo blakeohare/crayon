@@ -465,16 +465,6 @@ namespace Crayon.Translator.Php
             output.Add("pth_random_float()");
         }
         
-        protected override void TranslateRegisterTicker(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateRegisterTimeout(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("''");
@@ -697,12 +687,7 @@ namespace Crayon.Translator.Php
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateUnregisterTicker(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             output.Add("1.0 * ");

@@ -225,7 +225,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, compareTo);
             output.Add(")");
         }
-        
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -246,7 +246,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.getProgramData()");
         }
-        
+
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string op = increment ? "++" : "--";
@@ -445,20 +445,10 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-        
+
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.random.nextDouble()");
-        }
-
-        protected override void TranslateRegisterTicker(List<string> output)
-        {
-            // Nope
-        }
-
-        protected override void TranslateRegisterTimeout(List<string> output)
-        {
-            // Nope
         }
 
         protected override void TranslateSetProgramData(List<string> output, Expression programData)
@@ -668,11 +658,6 @@ namespace Crayon.Translator.Java
             output.Add("Math.tan(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateUnregisterTicker(List<string> output)
-        {
-            // Nope
         }
 
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
