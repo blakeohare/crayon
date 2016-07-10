@@ -5,4 +5,7 @@ if (ProgramData$p.initializationComplete) {
 
 StackFrame$stack.pc = pc;
 prepareToSuspend(ec, stack, valueStackSize);
+
+$_lib_game_clockTick();
+
 return suspendInterpreter();

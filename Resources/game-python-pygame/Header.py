@@ -100,7 +100,7 @@ def platform_begin(fps):
 	pygame.init()
 	_global_vars['fps'] = fps
 
-def _pygame_initialize_screen(width, height, pixel_dimensions):
+def _pygame_initialize_screen(width, height, pixel_dimensions, execId):
 	_global_vars['width'] = width
 	_global_vars['height'] = height
 	scaled_mode = pixel_dimensions != None and (width != pixel_dimensions[0] or height != pixel_dimensions[1])
@@ -113,6 +113,9 @@ def _pygame_initialize_screen(width, height, pixel_dimensions):
 	_global_vars['real_screen'] = real_screen
 	_global_vars['virtual_screen'] = virtual_screen
 	_global_vars['scaled_mode'] = scaled_mode
+
+	while v_runInterpreter(execId):
+		pass
 
 _PDL = pygame.draw.line
 _PDR = pygame.draw.rect
