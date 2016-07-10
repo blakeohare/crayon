@@ -69,7 +69,7 @@ namespace Crayon
                 case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.Minified, buildContext.JsFilePrefix);
                 case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
                 case "server-php": return new Crayon.Translator.Php.PhpPlatform();
-                case "ui-csharp-winforms": throw new NotImplementedException();
+                case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
                 case "ui-javascript": throw new NotImplementedException();
                 default:
                     throw new InvalidOperationException("Unrecognized platform. See usage.");

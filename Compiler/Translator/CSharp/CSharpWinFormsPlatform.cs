@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Crayon.Translator.CSharp
 {
-    class CSharpOpenTkPlatform : CSharpPlatform
+    class CSharpWinFormsPlatform : CSharpPlatform
     {
-        public CSharpOpenTkPlatform()
-            : base(new CSharpOpenTkSystemFunctionTranslator(), true)
-        { }
+        public CSharpWinFormsPlatform() : base(new CSharpWinFormsSystemFunctionTranslator(), false)
+        {
 
-        public override string PlatformShortId { get { return "game-csharp-opentk"; } }
+        }
+
+        public override string PlatformShortId { get { return "ui-csharp-winforms"; } }
 
         public override void PlatformSpecificFiles(
             string projectId,
@@ -16,22 +20,6 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase)
         {
-            // TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
-            foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
-            {
-                files[projectId + "/" + binary + ".dll"] = new FileOutput()
-                {
-                    Type = FileOutputType.Binary,
-                    BinaryContent = Util.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + binary + ".dll")
-                };
-            }
-
-            files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = Util.ReadResourceFileInternally("game-csharp-opentk/License.txt")
-            };
-
             List<string> embeddedResources = new List<string>();
 
             files[projectId + "/Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
@@ -80,23 +68,26 @@ namespace Crayon.Translator.CSharp
                 embeddedResourceReplacement.Add("    <EmbeddedResource Include=\"" + embeddedResource + "\" />");
             }
             replacements["EMBEDDED_RESOURCES"] = string.Join("\r\n", embeddedResourceReplacement);
-
+            
             foreach (string file in new string[]
             {
-                "SolutionFile.sln.txt,%%%PROJECT_ID%%%.sln",
-                "ProjectFile.csproj.txt,%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.csproj",
+                "SolutionFile.txt,%%%PROJECT_ID%%%.sln",
+                "ProjectFile.txt,%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.csproj",
 
-                "AssemblyInfo.txt,%%%PROJECT_ID%%%/Properties/AssemblyInfo.cs",
-                "GamepadTranslationHelper.txt,%%%PROJECT_ID%%%/GamepadTranslationHelper.cs",
-                "GameWindow.txt,%%%PROJECT_ID%%%/GameWindow.cs",
-                "GlUtil.txt,%%%PROJECT_ID%%%/GlUtil.cs",
-                "OpenTkRenderer.txt,%%%PROJECT_ID%%%/OpenTkRenderer.cs",
-                "OpenTkTranslationHelper.txt,%%%PROJECT_ID%%%/OpenTkTranslationHelper.cs",
+                "AppConfig.txt,%%%PROJECT_ID%%%/App.config",
+                "Form1.txt,%%%PROJECT_ID%%%/Form1.cs",
+                "Form1Designer.txt,%%%PROJECT_ID%%%/Form1.Designer.cs",
                 "Program.txt,%%%PROJECT_ID%%%/Program.cs",
+                "AssemblyInfo.txt,%%%PROJECT_ID%%%/Properties/AssemblyInfo.cs",
+                "ResourcesDesigner.txt,%%%PROJECT_ID%%%/Properties/Resources.Designer.cs",
+                "ResourcesResx.txt,%%%PROJECT_ID%%%/Properties/Resources.resx",
+                "SettingsDesigner.txt,%%%PROJECT_ID%%%/Properties/Settings.Designer.cs",
+                "SettingsSettings.txt,%%%PROJECT_ID%%%/Properties/Settings.settings",
+                "WinFormsTranslationHelper.txt,%%%PROJECT_ID%%%/WinFormsTranslationHelper.cs",
             })
             {
                 string[] parts = file.Split(',');
-                string source = "game-csharp-opentk/" + parts[0];
+                string source = "ui-csharp-winforms/" + parts[0];
                 string destination = Constants.DoReplacements(parts[1], replacements);
                 string content = Constants.DoReplacements(Util.ReadResourceFileInternally(source), replacements);
                 files[destination] = new FileOutput()

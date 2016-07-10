@@ -225,7 +225,7 @@ namespace Crayon
                 return "";
             }
 
-            throw new Exception(); // TODO: add token data here and throw a parser exception.
+            throw new ParserException(null, "This project type is not supported by the " + this.Name + " library.");
         }
     }
 }

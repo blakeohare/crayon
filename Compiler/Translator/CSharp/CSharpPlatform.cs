@@ -87,7 +87,6 @@ namespace Crayon.Translator.CSharp
             foreach (StructDefinition structDefinition in structDefinitions)
             {
                 string structName = structDefinition.Name.Value;
-                string filename = structName + ".cs";
                 List<string> codeContents = new List<string>();
                 codeContents.Add(crayonHeader);
                 codeContents.Add("\tpublic class " + structName + nl);
@@ -132,7 +131,7 @@ namespace Crayon.Translator.CSharp
                 codeContents.Add("\t}" + nl);
 
                 codeContents.Add(crayonFooter);
-                output[projectId + "/" + filename] = new FileOutput()
+                output[projectId + "/Crayon/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = string.Join("", codeContents)
@@ -149,9 +148,8 @@ namespace Crayon.Translator.CSharp
                 this.Translator.Translate(codeContents, finalCode[codefile]);
 
                 codeContents.Add(crayonWrapperFooter);
-
-                string filename = codefile + ".cs";
-                output[projectId + "/" + filename] = new FileOutput()
+                
+                output[projectId + "/Crayon/" + codefile + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = string.Join("", codeContents)
@@ -165,7 +163,7 @@ namespace Crayon.Translator.CSharp
                 "AsyncMessageQueue",
             })
             {
-                output[projectId + "/" + templateFile + ".cs"] = new FileOutput()
+                output[projectId + "/Crayon/" + templateFile + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(

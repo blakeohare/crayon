@@ -1,0 +1,57 @@
+﻿using System;
+
+namespace %%%PROJECT_ID%%%
+{
+    static class WinFormsTranslationHelper
+    {
+        internal static int TODO_deleteFile()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static int TODO_deleteDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string TODO_appDataRoot()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string TODO_currentDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string[] TODO_filesInDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static int TODO_fileWriteText()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string TODO_readText()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static int TODO_createDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void TODO_httpRequest()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static bool TODO_ioPathExists()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
