@@ -49,6 +49,8 @@ namespace Crayon.Translator.JavaScript
 
             List<string> codeJs = new List<string>();
 
+            codeJs.Add("R = {};\n");
+
             foreach (string jsFile in new string[] {
                 "file_io.js",
                 "fake_disk.js",

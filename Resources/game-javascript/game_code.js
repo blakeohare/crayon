@@ -1,6 +1,4 @@
-﻿var R = {};
-
-R.alwaysTrue = function() { return true; };
+﻿R.alwaysTrue = function() { return true; };
 R.alwaysFalse = function() { return false; };
 
 R.now = function () {
@@ -135,7 +133,14 @@ R.endFrame = function() {
 		var rctx = rc.getContext('2d');
 		rctx.drawImage(vc, 0, 0);
 	}
-	window.setTimeout(v_runTick, R.computeDelayMillis());
+	window.setTimeout(R.runFrame, R.computeDelayMillis());
+};
+
+R.runFrame = function() {
+    R.beginFrame();
+    var c = v_runInterpreter(R._global_vars.execId);
+    if (!c) return;
+    R.endFrame();
 };
 
 R.computeDelayMillis = function () {
@@ -158,7 +163,7 @@ R.pump_event_objects = function () {
 
 // TODO: also apply keydown and mousedown handlers
 // TODO: (here and python as well) throw an error if you attempt to call this twice.
-R.initializeScreen = function (width, height, pwidth, pheight) {
+R.initializeScreen = function (width, height, pwidth, pheight, execId) {
 	var scaledMode;
 	var canvasWidth;
 	var canvasHeight;
@@ -194,6 +199,7 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 	R._global_vars['ctx'] = canvas.getContext('2d');
 	R._global_vars['width'] = width;
 	R._global_vars['height'] = height;
+	R._global_vars.execId = execId;
 
 	document.onkeydown = R._keydown;
 	document.onkeyup = R._keyup;
@@ -210,6 +216,8 @@ R.initializeScreen = function (width, height, pwidth, pheight) {
 	if (scaledMode) {
 		R._global_vars['ctx'].scale(pwidth / width, pheight / height);
 	}
+
+	R.runFrame();
 };
 
 R.print = function (value) {
