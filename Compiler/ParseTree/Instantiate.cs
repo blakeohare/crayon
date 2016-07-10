@@ -46,6 +46,11 @@ namespace Crayon.ParseTree
                 this.Args[i] = this.Args[i].Resolve(parser);
             }
 
+            if (this.Class == null)
+            {
+                throw new ParserException(this.FirstToken, "No class named '" + this.Name + "'");
+            }
+
             ConstructorDefinition cons = this.Class.Constructor;
             if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
             {

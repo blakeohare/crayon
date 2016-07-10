@@ -5,7 +5,7 @@ ProgramData$p.integerSwitchLookups = $_convert_list_to_array('Dictionary<int, in
 ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, int>', ProgramData$p.stringSwitchLookupsBuilder);
 ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
 ProgramData$p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(ProgramData$p.invIdentifiers);
-ProgramData$p.funcArgs = $_new_array('Value', $_array_length(ProgramData$p.identifiers)); // over allocated but that's okay
+ProgramData$p.funcArgs = $_new_array('Value', $_array_length(ProgramData$p.identifiers)); // WAY over-allocated but that's okay for now, I guess.
 
 ProgramData$p.identifiersBuilder = null;
 ProgramData$p.literalTableBuilder = null;

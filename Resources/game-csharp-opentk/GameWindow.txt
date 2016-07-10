@@ -24,6 +24,8 @@ namespace %%%PROJECT_ID%%%
 		private int screenWidth;
 		private int screenHeight;
 
+        private int executionContextId;
+
 		private static double fps = 60;
 		private static GameWindow instance = null;
 		public static GameWindow Instance { get { return instance; } }
@@ -34,11 +36,13 @@ namespace %%%PROJECT_ID%%%
 			set { fps = value; }
 		}
 
-		private GameWindow(double fps, int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		private GameWindow(double fps, int gameWidth, int gameHeight, int screenWidth, int screenHeight, int executionContextId)
 			: base(screenWidth, screenHeight)
 		{
 			GameWindow.instance = this;
-			this.gameWidth = gameWidth;
+            this.executionContextId = executionContextId;
+
+            this.gameWidth = gameWidth;
 			this.gameHeight = gameHeight;
 			this.screenWidth = screenWidth;
 			this.screenHeight = screenHeight;
@@ -59,9 +63,9 @@ namespace %%%PROJECT_ID%%%
 			this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
 		}
 
-		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight)
+		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight, int executionContextId)
 		{
-			GameWindow gw = new GameWindow(fps, gameWidth, gameHeight, screenWidth, screenHeight);
+			GameWindow gw = new GameWindow(fps, gameWidth, gameHeight, screenWidth, screenHeight, executionContextId);
 			gw.Run(GameWindow.FPS, GameWindow.FPS);
 			return false;
 		}
@@ -259,7 +263,7 @@ namespace %%%PROJECT_ID%%%
 		{
 			CrayonWrapper.v_glResetDrawBuffer();
 
-			bool continueExecution = CrayonWrapper.v_runTick();
+			bool continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
 
 			if (!continueExecution)
 			{

@@ -234,10 +234,10 @@ function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('
 	return newTable;
 }
 
-function @type('int') resetLocalsStackTokens(@type('ProgramData') p, @type('StackFrame') stack) {
+function @type('int') resetLocalsStackTokens(@type('ExecutionContext') ec, @type('StackFrame') stack) {
 	
-	@type('Array<Value>') localsStack = ProgramData$p.localsStack;
-	@type('Array<int>') localsStackSet = ProgramData$p.localsStackSet;
+	@type('Array<Value>') localsStack = ExecutionContext$ec.localsStack;
+	@type('Array<int>') localsStackSet = ExecutionContext$ec.localsStackSet;
 	
 	@type('int') i = StackFrame$stack.localsStackOffsetEnd;
 	while (i < $_array_length(localsStackSet)) {
@@ -260,14 +260,14 @@ function @type('int') resetLocalsStackTokens(@type('ProgramData') p, @type('Stac
 		stackWalker = StackFrame$stackWalker.previous;
 	}
 
-	ProgramData$p.localsStackSetToken = 1;
+	ExecutionContext$ec.localsStackSetToken = 1;
 
 	return -1;
 }
 
-function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type('int') newScopeSize) {
-	@type('Array<Value>') oldLocals = ProgramData$p.localsStack;
-	@type('Array<int>') oldSetIndicator = ProgramData$p.localsStackSet;
+function @type('int') increaseLocalsStackCapacity(@type('ExecutionContext') ec, @type('int') newScopeSize) {
+	@type('Array<Value>') oldLocals = ExecutionContext$ec.localsStack;
+	@type('Array<int>') oldSetIndicator = ExecutionContext$ec.localsStackSet;
 
 	@type('int') oldCapacity = $_array_length(oldLocals);
 	@type('int') newCapacity = oldCapacity * 2 + newScopeSize;
@@ -280,14 +280,15 @@ function @type('int') increaseLocalsStackCapacity(@type('ProgramData') p, @type(
 		$_array_set(newSetIndicator, i, $_array_get(oldSetIndicator, i));
 	}
 
-	ProgramData$p.localsStack = newLocals;
-	ProgramData$p.localsStackSet = newSetIndicator;
+	ExecutionContext$ec.localsStack = newLocals;
+	ExecutionContext$ec.localsStackSet = newSetIndicator;
 
 	return 0;
 }
 
 function @type('StackFrame') maybeInvokeStaticConstructor(
 		@type('ProgramData') p,
+		@type('ExecutionContext') ec,
 		@type('StackFrame') stack,
 		@type('ClassInfo') classInfo,
 		@type('int') valueStackSize,
@@ -315,19 +316,19 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 
 	@type('int') newFrameLocalsSize = FunctionInfo$functionInfo.localsSize;
 	@type('int') currentFrameLocalsEnd = StackFrame$stack.localsStackOffsetEnd;
-	if ($_array_length(ProgramData$p.localsStack) <= currentFrameLocalsEnd + newFrameLocalsSize) {
-		increaseLocalsStackCapacity(p, newFrameLocalsSize);
+	if ($_array_length(ExecutionContext$ec.localsStack) <= currentFrameLocalsEnd + newFrameLocalsSize) {
+		increaseLocalsStackCapacity(ec, newFrameLocalsSize);
 	}
 
-	if (ProgramData$p.localsStackSetToken > 2000000000) {
-		resetLocalsStackTokens(p, stack);
+	if (ExecutionContext$ec.localsStackSetToken > 2000000000) {
+		resetLocalsStackTokens(ec, stack);
 	}
 
-	ProgramData$p.localsStackSetToken += 1;
+	ExecutionContext$ec.localsStackSetToken += 1;
 
 	return new StackFrame(
 		FunctionInfo$functionInfo.pc,
-		ProgramData$p.localsStackSetToken,
+		ExecutionContext$ec.localsStackSetToken,
 		currentFrameLocalsEnd,
 		currentFrameLocalsEnd + newFrameLocalsSize,
 		stack,
