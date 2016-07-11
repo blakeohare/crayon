@@ -32,6 +32,8 @@ namespace Nori {
 	
 	class Element {
 		
+		field _id;
+		
 		// TODO: This isn't a very good mechanism.
 		// Should use a render-pass counter or something.
 		field inTree = false;
@@ -63,6 +65,15 @@ namespace Nori {
 		
 		constructor() { }
 		
+		function setId(id) {
+			this._id = id;
+			return this;
+		}
+		
+		function findElement(id) {
+			return null;
+		}
+		
 		function setLeft(x) {
 			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
 			this.positioning[_PositioningIndex.LEFT_MARGIN] = x;
@@ -71,6 +82,13 @@ namespace Nori {
 		
 		function setTop(y) {
 			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
+			this.positioning[_PositioningIndex.TOP_MARGIN] = y;
+			return this;
+		}
+		
+		function setPosition(x, y) {
+			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
+			this.positioning[_PositioningIndex.LEFT_MARGIN] = x;
 			this.positioning[_PositioningIndex.TOP_MARGIN] = y;
 			return this;
 		}

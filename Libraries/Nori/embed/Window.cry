@@ -56,6 +56,12 @@ namespace Nori {
 			}
 		}
 		
+		function findElement(id) {
+			if (this.content != null) {
+				return this.content.findElement(id);
+			}
+		}
+		
 		function setSize(width, height) {
 			this.bounds[2] = Math.floor(width);
 			this.bounds[3] = Math.floor(height);

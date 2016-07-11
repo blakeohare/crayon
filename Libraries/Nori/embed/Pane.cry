@@ -11,6 +11,15 @@ namespace Nori {
 			return this;
 		}
 		
+		function findElement(id) {
+			for (child : this.children) {
+				if (child._id == id) return child;
+				output = child.findElement(id);
+				if (output != null) return output;
+			}
+			return null;
+		}
+		
 		field _reusableAvailableBounds = [0] * 4;
 		
 		function _internalRender(uiRoot, availableBounds, boundsOut) {
