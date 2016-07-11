@@ -153,3 +153,46 @@ function @type('bool') runInterpreter(@type('int') executionContextId) {
 
 	return true;
 }
+
+function @type('bool') runInterpreterWithFunctionPointer(@type('Value') fpValue, @type('Array<Value>') args) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('int') newId = ProgramData$p.lastExecutionContextId + 1;
+	ProgramData$p.lastExecutionContextId = newId;
+	@type('List<Value>') argList = $_new_list('Value');
+	for (@type('int') i = 0; i < $_array_length(args); i += 1) {
+		$_list_push(argList, $_array_get(args, i));
+	}
+
+	@type('Array<Value>') locals = $_new_array('Value', 0);
+	@type('Array<int>') localsSet = $_new_array('int', 0);
+	@type('Array<Value>') valueStack = $_new_array('Value', 100);
+	$_array_set(valueStack, 0, fpValue);
+	$_array_set(valueStack, 1, new Value(Types.LIST, argList));
+
+	@type('StackFrame') stack = new StackFrame(
+		$_array_length(ProgramData$p.ops) - 2, // pc
+		1, // localsStackSetToken,
+		0, // localsStackOffset,
+		0, // localsStackOffsetEnd,
+		null, // previous
+		false, // returnValueUsed
+		null, // object context
+		0, // valueStackSize
+		0); // static initialization class ID marker upon completion (not applicable here)
+
+	@type('ExecutionContext') executionContext = new ExecutionContext(
+		newId, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
+		stack,
+
+		// The value stack:
+		2, // size
+		100, // capacity
+		valueStack, // array
+		
+		locals,
+		localsSet,
+		1); // localsStackSetToken
+
+	$_dictionary_set(ProgramData$p.executionContexts, newId, executionContext);
+	return runInterpreter(newId);
+}

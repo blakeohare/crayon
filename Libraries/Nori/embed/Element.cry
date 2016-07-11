@@ -68,6 +68,5 @@ namespace Nori {
 				this._internalRenderCreate(uiRoot, boundsOut);
 			}
 		}
-		
 	}
 }

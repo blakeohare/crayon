@@ -173,6 +173,7 @@ enum PrimitiveMethodName {
 	GET,
 	INDEX_OF,
 	INSERT,
+	INVOKE,
 	JOIN,
 	KEYS,
 	LOWER,

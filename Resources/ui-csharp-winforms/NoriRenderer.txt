@@ -37,7 +37,6 @@ namespace %%%PROJECT_ID%%%
             }
 
             return output;
-
         }
 
         public class RectangleThing : UserControl
@@ -92,6 +91,13 @@ namespace %%%PROJECT_ID%%%
                     top != this.y ||
                     width != this.width ||
                     height != this.height;
+                if (this.locationDirty)
+                {
+                    this.x = left;
+                    this.y = top;
+                    this.width = width;
+                    this.height = height;
+                }
 
                 int colorValue =
                     ((INT_LIST[4] & 255) << 16) |
@@ -123,23 +129,19 @@ namespace %%%PROJECT_ID%%%
 
             if (initFunctionPointer != null)
             {
-                BuildUi(initFunctionPointer);
+                // TODO: check output and end execution if something bad happens.
+                CrayonWrapper.v_runInterpreterWithFunctionPointer(initFunctionPointer, new Value[0]);
             }
 
             form.Load += (sender, e) =>
             {
-                RestartVm(((Form1)sender).OpenExecutionContextId);
+                ResumeVm(((Form1)sender).OpenExecutionContextId);
             };
 
             form.ShowDialog();
         }
 
-        private static void BuildUi(Value functionPointer)
-        {
-
-        }
-
-        private static void RestartVm(int executionContextId)
+        private static void ResumeVm(int executionContextId)
         {
             if (executionContextId != -1)
             {

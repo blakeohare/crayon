@@ -19,6 +19,11 @@ namespace Crayon
                 throw new Exception(); // should have thrown before if there was no main function.
             }
 
+            FunctionDefinition invokeFunction = lines
+                .OfType<FunctionDefinition>()
+                .Where<FunctionDefinition>(fd => fd.NameToken.Value == "_LIB_CORE_invoke" && fd.Namespace == "Core")
+                .FirstOrDefault<FunctionDefinition>();
+            
             ByteBuffer userCode = new ByteBuffer();
 
             this.Compile(parser, userCode, lines);
@@ -53,6 +58,12 @@ namespace Crayon
             {
                 output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
             }
+            output.Add(null, OpCode.RETURN, 0);
+
+            // artificially inject a function call to _LIB_CORE_invoke after the final return. 
+            // When the interpreter is invoked with a function pointer, simply pop the function pointer and a Value list of the args
+            // onto the value stack and point the PC to opLength-2
+            output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
             return output;
@@ -1365,6 +1376,13 @@ namespace Crayon
 
         private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
         {
+            bool argCountIsNegativeOne = false;
+            FunctionDefinition ownerFunction = funCall.FunctionOrClassOwner as FunctionDefinition;
+            if (ownerFunction != null && ownerFunction.Namespace == "Core" && ownerFunction.NameToken.Value == "_LIB_CORE_invoke")
+            {
+                argCountIsNegativeOne = true;
+            }
+
             Expression root = funCall.Root;
             if (root is FunctionReference)
             {
@@ -1463,7 +1481,7 @@ namespace Crayon
                     funCall.ParenToken,
                     OpCode.CALL_FUNCTION,
                     (int)FunctionInvocationType.POINTER_PROVIDED,
-                    funCall.Args.Length,
+                    argCountIsNegativeOne ? -1 : funCall.Args.Length,
                     0,
                     outputUsed ? 1 : 0,
                     0);

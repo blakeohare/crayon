@@ -1,6 +1,6 @@
 ﻿
 /*
-	All function calls (even constructor invocations and primitive metthods) go through this op code, with the exception 
+	All function calls (even constructor invocations and primitive methods) go through this op code, with the exception 
 	of static constructors that are implicitly called from dereferencing a static field. However, implicit static constructor
 	invocations that occur as a result of a static method invocation goes through this op as well.
 
@@ -48,7 +48,7 @@
 
 	args:
 	row[0] --> type (see above)
-	row[1] --> args passed by user.
+	row[1] --> args passed by user. If this is -1, then that means a list was passed and should be used instead. This is a special case just used for Core.functionInvoke. 
 	row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
 	row[3] --> 1 if output is used
 	row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
@@ -76,9 +76,27 @@ if (bool1) {
 	$_comment('construct args array');
 	// Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
 
-	for (i = argCount - 1; i >= 0; i -= 1) {
+	if (argCount == -1) {
+		// See hack at the beginning of ByteCodeCompiler.cs's CompileFunctionCall method
 		valueStackSize -= 1;
-		$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
+		value = $_array_get(valueStack, valueStackSize);
+		if (Value$value.type == Types.NULL) {
+			argCount = 0;
+		} else if (Value$value.type == Types.LIST) {
+			list1 = $_cast('List<Value>', Value$value.internalValue);
+			argCount = $_list_length(list1);
+			for (i = argCount - 1; i >= 0; i -= 1) {
+				$_array_set(funcArgs, i, $_list_get(list1, i));
+			}
+		} else {
+			return killExecution(stack, pc, "Function pointers' .invoke metod requires a list argument.");
+		}
+		
+	} else {
+		for (i = argCount - 1; i >= 0; i -= 1) {
+			valueStackSize -= 1;
+			$_array_set(funcArgs, i, $_array_get(valueStack, valueStackSize));
+		}
 	}
 
 	if (type == FunctionInvocationType.LOCAL_METHOD) {
@@ -236,6 +254,14 @@ if (bool1) {
 					case PrimitiveMethodName.MERGE: import inline 'PrimitiveMethods/dict_merge.cry'; break;
 					case PrimitiveMethodName.REMOVE: import inline 'PrimitiveMethods/dict_remove.cry'; break;
 					case PrimitiveMethodName.VALUES: import inline 'PrimitiveMethods/dict_values.cry'; break;
+					default: output = null; break;
+				}
+				break;
+			case Types.FUNCTION:
+				$_comment('...on a function pointer');
+				functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
+				switch (functionId) {
+					case PrimitiveMethodName.INVOKE: import inline 'PrimitiveMethods/function_invoke.cry'; break;
 					default: output = null; break;
 				}
 				break;

@@ -17,6 +17,7 @@
 	if ($_dictionary_contains(nameLookups, 'get')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'get'), PrimitiveMethodName.GET);
 	if ($_dictionary_contains(nameLookups, 'indexOf')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'indexOf'), PrimitiveMethodName.INDEX_OF);
 	if ($_dictionary_contains(nameLookups, 'insert')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'insert'), PrimitiveMethodName.INSERT);
+	if ($_dictionary_contains(nameLookups, 'invoke')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'invoke'), PrimitiveMethodName.INVOKE);
 	if ($_dictionary_contains(nameLookups, 'join')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'join'), PrimitiveMethodName.JOIN);
 	if ($_dictionary_contains(nameLookups, 'keys')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'keys'), PrimitiveMethodName.KEYS);
 	if ($_dictionary_contains(nameLookups, 'lower')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'lower'), PrimitiveMethodName.LOWER);

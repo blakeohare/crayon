@@ -112,6 +112,7 @@
     <EmbeddedResource Include="PrimitiveMethods\dict_merge.cry" />
     <EmbeddedResource Include="PrimitiveMethods\dict_remove.cry" />
     <EmbeddedResource Include="PrimitiveMethods\dict_values.cry" />
+    <EmbeddedResource Include="PrimitiveMethods\function_invoke.cry" />
     <EmbeddedResource Include="PrimitiveMethods\list_add.cry" />
     <EmbeddedResource Include="PrimitiveMethods\list_choice.cry" />
     <EmbeddedResource Include="PrimitiveMethods\list_clear.cry" />

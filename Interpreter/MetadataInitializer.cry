@@ -38,6 +38,8 @@
 			$_array_set(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 1, functionId);
 		} else if ($_string_equals("_LIB_CORE_list_sort_by_key", name)) {
 			$_array_set(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2, functionId);
+		} else if ($_string_equals("_LIB_CORE_invoke", name)) {
+			$_array_set(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 3, functionId);
 		}
 	}
 

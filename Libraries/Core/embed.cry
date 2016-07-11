@@ -88,4 +88,12 @@
 	function getCurrentExecutionToken() {
 		return $$lib_core_getCurrentExecutionToken();
 	}
+	
+	// Interanlly called by fp.invoke(args)
+	function _LIB_CORE_invoke(fp, args) {
+		// MAGIC ALERT: There is a special compiler hack that checks specifically for this line (based on parent 
+		// function name) and compiles this function invocation with a special flag to treat the args list as
+		// individually passed arguments.
+		return fp(args);
+	}
 }

@@ -1,0 +1,9 @@
+﻿/*
+	TODO: this.
+*/
+if (argCount == 1) {
+	
+} else if (argCount == 0) {
+	
+}
+output = VALUE_NULL;

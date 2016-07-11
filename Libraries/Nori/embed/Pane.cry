@@ -5,10 +5,16 @@ namespace Nori {
 			
 		}
 		
+		function addChild(element) {
+			if (this.children == null) this.children = [];
+			this.children.add(element);
+			return this;
+		}
+		
 		field _reusableAvailableBounds = [0] * 4;
 		
 		function _internalRender(uiRoot, availableBounds, boundsOut) {
-			NORI_NATIVE_getBounds(this.positioning, availableBounds, boundsOut);
+			NORI_NATIVE_getBounds(this.positioning ?? Element.DEFAULT_POSITIONING, availableBounds, boundsOut);
 			
 			// TODO: a native implementation of this.
 			this._reusableAvailableBounds[0] = boundsOut[0];
@@ -18,7 +24,7 @@ namespace Nori {
 			
 			if (this.children != null) {
 				for (child : this.children) {
-					this._internalRender(uiRoot, this._reusableAvailableBounds, boundsOut);
+					child._internalRender(uiRoot, this._reusableAvailableBounds, boundsOut);
 				}
 			}
 		}
