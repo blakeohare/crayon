@@ -77,6 +77,7 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.MERGE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
+			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.INVOKE:
 				return output;
 			default:
 				return -1;

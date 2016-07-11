@@ -8,7 +8,7 @@ if (argCount == 0) {
 	value2 = $_array_get(funcArgs, 0);
 	if (Value$value2.type == Types.FUNCTION) {
 		primitiveMethodToCoreLibraryFallback = true;
-		functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2); // MAGIC NUMBER: 2
+		functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2); // MAGIC NUMBER: 2 (see metadata initializer)
 		$_array_set(funcArgs, 1, value); // funcArgs is allocated very big.
 		argCount = 2;
 	} else {

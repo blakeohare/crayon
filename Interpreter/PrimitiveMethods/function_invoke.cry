@@ -1,9 +1,16 @@
 ﻿/*
-	TODO: this.
+	arg[0] -> (optional) a list of values. If not provided, VALUE_NULL is used instead and the invoker will treat it as an empty list.
+	Type check occurs at invocation time.
 */
 if (argCount == 1) {
-	
+	$_array_set(funcArgs, 1, $_array_get(funcArgs, 0));
 } else if (argCount == 0) {
-	
+	$_array_set(funcArgs, 1, VALUE_NULL);
+} else {
+	return killExecution(stack, pc, "invoke requires a list of arguments.");
 }
-output = VALUE_NULL;
+$_array_set(funcArgs, 0, value);
+argCount = 2;
+primitiveMethodToCoreLibraryFallback = true;
+functionId = $_array_get(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 3); // MAGIC NUMBER: 3 (see metadata initializer)
+output = null; // triggers core library fallback
