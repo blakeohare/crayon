@@ -36,8 +36,7 @@ if (bool1) {
 		lib_func_error_message = "screen dimensions must be positive.";
 	}
 
-	StackFrame$stack.pc = pc;
-	prepareToSuspend(ec, stack, valueStackSize);
+	prepareToSuspend(ec, stack, valueStackSize, pc);
 	if (!bool2) {
 		int3 = int1;
 		int4 = int2;

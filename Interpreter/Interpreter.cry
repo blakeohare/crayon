@@ -7,7 +7,14 @@ function @type('InterpreterResult') suspendInterpreter() {
 	return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null);
 }
 
-function @type('InterpreterResult') interpreterFinished() {
+function @type('InterpreterResult') interpreterFinished(@type('ExecutionContext') ec) {
+	if (ec != null) {
+		@type('int') id = ExecutionContext$ec.id;
+		@type('ProgramData') p = $_get_program_data();
+		if ($_dictionary_contains(ProgramData$p.executionContexts, id)) {
+			$_dictionary_remove(ProgramData$p.executionContexts, id);
+		}
+	}
 	return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
 }
 
@@ -17,7 +24,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('Dictionary<int, ExecutionContext>') executionContexts = ProgramData$p.executionContexts;
 	if (!$_dictionary_contains(executionContexts, executionContextId)) {
 		// Stale context ID's may possibly be invoked. Pretend that they run and finish.
-		return interpreterFinished();
+		return interpreterFinished(null);
 	}
 	@type('ExecutionContext') ec = $_dictionary_get_guaranteed(executionContexts, executionContextId);
 
@@ -350,10 +357,15 @@ function @type('InterpreterResult') killExecutionWithTokenOverride(
 // interpret() called again. Even though this is only called once directly
 // in the translated crayon interpreter code, certain platforms will need
 // to call this manually.
-function @type('int') prepareToSuspend(@type('ExecutionContext') ec, @type('StackFrame') stack, @type('int') valueStackSize) {
+function @type('int') prepareToSuspend(
+	@type('ExecutionContext') ec,
+	@type('StackFrame') stack,
+	@type('int') valueStackSize,
+	@type('int') currentPc) {
+
 	ExecutionContext$ec.stackTop = stack;
 	ExecutionContext$ec.currentValueStackSize = valueStackSize;
-	StackFrame$stack.pc += 1;
+	StackFrame$stack.pc = currentPc + 1;
 	return 0;
 }
 

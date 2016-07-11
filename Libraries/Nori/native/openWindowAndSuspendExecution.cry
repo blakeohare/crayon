@@ -19,6 +19,8 @@ int4 = -1;
 if (Value$arg5.type == Types.INTEGER) int3 = $_cast('int', Value$arg5.internalValue);
 if (Value$arg6.type == Types.INTEGER) int4 = $_cast('int', Value$arg6.internalValue);
 
+prepareToSuspend(ec, stack, valueStackSize, pc);
+
 $_lib_nori_openWindowAndSuspendExecution(
 	ObjectInstance$objInstance1.nativeData,
 	int1, // window width
@@ -26,3 +28,6 @@ $_lib_nori_openWindowAndSuspendExecution(
 	int3, // post-close execution context ID (-1 for none)
 	int4, // post-open execution context ID (-1 for none)
 	arg4); // UI-builder function handler
+
+// This invocation is no longer valid. 
+return suspendInterpreter();

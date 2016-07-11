@@ -3,8 +3,7 @@ if (ProgramData$p.initializationComplete) {
 	performWorkNuggetPostFrame();
 }
 
-StackFrame$stack.pc = pc;
-prepareToSuspend(ec, stack, valueStackSize);
+prepareToSuspend(ec, stack, valueStackSize, pc);
 
 $_lib_game_clockTick();
 

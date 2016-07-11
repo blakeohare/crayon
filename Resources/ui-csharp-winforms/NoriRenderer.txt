@@ -138,6 +138,11 @@ namespace %%%PROJECT_ID%%%
                 ResumeVm(((Form1)sender).OpenExecutionContextId);
             };
 
+            form.FormClosed += (sender, e) =>
+            {
+                ResumeVm(((Form1)sender).CloseExecutionContextId);
+            };
+
             form.ShowDialog();
         }
 
@@ -151,7 +156,8 @@ namespace %%%PROJECT_ID%%%
 
         public static void CloseWindow(object uiHost, object windowObj, int resumeExecutionContextId)
         {
-            throw new NotImplementedException();
+            Form1 window = (Form1)windowObj;
+            window.Close();
         }
     }
 }
