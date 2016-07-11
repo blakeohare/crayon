@@ -1,27 +1,155 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace %%%PROJECT_ID%%%
 {
     public static class NoriRenderer
     {
-		public static object RenderSolidRectangle(object uiHost, object rectInstance, Value bounds, Value color)
-		{
-			throw new NotImplementedException();
-		}
+        private static readonly int[] INT_LIST = new int[8];
 
-		public static void OpenWindow(
-			object[] nativeDataOut,
-			int width, int height,
-			int closeExecutionContextId, int openExecutionContextId,
-			Value initFunctionPointer)
-		{
-			throw new NotImplementedException();
-		}
+        private static void ReadInts(Value listOfIntValues, int offset)
+        {
+            List<Value> values = (List<Value>)listOfIntValues.internalValue;
+            for (int i = values.Count - 1; i >= 0; --i)
+            {
+                INT_LIST[i + offset] = (int)values[i].internalValue;
+            }
+        }
 
-		public static void CloseWindow(object uiHost, object windowObj, int resumeExecutionContextId)
-		{
-			throw new NotImplementedException();
-		}
+        public static object RenderSolidRectangle(object uiHostObj, object rectInstance, Value bounds, Value color)
+        {
+            ReadInts(bounds, 0);
+            ReadInts(color, 4);
+
+            RectangleThing output;
+            if (rectInstance == null)
+            {
+                output = new RectangleThing();
+                Form uiHost = (Form)uiHostObj;
+                uiHost.Controls.Add(output);
+            }
+            else
+            {
+                output = (RectangleThing)rectInstance;
+                output.NoriUpdate();
+            }
+
+            return output;
+
+        }
+
+        public class RectangleThing : UserControl
+        {
+            private bool locationDirty = false;
+            private bool colorDirty = false;
+
+            private int x;
+            private int y;
+            private int width;
+            private int height;
+
+            private int colorValue = -1;
+            private Color color = Color.White;
+
+            public RectangleThing()
+            {
+                this.NoriUpdateValue();
+                this.BackColor = this.color;
+                this.Size = new Size(this.width, this.height);
+                this.Location = new Point(this.x, this.y);
+            }
+
+            public void NoriUpdate()
+            {
+                this.NoriUpdateValue();
+
+                if (this.locationDirty)
+                {
+                    this.Location = new Point(this.x, this.y);
+                    this.Size = new Size(this.width, this.height);
+                    this.locationDirty = false;
+                }
+
+                if (this.colorDirty)
+                {
+                    this.BackColor = this.color;
+                    this.colorDirty = false;
+                }
+            }
+
+            public void NoriUpdateValue()
+            {
+                int left = INT_LIST[0];
+                int top = INT_LIST[1];
+                int width = INT_LIST[2] - left;
+                int height = INT_LIST[3] - top;
+                if (width < 0) width = 0;
+                if (height < 0) height = 0;
+                this.locationDirty =
+                    left != this.x ||
+                    top != this.y ||
+                    width != this.width ||
+                    height != this.height;
+
+                int colorValue =
+                    ((INT_LIST[4] & 255) << 16) |
+                    ((INT_LIST[5] & 255) << 8) |
+                    ((INT_LIST[6] & 255)) |
+                    ((INT_LIST[7] & 255) << 24);
+                this.colorDirty = colorValue != this.colorValue;
+                if (this.colorDirty)
+                {
+                    this.color = Color.FromArgb(colorValue);
+                }
+            }
+        }
+
+        public static void OpenWindow(
+            object[] nativeDataOut,
+            int width, int height,
+            int closeExecutionContextId, int openExecutionContextId,
+            Value initFunctionPointer)
+        {
+            Form1 form = new Form1();
+            form.Width = width;
+            form.Height = height;
+            nativeDataOut[0] = form;
+            nativeDataOut[1] = form;
+            form.CloseExecutionContextId = closeExecutionContextId;
+            form.OpenExecutionContextId = openExecutionContextId;
+            form.BuildUiFunctionPointer = initFunctionPointer;
+
+            if (initFunctionPointer != null)
+            {
+                BuildUi(initFunctionPointer);
+            }
+
+            form.Load += (sender, e) =>
+            {
+                RestartVm(((Form1)sender).OpenExecutionContextId);
+            };
+
+            form.ShowDialog();
+        }
+
+        private static void BuildUi(Value functionPointer)
+        {
+
+        }
+
+        private static void RestartVm(int executionContextId)
+        {
+            if (executionContextId != -1)
+            {
+                CrayonWrapper.v_runInterpreter(executionContextId);
+            }
+        }
+
+        public static void CloseWindow(object uiHost, object windowObj, int resumeExecutionContextId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
