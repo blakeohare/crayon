@@ -5,5 +5,5 @@
 */
 import inline "FrameworkFunctions/3_arg.cry";
 
-$_lib_nori_renderRectangleSolid(null, lib_nori_getNativeData0(arg1), arg2, arg3);
+$_lib_nori_renderRectangleSolid(arg1, null, null, lib_nori_getNativeData0(arg1), arg2, arg3);
 

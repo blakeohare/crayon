@@ -43,10 +43,17 @@ namespace Nori {
 				Math.floor(this.bounds[2]),
 				Math.floor(this.bounds[3]),
 				this._internalRender,
+				this._invokeMouseEvent,
 				this._closeTimeResumeToken,
 				instantResumeToken);
 			
 			return blocking ? this.result : null;
+		}
+			
+		function _invokeMouseEvent(sender, handlers, button, x, y) {
+			for (handler : handlers) {
+				handler(sender, new MouseEventArgs(button, x, y));
+			}
 		}
 		
 		function setSize(width, height) {

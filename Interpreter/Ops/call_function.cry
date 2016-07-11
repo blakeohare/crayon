@@ -89,7 +89,7 @@ if (bool1) {
 				$_array_set(funcArgs, i, $_list_get(list1, i));
 			}
 		} else {
-			return killExecution(stack, pc, "Function pointers' .invoke metod requires a list argument.");
+			return killExecution(stack, pc, "Function pointers' .invoke method requires a list argument.");
 		}
 		
 	} else {

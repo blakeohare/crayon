@@ -3,10 +3,11 @@
 	arg 2: desired window width
 	arg 3: desired window height
 	arg 4: function handler to invoke. This should be the function that populates the UI.
-	arg 5: execution context ID to invoke after the window is closed.
-	arg 6: execution context ID to invoke when the window finishes opening.
+	arg 5: function handler for invoking mouse events.
+	arg 6: execution context ID to invoke after the window is closed.
+	arg 7: execution context ID to invoke when the window finishes opening.
 */
-import inline "FrameworkFunctions/6_arg.cry";
+import inline "FrameworkFunctions/7_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 int1 = $_cast('int', Value$arg2.internalValue);
@@ -16,8 +17,8 @@ if (ObjectInstance$objInstance1.nativeData == null) {
 }
 int3 = -1;
 int4 = -1;
-if (Value$arg5.type == Types.INTEGER) int3 = $_cast('int', Value$arg5.internalValue);
-if (Value$arg6.type == Types.INTEGER) int4 = $_cast('int', Value$arg6.internalValue);
+if (Value$arg6.type == Types.INTEGER) int3 = $_cast('int', Value$arg6.internalValue);
+if (Value$arg7.type == Types.INTEGER) int4 = $_cast('int', Value$arg7.internalValue);
 
 prepareToSuspend(ec, stack, valueStackSize, pc);
 
@@ -27,7 +28,8 @@ $_lib_nori_openWindowAndSuspendExecution(
 	int2, // window height
 	int3, // post-close execution context ID (-1 for none)
 	int4, // post-open execution context ID (-1 for none)
-	arg4); // UI-builder function handler
+	arg4, // UI-builder function handler
+	arg5); // Mouse event invoker
 
 // This invocation is no longer valid. 
 return suspendInterpreter();

@@ -7,6 +7,7 @@ namespace %%%PROJECT_ID%%%
 		public int OpenExecutionContextId { get; set; }
 		public int CloseExecutionContextId { get; set; }
 		public Value BuildUiFunctionPointer { get; set; }
+		public Value MouseEventFunctionPointer { get; set; }
 
         public Form1()
         {

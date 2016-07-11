@@ -31,7 +31,7 @@ namespace Nori {
 		
 		function _internalRenderCreate(uiRoot, currentBounds) {
 			if (this.fillType == Nori.FillStyle.SOLID) {
-				$$lib_nori_rectangleSolidRenderCreate(uiRoot, this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
+				$$lib_nori_rectangleSolidRenderCreate(uiRoot, this._handlers, this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
 			} else {
 				Core.assert(false); // Not implemented
 			}

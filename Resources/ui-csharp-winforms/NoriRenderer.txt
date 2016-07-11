@@ -7,6 +7,8 @@ namespace %%%PROJECT_ID%%%
 {
     public static class NoriRenderer
     {
+        public static Value MouseEventInvoker { get; set; }
+
         private static readonly int[] INT_LIST = new int[8];
 
         private static void ReadInts(Value listOfIntValues, int offset)
@@ -18,7 +20,7 @@ namespace %%%PROJECT_ID%%%
             }
         }
 
-        public static object RenderSolidRectangle(object uiHostObj, object rectInstance, Value bounds, Value color)
+        public static object RenderSolidRectangle(Value uiObject, Value handlerList, object uiHostObj, object rectInstance, Value bounds, Value color)
         {
             ReadInts(bounds, 0);
             ReadInts(color, 4);
@@ -26,7 +28,7 @@ namespace %%%PROJECT_ID%%%
             RectangleThing output;
             if (rectInstance == null)
             {
-                output = new RectangleThing();
+                output = new RectangleThing(uiObject, handlerList);
                 Form uiHost = (Form)uiHostObj;
                 uiHost.Controls.Add(output);
             }
@@ -52,12 +54,42 @@ namespace %%%PROJECT_ID%%%
             private int colorValue = -1;
             private Color color = Color.White;
 
-            public RectangleThing()
+			private Value uiObject;
+            private List<Value> handlerList;
+
+            public RectangleThing(Value uiObject, Value handlerList)
             {
+				this.uiObject = uiObject;
+                this.handlerList = ((List<Value>)handlerList.internalValue);
                 this.NoriUpdateValue();
                 this.BackColor = this.color;
                 this.Size = new Size(this.width, this.height);
                 this.Location = new Point(this.x, this.y);
+                this.MouseDown += (sender, e) => { this.InvokeMouseEvent(this.uiObject, e.X, e.Y, e.Button, 0); };
+                this.MouseUp += (sender, e) => { this.InvokeMouseEvent(this.uiObject, e.X, e.Y, e.Button, 1); };
+                this.MouseEnter += (sender, e) => { this.InvokeMouseEvent(this.uiObject, 0, 0, MouseButtons.None, 2); };
+                this.MouseLeave += (sender, e) => { this.InvokeMouseEvent(this.uiObject, 0, 0, MouseButtons.None, 3); };
+                this.MouseMove += (sender, e) => { this.InvokeMouseEvent(this.uiObject, e.X, e.Y, MouseButtons.None, 4); };
+            }
+
+            private void InvokeMouseEvent(Value uiObject, int x, int y, MouseButtons button, int eventId)
+            {
+                if (this.handlerList[eventId] == CrayonWrapper.v_VALUE_NULL) return;
+                Value handlerList = this.handlerList[eventId];
+                int buttonId = 0;
+                if (button == MouseButtons.None) buttonId = 0;
+                if (button == MouseButtons.Left) buttonId = 1;
+                else if (button == MouseButtons.Right) buttonId = 3;
+                else if (button == MouseButtons.Middle) buttonId = 2;
+                bool noCoords = eventId == 2 || eventId == 3;
+                CrayonWrapper.v_runInterpreterWithFunctionPointer(NoriRenderer.MouseEventInvoker, new Value[] {
+                    this.uiObject,
+                    handlerList,
+                    CrayonWrapper.v_buildInteger(buttonId),
+                    noCoords ? CrayonWrapper.v_VALUE_NULL : CrayonWrapper.v_buildInteger(x),
+                    noCoords ? CrayonWrapper.v_VALUE_NULL : CrayonWrapper.v_buildInteger(y),
+                });
+
             }
 
             public void NoriUpdate()
@@ -116,8 +148,10 @@ namespace %%%PROJECT_ID%%%
             object[] nativeDataOut,
             int width, int height,
             int closeExecutionContextId, int openExecutionContextId,
-            Value initFunctionPointer)
+            Value initFunctionPointer,
+			Value mouseEventFunctionPointer)
         {
+            NoriRenderer.MouseEventInvoker = mouseEventFunctionPointer;
             Form1 form = new Form1();
             form.Width = width;
             form.Height = height;
@@ -126,6 +160,7 @@ namespace %%%PROJECT_ID%%%
             form.CloseExecutionContextId = closeExecutionContextId;
             form.OpenExecutionContextId = openExecutionContextId;
             form.BuildUiFunctionPointer = initFunctionPointer;
+			form.MouseEventFunctionPointer = mouseEventFunctionPointer;
 
             if (initFunctionPointer != null)
             {

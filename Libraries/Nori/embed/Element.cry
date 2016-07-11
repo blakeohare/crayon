@@ -4,6 +4,32 @@ namespace Nori {
 		nativeData[0] -> native UI tree object
 	*/
 
+	enum _HandlerIndex {
+		MOUSE_DOWN = 0,
+		MOUSE_UP = 1,
+		MOUSE_ENTER = 2,
+		MOUSE_LEAVE = 3,
+		MOUSE_MOVE = 4,
+	}
+	
+	enum MouseButton {
+		NONE = 0,
+		LEFT = 1,
+		CENTER = 2,
+		RIGHT = 3,
+	}
+	
+	class MouseEventArgs {
+		field button;
+		field x;
+		field y;
+		constructor(button, x, y) {
+			this.button = button;
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
 	class Element {
 		
 		// TODO: This isn't a very good mechanism.
@@ -21,10 +47,19 @@ namespace Nori {
 		field positioning = null;
 		static field DEFAULT_POSITIONING = [0, 0, 0, null, 0, 0, 0, null]; // call .clone on this when needed or just use ?? operator when derferencing positioning.
 		
-		field mouseEnter;
-		field mouseLeave;
-		field mouseDown;
-		field mouseUp;
+		field _handlers = [null] * 5;
+		
+		function addMouseDownHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_DOWN); }
+		function addMouseUpHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_UP); }
+		function addMouseEnterHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_ENTER); }
+		function addMouseLeaveHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_LEAVE); }
+		function addMouseMoveHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_MOVE); }
+		
+		function _addHandler(handler, index) {
+			list = this._handlers[index];
+			if (list == null) { list = []; this._handlers[index] = list; }
+			return list.add(handler);
+		}
 		
 		constructor() { }
 		
