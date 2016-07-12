@@ -35,17 +35,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="javascript-common\bytecode.js" />
+    <EmbeddedResource Include="javascript-common\common.js" />
     <EmbeddedResource Include="javascript-common\fake_disk.js" />
     <EmbeddedResource Include="javascript-common\file_io.js" />
-    <EmbeddedResource Include="javascript-common\interpreter_helpers.js" />
+    <EmbeddedResource Include="javascript-common\http.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="game-javascript\drawing.js" />
     <EmbeddedResource Include="game-javascript\gamepad.js" />
-    <EmbeddedResource Include="game-javascript\game_code.js" />
+    <EmbeddedResource Include="game-javascript\game.js" />
     <EmbeddedResource Include="game-javascript\game_host_html.txt" />
-    <EmbeddedResource Include="game-javascript\http.js" />
+    <EmbeddedResource Include="game-javascript\images.js" />
     <EmbeddedResource Include="game-javascript\input.js" />
     <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>

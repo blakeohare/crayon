@@ -1,128 +1,127 @@
 ﻿
-R.blitRotated = function (canvas, x, y, theta) {
-    var ctx = R.globals.ctx;
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(theta);
-	ctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
-	ctx.restore();
-};
 
-R.blitPartial = function (canvas, tx, ty, tw, th, sx, sy, sw, sh) {
-	if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
+if (!C$game) { throw 1; } // Cannot use the drawing library without the game library.
 
-	R.globals.ctx.drawImage(canvas, sx, sy, sw, sh, tx, ty, tw, th);
-};
+// Lookups for fast hex conversion
+C$drawing = 1;
+C$drawing$HEX = [];
+C$drawing$HEXR = [];
 
-R.drawImageWithAlpha = function (canvas, x, y, a) {
-	if (a == 0) return;
-	var ctx = R.globals.ctx;
-	if (a != 255) {
-		ctx.globalAlpha = a / 255;
-		ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
-		ctx.globalAlpha = 1;
-	} else {
-		ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
-	}
-};
-
-var HEX = [];
-var HEXR = [];
 for (var i = 0; i < 256; ++i) {
-	var t = i.toString(16);
-	if (i < 16) t = '0' + t;
-	HEX.push(t);
-	HEXR.push('#' + t);
+    var t = i.toString(16);
+    if (i < 16) t = '0' + t;
+    C$drawing$HEX.push(t);
+    C$drawing$HEXR.push('#' + t);
 }
 
-R.fillScreen = function (r, g, b) {
-    var gb = R.globals;
-	gb.ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
-	gb.ctx.fillRect(0, 0, gb.width, gb.height);
+C$drawing$blitRotated = function (canvas, x, y, theta) {
+    C$game$ctx.save();
+    C$game$ctx.translate(x, y);
+    C$game$ctx.rotate(theta);
+    C$game$ctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+    C$game$ctx.restore();
 };
 
-R.drawRect = function (x, y, width, height, r, g, b, a) {
-    var ctx = R.globals.ctx;
-	ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
+C$drawing$blitPartial = function (canvas, tx, ty, tw, th, sx, sy, sw, sh) {
+	if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
+
+	C$game$ctx.drawImage(canvas, sx, sy, sw, sh, tx, ty, tw, th);
+};
+
+C$drawing$drawImageWithAlpha = function (canvas, x, y, a) {
+	if (a == 0) return;
 	if (a != 255) {
-		ctx.globalAlpha = a / 255;
-		ctx.fillRect(x, y, width + .1, height + .1);
-		ctx.globalAlpha = 1;
+	    C$game$ctx.globalAlpha = a / 255;
+	    C$game$ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
+	    C$game$ctx.globalAlpha = 1;
 	} else {
-		ctx.fillRect(x, y, width + .1, height + .1);
+	    C$game$ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width, canvas.height);
 	}
 };
 
-R.drawTriangle = function (ax, ay, bx, by, cx, cy, r, g, b, a) {
+C$drawing$fillScreen = function (r, g, b) {
+    C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+    C$game$ctx.fillRect(0, 0, C$game$width, C$game$height);
+};
+
+C$drawing$drawRect = function (x, y, width, height, r, g, b, a) {
+    C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+	if (a != 255) {
+	    C$game$ctx.globalAlpha = a / 255;
+	    C$game$ctx.fillRect(x, y, width + .1, height + .1);
+	    C$game$ctx.globalAlpha = 1;
+	} else {
+	    C$game$ctx.fillRect(x, y, width + .1, height + .1);
+	}
+};
+
+C$drawing$drawTriangle = function (ax, ay, bx, by, cx, cy, r, g, b, a) {
 	if (a == 0) return;
-	var ctx = R.globals.ctx;
 
 	var tpath = new Path2D();
 	tpath.moveTo(ax, ay);
 	tpath.lineTo(bx, by);
 	tpath.lineTo(cx, cy);
 
-	ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
+	C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
 	if (a != 255) {
-		ctx.globalAlpha = a / 255;
-		ctx.fill(tpath);
-		ctx.globalAlpha = 1;
+	    C$game$ctx.globalAlpha = a / 255;
+	    C$game$ctx.fill(tpath);
+	    C$game$ctx.globalAlpha = 1;
 	} else {
-		ctx.fill(tpath);
+	    C$game$ctx.fill(tpath);
 	}
 };
 
-R.drawEllipse = function (left, top, width, height, r, g, b, alpha) {
+C$drawing$drawEllipse = function (left, top, width, height, r, g, b, alpha) {
 	var radiusX = width / 2;
 	var radiusY = height / 2;
 	var centerX = left + radiusX;
 	var centerY = top + radiusY;
 
-	var ctx = R.globals.ctx;
 	radiusX = radiusX * 4 / 3; // no idea...
-	ctx.beginPath();
-	ctx.moveTo(centerX, centerY - radiusY);
-	ctx.bezierCurveTo(
+	C$game$ctx.beginPath();
+	C$game$ctx.moveTo(centerX, centerY - radiusY);
+	C$game$ctx.bezierCurveTo(
 		centerX + radiusX, centerY - radiusY,
 		centerX + radiusX, centerY + radiusY,
 		centerX, centerY + radiusY);
-	ctx.bezierCurveTo(
+	C$game$ctx.bezierCurveTo(
 		centerX - radiusX, centerY + radiusY,
 		centerX - radiusX, centerY - radiusY,
 		centerX, centerY - radiusY);
-	ctx.fillStyle = HEXR[r] + HEX[g] + HEX[b];
+	C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
 	if (alpha != 255) {
-	    ctx.globalAlpha = alpha / 255;
-		ctx.fill();
-		ctx.closePath();
-		ctx.globalAlpha = 1;
+	    C$game$ctx.globalAlpha = alpha / 255;
+	    C$game$ctx.fill();
+	    C$game$ctx.closePath();
+	    C$game$ctx.globalAlpha = 1;
 	} else {
-	    ctx.fill();
-	    ctx.closePath();
+	    C$game$ctx.fill();
+	    C$game$ctx.closePath();
 	}
 };
 
-R.drawLine = function (startX, startY, endX, endY, width, r, g, b, a) {
-    var ctx = R.globals.ctx;
+C$drawing$drawLine = function (startX, startY, endX, endY, width, r, g, b, a) {
 	var offset = ((width % 2) == 0) ? 0 : .5;
-	ctx.beginPath();
-	ctx.moveTo(startX + offset, startY + offset);
-	ctx.lineTo(endX + offset, endY + offset);
-	ctx.lineWidth = width;
+	C$game$ctx.beginPath();
+	C$game$ctx.moveTo(startX + offset, startY + offset);
+	C$game$ctx.lineTo(endX + offset, endY + offset);
+	C$game$ctx.lineWidth = width;
 	if (a != 255) {
-	    ctx.globalAlpha = a / 255;
-	    ctx.strokeStyle = HEXR[r] + HEX[g] + HEX[b];
-	    ctx.stroke();
-	    ctx.closePath();
-	    ctx.globalAlpha = 1;
+	    C$game$ctx.globalAlpha = a / 255;
+	    C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+	    C$game$ctx.stroke();
+	    C$game$ctx.closePath();
+	    C$game$ctx.globalAlpha = 1;
 	} else {
-	    ctx.strokeStyle = HEXR[r] + HEX[g] + HEX[b];
-	    ctx.stroke();
-	    ctx.closePath();
+	    C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+	    C$game$ctx.stroke();
+	    C$game$ctx.closePath();
 	}
 };
 
-R.flipImage = function (canvas, flipX, flipY) {
+C$drawing$flipImage = function (canvas, flipX, flipY) {
 	var output = document.createElement('canvas');
 
 	output.width = canvas.width;
@@ -153,7 +152,7 @@ R.flipImage = function (canvas, flipX, flipY) {
 	return output;
 };
 
-R.scaleImage = function (originalCanvas, width, height) {
+C$drawing$scaleImage = function (originalCanvas, width, height) {
 	var output = document.createElement('canvas');
 	var ctx = output.getContext('2d');
 	output.width = width;

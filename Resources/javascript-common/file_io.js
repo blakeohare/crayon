@@ -1,35 +1,30 @@
 ﻿
-R.readResourceText = function (path) {
-	var output = R.resources[path];
-	if (output === undefined) return null;
-	return output;
-};
+C$io = 1;
+C$io$virtualDisk = null;
+C$io$virtualDisk = null;
+C$io$userData = null;
 
-R.IO = {};
-
-R.IO.virtualDisk = null;
-R.IO.userData = null;
-R.IO.get_disk = function (isUserData) {
+C$io$getDisk = function (isUserData) {
 	if (isUserData) {
-		if (R.IO.userData === null) {
+	    if (C$io$userData === null) {
 			try {
 				if ('localStorage' in window && window['localStorage'] !== null) {
-					R.IO.userData = createFakeDisk(localStorage);
+				    C$io$userData = createFakeDisk(localStorage);
 				}
 			} catch (e) { }
-			if (R.IO.userData == null) R.IO.userData = createFakeDisk(null);
+			if (C$io$userData == null) C$io$userData = createFakeDisk(null);
 		}
-		return R.IO.userData;
+	    return C$io$userData;
 	} else {
-		if (R.IO.virtualDisk === null) {
-			R.IO.virtualDisk = createFakeDisk(null);
+	    if (C$io$virtualDisk === null) {
+	        C$io$virtualDisk = createFakeDisk(null);
 		}
-		return R.IO.virtualDisk;
+	    return C$io$virtualDisk;
 	}
 };
 
-R.IO.checkPath = function (path, isDir, isUserData) {
-	disk = R.IO.get_disk(isUserData);
+C$io$checkPath = function (path, isDir, isUserData) {
+    disk = C$io$getDisk(isUserData);
 	if (isDir) {
 		return disk.is_directory(path);
 	} else {
@@ -38,17 +33,17 @@ R.IO.checkPath = function (path, isDir, isUserData) {
 	return false;
 };
 
-R.IO.listFiles = function (path, isUserData) {
-	disk = R.IO.get_disk(isUserData);
+C$io$listFiles = function (path, isUserData) {
+    disk = C$io$getDisk(isUserData);
 	return disk.list_dir(path);
 };
 
-R.IO.readFile = function (path, isUserData) {
-	disk = R.IO.get_disk(isUserData);
+C$io$readFile = function (path, isUserData) {
+    disk = C$io$getDisk(isUserData);
 	return disk.read_file(path);
 };
 
-R.IO.writeFile = function (path, content, isUserData) {
-	disk = R.IO.get_disk(isUserData);
+C$io$writeFile = function (path, content, isUserData) {
+    disk = C$io$getDisk(isUserData);
 	return disk.write_text(path, content);
 };

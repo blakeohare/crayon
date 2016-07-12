@@ -8,46 +8,48 @@ music[3] -> is looping
 
 */
 
-R._dummyAudio = new Audio();
+C$audio = 1;
+C$audio$dummyAudio = new Audio();
+C$audio$musicCurrent = null;
+C$audio$soundObjectIndexByFilename = {};
+C$audio$soundObjectsByIndex = [];
 
-R.isAudioSupported = function () {
-	return R.isAudioEnabled(R._dummyAudio);
+C$audio$isAudioSupported = function () {
+    return C$audio$isAudioEnabled(C$audio$dummyAudio);
 };
 
-R.isAudioEnabled = function (audioObj) {
-	return !!R._dummyAudio.canPlayType('audio/ogg');
+C$audio$isAudioEnabled = function (audioObj) {
+    return !!C$audio$dummyAudio.canPlayType('audio/ogg');
 };
 
-R.musicSetVolume = function (r) {
-	if (R.musicCurrent != null)
-		R.musicCurrent[0].volume = r;
+C$audio$musicSetVolume = function (r) {
+    if (C$audio$musicCurrent != null)
+        C$audio$musicCurrent[0].volume = r;
 };
 
-R.musicCurrent = null;
+C$audio$musicPlay = function (music, loop) {
+    if (C$audio$musicIsPlaying()) C$audio$musicCurrent[0].pause();
 
-R.musicPlay = function (music, loop) {
-	if (R.musicIsPlaying()) R.musicCurrent[0].pause();
-
-	if (R.isAudioEnabled(music[0])) {
+    if (C$audio$isAudioEnabled(music[0])) {
 		if (music[0].readyState == 2) {
 			music[0].currentTime = 0;
 		}
 		music[3] = loop;
-		R.musicCurrent = music;
+		C$audio$musicCurrent = music;
 		music[0].play();
 	}
 };
 
-R.musicStop = function () {
-	if (R.musicIsPlaying()) R.musicCurrent[0].pause();
+C$audio$musicStop = function () {
+    if (C$audio$musicIsPlaying()) C$audio$musicCurrent[0].pause();
 };
 
-R.musicIsPlaying = function () {
-	return R.musicCurrent != null && !R.musicCurrent.paused;
+C$audio$musicIsPlaying = function () {
+    return C$audio$musicCurrent != null && !C$audio$musicCurrent.paused;
 };
 
-R.musicLoad = function (filepath) {
-	var audioObject = new Audio(%%%JS_FILE_PREFIX%%% + 'resources/audio/' + filepath);
+C$audio$musicLoad = function (filepath) {
+    var audioObject = new Audio(C$common$jsFilePrefix + 'resources/audio/' + filepath);
 	var m = [
 		audioObject,
 		filepath,
@@ -88,24 +90,21 @@ R.musicLoad = function (filepath) {
 	- channelStruct[3] -> current state: 0 -> playing, 1 -> paused, 2 -> stopped
 */
 
-R.soundObjectIndexByFilename = {};
-R.soundObjectsByIndex = [];
-
-R.prepSoundForLoading = function (filepath) {
-	var index = R.soundObjectIndexByFilename[filepath];
+C$audio$prepSoundForLoading = function (filepath) {
+    var index = C$audio$soundObjectIndexByFilename[filepath];
 	if (index === undefined) {
-		index = R.soundObjectsByIndex.length;
-		var data = [[new Audio(%%%JS_FILE_PREFIX%%% + 'resources/audio/' + filepath)], filepath, index];
-		R.soundObjectIndexByFilename[filepath] = index;
-		R.soundObjectsByIndex.push(data);
+	    index = C$audio$soundObjectsByIndex.length;
+	    var data = [[new Audio(C$common$jsFilePrefix + 'resources/audio/' + filepath)], filepath, index];
+		C$audio$soundObjectIndexByFilename[filepath] = index;
+		C$audio$soundObjectsByIndex.push(data);
 	}
 
-	return R.soundObjectsByIndex[index];
+	return C$audio$soundObjectsByIndex[index];
 };
 
-R.stopSound = function (channel, isPause) {
+C$audio$stopSound = function (channel, isPause) {
 	if (channel[3] == 0) {
-		var s = R.soundObjectsByIndex[channel[0]];
+	    var s = C$audio$soundObjectsByIndex[channel[0]];
 		var audio = s[0][channel[1]];
 		if (!audio.ended) {
 			channel[2] = audio.currentTime;
@@ -115,16 +114,16 @@ R.stopSound = function (channel, isPause) {
 	}
 };
 
-R.resumeSound = function (channel) {
+C$audio$resumeSound = function (channel) {
 	if (channel[3] == 1) {
-		var s = R.soundObjectsByIndex[channel[0]];
-		newChannel = R.playSound(s[1], channel[2]); // just discard the new channel object and apply the info to the currently existing reference.
+	    var s = C$audio$soundObjectsByIndex[channel[0]];
+	    newChannel = C$audio$playSound(s[1], channel[2]); // just discard the new channel object and apply the info to the currently existing reference.
 		channel[1] = newChannel[1];
 		channel[3] = 0;
 	}
 };
 
-R.playSound = function (sound, startFrom) {
+C$audio$playSound = function (sound, startFrom) {
 	var audioList = sound[0];
 	var audio = null;
 	var audioIndex = 0;
@@ -137,10 +136,10 @@ R.playSound = function (sound, startFrom) {
 	}
 	if (audio == null) {
 		audioIndex = audioList.length;
-		audio = new Audio(%%%JS_FILE_PREFIX%%% + sound[1]);
+		audio = new Audio(C$common$jsFilePrefix + sound[1]);
 		audioList.push(audio);
 	}
-	if (R.isAudioEnabled(audio)) {
+	if (C$audio$isAudioEnabled(audio)) {
 		if (audio.readyState == 2) {
 			audio.currentTime = startFrom;
 		}

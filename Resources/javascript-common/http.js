@@ -1,5 +1,6 @@
 ﻿
-R.makeHttpRequest = function (requestObj, method, url, body, userAgent, contentType, contentLength, headerNames, headerValues) {
+C$http = 1;
+C$http$makeHttpRequest = function (requestObj, method, url, body, userAgent, contentType, contentLength, headerNames, headerValues) {
 	var requestSender = null;
 	if (window.ActiveXObject) {
 		requestSender = new ActiveXObject("Microsoft.XMLHTTP");

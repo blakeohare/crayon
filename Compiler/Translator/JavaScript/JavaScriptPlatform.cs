@@ -32,45 +32,43 @@ namespace Crayon.Translator.JavaScript
 
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
-                { "JS_FILE_PREFIX", "'" + this.jsFolderPrefix + "'" },
-                { "JS_BYTE_CODE", Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent, true) },
-                { "JS_RESOURCE_MANIFEST", Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent, true) },
                 { "PROJECT_ID", projectId },
 
                 // TODO: create a field in the build file
                 { "BUILD_FILE_DEFINED_TITLE", "Untitled" },
             };
 
-            output["index.html"] = new FileOutput()
+            output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
+                TextContent =
+                    "C$bytecode = " + Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent, true) + ";\n" +
+                    "C$resourceManifest = " + Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent, true) + ";",
             };
 
             List<string> codeJs = new List<string>();
-
-            codeJs.Add("R = {};\n");
-
+            
             foreach (string jsFile in new string[] {
+                "common.js",
                 "file_io.js",
                 "fake_disk.js",
-                "interpreter_helpers.js",
+                "http.js",
             })
             {
-                codeJs.Add(Minify(Util.ReadResourceFileInternally("javascript-common/" + jsFile)));
+                codeJs.Add(Util.ReadResourceFileInternally("javascript-common/" + jsFile));
                 codeJs.Add(this.Translator.NL);
             }
 
             foreach (string jsFile in new string[] {
-                "game_code.js",
+                "game.js",
                 "input.js",
                 "drawing.js",
+                "images.js",
                 "sound.js",
                 "gamepad.js",
-                "http.js",
             })
             {
-                codeJs.Add(Minify(Util.ReadResourceFileInternally("game-javascript/" + jsFile)));
+                codeJs.Add(Util.ReadResourceFileInternally("game-javascript/" + jsFile));
                 codeJs.Add(this.Translator.NL);
             }
 
@@ -92,13 +90,7 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text,
                 TextContent = codeJsText
             };
-
-            output["bytecode.js"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("javascript-common/bytecode.js"), replacements),
-            };
-
+            
             Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
@@ -124,17 +116,35 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text
             };
 
+            output["index.html"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
+            };
+
+            if (this.IsMin)
+            {
+                // TODO: redo this so that minification is smarter.
+                // When you do, you'll have to solve the problem of functions being invoked from handlers in HTML (templates and generated). 
+                foreach (string filename in output.Keys.Where(name => name.EndsWith(".js")))
+                {
+                    FileOutput file = output[filename];
+                    file.TextContent = this.MinifyCode(file.TextContent);
+                }
+            }
+
             return output;
         }
 
         private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
         {
             List<string> output = new List<string>();
+            output.Add("C$common$jsFilePrefix = '" + this.jsFolderPrefix + "';\n");
             string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
             for (int i = 0; i < keys.Length; ++i)
             {
                 string filename = keys[i];
-                output.Add("R.addTextRes(");
+                output.Add("C$common$addTextRes(");
                 output.Add(Util.ConvertStringValueToCode(filename, true));
                 output.Add(", ");
                 output.Add(Util.ConvertStringValueToCode(files[filename], true));
@@ -143,7 +153,8 @@ namespace Crayon.Translator.JavaScript
             return string.Join("", output);
         }
 
-        private string Minify(string data)
+        // TODO: minify variable names by actually parsing the code and resolving stuff. 
+        private string MinifyCode(string data)
         {
             if (!this.IsMin)
             {

@@ -8,7 +8,7 @@ namespace Crayon.Translator.JavaScript
     {
         protected override void TranslateResourceGetManifest(List<string> output)
         {
-            output.Add("CRAYON.getResourceManifest()");
+            output.Add("C$resourceManifest");
         }
 
         protected override void TranslateAppDataRoot(List<string> output)
@@ -18,7 +18,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateAsyncMessageQueuePump(List<string> output)
         {
-            output.Add("R.pumpAsyncMessageQueue()");
+            output.Add("C$common$pumpAsyncMessageQueue()");
         }
 
         protected override void TranslateArcCos(List<string> output, Expression value)
@@ -75,7 +75,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateBeginFrame(List<string> output)
         {
-            output.Add("R.beginFrame()");
+            output.Add("C$game$beginFrame()");
         }
 
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
@@ -139,7 +139,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateCurrentTimeSeconds(List<string> output)
         {
-            output.Add("R.now()");
+            output.Add("C$common$now()");
         }
 
         protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -161,14 +161,14 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary)
         {
-            output.Add("slow_dictionary_get_keys(");
+            output.Add("C$common$dictionaryKeys(");
             this.Translator.TranslateExpression(output, dictionary);
             output.Add(")");
         }
 
         protected override void TranslateDictionaryGetValues(List<string> output, Expression dictionary)
         {
-            output.Add("slow_dictionary_get_values(");
+            output.Add("C$common$dictionaryValues(");
             this.Translator.TranslateExpression(output, dictionary);
             output.Add(")");
         }
@@ -221,17 +221,17 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateGetProgramData(List<string> output)
         {
-            output.Add("R.ProgramData");
+            output.Add("C$common$programData");
         }
 
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
-            output.Add("CRAYON.getByteCode()");
+            output.Add("C$bytecode");
         }
 
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
-            output.Add("R.makeHttpRequest(");
+            output.Add("C$http$makeHttpRequest(");
             this.Translator.TranslateExpression(output, httpRequest);
             output.Add(", ");
             this.Translator.TranslateExpression(output, method);
@@ -269,7 +269,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
         {
-            output.Add("R.IO.createDirectory(");
+            output.Add("C$IO$createDirectory(");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
@@ -281,7 +281,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
         {
-            output.Add("R.IO.deleteDirectory(");
+            output.Add("C$IO$deleteDirectory(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isRecursive);
@@ -290,7 +290,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
         {
-            output.Add("R.IO.deleteFile(");
+            output.Add("C$IO$deleteFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
@@ -299,7 +299,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
         {
-            output.Add("R.IO.checkPath(");
+            output.Add("C$IO$checkPath(");
             this.Translator.TranslateExpression(output, canonicalizedPath);
             output.Add(", ");
             this.Translator.TranslateExpression(output, directoriesOnly);
@@ -310,7 +310,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
         {
-            output.Add("R.IO.readFile(");
+            output.Add("C$IO$readFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
@@ -319,7 +319,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
         {
-            output.Add("R.IO.listFiles(");
+            output.Add("C$IO$listFiles(");
             this.Translator.TranslateExpression(output, verifiedCanonicalizedPath);
             output.Add(", ");
             this.Translator.TranslateExpression(output, isUserData);
@@ -328,7 +328,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
         {
-            output.Add("R.IO.writeFile(");
+            output.Add("C$IO$writeFile(");
             this.Translator.TranslateExpression(output, path);
             output.Add(", ");
             this.Translator.TranslateExpression(output, content);
@@ -339,7 +339,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIsValidInteger(List<string> output, Expression number)
         {
-            output.Add("R.is_valid_integer(");
+            output.Add("C$common$is_valid_integer(");
             this.Translator.TranslateExpression(output, number);
             output.Add(")");
         }
@@ -353,7 +353,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateListClear(List<string> output, Expression list)
         {
-            output.Add("clear_list(");
+            output.Add("C$common$clearList(");
             this.Translator.TranslateExpression(output, list);
             output.Add(")");
         }
@@ -450,14 +450,14 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateListShuffleInPlace(List<string> output, Expression list)
         {
-            output.Add("shuffle(");
+            output.Add("C$common$shuffle(");
             this.Translator.TranslateExpression(output, list);
             output.Add(")");
         }
 
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
-            output.Add("multiply_list(");
+            output.Add("C$common$multiplyList(");
             this.Translator.TranslateExpression(output, list);
             output.Add(this.Shorten(", "));
             this.Translator.TranslateExpression(output, num);
@@ -466,9 +466,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
-            output.Add("create_new_array(");
-            this.Translator.TranslateExpression(output, size);
-            output.Add(")");
+            this.TranslateNewListOfSize(output, type, size);
         }
 
         protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
@@ -483,7 +481,19 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
         {
-            output.Add("create_list_of_size(");
+            if (length is IntegerConstant)
+            {
+                int literalLength = ((IntegerConstant)length).Value;
+                switch (literalLength)
+                {
+                    case 0: output.Add("[]"); return;
+                    case 1: output.Add("[null]"); return;
+                    case 2: output.Add("[null, null]"); return;
+                    case 3: output.Add("[null, null, null]"); return;
+                    default: break;
+                }
+            }
+            output.Add("C$common$createNewArray(");
             this.Translator.TranslateExpression(output, length);
             output.Add(")");
         }
@@ -496,7 +506,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
         {
-            output.Add("R.floatParseHelper(");
+            output.Add("C$common$floatParseHelper(");
             this.Translator.TranslateExpression(output, outParam);
             output.Add(", ");
             this.Translator.TranslateExpression(output, rawString);
@@ -512,7 +522,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateParseJson(List<string> output, Expression rawString)
         {
-            output.Add("R.parseJson(");
+            output.Add("C$common$parseJson(");
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
@@ -524,14 +534,14 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
-            output.Add("R.getTextRes('text/' + ");
+            output.Add("C$common$getTextRes('text/' + ");
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
 
         protected override void TranslateSetProgramData(List<string> output, Expression programData)
         {
-            output.Add("R.ProgramData = ");
+            output.Add("C$common$programData = ");
             this.Translator.TranslateExpression(output, programData);
         }
 
@@ -544,14 +554,14 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
-            output.Add("R.sortedCopyOfArray(");
+            output.Add("C$common$sortedCopyOfArray(");
             this.Translator.TranslateExpression(output, list);
             output.Add(")");
         }
 
         protected override void TranslateSortedCopyOfStringArray(List<string> output, Expression list)
         {
-            output.Add("R.sortedCopyOfArray(");
+            output.Add("C$common$sortedCopyOfArray(");
             this.Translator.TranslateExpression(output, list);
             output.Add(")");
         }
@@ -619,7 +629,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
-            output.Add("stringEndsWith(");
+            output.Add("C$common$stringEndsWith(");
             this.Translator.TranslateExpression(output, stringExpr);
             output.Add(this.Shorten(", "));
             this.Translator.TranslateExpression(output, findMe);
