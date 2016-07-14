@@ -511,6 +511,13 @@ def _audio_sound_play(sfx, vol, pan):
 	ch = sfx.play()
 	ch.set_volume(vol)
 
+def string_check_slice(haystack, i, needle):
+	return haystack[i:i + len(needle)] == needle
+
+def string_substring(s, start, length = None):
+	if length == None: return s[start:]
+	return s[start:start + length]
+
 def _always_true(): return True
 def _always_false(): return False
 

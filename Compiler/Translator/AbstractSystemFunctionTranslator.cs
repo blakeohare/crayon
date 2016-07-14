@@ -54,6 +54,7 @@ namespace Crayon.Translator
 
                 case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
                 case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
+                case "_array_join": VerifyCount(functionCall, 2); TranslateArrayJoin(output, args[0], args[1]); break;
                 case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
                 case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
                 case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
@@ -131,7 +132,7 @@ namespace Crayon.Translator
                 case "_string_endswith": VerifyCount(functionCall, 2); TranslateStringEndsWith(output, args[0], args[1]); break;
                 case "_string_equals": VerifyCount(functionCall, 2); TranslateStringEquals(output, args[0], args[1]); break;
                 case "_string_from_code": VerifyCount(functionCall, 1); TranslateStringFromCode(output, args[0]); break;
-                case "_string_index_of": VerifyCount(functionCall, 2); TranslateStringIndexOf(output, args[0], args[1]); break;
+                case "_string_index_of": VerifyCount(functionCall, 2, 3); TranslateStringIndexOf(output, args[0], args[1], args.Length == 3 ? args[2] : null); break;
                 case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
                 case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
                 case "_string_parse_float": VerifyCount(functionCall, 1); TranslateStringParseFloat(output, args[0]); break;
@@ -140,6 +141,8 @@ namespace Crayon.Translator
                 case "_string_replace": VerifyCount(functionCall, 3); TranslateStringReplace(output, args[0], args[1], args[2]); break;
                 case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
                 case "_string_startswith": VerifyCount(functionCall, 2); TranslateStringStartsWith(output, args[0], args[1]); break;
+                case "_string_substring": VerifyCount(functionCall, 2, 3); TranslateStringSubstring(output, args[0], args[1], args.Length > 2 ? args[2] : null); break;
+                case "_string_substring_exists_at": VerifyCount(functionCall, 3); TranslateStringSubstringExistsAt(output, args[0], args[1], args[2]); break;
                 case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
                 case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
                 case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
@@ -154,6 +157,7 @@ namespace Crayon.Translator
         protected abstract void TranslateArcSin(List<string> output, Expression value);
         protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);
         protected abstract void TranslateArrayGet(List<string> output, Expression list, Expression index);
+        protected abstract void TranslateArrayJoin(List<string> output, Expression array, Expression sep);
         protected abstract void TranslateArrayLength(List<string> output, Expression list);
         protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateAssert(List<string> output, Expression message);
@@ -234,7 +238,7 @@ namespace Crayon.Translator
         protected abstract void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe);
         protected abstract void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b);
         protected abstract void TranslateStringFromCode(List<string> output, Expression characterCode);
-        protected abstract void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle);
+        protected abstract void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom);
         protected abstract void TranslateStringLength(List<string> output, Expression stringValue);
         protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
         protected abstract void TranslateStringParseFloat(List<string> output, Expression stringValue);
@@ -243,6 +247,8 @@ namespace Crayon.Translator
         protected abstract void TranslateStringReverse(List<string> output, Expression stringValue);
         protected abstract void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep);
         protected abstract void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe);
+        protected abstract void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength);
+        protected abstract void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index);
         protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
         protected abstract void TranslateTan(List<string> output, Expression value);
@@ -255,6 +261,17 @@ namespace Crayon.Translator
             {
                 throw new ParserException(functionCall.FirstToken, "Not enough args. Expected at least " + minArgCount);
             }
+        }
+
+        private void VerifyCount(SystemFunctionCall functionCall, int argCount1, params int[] orTheseArgCounts)
+        {
+            int count = functionCall.Args.Length;
+            if (count == argCount1) return;
+            foreach (int argCount in orTheseArgCounts)
+            {
+                if (argCount == count) return;
+            }
+            throw new ParserException(functionCall.FirstToken, "Wrong number of args.");
         }
 
         private void VerifyCount(SystemFunctionCall functionCall, int argCount)

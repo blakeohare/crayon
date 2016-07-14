@@ -51,6 +51,15 @@ namespace Crayon.ParseTree
                 return new BooleanConstant(this.FirstToken, isJavaScript, this.FunctionOrClassOwner);
             }
 
+            if (this.Name == "$_ord")
+            {
+                if (this.Args[0] is StringConstant)
+                {
+                    string strValue = ((StringConstant)this.Args[0]).Value;
+                    if (strValue.Length != 1) throw new ParserException(this.FirstToken, "$_ord must take in a string of length 1");
+                    return new IntegerConstant(this.FirstToken, strValue[0], this.FunctionOrClassOwner);
+                }
+            }
             // args have already been resolved.
             return this;
         }

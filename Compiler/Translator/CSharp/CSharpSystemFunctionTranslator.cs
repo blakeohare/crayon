@@ -42,6 +42,15 @@ namespace Crayon.Translator.CSharp
             output.Add("]");
         }
 
+        protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
+        {
+            output.Add("string.Join(");
+            this.Translator.TranslateExpression(output, sep);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, array);
+            output.Add(")");
+        }
+
         protected override void TranslateArrayLength(List<string> output, Expression list)
         {
             this.Translator.TranslateExpression(output, list);
@@ -586,11 +595,16 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
+        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
         {
             this.Translator.TranslateExpression(output, haystack);
             output.Add(".IndexOf(");
             this.Translator.TranslateExpression(output, needle);
+            if (optionalStartFrom != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalStartFrom);
+            }
             output.Add(")");
         }
 
@@ -651,6 +665,31 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, stringExpr);
             output.Add(".StartsWith(");
             this.Translator.TranslateExpression(output, findMe);
+            output.Add(")");
+        }
+
+        protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
+        {
+            output.Add("(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(").Substring(");
+            this.Translator.TranslateExpression(output, startIndex);
+            if (optionalLength != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalLength);
+            }
+            output.Add(")");
+        }
+
+        protected override void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index)
+        {
+            output.Add("TranslationHelper.CheckStringSlice(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, lookFor);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
 

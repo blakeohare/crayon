@@ -36,6 +36,11 @@ namespace Crayon.Translator.Php
             output.Add("]");
         }
 
+        protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void TranslateArrayLength(List<string> output, Expression list)
         {
             output.Add("count(");
@@ -596,12 +601,17 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
 
-        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
+        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
         {
             output.Add("pth_string_index_of(");
             this.PhpTranslator.TranslateExpression(output, haystack);
             output.Add(", ");
             this.PhpTranslator.TranslateExpression(output, needle);
+            if (optionalStartFrom != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalStartFrom);
+            }
             output.Add(")");
         }
 
@@ -667,6 +677,31 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, stringExpr);
             output.Add(", ");
             this.PhpTranslator.TranslateExpression(output, findMe);
+            output.Add(")");
+        }
+
+        protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
+        {
+            output.Add("pth_string_substring(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, startIndex);
+            if (optionalLength != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalLength);
+            }
+            output.Add(")");
+        }
+
+        protected override void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index)
+        {
+            output.Add("pth_string_check_slice(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, lookFor);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
 

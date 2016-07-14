@@ -52,6 +52,14 @@ namespace Crayon.Translator.Python
             output.Add("]");
         }
 
+        protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
+        {
+            this.Translator.TranslateExpression(output, sep);
+            output.Add(".join(");
+            this.Translator.TranslateExpression(output, array);
+            output.Add(")");
+        }
+
         protected override void TranslateArrayLength(List<string> output, Expression list)
         {
             output.Add("len(");
@@ -201,7 +209,7 @@ namespace Crayon.Translator.Python
         {
             throw new Exception("This should have been optimized out.");
         }
-        
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("float(");
@@ -250,7 +258,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, headerValueList);
             output.Add(")");
         }
-        
+
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             throw new InvalidOperationException("Should have been optimized out.");
@@ -502,7 +510,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, character);
             output.Add(")");
         }
-        
+
         protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
         {
             output.Add("_parse_float_helper(");
@@ -530,7 +538,7 @@ namespace Crayon.Translator.Python
         {
             output.Add("random.random()");
         }
-        
+
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("RESOURCES.readTextFile('resources/text/' + ");
@@ -641,11 +649,16 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
-        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle)
+        protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
         {
             this.Translator.TranslateExpression(output, haystack);
             output.Add(".find(");
             this.Translator.TranslateExpression(output, needle);
+            if (optionalStartFrom != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalStartFrom);
+            }
             output.Add(")");
         }
 
@@ -708,6 +721,31 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
+        protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
+        {
+            output.Add("string_substring(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, startIndex);
+            if (optionalLength != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalLength);
+            }
+            output.Add(")");
+        }
+
+        protected override void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index)
+        {
+            output.Add("string_check_slice(");
+            this.Translator.TranslateExpression(output, stringExpr);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, lookFor);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, index);
+            output.Add(")");
+        }
+
         protected override void TranslateStringTrim(List<string> output, Expression stringValue)
         {
             this.Translator.TranslateExpression(output, stringValue);
@@ -726,7 +764,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-        
+
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             output.Add("1.0 * ");

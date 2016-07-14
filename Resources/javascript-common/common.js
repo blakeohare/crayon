@@ -162,6 +162,14 @@ C$common$multiplyList = function (list, size) {
     return output;
 };
 
+C$common$substring = function (s, start, len) {
+    return len === null ? s.substring(start) : s.substring(start, s.length + len);
+};
+
+C$common$checksubstring = function (s, lookfor, index) {
+    return s.substring(index, index + lookfor.length) === lookfor;
+};
+
 C$common$clearList = function (list) {
     list.length = 0;
 };

@@ -90,6 +90,7 @@ if (int5 == 1) {
 		stringList1 = $_new_list('string');
 		if (bool1) {
 			// forward
+			// TODO: if step is 1, then use a simple substring call
 			while (int1 < int2) {
 				$_list_push(stringList1, $_char_to_string($_string_char_at(string1, int1)));
 				int1 += int3;

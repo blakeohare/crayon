@@ -1,0 +1,80 @@
+﻿/*
+	The XML library supports basic XML.
+*/
+namespace XML {
+	enum XmlOption {
+		// TODO: use this
+		TRIM_WHITESPACE = 1,
+		
+		// TODO: use this
+		STRICT_ENTITIES = 2,
+		
+		// TODO: use this
+		ALLOW_INCOMPLETE_DOCUMENT = 4,
+		
+		FAIL_SILENTLY = 8,
+	}
+	
+	class XmlElement {
+	
+		// the nativeData field of this dummy object contains some helper data structures for parsing.
+		static field _DUMMY = new XmlText(null);
+	
+		field name;
+		field attributes;
+		field children;
+		
+		constructor(name, attributes, children) {
+			this.name = name;
+			this.attributes = attributes.clone();
+			this.children = children.clone();
+		}
+	}
+	
+	class XmlText {
+		field value;
+		constructor(value) {
+			this.value = value;
+		}
+	}
+	
+	/*
+		Input is a struct-like list representing an XML element.
+		The data represented is trusted to be well-formed.
+		data[0] -> the boolean true. false indicates that this list represents a text object.
+		data[1] -> name
+		data[2] -> attribute names
+		data[3] -> attribute values
+		data[4] -> children
+	*/
+	function _objGen(data, dictReusable, options) {
+		children = [];
+		for (child : data[4]) {
+			if (child[0]) {
+				children.add(XML._objGen(child, dictReusable, options));
+			} else {
+				children.add(new XmlText(child[1]));
+			}
+		}
+		keys = data[2];
+		values = data[3];
+		len = keys.length;
+		
+		for (i = 0; i < len; ++i) {
+			dictReusable[keys[i]] = values[i];
+		}
+		output = new XmlElement(data[1], dictReusable, children);
+		dictReusable.clear();
+		return output;
+	}
+	
+	function parse(string, options = 0) {
+		output = [];
+		error = $$lib_xml_parse(string, output, XmlElement._DUMMY);
+		if (error != null) {
+			if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
+			Core.assert(false, "XML parsing error: " + error);
+		}
+		return XML._objGen(output[0], {}, options);
+	}
+}
