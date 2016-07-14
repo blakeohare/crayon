@@ -18,6 +18,7 @@ namespace Crayon.Translator.JavaScript
         public override bool IsStronglyTyped { get { return false; } }
         public override bool ImagesLoadInstantly { get { return false; } }
         public override bool IsArraySameAsList { get { return true; } }
+        public override bool IsCharANumber { get { return false; } }
         public override string PlatformShortId { get { return "game-javascript"; } }
 
         public override Dictionary<string, FileOutput> Package(

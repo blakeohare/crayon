@@ -3,7 +3,7 @@
 	arg 2: output list
 	arg 3: dummy object instance with nativeData, (although if it doesn't, this function must initialize it)
 		nativeData[0] -> Dictionary<string, string> maps XML entity codes to their string instances.
-		// TODO: there's a lot of dirty code in the parser that uses switch statements where a set makes more sense. Add those here.
+		nativeData[1] -> Dictionary<int, int> keys are a set of character codes that end unquoted attribute values. Value is ignored.
 	
 	output is the error encountered or null.
 	
@@ -28,13 +28,20 @@ list1 = $_cast('List<Value>', Value$arg2.internalValue);
 objInstance1 = $_cast('ObjectInstance', Value$arg3.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
 if (objArray1 == null) {
-	objArray1 = $_new_array('object', 1);
+	objArray1 = $_new_array('object', 2);
 	ObjectInstance$objInstance1.nativeData = objArray1;
 	$_array_set(objArray1, 0, $_new_dictionary('string', 'string'));
+	$_array_set(objArray1, 1, $_new_dictionary('int', 'int'));
 }
 
 output = VALUE_NULL;
-string2 = lib_xml_parse(string1, intOutParam, list1, $_cast('Dictionary<string, string>', $_array_get(objArray1, 0)));
+string2 = lib_xml_parse(
+	string1,
+	intOutParam,
+	list1,
+	$_cast('Dictionary<string, string>', $_array_get(objArray1, 0)),
+	$_cast('Dictionary<int, int>', $_array_get(objArray1, 1))
+	);
 if (string2 != null) {
 	output = buildString(string2);
 }

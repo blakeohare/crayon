@@ -100,6 +100,7 @@ namespace Crayon
             replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
             replacements.Add("LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT", this.platform.LibraryBigSwitchStatement);
             replacements.Add("IS_PHP", (this.platform is Crayon.Translator.Php.PhpPlatform) ? "true" : "false");
+            replacements.Add("IS_CHAR_A_NUMBER", this.platform.IsCharANumber ? "true" : "false");
             return replacements;
         }
 

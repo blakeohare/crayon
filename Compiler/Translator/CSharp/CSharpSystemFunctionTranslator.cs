@@ -540,6 +540,14 @@ namespace Crayon.Translator.CSharp
             }
         }
 
+        protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add("[");
+            this.Translator.TranslateExpression(output, index);
+            output.Add("]");
+        }
+
         protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
         {
             this.Translator.TranslateExpression(output, stringValue);

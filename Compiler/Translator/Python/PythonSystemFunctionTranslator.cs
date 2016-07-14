@@ -600,6 +600,15 @@ namespace Crayon.Translator.Python
             output.Add("]");
         }
 
+        protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
+        {
+            output.Add("ord(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add("[");
+            this.Translator.TranslateExpression(output, index);
+            output.Add("])");
+        }
+
         protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
         {
             output.Add("cmp(");

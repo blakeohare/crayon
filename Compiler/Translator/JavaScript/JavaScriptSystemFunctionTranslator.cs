@@ -605,6 +605,14 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
+        protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".charCodeAt(");
+            this.Translator.TranslateExpression(output, index);
+            output.Add(")");
+        }
+
         protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
         {
             // TODO: this may return crazy values, need to normalize to -1, 0, or 1

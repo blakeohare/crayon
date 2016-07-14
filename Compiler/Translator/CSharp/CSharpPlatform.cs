@@ -16,6 +16,7 @@ namespace Crayon.Translator.CSharp
         public override bool IsStronglyTyped { get { return true; } }
         public override bool ImagesLoadInstantly { get { return true; } }
         public override bool IsArraySameAsList { get { return false; } }
+        public override bool IsCharANumber{ get { return true; } }
 
         public abstract void PlatformSpecificFiles(
             string projectId,

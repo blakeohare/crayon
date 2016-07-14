@@ -530,6 +530,14 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
+        protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".charAt(");
+            this.Translator.TranslateExpression(output, index);
+            output.Add(")");
+        }
+
         protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
         {
             this.Translator.TranslateExpression(output, a);

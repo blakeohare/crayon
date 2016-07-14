@@ -73,7 +73,7 @@ namespace XML {
 		error = $$lib_xml_parse(string, output, XmlElement._DUMMY);
 		if (error != null) {
 			if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
-			Core.assert(false, "XML parsing error: " + error);
+			Core.assert(false, error);
 		}
 		return XML._objGen(output[0], {}, options);
 	}
