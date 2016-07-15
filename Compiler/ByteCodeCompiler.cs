@@ -802,7 +802,7 @@ namespace Crayon
             else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, null, outputUsed);
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
-            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, outputUsed);
+            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, outputUsed);
             else throw new NotImplementedException();
         }
 
@@ -814,9 +814,10 @@ namespace Crayon
             }
         }
 
-        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, bool outputUsed)
+        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, Expression[] argsOverrideOrNull, bool outputUsed)
         {
-            foreach (Expression arg in coreFuncInvocation.Args)
+            Expression[] args = argsOverrideOrNull ?? coreFuncInvocation.Args;
+            foreach (Expression arg in args)
             {
                 this.CompileExpression(parser, buffer, arg, true);
             }
@@ -1370,19 +1371,32 @@ namespace Crayon
                 variableValues[libraryFunction.ArgNames[i].Value] = argValue;
             }
 
-            LibraryFunctionCall nativeFunctionCall = ((ReturnStatement)libraryFunction.Code[0]).Expression as LibraryFunctionCall;
-            if (nativeFunctionCall == null)
+            Expression libraryFunctionBody = ((ReturnStatement)libraryFunction.Code[0]).Expression;
+            LibraryFunctionCall nativeLibraryFunctionCall = libraryFunctionBody as LibraryFunctionCall;
+            CoreFunctionInvocation coreFunctionCall = libraryFunctionBody as CoreFunctionInvocation;
+            if (nativeLibraryFunctionCall == null && coreFunctionCall == null)
             {
                 throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
             }
 
+            Expression[] args = nativeLibraryFunctionCall != null
+                ? nativeLibraryFunctionCall.Args
+                : coreFunctionCall.Args;
+
             List<Expression> arguments = new List<Expression>();
             for (int i = 0; i < nativeLength; ++i)
             {
-                arguments.Add(variableValues[((Variable)nativeFunctionCall.Args[i]).Name]);
+                arguments.Add(variableValues[((Variable)args[i]).Name]);
             }
 
-            this.CompileLibraryFunctionCall(parser, buffer, nativeFunctionCall, arguments, functionCall.ParenToken, outputUsed);
+            if (nativeLibraryFunctionCall != null)
+            {
+                this.CompileLibraryFunctionCall(parser, buffer, nativeLibraryFunctionCall, arguments, functionCall.ParenToken, outputUsed);
+            }
+            else
+            {
+                this.CompileCoreFunctionInvocation(parser, buffer, coreFunctionCall, arguments.ToArray(), outputUsed);
+            }
         }
 
         private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)

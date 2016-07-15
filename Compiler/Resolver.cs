@@ -151,11 +151,20 @@ namespace Crayon
                     ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
                     if (returnStatement != null)
                     {
-                        LibraryFunctionCall libraryFunctionCall = returnStatement.Expression as LibraryFunctionCall;
-                        if (libraryFunctionCall != null)
+                        Expression[] argsFromLibOrCoreFunction = null;
+                        if (returnStatement.Expression is LibraryFunctionCall)
+                        {
+                            argsFromLibOrCoreFunction = ((LibraryFunctionCall)returnStatement.Expression).Args;
+                        }
+                        else if (returnStatement.Expression is CoreFunctionInvocation)
+                        {
+                            argsFromLibOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
+                        }
+
+                        if (argsFromLibOrCoreFunction != null)
                         {
                             bool allSimpleVariables = true;
-                            foreach (Expression expr in libraryFunctionCall.Args)
+                            foreach (Expression expr in argsFromLibOrCoreFunction)
                             {
                                 if (!(expr is Variable))
                                 {
