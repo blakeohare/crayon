@@ -1,1 +1,0 @@
-$_lib_core_print: C$common$print([ARG:1])

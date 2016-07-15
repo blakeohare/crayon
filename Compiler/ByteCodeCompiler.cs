@@ -802,7 +802,7 @@ namespace Crayon
             else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, null, outputUsed);
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
-            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, outputUsed);
+            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
             else throw new NotImplementedException();
         }
 
@@ -814,15 +814,16 @@ namespace Crayon
             }
         }
 
-        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, Expression[] argsOverrideOrNull, bool outputUsed)
+        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, Expression[] argsOverrideOrNull, Token tokenOverrideOrNull, bool outputUsed)
         {
+            Token token = tokenOverrideOrNull ?? coreFuncInvocation.FirstToken;
             Expression[] args = argsOverrideOrNull ?? coreFuncInvocation.Args;
             foreach (Expression arg in args)
             {
                 this.CompileExpression(parser, buffer, arg, true);
             }
 
-            buffer.Add(coreFuncInvocation.FirstToken, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
+            buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
         }
 
         private void CompileFieldReference(Parser parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
@@ -1395,7 +1396,7 @@ namespace Crayon
             }
             else
             {
-                this.CompileCoreFunctionInvocation(parser, buffer, coreFunctionCall, arguments.ToArray(), outputUsed);
+                this.CompileCoreFunctionInvocation(parser, buffer, coreFunctionCall, arguments.ToArray(), functionCall.ParenToken, outputUsed);
             }
         }
 

@@ -5,6 +5,20 @@ namespace Crayon.Translator.Java
 {
     internal class JavaAwtSystemFunctionTranslator : JavaSystemFunctionTranslator
     {
+        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
+        {
+            if (isErr)
+            {
+                output.Add("System.err.println(\"\", ");
+            }
+            else
+            {
+                output.Add("System.out.println(\"\", ");
+            }
+            this.Translator.TranslateExpression(output, expression);
+            output.Add(")");
+        }
+
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("AwtTranslationHelper.getResourceManifest()");

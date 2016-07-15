@@ -4,6 +4,7 @@
     {
         PARSE_INT = 1,
         PARSE_FLOAT = 2,
+        PRINT = 3,
     }
 
     public static class CoreFunctionIDHelper
@@ -14,6 +15,7 @@
             {
                 case "parseInt": return (int)CoreFunctionID.PARSE_INT;
                 case "parseFloat": return (int)CoreFunctionID.PARSE_FLOAT;
+                case "print": return (int)CoreFunctionID.PRINT;
                 default: return -1;
             }
         }

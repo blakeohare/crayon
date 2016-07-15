@@ -6,6 +6,13 @@ namespace Crayon.Translator.JavaScript
 {
     internal class JavaScriptSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
+        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
+        {
+            output.Add("C$common$print(");
+            this.Translator.TranslateExpression(output, expression);
+            output.Add(")");
+        }
+
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("C$resourceManifest");

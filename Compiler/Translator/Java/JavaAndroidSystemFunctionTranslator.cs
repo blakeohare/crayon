@@ -6,6 +6,13 @@ namespace Crayon.Translator.Java
 {
     internal class JavaAndroidSystemFunctionTranslator : JavaSystemFunctionTranslator
     {
+        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
+        {
+            output.Add("android.util.Log.d(\"\", ");
+            this.Translator.TranslateExpression(output, expression);
+            output.Add(")");
+        }
+
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             throw new NotImplementedException();

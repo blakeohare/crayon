@@ -1,1 +1,0 @@
-$_lib_core_print: echo [ARG:1] . "\n"

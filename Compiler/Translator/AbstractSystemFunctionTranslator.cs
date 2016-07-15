@@ -115,6 +115,8 @@ namespace Crayon.Translator
                 case "_postfix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, false); break;
                 case "_prefix_decrement": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], false, true); break;
                 case "_prefix_increment": VerifyCount(functionCall, 1); TranslateIncrement(output, args[0], true, true); break;
+                case "_print_stderr": VerifyCount(functionCall, 1); TranslatePrint(output, args[0], true); break;
+                case "_print_stdout": VerifyCount(functionCall, 1); TranslatePrint(output, args[0], false); break;
                 case "_random_float": VerifyCount(functionCall, 0); TranslateRandomFloat(output); break;
                 case "_resource_get_manifest": VerifyCount(functionCall, 0); TranslateResourceGetManifest(output); break;
                 case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
@@ -222,6 +224,7 @@ namespace Crayon.Translator
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
         protected abstract void TranslateParseJson(List<string> output, Expression rawString);
         protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
+        protected abstract void TranslatePrint(List<string> output, Expression expression, bool isErr);
         protected abstract void TranslateRandomFloat(List<string> output);
         protected abstract void TranslateResourceGetManifest(List<string> output);
         protected abstract void TranslateResourceReadText(List<string> output, Expression path);

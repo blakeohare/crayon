@@ -145,7 +145,7 @@ function @type('bool') runInterpreter(@type('int') executionContextId) {
 		// TODO: don't generate the error in the interpreter. Instead just return the message and
 		// the stack trace will be determined from the stack here. Also later add logic to 
 		// conditionally find symbol information here.
-		$_lib_core_print(InterpreterResult$result.errorMessage);
+		$_print_stderr(InterpreterResult$result.errorMessage);
 		return false;
 	} else if (InterpreterResult$result.status == InterpreterResultStatus.SUSPENDED) {
 		// Do nothing.

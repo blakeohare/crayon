@@ -8,6 +8,13 @@ namespace Crayon.Translator.Php
     {
         private PhpTranslator PhpTranslator { get { return (PhpTranslator)this.Translator; } }
 
+        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
+        {
+            output.Add("echo ");
+            this.Translator.TranslateExpression(output, expression);
+            output.Add(" . \"\\n\"");
+        }
+
         protected override void TranslateAppDataRoot(List<string> output)
         {
             output.Add("TODO_optimize_out()");

@@ -6,6 +6,22 @@ namespace Crayon.Translator.Python
 {
     internal class PythonSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
+        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
+        {
+            if (isErr)
+            {
+                output.Add("sys.stderr.write(");
+                this.Translator.TranslateExpression(output, expression);
+                output.Add(" + \"\\n\")");
+            }
+            else
+            {
+                output.Add("print(");
+                this.Translator.TranslateExpression(output, expression);
+                output.Add(")");
+            }
+        }
+
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("RESOURCES.getManifest()");

@@ -26,7 +26,7 @@
 	}
 
 	function print(value) {
-		return $$lib_core_print(value);
+		return $$$('print', value);
 	}
 
 	function typeof(value) {
