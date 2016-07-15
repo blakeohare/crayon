@@ -10,7 +10,7 @@
 	}
 
 	function currentTime() {
-		return $$lib_core_current_time();
+		return $$lib_core_currentTime();
 	}
 
 	function ord(value) {
@@ -18,11 +18,11 @@
 	}
 
 	function parseFloat(value) {
-		return $$lib_core_parse_float(value);
+		return $$lib_core_parseFloat(value);
 	}
 
 	function parseInt(value) {
-		return $$lib_core_parse_int(value);
+		return $$lib_core_parseInt(value);
 	}
 
 	function print(value) {
@@ -59,7 +59,7 @@
 			for (t : list) {
 				k.add(fp(t));
 			}
-			$$lib_core_sort_list(list, k);
+			$$lib_core_sortList(list, k);
 		}
 	}
 

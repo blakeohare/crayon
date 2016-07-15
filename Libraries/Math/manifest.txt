@@ -3,7 +3,3 @@ AUTHOR: Blake O'Hare
 DOCUMENTATION: http://crayonlang.org/docs/0.2.0/math
 DESCRIPTION: Common basic math functions.
 
-# Description of the behavior of $_int on each platform...
-BOOL_FLAG: MATH_INT_IS_FLOOR: false
-[game-java-awt] BOOL_FLAG: MATH_INT_IS_FLOOR: true
-[game-javascript] BOOL_FLAG: MATH_INT_IS_FLOOR: true
