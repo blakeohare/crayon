@@ -23,7 +23,7 @@ namespace Crayon
                 .OfType<FunctionDefinition>()
                 .Where<FunctionDefinition>(fd => fd.NameToken.Value == "_LIB_CORE_invoke" && fd.Namespace == "Core")
                 .FirstOrDefault<FunctionDefinition>();
-            
+
             ByteBuffer userCode = new ByteBuffer();
 
             this.Compile(parser, userCode, lines);
@@ -802,6 +802,7 @@ namespace Crayon
             else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, null, outputUsed);
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
+            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, outputUsed);
             else throw new NotImplementedException();
         }
 
@@ -811,6 +812,16 @@ namespace Crayon
             {
                 throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
             }
+        }
+
+        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, bool outputUsed)
+        {
+            foreach (Expression arg in coreFuncInvocation.Args)
+            {
+                this.CompileExpression(parser, buffer, arg, true);
+            }
+
+            buffer.Add(coreFuncInvocation.FirstToken, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
         }
 
         private void CompileFieldReference(Parser parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)

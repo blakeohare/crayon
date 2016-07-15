@@ -83,6 +83,13 @@ namespace Crayon.ParseTree
 
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
+            if (this.Root is Variable && ((Variable)this.Root).Name.Contains("$$$"))
+            {
+                this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+
+                return new CoreFunctionInvocation(this.FirstToken, this.Args, this.FunctionOrClassOwner);
+            }
+
             this.Root = this.Root.ResolveNames(parser, lookup, imports);
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
 

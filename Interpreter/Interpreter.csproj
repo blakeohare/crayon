@@ -69,6 +69,7 @@
     <EmbeddedResource Include="Ops\call_function.cry" />
     <EmbeddedResource Include="Ops\call_lib_function.cry" />
     <EmbeddedResource Include="Ops\class_definition.cry" />
+    <EmbeddedResource Include="Ops\core_function.cry" />
     <EmbeddedResource Include="Ops\def_dictionary.cry" />
     <EmbeddedResource Include="Ops\def_list.cry" />
     <EmbeddedResource Include="Ops\def_original_code.cry" />

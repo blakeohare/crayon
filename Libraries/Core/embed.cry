@@ -18,11 +18,11 @@
 	}
 
 	function parseFloat(value) {
-		return $$lib_core_parseFloat(value);
+		return $$$('parseFloat', value);
 	}
 
 	function parseInt(value) {
-		return $$lib_core_parseInt(value);
+		return $$$('parseInt', value);
 	}
 
 	function print(value) {
@@ -34,11 +34,11 @@
 	}
 
 	function isString(value) {
-		return Core.typeof(value) == Core.Type.STRING;
+		return $$lib_core_typeof(value) == Core.Type.STRING;
 	}
 
 	function isNumber(value) {
-		return Core.typeof(value) == Core.Type.INTEGER || Core.typeof(value) == Core.Type.FLOAT;
+		return $$lib_core_typeof(value) == Core.Type.INTEGER || $$lib_core_typeof(value) == Core.Type.FLOAT;
 	}
 
 	enum Type {

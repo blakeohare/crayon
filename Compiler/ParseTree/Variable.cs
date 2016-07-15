@@ -53,6 +53,11 @@ namespace Crayon.ParseTree
 
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
+            if (this.Name == "$$$")
+            {
+                throw new ParserException(this.FirstToken, "Core function invocations cannot stand alone and must be immediately invoked.");
+            }
+
             if (this.Name.StartsWith("$$"))
             {
                 return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.FunctionOrClassOwner);

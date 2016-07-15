@@ -1,0 +1,37 @@
+﻿output = VALUE_NULL;
+
+switch ($_array_get(row, 0)) {
+	
+	case 1: $_comment('parseInt');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.STRING) {
+			string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
+			if ($_is_valid_integer(string1)) {
+				output = buildInteger($_parse_int(string1));
+			}
+		} else {
+			return killExecution(stack, pc, "parseInt requires a string argument.");
+		}
+		break;
+
+	case 2: $_comment('parseFloat');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.STRING) {
+			string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
+			$_parse_float(floatList1, string1);
+			if ($_array_get(floatList1, 0) >= 0) {
+				output = buildFloat($_array_get(floatList1, 1));
+			}
+		} else {
+			return killExecution(stack, pc, "parseFloat requires a string argument.");
+		}
+		break;
+}
+
+if ($_array_get(row, 1) == 1) { // output used?
+	import inline "ValueStackCapacityCheck.cry";
+	$_array_set(valueStack, valueStackSize, output);
+	valueStackSize += 1;
+}

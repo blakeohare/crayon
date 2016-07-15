@@ -18,6 +18,7 @@
         CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
         CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
         CONTINUE, // no ops. This should be resolved into a jump before actually being run.
+        CORE_FUNCTION, // 1: function ID
         DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
         DEF_DICTIONARY, // 1: size
         DEF_LIST, // 1: size
