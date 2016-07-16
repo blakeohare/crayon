@@ -818,6 +818,30 @@ namespace Crayon
         {
             Token token = tokenOverrideOrNull ?? coreFuncInvocation.FirstToken;
             Expression[] args = argsOverrideOrNull ?? coreFuncInvocation.Args;
+
+            if (coreFuncInvocation.FunctionId == (int)CoreFunctionID.TYPE_IS)
+            {
+                EnsureUsed(coreFuncInvocation.FirstToken, outputUsed);
+
+                this.CompileExpression(parser, buffer, args[0], true);
+                int typeCount = args.Length - 1;
+                int[] actualArgs = new int[typeCount + 3];
+                actualArgs[0] = coreFuncInvocation.FunctionId;
+                actualArgs[1] = 1; // output used
+                actualArgs[2] = typeCount;
+                for (int i = typeCount - 1; i >= 0; --i)
+                {
+                    IntegerConstant typeArg = args[args.Length - 1 - i] as IntegerConstant;
+                    if (typeArg == null)
+                    {
+                        throw new ParserException(coreFuncInvocation.FirstToken, "typeis requires type enum values.");
+                    }
+                    actualArgs[3 + i] = typeArg.Value + 1;
+                }
+                buffer.Add(token, OpCode.CORE_FUNCTION, actualArgs);
+                return;
+            }
+
             foreach (Expression arg in args)
             {
                 this.CompileExpression(parser, buffer, arg, true);

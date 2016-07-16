@@ -1,20 +1,36 @@
 ﻿namespace Core {
 	const CRAYON_VERSION = "0.2.0";
 
+	enum Type {
+		NULL = 0,
+		BOOLEAN = 1,
+		INTEGER = 2,
+		FLOAT = 3,
+		STRING = 4,
+		LIST = 5,
+		DICTIONARY = 6,
+		OBJECT = 7,
+		FUNCTION = 8,
+	}
+
 	function assert(condition, message = null) {
-		return $$lib_core_assert(condition, message);
+		return $$$('assert', condition, message);
+	}
+	
+	function fail(message) {
+		return $$$('assert', false, message);
 	}
 
 	function chr(value) {
-		return $$lib_core_chr(value);
+		return $$$('chr', value);
 	}
 
 	function currentTime() {
-		return $$lib_core_currentTime();
+		return $$$('currentTime');
 	}
 
 	function ord(value) {
-		return $$lib_core_ord(value);
+		return $$$('ord', value);
 	}
 
 	function parseFloat(value) {
@@ -30,36 +46,20 @@
 	}
 
 	function typeof(value) {
-		return $$lib_core_typeof(value);
+		return $$$('typeof',value);
 	}
 
 	function isString(value) {
-		return $$lib_core_typeof(value) == Core.Type.STRING;
+		return $$$('typeis', value, Core.Type.STRING);
 	}
 
 	function isNumber(value) {
-		return $$lib_core_typeof(value) == Core.Type.INTEGER || $$lib_core_typeof(value) == Core.Type.FLOAT;
-	}
-
-	enum Type {
-		NULL = 0,
-		BOOLEAN = 1,
-		INTEGER = 2,
-		FLOAT = 3,
-		STRING = 4,
-		LIST = 5,
-		DICTIONARY = 6,
-		OBJECT = 7,
-		FUNCTION = 8,
+		return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
 	}
 
 	function _LIB_CORE_list_sort_by_key(fp, list) {
 		if (list.length > 1) {
-			k = [];
-			for (t : list) {
-				k.add(fp(t));
-			}
-			$$lib_core_sortList(list, k);
+			$$$('sortList', list, _LIB_CORE_list_map(fp, list));
 		}
 	}
 
@@ -75,8 +75,8 @@
 		output = [];
 		for (t : list) {
 			b = fp(t);
-			if ($$lib_core_typeof(b) != Core.Type.BOOLEAN) {
-				$$lib_core_assert(false, "User function returned a non-boolean value.");
+			if (!$$$('typeis', b, Core.Type.BOOLEAN)) {
+				Core.fail("Filter function returned a non-boolean value.");
 			}
 			if (b) { 
 				output.add(t);
@@ -86,7 +86,7 @@
 	}
 	
 	function getCurrentExecutionToken() {
-		return $$lib_core_getCurrentExecutionToken();
+		return $$$('execId');
 	}
 	
 	// Interanlly called by fp.invoke(args)

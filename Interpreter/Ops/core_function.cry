@@ -1,10 +1,9 @@
-﻿output = VALUE_NULL;
-
-switch ($_array_get(row, 0)) {
+﻿switch ($_array_get(row, 0)) {
 	
 	case 1: $_comment('parseInt');
 		import inline "FrameworkFunctions/1_arg.cry";
 
+		output = VALUE_NULL;
 		if (Value$arg1.type == Types.STRING) {
 			string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
 			if ($_is_valid_integer(string1)) {
@@ -17,7 +16,8 @@ switch ($_array_get(row, 0)) {
 
 	case 2: $_comment('parseFloat');
 		import inline "FrameworkFunctions/1_arg.cry";
-
+		
+		output = VALUE_NULL;
 		if (Value$arg1.type == Types.STRING) {
 			string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
 			$_parse_float(floatList1, string1);
@@ -31,7 +31,86 @@ switch ($_array_get(row, 0)) {
 
 	case 3: $_comment('print');
 		import inline "FrameworkFunctions/1_arg.cry";
+		output = VALUE_NULL;
 		$_print_stdout(valueToString(arg1));
+		break;
+
+	case 4: $_comment('typeof');
+		import inline "FrameworkFunctions/1_arg.cry";
+		// TODO: UNIT TEST!!!! This is fast-but-brittle code.
+		output = buildInteger(Value$arg1.type - 1);
+		break;
+
+	case 5: $_comment('typeis');
+		import inline "FrameworkFunctions/1_arg.cry";
+		int1 = Value$arg1.type;
+		int2 = $_array_get(row, 2); // arg count
+		bool1 = false;
+		while (int2 > 0) {
+			if ($_array_get(row, 2 + int2) == int1) {
+				bool1 = true;
+				int2 = 0;
+			} else {
+				int2 -= 1;
+			}
+		}
+		if (bool1) {
+			output = VALUE_TRUE;
+		} else {
+			output = VALUE_FALSE;
+		}
+		break;
+
+	case 6: $_comment('execId');
+		output = buildInteger(ExecutionContext$ec.id);
+		break;
+
+	case 7: $_comment('assert');
+		import inline "FrameworkFunctions/2_arg.cry";
+		if (Value$arg1.type != Types.BOOLEAN) return killExecution(stack, pc, "Assertion expression must be a boolean.");
+		if ($_cast('bool', Value$arg1.internalValue)) output = VALUE_NULL;
+		else return killExecution(stack, pc, $_string_concat("Assertion failed: ", valueToString(arg2)));
+		break;
+
+	case 8: $_comment('chr');
+		output = null;
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type == Types.INTEGER) {
+			int1 = $_cast('int', Value$arg1.internalValue);
+			if (int1 >= 0 && int1 < 256) {
+				output = buildCommonString($_chr(int1));
+			}
+		}
+		if (output == null) return killExecution(stack, pc, "chr requires an integer between 0 and 255");
+		break;
+
+	case 9: $_comment('ord');
+		output = null;
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type == Types.STRING) {
+			string1 = $_cast('string', Value$arg1.internalValue);
+			if ($_string_length(string1) == 1) {
+				output = buildInteger($_string_char_code_at(string1, 0));
+			}
+		}
+		if (output == null) return killExecution(stack, pc, "ord requires a 1 character string.");
+		break;
+
+	case 10: $_comment('currentTime');
+		output = buildFloat($_current_time_seconds());
+		break;
+
+	case 11: $_comment('sortList');
+		output = VALUE_NULL;
+		import inline "FrameworkFunctions/2_arg.cry";
+		// No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
+		// Identical length is also presumed.
+		list1 = $_cast('List<Value>', Value$arg1.internalValue); // original items
+		list2 = $_cast('List<Value>', Value$arg2.internalValue); // keys
+		lib_core_sort_lists(list2, list1, intOutParam);
+		if ($_array_get(intOutParam, 0) > 0) {
+			return killExecution(stack, pc, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+		}
 		break;
 }
 
