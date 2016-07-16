@@ -92,8 +92,8 @@ namespace GFX {
 			// _key == null, or blank image objects, are used internally and are tweaked/populated manually by the library
 			if (_key != null) {
 				$$lib_gfx_image_get(this, _key); 
-				this.width = $$lib_core_nativeInt(this, 1);
-				this.height = $$lib_core_nativeInt(this, 2);
+				this.width = $$$('nativeInt', this, 1);
+				this.height = $$$('nativeInt', this, 2);
 			}
 		}
 

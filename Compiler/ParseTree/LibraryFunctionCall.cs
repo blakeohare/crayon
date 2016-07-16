@@ -30,7 +30,7 @@ namespace Crayon.ParseTree
             this.LibraryName = callingLibrary;
 
             string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
-            if (!name.StartsWith(expectedPrefix) && !name.StartsWith("lib_core_"))
+            if (!name.StartsWith(expectedPrefix))
             {
                 throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
             }

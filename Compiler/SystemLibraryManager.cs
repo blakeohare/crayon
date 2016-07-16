@@ -38,12 +38,7 @@ namespace Crayon
             {
                 return this.libFunctionIds[name];
             }
-
-            if (library != "Core" && name.StartsWith("lib_core_"))
-            {
-                library = "Core";
-            }
-
+            
             this.functionNameToLibraryName[name] = library;
             this.orderedListOfFunctionNames.Add(name);
             int id = this.orderedListOfFunctionNames.Count;
