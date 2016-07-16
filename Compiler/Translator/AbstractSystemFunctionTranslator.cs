@@ -100,6 +100,7 @@ namespace Crayon.Translator
                 case "_math_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
                 case "_math_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
                 case "_math_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
+                case "_math_log": VerifyCount(functionCall, 1); TranslateMathLog(output, args[0]); break;
                 case "_math_pow": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
                 case "_math_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
                 case "_math_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
@@ -214,6 +215,7 @@ namespace Crayon.Translator
         protected abstract void TranslateListReverseInPlace(List<string> output, Expression list);
         protected abstract void TranslateListSet(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateListShuffleInPlace(List<string> output, Expression list);
+        protected abstract void TranslateMathLog(List<string> output, Expression value);
         protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
         protected abstract void TranslateNewArray(List<string> output, StringConstant type, Expression size);
         protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);

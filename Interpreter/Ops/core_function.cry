@@ -107,10 +107,303 @@
 		// Identical length is also presumed.
 		list1 = $_cast('List<Value>', Value$arg1.internalValue); // original items
 		list2 = $_cast('List<Value>', Value$arg2.internalValue); // keys
-		lib_core_sort_lists(list2, list1, intOutParam);
+		sortLists(list2, list1, intOutParam);
 		if ($_array_get(intOutParam, 0) > 0) {
 			return killExecution(stack, pc, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 		}
+		break;
+
+	case 12: $_comment('abs');
+		output = VALUE_NULL;
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.INTEGER) {
+			if ($_cast('int', Value$arg1.internalValue) < 0) {
+				output = buildInteger(-$_cast('int', Value$arg1.internalValue));
+			} else {
+				output = arg1;
+			}
+		} else if (Value$arg1.type == Types.FLOAT) {
+			if ($_cast('double', Value$arg1.internalValue) < 0) {
+				output = buildFloat(-$_cast('double', Value$arg1.internalValue));
+			} else {
+				output = arg1;
+			}
+		} else {
+			return killExecution(stack, pc, "abs requires a number as input.");
+		}
+
+		break;
+
+	case 13: $_comment('arcCos');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			return killExecution(stack, pc, "arccos requires a number as input.");
+		}
+
+		if (float1 < -1 || float1  > 1) {
+			return killExecution(stack, pc, "arccos requires a number in the range of -1 to 1.");
+		}
+		output = buildFloat($_math_arc_cos(float1));
+		break;
+
+	case 14: $_comment('arcSin');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			return killExecution(stack, pc, "arcsin requires a number as input.");
+		}
+
+		if (float1 < -1 || float1  > 1) {
+			return killExecution(stack, pc, "arcsin requires a number in the range of -1 to 1.");
+		}
+		output = buildFloat($_math_arc_sin(float1));
+		break;
+
+	case 15: $_comment('arcTan');
+		import inline "FrameworkFunctions/2_arg.cry";
+		bool1 = false;
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			bool1 = true;
+		}
+
+		if (Value$arg2.type == Types.FLOAT) {
+			float2 = $_cast('double', Value$arg2.internalValue);
+		} else if (Value$arg2.type == Types.INTEGER) {
+			float2 = $_cast('int', Value$arg2.internalValue);
+		} else {
+			bool1 = true;
+		}
+
+		if (bool1) {
+			return killExecution(stack, pc, "arctan requires numeric arguments.");
+		}
+		output = buildFloat($_math_arc_tan(float1, float2));
+		break;
+
+	case 16: $_comment('cos');
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+			output = buildFloat($_math_cos(float1));
+		} else if (Value$arg1.type == Types.INTEGER) {
+			int1 = $_cast('int', Value$arg1.internalValue);
+			output = buildFloat($_math_cos(int1));
+		} else {
+			return killExecution(stack, pc, "cos requires a number argument.");
+		}
+		break;
+
+	case 17: $_comment('ensureRange');
+		// arg 1: value
+		// arg 2: min
+		// arg 3: max
+		import inline "FrameworkFunctions/3_arg.cry";
+
+		bool1 = false; // type error flag.
+
+		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
+		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
+		else bool1 = true;
+		
+		if (Value$arg3.type == Types.FLOAT) float3 = $_cast('double', Value$arg3.internalValue);
+		else if (Value$arg3.type == Types.INTEGER) float3 = $_cast('int', Value$arg3.internalValue);
+		else bool1 = true;
+		
+		if (!bool1 && float3 < float2) {
+			// Min and max are swapped D:
+			// It OK. 
+			// I fix 4 u.
+			float1 = float3;
+			float3 = float2;
+			float2 = float1;
+			value = arg2;
+			arg2 = arg3;
+			arg3 = value;
+		}
+		
+		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
+		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
+		else bool1 = true;
+		
+		if (bool1) {
+			return killExecution(stack, pc, "ensureRange requires numeric arguments.");
+		}
+
+		if (float1 < float2) {
+			output = arg2;
+		} else if (float1 > float3) {
+			output = arg3;
+		} else {
+			output = arg1;
+		}
+
+		break;
+
+	case 18: $_comment('floor');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+			if (%%%INT_IS_FLOOR%%%) {
+				output = buildInteger($_int(float1));
+			} else {
+				if (float1 < 0 && float1 % 1 != 0) {
+					output = buildInteger($_int(float1) - 1);
+				} else {
+					output = buildInteger($_int(float1));
+				}
+			}
+		} else if (Value$arg1.type == Types.INTEGER) {
+			output = arg1;
+		} else {
+			return killExecution(stack, pc, "floor expects a numeric argument.");
+		}
+		break;
+
+	case 19: $_comment('max');
+		import inline "FrameworkFunctions/2_arg.cry";
+
+		bool1 = false;
+		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
+		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
+		else bool1 = true;
+		
+		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
+		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
+		else bool1 = true;
+		
+		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
+		
+		if (float1 >= float2) {
+			output = arg1;
+		} else {
+			output = arg2;
+		}
+		break;
+
+	case 20: $_comment('min');
+		import inline "FrameworkFunctions/2_arg.cry";
+
+		bool1 = false;
+		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
+		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
+		else bool1 = true;
+		
+		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
+		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
+		else bool1 = true;
+		
+		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
+		
+		if (float1 <= float2) {
+			output = arg1;
+		} else {
+			output = arg2;
+		}
+		break;
+
+	case 21: $_comment('nativeInt');
+		/*
+			arg 1: object instance
+			arg 2: native data index
+		*/
+		import inline "FrameworkFunctions/2_arg.cry";
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		i = $_cast('int', Value$arg2.internalValue);
+		output = buildInteger($_cast('int', $_array_get(ObjectInstance$objInstance1.nativeData, i)));
+		break;
+
+	case 22: $_comment('nativeString');
+		/*
+			arg 1: object instance
+			arg 2: native data index
+			arg 3: bool if this should be treated as a common string
+		*/
+		import inline "FrameworkFunctions/3_arg.cry";
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		i = $_cast('int', Value$arg2.internalValue);
+		string1 = $_cast('string', $_array_get(ObjectInstance$objInstance1.nativeData, i));
+		if ($_cast('bool', Value$arg3.internalValue)) {
+			output = buildCommonString(string1);
+		} else {
+			output = buildString(string1);
+		}
+		break;
+
+	case 23: $_comment('sign');
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type == Types.INTEGER) float1 = $_cast('double', $_cast('int', Value$arg1.internalValue));
+		else if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
+		else return killExecution(stack, pc, "sign requires a number as input.");
+
+		if (float1 == 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 0);
+		else if (float1 > 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
+		else output = $_array_get($_array_get(INTEGERS_CACHE, 1), 1);
+		break;
+
+	case 24: $_comment('sin');
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			return killExecution(stack, pc, "sin requires a number argument.");
+		}
+		output = buildFloat($_math_sin(float1));
+		break;
+
+	case 25: $_comment('tan');
+		import inline "FrameworkFunctions/1_arg.cry";
+		// Checking for pi / 2 is not really necessary even though it is not a valid tan value, because 
+		// floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.
+		// TODO: unit test so that I know this is actually true in practice.
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			return killExecution(stack, pc, "tan requires a number argument.");
+		}
+		output = buildFloat($_math_tan(float1));
+		break;
+
+	case 26: $_comment('log');
+		/*
+			arg1: value to take the natural log of
+			arg2: constant float value to multiply the output by to change the base. [type safety guaranteed]
+
+			to help avoid floating point arithmetic errors, add an tiny epsilon and then round
+			down to check for crossing an int boundary.
+		*/
+		import inline "FrameworkFunctions/2_arg.cry";
+		if (Value$arg1.type == Types.FLOAT) {
+			float1 = $_cast('double', Value$arg1.internalValue);
+		} else if (Value$arg1.type == Types.INTEGER) {
+			float1 = $_cast('int', Value$arg1.internalValue);
+		} else {
+			return killExecution(stack, pc, "logarithms require a number argument.");
+		}
+		
+		if (float1 <= 0) {
+			return killExecution(stack, pc, "logarithms require positive inputs.");
+		}
+
+		output = buildFloat(fixFuzzyFloatPrecision($_math_log(float1) * $_cast('double', Value$arg2.internalValue)));
 		break;
 }
 

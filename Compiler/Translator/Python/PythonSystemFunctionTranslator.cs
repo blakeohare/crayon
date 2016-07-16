@@ -466,6 +466,13 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
+        protected override void TranslateMathLog(List<string> output, Expression value)
+        {
+            output.Add("math.log(");
+            this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             this.Translator.TranslateExpression(output, list);

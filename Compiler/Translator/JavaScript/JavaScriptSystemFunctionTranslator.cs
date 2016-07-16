@@ -467,6 +467,13 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
+        protected override void TranslateMathLog(List<string> output, Expression value)
+        {
+            output.Add("Math.log(");
+            this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("C$common$multiplyList(");

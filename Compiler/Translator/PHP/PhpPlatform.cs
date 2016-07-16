@@ -13,20 +13,16 @@ namespace Crayon.Translator.Php
             false)
         { }
 
-        public override bool ImagesLoadInstantly { get { return true; } }
-
-        public override bool IsArraySameAsList { get { return true; } }
-
-        public override bool IsAsync { get { return false; } }
-
-        public override bool IsStronglyTyped { get { return false; } }
-
         public override string PlatformShortId { get { return "server-php"; } }
 
+        public override bool ImagesLoadInstantly { get { return true; } }
+        public override bool IsArraySameAsList { get { return true; } }
+        public override bool IsAsync { get { return false; } }
+        public override bool IsStronglyTyped { get { return false; } }
         public override bool SupportsListClear { get { return false; } }
-
         public override bool IsByteCodeLoadedDirectly { get { return true; } }
         public override bool IsCharANumber { get { return false; } }
+        public override bool IntIsFloor { get { return false; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,

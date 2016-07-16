@@ -373,6 +373,13 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
+        protected override void TranslateMathLog(List<string> output, Expression value)
+        {
+            output.Add("Math.Log(");
+            this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("TranslationHelper.MultiplyList(");

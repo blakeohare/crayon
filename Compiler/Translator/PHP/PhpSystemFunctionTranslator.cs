@@ -409,6 +409,13 @@ namespace Crayon.Translator.Php
             output.Add("->r)");
         }
 
+        protected override void TranslateMathLog(List<string> output, Expression value)
+        {
+            output.Add("log(");
+            this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("pth_multiply_list(");

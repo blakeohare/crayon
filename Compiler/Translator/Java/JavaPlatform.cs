@@ -10,6 +10,7 @@ namespace Crayon.Translator.Java
         public override bool ImagesLoadInstantly { get { return true; } }
         public override bool IsArraySameAsList { get { return false; } }
         public override bool IsCharANumber { get { return true; } }
+        public override bool IntIsFloor { get { return true; } }
 
         public JavaPlatform(PlatformId platform, JavaSystemFunctionTranslator systemFunctionTranslator, bool isOpenGlBased)
             : base(platform, LanguageId.JAVA, false, new JavaTranslator(), systemFunctionTranslator, isOpenGlBased)

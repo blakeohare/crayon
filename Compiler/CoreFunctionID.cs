@@ -13,6 +13,21 @@
         ORD = 9,
         CURRENT_TIME = 10,
         SORT_LIST = 11,
+        ABS = 12,
+        ARC_COS = 13,
+        ARC_SIN = 14,
+        ARC_TAN = 15,
+        COS = 16,
+        ENSURE_RANGE = 17,
+        FLOOR = 18,
+        MAX = 19,
+        MIN = 20,
+        NATIVE_INT = 21,
+        NATIVE_STRING = 22,
+        SIGN = 23,
+        SIN = 24,
+        TAN = 25,
+        LN = 26,
     }
 
     public static class CoreFunctionIDHelper
@@ -32,6 +47,21 @@
                 case "ord": return (int)CoreFunctionID.ORD;
                 case "currentTime": return (int)CoreFunctionID.CURRENT_TIME;
                 case "sortList": return (int)CoreFunctionID.SORT_LIST;
+                case "abs": return (int)CoreFunctionID.ABS;
+                case "arcCos": return (int)CoreFunctionID.ARC_COS;
+                case "arcSin": return (int)CoreFunctionID.ARC_SIN;
+                case "arcTan": return (int)CoreFunctionID.ARC_TAN;
+                case "cos": return (int)CoreFunctionID.COS;
+                case "ensureRange": return (int)CoreFunctionID.ENSURE_RANGE;
+                case "floor": return (int)CoreFunctionID.FLOOR;
+                case "max": return (int)CoreFunctionID.MAX;
+                case "min": return (int)CoreFunctionID.MIN;
+                case "nativeInt": return (int)CoreFunctionID.NATIVE_INT;
+                case "nativeString": return (int)CoreFunctionID.NATIVE_STRING;
+                case "sign": return (int)CoreFunctionID.SIGN;
+                case "sin": return (int)CoreFunctionID.SIN;
+                case "tan": return (int)CoreFunctionID.TAN;
+                case "ln": return (int)CoreFunctionID.LN;
                 default: return -1;
             }
         }

@@ -11,6 +11,23 @@ namespace Crayon
         public static string FloatToString(double value)
         {
             string output = value.ToString();
+            if (output.Contains("E-"))
+            {
+                output = "0.";
+                if (value < 0)
+                {
+                    value = -value;
+                    output = "-" + output;
+                }
+                value *= 15;
+                for (int i = 0; i < 20 && value != 0; ++i)
+                {
+                    output += (int)(value % 10);
+                    value = value % 1;
+                    value *= 10;
+                }
+            }
+
             if (!output.Contains('.'))
             {
                 output += ".0";
