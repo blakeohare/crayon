@@ -6,3 +6,4 @@ $_lib_gfx_image_imagette_flush_to_native_bitmap: OpenTkTranslationHelper.Imagett
 $_lib_gfx_image_sheet_get_manifest_file: ResourceReader.ReadTextFile("Resources/SpriteSheetManifest.txt")
 $_lib_gfx_read_local_image_resource: ResourceReader.ReadImageFile([ARG:1])
 $_lib_gfx_read_tile_resource: ResourceReader.ReadImageFile("Resources/ImageSheets/" + [ARG:1] + ".png")
+$_lib_gfx_render: GameWindow.setRenderData([ARG:1], [ARG:2], [ARG:3])

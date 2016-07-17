@@ -78,9 +78,41 @@ namespace GFX {
 		}
 	}
 
+	enum _ImageDrawParamType {
+		/*
+			5,
+			1,
+			x,
+			y,
+			alpha,
+		*/
+		SIMPLE = 1,
+		
+		/*
+			5,
+			2,
+			sourceX,
+			sourceY,
+			sourceWidth,
+			sourceHeight,
+			targetX,
+			targetY,
+			targetWidth,
+			targetHeight,
+			alpha,
+		*/
+		SLICE_N_STRETCH = 2,
+		
+		ROTATE_WITH_OPTIONS = 4,
+	}
+
 	class Image {
 		field width;
 		field height;
+
+		static constructor() {
+			$$lib_gfx_renderQueueAction(Draw._queue, 0); // essentially no-ops, but runs the queue initializers. 
+		}
 
 		/*
 			Native data:
@@ -97,46 +129,134 @@ namespace GFX {
 			}
 		}
 
-		// TODO: move all floor functions to inline in translated code.
-
+		/*
+			[0] -> GFX._DrawCommands.IMAGE,
+			
+			[1] -> optionFlagsBitMask {
+				1 - slice,
+				2 - stretch,
+				4 - rotate,
+				8 - alpha
+			}
+			
+			// used if slice is enabled
+			[2] -> sourceX, 
+			[3] -> sourceY,
+			[4] -> sourceWidth,
+			[5] -> sourceHeight,
+			
+			// used if stretch is enabled
+			[6] -> drawWidth,
+			[7] -> drawHeight
+			
+			// these are top left corner unless rotate flag is enabled
+			[8] -> targetX, 
+			[9] -> targetY,
+			
+			// used if rotate is enabled
+			[10] -> theta * 1048576,
+			
+			// used if alpha is enabled
+			[11] -> alpha value
+			
+		*/
 		function draw(x, y) {
-			$$lib_gfx_blit_image(this, floor(x), floor(y));
-		}
-
-		function drawPartial(tx, ty, sx, sy, width, height) {
-			$$lib_gfx_blit_image_partial(this, tx, ty, sx, sy, width, height);
-		}
-
-		function drawStretched(tx, ty, tw, th) {
-			return $$lib_gfx_blit_image_partial_at_scale(
-				this,
-				floor(tx), floor(ty),
-				floor(tw), floor(th),
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				0,
+				0, 0, 0, 0,
 				0, 0,
-				this.width, this.height);
-		}
-
-		function drawPartialStretched(tx, ty, tw, th, sx, sy, sw, sh) {
-			return $$lib_gfx_blit_image_partial_at_scale(
-				this,
-				floor(tx), floor(ty),
-				floor(tw), floor(th),
-				floor(sx), floor(sy),
-				floor(sw), floor(sh));
-		}
-
-		function drawRotated(x, y, theta) {
-			// TODO: more efficient type checking
-			// force types or crash.
-			x = Math.floor(x);
-			y = Math.floor(y);
-			theta += 0.0;
-
-			return $$lib_gfx_blit_image_rotated(this, x, y, theta);
+				x, y,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
 		}
 
 		function drawWithAlpha(x, y, alpha) {
-			return $$lib_gfx_blit_image_with_alpha(this, x, y, alpha);
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				8,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				0,
+				alpha) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegion(tx, ty, sx, sy, width, height) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1,
+				sx, sy, width, height,
+				0, 0,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawStretched(tx, ty, tw, th) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				2,
+				0, 0, 0, 0,
+				tw, th,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegionStretched(tx, ty, tw, th, sx, sy, sw, sh) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegionStretchedWithAlpha(tx, ty, tw, th, sx, sy, sw, sh, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2 | 8,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRotated(x, y, theta) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				4,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				theta,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRotatedWithAlpha(x, y, theta, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				4 | 8,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				theta,
+				alpha) ? null : Core.fail("Invalid arguments");
+		}
+		
+		function drawWithOptions(tx, ty, tw, th, sx, sy, sw, sh, theta, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2 | 4 | 8,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				theta,
+				alpha) ? null : Core.fail("Invalid arguments");
 		}
 
 		function flip(h, v) {
@@ -176,7 +296,7 @@ namespace GFX {
 
 		static function _framePreHandler() { return $$lib_gfx_image_sheet_pre_frame_handler(); }
 		static function _framePostHandler() { return $$lib_gfx_image_sheet_post_frame_handler(); }
-
+		
 		static function fromIds(ids) {
 			t = [];
 			e = "Image sheet ID must be a string or non-empty list of strings.";
@@ -208,28 +328,68 @@ namespace GFX {
 		}
 	}
 
-	namespace Draw {
-		function ellipse(left, top, width, height, r, g, b, a = 255) {
-			return $$lib_gfx_draw_ellipse(left, top, width, height, r, g, b, a);
+	enum _DrawCommands {
+		RECTANGLE = 1,
+		ELLIPSE = 2,
+		LINE = 3,
+		TRIANGLE = 4,
+		
+		/*
+			5
+			
+		*/
+		IMAGE = 5,
+		
+	}
+	
+	class Draw {
+		
+		static field _queue = new Object();
+		static constructor() {
+			$$lib_gfx_renderQueueAction(Draw._queue, 0); // essentially no-ops, but runs the queue initializers.
+			Game.GameWindow._frameEndHandlers.add(GFX.Draw._renderer);
+			Game.GameWindow._frameBeginHandlers.add(GFX.Draw._rendererReset);
+		}
+		constructor() { Core.fail(); }
+		
+		static function _renderer() {
+			// send the render queue to the platform renderer
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 1);
+		}
+		
+		static function _rendererReset() {
+			// clear the render queue
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+		}
+		
+		static function ellipse(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.ELLIPSE,
+				left, top, width, height, r, g, b, a);
 		}
 
-		function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
-			return $$lib_gfx_draw_line(startX, startY, endX, endY, strokeWidth, r, g, b, a);
+		static function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.LINE,
+				startX, startY, endX, endY, strokeWidth, r, g, b, a);
 		}
 
-		function rectangle(left, top, width, height, r, g, b, a = 255) {
-			return $$lib_gfx_draw_rectangle(left, top, width, height, r, g, b, a);
+		static function rectangle(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.RECTANGLE,
+				left, top, width, height, r, g, b, a);
 		}
 
-		function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
-			return $$lib_gfx_draw_triangle(ax, ay, bx, by, cx, cy, r, g, b, a);
+		static function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.TRIANGLE,
+				ax, ay, bx, by, cx, cy, r, g, b, a);
 		}
 
-		// It's okay if the compiler can't inline this like the others.
-		// You shouldn't be calling fill more than once per frame anyway so one-time performance is irrelevant.
-		function fill(r, g, b) {
+		static function fill(r, g, b) {
 			t = Game.GameWindow.instance;
-			return $$lib_gfx_fill_screen(r, g, b, t._w, t._h);
+			$$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+			return GFX.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
 		}
 	}
 }

@@ -1,0 +1,101 @@
+// There are 13 args. But not all are used. So don't pop them all.
+
+/*
+	args[0] -> Draw queue wrapper object.
+	args[1] -> image instance
+	
+	args[2] -> BIT MASK
+	
+	args[3-13] -> Copy these directly to the event queue
+*/
+valueStackSize -= 13;
+
+value = $_array_get(valueStack, valueStackSize);
+objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+
+// Get the event queue, expand it
+intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0)); // event queue
+len = $_cast('int', $_array_get(objArray1, 1)); // event queue virtual length
+if (len >= $_array_length(intArray1)) {
+	intArray2 = $_new_array('int', len * 2 + 16);
+	for (i = 0; i < len; i += 1) {
+		$_array_set(intArray2, i, $_array_get(intArray1, i));
+	}
+	intArray1 = intArray2;
+	$_array_set(objArray1, 0, intArray1);
+}
+$_array_set(objArray1, 1, len + 16);
+
+// Do the same with the image queue. Image queue is not created by the native data int writer, so it may be null.
+objArrayArray1 = $_cast('Array<Array<object>>', $_array_get(objArray1, 2)); // image queue
+if (objArrayArray1 == null) {
+	int1 = 0;
+	objArrayArray1 = $_new_array('Array<object>', 0);
+} else {
+	int1 = $_cast('int', $_array_get(objArray1, 3));
+}
+if (int1 >= $_array_length(objArrayArray1)) {
+	objArrayArray2 = $_new_array('Array<object>', int1 * 2 + 16);
+	for (i = 0; i < int1; i += 1) {
+		$_array_set(objArrayArray2, i, $_array_get(objArrayArray1, i));
+	}
+	objArrayArray1 = objArrayArray2;
+	$_array_set(objArray1, 2, objArrayArray1);
+}
+$_array_set(objArray1, 3, int1 + 1);
+
+// Add the image object's nativeData array to the image queue
+value = $_array_get(valueStack, valueStackSize + 1); // image instance
+objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+$_array_set(objArrayArray1, int1, ObjectInstance$objInstance1.nativeData);
+
+bool1 = true;
+
+// Bit mask
+value = $_array_get(valueStack, valueStackSize + 2);
+int1 = $_cast('int', Value$value.internalValue);
+$_array_set(intArray1, len, 5);
+$_array_set(intArray1, len + 1, int1);
+
+if ((int1 & 4) != 0) {
+	value = $_array_get(valueStack, valueStackSize + 11);
+	if (Value$value.type == Types.FLOAT) float1 = $_cast('double', Value$value.internalValue);
+	else if (Value$value.type == Types.INTEGER) float1 = $_cast('int', Value$value.internalValue);
+	else bool1 = false;
+	int2 = $_int(canonicalizeAngle(float1) * 1048576);
+	$_array_set(intArray1, len | 10, int2);
+}
+
+if (bool1 && (int1 & 8) != 0) {
+	value = $_array_get(valueStack, valueStackSize + 12);
+	if (Value$value.type == Types.INTEGER) int2 = $_cast('int', Value$value.internalValue);
+	else if (Value$value.type == Types.FLOAT) {
+		float1 = $_cast('double', Value$value.internalValue);
+		int2 = $_int(float1 + .5);
+	} else {
+		bool1 = false;
+	}
+	
+	if (int2 > 255) int2 = 255;
+	else if (int2 < 0) int2 = 0;
+}
+
+for (i = 0; i < 8; i += 1) {
+	// just blindly copy the rest of the numbers rounding floats to ints
+	value = $_array_get(valueStack, valueStackSize + 3 + i);
+	if (Value$value.type == Types.INTEGER) {
+		int2 = $_cast('int', Value$value.internalValue);
+	} else if (Value$value.type == Types.FLOAT) {
+		float1 = $_cast('double', Value$value.internalValue);
+		int2 = $_int(float1 + .5);
+	} else {
+		bool1 = false;
+		i = 9;
+	}
+	
+	$_array_set(intArray1, len + 2 + i, int2);
+}
+
+if (bool1) output = VALUE_TRUE;
+else output = VALUE_FALSE;

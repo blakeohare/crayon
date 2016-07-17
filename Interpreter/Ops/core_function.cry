@@ -405,6 +405,49 @@
 
 		output = buildFloat(fixFuzzyFloatPrecision($_math_log(float1) * $_cast('double', Value$arg2.internalValue)));
 		break;
+
+	case 27: $_comment('intQueueClear');
+		output = VALUE_NULL;
+		import inline "FrameworkFunctions/1_arg.cry";
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		if (ObjectInstance$objInstance1.nativeData != null) {
+			$_array_set(ObjectInstance$objInstance1.nativeData, 1, 0);
+		}
+		break;
+
+	case 28: $_comment('intQueueWrite16');
+		output = VALUE_NULL;
+		int1 = $_array_get(row, 2);
+		valueStackSize -= int1 + 1;
+
+		value = $_array_get(valueStack, valueStackSize);
+		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+		objArray1 = ObjectInstance$objInstance1.nativeData;
+		intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0));
+		len = $_cast('int', $_array_get(objArray1, 1));
+		if (len >= $_array_length(intArray1)) {
+			intArray2 = $_new_array('int', len * 2 + 16);
+			for (j = 0; j < len; j += 1) {
+				$_array_set(intArray2, j, $_array_get(intArray1, j));
+			}
+			intArray1 = intArray2;
+			$_array_set(objArray1, 0, intArray1);
+		}
+		$_array_set(objArray1, 1, len + 16);
+
+		for (i = int1 - 1; i >= 0; i -= 1) {
+			value = $_array_get(valueStack, valueStackSize + 1 + i);
+			if (Value$value.type == Types.INTEGER) {
+				int2 = $_cast('int', Value$value.internalValue);
+			} else if (Value$value.type == Types.FLOAT) {
+				float1 = $_cast('double', Value$value.internalValue) + .5;
+				int2 = $_int(float1);
+			} else {
+				return killExecution(stack, pc, "Input must be integers.");
+			}
+			$_array_set(intArray1, len + i, int2);
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

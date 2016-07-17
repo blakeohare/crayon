@@ -697,3 +697,10 @@ function @type('double') fixFuzzyFloatPrecision(@type('double') x) {
 	}
 	return x;
 }
+
+function @type('double') canonicalizeAngle(@type('double') a) {
+	@type('double') twopi = 2 * 3.14159265358979323846;
+	a = a % twopi;
+	if (a < 0) a += twopi;
+	return a;
+}

@@ -81,6 +81,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('int') int4 = 0;
 	@type('int') int5 = 0;
 	@type('int') i = 0;
+	@type('int') j = 0;
 	@type('double') float1 = 0.0;
 	@type('double') float2 = 0.0;
 	@type('double') float3 = 0.0;
@@ -104,7 +105,10 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('List<int>') intList1 = null;
 	@type('Array<Value>') valueArray1 = null;
 	@type('Array<int>') intArray1 = null;
+	@type('Array<int>') intArray2 = null;
 	@type('Array<object>') objArray1 = null;
+	@type('Array<Array<object>>') objArrayArray1 = null;
+	@type('Array<Array<object>>') objArrayArray2 = null;
 	@type('FunctionPointer') functionPointer1 = null;
 	@type('Dictionary<int, int>') intIntDict1 = null;
 	@type('StackFrame') stackFrame2 = null;

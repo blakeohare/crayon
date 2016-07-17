@@ -27,7 +27,7 @@ namespace %%%PROJECT_ID%%%
 			public int a;
 		}
 
-        public static void render(int[] commands, Image[] images, int length, int VW, int VH, int RW, int RH)
+        public static void render(int[] commands, int length, object[][] imagesNativeData, int VW, int VH, int RW, int RH)
         {
             bool scaled = VW != RW || VH != RH;
             int i = 0;
@@ -90,6 +90,12 @@ namespace %%%PROJECT_ID%%%
                         green = commands[i | 6];
                         blue = commands[i | 7];
                         alpha = commands[i | 8];
+
+						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
                         if (right >= 0 && left < VW && bottom > 0 && top < VH)
                         {
                             if (state == null || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
@@ -139,6 +145,12 @@ namespace %%%PROJECT_ID%%%
                         green = commands[i | 8];
                         blue = commands[i | 9];
                         alpha = commands[i | 10];
+						
+						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
                         if (state != null)
                         {
                             GL.End();
@@ -181,6 +193,12 @@ namespace %%%PROJECT_ID%%%
                         startY = top + height / 2;
                         width = width / 2;
                         height = height / 2;
+						
+						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
                         if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0)
                         {
                             if (state != null)
@@ -226,6 +244,12 @@ namespace %%%PROJECT_ID%%%
                         alpha = commands[i | 9];
                         left = startX;
                         right = startX;
+						
+						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
                         if (startX > endX)
                         {
                             left = endX;
@@ -328,7 +352,7 @@ namespace %%%PROJECT_ID%%%
                         }
                         break;
                     case 4:
-                        image = images[image_i];
+                        image = (Image) imagesNativeData[image_i][0];
                         image_i += 1;
                         startX = commands[i | 1];
                         startY = commands[i | 2];
@@ -394,7 +418,7 @@ namespace %%%PROJECT_ID%%%
                         GL.Vertex2(((int)(cx * RW) / VW), ((int)(cy * RH) / VH));
                         break;
                     case 3:
-                        image = images[image_i];
+                        image = (Image) imagesNativeData[image_i][0];
                         image_i += 1;
                         left = commands[i | 1];
                         top = commands[i | 2];

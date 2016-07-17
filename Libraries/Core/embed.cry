@@ -96,4 +96,6 @@
 		// individually passed arguments.
 		return fp(args);
 	}
+	
+	class Object { } // Sometimes you just need a dummy object.
 }
