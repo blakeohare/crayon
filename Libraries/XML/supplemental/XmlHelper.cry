@@ -27,6 +27,7 @@ function @type('string') lib_xml_parse(
 		$_dictionary_set(stringEnders, $_ord('\t'), 1);
 		$_dictionary_set(stringEnders, $_ord('\r'), 1);
 		$_dictionary_set(stringEnders, $_ord('\n'), 1);
+		$_dictionary_set(stringEnders, $_ord('/'), 1);
 	}
 
 	$_array_set(indexPtr, 0, 0);

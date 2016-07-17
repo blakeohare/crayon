@@ -15,6 +15,12 @@ namespace XML {
 		FAIL_SILENTLY = 8,
 	}
 	
+	enum NodeType {
+		ELEMENT,
+		TEXT,
+		COMMENT,
+	}
+	
 	class XmlElement {
 	
 		// the nativeData field of this dummy object contains some helper data structures for parsing.
@@ -23,6 +29,7 @@ namespace XML {
 		field name;
 		field attributes;
 		field children;
+		field type = NodeType.ELEMENT;
 		
 		constructor(name, attributes, children) {
 			this.name = name;
@@ -33,6 +40,7 @@ namespace XML {
 	
 	class XmlText {
 		field value;
+		field type = NodeType.TEXT;
 		constructor(value) {
 			this.value = value;
 		}
