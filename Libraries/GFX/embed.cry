@@ -182,29 +182,32 @@ namespace GFX {
 				alpha) ? null : Core.fail("Invalid arguments");
 		}
 
-		function drawRegion(tx, ty, sx, sy, width, height) {
+		function drawRegion(x, y, sx, sy, width, height) {
+			if (width == 0 || height == 0) return;
 			return $$lib_gfx_addImageRenderEvent(
 				GFX.Draw._queue, this,
 				1,
 				sx, sy, width, height,
 				0, 0,
-				tx, ty,
+				x, y,
 				0,
 				0) ? null : Core.fail("Invalid arguments");
 		}
 
-		function drawStretched(tx, ty, tw, th) {
+		function drawStretched(x, y, width, height) {
+			if (width == 0 || height == 0) return;
 			return $$lib_gfx_addImageRenderEvent(
 				GFX.Draw._queue, this,
 				2,
 				0, 0, 0, 0,
-				tw, th,
-				tx, ty,
+				width, height,
+				x, y,
 				0,
 				0) ? null : Core.fail("Invalid arguments");
 		}
 
 		function drawRegionStretched(tx, ty, tw, th, sx, sy, sw, sh) {
+			if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
 			return $$lib_gfx_addImageRenderEvent(
 				GFX.Draw._queue, this,
 				1 | 2,

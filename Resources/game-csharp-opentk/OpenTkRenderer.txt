@@ -7,29 +7,30 @@ namespace %%%PROJECT_ID%%%
 {
     public static class OpenTkRenderer
     {
-		private class GlRenderState
-		{
-			public GlRenderState(int mode, int textureId, int r, int g, int b, int a)
-			{
-				this.mode = mode;
-				this.textureId = textureId;
-				this.r = r;
-				this.g = g;
-				this.b = b;
-				this.a = a;
-			}
+        private class GlRenderState
+        {
+            public GlRenderState(int mode, int textureId, int r, int g, int b, int a)
+            {
+                this.mode = mode;
+                this.textureId = textureId;
+                this.r = r;
+                this.g = g;
+                this.b = b;
+                this.a = a;
+            }
 
-			public int mode;
-			public int textureId;
-			public int r;
-			public int g;
-			public int b;
-			public int a;
-		}
+            public int mode;
+            public int textureId;
+            public int r;
+            public int g;
+            public int b;
+            public int a;
+        }
 
         public static void render(int[] commands, int length, object[][] imagesNativeData, int VW, int VH, int RW, int RH)
         {
             bool scaled = VW != RW || VH != RH;
+            bool rotated = false;
             int i = 0;
             int image_i = 0;
             int width = 0;
@@ -45,6 +46,7 @@ namespace %%%PROJECT_ID%%%
             int startY = 0;
             int endX = 0;
             int endY = 0;
+            int mask = 0;
             double textureWidth = 0.0;
             double textureHeight = 0.0;
             double textureLeft = 0.0;
@@ -68,6 +70,8 @@ namespace %%%PROJECT_ID%%%
             double angle = 0.0;
             double r_cos = 0.0;
             double r_sin = 0.0;
+            double centerX = 0;
+            double centerY = 0;
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -91,10 +95,10 @@ namespace %%%PROJECT_ID%%%
                         blue = commands[i | 7];
                         alpha = commands[i | 8];
 
-						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (right >= 0 && left < VW && bottom > 0 && top < VH)
                         {
@@ -145,11 +149,11 @@ namespace %%%PROJECT_ID%%%
                         green = commands[i | 8];
                         blue = commands[i | 9];
                         alpha = commands[i | 10];
-						
-						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
+                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (state != null)
                         {
@@ -193,11 +197,11 @@ namespace %%%PROJECT_ID%%%
                         startY = top + height / 2;
                         width = width / 2;
                         height = height / 2;
-						
-						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
+                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0)
                         {
@@ -232,7 +236,7 @@ namespace %%%PROJECT_ID%%%
                             GL.End();
                         }
                         break;
-                    case 5:
+                    case 3:
                         startX = commands[i | 1];
                         startY = commands[i | 2];
                         endX = commands[i | 3];
@@ -244,11 +248,11 @@ namespace %%%PROJECT_ID%%%
                         alpha = commands[i | 9];
                         left = startX;
                         right = startX;
-						
-						if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-						if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-						if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-						if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
+                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (startX > endX)
                         {
@@ -351,21 +355,9 @@ namespace %%%PROJECT_ID%%%
                             GL.Vertex2(dx, dy);
                         }
                         break;
-                    case 4:
-                        image = (Image) imagesNativeData[image_i][0];
-                        image_i += 1;
-                        startX = commands[i | 1];
-                        startY = commands[i | 2];
-                        width = commands[i | 3];
-                        height = commands[i | 4];
-                        angle = commands[i | 5] / 1000000.0;
-                        alpha = 255;
-                        textureWidth = image.textureRight - image.textureLeft;
-                        textureHeight = image.textureBottom - image.textureTop;
-                        textureLeft = image.textureLeft;
-                        textureTop = image.textureTop;
-                        textureRight = textureLeft + textureWidth;
-                        textureBottom = textureTop + textureHeight;
+                    case 5:
+                        image = (Image)imagesNativeData[image_i++][0];
+
                         compositeImage = image.compositeResource;
                         if (!compositeImage.loaded)
                         {
@@ -377,8 +369,59 @@ namespace %%%PROJECT_ID%%%
                             compositeImage.glTextureId = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)compositeImage.nativeBitmap);
                             compositeImage.loaded = true;
                         }
+
+                        mask = commands[i | 1];
+                        rotated = (mask & 4) != 0;
                         textureId = compositeImage.glTextureId;
-                        if (state == null || state.mode != 1 || state.a != alpha || state.textureId != textureId)
+                        alpha = 255;
+                        startX = commands[i | 8]; // left
+                        startY = commands[i | 9]; // top
+
+                        // alpha
+                        if ((mask & 8) != 0)
+                        {
+                            alpha = commands[i | 11];
+                            if (alpha < 0 || alpha > 255) alpha = alpha < 0 ? 0 : 255;
+                        }
+
+
+                        textureWidth = image.textureRight - image.textureLeft;
+                        textureHeight = image.textureBottom - image.textureTop;
+
+                        // slice
+                        if ((mask & 1) != 0)
+                        {
+                            ax = commands[i | 2];
+                            ay = commands[i | 3];
+                            width = commands[i | 4];
+                            height = commands[i | 5];
+
+                            textureLeft = image.textureLeft + textureWidth * ax / image.width;
+                            textureRight = textureLeft + textureWidth * width / image.width;
+                            textureTop = image.textureTop + textureHeight * ay / image.height;
+                            textureBottom = textureTop + textureTop * height / image.height;
+                        }
+                        else
+                        {
+                            width = image.width;
+                            height = image.height;
+                            textureLeft = image.textureLeft;
+                            textureTop = image.textureTop;
+                            textureRight = textureLeft + textureWidth;
+                            textureBottom = textureTop + textureHeight;
+                        }
+
+                        // stretch
+                        if ((mask & 2) != 0)
+                        {
+                            width = commands[i | 6];
+                            height = commands[i | 7];
+                        }
+
+                        if (state == null ||
+                            state.mode != 1 ||
+                            state.a != alpha ||
+                            state.textureId != textureId)
                         {
                             if (state == null)
                             {
@@ -396,29 +439,50 @@ namespace %%%PROJECT_ID%%%
                             GL.BindTexture(TextureTarget.Texture2D, textureId);
                             GL.Begin(BeginMode.Quads);
                         }
-                        r_cos = Math.Cos(angle);
-                        r_sin = Math.Sin(angle);
-                        tx = width * 0.5;
-                        ty = height * 0.5;
-                        ax = (r_cos * -tx - r_sin * -ty) + startX;
-                        ay = (r_sin * -tx + r_cos * -ty) + startY;
-                        bx = (r_cos * tx - r_sin * -ty) + startX;
-                        by = (r_sin * tx + r_cos * -ty) + startY;
-                        cx = (r_cos * -tx - r_sin * ty) + startX;
-                        cy = (r_sin * -tx + r_cos * ty) + startY;
-                        dx = (r_cos * tx - r_sin * ty) + startX;
-                        dy = (r_sin * tx + r_cos * ty) + startY;
-                        GL.TexCoord2(textureLeft, textureTop);
-                        GL.Vertex2(((int)(ax * RW) / VW), ((int)(ay * RH) / VH));
-                        GL.TexCoord2(textureRight, textureTop);
-                        GL.Vertex2(((int)(bx * RW) / VW), ((int)(by * RH) / VH));
-                        GL.TexCoord2(textureRight, textureBottom);
-                        GL.Vertex2(((int)(dx * RW) / VW), ((int)(dy * RH) / VH));
-                        GL.TexCoord2(textureLeft, textureBottom);
-                        GL.Vertex2(((int)(cx * RW) / VW), ((int)(cy * RH) / VH));
+
+                        if (rotated)
+                        {
+                            angle = commands[i | 5] / 1048576.0;
+                            r_cos = Math.Cos(angle);
+                            r_sin = Math.Sin(angle);
+                            tx = width * 0.5;
+                            ty = height * 0.5;
+                            centerX = startX - tx;
+                            centerY = startY - ty;
+                            ax = (r_cos * -tx - r_sin * -ty) + centerX;
+                            ay = (r_sin * -tx + r_cos * -ty) + centerY;
+                            bx = (r_cos * tx - r_sin * -ty) + centerX;
+                            by = (r_sin * tx + r_cos * -ty) + centerY;
+                            cx = (r_cos * -tx - r_sin * ty) + centerX;
+                            cy = (r_sin * -tx + r_cos * ty) + centerY;
+                            dx = (r_cos * tx - r_sin * ty) + centerX;
+                            dy = (r_sin * tx + r_cos * ty) + centerY;
+                            GL.TexCoord2(textureLeft, textureTop);
+                            GL.Vertex2((int)(ax * RW / VW), (int)(ay * RH / VH));
+                            GL.TexCoord2(textureRight, textureTop);
+                            GL.Vertex2((int)(bx * RW / VW), (int)(by * RH / VH));
+                            GL.TexCoord2(textureRight, textureBottom);
+                            GL.Vertex2((int)(dx * RW / VW), (int)(dy * RH / VH));
+                            GL.TexCoord2(textureLeft, textureBottom);
+                            GL.Vertex2((int)(cx * RW / VW), (int)(cy * RH / VH));
+                        }
+                        else
+                        {
+                            endX = startX + width;
+                            endY = startY + height;
+                            GL.TexCoord2(textureLeft, textureTop);
+                            GL.Vertex2(startX * RW / VW, startY * RH / VH);
+                            GL.TexCoord2(textureRight, textureTop);
+                            GL.Vertex2(endX * RW / VW, startY * RH / VH);
+                            GL.TexCoord2(textureRight, textureBottom);
+                            GL.Vertex2(endX * RW / VW, endY * RH / VH);
+                            GL.TexCoord2(textureLeft, textureBottom);
+                            GL.Vertex2(startX * RW / VW, endY * RH / VH);
+                        }
                         break;
-                    case 3:
-                        image = (Image) imagesNativeData[image_i][0];
+
+                    case 103:
+                        image = (Image)imagesNativeData[image_i][0];
                         image_i += 1;
                         left = commands[i | 1];
                         top = commands[i | 2];
@@ -467,6 +531,7 @@ namespace %%%PROJECT_ID%%%
                                 GL.BindTexture(TextureTarget.Texture2D, textureId);
                                 GL.Begin(BeginMode.Quads);
                             }
+
                             if (scaled)
                             {
                                 GL.TexCoord2(textureLeft, textureTop);

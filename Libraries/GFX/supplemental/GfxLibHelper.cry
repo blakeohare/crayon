@@ -10,15 +10,15 @@ function @type('object') libGfxGetImgFromInstance(@type('Value') v) {
 	return $_array_get(ObjectInstance$oi.nativeData, 0);
 }
 
-// TODO: centralize this.
 function @type('int') libGfxSetImgOnInstance(@type('Value') inst, @type('object') img) {
 	@type('ObjectInstance') oi = $_cast('ObjectInstance', Value$inst.internalValue);
 	@type('Array<object>') nd = ObjectInstance$oi.nativeData;
-	if (nd == null) {
-		nd = $_new_array('object', 1);
+	if (nd == null || $_array_length(nd) != 3) {
+		nd = $_new_array('object', 3);
 		ObjectInstance$oi.nativeData = nd;
 	}
 	$_array_set(nd, 0, img);
+	libGfxGetImageSize(img, nd);
 	return 0;
 }
 
