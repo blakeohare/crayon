@@ -59,6 +59,7 @@ int1 = $_cast('int', Value$value.internalValue);
 $_array_set(intArray1, len, 5);
 $_array_set(intArray1, len + 1, int1);
 
+// rotation
 if ((int1 & 4) != 0) {
 	value = $_array_get(valueStack, valueStackSize + 11);
 	if (Value$value.type == Types.FLOAT) float1 = $_cast('double', Value$value.internalValue);
@@ -68,6 +69,7 @@ if ((int1 & 4) != 0) {
 	$_array_set(intArray1, len | 10, int2);
 }
 
+// alpha
 if (bool1 && (int1 & 8) != 0) {
 	value = $_array_get(valueStack, valueStackSize + 12);
 	if (Value$value.type == Types.INTEGER) int2 = $_cast('int', Value$value.internalValue);
@@ -82,6 +84,7 @@ if (bool1 && (int1 & 8) != 0) {
 	else if (int2 < 0) int2 = 0;
 }
 
+// copy all the numbers
 for (i = 0; i < 8; i += 1) {
 	// just blindly copy the rest of the numbers rounding floats to ints
 	value = $_array_get(valueStack, valueStackSize + 3 + i);
@@ -98,26 +101,48 @@ for (i = 0; i < 8; i += 1) {
 	$_array_set(intArray1, len + 2 + i, int2);
 }
 
+bool2 = false; // is noop
+
+// stretching
+if ((int1 & 2) != 0) {
+	int2 = $_array_get(intArray1, len + 8);
+	if (int2 < 0) bool1 = false;
+	else if (int2 == 0) bool2 = true;
+	int2 = $_array_get(intArray1, len + 9);
+	if (int2 < 0) bool1 = false;
+	else if (int2 == 0) bool2 = true;
+}
+
+// slicing
 if ((int1 & 1) != 0) {
 	int1 = $_cast('int', $_array_get(objArray1, 1)); // image width
-	int2 = $_array_get(intArray1, len + 4); // source x
-	int3 = $_array_get(intArray1, len + 6); // desired width
-	if (int2 < 0 || int2 >= int1 || int3 < 1 || int2 + int3 > int1) {
+	int2 = $_array_get(intArray1, len + 2); // source x
+	int3 = $_array_get(intArray1, len + 4); // desired width
+	if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
 		bool1 = false;
 	}
+	if (int3 == 0) bool2 = true;
 	
 	if (bool1) {
 		int1 = $_cast('int', $_array_get(objArray1, 2)); // image height
-		int2 = $_array_get(intArray1, len + 5); // source y
-		int3 = $_array_get(intArray1, len + 6); // desired height
-		if (int2 < 0 || int2 >= int1 || int3 < 1 || int2 + int3 > int1) {
+		int2 = $_array_get(intArray1, len + 3); // source y
+		int3 = $_array_get(intArray1, len + 5); // desired height
+		if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
 			bool1 = false;
 		}
+		if (int3 == 0) bool2 = true;
 	}
 }
 
-if (bool1) output = VALUE_TRUE;
-else {
+if (bool1) {
+	if (bool2) {
+		// noop (asked for 0 width or height, off-screen, etc.
+		objArray1 = ObjectInstance$objInstance1.nativeData;
+		$_array_set(objArray1, 1, $_cast('int', $_array_get(objArray1, 1)) - 16);
+		$_array_set(objArray1, 3, $_cast('int', $_array_get(objArray1, 3)) - 1);
+	}
+	output = VALUE_TRUE;
+} else {
 	// TODO: this is okay for now since this will cause a crash.
 	// however when exceptions become a thing, both queue lengths must be rolled back 
 	// so that if the exception is caught it won't render invalid data.

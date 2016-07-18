@@ -399,7 +399,7 @@ namespace %%%PROJECT_ID%%%
                             textureLeft = image.textureLeft + textureWidth * ax / image.width;
                             textureRight = textureLeft + textureWidth * width / image.width;
                             textureTop = image.textureTop + textureHeight * ay / image.height;
-                            textureBottom = textureTop + textureTop * height / image.height;
+                            textureBottom = textureTop + textureHeight * height / image.height;
                         }
                         else
                         {
@@ -442,21 +442,19 @@ namespace %%%PROJECT_ID%%%
 
                         if (rotated)
                         {
-                            angle = commands[i | 5] / 1048576.0;
+                            angle = commands[i | 10] / 1048576.0;
                             r_cos = Math.Cos(angle);
                             r_sin = Math.Sin(angle);
                             tx = width * 0.5;
                             ty = height * 0.5;
-                            centerX = startX - tx;
-                            centerY = startY - ty;
-                            ax = (r_cos * -tx - r_sin * -ty) + centerX;
-                            ay = (r_sin * -tx + r_cos * -ty) + centerY;
-                            bx = (r_cos * tx - r_sin * -ty) + centerX;
-                            by = (r_sin * tx + r_cos * -ty) + centerY;
-                            cx = (r_cos * -tx - r_sin * ty) + centerX;
-                            cy = (r_sin * -tx + r_cos * ty) + centerY;
-                            dx = (r_cos * tx - r_sin * ty) + centerX;
-                            dy = (r_sin * tx + r_cos * ty) + centerY;
+                            ax = (r_cos * -tx - r_sin * -ty) + startX;
+                            ay = (r_sin * -tx + r_cos * -ty) + startY;
+                            bx = (r_cos * tx - r_sin * -ty) + startX;
+                            by = (r_sin * tx + r_cos * -ty) + startY;
+                            cx = (r_cos * -tx - r_sin * ty) + startX;
+                            cy = (r_sin * -tx + r_cos * ty) + startY;
+                            dx = (r_cos * tx - r_sin * ty) + startX;
+                            dy = (r_sin * tx + r_cos * ty) + startY;
                             GL.TexCoord2(textureLeft, textureTop);
                             GL.Vertex2((int)(ax * RW / VW), (int)(ay * RH / VH));
                             GL.TexCoord2(textureRight, textureTop);
