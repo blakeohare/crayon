@@ -115,7 +115,8 @@ def _pygame_initialize_screen(width, height, pixel_dimensions, execId):
 	_global_vars['scaled_mode'] = scaled_mode
 
 	while v_runInterpreter(execId):
-		pass
+		gfxRender()
+		_pygame_end_of_frame()
 
 _PDL = pygame.draw.line
 _PDR = pygame.draw.rect

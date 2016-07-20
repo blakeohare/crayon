@@ -67,7 +67,13 @@ if ((int1 & 4) != 0) {
 	else bool1 = false;
 	int2 = $_int(canonicalizeAngle(float1) * 1048576);
 	$_array_set(intArray1, len | 10, int2);
+	if (int2 < 1) {
+		// angle is reasonably close to 0? unset the rotation bit
+		$_array_set(intArray1, len | 1, int1 - 4);
+	}
 }
+
+bool2 = false; // is noop
 
 // alpha
 if (bool1 && (int1 & 8) != 0) {
@@ -80,8 +86,14 @@ if (bool1 && (int1 & 8) != 0) {
 		bool1 = false;
 	}
 	
-	if (int2 > 255) int2 = 255;
-	else if (int2 < 0) int2 = 0;
+	if (int2 > 254) {
+		// alpha is 255? unset the alpha bit.
+		$_array_set(intArray1, len | 1, int1 - 8);
+	} else if (int2 < 0) {
+		bool2 = true;
+	} else {
+		$_array_set(intArray1, len | 11, int2);
+	}
 }
 
 // copy all the numbers
@@ -100,8 +112,6 @@ for (i = 0; i < 8; i += 1) {
 	
 	$_array_set(intArray1, len + 2 + i, int2);
 }
-
-bool2 = false; // is noop
 
 // stretching
 if ((int1 & 2) != 0) {
@@ -136,7 +146,7 @@ if ((int1 & 1) != 0) {
 
 if (bool1) {
 	if (bool2) {
-		// noop (asked for 0 width or height, off-screen, etc.
+		// noop (asked for 0 width or height, off-screen, 0 alpha, etc.
 		objArray1 = ObjectInstance$objInstance1.nativeData;
 		$_array_set(objArray1, 1, $_cast('int', $_array_get(objArray1, 1)) - 16);
 		$_array_set(objArray1, 3, $_cast('int', $_array_get(objArray1, 3)) - 1);

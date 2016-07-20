@@ -37,9 +37,10 @@ namespace Crayon.Translator.Python
             foreach (string file in new string[] {
                 "Imports.py",
                 "Header.py",
+                "GfxRenderer.py",
                 "ResourceReader.py",
-                "GamepadLibraryHelper.py", // TODO: conditionally include
-                "AsyncHttpFetcher.py", // TODO: conditionally include
+                "GamepadLibraryHelper.py",
+                "AsyncHttpFetcher.py",
             })
             {
                 concatenatedCode.Add(this.GetPyGameCode(file, replacements));

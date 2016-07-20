@@ -190,6 +190,7 @@
     <EmbeddedResource Include="game-python-pygame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="game-python-pygame\Footer.py" />
     <EmbeddedResource Include="game-python-pygame\GamepadLibraryHelper.py" />
+    <EmbeddedResource Include="game-python-pygame\GfxRenderer.py" />
     <EmbeddedResource Include="game-python-pygame\Header.py" />
     <EmbeddedResource Include="game-python-pygame\Imports.py" />
     <EmbeddedResource Include="game-python-pygame\ResourceReader.py" />
