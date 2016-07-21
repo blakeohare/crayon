@@ -1,13 +1,4 @@
-$_lib_gfx_blitImage: C$game$ctx.drawImage([ARG:1][1], [ARG:2], [ARG:3])
-$_lib_gfx_blitImageAlpha: C$drawing$drawImageWithAlpha([ARG:1][1], [ARG:2], [ARG:3], [ARG:4])
-$_lib_gfx_blitImagePartial: C$drawing$blitPartial([ARG:1][1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
-$_lib_gfx_blitImageRotated: C$drawing$blitRotated([ARG:1][1], [ARG:2], [ARG:3], [ARG:4])
 $_lib_gfx_download_image: C$images$downloadImage([ARG:1], [ARG:2])
-$_lib_gfx_drawEllipse: C$drawing$drawEllipse([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
-$_lib_gfx_drawLine: C$drawing$drawLine([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
-$_lib_gfx_drawRectangle: C$drawing$drawRect([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
-$_lib_gfx_drawTriangle: C$drawing$drawTriangle([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
-$_lib_gfx_fillScreen: C$drawing$fillScreen([ARG:1], [ARG:2], [ARG:3])
 $_lib_gfx_getTileDirectory: "resources/imagesheets/"
 $_lib_gfx_image_async_download_completed_payload: C$images$get_completed_image_if_downloaded([ARG:1])
 $_lib_gfx_image_create_flipped_copy_of_native_bitmap: C$drawing$flipImage([ARG:1], [ARG:2], [ARG:3])
@@ -17,3 +8,4 @@ $_lib_gfx_image_native_bitmap_height: [ARG:1].height
 $_lib_gfx_image_native_bitmap_width: [ARG:1].width
 $_lib_gfx_image_scale_native_resource: C$drawing$scaleImage([ARG:1], ([ARG:2], [ARG:3]))
 $_lib_gfx_image_sheet_get_manifest_file: C$common$getTextRes("image_sheet_manifest.txt")
+$_lib_gfx_render: C$drawing$rendererSetData([ARG:1], [ARG:2], [ARG:3])
