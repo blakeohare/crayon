@@ -9,11 +9,11 @@ namespace Crayon.Translator.Java
         {
             if (isErr)
             {
-                output.Add("System.err.println(\"\", ");
+                output.Add("System.err.println(");
             }
             else
             {
-                output.Add("System.out.println(\"\", ");
+                output.Add("System.out.println(");
             }
             this.Translator.TranslateExpression(output, expression);
             output.Add(")");
