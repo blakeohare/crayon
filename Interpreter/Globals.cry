@@ -9,10 +9,10 @@
 
 @uncontained @type('Dictionary<string, Value>') COMMON_STRINGS = $_new_dictionary('string', 'Value');
 
-// The following are used in the OpenGL render pipeline.
+// TODO: The following are used in the Libraries/GFX/supplemental and need to be moved.
 @uncontained @type('Array<int>') GL_DATA = $_new_array('int', 0);
 @uncontained @type('int') GL_VIRTUAL_SIZE = 0;
 @uncontained @type('int') GL_REAL_SIZE  = 0;
-@uncontained @type('Array<Image>') GL_IMAGES = $_new_array('Image', 0);
+@uncontained @type('Array<object>') GL_IMAGES = $_new_array('object', 0);
 @uncontained @type('int') GL_IMAGES_VIRTUAL_SIZE = 0;
 @uncontained @type('int') GL_IMAGES_REAL_SIZE = 0;

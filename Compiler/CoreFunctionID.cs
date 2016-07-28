@@ -30,6 +30,7 @@
         LN = 26,
         INT_QUEUE_CLEAR = 27,
         INT_QUEUE_WRITE_16 = 28,
+        EXECUTION_CONTEXT_COUNTER = 29,
     }
 
     public static class CoreFunctionIDHelper
@@ -43,6 +44,7 @@
                 case "print": return (int)CoreFunctionID.PRINT;
                 case "typeof": return (int)CoreFunctionID.TYPE_OF;
                 case "typeis": return (int)CoreFunctionID.TYPE_IS;
+                case "execCounter": return (int)CoreFunctionID.EXECUTION_CONTEXT_COUNTER;
                 case "execId": return (int)CoreFunctionID.EXECUTION_CONTEXT_ID;
                 case "assert": return (int)CoreFunctionID.ASSERT;
                 case "chr": return (int)CoreFunctionID.CHR;

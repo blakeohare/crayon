@@ -107,6 +107,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('Array<int>') intArray1 = null;
 	@type('Array<int>') intArray2 = null;
 	@type('Array<object>') objArray1 = null;
+	@type('Array<object>') objArray2 = null;
 	@type('Array<Array<object>>') objArrayArray1 = null;
 	@type('Array<Array<object>>') objArrayArray2 = null;
 	@type('FunctionPointer') functionPointer1 = null;

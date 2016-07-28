@@ -99,13 +99,13 @@ namespace Crayon.Translator.JavaScript
                 textResources["text/" + textFile.CanonicalFileName] = textFile.TextContent;
             }
 
-            foreach (string filename in resourceDatabase.SpriteSheetFiles.Keys)
+            foreach (string filename in resourceDatabase.ImageSheetFiles.Keys)
             {
-                FileOutput imageSheetFile = resourceDatabase.SpriteSheetFiles[filename];
+                FileOutput imageSheetFile = resourceDatabase.ImageSheetFiles[filename];
                 output["resources/imagesheets/" + filename] = imageSheetFile;
             }
 
-            textResources["image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile.TextContent;
+            textResources["image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
 
             foreach (FileOutput audioFile in resourceDatabase.AudioResources)
             {

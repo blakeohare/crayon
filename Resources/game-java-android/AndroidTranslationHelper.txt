@@ -75,7 +75,7 @@ class AndroidTranslationHelper {
     }
 
     public static android.graphics.Bitmap readLocalTileResource(String path) {
-        return context.loadBitmap("spritesheets/" + path + ".png");
+        return context.loadBitmap("imagesheets/" + path + ".png");
     }
 
     public static android.graphics.Bitmap flushImagetteToBitmap(Imagette imagette) {

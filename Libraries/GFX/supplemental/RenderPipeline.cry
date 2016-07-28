@@ -1,4 +1,4 @@
-﻿
+
 function @type('bool') glFillScreen(
 	@type('int') red,
 	@type('int') green,

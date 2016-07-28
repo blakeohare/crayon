@@ -28,15 +28,15 @@ namespace Crayon.Translator.CSharp
 
             List<string> additionalAndroidAssets = new List<string>();
 
-            if (resourceDatabase.SpriteSheetManifestFile != null)
+            if (resourceDatabase.ImageSheetManifestFile != null)
             {
-                foreach (string tileName in resourceDatabase.SpriteSheetFiles.Keys)
+                foreach (string tileName in resourceDatabase.ImageSheetFiles.Keys)
                 {
                     additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\ImageSheets\\" + tileName + "\" />");
-                    files[projectId + "/Assets/ImageSheets/" + tileName] = resourceDatabase.SpriteSheetFiles[tileName];
+                    files[projectId + "/Assets/ImageSheets/" + tileName] = resourceDatabase.ImageSheetFiles[tileName];
                 }
 
-                files[projectId + "/Assets/imageSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                files[projectId + "/Assets/imageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
                 additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\imageSheetManifest.txt\" />");
             }
 

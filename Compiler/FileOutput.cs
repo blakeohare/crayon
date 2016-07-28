@@ -8,7 +8,7 @@
         Image,
 
         // A stub indicating the original file path of a file that was once here but is no longer
-        // present at this location. This is for things like images that are in sprite sheets.
+        // present at this location. This is for things like images that are in image sheets.
         Ghost,
     }
 
@@ -32,8 +32,8 @@
         // Ghost types will have this set.
         public string OriginalPath { get; set; }
 
-        // Set on images that are included as a sprite sheet. Type is changed to Ghost after processing.
-        public string SpriteSheetId { get; set; }
+        // Set on images that are included as a image sheet. Type is changed to Ghost after processing.
+        public string ImageSheetId { get; set; }
 
         // An auto-assigned filename that doesn't have special characters.
         public string CanonicalFileName { get; set; }

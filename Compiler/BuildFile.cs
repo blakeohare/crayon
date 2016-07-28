@@ -12,9 +12,9 @@ namespace Crayon
         public string ProjectID { get; set; }
         public string OutputFolder { get; set; }
         public string SourceFolder { get; set; }
-        public Dictionary<string, string[]> SpriteSheetPrefixesById { get; set; }
+        public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
         public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; private set; }
-        public string[] SpriteSheetIds { get; set; }
+        public string[] ImageSheetIds { get; set; }
         public string JsFilePrefix { get; set; }
         public string Platform { get; set; }
         public bool Minified { get; set; }
@@ -50,9 +50,9 @@ namespace Crayon
             [XmlElement("output")]
             public string Output { get; set; }
 
-            [XmlArray("spritesheets")]
+            [XmlArray("imagesheets")]
             [XmlArrayItem("sheet")]
-            public SpriteSheet[] SpriteSheets { get; set; }
+            public ImageSheet[] ImageSheets { get; set; }
 
             [XmlElement("jsfileprefix")]
             public string JsFilePrefix { get; set; }
@@ -119,7 +119,7 @@ namespace Crayon
             public string EnvironmentVarValue { get; set; }
         }
 
-        public class SpriteSheet
+        public class ImageSheet
         {
             [XmlAttribute("id")]
             public string Id { get; set; }
@@ -182,7 +182,7 @@ namespace Crayon
             flattened.Source = DoReplacement(targetName, desiredTarget.Source ?? flattened.Source);
             flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
             flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
-            flattened.SpriteSheets = MergeSpriteSheets(desiredTarget.SpriteSheets, flattened.SpriteSheets);
+            flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
             flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
             flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
             flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
@@ -194,8 +194,8 @@ namespace Crayon
                 Platform = desiredTarget.Platform,
                 ProjectID = flattened.ProjectName,
                 SourceFolder = flattened.Source,
-                SpriteSheetPrefixesById = flattened.SpriteSheets.ToDictionary<SpriteSheet, string, string[]>(s => s.Id, s => s.Prefixes),
-                SpriteSheetIds = flattened.SpriteSheets.Select<SpriteSheet, string>(s => s.Id).ToArray(),
+                ImageSheetPrefixesById = flattened.ImageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
+                ImageSheetIds = flattened.ImageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 Minified = flattened.Minified,
                 ReadableByteCode = flattened.ExportDebugByteCode,
                 BuildVariableLookup = varLookup,
@@ -343,19 +343,19 @@ namespace Crayon
             return output;
         }
 
-        private static SpriteSheet[] MergeSpriteSheets(SpriteSheet[] originalSheets, SpriteSheet[] newSheets)
+        private static ImageSheet[] MergeImageSheets(ImageSheet[] originalSheets, ImageSheet[] newSheets)
         {
             Dictionary<string, List<string>> prefixDirectLookup = new Dictionary<string, List<string>>();
             List<string> order = new List<string>();
 
-            originalSheets = originalSheets ?? new SpriteSheet[0];
-            newSheets = newSheets ?? new SpriteSheet[0];
+            originalSheets = originalSheets ?? new ImageSheet[0];
+            newSheets = newSheets ?? new ImageSheet[0];
 
-            foreach (SpriteSheet sheet in originalSheets.Concat<SpriteSheet>(newSheets))
+            foreach (ImageSheet sheet in originalSheets.Concat<ImageSheet>(newSheets))
             {
                 if (sheet.Id == null)
                 {
-                    throw new InvalidOperationException("Sprite sheet is missing an ID.");
+                    throw new InvalidOperationException("Image sheet is missing an ID.");
                 }
 
                 if (!prefixDirectLookup.ContainsKey(sheet.Id))
@@ -367,8 +367,8 @@ namespace Crayon
             }
 
             return order
-                .Select<string, SpriteSheet>(
-                    id => new SpriteSheet()
+                .Select<string, ImageSheet>(
+                    id => new ImageSheet()
                     {
                         Id = id,
                         Prefixes = prefixDirectLookup[id].ToArray()

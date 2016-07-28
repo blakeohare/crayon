@@ -54,7 +54,6 @@
     <EmbeddedResource Include="IOManager.cry" />
     <EmbeddedResource Include="MetadataInitializer.cry" />
     <EmbeddedResource Include="NetworkManager.cry" />
-    <EmbeddedResource Include="OpenGlPipeline.cry" />
     <EmbeddedResource Include="Ops\add_literal.cry" />
     <EmbeddedResource Include="Ops\add_name.cry" />
     <EmbeddedResource Include="Ops\assign_index.cry" />
@@ -95,7 +94,6 @@
     <EmbeddedResource Include="Ops\pop_if_null_or_jump.cry" />
     <EmbeddedResource Include="Ops\push_func_ref.cry" />
     <EmbeddedResource Include="Ops\return.cry" />
-    <EmbeddedResource Include="Ops\sprite_sheet_builder.cry" />
     <EmbeddedResource Include="Ops\stack_insertion_for_increment.cry" />
     <EmbeddedResource Include="Ops\stack_swap_pop.cry" />
     <EmbeddedResource Include="Ops\switch_int.cry" />

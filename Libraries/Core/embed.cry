@@ -89,6 +89,10 @@
 		return $$$('execId');
 	}
 	
+	function getExecutionIterationCounter() {
+		return $$$('execCounter');
+	}
+	
 	// Interanlly called by fp.invoke(args)
 	function _LIB_CORE_invoke(fp, args) {
 		// MAGIC ALERT: There is a special compiler hack that checks specifically for this line (based on parent 

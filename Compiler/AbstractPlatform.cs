@@ -165,18 +165,22 @@ namespace Crayon
 
             ResourceDatabase resourceDatabase = new ResourceDatabase(allFiles, inputFolder);
 
-            SpriteSheetBuilder spriteSheetBuilder = new SpriteSheetBuilder();
-            if (buildContext.SpriteSheetIds != null)
+            ImageSheets.ImageSheetBuilder imageSheetBuilder = new ImageSheets.ImageSheetBuilder();
+            if (buildContext.ImageSheetIds != null)
             {
-                foreach (string spriteSheetId in buildContext.SpriteSheetIds)
+                foreach (string imageSheetId in buildContext.ImageSheetIds)
                 {
-                    foreach (string fileMatcher in buildContext.SpriteSheetPrefixesById[spriteSheetId])
+                    imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+                    
+                    foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
                     {
-                        spriteSheetBuilder.AddPrefix(spriteSheetId, fileMatcher);
+                        imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
                     }
                 }
             }
-            spriteSheetBuilder.Generate(resourceDatabase);
+            ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+            resourceDatabase.AddImageSheets(imageSheets);
 
             resourceDatabase.GenerateResourceMapping();
 

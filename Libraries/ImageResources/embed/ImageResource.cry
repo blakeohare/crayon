@@ -1,0 +1,21 @@
+
+namespace ImageResources {
+	class ImageResource {
+	
+		field _nativeResource;
+		field _width;
+		field _height;
+		
+		// Do not document init. Only used internally.
+		constructor(width, height, init = true) {
+			this._width = width;
+			this._height = height;
+			if (init) {
+				this._nativeResource = new NativeImageData(width, height);
+			}
+		}
+		
+		function getWidth() { return this._width; }
+		function getHeight() { return this._height; }
+	}
+}

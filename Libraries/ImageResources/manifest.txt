@@ -1,0 +1,7 @@
+NAME: ImageResources
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/imageresources
+DESCRIPTION: synchronous and asynchronous image and image sheet loaders
+
+BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: false
+[game-javascript] BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: true

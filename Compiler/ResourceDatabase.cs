@@ -54,9 +54,9 @@ namespace Crayon
         public FileOutput ByteCodeFile { get; set; }
         public ByteBuffer ByteCodeRawData { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
-        public FileOutput SpriteSheetManifestFile { get; set; }
+        public FileOutput ImageSheetManifestFile { get; set; }
 
-        public Dictionary<string, FileOutput> SpriteSheetFiles { get; set; }
+        public Dictionary<string, FileOutput> ImageSheetFiles { get; set; }
         public List<FileOutput> FontSheetFiles { get; set; }
 
         public List<FileOutput> AudioResources { get; set; }
@@ -86,7 +86,7 @@ namespace Crayon
             this.ImageResources = new List<FileOutput>();
             this.TextResources = new List<FileOutput>();
             this.FontResources = new List<FileOutput>();
-            this.SpriteSheetFiles = new Dictionary<string, FileOutput>();
+            this.ImageSheetFiles = new Dictionary<string, FileOutput>();
             this.FontSheetFiles = new List<FileOutput>();
 
             // Everything is just a basic copy resource at first.
@@ -196,6 +196,76 @@ namespace Crayon
                 }
             }
         }
+        
+        // TODO: move into its own helper class in the ImageSheets namespace.
+        public void AddImageSheets(IList<ImageSheets.Sheet> sheets)
+        {
+            int tileCounter = 1;
+            List<string> manifest = new List<string>();
+            int sheetCounter = 0;
+            foreach (ImageSheets.Sheet sheet in sheets)
+            {
+                manifest.Add("S," + sheetCounter++ + "," + sheet.ID);
+
+                List<ImageSheets.Chunk> jpegChunks = new List<ImageSheets.Chunk>();
+                foreach (ImageSheets.Chunk chunk in sheet.Chunks)
+                {
+                    if (chunk.IsJPEG)
+                    {
+                        jpegChunks.Add(chunk);
+                    }
+                    else
+                    {
+                        int width = chunk.Width;
+                        int height = chunk.Height;
+                        if (width == 1024 && height == 1024)
+                        {
+                            width = 0;
+                            height = 0;
+                        }
+                        manifest.Add("C," + width + "," + height);
+                        foreach (ImageSheets.Tile tile in chunk.Tiles)
+                        {
+                            tile.GeneratedFilename = "t" + (tileCounter++) + (chunk.IsJPEG ? ".jpg" : ".png");
+                            manifest.Add("T," + tile.GeneratedFilename + "," + tile.ChunkX + "," + tile.ChunkY + "," + tile.Width + "," + tile.Height + "," + tile.Bytes);
+                            
+                            if (tile.IsDirectCopy)
+                            {
+                                this.ImageSheetFiles[tile.GeneratedFilename] = tile.OriginalFile;
+                            }
+                            else
+                            {
+                                this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
+                                {
+                                    Bitmap = tile.Bitmap,
+                                    Type = FileOutputType.Image,
+                                };
+                            }
+                        }
+
+                        foreach (ImageSheets.Image image in chunk.Members)
+                        {
+                            manifest.Add("I," + image.ChunkX + "," + image.ChunkY + "," + image.Width + "," + image.Height + "," + image.OriginalPath);
+                        }
+                    }
+                }
+
+                foreach (ImageSheets.Chunk jpegChunk in jpegChunks)
+                {
+                    ImageSheets.Tile jpegTile = jpegChunk.Tiles[0];
+                    manifest.Add("J," + jpegTile.GeneratedFilename + "," + jpegTile.Width + "," + jpegTile.Height + "," + jpegTile.Bytes + "," + jpegTile.OriginalFile.RelativeInputPath);
+                }
+            }
+            
+            if (manifest.Count > 0)
+            {
+                this.ImageSheetManifestFile = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join("\n", manifest),
+                };
+            }
+        }
 
         public void GenerateResourceMapping()
         {
@@ -208,18 +278,36 @@ namespace Crayon
                 manifest.Add("TXT," + textFile.OriginalPath + "," + textFile.CanonicalFileName);
             }
 
+            List<string> imageSheetManifestFileAdditions = new List<string>();
             i = 1;
             foreach (FileOutput imageFile in this.ImageResources)
             {
                 if (imageFile.Type == FileOutputType.Ghost)
                 {
-                    manifest.Add("IMGSH," + imageFile.OriginalPath + ",," + imageFile.SpriteSheetId);
+                    manifest.Add("IMGSH," + imageFile.OriginalPath + ",," + imageFile.ImageSheetId);
                 }
                 else
                 {
                     bool isPng = imageFile.OriginalPath.ToLower().EndsWith(".png");
                     imageFile.CanonicalFileName = "i" + (i++) + (isPng ? ".png" : ".jpg");
                     manifest.Add("IMG," + imageFile.OriginalPath + "," + imageFile.CanonicalFileName);
+                    imageSheetManifestFileAdditions.Add("A," + imageFile.CanonicalFileName + "," + imageFile.Bitmap.Width + "," + imageFile.Bitmap.Height + "," + imageFile.OriginalPath);
+                }
+            }
+
+            if (imageSheetManifestFileAdditions.Count > 0)
+            {
+                if (this.ImageSheetManifestFile == null)
+                {
+                    this.ImageSheetManifestFile = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = string.Join("\n", imageSheetManifestFileAdditions),
+                    };
+                }
+                else
+                {
+                    this.ImageSheetManifestFile.TextContent += "\n" + string.Join("\n", imageSheetManifestFileAdditions);
                 }
             }
 

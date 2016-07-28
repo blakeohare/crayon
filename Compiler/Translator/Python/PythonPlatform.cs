@@ -64,7 +64,7 @@ namespace Crayon.Translator.Python
             };
 
             output["resources/byte_code.txt"] = resourceDatabase.ByteCodeFile;
-            output["resources/image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+            output["resources/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)
@@ -77,7 +77,7 @@ namespace Crayon.Translator.Python
                 output["resources/audio/" + audioFile.CanonicalFileName] = audioFile;
             }
 
-            Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.SpriteSheetFiles;
+            Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.ImageSheetFiles;
             if (imageSheetTiles != null)
             {
                 foreach (string tileName in imageSheetTiles.Keys)

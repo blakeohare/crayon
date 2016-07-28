@@ -26,22 +26,6 @@ namespace %%%PROJECT_ID%%%
 			return GameWindow.Instance.GetEvents();
 		}
 		
-		public static object ImagetteFlushToNativeBitmap(Imagette img)
-		{
-			System.Drawing.Bitmap target = new System.Drawing.Bitmap(img.width, img.height);
-			target.SetResolution(96, 96);
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
-			for (int i = img.nativeBitmaps.Count - 1; i >= 0; i--)
-			{
-				System.Drawing.Bitmap source = (System.Drawing.Bitmap)img.nativeBitmaps[i];
-				int x = img.xs[i];
-				int y = img.ys[i];
-				g.DrawImage(source, x, y);
-			}
-			g.Flush();
-			return target;
-		}
-
 		public static void MakeHttpRequestWithHandler(HttpRequest httpRequest, string method, string url, string body, string userAgent, string contentType, string contentLength, List<string> headerNames, List<string> headerValues)
 		{
 			System.ComponentModel.BackgroundWorker bgRequest = new System.ComponentModel.BackgroundWorker();
@@ -110,7 +94,9 @@ namespace %%%PROJECT_ID%%%
 			};
 			bgWorker.RunWorkerCompleted += (sender, args) =>
 			{
-				CrayonWrapper.v_imageDownloadCompletionHandler(key, args.Result);
+				// TODO: bring this back.
+				throw new NotImplementedException();
+				//CrayonWrapper.v_imageDownloadCompletionHandler(key, args.Result);
 			};
 			bgWorker.RunWorkerAsync();
 		}
@@ -348,5 +334,69 @@ namespace %%%PROJECT_ID%%%
 		{
 			return SdlDotNet.Audio.MusicPlayer.IsPlaying;
 		}
+		
+        public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
+        {
+            bool isDone = false;
+            lock (imageLoaderNativeData[3])
+            {
+                isDone = (int)imageLoaderNativeData[2] != 0;
+            }
+
+            output[0] = isDone ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
+        }
+
+        public static void ImageLoadAsync(
+			string filename,
+			object[] nativeImageDataNativeData,
+			object[] imageLoaderNativeData)
+        {
+            imageLoaderNativeData[3] = new object();
+            System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
+            bgw.DoWork += (sender, args) =>
+            {
+                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+                
+                lock(imageLoaderNativeData[3])
+                {
+                    imageLoaderNativeData[2] = loaded ? 1 : 2;
+                }
+            };
+            
+            bgw.RunWorkerAsync();
+        }
+        
+        public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
+        {
+            System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("Resources/Images/" + filename);
+            if (bmp != null)
+            {
+                if (statusOutCheesy != null) statusOutCheesy.Reverse();
+                nativeImageDataNativeData[0] = bmp;
+                nativeImageDataNativeData[1] = bmp.Width;
+                nativeImageDataNativeData[2] = bmp.Height;
+                return true;
+            }
+            return false;
+        }
+
+        public static string GetImageResourceManifestString()
+        {
+            return ResourceReader.ReadTextFile("Resources/ImageSheetManifest.txt") ?? "";
+        }
+
+        public static object GenerateNativeBitmapOfSize(int width, int height)
+        {
+            return new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        }
+
+        public static void BlitImage(
+            object targetBmp, object sourceBmp,
+            int targetX, int targetY,
+            int sourceX, int sourceY,
+            int width, int height)
+        {
+            throw new NotImplementedException();
+        }
 	}
 }
