@@ -6,6 +6,10 @@ namespace ImageResources {
 		field _width;
 		field _height;
 		
+		// top-left location within the _nativeResource
+		field _x = 0;
+		field _y = 0;
+		
 		// Do not document init. Only used internally.
 		constructor(width, height, init = true) {
 			this._width = width;

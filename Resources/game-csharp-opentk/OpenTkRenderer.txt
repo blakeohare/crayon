@@ -27,7 +27,7 @@ namespace %%%PROJECT_ID%%%
             public int a;
         }
 
-        public static void render(int[] commands, int length, object[][] imagesNativeData, int VW, int VH, int RW, int RH)
+        public static void render(int[] commands, int length, object[][] texturesNativeData, int VW, int VH, int RW, int RH)
         {
             bool scaled = VW != RW || VH != RH;
             bool rotated = false;
@@ -47,12 +47,18 @@ namespace %%%PROJECT_ID%%%
             int endX = 0;
             int endY = 0;
             int mask = 0;
-            double textureWidth = 0.0;
-            double textureHeight = 0.0;
-            double textureLeft = 0.0;
-            double textureRight = 0.0;
-            double textureTop = 0.0;
-            double textureBottom = 0.0;
+            double textureWidth;
+            double textureHeight;
+			double textureResourceWidth;
+			double textureResourceHeight;
+            double textureLeft;
+            double textureRight;
+            double textureTop;
+            double textureBottom;
+			double croppedLeft;
+			double croppedRight;
+			double croppedTop;
+			double croppedBottom;
             double slope = 0.0;
             double slopeScalingCoefficient = 0.0;
             double offsetXComp = 0.0;
@@ -77,8 +83,8 @@ namespace %%%PROJECT_ID%%%
             int blue = 0;
             int alpha = 0;
             int textureId = (-1);
-            Image image = null;
-            CompositeImage compositeImage = null;
+            object[] textureNativeData;
+            object[] textureResourceNativeData;
             GlRenderState state = null;
             int[] textureArray = new int[1];
             while (i < length)
@@ -356,23 +362,23 @@ namespace %%%PROJECT_ID%%%
                         }
                         break;
                     case 5:
-                        image = (Image)imagesNativeData[image_i++][0];
+                        textureNativeData = texturesNativeData[image_i++];
+						textureResourceNativeData = (object[])textureNativeData[0];
 
-                        compositeImage = image.compositeResource;
-                        if (!compositeImage.loaded)
+                        if (!(bool)textureResourceNativeData[1])
                         {
                             if (state != null)
                             {
                                 state = null;
                                 GL.End();
                             }
-                            compositeImage.glTextureId = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)compositeImage.nativeBitmap);
-                            compositeImage.loaded = true;
+                            textureResourceNativeData[2] = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)textureResourceNativeData[3]);
+                            textureResourceNativeData[1] = true;
                         }
 
                         mask = commands[i | 1];
                         rotated = (mask & 4) != 0;
-                        textureId = compositeImage.glTextureId;
+                        textureId = (int)textureResourceNativeData[2];
                         alpha = 255;
                         startX = commands[i | 8]; // left
                         startY = commands[i | 9]; // top
@@ -384,9 +390,17 @@ namespace %%%PROJECT_ID%%%
                             if (alpha < 0 || alpha > 255) alpha = alpha < 0 ? 0 : 255;
                         }
 
+						textureLeft = (double)textureNativeData[1];
+						textureTop = (double)textureNativeData[2];
+						textureRight = (double)textureNativeData[3];
+						textureBottom = (double)textureNativeData[4];
+						width = (int)textureNativeData[5];
+						height = (int)textureNativeData[6];
 
-                        textureWidth = image.textureRight - image.textureLeft;
-                        textureHeight = image.textureBottom - image.textureTop;
+                        textureWidth = textureRight - textureLeft;
+                        textureHeight = textureBottom - textureTop;
+						textureResourceWidth = (int)textureResourceNativeData[4];
+						textureResourceHeight = (int)textureResourceNativeData[5];
 
                         // slice
                         if ((mask & 1) != 0)
@@ -395,20 +409,16 @@ namespace %%%PROJECT_ID%%%
                             ay = commands[i | 3];
                             width = commands[i | 4];
                             height = commands[i | 5];
+							
+							croppedLeft = textureLeft + textureWidth * ax / textureResourceWidth;
+							croppedRight = croppedLeft + textureWidth * width / textureResourceWidth;
+							croppedTop = textureTop + textureHeight * ay / textureResourceHeight;
+							croppedBottom = textureTop + textureHeight * height / textureResourceHeight;
 
-                            textureLeft = image.textureLeft + textureWidth * ax / image.width;
-                            textureRight = textureLeft + textureWidth * width / image.width;
-                            textureTop = image.textureTop + textureHeight * ay / image.height;
-                            textureBottom = textureTop + textureHeight * height / image.height;
-                        }
-                        else
-                        {
-                            width = image.width;
-                            height = image.height;
-                            textureLeft = image.textureLeft;
-                            textureTop = image.textureTop;
-                            textureRight = textureLeft + textureWidth;
-                            textureBottom = textureTop + textureHeight;
+                            textureLeft = croppedLeft;
+                            textureRight = croppedRight;
+                            textureTop = croppedTop;
+                            textureBottom = croppedBottom;
                         }
 
                         // stretch
@@ -479,81 +489,6 @@ namespace %%%PROJECT_ID%%%
                         }
                         break;
 
-                    case 103:
-                        image = (Image)imagesNativeData[image_i][0];
-                        image_i += 1;
-                        left = commands[i | 1];
-                        top = commands[i | 2];
-                        right = commands[i | 3] + left;
-                        bottom = commands[i | 4] + top;
-                        startX = commands[i | 5];
-                        startY = commands[i | 6];
-                        width = commands[i | 7];
-                        height = commands[i | 8];
-                        alpha = commands[i | 9];
-                        if (right >= 0 && left < VW && bottom >= 0 && top < VH)
-                        {
-                            textureWidth = image.textureRight - image.textureLeft;
-                            textureHeight = image.textureBottom - image.textureTop;
-                            textureLeft = image.textureLeft + (textureWidth * startX) / image.width;
-                            textureTop = image.textureTop + (textureHeight * startY) / image.height;
-                            textureRight = textureLeft + (textureWidth * width) / image.width;
-                            textureBottom = textureTop + (textureHeight * height) / image.height;
-                            compositeImage = image.compositeResource;
-                            if (!compositeImage.loaded)
-                            {
-                                if (state != null)
-                                {
-                                    state = null;
-                                    GL.End();
-                                }
-                                compositeImage.glTextureId = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)compositeImage.nativeBitmap);
-                                compositeImage.loaded = true;
-                            }
-                            textureId = compositeImage.glTextureId;
-                            if (state == null || state.mode != 1 || state.a != alpha || state.textureId != textureId)
-                            {
-                                if (state == null)
-                                {
-                                    state = new GlRenderState(0, 0, 0, 0, 0, 0);
-                                }
-                                else
-                                {
-                                    GL.End();
-                                }
-                                state.mode = 1;
-                                state.textureId = textureId;
-                                state.a = alpha;
-                                GL.Enable(EnableCap.Texture2D);
-                                GL.Color4((byte)255, (byte)255, (byte)255, (byte)alpha);
-                                GL.BindTexture(TextureTarget.Texture2D, textureId);
-                                GL.Begin(BeginMode.Quads);
-                            }
-
-                            if (scaled)
-                            {
-                                GL.TexCoord2(textureLeft, textureTop);
-                                GL.Vertex2(left * RW / VW, top * RH / VH);
-                                GL.TexCoord2(textureRight, textureTop);
-                                GL.Vertex2(right * RW / VW, top * RH / VH);
-                                GL.TexCoord2(textureRight, textureBottom);
-                                GL.Vertex2(right * RW / VW, bottom * RH / VH);
-                                GL.TexCoord2(textureLeft, textureBottom);
-                                GL.Vertex2(left * RW / VW, bottom * RH / VH);
-                            }
-                            else
-                            {
-                                GL.TexCoord2(textureLeft, textureTop);
-                                GL.Vertex2(left, top);
-                                GL.TexCoord2(textureRight, textureTop);
-                                GL.Vertex2(right, top);
-                                GL.TexCoord2(textureRight, textureBottom);
-                                GL.Vertex2(right, bottom);
-                                GL.TexCoord2(textureLeft, textureBottom);
-                                GL.Vertex2(left, bottom);
-                            }
-                        }
-                        break;
                     default:
                         return;
                 }

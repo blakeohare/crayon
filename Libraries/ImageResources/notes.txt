@@ -139,7 +139,7 @@ GfxTexture
 - width - width and height of just this image within the sheet
 - height
 
-GfxTextureDatabase
+GfxTextureDatabase (static lookup dictionary on GfxTextureResource)
 - Dictionary<resourceVersionKey, gfxTextureResource> loadedResources
 
 PixelSession

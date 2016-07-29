@@ -261,8 +261,6 @@ namespace %%%PROJECT_ID%%%
 
 		private void Update()
 		{
-			CrayonWrapper.v_glResetDrawBuffer();
-
 			bool continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
 
 			if (!continueExecution)

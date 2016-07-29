@@ -1,0 +1,227 @@
+import Math;
+import ImageResources;
+
+namespace GFX {
+	class GfxTexture {
+		/*
+			nativeData[0] -> weak reference to GfxTextureResource's nativeData
+			
+			nativeData[1] -> texture left
+			nativeData[2] -> texture top
+			nativeData[3] -> texture right
+			nativeData[4] -> texture button
+			nativeData[5] -> width
+			nativeData[6] -> height
+		*/
+		
+		field _gfxTextureResource;
+		field width;
+		field height;
+		
+		static field REUSABLE_WIDTH_HEIGHT_OUT = [0, 0];
+		static function createImage(imageResource) {
+			atlasNativeResource = imageResource._nativeResource;
+			atlasNativeResource.verifyUnlocked();
+			width = imageResource._width;
+			height = imageResource._height;
+			
+			if ($$lib_gfx_isPlatformUsingTextureAtlas()) { // TODO: compile time constant functions
+				// only create a new texture resource if one doesn't exist that already has the same atlas backing it
+				key = atlasNativeResource.resourceFingerprint;
+				textureResource = GfxTextureResource.database.get(key);
+				if (textureResource == null) {
+					textureResource = new GfxTextureResource();
+					newWidth = GfxTexture._nextPowerOf2(atlasNativeResource.width);
+					newHeight = GfxTexture._nextPowerOf2(atlasNativeResource.height);
+					textureResource.width = newWidth;
+					textureResource.height = newHeight;
+					img = new ImageResources.NativeImageData(NativeImageDataConstructionType.SIZE, [newWidth, newHeight]);
+					atlasDummyWrapper = new ImageResources.ImageResource(atlasNativeResource.width, atlasNativeResource.height, false);
+					atlasDummyWrapper._nativeResource = atlasNativeResource; 
+					img.lock();
+					img.blit(atlasDummyWrapper, 0, 0);
+					img.unlock();
+					$$lib_gfx_initializeTextureResource(textureResource, img);
+				}
+				x = imageResource._x;
+				y = imageResource._y;
+				tfw = textureResource.width + 0.0;
+				tfh = textureResource.height + 0.0;
+				textureCoords = [x / tfw, y / tfh, (x + width) / tfw, (y + height) / tfh];
+			} else {
+				// create a new texture each time.
+				img = new ImageResources.NativeImageData(NativeImageDataConstructionType.SIZE, [width, height]);
+				img.lock();
+				img.blit(imageResource, 0, 0);
+				img.unlock();
+				textureResource = new GfxTextureResource();
+				textureResource.width = width;
+				textureResource.height = height;
+				$$lib_gfx_initializeTextureResource(textureResource, img);
+				textureCoords = [0.0, 0.0, 1.0, 1.0];
+			}
+			texture = new GfxTexture(textureResource, width, height);
+			$$lib_gfx_initializeTexture(texture, textureResource, textureCoords, width, height);
+			return texture;
+		}
+		
+		static function _nextPowerOf2(num) {
+			if ((num & (num - 1)) == 0) return num;
+			for (walker = num / 2; walker > 0; walker /= 2) {
+				num |= walker;
+			}
+			return walker + 1;
+		}
+		
+		// TODO: make this private
+		constructor(ref, width, height) {
+			this._gfxTextureResource = ref;
+			this.width = width;
+			this.height = height;
+		}
+		
+		/*
+			[0] -> GFX._DrawCommands.IMAGE,
+			
+			[1] -> optionFlagsBitMask {
+				1 - slice,
+				2 - stretch,
+				4 - rotate,
+				8 - alpha
+			}
+			
+			// used if slice is enabled
+			[2] -> sourceX, 
+			[3] -> sourceY,
+			[4] -> sourceWidth,
+			[5] -> sourceHeight,
+			
+			// used if stretch is enabled
+			[6] -> drawWidth,
+			[7] -> drawHeight
+			
+			// these are top left corner unless rotate flag is enabled
+			[8] -> targetX, 
+			[9] -> targetY,
+			
+			// used if rotate is enabled
+			[10] -> theta * 1048576,
+			
+			// used if alpha is enabled
+			[11] -> alpha value
+			
+		*/
+		function draw(x, y) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				0,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawWithAlpha(x, y, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				8,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				0,
+				alpha) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegion(x, y, sx, sy, width, height) {
+			if (width == 0 || height == 0) return;
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1,
+				sx, sy, width, height,
+				0, 0,
+				x, y,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawStretched(x, y, width, height) {
+			if (width == 0 || height == 0) return;
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				2,
+				0, 0, 0, 0,
+				width, height,
+				x, y,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegionStretched(tx, ty, tw, th, sx, sy, sw, sh) {
+			if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRegionStretchedWithAlpha(tx, ty, tw, th, sx, sy, sw, sh, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2 | 8,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				0,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRotated(x, y, theta) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				4,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				theta,
+				0) ? null : Core.fail("Invalid arguments");
+		}
+
+		function drawRotatedWithAlpha(x, y, theta, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				4 | 8,
+				0, 0, 0, 0,
+				0, 0,
+				x, y,
+				theta,
+				alpha) ? null : Core.fail("Invalid arguments");
+		}
+		
+		function drawWithOptions(tx, ty, tw, th, sx, sy, sw, sh, theta, alpha) {
+			return $$lib_gfx_addImageRenderEvent(
+				GFX.Draw._queue, this,
+				1 | 2 | 4 | 8,
+				sx, sy, sw, sh,
+				tw, th,
+				tx, ty,
+				theta,
+				alpha) ? null : Core.fail("Invalid arguments");
+		}
+
+		// TODO: 90 degree rotations would be nice and simple.
+
+		function flip(h, v) {
+			Core.fail("TODO: re-implement this.");
+		}
+
+		function scale(w, h) {
+			// TODO: also do scaling with negative sizes.
+			Core.fail("TODO: re-implement this.");
+		}
+	}
+}

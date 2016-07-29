@@ -1,0 +1,66 @@
+import  Game;
+
+namespace GFX {
+	
+	enum _DrawCommands {
+		RECTANGLE = 1,
+		ELLIPSE = 2,
+		LINE = 3,
+		TRIANGLE = 4,
+		IMAGE = 5,
+	}
+	
+	class Draw {
+		
+		static field _queue = new Core.Object();
+		
+		static constructor() {
+			$$lib_gfx_renderQueueAction(Draw._queue, 0); // essentially no-ops, but runs the queue initializers.
+			Game.GameWindow._frameEndHandlers.add(GFX.Draw._renderer);
+			Game.GameWindow._frameBeginHandlers.add(GFX.Draw._rendererReset);
+		}
+		
+		// TODO: static classes
+		constructor() { Core.fail(); }
+		
+		static function _renderer() {
+			// send the render queue to the platform renderer
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 1);
+		}
+		
+		static function _rendererReset() {
+			// clear the render queue
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+		}
+		
+		static function ellipse(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.ELLIPSE,
+				left, top, width, height, r, g, b, a);
+		}
+
+		static function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.LINE,
+				startX, startY, endX, endY, strokeWidth, r, g, b, a);
+		}
+
+		static function rectangle(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.RECTANGLE,
+				left, top, width, height, r, g, b, a);
+		}
+
+		static function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.TRIANGLE,
+				ax, ay, bx, by, cx, cy, r, g, b, a);
+		}
+
+		static function fill(r, g, b) {
+			t = Game.GameWindow.instance;
+			$$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+			return GFX.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
+		}
+	}
+}
