@@ -69,8 +69,8 @@ namespace Crayon.Translator.CSharp
                 foreach (string imageSheetFile in resourceDatabase.ImageSheetFiles.Keys)
                 {
                     FileOutput fileOutput = resourceDatabase.ImageSheetFiles[imageSheetFile];
-                    files[projectId + "/Resources/ImageSheets/" + imageSheetFile] = fileOutput;
-                    embeddedResources.Add("Resources\\ImageSheets\\" + imageSheetFile);
+                    files[projectId + "/Resources/Images/" + imageSheetFile] = fileOutput;
+                    embeddedResources.Add("Resources\\Images\\" + imageSheetFile);
                 }
             }
 

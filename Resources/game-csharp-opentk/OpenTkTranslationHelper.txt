@@ -345,27 +345,27 @@ namespace %%%PROJECT_ID%%%
 
             output[0] = isDone ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
         }
-
+		
         public static void ImageLoadAsync(
-			string filename,
-			object[] nativeImageDataNativeData,
-			object[] imageLoaderNativeData)
+            string filename,
+            object[] nativeImageDataNativeData,
+            object[] imageLoaderNativeData)
         {
             imageLoaderNativeData[3] = new object();
             System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
             bgw.DoWork += (sender, args) =>
             {
                 bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
-                
-                lock(imageLoaderNativeData[3])
+
+                lock (imageLoaderNativeData[3])
                 {
                     imageLoaderNativeData[2] = loaded ? 1 : 2;
                 }
             };
-            
+
             bgw.RunWorkerAsync();
         }
-        
+
         public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
         {
             System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("Resources/Images/" + filename);
@@ -396,7 +396,14 @@ namespace %%%PROJECT_ID%%%
             int sourceX, int sourceY,
             int width, int height)
         {
-            throw new NotImplementedException();
+            System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
+            System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
+            g.DrawImage(
+                source,
+                new System.Drawing.Rectangle(targetX, targetY, width, height),
+                new System.Drawing.Rectangle(sourceX, sourceY, width, height),
+                System.Drawing.GraphicsUnit.Pixel);
         }
 	}
 }

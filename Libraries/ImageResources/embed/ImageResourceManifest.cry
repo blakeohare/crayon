@@ -13,6 +13,7 @@ namespace ImageResources {
 		static field resourceInfo = null;
 		static field sheetInfo = null;
 		static field sheetIdByName = {};
+		static field filesBySheetId = {};
 		
 		static function getFileInfo(filename, sheetOnly = false) {
 			ImageResourceManifest.ensureInitialized();
@@ -37,6 +38,7 @@ namespace ImageResources {
 		}
 		
 		static function getSheetInfo(name) {
+			ImageResourceManifest.ensureInitialized();
 			if (Core.typeof(name) != Core.Type.STRING) Core.fail("Image sheet ID must be a string");
 			id = ImageResourceManifest.sheetIdByName.get(name);
 			if (id == null) Core.fail("Image sheet with ID of '" + name + "' not found.");
@@ -108,6 +110,12 @@ namespace ImageResources {
 						height = Core.parseInt(parts[4]);
 						filename = parts[5:].join(',').trim();
 						resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, x, y, width, height];
+						files = ImageResourceManifest.filesBySheetId.get(activeSheetId);
+						if (files == null) {
+							files = [];
+							ImageResourceManifest.filesBySheetId[activeSheetId] = files;
+						}
+						files.add(filename);
 						break;
 					
 					case 'J': // A JPEG that is a member of a sheet logically but is its own chunk
@@ -127,6 +135,10 @@ namespace ImageResources {
 						};
 						break;
 				}
+			}
+			
+			for (files : ImageResourceManifest.filesBySheetId.values()) {
+				files.sort();
 			}
 		}
 	}

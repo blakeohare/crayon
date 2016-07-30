@@ -63,5 +63,14 @@ namespace ImageResources {
 			
 			return progress / this._weight;
 		}
+		
+		function getFiles() {
+			output = [];
+			for (sheet : this._orderedSheets) {
+				output.concat(sheet.getFiles());
+			}
+			output.sort();
+			return output;
+		}
 	}
 }

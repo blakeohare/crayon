@@ -24,7 +24,7 @@ namespace ImageResources {
 			
 			chunks = info['chunks'];
 			tiles = [];
-			for (chunk : chunks) {
+			for (chunk : chunks.values()) {
 				tiles.concat(chunk['tiles']);
 			}
 			
@@ -35,7 +35,14 @@ namespace ImageResources {
 			} else {
 				lookup = {};
 				for (tile : tiles) {
-					lookup[tile] = ImageLoader._loadImpl(tile, true, false, null, null);
+					genName = tile[0];
+					width = tile[3];
+					height = tile[4];
+					lookup[genName] = ImageLoader._loadImpl(
+						genName,
+						true, // is generated name
+						false, // is asynchronous
+						width, height);
 				}
 				this._turnTilesIntoSheet(lookup);
 			}
@@ -127,11 +134,15 @@ namespace ImageResources {
 				}
 				res.unlock();
 				while (chunks.length <= chunkId) { chunks.add(null); }
-				chunks[chunkId] = chunk;
+				chunks[chunkId] = img;
 			}
 			this._chunks = chunks;
 			this._isLoaded = true;
 			this._info = null; // no longer needed. feed to the GC.
+		}
+		
+		function getFiles() {
+			return ImageResourceManifest.filesBySheetId[this._id].clone();
 		}
 	}
 	
