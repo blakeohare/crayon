@@ -3,16 +3,21 @@ import GFX;
 class ImageLibrary {
 	static field images = {};
 	static field flippedImages = {};
+	static field textures = {};
 	
 	constructor() { }
 	
 	static function get(path) {
-		img = ImageLibrary.images.get(path);
-		if (img == null) {
-			img = ImageLoader.fromResource('images/' + path).getImage();
-			ImageLibrary.images[path] = img;
+		texture = ImageLibrary.textures.get(path);
+		if (texture == null) {
+			texture = GfxTexture.createImage(ImageLibrary.getResource(path));
+			ImageLibrary.textures[path] = texture;
 		}
-		return img;
+		return texture;
+	}
+	
+	static function getResource(path) {
+		return ImageLibrary.images[path];
 	}
 	
 	static function getFlipped(path) {
@@ -22,5 +27,12 @@ class ImageLibrary {
 			ImageLibrary.flippedImages[path] = img;
 		}
 		return img;
+	}
+	
+	static function populateLibrary(sheet) {
+		for (file : sheet.getFiles()) {
+			key = file['images/'.length:];
+			ImageLibrary.images[key] = sheet.getImage(file);
+		}
 	}
 }

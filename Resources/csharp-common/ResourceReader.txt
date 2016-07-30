@@ -28,15 +28,17 @@ namespace %%%PROJECT_ID%%%
 			return ReadTextFile("Resources/ByteCode.txt");
 		}
 
-		public static System.Drawing.Bitmap ReadImageFile(string path)
-		{
-			IList<byte> data = ReadBytes(path);
-			if (data == null)
-			{
-				return null;
-			}
-			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
-		}
+        public static System.Drawing.Bitmap ReadImageFile(string path)
+        {
+            IList<byte> data = ReadBytes(path);
+            if (data == null)
+            {
+                return null;
+            }
+            MemoryStream ms = new MemoryStream(data.ToArray());
+            ms.Seek(0, SeekOrigin.Begin); // Seems redundant but randomly crashes without it.
+            return (Bitmap)Bitmap.FromStream(ms);
+        }
 
 		public static System.IO.Stream GetResourceStream(string path)
 		{

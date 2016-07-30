@@ -1,4 +1,5 @@
 import GFX;
+import ImageResources;
 import Math;
 
 class LoadingScene : AbstractScene {
@@ -15,13 +16,14 @@ class LoadingScene : AbstractScene {
 	field counter = 0;
 	
 	constructor() : base() {
-		this.loader = ImageSheetLoader.fromIds('everything');
+		this.loader = ImageSheet.loadFromResourcesAsync('everything');
 	}
 	
 	function update(isTap) {
 		if (this.loader.isDone() && this.counter >= FPS && this.postCompletionCounter == 0) {
 			this.switchSceneWithFade(new TitleScene());
 			this.postCompletionCounter++;
+			ImageLibrary.populateLibrary(this.loader);
 		} else if (this.postCompletionCounter > 0) {
 			this.postCompletionCounter++;
 		}

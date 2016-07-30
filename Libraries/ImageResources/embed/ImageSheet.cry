@@ -31,7 +31,7 @@ namespace ImageResources {
 			this._weight = tiles.length;
 			
 			if (isAsync) {
-				this._loader = new ImageResources.ImageSheetLoaderAsync(tiles);
+				this._loader = new ImageResources.ImageSheetLoaderAsync(tiles).load();
 			} else {
 				lookup = {};
 				for (tile : tiles) {
@@ -157,8 +157,16 @@ namespace ImageResources {
 		
 		function load() {
 			for (tile : this.tiles) {
-				this.inProgress[tile[0]] = ImageLoader._loadImpl(tile[0], true, true, null, null);
+				genName = tile[0];
+				width = tile[3];
+				height = tile[4];
+				this.inProgress[genName] = ImageLoader._loadImpl(
+					genName,
+					true, // is generated filename
+					true, // is asynchronous
+					width, height);
 			}
+			return this;
 		}
 		
 		function getStatus(out) {
