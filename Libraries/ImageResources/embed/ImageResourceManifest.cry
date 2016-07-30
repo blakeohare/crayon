@@ -12,10 +12,35 @@ namespace ImageResources {
 		
 		static field resourceInfo = null;
 		static field sheetInfo = null;
+		static field sheetIdByName = {};
 		
-		static function getFileInfo(filename) {
+		static function getFileInfo(filename, sheetOnly = false) {
 			ImageResourceManifest.ensureInitialized();
-			return ImageResourceManifest.resourceInfo.get(filename);
+			output = ImageResourceManifest.resourceInfo.get(filename);
+			if (output == null) {
+				nkey = filename.trim().replace('\\', '/');
+				output = ImageResourceManifest.resourceInfo.get(nkey);
+				if (output != null) {
+					ImageResourceManifest.resourceInfo[filename] = output;
+				}
+			}
+			
+			if (output == null) {
+				Core.fail("Resource '" + filename + "' does not exist.");
+			}
+			
+			if (sheetOnly && output[0] != ImgResourceType.SHEET) {
+				Core.fail("Resource '" + filename + "' is standalone and not included in an image sheet.");
+			}
+			
+			return output;
+		}
+		
+		static function getSheetInfo(name) {
+			if (Core.typeof(name) != Core.Type.STRING) Core.fail("Image sheet ID must be a string");
+			id = ImageResourceManifest.sheetIdByName.get(name);
+			if (id == null) Core.fail("Image sheet with ID of '" + name + "' not found.");
+			return ImageResourceManifest.sheetInfo[id];
 		}
 		
 		static function ensureInitialized() {
@@ -45,8 +70,10 @@ namespace ImageResources {
 						name = parts[2:].join(',').trim();
 						sheetInfo[activeSheetId] = {
 							'name': name,
+							'id': activeSheetId,
 							'chunks': {},
 						};
+						ImageResourceManifest.sheetIdByName[name] = activeSheetId;
 						break;
 						
 					case 'C': // declare a new chunk

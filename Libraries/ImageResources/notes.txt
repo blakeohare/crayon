@@ -60,7 +60,8 @@ and dimension info.
 sheetInfo is a lookup of sheet information based on sheet ID...
 {
 	<SHEET ID>: {
-		name: <NAME>
+		name: <NAME>,
+		id: <ID>,
 		chunks: {
 			<CHUNK ID>: {
 				width: <WIDTH>
