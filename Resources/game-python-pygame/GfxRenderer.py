@@ -27,7 +27,7 @@ def gfxRender():
 
 		if command == 5:
 			mask = events[i | 1]
-			image = images[imageIndex][0][1]
+			image = images[imageIndex][0][3]
 			imageIndex += 1
 			x = events[i | 8]
 			y = events[i | 9]
@@ -115,7 +115,6 @@ def gfxRender():
 				t = pygame.Surface(wh).convert()
 				t.blit(screen, (-area[0], -area[1]))
 				if command == 1:
-					print color
 					t.fill(color)
 				else:
 					pygame.draw.ellipse(t, color, (0, 0, w[0], h[0]))
