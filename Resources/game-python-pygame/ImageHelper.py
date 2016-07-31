@@ -25,7 +25,7 @@ def _checkLoaderIsDone(imageLoaderNativeData, nativeImageDataNativeData, output)
 	output[0] = v_VALUE_TRUE if isDone else v_VALUE_FALSE
 
 def _generateNativeBitmapOfSize(w, h):
-	return pygame.Surface((w, h)).convert_alpha()
+	return pygame.Surface((w, h), pygame.SRCALPHA)
 
 def _imageResourceBlitImage(target, source, targetX, targetY, sourceX, sourceY, width, height):
 	target.blit(source, (targetX, targetY, width, height), area = (sourceX, sourceY, width, height))

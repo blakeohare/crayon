@@ -52,7 +52,7 @@ namespace GFX {
 				// create a new texture each time.
 				img = new ImageResources.NativeImageData(NativeImageDataConstructionType.SIZE, [width, height]);
 				img.lock();
-				img.blit(imageResource, 0, 0);
+				img.blit(imageResource, -imageResource._x, -imageResource._y);
 				img.unlock();
 				textureResource = new GfxTextureResource();
 				textureResource.width = width;
