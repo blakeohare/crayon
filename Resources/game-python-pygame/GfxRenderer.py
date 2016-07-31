@@ -76,8 +76,8 @@ def gfxRender():
 							w, h = rotated.get_size()
 							screen.blit(rotated, (x - w // 2, y - h // 2))
 						else:
-							rotateTempImg = pygame.Surface((tw, th)).convert_alpha()
-							rotateTempImg.blit(image, (0, 0, tw, th), (sx, sy, sw, sh))
+							rotatedTempImg = pygame.Surface((tw, th), pygame.SRCALPHA)
+							rotatedTempImg.blit(image, (0, 0, tw, th), (sx, sy, sw, sh))
 							rotated = pygame.transform.rotate(rotatedTempImg, angle)
 							x -= rotated.get_width() // 2
 							y -= rotated.get_height() // 2
@@ -86,7 +86,7 @@ def gfxRender():
 							else:
 								screen.blit(rotated, (x, y))
 					else:
-						imgToBlit = pygame.Surface((tw, th)).convert_alpha()
+						imgToBlit = pygame.Surface((tw, th), pygame.SRCALPHA)
 						imgToBlit.blit(image, (0, 0, tw, th), (sx, sy, sw, sh))
 
 					if imgToBlit != None:
@@ -95,7 +95,7 @@ def gfxRender():
 						if w > tempImgWidth or h > tempImgHeight:
 							tempImgWidth = max(tempImgWidth, w)
 							tempImgHeight = max(tempImgHeight, h)
-							tempImg = pygame.Surface((tempImgWidth, tempImgHeight)).convert()
+							tempImg = pygame.Surface((tempImgWidth, tempImgHeight)) # intentionally no alpha channel
 						tempImg.blit(screen, (-x, -y, w, h))
 						tempImg.blit(imgToBlit, (0, 0))
 						tempImg.set_alpha(alpha)
@@ -111,7 +111,7 @@ def gfxRender():
 					pygame.draw.ellipse(screen, color, area)
 			elif alpha > 0:
 				wh = area[2:]
-				t = pygame.Surface(wh).convert()
+				t = pygame.Surface(wh) # intenionally no alpha channel
 				t.blit(screen, (-area[0], -area[1]))
 				if command == 1:
 					t.fill(color)

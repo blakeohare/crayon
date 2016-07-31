@@ -118,34 +118,6 @@ def _pygame_initialize_screen(width, height, pixel_dimensions, execId):
 		gfxRender()
 		_pygame_end_of_frame()
 
-_PDL = pygame.draw.line
-_PDR = pygame.draw.rect
-_PR = pygame.Rect
-
-_temp_image = [None]
-
-def _blit_image_with_alpha(surface, x, y, alpha):
-	scr = _global_vars['virtual_screen']
-	if alpha > 0:
-		if alpha >= 255:
-			scr.blit(surface, (x, y))
-		else:
-			# TODO: there must be a better way
-			temp = _temp_image[0]
-			if temp == None:
-				w = surface.get_width()
-				h = surface.get_height()
-				if w < 100: w = 100
-				if h < 100: h = 100
-				temp = pygame.Surface((w, h)).convert()
-				_temp_image[0] = temp
-			temp.blit(scr, (-x, -y))
-			temp.blit(surface, (0, 0))
-			temp.set_alpha(alpha)
-			scr.blit(temp, (x, y), surface.get_rect())
-
-_images_downloaded = {}
-
 def create_assertion(message):
 	raise Exception(message)
 
@@ -158,13 +130,6 @@ def create_sorted_copy_of_list(items):
 	items.sort()
 	return items
 
-def flush_imagette(imagette):
-	width, height, images, xs, ys = imagette
-	output = pygame.Surface((width, height), pygame.SRCALPHA)
-	for i in range(len(images)):
-		output.blit(images[i], (xs[i], ys[i]))
-	return output
-
 def load_local_image_resource(path):
 	path = path.replace('/', os.sep);
 	if not os.path.exists(path): return None
@@ -172,39 +137,6 @@ def load_local_image_resource(path):
 		return pygame.image.load(path)
 	except:
 		return None
-
-def blit_partial(surface, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight):
-	if sourceWidth == targetWidth and sourceHeight == targetHeight:
-		_global_vars['virtual_screen'].blit(surface, (targetX, targetY), _PR(sourceX, sourceY, sourceWidth, sourceHeight))
-	else:
-		# PyGame makes me sad.
-		scale_x = 1.0 * targetWidth / sourceWidth
-		scale_y = 1.0 * targetHeight / sourceHeight
-		original_width, original_height = surface.get_size()
-		calculated_full_width = int(original_width * scale_x)
-		calculated_full_height = int(original_height * scale_y)
-		t_surf = get_temporary_image(calculated_full_width, calculated_full_height)
-		pygame.transform.scale(surface, (calculated_full_width, calculated_full_height), t_surf)
-		source_x_scaled = int(sourceX * scale_x)
-		source_y_scaled = int(sourceY * scale_y)
-		_global_vars['virtual_screen'].blit(t_surf, (targetX, targetY), _PR(source_x_scaled, source_y_scaled, targetWidth, targetHeight))
-
-def blit_rotated(surface, x, y, theta):
-	# Kills your performance dead.
-	# One of these days, I'll use a Python OpenGL implementation like pyglet instead. But for now...
-	oh_god = pygame.transform.rotate(surface[1], -theta * 180 / math.pi)
-	w, h = oh_god.get_size()
-	_global_vars['virtual_screen'].blit(oh_god, (x - w // 2, y - h // 2))
-	
-
-_temp_image_cache = {}
-def get_temporary_image(width, height):
-	key = width * 1000000000 + height
-	img = _temp_image_cache.get(key, None)
-	if img == None:
-		img = pygame.Surface((width, height)).convert_alpha()
-		_temp_image_cache[key] = img
-	return img
 
 def wrappedChr(code):
 	if code < 0 or code > 255: return '?'
@@ -242,9 +174,6 @@ def _pygame_end_of_frame():
 	else:
 		_global_vars['pumped'] = False
 
-def _pygame_flip_image(img, flipx, flipy):
-	return pygame.transform.flip(img, flipx, flipy)
-
 def _parse_json(raw):
 	import json
 	try:
@@ -279,96 +208,6 @@ def _parse_json_thing(item):
 			values.append(_parse_json_thing(item[key]))
 		return v_buildDictionary(keys, values);
 	return v_VALUE_NULL;
-
-_TEMP_SURFACE = [None]
-def draw_rectangle(x, y, width, height, r, g, b, a):
-	# Pygame has a bug where it doesn't draw rectangles if the height is 1.
-	if a == 255 and height > 1:
-		_PDR(_global_vars['virtual_screen'], (r, g, b), _PR(x, y, width, height))
-	elif a > 0:
-		ts = _TEMP_SURFACE[0]
-		if ts == None:
-			ts = pygame.Surface(_global_vars['virtual_screen'].get_size()).convert()
-		ts.fill((r, g, b))
-		ts.set_alpha(a)
-		_global_vars['virtual_screen'].blit(ts, (x, y), _PR(0, 0, width, height))
-
-_POLYGON_SURFACE = [None]
-_POLYGON_BG = (123, 249, 19)
-_POLYGON_BG_ALT = (122, 249, 19)
-def draw_triangle(x1, y1, x2, y2, x3, y3, r, g, b, a):
-	if a >= 255:
-		pygame.draw.polygon(_global_vars['virtual_screen'], (r, g, b), ((x1, y1), (x2, y2), (x3, y3)))
-	elif a > 0:
-		bounds = [x1, y1, x1, y1]
-		if x2 < x1: bounds[0] = x2
-		else: bounds[2] = x2
-
-		if y2 < y1:  bounds[1] = y2
-		else: bounds[3] = y2
-
-		if x3 < bounds[0]: bounds[0] = x3
-		elif x3 > bounds[2]: bounds[2] = x3
-
-		if y3 < bounds[1]: bounds[1] = y3
-		elif y3 > bounds[3]: bounds[3] = y3
-		
-		w = bounds[2] - bounds[0]
-		h = bounds[3] - bounds[1]
-
-		if w == 0 or h == 0: return
-
-		ts = _POLYGON_SURFACE[0]
-		
-		if ts == None:
-			ts = pygame.Surface((w, h)).convert()
-			_POLYGON_SURFACE[0] = ts
-
-		tw, th = ts.get_size()
-		if tw < w or th < h:
-			nw = max(tw, w)
-			nh = max(th, h)
-			ts = pygame.Surface((nw, nh)).convert()
-			_POLYGON_SURFACE[0] = ts
-
-		bg = _POLYGON_BG # just some random uncommon color
-		if r == bg[0] and g == bg[1] and b == bg[2]:
-			bg = _POLYGON_BG_ALT
-		ts.fill(bg)
-		ts.set_colorkey(bg)
-		left = bounds[0]
-		top = bounds[1]
-		pygame.draw.polygon(ts, (r, g, b), ((x1 - left, y1 - top), (x2 - left, y2 - top), (x3 - left, y3 - top)))
-		ts.set_alpha(a)
-		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, w, h))
-
-def draw_ellipse(left, top, width, height, r, g, b, a):
-	
-	if a >= 255:
-		pygame.draw.ellipse(_global_vars['virtual_screen'], (r, g, b), pygame.Rect(left, top, width, height))
-	elif a > 0:
-		if width == 0 or height == 0: return
-		ts = _POLYGON_SURFACE[0]
-		if ts == None:
-			ts = pygame.Surface((width, height)).convert()
-			_POLYGON_SURFACE[0] = ts
-
-		tw, th = ts.get_size()
-		if tw < width or th < height:
-			nw = max(tw, width)
-			nh = max(th, height)
-			ts = pygame.Surface((nw, nh)).convert()
-			_POLYGON_SURFACE[0] = ts
-
-		bg = _POLYGON_BG
-		if r == bg[0] and g == bg[1] and b == bg[2]:
-			bg = _POLYGON_BG_ALT
-		ts.fill(bg)
-		ts.set_colorkey(bg)
-		pygame.draw.ellipse(ts, (r, g, b), pygame.Rect(0, 0, width, height))
-		ts.set_alpha(a)
-		_global_vars['virtual_screen'].blit(ts, (left, top), (0, 0, width, height))
-
 
 def io_helper_check_path(path, isDirCheck, checkCase):
 	# TODO: check case.
