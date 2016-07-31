@@ -78,6 +78,7 @@ namespace Crayon.Translator
                 case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
                 case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
                 case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
+                case "_enqueue_vm_resume": VerifyCount(functionCall, 2); TranslateEnqueueVmResume(output, args[0], args[1]); break;
                 case "_force_parens": VerifyCount(functionCall, 1); TranslateForceParens(output, args[0]); break;
                 case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
                 case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
@@ -186,6 +187,7 @@ namespace Crayon.Translator
         protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);
         protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
         protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
+        protected abstract void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId);
         protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
         protected abstract void TranslateForceParens(List<string> output, Expression expression);
         protected abstract void TranslateGetProgramData(List<string> output);

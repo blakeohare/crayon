@@ -215,6 +215,15 @@ namespace Crayon.Translator.JavaScript
             throw new Exception("This should have been optimized out.");
         }
 
+        protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
+        {
+            output.Add("C$common$enqueueVmResume(");
+            this.Translator.TranslateExpression(output, seconds);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, executionContextId);
+            output.Add(")");
+        }
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
