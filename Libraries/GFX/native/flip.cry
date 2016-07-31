@@ -1,0 +1,49 @@
+/*
+	arg 1: GfxTexture original instance
+	arg 2: GfxTexture new instance (no native data yet)
+	arg 3: boolean: flip horizontally
+	arg 4: boolean: flip vertically
+	
+	one or both flips will be true.
+	For texture atlas platforms, simply swap around the texture bounds.
+	For other platforms, create a mutated copy of the image but maintain the (0, 0, 1, 1) texture bounds.
+*/
+import inline "FrameworkFunctions/4_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+objArray2 = $_new_array('object', 7);
+ObjectInstance$objInstance2.nativeData = objArray2;
+bool1 = $_cast('bool', Value$arg3.internalValue);
+bool2 = $_cast('bool', Value$arg4.internalValue);
+
+i = 6;
+while (i >= 0) {
+	$_array_set(objArray2, i, $_array_get(objArray1, i));
+	i -= 1;
+}
+
+if (%%%LIB_GFX_USES_TEXTURE_ATLAS%%%) {
+	/*
+		objArray1[1] -> texture left
+		objArray1[2] -> texture top
+		objArray1[3] -> texture right
+		objArray1[4] -> texture button
+	*/
+	if (bool1) {
+		object1 = $_array_get(objArray1, 1);
+		$_array_set(objArray1, 1, $_array_get(objArray1, 3));
+		$_array_set(objArray1, 3, object1);
+	}
+	if (bool2) {
+		object1 = $_array_get(objArray1, 2);
+		$_array_set(objArray1, 2, $_array_get(objArray1, 4));
+		$_array_set(objArray1, 4, object1);
+	}
+	
+} else {
+	return killExecution(stack, pc, "Not implemented.");
+}
+
+output = arg1;

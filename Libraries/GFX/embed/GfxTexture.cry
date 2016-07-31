@@ -216,12 +216,37 @@ namespace GFX {
 		// TODO: 90 degree rotations would be nice and simple.
 
 		function flip(h, v) {
-			Core.fail("TODO: re-implement this.");
+			if (!(h || v)) return this;
+			
+			output = new GfxTexture(this._gfxTextureResource, this.width, this.height);
+			return $$lib_gfx_flip(this, output, h, v);
 		}
 
+		/*
+			w and h are the final size as integers, not the scale ratio.
+			Negative integers are allowed and flip will be automatically called.
+		*/
 		function scale(w, h) {
-			// TODO: also do scaling with negative sizes.
-			Core.fail("TODO: re-implement this.");
+			if (
+				!($$$('typeis', w, Core.Type.INTEGER) && 
+					$$$('typeis', h, Core.Type.INTEGER)) ||
+				w == 0 ||
+				h == 0) {
+				Core.fail("Image dimensions must be non-zero integers.");
+			}
+			hor = w < 0;
+			ver = h < 0;
+			if (hor || ver) {
+				img = this.flip(hor, ver);
+				w = $$$('abs', w);
+				h = $$$('abs', h);
+			} else {
+				img = this;
+			}
+			if (w == this.width && h == this.height) return img;
+			output = new GfxTexture(this._gfxTextureResource, w, h);
+			$$lib_gfx_scale(img, output, w, h);
+			return output;
 		}
 	}
 }

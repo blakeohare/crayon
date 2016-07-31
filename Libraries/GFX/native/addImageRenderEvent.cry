@@ -1,12 +1,34 @@
 // There are 13 args. But not all are used. So don't pop them all.
 
 /*
-	args[0] -> Draw queue wrapper object.
-	args[1] -> image instance
+	valueStack[n + 0] -> Draw queue wrapper object.
+	valueStack[n + 1] -> GfxTexture instance
 	
-	args[2] -> BIT MASK
+	valueStack[n + 2] -> BIT MASK
 	
-	args[3-13] -> Copy these directly to the event queue
+	valueStack[n + 3 to 12] -> Copy these directly to the event queue
+	
+	GfxTexture's nativeData:
+		data[0] -> GfxTextureResource's native data
+		
+		floats:
+		data[1] -> texture left
+		data[2] -> texture top
+		data[3] -> texture right
+		data[4] -> texture bottom
+		
+		ints:
+		data[5] -> pixel width
+		data[6] -> pixel height
+	
+	GfxTextureResource's nativeData:
+		data[0] -> bool: is GL based?
+		data[1] -> bool: is texture loaded?
+		data[2] -> int: GL texture ID
+		data[3] -> image resource
+		data[4] -> pixel width
+		data[5] -> pixel height
+		
 */
 valueStackSize -= 13;
 
@@ -125,7 +147,7 @@ if ((int1 & 2) != 0) {
 
 // slicing
 if ((int1 & 1) != 0) {
-	int1 = $_cast('int', $_array_get(objArray1, 1)); // image width
+	int1 = $_cast('int', $_array_get(objArray1, 5)); // image width
 	int2 = $_array_get(intArray1, len + 2); // source x
 	int3 = $_array_get(intArray1, len + 4); // desired width
 	if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
@@ -134,7 +156,7 @@ if ((int1 & 1) != 0) {
 	if (int3 == 0) bool2 = true;
 	
 	if (bool1) {
-		int1 = $_cast('int', $_array_get(objArray1, 2)); // image height
+		int1 = $_cast('int', $_array_get(objArray1, 6)); // image height
 		int2 = $_array_get(intArray1, len + 3); // source y
 		int3 = $_array_get(intArray1, len + 5); // desired height
 		if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
