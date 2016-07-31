@@ -89,10 +89,6 @@ if ((int1 & 4) != 0) {
 	else bool1 = false;
 	int2 = $_int(canonicalizeAngle(float1) * 1048576);
 	$_array_set(intArray1, len | 10, int2);
-	if (int2 < 1) {
-		// angle is reasonably close to 0? unset the rotation bit
-		$_array_set(intArray1, len | 1, int1 - 4);
-	}
 }
 
 bool2 = false; // is noop
