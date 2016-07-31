@@ -119,14 +119,18 @@ namespace ImageResources {
 				return loader;
 			}
 			
-			// In platforms where yielding execution is required for the loader to finish 
-			// (i.e. JavaScript), this will actually end execution and the load handler will
-			// re-start the interpreter.
 			statusOut = [false, true];
-			$$lib_imageresources_loadSynchronous(
-				nativeImage,
-				filename,
-				statusOut);
+			if ($$lib_imageresources_yieldRequiredByPlatform()) {
+				$$lib_imageresources_loadSynchronousVmSuspend(
+					nativeImage,
+					filename,
+					statusOut);
+			} else {
+				$$lib_imageresources_loadSynchronous(
+					nativeImage,
+					filename,
+					statusOut);
+			}
 			if (!statusOut[0]) Core.fail("Image load failed");
 			
 			image = new ImageResources.ImageResource(width, height, false);

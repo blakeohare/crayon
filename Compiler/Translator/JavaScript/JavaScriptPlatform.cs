@@ -65,7 +65,7 @@ namespace Crayon.Translator.JavaScript
                 "game.js",
                 "input.js",
                 "drawing.js",
-                "images.js",
+                "images2.js",
                 "sound.js",
                 "gamepad.js",
             })
@@ -102,10 +102,10 @@ namespace Crayon.Translator.JavaScript
             foreach (string filename in resourceDatabase.ImageSheetFiles.Keys)
             {
                 FileOutput imageSheetFile = resourceDatabase.ImageSheetFiles[filename];
-                output["resources/imagesheets/" + filename] = imageSheetFile;
+                output["resources/images/" + filename] = imageSheetFile;
             }
 
-            textResources["image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
+            textResources["imageresmanifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
 
             foreach (FileOutput audioFile in resourceDatabase.AudioResources)
             {

@@ -177,3 +177,7 @@ C$common$clearList = function (list) {
 C$common$getElement = function (id) {
     return document.getElementById(id);
 };
+
+C$common$getBool = function (b) {
+    return b ? v_VALUE_TRUE : v_VALUE_FALSE;
+}

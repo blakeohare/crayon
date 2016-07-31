@@ -7,6 +7,10 @@ function @type('InterpreterResult') suspendInterpreter() {
 	return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null);
 }
 
+function @type('InterpreterResult') suspendInterpreterWithLock() {
+	return new InterpreterResult(InterpreterResultStatus.SUSPENDED_WITH_LOCK, null);
+}
+
 function @type('InterpreterResult') interpreterFinished(@type('ExecutionContext') ec) {
 	if (ec != null) {
 		@type('int') id = ExecutionContext$ec.id;

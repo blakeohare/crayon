@@ -29,9 +29,23 @@ C$game$endFrame = function() {
 
 C$game$runFrame = function () {
     C$game$beginFrame();
-    var cont = v_runInterpreter(C$game$execId);
-    if (!cont) return;
-    C$game$endFrame();
+    C$game$runInterpreter();
+};
+
+C$game$runInterpreter = function(execId) {
+    var result = v_runInterpreter(execId);
+    var statusCode = result[0]; // TODO: make helper getter function.
+    switch (statusCode) {
+        case 2: // SUSPENDED
+            if (C$game$execId == execId) {
+                C$game$endFrame();
+            }
+            return;
+        case 1: // FINISHED
+        case 3: // ERROR
+        case 4: // SUSPENDED_WITH_LOCK - used by synchronous image loading
+            return;
+    }
 };
 
 C$game$computeDelayMillis = function () {

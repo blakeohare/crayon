@@ -46,6 +46,7 @@
     <EmbeddedResource Include="game-javascript\game.js" />
     <EmbeddedResource Include="game-javascript\game_host_html.txt" />
     <EmbeddedResource Include="game-javascript\images.js" />
+    <EmbeddedResource Include="game-javascript\images2.js" />
     <EmbeddedResource Include="game-javascript\input.js" />
     <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>
