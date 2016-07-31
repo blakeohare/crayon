@@ -29,3 +29,6 @@ def _generateNativeBitmapOfSize(w, h):
 
 def _imageResourceBlitImage(target, source, targetX, targetY, sourceX, sourceY, width, height):
 	target.blit(source, (targetX, targetY, width, height), area = (sourceX, sourceY, width, height))
+
+def _flipTexture(image, flipH, flipV):
+	return pygame.transform.flip(image, flipH, flipV)

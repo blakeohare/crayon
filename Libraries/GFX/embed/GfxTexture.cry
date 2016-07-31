@@ -215,11 +215,23 @@ namespace GFX {
 
 		// TODO: 90 degree rotations would be nice and simple.
 
+		function _createResCopy(res) {
+			output = [res, res];
+			if ($$lib_gfx_isPlatformUsingTextureAtlas()) {
+				// for non-atlas platforms, create a copy of the texture resource.
+				newRes = new GfxTextureResource();
+				newRes.width = res.width;
+				newRes.height = res.height;
+				output[1] = newRes;
+			}
+			return output;
+		}
+		
 		function flip(h, v) {
 			if (!(h || v)) return this;
-			
-			output = new GfxTexture(this._gfxTextureResource, this.width, this.height);
-			return $$lib_gfx_flip(this, output, h, v);
+			res = this._createResCopy(this._gfxTextureResource);
+			output = new GfxTexture(res[1], this.width, this.height);
+			return $$lib_gfx_flip(this, output, h, v, res[0], res[1]);
 		}
 
 		/*
@@ -244,8 +256,9 @@ namespace GFX {
 				img = this;
 			}
 			if (w == this.width && h == this.height) return img;
-			output = new GfxTexture(this._gfxTextureResource, w, h);
-			$$lib_gfx_scale(img, output, w, h);
+			res = this._createResCopy(this._gfxTextureResource);
+			output = new GfxTexture(res[1], w, h);
+			$$lib_gfx_scale(img, output, w, h, res[0], res[1]);
 			return output;
 		}
 	}
