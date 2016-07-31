@@ -37,6 +37,7 @@ namespace Crayon.Translator.Python
             foreach (string file in new string[] {
                 "Imports.py",
                 "Header.py",
+                "ImageHelper.py",
                 "GfxRenderer.py",
                 "ResourceReader.py",
                 "GamepadLibraryHelper.py",
@@ -82,7 +83,7 @@ namespace Crayon.Translator.Python
             {
                 foreach (string tileName in imageSheetTiles.Keys)
                 {
-                    output["resources/image_sheets/" + tileName] = imageSheetTiles[tileName];
+                    output["resources/images/" + tileName] = imageSheetTiles[tileName];
                 }
             }
 

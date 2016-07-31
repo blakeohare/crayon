@@ -1,0 +1,6 @@
+$_lib_imageresources_loadAsync: _imageLoadAsync([ARG:1], [ARG:2], [ARG:3])
+$_lib_imageresources_loadSync: _imageLoadSync([ARG:1], [ARG:2], [ARG:3])
+$_lib_imageresources_getManifestString: _getImageResourceManifestString()
+$_lib_imageresources_generateNativeBitmapOfSize: _generateNativeBitmapOfSize([ARG:1], [ARG:2])
+$_lib_imageresources_blit: _imageResourceBlitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+$_lib_imageresources_checkLoaderIsDone: _checkLoaderIsDone([ARG:1], [ARG:2], [ARG:3])
