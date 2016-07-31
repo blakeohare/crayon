@@ -44,13 +44,13 @@ public final class RenderEngine {
             }
         }
 
-        int x, y, sx, sy, width, height, red, green, blue, alpha;
+        int x, y, sx, sy, width, height, sw, sh, tw, th, red, green, blue, alpha;
         int ax, ay, bx, by, cx, cy;
 		int mask;
         int[] xs = new int[3];
         int[] ys = new int[3];
         double angle;
-        java.awt.Image image;
+        java.awt.image.BufferedImage image;
 		AffineTransform at;
 		int[] events = RenderEngine.renderEvents;
 		int length = RenderEngine.renderEventsLength;
@@ -100,15 +100,63 @@ public final class RenderEngine {
 					y = events[i | 9];
 
 					textureNativeData = (Object[]) images[imagesIndex++];
-					
 					textureResourceNativeData = (Object[]) textureNativeData[0];
-					
 					image = (BufferedImage) textureResourceNativeData[3];
 					
 					if (mask == 0) {
 						g.drawImage(image, x, y, null);
 					} else {
-						throw new RuntimeException("Non-mask 0 draw operations are not implemented");
+						
+						if ((mask & 1) != 0) {
+							sx = events[i | 2];
+							sy = events[i | 3];
+							sw = events[i | 4];
+							sh = events[i | 5];
+						} else {
+							sx = 0;
+							sy = 0;
+							sw = image.getWidth();
+							sh = image.getHeight();
+						}
+
+						if ((mask & 2) != 0) {
+							tw = events[i | 6];
+							th = events[i | 7];
+						} else {
+							tw = sw;
+							th = sh;
+						}
+
+						if ((mask & 8) != 0) {
+							alpha = events[i | 11];
+						} else {
+							alpha = 255;
+						}
+
+						if ((mask & 4) != 0) {
+							angle = events[i | 10] / 1048576.0;
+							at = new AffineTransform();
+							at.translate(x - tw / 2, y - th / 2);
+							at.translate(tw / 2, th/ 2);
+							at.rotate(angle);
+							at.translate(tw / -2, th / -2);
+							
+							if (alpha == 255) {
+								g.drawImage(image, at, null);
+							} else {
+								g.setComposite(alphaComposite[alpha]);
+								g.drawImage(image, at, null);
+								g.setComposite(alphaComposite[255]);
+							}
+						} else {
+							if (alpha == 255) {
+								g.drawImage(image, x, y, x + tw, y + th, sx, sy, sx + sw, sy + sh, null);
+							} else {
+								g.setComposite(alphaComposite[alpha]);
+								g.drawImage(image, x, y, x + tw, y + th, sx, sy, sx + sw, sy + sh, null);
+								g.setComposite(alphaComposite[255]);
+							}
+						}
 					}
 					break;
 
