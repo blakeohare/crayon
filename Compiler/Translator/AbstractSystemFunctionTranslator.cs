@@ -149,6 +149,7 @@ namespace Crayon.Translator
                 case "_string_substring_exists_at": VerifyCount(functionCall, 3); TranslateStringSubstringExistsAt(output, args[0], args[1], args[2]); break;
                 case "_string_trim": VerifyCount(functionCall, 1); TranslateStringTrim(output, args[0]); break;
                 case "_string_upper": VerifyCount(functionCall, 1); TranslateStringUpper(output, args[0]); break;
+                case "_thread_sleep": VerifyCount(functionCall, 1); TranslateThreadSleep(output, args[0]); break;
                 case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
                 case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
                 default: throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);
@@ -258,6 +259,7 @@ namespace Crayon.Translator
         protected abstract void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index);
         protected abstract void TranslateStringTrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringUpper(List<string> output, Expression stringValue);
+        protected abstract void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds);
         protected abstract void TranslateTan(List<string> output, Expression value);
         protected abstract void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator);
         protected abstract void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator);

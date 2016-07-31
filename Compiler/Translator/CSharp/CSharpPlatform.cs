@@ -18,6 +18,7 @@ namespace Crayon.Translator.CSharp
         public override bool IsArraySameAsList { get { return false; } }
         public override bool IsCharANumber { get { return true; } }
         public override bool IntIsFloor { get { return false; } }
+        public override bool IsThreadBlockingAllowed { get { return true; } }
 
         public abstract void PlatformSpecificFiles(
             string projectId,

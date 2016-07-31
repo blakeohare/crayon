@@ -452,6 +452,29 @@
 	case 29: $_comment('execCounter');
 		output = buildInteger(ExecutionContext$ec.executionCounter);
 		break;
+
+	case 30: $_comment('sleep');
+		import inline "FrameworkFunctions/1_arg.cry";
+
+		// type guaranteed
+		float1 = getFloat(arg1);
+		if (%%%IS_THREAD_BLOCKING_ALLOWED%%%) {
+			$_thread_sleep(float1);
+		} else {
+			// Do the output-used check here.
+			if ($_array_get(row, 1) == 1) {
+				import inline "ValueStackCapacityCheck.cry";
+				$_array_set(valueStack, valueStackSize, VALUE_NULL);
+				valueStackSize += 1;
+			}
+
+			prepareToSuspend(ec, stack, valueStackSize, pc);
+			
+			$_enqueue_vm_resume(float1, ExecutionContext$ec.id);
+
+			return suspendInterpreterWithLock();
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

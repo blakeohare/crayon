@@ -704,3 +704,8 @@ function @type('double') canonicalizeAngle(@type('double') a) {
 	if (a < 0) a += twopi;
 	return a;
 }
+
+function @type('double') getFloat(@type('Value') num) {
+	if (Value$num.type == Types.FLOAT) return $_cast('double', Value$num.internalValue);
+	return $_cast('int', Value$num.internalValue) + 0.0;
+}

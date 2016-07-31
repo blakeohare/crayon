@@ -727,6 +727,13 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("System.Threading.Thread.Sleep((int)(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
+            output.Add(" * 1000))");
+        }
+
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             this.Translator.TranslateExpression(output, numerator);

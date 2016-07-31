@@ -797,6 +797,13 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("time.sleep(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
+            output.Add(")");
+        }
+
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             output.Add("1.0 * ");

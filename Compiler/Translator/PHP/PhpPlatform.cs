@@ -23,6 +23,7 @@ namespace Crayon.Translator.Php
         public override bool IsByteCodeLoadedDirectly { get { return true; } }
         public override bool IsCharANumber { get { return false; } }
         public override bool IntIsFloor { get { return false; } }
+        public override bool IsThreadBlockingAllowed { get { return true; } }
 
         public override Dictionary<string, FileOutput> Package(
             BuildContext buildContext,

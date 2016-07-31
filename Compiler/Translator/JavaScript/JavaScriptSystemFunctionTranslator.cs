@@ -796,6 +796,11 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            throw new InvalidOperationException(); // Optimized out.
+        }
+
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             this.Translator.TranslateExpression(output, numerator);

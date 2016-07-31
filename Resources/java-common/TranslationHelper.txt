@@ -215,4 +215,12 @@ final class TranslationHelper {
             outParam[0] = -1;
         }
     }
+
+	public static void sleep(double seconds) {
+		int millis = (int) (seconds * 1000);
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+		}
+	}
 }

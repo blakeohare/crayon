@@ -45,6 +45,13 @@
 		return $$$('print', value);
 	}
 
+	function sleep(seconds) {
+		Core.assert(
+			$$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
+			seconds >= 0, "Invalid argument.");
+		return $$$('sleep', seconds);
+	}
+
 	function typeof(value) {
 		return $$$('typeof',value);
 	}

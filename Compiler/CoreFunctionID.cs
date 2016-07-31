@@ -31,6 +31,7 @@
         INT_QUEUE_CLEAR = 27,
         INT_QUEUE_WRITE_16 = 28,
         EXECUTION_CONTEXT_COUNTER = 29,
+        SLEEP = 30,
     }
 
     public static class CoreFunctionIDHelper
@@ -68,6 +69,7 @@
                 case "ln": return (int)CoreFunctionID.LN;
                 case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16; 
                 case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
+                case "sleep": return (int)CoreFunctionID.SLEEP;
                 default: return -1;
             }
         }

@@ -16,6 +16,7 @@ namespace Crayon.Translator.Python
         public override bool IsArraySameAsList { get { return true; } }
         public override bool IsCharANumber { get { return false; } }
         public override bool IntIsFloor { get { return false; } }
+        public override bool IsThreadBlockingAllowed { get { return true; } }
 
         public override string PlatformShortId { get { return "game-python-pygame"; } }
 

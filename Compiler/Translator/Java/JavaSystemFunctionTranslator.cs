@@ -710,6 +710,13 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("TranslationHelper.sleep(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
+            output.Add(")");
+        }
+
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             this.Translator.TranslateExpression(output, numerator);

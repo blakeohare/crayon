@@ -23,6 +23,7 @@ namespace Crayon
         public abstract bool IsArraySameAsList { get; }
         public abstract bool IsCharANumber{ get; }
         public abstract bool IntIsFloor { get; }
+        public abstract bool IsThreadBlockingAllowed { get; }
         public virtual bool IsByteCodeLoadedDirectly { get { return false; } }
         public abstract string PlatformShortId { get; }
 
