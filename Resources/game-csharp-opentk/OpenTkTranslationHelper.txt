@@ -396,6 +396,7 @@ namespace %%%PROJECT_ID%%%
             int sourceX, int sourceY,
             int width, int height)
         {
+            // TODO: preserve the graphics instance on the nativeData so that this doesn't have to be re-created every time.
             System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
             System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
@@ -404,6 +405,8 @@ namespace %%%PROJECT_ID%%%
                 new System.Drawing.Rectangle(targetX, targetY, width, height),
                 new System.Drawing.Rectangle(sourceX, sourceY, width, height),
                 System.Drawing.GraphicsUnit.Pixel);
+            g.Flush();
+            g.Dispose();
         }
 	}
 }
