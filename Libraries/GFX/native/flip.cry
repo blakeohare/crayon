@@ -33,17 +33,17 @@ if (%%%LIB_GFX_USES_TEXTURE_ATLAS%%%) {
 	*/
 	if (bool1) {
 		object1 = $_array_get(objArray1, 1);
-		$_array_set(objArray1, 1, $_array_get(objArray1, 3));
-		$_array_set(objArray1, 3, object1);
+		$_array_set(objArray2, 1, $_array_get(objArray2, 3));
+		$_array_set(objArray2, 3, object1);
 	}
 	if (bool2) {
 		object1 = $_array_get(objArray1, 2);
-		$_array_set(objArray1, 2, $_array_get(objArray1, 4));
-		$_array_set(objArray1, 4, object1);
+		$_array_set(objArray2, 2, $_array_get(objArray2, 4));
+		$_array_set(objArray2, 4, object1);
 	}
 	
 } else {
 	return killExecution(stack, pc, "Not implemented.");
 }
 
-output = arg1;
+output = arg2;

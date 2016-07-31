@@ -35,6 +35,8 @@ namespace %%%PROJECT_ID%%%
             int image_i = 0;
             int width = 0;
             int height = 0;
+            int cropWidth;
+            int cropHeight;
             int left = 0;
             int right = 0;
             int top = 0;
@@ -407,18 +409,20 @@ namespace %%%PROJECT_ID%%%
                         {
                             ax = commands[i | 2];
                             ay = commands[i | 3];
-                            width = commands[i | 4];
-                            height = commands[i | 5];
+                            cropWidth = commands[i | 4];
+                            cropHeight = commands[i | 5];
 							
-							croppedLeft = textureLeft + textureWidth * ax / textureResourceWidth;
-							croppedRight = croppedLeft + textureWidth * width / textureResourceWidth;
-							croppedTop = textureTop + textureHeight * ay / textureResourceHeight;
-							croppedBottom = textureTop + textureHeight * height / textureResourceHeight;
+							croppedLeft = textureLeft + textureWidth * ax / width;
+							croppedRight = croppedLeft + textureWidth * (ax + cropWidth) / width;
+							croppedTop = textureTop + textureHeight * ay / height;
+							croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
 
                             textureLeft = croppedLeft;
                             textureRight = croppedRight;
                             textureTop = croppedTop;
                             textureBottom = croppedBottom;
+                            width = cropWidth;
+                            height = cropHeight;
                         }
 
                         // stretch
