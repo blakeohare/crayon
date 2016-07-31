@@ -629,9 +629,8 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
         {
-            // TODO: this may return crazy values, need to normalize to -1, 0, or 1
             this.Translator.TranslateExpression(output, a);
-            output.Add(".compareTo(");
+            output.Add(".localeCompare(");
             this.Translator.TranslateExpression(output, b);
             output.Add(")");
         }
