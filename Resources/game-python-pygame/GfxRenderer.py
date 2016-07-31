@@ -47,9 +47,10 @@ def gfxRender():
 				screen.blit(image, (x, y, events[i | 6], events[i | 7]), (sx, sy, sw, sh))
 			else:
 
-				alpha = None
-				if (mask & 4) != 0:
+				alpha = 255
+				if (mask & 8) != 0:
 					alpha = events[i | 11]
+				
 				if alpha > 0:
 					
 					w, h = image.get_size()
@@ -63,26 +64,24 @@ def gfxRender():
 					else:
 						tw, th = w, h
 
-					angle = None
-					if (mask & 8) != 0:
-						angle = events[i | 10] / 1048576.0 * 180 / math.pi
-						if angle == 0: angle = None
+					if (mask & 4) != 0:
+						angle = events[i | 10] / 1048576.0 * -180 / math.pi
+					else:
+						angle = None
 					
 					imgToBlit = None
 					if angle != None:
-						angle = events[i | 10] / 1048576.0 * 180 / math.pi
-						if mask == 8:
-							# just rotation, not other transforms
+						if mask == 4: # just rotation, not other transforms
 							rotated = pygame.transform.rotate(image, angle)
 							w, h = rotated.get_size()
-							screen.blit(rotated, x - w // 2, y - h // 2)
+							screen.blit(rotated, (x - w // 2, y - h // 2))
 						else:
 							rotateTempImg = pygame.Surface((tw, th)).convert_alpha()
 							rotateTempImg.blit(image, (0, 0, tw, th), (sx, sy, sw, sh))
 							rotated = pygame.transform.rotate(rotatedTempImg, angle)
 							x -= rotated.get_width() // 2
 							y -= rotated.get_height() // 2
-							if alpha != None:
+							if alpha < 255:
 								imgToBlit = rotated
 							else:
 								screen.blit(rotated, (x, y))
