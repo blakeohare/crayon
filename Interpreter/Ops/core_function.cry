@@ -448,6 +448,10 @@
 			$_array_set(intArray1, len + i, int2);
 		}
 		break;
+
+	case 29: $_comment('execCounter');
+		output = buildInteger(ExecutionContext$ec.executionCounter);
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

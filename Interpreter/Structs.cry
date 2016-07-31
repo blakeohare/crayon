@@ -64,6 +64,7 @@ struct ExecutionContext {
 	@type('Array<Value>') localsStack,
 	@type('Array<int>') localsStackSet,
 	@type('int') localsStackSetToken,
+	@type('int') executionCounter,
 }
 
 struct StackFrame {

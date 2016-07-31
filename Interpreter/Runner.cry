@@ -54,7 +54,9 @@ function @type('int') main() {
 		
 		localsStack,
 		localsStackSet,
-		1); // localsStackSetToken
+		1, // localsStackSetToken
+
+		0); // executionCounter
 
 	@type('Dictionary<int, ExecutionContext>') executionContexts = $_new_dictionary('int', 'ExecutionContext');
 	$_dictionary_set(executionContexts, 0, executionContext);
@@ -165,7 +167,9 @@ function @type('bool') runInterpreterWithFunctionPointer(@type('Value') fpValue,
 		
 		locals,
 		localsSet,
-		1); // localsStackSetToken
+		1, // localsStackSetToken
+
+		0); // executionContext
 
 	$_dictionary_set(ProgramData$p.executionContexts, newId, executionContext);
 	return runInterpreter(newId);

@@ -28,6 +28,8 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	}
 	@type('ExecutionContext') ec = $_dictionary_get_guaranteed(executionContexts, executionContextId);
 
+	ExecutionContext$ec.executionCounter += 1;
+
 	@type('StackFrame') stack = ExecutionContext$ec.stackTop;
 	@type('Array<int>') ops = ProgramData$p.ops;
 	@type('Array<Array<int>>') args = ProgramData$p.args;
