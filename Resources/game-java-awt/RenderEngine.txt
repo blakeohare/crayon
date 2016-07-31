@@ -2,6 +2,7 @@
 
 import java.awt.geom.AffineTransform;
 import java.awt.AlphaComposite;
+import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -21,181 +22,20 @@ public final class RenderEngine {
     private static int renderArgsVirtualLength = 0;
     private static int renderArgsRealLength = renderArgs.length;
 
-    private static Image[] images = new Image[100];
-    private static int imagesVirtualLength = 0;
-    private static int imagesRealLength = images.length;
-
 	private static int[] renderEvents = new int[0];
 	private static int renderEventsLength = 0;
 	private static Object[] renderImages = new Object[0];
 
     private static AlphaComposite[] alphaComposite = new AlphaComposite[256];
 
-    private RenderEngine() {
-    }
+    private RenderEngine() { }
 
 	public static void setRenderQueues(int[] renderEvents, int renderEventsLength, Object[] images) {
 		RenderEngine.renderEvents = renderEvents;
 		RenderEngine.renderEventsLength = renderEventsLength;
 		RenderEngine.renderImages = images;
 	}
-
-    public static void reset() {
-        fillScreen(0, 0, 0);
-    }
-
-    public static void fillScreen(int red, int green, int blue) {
-        renderArgsVirtualLength = 0;
-        imagesVirtualLength = 0;
-        renderArgs[renderArgsVirtualLength++] = FILL_SCREEN;
-        renderArgs[renderArgsVirtualLength++] = red;
-        renderArgs[renderArgsVirtualLength++] = green;
-        renderArgs[renderArgsVirtualLength++] = blue;
-    }
-
-    public static void blitImage(Object imageObject, int x, int y) {
-        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        if (imagesVirtualLength + 1 >= imagesRealLength) {
-            expandImagesCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE;
-        renderArgs[renderArgsVirtualLength++] = x;
-        renderArgs[renderArgsVirtualLength++] = y;
-
-        images[imagesVirtualLength++] = (Image) imageObject;
-    }
-
-    public static void blitImageAlpha(Object imageObject, int x, int y, int alpha) {
-        if (alpha < 1) return;
-        if (alpha > 254) {
-            blitImage(imageObject, x, y);
-            return;
-        }
-        if (renderArgsVirtualLength + 3 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        if (imagesVirtualLength + 1 >= imagesRealLength) {
-            expandImagesCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_ALPHA;
-        renderArgs[renderArgsVirtualLength++] = x;
-        renderArgs[renderArgsVirtualLength++] = y;
-        renderArgs[renderArgsVirtualLength++] = alpha;
-
-        images[imagesVirtualLength++] = (Image) imageObject;
-    }
-
-    public static void blitImagePartial(Object imageObject, int targetX, int targetY, int targetWidth, int targetHeight, int sourceX, int sourceY, int sourceWidth, int sourceHeight) {
-        if (renderArgsVirtualLength + 7 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        if (imagesVirtualLength + 1 >= imagesRealLength) {
-            expandImagesCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_PARTIAL;
-        renderArgs[renderArgsVirtualLength++] = targetX;
-        renderArgs[renderArgsVirtualLength++] = targetY;
-        renderArgs[renderArgsVirtualLength++] = sourceX;
-        renderArgs[renderArgsVirtualLength++] = sourceY;
-        renderArgs[renderArgsVirtualLength++] = sourceWidth;
-        renderArgs[renderArgsVirtualLength++] = sourceHeight;
-
-        images[imagesVirtualLength++] = (Image) imageObject;
-    }
-    
-    public static void blitImageRotated(Object imageObject, int centerX, int centerY, double angle) {
-        if (renderArgsVirtualLength + 4 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        if (imagesVirtualLength + 1 >= imagesRealLength) {
-            expandImagesCapacity();
-        }
-
-		double twopi = 3.14159265358979323 * 2;
-        renderArgs[renderArgsVirtualLength++] = BLIT_IMAGE_ROTATED;
-        renderArgs[renderArgsVirtualLength++] = centerX;
-        renderArgs[renderArgsVirtualLength++] = centerY;
-        renderArgs[renderArgsVirtualLength++] = (int) (1000000 * (angle % twopi + twopi));
-        
-        images[imagesVirtualLength++] = (Image) imageObject;
-    }
-
-    public static void drawEllipse(int left, int top, int width, int height, int red, int green, int blue, int alpha) {
-        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = DRAW_ELLIPSE;
-        renderArgs[renderArgsVirtualLength++] = left;
-        renderArgs[renderArgsVirtualLength++] = top;
-        renderArgs[renderArgsVirtualLength++] = width;
-        renderArgs[renderArgsVirtualLength++] = height;
-        renderArgs[renderArgsVirtualLength++] = red;
-        renderArgs[renderArgsVirtualLength++] = green;
-        renderArgs[renderArgsVirtualLength++] = blue;
-        renderArgs[renderArgsVirtualLength++] = alpha;
-    }
-
-    public static void drawLine(int startX, int startY, int endX, int endY, int lineWidth, int red, int green, int blue, int alpha) {
-        if (renderArgsVirtualLength + 10 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = DRAW_LINE;
-        renderArgs[renderArgsVirtualLength++] = startX;
-        renderArgs[renderArgsVirtualLength++] = startY;
-        renderArgs[renderArgsVirtualLength++] = endX;
-        renderArgs[renderArgsVirtualLength++] = endY;
-        renderArgs[renderArgsVirtualLength++] = lineWidth;
-        renderArgs[renderArgsVirtualLength++] = red;
-        renderArgs[renderArgsVirtualLength++] = green;
-        renderArgs[renderArgsVirtualLength++] = blue;
-        renderArgs[renderArgsVirtualLength++] = alpha;
-    }
-
-    public static void drawRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-        if (renderArgsVirtualLength + 9 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = DRAW_RECTANGLE;
-        renderArgs[renderArgsVirtualLength++] = x;
-        renderArgs[renderArgsVirtualLength++] = y;
-        renderArgs[renderArgsVirtualLength++] = width;
-        renderArgs[renderArgsVirtualLength++] = height;
-        renderArgs[renderArgsVirtualLength++] = red;
-        renderArgs[renderArgsVirtualLength++] = green;
-        renderArgs[renderArgsVirtualLength++] = blue;
-        renderArgs[renderArgsVirtualLength++] = alpha;
-    }
-
-    public static void drawTriangle(int ax, int ay, int bx, int by, int cx, int cy, int red, int green, int blue, int alpha) {
-        if (renderArgsVirtualLength + 11 >= renderArgsRealLength) {
-            expandArgsCapacity();
-        }
-
-        renderArgs[renderArgsVirtualLength++] = DRAW_TRIANGLE;
-        renderArgs[renderArgsVirtualLength++] = ax;
-        renderArgs[renderArgsVirtualLength++] = ay;
-        renderArgs[renderArgsVirtualLength++] = bx;
-        renderArgs[renderArgsVirtualLength++] = by;
-        renderArgs[renderArgsVirtualLength++] = cx;
-        renderArgs[renderArgsVirtualLength++] = cy;
-        renderArgs[renderArgsVirtualLength++] = red;
-        renderArgs[renderArgsVirtualLength++] = green;
-        renderArgs[renderArgsVirtualLength++] = blue;
-        renderArgs[renderArgsVirtualLength++] = alpha;
-    }
-
+	
     public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
 
         if (alphaComposite[0] == null) {
@@ -215,6 +55,8 @@ public final class RenderEngine {
 		int[] events = RenderEngine.renderEvents;
 		int length = RenderEngine.renderEventsLength;
 		Object[] images = RenderEngine.renderImages;
+		Object[] textureNativeData;
+		Object[] textureResourceNativeData;
 		int imagesIndex = 0;
 
         for (int i = 0; i < renderEventsLength; i += 16) {
@@ -256,13 +98,18 @@ public final class RenderEngine {
 					mask = events[i | 1];
 					x = events[i | 8];
 					y = events[i | 9];
-					image = (java.awt.Image) ((Image) ((Object[]) images[imagesIndex++])[0]).rawResource;
+
+					textureNativeData = (Object[]) images[imagesIndex++];
+					
+					textureResourceNativeData = (Object[]) textureNativeData[0];
+					
+					image = (BufferedImage) textureResourceNativeData[3];
+					
 					if (mask == 0) {
 						g.drawImage(image, x, y, null);
 					} else {
-						throw new RuntimeException();
+						throw new RuntimeException("Non-mask 0 draw operations are not implemented");
 					}
-					
 					break;
 
                 case FILL_SCREEN + 100:
@@ -398,6 +245,7 @@ public final class RenderEngine {
         }
     }
 
+	/*
     private static void expandArgsCapacity() {
         int[] newRenderArgs = new int[renderArgsRealLength * 2];
         System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
@@ -410,5 +258,5 @@ public final class RenderEngine {
         System.arraycopy(images , 0, newImages, 0, imagesVirtualLength);
         images = newImages;
         imagesRealLength = images.length;
-    }
+    }//*/
 }

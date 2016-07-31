@@ -183,7 +183,7 @@ class GameWindow {
     }
 
     private void timerTick() {
-        RenderEngine.reset();
+        
         boolean continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
         if (!continueExecution) {
             frame.setVisible(false);

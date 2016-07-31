@@ -212,7 +212,7 @@ namespace Crayon.Translator.Java
 
             foreach (string tileFile in resourceDatabase.ImageSheetFiles.Keys)
             {
-                output["resources/imagesheets/" + tileFile] = resourceDatabase.ImageSheetFiles[tileFile];
+                output["resources/images/" + tileFile] = resourceDatabase.ImageSheetFiles[tileFile];
             }
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)

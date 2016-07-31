@@ -1,3 +1,2 @@
-$_lib_gfx_image_sheet_get_manifest_file: RESOURCES.readTextFile("resources/image_sheet_manifest.txt")
-$_lib_gfx_render: gfxRendererSetData([ARG:1], [ARG:2], [ARG:3])
 $_lib_gfx_flipTexture: _flipTexture([ARG:1], [ARG:2], [ARG:3])
+$_lib_gfx_render: gfxRendererSetData([ARG:1], [ARG:2], [ARG:3])
