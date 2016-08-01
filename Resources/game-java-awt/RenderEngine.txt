@@ -8,20 +8,6 @@ import java.awt.Graphics2D;
 
 public final class RenderEngine {
 
-    private static final int BLIT_IMAGE = 1;
-    private static final int BLIT_IMAGE_PARTIAL = 2;
-    private static final int BLIT_IMAGE_ALPHA = 3;
-    private static final int BLIT_IMAGE_ROTATED = 4;
-    private static final int DRAW_ELLIPSE = 5;
-    private static final int DRAW_LINE = 6;
-    private static final int DRAW_RECTANGLE = 7;
-    private static final int DRAW_TRIANGLE = 8;
-    private static final int FILL_SCREEN = 9;
-
-    private static int[] renderArgs = new int[1000];
-    private static int renderArgsVirtualLength = 0;
-    private static int renderArgsRealLength = renderArgs.length;
-
 	private static int[] renderEvents = new int[0];
 	private static int renderEventsLength = 0;
 	private static Object[] renderImages = new Object[0];
@@ -47,8 +33,8 @@ public final class RenderEngine {
         int x, y, sx, sy, width, height, sw, sh, tw, th, red, green, blue, alpha;
         int ax, ay, bx, by, cx, cy;
 		int mask;
-        int[] xs = new int[3];
-        int[] ys = new int[3];
+        int[] xs = new int[4];
+        int[] ys = new int[4];
         double angle;
         java.awt.image.BufferedImage image;
 		AffineTransform at;
@@ -89,9 +75,6 @@ public final class RenderEngine {
 					break;
 
 				case 3: // line
-					// TODO: this is a little off. 
-					// .drawLine seems to be inherently box-capped and so the line length is extended
-					// by lineWidth / 2 in each direction. Need to compensate for this to get it to match other platforms.
                     sx = events[i | 1];
                     sy = events[i | 2];
                     x = events[i | 3];
@@ -101,10 +84,11 @@ public final class RenderEngine {
                     green = events[i | 7];
                     blue = events[i | 8];
                     alpha = events[i | 9];
-					if alpha > 0 and width > 0:
+					if (alpha > 0) {
 						g.setColor(new Color(red, green, blue, alpha));
 						g.setStroke(new java.awt.BasicStroke(width));
 						g.drawLine(x, y, sx, sy);
+					}
 					break;
 
 				case 4: // triangle
@@ -122,7 +106,24 @@ public final class RenderEngine {
                     g.fillPolygon(xs, ys, 3);
 					break;
 
-				case 5: // image
+				case 5: // quad
+                    xs[0] = events[i | 1];
+                    ys[0] = events[i | 2];
+                    xs[1] = events[i | 3];
+                    ys[1] = events[i | 4];
+                    xs[2] = events[i | 5];
+                    ys[2] = events[i | 6];
+                    xs[3] = events[i | 7];
+                    ys[3] = events[i | 8];
+                    red = events[i | 9];
+                    green = events[i | 10];
+                    blue = events[i | 11];
+                    alpha = events[i | 12];
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillPolygon(xs, ys, 4);
+					break;
+
+				case 6: // image
 					mask = events[i | 1];
 					x = events[i | 8];
 					y = events[i | 9];
@@ -187,152 +188,7 @@ public final class RenderEngine {
 						}
 					}
 					break;
-
-                case FILL_SCREEN + 100:
-					/*/
-                    red = renderArgs[index++];
-                    green = renderArgs[index++];
-                    blue = renderArgs[index++];
-                    
-                    g.setColor(new Color(red, green, blue));
-                    g.fillRect(-1, -1, canvasWidth + 2, canvasHeight + 2);
-					//*/
-                    break;
-
-                case BLIT_IMAGE + 100:
-					/*/
-                    image = images[imagesIndex++];
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-
-                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
-					//*/
-                    break;
-
-                case BLIT_IMAGE_ALPHA + 100:
-					/*/
-                    image = images[imagesIndex++];
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    alpha = renderArgs[index++];
-                    g.setComposite(alphaComposite[alpha]);
-                    g.drawImage((java.awt.Image) image.rawResource, x, y, null);
-                    g.setComposite(alphaComposite[255]);
-					//*/
-                    break;
-
-				case BLIT_IMAGE_ROTATED + 100:
-					/*/
-                    image = images[imagesIndex++];
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    angle = renderArgs[index++] / 1000000.0;
-					at = new AffineTransform();
-					width = image.width;
-					height = image.height;
-					at.translate(x - width / 2, y - height / 2);
-					at.translate(width / 2, height / 2);
-					at.rotate(angle);
-					at.translate(width / -2, height / -2);
-					g.drawImage((java.awt.Image) image.rawResource, at, null);
-					//*/
-					break;
-					
-                case BLIT_IMAGE_PARTIAL + 100:
-					/*/
-                    image = images[imagesIndex++];
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    sx = renderArgs[index++];
-                    sy = renderArgs[index++];
-                    width = renderArgs[index++];
-                    height = renderArgs[index++];
-                    g.drawImage((java.awt.Image) image.rawResource, x, y, x + width, y + height, sx, sy, sx + width, sy + height, null);
-					//*/
-                    break;
-
-                case DRAW_ELLIPSE + 100:
-					/*/
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    width = renderArgs[index++];
-                    height = renderArgs[index++];
-                    red = renderArgs[index++];
-                    green = renderArgs[index++];
-                    blue = renderArgs[index++];
-                    alpha = renderArgs[index++];
-                    g.setColor(new Color(red, green, blue, alpha));
-                    g.fillOval(x, y, width, height);
-                    //*/
-                    break;
-
-                case DRAW_LINE + 100:
-					/*/
-                    sx = renderArgs[index++];
-                    sy = renderArgs[index++];
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    width = renderArgs[index++];
-                    red = renderArgs[index++];
-                    green = renderArgs[index++];
-                    blue = renderArgs[index++];
-                    alpha = renderArgs[index++];
-                    g.setColor(new Color(red, green, blue, alpha));
-                    g.setStroke(new java.awt.BasicStroke(width));
-                    g.drawLine(x, y, sx, sy);
-                    //*/
-                    break;
-
-                case DRAW_RECTANGLE + 100:
-					/*/
-                    x = renderArgs[index++];
-                    y = renderArgs[index++];
-                    width = renderArgs[index++];
-                    height = renderArgs[index++];
-                    red = renderArgs[index++];
-                    green = renderArgs[index++];
-                    blue = renderArgs[index++];
-                    alpha = renderArgs[index++];
-
-                    // TODO: need a really fast caching mechanism for colors so I don't always rapidly alloc this
-                    g.setColor(new Color(red, green, blue, alpha));
-                    g.fillRect(x, y, width, height);
-                    //*/
-                    break;
-
-                case DRAW_TRIANGLE + 100:
-					/*/
-                    xs[0] = renderArgs[index++];
-                    ys[0] = renderArgs[index++];
-                    xs[1] = renderArgs[index++];
-                    ys[1] = renderArgs[index++];
-                    xs[2] = renderArgs[index++];
-                    ys[2] = renderArgs[index++];
-                    red = renderArgs[index++];
-                    green = renderArgs[index++];
-                    blue = renderArgs[index++];
-                    alpha = renderArgs[index++];
-
-                    g.setColor(new Color(red, green, blue, alpha));
-                    g.fillPolygon(xs, ys, 3);
-                    //*/
-                    break;
             }
         }
     }
-
-	/*
-    private static void expandArgsCapacity() {
-        int[] newRenderArgs = new int[renderArgsRealLength * 2];
-        System.arraycopy(renderArgs, 0, newRenderArgs, 0, renderArgsVirtualLength);
-        renderArgs = newRenderArgs;
-        renderArgsRealLength = renderArgs.length;
-    }
-
-    private static void expandImagesCapacity() {
-        Image[] newImages = new Image[imagesRealLength * 2];
-        System.arraycopy(images , 0, newImages, 0, imagesVirtualLength);
-        images = newImages;
-        imagesRealLength = images.length;
-    }//*/
 }
