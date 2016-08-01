@@ -23,21 +23,22 @@ C$game$beginFrame = function () {
 C$game$endFrame = function() {
     if (C$game$scaled_mode) {
         C$game$real_canvas.getContext('2d').drawImage(C$game$virtual_canvas, 0, 0);
-	}
+    }
+
     window.setTimeout(C$game$runFrame, C$game$computeDelayMillis());
 };
 
 C$game$runFrame = function () {
     C$game$beginFrame();
-    var cont = v_runInterpreter(C$game$execId);
-    if (!cont) return;
-    C$game$endFrame();
+    v_runInterpreter(C$game$execId); // clockTick will induce endFrame()
 };
 
 C$game$computeDelayMillis = function () {
     var ideal = 1.0 / C$game$fps;
     var diff = C$common$now() - C$game$last_frame_began;
-	return Math.floor((ideal - diff) * 1000);
+    var delay = Math.floor((ideal - diff) * 1000);
+    if (delay < 1) delay = 1;
+    return delay;
 };
 
 C$game$initializeGame = function (fps) {

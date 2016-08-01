@@ -6,6 +6,9 @@ if (!C$game) { throw 1; } // Cannot use the drawing library without the game lib
 C$drawing = 1;
 C$drawing$HEX = [];
 C$drawing$HEXR = [];
+C$drawing$events = [];
+C$drawing$eventsLength = 0;
+C$drawing$images = [];
 
 for (var i = 0; i < 256; ++i) {
     var t = i.toString(16);
@@ -13,6 +16,239 @@ for (var i = 0; i < 256; ++i) {
     C$drawing$HEX.push(t);
     C$drawing$HEXR.push('#' + t);
 }
+
+C$drawing$rendererSetData = function (events, eventsLength, images) {
+    C$drawing$events = events;
+    C$drawing$eventsLength = eventsLength;
+    C$drawing$images = images;
+    C$drawing$render();
+};
+
+C$drawing$render = function () {
+    var ev = C$drawing$events;
+    var images = C$drawing$images;
+    var imagesIndex = 0;
+    var canvas = null;
+    var mask = 0;
+    var x = 0;
+    var y = 0;
+    var w = 0;
+    var h = 0;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    var a = 0;
+    var tw = 0;
+    var th = 0;
+    var sx = 0;
+    var sy = 0;
+    var sw = 0;
+    var sh = 0;
+    var alpha = 0;
+    var theta = 0;
+    var radiusX = 0;
+    var radiusY = 0;
+    var path;
+    var offset;
+
+    for (var i = 0; i < C$drawing$eventsLength; i += 16) {
+        switch (ev[i]) {
+            case 1:
+                // rectangle
+                x = ev[i | 1];
+                y = ev[i | 2];
+                w = ev[i | 3];
+                h = ev[i | 4];
+                r = ev[i | 5];
+                g = ev[i | 6];
+                b = ev[i | 7];
+                a = ev[i | 8];
+
+                C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                if (a != 255) {
+                    C$game$ctx.globalAlpha = a / 255.0;
+                    C$game$ctx.fillRect(x, y, w + .1, h + .1); // TODO: get to the bottom of this mysterious .1. Is it still necessary?
+                    C$game$ctx.globalAlpha = 1;
+                } else {
+                    C$game$ctx.fillRect(x, y, w + .1, h + .1);
+                }
+                break;
+
+            case 2:
+                // ellipse
+                w = ev[i | 3] / 2; // note that w and h are half width and half height
+                h = ev[i | 4] / 2;
+                x = ev[i | 1] + w;
+                y = ev[i | 2] + h;
+                r = ev[i | 5];
+                g = ev[i | 6];
+                b = ev[i | 7];
+                a = ev[i | 8];
+
+                w = w * 4 / 3; // no idea why this needs to exist to look correct...
+                C$game$ctx.beginPath();
+                C$game$ctx.moveTo(x, y - h);
+                C$game$ctx.bezierCurveTo(
+                    x + w, y - h,
+                    x + w, y + h,
+                    x, y + h);
+                C$game$ctx.bezierCurveTo(
+                    x - w, y + h,
+                    x - w, y - h,
+                    x, y - h);
+                C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                if (a != 255) {
+                    C$game$ctx.globalAlpha = a / 255.0;
+                    C$game$ctx.fill();
+                    C$game$ctx.closePath();
+                    C$game$ctx.globalAlpha = 1;
+                } else {
+                    C$game$ctx.fill();
+                    C$game$ctx.closePath();
+                }
+                break;
+
+            case 3:
+                // line
+                ax = ev[i | 1];
+                ay = ev[i | 2];
+                bx = ev[i | 3];
+                by = ev[i | 4];
+                width = ev[i | 5];
+                r = ev[i | 6];
+                g = ev[i | 7];
+                b = ev[i | 8];
+                a = ev[i | 9];
+
+                if (a > 0) {
+                    offset = ((width % 2) == 0) ? 0 : .5;
+                    C$game$ctx.beginPath();
+                    C$game$ctx.moveTo(ax + offset, ay + offset);
+                    C$game$ctx.lineTo(bx + offset, by + offset);
+                    C$game$ctx.lineWidth = width;
+                    if (a < 255) {
+                        C$game$ctx.globalAlpha = a / 255;
+                        C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                        C$game$ctx.stroke();
+                        C$game$ctx.closePath();
+                        C$game$ctx.globalAlpha = 1;
+                    } else {
+                        C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                        C$game$ctx.stroke();
+                        C$game$ctx.closePath();
+                    }
+                }
+                break;
+
+            case 4: // triangle
+            case 5: // quad
+                ax = ev[i | 1];
+                ay = ev[i | 2];
+                bx = ev[i | 3];
+                by = ev[i | 4];
+                cx = ev[i | 5];
+                cy = ev[i | 6];
+                if (ev[i] == 4) {
+                    // triangle
+                    dx = null;
+                    r = ev[i | 7];
+                    g = ev[i | 8];
+                    b = ev[i | 9];
+                    a = ev[i | 10];
+                } else {
+                    // quad
+                    dx = ev[i | 7];
+                    dy = ev[i | 8]
+                    r = ev[i | 9];
+                    g = ev[i | 10];
+                    b = ev[i | 11];
+                    a = ev[i | 12];
+                }
+
+                if (a > 0) {
+                    path = new Path2D();
+                    path.moveTo(ax, ay);
+                    path.lineTo(bx, by);
+                    path.lineTo(cx, cy);
+                    if (dx != null) {
+                        path.lineTo(dx, dy);
+                    }
+
+                    C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                    if (a < 255) {
+                        C$game$ctx.globalAlpha = a / 255;
+                        C$game$ctx.fill(path);
+                        C$game$ctx.globalAlpha = 1;
+                    } else {
+                        C$game$ctx.fill(path);
+                    }
+                }
+
+                break;
+            case 6:
+                // images
+                canvas = images[imagesIndex++][0][3];
+                x = ev[i | 8];
+                y = ev[i | 9];
+                w = canvas.width;
+                h = canvas.height;
+                mask = ev[i | 1];
+                if (mask == 0) {
+                    // basic case
+                    C$game$ctx.drawImage(canvas, 0, 0, w, h, x, y, w, h);
+                } else if ((mask & 4) != 0) {
+                    // rotation is involved
+                    theta = ev[i | 10] / 1048576.0;
+                    if ((mask & 3) == 0) {
+                        C$game$ctx.save();
+                        C$game$ctx.translate(x, y);
+                        C$game$ctx.rotate(theta);
+
+                        if ((mask & 8) == 0) {
+                            C$game$ctx.drawImage(canvas, -w / 2, -h / 2);
+                        } else {
+                            C$game$ctx.globalAlpha = ev[i | 11] / 255;
+                            C$game$ctx.drawImage(canvas, -w / 2, -h / 2);
+                            C$game$ctx.globalAlpha = 1;
+                        }
+                        C$game$ctx.restore();
+                    } else {
+                        // TODO: slice and scale a picture and rotate it.
+                    }
+                } else {
+                    // no rotation
+                    if ((mask & 1) == 0) {
+                        sx = 0;
+                        sy = 0;
+                        sw = w;
+                        sh = h;
+                    } else {
+                        sx = ev[i | 2];
+                        sy = ev[i | 3];
+                        sw = ev[i | 4];
+                        sh = ev[i | 5];
+                    }
+                    if ((mask & 2) == 0) {
+                        tw = sw;
+                        th = sh;
+                    } else {
+                        tw = ev[i | 6];
+                        th = ev[i | 7];
+                    }
+
+                    if ((mask & 8) == 0) {
+                        C$game$ctx.drawImage(canvas, sx, sy, sw, sh, x, y, tw, th);
+                    } else {
+                        C$game$ctx.globalAlpha = ev[i | 11] / 255;
+                        C$game$ctx.drawImage(canvas, sx, sy, sw, sh, x, y, tw, th);
+                        C$game$ctx.globalAlpha = 1;
+                    }
+                }
+                break;
+        }
+
+    }
+};
 
 C$drawing$blitRotated = function (canvas, x, y, theta) {
     C$game$ctx.save();

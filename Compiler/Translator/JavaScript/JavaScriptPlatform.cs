@@ -20,6 +20,7 @@ namespace Crayon.Translator.JavaScript
         public override bool IsArraySameAsList { get { return true; } }
         public override bool IsCharANumber { get { return false; } }
         public override bool IntIsFloor { get { return true; } }
+        public override bool IsThreadBlockingAllowed { get { return false; } }
         public override string PlatformShortId { get { return "game-javascript"; } }
 
         public override Dictionary<string, FileOutput> Package(
@@ -64,8 +65,8 @@ namespace Crayon.Translator.JavaScript
             foreach (string jsFile in new string[] {
                 "game.js",
                 "input.js",
+                "imageresources.js",
                 "drawing.js",
-                "images.js",
                 "sound.js",
                 "gamepad.js",
             })
@@ -99,13 +100,13 @@ namespace Crayon.Translator.JavaScript
                 textResources["text/" + textFile.CanonicalFileName] = textFile.TextContent;
             }
 
-            foreach (string filename in resourceDatabase.SpriteSheetFiles.Keys)
+            foreach (string filename in resourceDatabase.ImageSheetFiles.Keys)
             {
-                FileOutput imageSheetFile = resourceDatabase.SpriteSheetFiles[filename];
-                output["resources/imagesheets/" + filename] = imageSheetFile;
+                FileOutput imageSheetFile = resourceDatabase.ImageSheetFiles[filename];
+                output["resources/images/" + filename] = imageSheetFile;
             }
 
-            textResources["image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile.TextContent;
+            textResources["imageresmanifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
 
             foreach (FileOutput audioFile in resourceDatabase.AudioResources)
             {

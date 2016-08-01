@@ -847,6 +847,12 @@ namespace Crayon
                 this.CompileExpression(parser, buffer, arg, true);
             }
 
+            if (coreFuncInvocation.FunctionId == (int)CoreFunctionID.INT_QUEUE_WRITE_16)
+            {
+                buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0, args.Length - 1);
+                return;
+            }
+
             buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
         }
 

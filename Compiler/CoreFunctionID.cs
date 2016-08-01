@@ -28,6 +28,10 @@
         SIN = 24,
         TAN = 25,
         LN = 26,
+        INT_QUEUE_CLEAR = 27,
+        INT_QUEUE_WRITE_16 = 28,
+        EXECUTION_CONTEXT_COUNTER = 29,
+        SLEEP = 30,
     }
 
     public static class CoreFunctionIDHelper
@@ -41,6 +45,7 @@
                 case "print": return (int)CoreFunctionID.PRINT;
                 case "typeof": return (int)CoreFunctionID.TYPE_OF;
                 case "typeis": return (int)CoreFunctionID.TYPE_IS;
+                case "execCounter": return (int)CoreFunctionID.EXECUTION_CONTEXT_COUNTER;
                 case "execId": return (int)CoreFunctionID.EXECUTION_CONTEXT_ID;
                 case "assert": return (int)CoreFunctionID.ASSERT;
                 case "chr": return (int)CoreFunctionID.CHR;
@@ -62,6 +67,9 @@
                 case "sin": return (int)CoreFunctionID.SIN;
                 case "tan": return (int)CoreFunctionID.TAN;
                 case "ln": return (int)CoreFunctionID.LN;
+                case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16; 
+                case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
+                case "sleep": return (int)CoreFunctionID.SLEEP;
                 default: return -1;
             }
         }

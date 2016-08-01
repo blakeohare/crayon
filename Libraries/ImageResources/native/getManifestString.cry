@@ -1,0 +1,5 @@
+/*
+	Get the image resource manifest as a string.
+*/
+
+output = buildString($_lib_imageresources_getManifestString());

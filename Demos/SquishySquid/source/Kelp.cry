@@ -58,7 +58,7 @@ class Kelp {
 		targetY = 0;
 		kelpHeight = this.topOpeningY;
 		sourceY = img.height - kelpHeight;
-		img.drawPartial(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+		img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
 		
 		// Draw kelp on bottom
 		img = ImageLibrary.get('kelp.png');
@@ -67,6 +67,6 @@ class Kelp {
 		targetX = left;
 		targetY = this.bottomOpeningY;
 		kelpHeight = AVAILABLE_HEIGHT - this.bottomOpeningY;
-		img.drawPartial(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+		img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
 	}
 }

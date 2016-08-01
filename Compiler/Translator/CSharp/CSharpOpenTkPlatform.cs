@@ -61,16 +61,16 @@ namespace Crayon.Translator.CSharp
                 embeddedResources.Add("Resources\\Audio\\" + fileOutput.CanonicalFileName);
             }
 
-            if (resourceDatabase.SpriteSheetManifestFile != null)
+            if (resourceDatabase.ImageSheetManifestFile != null)
             {
-                files[projectId + "/Resources/SpriteSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
-                embeddedResources.Add("Resources\\SpriteSheetManifest.txt");
+                files[projectId + "/Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+                embeddedResources.Add("Resources\\ImageSheetManifest.txt");
 
-                foreach (string spriteSheetFile in resourceDatabase.SpriteSheetFiles.Keys)
+                foreach (string imageSheetFile in resourceDatabase.ImageSheetFiles.Keys)
                 {
-                    FileOutput fileOutput = resourceDatabase.SpriteSheetFiles[spriteSheetFile];
-                    files[projectId + "/Resources/ImageSheets/" + spriteSheetFile] = fileOutput;
-                    embeddedResources.Add("Resources\\ImageSheets\\" + spriteSheetFile);
+                    FileOutput fileOutput = resourceDatabase.ImageSheetFiles[imageSheetFile];
+                    files[projectId + "/Resources/Images/" + imageSheetFile] = fileOutput;
+                    embeddedResources.Add("Resources\\Images\\" + imageSheetFile);
                 }
             }
 

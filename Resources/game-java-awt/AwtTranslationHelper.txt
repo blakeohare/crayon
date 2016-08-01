@@ -77,22 +77,6 @@ class AwtTranslationHelper {
         return sb.toString();
     }
 
-    public static Object flushImagetteToBitmap(Imagette imagette) {
-        int width = imagette.width;
-        int height = imagette.height;
-        BufferedImage finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = finalImage.getGraphics();
-        int length = imagette.nativeBitmaps.size();
-        for (int i = 0; i < length; ++i) {
-            BufferedImage img = (BufferedImage) imagette.nativeBitmaps.get(i);
-            int x = imagette.xs.get(i);
-            int y = imagette.ys.get(i);
-            g.drawImage(img, x, y, null);
-        }
-        g.dispose();
-        return finalImage;
-    }
-
     public static BufferedImage flipImage(Object original, boolean flipX, boolean flipY) {
         BufferedImage originalImage = (BufferedImage) original;
         if (!flipX && !flipY) return originalImage;
@@ -286,7 +270,58 @@ class AwtTranslationHelper {
         return newImage;
     }
 
-	public static void downloadImage(String key, String url) {
-		throw new RuntimeException();
+	public static BufferedImage generateNativeBitmapOfSize(int width, int height) {
+        return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	}
+
+	public static String getImageResourceManifestString() {
+		return readFileText("resources/imagesheetmanifest.txt");
+	}
+
+	public static void imageResourceBlitImage(
+		Object target, Object source,
+		int targetX, int targetY,
+		int sourceX, int sourceY,
+		int width, int height) {
+		
+		Graphics g = ((BufferedImage) target).getGraphics();
+		g.drawImage(
+			(BufferedImage) source,
+			targetX, targetY,
+			targetX + width, targetY + height,
+			sourceX, sourceY,
+			sourceX + width, sourceY + height,
+			null);
+        g.dispose();
+	}
+
+	public static void imageLoadAsync(String genFileName, Object[] nativeImageDataNativeData, Object[] imageLoaderNativeData) {
+		// TODO: implement this for real and add mutex checks to checkLoaderIsDone
+		boolean loaded = imageLoadSync(genFileName, nativeImageDataNativeData, null);
+		imageLoaderNativeData[2] = loaded ? 1 : 2;
+	}
+
+	public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, ArrayList<Value> outStatusCheesy) {
+		BufferedImage image = loadImageFromLocalFile("images/" + genFileName);
+		if (image != null) {
+			if (outStatusCheesy != null) java.util.Collections.reverse(outStatusCheesy);
+			nativeImageDataNativeData[0] = image;
+			nativeImageDataNativeData[1] = image.getWidth();
+			nativeImageDataNativeData[2] = image.getHeight();
+			return true;
+		}
+		return false;
+	}
+
+	public static void checkLoaderIsDone(
+		Object[] imageLoaderNativeData,
+		Object[] nativeImageDataNativeData,
+		ArrayList<Value> output) {
+		
+		// TODO: add mutex checks when imageLoadAsync is implemented
+		int status = (int)imageLoaderNativeData[2];
+		// TODO: release mutex
+
+		output.set(0, CrayonWrapper.v_buildInteger(status));
 	}
 }

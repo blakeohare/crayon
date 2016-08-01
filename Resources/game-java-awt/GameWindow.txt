@@ -183,28 +183,29 @@ class GameWindow {
     }
 
     private void timerTick() {
-        RenderEngine.reset();
-        boolean continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
-        if (!continueExecution) {
+        
+        int vmStatus = CrayonWrapper.v_runInterpreter(this.executionContextId);
+        if (vmStatus == 1 || // finished
+			vmStatus == 3) { // uncaught error
             frame.setVisible(false);
             System.exit(0);
         }
 
-        maybeUpdateCanvas();
-        Graphics2D virtualG = (Graphics2D) virtualScreen.createGraphics();
-        RenderEngine.render(virtualG, gameWidth, gameHeight);
+		maybeUpdateCanvas();
+		Graphics2D virtualG = (Graphics2D) virtualScreen.createGraphics();
+		RenderEngine.render(virtualG, gameWidth, gameHeight);
 
-        Graphics2D realG = (Graphics2D) strategy.getDrawGraphics();
-        realG.setRenderingHint(
-            RenderingHints.KEY_INTERPOLATION, 
-            RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        realG.drawImage(
-            virtualScreen, 0, 0, screenWidth, screenHeight,
-            0, 0, virtualScreen.getWidth(), virtualScreen.getHeight(),
-            null);
+		Graphics2D realG = (Graphics2D) strategy.getDrawGraphics();
+		realG.setRenderingHint(
+			RenderingHints.KEY_INTERPOLATION, 
+			RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		realG.drawImage(
+			virtualScreen, 0, 0, screenWidth, screenHeight,
+			0, 0, virtualScreen.getWidth(), virtualScreen.getHeight(),
+			null);
 
-        realG.dispose();
-        strategy.show();
+		realG.dispose();
+		strategy.show();
     }
 
     public void show() {

@@ -1,6 +1,6 @@
 ﻿
 if (argCount == 0) {
-	lib_core_sort_lists(list1, list1, intOutParam);
+	sortLists(list1, list1, intOutParam);
 	if ($_array_get(intOutParam, 0) > 0) {
 		return killExecution(stack, pc, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 	}

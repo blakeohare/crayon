@@ -1,0 +1,27 @@
+/*
+	All arguments are within valid range before this function is invoked.
+	
+	arg 1: NativeImageData object, whose nativeData[0] bitmap must be modified.
+	arg 2: NativeImageData object, whose nativeData[0] bitmap must be copied onto arg 1's
+	arg 3: target left (int)
+	arg 4: target top (int)
+	arg 5: source left (int)
+	arg 6: source top (int)
+	arg 7: width (int)
+	arg 8: height (int)
+*/
+
+import inline "FrameworkFunctions/8_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
+
+$_lib_imageresources_blit(
+	$_array_get(ObjectInstance$objInstance1.nativeData, 0), // target bitmap
+	$_array_get(ObjectInstance$objInstance2.nativeData, 0), // source bitmap
+	$_cast('int', Value$arg3.internalValue), // target left
+	$_cast('int', Value$arg4.internalValue), // target top
+	$_cast('int', Value$arg5.internalValue), // source left
+	$_cast('int', Value$arg6.internalValue), // source top
+	$_cast('int', Value$arg7.internalValue), // width
+	$_cast('int', Value$arg8.internalValue)); // height

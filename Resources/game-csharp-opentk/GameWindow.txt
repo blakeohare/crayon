@@ -261,11 +261,10 @@ namespace %%%PROJECT_ID%%%
 
 		private void Update()
 		{
-			CrayonWrapper.v_glResetDrawBuffer();
+			int vmStatus = CrayonWrapper.v_runInterpreter(this.executionContextId);
 
-			bool continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
-
-			if (!continueExecution)
+			if (vmStatus == 1 || // Finished
+				vmStatus == 3) // Error
 			{
 				// Because sometimes once isn't enough.
 				this.Close();
@@ -274,21 +273,33 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
-		private void Render()
-		{
-			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			GL.ClearColor(0f, 0f, 0f, 1f);
-			GL.MatrixMode(MatrixMode.Modelview);
-			GL.LoadIdentity();
+        // defaults are valid and empty
+        private static int[] renderEvents = new int[0];
+        private static int renderEventsLength = 0;
+        private static object[][] imagesNativeData = null;
 
-			OpenTkRenderer.render(
-                CrayonWrapper.v_GL_DATA,
-                CrayonWrapper.v_GL_IMAGES,
-                CrayonWrapper.v_GL_VIRTUAL_SIZE,
+        public static void setRenderData(int[] events, int eventsLength, object[][] imagesNativeData)
+        {
+            GameWindow.renderEvents = events;
+            GameWindow.renderEventsLength = eventsLength;
+            GameWindow.imagesNativeData = imagesNativeData;
+        }
+
+        private void Render()
+        {
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(0f, 0f, 0f, 1f);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            OpenTkRenderer.render(
+                GameWindow.renderEvents,
+                GameWindow.renderEventsLength,
+                GameWindow.imagesNativeData,
                 this.gameWidth, this.gameHeight, this.screenWidth, this.screenHeight);
 
-			this.SwapBuffers();
-		}
+            this.SwapBuffers();
+        }
 
 		internal int GetGamepadCount()
 		{

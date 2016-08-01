@@ -71,14 +71,14 @@ namespace Crayon.Translator.CSharp
                 bundleResources.Add("    <BundleResource Include=\"Resources\\Text\\" + textFile.CanonicalFileName + "\" />\r\n");
             }
 
-            if (resourceDatabase.SpriteSheetManifestFile != null)
+            if (resourceDatabase.ImageSheetManifestFile != null)
             {
-                files[projectId + "/Resources/ImageSheetManifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                files[projectId + "/Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
                 bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheetManifest.txt\" />\r\n");
 
-                foreach (string tileName in resourceDatabase.SpriteSheetFiles.Keys)
+                foreach (string tileName in resourceDatabase.ImageSheetFiles.Keys)
                 {
-                    FileOutput tile = resourceDatabase.SpriteSheetFiles[tileName];
+                    FileOutput tile = resourceDatabase.ImageSheetFiles[tileName];
                     files[projectId + "/Resources/ImageSheets/" + tileName] = tile;
                     bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheets\\" + tileName + "\" />\r\n");
                 }

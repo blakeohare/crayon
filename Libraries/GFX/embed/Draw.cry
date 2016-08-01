@@ -1,0 +1,121 @@
+import  Game;
+
+namespace GFX {
+	
+	enum _DrawCommands {
+		RECTANGLE = 1,
+		ELLIPSE = 2,
+		LINE = 3,
+		TRIANGLE = 4,
+		QUAD = 5,
+		IMAGE = 6,
+	}
+	
+	class Draw {
+		
+		static field _queue = new Core.Object();
+		
+		static constructor() {
+			$$lib_gfx_renderQueueAction(Draw._queue, 0); // essentially no-ops, but runs the queue initializers.
+			Game.GameWindow._frameEndHandlers.add(GFX.Draw._renderer);
+			Game.GameWindow._frameBeginHandlers.add(GFX.Draw._rendererReset);
+		}
+		
+		// TODO: static classes
+		constructor() { Core.fail(); }
+		
+		static function _renderer() {
+			// send the render queue to the platform renderer
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 1);
+		}
+		
+		static function _rendererReset() {
+			// clear the render queue
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+		}
+		
+		static function ellipse(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.ELLIPSE,
+				left, top, width, height, r, g, b, a);
+		}
+
+		static function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
+			if (strokeWidth < 1) return;
+			
+			// If the line is horizontal or vertical, use the rectangle drawing code instead.
+			// This guarantees clean crisp 1-pixel lines across platforms which is actually
+			// probably the most common use case.
+			
+			if (startY == endY) { // horizontal
+				return $$$('intQueueWrite16', GFX.Draw._queue,
+					_DrawCommands.RECTANGLE,
+					$$$('min', startX, endX), // left
+					startY - strokeWidth / 2, // top
+					$$$('abs', endX - startX), // width
+					strokeWidth, // height
+					r, g, b, a);
+			}
+			
+			if (startX == endX) { // vertical
+				return $$$('intQueueWrite16', GFX.Draw._queue,
+					_DrawCommands.RECTANGLE,
+					startX - strokeWidth / 2, // left
+					$$$('min', startY, endY), // top
+					strokeWidth, // width
+					$$$('abs', endY - startY), // height
+					r, g, b, a);
+			}
+			
+			/*
+				GL-based platforms use the quadrilateral method to draw lines.
+				For other platforms, the capping behavior of lines tends to vary
+				so only use the native line drawing method when the line is skinny
+				and different caps aren't noticeable. (1 or 2 pixels wide)
+				
+				For everything else, calculate the coordinates of the quadrilateral
+				that represents this line and use the platform's polygon drawing method
+				instead.
+			*/
+			if (strokeWidth < 3 && !$$lib_gfx_isOpenGlBased()) {
+				return $$$('intQueueWrite16', GFX.Draw._queue,
+					_DrawCommands.LINE,
+					startX, startY, endX, endY, strokeWidth, r, g, b, a);
+			}
+			
+			$$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.QUAD,
+				startX, startY, endX, endY, strokeWidth, 0, 0, 0, r, g, b, a);
+			
+			// The above command is wrong. However there's lots of math to get the 
+			// correct coordinates, so do the transformation in translated code.
+			return $$lib_gfx_lineToQuad(GFX.Draw._queue);
+		}
+
+		static function rectangle(left, top, width, height, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.RECTANGLE,
+				left, top, width, height, r, g, b, a);
+		}
+
+		static function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.TRIANGLE,
+				ax, ay, bx, by, cx, cy, r, g, b, a);
+		}
+
+		static function quad(ax, ay, bx, by, cx, cy, dx, dy, r, g, b, a = 255) {
+			// TODO: if this makes a bowtime, and this is an OpenGL based platform,
+			// decompose this into two triangle draws.
+			return $$$('intQueueWrite16', GFX.Draw._queue,
+				_DrawCommands.QUAD,
+				ax, ay, bx, by, cx, cy, dx, dy, r, g, b, a);
+		}
+		
+		static function fill(r, g, b) {
+			t = Game.GameWindow.instance;
+			$$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+			return GFX.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
+		}
+	}
+}

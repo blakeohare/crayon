@@ -177,3 +177,11 @@ C$common$clearList = function (list) {
 C$common$getElement = function (id) {
     return document.getElementById(id);
 };
+
+C$common$getBool = function (b) {
+    return b ? v_VALUE_TRUE : v_VALUE_FALSE;
+}
+
+C$common$enqueueVmResume = function (seconds, execId) {
+    window.setTimeout(v_runInterpreter, Math.floor(seconds * 1000), execId);
+};

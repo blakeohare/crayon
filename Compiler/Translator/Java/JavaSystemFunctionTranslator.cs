@@ -231,6 +231,11 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
+        protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
+        {
+            throw new InvalidOperationException(); // optimized out.
+        }
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -707,6 +712,13 @@ namespace Crayon.Translator.Java
         {
             output.Add("Math.tan(");
             this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("TranslationHelper.sleep(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
             output.Add(")");
         }
 

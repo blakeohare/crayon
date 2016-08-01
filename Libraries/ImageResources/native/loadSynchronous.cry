@@ -1,0 +1,30 @@
+/*
+	Load an image synchronously.
+	This codepath does not get used by platforms where synchronous loading is 
+	impossible (JS) hence the wrapping if statement.
+	
+	arg 1: NativeImageData object instance (blank. must fill in the nativeData for this)
+		nativeData[0] -> native bitmap resource
+		nativeData[1] -> width (int)
+		nativeData[2] -> height (int)
+	arg 2: Generated filename
+	arg 3: Status out. Reverse this list upon success.
+*/
+
+if (!%%%IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM%%%) {
+	import inline "FrameworkFunctions/3_arg.cry";
+
+	objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+	string1 = $_cast('string', Value$arg2.internalValue);
+	list1 = $_cast('List<Value>', Value$arg3.internalValue);
+
+	objArray1 = $_new_array('object', 3);
+	ObjectInstance$objInstance1.nativeData = objArray1;
+
+	$_lib_imageresources_loadSync(
+		string1, // filename
+		objArray1, // native image data nativeData
+		list1); // status out
+} else {
+	output = VALUE_NULL;
+}

@@ -45,7 +45,7 @@
     <EmbeddedResource Include="game-javascript\gamepad.js" />
     <EmbeddedResource Include="game-javascript\game.js" />
     <EmbeddedResource Include="game-javascript\game_host_html.txt" />
-    <EmbeddedResource Include="game-javascript\images.js" />
+    <EmbeddedResource Include="game-javascript\imageresources.js" />
     <EmbeddedResource Include="game-javascript\input.js" />
     <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>
@@ -190,7 +190,9 @@
     <EmbeddedResource Include="game-python-pygame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="game-python-pygame\Footer.py" />
     <EmbeddedResource Include="game-python-pygame\GamepadLibraryHelper.py" />
+    <EmbeddedResource Include="game-python-pygame\GfxRenderer.py" />
     <EmbeddedResource Include="game-python-pygame\Header.py" />
+    <EmbeddedResource Include="game-python-pygame\ImageHelper.py" />
     <EmbeddedResource Include="game-python-pygame\Imports.py" />
     <EmbeddedResource Include="game-python-pygame\ResourceReader.py" />
   </ItemGroup>
@@ -199,6 +201,7 @@
     <EmbeddedResource Include="ui-csharp-winforms\AssemblyInfo.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\Form1.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\Form1Designer.txt" />
+    <EmbeddedResource Include="ui-csharp-winforms\NoriRenderer.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\Program.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\ProjectFile.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\ResourcesDesigner.txt" />
@@ -207,9 +210,6 @@
     <EmbeddedResource Include="ui-csharp-winforms\SettingsSettings.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\SolutionFile.txt" />
     <EmbeddedResource Include="ui-csharp-winforms\WinFormsTranslationHelper.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ui-csharp-winforms\NoriRenderer.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

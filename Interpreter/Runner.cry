@@ -54,7 +54,9 @@ function @type('int') main() {
 		
 		localsStack,
 		localsStackSet,
-		1); // localsStackSetToken
+		1, // localsStackSetToken
+
+		0); // executionCounter
 
 	@type('Dictionary<int, ExecutionContext>') executionContexts = $_new_dictionary('int', 'ExecutionContext');
 	$_dictionary_set(executionContexts, 0, executionContext);
@@ -80,33 +82,7 @@ function @type('int') main() {
 		$_new_list('Dictionary<string, int>'), // string switch lookups builder
 		0, // instance counter
 
-		// TODO: move this out of here.
-		new SpriteSheetData(
-			$_new_dictionary('string', 'SpriteSheetItemDescriptor'), // image_paths --> image info
-			$_new_dictionary('int', 'List<string>'), // group ID --> image paths
-			$_new_dictionary('int', 'Dictionary<int, bool>'), // group ID --> tile ID hash set (bool ignored)
-			$_new_dictionary('string', 'int'), // group name --> group ID
-			false // initialized
-		),
-		new ImageSheetStatus(
-			$_new_dictionary('string', 'string'),
-			$_new_dictionary('string', 'object'),
-			$_new_dictionary('string', 'int'),
-			$_new_dictionary('string', 'TileLoadRequest'),
-			$_new_dictionary('string', 'ImageSheetVirtualizationGrid'),
-			$_new_dictionary('int', 'Array<string>'),
-			$_new_dictionary('string', 'int'),
-			false,
-			$_new_dictionary('string', 'Image'),
-			$_new_dictionary('string', 'CompositeImage'),
-			$_new_dictionary('int', 'int'),
-			$_new_dictionary('int', 'List<SpriteSheetItemDescriptor>>'),
-			$_new_dictionary('string', 'Array<int>'),
-			$_new_list('TileLoadRequest'),
-			$_new_dictionary('string', 'object'),
-			$_new_dictionary('int', 'Array<int>'),
-			$_new_dictionary('string', 'ImageSheetVirtualizationGrid')),
-		false,
+		false, // initialization complete
 
 		// OO stuff
 		$_new_array('ClassInfo', 100),
@@ -131,30 +107,25 @@ function @type('int') main() {
 	during the lifetime of the initial invocation. (for example, a blocking window is opened)
 	This is why the output of the initial invocation is meaningless.
 */
-function @type('bool') runInterpreter(@type('int') executionContextId) {
+function @type('int') runInterpreter(@type('int') executionContextId) {
 	@type('ProgramData') p = $_get_program_data();
 	@type('InterpreterResult') result = interpret(executionContextId);
-	if (InterpreterResult$result.status == InterpreterResultStatus.FINISHED) {
+	@type('int') status = InterpreterResult$result.status;
+	if (status == InterpreterResultStatus.FINISHED) {
 		if ($_dictionary_contains(ProgramData$p.executionContexts, executionContextId)) {
 			$_dictionary_remove(ProgramData$p.executionContexts, executionContextId);
 		}
-		if (executionContextId == 0) {
-			return false;
-		}
-	} else if (InterpreterResult$result.status == InterpreterResultStatus.FATAL_ERROR) {
+	} else if (status == InterpreterResultStatus.FATAL_ERROR) {
 		// TODO: don't generate the error in the interpreter. Instead just return the message and
 		// the stack trace will be determined from the stack here. Also later add logic to 
 		// conditionally find symbol information here.
 		$_print_stderr(InterpreterResult$result.errorMessage);
-		return false;
-	} else if (InterpreterResult$result.status == InterpreterResultStatus.SUSPENDED) {
-		// Do nothing.
 	}
 
-	return true;
+	return status;
 }
 
-function @type('bool') runInterpreterWithFunctionPointer(@type('Value') fpValue, @type('Array<Value>') args) {
+function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, @type('Array<Value>') args) {
 	@type('ProgramData') p = $_get_program_data();
 	@type('int') newId = ProgramData$p.lastExecutionContextId + 1;
 	ProgramData$p.lastExecutionContextId = newId;
@@ -191,7 +162,9 @@ function @type('bool') runInterpreterWithFunctionPointer(@type('Value') fpValue,
 		
 		locals,
 		localsSet,
-		1); // localsStackSetToken
+		1, // localsStackSetToken
+
+		0); // executionContext
 
 	$_dictionary_set(ProgramData$p.executionContexts, newId, executionContext);
 	return runInterpreter(newId);

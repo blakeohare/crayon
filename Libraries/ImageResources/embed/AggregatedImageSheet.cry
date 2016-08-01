@@ -1,0 +1,76 @@
+namespace ImageResources {
+	/*
+		Aggregated image sheets are collections of image sheets and behave just like
+		one giant image sheet. This class is not exposed to users through documentation
+		as it implements the same interface as a normal ImageSheet. These are created by
+		the user by passing in a list of sheet names to the ImageSheet.loadFromResources
+		functions instead of a single name.
+	*/
+	class AggregatedImageSheet {
+		
+		field _sheetsById = {};
+		field _orderedSheets;
+		field _ids = [];
+		field _weight = 0;
+		
+		field _isLoaded = false;
+		
+		constructor(sheets) {
+			this._orderedSheets = sheets.clone();
+			if (sheets.length == 0) {
+				this._isLoaded = true;
+			} else {
+				for (sheet : sheets) {
+					id = sheet._id;
+					this._sheetsById[id] = sheet;
+					this._ids.add(id);
+					this._weight += sheet._weight;
+				}
+			}
+		}
+		
+		function getImage(resourcePath) {
+			res = ImageResourceManifest.getFileInfo(resourcePath, true);
+			sheet = this._sheetsById.get(res[1]);
+			if (sheet == null) {
+				// TODO: show the ID's of the loaded ones?
+				Core.fail("Resource '" + resourcePath + "' is not included in this sheet.");
+			}
+			
+			return sheet.getImage(resourcePath);
+		}
+		
+		function isDone() {
+			if (this._isLoaded) return true;
+			
+			for (sheet : this._orderedSheets) {
+				if (!sheet.isDone()) {
+					return false;
+				}
+			}
+			
+			this._isLoaded = true;
+			return true;
+		}
+		
+		function getProgress() {
+			if (this._isLoaded) return 1.0;
+			
+			progress = 0.0;
+			for (sheet : this._orderedSheets) {
+				progress += sheet.getProgress() * sheet._weight;
+			}
+			
+			return progress / this._weight;
+		}
+		
+		function getFiles() {
+			output = [];
+			for (sheet : this._orderedSheets) {
+				output.concat(sheet.getFiles());
+			}
+			output.sort();
+			return output;
+		}
+	}
+}

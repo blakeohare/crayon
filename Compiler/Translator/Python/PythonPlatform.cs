@@ -16,6 +16,7 @@ namespace Crayon.Translator.Python
         public override bool IsArraySameAsList { get { return true; } }
         public override bool IsCharANumber { get { return false; } }
         public override bool IntIsFloor { get { return false; } }
+        public override bool IsThreadBlockingAllowed { get { return true; } }
 
         public override string PlatformShortId { get { return "game-python-pygame"; } }
 
@@ -37,9 +38,11 @@ namespace Crayon.Translator.Python
             foreach (string file in new string[] {
                 "Imports.py",
                 "Header.py",
+                "ImageHelper.py",
+                "GfxRenderer.py",
                 "ResourceReader.py",
-                "GamepadLibraryHelper.py", // TODO: conditionally include
-                "AsyncHttpFetcher.py", // TODO: conditionally include
+                "GamepadLibraryHelper.py",
+                "AsyncHttpFetcher.py",
             })
             {
                 concatenatedCode.Add(this.GetPyGameCode(file, replacements));
@@ -63,7 +66,7 @@ namespace Crayon.Translator.Python
             };
 
             output["resources/byte_code.txt"] = resourceDatabase.ByteCodeFile;
-            output["resources/image_sheet_manifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+            output["resources/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)
@@ -76,12 +79,12 @@ namespace Crayon.Translator.Python
                 output["resources/audio/" + audioFile.CanonicalFileName] = audioFile;
             }
 
-            Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.SpriteSheetFiles;
+            Dictionary<string, FileOutput> imageSheetTiles = resourceDatabase.ImageSheetFiles;
             if (imageSheetTiles != null)
             {
                 foreach (string tileName in imageSheetTiles.Keys)
                 {
-                    output["resources/image_sheets/" + tileName] = imageSheetTiles[tileName];
+                    output["resources/images/" + tileName] = imageSheetTiles[tileName];
                 }
             }
 

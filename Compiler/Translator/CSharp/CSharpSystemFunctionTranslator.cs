@@ -213,6 +213,11 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
+        protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
+        {
+            throw new InvalidOperationException(); // optimized out.
+        }
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("System.Math.Pow(");
@@ -725,6 +730,13 @@ namespace Crayon.Translator.CSharp
             output.Add("Math.Tan(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
+        }
+
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("System.Threading.Thread.Sleep((int)(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
+            output.Add(" * 1000))");
         }
 
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)

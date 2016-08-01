@@ -1,0 +1,42 @@
+/*
+	Initializes the nativeData of a GfxTexture instance.
+	
+	arg 1: GfxTexture instance
+	arg 2: GfxTextureResource instance
+	arg 3: list of 4 floats/doubles (left, top, right, bottom)
+	arg 4: texture width (pixels)
+	arg 5: texture height (pixels)
+	
+	
+	GfxTexture's nativeData...
+	nativeData[0] -> a weak reference to GfxTextureResource's nativeData
+	nativeData[1] -> texture left (ratio)
+	nativeData[2] -> texture top (ratio)
+	nativeData[3] -> texture right (ratio)
+	nativeData[4] -> texture bottom (ratio)
+	nativeData[5] -> texture width (pixels)
+	nativeData[6] -> texture height (pixels)
+*/
+import inline "FrameworkFunctions/5_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = $_new_array('object', 7);
+ObjectInstance$objInstance1.nativeData = objArray1;
+objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+$_array_set(objArray1, 0, ObjectInstance$objInstance1.nativeData);
+list1 = $_cast('List<Value>', Value$arg3.internalValue);
+value = $_list_get(list1, 0);
+float1 = $_cast('double', Value$value.internalValue);
+value = $_list_get(list1, 2);
+float2 = $_cast('double', Value$value.internalValue);
+$_array_set(objArray1, 1, float1);
+$_array_set(objArray1, 3, float2);
+value = $_list_get(list1, 1);
+float1 = $_cast('double', Value$value.internalValue);
+value = $_list_get(list1, 3);
+float2 = $_cast('double', Value$value.internalValue);
+$_array_set(objArray1, 2, float1);
+$_array_set(objArray1, 4, float2);
+
+$_array_set(objArray1, 5, $_cast('int', Value$arg4.internalValue));
+$_array_set(objArray1, 6, $_cast('int', Value$arg5.internalValue));

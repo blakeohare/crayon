@@ -223,7 +223,12 @@ namespace Crayon.Translator.Python
 
         protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
         {
-            throw new Exception("This should have been optimized out.");
+            throw new InvalidOperationException(); // optimized out.
+        }
+
+        protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
+        {
+            throw new InvalidOperationException(); // optimized out.
         }
 
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
@@ -794,6 +799,13 @@ namespace Crayon.Translator.Python
         {
             output.Add("math.tan(");
             this.Translator.TranslateExpression(output, value);
+            output.Add(")");
+        }
+
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            output.Add("time.sleep(");
+            this.Translator.TranslateExpression(output, timeDelaySeconds);
             output.Add(")");
         }
 

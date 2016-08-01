@@ -108,7 +108,10 @@ namespace %%%PROJECT_ID%%%
 			
             CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
             CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
-            if (!CrayonWrapper.v_runInterpreter(ExecutionContextId))
+
+			int vmStatus = CrayonWrapper.v_runInterpreter(ExecutionContextId);
+            if (vmStatus == 1 || // finished
+				vmStatus == 3) // error
             {
                 // TODO: force exit app here.
             }

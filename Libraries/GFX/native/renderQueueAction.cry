@@ -1,0 +1,37 @@
+/*
+	This method is multi purpose. Extracting the event queue is 99% of the work for all actions and performance here
+	isn't important, so they're combined to save code.
+	
+	arg 1: object instance that contains the render event queue
+	arg 2: an integer. 
+		0 -> send the queue to the platform for rendering.
+		1 -> reset the queue length to 0
+	
+*/
+import inline "FrameworkFunctions/2_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+if (objArray1 == null) {
+	objArray1 = $_new_array('object', 4);
+	ObjectInstance$objInstance1.nativeData = objArray1;
+}
+
+intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0));
+if (intArray1 == null) {
+	intArray1 = $_new_array('int', 0);
+	$_array_set(objArray1, 0, intArray1);
+	$_array_set(objArray1, 1, 0);
+	$_array_set(objArray1, 2, $_new_array('Array<object>', 64));
+	$_array_set(objArray1, 3, 0);
+}
+
+int1 = $_cast('int', $_array_get(objArray1, 1));
+objArrayArray1 = $_cast('Array<Array<object>>', $_array_get(objArray1, 2));
+i = $_cast('int', Value$arg2.internalValue);
+if (i == 1) {
+	$_lib_gfx_render(intArray1, int1, objArrayArray1);
+} else if (i == 2) {
+	$_array_set(objArray1, 1, 0);
+	$_array_set(objArray1, 3, 0);
+} // 0 is valid and will simply used to run the initializers above.

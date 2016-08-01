@@ -8,11 +8,3 @@
 @uncontained @type('Value') VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);
 
 @uncontained @type('Dictionary<string, Value>') COMMON_STRINGS = $_new_dictionary('string', 'Value');
-
-// The following are used in the OpenGL render pipeline.
-@uncontained @type('Array<int>') GL_DATA = $_new_array('int', 0);
-@uncontained @type('int') GL_VIRTUAL_SIZE = 0;
-@uncontained @type('int') GL_REAL_SIZE  = 0;
-@uncontained @type('Array<Image>') GL_IMAGES = $_new_array('Image', 0);
-@uncontained @type('int') GL_IMAGES_VIRTUAL_SIZE = 0;
-@uncontained @type('int') GL_IMAGES_REAL_SIZE = 0;

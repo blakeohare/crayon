@@ -115,6 +115,7 @@ enum InterpreterResultStatus {
 	FINISHED = 1,
 	SUSPENDED = 2,
 	FATAL_ERROR = 3,
+	SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
 }
 
 enum AsyncMessageType {

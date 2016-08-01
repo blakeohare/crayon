@@ -28,15 +28,30 @@ namespace %%%PROJECT_ID%%%
 			return ReadTextFile("Resources/ByteCode.txt");
 		}
 
-		public static System.Drawing.Bitmap ReadImageFile(string path)
-		{
-			IList<byte> data = ReadBytes(path);
-			if (data == null)
-			{
-				return null;
-			}
-			return new Bitmap(Bitmap.FromStream(new MemoryStream(data.ToArray<byte>())));
-		}
+        public static System.Drawing.Bitmap ReadImageFile(string path)
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                IList<byte> data = ReadBytes(path);
+                if (data == null)
+                {
+                    return null;
+                }
+                MemoryStream ms = new MemoryStream(data.ToArray());
+                ms.Seek(0, SeekOrigin.Begin); // Seems redundant but randomly crashes without it.
+                try
+                {
+                    return (Bitmap)Bitmap.FromStream(ms);
+                }
+                catch (System.ArgumentException)
+                {
+                    // This happens randomly like 3% of the time on valid images.
+                    // I have no idea why.
+                    // .03 to the 10th power is never, although a better solution/explanation would be really nice.
+                }
+            }
+            return null;
+        }
 
 		public static System.IO.Stream GetResourceStream(string path)
 		{

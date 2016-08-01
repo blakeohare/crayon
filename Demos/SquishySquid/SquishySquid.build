@@ -3,11 +3,11 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
-	<spritesheets>
+	<imagesheets>
 		<sheet id="everything">
 			<prefix>*</prefix>
 		</sheet>
-	</spritesheets>
+	</imagesheets>
 
 	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
 	

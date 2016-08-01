@@ -215,6 +215,15 @@ namespace Crayon.Translator.JavaScript
             throw new Exception("This should have been optimized out.");
         }
 
+        protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
+        {
+            output.Add("C$common$enqueueVmResume(");
+            this.Translator.TranslateExpression(output, seconds);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, executionContextId);
+            output.Add(")");
+        }
+
         protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
         {
             output.Add("Math.pow(");
@@ -629,9 +638,8 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
         {
-            // TODO: this may return crazy values, need to normalize to -1, 0, or 1
             this.Translator.TranslateExpression(output, a);
-            output.Add(".compareTo(");
+            output.Add(".localeCompare(");
             this.Translator.TranslateExpression(output, b);
             output.Add(")");
         }
@@ -795,6 +803,11 @@ namespace Crayon.Translator.JavaScript
             output.Add("Math.tan(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
+        }
+
+        protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
+        {
+            throw new InvalidOperationException(); // Optimized out.
         }
 
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)

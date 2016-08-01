@@ -19,6 +19,7 @@ class ResourceReader:
 		return output
 
 	def readImageFile(self, path):
+		# TODO: create a wrapper for images that falls back appropriately to either PyGame or PIL
 		path = self.canonicalizeAndVerifyPath(path)
 		if path == None: return None
 		return pygame.image.load(path)

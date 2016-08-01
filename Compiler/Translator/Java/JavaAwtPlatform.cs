@@ -210,9 +210,9 @@ namespace Crayon.Translator.Java
                 };
             }
 
-            foreach (string tileFile in resourceDatabase.SpriteSheetFiles.Keys)
+            foreach (string tileFile in resourceDatabase.ImageSheetFiles.Keys)
             {
-                output["resources/imagesheets/" + tileFile] = resourceDatabase.SpriteSheetFiles[tileFile];
+                output["resources/images/" + tileFile] = resourceDatabase.ImageSheetFiles[tileFile];
             }
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)
@@ -222,9 +222,9 @@ namespace Crayon.Translator.Java
 
             output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
-            if (resourceDatabase.SpriteSheetManifestFile != null)
+            if (resourceDatabase.ImageSheetManifestFile != null)
             {
-                output["resources/imagesheetmanifest.txt"] = resourceDatabase.SpriteSheetManifestFile;
+                output["resources/imagesheetmanifest.txt"] = resourceDatabase.ImageSheetManifestFile;
             }
 
             output["build.xml"] = new FileOutput()
