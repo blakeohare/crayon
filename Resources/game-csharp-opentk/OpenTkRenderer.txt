@@ -146,50 +146,7 @@ namespace %%%PROJECT_ID%%%
                             }
                         }
                         break;
-                    case 6:
-                        ax = commands[i | 1];
-                        ay = commands[i | 2];
-                        bx = commands[i | 3];
-                        by = commands[i | 4];
-                        cx = commands[i | 5];
-                        cy = commands[i | 6];
-                        red = commands[i | 7];
-                        green = commands[i | 8];
-                        blue = commands[i | 9];
-                        alpha = commands[i | 10];
 
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
-
-                        if (state != null)
-                        {
-                            GL.End();
-                            state = null;
-                        }
-                        GL.Disable(EnableCap.Texture2D);
-                        GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
-                        GL.Begin(BeginMode.Polygon);
-                        ptCount = (width + height) / 8;
-                        if (ptCount < 16)
-                        {
-                            ptCount = 16;
-                        }
-                        if (scaled)
-                        {
-                            GL.Vertex2(ax * RW / VW, ay * RH / VH);
-                            GL.Vertex2(bx * RW / VW, by * RH / VH);
-                            GL.Vertex2(cx * RW / VW, cy * RH / VH);
-                        }
-                        else
-                        {
-                            GL.Vertex2(ax, ay);
-                            GL.Vertex2(bx, by);
-                            GL.Vertex2(cx, cy);
-                        }
-                        GL.End();
-                        break;
                     case 2:
                         left = commands[i | 1];
                         top = commands[i | 2];
@@ -244,6 +201,7 @@ namespace %%%PROJECT_ID%%%
                             GL.End();
                         }
                         break;
+
                     case 3:
                         startX = commands[i | 1];
                         startY = commands[i | 2];
@@ -363,6 +321,52 @@ namespace %%%PROJECT_ID%%%
                             GL.Vertex2(dx, dy);
                         }
                         break;
+
+                    case 4:
+                        ax = commands[i | 1];
+                        ay = commands[i | 2];
+                        bx = commands[i | 3];
+                        by = commands[i | 4];
+                        cx = commands[i | 5];
+                        cy = commands[i | 6];
+                        red = commands[i | 7];
+                        green = commands[i | 8];
+                        blue = commands[i | 9];
+                        alpha = commands[i | 10];
+
+                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
+                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
+                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
+                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
+
+                        if (state != null)
+                        {
+                            GL.End();
+                            state = null;
+                        }
+                        GL.Disable(EnableCap.Texture2D);
+                        GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
+                        GL.Begin(BeginMode.Polygon);
+                        ptCount = (width + height) / 8;
+                        if (ptCount < 16)
+                        {
+                            ptCount = 16;
+                        }
+                        if (scaled)
+                        {
+                            GL.Vertex2(ax * RW / VW, ay * RH / VH);
+                            GL.Vertex2(bx * RW / VW, by * RH / VH);
+                            GL.Vertex2(cx * RW / VW, cy * RH / VH);
+                        }
+                        else
+                        {
+                            GL.Vertex2(ax, ay);
+                            GL.Vertex2(bx, by);
+                            GL.Vertex2(cx, cy);
+                        }
+                        GL.End();
+                        break;
+
                     case 5:
                         textureNativeData = texturesNativeData[image_i++];
 						textureResourceNativeData = (object[])textureNativeData[0];
