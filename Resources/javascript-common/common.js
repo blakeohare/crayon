@@ -182,12 +182,6 @@ C$common$getBool = function (b) {
     return b ? v_VALUE_TRUE : v_VALUE_FALSE;
 }
 
-C$common$runInterpreter = function (execId) {
-    var result = v_runInterpreter(execId);
-    var statusCode = result[0]; // TODO: make helper getter function.
-    return statusCode;
-};
-
 C$common$enqueueVmResume = function (seconds, execId) {
-    window.setTimeout(C$common$runInterpreter, Math.floor(seconds * 1000), execId);
+    window.setTimeout(v_runInterpreter, Math.floor(seconds * 1000), execId);
 };

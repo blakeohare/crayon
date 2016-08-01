@@ -112,7 +112,7 @@ C$drawing$render = function () {
                 break;
             case 5:
                 // images
-                canvas = images[imagesIndex++][0][1];
+                canvas = images[imagesIndex++][0][3];
                 x = ev[i | 8];
                 y = ev[i | 9];
                 w = canvas.width;

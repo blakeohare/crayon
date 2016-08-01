@@ -261,9 +261,10 @@ namespace %%%PROJECT_ID%%%
 
 		private void Update()
 		{
-			bool continueExecution = CrayonWrapper.v_runInterpreter(this.executionContextId);
+			int vmStatus = CrayonWrapper.v_runInterpreter(this.executionContextId);
 
-			if (!continueExecution)
+			if (vmStatus == 1 || // Finished
+				vmStatus == 3) // Error
 			{
 				// Because sometimes once isn't enough.
 				this.Close();

@@ -107,30 +107,31 @@ function @type('int') main() {
 	during the lifetime of the initial invocation. (for example, a blocking window is opened)
 	This is why the output of the initial invocation is meaningless.
 */
-function @type('bool') runInterpreter(@type('int') executionContextId) {
+function @type('int') runInterpreter(@type('int') executionContextId) {
 	@type('ProgramData') p = $_get_program_data();
 	@type('InterpreterResult') result = interpret(executionContextId);
-	if (InterpreterResult$result.status == InterpreterResultStatus.FINISHED) {
+	@type('int') status = InterpreterResult$result.status;
+	if (status == InterpreterResultStatus.FINISHED) {
 		if ($_dictionary_contains(ProgramData$p.executionContexts, executionContextId)) {
 			$_dictionary_remove(ProgramData$p.executionContexts, executionContextId);
 		}
 		if (executionContextId == 0) {
 			return false;
 		}
-	} else if (InterpreterResult$result.status == InterpreterResultStatus.FATAL_ERROR) {
+	} else if (status == InterpreterResultStatus.FATAL_ERROR) {
 		// TODO: don't generate the error in the interpreter. Instead just return the message and
 		// the stack trace will be determined from the stack here. Also later add logic to 
 		// conditionally find symbol information here.
 		$_print_stderr(InterpreterResult$result.errorMessage);
 		return false;
-	} else if (InterpreterResult$result.status == InterpreterResultStatus.SUSPENDED) {
+	} else if (status == InterpreterResultStatus.SUSPENDED) {
 		// Do nothing.
 	}
 
-	return true;
+	return status;
 }
 
-function @type('bool') runInterpreterWithFunctionPointer(@type('Value') fpValue, @type('Array<Value>') args) {
+function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, @type('Array<Value>') args) {
 	@type('ProgramData') p = $_get_program_data();
 	@type('int') newId = ProgramData$p.lastExecutionContextId + 1;
 	ProgramData$p.lastExecutionContextId = newId;
