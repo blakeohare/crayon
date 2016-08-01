@@ -92,6 +92,18 @@ public final class RenderEngine {
 					break;
 
 				case 4: // triangle
+                    xs[0] = events[i | 1];
+                    ys[0] = events[i | 2];
+                    xs[1] = events[i | 3];
+                    ys[1] = events[i | 4];
+                    xs[2] = events[i | 5];
+                    ys[2] = events[i | 6];
+                    red = events[i | 7];
+                    green = events[i | 8];
+                    blue = events[i | 9];
+                    alpha = events[i | 10];
+                    g.setColor(new Color(red, green, blue, alpha));
+                    g.fillPolygon(xs, ys, 3);
 					break;
 
 				case 5: // image

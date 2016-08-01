@@ -119,7 +119,48 @@ def gfxRender():
 					pygame.draw.ellipse(t, color, (0, 0, w[0], h[0]))
 				t.set_alpha(alpha)
 				screen.blit(t, area[:2])
+		elif command == 4:
+			# triangle
+			ax = events[i | 1]
+			ay = events[i | 2]
+			bx = events[i | 3]
+			by = events[i | 4]
+			cx = events[i | 5]
+			cy = events[i | 6]
+			red = events[i | 7]
+			green = events[i | 8]
+			blue = events[i | 9]
+			alpha = events[i | 10]
+			if alpha == 255:
+				pygame.draw.polygon(screen, (red, green, blue, alpha), [(ax, ay), (bx, by), (cx, cy)])
+			else:
+				minX = ax
+				minY = ay
+				maxX = ax
+				maxY = ay
+				if bx < minX: minX = bx
+				if cx < minX: minX = cx
+				if by < minY: minY = by
+				if cy < minY: minY = cy
+				if bx > maxX: maxX = bx
+				if cx > maxX: maxX = cx
+				if by > maxY: maxY = by
+				if cy > maxY: maxY = cy
+				width = maxX - minX
+				height = maxY - minY
+				if width > tempImgWidth or height > tempImgHeight:
+					tempImgWidth = max(tempImgWidth, width)
+					tempImgHeight = max(tempImgHeight, height)
+					tempImg = pygame.Surface((tempImgWidth, tempImgHeight)) # intentionally no alpha channel
+				tempImg.blit(screen, (0, 0, width, height), (minX, minY, width, height))
+				pygame.draw.polygon(tempImg, (red, green, blue, alpha), [(ax - minX, ay - minY), (bx - minX, by - minY), (cx - minX, cy - minY)])
+				tempImg.set_alpha(alpha)
+				screen.blit(tempImg, (minX, minY, width, height), (0, 0, width, height))
+
 				
+
+		else: # command == 3 is line
+			pass
 		i += 16
 	
 	_gfxRendererVars['tempImg'] = tempImg
