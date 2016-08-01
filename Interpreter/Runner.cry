@@ -115,17 +115,11 @@ function @type('int') runInterpreter(@type('int') executionContextId) {
 		if ($_dictionary_contains(ProgramData$p.executionContexts, executionContextId)) {
 			$_dictionary_remove(ProgramData$p.executionContexts, executionContextId);
 		}
-		if (executionContextId == 0) {
-			return false;
-		}
 	} else if (status == InterpreterResultStatus.FATAL_ERROR) {
 		// TODO: don't generate the error in the interpreter. Instead just return the message and
 		// the stack trace will be determined from the stack here. Also later add logic to 
 		// conditionally find symbol information here.
 		$_print_stderr(InterpreterResult$result.errorMessage);
-		return false;
-	} else if (status == InterpreterResultStatus.SUSPENDED) {
-		// Do nothing.
 	}
 
 	return status;
