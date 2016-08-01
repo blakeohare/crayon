@@ -337,13 +337,13 @@ namespace %%%PROJECT_ID%%%
 		
         public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
         {
-            bool isDone = false;
+            int status = 0;
             lock (imageLoaderNativeData[3])
             {
-                isDone = (int)imageLoaderNativeData[2] != 0;
+                status = (int)imageLoaderNativeData[2];
             }
 
-            output[0] = isDone ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
+            output[0] = CrayonWrapper.v_buildInteger(status);
         }
 		
         public static void ImageLoadAsync(

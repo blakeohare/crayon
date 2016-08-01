@@ -21,8 +21,7 @@ def _imageLoadSync(filename, nativeImageDataNativeData, statusOutCheesy):
 
 def _checkLoaderIsDone(imageLoaderNativeData, nativeImageDataNativeData, output):
 	# TODO: this will have to have mutex locking when _imageLoadAsync is implemented for real.
-	isDone = imageLoaderNativeData[2] != 0
-	output[0] = v_VALUE_TRUE if isDone else v_VALUE_FALSE
+	output[0] = v_buildInteger(imageLoaderNativeData[2])
 
 def _generateNativeBitmapOfSize(w, h):
 	return pygame.Surface((w, h), pygame.SRCALPHA)

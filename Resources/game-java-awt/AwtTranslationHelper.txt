@@ -319,9 +319,9 @@ class AwtTranslationHelper {
 		ArrayList<Value> output) {
 		
 		// TODO: add mutex checks when imageLoadAsync is implemented
-		boolean isDone = (int)imageLoaderNativeData[2] != 0;
+		int status = (int)imageLoaderNativeData[2];
 		// TODO: release mutex
 
-		output.set(0, isDone ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE);
+		output.set(0, CrayonWrapper.v_buildInteger(status));
 	}
 }
