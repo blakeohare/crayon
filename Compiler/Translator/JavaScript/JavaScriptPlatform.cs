@@ -65,8 +65,8 @@ namespace Crayon.Translator.JavaScript
             foreach (string jsFile in new string[] {
                 "game.js",
                 "input.js",
+                "imageresources.js",
                 "drawing.js",
-                "images2.js",
                 "sound.js",
                 "gamepad.js",
             })
