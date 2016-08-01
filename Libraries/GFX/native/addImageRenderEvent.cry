@@ -78,7 +78,7 @@ bool1 = true;
 // Bit mask
 value = $_array_get(valueStack, valueStackSize + 2);
 int1 = $_cast('int', Value$value.internalValue);
-$_array_set(intArray1, len, 5);
+$_array_set(intArray1, len, 6);
 $_array_set(intArray1, len + 1, int1);
 
 // rotation
