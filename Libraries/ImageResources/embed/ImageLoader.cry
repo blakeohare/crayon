@@ -58,35 +58,42 @@ namespace ImageResources {
 		
 		static field REUSABLE_IS_DONE_OUT = [null];
 		function isDone() {
-			c = Core.getExecutionIterationCounter();
-			if (c != this._executionIterationCount) {
-				this._isDoneChecksOnThisFrame = 1;
-				this._executionIterationCount = c;
-			} else {
-				this._isDoneChecksOnThisFrame++;
-			}
-			
 			if (this._isDone) {
 				return true;
-			} else {
-				
-				// There are 2 possible places where the final result of the loading is copied to 
-				// the NativeImageData instance's nativeData:
-				// - at the end of the asynchronous loader, using the mutex in nativeData[3]
-				// - as a result of this next function. It will never be called twice on a successfully loaded image.
-				$$lib_imageresources_checkLoaderIsDone(this, this._nativeImage, ImageLoader.REUSABLE_IS_DONE_OUT);
-				
-				if (ImageLoader.REUSABLE_IS_DONE_OUT[0]) {
-					this._isDone = true;
-					return true;
+			}
+			
+			// There are 2 possible places where the final result of the loading is copied to 
+			// the NativeImageData instance's nativeData:
+			// - at the end of the asynchronous loader, using the mutex in nativeData[3]
+			// - as a result of this next function. It will never be called twice on a successfully loaded image.
+			$$lib_imageresources_checkLoaderIsDone(this, this._nativeImage, ImageLoader.REUSABLE_IS_DONE_OUT);
+			
+			status = ImageLoader.REUSABLE_IS_DONE_OUT[0];
+			if (status > 0) {
+				this._isDone = true;
+				Core.assert(status == 1, "Error encountered while loading image.");
+				return true;
+			}
+			
+			if ($$lib_imageresources_yieldRequiredByPlatform()) {
+				// Keep track of how many times this has been called without a yield.
+				// If it's more than a couple times, then it's likely this person is checking
+				// inside a blocking loop and the handler hasn't had a chance to fire.
+				c = Core.getExecutionIterationCounter();
+				if (c != this._executionIterationCount) {
+					this._isDoneChecksOnThisFrame = 1;
+					this._executionIterationCount = c;
 				} else {
-					if ($$lib_imageresources_yieldRequiredByPlatform() &&
-						this._isDoneChecksOnThisFrame > 10) {
-					
-						$$lib_imageresources_briefYieldIfRequiredByPlatform();
-					}
+					this._isDoneChecksOnThisFrame++;
+				}
+				
+				// If they've called this function 10 times without a yield, do a thread sleep
+				// to potentially let the image load handler run.
+				if (this._isDoneChecksOnThisFrame > 10) {
+					Core.sleep(.01);
 				}
 			}
+			
 			return false;
 		}
 		
@@ -121,10 +128,21 @@ namespace ImageResources {
 			
 			statusOut = [false, true];
 			if ($$lib_imageresources_yieldRequiredByPlatform()) {
-				$$lib_imageresources_loadSynchronousVmSuspend(
+				
+				loader._nativeImage = nativeImage;
+				$$lib_imageresources_loadAsynchronous(
 					nativeImage,
 					filename,
-					statusOut);
+					loader);
+				
+				Core.sleep(.005);
+				delay = .01;
+				while (!loader.isDone()) {
+					Core.sleep(delay);
+					delay *= 1.2;
+					if (delay > 1) delay = 1;
+				}
+				statusOut.reverse();
 			} else {
 				$$lib_imageresources_loadSynchronous(
 					nativeImage,

@@ -1,9 +1,0 @@
-/*
-	End execution and yield to the platform briefly to allow image loading to catch up.
-*/
-
-if (%%%IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM%%%) {
-	return killExecution(stack, pc, "TODO: implement this.");
-} else {
-	output = VALUE_NULL;
-}

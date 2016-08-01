@@ -1,7 +1,7 @@
 /*
 	Load an image synchronously.
 	This codepath does not get used by platforms where synchronous loading is 
-	impossible (JS) hence the wrapping if statement. See loadSynchronousVmSuspend instead.
+	impossible (JS) hence the wrapping if statement.
 	
 	arg 1: NativeImageData object instance (blank. must fill in the nativeData for this)
 		nativeData[0] -> native bitmap resource
