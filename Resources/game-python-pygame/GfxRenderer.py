@@ -106,7 +106,11 @@ def gfxRender():
 			area = events[i | 1: i | 5]
 			if alpha == 255:
 				if command == 1:
-					pygame.draw.rect(screen, color, area)
+					if area[3] == 1:
+						# PyGame has a bug where rectangles of height 1 do not get rendered.
+						pygame.draw.line(screen, color, (area[0], area[1]), (area[0] + area[2], area[1]))
+					else:
+						pygame.draw.rect(screen, color, area)
 				elif command == 2:
 					pygame.draw.ellipse(screen, color, area)
 			elif alpha > 0:
@@ -156,8 +160,6 @@ def gfxRender():
 				pygame.draw.polygon(tempImg, (red, green, blue, alpha), [(ax - minX, ay - minY), (bx - minX, by - minY), (cx - minX, cy - minY)])
 				tempImg.set_alpha(alpha)
 				screen.blit(tempImg, (minX, minY, width, height), (0, 0, width, height))
-
-				
 
 		else: # command == 3 is line
 			pass

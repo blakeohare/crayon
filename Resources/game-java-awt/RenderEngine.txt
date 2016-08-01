@@ -89,6 +89,22 @@ public final class RenderEngine {
 					break;
 
 				case 3: // line
+					// TODO: this is a little off. 
+					// .drawLine seems to be inherently box-capped and so the line length is extended
+					// by lineWidth / 2 in each direction. Need to compensate for this to get it to match other platforms.
+                    sx = events[i | 1];
+                    sy = events[i | 2];
+                    x = events[i | 3];
+                    y = events[i | 4];
+                    width = events[i | 5];
+                    red = events[i | 6];
+                    green = events[i | 7];
+                    blue = events[i | 8];
+                    alpha = events[i | 9];
+					if alpha > 0 and width > 0:
+						g.setColor(new Color(red, green, blue, alpha));
+						g.setStroke(new java.awt.BasicStroke(width));
+						g.drawLine(x, y, sx, sy);
 					break;
 
 				case 4: // triangle
