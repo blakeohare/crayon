@@ -48,6 +48,9 @@ C$drawing$render = function () {
     var theta = 0;
     var radiusX = 0;
     var radiusY = 0;
+    var path;
+    var offset;
+
     for (var i = 0; i < C$drawing$eventsLength; i += 16) {
         switch (ev[i]) {
             case 1:
@@ -104,13 +107,85 @@ C$drawing$render = function () {
                     C$game$ctx.closePath();
                 }
                 break;
+
             case 3:
                 // line
+                ax = ev[i | 1];
+                ay = ev[i | 2];
+                bx = ev[i | 3];
+                by = ev[i | 4];
+                width = ev[i | 5];
+                r = ev[i | 6];
+                g = ev[i | 7];
+                b = ev[i | 8];
+                a = ev[i | 9];
+
+                if (a > 0) {
+                    offset = ((width % 2) == 0) ? 0 : .5;
+                    C$game$ctx.beginPath();
+                    C$game$ctx.moveTo(ax + offset, ay + offset);
+                    C$game$ctx.lineTo(bx + offset, by + offset);
+                    C$game$ctx.lineWidth = width;
+                    if (a < 255) {
+                        C$game$ctx.globalAlpha = a / 255;
+                        C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                        C$game$ctx.stroke();
+                        C$game$ctx.closePath();
+                        C$game$ctx.globalAlpha = 1;
+                    } else {
+                        C$game$ctx.strokeStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                        C$game$ctx.stroke();
+                        C$game$ctx.closePath();
+                    }
+                }
                 break;
-            case 4:
-                // triangle
+
+            case 4: // triangle
+            case 5: // quad
+                ax = ev[i | 1];
+                ay = ev[i | 2];
+                bx = ev[i | 3];
+                by = ev[i | 4];
+                cx = ev[i | 5];
+                cy = ev[i | 6];
+                if (ev[i] == 4) {
+                    // triangle
+                    dx = null;
+                    r = ev[i | 7];
+                    g = ev[i | 8];
+                    b = ev[i | 9];
+                    a = ev[i | 10];
+                } else {
+                    // quad
+                    dx = ev[i | 7];
+                    dy = ev[i | 8]
+                    r = ev[i | 9];
+                    g = ev[i | 10];
+                    b = ev[i | 11];
+                    a = ev[i | 12];
+                }
+
+                if (a > 0) {
+                    path = new Path2D();
+                    path.moveTo(ax, ay);
+                    path.lineTo(bx, by);
+                    path.lineTo(cx, cy);
+                    if (dx != null) {
+                        path.lineTo(dx, dy);
+                    }
+
+                    C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                    if (a < 255) {
+                        C$game$ctx.globalAlpha = a / 255;
+                        C$game$ctx.fill(path);
+                        C$game$ctx.globalAlpha = 1;
+                    } else {
+                        C$game$ctx.fill(path);
+                    }
+                }
+
                 break;
-            case 5:
+            case 6:
                 // images
                 canvas = images[imagesIndex++][0][3];
                 x = ev[i | 8];
