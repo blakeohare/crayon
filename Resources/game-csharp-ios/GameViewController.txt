@@ -14,6 +14,9 @@ namespace %%%PROJECT_ID%%%
 		EAGLContext context { get; set; }
 
 		private bool executionBegun = false;
+		private bool executionEnded = false;
+
+		private int executionContextId;
 
 		public int LogicalWidth { get; set; }
 		public int LogicalHeight { get; set; }
@@ -135,22 +138,36 @@ namespace %%%PROJECT_ID%%%
 
 		public override void Update()
 		{
-			CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
-			CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
-
 			if (!this.executionBegun)
 			{
-            	CrayonWrapper.v_main();
-            	this.executionBegun = true;
+				CrayonWrapper.v_main();
+				this.executionBegun = true;
 			}
-			else
+			else if (!this.executionEnded)
 			{
-				bool forceExit = !CrayonWrapper.v_runTick();
-				if (forceExit)
+				int status = CrayonWrapper.v_runInterpreter(this.executionContextId);
+				switch (status)
 				{
-				    // TODO: force exit app here.
+					case 1: // Finished
+					case 3: // Fatal error
+						this.executionEnded = true;
+						break;
+					case 2: // Suspended
+					case 4: // Suspended with lock
+						break;
 				}
 			}
+		}
+
+		private static int[] renderCommands = new int[0];
+		private static int renderCommandsLength = 0;
+		private static object[] images = new object[0];
+
+		public static void SetRenderData(int[] renderCommands, int renderCommandsLength, object[] images)
+		{
+			GameViewController.renderCommands = renderCommands;
+			GameViewController.renderCommandsLength = renderCommandsLength;
+			GameViewController.images = images;
 		}
 
 		void IGLKViewDelegate.DrawInRect(GLKView view, CoreGraphics.CGRect rect)
@@ -169,7 +186,7 @@ namespace %%%PROJECT_ID%%%
 
 			if (this.ScreenInitialized)
 			{
-				Graphics2dRenderer.Render(CrayonWrapper.v_GL_DATA, CrayonWrapper.v_GL_VIRTUAL_SIZE, CrayonWrapper.v_GL_IMAGES, logicalWidth, logicalHeight);
+				Graphics2dRenderer.Render(renderCommands, renderCommandsLength, images, logicalWidth, logicalHeight);
 			}
 			GL.Finish();
 		}

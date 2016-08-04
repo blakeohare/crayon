@@ -49,17 +49,21 @@ namespace %%%PROJECT_ID%%%
 			return new List<PlatformRelayObject>(GVC.GetEvents());
 		}
 
+		/*
 		public static object FlushImagetteToNativeBitmap(Imagette imagette)
 		{
-			int width = imagette.width;
-			int height = imagette.height;
+			int width = 0;
+			int height = 0;
+			int[] xs = null;
+			int[] ys = null;
+			CoreGraphics.CGImage[] nativeBitmaps = null;
 			byte[] bitmapData = new byte[width * height * 4];
 
-			for (int i = 0; i < imagette.nativeBitmaps.Count; ++i)
+			for (int i = 0; i < nativeBitmaps.Length; ++i)
 			{
-				CoreGraphics.CGImage component = (CoreGraphics.CGImage)imagette.nativeBitmaps[i];
-				int leftX = imagette.xs[i];
-				int topY = imagette.ys[i];
+				CoreGraphics.CGImage component = nativeBitmaps[i];
+				int leftX = xs[i];
+				int topY = ys[i];
 				int cWidth = (int)component.Width;
 				int cHeight = (int)component.Height;
 				IntPtr componentData = component.DataProvider.CopyData().Bytes;
@@ -82,20 +86,22 @@ namespace %%%PROJECT_ID%%%
 				Foundation.NSData data = Foundation.NSData.FromBytes(ptr, (nuint)bitmapData.Length);
 				CoreGraphics.CGDataProvider dataProvider = new CoreGraphics.CGDataProvider(data);
 				CoreGraphics.CGImage output = new CoreGraphics.CGImage(
-					imagette.width,
-				imagette.height, 8, 32, 4 * imagette.width, colorSpace,
+					width,
+					height, 8, 32, 4 * width, colorSpace,
 					CoreGraphics.CGBitmapFlags.ByteOrderDefault,
 					dataProvider, null, false, CoreGraphics.CGColorRenderingIntent.Default);
 				
 				System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 				return output;
 			}
-		}
+		}//*/
 
+		/*
 		public static void DownloadImage(string key, string url)
 		{
 			throw new NotImplementedException();
 		}
+		*/
 
 		public static void HttpRequest(
 			HttpRequest request,
@@ -147,6 +153,40 @@ namespace %%%PROJECT_ID%%%
 		}
 
 		public static int IoCreateDirectory(string path)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void CheckLoaderIsDone(object[] nativeData1, object[] nativeData2, List<Value> statusOutCheesy)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void ImageLoadAsync(string genPath, object[] nativeData1, object[] nativeData2)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void ImageLoadSync(string genPath, object[] nativeData1, List<Value> statusOut)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static string GetImageResourceManifestString()
+		{
+			return ResourceReader.ReadTextFile("ImageSheetManifest.txt") ?? "";
+		}
+
+		public static object GenerateNativeBitmapOfSize(int width, int height)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void BlitImage(
+			object targetObject, object sourceObject,
+			int targetX, int targetY,
+			int sourceX, int sourceY,
+			int width, int height)
 		{
 			throw new NotImplementedException();
 		}

@@ -18,17 +18,16 @@ namespace %%%PROJECT_ID%%%
 			float left, top, width, height, bottom, right;
 			byte red, green, blue, alpha;
 			float textureLeft, textureTop, textureRight, textureBottom, textureWidth, textureHeight;
-			Image image;
 			int imageWidth, imageHeight;
 			int targetX, targetY, sourceX, sourceY, targetWidth, targetHeight, sourceWidth, sourceHeight;
 
 			int imageIndex = 0;
-			CompositeImage compositeImage;
 
 			for (int i = 0; i < commandsLength; i += 16)
 			{
 				switch (commands[i])
 				{
+					/*
 					case 1:
 						// Render rectangle
 						left = commands[i | 1];
@@ -185,7 +184,7 @@ namespace %%%PROJECT_ID%%%
 					case 6:
 						// Render triangle
 						break;
-
+					//*/
 					default:
 						break;
 				}

@@ -1,0 +1,6 @@
+$_lib_imageresources_loadAsync: CsxiTranslationHelper.ImageLoadAsync([ARG:1], [ARG:2], [ARG:3])
+$_lib_imageresources_loadSync: CsxiTranslationHelper.ImageLoadSync([ARG:1], [ARG:2], [ARG:3])
+$_lib_imageresources_getManifestString: CsxiTranslationHelper.GetImageResourceManifestString()
+$_lib_imageresources_generateNativeBitmapOfSize: CsxiTranslationHelper.GenerateNativeBitmapOfSize([ARG:1], [ARG:2])
+$_lib_imageresources_blit: CsxiTranslationHelper.BlitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+$_lib_imageresources_checkLoaderIsDone: CsxiTranslationHelper.CheckLoaderIsDone([ARG:1], [ARG:2], [ARG:3])
