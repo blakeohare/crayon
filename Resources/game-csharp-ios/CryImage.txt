@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using CoreGraphics;
+
+namespace %%%PROJECT_ID%%%
+{
+	public class CryImage
+	{
+		// One of these might be null, but not both.
+		// They are both lazily initialized.
+		private CoreGraphics.CGImage cgImage;
+		private byte[] pixelData;
+
+		private int width;
+		private int height;
+
+		public int Width { get { return this.width; } }
+		public int Height { get { return this.height; } }
+
+		private bool isLocked = false;
+
+		public CryImage(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+			this.pixelData = new byte[4 * width * height];
+		}
+
+		public CryImage(CoreGraphics.CGImage cgImage)
+		{
+			this.cgImage = cgImage;
+			this.width = (int)this.cgImage.Width;
+			this.height = (int)this.cgImage.Height;
+		}
+
+		public void LockPixels()
+		{
+			if (this.isLocked)
+			{
+				throw new InvalidOperationException();
+			}
+
+			this.isLocked = true;
+		}
+
+		public void UnlockPixels()
+		{
+			if (!this.isLocked)
+			{
+				throw new InvalidOperationException();
+			}
+
+			this.cgImage = null;
+			this.GetNativeImage();
+			this.isLocked = false;
+		}
+
+		// Inputs are not bounds checked.
+		// Please blit responsibly.
+		// Also note that this just copies pixels directly and doesn't blend colors when alpha isn't opaque.
+		// Should only be used for compositing images together.
+		public void Blit(
+			object sourceObject,
+			int targetX, int targetY,
+			int sourceX, int sourceY,
+			int width, int height)
+		{
+			if (!this.isLocked)
+			{
+				throw new InvalidOperationException();
+			}
+			CryImage source = (CryImage)sourceObject;
+			byte[] sourcePixels = source.GetPixelData();
+			int targetIndex = (targetX + targetY * this.width) * 4;
+			int sourceIndex = (sourceX + sourceY * source.width) * 4;
+			int dataRowLength = width * 4;
+			int sourceStride = source.width * 4;
+			int targetStride = this.width * 4;
+
+			while (height-- > 0)
+			{
+				Array.Copy(sourcePixels, sourceIndex, this.pixelData, targetIndex, dataRowLength);
+				targetIndex += targetStride;
+				sourceIndex += sourceStride;
+			}
+		}
+
+		public byte[] GetPixelData()
+		{
+			if (this.isLocked)
+			{
+				throw new InvalidOperationException();
+			}
+
+			if (this.pixelData == null)
+			{
+				this.pixelData = new byte[4 * this.width * this.height];
+
+				IntPtr componentData = this.cgImage.DataProvider.CopyData().Bytes;
+				Marshal.Copy(componentData, this.pixelData, 0, this.pixelData.Length);
+			}
+
+			return this.pixelData;
+		}
+
+		public CoreGraphics.CGImage GetNativeImage()
+		{
+			if (this.cgImage == null)
+			{
+				using (CoreGraphics.CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB())
+				{
+					IntPtr ptr = Marshal.AllocHGlobal(this.pixelData.Length);
+					Marshal.Copy(this.pixelData, 0, ptr, this.pixelData.Length);
+					Foundation.NSData data = Foundation.NSData.FromBytes(ptr, (nuint)this.pixelData.Length);
+					CGDataProvider dataProvider = new CGDataProvider(data);
+					this.cgImage = new CGImage(
+						width, height, 8, 32, 4 * width, 
+						colorSpace,
+						CGBitmapFlags.ByteOrderDefault,
+						dataProvider, null, false, CGColorRenderingIntent.Default);
+
+					Marshal.FreeHGlobal(ptr);
+				}
+			}
+			return this.cgImage;
+		}
+	}
+}

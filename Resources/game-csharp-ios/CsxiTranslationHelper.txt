@@ -157,19 +157,47 @@ namespace %%%PROJECT_ID%%%
 			throw new NotImplementedException();
 		}
 
-		public static void CheckLoaderIsDone(object[] nativeData1, object[] nativeData2, List<Value> statusOutCheesy)
+		public static void CheckLoaderIsDone(
+			object[] imageLoaderNativeData,
+			object[] nativeImageDataNativeData,
+			List<Value> output)
 		{
-			throw new NotImplementedException();
+			int status = 0;
+			lock (imageLoaderNativeData[3])
+			{
+				status = (int)imageLoaderNativeData[2];
+			}
+
+			output[0] = CrayonWrapper.v_buildInteger(status);
 		}
 
-		public static void ImageLoadAsync(string genPath, object[] nativeData1, object[] nativeData2)
+		public static void ImageLoadAsync(
+			string filename,
+			object[] nativeImageDataNativeData,
+			object[] imageLoaderNativeData)
 		{
-			throw new NotImplementedException();
+			imageLoaderNativeData[3] = new object(); // mutex
+
+			// TODO: Once I verify this works, switch to BackgroundWorker.
+			bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+			imageLoaderNativeData[2] = loaded ? 1 : 2;
 		}
 
-		public static void ImageLoadSync(string genPath, object[] nativeData1, List<Value> statusOut)
+		public static bool ImageLoadSync(
+			string filename,
+			object[] nativeImageDataNativeData,
+			List<Value> statusOutCheesy)
 		{
-			throw new NotImplementedException();
+			CryImage image = ResourceReader.ReadImageFile("Images/" + filename);
+			if (image != null)
+			{
+				if (statusOutCheesy != null) statusOutCheesy.Reverse();
+				nativeImageDataNativeData[0] = image;
+				nativeImageDataNativeData[1] = image.Width;
+				nativeImageDataNativeData[2] = image.Height;
+				return true;
+			}
+			return false;
 		}
 
 		public static string GetImageResourceManifestString()
@@ -179,7 +207,7 @@ namespace %%%PROJECT_ID%%%
 
 		public static object GenerateNativeBitmapOfSize(int width, int height)
 		{
-			throw new NotImplementedException();
+			return new CryImage(width, height);
 		}
 
 		public static void BlitImage(
@@ -188,7 +216,14 @@ namespace %%%PROJECT_ID%%%
 			int sourceX, int sourceY,
 			int width, int height)
 		{
-			throw new NotImplementedException();
+			CryImage target = (CryImage)targetObject;
+			CryImage source = (CryImage)sourceObject;
+
+			// TODO: eventually perform locking and unlocking at a layer above so that this
+			// is less inefficient.
+			target.LockPixels();
+			target.Blit(source, targetX, targetY, sourceX, sourceY, width, height);
+			target.UnlockPixels();
 		}
 	}
 }

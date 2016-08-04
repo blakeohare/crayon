@@ -16,7 +16,7 @@ namespace %%%PROJECT_ID%%%
 			return ReadTextFile("ResourceManifest.txt");
 		}
 
-		public static object ReadImageFile(string path)
+		public static CryImage ReadImageFile(string path)
 		{
 			int dot = path.LastIndexOf('.');
 			if (dot == -1) return null;

@@ -26,6 +26,7 @@ namespace Crayon.Translator.CSharp
 
             foreach (string csFile in new string[] {
                 "AppDelegate",
+				"CryImage",
                 "CsxiTranslationHelper",
                 "GameViewController",
                 "Graphics2dRenderer",
@@ -79,8 +80,8 @@ namespace Crayon.Translator.CSharp
                 foreach (string tileName in resourceDatabase.ImageSheetFiles.Keys)
                 {
                     FileOutput tile = resourceDatabase.ImageSheetFiles[tileName];
-                    files[projectId + "/Resources/ImageSheets/" + tileName] = tile;
-                    bundleResources.Add("    <BundleResource Include=\"Resources\\ImageSheets\\" + tileName + "\" />\r\n");
+                    files[projectId + "/Resources/Images/" + tileName] = tile;
+                    bundleResources.Add("    <BundleResource Include=\"Resources\\Images\\" + tileName + "\" />\r\n");
                 }
             }
 

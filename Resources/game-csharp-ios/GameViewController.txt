@@ -197,11 +197,15 @@ namespace %%%PROJECT_ID%%%
 			return System.IO.File.ReadAllText(path);
 		}
 
-		public CoreGraphics.CGImage LoadImage(string name, string type)
+		public CryImage LoadImage(string name, string type)
 		{
 			string path = NSBundle.MainBundle.PathForResource(name, type);
+			if (path == null)
+			{
+				return null;
+			}
 			CoreGraphics.CGImage image = UIKit.UIImage.FromFile(path).CGImage;
-			return image;
+			return new CryImage(image);
 		}
 	}
 }
