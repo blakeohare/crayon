@@ -7,7 +7,7 @@ import os
 
 def loadFile(path):
 	c = open(path, 'rt')
-	text = c.read().replace('\r\n', '\n').replace('\r', '\n')
+	text = c.read()
 	c.close()
 	return text
 
@@ -50,7 +50,8 @@ def normalizeTab(string, tab):
 	return (tab * count) + string
 
 def normalize(filepath, lineEnding, tab, includeNewlineAtEnd):
-	text = loadFile(filepath)
+	originaltext = loadFile(filepath)
+	text = originaltext.replace('\r\n', '\n').replace('\r', '\n')
 	text = rtrim(text)
 	
 	output = []
@@ -70,6 +71,7 @@ def normalize(filepath, lineEnding, tab, includeNewlineAtEnd):
 		text = text.replace('\n\n\n', '\n\n')
 		
 	writeFile(filepath, text)
+	return originaltext != text
 
 def getFiles(dir, ending):
 	output = []
@@ -88,8 +90,9 @@ def getFilesImpl(dir, ending, output):
 def normalizeBatch(dir, ending, lineEnding, tab, includeNewlineAtEnd):
 	files = getFiles(dir, ending)
 	for file in files:
-		print file
-		normalize(file, lineEnding, tab, includeNewlineAtEnd)
+		changes = normalize(file, lineEnding, tab, includeNewlineAtEnd)
+		if changes:
+			print('FIXED: ' + file)
 		
 
 def main():
@@ -100,5 +103,4 @@ def main():
 	normalizeBatch('Resources/game-javascript', '.js', '\n', ' ' * 2, True)
 	normalizeBatch('Demos', '.cry', '\n', ' ' * 4, True)
 
-print 'ahoy'
 main()
