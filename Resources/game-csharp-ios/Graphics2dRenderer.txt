@@ -242,6 +242,8 @@ namespace %%%PROJECT_ID%%%
 						GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
 						GL.Enable(All.Texture2D);
 						GL.BindTexture(All.Texture2D, textureId);
+						GL.TexParameter(All.Texture2D, All.TextureMinFilter, (int)All.Nearest);
+						GL.TexParameter(All.Texture2D, All.TextureMagFilter, (int)All.Nearest);
 						GL.EnableClientState(All.VertexArray);
 						GL.EnableClientState(All.TextureCoordArray);
 						GL.DisableClientState(All.ColorArray);
