@@ -6,25 +6,25 @@ const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
 function main() {
-	window = new Game.GameWindow("Fire Dodge Game", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
-	
-	activeScene = new LoadingScene();
-	
-	while (activeScene != null) {
-		events = window.pumpEvents();
-		for (event : events) {
-			if (event.type == EventType.QUIT)
-				return;
-		}
-		activeScene.processInput(events);
-		activeScene.update();
-		
-		GFX.Draw.fill(0, 0, 0);
-		
-		activeScene.render();
-		
-		activeScene = activeScene.next;
-		
-		window.clockTick();
-	}
+    window = new Game.GameWindow("Fire Dodge Game", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    activeScene = new LoadingScene();
+
+    while (activeScene != null) {
+        events = window.pumpEvents();
+        for (event : events) {
+            if (event.type == EventType.QUIT)
+                return;
+        }
+        activeScene.processInput(events);
+        activeScene.update();
+
+        GFX.Draw.fill(0, 0, 0);
+
+        activeScene.render();
+
+        activeScene = activeScene.next;
+
+        window.clockTick();
+    }
 }

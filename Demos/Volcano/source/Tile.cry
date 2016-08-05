@@ -1,32 +1,32 @@
 class Tile {
 
-	field type;
-	field passable;
-	field image;
-	field rowMapper;
-	field playScene;
+    field type;
+    field passable;
+    field image;
+    field rowMapper;
+    field playScene;
 
-	constructor(type, rowMapper, playScene) {
-		this.type = type;
-		this.passable = type == 'bg';
-		this.rowMapper = rowMapper;
-		this.playScene = playScene;
-	}
-	
-	function getRow() {
-		return this.rowMapper[0];
-	}
-	
-	function render(x, y) {
-		if (this.image == null) {
-			if (this.type == 'bg') {
-				this.image = ImageLibrary.get('tiles/bg.png');
-			} else if (this.type == 'rock') {
-				this.image = ImageLibrary.get('tiles/rock.png');
-			} else {
-				assert(false, "Unknown tile type");
-			}
-		}
-		this.image.draw(x, y);
-	}
+    constructor(type, rowMapper, playScene) {
+        this.type = type;
+        this.passable = type == 'bg';
+        this.rowMapper = rowMapper;
+        this.playScene = playScene;
+    }
+
+    function getRow() {
+        return this.rowMapper[0];
+    }
+
+    function render(x, y) {
+        if (this.image == null) {
+            if (this.type == 'bg') {
+                this.image = ImageLibrary.get('tiles/bg.png');
+            } else if (this.type == 'rock') {
+                this.image = ImageLibrary.get('tiles/rock.png');
+            } else {
+                assert(false, "Unknown tile type");
+            }
+        }
+        this.image.draw(x, y);
+    }
 }

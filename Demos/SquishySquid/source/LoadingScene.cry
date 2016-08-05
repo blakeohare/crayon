@@ -3,52 +3,52 @@ import ImageResources;
 import Math;
 
 class LoadingScene : AbstractScene {
-	
-	field loader;
-	field progress = 0;
-	field postCompletionCounter = 0;
-	field transitionTriggered = false;
-	
-	// Use a counter that increments each update cycle.
-	// When this counter is <= FPS, multiply the image sheet loader progress by counter / FPS to get the effective progress.
-	// This guarantees that the progress screen will show for at least 1 second and if the download is instantanoues,
-	// it won't look jerky.
-	field counter = 0;
-	
-	constructor() : base() {
-		this.loader = ImageSheet.loadFromResourcesAsync('everything');
-	}
-	
-	function update(isTap) {
-		if (this.loader.isDone() && this.counter >= FPS && this.postCompletionCounter == 0) {
-			this.switchSceneWithFade(new TitleScene());
-			this.postCompletionCounter++;
-			ImageLibrary.populateLibrary(this.loader);
-		} else if (this.postCompletionCounter > 0) {
-			this.postCompletionCounter++;
-		}
-		
-		this.progress = this.loader.getProgress();
-		
-		this.counter++;
-		
-		this.progress = this.loader.getProgress() * (1.0 * Math.min(FPS, this.counter) / FPS);
-	}
-	
-	function render() {
-		GFX.Draw.fill(0, 0, 0);
-		
-		dotCount = 16;
-		mainRadius = 100 + this.postCompletionCounter * 8.0;
-		dotRadius = 8;
-		lightBlue = [100, 200, 255];
-		darkBlue = [0, 0, 80];
-		for (i = 0; i < dotCount; ++i) {
-			theta = Math.PI * 2 * (0.1 * this.counter / FPS + 1.0 * i / dotCount);
-			x = Math.floor(Math.cos(theta) * mainRadius + WIDTH / 2);
-			y = Math.floor(Math.sin(theta) * mainRadius + HEIGHT / 2);
-			color = 1.0 * i / dotCount <= this.progress ? lightBlue : darkBlue;
-			GFX.Draw.ellipse(x - dotRadius, y - dotRadius, dotRadius * 2, dotRadius * 2, color[0], color[1], color[2]);
-		}
-	}
+
+    field loader;
+    field progress = 0;
+    field postCompletionCounter = 0;
+    field transitionTriggered = false;
+
+    // Use a counter that increments each update cycle.
+    // When this counter is <= FPS, multiply the image sheet loader progress by counter / FPS to get the effective progress.
+    // This guarantees that the progress screen will show for at least 1 second and if the download is instantanoues,
+    // it won't look jerky.
+    field counter = 0;
+
+    constructor() : base() {
+        this.loader = ImageSheet.loadFromResourcesAsync('everything');
+    }
+
+    function update(isTap) {
+        if (this.loader.isDone() && this.counter >= FPS && this.postCompletionCounter == 0) {
+            this.switchSceneWithFade(new TitleScene());
+            this.postCompletionCounter++;
+            ImageLibrary.populateLibrary(this.loader);
+        } else if (this.postCompletionCounter > 0) {
+            this.postCompletionCounter++;
+        }
+
+        this.progress = this.loader.getProgress();
+
+        this.counter++;
+
+        this.progress = this.loader.getProgress() * (1.0 * Math.min(FPS, this.counter) / FPS);
+    }
+
+    function render() {
+        GFX.Draw.fill(0, 0, 0);
+
+        dotCount = 16;
+        mainRadius = 100 + this.postCompletionCounter * 8.0;
+        dotRadius = 8;
+        lightBlue = [100, 200, 255];
+        darkBlue = [0, 0, 80];
+        for (i = 0; i < dotCount; ++i) {
+            theta = Math.PI * 2 * (0.1 * this.counter / FPS + 1.0 * i / dotCount);
+            x = Math.floor(Math.cos(theta) * mainRadius + WIDTH / 2);
+            y = Math.floor(Math.sin(theta) * mainRadius + HEIGHT / 2);
+            color = 1.0 * i / dotCount <= this.progress ? lightBlue : darkBlue;
+            GFX.Draw.ellipse(x - dotRadius, y - dotRadius, dotRadius * 2, dotRadius * 2, color[0], color[1], color[2]);
+        }
+    }
 }

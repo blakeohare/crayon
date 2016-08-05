@@ -1,27 +1,27 @@
 /*
-	An object that contains all the qualities properties of a tile type.
-	These are unique per type of tile and a common reference to each type
-	is shared between all tile objects of that type.
+    An object that contains all the qualities properties of a tile type.
+    These are unique per type of tile and a common reference to each type
+    is shared between all tile objects of that type.
 */
 class TileTemplate {
-	field id;
-	field isBlocking;
-	field images;
-	
-	static field TILE_TEMPLATE_BLOCKING_TILES = {
-		'x': true,
-		'g': true,
-	};
-	
-	constructor(id, imagePaths) {
-		this.id = id;
-		this.isBlocking = TileTemplate.TILE_TEMPLATE_BLOCKING_TILES.get(id, false);
-		
-		images = [];
-		for (path : imagePaths) {
-			images.add(ImageLibrary.get('tiles/' + path));
-		}
-		
-		this.images = images;
-	}
+    field id;
+    field isBlocking;
+    field images;
+
+    static field TILE_TEMPLATE_BLOCKING_TILES = {
+        'x': true,
+        'g': true,
+    };
+
+    constructor(id, imagePaths) {
+        this.id = id;
+        this.isBlocking = TileTemplate.TILE_TEMPLATE_BLOCKING_TILES.get(id, false);
+
+        images = [];
+        for (path : imagePaths) {
+            images.add(ImageLibrary.get('tiles/' + path));
+        }
+
+        this.images = images;
+    }
 }

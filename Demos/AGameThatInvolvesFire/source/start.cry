@@ -13,27 +13,27 @@ import 'WinScene.cry';
 level_store = new LevelStore();
 
 function main() {
-	$initialize_game(30);
-	$initialize_screen(800, 600);
-	image_library = new ImageLibrary();
-	active_scene = new LoadingScene(image_library);
-	
-	while (active_scene != null) {
-		
-		events = $get_events();
-		for (i = 0; i < events.length; ++i) {
-			ev = events[i];
-			if (ev[0] == 'exit') return;
-		}
-		active_scene.process_input(events);
-		active_scene.update();
-		$fill_screen(0, 0, 0);
-		active_scene.render(image_library);
-		
-		active_scene = active_scene.next;
-		
-		$clock_tick();
-	}
+    $initialize_game(30);
+    $initialize_screen(800, 600);
+    image_library = new ImageLibrary();
+    active_scene = new LoadingScene(image_library);
+
+    while (active_scene != null) {
+
+        events = $get_events();
+        for (i = 0; i < events.length; ++i) {
+            ev = events[i];
+            if (ev[0] == 'exit') return;
+        }
+        active_scene.process_input(events);
+        active_scene.update();
+        $fill_screen(0, 0, 0);
+        active_scene.render(image_library);
+
+        active_scene = active_scene.next;
+
+        $clock_tick();
+    }
 }
 
 main();

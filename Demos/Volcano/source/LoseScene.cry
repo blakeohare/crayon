@@ -1,47 +1,47 @@
 import Math;
 
 class LoseScene : AbstractScene {
-	
-	field counter = 0;
-	field meters;
 
-	constructor(meters) : base() {
-		this.meters = max(0, meters);
-	}
-	
-	function processInput(events) {
-		proceed = false;
-		for (event : events) {
-			switch (event.type) {
-				case EventType.MOUSE_LEFT_DOWN:
-					proceed = true;
-					break;
-				case EventType.KEY_DOWN:
-					if (event.key == KeyboardKey.SPACE || event.key == KeyboardKey.ENTER) {
-						proceed = true;
-					}
-					break;
-			}
-		}
-		
-		if (proceed) {
-			this.switchScene(new PlayScene());
-		}
-	}
-	
-	function update() {
-		this.counter++;
-	}
-	
-	function render() {
-		ImageLibrary.get('menus/you_ascended.png').draw(0, 0);
-		
-		x = 100;
-		for (char : this.meters + '') {
-			ImageLibrary.get('menus/num' + char + '.png').draw(x, 150);
-			x += 74;
-		}
-		
-		ImageLibrary.get('menus/meters.png').draw(0, 300);
-	}
+    field counter = 0;
+    field meters;
+
+    constructor(meters) : base() {
+        this.meters = max(0, meters);
+    }
+
+    function processInput(events) {
+        proceed = false;
+        for (event : events) {
+            switch (event.type) {
+                case EventType.MOUSE_LEFT_DOWN:
+                    proceed = true;
+                    break;
+                case EventType.KEY_DOWN:
+                    if (event.key == KeyboardKey.SPACE || event.key == KeyboardKey.ENTER) {
+                        proceed = true;
+                    }
+                    break;
+            }
+        }
+
+        if (proceed) {
+            this.switchScene(new PlayScene());
+        }
+    }
+
+    function update() {
+        this.counter++;
+    }
+
+    function render() {
+        ImageLibrary.get('menus/you_ascended.png').draw(0, 0);
+
+        x = 100;
+        for (char : this.meters + '') {
+            ImageLibrary.get('menus/num' + char + '.png').draw(x, 150);
+            x += 74;
+        }
+
+        ImageLibrary.get('menus/meters.png').draw(0, 300);
+    }
 }

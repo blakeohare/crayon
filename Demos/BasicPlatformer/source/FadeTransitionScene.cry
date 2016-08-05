@@ -2,44 +2,44 @@ import Math;
 import GFX;
 
 /*
-	Fades a scene to blackness for 1 second.
-	Fades a nother scene in for 1 second.
+    Fades a scene to blackness for 1 second.
+    Fades a nother scene in for 1 second.
 */
 class FadeTransitionScene : AbstractScene {
-	field before;
-	field after;
-	field counter = 0;
-	field alpha = 0;
-	field duration = FPS;
-	field halfDuration;
-	field bg;
-	
-	constructor(before, after) : base() {
-		this.before = before;
-		this.after = after;
-		this.halfDuration = this.duration / 2;
-		this.bg = this.before;
-	}
-	
-	function update(pressedKeys, pressedThisframe) {
-		this.counter++;
-		if (this.counter < this.halfDuration) {
-			this.alpha = Math.floor(255 * this.counter /  this.halfDuration);
-		} else {
-			this.alpha = 255 - Math.floor(255 * (this.counter - this.halfDuration) / this.halfDuration);
-		}
-		
-		this.alpha = Math.ensureRange(this.alpha, 0, 255);
-		
-		if (this.counter > this.duration) {
-			this.next = this.after;
-		} else if (this.counter > this.halfDuration) {
-			this.bg = this.after;
-		}
-	}
-	
-	function render(rc) {
-		this.bg.render(rc);
-		GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, this.alpha);
-	}
+    field before;
+    field after;
+    field counter = 0;
+    field alpha = 0;
+    field duration = FPS;
+    field halfDuration;
+    field bg;
+
+    constructor(before, after) : base() {
+        this.before = before;
+        this.after = after;
+        this.halfDuration = this.duration / 2;
+        this.bg = this.before;
+    }
+
+    function update(pressedKeys, pressedThisframe) {
+        this.counter++;
+        if (this.counter < this.halfDuration) {
+            this.alpha = Math.floor(255 * this.counter /  this.halfDuration);
+        } else {
+            this.alpha = 255 - Math.floor(255 * (this.counter - this.halfDuration) / this.halfDuration);
+        }
+
+        this.alpha = Math.ensureRange(this.alpha, 0, 255);
+
+        if (this.counter > this.duration) {
+            this.next = this.after;
+        } else if (this.counter > this.halfDuration) {
+            this.bg = this.after;
+        }
+    }
+
+    function render(rc) {
+        this.bg.render(rc);
+        GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, this.alpha);
+    }
 }

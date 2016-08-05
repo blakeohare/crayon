@@ -2,75 +2,75 @@ import GFX;
 import Math;
 
 /*
-	Scene that displays a progress bar while the image sheet loads.
+    Scene that displays a progress bar while the image sheet loads.
 */
 class LoadingScene : AbstractScene {
 
-	field progress = 0.0;
-	field loader;
-	
-	static field BAR_WIDTH = WIDTH * 3 / 4;
-	static field BAR_HEIGHT = HEIGHT / 20;
-	static field BAR_FILL_COLOR = [0, 80, 200]; // blue-ish
-	static field BAR_OUTLINE_COLOR = [100, 100, 100]; // gray
-	
-	constructor() : base() {
-		this.loader = GFX.ImageSheetLoader.fromIds('everything');
-	}
-	
-	function update(pressedKeys, pressedThisFrame) {
-		if (this.loader.isDone()) {
-				this.next = new FadeTransitionScene(this, new TitleScene());
-		}
-		this.progress = this.loader.getProgress();
-	}
-	
-	static function lightenColor(rgb) {
-		return [
-			Math.min(rgb[0] + 40, 255),
-			Math.min(rgb[1] + 40, 255),
-			Math.min(rgb[2] + 40, 255),
-		];
-	}
-	
-	static function darkenColor(rgb) {
-		return [
-			rgb[0] / 2,
-			rgb[1] / 2,
-			rgb[2] / 2,
-		];
-	}
-	
-	// Render a progress bar.
-	function render(rc) {
-	
-		// fill with black
-		GFX.Draw.fill(0, 0, 0);
-		
-		// Draw a rectangle centered in the screen that has a 2 pixel outline and a black fill.
-		left = (WIDTH - LoadingScene.BAR_WIDTH) / 2;
-		top = (HEIGHT - LoadingScene.BAR_HEIGHT) / 2;
-		rgb = LoadingScene.BAR_OUTLINE_COLOR;
-		GFX.Draw.rectangle(
-			left, top, LoadingScene.BAR_WIDTH, LoadingScene.BAR_HEIGHT, 
-			rgb[0], rgb[1], rgb[2]);
-		GFX.Draw.rectangle(
-			left + 2, top + 2, LoadingScene.BAR_WIDTH - 4, LoadingScene.BAR_HEIGHT - 4, 
-			0, 0, 0); // black
-		
-		// Calculate the coordinates of a rectangle that has 4 pixels margin inside the above rectangle.
-		innerWidth = LoadingScene.BAR_WIDTH - 8;
-		innerHeight = LoadingScene.BAR_HEIGHT - 8;
-		innerLeft = left + 4;
-		innerTop = top + 4;
-		
-		// shrink the width of this rectangle to match the current progress.
-		progressWidth = Math.floor(innerWidth * this.progress);
-		
-		// Draw the progress bar.
-		rgb = LoadingScene.BAR_FILL_COLOR;
-		GFX.Draw.rectangle(
-			innerLeft, innerTop, progressWidth, innerHeight, 
-			rgb[0], rgb[1], rgb[2]);
-	}
+    field progress = 0.0;
+    field loader;
+
+    static field BAR_WIDTH = WIDTH * 3 / 4;
+    static field BAR_HEIGHT = HEIGHT / 20;
+    static field BAR_FILL_COLOR = [0, 80, 200]; // blue-ish
+    static field BAR_OUTLINE_COLOR = [100, 100, 100]; // gray
+
+    constructor() : base() {
+        this.loader = GFX.ImageSheetLoader.fromIds('everything');
+    }
+
+    function update(pressedKeys, pressedThisFrame) {
+        if (this.loader.isDone()) {
+                this.next = new FadeTransitionScene(this, new TitleScene());
+        }
+        this.progress = this.loader.getProgress();
+    }
+
+    static function lightenColor(rgb) {
+        return [
+            Math.min(rgb[0] + 40, 255),
+            Math.min(rgb[1] + 40, 255),
+            Math.min(rgb[2] + 40, 255),
+        ];
+    }
+
+    static function darkenColor(rgb) {
+        return [
+            rgb[0] / 2,
+            rgb[1] / 2,
+            rgb[2] / 2,
+        ];
+    }
+
+    // Render a progress bar.
+    function render(rc) {
+
+        // fill with black
+        GFX.Draw.fill(0, 0, 0);
+
+        // Draw a rectangle centered in the screen that has a 2 pixel outline and a black fill.
+        left = (WIDTH - LoadingScene.BAR_WIDTH) / 2;
+        top = (HEIGHT - LoadingScene.BAR_HEIGHT) / 2;
+        rgb = LoadingScene.BAR_OUTLINE_COLOR;
+        GFX.Draw.rectangle(
+            left, top, LoadingScene.BAR_WIDTH, LoadingScene.BAR_HEIGHT,
+            rgb[0], rgb[1], rgb[2]);
+        GFX.Draw.rectangle(
+            left + 2, top + 2, LoadingScene.BAR_WIDTH - 4, LoadingScene.BAR_HEIGHT - 4,
+            0, 0, 0); // black
+
+        // Calculate the coordinates of a rectangle that has 4 pixels margin inside the above rectangle.
+        innerWidth = LoadingScene.BAR_WIDTH - 8;
+        innerHeight = LoadingScene.BAR_HEIGHT - 8;
+        innerLeft = left + 4;
+        innerTop = top + 4;
+
+        // shrink the width of this rectangle to match the current progress.
+        progressWidth = Math.floor(innerWidth * this.progress);
+
+        // Draw the progress bar.
+        rgb = LoadingScene.BAR_FILL_COLOR;
+        GFX.Draw.rectangle(
+            innerLeft, innerTop, progressWidth, innerHeight,
+            rgb[0], rgb[1], rgb[2]);
+    }
 }

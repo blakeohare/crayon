@@ -1,23 +1,23 @@
 /*
-	Cache of tile types.
+    Cache of tile types.
 */
 class TileStore {
-	static field templates = null;
-	static field TILE_IDS = ['x', 'g'];
-	
-	constructor() { Core.assert(false); }
-	
-	static function initialize() {
-		if (TileStore.templates == null) {
-			TileStore.templates = {};
-			for (id : TileStore.TILE_IDS) {
-				template = new TileTemplate(id, [id + '.png']);
-				TileStore.templates[id] = template;
-			}
-		}
-	}
-	
-	static function get(id) {
-		return TileStore.templates[id];
-	}
+    static field templates = null;
+    static field TILE_IDS = ['x', 'g'];
+
+    constructor() { Core.assert(false); }
+
+    static function initialize() {
+        if (TileStore.templates == null) {
+            TileStore.templates = {};
+            for (id : TileStore.TILE_IDS) {
+                template = new TileTemplate(id, [id + '.png']);
+                TileStore.templates[id] = template;
+            }
+        }
+    }
+
+    static function get(id) {
+        return TileStore.templates[id];
+    }
 }

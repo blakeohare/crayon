@@ -1,43 +1,43 @@
 class FadeTransitionScene : AbstractScene {
-	
-	field prev;
-	field next;
-	field counter = 0;
-	field duration = FPS;
-	
-	constructor(prev, next) : base() {
-		this.prev = prev;
-		this.next = next;
-	}
-	
-	function getCurrentBackground() {
-		return this.counter < this.duration / 2 ? this.prev : this.next;
-	}
-	
-	function getCurrentBlackness() {
-		progress = 1.0 * this.counter / this.duration;
-		
-		if (progress < .5) {
-			progress *= 2;
-		} else {
-			progress -= .5;
-			progress = 1 - progress * 2;
-		}
-		
-		return Math.ensureRange(progress, 0.0, 1.0);
-	}
-	
-	function update(isTap) {
-		this.counter++;
-		this.getCurrentBackground().update(false); // don't relay taps
-		if (this.counter >= this.duration) {
-			this.switchScene(this.next);
-		}
-	}
-	
-	function render() {
-		this.getCurrentBackground().render();
-		alpha = Math.floor(255 * this.getCurrentBlackness());
-		GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, alpha);
-	}
+
+    field prev;
+    field next;
+    field counter = 0;
+    field duration = FPS;
+
+    constructor(prev, next) : base() {
+        this.prev = prev;
+        this.next = next;
+    }
+
+    function getCurrentBackground() {
+        return this.counter < this.duration / 2 ? this.prev : this.next;
+    }
+
+    function getCurrentBlackness() {
+        progress = 1.0 * this.counter / this.duration;
+
+        if (progress < .5) {
+            progress *= 2;
+        } else {
+            progress -= .5;
+            progress = 1 - progress * 2;
+        }
+
+        return Math.ensureRange(progress, 0.0, 1.0);
+    }
+
+    function update(isTap) {
+        this.counter++;
+        this.getCurrentBackground().update(false); // don't relay taps
+        if (this.counter >= this.duration) {
+            this.switchScene(this.next);
+        }
+    }
+
+    function render() {
+        this.getCurrentBackground().render();
+        alpha = Math.floor(255 * this.getCurrentBlackness());
+        GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, alpha);
+    }
 }

@@ -12,145 +12,145 @@ const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 const FRAMES_PER_UPDATE = 3;
 
 function makeGrid(width, height) {
-	grid = [];
-	while (width-- > 0) {
-		grid.add([null] * height);
-	}
-	return grid;
+    grid = [];
+    while (width-- > 0) {
+        grid.add([null] * height);
+    }
+    return grid;
 }
 
 function getRandomBlue() {
-	return [
-		Random.randomInt(40),
-		Random.randomInt(100, 200),
-		Random.randomInt(170, 255)
-	];
+    return [
+        Random.randomInt(40),
+        Random.randomInt(100, 200),
+        Random.randomInt(170, 255)
+    ];
 }
 
 function main() {
-	window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
-	
-	counter = 0;
-	
-	grid = makeGrid(WIDTH, HEIGHT);
-	buffer = makeGrid(WIDTH, HEIGHT);
-	
-	neighborsLookup = makeGrid(WIDTH, HEIGHT);
-	blues = makeGrid(WIDTH, HEIGHT);
-	
-	adjacentOffsets = [-1, 0, 1];
-	
-	for (y = 0; y < HEIGHT; ++y) {
-		for (x = 0; x < WIDTH; ++x) {
-			grid[x][y] = Random.randomBool();
-			blues[x][y] = getRandomBlue();
-			neighbors = [];
-			for (nx = x - 1; nx <= x + 1; ++nx) {
-				for (ny = y - 1; ny <= y + 1; ++ny) {
-					if (nx != x || ny != y) {
-						if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
-							neighbors.add([nx, ny]);
-						}
-					}
-				}
-			}
-			neighborsLookup[x][y] = neighbors;
-		}
-	}
-	
-	last_col = -1;
-	last_row = -1;
-	mousePressed = false;
-	
-	while (true) {
-		for (event : window.pumpEvents()) {
-			switch (event.type) {
-				case EventType.QUIT:
-					return;
-				
-				case EventType.MOUSE_MOVE:
-					last_col = event.x / CELL_SIZE;
-					last_row = event.y / CELL_SIZE;
-					break;
-				
-				case EventType.MOUSE_LEFT_DOWN:
-					mousePressed = true;
-					break;
-				
-				case EventType.MOUSE_LEFT_UP:
-					mousePressed = false;
-					break;
-			}
-		}
-		
-		if (mousePressed) {
-			if (last_col >= 0 && 
-				last_row >= 0 &&
-				last_col < WIDTH && 
-				last_row < HEIGHT) {
-				grid[last_col][last_row] = true;
-			}
-		}
-		
-		++counter;
-		
-		if (counter % FRAMES_PER_UPDATE == 0) {
-			// Perform an iteration...
-			for (y = 0; y < HEIGHT; ++y) {
-				for (x = 0; x < WIDTH; ++x) {
-					neighbors = 0;
-					for (neighbor : neighborsLookup[x][y]) {
-						if (grid[neighbor[0]][neighbor[1]]) {
-							neighbors++;
-						}
-					}
-					current_state = grid[x][y];
-					new_state = current_state;
-					if (current_state) {
-						if (neighbors < 2) {
-							new_state = false; // die from loneliness
-						} else if (neighbors > 3) {
-							new_state = false; // die from overcrowding
-						}
-					} else {
-						if (neighbors == 3) {
-							new_state = true; // new cell is born
-						}
-					}
-					
-					if (current_state == new_state) {
-						buffer[x][y] = current_state;
-					} else if (new_state) {
-						buffer[x][y] = true;
-					} else {
-						buffer[x][y] = false;
-					}
-				}
-			}
-			
-			for (y = 0; y < HEIGHT; ++y) {
-				for (x = 0; x < WIDTH; ++x) {
-					grid[x][y] = buffer[x][y];
-				}
-			}
-		}
-		
-		GFX.Draw.fill(0, 0, 0);
-		for (y = 0; y < HEIGHT; ++y) {
-			for (x = 0; x < WIDTH; ++x) {
-				if (grid[x][y]) {
-					rgb = blues[x][y];
-					GFX.Draw.rectangle(
-						x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 
-						rgb[0], rgb[1], rgb[2]);
-				} else if (x == last_col && y == last_row) {
-					GFX.Draw.rectangle(
-						x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 
-						64, 64, 64);
-				}
-			}
-		}
-		
-		window.clockTick();
-	}
+    window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    counter = 0;
+
+    grid = makeGrid(WIDTH, HEIGHT);
+    buffer = makeGrid(WIDTH, HEIGHT);
+
+    neighborsLookup = makeGrid(WIDTH, HEIGHT);
+    blues = makeGrid(WIDTH, HEIGHT);
+
+    adjacentOffsets = [-1, 0, 1];
+
+    for (y = 0; y < HEIGHT; ++y) {
+        for (x = 0; x < WIDTH; ++x) {
+            grid[x][y] = Random.randomBool();
+            blues[x][y] = getRandomBlue();
+            neighbors = [];
+            for (nx = x - 1; nx <= x + 1; ++nx) {
+                for (ny = y - 1; ny <= y + 1; ++ny) {
+                    if (nx != x || ny != y) {
+                        if (nx >= 0 && ny >= 0 && nx < WIDTH && ny < HEIGHT) {
+                            neighbors.add([nx, ny]);
+                        }
+                    }
+                }
+            }
+            neighborsLookup[x][y] = neighbors;
+        }
+    }
+
+    last_col = -1;
+    last_row = -1;
+    mousePressed = false;
+
+    while (true) {
+        for (event : window.pumpEvents()) {
+            switch (event.type) {
+                case EventType.QUIT:
+                    return;
+
+                case EventType.MOUSE_MOVE:
+                    last_col = event.x / CELL_SIZE;
+                    last_row = event.y / CELL_SIZE;
+                    break;
+
+                case EventType.MOUSE_LEFT_DOWN:
+                    mousePressed = true;
+                    break;
+
+                case EventType.MOUSE_LEFT_UP:
+                    mousePressed = false;
+                    break;
+            }
+        }
+
+        if (mousePressed) {
+            if (last_col >= 0 &&
+                last_row >= 0 &&
+                last_col < WIDTH &&
+                last_row < HEIGHT) {
+                grid[last_col][last_row] = true;
+            }
+        }
+
+        ++counter;
+
+        if (counter % FRAMES_PER_UPDATE == 0) {
+            // Perform an iteration...
+            for (y = 0; y < HEIGHT; ++y) {
+                for (x = 0; x < WIDTH; ++x) {
+                    neighbors = 0;
+                    for (neighbor : neighborsLookup[x][y]) {
+                        if (grid[neighbor[0]][neighbor[1]]) {
+                            neighbors++;
+                        }
+                    }
+                    current_state = grid[x][y];
+                    new_state = current_state;
+                    if (current_state) {
+                        if (neighbors < 2) {
+                            new_state = false; // die from loneliness
+                        } else if (neighbors > 3) {
+                            new_state = false; // die from overcrowding
+                        }
+                    } else {
+                        if (neighbors == 3) {
+                            new_state = true; // new cell is born
+                        }
+                    }
+
+                    if (current_state == new_state) {
+                        buffer[x][y] = current_state;
+                    } else if (new_state) {
+                        buffer[x][y] = true;
+                    } else {
+                        buffer[x][y] = false;
+                    }
+                }
+            }
+
+            for (y = 0; y < HEIGHT; ++y) {
+                for (x = 0; x < WIDTH; ++x) {
+                    grid[x][y] = buffer[x][y];
+                }
+            }
+        }
+
+        GFX.Draw.fill(0, 0, 0);
+        for (y = 0; y < HEIGHT; ++y) {
+            for (x = 0; x < WIDTH; ++x) {
+                if (grid[x][y]) {
+                    rgb = blues[x][y];
+                    GFX.Draw.rectangle(
+                        x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE,
+                        rgb[0], rgb[1], rgb[2]);
+                } else if (x == last_col && y == last_row) {
+                    GFX.Draw.rectangle(
+                        x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE,
+                        64, 64, 64);
+                }
+            }
+        }
+
+        window.clockTick();
+    }
 }

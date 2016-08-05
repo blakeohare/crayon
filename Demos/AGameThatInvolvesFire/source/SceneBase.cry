@@ -1,5 +1,5 @@
 class SceneBase {
-	constructor() {
-		this.next = this;
-	}
+    constructor() {
+        this.next = this;
+    }
 }

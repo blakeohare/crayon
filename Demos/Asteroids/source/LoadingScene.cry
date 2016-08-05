@@ -1,21 +1,21 @@
 import GFX;
 
 class LoadingScene : AbstractScene {
-	
-	field loader;
-	
-	constructor() : base() {
-		this.loader = ImageSheetLoader.fromIds('everything');
-	}
-	
-	function update(raw_events, pressed_keys) {
-		if (this.loader.isDone()) {
-			this.next = new TitleScene();
-		}
-	}
-	
-	// Could render a progress bar, but the images in this game are just simple text that it will 
-	// load instantaneously for almost all users. Flashing a progress bar for a split second would
-	// probably not be very useful.
-	function render() { }
+
+    field loader;
+
+    constructor() : base() {
+        this.loader = ImageSheetLoader.fromIds('everything');
+    }
+
+    function update(raw_events, pressed_keys) {
+        if (this.loader.isDone()) {
+            this.next = new TitleScene();
+        }
+    }
+
+    // Could render a progress bar, but the images in this game are just simple text that it will
+    // load instantaneously for almost all users. Flashing a progress bar for a split second would
+    // probably not be very useful.
+    function render() { }
 }

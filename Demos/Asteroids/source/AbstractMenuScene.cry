@@ -2,39 +2,39 @@ import Game;
 import GFX;
 
 class AbstractMenuScene : AbstractScene {
-	field textImg;
-	field bg;
-	field counter = 0;
-	
-	constructor(textImg, bg) : base() {
-		this.textImg = textImg;
-		this.bg = bg;
-	}
-	
-	function update(keysPressed, keysPressedThisFrame) {
-		this.counter++;
-		if (this.counter > 10 && // delay recognition of key presses just in case the player is firing their lazor wildly while they die, the way we all hope to die.
-			(keysPressedThisFrame.get(KeyboardKey.SPACE, false) ||
-			keysPressedThisFrame.get(KeyboardKey.ENTER, false))) {
-			
-			this.next = new PlayScene(false);
-		}
-		
-		this.bg.update({}, {});
-	}
-	
-	function render() {
-		// Continue to draw background but dim it.
-		this.bg.render();
-		GFX.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 128);
-		
-		// show text in the top quarter of the screen.
-		this.textImg.draw((GAME_WIDTH - this.textImg.width) / 2, GAME_HEIGHT / 4 - this.textImg.height / 2);
-		
-		// blink "Press Start" 3 times per second about 3 quarters of the way down the screen
-		if ((6 * this.counter / FPS) % 2 == 0) {
-			pressStartImg = ImageLibrary.get('press_start.png');
-			pressStartImg.draw((GAME_WIDTH - pressStartImg.width) / 2, 3 * GAME_HEIGHT / 4 - pressStartImg.height / 2);
-		}
-	}
+    field textImg;
+    field bg;
+    field counter = 0;
+
+    constructor(textImg, bg) : base() {
+        this.textImg = textImg;
+        this.bg = bg;
+    }
+
+    function update(keysPressed, keysPressedThisFrame) {
+        this.counter++;
+        if (this.counter > 10 && // delay recognition of key presses just in case the player is firing their lazor wildly while they die, the way we all hope to die.
+            (keysPressedThisFrame.get(KeyboardKey.SPACE, false) ||
+            keysPressedThisFrame.get(KeyboardKey.ENTER, false))) {
+
+            this.next = new PlayScene(false);
+        }
+
+        this.bg.update({}, {});
+    }
+
+    function render() {
+        // Continue to draw background but dim it.
+        this.bg.render();
+        GFX.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 128);
+
+        // show text in the top quarter of the screen.
+        this.textImg.draw((GAME_WIDTH - this.textImg.width) / 2, GAME_HEIGHT / 4 - this.textImg.height / 2);
+
+        // blink "Press Start" 3 times per second about 3 quarters of the way down the screen
+        if ((6 * this.counter / FPS) % 2 == 0) {
+            pressStartImg = ImageLibrary.get('press_start.png');
+            pressStartImg.draw((GAME_WIDTH - pressStartImg.width) / 2, 3 * GAME_HEIGHT / 4 - pressStartImg.height / 2);
+        }
+    }
 }

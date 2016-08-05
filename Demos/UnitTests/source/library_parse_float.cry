@@ -1,7 +1,7 @@
 function library_parse_float() {
 
-	print('library_parse_float - parsing floats');
-	
-	assert(parseFloat(' 42.0 \r') == 42.0, "library_parse_float");
-	assert(parseFloat('kitties') == null, "library_parse_float");
+    print('library_parse_float - parsing floats');
+
+    assert(parseFloat(' 42.0 \r') == 42.0, "library_parse_float");
+    assert(parseFloat('kitties') == null, "library_parse_float");
 }

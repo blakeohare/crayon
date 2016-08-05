@@ -1,19 +1,19 @@
 class AbstractScene {
-	field next;
-	
-	constructor() {
-		this.next = this;
-	}
-	
-	function processInput(events) {
-		assert(false, "Override required.");
-	}
-	
-	function update() {
-		assert(false, "Override required.");
-	}
-	
-	function render() {
-		assert(false, "Override required.");
-	}
+    field next;
+
+    constructor() {
+        this.next = this;
+    }
+
+    function processInput(events) {
+        assert(false, "Override required.");
+    }
+
+    function update() {
+        assert(false, "Override required.");
+    }
+
+    function render() {
+        assert(false, "Override required.");
+    }
 }

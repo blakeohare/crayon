@@ -3,36 +3,36 @@ import Math;
 
 class LoadingScene : AbstractScene {
 
-	field progress = 0.0;
-	field loader;
-	
-	constructor() : base() {
-		this.loader = ImageSheetLoader.fromIds('everything');
-	}
-	
-	function processInput(events) {
-		// nothing to do.
-	}
-	
-	function update() {
-		if (this.loader.isDone()) {
-			this.switchScene(new TitleScene());
-		}
-		this.progress = this.loader.getProgress();
-	}
-	
-	function render() {
-		// Draw a progress bar.
-		height = 20;
-		width = WIDTH * 3 / 4;
-		x = WIDTH / 2 - width / 2;
-		y = HEIGHT / 2 - height / 2;
-		
-		// dark gray background
-		GFX.Draw.rectangle(x, y, width, height, 40, 40, 40);
-		
-		// yellow progress
-		width = floor(width * this.progress);
-		GFX.Draw.rectangle(x, y, width, height, 255, 255, 0);
-	}
+    field progress = 0.0;
+    field loader;
+
+    constructor() : base() {
+        this.loader = ImageSheetLoader.fromIds('everything');
+    }
+
+    function processInput(events) {
+        // nothing to do.
+    }
+
+    function update() {
+        if (this.loader.isDone()) {
+            this.switchScene(new TitleScene());
+        }
+        this.progress = this.loader.getProgress();
+    }
+
+    function render() {
+        // Draw a progress bar.
+        height = 20;
+        width = WIDTH * 3 / 4;
+        x = WIDTH / 2 - width / 2;
+        y = HEIGHT / 2 - height / 2;
+
+        // dark gray background
+        GFX.Draw.rectangle(x, y, width, height, 40, 40, 40);
+
+        // yellow progress
+        width = floor(width * this.progress);
+        GFX.Draw.rectangle(x, y, width, height, 255, 255, 0);
+    }
 }

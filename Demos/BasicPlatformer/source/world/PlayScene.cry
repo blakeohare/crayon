@@ -2,72 +2,71 @@ import Game;
 import GFX;
 import Math;
 
-
 /*
-	Scene where actual gameplay takes place. 
-	Contains sprites and tiles.
+    Scene where actual gameplay takes place.
+    Contains sprites and tiles.
 */
 class PlayScene : AbstractScene {
-	field sky;
-	field map;
-	field sprites = [];
-	field player;
-	field cameraTarget;
-	field cameraCurrent;
-	
-	constructor() : base() {
-		this.sky = ImageLibrary.get('sky.png');
-		this.map = new Map('level1');
-		startX = this.map.startLoc[0] - .5;
-		startY = this.map.startLoc[1] - .5;
-		this.player = new Sprite('player', startX, startY);
-		this.sprites.add(this.player);
-		cx = this.player.x * 32;
-		cy = this.player.y * 32;
-		this.cameraTarget = [cx, cy];
-		this.cameraCurrent = this.cameraTarget.clone();
-	}
-	
-	function update(pressedKeys, pressedThisFrame) {
-		moveRight = pressedKeys.get(KeyboardKey.RIGHT, false);
-		moveLeft = pressedKeys.get(KeyboardKey.LEFT, false);
-		move = moveRight || moveLeft;
-		
-		isJump = pressedThisFrame.get(KeyboardKey.SPACE, false);
-		if (isJump && this.player.ground != null) {
-			this.player.ground = null;
-			this.player.vy = -.6;
-		}
-		
-		if (move) {
-			this.player.accelerateX(moveRight);
-		}
-		
-		for (sprite : this.sprites) {
-			sprite.update(this);
-		}
-	}
-	
-	function render(rc) {
-		this.cameraTarget = [this.player.x * 32, this.player.y * 32];
-		this.cameraCurrent = [
-			(this.cameraCurrent[0] * 5 + this.cameraTarget[0]) / 6.0,
-			(this.cameraCurrent[1] * 5 + this.cameraTarget[1]) / 6.0];
-		viewX = Math.floor(this.cameraCurrent[0]) - WIDTH / 2;
-		viewY = Math.floor(this.cameraCurrent[1]) - HEIGHT / 2;
-		if (viewX < 0) viewX = 0;
-		if (viewY < 0) viewY = 0;
-		mapWidth = this.map.width * 32;
-		mapHeight = this.map.height * 32;
-		if (viewX > mapWidth - WIDTH) viewX = mapWidth - WIDTH;
-		if (viewY > mapHeight - HEIGHT) viewY = mapHeight - HEIGHT;
-		
-		GFX.Draw.fill(255, 0, 0);
-		this.sky.draw(0, 0);
-		this.map.render(rc, viewX, viewY);
-		
-		for (sprite : this.sprites) {
-			sprite.render(rc, viewX, viewY);
-		}
-	}
+    field sky;
+    field map;
+    field sprites = [];
+    field player;
+    field cameraTarget;
+    field cameraCurrent;
+
+    constructor() : base() {
+        this.sky = ImageLibrary.get('sky.png');
+        this.map = new Map('level1');
+        startX = this.map.startLoc[0] - .5;
+        startY = this.map.startLoc[1] - .5;
+        this.player = new Sprite('player', startX, startY);
+        this.sprites.add(this.player);
+        cx = this.player.x * 32;
+        cy = this.player.y * 32;
+        this.cameraTarget = [cx, cy];
+        this.cameraCurrent = this.cameraTarget.clone();
+    }
+
+    function update(pressedKeys, pressedThisFrame) {
+        moveRight = pressedKeys.get(KeyboardKey.RIGHT, false);
+        moveLeft = pressedKeys.get(KeyboardKey.LEFT, false);
+        move = moveRight || moveLeft;
+
+        isJump = pressedThisFrame.get(KeyboardKey.SPACE, false);
+        if (isJump && this.player.ground != null) {
+            this.player.ground = null;
+            this.player.vy = -.6;
+        }
+
+        if (move) {
+            this.player.accelerateX(moveRight);
+        }
+
+        for (sprite : this.sprites) {
+            sprite.update(this);
+        }
+    }
+
+    function render(rc) {
+        this.cameraTarget = [this.player.x * 32, this.player.y * 32];
+        this.cameraCurrent = [
+            (this.cameraCurrent[0] * 5 + this.cameraTarget[0]) / 6.0,
+            (this.cameraCurrent[1] * 5 + this.cameraTarget[1]) / 6.0];
+        viewX = Math.floor(this.cameraCurrent[0]) - WIDTH / 2;
+        viewY = Math.floor(this.cameraCurrent[1]) - HEIGHT / 2;
+        if (viewX < 0) viewX = 0;
+        if (viewY < 0) viewY = 0;
+        mapWidth = this.map.width * 32;
+        mapHeight = this.map.height * 32;
+        if (viewX > mapWidth - WIDTH) viewX = mapWidth - WIDTH;
+        if (viewY > mapHeight - HEIGHT) viewY = mapHeight - HEIGHT;
+
+        GFX.Draw.fill(255, 0, 0);
+        this.sky.draw(0, 0);
+        this.map.render(rc, viewX, viewY);
+
+        for (sprite : this.sprites) {
+            sprite.render(rc, viewX, viewY);
+        }
+    }
 }

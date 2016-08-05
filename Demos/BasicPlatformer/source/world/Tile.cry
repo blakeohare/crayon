@@ -1,16 +1,16 @@
 /*
-	Tiles contain a location and a template object but no other properties 
-	inherent to the tile instance. All properties of the tile are stored on 
-	the template object which are unique per tile type.
+    Tiles contain a location and a template object but no other properties
+    inherent to the tile instance. All properties of the tile are stored on
+    the template object which are unique per tile type.
 */
 class Tile {
-	field template;
-	field col;
-	field row;
-	
-	constructor(template, col, row) {
-		this.template = template;
-		this.col = col;
-		this.row = row;
-	}
+    field template;
+    field col;
+    field row;
+
+    constructor(template, col, row) {
+        this.template = template;
+        this.col = col;
+        this.row = row;
+    }
 }

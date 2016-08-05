@@ -98,6 +98,7 @@ def main():
 	normalizeBatch('Interpreter', '.cry', '\n', '\t', True)
 	normalizeBatch('Resources/game-python-pygame', '.py', '\n', ' ' * 2, True)
 	normalizeBatch('Resources/game-javascript', '.js', '\n', ' ' * 2, True)
+	normalizeBatch('Demos', '.cry', '\n', ' ' * 4, True)
 
 print 'ahoy'
 main()

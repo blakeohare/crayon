@@ -2,31 +2,31 @@ import GFX;
 import Math;
 
 class LoadingScene : AbstractScene {
-	field phase = 'start';
-	field progress = 0.0;
-	field loader;
-	
-	constructor() : base() {
-		this.loader = ImageSheetLoader.fromIds('everything');
-	}
-	
-	function processInput(events) {
-		// can't do anything.
-	}
-	
-	function update() {
-		this.progress = this.loader.getProgress();
-		if (this.loader.isDone()) {
-			this.next = new PlayScene();
-		}
-	}
-	
-	function render() {
-		left = 10;
-		top = 10;
-		width = 400;
-		height = 20;
-		GFX.Draw.rectangle(left - 1, top - 1, width + 2, height + 2, 128, 128, 128);
-		GFX.Draw.rectangle(left, top, floor(width * this.progress), height, 0, 128, 255);
-	}
+    field phase = 'start';
+    field progress = 0.0;
+    field loader;
+
+    constructor() : base() {
+        this.loader = ImageSheetLoader.fromIds('everything');
+    }
+
+    function processInput(events) {
+        // can't do anything.
+    }
+
+    function update() {
+        this.progress = this.loader.getProgress();
+        if (this.loader.isDone()) {
+            this.next = new PlayScene();
+        }
+    }
+
+    function render() {
+        left = 10;
+        top = 10;
+        width = 400;
+        height = 20;
+        GFX.Draw.rectangle(left - 1, top - 1, width + 2, height + 2, 128, 128, 128);
+        GFX.Draw.rectangle(left, top, floor(width * this.progress), height, 0, 128, 255);
+    }
 }

@@ -1,16 +1,16 @@
 import GFX;
 
 class ImageLibrary {
-	static field images = {};
-	
-	constructor() { }
-	
-	static function get(path) {
-		img = ImageLibrary.images.get(path);
-		if (img == null) {
-			img = ImageLoader.fromResource('images/' + path).getImage();
-			ImageLibrary.images[path] = img;
-		}
-		return img;
-	}
+    static field images = {};
+
+    constructor() { }
+
+    static function get(path) {
+        img = ImageLibrary.images.get(path);
+        if (img == null) {
+            img = ImageLoader.fromResource('images/' + path).getImage();
+            ImageLibrary.images[path] = img;
+        }
+        return img;
+    }
 }

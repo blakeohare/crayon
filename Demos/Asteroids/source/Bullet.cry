@@ -2,32 +2,32 @@ const BULLET_VELOCITY = 4;
 const BULLET_RADIUS = 4;
 
 class Bullet {
-	field x;
-	field y;
-	field vx;
-	field vy;
-	field dead = false;
-	
-	constructor(x, y, angle) {
-		this.x = x;
-		this.y = y;
-		this.vx = BULLET_VELOCITY * Math.cos(angle);
-		this.vy = BULLET_VELOCITY * Math.sin(angle);
-	}
-	
-	function update() {
-		this.x += this.vx;
-		this.y += this.vy;
-		
-		// remove bullet from scene if it goes off the edge, unlike other sprites which wrap.
-		if (this.x < 0 || this.y < 0 || this.x > GAME_WIDTH || this.y > GAME_HEIGHT) {
-			this.dead = true;
-		}
-	}
-	
-	function render() {
-		left = Math.floor(this.x - BULLET_RADIUS);
-		top = Math.floor(this.y - BULLET_RADIUS);
-		GFX.Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
-	}
+    field x;
+    field y;
+    field vx;
+    field vy;
+    field dead = false;
+
+    constructor(x, y, angle) {
+        this.x = x;
+        this.y = y;
+        this.vx = BULLET_VELOCITY * Math.cos(angle);
+        this.vy = BULLET_VELOCITY * Math.sin(angle);
+    }
+
+    function update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // remove bullet from scene if it goes off the edge, unlike other sprites which wrap.
+        if (this.x < 0 || this.y < 0 || this.x > GAME_WIDTH || this.y > GAME_HEIGHT) {
+            this.dead = true;
+        }
+    }
+
+    function render() {
+        left = Math.floor(this.x - BULLET_RADIUS);
+        top = Math.floor(this.y - BULLET_RADIUS);
+        GFX.Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
+    }
 }

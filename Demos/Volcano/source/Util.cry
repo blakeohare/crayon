@@ -1,7 +1,7 @@
 function makeGrid(width, height) {
-	cols = [];
-	while (width-- > 0) {
-		cols.add([null] * height);
-	}
-	return cols;
+    cols = [];
+    while (width-- > 0) {
+        cols.add([null] * height);
+    }
+    return cols;
 }

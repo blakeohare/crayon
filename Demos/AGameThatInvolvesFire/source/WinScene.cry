@@ -1,20 +1,20 @@
 class WinScene : SceneBase {
-	constructor() : base() {
-		this.counter = 0;
-	}
-	
-	function process_input(events) {
+    constructor() : base() {
+        this.counter = 0;
+    }
 
-	}
-	
-	function update() {
-		this.counter++;
-		if (this.counter == 90) {
-			this.next = new TitleScene();
-		}
-	}
-	
-	function render(imgLib) {
-		$blit_image(imgLib.images['menus/win'], 0, 0);
-	}
+    function process_input(events) {
+
+    }
+
+    function update() {
+        this.counter++;
+        if (this.counter == 90) {
+            this.next = new TitleScene();
+        }
+    }
+
+    function render(imgLib) {
+        $blit_image(imgLib.images['menus/win'], 0, 0);
+    }
 }

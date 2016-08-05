@@ -2,71 +2,71 @@ const KELP_WIDTH = 80;
 const KELP_OPENING_HEIGHT = 200;
 
 class Kelp {
-	field x;
-	field left;
-	field right;
-	field topOpeningY;
-	field bottomOpeningY;
-	
-	constructor(centerX, openingCenterY) {
-		this.x = centerX;
-		this.left = centerX - KELP_WIDTH / 2;
-		this.right = this.left + KELP_WIDTH;
-		this.topOpeningY = Math.floor(openingCenterY - KELP_OPENING_HEIGHT / 2);
-		this.bottomOpeningY = Math.floor(this.topOpeningY + KELP_OPENING_HEIGHT);
-	}
-	
-	function isCollision(squid) {
-		sTop = squid.y - squid.radius;
-		sBottom = squid.y + squid.radius;
-		sLeft = squid.x - squid.radius;
-		sRight = squid.x + squid.radius;
-		
-		// Squid center is vertically aligned with the kelp. 
-		// Just check to make sure top and bottom don't touch.
-		if (squid.x >= this.left && squid.x <= this.right) {
-			return sTop < this.topOpeningY || sBottom > this.bottomOpeningY;
-		}
-		
-		// Squid is above the top opening or below the bottom opening.
-		// Just check to make sure the squid is entirely to the left or right of the kelp.
-		if (squid.y <= this.topOpeningY || squid.y >= this.bottomOpeningY) {
-			return sRight > this.left && sLeft < this.right;
-		}
-		
-		// For remaining regions, just check the distance between the center and the corners
-		// of the kelp and compare to the radius.
-		for (x : [this.left, this.right]) {
-			for (y : [this.topOpeningY, this.bottomOpeningY]) {
-				distance = ((squid.x - x) ** 2 + (squid.y - y) ** 2) ** .5;
-				if (distance < squid.radius) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-	
-	function render(cameraX) {
-		left = Math.floor(this.left - cameraX + WIDTH / 2);
-		
-		// Draw kelp on top
-		img = ImageLibrary.getFlipped('kelp.png');
-		targetX = left;
-		sourceX = 0;
-		targetY = 0;
-		kelpHeight = this.topOpeningY;
-		sourceY = img.height - kelpHeight;
-		img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
-		
-		// Draw kelp on bottom
-		img = ImageLibrary.get('kelp.png');
-		sourceX = 0;
-		sourceY = 0;
-		targetX = left;
-		targetY = this.bottomOpeningY;
-		kelpHeight = AVAILABLE_HEIGHT - this.bottomOpeningY;
-		img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
-	}
+    field x;
+    field left;
+    field right;
+    field topOpeningY;
+    field bottomOpeningY;
+
+    constructor(centerX, openingCenterY) {
+        this.x = centerX;
+        this.left = centerX - KELP_WIDTH / 2;
+        this.right = this.left + KELP_WIDTH;
+        this.topOpeningY = Math.floor(openingCenterY - KELP_OPENING_HEIGHT / 2);
+        this.bottomOpeningY = Math.floor(this.topOpeningY + KELP_OPENING_HEIGHT);
+    }
+
+    function isCollision(squid) {
+        sTop = squid.y - squid.radius;
+        sBottom = squid.y + squid.radius;
+        sLeft = squid.x - squid.radius;
+        sRight = squid.x + squid.radius;
+
+        // Squid center is vertically aligned with the kelp.
+        // Just check to make sure top and bottom don't touch.
+        if (squid.x >= this.left && squid.x <= this.right) {
+            return sTop < this.topOpeningY || sBottom > this.bottomOpeningY;
+        }
+
+        // Squid is above the top opening or below the bottom opening.
+        // Just check to make sure the squid is entirely to the left or right of the kelp.
+        if (squid.y <= this.topOpeningY || squid.y >= this.bottomOpeningY) {
+            return sRight > this.left && sLeft < this.right;
+        }
+
+        // For remaining regions, just check the distance between the center and the corners
+        // of the kelp and compare to the radius.
+        for (x : [this.left, this.right]) {
+            for (y : [this.topOpeningY, this.bottomOpeningY]) {
+                distance = ((squid.x - x) ** 2 + (squid.y - y) ** 2) ** .5;
+                if (distance < squid.radius) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function render(cameraX) {
+        left = Math.floor(this.left - cameraX + WIDTH / 2);
+
+        // Draw kelp on top
+        img = ImageLibrary.getFlipped('kelp.png');
+        targetX = left;
+        sourceX = 0;
+        targetY = 0;
+        kelpHeight = this.topOpeningY;
+        sourceY = img.height - kelpHeight;
+        img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+
+        // Draw kelp on bottom
+        img = ImageLibrary.get('kelp.png');
+        sourceX = 0;
+        sourceY = 0;
+        targetX = left;
+        targetY = this.bottomOpeningY;
+        kelpHeight = AVAILABLE_HEIGHT - this.bottomOpeningY;
+        img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+    }
 }

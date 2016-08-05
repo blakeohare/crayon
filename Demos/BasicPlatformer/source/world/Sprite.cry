@@ -3,146 +3,146 @@ import Math;
 
 class Sprite {
 
-	field id;
-	field x;
-	field y;
-	field dx = 0.0;
-	field dy = 0.0;
-	field vx = 0;
-	field vy = 0;
-	field ground;
-	field xAccelerated = false;
+    field id;
+    field x;
+    field y;
+    field dx = 0.0;
+    field dy = 0.0;
+    field vx = 0;
+    field vy = 0;
+    field ground;
+    field xAccelerated = false;
 
-	constructor(id, x, y) {
-		this.id = id;
-		this.x = x + 0.0;
-		this.y = y + 0.0;
-	}
-	
-	function accelerateX(isRightDirection) {
-		this.xAccelerated = true;
-		if (isRightDirection) {
-			this.vx += .05;
-			if (this.vx > .3) this.vx = 0.3;
-		} else {
-			this.vx -= .05;
-			if (this.vx < -.3) this.vx = -0.3;
-		}
-		this.dx += this.vx;
-	}
-	
-	function update(playscene) {
-		if (!this.xAccelerated && this.vx != 0) {
-			if (this.vx > 0) {
-				this.vx -= .05;
-				if (this.vx < 0) {
-					this.vx = 0;
-				}
-			} else if (this.vx < 0) {
-				this.vx += .05;
-				if (this.vx > 0) {
-					this.vx = 0;
-				}
-			}
-			this.dx += this.vx;
-		}
-		this.xAccelerated = false;
-		
-		map = playscene.map;
-		grid = map.grid;
-		cols = map.width;
-		rows = map.height;
-		
-		topEpsilon = 0.1;
-		bottomEpsilon = 0.001;
-		
-		newx = this.x + this.dx;
-		bottom = this.y;
-		top = this.y - 1;
-		
-		col = Math.floor(newx);
-		rowBottom = Math.floor(bottom - bottomEpsilon);
-		rowTop = Math.floor(top + topEpsilon);
-		
-		if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
-			tile1 = grid[col][rowTop];
-			tile2 = grid[col][rowBottom];
-			if ((tile1 == null || !tile1.template.isBlocking) &&
-				(tile2 == null || !tile2.template.isBlocking)) {
-				this.x = newx;
-			}
-		}
-		
-		dy = this.dy + this.vy;
-		newY = this.y + dy;
-		top = newY - 1 + topEpsilon;
-		bottom = newY + bottomEpsilon;
-		x = this.x;
-		
-		col = Math.floor(x);
-		rowTop = Math.floor(top);
-		rowBottom = Math.floor(bottom);
-		
-		this.ground = null;
-		
-		if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
-			tileTop = grid[col][rowTop];
-			tileBottom = grid[col][rowBottom];
-			if ((tileTop == null || !tileTop.template.isBlocking) &&
-				(tileBottom == null || !tileBottom.template.isBlocking)) {
-				this.y = this.y + dy;
-			} else {
-				if (dy < 0) {
-					if (tileTop != null && tileTop.template.isBlocking) {
-						this.vy = 0; // head bonk!
-					} else {
-						this.y = this.y + dy;
-					}
-				} else if (dy > 0) {
-					if (tileBottom != null && tileBottom.template.isBlocking) {
-						this.ground = tileBottom;
-						this.y = tileBottom.row * 1.0;
-					} else {
-						this.y = this.y + dy;
-					}
-				} else {
-					// do nothing
-				}
-			}
-		}
-		
-		if (this.ground == null && this.vy >= 0) {
-			newGround = null;
-			col = Math.floor(this.x);
-			row = Math.floor(this.y + .05);
-			
-			if (row < rows) {
-				tile = grid[col][row];
-				if (tile != null && tile.template.isBlocking) {
-					newGround = tile;
-				}
-			}
-			
-			this.ground = newGround;
-		}
-		
-		if (this.ground != null) {
-			this.y = this.ground.row * 1.0;
-			this.vy = 0;
-		} else {
-			this.vy += .05;
-			if (this.vy > .9) this.vy = .9;
-			else if (this.vy < -.9) this.vy = -.9;
-		}
-		
-		this.dx = 0;
-		this.dy = 0;
-	}
-	
-	function render(rc, cx, cy) {
-		radius = 16;
-		rx = Math.floor(this.x * 32) - cx;
-		ry = Math.floor(this.y * 32 - radius) - cy;
-		GFX.Draw.ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0);
-	}
+    constructor(id, x, y) {
+        this.id = id;
+        this.x = x + 0.0;
+        this.y = y + 0.0;
+    }
+
+    function accelerateX(isRightDirection) {
+        this.xAccelerated = true;
+        if (isRightDirection) {
+            this.vx += .05;
+            if (this.vx > .3) this.vx = 0.3;
+        } else {
+            this.vx -= .05;
+            if (this.vx < -.3) this.vx = -0.3;
+        }
+        this.dx += this.vx;
+    }
+
+    function update(playscene) {
+        if (!this.xAccelerated && this.vx != 0) {
+            if (this.vx > 0) {
+                this.vx -= .05;
+                if (this.vx < 0) {
+                    this.vx = 0;
+                }
+            } else if (this.vx < 0) {
+                this.vx += .05;
+                if (this.vx > 0) {
+                    this.vx = 0;
+                }
+            }
+            this.dx += this.vx;
+        }
+        this.xAccelerated = false;
+
+        map = playscene.map;
+        grid = map.grid;
+        cols = map.width;
+        rows = map.height;
+
+        topEpsilon = 0.1;
+        bottomEpsilon = 0.001;
+
+        newx = this.x + this.dx;
+        bottom = this.y;
+        top = this.y - 1;
+
+        col = Math.floor(newx);
+        rowBottom = Math.floor(bottom - bottomEpsilon);
+        rowTop = Math.floor(top + topEpsilon);
+
+        if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
+            tile1 = grid[col][rowTop];
+            tile2 = grid[col][rowBottom];
+            if ((tile1 == null || !tile1.template.isBlocking) &&
+                (tile2 == null || !tile2.template.isBlocking)) {
+                this.x = newx;
+            }
+        }
+
+        dy = this.dy + this.vy;
+        newY = this.y + dy;
+        top = newY - 1 + topEpsilon;
+        bottom = newY + bottomEpsilon;
+        x = this.x;
+
+        col = Math.floor(x);
+        rowTop = Math.floor(top);
+        rowBottom = Math.floor(bottom);
+
+        this.ground = null;
+
+        if (col >= 0 && col < cols && rowTop >= 0 && rowBottom < rows) {
+            tileTop = grid[col][rowTop];
+            tileBottom = grid[col][rowBottom];
+            if ((tileTop == null || !tileTop.template.isBlocking) &&
+                (tileBottom == null || !tileBottom.template.isBlocking)) {
+                this.y = this.y + dy;
+            } else {
+                if (dy < 0) {
+                    if (tileTop != null && tileTop.template.isBlocking) {
+                        this.vy = 0; // head bonk!
+                    } else {
+                        this.y = this.y + dy;
+                    }
+                } else if (dy > 0) {
+                    if (tileBottom != null && tileBottom.template.isBlocking) {
+                        this.ground = tileBottom;
+                        this.y = tileBottom.row * 1.0;
+                    } else {
+                        this.y = this.y + dy;
+                    }
+                } else {
+                    // do nothing
+                }
+            }
+        }
+
+        if (this.ground == null && this.vy >= 0) {
+            newGround = null;
+            col = Math.floor(this.x);
+            row = Math.floor(this.y + .05);
+
+            if (row < rows) {
+                tile = grid[col][row];
+                if (tile != null && tile.template.isBlocking) {
+                    newGround = tile;
+                }
+            }
+
+            this.ground = newGround;
+        }
+
+        if (this.ground != null) {
+            this.y = this.ground.row * 1.0;
+            this.vy = 0;
+        } else {
+            this.vy += .05;
+            if (this.vy > .9) this.vy = .9;
+            else if (this.vy < -.9) this.vy = -.9;
+        }
+
+        this.dx = 0;
+        this.dy = 0;
+    }
+
+    function render(rc, cx, cy) {
+        radius = 16;
+        rx = Math.floor(this.x * 32) - cx;
+        ry = Math.floor(this.y * 32 - radius) - cy;
+        GFX.Draw.ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0);
+    }
 }
