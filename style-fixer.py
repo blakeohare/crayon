@@ -16,8 +16,6 @@ def writeFile(path, content):
 	c.write(content)
 	c.close()
 
-
-
 def rtrim(string):
 	while len(string) > 0 and string[-1] in ' \r\n\t':
 		string = string[:-1]
@@ -96,7 +94,7 @@ def normalizeBatch(dir, ending, lineEnding, tab, includeNewlineAtEnd):
 		
 
 def main():
-	normalizeBatch('Compiler', '.cs', '\n', ' ' * 4, True)
+	normalizeBatch('Compiler', '.cs', '\r\n', ' ' * 4, True)
 	normalizeBatch('Compiler', '.csproj', '\n', ' ' * 2, False)
 	normalizeBatch('Interpreter', '.cry', '\n', '\t', True)
 	normalizeBatch('Resources/game-python-pygame', '.py', '\n', ' ' * 2, True)
