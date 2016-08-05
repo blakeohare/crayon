@@ -6,57 +6,10 @@ leftValue = $_array_get(valueStack, valueStackSize);
 leftType = Value$leftValue.type;
 rightType = Value$rightValue.type;
 
-// TODO: special switch for when left == right
 op = $_array_get(row, 0);
 value = null;
-if (op == BinaryOps.EQUALS || op == BinaryOps.NOT_EQUALS) {
-	if (%%%STRONGLY_TYPED%%%) {
-		if (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1) {
-			bool1 = true;
-		} else {
-			bool1 = false;
-		}
-	} else {
-		if (leftType == rightType) {
-			if (leftType <= Types.DICTIONARY) { // Note that this exists. Changing the ordering of types in the enum definition could ruin ==/!=
-				if (Value$leftValue.internalValue == Value$rightValue.internalValue) { // may have to change if a platform doesn't support == for strings
-					bool1 = true;
-				} else {
-					bool1 = false;
-				}
-			} else if (leftType == Types.INSTANCE) {
-				objInstance1 = $_cast('ObjectInstance', Value$leftValue.internalValue);
-				objInstance2 = $_cast('ObjectInstance', Value$rightValue.internalValue);
-				if (ObjectInstance$objInstance1.objectId == ObjectInstance$objInstance2.objectId) {
-					bool1 = true;
-				} else {
-					bool1 = false;
-				}
-			} else {
-				return killExecution(stack, pc, "== and != not defined here.");
-			}
-		} else {
-			if ((leftType == Types.INTEGER && rightType == Types.FLOAT) || (leftType == Types.FLOAT && rightType == Types.INTEGER)) {
-				// does this work on c#? 
-				// (object)0.0 == (object)0
-				if (Value$leftValue.internalValue == Value$rightValue.internalValue) {
-					bool1 = true;
-				} else {
-					bool1 = false;
-				}
-			} else {
-				bool1 = false;
-			}
-		}
-	}
 
-	if (op == BinaryOps.NOT_EQUALS) {
-		bool1 = !bool1;
-	}
-
-	if (bool1) value = VALUE_TRUE;
-	else value = VALUE_FALSE;
-} else if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
+if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, $_string_concat(valueToString(leftValue), valueToString(rightValue)));
 } else {
 	// At this point the remaining ops will be primitive types or if they are reference types, won't 

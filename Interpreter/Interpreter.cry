@@ -188,6 +188,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 			case OpCodes.DEREF_INSTANCE_FIELD: $_comment('DEREF_INSTANCE_FIELD'); import inline 'Ops/deref_instance_field.cry'; break;
 			case OpCodes.DEREF_STATIC_FIELD: $_comment('DEREF_STATIC_FIELD'); import inline 'Ops/deref_static_field.cry'; break;
 			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'Ops/duplicate_stack_top.cry'; break;
+			case OpCodes.EQUALS: $_comment('EQUALS'); import inline 'Ops/equals.cry'; break;
 			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'Ops/finalize_initialization.cry'; break;
 			case OpCodes.FUNCTION_DEFINITION: $_comment('FUNCTION_DEFINITION'); import inline 'Ops/function_definition.cry'; break;
 			case OpCodes.INDEX: $_comment('INDEX'); import inline 'Ops/index.cry'; break;

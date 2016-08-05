@@ -26,6 +26,7 @@
         DEREF_INSTANCE_FIELD, // 1: member ID
         DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID
         DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
+        EQUALS, // 1: 1 to reverse results
         FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
         FUNCTION_DEFINITION, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
         INDEX,

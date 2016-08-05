@@ -13,11 +13,9 @@
         BITWISE_XOR = 8,
         BIT_SHIFT_LEFT = 9,
         BIT_SHIFT_RIGHT = 10,
-        EQUALS = 12,
-        NOT_EQUALS = 13,
-        LESS_THAN = 14,
-        LESS_THAN_OR_EQUAL = 15,
-        GREATER_THAN = 16,
-        GREATER_THAN_OR_EQUAL = 17,
+        LESS_THAN = 11,
+        LESS_THAN_OR_EQUAL = 12,
+        GREATER_THAN = 13,
+        GREATER_THAN_OR_EQUAL = 14,
     }
 }

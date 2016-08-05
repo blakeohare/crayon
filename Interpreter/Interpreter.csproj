@@ -76,6 +76,7 @@
     <EmbeddedResource Include="Ops\deref_instance_field.cry" />
     <EmbeddedResource Include="Ops\deref_static_field.cry" />
     <EmbeddedResource Include="Ops\duplicate_stack_top.cry" />
+    <EmbeddedResource Include="Ops\equals.cry" />
     <EmbeddedResource Include="Ops\finalize_initialization.cry" />
     <EmbeddedResource Include="Ops\function_definition.cry" />
     <EmbeddedResource Include="Ops\index.cry" />
