@@ -23,7 +23,7 @@ if (Value$root.type == Types.LIST) {
 		if (DictImpl$dictImpl.size == 0) {
 			return killExecution(stack, pc, "Key not found. Dictionary is empty.");
 		}
-		return killExecution(stack, pc, 
+		return killExecution(stack, pc,
 			$_string_concat("Incorrect key type. This dictionary contains ", getTypeFromId(DictImpl$dictImpl.keyType), " keys. Provided key is a ", getTypeFromId(keyType), "."));
 	} else {
 		if (keyType == Types.INTEGER) {

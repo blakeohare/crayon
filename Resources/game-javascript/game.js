@@ -46,79 +46,79 @@ C$game$initializeGame = function (fps) {
 };
 
 C$game$pumpEventObjects = function () {
-	var newEvents = [];
-	var output = C$input$eventRelays;
-	C$input$eventRelays = newEvents;
-	return output;
+  var newEvents = [];
+  var output = C$input$eventRelays;
+  C$input$eventRelays = newEvents;
+  return output;
 };
 
 // TODO: also apply keydown and mousedown handlers
 // TODO: (here and python as well) throw an error if you attempt to call this twice.
 C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
-	var scaledMode;
-	var canvasWidth;
-	var canvasHeight;
-	var virtualCanvas = null;
-	if (pwidth === null || pheight === null) {
-		scaledMode = false;
-		canvasWidth = width;
-		canvasHeight = height;
-	} else {
-		scaledMode = true;
-		canvasWidth = pwidth;
-		canvasHeight = pheight;
-		virtualCanvas = document.createElement('canvas');
-		virtualCanvas.width = width;
-		virtualCanvas.height = height;
-	}
-	var canvasHost = C$common$getElement('crayon_host');
-	canvasHost.innerHTML =
-		'<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
-		'<div style="display:none;">' +
-			'<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
-			'<div id="crayon_image_loader_queue"></div>' +
-			'<div id="crayon_image_store"></div>' +
-			'<div id="crayon_temp_image"></div>' +
-		'</div>';
-	var canvas = C$common$getElement('crayon_screen');
+  var scaledMode;
+  var canvasWidth;
+  var canvasHeight;
+  var virtualCanvas = null;
+  if (pwidth === null || pheight === null) {
+    scaledMode = false;
+    canvasWidth = width;
+    canvasHeight = height;
+  } else {
+    scaledMode = true;
+    canvasWidth = pwidth;
+    canvasHeight = pheight;
+    virtualCanvas = document.createElement('canvas');
+    virtualCanvas.width = width;
+    virtualCanvas.height = height;
+  }
+  var canvasHost = C$common$getElement('crayon_host');
+  canvasHost.innerHTML =
+    '<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
+    '<div style="display:none;">' +
+      '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
+      '<div id="crayon_image_loader_queue"></div>' +
+      '<div id="crayon_image_store"></div>' +
+      '<div id="crayon_temp_image"></div>' +
+    '</div>';
+  var canvas = C$common$getElement('crayon_screen');
 
-	C$game$scaled_mode = scaledMode;
-	C$game$real_canvas = canvas;
-	C$game$virtual_canvas = scaledMode ? virtualCanvas : canvas;
-	C$game$ctx = canvas.getContext('2d');
-	C$game$width = width;
-	C$game$height = height;
-	C$game$execId = execId;
+  C$game$scaled_mode = scaledMode;
+  C$game$real_canvas = canvas;
+  C$game$virtual_canvas = scaledMode ? virtualCanvas : canvas;
+  C$game$ctx = canvas.getContext('2d');
+  C$game$width = width;
+  C$game$height = height;
+  C$game$execId = execId;
 
-	C$images$image_loader = C$common$getElement('crayon_image_loader');
-	C$images$image_store = C$common$getElement('crayon_image_store');
-	C$images$temp_image = C$common$getElement('crayon_temp_image');
+  C$images$image_loader = C$common$getElement('crayon_image_loader');
+  C$images$image_store = C$common$getElement('crayon_image_store');
+  C$images$temp_image = C$common$getElement('crayon_temp_image');
 
-	document.onkeydown = C$input$keydown;
-	document.onkeyup = C$input$keyup;
-	
-	canvas.addEventListener('mousedown', C$input$mousedown);
-	canvas.addEventListener('mouseup', C$input$mouseup);
-	canvas.addEventListener('mousemove', C$input$mousemove);
+  document.onkeydown = C$input$keydown;
+  document.onkeyup = C$input$keyup;
 
-	C$game$ctx.imageSmoothingEnabled = false;
-	C$game$ctx.mozImageSmoothingEnabled = false;
-	C$game$ctx.msImageSmoothingEnabled = false;
-	C$game$ctx.webkitImageSmoothingEnabled = false;
+  canvas.addEventListener('mousedown', C$input$mousedown);
+  canvas.addEventListener('mouseup', C$input$mouseup);
+  canvas.addEventListener('mousemove', C$input$mousemove);
 
-	if (scaledMode) {
-	    C$game$ctx.scale(pwidth / width, pheight / height);
-	}
+  C$game$ctx.imageSmoothingEnabled = false;
+  C$game$ctx.mozImageSmoothingEnabled = false;
+  C$game$ctx.msImageSmoothingEnabled = false;
+  C$game$ctx.webkitImageSmoothingEnabled = false;
 
-	C$game$runFrame();
+  if (scaledMode) {
+      C$game$ctx.scale(pwidth / width, pheight / height);
+  }
+
+  C$game$runFrame();
 };
 
 C$game$setTitle = function (title) {
-	window.document.title = title;
+  window.document.title = title;
 };
 
 window.addEventListener('keydown', function(e) {
-	if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-		e.preventDefault();
-	}
+  if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    e.preventDefault();
+  }
 }, false);

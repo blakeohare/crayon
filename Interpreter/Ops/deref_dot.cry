@@ -8,7 +8,7 @@ switch (Value$value.type) {
 		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 		classInfo = $_array_get(classTable, ObjectInstance$objInstance1.classId);
 		intIntDict1 = ClassInfo$classInfo.globalIdToMemberId;
-		
+
 		// TODO: a better way to do this without double-lookup.
 		if ($_dictionary_contains(intIntDict1, nameId)) {
 			int1 = $_dictionary_get_guaranteed(intIntDict1, nameId);

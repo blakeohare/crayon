@@ -138,7 +138,7 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 	if (%%%STRONGLY_TYPED%%%) {
 		if (leftType == rightType) {
 			if (leftType == Types.NULL) return 1;
-			
+
 			if (leftType == Types.INTEGER) {
 				if ($_cast('int', Value$a.internalValue) == $_cast('int', Value$b.internalValue)) {
 					return 1;
@@ -181,8 +181,8 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 		}
 		return 0;
 	} else {
-		if (leftType == rightType || 
-			(leftType == Types.INTEGER && rightType == Types.FLOAT) || 
+		if (leftType == rightType ||
+			(leftType == Types.INTEGER && rightType == Types.FLOAT) ||
 			(leftType == Types.FLOAT && rightType == Types.INTEGER)) {
 			if (leftType < Types.LIST) {
 				if (Value$a.internalValue == Value$b.internalValue) {
@@ -382,7 +382,7 @@ function @type('bool') numberCompare(@type('Value') a, @type('Value') b) {
 }
 
 function @type('int') nextPowerOf2(@type('int') value) {
-	
+
 	if (((value - 1) & value) == 0) return value;
 
 	@type('int') output = 1;
@@ -396,7 +396,7 @@ function @type('int') nextPowerOf2(@type('int') value) {
 function @type('PlatformRelayObject') buildRelayObj(
 	@type('int') type,
 	@type('int') iarg1,
-	@type('int') iarg2, 
+	@type('int') iarg2,
 	@type('int') iarg3,
 	@type('double') farg1,
 	@type('string') sarg1) {
@@ -478,7 +478,7 @@ function @type('int') parsePosDecInt(@type('string') original) {
 }
 
 function @type('DictImpl') cloneDictionary(@type('DictImpl') original, @type('DictImpl') clone) {
-	
+
 	@type('Dictionary<int, Value>') keyIntLookup_clone = null;
 	@type('Dictionary<int, Value>') valueIntLookup_clone = null;
 	@type('Dictionary<string, Value>') keyStringLookup_clone = null;
@@ -540,7 +540,7 @@ function @type('int') sortLists(
 	@type('List<Value>') keyList,
 	@type('List<Value>') parallelList, // nullable
 	@type('Array<int>') intOutParam) {
-	
+
 	$_array_set(intOutParam, 0, 0);
 	@type('int') length = $_list_length(keyList);
 	if (length < 2) return 0;
@@ -654,7 +654,7 @@ function @type('int') sortHelperSwap(
 	@type('bool') isString,
 	@type('int') index1,
 	@type('int') index2) {
-	
+
 	if (index1 == index2) return 0;
 
 	if (values != null) {

@@ -234,7 +234,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 // 2 - start index is out of bounds
 // 3 - start index occurs after begin index (relative to direction)
 function @type('int') canonicalizeListSliceArgs(
-	@type('Array<int>') outParams, 
+	@type('Array<int>') outParams,
 	@type('Value') beginValue,
 	@type('Value') endValue,
 	@type('int') beginIndex,
@@ -280,10 +280,10 @@ function @type('InterpreterResult') killExecution(@type('StackFrame') stack, @ty
 function @type('InterpreterResult') killExecutionWithTokenOverride(
 		@type('StackFrame') stack,
 		@type('int') pc,
-		@type('Token') firstTokenOverride, 
+		@type('Token') firstTokenOverride,
 		@type('string') message) {
 	@type('string') fullMessage = '';
-	@type('ProgramData') programData = $_get_program_data(); 
+	@type('ProgramData') programData = $_get_program_data();
 	@type('Array<List<Token>>') allTokens = ProgramData$programData.tokenData;
 	@type('List<Token>') tokenList = null;
 	@type('Token') token = null;

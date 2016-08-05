@@ -26,7 +26,7 @@ namespace Crayon.Translator.CSharp
 
             foreach (string csFile in new string[] {
                 "AppDelegate",
-				"CryImage",
+                "CryImage",
                 "CsxiTranslationHelper",
                 "GameViewController",
                 "Graphics2dRenderer",

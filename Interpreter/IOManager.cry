@@ -163,7 +163,7 @@ function @type('int') ioPathFixer(
 			}
 			$_list_pop(pathBuilder);
 			if (isWindows && $_list_length(pathBuilder) == 0) {
-				return IOErrors.PATH_STEPS_ABOVE_DOMAIN; 
+				return IOErrors.PATH_STEPS_ABOVE_DOMAIN;
 			}
 		} else if ($_string_equals(".", part) || $_string_length(part) == 0) {
 			// do nothing for '.' or empty strings (which occur before and after the end of the path if there were slashes at either end)
@@ -171,7 +171,7 @@ function @type('int') ioPathFixer(
 			$_list_push(pathBuilder, part);
 		}
 	}
-	
+
 	// Check to see if this is the root directory e.g. C:\ or /
 	@type('bool') isRoot = false;
 	if (isWindows) {
@@ -255,7 +255,7 @@ function @type('int') ioEnsurePathPartsExist(@type('List<string>') pathBuilder, 
 
 	if (isWindows) {
 		if ($_list_length(pathBuilder) == 1) {
-			return IOErrors.NONEXISTENT_DRIVE; 
+			return IOErrors.NONEXISTENT_DRIVE;
 		}
 	} else if ($_list_length(pathBuilder) == 0) {
 		if ($_is_javascript()) {

@@ -110,30 +110,30 @@ struct SystemMethod {
 	When a class is initialized, a new Array<Value> is allocated with length of .memberCount.
 	Then a loop runs through all member ID/indexes and checks the fieldInitializationCommand.
 	If it's a literal, it copies the value directly from the fieldInitializationLiteral in the class metadata here.
-	If it's a LIST or DICT, then it creates an empty instance of those. 
+	If it's a LIST or DICT, then it creates an empty instance of those.
 	LIST or DICT is only used if the field is initialized to an _empty_ List or Dictionary. Otherwise NULL is used.
-	If it's a SYSTEM_NULL the value of null (not a Value, but an actual native null) is applied to that slot. This 
+	If it's a SYSTEM_NULL the value of null (not a Value, but an actual native null) is applied to that slot. This
 	indicates that the member is actually referencing a method. This is lazily populated at runtime if a function
 	reference without invocation is ever made.
 
 	At this point in CALL_FUNCTION, local arguments are pushed onto the locals stack and the constructor's stack
-	frame is pushed with the PC pointing at the proper optional argument. But before execution resumes, more stack 
+	frame is pushed with the PC pointing at the proper optional argument. But before execution resumes, more stack
 	frames are pushed...
 
 	In the byte code, the CLASS_INITIALIZER is followed by some code that has all the field default values individually
 	followed by ASSIGN_FIELD (for anything that isn't a literal, empty list, or empty dictionary) followed by RETURN.
-	After the constructor's args have been pushed to the local stack and the constructor's stack frame is initialized, 
+	After the constructor's args have been pushed to the local stack and the constructor's stack frame is initialized,
 	the call stack pushes ALL the PC's that appear in fieldInitializerPcs onto the stack in order, which results in
 	the root parent last. As these return, they will end up back at the child constructor.
 
-	One of the side effects of this system is all fields (even in base classes) that have literal values will be 
+	One of the side effects of this system is all fields (even in base classes) that have literal values will be
 	initialized first before anything else happens. After that all other fields and constructors are invoked in the
 	traditional order, which is a change in behavior from languages like Java and C#. But if your code explicitly is
 	expecting a default null value in a field that is initialized with another literal before your other field that
-	is initialized with a function invocation, then you're asking for trouble anyway. The performance of the copying 
+	is initialized with a function invocation, then you're asking for trouble anyway. The performance of the copying
 	from the array of literals has better performance than putting all field initializers in the field initializer
 	code chunk.
-	
+
 */
 struct ClassInfo {
 	@type('int') id,
@@ -143,7 +143,7 @@ struct ClassInfo {
 	@type('Array<Value>') staticFields,
 	@type('int') staticConstructorFunctionId,
 	@type('int') constructorFunctionId,
-	
+
 	// A list of PC offsets (from this class to its parent root) that should be pushed onto the stack
 	// to initialize fields.
 	@type('Array<int>') fieldInitializerPcs,
@@ -155,13 +155,13 @@ struct ClassInfo {
 	@type('Array<int>') fieldInitializationCommand, // 0 - USE_LITERAL, 1 - LIST, 2 - DICT, 3 - SYSTEM NULL (reserved for method)
 	@type('Array<Value>') fieldInitializationLiteral,
 
-	// TODO: It might actually be good to create two of these, one that's global ID to all member ID's, and another 
-	// for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave 
+	// TODO: It might actually be good to create two of these, one that's global ID to all member ID's, and another
+	// for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave
 	// the road for private/protected/public modifiers.
 	@type('Dictionary<int, int>') globalIdToMemberId,
 
 	// TODO: another thought is to allocate an array for all global ID's to map to member ID's. This would be a lot of
-	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized 
+	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized
 	// codebase.
 }
 

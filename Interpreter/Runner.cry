@@ -7,7 +7,7 @@
 		<body onload="v_main()">...</body>
 		public static void main(String[] args) { CrayonWrapper.v_main(); }
 		<?php v_main(); ?>
-	
+
 	return value is meaningless.
 */
 function @type('int') main() {
@@ -51,7 +51,7 @@ function @type('int') main() {
 		0, // size
 		100, // capacity
 		$_new_array('Value', 100), // array
-		
+
 		localsStack,
 		localsStackSet,
 		1, // localsStackSetToken
@@ -117,7 +117,7 @@ function @type('int') runInterpreter(@type('int') executionContextId) {
 		}
 	} else if (status == InterpreterResultStatus.FATAL_ERROR) {
 		// TODO: don't generate the error in the interpreter. Instead just return the message and
-		// the stack trace will be determined from the stack here. Also later add logic to 
+		// the stack trace will be determined from the stack here. Also later add logic to
 		// conditionally find symbol information here.
 		$_print_stderr(InterpreterResult$result.errorMessage);
 	}
@@ -159,7 +159,7 @@ function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, 
 		2, // size
 		100, // capacity
 		valueStack, // array
-		
+
 		locals,
 		localsSet,
 		1, // localsStackSetToken

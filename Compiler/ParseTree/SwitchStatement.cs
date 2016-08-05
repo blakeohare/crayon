@@ -36,8 +36,8 @@ namespace Crayon.ParseTree
 
         public Expression Condition { get; private set; }
         // for platforms that don't have switch statements and require creative use of if/else statements to mapped ID's, you can explicitly declare the maximum integer value that will
-        // ever occur as input in the condition. This allows you to create a list large enough to accomodate all values. 
-        // This is specifically used for the binary operator switch statement, which is a sparse lookup table defined as a list where most entries point to the default case. 
+        // ever occur as input in the condition. This allows you to create a list large enough to accomodate all values.
+        // This is specifically used for the binary operator switch statement, which is a sparse lookup table defined as a list where most entries point to the default case.
         // The explicit max fills this list large enough to accomodate the maximum value beyond the largest valid lookup ID and maps them to default.
         private Expression explicitMax;
         private Token explicitMaxToken;
@@ -75,7 +75,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        // TODO: in the resolve be sure to make fallthroughs an error. 
+        // TODO: in the resolve be sure to make fallthroughs an error.
 
         internal override IList<Executable> Resolve(Parser parser)
         {

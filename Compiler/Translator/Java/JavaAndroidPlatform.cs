@@ -34,8 +34,8 @@ namespace Crayon.Translator.Java
             };
 
             foreach (string simpleCopyText in new string[] {
-				// Boilerplate Android project stuff
-				"build.gradle|AndroidProject/Boilerplate/BuildGradle.txt",
+                // Boilerplate Android project stuff
+                "build.gradle|AndroidProject/Boilerplate/BuildGradle.txt",
                 "gradle.properties|AndroidProject/Boilerplate/GradleProperties.txt",
                 "gradlew|AndroidProject/Boilerplate/Gradlew.txt",
                 "gradlew.bat|AndroidProject/Boilerplate/GradlewBat.txt",
@@ -73,16 +73,16 @@ namespace Crayon.Translator.Java
                 ".idea/vcs.xml|AndroidProject/Boilerplate/Idea/VcsXml.txt",
                 ".idea/workspace.xml|AndroidProject/Boilerplate/Idea/WorkspaceXml.txt",
 
-				// Crayon Android stuff
-				pathToJavaCode + "/AndroidTranslationHelper.java|AndroidProject/AndroidTranslationHelper.txt",
+                // Crayon Android stuff
+                pathToJavaCode + "/AndroidTranslationHelper.java|AndroidProject/AndroidTranslationHelper.txt",
                 pathToJavaCode + "/GlUtil.java|AndroidProject/GlUtil.txt",
                 pathToJavaCode + "/GameActivity.java|AndroidProject/GameActivity.txt",
                 pathToJavaCode + "/OpenGlRenderer.java|AndroidProject/OpenGlRenderer.txt",
                 pathToJavaCode + "/CrayonGlRenderer.java|AndroidProject/CrayonGlRenderer.txt",
                 pathToJavaCode + "/CrayonGlSurfaceView.java|AndroidProject/CrayonGlSurfaceView.txt",
 
-				// Generic Crayon Java stuff
-				pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
+                // Generic Crayon Java stuff
+                pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
                 pathToJavaCode + "/TranslationHelper.java|Project/TranslationHelper.txt",
                 pathToJavaCode + "/Image.java|Project/Image.txt",
                 pathToJavaCode + "/JsonParser.java|Project/JsonParser.txt",
@@ -229,31 +229,31 @@ namespace Crayon.Translator.Java
                 output["app/src/main/res/bytecode/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             }
             /*
-			foreach (string file in filesToCopyOver)
-			{
-				SystemBitmap bmpHack = null;
-				if (file.ToLowerInvariant().EndsWith(".png"))
-				{
-					bmpHack = new SystemBitmap(FileUtil.JoinPath(inputFolder, file));
-				}
+            foreach (string file in filesToCopyOver)
+            {
+                SystemBitmap bmpHack = null;
+                if (file.ToLowerInvariant().EndsWith(".png"))
+                {
+                    bmpHack = new SystemBitmap(FileUtil.JoinPath(inputFolder, file));
+                }
 
-				if (bmpHack != null)
-				{
-					output["app/src/main/res/images/" + file] = new FileOutput()
-					{
-						Type = FileOutputType.Image,
-						Bitmap = bmpHack
-					};
-				}
-				else
-				{
-					output["app/src/main/res/images/" + file] = new FileOutput()
-					{
-						Type = FileOutputType.Copy,
-						RelativeInputPath = file
-					};
-				}
-			}
+                if (bmpHack != null)
+                {
+                    output["app/src/main/res/images/" + file] = new FileOutput()
+                    {
+                        Type = FileOutputType.Image,
+                        Bitmap = bmpHack
+                    };
+                }
+                else
+                {
+                    output["app/src/main/res/images/" + file] = new FileOutput()
+                    {
+                        Type = FileOutputType.Copy,
+                        RelativeInputPath = file
+                    };
+                }
+            }
             ///*/
 
             output["app/src/main/res/raw/bytes.txt"] = resourceDatabase.ByteCodeFile;

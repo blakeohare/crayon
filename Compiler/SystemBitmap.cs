@@ -1,14 +1,14 @@
 ﻿namespace Crayon
 {
     /**
-	 * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
-	 */
+     * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
+     */
     public class SystemBitmap
     {
 #if WINDOWS
         private System.Drawing.Bitmap bitmap;
 #elif OSX
-		private readonly Cairo.ImageSurface bitmap;
+        private readonly Cairo.ImageSurface bitmap;
 #endif
 
         public int Width { get; set; }
@@ -32,9 +32,9 @@
 
             this.bitmap = newBmp;
 #elif OSX
-			this.bitmap = new Cairo.ImageSurface(filepath);
-			this.Width = this.bitmap.Width;
-			this.Height = this.bitmap.Height;
+            this.bitmap = new Cairo.ImageSurface(filepath);
+            this.Width = this.bitmap.Width;
+            this.Height = this.bitmap.Height;
 #endif
         }
 
@@ -46,7 +46,7 @@
             this.bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             this.bitmap.SetResolution(96, 96);
 #elif OSX
-			this.bitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
+            this.bitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
 #endif
         }
 
@@ -55,7 +55,7 @@
 #if WINDOWS
             this.bitmap.Save(path);
 #elif OSX
-			this.bitmap.WriteToPng(path);
+            this.bitmap.WriteToPng(path);
 #endif
         }
 
@@ -69,7 +69,7 @@
 #if WINDOWS
             private System.Drawing.Graphics systemGraphics;
 #elif OSX
-			private readonly Cairo.Context context;
+            private readonly Cairo.Context context;
 #endif
 
             public Graphics(SystemBitmap owner)
@@ -77,7 +77,7 @@
 #if WINDOWS
                 this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
 #elif OSX
-				this.context = new Cairo.Context(owner.bitmap);
+                this.context = new Cairo.Context(owner.bitmap);
 #endif
             }
 
@@ -87,8 +87,8 @@
                 this.systemGraphics.DrawImageUnscaled(bmp.bitmap, x, y);
 #elif OSX
 
-				this.context.SetSource(bmp.bitmap, x, y);
-				this.context.Paint();
+                this.context.SetSource(bmp.bitmap, x, y);
+                this.context.Paint();
 #endif
             }
 
@@ -97,7 +97,7 @@
 #if WINDOWS
 
 #elif OSX
-				this.context.Dispose();
+                this.context.Dispose();
 #endif
             }
         }

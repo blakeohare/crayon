@@ -43,7 +43,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AndroidTranslationHelper.isWindows()");
         }
-        
+
         protected override void TranslateGetRawByteCodeString(List<string> output)
         {
             output.Add("AndroidTranslationHelper.getRawByteCodeString()");
@@ -125,7 +125,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, isUserData);
             output.Add(")");
         }
-        
+
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AndroidTranslationHelper.resourceReadText(");

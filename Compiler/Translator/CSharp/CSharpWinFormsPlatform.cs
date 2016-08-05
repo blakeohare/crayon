@@ -68,7 +68,7 @@ namespace Crayon.Translator.CSharp
                 embeddedResourceReplacement.Add("    <EmbeddedResource Include=\"" + embeddedResource + "\" />");
             }
             replacements["EMBEDDED_RESOURCES"] = string.Join("\r\n", embeddedResourceReplacement);
-            
+
             foreach (string file in new string[]
             {
                 "SolutionFile.txt,%%%PROJECT_ID%%%.sln",

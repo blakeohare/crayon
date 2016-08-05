@@ -67,7 +67,7 @@
                 case "sin": return (int)CoreFunctionID.SIN;
                 case "tan": return (int)CoreFunctionID.TAN;
                 case "ln": return (int)CoreFunctionID.LN;
-                case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16; 
+                case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16;
                 case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
                 case "sleep": return (int)CoreFunctionID.SLEEP;
                 default: return -1;

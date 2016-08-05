@@ -60,7 +60,7 @@ namespace Crayon
             }
             output.Add(null, OpCode.RETURN, 0);
 
-            // artificially inject a function call to _LIB_CORE_invoke after the final return. 
+            // artificially inject a function call to _LIB_CORE_invoke after the final return.
             // When the interpreter is invoked with a function pointer, simply pop the function pointer and a Value list of the args
             // onto the value stack and point the PC to opLength-2
             output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
@@ -330,7 +330,7 @@ namespace Crayon
 
                 members.AddRange(new int[] {
                     0, // flag for field
-					memberId,
+                    memberId,
                     fieldNameId,
                     initInstruction,
                     literalId});
@@ -344,11 +344,11 @@ namespace Crayon
 
                 members.AddRange(new int[] {
                     1, // flag for method
-					memberId,
+                    memberId,
                     methodNameId,
                     functionId,
                     0, // ignored value. It's just here to keep spacing consistent.
-				});
+                });
             }
 
             ByteBuffer initializer = null;
@@ -371,7 +371,7 @@ namespace Crayon
                 nameId,
                 constructorId,
                 initializer == null ? 0 : initializer.Size, // jump amount after initialization
-				staticConstructorId,
+                staticConstructorId,
                 staticFieldCount,
             };
 
@@ -751,10 +751,10 @@ namespace Crayon
             {
                 funDef.FunctionID,
                 parser.GetId(funDef.NameToken.Value), // local var to save in
-				minArgCount,
+                minArgCount,
                 funDef.ArgNames.Length, // max number of args supplied
-				isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
-				isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
+                isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
+                isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
                 funDef.LocalScopeSize,
                 tBuffer.Size,
                 offsetsForOptionalArgs.Count
@@ -1078,7 +1078,7 @@ namespace Crayon
             {
                 // OpCode re-use be damned. This should be not one, but two top-level op codes.
                 // INCREMENT_INLINE and INCREMENT_POP (depending on whether outputUsed is true)
-                // In fact, the code here in its current form is actually WRONG because someString++ will have 
+                // In fact, the code here in its current form is actually WRONG because someString++ will have
                 // a '1' appended to it when it really should be an error if the variable is not an integer.
                 // Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
                 Variable variable = (Variable)increment.Root;

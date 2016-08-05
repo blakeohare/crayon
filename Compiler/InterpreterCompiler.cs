@@ -9,19 +9,19 @@ namespace Crayon
         // Order in which the files are compiled.
         private static readonly string[] FILES = new string[] {
 
-			// These 3 must go first
-			"Structs.cry",
+            // These 3 must go first
+            "Structs.cry",
             "Constants.cry",
             "Globals.cry",
 
-			// These are just piles of functions so they can be compiled in any order.
-			"BinaryOpsUtil.cry",
+            // These are just piles of functions so they can be compiled in any order.
+            "BinaryOpsUtil.cry",
             "ByteCodeLoader.cry",
             "Interpreter.cry",
             "IOManager.cry",
             "MetadataInitializer.cry",
             "NetworkManager.cry",
-			"PrimitiveMethods.cry",
+            "PrimitiveMethods.cry",
             "ResourceManager.cry",
             "Runner.cry",
             "TypesUtil.cry",

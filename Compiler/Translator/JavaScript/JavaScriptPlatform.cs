@@ -50,7 +50,7 @@ namespace Crayon.Translator.JavaScript
             };
 
             List<string> codeJs = new List<string>();
-            
+
             foreach (string jsFile in new string[] {
                 "common.js",
                 "file_io.js",
@@ -93,7 +93,7 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text,
                 TextContent = codeJsText
             };
-            
+
             Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
@@ -128,7 +128,7 @@ namespace Crayon.Translator.JavaScript
             if (this.IsMin)
             {
                 // TODO: redo this so that minification is smarter.
-                // When you do, you'll have to solve the problem of functions being invoked from handlers in HTML (templates and generated). 
+                // When you do, you'll have to solve the problem of functions being invoked from handlers in HTML (templates and generated).
                 foreach (string filename in output.Keys.Where(name => name.EndsWith(".js")))
                 {
                     FileOutput file = output[filename];
@@ -156,7 +156,7 @@ namespace Crayon.Translator.JavaScript
             return string.Join("", output);
         }
 
-        // TODO: minify variable names by actually parsing the code and resolving stuff. 
+        // TODO: minify variable names by actually parsing the code and resolving stuff.
         private string MinifyCode(string data)
         {
             if (!this.IsMin)

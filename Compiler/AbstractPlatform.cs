@@ -172,7 +172,7 @@ namespace Crayon
                 foreach (string imageSheetId in buildContext.ImageSheetIds)
                 {
                     imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
-                    
+
                     foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
                     {
                         imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
@@ -223,7 +223,7 @@ namespace Crayon
             FileUtil.EnsureParentFolderExists(outputFolder);
 
             // TODO: delete all files and directories in the output folder that are not in the new output
-            // which is better than deleting everything and re-exporting because the user may have command 
+            // which is better than deleting everything and re-exporting because the user may have command
             // lines and windows open viewing the previous content, which will prevent a full delete from
             // working, but won't stop a simple overwrite of old content.
 

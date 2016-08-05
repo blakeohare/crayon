@@ -151,7 +151,7 @@ namespace Crayon.Translator.CSharp
                 this.Translator.Translate(codeContents, finalCode[codefile]);
 
                 codeContents.Add(crayonWrapperFooter);
-                
+
                 output[projectId + "/Crayon/" + codefile + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,

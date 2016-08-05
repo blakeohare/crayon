@@ -160,7 +160,7 @@ namespace Crayon
                     case FileCategory.IMAGE:
                         if (extension == "png")
                         {
-                            // Re-encode PNGs into a common format/palette configuration since there are some issues 
+                            // Re-encode PNGs into a common format/palette configuration since there are some issues
                             // with obscure format PNGs on some platforms. Luckily the compiler is pretty good with
                             // reading these. Besides, you're going to be opening most of these files anyway since
                             // the user should be using image sheets.
@@ -196,7 +196,7 @@ namespace Crayon
                 }
             }
         }
-        
+
         // TODO: move into its own helper class in the ImageSheets namespace.
         public void AddImageSheets(IList<ImageSheets.Sheet> sheets)
         {
@@ -228,7 +228,7 @@ namespace Crayon
                         {
                             tile.GeneratedFilename = "t" + (tileCounter++) + (chunk.IsJPEG ? ".jpg" : ".png");
                             manifest.Add("T," + tile.GeneratedFilename + "," + tile.ChunkX + "," + tile.ChunkY + "," + tile.Width + "," + tile.Height + "," + tile.Bytes);
-                            
+
                             if (tile.IsDirectCopy)
                             {
                                 this.ImageSheetFiles[tile.GeneratedFilename] = tile.OriginalFile;
@@ -256,7 +256,7 @@ namespace Crayon
                     manifest.Add("J," + jpegTile.GeneratedFilename + "," + jpegTile.Width + "," + jpegTile.Height + "," + jpegTile.Bytes + "," + jpegTile.OriginalFile.RelativeInputPath);
                 }
             }
-            
+
             if (manifest.Count > 0)
             {
                 this.ImageSheetManifestFile = new FileOutput()

@@ -222,7 +222,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, expression);
             output.Add(")");
         }
-        
+
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("pth_getProgramData()");
@@ -232,12 +232,12 @@ namespace Crayon.Translator.Php
         {
             output.Add("TODO_optimize_this_out()");
         }
-        
+
         protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
         {
             output.Add("TODO_optimize_out()");
         }
-        
+
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string token = increment ? "++" : "--";
@@ -245,7 +245,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, expression);
             if (!prefix) output.Add(token);
         }
-        
+
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("intval(");
@@ -483,12 +483,12 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-        
+
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("pth_random_float()");
         }
-        
+
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("''");
@@ -505,7 +505,7 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, programData);
             output.Add(")");
         }
-        
+
         protected override void TranslateSin(List<string> output, Expression value)
         {
             throw new NotImplementedException();

@@ -16,7 +16,7 @@ C$gamepad$isSupported = function () {
 C$gamepad$refresh = function () {
     for (i = 0; i < C$gamepad$queue.length; ++i) {
         C$gamepad$devices.push(C$gamepad$queue[i]);
-	}
+  }
     C$gamepad$queue = [];
 };
 
@@ -29,23 +29,23 @@ C$gamepad$getDevice = function (i) {
 };
 
 C$gamepad$getName = function (device) {
-	return device.id;
+  return device.id;
 };
 
 C$gamepad$getButtonCount = function (device) {
-	return device.buttons.length;
+  return device.buttons.length;
 };
 
 C$gamepad$getAxisCount = function (device) {
-	return device.axes.length;
+  return device.axes.length;
 };
 
 C$gamepad$getButtonState = function (device, index) {
-	return device.buttons[index].pressed;
+  return device.buttons[index].pressed;
 };
 
 C$gamepad$getAxisState = function (device, index) {
-	return device.axes[index];
+  return device.axes[index];
 };
 
 window.addEventListener("gamepadconnected", function (e) {
@@ -53,5 +53,5 @@ window.addEventListener("gamepadconnected", function (e) {
 });
 
 window.addEventListener("gamepaddisconnected", function (e) {
-	// ignore for now.
+  // ignore for now.
 });

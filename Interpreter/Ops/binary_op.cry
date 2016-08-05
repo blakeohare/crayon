@@ -12,7 +12,7 @@ value = null;
 if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, $_string_concat(valueToString(leftValue), valueToString(rightValue)));
 } else {
-	// At this point the remaining ops will be primitive types or if they are reference types, won't 
+	// At this point the remaining ops will be primitive types or if they are reference types, won't
 	// matter if a copy is made, hence = being safe instead of =
 	left = Value$leftValue.internalValue;
 	right = Value$rightValue.internalValue;
@@ -48,7 +48,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			$_comment('float ** float');
 			value = buildFloat(0.0 + $_math_pow($_cast('double', left), $_cast('double', right)));
 			break;
-						
+
 		// float % float
 		case (Types.FLOAT * MAX_OP + BinaryOps.MODULO) * MAX_TYPE + Types.FLOAT:
 			$_comment('float % float');
@@ -127,7 +127,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 				value = new Value(Types.INTEGER, int1);
 			}
 			break;
-			
+
 		// int * int
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('int * int');
@@ -217,13 +217,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		// float / int
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.INTEGER:
 			$_comment('float / int');
-			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0"); 
+			if ($_cast('int', right) == 0) return killExecution(stack, pc, "Division by 0");
 			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('int', right))); break;
 
 		// float / float
 		case (Types.FLOAT * MAX_OP + BinaryOps.DIVISION) * MAX_TYPE + Types.FLOAT:
 			$_comment('float / float');
-			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0"); 
+			if ($_cast('double', right) == 0) return killExecution(stack, pc, "Division by 0");
 			value = buildFloat($_unsafe_float_division($_cast('double', left), $_cast('double', right))); break;
 
 		// int & int
@@ -264,7 +264,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('int <= int');
 			if ($_cast('int', left) <= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
-							
+
 		// float < int
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.INTEGER:
 			$_comment('float < int');
@@ -274,7 +274,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		case (Types.FLOAT * MAX_OP + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE + Types.INTEGER:
 			$_comment('float <= int');
 			if ($_cast('double', left) <= $_cast('int', right)) value = VALUE_TRUE; else value = VALUE_FALSE; break;
-							
+
 		// int < float
 		case (Types.INTEGER * MAX_OP + BinaryOps.LESS_THAN) * MAX_TYPE + Types.FLOAT:
 			$_comment('int < float');
@@ -351,7 +351,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			// TODO: throw error if int is negative
 			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
 			break;
-							
+
 		// int * list
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.LIST:
 			$_comment('int * list');

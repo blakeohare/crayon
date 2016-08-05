@@ -41,20 +41,20 @@ namespace Crayon.ImageSheets
             {
                 /*
                  * This algorithm simply allocates images to the top left corner of a 1024x1024 rectangle
-                 * and goes sequentially across the top. 
-                 * 
+                 * and goes sequentially across the top.
+                 *
                  * Images are sorted by height (with filename as tie-breaker for deterministic behavior)
-                 * 
+                 *
                  * Once it reaches the right side, it starts over at the y coordinate of the bottom of the
                  * first image.
-                 * 
+                 *
                  * Once it runs out of room on the 1024x1024 chunk, it creates a new chunk.
-                 * 
+                 *
                  * The chunk will attempt to tile itself into a 4x4 square of 256 x 256 pixel images each.
                  * As images are being added to the chunk, this 4x4 grid marks each tile as dirty when used.
                  * This will prevent empty tiles from being generated as images.
-                 * 
-                 * TODO: tiles can be arbitrary size. 
+                 *
+                 * TODO: tiles can be arbitrary size.
                  * Create some sort of threshold where tiles can be combined.
                  * Add a flag to disable tiling (i.e. 1 chunk = 1 tile) for non-JS platoforms.
                  */
@@ -100,11 +100,11 @@ namespace Crayon.ImageSheets
                     chunk.GenerateTiles();
                 }
             }
-            
+
             tiledChunks.AddRange(solitaryChunks);
             return tiledChunks.ToArray();
         }
-        
+
         private static Chunk BuildChunkWithSingleImage(Image image, bool isJpeg)
         {
             return new Chunk()

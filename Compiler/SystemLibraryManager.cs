@@ -38,7 +38,7 @@ namespace Crayon
             {
                 return this.libFunctionIds[name];
             }
-            
+
             this.functionNameToLibraryName[name] = library;
             this.orderedListOfFunctionNames.Add(name);
             int id = this.orderedListOfFunctionNames.Count;

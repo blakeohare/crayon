@@ -18,7 +18,7 @@ namespace Crayon.ImageSheets
             // This is done in the AbstractPlatform just before invoking this method.
 
             Dictionary<string, List<FileOutput>> files = this.PrefixMatcher.MatchAndRemoveFiles(resDB);
-            
+
             List<Sheet> sheets = new List<Sheet>();
 
             foreach (string sheetId in files.Keys.OrderBy(k => k))

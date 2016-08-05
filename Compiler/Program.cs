@@ -7,18 +7,18 @@ namespace Crayon
     internal class Program
     {
 #if RELEASE
-		private static readonly string USAGE = string.Join("\n", new string[] {
-			"Usage:",
+        private static readonly string USAGE = string.Join("\n", new string[] {
+            "Usage:",
             "  crayon BUILD-FILE -target BUILD-TARGET-NAME [OPTIONS...]",
-			"",
-			"Flags:",
-			"",
-			"  -target            (REQUIRED) When a build file is specified, selects the",
-			"                     target within that build file to build.",
-			"",
-			"  -readablebytecode  (OPTIONAL) Output a file of the final byte code in a",
-			"                     semi-readable fashion for debugging purposes.",
-		});
+            "",
+            "Flags:",
+            "",
+            "  -target            (REQUIRED) When a build file is specified, selects the",
+            "                     target within that build file to build.",
+            "",
+            "  -readablebytecode  (OPTIONAL) Output a file of the final byte code in a",
+            "                     semi-readable fashion for debugging purposes.",
+        });
 #endif
 
         static void Main(string[] args)
@@ -28,25 +28,25 @@ namespace Crayon
             Program.Compile(args);
 #else
 
-			if (args.Length == 0)
-			{
-				System.Console.WriteLine(USAGE);
-			}
-			else
-			{
-				try
-				{
-					Program.Compile(args);
-				}
-				catch (InvalidOperationException e)
-				{
-					System.Console.Error.WriteLine(e.Message);
-				}
-				catch (ParserException e)
-				{
-					System.Console.Error.WriteLine(e.Message);
-				}
-			}
+            if (args.Length == 0)
+            {
+                System.Console.WriteLine(USAGE);
+            }
+            else
+            {
+                try
+                {
+                    Program.Compile(args);
+                }
+                catch (InvalidOperationException e)
+                {
+                    System.Console.Error.WriteLine(e.Message);
+                }
+                catch (ParserException e)
+                {
+                    System.Console.Error.WriteLine(e.Message);
+                }
+            }
 #endif
         }
 

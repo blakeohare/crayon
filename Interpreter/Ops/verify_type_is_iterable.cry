@@ -1,7 +1,7 @@
 ﻿
 value = $_array_get(valueStack, valueStackSize - 1);
 if (Value$value.type != Types.LIST && Value$value.type != Types.STRING) {
-	return killExecution(stack, pc, 
+	return killExecution(stack, pc,
 		$_string_concat(
 			"Expected an iterable type, such as a list or string. Found ",
 			getTypeFromId(Value$value.type),

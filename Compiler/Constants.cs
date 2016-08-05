@@ -47,18 +47,18 @@ namespace Crayon
             }
 
             fields.AddRange(new string[] {
-				// events
-				"button", "down", "key", "type", "x", "y", "player", "name", "value", "device", "is_significant", "descriptor",
+                // events
+                "button", "down", "key", "type", "x", "y", "player", "name", "value", "device", "is_significant", "descriptor",
                 "is_key", "is_mouse", "is_quit", "is_gamepad", "is_hardware",
 
-				// gamepad
-				"id", "name", "has_configuration", 
+                // gamepad
+                "id", "name", "has_configuration",
 
-				// http request
-				"completed", "content", "code",
+                // http request
+                "completed", "content", "code",
 
-				// image
-				"width", "height",
+                // image
+                "width", "height",
             });
 
             constants.Add("PREDEFINED_FIELD_COUNT", "" + (fields.Count + 1));

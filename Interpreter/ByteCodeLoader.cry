@@ -94,8 +94,8 @@ function @type('string') read_string(@type('Array<int>') pindex, @type('string')
 
 function @type('Code') loadByteCode() {
 	if (%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {
-		// PHP basically bypasses all the parsing as its bytecode is saved as a PHP file that returns these uncompressed 
-		// values directly. Parsing this all on every HTTP request would be a waste of CPU, whereas doing it once for 
+		// PHP basically bypasses all the parsing as its bytecode is saved as a PHP file that returns these uncompressed
+		// values directly. Parsing this all on every HTTP request would be a waste of CPU, whereas doing it once for
 		// the rest of the traditional start-once-run-for-several-minutes apps that's okay.
 		@type('Array<int>') ops = $_byte_code_get_ops();
 		@type('Array<int>') iargs = $_byte_code_get_int_args();
@@ -111,7 +111,7 @@ function @type('Code') loadByteCode() {
 		if (header != 'CRAYON') {
 			// TODO: assert
 		}
-	
+
 		@type('string') alphaNums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		@type('int') opCount = read_integer(index, raw, length, alphaNums);
 
@@ -159,7 +159,6 @@ function @type('Code') loadByteCode() {
 			}
 			$_array_set(sargs, i, stringarg);
 		}
-	
 	}
 
 	return new Code(ops, iargs, sargs);

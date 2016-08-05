@@ -22,7 +22,7 @@ namespace Crayon.ParseTree
 
         public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Executable owner)
         {
-            // TODO: don't pop from the front, you fool. that's silly slow. 
+            // TODO: don't pop from the front, you fool. that's silly slow.
             List<Expression> mutableList = new List<Expression>(expressions);
             List<Token> mutableOps = new List<Token>(ops);
             Expression left = mutableList[0];

@@ -73,7 +73,7 @@ namespace Crayon
         }
 
         // Each character is encoded
-        // A character can be followed by a @ followed by an encoded integer 
+        // A character can be followed by a @ followed by an encoded integer
         // indicating how many times to repeat the last character.
         // If a % appears, that indicates the end of the string.
         private static void EncodeString(StringBuilder sb, string value)

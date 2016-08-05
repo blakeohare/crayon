@@ -16,7 +16,7 @@ if (type == Types.LIST) {
 				return killExecution(stack, pc, "Index is out of range.");
 			}
 		}
-		
+
 		if (i >= $_list_length(list1)) {
 			return killExecution(stack, pc, "Index is out of range.");
 		}

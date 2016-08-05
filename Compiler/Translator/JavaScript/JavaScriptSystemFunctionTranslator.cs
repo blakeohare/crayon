@@ -367,7 +367,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
-            // TODO: make platforms that have a constant value for this also have a 
+            // TODO: make platforms that have a constant value for this also have a
             // %%% platform parameter that can be used to short circuit interpreter code.
             output.Add("false");
         }

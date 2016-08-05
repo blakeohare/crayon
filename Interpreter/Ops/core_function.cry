@@ -1,5 +1,5 @@
 ﻿switch ($_array_get(row, 0)) {
-	
+
 	case 1: $_comment('parseInt');
 		import inline "FrameworkFunctions/1_arg.cry";
 
@@ -16,7 +16,7 @@
 
 	case 2: $_comment('parseFloat');
 		import inline "FrameworkFunctions/1_arg.cry";
-		
+
 		output = VALUE_NULL;
 		if (Value$arg1.type == Types.STRING) {
 			string1 = $_string_trim($_force_parens($_cast('string', Value$arg1.internalValue)));
@@ -218,14 +218,14 @@
 		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
 		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
 		else bool1 = true;
-		
+
 		if (Value$arg3.type == Types.FLOAT) float3 = $_cast('double', Value$arg3.internalValue);
 		else if (Value$arg3.type == Types.INTEGER) float3 = $_cast('int', Value$arg3.internalValue);
 		else bool1 = true;
-		
+
 		if (!bool1 && float3 < float2) {
 			// Min and max are swapped D:
-			// It OK. 
+			// It OK.
 			// I fix 4 u.
 			float1 = float3;
 			float3 = float2;
@@ -234,11 +234,11 @@
 			arg2 = arg3;
 			arg3 = value;
 		}
-		
+
 		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
 		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
 		else bool1 = true;
-		
+
 		if (bool1) {
 			return killExecution(stack, pc, "ensureRange requires numeric arguments.");
 		}
@@ -281,13 +281,13 @@
 		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
 		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
 		else bool1 = true;
-		
+
 		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
 		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
 		else bool1 = true;
-		
+
 		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
-		
+
 		if (float1 >= float2) {
 			output = arg1;
 		} else {
@@ -302,13 +302,13 @@
 		if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
 		else if (Value$arg1.type == Types.INTEGER) float1 = $_cast('int', Value$arg1.internalValue);
 		else bool1 = true;
-		
+
 		if (Value$arg2.type == Types.FLOAT) float2 = $_cast('double', Value$arg2.internalValue);
 		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
 		else bool1 = true;
-		
+
 		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
-		
+
 		if (float1 <= float2) {
 			output = arg1;
 		} else {
@@ -369,7 +369,7 @@
 
 	case 25: $_comment('tan');
 		import inline "FrameworkFunctions/1_arg.cry";
-		// Checking for pi / 2 is not really necessary even though it is not a valid tan value, because 
+		// Checking for pi / 2 is not really necessary even though it is not a valid tan value, because
 		// floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.
 		// TODO: unit test so that I know this is actually true in practice.
 		if (Value$arg1.type == Types.FLOAT) {
@@ -398,7 +398,7 @@
 		} else {
 			return killExecution(stack, pc, "logarithms require a number argument.");
 		}
-		
+
 		if (float1 <= 0) {
 			return killExecution(stack, pc, "logarithms require positive inputs.");
 		}
@@ -469,7 +469,7 @@
 			}
 
 			prepareToSuspend(ec, stack, valueStackSize, pc);
-			
+
 			$_enqueue_vm_resume(float1, ExecutionContext$ec.id);
 
 			return suspendInterpreterWithLock();

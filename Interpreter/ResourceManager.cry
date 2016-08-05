@@ -31,7 +31,7 @@
 		}
 		i += 1;
 	}
-	
+
 	@type('Array<string>') dirs = $_dictionary_get_keys('string', filesPerDirectoryBuilder);
 	@type('Dictionary<string, Array<string>>') filesPerDirectorySorted = $_new_dictionary('string', 'Array<string>');
 	for (i = 0; i < $_array_length(dirs); i += 1) {
@@ -48,7 +48,7 @@
 function @type('int') resource_manager_populate_directory_lookup(
 		@type('Dictionary<string, List<string>>') dirs,
 		@type('string') path) {
-	
+
 	@type('Array<string>') parts = $_string_split(path, '/');
 	@type('string') pathBuilder = '';
 	@type('string') file = '';

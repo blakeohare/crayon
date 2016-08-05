@@ -13,7 +13,7 @@ function @type('object') lib_http_make_request(
 	@type('List<Value>') headerValues,
 	@type('string') defaultUserAgent,
 	@type('Array<int>') errorCodeOut) {
-	
+
 	$_array_set(errorCodeOut, 0, 0);
 
 	@type('HttpRequest') request = new HttpRequest(0, null, null, null);
@@ -69,10 +69,10 @@ function @type('object') lib_http_make_request(
 }
 
 function @type('bool') handleHttpResponse(
-	@type('HttpRequest') request, 
-	@type('int') statusCode, 
+	@type('HttpRequest') request,
+	@type('int') statusCode,
 	@type('string') status,
-	@type('string') body, 
+	@type('string') body,
 	@type('Dictionary<string, Array<string>>') headers) {
 
 	HttpRequest$request.statusCode = statusCode;
@@ -95,7 +95,7 @@ function @type('Value') lib_http_convert_response_to_list(@type('ObjectInstance'
 	@type('HttpRequest') req = $_cast('HttpRequest', $_array_get(nd, 0));
 	if (req == null) return VALUE_NULL;
 	if (HttpRequest$req.statusCode < 100) return VALUE_NULL;
-	
+
 	@type('List<Value>') values = $_new_list('Value');
 	$_list_push(values, buildInteger(HttpRequest$req.statusCode));
 	$_list_push(values, buildString(HttpRequest$req.status));

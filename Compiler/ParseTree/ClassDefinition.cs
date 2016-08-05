@@ -351,7 +351,7 @@ namespace Crayon.ParseTree
                     {
                         if (existingItem is FieldDeclaration)
                         {
-                            // TODO: again, give more information. 
+                            // TODO: again, give more information.
                             throw new ParserException(fd.FirstToken, "This field overrides a previous definition.");
                         }
 

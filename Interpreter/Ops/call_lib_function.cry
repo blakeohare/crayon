@@ -8,7 +8,7 @@
 		2) library functions must have their own ID# within the library and also each library gets assigned an ID# when compiled.
 		3) there is a library registration opcode. LIBRARY_REGISTER library ID, function count, string: name These are added to a dictionary
 		4) FINALIZE_INITIALIZATION will invoke a system function called $_finalize_library_manifest()
-			
+
 			C# simple
 				Extra projects are included. Each project implements an interface
 				Value ILibInvoker.Invoke(int functionId, int argCount, Value[] args)
@@ -24,15 +24,15 @@
 
 			Python
 				Tack on library code. Each library then adds a list of function pointers to a list indexed by library ID.
-			
+
 			JavaScript
-				Each library as a separate .js file. 
+				Each library as a separate .js file.
 				Each one will do the same thing as Python. C$common$libFuncLookup
 
 			PHP
 				Each library as a separate .php file.
 				Each library is a class where native calls are just methods and there is one method called invoke.
-				There is a global array of these functions. 
+				There is a global array of these functions.
 */
 
 output = VALUE_NULL;

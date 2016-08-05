@@ -1,6 +1,6 @@
 ﻿
 /*
-	All function calls (even constructor invocations and primitive methods) go through this op code, with the exception 
+	All function calls (even constructor invocations and primitive methods) go through this op code, with the exception
 	of static constructors that are implicitly called from dereferencing a static field. However, implicit static constructor
 	invocations that occur as a result of a static method invocation goes through this op as well.
 
@@ -8,38 +8,38 @@
 	a known invocation, and then follows through the rest of the shared codepath.
 
 	Here are the values of FunctionInvocationType, and what they do in this op...
-		
+
 		NORMAL_FUNCTION
 		Nothing special. Function is invoked.
-		
+
 		STATIC_METHOD
 		Check to see if the class is staticly initialized. If it isn't (or not in progress), don't pop the args, subtract
 		1 from the PC, and then change the invocation type to STATIC_CONSTRUCTOR. When it returns, it'll return to the previous
 		PC and then resume this op again and it'll be initialized.
-		
+
 		LOCAL_METHOD
-		At the final invocation phase, functionId and value must be set. 
-		
+		At the final invocation phase, functionId and value must be set.
+
 		POINTER_PROVIDED
 		Pop the stack, look at the pointer, and figure out what this is. Change type accordingly.
 		This happens before final invocation time.
-		
+
 		FIELD_INVOCATION
 		Pop the stack, look at the pointer, look at the field name, then resolve this into one of the following:
 		LOCAL_METHOD, POINTER_PROVIDED (i.e. it's a function pointer that was set on a normal field of a class, or
 		PRIMITIVE_METHOD
-		
+
 		CONSTRUCTOR
 
 		BASE_CONSTRUCTOR
-		
+
 		STATIC_CONSTRUCTOR
 		This is never invoked from the byte code. It is always invoked as a result of STATIC_METHOD.
 		When it is invoked, it must mark the stack frame as having a static initalization resolution, so that when it's popped,
 		the class is marked as fully initialized.
-		
+
 		PRIMITIVE_METHOD
-		This is the only function invocation that does not result in stack changes. The value is computed 
+		This is the only function invocation that does not result in stack changes. The value is computed
 		synchronously and immediately pushed back to the stack.
 		There may be an exception to this in the future thoough, when list.sort(key_function_pointer) is added,
 		in which case, this primitive method call may possibly be resolved into a NORMAL_FUNCTION call referring a
@@ -48,7 +48,7 @@
 
 	args:
 	row[0] --> type (see above)
-	row[1] --> args passed by user. If this is -1, then that means a list was passed and should be used instead. This is a special case just used for Core.functionInvoke. 
+	row[1] --> args passed by user. If this is -1, then that means a list was passed and should be used instead. This is a special case just used for Core.functionInvoke.
 	row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
 	row[3] --> 1 if output is used
 	row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
@@ -91,7 +91,7 @@ if (bool1) {
 		} else {
 			return killExecution(stack, pc, "Function pointers' .invoke method requires a list argument.");
 		}
-		
+
 	} else {
 		for (i = argCount - 1; i >= 0; i -= 1) {
 			valueStackSize -= 1;
@@ -111,7 +111,7 @@ if (bool1) {
 		}
 	} else if (type == FunctionInvocationType.FIELD_INVOCATION) {
 		$_comment('field invocation');
-		// provided pointers have no risk of requiring a static initialization because the pointer can only be 
+		// provided pointers have no risk of requiring a static initialization because the pointer can only be
 		// provided from a source that would have already triggered it.
 
 		// Pop the stack and see what we have.
@@ -133,7 +133,7 @@ if (bool1) {
 						type = FunctionInvocationType.LOCAL_METHOD;
 					} else {
 						// This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
-						// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here 
+						// Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here
 						// as it will be done redundantly later.
 						value = $_array_get(ObjectInstance$objInstance1.members, int1);
 						type = FunctionInvocationType.POINTER_PROVIDED;
@@ -162,7 +162,7 @@ if (bool1) {
 
 	if (type == FunctionInvocationType.POINTER_PROVIDED) {
 		$_comment('pointer provided');
-		
+
 		valueStackSize -= 1;
 		value = $_array_get(valueStack, valueStackSize);
 
@@ -197,7 +197,7 @@ if (bool1) {
 			return killExecution(stack, pc, "This type cannot be invoked like a function.");
 		}
 	}
-	
+
 	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
 		$_comment('primitive method invocation');
 		output = VALUE_NULL;
@@ -266,7 +266,7 @@ if (bool1) {
 				}
 				break;
 		}
-	
+
 		if (output == null) {
 			if (primitiveMethodToCoreLibraryFallback) {
 				type = FunctionInvocationType.NORMAL_FUNCTION;
@@ -287,7 +287,7 @@ if (bool1) {
 
 	if (bool1) {
 		$_comment('push a new frame to the stack');
-	
+
 		StackFrame$stack.pc = pc;
 		bool1 = false; // bool1 now indicates whether the PC's in intArray1 indicate additional stack frames that need to be pushed.
 
@@ -373,8 +373,8 @@ if (bool1) {
 				classId = 0;
 				break;
 		}
-	
-		if (argCount < FunctionInfo$functionInfo.minArgs || 
+
+		if (argCount < FunctionInfo$functionInfo.minArgs ||
 			argCount > FunctionInfo$functionInfo.maxArgs) {
 			return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
 		}
@@ -410,7 +410,7 @@ if (bool1) {
 			valueStackSize,
 			0); // for static constructor use only
 
-		// now that we're in the new stack frame, flush out all the passed args to the local stack since their 
+		// now that we're in the new stack frame, flush out all the passed args to the local stack since their
 		// ID's are allocated with args first.
 		for (i = 0; i < argCount; i += 1) {
 			int1 = localsStackOffset + i;
@@ -423,7 +423,7 @@ if (bool1) {
 			// Adjust the PC to skip these if those arguments were provided.
 			int1 = argCount - FunctionInfo$functionInfo.minArgs; // number of optional args provided
 			if (int1 > 0) {
-				// The amount to increment the PC by is conveniently stored in the function metadata in an 
+				// The amount to increment the PC by is conveniently stored in the function metadata in an
 				// array indexed by the number of optional args provided.
 				pc += $_array_get(FunctionInfo$functionInfo.pcOffsetsForOptionalArgs, int1);
 				StackFrame$stack.pc = pc;

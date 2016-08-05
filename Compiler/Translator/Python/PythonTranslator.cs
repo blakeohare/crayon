@@ -246,32 +246,32 @@ namespace Crayon.Translator.Python
                 output.Add("\r\n");
 
                 /*
-				 * This is probably best
-				 * _switch_statement_lookup_27 = {
-				 *   case_expr1: 1,
-				 *   case_expr2a: 2,
-				 *   case_expr2b: 2,
-				 *   case_expr3: 3
-				 * }
-				 * ...
-				 * _ignored_switch_loopy_thing_27 = 1
-				 * while _ignored_switch_loopy_thing_27 == =1:
-				 *   _ignored_switch_loopy_thing = 0
-				 *   _switch_expr_27 = _switch_statement_lookup_27.get(arbitrary_expression, 4) # 4 is the default case
-				 *   if _switch_expr_27 < 3:
-				 *     if _switch_expr_27 < 2:
-				 *       code for case 1
-				 *     else:
-				 *       code for case 2
-				 *   else:
-				 *     if _switch_expr_27 < 4:
-				 *       code for case 3
-				 *     else:
-				 *       code for case 4 (default)
-				 * 
-				 * This way you just leave the breaks as they are. 
-				 * Don't try to use an array instead of a dictionary, though. Because that will cause the switch to crash if a crazy value is passed in.
-				 */
+                 * This is probably best
+                 * _switch_statement_lookup_27 = {
+                 *   case_expr1: 1,
+                 *   case_expr2a: 2,
+                 *   case_expr2b: 2,
+                 *   case_expr3: 3
+                 * }
+                 * ...
+                 * _ignored_switch_loopy_thing_27 = 1
+                 * while _ignored_switch_loopy_thing_27 == =1:
+                 *   _ignored_switch_loopy_thing = 0
+                 *   _switch_expr_27 = _switch_statement_lookup_27.get(arbitrary_expression, 4) # 4 is the default case
+                 *   if _switch_expr_27 < 3:
+                 *     if _switch_expr_27 < 2:
+                 *       code for case 1
+                 *     else:
+                 *       code for case 2
+                 *   else:
+                 *     if _switch_expr_27 < 4:
+                 *       code for case 3
+                 *     else:
+                 *       code for case 4 (default)
+                 *
+                 * This way you just leave the breaks as they are.
+                 * Don't try to use an array instead of a dictionary, though. Because that will cause the switch to crash if a crazy value is passed in.
+                 */
 
 
                 // This isn't even right. If a default is first, this will blow up.

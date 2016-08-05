@@ -11,4 +11,3 @@ value = $_array_get(ObjectInstance$objInstance1.members, $_array_get(row, 0));
 import inline "ValueStackCapacityCheck.cry";
 $_array_set(valueStack, valueStackSize, value);
 valueStackSize += 1;
-

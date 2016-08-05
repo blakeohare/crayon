@@ -1,4 +1,4 @@
-﻿// row[0]: 
+﻿// row[0]:
 //   0 --> no return value on stack, implicit null.
 //   1 --> return value is on the stack.
 
