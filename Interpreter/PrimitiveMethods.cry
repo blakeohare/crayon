@@ -38,7 +38,6 @@
 	return lookup;
 }
 
-
 // returns an integer value in the enum PrimitiveMethodName
 function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @type('int') type, @type('int') globalNameId) {
 	@type('int') output = $_array_get(lookup, globalNameId);

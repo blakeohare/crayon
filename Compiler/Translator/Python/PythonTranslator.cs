@@ -273,7 +273,6 @@ namespace Crayon.Translator.Python
                  * Don't try to use an array instead of a dictionary, though. Because that will cause the switch to crash if a crazy value is passed in.
                  */
 
-
                 // This isn't even right. If a default is first, this will blow up.
                 for (int i = 0; i < switchStatement.Chunks.Length; ++i)
                 {
@@ -348,7 +347,6 @@ namespace Crayon.Translator.Python
                         this.CurrentIndention--;
                     }
                 }
-
 
             }
             else if (firstCase is StringConstant)

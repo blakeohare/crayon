@@ -53,7 +53,6 @@
 	VERIFY_TYPE_IS_ITERABLE, // verifies the last item on the stack is a list
 }
 
-
 // Needs to be in sync with BinaryOps.cs
 enum BinaryOps
 {

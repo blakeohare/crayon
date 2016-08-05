@@ -94,7 +94,6 @@ namespace Crayon
             public Target[] Targets { get; set; }
         }
 
-
         public class Target : BuildItem
         {
             [XmlAttribute("name")]

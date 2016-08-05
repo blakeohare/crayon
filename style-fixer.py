@@ -52,6 +52,7 @@ def normalizeTab(string, tab):
 def normalize(filepath, lineEnding, tab, includeNewlineAtEnd):
 	text = loadFile(filepath)
 	text = rtrim(text)
+	
 	output = []
 	for line in text.split('\n'):
 		
@@ -65,6 +66,9 @@ def normalize(filepath, lineEnding, tab, includeNewlineAtEnd):
 	
 	text = lineEnding.join(output)
 	
+	while '\n\n\n' in text:
+		text = text.replace('\n\n\n', '\n\n')
+		
 	writeFile(filepath, text)
 
 def getFiles(dir, ending):

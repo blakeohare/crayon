@@ -131,7 +131,6 @@ class HttpAsyncRequest:
       for value in self.header_values[key]:
         headers.append((f_key, value))
 
-
     thread = _threading.Thread(target = _send_impl, args = (self.crayon_obj, self, self.method, url, headers, self.content))
     thread.daemon = True
     thread.start()

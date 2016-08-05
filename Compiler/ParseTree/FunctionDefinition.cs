@@ -170,7 +170,6 @@ namespace Crayon.ParseTree
             }
         }
 
-
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
             // Currently only used to get the variables declared in a function in translation mode. This shouldn't
