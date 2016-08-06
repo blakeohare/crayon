@@ -1,2 +1,2 @@
 $_lib_gfx_gl_max_texture_size: 2048
-$_lib_gfx_render: GameViewController.SetRenderData([ARG:1], [ARG:2], [ARG:3])
+$_lib_gfx_render: GameViewController.SetRenderData([ARG:1], [ARG:2], [ARG:3], [ARG:4])

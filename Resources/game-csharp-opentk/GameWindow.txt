@@ -277,12 +277,14 @@ namespace %%%PROJECT_ID%%%
         private static int[] renderEvents = new int[0];
         private static int renderEventsLength = 0;
         private static object[][] imagesNativeData = null;
+		private static List<int> textChars = null;
 
-        public static void setRenderData(int[] events, int eventsLength, object[][] imagesNativeData)
+        public static void SetRenderData(int[] events, int eventsLength, object[][] imagesNativeData, List<int> textChars)
         {
             GameWindow.renderEvents = events;
             GameWindow.renderEventsLength = eventsLength;
             GameWindow.imagesNativeData = imagesNativeData;
+			GameWindow.textChars = textChars;
         }
 
         private void Render()

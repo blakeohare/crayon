@@ -4,12 +4,16 @@ _gfxRendererVars = {
   'events': [],
   'eventsLength': 0,
   'images': [],
+  'textChars': [],
+  'fontLookup': {},
+  'fontCharLookupByStyle': {},
 }
 
-def gfxRendererSetData(events, eventsLength, images):
+def gfxRendererSetData(events, eventsLength, images, textChars):
   _gfxRendererVars['events'] = events
   _gfxRendererVars['eventsLength'] = eventsLength
   _gfxRendererVars['images'] = images
+  _gfxRendererVars['textChars'] = textChars
 
 def gfxRender():
   screen = _global_vars['virtual_screen']
@@ -17,10 +21,15 @@ def gfxRender():
   events = _gfxRendererVars['events']
   eventsLength = _gfxRendererVars['eventsLength']
   images = _gfxRendererVars['images']
+  textChars = _gfxRendererVars['textChars']
   tempImgWidth, tempImgHeight = tempImg.get_size()
   screenWidth, screenHeight = screen.get_size()
 
+  if len(textChars) > 0:
+    _gfxEnsureCharsLoaded(events, textChars)
+
   imageIndex = 0
+  textIndex = 0
   i = 0
   while i < eventsLength:
     command = events[i]
@@ -193,7 +202,93 @@ def gfxRender():
         pygame.draw.line(tempImg, rgb, pt1, pt2, strokeWidth)
         tempImg.set_alpha(alpha)
         screen.blit(tempImg, (minX, minY, width, height), (0, 0, width, height))
+    elif command == 7:
+      # text
+      styleKey = _gfxGetStyleKey(events, i)
+      charLookup = _gfxRendererVars['fontCharLookupByStyle'].get(styleKey)
+      x = events[i | 1]
+      y = events[i | 2]
+      for j in range(events[i | 13]):
+        c = textChars[j]
+        textIndex += 1
+        img = charLookup[c]
+        screen.blit(img, (x, y))
+        x += img.get_width()
 
     i += 16
 
   _gfxRendererVars['tempImg'] = tempImg
+
+class GfxFont:
+  def __init__(self, name, isSystem, font12):
+    self.name = name
+    self.isSystem = isSystem
+    self.fonts = { 12 * 1024: font12 }
+
+  def getFont(self, size):
+    size = int(size + .9999999999)
+    key = int(size * 1024 + .5)
+    font = self.fonts.get(key)
+    if font == None:
+      if self.isSystem:
+        font = pygame.font.SysFont(self.name, size)
+      else:
+        font = pygame.font.Font(self.name, size)
+      self.fonts[key] = font
+    return font
+
+def _gfxLoadFont(isSystem, name, globalId):
+  try:
+    if isSystem:
+      font12 = pygame.font.SysFont(name, 12)
+    else:
+      font12 = pygame.font.Font(name, 12)
+  except:
+    return False
+
+  _gfxRendererVars['fontLookup'][globalId] = GfxFont(name, isSystem, font12)
+
+  return True
+
+def _gfxPushCodePoints(list, string):
+  for char in string:
+    list.append(ord(char))
+  return len(string)
+
+def _gfxEnsureCharsLoaded(events, textChars):
+  textCharIndex = 0
+  i = 0
+  eventLength = len(events)
+  # TODO: batch these all at the end.
+  while i < eventLength:
+    if events[i] == 7:
+      key = _gfxGetStyleKey(events, i)
+      charLookup = _gfxRendererVars['fontCharLookupByStyle'].get(key)
+      if charLookup == None:
+        charLookup = {}
+        _gfxRendererVars['fontCharLookupByStyle'][key] = charLookup
+      textLen = events[i | 13]
+      while textLen > 0:
+        c = textChars[textCharIndex]
+        if charLookup.get(c) == None:
+          fontId = events[i | 3]
+          charLookup[c] = _gfxRenderChar(
+            _gfxRendererVars['fontLookup'][fontId],
+            c,
+            events[i | 4] / 1024.0, # size
+            events[i | 5] == 1, # bold
+            events[i | 6] == 1, # italic
+            events[i | 7], events[i | 8], events[i | 9]) # RGB
+        textCharIndex += 1
+        textLen -= 1
+    i += 16
+
+def _gfxGetStyleKey(events, i):
+  # i | (3 through 11) are font face ID, size, bold, italic, r, g, b, a respectively
+  return ','.join(map(str, events[i + 3: i + 11]))
+
+def _gfxRenderChar(fontFace, codePoint, size, isBold, isItalic, r, g, b):
+  font = fontFace.getFont(size)
+  text = chr(codePoint)
+  img = font.render(text, True, (r, g, b))
+  return img

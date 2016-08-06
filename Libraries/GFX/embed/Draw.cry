@@ -9,14 +9,19 @@ namespace GFX {
 		TRIANGLE = 4,
 		QUAD = 5,
 		IMAGE = 6,
+		
+		TEXT = 7, // Not used directly in GFX. Injected by GfxText
 	}
 	
 	class Draw {
 		
 		static field _queue = new Core.Object();
+		static field _text_queue = null;
 		
 		static constructor() {
-			$$lib_gfx_renderQueueAction(Draw._queue, 0); // essentially no-ops, but runs the queue initializers.
+			// essentially no-ops, but runs the queue initializers.
+			$$lib_gfx_renderQueueAction(GFX.Draw._queue, GFX.Draw._text_queue, 0);
+			
 			Game.GameWindow._frameEndHandlers.add(GFX.Draw._renderer);
 			Game.GameWindow._frameBeginHandlers.add(GFX.Draw._rendererReset);
 		}
@@ -26,12 +31,13 @@ namespace GFX {
 		
 		static function _renderer() {
 			// send the render queue to the platform renderer
-			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 1);
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, GFX.Draw._text_queue, 1);
 		}
 		
 		static function _rendererReset() {
 			// clear the render queue
-			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+			Draw._text_queue = null;
+			return $$lib_gfx_renderQueueAction(GFX.Draw._queue, GFX.Draw._text_queue, 2);
 		}
 		
 		static function ellipse(left, top, width, height, r, g, b, a = 255) {
@@ -86,9 +92,8 @@ namespace GFX {
 			$$$('intQueueWrite16', GFX.Draw._queue,
 				_DrawCommands.QUAD,
 				startX, startY, endX, endY, strokeWidth, 0, 0, 0, r, g, b, a);
-			
-			// The above command is wrong. However there's lots of math to get the 
-			// correct coordinates, so do the transformation in translated code.
+			// The above command is just a placeholder. Do the rest of the 
+			// transformation in translated code...
 			return $$lib_gfx_lineToQuad(GFX.Draw._queue);
 		}
 
@@ -114,7 +119,7 @@ namespace GFX {
 		
 		static function fill(r, g, b) {
 			t = Game.GameWindow.instance;
-			$$lib_gfx_renderQueueAction(GFX.Draw._queue, 2);
+			$$lib_gfx_renderQueueAction(GFX.Draw._queue, GFX.Draw._text_queue, 2);
 			return GFX.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
 		}
 	}
