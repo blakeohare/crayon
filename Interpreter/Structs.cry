@@ -1,5 +1,4 @@
-﻿// TODO: it's probably time to split this file up into a structs folder with a different file for each individual struct.
-
+﻿
 struct Code {
 	@type('Array<int>') ops,
 	@type('Array<Array<int>>') args,
@@ -17,11 +16,6 @@ struct DictImpl {
 	@type('int') keyType
 }
 
-// TODO: This needs to be more extensible and cleaned up.
-// Things like image sheet stuff should still be applied to ProgramData, but needs to be done so in a way
-// that doesn't clutter up the schema and can be leveraged by other custom libraries. For example, creating
-// some sort of Dictionary keyed off of a library namespace string that can point to an arbitrary type and
-// having a model for defining structs in the libraries.
 struct ProgramData {
 	@type('Dictionary<int, ExecutionContext>') executionContexts,
 	@type('int') lastExecutionContextId,

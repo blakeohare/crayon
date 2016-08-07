@@ -23,10 +23,8 @@ function @type('int') main() {
 
 	@type('int') i = 0;
 
-	// TODO: once back in a stable state, set the local and value stack initialization sizes to very low.
-	// These limits are probably rarely exceeded so there may be bugs lurking that I want to get out in the open.
-	@type('Array<Value>') localsStack = $_new_array('Value', 1000);
-	@type('Array<int>') localsStackSet = $_new_array('int', 1000);
+	@type('Array<Value>') localsStack = $_new_array('Value', 10);
+	@type('Array<int>') localsStackSet = $_new_array('int', 10);
 	for (i = $_array_length(localsStack) - 1; i >= 0; i -= 1) {
 		$_array_set(localsStack, i, null);
 		$_array_set(localsStackSet, i, 0);

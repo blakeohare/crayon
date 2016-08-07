@@ -65,24 +65,5 @@ namespace %%%PROJECT_ID%%%
 			g.DrawImage(bitmap, TOP_LEFT);
 			return targetBmp;
 		}
-
-		private static int maxTextureSize = -1;
-		public static int MaxTextureSize
-		{
-			get
-			{
-				if (maxTextureSize == -1)
-				{
-					/*
-					// TODO: figure out why this isn't working...
-					int value;
-					OpenTK.Graphics.OpenGL.GL.GetInteger(OpenTK.Graphics.OpenGL.GetPName.MaxTextureSize, out value);
-					maxTextureSize = value;
-					//*/
-					maxTextureSize = 1024 * 16;
-				}
-				return maxTextureSize;
-			}
-		}
 	}
 }

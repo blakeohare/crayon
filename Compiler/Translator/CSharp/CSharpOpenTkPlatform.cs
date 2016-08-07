@@ -16,7 +16,6 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase)
         {
-            // TODO: Do conditional check to see if any sound is used anywhere. If not, exclude the SdlDotNet/Tao.Sdl binaries.
             foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
             {
                 files[projectId + "/" + binary + ".dll"] = new FileOutput()

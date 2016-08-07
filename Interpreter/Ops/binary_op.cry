@@ -348,14 +348,17 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		// list * int
 		case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('list * int');
-			// TODO: throw error if int is negative
-			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), $_cast('int', right)));
+			int1 = $_cast('int', right);
+			if (int1 < 0) return killExecution(stack, pc, "Cannot multiply list by negative number.");
+			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), int1));
 			break;
 
 		// int * list
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.LIST:
 			$_comment('int * list');
-			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', right), $_cast('int', left)));
+			int1 = $_cast('int', left);
+			if (int1 < 0) return killExecution(stack, pc, "Cannot multiply list by negative number.");
+			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', right), int1));
 			break;
 
 		default:

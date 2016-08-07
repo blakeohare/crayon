@@ -141,8 +141,7 @@ namespace Crayon
 
             if (libraryManifestPath == null)
             {
-                // TODO: figure out why this was here. Shouldn't this be an error?
-                return EMPTY_EXECUTABLE;
+                throw new ParserException(throwToken, "Library manifest not found.");
             }
 
             Library library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);

@@ -54,8 +54,20 @@ namespace Crayon.ParseTree
             ConstructorDefinition cons = this.Class.Constructor;
             if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
             {
-                // TODO: show the correct arg count.
-                throw new ParserException(this.FirstToken, "This constructor has the wrong number of arguments.");
+                string message = "This constructor has the wrong number of arguments. ";
+                if (cons.MinArgCount == cons.MaxArgCount)
+                {
+                    message += "Expected " + cons.MinArgCount + " but found " + this.Args.Length;
+                }
+                else if (this.Args.Length < cons.MinArgCount)
+                {
+                    message += " At least " + cons.MinArgCount + " are required but found only " + this.Args.Length + ".";
+                }
+                else
+                {
+                    message += " At most " + cons.MaxArgCount + " are allowed but found " + this.Args.Length + ".";
+                }
+                throw new ParserException(this.FirstToken, message);
             }
 
             return this;

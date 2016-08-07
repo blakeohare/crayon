@@ -389,8 +389,6 @@ if (bool1) {
 		}
 
 		localsStackSetToken += 1;
-		// TODO: set this to 100 to test.
-		// If this comment is still here, then that means I haven't tested this.
 		if (localsStackSetToken > 2000000000) {
 			resetLocalsStackTokens(ec, stack);
 			localsStackSetToken = 2;

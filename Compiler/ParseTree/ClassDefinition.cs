@@ -282,7 +282,6 @@ namespace Crayon.ParseTree
                 this.StaticConstructor.ResolveNames(parser, lookup, imports);
             }
 
-            // TODO: if there is no constructor, just create an implicit one.
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
             if (this.Constructor == null)
             {

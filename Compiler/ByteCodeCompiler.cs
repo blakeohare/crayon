@@ -587,8 +587,6 @@ namespace Crayon
                 else if (assignment.Target is BracketIndex)
                 {
                     BracketIndex bi = (BracketIndex)assignment.Target;
-                    // TODO: optimization opportunity: special op code when index is a string or int constant.
-
                     this.CompileExpression(parser, buffer, bi.Root, true);
                     this.CompileExpression(parser, buffer, bi.Index, true);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
@@ -1246,8 +1244,6 @@ namespace Crayon
 
         private void CompileBracketIndex(Parser parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
         {
-            // TODO: do a bunch of optimizations here:
-            // bracket index of integer, bracket index of string, bracket index of simple variable name, then bracket index of complex expression
             if (!outputUsed) throw new ParserException(bracketIndex.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, bracketIndex.Root, true);
             this.CompileExpression(parser, buffer, bracketIndex.Index, true);

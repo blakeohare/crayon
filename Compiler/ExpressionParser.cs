@@ -159,7 +159,6 @@ namespace Crayon
             {
                 Token negateOp = tokens.Pop();
                 Expression root = ParseNegate(tokens, owner);
-                // TODO: just make a negation parse tree node
                 if (negateOp.Value == "!") return new BooleanNot(negateOp, root, owner);
                 if (negateOp.Value == "-") return new NegativeSign(negateOp, root, owner);
                 throw new Exception("This shouldn't happen.");

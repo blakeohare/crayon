@@ -245,12 +245,14 @@ function @type('int') resetLocalsStackTokens(@type('ExecutionContext') ec, @type
 	while (i < $_array_length(localsStackSet)) {
 		$_array_set(localsStackSet, i, 0);
 		$_array_set(localsStack, i, null);
+		i += 1;
 	}
 
 	@type('StackFrame') stackWalker = stack;
 
 	while (stackWalker != null) {
 		@type('int') token = StackFrame$stackWalker.localsStackSetToken;
+		StackFrame$stackWalker.localsStackSetToken = 1;
 		for (i = StackFrame$stackWalker.localsStackOffset; i < StackFrame$stackWalker.localsStackOffsetEnd; i += 1) {
 			if ($_array_get(localsStackSet, i) == token) {
 				$_array_set(localsStackSet, i, 1);
