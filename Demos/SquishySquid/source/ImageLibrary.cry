@@ -1,11 +1,9 @@
 import Graphics;
 
-class ImageLibrary {
+static class ImageLibrary {
     static field images = {};
     static field flippedImages = {};
     static field textures = {};
-
-    constructor() { }
 
     static function get(path) {
         texture = ImageLibrary.textures.get(path);

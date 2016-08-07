@@ -14,12 +14,25 @@ namespace Crayon.ParseTree
         public int LocalScopeSize { get; set; }
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
+        public bool IsDefault { get; private set; }
+
+        public ConstructorDefinition(Executable owner) : base(null,owner )
+        {
+            this.IsDefault = true;
+
+            this.Code = new Executable[0];
+            this.ArgNames = new Token[0];
+            this.DefaultValues = new Expression[0];
+            this.BaseArgs = new Expression[0];
+            this.MaxArgCount = 0;
+            this.MinArgCount = 0;
+        }
 
         public ConstructorDefinition(Token constructorToken, IList<Token> args, IList<Expression> defaultValues, IList<Expression> baseArgs, IList<Executable> code, Token baseToken, Executable owner)
             : base(constructorToken, owner)
         {
+            this.IsDefault = false;
             this.ArgNames = args.ToArray();
-            //this.ArgVarIDs = new int[this.Args.Length];
             this.DefaultValues = defaultValues.ToArray();
             this.BaseArgs = baseArgs.ToArray();
             this.Code = code.ToArray();

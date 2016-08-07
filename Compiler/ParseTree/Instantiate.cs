@@ -51,6 +51,11 @@ namespace Crayon.ParseTree
                 throw new ParserException(this.FirstToken, "No class named '" + this.Name + "'");
             }
 
+            if (this.Class.StaticToken != null)
+            {
+                throw new ParserException(this.FirstToken, "Cannot instantiate a static class.");
+            }
+
             ConstructorDefinition cons = this.Class.Constructor;
             if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
             {

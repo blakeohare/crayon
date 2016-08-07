@@ -19,6 +19,9 @@ namespace Crayon.ParseTree
         public FieldDeclaration[] Fields { get; set; }
         public string Namespace { get; set; }
 
+        public Token StaticToken { get; set; }
+        public Token FinalToken { get; set; }
+        
         private bool memberIdsResolved = false;
 
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
@@ -32,7 +35,9 @@ namespace Crayon.ParseTree
             IList<Token> subclassTokens,
             IList<string> subclassNames,
             string ns,
-            Executable owner)
+            Executable owner,
+            Token staticToken,
+            Token finalToken)
             : base(classToken, owner)
         {
             this.ClassID = ClassDefinition.classIdAlloc++;
@@ -41,6 +46,13 @@ namespace Crayon.ParseTree
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
             this.BaseClassDeclarations = subclassNames.ToArray();
+            this.StaticToken = staticToken;
+            this.FinalToken = finalToken;
+
+            if (staticToken != null && this.BaseClassTokens.Length > 0)
+            {
+                throw new ParserException(staticToken, "Class cannot be static and have base classes or interfaces.");
+            }
         }
 
         internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
@@ -157,15 +169,30 @@ namespace Crayon.ParseTree
 
             for (int i = 0; i < this.Fields.Length; ++i)
             {
-                this.Fields[i] = (FieldDeclaration)this.Fields[i].Resolve(parser)[0];
+                FieldDeclaration field = (FieldDeclaration)this.Fields[i].Resolve(parser)[0];
+                this.Fields[i] = field;
+                if (this.StaticToken != null && !field.IsStaticField)
+                {
+                    throw new ParserException(field.FirstToken, "Cannot have a non-static field in a static class.");
+                }
             }
 
             for (int i = 0; i < this.Methods.Length; ++i)
             {
-                this.Methods[i] = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
+                FunctionDefinition funcDef = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
+                this.Methods[i] = funcDef;
+                if (this.StaticToken != null && !funcDef.IsStaticMethod)
+                {
+                    throw new ParserException(funcDef.FirstToken, "Cannot have a non-static method in a static class.");
+                }
             }
 
             this.Constructor.Resolve(parser);
+            if (this.StaticToken != null && !this.Constructor.IsDefault)
+            {
+                throw new ParserException(this.Constructor.FirstToken, "Static classes cannot have a non-static constructor.");
+            }
+
             if (this.StaticConstructor != null)
             {
                 this.StaticConstructor.Resolve(parser);
@@ -175,6 +202,20 @@ namespace Crayon.ParseTree
 
             bool hasABaseClass = this.BaseClass != null;
             bool callsBaseConstructor = this.Constructor.BaseToken != null;
+
+            if (hasABaseClass)
+            {
+                if (this.BaseClass.FinalToken != null)
+                {
+                    throw new ParserException(this.FirstToken, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as final.");
+                }
+
+                if (this.BaseClass.StaticToken != null)
+                {
+                    throw new ParserException(this.FirstToken, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as static.");
+                }
+            }
+            
             if (hasABaseClass && callsBaseConstructor)
             {
                 Expression[] defaultValues = this.BaseClass.Constructor.DefaultValues;
@@ -285,7 +326,7 @@ namespace Crayon.ParseTree
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
             if (this.Constructor == null)
             {
-                this.Constructor = new ConstructorDefinition(this.FirstToken, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, this);
+                this.Constructor = new ConstructorDefinition(this);
             }
 
             this.Constructor.ResolveNames(parser, lookup, imports);

@@ -14,6 +14,47 @@ namespace Crayon
 
             if (!simpleOnly)
             {
+                Token staticToken = null;
+                Token finalToken = null;
+                while (value == "static" || value == "final")
+                {
+                    if (value == "static" && staticToken == null)
+                    {
+                        staticToken = tokens.Pop();
+                        value = tokens.PeekValue();
+                    }
+                    if (value == "final" && finalToken == null)
+                    {
+                        finalToken = tokens.Pop();
+                        value = tokens.PeekValue();
+                    }
+                }
+
+                if (staticToken != null || finalToken != null)
+                {
+                    if (value != "class")
+                    {
+                        if (staticToken != null)
+                        {
+                            throw new ParserException(staticToken, "Only classes, methods, and fields may be marked as static");
+                        }
+                        else
+                        {
+                            throw new ParserException(finalToken, "Only classes may be marked as final.");
+                        }
+                    }
+
+                    if (staticToken != null && finalToken != null)
+                    {
+                        throw new ParserException(staticToken, "Classes cannot be both static and final.");
+                    }
+                }
+
+                if (!isRoot && (value == "function" || value == "class"))
+                {
+                    throw new ParserException(tokens.Peek(), (value == "function" ? "Function" : "Class") + " definition cannot be nested in another construct.");
+                }
+
                 if (parser.IsTranslateMode && value == "struct")
                 {
                     if (!isRoot)
@@ -22,11 +63,6 @@ namespace Crayon
                     }
 
                     return ParseStruct(tokens, owner);
-                }
-
-                if (!isRoot && (value == "function" || value == "class"))
-                {
-                    throw new ParserException(tokens.Peek(), (value == "function" ? "Function" : "Class") + " definition cannot be nested in another construct.");
                 }
 
                 if (value == "import")
@@ -100,7 +136,7 @@ namespace Crayon
                 {
                     case "namespace": return ParseNamespace(parser, tokens, owner);
                     case "function": return ParseFunction(parser, tokens, owner);
-                    case "class": return ParseClassDefinition(parser, tokens, owner);
+                    case "class": return ParseClassDefinition(parser, tokens, owner, staticToken, finalToken);
                     case "enum": return ParseEnumDefinition(parser, tokens, owner);
                     case "for": return ParseFor(parser, tokens, owner);
                     case "while": return ParseWhile(parser, tokens, owner);
@@ -231,7 +267,7 @@ namespace Crayon
             return new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, items, values, owner);
         }
 
-        private static Executable ParseClassDefinition(Parser parser, TokenStream tokens, Executable owner)
+        private static Executable ParseClassDefinition(Parser parser, TokenStream tokens, Executable owner, Token staticToken, Token finalToken)
         {
             Token classToken = tokens.PopExpected("class");
             Token classNameToken = tokens.Pop();
@@ -266,7 +302,9 @@ namespace Crayon
                 baseClassTokens,
                 baseClassStrings,
                 parser.CurrentNamespace,
-                owner);
+                owner,
+                staticToken,
+                finalToken);
 
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
