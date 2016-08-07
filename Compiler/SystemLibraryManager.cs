@@ -78,7 +78,7 @@ namespace Crayon
 #if RELEASE
                 if (crayonHome == null)
                 {
-                    throw new InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
+                    throw new System.InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
                 }
 #endif
 
