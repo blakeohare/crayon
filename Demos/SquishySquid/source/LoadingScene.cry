@@ -1,4 +1,4 @@
-import GFX;
+import Graphics;
 import ImageResources;
 import Math;
 
@@ -36,7 +36,7 @@ class LoadingScene : AbstractScene {
     }
 
     function render() {
-        GFX.Draw.fill(0, 0, 0);
+        Graphics.Draw.fill(0, 0, 0);
 
         dotCount = 16;
         mainRadius = 100 + this.postCompletionCounter * 8.0;
@@ -48,7 +48,7 @@ class LoadingScene : AbstractScene {
             x = Math.floor(Math.cos(theta) * mainRadius + WIDTH / 2);
             y = Math.floor(Math.sin(theta) * mainRadius + HEIGHT / 2);
             color = 1.0 * i / dotCount <= this.progress ? lightBlue : darkBlue;
-            GFX.Draw.ellipse(x - dotRadius, y - dotRadius, dotRadius * 2, dotRadius * 2, color[0], color[1], color[2]);
+            Graphics.Draw.ellipse(x - dotRadius, y - dotRadius, dotRadius * 2, dotRadius * 2, color[0], color[1], color[2]);
         }
     }
 }

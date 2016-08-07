@@ -1,0 +1,2 @@
+$_lib_graphicstext_loadFont: AwtTranslationHelper.loadFont([ARG:1], [ARG:2], [ARG:3])
+$_lib_graphicstext_pushCodePoints: AwtTranslationHelper.pushCodePoints([ARG:1], [ARG:2])

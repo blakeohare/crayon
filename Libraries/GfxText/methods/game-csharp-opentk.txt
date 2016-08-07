@@ -1,2 +1,0 @@
-$_lib_gfxtext_loadFont: OpenTkTranslationHelper.LoadFont([ARG:1], [ARG:2], [ARG:3])
-$_lib_gfxtext_pushCodePoints: OpenTkTranslationHelper.PushCodePoints([ARG:1], [ARG:2])

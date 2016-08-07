@@ -1,5 +1,0 @@
-if (%%%LIB_GFX_USES_TEXTURE_ATLAS%%%) {
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
-}

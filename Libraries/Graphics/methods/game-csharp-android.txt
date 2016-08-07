@@ -1,0 +1,8 @@
+$_lib_graphics_download_image: CsxaTranslationHelper.DownloadImage([ARG:1], [ARG:2])
+$_lib_graphics_gl_max_texture_size: CsxaTranslationHelper.GetMaxTextureSize()
+$_lib_graphics_image_imagette_flush_to_native_bitmap: CsxaTranslationHelper.ImagetteFlushToNativeBitmap([ARG:1])
+$_lib_graphics_image_native_bitmap_height: ((Android.Graphics.Bitmap)[ARG:1]).Height
+$_lib_graphics_image_native_bitmap_width: ((Android.Graphics.Bitmap)[ARG:1]).Width
+$_lib_graphics_image_sheet_get_manifest_file: ResourceReader.ReadTextResource("imageSheetManifest.txt")
+$_lib_graphics_read_tile_resource: ResourceReader.ReadImageFile("ImageSheets/" + [ARG:1] + ".png")
+$_lib_graphics_read_local_image_resource: ResourceReader.ReadImageFile([ARG:1])

@@ -1,4 +1,0 @@
-NAME: GfxText
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/gfxtext
-DESCRIPTION: Library to use in conjunction with GFX to render text to a game screen.

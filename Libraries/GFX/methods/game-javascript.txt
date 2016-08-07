@@ -1,2 +1,0 @@
-$_lib_gfx_flipTexture: C$drawing$flipImage([ARG:1], [ARG:2], [ARG:3])
-$_lib_gfx_render: C$drawing$rendererSetData([ARG:1], [ARG:2], [ARG:3], [ARG:4])

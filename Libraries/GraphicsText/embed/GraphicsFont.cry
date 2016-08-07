@@ -1,0 +1,119 @@
+namespace GraphicsText {
+	
+	class GraphicsFont {
+		field _name;
+		field _id = GraphicsFont._GLOBAL_ID++;
+		
+		static field _GLOBAL_ID = 0;
+		static field _lookup = {};
+		
+		constructor(name) {
+			this._name = name;
+		}
+		
+		static function loadResource(name) { return GraphicsFont._load(name, false); }
+		static function loadFromSystem(name) { return GraphicsFont._load(name, true); }
+		
+		static function _load(name, isSys) {
+			key = (isSys ? 'S' : 'R') + ':' + name;
+			font = GraphicsFont._lookup.get(key);
+			if (font == null) {
+				if ($$lib_graphicstext_loadFont(isSys, name, GraphicsFont._GLOBAL_ID)) {
+					font = new GraphicsFont(name);
+					GraphicsFont._lookup[key] = font;
+				} else {
+					Core.fail(
+						"Could not find " + 
+						(isSys ? "system font" : "font resource") + 
+						" named '" + name + "'");
+				}
+			}
+			return font;
+		}
+	}
+	
+	class GraphicsFontStyleBuilder {
+		
+		field _values = [
+			null,
+			12,
+			false,
+			false,
+			255,
+			255,
+			255,
+			255,
+			1.0,
+			1.0
+		];
+		
+		constructor() { }
+		
+		function _setValue(value, index) {
+			this._values[index] = value;
+			return this;
+		}
+		
+		function setFont(font) { return this._setValue(font, 0); }
+		function setSize(size) { return this._setValue(size, 1); }
+		function setItalic(enabled) { return this._setValue(enabled, 2); }
+		function setBold(enabled) { return this._setValue(enabled, 3); }
+		function setColor(r, g, b, a = 255) { 
+			this._setValue(r, 4);
+			this._setValue(g, 5);
+			this._setValue(b, 6);
+			return this._setValue(a, 7);
+		}
+		function setKerning(ratio) { return this._setValue(ratio, 8); }
+		function setLineHeight(ratio) { return this._setValue(ratio, 9); }
+		
+		function build() {
+			return new GraphicsFontStyle(this._values);
+		}
+	}
+	
+	class GraphicsFontStyle {
+		field _values;
+		
+		constructor(values) {
+			this._values = values.clone();
+		}
+		
+		function toBuilder() {
+			output = new GraphicsFontStyleBuilder();
+			output._values = this._values.clone();
+			return output;
+		}
+		
+		function makeSimple(font, size, r, g, b, a = 255) {
+			return new GraphicsFontStyleBuilder()
+				.setFont(font)
+				.setSize(size)
+				.setColor(r, g, b, a)
+				.build();
+		}
+	}
+	
+	class GraphicsTextRenderer {
+		static function renderText(text, style, x, y) {
+			if (Core.typeof(text) != Core.Type.STRING) text = '' + text;
+			
+			len = $$lib_graphicstext_pushStringCodePoints(Graphics.Draw._queue, text);
+			if (len > 0) {
+				values = style._values;
+				$$$('intQueueWrite16', Graphics.Draw._queue,
+					_DrawCommands.TEXT,
+					x,
+					y,
+					values[0]._id, // font ID
+					$$$('floor', values[1] * 1024), // font size 1024x
+					values[2] ? 1 : 0, // bold
+					values[3] ? 1 : 0, // italic
+					values[4], values[5], values[6], values[7], // RGBA
+					$$$('floor', values[8] * 1024), // kerning 1024x
+					$$$('floor', values[9] * 1024), // line height 1024x
+					len); // string length
+			}
+		}
+	}
+}

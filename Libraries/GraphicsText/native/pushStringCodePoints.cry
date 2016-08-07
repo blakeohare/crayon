@@ -1,0 +1,14 @@
+/*
+	arg 1: queue object with native data
+	arg 2: string to convert into code points. Push these onto the back of arg1.nativeData[4]
+	
+	output: number of code points pushed.
+*/
+import inline "FrameworkFunctions/2_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+intList1 = $_cast('List<int>', $_array_get(objArray1, 4));
+
+int1 = $_lib_graphicstext_pushCodePoints(intList1, $_cast('string', Value$arg2.internalValue));
+output = buildInteger(int1);

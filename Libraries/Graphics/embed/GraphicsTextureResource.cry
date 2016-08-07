@@ -1,0 +1,24 @@
+namespace Graphics {
+	class GraphicsTextureResource {
+		
+		static field database = {}; // mapping of ImageResource version keys to GraphicsTextureResource instances.
+	
+		/*
+			nativeData[0] -> boolean if this is GL-based
+			nativeData[1] -> boolean if this texture is loaded.
+			nativeData[2] -> texture ID for OpenGL-based platforms
+			nativeData[3] -> a _COPY_ of the actual native image resource
+				for OpenGL platforms this is a power-of-2 sized image
+				for non-GL platforms this is a simple image of just the image desired, which could be a single
+					member of an image sheet.
+			nativeData[4] -> width
+			nativeData[5] -> height
+		*/
+		
+		// set externally
+		field width;
+		field height;
+		
+		constructor() { }
+	}
+}

@@ -1,0 +1,4 @@
+NAME: GraphicsText
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/graphicstext
+DESCRIPTION: Library to use in conjunction with the Grahpics library to render text to a game screen.
