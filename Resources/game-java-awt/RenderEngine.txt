@@ -5,21 +5,24 @@ import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public final class RenderEngine {
 
 	private static int[] renderEvents = new int[0];
 	private static int renderEventsLength = 0;
 	private static Object[] renderImages = new Object[0];
+	private static ArrayList<Integer> textChars = null;
 
     private static AlphaComposite[] alphaComposite = new AlphaComposite[256];
 
     private RenderEngine() { }
 
-	public static void setRenderQueues(int[] renderEvents, int renderEventsLength, Object[] images) {
+	public static void setRenderQueues(int[] renderEvents, int renderEventsLength, Object[] images, ArrayList<Integer> textChars) {
 		RenderEngine.renderEvents = renderEvents;
 		RenderEngine.renderEventsLength = renderEventsLength;
 		RenderEngine.renderImages = images;
+		RenderEngine.textChars = textChars;
 	}
 	
     public static void render(Graphics2D g, int canvasWidth, int canvasHeight) {
@@ -30,20 +33,25 @@ public final class RenderEngine {
             }
         }
 
-        int x, y, sx, sy, width, height, sw, sh, tw, th, red, green, blue, alpha;
+        int x, y, sx, sy, width, height, sw, sh, tw, th, red, green, blue, alpha, j;
         int ax, ay, bx, by, cx, cy;
-		int mask;
+		int mask, fontId;
         int[] xs = new int[4];
         int[] ys = new int[4];
-        double angle;
+        double angle, fontSize;
+		boolean isBold, isItalic;
         java.awt.image.BufferedImage image;
+		java.awt.Font font;
 		AffineTransform at;
 		int[] events = RenderEngine.renderEvents;
 		int length = RenderEngine.renderEventsLength;
 		Object[] images = RenderEngine.renderImages;
 		Object[] textureNativeData;
 		Object[] textureResourceNativeData;
+		ArrayList<Integer> textCharacters = RenderEngine.textChars;
 		int imagesIndex = 0;
+		int textCharIndex = 0;
+		String s;
 
         for (int i = 0; i < renderEventsLength; i += 16) {
             switch (events[i]) {
@@ -187,6 +195,31 @@ public final class RenderEngine {
 							}
 						}
 					}
+					break;
+
+				case 7: // text
+					x = events[i | 1];
+					y = events[i | 2];
+					fontId = events[i | 3];
+					fontSize = events[i | 4] / 1024.0;
+					isBold = events[i | 5] == 1;
+					isItalic = events[i | 6] == 1;
+					font = AwtTranslationHelper.getFont(fontId, fontSize, isBold, isItalic);
+					red = events[i | 7];
+					green = events[i | 8];
+					blue = events[i | 9];
+					alpha = events[i | 10];
+					// TODO: kerning @ events[i | 11]
+					// TODO: line height @ events[i | 12]
+					length = events[i | 13];
+					s = "";
+					for (j = 0; j < length; ++j) {
+						s = s + Character.toString((char) (int) textCharacters.get(textCharIndex++));
+					}
+					
+                    g.setColor(new Color(red, green, blue, alpha));
+					g.setFont(font);
+					g.drawString(s, x, y);
 					break;
             }
         }

@@ -259,7 +259,6 @@ def _gfxEnsureCharsLoaded(events, textChars):
   textCharIndex = 0
   i = 0
   eventLength = len(events)
-  # TODO: batch these all at the end.
   while i < eventLength:
     if events[i] == 7:
       key = _gfxGetStyleKey(events, i)
