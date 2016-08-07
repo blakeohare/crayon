@@ -1,12 +1,12 @@
 <documentation>
-	<library name="GFX">
+	<library name="Graphics">
 		<description>
 			Drawing and image-loading functions designed to be used with the Game library.
 		</description>
-		<namespace name="GFX">
+		<namespace name="Graphics">
 			<enum name="ImageLoaderStatus">
 				<description>
-					Enum for various states an <link see="GFX.ImageLoader">ImageLoader</link> can be in.
+					Enum for various states an <link see="Graphics.ImageLoader">ImageLoader</link> can be in.
 				</description>
 				<value>LOADING</value>
 				<value>OK</value>
@@ -17,7 +17,7 @@
 			</enum>
 			<class name="ImageLoader">
 				<description>
-					Asynchronous image loader. Note that images declared as part of an image sheet must be loaded in the sheet first. See <link see="gfx.imagesheetloader">ImageSheetLoader</link>.
+					Asynchronous image loader. Note that images declared as part of an image sheet must be loaded in the sheet first. See <link see="graphics.imagesheetloader">ImageSheetLoader</link>.
 				</description>
 				<function static="true" name="fromResource">
 					<arg name="path" type="string">
@@ -58,19 +58,19 @@
 				</function>
 				<function name="getStatus">
 					<description>
-						Returns a <link see="GFX.ImageLoaderStatus">ImageLoaderStatus</link> enum value.
+						Returns a <link see="Graphics.ImageLoaderStatus">ImageLoaderStatus</link> enum value.
 					</description>
 				</function>
 				<function name="getImage">
 					<description>
-						Returns an <link see="GFX.Image">Image</link> instance. Throws an error if the image is not loaded yet. Use .isDone() and .getStatus() to be sure.
+						Returns an <link see="Graphics.Image">Image</link> instance. Throws an error if the image is not loaded yet. Use .isDone() and .getStatus() to be sure.
 					</description>
 				</function>
 			</class>
 			<class name="ImageSheetLoader">
 				<description>
 					An ImageSheetLoader loads all the resource images in an aggregated sheet in one swoop so they don't have to be loaded individually.
-					Once an image sheet finishes loading, individual image resources that are members of the sheet must still be loaded with an <link see="gfx.imageloader">ImageLoader</link>, however loading will occur synchronously and instantly.
+					Once an image sheet finishes loading, individual image resources that are members of the sheet must still be loaded with an <link see="graphics.imageloader">ImageLoader</link>, however loading will occur synchronously and instantly.
 				</description>
 				<function static="true" name="fromIds">
 					<arg name="idOrIds" type="string or list of strings">
@@ -92,7 +92,7 @@
 				</function>
 				<function name="getStatus">
 					<description>
-						Returns an <link see="gfx.imageloaderstatus">ImageLoaderStatus</link> value indicating the state of the loader.
+						Returns an <link see="graphics.imageloaderstatus">ImageLoaderStatus</link> value indicating the state of the loader.
 					</description>
 				</function>
 			</class>
