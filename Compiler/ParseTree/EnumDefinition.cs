@@ -21,6 +21,11 @@ namespace Crayon.ParseTree
             this.Items = items.ToArray();
             this.Values = values.ToArray();
             this.IntValue = new Dictionary<string, int>();
+
+            if (this.Items.Length == 0)
+            {
+                throw new ParserException(enumToken, "Enum definitions cannot be empty.");
+            }
         }
 
         internal override IList<Executable> Resolve(Parser parser)
