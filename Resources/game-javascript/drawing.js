@@ -9,6 +9,7 @@ C$drawing$HEXR = [];
 C$drawing$events = [];
 C$drawing$eventsLength = 0;
 C$drawing$images = [];
+C$drawing$textChars = [];
 
 for (var i = 0; i < 256; ++i) {
     var t = i.toString(16);
@@ -17,10 +18,11 @@ for (var i = 0; i < 256; ++i) {
     C$drawing$HEXR.push('#' + t);
 }
 
-C$drawing$rendererSetData = function (events, eventsLength, images) {
+C$drawing$rendererSetData = function (events, eventsLength, images, textChars) {
     C$drawing$events = events;
     C$drawing$eventsLength = eventsLength;
     C$drawing$images = images;
+    C$drawing$textChars = textChars;
     C$drawing$render();
 };
 
@@ -50,6 +52,9 @@ C$drawing$render = function () {
     var radiusY = 0;
     var path;
     var offset;
+    var font;
+    var text;
+    var textIndex = 0;
 
     for (var i = 0; i < C$drawing$eventsLength; i += 16) {
         switch (ev[i]) {
@@ -245,6 +250,39 @@ C$drawing$render = function () {
                     }
                 }
                 break;
+
+            case 7:
+                // text
+
+                x = ev[i | 1];
+                y = ev[i | 2];
+                font = C$drawing$fontsById[ev[i | 3]];
+                height = ev[i | 4] / 1024.0;
+                bold = ev[i | 5] == 1; 
+                italic = ev[i | 6] == 1;
+                r = ev[i | 7];
+                g = ev[i | 8];
+                b = ev[i | 9];
+                a = ev[i | 10];
+                // TODO: kerning ev[i | 11]
+                // TODO: line height ev[i | 12]
+                w = ev[i | 13];
+
+                text = '';
+                for (j = 0; j < w; ++j) {
+                    text += String.fromCharCode(C$drawing$textChars[textIndex++]);
+                }
+
+                C$game$ctx.font = (italic ? 'italic ' : '') + (bold ? 'bold ' : '') + height + 'px ' + font;
+                C$game$ctx.fillStyle = C$drawing$HEXR[r] + C$drawing$HEX[g] + C$drawing$HEX[b];
+                if (a != 255) {
+                    C$game$ctx.globalAlpha = a / 255;
+                    C$game$ctx.fillText(text, x, y);
+                    C$game$ctx.globalAlpha = 1;
+                } else {
+                    C$game$ctx.fillText(text, x, y);
+                }
+                break;
         }
 
     }
@@ -402,4 +440,44 @@ C$drawing$scaleImage = function (originalCanvas, width, height) {
     0, 0, originalCanvas.width, originalCanvas.height,
     0, 0, width, height);
   return output;
+};
+
+C$drawing$fontsById = [];
+
+C$drawing$loadFont = function (isSystem, name, id) {
+    while (C$drawing$fontsById.length <= id) C$drawing$fontsById.push(null);
+
+    if (isSystem) {
+        // TODO: assume it's available. 
+        // There's a horrificly hacky hack that's pretty simple to check if a font is availble that involves
+        // checking the width of a div element with some text such as "IO" with the following styles applied to it:
+        // font-family: "(the font)", sans-serif
+        // font-family: "(the font)", monospace
+        // If the sizes are the same, then it's available.
+        // But for now, assume it's always available.
+
+        C$drawing$fontsById[id] = name;
+        return true;
+    } else {
+        // TODO: this
+    }
+    return false;
+};
+
+C$drawing$pushCodePoints = function (list, string) {
+    var byteLength = string.length;
+    var logicalLength = 0;
+    var c;
+    for (var i = 0; i < byteLength; ++i) {
+        c = string.charCodeAt(i);
+        if (c < 128) {
+            list.push(c);
+        } else {
+            // TODO: decode UTF-8 and update i accordingly
+            list.push(c);
+        }
+        ++logicalLength;
+    }
+
+    return logicalLength;
 };
