@@ -71,6 +71,7 @@ struct StackFrame {
 	@type('Value') objectContext,
 	@type('int') valueStackPopSize, // size of the value stack when this frame is popped.
 	@type('int') markClassAsInitialized,
+	@type('int') depth, // stack depth for infinite recursion detection
 }
 
 struct InterpreterResult {

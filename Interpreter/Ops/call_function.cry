@@ -406,7 +406,8 @@ if (bool1) {
 			returnValueUsed,
 			value, // the value of the 'this' keyword
 			valueStackSize,
-			0); // for static constructor use only
+			0, // for static constructor use only
+			StackFrame$stack.depth + 1); 
 
 		// now that we're in the new stack frame, flush out all the passed args to the local stack since their
 		// ID's are allocated with args first.
@@ -439,10 +440,15 @@ if (bool1) {
 					false, // return value used
 					value, // value of 'this' keyword
 					valueStackSize, // should not change
-					0); // for static constructors only
+					0, // for static constructors only
+					StackFrame$stack.depth + 1);
 			}
 
 			pc = StackFrame$stack.pc;
+		}
+
+		if (StackFrame$stack.depth > 1000) {
+			return killExecution(stack, pc, "Stack overflow.");
 		}
 	}
 }

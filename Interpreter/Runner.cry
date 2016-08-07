@@ -39,7 +39,8 @@ function @type('int') main() {
 		false, // returnValueUsed
 		null, // object context
 		0, // valueStackSize
-		0); // static initialization class ID marker upon completion (not applicable here)
+		0, // static initialization class ID marker upon completion (not applicable here)
+		1); // stack depth
 
 	@type('ExecutionContext') executionContext = new ExecutionContext(
 		0, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
@@ -147,7 +148,8 @@ function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, 
 		false, // returnValueUsed
 		null, // object context
 		0, // valueStackSize
-		0); // static initialization class ID marker upon completion (not applicable here)
+		0, // static initialization class ID marker upon completion (not applicable here)
+		1); // stack depth
 
 	@type('ExecutionContext') executionContext = new ExecutionContext(
 		newId, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
