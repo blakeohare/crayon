@@ -15,6 +15,7 @@ namespace Crayon.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
+        public Annotation PrivateAnnotation { get; set; }
 
         public ConstructorDefinition(Executable owner) : base(null,owner )
         {

@@ -55,8 +55,24 @@ namespace Crayon.ParseTree
             {
                 throw new ParserException(this.FirstToken, "Cannot instantiate a static class.");
             }
-
+            
             ConstructorDefinition cons = this.Class.Constructor;
+
+            if (cons.PrivateAnnotation != null)
+            {
+                string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
+                if (cons.PrivateAnnotation.Args.Length > 0)
+                {
+                    StringConstant stringMessage = cons.PrivateAnnotation.Args[0] as StringConstant;
+                    if (stringMessage != null)
+                    {
+                        errorMessage += " " + stringMessage.Value.Trim();
+                    }
+                }
+
+                throw new ParserException(this.FirstToken, errorMessage);
+            }
+
             if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
             {
                 string message = "This constructor has the wrong number of arguments. ";

@@ -11,7 +11,7 @@ namespace Crayon
         public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot, Executable owner)
         {
             string value = tokens.PeekValue();
-
+            
             if (!simpleOnly)
             {
                 Token staticToken = null;
@@ -314,6 +314,20 @@ namespace Crayon
 
             while (!tokens.PopIfPresent("}"))
             {
+                Dictionary<string, List<Annotation>> annotations = null; 
+
+                while (tokens.IsNext("@"))
+                {
+                    annotations = annotations ?? new Dictionary<string, List<Annotation>>();
+                    Annotation annotation = AnnotationParser.ParseAnnotation(tokens);
+                    if (!annotations.ContainsKey(annotation.Type))
+                    {
+                        annotations[annotation.Type] = new List<Annotation>();
+                    }
+
+                    annotations[annotation.Type].Add(annotation);
+                }
+
                 if (tokens.IsNext("function") || tokens.AreNext("static", "function"))
                 {
                     methods.Add((FunctionDefinition)ExecutableParser.ParseFunction(parser, tokens, cd));
@@ -326,6 +340,12 @@ namespace Crayon
                     }
 
                     constructorDef = (ConstructorDefinition)ExecutableParser.ParseConstructor(parser, tokens, cd);
+
+                    if (annotations != null && annotations.ContainsKey("private"))
+                    {
+                        constructorDef.PrivateAnnotation = annotations["private"][0];
+                        annotations["private"].RemoveAt(0);
+                    }
                 }
                 else if (tokens.AreNext("static", "constructor"))
                 {
@@ -344,6 +364,17 @@ namespace Crayon
                 else
                 {
                     tokens.PopExpected("}");
+                }
+
+                if (annotations != null)
+                {
+                    foreach (List<Annotation> annotationsOfType in annotations.Values)
+                    {
+                        if (annotationsOfType.Count > 0)
+                        {
+                            throw new ParserException(annotationsOfType[0].FirstToken, "Unused or extra annotation.");
+                        }
+                    }
                 }
             }
 
