@@ -408,5 +408,17 @@ namespace %%%PROJECT_ID%%%
             g.Flush();
             g.Dispose();
         }
+
+        public static bool LoadFont(bool isSystem, string name, int fontId)
+        {
+            // No-op for now.
+            return true;
+        }
+
+        public static int PushCodePoints(List<int> codePoints, string value)
+        {
+            // No-op for now.
+            return 0;
+        }
 	}
 }
