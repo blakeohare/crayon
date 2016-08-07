@@ -35,11 +35,17 @@ namespace Crayon.ParseTree
                     enumDef.Resolve(parser);
                 }
 
-                if (step == "length")
+                switch (step)
                 {
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+                    case "length":
+                        return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+                    case "max":
+                        return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.FunctionOrClassOwner);
+                    case "values":
+                        return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.FunctionOrClassOwner);
                 }
-                else if (enumDef.IntValue.ContainsKey(step))
+
+                if (enumDef.IntValue.ContainsKey(step))
                 {
                     return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.FunctionOrClassOwner);
                 }

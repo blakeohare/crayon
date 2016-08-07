@@ -67,6 +67,26 @@ namespace Crayon.ParseTree
                 }
             }
 
+            if (this.Root is SpecialEntity)
+            {
+                if (this.Root is SpecialEntity.EnumMaxFunction)
+                {
+                    int max = ((SpecialEntity.EnumMaxFunction)this.Root).GetMax();
+                    return new IntegerConstant(this.Root.FirstToken, max, this.FunctionOrClassOwner);
+                }
+
+                if (this.Root is SpecialEntity.EnumValuesFunction)
+                {
+                    int[] rawValues = ((SpecialEntity.EnumValuesFunction)this.Root).GetValues();
+                    List<Expression> values = new List<Expression>();
+                    foreach (int rawValue in rawValues)
+                    {
+                        values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.FunctionOrClassOwner));
+                    }
+                    return new ListDefinition(this.FirstToken, values, this.FunctionOrClassOwner);
+                }
+            }
+
             return this;
         }
 
