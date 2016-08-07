@@ -17,8 +17,11 @@ switch (Value$value.type) {
 			if (functionId == -1) {
 				output = $_array_get(ObjectInstance$objInstance1.members, int1);
 			} else {
-				// This is pretty straightforward.
-				return killExecution(stack, pc, "TODO: method pointers.");
+				output = new Value(Types.FUNCTION, new FunctionPointer(
+					FunctionPointerType.METHOD,
+					value, // object instance
+					ObjectInstance$objInstance1.classId,
+					functionId));
 			}
 		} else {
 			string1 = "Instance"; // TODO: use class name.
