@@ -547,14 +547,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslateParseJson(List<string> output, Expression rawString)
-        {
-            output.Add("C$common$parseJson(");
-            this.Translator.TranslateExpression(output, rawString);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("Math.random()");

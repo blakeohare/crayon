@@ -469,14 +469,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-
-        protected override void TranslateParseJson(List<string> output, Expression rawString)
-        {
-            output.Add("JsonParser.ParseJsonIntoValue(");
-            this.Translator.TranslateExpression(output, rawString);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.GetRandomNumber()");

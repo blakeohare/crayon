@@ -477,13 +477,6 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
 
-        protected override void TranslateParseJson(List<string> output, Expression rawString)
-        {
-            output.Add("pth_parse_json(");
-            this.PhpTranslator.TranslateExpression(output, rawString);
-            output.Add(")");
-        }
-
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("pth_random_float()");

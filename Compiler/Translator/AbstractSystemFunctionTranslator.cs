@@ -46,9 +46,6 @@ namespace Crayon.Translator
                 case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
                 case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
 
-                // TODO: to the JSON library
-                case "_parse_json": VerifyCount(functionCall, 1); TranslateParseJson(output, args[0]); break;
-
                 // TODO: redo this too. preferably when you refactor the HTTP stuff that depends on this
                 case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
 
@@ -227,7 +224,6 @@ namespace Crayon.Translator
         protected abstract void TranslateOrd(List<string> output, Expression character);
         protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
-        protected abstract void TranslateParseJson(List<string> output, Expression rawString);
         protected abstract void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix);
         protected abstract void TranslatePrint(List<string> output, Expression expression, bool isErr);
         protected abstract void TranslateRandomFloat(List<string> output);
