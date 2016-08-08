@@ -21,7 +21,8 @@ namespace Crayon.Translator.Java
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             string package = projectId.ToLowerInvariant();
@@ -50,7 +51,6 @@ namespace Crayon.Translator.Java
             foreach (string basicFile in new string[] {
                 "AsyncMessageQueue",
                 "TranslationHelper",
-                "JsonParser"
             })
             {
                 output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
@@ -178,38 +178,7 @@ namespace Crayon.Translator.Java
                     TextContent = fileContents
                 };
             }
-
-            // TODO: move this all to the JSON library somehow
-            foreach (string jsonFile in new string[]
-            {
-                "CDL.java",
-                "Cookie.java",
-                "CookieList.java",
-                "HTTP.java",
-                "HTTPTokener.java",
-                "JSONArray.java",
-                "JSONException.java",
-                "JSONML.java",
-                "JSONObject.java",
-                "JSONPointer.java",
-                "JSONPointerException.java",
-                "JSONString.java",
-                "JSONStringer.java",
-                "JSONTokener.java",
-                "JSONWriter.java",
-                "Property.java",
-                "README",
-                "XML.java",
-                "XMLTokener.java",
-            })
-            {
-                output["src/org/json/" + jsonFile] = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = Util.ReadResourceFileInternally("java-common/org-json/" + jsonFile),
-                };
-            }
-
+            
             foreach (string tileFile in resourceDatabase.ImageSheetFiles.Keys)
             {
                 output["resources/images/" + tileFile] = resourceDatabase.ImageSheetFiles[tileFile];
@@ -218,6 +187,17 @@ namespace Crayon.Translator.Java
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
                 output["resources/text/" + textFile.CanonicalFileName] = textFile;
+            }
+
+            Dictionary<string, string> libraryResourceFiles = this.LibraryManager.CopiedFiles;
+            foreach (string file in libraryResourceFiles.Keys)
+            {
+                string content = libraryResourceFiles[file];
+                output[file.Replace("%PROJECT_ID%", projectId.ToLower())] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = Constants.DoReplacements(content, replacements)
+                };
             }
 
             output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;

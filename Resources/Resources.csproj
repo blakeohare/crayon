@@ -56,27 +56,6 @@
     <EmbeddedResource Include="java-common\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-common\org-json\CDL.java" />
-    <EmbeddedResource Include="java-common\org-json\Cookie.java" />
-    <EmbeddedResource Include="java-common\org-json\CookieList.java" />
-    <EmbeddedResource Include="java-common\org-json\HTTP.java" />
-    <EmbeddedResource Include="java-common\org-json\HTTPTokener.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONArray.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONException.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONML.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONObject.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONPointer.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONPointerException.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONString.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONStringer.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONTokener.java" />
-    <EmbeddedResource Include="java-common\org-json\JSONWriter.java" />
-    <EmbeddedResource Include="java-common\org-json\Property.java" />
-    <EmbeddedResource Include="java-common\org-json\README" />
-    <EmbeddedResource Include="java-common\org-json\XML.java" />
-    <EmbeddedResource Include="java-common\org-json\XMLTokener.java" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="game-java-android\AndroidTranslationHelper.txt" />
     <EmbeddedResource Include="game-java-android\boilerplate\AndroidIml.txt" />
     <EmbeddedResource Include="game-java-android\boilerplate\AndroidManifestXml.txt" />
@@ -131,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="csharp-common\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="csharp-common\JsonParser.txt" />
     <EmbeddedResource Include="csharp-common\TranslationHelper.txt" />
     <EmbeddedResource Include="csharp-common\ResourceReader.txt" />
   </ItemGroup>

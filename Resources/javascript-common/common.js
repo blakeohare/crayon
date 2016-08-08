@@ -53,43 +53,7 @@ C$common$floatParseHelper = function(floatOut, text) {
     floatOut[1] = output;
 };
 
-C$common$parseJson = function(rawText) {
-    try {
-        return C$common$convertJsonThing(JSON.parse(rawText));
-    } catch (e) {
-        return null;
-    }
-};
-
-C$common$convertJsonThing = function(thing) {
-    var type = C$common$typeClassify(thing);
-    switch (type) {
-        case 'null': return v_VALUE_NULL;
-        case 'bool': return thing ? v_VALUE_TRUE : v_VALUE_FALSE;
-        case 'string': return v_buildString(thing);
-        case 'list':
-            var list = [];
-            for (i = 0; i < thing.length; ++i) {
-                list.push(C$common$convertJsonThing(thing[i]));
-            }
-            return v_buildListByWrappingInput(list);
-        case 'dict':
-            var keys = [];
-            var values = [];
-            for (var rawKey in thing) {
-                keys.push(rawKey);
-                values.push(C$common$convertJsonThing(thing[rawKey]));
-            }
-            return v_buildDictionary(keys, values);
-        case 'int':
-            return v_buildInteger(thing);
-        case 'float':
-            return v_buildFloat(thing);
-        default:
-            return v_VALUE_NULL;
-    }
-};
-
+// currently only used by the JSON library but potentially useful elsewhere
 C$common$typeClassify = function(t) {
     if (t === null) return 'null';
     if (t === true || t === false) return 'bool';

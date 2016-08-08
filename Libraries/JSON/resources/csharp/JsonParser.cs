@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace %%%PROJECT_ID%%%
+namespace %%%PROJECT_ID%%%.Library.Json
 {
 	internal static class JsonParser
 	{

@@ -174,41 +174,6 @@ def _pygame_end_of_frame():
   else:
     _global_vars['pumped'] = False
 
-def _parse_json(raw):
-  import json
-  try:
-    return _parse_json_thing(json.loads(raw))
-  except:
-    return None
-
-def _parse_json_thing(item):
-  if item == None: return v_VALUE_NULL
-  if item == "": return v_VALUE_EMPTY_STRING
-  t = str(type(item))
-  if "'bool'" in t:
-    if item == True:
-      return VALUE_TRUE
-    return VALUE_FALSE
-  if "'int'" in t or "'long'" in t:
-    return v_buildInteger(item)
-  if "'float'" in t:
-    return [%%%TYPE_ID_FLOAT%%%, item];
-  if "'string'" in t or "'unicode'" in t:
-    return [%%%TYPE_ID_STRING%%%, str(item)]
-  if "'list'" in t:
-    output = []
-    for o in item:
-      output.append(_parse_json_thing(o))
-    return [%%%TYPE_ID_LIST%%%, output]
-  if "'dict'" in t:
-    keys = []
-    values = []
-    for key in item.keys():
-      keys.append(key)
-      values.append(_parse_json_thing(item[key]))
-    return v_buildDictionary(keys, values);
-  return v_VALUE_NULL;
-
 def io_helper_check_path(path, isDirCheck, checkCase):
   # TODO: check case.
   if os.path.exists(path):
@@ -362,3 +327,5 @@ def _always_true(): return True
 def _always_false(): return False
 
 program_data = [None]
+
+%%%LIBRARY_EMBED_CODE%%%

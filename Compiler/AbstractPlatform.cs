@@ -11,6 +11,7 @@ namespace Crayon
         public AbstractTranslator Translator { get; private set; }
         public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
         public InterpreterCompiler InterpreterCompiler { get; private set; }
+        public SystemLibraryManager LibraryManager { get; private set; }
         public virtual bool TrimBom { get { return false; } }
 
         public PlatformId PlatformId { get; private set; }
@@ -77,8 +78,8 @@ namespace Crayon
             
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode);
-
-            this.LibraryBigSwitchStatement = userCodeParser.SystemLibraryManager.GetLibrarySwitchStatement(this);
+            this.LibraryManager = userCodeParser.SystemLibraryManager;
+            this.LibraryBigSwitchStatement = this.LibraryManager.GetLibrarySwitchStatement(this);
             this.InterpreterCompiler = new InterpreterCompiler(this, userCodeParser.SystemLibraryManager);
             return buffer;
         }
@@ -202,7 +203,8 @@ namespace Crayon
                 executablesByFile,
                 structs,
                 inputFolder,
-                resourceDatabase);
+                resourceDatabase,
+                this.LibraryManager);
 
             if (buildContext.ReadableByteCode)
             {
@@ -272,7 +274,8 @@ namespace Crayon
             Dictionary<string, Executable[]> finalCode,
             ICollection<StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase);
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager);
 
         public virtual string TranslateType(string original)
         {

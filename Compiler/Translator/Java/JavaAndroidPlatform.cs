@@ -19,7 +19,8 @@ namespace Crayon.Translator.Java
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             string package = "com." + projectId.ToLowerInvariant() + ".app";

@@ -227,6 +227,104 @@ namespace Crayon
             throw new InvalidOperationException("No native translation provided for " + functionName);
         }
 
+
+        public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
+        {
+            string resourceManifest = this.ReadFile("resources/resource-manifest.txt", true).Trim();
+            if (resourceManifest.Length > 0)
+            {
+                string mode = "inactive"; // inactive | pending | active
+
+                foreach (string lineRaw in resourceManifest.Split('\n'))
+                {
+                    string[] parts = lineRaw.Trim().Split(':');
+                    if (parts[0].StartsWith("#")) continue; // comment 
+
+                    string command = parts[0].ToUpper().Trim();
+                    if (command.Length > 0)
+                    {
+                        switch (mode)
+                        {
+                            case "active":
+                                switch (command)
+                                {
+                                    case "COPYFILES":
+                                        this.LibraryResourceCopyFiles(parts[1].Trim(), parts[2].Trim(), filesToCopy);
+                                        break;
+
+                                    case "EMBED":
+                                        this.LibraryResourceEmbedFiles(parts[1].Trim(), contentToEmbed);
+                                        break;
+
+                                    case "END":
+                                        mode = "inactive";
+                                        break;
+                                }
+                                break;
+
+                            case "inactive":
+                                if (command == "BEGIN")
+                                {
+                                    mode = "pending";
+                                }
+                                break;
+
+                            case "pending":
+                                switch (command)
+                                {
+                                    case "APPLICABLE-TO":
+                                        if (platformId == parts[1].Trim())
+                                        {
+                                            mode = "active";
+                                        }
+                                        break;
+                                    case "END":
+                                        mode = "inactive";
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LibraryResourceCopyFiles(string sourceDirectory, string targetPathTemplate, Dictionary<string, string> copyOutput)
+        {
+            foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
+            {
+                string content = this.ReadFile("resources/" + sourceDirectory + "/" + file, false);
+                string targetPath = targetPathTemplate.Replace("%FILE%", file);
+                copyOutput.Add(targetPath, content);
+            }
+        }
+
+        private void LibraryResourceEmbedFiles(string sourceDirectory, List<string> embedTarget)
+        {
+            foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
+            {
+                embedTarget.Add(this.ReadFile("resources/" + sourceDirectory + "/" + file, false));
+            }
+        }
+
+        private HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] { ".ds_store", "thumbs.db" });
+        private string[] ListDirectory(string pathRelativeToLibraryRoot)
+        {
+            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
+            List<string> output = new List<string>();
+            if (FileUtil.DirectoryExists(fullPath))
+            {
+                foreach (string file in FileUtil.DirectoryListFileNames(fullPath))
+                {
+                    if (!IGNORABLE_FILES.Contains(file.ToLower()))
+                    {
+                        output.Add(file);
+                    }
+                }
+            }
+            return output.ToArray();
+        }
+
         private string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);

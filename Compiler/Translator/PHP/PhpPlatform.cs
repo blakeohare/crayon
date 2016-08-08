@@ -31,7 +31,8 @@ namespace Crayon.Translator.Php
             Dictionary<string, Executable[]> finalCode,
             ICollection<StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             FileOutput byteCodeFile = this.GenerateByteCodeFile(resourceDatabase.ByteCodeRawData);

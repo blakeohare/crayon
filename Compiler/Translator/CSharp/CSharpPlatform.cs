@@ -53,7 +53,8 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager)
         {
             Dictionary<string, string> replacements = new Dictionary<string, string>() {
                 { "PROJECT_GUID", GetGuid(buildContext.GuidSeed, "@@project").ToUpper() },
@@ -161,7 +162,6 @@ namespace Crayon.Translator.CSharp
 
             // Copy templated files over with proper replacements
             foreach (string templateFile in new string[] {
-                "JsonParser",
                 "TranslationHelper",
                 "AsyncMessageQueue",
             })
@@ -177,6 +177,17 @@ namespace Crayon.Translator.CSharp
 
             // Add files for specific C# platform
             this.PlatformSpecificFiles(projectId, output, replacements, resourceDatabase);
+
+            Dictionary<string, string> libraryResourceFiles = this.LibraryManager.CopiedFiles;
+            foreach (string file in libraryResourceFiles.Keys)
+            {
+                string content = libraryResourceFiles[file];
+                output[file.Replace("%PROJECT_ID%", projectId)] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = Constants.DoReplacements(content, replacements)
+                };
+            }
 
             return output;
         }

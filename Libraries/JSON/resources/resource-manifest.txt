@@ -1,0 +1,28 @@
+BEGIN
+APPLICABLE-TO: game-java-awt
+COPYFILES: java-org-json: src/org/json/%FILE%
+COPYFILES: java: src/%PROJECT_ID%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-java-android
+COPYFILES: java-org-json: app/src/main/java/org/json/%FILE%
+COPYFILES: java: app/src/main/java/%PROJECT_ID%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-csharp-android
+APPLICABLE-TO: game-csharp-ios
+APPLICABLE-TO: game-csharp-opentk
+COPYFILES: csharp: %PROJECT_ID%/Libraries/Json/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBEDCODE: python
+END
+
+BEGIN
+APPLICABLE-TO: game-javascript
+EMBEDCODE: javascript
+END

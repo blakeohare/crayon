@@ -29,7 +29,8 @@ namespace Crayon.Translator.JavaScript
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
             string fileCopySourceRoot,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            SystemLibraryManager libraryManager)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
@@ -116,7 +117,13 @@ namespace Crayon.Translator.JavaScript
             output["resources.js"] = new FileOutput()
             {
                 TextContent = BuildTextResourcesCodeFile(textResources),
-                Type = FileOutputType.Text
+                Type = FileOutputType.Text,
+            };
+
+            output["libraries.js"] = new FileOutput()
+            {
+                TextContent = BuildLibrariesCodeFile(libraryManager),
+                Type = FileOutputType.Text,
             };
 
             output["index.html"] = new FileOutput()
@@ -137,6 +144,11 @@ namespace Crayon.Translator.JavaScript
             }
 
             return output;
+        }
+
+        private string BuildLibrariesCodeFile(SystemLibraryManager libraryManager)
+        {
+            return "library code goes here.";
         }
 
         private string BuildTextResourcesCodeFile(Dictionary<string, string> files)

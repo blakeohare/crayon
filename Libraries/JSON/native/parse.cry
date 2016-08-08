@@ -11,7 +11,7 @@ if (Value$arg1.type != Types.STRING) {
 	string1 = $_cast('string', Value$arg1.internalValue);
 	bool1 = true; // is error
 	if ($_string_length(string1) > 0) {
-		output = $_parse_json(string1);
+		output = $_lib_json_parse(string1);
 		if (output != null) {
 			bool1 = false;
 		}

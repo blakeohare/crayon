@@ -60,6 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Crayon\*.cs" />
     <Compile Include="*.cs" />
+    <Compile Include="Libraries\*\*.cs" />
   </ItemGroup>
   <ItemGroup>
 %%%EMBEDDED_RESOURCES%%%
