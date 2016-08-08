@@ -92,7 +92,7 @@ namespace Crayon.ParseTree
                 if (step == "join")
                 {
                     throw new ParserException(this.StepToken,
-                        "There is no join method on strings, you silly Python user. Did you mean to do list.join(string) instead?");
+                        "There is no join method on strings. Did you mean to do list.join(string) instead?");
                 }
                 else if (step == "size")
                 {
