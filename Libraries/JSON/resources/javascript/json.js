@@ -1,7 +1,7 @@
 
 LIB$json$parseJson = function(rawText) {
     try {
-        return C$common$convertJsonThing(JSON.parse(rawText));
+        return LIB$json$convertJsonThing(window.JSON.parse(rawText));
     } catch (e) {
         return null;
     }

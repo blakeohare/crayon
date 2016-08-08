@@ -95,6 +95,13 @@ namespace Crayon.Translator.JavaScript
                 TextContent = codeJsText
             };
 
+
+            output["libraries.js"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = libraryManager.EmbeddedContent,
+            };
+            
             Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
@@ -119,13 +126,7 @@ namespace Crayon.Translator.JavaScript
                 TextContent = BuildTextResourcesCodeFile(textResources),
                 Type = FileOutputType.Text,
             };
-
-            output["libraries.js"] = new FileOutput()
-            {
-                TextContent = BuildLibrariesCodeFile(libraryManager),
-                Type = FileOutputType.Text,
-            };
-
+            
             output["index.html"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -145,12 +146,7 @@ namespace Crayon.Translator.JavaScript
 
             return output;
         }
-
-        private string BuildLibrariesCodeFile(SystemLibraryManager libraryManager)
-        {
-            return "library code goes here.";
-        }
-
+        
         private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
         {
             List<string> output = new List<string>();
