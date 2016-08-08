@@ -53,22 +53,12 @@ namespace Crayon.ParseTree
         {
             throw new NotImplementedException();
         }
-
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            // Not called in this way.
+            throw new NotImplementedException();
+        }
     }
 }

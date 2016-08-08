@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -37,28 +38,28 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            foreach (Executable ex in this.Code)
-            {
-                ex.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
+            this.Condition.PerformLocalIdAllocation(varIds, phase);
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            for (int i = 0; i < this.Code.Length; ++i)
+            if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
             {
-                this.Code[i].CalculateLocalIdPass(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.Condition.SetLocalIdPass(varIds);
-            for (int i = 0; i < this.Code.Length; ++i)
+            else
             {
-                this.Code[i].SetLocalIdPass(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER);
+                }
+
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                }
             }
         }
 

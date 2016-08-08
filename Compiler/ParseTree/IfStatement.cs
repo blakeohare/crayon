@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -56,31 +57,7 @@ namespace Crayon.ParseTree
                     this.FalseCode[this.FalseCode.Length - 1].IsTerminator;
             }
         }
-
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.TrueCode.Concat<Executable>(this.FalseCode))
-            {
-                ex.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
-            {
-                ex.CalculateLocalIdPass(varIds);
-            }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.Condition.SetLocalIdPass(varIds);
-            foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
-            {
-                ex.SetLocalIdPass(varIds);
-            }
-        }
+        
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
@@ -96,6 +73,46 @@ namespace Crayon.ParseTree
             foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
             {
                 ex.GetAllVariablesReferenced(vars);
+            }
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            this.Condition.PerformLocalIdAllocation(varIds, phase);
+            if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.TrueCode.Length == 0 || this.FalseCode.Length == 0)
+            {
+                foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
+            else
+            {
+                // branch the variable ID allocator. 
+                VariableIdAllocator trueVars = varIds.Clone();
+                VariableIdAllocator falseVars = varIds.Clone();
+
+                // Go through and register and allocate all variables.
+                // The allocated ID's are going to be garbage, but this enforces that they must be
+                // declared before being used.
+                foreach (Executable ex in this.TrueCode)
+                {
+                    ex.PerformLocalIdAllocation(trueVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                }
+                foreach (Executable ex in this.FalseCode)
+                {
+                    ex.PerformLocalIdAllocation(falseVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                }
+
+                // Now that the code is as correct as we can verify, merge the branches back together
+                // creating a new set of variable ID's.
+                varIds.MergeClonesBack(trueVars, falseVars);
+
+                // Go back through and do another allocation pass and assign the correct variable ID's.
+                foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                }
             }
         }
     }

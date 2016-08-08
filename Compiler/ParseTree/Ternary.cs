@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -41,11 +42,11 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Condition.SetLocalIdPass(varIds);
-            this.TrueValue.SetLocalIdPass(varIds);
-            this.FalseValue.SetLocalIdPass(varIds);
+            this.Condition.PerformLocalIdAllocation(varIds, phase);
+            this.TrueValue.PerformLocalIdAllocation(varIds, phase);
+            this.FalseValue.PerformLocalIdAllocation(varIds, phase);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)

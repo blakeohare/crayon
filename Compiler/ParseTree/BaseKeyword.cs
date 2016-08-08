@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -15,14 +16,14 @@ namespace Crayon.ParseTree
         {
             throw new ParserException(this.FirstToken, "'base' keyword can only be used as part of a method reference.");
         }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-
+        
         internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
         {
             return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -17,7 +18,7 @@ namespace Crayon.ParseTree
         public bool IsDefault { get; private set; }
         public Annotation PrivateAnnotation { get; set; }
 
-        public ConstructorDefinition(Executable owner) : base(null,owner )
+        public ConstructorDefinition(Executable owner) : base(null, owner)
         {
             this.IsDefault = true;
 
@@ -83,28 +84,6 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            foreach (Token argToken in this.ArgNames)
-            {
-                varIds.RegisterVariable(argToken.Value);
-            }
-            foreach (Executable line in this.Code)
-            {
-                line.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a constructor.
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a constructor.
-        }
-
         internal void AllocateLocalScopeIds()
         {
             VariableIdAllocator variableIds = new VariableIdAllocator();
@@ -113,24 +92,21 @@ namespace Crayon.ParseTree
                 variableIds.RegisterVariable(this.ArgNames[i].Value);
             }
 
-            foreach (Executable ex in this.Code)
-            {
-                ex.CalculateLocalIdPass(variableIds);
-            }
+            this.PerformLocalIdAllocation(variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
             this.LocalScopeSize = variableIds.Size;
+        }
 
-            if (this.BaseArgs != null)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            foreach (Expression arg in this.BaseArgs)
             {
-                foreach (Expression ex in this.BaseArgs)
-                {
-                    ex.SetLocalIdPass(variableIds);
-                }
+                arg.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.SetLocalIdPass(variableIds);
+                ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
         }
 

@@ -199,17 +199,6 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            foreach (Chunk chunk in this.Chunks)
-            {
-                foreach (Executable ex in chunk.Code)
-                {
-                    ex.GenerateGlobalNameIdManifest(varIds);
-                }
-            }
-        }
-
         internal IList<Executable> CompilationResolution(Parser parser)
         {
             Chunk lastChunk = this.chunks[this.chunks.Length - 1];
@@ -288,27 +277,43 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            for (int i = 0; i < this.Chunks.Length; ++i)
+            this.Condition.PerformLocalIdAllocation(varIds, phase);
+
+            if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.chunks.Length <= 1)
             {
-                Chunk chunk = this.Chunks[i];
-                for (int j = 0; j < chunk.Code.Length; ++j)
+                foreach (Chunk chunk in this.chunks)
                 {
-                    chunk.Code[j].CalculateLocalIdPass(varIds);
+                    foreach (Executable ex in chunk.Code)
+                    {
+                        ex.PerformLocalIdAllocation(varIds, phase);
+                    }
                 }
             }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.Condition.SetLocalIdPass(varIds);
-            for (int i = 0; i < this.chunks.Length; ++i)
+            else
             {
-                Chunk chunk = this.Chunks[i];
-                for (int j = 0; j < chunk.Code.Length; ++j)
+                VariableIdAllocator[] varIdBranches = new VariableIdAllocator[this.chunks.Length];
+                for (int i = 0; i < this.chunks.Length; ++i)
                 {
-                    chunk.Code[j].SetLocalIdPass(varIds);
+                    Chunk chunk = this.chunks[i];
+                    varIdBranches[i] = varIds.Clone();
+                    foreach (Executable ex in chunk.Code)
+                    {
+                        ex.PerformLocalIdAllocation(varIdBranches[i], phase);
+                    }
+                }
+
+                varIds.MergeClonesBack(varIdBranches);
+
+                for (int i = 0; i < this.chunks.Length; ++i)
+                {
+                    Chunk chunk = this.chunks[i];
+                    varIdBranches[i] = varIds.Clone();
+                    foreach (Executable ex in chunk.Code)
+                    {
+                        ex.PerformLocalIdAllocation(varIdBranches[i], VariableIdAllocPhase.ALLOC);
+                    }
                 }
             }
         }

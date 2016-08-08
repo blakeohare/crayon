@@ -74,12 +74,7 @@ namespace Crayon
         {
             Parser userCodeParser = new Parser(null, buildContext, null);
             ParseTree.Executable[] userCode = userCodeParser.ParseAllTheThings(inputFolder);
-
-            foreach (Executable ex in userCode)
-            {
-                ex.GenerateGlobalNameIdManifest(userCodeParser.VariableIds);
-            }
-
+            
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -121,9 +122,12 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.LocalScopeId = varIds.GetVarId(this.FirstToken, true);
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.LocalScopeId = varIds.GetVarId(this.FirstToken);
+            }
         }
 
         public override string ToString()

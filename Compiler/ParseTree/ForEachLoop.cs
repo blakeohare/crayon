@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -25,34 +26,36 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            string iterator = this.IterationVariable.Value;
-            varIds.RegisterVariable(iterator);
+            this.IterationExpression.PerformLocalIdAllocation(varIds, phase);
 
-            foreach (Executable ex in this.Code)
+            if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
-                ex.GenerateGlobalNameIdManifest(varIds);
+                varIds.RegisterVariable(this.IterationVariable.Value);
             }
-        }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            varIds.RegisterVariable(this.IterationVariable.Value);
-            for (int i = 0; i < this.Code.Length; ++i)
+            if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
             {
-                this.Code[i].CalculateLocalIdPass(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
-        }
+            else
+            {
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER);
+                }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.IterationExpression.SetLocalIdPass(varIds);
-            this.IterationVariableId = varIds.GetVarId(this.IterationVariable, false);
-            for (int i = 0; i < this.Code.Length; ++i)
-            {
-                this.Code[i].SetLocalIdPass(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                }
             }
+
+            this.IterationVariableId = varIds.GetVarId(this.IterationVariable);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

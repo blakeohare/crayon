@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -39,9 +40,13 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Root.SetLocalIdPass(varIds);
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                // Despite potentially assigning to a varaible, it does not declare it, so it gets no special treatment.
+                this.Root.PerformLocalIdAllocation(varIds, phase);
+            }
         }
 
         internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)

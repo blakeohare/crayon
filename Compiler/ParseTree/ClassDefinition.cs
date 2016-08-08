@@ -21,7 +21,7 @@ namespace Crayon.ParseTree
 
         public Token StaticToken { get; set; }
         public Token FinalToken { get; set; }
-        
+
         private bool memberIdsResolved = false;
 
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
@@ -55,32 +55,12 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            varIds.RegisterVariable(this.NameToken.Value);
-            foreach (FieldDeclaration fd in this.Fields)
-            {
-                fd.GenerateGlobalNameIdManifest(varIds);
-            }
-            if (this.StaticConstructor != null)
-            {
-                this.StaticConstructor.GenerateGlobalNameIdManifest(varIds);
-            }
-            if (this.Constructor != null)
-            {
-                this.Constructor.GenerateGlobalNameIdManifest(varIds);
-            }
-            foreach (FunctionDefinition fd in this.Methods)
-            {
-                fd.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
+        private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
         public void AllocateLocalScopeIds()
         {
             foreach (FieldDeclaration fd in this.Fields)
             {
-                fd.VerifyNoVariablesAreDereferenced();
+                fd.PerformLocalIdAllocation(EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
             }
 
             // null check has occurred before now.
@@ -215,7 +195,7 @@ namespace Crayon.ParseTree
                     throw new ParserException(this.FirstToken, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as static.");
                 }
             }
-            
+
             if (hasABaseClass && callsBaseConstructor)
             {
                 Expression[] defaultValues = this.BaseClass.Constructor.DefaultValues;
@@ -250,17 +230,7 @@ namespace Crayon.ParseTree
 
             return Listify(this);
         }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a class.
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a class.
-        }
-
+        
         public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
         {
             List<ClassDefinition> baseClasses = new List<ClassDefinition>();
@@ -411,5 +381,10 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            // Not called in this way.
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -33,8 +33,8 @@ namespace Crayon.ParseTree
         }
 
         internal abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
-
-        internal abstract void SetLocalIdPass(VariableIdAllocator varIds);
+        
+        internal abstract void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         public static Executable DoNameLookup(Dictionary<string, Executable> lookup, string[] imports, string name)
         {

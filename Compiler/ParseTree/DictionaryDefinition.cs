@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -19,21 +20,28 @@ namespace Crayon.ParseTree
 
         internal override Expression Resolve(Parser parser)
         {
+            // Iterate through KVP in parallel so that errors will get reported in the preferred order.
+
+            // TODO: verify no duplicate keys and keys are all of correct type (amongst the 
+            // keys that can be resolved into constants, at least).
             for (int i = 0; i < this.Keys.Length; ++i)
             {
                 this.Keys[i] = this.Keys[i].Resolve(parser);
                 this.Values[i] = this.Values[i].Resolve(parser);
-                // TODO: verify no duplicate keys?
             }
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            for (int i = 0, length = this.Keys.Length; i < length; ++i)
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Keys[i].SetLocalIdPass(varIds);
-                this.Values[i].SetLocalIdPass(varIds);
+                // Iterate through KVP in parallel so that errors will get reported in the preferred order.
+                for (int i = 0; i < this.Keys.Length; ++i)
+                {
+                    this.Keys[i].PerformLocalIdAllocation(varIds, phase);
+                    this.Values[i].PerformLocalIdAllocation(varIds, phase);
+                }
             }
         }
 

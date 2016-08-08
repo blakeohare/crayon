@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -35,15 +36,7 @@ namespace Crayon.ParseTree
 
             return this;
         }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Expression expr in this.Expressions)
-            {
-                expr.SetLocalIdPass(varIds);
-            }
-        }
-
+        
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);
@@ -55,6 +48,17 @@ namespace Crayon.ParseTree
             foreach (Expression expr in this.Expressions)
             {
                 expr.GetAllVariablesReferenced(vars);
+            }
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                foreach (Expression ex in this.Expressions)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -97,19 +98,16 @@ namespace Crayon.ParseTree
             return Executable.EMPTY_ARRAY;
         }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
             return this;
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            throw new System.InvalidOperationException(); // should be resolved by now.
+            // Not called this way.
+            throw new InvalidOperationException();
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }

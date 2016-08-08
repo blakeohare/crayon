@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -87,19 +88,6 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            varIds.RegisterVariable(this.NameToken.Value);
-            foreach (Token argToken in this.ArgNames)
-            {
-                varIds.RegisterVariable(argToken.Value);
-            }
-            foreach (Executable line in this.Code)
-            {
-                line.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         {
             foreach (Executable line in this.Code)
@@ -129,16 +117,6 @@ namespace Crayon.ParseTree
             return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
         }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a function.
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new System.InvalidOperationException(); // never call this directly on a function.
-        }
-
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             parser.CurrentCodeContainer = this;
@@ -156,17 +134,15 @@ namespace Crayon.ParseTree
             {
                 variableIds.RegisterVariable(this.ArgNames[i].Value);
             }
-
-            foreach (Executable ex in this.Code)
-            {
-                ex.CalculateLocalIdPass(variableIds);
-            }
-
+            this.PerformLocalIdAllocation(variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             this.LocalScopeSize = variableIds.Size;
+        }
 
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
             foreach (Executable ex in this.Code)
             {
-                ex.SetLocalIdPass(variableIds);
+                ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
         }
 
@@ -174,7 +150,7 @@ namespace Crayon.ParseTree
         {
             // Currently only used to get the variables declared in a function in translation mode. This shouldn't
             // be called directly.
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

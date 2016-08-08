@@ -62,13 +62,7 @@ namespace Crayon.ParseTree
 
             return this;
         }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.Root.SetLocalIdPass(varIds);
-            this.Index.SetLocalIdPass(varIds);
-        }
-
+        
         internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Root = this.Root.ResolveNames(parser, lookup, imports);
@@ -80,6 +74,15 @@ namespace Crayon.ParseTree
         {
             this.Root.GetAllVariablesReferenced(vars);
             this.Index.GetAllVariablesReferenced(vars);
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(varIds, phase);
+                this.Index.PerformLocalIdAllocation(varIds, phase);
+            }
         }
     }
 }

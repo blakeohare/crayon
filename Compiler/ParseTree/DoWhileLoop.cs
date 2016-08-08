@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -32,30 +33,28 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            foreach (Executable ex in this.Code)
+            if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
             {
-                ex.GenerateGlobalNameIdManifest(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
+                this.Condition.PerformLocalIdAllocation(varIds, phase);
             }
-        }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.Code)
+            else
             {
-                ex.CalculateLocalIdPass(varIds);
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER);
+                }
+                foreach (Executable ex in this.Code)
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                }
+                this.Condition.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
             }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.Code)
-            {
-                ex.SetLocalIdPass(varIds);
-            }
-
-            this.Condition.SetLocalIdPass(varIds);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

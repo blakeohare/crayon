@@ -55,19 +55,18 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Root.SetLocalIdPass(varIds);
-            for (int i = 0; i < this.Items.Length; ++i)
+            this.Root.PerformLocalIdAllocation(varIds, phase);
+            foreach (Expression item in this.Items)
             {
-                Expression item = this.Items[i];
                 if (item != null)
                 {
-                    this.Items[i].SetLocalIdPass(varIds);
+                    item.PerformLocalIdAllocation(varIds, phase);
                 }
             }
         }
-
+        
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
             throw new System.NotImplementedException();

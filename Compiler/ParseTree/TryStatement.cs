@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -51,33 +52,7 @@ namespace Crayon.ParseTree
             }
             return output;
         }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            if (this.ExceptionToken != null)
-            {
-                varIds.RegisterVariable(this.ExceptionToken.Value);
-            }
-
-            foreach (Executable ex in this.GetAllExecutables())
-            {
-                ex.CalculateLocalIdPass(varIds);
-            }
-        }
-
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            if (this.ExceptionToken != null)
-            {
-                varIds.RegisterVariable(this.ExceptionToken.Value);
-            }
-
-            foreach (Executable ex in this.GetAllExecutables())
-            {
-                ex.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
+        
         internal override IList<Executable> Resolve(Parser parser)
         {
             List<Executable> builder = new List<Executable>();
@@ -119,16 +94,40 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            if (this.ExceptionToken != null)
+            foreach (Executable ex in this.TryBlock)
             {
-                this.ExceptionVariableLocalScopeId = varIds.GetVarId(this.ExceptionToken, false);
+                ex.PerformLocalIdAllocation(varIds, phase);
             }
 
-            foreach (Executable ex in this.GetAllExecutables())
+            if (this.CatchBlock != null)
             {
-                ex.SetLocalIdPass(varIds);
+                if (this.ExceptionToken != null)
+                {
+                    if ((phase & VariableIdAllocPhase.REGISTER) != 0)
+                    {
+                        varIds.RegisterVariable(this.ExceptionToken.Value);
+                    }
+
+                    if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+                    {
+                        this.ExceptionVariableLocalScopeId = varIds.GetVarId(this.ExceptionToken);
+                    }
+                }
+
+                foreach (Executable ex in this.CatchBlock)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
+
+            if (this.FinallyBlock != null)
+            {
+                foreach (Executable ex in this.FinallyBlock)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
         }
 

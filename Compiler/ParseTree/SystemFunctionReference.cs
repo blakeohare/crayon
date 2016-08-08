@@ -21,10 +21,7 @@ namespace Crayon.ParseTree
             throw new InvalidOperationException(); // translate mode only
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new InvalidOperationException(); // translate mode only
-        }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
     }

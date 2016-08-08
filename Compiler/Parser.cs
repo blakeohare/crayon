@@ -14,7 +14,6 @@ namespace Crayon
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
-            this.VariableIds = new VariableIdAllocator();
             this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
@@ -38,9 +37,7 @@ namespace Crayon
         // Syntax parsing is currently stateless. Which is nice. In an ideal world.
         // One day I will undo this for a more reasonable solution.
         public static bool IsTranslateMode_STATIC_HACK { get; set; }
-
-        public VariableIdAllocator VariableIds { get; private set; }
-
+        
         public Executable CurrentCodeContainer { get; set; }
 
         public static string CurrentSystemLibrary_STATIC_HACK { get; set; }

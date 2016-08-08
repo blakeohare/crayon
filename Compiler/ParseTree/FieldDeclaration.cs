@@ -26,22 +26,6 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new InvalidOperationException(); // never call this function directly.
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new InvalidOperationException(); // never call this function directly.
-        }
-
-        public void VerifyNoVariablesAreDereferenced()
-        {
-            // Pass in an empty Var ID allocator, so that any variable usage will generate an error message.
-            this.DefaultValue.SetLocalIdPass(new VariableIdAllocator());
-        }
-
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             parser.CurrentCodeContainer = this;
@@ -51,11 +35,14 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            varIds.RegisterVariable(this.NameToken.Value);
-        }
-
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+
+        private static readonly VariableIdAllocator EMPTY_ID_ALLOC = new VariableIdAllocator();
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            // Throws if it finds any variable.
+            this.DefaultValue.PerformLocalIdAllocation(varIds, phase);
+        }
     }
 }

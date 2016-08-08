@@ -39,12 +39,7 @@ namespace Crayon.ParseTree
         {
             throw new InvalidOperationException();
         }
-
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            throw new InvalidOperationException(); // not called in translate mode.
-        }
-
+        
         public SearchTree GenerateSearchTree()
         {
             int[] keys = this.codeByCondition.Keys.ToArray();
@@ -95,13 +90,8 @@ namespace Crayon.ParseTree
         {
             this.OriginalSwitchStatement.GetAllVariableNames(lookup);
         }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            throw new InvalidOperationException(); // translate mode only
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             throw new InvalidOperationException(); // translate mode only
         }

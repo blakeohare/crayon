@@ -52,11 +52,14 @@ namespace Crayon.ParseTree
             throw new InvalidOperationException(); // this class is generated on the general resolve pass.
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            for (int i = 0; i < this.Args.Length; ++i)
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Args[i].SetLocalIdPass(varIds);
+                foreach (Expression ex in this.Args)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
         }
 

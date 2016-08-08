@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -49,34 +50,26 @@ namespace Crayon.ParseTree
             this.Target.GetAllVariableNames(lookup);
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            if (this.Target is Variable)
+            this.Value.PerformLocalIdAllocation(varIds, phase);
+
+            if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
-                varIds.RegisterVariable(((Variable)this.Target).Name);
+                bool isVariableDeclared = 
+                    // A variable is considered declared if the target is a variable and = is used instead of something like +=
+                    this.Target is Variable && 
+                    this.AssignmentOpToken.Value == "=";
+
+                if (isVariableDeclared)
+                {
+                    varIds.RegisterVariable(this.TargetAsVariable.Name);
+                }
             }
+
+            this.Target.PerformLocalIdAllocation(varIds, phase);
         }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            Variable variable = this.TargetAsVariable;
-
-            // Note that things like += do not declare a new variable name and so they don't count as assignment
-            // in this context. foo += value should NEVER take a global scope value and assign it to a local scope value.
-            // Globals cannot be assigned to from outside the global scope.
-            if (variable != null &&
-                this.AssignmentOpToken.Value == "=")
-            {
-                varIds.RegisterVariable(variable.Name);
-            }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            this.Value.SetLocalIdPass(varIds);
-            this.Target.SetLocalIdPass(varIds);
-        }
-
+        
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Target = this.Target.ResolveNames(parser, lookup, imports);

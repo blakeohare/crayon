@@ -17,20 +17,14 @@ namespace Crayon.ParseTree
         {
             throw new Exception("Imports shouldn't exist at this point in the compilation pipeline.");
         }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
-        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-
+        
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             throw new InvalidOperationException();
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            // no assignments
-        }
-
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

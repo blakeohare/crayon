@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -55,22 +56,25 @@ namespace Crayon.ParseTree
             {
                 throw new ParserException(this.FirstToken, "Cannot instantiate a static class.");
             }
-            
+
             ConstructorDefinition cons = this.Class.Constructor;
 
             if (cons.PrivateAnnotation != null)
             {
-                string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
-                if (cons.PrivateAnnotation.Args.Length > 0)
+                if (this.Class != this.FunctionOrClassOwner.FunctionOrClassOwner)
                 {
-                    StringConstant stringMessage = cons.PrivateAnnotation.Args[0] as StringConstant;
-                    if (stringMessage != null)
+                    string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
+                    if (cons.PrivateAnnotation.Args.Length > 0)
                     {
-                        errorMessage += " " + stringMessage.Value.Trim();
+                        StringConstant stringMessage = cons.PrivateAnnotation.Args[0] as StringConstant;
+                        if (stringMessage != null)
+                        {
+                            errorMessage += " " + stringMessage.Value.Trim();
+                        }
                     }
-                }
 
-                throw new ParserException(this.FirstToken, errorMessage);
+                    throw new ParserException(this.FirstToken, errorMessage);
+                }
             }
 
             if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
@@ -92,14 +96,6 @@ namespace Crayon.ParseTree
             }
 
             return this;
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            for (int i = 0; i < this.Args.Length; ++i)
-            {
-                this.Args[i].SetLocalIdPass(varIds);
-            }
         }
 
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
@@ -128,6 +124,17 @@ namespace Crayon.ParseTree
             }
 
             return this;
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                foreach (Expression arg in this.Args)
+                {
+                    arg.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)

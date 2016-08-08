@@ -65,15 +65,11 @@ namespace Crayon.ParseTree
         {
             return new Executable[] { ex };
         }
-
-        internal abstract void CalculateLocalIdPass(VariableIdAllocator varIds);
-
+        
         // To be overridden if necessary.
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         { }
-
-        internal abstract void GenerateGlobalNameIdManifest(VariableIdAllocator varIds);
-
+        
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
     }
 }

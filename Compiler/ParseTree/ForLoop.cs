@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
@@ -47,35 +48,6 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.Init.Concat<Executable>(this.Step).Concat<Executable>(this.Code))
-            {
-                ex.GenerateGlobalNameIdManifest(varIds);
-            }
-        }
-
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.Init.Concat(this.Step).Concat(this.Code))
-            {
-                ex.CalculateLocalIdPass(varIds);
-            }
-        }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Executable ex in this.Init)
-            {
-                ex.SetLocalIdPass(varIds);
-            }
-            this.Condition.SetLocalIdPass(varIds);
-            foreach (Executable ex in this.Step.Concat(this.Code))
-            {
-                ex.SetLocalIdPass(varIds);
-            }
-        }
-
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExecutableNameResolver(parser, lookup, imports, this.Init);
@@ -91,6 +63,40 @@ namespace Crayon.ParseTree
             foreach (Executable ex in this.Init.Concat(this.Step).Concat(this.Code))
             {
                 ex.GetAllVariablesReferenced(vars);
+            }
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            bool register = (phase & VariableIdAllocPhase.REGISTER) != 0;
+            bool alloc = (phase & VariableIdAllocPhase.ALLOC) != 0;
+            bool both = register && alloc;
+
+            foreach (Executable ex in this.Init)
+            {
+                ex.PerformLocalIdAllocation(varIds, phase);
+            }
+            
+            this.Condition.PerformLocalIdAllocation(varIds, phase);
+
+            if (both)
+            {
+                foreach (Executable ex in this.Code.Concat(this.Step))
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER);
+                }
+
+                foreach (Executable ex in this.Code.Concat(this.Step))
+                {
+                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                }
+            }
+            else
+            {
+                foreach (Executable ex in this.Code.Concat(this.Step))
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
             }
         }
     }

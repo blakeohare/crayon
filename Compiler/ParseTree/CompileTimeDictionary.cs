@@ -19,13 +19,12 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

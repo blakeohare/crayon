@@ -22,13 +22,12 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-
         public Expression CloneValue(Token token, Executable owner)
         {
             return new NullConstant(token, owner);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

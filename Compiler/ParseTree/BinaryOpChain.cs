@@ -269,10 +269,13 @@ namespace Crayon.ParseTree
             return new BooleanConstant(firstToken, value, this.FunctionOrClassOwner);
         }
 
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Left.SetLocalIdPass(varIds);
-            this.Right.SetLocalIdPass(varIds);
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Left.PerformLocalIdAllocation(varIds, phase);
+                this.Right.PerformLocalIdAllocation(varIds, phase);
+            }
         }
 
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

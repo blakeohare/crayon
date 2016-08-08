@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -32,19 +33,12 @@ namespace Crayon.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override void CalculateLocalIdPass(VariableIdAllocator varIds) { }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if (this.Expression != null)
             {
-                this.Expression.SetLocalIdPass(varIds);
+                this.Expression.PerformLocalIdAllocation(varIds, phase);
             }
-        }
-
-        internal override void GenerateGlobalNameIdManifest(VariableIdAllocator varIds)
-        {
-            // no assignments
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)

@@ -30,18 +30,18 @@ namespace Crayon.ParseTree
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
             return this;
         }
-
-        internal override void SetLocalIdPass(VariableIdAllocator varIds)
-        {
-            foreach (Expression item in this.Items)
-            {
-                item.SetLocalIdPass(varIds);
-            }
-        }
-
+        
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
             throw new NotImplementedException();
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            foreach (Expression item in this.Items)
+            {
+                item.PerformLocalIdAllocation(varIds, phase);
+            }
         }
     }
 }

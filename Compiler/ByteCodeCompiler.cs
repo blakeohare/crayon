@@ -44,7 +44,9 @@ namespace Crayon
             header.Add(null, OpCode.FINALIZE_INITIALIZATION);
 
             ByteBuffer output = new Crayon.ByteBuffer();
-            output.Add(null, OpCode.USER_CODE_START, header.Size + 1, parser.VariableIds.Size);
+            // TODO: surgically remove the need for this 0 to be here.
+            // It used to indicate the local scope size of the global scope.
+            output.Add(null, OpCode.USER_CODE_START, header.Size + 1, 0);
             output.Concat(header);
             output.Concat(userCode);
 
