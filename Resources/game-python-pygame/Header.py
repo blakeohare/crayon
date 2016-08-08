@@ -327,5 +327,3 @@ def _always_true(): return True
 def _always_false(): return False
 
 program_data = [None]
-
-%%%LIBRARY_EMBED_CODE%%%

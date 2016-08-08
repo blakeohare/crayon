@@ -19,10 +19,10 @@ END
 
 BEGIN
 APPLICABLE-TO: game-python-pygame
-EMBEDCODE: python
+EMBED: python
 END
 
 BEGIN
 APPLICABLE-TO: game-javascript
-EMBEDCODE: javascript
+EMBED: javascript
 END

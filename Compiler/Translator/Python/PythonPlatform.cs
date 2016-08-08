@@ -39,6 +39,7 @@ namespace Crayon.Translator.Python
             foreach (string file in new string[] {
                 "Imports.py",
                 "Header.py",
+                "Library.py",
                 "ImageHelper.py",
                 "GfxRenderer.py",
                 "ResourceReader.py",
@@ -46,7 +47,16 @@ namespace Crayon.Translator.Python
                 "AsyncHttpFetcher.py",
             })
             {
-                concatenatedCode.Add(this.GetPyGameCode(file, replacements));
+                string content;
+                if (file == "Library.py")
+                {
+                    content = libraryManager.EmbeddedContent;
+                }
+                else
+                {
+                    content = this.GetPyGameCode(file, replacements);
+                }
+                concatenatedCode.Add(content);
                 concatenatedCode.Add(this.Translator.NL);
             }
 
