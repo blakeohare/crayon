@@ -1,8 +1,4 @@
 ﻿
-if (ProgramData$p.initializationComplete) {
-	performWorkNuggetPostFrame();
-}
-
 prepareToSuspend(ec, stack, valueStackSize, pc);
 
 $_lib_game_clockTick();

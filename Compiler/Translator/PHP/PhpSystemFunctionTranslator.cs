@@ -76,11 +76,6 @@ namespace Crayon.Translator.Php
             output.Add("TODO_optimize_out()");
         }
 
-        protected override void TranslateBeginFrame(List<string> output)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             output.Add("bytecode_get_iargs()");
@@ -233,11 +228,6 @@ namespace Crayon.Translator.Php
             output.Add("TODO_optimize_this_out()");
         }
 
-        protected override void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
         protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
         {
             string token = increment ? "++" : "--";
@@ -251,46 +241,6 @@ namespace Crayon.Translator.Php
             output.Add("intval(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateIoCreateDirectory(List<string> output, Expression path)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoCurrentDirectory(List<string> output)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
-        protected override void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData)
-        {
-            output.Add("TODO_optimize_out()");
         }
 
         protected override void TranslateIsValidInteger(List<string> output, Expression number)

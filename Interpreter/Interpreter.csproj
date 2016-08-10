@@ -51,9 +51,7 @@
     <EmbeddedResource Include="Globals.cry" />
     <EmbeddedResource Include="Interpreter.cry" />
     <EmbeddedResource Include="InvokeStaticConstructor.cry" />
-    <EmbeddedResource Include="IOManager.cry" />
     <EmbeddedResource Include="MetadataInitializer.cry" />
-    <EmbeddedResource Include="NetworkManager.cry" />
     <EmbeddedResource Include="Ops\add_literal.cry" />
     <EmbeddedResource Include="Ops\add_name.cry" />
     <EmbeddedResource Include="Ops\assign_index.cry" />

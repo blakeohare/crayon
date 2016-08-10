@@ -73,11 +73,6 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-        protected override void TranslateBeginFrame(List<string> output)
-        {
-            // Nope
-        }
-
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             throw new NotImplementedException();
