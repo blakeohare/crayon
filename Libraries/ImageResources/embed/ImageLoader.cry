@@ -45,14 +45,17 @@ namespace ImageResources {
 		field _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
 		field _isDone = false;
 		field _nativeImage;
+		field _output = null;
 		
 		function getImage() {
+			if (this._output != null) return this._output;
+			if (!this._isDone) Core.fail("Loading is not finished.");
 			if (this._nativeImage == null) {
 				Core.fail("Image has already been constructed.");
 			}
 			img = new ImageResource(this._nativeImage.width, this._nativeImage.height, false);
 			img._nativeResource = this._nativeImage;
-			this._nativeImage = null; // now that the native image is mutable by user code, do not maintain a reference to it.
+			this._output = img;
 			return img;
 		}
 		

@@ -19,6 +19,7 @@ namespace ImageResources {
 			}
 		}
 		
+		// TODO: support immutable fields. I'd much rather expose these as .width and .height.
 		function getWidth() { return this._width; }
 		function getHeight() { return this._height; }
 	}

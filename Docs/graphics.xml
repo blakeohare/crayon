@@ -4,99 +4,10 @@
 			Drawing and image-loading functions designed to be used with the Game library.
 		</description>
 		<namespace name="Graphics">
-			<enum name="ImageLoaderStatus">
+			<class name="GraphicsTexture">
 				<description>
-					Enum for various states an <link see="Graphics.ImageLoader">ImageLoader</link> can be in.
+					Represents an <link see="imageresources.imageresource">ImageResource</link> loaded into the graphics engine that can be drawn on the screen.
 				</description>
-				<value>LOADING</value>
-				<value>OK</value>
-				<value>NOT_STARTED</value>
-				<value>NOT_FOUND</value>
-				<value>INVALID</value>
-				<value>TIMED_OUT</value>
-			</enum>
-			<class name="ImageLoader">
-				<description>
-					Asynchronous image loader. Note that images declared as part of an image sheet must be loaded in the sheet first. See <link see="graphics.imagesheetloader">ImageSheetLoader</link>.
-				</description>
-				<function static="true" name="fromResource">
-					<arg name="path" type="string">
-						Path to a bundled image resource.
-					</arg>
-					<description>
-						Creates an image loader instance for an image resource that was bundled with the project.
-					</description>
-				</function>
-				<function static="true" name="fromWeb">
-					<arg name="url" type="string">
-						URL to an image.
-					</arg>
-					<description>
-						Creates an image loader instance for an image file from the web. Note that bundled image resource should still be loaded with fromResource even if the project type is JavaScript.
-					</description>
-				</function>
-				<function static="true" name="fromUserData">
-					<arg name="path" type="string">
-						Path to an image file relative to the user data folder root.
-					</arg>
-					<description>
-						Creates an image loader instance for an image file in the user data folder.
-					</description>
-				</function>
-				<function static="true" name="fromFile">
-					<arg name="path" type="string">
-						Path to an image file on disk.
-					</arg>
-					<description>
-						Creates an image loader instance for an image file on the local disk.
-					</description>
-				</function>
-				<function name="isDone">
-					<description>
-						Returns a boolean that is true when loading is complete (regardless of error state).
-					</description>
-				</function>
-				<function name="getStatus">
-					<description>
-						Returns a <link see="Graphics.ImageLoaderStatus">ImageLoaderStatus</link> enum value.
-					</description>
-				</function>
-				<function name="getImage">
-					<description>
-						Returns an <link see="Graphics.Image">Image</link> instance. Throws an error if the image is not loaded yet. Use .isDone() and .getStatus() to be sure.
-					</description>
-				</function>
-			</class>
-			<class name="ImageSheetLoader">
-				<description>
-					An ImageSheetLoader loads all the resource images in an aggregated sheet in one swoop so they don't have to be loaded individually.
-					Once an image sheet finishes loading, individual image resources that are members of the sheet must still be loaded with an <link see="graphics.imageloader">ImageLoader</link>, however loading will occur synchronously and instantly.
-				</description>
-				<function static="true" name="fromIds">
-					<arg name="idOrIds" type="string or list of strings">
-						An ID (or list of IDs) of an image sheet defined in the build file.
-					</arg>
-					<description>
-						Factory method to create a new ImageSheetLoader from a set of IDs.
-					</description>
-				</function>
-				<function name="getProgress">
-					<description>
-						Returns the current overall progress of all image sheets managed by this loader as a float from 0 to 1.
-					</description>
-				</function>
-				<function name="isDone">
-					<description>
-						Returns a boolean for whether loading is complete for all sheets managed by this loader.
-					</description>
-				</function>
-				<function name="getStatus">
-					<description>
-						Returns an <link see="graphics.imageloaderstatus">ImageLoaderStatus</link> value indicating the state of the loader.
-					</description>
-				</function>
-			</class>
-			<class name="Image">
 				<field name="width">
 					<description>
 						Width of the image, in pixels.
@@ -118,8 +29,102 @@
 						Draws an image on the <link see="Game.GameWindow">GameWindow</link> screen. The top left corner of the image will be position on the given X and Y coordinates.
 					</description>
 				</function>
+				<function name="drawWithAlpha">
+					<arg name="x" type="integer">
+						X coordinate
+					</arg>
+					<arg name="y" type="integer">
+						Y coordinate
+					</arg>
+					<arg name="alpha" type="integer">
+						Alpha value (0-255)
+					</arg>
+					<description>
+						Draws an image on the <link see="Game.GameWindow">GameWindow</link> screen. The top left corner of the image will be position on the given X and Y coordinates.
+						The image will have the given opacity.
+					</description>
+				</function>
+				<function name="drawRegion">
+					<arg name="targetX" type="integer">
+						X coordinate on the screen
+					</arg>
+					<arg name="targetY" type="integer">
+						Y coordinate on the screen
+					</arg>
+					<arg name="sourceX" type="integer">
+						Left X coordinate of the region within the source texture to draw.
+					</arg>
+					<arg name="sourceY" type="integer">
+						Top Y coordinate of the region within the source texture to draw.
+					</arg>
+					<arg name="width" type="integer">
+						Width of the region within the texture to draw.
+					</arg>
+					<arg name="height" type="integer">
+						Height of the region within the texture to draw.
+					</arg>
+					<description>
+						Draws a specific region of an image onto the <link see="Game.GameWindow">GameWindow</link> screen.
+						The top left corner of the image will be position on the given target X and Y coordinates.
+						Only the region of the texture defined by the source X and Y coordinates and width and height will be drawn to the screen.
+					</description>
+				</function>
+				<function name="drawStretched">
+					<arg name="x" type="integer">
+						X coordinate on the screen
+					</arg>
+					<arg name="y" type="integer">
+						Y coordinate on the screen
+					</arg>
+					<arg name="width" type="integer">
+						Width to stretch the image to.
+					</arg>
+					<arg name="height" type="integer">
+						Height to stretch the image to.
+					</arg>
+					<description>
+						Draws a stretched (or shrunken) version of an image onto the <link see="Game.GameWindow">GameWindow</link> screen.
+						The top left corner of the image will be position on the given target X and Y coordinates.
+						The resulting width and height of the image on the screen is denoted by the width and height values.
+					</description>
+				</function>
+				<function name="drawRegionStretched">
+					<arg name="targetX" type="integer">
+						X coordinate on the screen
+					</arg>
+					<arg name="targetY" type="integer">
+						Y coordinate on the screen
+					</arg>
+					<arg name="targetWidth" type="integer">
+						Desired width of the image to appear on the screen.
+					</arg>
+					<arg name="targetHeight" type="integer">
+						Desired height of the image to appear on the screen.
+					</arg>
+					<arg name="sourceX" type="integer">
+						Left X coordinate of the region within the source texture to draw.
+					</arg>
+					<arg name="sourceY" type="integer">
+						Top Y coordinate of the region within the source texture to draw.
+					</arg>
+					<arg name="sourceWidth" type="integer">
+						Width of the region within the texture to draw.
+					</arg>
+					<arg name="sourceHeight" type="integer">
+						Height of the region within the texture to draw.
+					</arg>
+					<description>
+						A combination of <link see="graphics.graphicstexture.drawRegion">drawRegion</link> and <link see="graphics.graphicstexture.drawStretched">drawStretched</link>.
+						Draws a portion of an image onto the screen and stretches/shrinks it to the given size.
+						The top left corner of the image will be position on the given target X and Y coordinates.
+						The resulting width and height of the image on the screen is denoted by the width and height values.
+					</description>
+				</function>
 			</class>
-			<namespace name="Draw">
+			<class name="Draw">
+				<description>
+					Collection of functions for drawing 2D geometric primitives onto the game screen.
+				</description>
 				<function name="ellipse">
 					<arg name="left" type="integer">
 						X coordinate of the left side of the ellipse.
@@ -245,6 +250,47 @@
 						Alpha value of the line color (0-255).
 					</arg>
 				</function>
+				<function name="quad">
+					<description>
+						Draws a quadrilateral on the screen.
+					</description>
+					<arg name="x1" type="integer">
+						X coordinate of the first point.
+					</arg>
+					<arg name="y1" type="integer">
+						Y coordinate of the first point.
+					</arg>
+					<arg name="x2" type="integer">
+						X coordinate of the second point.
+					</arg>
+					<arg name="y2" type="integer">
+						Y coordinate of the second point.
+					</arg>
+					<arg name="x3" type="integer">
+						X coordinate of the third point.
+					</arg>
+					<arg name="y3" type="integer">
+						Y coordinate of the third point.
+					</arg>
+					<arg name="x4" type="integer">
+						X coordinate of the fourth point.
+					</arg>
+					<arg name="y4" type="integer">
+						Y coordinate of the fourth point.
+					</arg>
+					<arg name="red" type="integer">
+						Red value of the line color (0-255).
+					</arg>
+					<arg name="green" type="integer">
+						Green value of the line color (0-255).
+					</arg>
+					<arg name="blue" type="integer">
+						Blue value of the line color (0-255).
+					</arg>
+					<arg name="alpha" type="integer" default="255">
+						Alpha value of the line color (0-255).
+					</arg>
+				</function>
 				<function name="fill">
 					<description>
 						Fills the screen with an opaque color.
@@ -259,7 +305,7 @@
 						Blue value of the fill (0-255).
 					</arg>
 				</function>
-			</namespace>
+			</class>
 		</namespace>
 	</library>
 </documentation>
