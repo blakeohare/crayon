@@ -1,0 +1,45 @@
+/*
+	arg1: some user provided value. 
+	arg2: an object to populate native data.
+		nativeData[0] -> array of bytes
+	
+	Ensure the value is a list of values that are valid for the byte range (-128 to 255)
+	and then set that array of bytes to the object
+	
+	return true upon success.
+*/
+
+import inline "FrameworkFunctions/2_arg.cry";
+
+output = VALUE_FALSE;
+
+if (Value$arg1.type == Types.LIST) {
+	list1 = $_cast('List<Value>', Value$arg1.internalValue);
+	i = $_list_length(list1);
+	intArray1 = $_new_array('int', i);
+	bool1 = true;
+	while (i > 0) {
+		i -= 1;
+		value = $_list_get(list1, i);
+		if (Value$value.type != Types.INTEGER) {
+			bool1 = false;
+			break;
+		}
+		int1 = $_cast('int', Value$value.internalValue);
+		if (int1 < 256 && int1 >= -128) {
+			if (int1 < 0) int1 += 256;
+			$_array_set(intArray1, i, int1);
+		} else {
+			bool1 = false;
+			break;
+		}
+	}
+	
+	if (bool1) {
+		output = VALUE_TRUE;
+		objArray1 = $_new_array('object', 1);
+		$_array_set(objArray1, 0, intArray1);
+		objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+		ObjectInstance$objInstance1.nativeData = objArray1;
+	}
+}
