@@ -145,7 +145,10 @@ namespace Crayon.ParseTree
                 {
                     if (!funcDef.IsStaticMethod)
                     {
-                        throw new ParserException(this.DotToken, "Cannot make a static reference to a non-static method.");
+                        string className = cd.NameToken.Value;
+                        string functionName = funcDef.NameToken.Value;
+
+                        throw new ParserException(this.DotToken, "'" + className + "." + functionName + "' is not a static method, but it is being used as though it is static.");
                     }
 
                     return new FunctionReference(this.FirstToken, funcDef, this.FunctionOrClassOwner);
@@ -259,7 +262,7 @@ namespace Crayon.ParseTree
                 }
 
                 // TODO: show suggestions in the error message for anything close to what was typed.
-                throw new ParserException(this.StepToken, "Unknown field: '" + field + "'.");
+                throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
             }
 
             return this;
