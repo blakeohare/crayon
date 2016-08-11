@@ -23,6 +23,10 @@ namespace Crayon
                 output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
                 output.Add("\nbreak;\n");
             }
+            if (this.orderedListOfFunctionNames.Count == 0)
+            {
+                output.Add("case 0: break;");
+            }
             return string.Join("\n", output);
         }
 
