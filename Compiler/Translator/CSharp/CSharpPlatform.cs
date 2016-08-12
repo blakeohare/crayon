@@ -163,7 +163,6 @@ namespace Crayon.Translator.CSharp
             // Copy templated files over with proper replacements
             foreach (string templateFile in new string[] {
                 "TranslationHelper",
-                "AsyncMessageQueue",
             })
             {
                 output[projectId + "/Crayon/" + templateFile + ".cs"] = new FileOutput()

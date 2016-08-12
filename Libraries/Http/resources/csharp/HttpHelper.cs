@@ -16,7 +16,8 @@ namespace %%%PROJECT_ID%%%.Library.Http
             HttpResponseValue response = (HttpResponseValue)httpRequest;
             intOut[0] = response.StatusCode;
             intOut[1] = response.IsContentBinary ? 1 : 0;
-            stringOut[0] = response.ContentString;
+            stringOut[0] = response.StatusMessage;
+            stringOut[1] = response.ContentString;
             responseNativeData[0] = response.ContentBytes;
             headersOut.AddRange(response.Headers);
         }
@@ -126,7 +127,7 @@ namespace %%%PROJECT_ID%%%.Library.Http
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             int statusCode = (int)response.StatusCode;
-            string status = statusCode + " " + response.StatusDescription;
+            string statusMessage = response.StatusDescription;
             byte[] responseBytes = null;
             string responseString = null;
             if (outputIsBinary)
@@ -173,7 +174,7 @@ namespace %%%PROJECT_ID%%%.Library.Http
             return new HttpResponseValue()
             {
                 StatusCode = statusCode,
-                StatusDescription = status,
+                StatusMessage = statusMessage,
                 IsContentBinary = outputIsBinary,
                 ContentString = responseString,
                 ContentBytes = responseBytes,
@@ -184,7 +185,7 @@ namespace %%%PROJECT_ID%%%.Library.Http
         private class HttpResponseValue
         {
             public int StatusCode { get; set; }
-            public string StatusDescription { get; set; }
+            public string StatusMessage { get; set; }
             public bool IsContentBinary { get; set; }
             public string ContentString { get; set; }
             public byte[] ContentBytes { get; set; }
