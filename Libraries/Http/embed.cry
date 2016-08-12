@@ -91,6 +91,7 @@
 		field _headerNames = []; // original case
 		field _content;
 		field _statusCode = 0;
+		field _statusMessage = '';
 		field _isBinary = false;
 		
 		@private constructor() { }
@@ -113,8 +114,9 @@
 				values.add(value);
 			}
 			response._statusCode = output[0];
-			response._content = output[1];
-			response._isBinary = output[2];
+			response._statusMessage = output[1];
+			response._content = output[2];
+			response._isBinary = output[3];
 			
 			return response;
 		}
@@ -146,6 +148,10 @@
 		
 		function getStatusCode() {
 			return this._statusCode;
+		}
+		
+		function getStatusMessage() {
+			return this._statusMessage;
 		}
 	}
 

@@ -8,9 +8,10 @@
 		nativeData[0] -> byte array if a binary request
 		
 	arg3: empty list for output
-		out[0] -> status code
-		out[1] -> text content
-		out[2] -> bool, true if binary
+		out[0] -> status code e.g. 403
+		out[1] -> status message e.g. FORBIDDEN
+		out[2] -> text content
+		out[3] -> bool, true if binary
 	
 	arg4: empty list for output (header data)
 		this list will have 2n values added to it, alternating between header name and header value
@@ -35,8 +36,9 @@ $_lib_http_readResponseData(
 	intOutParam,
 	
 	/*
-		output param for the following value:
-		[0] -> text content
+		output param for the following values:
+		[0] -> status message
+		[1] -> text content
 	*/
 	stringOutParam,
 	
@@ -56,12 +58,13 @@ list1 = $_cast('List<Value>', Value$arg3.internalValue);
 
 // push the status code
 $_list_push(list1, buildInteger($_array_get(intOutParam, 0)));
+$_list_push(list1, buildString($_array_get(stringOutParam, 0)));
 
 // push the text content
 value = VALUE_NULL;
 value2 = VALUE_TRUE;
 if ($_array_get(intOutParam, 1) == 0) {
-	value = buildString($_array_get(stringOutParam, 0));
+	value = buildString($_array_get(stringOutParam, 1));
 	value2 = VALUE_FALSE;
 }
 $_list_push(list1, value); // content
