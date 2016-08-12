@@ -51,7 +51,6 @@
     <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-common\JsonParser.txt" />
     <EmbeddedResource Include="java-common\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
