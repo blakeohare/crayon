@@ -46,7 +46,7 @@ public class HttpHelper {
 	}
 
 	public static void sendRequestAsync(
-		Object[] requestNativeData,
+		final Object[] requestNativeData,
 		String method,
 		String url,
 		ArrayList<String> headers,
@@ -54,7 +54,18 @@ public class HttpHelper {
 		Object content,
 		boolean outputIsBinary) {
 		
-		throw new RuntimeException();
+		requestNativeData[1] = new Object();
+		
+		new Thread(new Runnable() {
+			public void run() {
+				HttpResponseValue response = sendRequestSyncImpl(requestNativeData, method, url, headers, contentMode, content, outputIsBinary);
+				synchronized (requestNativeData[1])
+				{
+					requestNativeData[0] = response;
+					requestNativeData[2] = true;
+				}
+			}
+		}).start();
 	}
 
 	public static boolean sendRequestSync(
@@ -187,7 +198,11 @@ public class HttpHelper {
 		public String[] headers;
 	}
 
-	public static boolean pollRequest(Object[] requestNativeData) {
-		throw new RuntimeException();
+	public static boolean pollRequest(final Object[] requestNativeData) {
+		boolean output = false;
+		synchronized (requestNativeData[1]) {
+			output = (boolean) requestNativeData[2];
+		}
+		return output;
 	}
 }
