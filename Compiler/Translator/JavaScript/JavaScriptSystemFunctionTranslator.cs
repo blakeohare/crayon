@@ -23,11 +23,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("'/'");
         }
 
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("C$common$pumpAsyncMessageQueue()");
-        }
-
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("Math.acos(");

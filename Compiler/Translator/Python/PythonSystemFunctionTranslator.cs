@@ -32,11 +32,6 @@ namespace Crayon.Translator.Python
             output.Add("get_app_data_root()");
         }
 
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("_pump_async_message_queue()");
-        }
-
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("math.acos(");

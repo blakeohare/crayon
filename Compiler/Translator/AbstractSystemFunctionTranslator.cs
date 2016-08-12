@@ -137,7 +137,6 @@ namespace Crayon.Translator
         }
 
         protected abstract void TranslateAppDataRoot(List<string> output);
-        protected abstract void TranslateAsyncMessageQueuePump(List<string> output);
         protected abstract void TranslateArcCos(List<string> output, Expression value);
         protected abstract void TranslateArcSin(List<string> output, Expression value);
         protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);

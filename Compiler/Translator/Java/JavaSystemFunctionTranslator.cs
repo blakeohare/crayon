@@ -7,12 +7,7 @@ namespace Crayon.Translator.Java
     internal abstract class JavaSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
         public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
-
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("AsyncMessageQueue.pumpMessages()");
-        }
-
+        
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("Math.acos(");

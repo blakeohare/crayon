@@ -6,11 +6,6 @@ namespace Crayon.Translator.CSharp
 {
     internal abstract class CSharpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("AsyncMessageQueue.PumpMessages()");
-        }
-
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("Math.Acos(");

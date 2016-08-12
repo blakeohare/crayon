@@ -207,10 +207,6 @@ class AwtTranslationHelper {
         return appDataRoot;
     }
 
-    public static void makeHttpRequest(String method, String url, String body, String userAgent, String contentType, String contentLength, ArrayList<String> headerNameList, ArrayList<String> headerNameValues) {
-        throw new RuntimeException("TODO: implement makeHttpRequest");
-    }
-
     public static int ioDeleteDirectory(String path, boolean recursive) {
         try {
             File file = new File(path);

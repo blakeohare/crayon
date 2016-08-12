@@ -70,12 +70,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, message);
             output.Add(")");
         }
-
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("TODO_optimize_out()");
-        }
-
+        
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             output.Add("bytecode_get_iargs()");
