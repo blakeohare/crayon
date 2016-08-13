@@ -10,3 +10,8 @@ BEGIN
 APPLICABLE-TO: game-java-awt
 COPYFILES: java: src/crayonlib/http/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBED: python
+END

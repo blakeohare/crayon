@@ -44,7 +44,6 @@ namespace Crayon.Translator.Python
                 "GfxRenderer.py",
                 "ResourceReader.py",
                 "GamepadLibraryHelper.py",
-                "AsyncHttpFetcher.py",
             })
             {
                 string content;

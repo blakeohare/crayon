@@ -163,7 +163,6 @@
     <EmbeddedResource Include="server-php\index.php" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="game-python-pygame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="game-python-pygame\Footer.py" />
     <EmbeddedResource Include="game-python-pygame\GamepadLibraryHelper.py" />
     <EmbeddedResource Include="game-python-pygame\GfxRenderer.py" />
