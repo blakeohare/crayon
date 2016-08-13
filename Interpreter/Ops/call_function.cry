@@ -360,8 +360,9 @@ if (bool1) {
 					valueStackSize += 1;
 				}
 
-				intArray1 = ClassInfo$classInfo.fieldInitializerPcs;
-				bool1 = true;
+				//intArray1 = ClassInfo$classInfo.fieldInitializerPcs;
+				//bool1 = true;
+				bool1 = false;
 				break;
 			case FunctionInvocationType.BASE_CONSTRUCTOR:
 				$_comment('base constructor');

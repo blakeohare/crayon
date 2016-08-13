@@ -282,10 +282,8 @@ namespace Crayon
             if (classDefinition.StaticConstructor != null)
             {
                 // All static field initializers are added here.
-                this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor);
+                this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor, null);
             }
-
-            this.CompileConstructor(parser, buffer, classDefinition.Constructor);
 
             foreach (FunctionDefinition fd in classDefinition.Methods)
             {
@@ -353,18 +351,18 @@ namespace Crayon
                 });
             }
 
-            ByteBuffer initializer = null;
+            ByteBuffer initializer = new ByteBuffer();
 
             if (fieldsWithComplexValues.Count > 0)
             {
-                initializer = new ByteBuffer();
                 foreach (FieldDeclaration complexField in fieldsWithComplexValues)
                 {
                     this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
                     initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
                 }
-                initializer.Add(null, OpCode.RETURN, 0);
             }
+
+            this.CompileConstructor(parser, buffer, classDefinition.Constructor, initializer);
 
             List<int> args = new List<int>()
             {
@@ -387,7 +385,7 @@ namespace Crayon
             }
         }
 
-        private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor)
+        private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
             // TODO: throw parser exception in the resolver if a return appears with any value
 
@@ -423,6 +421,11 @@ namespace Crayon
                     cd.BaseClass.Constructor.FunctionID,
                     0,
                     cd.BaseClass.ClassID);
+            }
+
+            if (complexFieldInitializers != null)
+            {
+                tBuffer.Concat(complexFieldInitializers);
             }
 
             this.Compile(parser, tBuffer, constructor.Code);
