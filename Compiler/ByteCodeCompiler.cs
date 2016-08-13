@@ -382,6 +382,8 @@ namespace Crayon
         private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
             // TODO: throw parser exception in the resolver if a return appears with any value
+            // TODO: throw parse exception if 'this' is used in the base args or default args anywhere. 
+            // TODO: some sort of mechanism (preferably earlier in the pipeline) that prevents the above.
 
             ByteBuffer tBuffer = new ByteBuffer();
 
