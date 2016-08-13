@@ -1,0 +1,5 @@
+$_lib_http_readResponseData: Library.Http.HttpHelper.ReadResponseData([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+$_lib_http_getResponseBytes: Library.Http.HttpHelper.GetResponseBytes([ARG:1], [ARG:2], [ARG:3])
+$_lib_http_sendRequestAsynchronous: Library.Http.HttpHelper.SendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+$_lib_http_sendRequestSynchronous: Library.Http.HttpHelper.SendRequestSync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+$_lib_http_pollRequest: Library.Http.HttpHelper.PollRequest([ARG:1])

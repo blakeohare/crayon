@@ -83,10 +83,8 @@ namespace Crayon.Translator.Java
                 pathToJavaCode + "/CrayonGlSurfaceView.java|AndroidProject/CrayonGlSurfaceView.txt",
 
                 // Generic Crayon Java stuff
-                pathToJavaCode + "/AsyncMessageQueue.java|Project/AsyncMessageQueue.txt",
                 pathToJavaCode + "/TranslationHelper.java|Project/TranslationHelper.txt",
                 pathToJavaCode + "/Image.java|Project/Image.txt",
-                pathToJavaCode + "/JsonParser.java|Project/JsonParser.txt",
             })
             {
                 string[] parts = simpleCopyText.Split('|');
@@ -113,10 +111,8 @@ namespace Crayon.Translator.Java
             }
 
             foreach (string basicFile in new string[] {
-                "AsyncMessageQueue",
                 "TranslationHelper",
                 "Image",
-                "JsonParser"
             })
             {
                 output[pathToJavaCode + "/" + basicFile + ".java"] = new FileOutput()

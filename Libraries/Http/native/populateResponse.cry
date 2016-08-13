@@ -1,0 +1,77 @@
+/*
+	arg1: request object
+		nativeData[0] -> reference to platform HTTP request object
+		nativeData[1] -> unused here
+		nativeData[2] -> unused here
+		
+	arg2: response object (nativeData not set yet)
+		nativeData[0] -> byte array if a binary request
+		
+	arg3: empty list for output
+		out[0] -> status code e.g. 403
+		out[1] -> status message e.g. FORBIDDEN
+		out[2] -> text content
+		out[3] -> bool, true if binary
+	
+	arg4: empty list for output (header data)
+		this list will have 2n values added to it, alternating between header name and header value
+*/
+
+import inline "FrameworkFunctions/4_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0);
+
+objArray1 = $_new_array('object', 1);
+stringList1 = $_new_list('string');
+$_lib_http_readResponseData(
+	// native http request object
+	object1,
+	
+	/*
+		output param for the following values:
+		[0] -> status code
+		[1] -> 0 => text, 1 => binary
+	*/
+	intOutParam,
+	
+	/*
+		output param for the following values:
+		[0] -> status message
+		[1] -> text content
+	*/
+	stringOutParam,
+	
+	/*
+		output param for the following value:
+		[0] -> binary content as a byte array
+	*/
+	objArray1,
+	
+	// add the headers here.
+	stringList1);
+
+objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+ObjectInstance$objInstance1.nativeData = objArray1;
+
+list1 = $_cast('List<Value>', Value$arg3.internalValue);
+
+// push the status code
+$_list_push(list1, buildInteger($_array_get(intOutParam, 0)));
+$_list_push(list1, buildString($_array_get(stringOutParam, 0)));
+
+// push the text content
+value = VALUE_NULL;
+value2 = VALUE_TRUE;
+if ($_array_get(intOutParam, 1) == 0) {
+	value = buildString($_array_get(stringOutParam, 1));
+	value2 = VALUE_FALSE;
+}
+$_list_push(list1, value); // content
+$_list_push(list1, value2); // boolean
+
+// push the header information
+list1 = $_cast('List<Value>', Value$arg4.internalValue);
+for (i = 0; i < $_list_length(stringList1); i += 1) {
+	$_list_push(list1, buildString($_list_get(stringList1, i)));
+}

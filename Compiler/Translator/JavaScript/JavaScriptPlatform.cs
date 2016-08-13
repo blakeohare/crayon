@@ -56,7 +56,6 @@ namespace Crayon.Translator.JavaScript
                 "common.js",
                 "file_io.js",
                 "fake_disk.js",
-                "http.js",
             })
             {
                 codeJs.Add(Util.ReadResourceFileInternally("javascript-common/" + jsFile));

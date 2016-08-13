@@ -136,7 +136,12 @@ namespace Crayon
             Token token = this.Pop();
             if (token.Value != value)
             {
-                throw new ParserException(token, " Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'");
+                string message = "Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'.";
+                if (value == ";" && this.topIndex > 0 && this.topTokens[this.topIndex - 2].Line < token.Line)
+                {
+                    message += " Is this previous line missing a semicolon at the end?";
+                }
+                throw new ParserException(token, message);
             }
             return token;
         }

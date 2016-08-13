@@ -38,7 +38,6 @@
     <EmbeddedResource Include="javascript-common\common.js" />
     <EmbeddedResource Include="javascript-common\fake_disk.js" />
     <EmbeddedResource Include="javascript-common\file_io.js" />
-    <EmbeddedResource Include="javascript-common\http.js" />
     <EmbeddedResource Include="game-csharp-ios\CryImage.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +50,6 @@
     <EmbeddedResource Include="game-javascript\sound.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="java-common\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="java-common\JsonParser.txt" />
     <EmbeddedResource Include="java-common\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -109,7 +106,6 @@
     <EmbeddedResource Include="game-java-awt\Start.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="csharp-common\AsyncMessageQueue.txt" />
     <EmbeddedResource Include="csharp-common\TranslationHelper.txt" />
     <EmbeddedResource Include="csharp-common\ResourceReader.txt" />
   </ItemGroup>
@@ -166,7 +162,6 @@
     <EmbeddedResource Include="server-php\index.php" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="game-python-pygame\AsyncHttpFetcher.py" />
     <EmbeddedResource Include="game-python-pygame\Footer.py" />
     <EmbeddedResource Include="game-python-pygame\GamepadLibraryHelper.py" />
     <EmbeddedResource Include="game-python-pygame\GfxRenderer.py" />

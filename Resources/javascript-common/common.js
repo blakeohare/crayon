@@ -72,10 +72,6 @@ C$common$typeClassify = function(t) {
     return 'null';
 };
 
-C$common$pumpAsyncMessageQueue = function () {
-    return null;
-};
-
 C$common$dictionaryKeys = function (dictionary) {
     var output = [];
     for (var key in dictionary) {

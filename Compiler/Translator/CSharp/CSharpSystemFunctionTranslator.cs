@@ -6,11 +6,6 @@ namespace Crayon.Translator.CSharp
 {
     internal abstract class CSharpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslateAsyncMessageQueuePump(List<string> output)
-        {
-            output.Add("AsyncMessageQueue.PumpMessages()");
-        }
-
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("Math.Acos(");
@@ -71,11 +66,6 @@ namespace Crayon.Translator.CSharp
             output.Add("TranslationHelper.Assertion(");
             this.Translator.TranslateExpression(output, message);
             output.Add(")");
-        }
-
-        protected override void TranslateBeginFrame(List<string> output)
-        {
-            // Nope
         }
 
         protected override void TranslateByteCodeGetIntArgs(List<string> output)

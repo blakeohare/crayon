@@ -49,7 +49,6 @@ namespace Crayon.Translator.Java
             }
 
             foreach (string basicFile in new string[] {
-                "AsyncMessageQueue",
                 "TranslationHelper",
             })
             {
@@ -89,7 +88,7 @@ namespace Crayon.Translator.Java
                 "import java.util.HashMap;",
                 "import java.util.Stack;",
                 "",
-                "final class CrayonWrapper {",
+                "public final class CrayonWrapper {",
                 "    private CrayonWrapper() {}",
                 ""));
 
@@ -119,7 +118,7 @@ namespace Crayon.Translator.Java
 
                 List<string> codeContents = new List<string>();
 
-                codeContents.Add("class " + structName + " {" + nl);
+                codeContents.Add("public final class " + structName + " {" + nl);
                 codeContents.Add("    public " + structName + "(");
                 List<string> types = new List<string>();
                 for (int i = 0; i < structDefinition.FieldsByIndex.Length; ++i)
@@ -199,7 +198,7 @@ namespace Crayon.Translator.Java
                     TextContent = Constants.DoReplacements(content, replacements)
                 };
             }
-
+            
             output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
             if (resourceDatabase.ImageSheetManifestFile != null)

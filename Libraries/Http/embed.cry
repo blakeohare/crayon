@@ -1,37 +1,15 @@
-﻿
-/*
-	This "import Game" needs to go away.
-
-	HTTP requests, in their current form, requires an asynchronous gap in the interpreter
-	to poll and update the state of the active HTTP requests. This is currently done bewteen
-	game frames when gameWindow.clockTick() is called. This stems from the nature of Crayon
-	being purely for games. Moving forward this needs to be decoupled in order to make Crayon
-	a general-purpose language. 
-
-	The plan for this involves adding an asynchronous work pump of some sort in Core that the
-	HTTP library registers itself to. But that's a design-doc for another day.
-*/
-import Game;
-
-namespace HTTP {
+﻿namespace HTTP {
 
 	const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
 
 	enum Method {
-		GET,
-		POST,
-		PUT,
-		DELETE,
+		GET = 1,
+		POST = 2,
+		PUT = 3,
+		DELETE = 4,
 	}
 
-	enum State {
-		NOT_SENT = 0,
-		SENT = 1,
-		DONE = 2,
-		ERROR = 3,
-	}
-
-	enum Status {
+	enum StatusCode {
 		CONTINUE = 100,
 		SWITCHING_PROTOCOLS = 101,
 		PROCESSING = 102,
@@ -105,154 +83,212 @@ namespace HTTP {
 		NETWORK_AUTHENTICATION_REQIURED = 511,
 	}
 
+	class HttpResponse {
+		/*
+			nativeData[0] -> a byte array if this is a binary response
+		*/
+		field _headerValues = {}; // key is lowercase
+		field _headerNames = []; // original case
+		field _content;
+		field _statusCode = 0;
+		field _statusMessage = '';
+		field _isBinary = false;
+		
+		@private constructor() { }
+		
+		static function _initialize(request) {
+			response = new HttpResponse();
+			output = [];
+			headersOut = [];
+			$$lib_http_populateResponse(request, response, output, headersOut);
+			for (i = 0; i < headersOut.length; i += 2) {
+				name = headersOut[i].trim();
+				key = name.lower();
+				value = headersOut[i + 1];
+				values = response._headerValues.get(key);
+				if (values == null) {
+					values = [];
+					response._headerValues[key] = values;
+					response._headerNames.add(name);
+				}
+				values.add(value);
+			}
+			response._statusCode = output[0];
+			response._statusMessage = output[1];
+			response._content = output[2];
+			response._isBinary = output[3];
+			
+			return response;
+		}
+		
+		function getHeaderNames() {
+			return this._headerNames;
+		}
+		
+		function getHeaders(name) {
+			output = this._headerNames.get(name.loweer());
+			if (output == null) return [];
+			return output.clone();
+		}
+		
+		function getHeader(name) {
+			output = this._headerNames.get(name.lower());
+			if (output == null) return null;
+			return output[0];
+		}
+		
+		function getContent() {
+			if (this._isBinary) {
+				output = [];
+				// just returns output
+				return $$lib_http_getResponseBytes(this, output);
+			}
+			return this._content;
+		}
+		
+		function getStatusCode() {
+			return this._statusCode;
+		}
+		
+		function getStatusMessage() {
+			return this._statusMessage;
+		}
+	}
+
+	enum RequestMode {
+		TEXT = 0,
+		BINARY = 1,
+	}
+
 	class HttpRequest {
 		
-		static constructor() {
-			Game.GameWindow._frameEndHandlers.add(HttpRequest._worker);
-		}
-		
+		/*
+			nativeData[0] -> a reference to an ongoing HTTP request object
+			nativeData[1] -> if applicable, a mutex for accessing the asynchronous HTTP request
+			nativeData[2] -> boolean: is done
+		*/
 		static field _active_requests = null;
 		
-		static function _worker() {
-			if (HttpRequest._active_requests != null) {
-				new_list = [];
-				for (r : HttpRequest._active_requests) {
-					/*
-						returns a list with the following values:
-						[0] -> status code (int)
-						[1] -> status (string)
-						[2] -> response body
-						[3] -> dictionary of canonical (lowercase) header names to their non-canonical (actual) value
-						[4] -> dictionary of canonical (lowercase) header names to a list of string values
-						[5] -> list of header names returned
-					*/
-					t = $$lib_http_request_poll(r);
-					if (t == null) {
-						new_list.add(r);
-					} else {
-						r._s = HTTP.State.DONE;
-						r._r = t;
-					}
-				}
-				HttpRequest._active_requests = new_list.length == 0 ? null : new_list;
-			}
-		}
-
-		field _u;
-		field _m = 'GET';
-		field _hk = [];
-		field _hv = [];
-		field _b = null;
-		field _s = State.NOT_SENT;
-		field _e;
-		field _r;
-
+		field _url;
+		field _method = HTTP.Method.GET;
+		field _headers = [];
+		field _content = null;
+		field _mode = HTTP.RequestMode.TEXT;
+		field _isReady = false;
+		field _contentIsBinary = false;
+		field _userAgent = HTTP.DEFAULT_USER_AGENT;
+		field _contentType = null;
+		field _timesPolled = 0;
+		
 		constructor(url) {
-			Core.assert($$lib_core_typeof(url) == Core.Type.STRING, "URL must be a string.");
-			this._u = url;
-		}
-
-		function _assertReady() {
-			Core.assert(this._r != null, "Cannot call this function until the request has completed successfully.");
-		}
-
-		function getError() {
-			return this._e;
-		}
-
-		function getState() {
-			return this._s;
-		}
-
-		function getStatusCode() {
-			this._assertReady();
-			return this._r[0];
-		}
-
-		function getStatus() {
-			this._assertReady();
-			return this._r[1];
-		}
-
-		function getBody() {
-			this._assertReady();
-			return this._r[2];
-		}
-
-		function getResponseHeaderValue(name) {
-			t = this.getResponseHeaderValues(name);
-			return t.length > 0 ? t[0] : null;
-		}
-
-		function getResponseHeaderValues(name) {
-			Core.assert($$lib_core_typeof(name) == Core.Type.STRING, "Header name must be a string.");
-			this._assertReady();
-			t = this._r[3].get(name.lower());
-			if (t == null) return [];
-			return this._r[4].get(t).clone();
-		}
-
-		function getResponseHeaderNames() {
-			this._assertReady();
-			return this._r[5].clone();
+			this._url = url + '';
 		}
 
 		function setMethod(method) {
-			if ($$lib_core_typeof(method) == Core.Type.INTEGER) {
-				switch (method) {
-					case Method.DELETE: method = 'DELETE'; break;
-					case Method.GET: method = 'GET'; break;
-					case Method.POST: method = 'POST'; break;
-					case Method.PUT: method = 'PUT'; break;
-					default: Core.assert(false, "Unknown HTTP method."); break;
-				}
-			}
-			Core.assert($$lib_core_typeof(method) == Core.Type.STRING, "HTTP Method must be a string.");
-			this._m = method;
+			this._method = method;
 			return this;
 		}
 
 		function setHeader(name, value) {
+			Core.assert(Core.typeof(name) == Core.Type.STRING, "HTTP header name must be a string.");
 			name = name.trim();
-			Core.assert($$lib_core_typeof(name) == Core.Type.STRING, "HTTP header name must be a string.");
+			Core.assert(name.length > 0, "HTTP header name must be non-empty.");
 			Core.assert(value != null, "HTTP header value cannot be null.");
-			this._hk.add(name);
-			this._hv.add((value + '').trim());
-			return this;
-		}
-
-		function setBody(value) {
-			this._b = value == null ? null : (value + '');
-			return this;
-		}
-
-		function sendAsync() {
-			Core.assert(this._s == HTTP.State.NOT_SENT, "Cannot send same request instance multiple times.");
-
-			// The HTTP request struct is set to the nativeData[0] of 'this' as a result of the following call...
-			t = $$lib_http_request(
-				this,
-				this._m,
-				this._u,
-				this._hk,
-				this._hv,
-				this._b,
-				HTTP.DEFAULT_USER_AGENT);
-
-			this._s = HTTP.State.ERROR;
-			switch (t) {
-				case 0:
-					this._e = null;
-					this._s = HTTP.State.SENT;
-					if (HttpRequest._active_requests == null) HttpRequest._active_requests = [];
-					HttpRequest._active_requests.add(this);
-					break;
-
-				case 1: this._e = "Cannot set content length without a body."; break;
-				case 2: this._e = "Cannot set content type without a body."; break;
-				default: this._e = "An unknown error has occurred."; break;
+			
+			value = value + '';
+			switch (name.lower()) {
+				case 'user-agent': this._userAgent = value; break;
+				case 'content-type': this._contentType = value; break;
+				default: this._headers.add(name, value); break;
 			}
 			return this;
+		}
+
+		function setContentBytes(value, contentType = null) {
+			obj = new Object();
+			if (!$$lib_http_fastEnsureAllBytes(value, obj)) Core.fail("Input must be a list of byte values");
+			
+			this._content = obj;
+			this._contentIsBinary = true;
+			return this._setContentHelper(contentType);
+		}
+		
+		function setContent(value, contentType = null) {
+			this._content = value + '';
+			this._contentIsBinary = false;
+			return this._setContentHelper(contentType);
+		}
+		
+		function _setContentHelper(contentType) {
+			if (contentType != null) {
+				this.setHeader('Content-Type', contentType);
+			}
+			if (this._method == null) {
+				this._method = HTTP.Method.POST;
+			}
+			return this;
+		}
+		
+		function setMode(mode) {
+			this._mode = mode;
+			return this;
+		}
+		
+		function send() {
+			this._sendImpl(false);
+			this._isReady = true;
+			return this.getResponse();
+		}
+		
+		function sendAsync() {
+			return this._sendImpl(true);
+		}
+
+		function _sendImpl(isAsync) {
+		
+			method = {
+				HTTP.Method.GET: 'GET',
+				HTTP.Method.POST: 'POST',
+				HTTP.Method.PUT: 'PUT',
+				HTTP.Method.DELETE: 'DELETE',
+			}.get(this._method, this._method) + '';
+			
+			this._headers.add('User-Agent', this._userAgent);
+			if (this._contentType != null) {
+				this._headers.add('Content-Type', this._contentType);
+			}
+			
+			$$lib_http_sendRequest(
+				this,
+				isAsync,
+				method,
+				this._url,
+				this._headers,
+				this._content,
+				this._mode);
+			return this;
+		}
+		
+		function isDone() {
+			if (this._isReady) return true;
+			
+			if (this._timesPolled++ > 10) {
+				this._timesPolled = 0;
+				// Yield the thread for a tiny moment to give the handler a chance to run for platforms that require
+				// asynchronous HTTP requests to invoke a completion handler on the main thread.
+				Core.sleep(0.001);
+			}
+			
+			if ($$lib_http_pollRequest(this)) { // updates the native data
+				this._isReady = true;
+			}
+			
+			return this._isReady;
+		}
+		
+		function getResponse() {
+			Core.assert(this._isReady, "Request not finished.");
+			return HTTP.HttpResponse._initialize(this);
 		}
 	}
 }

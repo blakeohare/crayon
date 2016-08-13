@@ -73,11 +73,6 @@ namespace %%%PROJECT_ID%%%
 			// Nothing to do here.
 		}
 
-		public static void DownloadImage(string key, string url)
-		{
-			throw new NotImplementedException("Download Image");
-		}
-		
         private static String PrefixUserDataFolder(string path)
         {
             return System.IO.Path.Combine(

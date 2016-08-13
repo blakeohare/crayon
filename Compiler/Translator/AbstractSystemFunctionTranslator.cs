@@ -32,30 +32,12 @@ namespace Crayon.Translator
 
             switch (name)
             {
-                // TODO: migrate this to the HTTP library
-                case "_http_request": VerifyCount(functionCall, 9); TranslateHttpRequest(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]); break;
-
-                // TODO: migrate these to the FileIO library
-                case "_io_create_directory": VerifyCount(functionCall, 1); TranslateIoCreateDirectory(output, args[0]); break;
-                case "_io_current_directory": VerifyCount(functionCall, 0); TranslateIoCurrentDirectory(output); break;
-                case "_io_delete_directory": VerifyCount(functionCall, 2); TranslateIoDeleteDirectory(output, args[0], args[1]); break;
-                case "_io_delete_file": VerifyCount(functionCall, 2); TranslateIoDeleteFile(output, args[0], args[1]); break;
-                case "_io_does_path_exist": VerifyCount(functionCall, 4); TranslateIoDoesPathExist(output, args[0], args[1], args[2], args[3]); break;
-                case "_io_file_read_text": VerifyCount(functionCall, 2); TranslateIoFileReadText(output, args[0], args[1]); break;
-                case "_io_files_in_directory": VerifyCount(functionCall, 2); TranslateIoFilesInDirectory(output, args[0], args[1]); break;
-                case "_io_file_write_text": VerifyCount(functionCall, 3); TranslateIoFileWriteText(output, args[0], args[1], args[2]); break;
-                case "_is_windows_program": VerifyCount(functionCall, 0); TranslateIsWindowsProgram(output); break;
-
-                // TODO: redo this too. preferably when you refactor the HTTP stuff that depends on this
-                case "_async_message_queue_pump": VerifyCount(functionCall, 0); TranslateAsyncMessageQueuePump(output); break;
-
                 case "_app_data_root": VerifyCount(functionCall, 0); TranslateAppDataRoot(output); break;
                 case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
                 case "_array_join": VerifyCount(functionCall, 2); TranslateArrayJoin(output, args[0], args[1]); break;
                 case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
                 case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
                 case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
-                case "_begin_frame": VerifyCount(functionCall, 0); TranslateBeginFrame(output); break;
                 case "_byte_code_get_int_args": VerifyCount(functionCall, 0); TranslateByteCodeGetIntArgs(output); break;
                 case "_byte_code_get_ops": VerifyCount(functionCall, 0); TranslateByteCodeGetOps(output); break;
                 case "_byte_code_get_string_args": VerifyCount(functionCall, 0); TranslateByteCodeGetStringArgs(output); break;
@@ -155,7 +137,6 @@ namespace Crayon.Translator
         }
 
         protected abstract void TranslateAppDataRoot(List<string> output);
-        protected abstract void TranslateAsyncMessageQueuePump(List<string> output);
         protected abstract void TranslateArcCos(List<string> output, Expression value);
         protected abstract void TranslateArcSin(List<string> output, Expression value);
         protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);
@@ -164,7 +145,6 @@ namespace Crayon.Translator
         protected abstract void TranslateArrayLength(List<string> output, Expression list);
         protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateAssert(List<string> output, Expression message);
-        protected abstract void TranslateBeginFrame(List<string> output);
         protected abstract void TranslateByteCodeGetIntArgs(List<string> output);
         protected abstract void TranslateByteCodeGetOps(List<string> output);
         protected abstract void TranslateByteCodeGetStringArgs(List<string> output);
@@ -189,16 +169,7 @@ namespace Crayon.Translator
         protected abstract void TranslateForceParens(List<string> output, Expression expression);
         protected abstract void TranslateGetProgramData(List<string> output);
         protected abstract void TranslateGetRawByteCodeString(List<string> output);
-        protected abstract void TranslateHttpRequest(List<string> output, Expression httpRequest, Expression method, Expression url, Expression body, Expression userAgent, Expression contentType, Expression contentLength, Expression headerNameList, Expression headerValueList);
         protected abstract void TranslateInt(List<string> output, Expression value);
-        protected abstract void TranslateIoCreateDirectory(List<string> output, Expression path);
-        protected abstract void TranslateIoCurrentDirectory(List<string> output);
-        protected abstract void TranslateIoDeleteDirectory(List<string> output, Expression path, Expression isRecursive);
-        protected abstract void TranslateIoDeleteFile(List<string> output, Expression path, Expression isUserData);
-        protected abstract void TranslateIoDoesPathExist(List<string> output, Expression canonicalizedPath, Expression directoriesOnly, Expression performCaseCheck, Expression isUserData);
-        protected abstract void TranslateIoFileReadText(List<string> output, Expression path, Expression isUserData);
-        protected abstract void TranslateIoFilesInDirectory(List<string> output, Expression verifiedCanonicalizedPath, Expression isUserData);
-        protected abstract void TranslateIoFileWriteText(List<string> output, Expression path, Expression content, Expression isUserData);
         protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
         protected abstract void TranslateIsWindowsProgram(List<string> output);
         protected abstract void TranslateListClear(List<string> output, Expression list);

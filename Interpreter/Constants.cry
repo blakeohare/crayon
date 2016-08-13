@@ -116,30 +116,8 @@ enum InterpreterResultStatus {
 	SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
 }
 
-enum AsyncMessageType {
-	HTTP_RESPONSE = %%%ASYNC_MESSAGE_TYPE_HTTP_RESPONSE%%%,
-}
-
 const INTEGER_POSITIVE_CACHE = 1000;
 const INTEGER_NEGATIVE_CACHE = 100;
-
-// There is a to string method in IOManager.cry
-// This enum is duplciated in IOErrors.cs
-enum IOErrors {
-	NONE = %%%IO_ERROR_NONE%%%,
-	INVALID_PATH = %%%IO_ERROR_INVALID_PATH%%%,
-	PATH_STEPS_ABOVE_DOMAIN = %%%IO_ERROR_PATH_STEPS_ABOVE_DOMAIN%%%, // e.g. C:\..\foo.txt or %APPDATA%\..\foo.txt in userdata-only context
-	DOES_NOT_EXIST = %%%IO_ERROR_DOES_NOT_EXIST%%%,
-	BAD_CASING = %%%IO_ERROR_BAD_CASING%%%,
-	NONEXISTENT_DRIVE = %%%IO_ERROR_NONEXISTENT_DRIVE%%%,
-	IMPOSSIBLE_STATE = %%%IO_ERROR_IMPOSSIBLE_STATE%%%,
-	READ_ONLY = %%%IO_ERROR_READ_ONLY%%%,
-	DISK_FULL = %%%IO_ERROR_DISK_FULL%%%,
-	RESERVED_NAME = %%%IO_ERROR_RESERVED_NAME%%%,
-	PATH_TOO_LONG = %%%IO_ERROR_PATH_TOO_LONG%%%,
-	CANNOT_DELETE_DIRECTORY = %%%IO_ERROR_CANNOT_DELETE_DIRECTORY%%%,
-	UNKNOWN_ERROR = %%%IO_ERROR_UNKNOWN_ERROR%%%,
-}
 
 enum PrimitiveMethodName {
 	ADD,

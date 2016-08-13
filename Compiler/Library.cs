@@ -340,7 +340,7 @@ namespace Crayon
                 return "";
             }
 
-            throw new ParserException(null, "This project type is not supported by the " + this.Name + " library.");
+            throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
         }
     }
 }

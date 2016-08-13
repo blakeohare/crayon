@@ -1211,7 +1211,14 @@ namespace Crayon
 
         private void CompileBinaryOpChain(Parser parser, ByteBuffer buffer, BinaryOpChain opChain, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(opChain.FirstToken, "This expression isn't valid here.");
+            if (!outputUsed)
+            {
+                if (opChain.Op.Value == "==")
+                {
+                    throw new ParserException(opChain.Op, "'==' cannot be used like this. Did you mean to use just a single '=' instead?");
+                }
+                throw new ParserException(opChain.FirstToken, "This expression isn't valid here.");
+            }
 
             this.CompileExpressionList(parser, buffer, new Expression[] { opChain.Left, opChain.Right }, true);
 

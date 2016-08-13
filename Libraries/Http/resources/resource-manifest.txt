@@ -1,0 +1,22 @@
+
+BEGIN
+APPLICABLE-TO: game-csharp-android
+APPLICABLE-TO: game-csharp-ios
+APPLICABLE-TO: game-csharp-opentk
+COPYFILES: csharp: %PROJECT_ID%/Libraries/Http/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-java-awt
+COPYFILES: java: src/crayonlib/http/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBED: python
+END
+
+BEGIN
+APPLICABLE-TO: game-javascript
+EMBED: javascript
+END
