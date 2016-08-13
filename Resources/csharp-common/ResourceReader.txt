@@ -30,17 +30,12 @@ namespace %%%PROJECT_ID%%%
 		
         public static System.Drawing.Bitmap ReadImageFile(string path)
         {
-            for (int i = 0; i < 10; ++i)
+            IList<byte> data = ReadBytes(path);
+            if (data == null)
             {
-                IList<byte> data = ReadBytes(path);
-                if (data == null)
-                {
-                    return null;
-                }
-                MemoryStream ms = new MemoryStream(data.ToArray());
-                return (Bitmap)Bitmap.FromStream(ms);
+                return null;
             }
-            return null;
+            return (Bitmap)Bitmap.FromStream(new MemoryStream(data.ToArray()));
         }
 
 		// C# does not like it when you access resources from different threads.
