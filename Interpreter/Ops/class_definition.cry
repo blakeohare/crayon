@@ -1,2 +1,2 @@
 ﻿
-pc += initializeClass(pc, p, row);
+initializeClass(pc, p, row);

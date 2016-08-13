@@ -72,9 +72,8 @@ function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @
 	args[1] -> base class ID or -1 if no parent
 	args[2] -> global name ID for class (potentially not unique)
 	args[3] -> constructor function ID
-	args[4] -> Jump amount after initialization complete
-	args[5] -> static constructor function ID or -1
-	args[6] -> number of static fields
+	args[4] -> static constructor function ID or -1
+	args[5] -> number of static fields
 	args[n .. n+5] -> fields and methods that are declared in this class.
 		n + 0 -> 0 if field, 1 if method
 		n + 1 -> member ID (numbering starts after base class member ID's
@@ -100,14 +99,12 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	@type('int') baseClassId = $_array_get(args, 1);
 	@type('int') globalNameId = $_array_get(args, 2);
 	@type('int') constructorFunctionId = $_array_get(args, 3);
-	@type('int') pcJumpAfterDone = $_array_get(args, 4);
-	@type('bool') initializerPresent = pcJumpAfterDone != 0;
-	@type('int') staticConstructorFunctionId = $_array_get(args, 5);
+	@type('int') staticConstructorFunctionId = $_array_get(args, 4);
 	@type('int') staticInitializationState = 0;
 	if (staticConstructorFunctionId == -1) {
 		staticInitializationState = 2;
 	}
-	@type('int') staticFieldCount = $_array_get(args, 6); // just static fields. no static methods. those function IDs are resolved inline at compile time
+	@type('int') staticFieldCount = $_array_get(args, 5); // just static fields. no static methods. those function IDs are resolved inline at compile time
 
 	@type('Array<Value>') staticFields = $_new_array('Value', staticFieldCount);
 	for (i = 0; i < staticFieldCount; i += 1) {
@@ -122,7 +119,6 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		staticFields,
 		staticConstructorFunctionId,
 		constructorFunctionId,
-		null, // field initializer PC list with base-most class first.
 		0, // member count
 		null, // Array of member ID -> function IDs (with -1 fallback)
 		null, // Field initialization command by member ID
@@ -146,19 +142,6 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	if (baseClassId != -1) {
 		baseClass = $_list_get(classChain, 1);
 	}
-
-	// create the field initializer PC list
-	@type('List<int>') fieldInitializerPcs = $_new_list('int');
-	if (initializerPresent) {
-		$_list_push(fieldInitializerPcs, pc);
-	}
-	if (baseClass != null) {
-		@type('Array<int>') baseFieldInitializerPcs = ClassInfo$baseClass.fieldInitializerPcs;
-		for (i = 0; i < $_array_length(baseFieldInitializerPcs); i += 1) {
-			$_list_push(fieldInitializerPcs, $_array_get(baseFieldInitializerPcs, i));
-		}
-	}
-	ClassInfo$classInfo.fieldInitializerPcs = $_convert_list_to_array('int', fieldInitializerPcs);
 
 	// populate all the members. basically just copy the member lookups for the base class and then
 	// overlay the current classes value on top of it.
@@ -186,7 +169,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	}
 
 	// and now add the overrides and appends
-	for (i = 7; i < $_array_length(args); i += 5) {
+	for (i = 6; i < $_array_length(args); i += 5) {
 		memberId = $_array_get(args, i + 1);
 		globalId = $_array_get(args, i + 2);
 		while (memberId >= $_list_length(functionIds)) {
@@ -215,7 +198,7 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
 	ClassInfo$classInfo.globalIdToMemberId = globalNameIdToMemberId;
 
-	return pcJumpAfterDone;
+	return 0;
 }
 
 function @type('Array<ClassInfo>') getClassTable(@type('ProgramData') p, @type('int') classId) {

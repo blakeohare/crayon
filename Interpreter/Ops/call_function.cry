@@ -359,10 +359,6 @@ if (bool1) {
 					$_array_set(valueStack, valueStackSize, value);
 					valueStackSize += 1;
 				}
-
-				//intArray1 = ClassInfo$classInfo.fieldInitializerPcs;
-				//bool1 = true;
-				bool1 = false;
 				break;
 			case FunctionInvocationType.BASE_CONSTRUCTOR:
 				$_comment('base constructor');
@@ -428,24 +424,6 @@ if (bool1) {
 				pc += $_array_get(FunctionInfo$functionInfo.pcOffsetsForOptionalArgs, int1);
 				StackFrame$stack.pc = pc;
 			}
-		}
-
-		if (bool1) {
-			for (i = 0; i < $_array_length(intArray1); i += 1) {
-				stack = new StackFrame(
-					$_array_get(intArray1, i), // PC of initializer - 1
-					localsStackSetToken, // locals are not allowed in field initializer, so these are all the same.
-					localsStackOffset,
-					localsStackOffset,
-					stack,
-					false, // return value used
-					value, // value of 'this' keyword
-					valueStackSize, // should not change
-					0, // for static constructors only
-					StackFrame$stack.depth + 1);
-			}
-
-			pc = StackFrame$stack.pc;
 		}
 
 		if (StackFrame$stack.depth > 1000) {

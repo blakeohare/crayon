@@ -111,24 +111,8 @@ struct SystemMethod {
 	indicates that the member is actually referencing a method. This is lazily populated at runtime if a function
 	reference without invocation is ever made.
 
-	At this point in CALL_FUNCTION, local arguments are pushed onto the locals stack and the constructor's stack
-	frame is pushed with the PC pointing at the proper optional argument. But before execution resumes, more stack
-	frames are pushed...
-
-	In the byte code, the CLASS_INITIALIZER is followed by some code that has all the field default values individually
-	followed by ASSIGN_FIELD (for anything that isn't a literal, empty list, or empty dictionary) followed by RETURN.
-	After the constructor's args have been pushed to the local stack and the constructor's stack frame is initialized,
-	the call stack pushes ALL the PC's that appear in fieldInitializerPcs onto the stack in order, which results in
-	the root parent last. As these return, they will end up back at the child constructor.
-
-	One of the side effects of this system is all fields (even in base classes) that have literal values will be
-	initialized first before anything else happens. After that all other fields and constructors are invoked in the
-	traditional order, which is a change in behavior from languages like Java and C#. But if your code explicitly is
-	expecting a default null value in a field that is initialized with another literal before your other field that
-	is initialized with a function invocation, then you're asking for trouble anyway. The performance of the copying
-	from the array of literals has better performance than putting all field initializers in the field initializer
-	code chunk.
-
+	All other fields are populated by the constructor by the default field value code which is injected into the
+	constructor's byte code between the base constructor invocation and the body of the constructor.
 */
 struct ClassInfo {
 	@type('int') id,
@@ -138,10 +122,6 @@ struct ClassInfo {
 	@type('Array<Value>') staticFields,
 	@type('int') staticConstructorFunctionId,
 	@type('int') constructorFunctionId,
-
-	// A list of PC offsets (from this class to its parent root) that should be pushed onto the stack
-	// to initialize fields.
-	@type('Array<int>') fieldInitializerPcs,
 
 	@type('int') memberCount, // total number of fields and methods, flattened.
 	// The following lists contain data on all flattened fields and methods indexed by member ID.
