@@ -34,7 +34,7 @@ namespace Crayon
                 orderedVars.Add(value);
             }
         }
-
+        
         public int GetVarId(Token variableToken)
         {
             int id;
@@ -48,7 +48,7 @@ namespace Crayon
                 return id;
             }
 
-            throw new ParserException(variableToken, "'" + variableToken.Value + "' is not defined anywhere.");
+            return -1;
         }
 
         public VariableIdAllocator Clone()

@@ -1,3 +1,5 @@
+import Math;
+
 const KELP_WIDTH = 80;
 const KELP_OPENING_HEIGHT = 200;
 

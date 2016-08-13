@@ -12,7 +12,12 @@ namespace Crayon
 
         private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
         private List<string> orderedListOfFunctionNames = new List<string>();
-        
+
+        public static bool IsValidLibrary(string name)
+        {
+            return systemLibraryPathsByName.ContainsKey(name);
+        }
+
         public string GetLibrarySwitchStatement(AbstractPlatform platform)
         {
             List<string> output = new List<string>();
@@ -69,13 +74,13 @@ namespace Crayon
             return output;
         }
 
-        private Dictionary<string, string> systemLibraryPathsByName = null;
+        private static Dictionary<string, string> systemLibraryPathsByName = null;
 
         private string GetSystemLibraryPath(string name)
         {
-            if (this.systemLibraryPathsByName == null)
+            if (systemLibraryPathsByName == null)
             {
-                this.systemLibraryPathsByName = new Dictionary<string, string>();
+                systemLibraryPathsByName = new Dictionary<string, string>();
 
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
@@ -115,13 +120,13 @@ namespace Crayon
                     string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
                     if (System.IO.File.Exists(manifestPath))
                     {
-                        this.systemLibraryPathsByName[libraryName] = manifestPath;
+                        systemLibraryPathsByName[libraryName] = manifestPath;
                     }
                 }
             }
 
             string fullpath;
-            return this.systemLibraryPathsByName.TryGetValue(name, out fullpath)
+            return systemLibraryPathsByName.TryGetValue(name, out fullpath)
                 ? fullpath
                 : null;
         }

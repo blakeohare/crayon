@@ -107,6 +107,7 @@ namespace Crayon.ParseTree
             }
 
             Executable exec = DoNameLookup(lookup, imports, this.Name);
+
             if (exec != null)
             {
                 return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.FunctionOrClassOwner);
@@ -127,6 +128,15 @@ namespace Crayon.ParseTree
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
                 this.LocalScopeId = varIds.GetVarId(this.FirstToken);
+                if (this.LocalScopeId == -1)
+                {
+                    string name = this.FirstToken.Value;
+                    if (SystemLibraryManager.IsValidLibrary(name))
+                    {
+                        throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
+                    }
+                    throw new ParserException(this.FirstToken, "'" + name + "' is used but is never assigned to.");
+                }
             }
         }
 

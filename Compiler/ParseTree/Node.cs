@@ -40,7 +40,22 @@ namespace Crayon.ParseTree
         {
             if (lookup.ContainsKey(name))
             {
-                return lookup[name];
+                Executable output = lookup[name];
+
+                if (output is Namespace)
+                {
+                    foreach (string import in imports)
+                    {
+                        if (import == ((Namespace)output).Name)
+                        {
+                            return output;
+                        }
+                    }
+                }
+                else
+                {
+                    return output;
+                }
             }
 
             foreach (string import in imports)

@@ -1,3 +1,6 @@
+import Graphics;
+import Math;
+
 class FadeTransitionScene : AbstractScene {
 
     field prev;
