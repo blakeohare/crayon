@@ -38,7 +38,6 @@
     <EmbeddedResource Include="javascript-common\common.js" />
     <EmbeddedResource Include="javascript-common\fake_disk.js" />
     <EmbeddedResource Include="javascript-common\file_io.js" />
-    <EmbeddedResource Include="javascript-common\http.js" />
     <EmbeddedResource Include="game-csharp-ios\CryImage.txt" />
   </ItemGroup>
   <ItemGroup>

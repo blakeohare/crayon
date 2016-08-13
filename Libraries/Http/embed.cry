@@ -178,6 +178,7 @@
 		field _contentIsBinary = false;
 		field _userAgent = HTTP.DEFAULT_USER_AGENT;
 		field _contentType = null;
+		field _timesPolled = 0;
 		
 		constructor(url) {
 			this._url = url + '';
@@ -270,9 +271,18 @@
 		
 		function isDone() {
 			if (this._isReady) return true;
+			
+			if (this._timesPolled++ > 10) {
+				this._timesPolled = 0;
+				// Yield the thread for a tiny moment to give the handler a chance to run for platforms that require
+				// asynchronous HTTP requests to invoke a completion handler on the main thread.
+				Core.sleep(0.001);
+			}
+			
 			if ($$lib_http_pollRequest(this)) { // updates the native data
 				this._isReady = true;
 			}
+			
 			return this._isReady;
 		}
 		
