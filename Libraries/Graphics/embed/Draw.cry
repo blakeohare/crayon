@@ -15,11 +15,14 @@ namespace Graphics {
 	
 	class Draw {
 		
+		static field _queueOld = new Core.Object();
 		static field _queue = new Core.Object();
+		static field _text_queueOld = null;
 		static field _text_queue = null;
 		
 		static constructor() {
 			// essentially no-ops, but runs the queue initializers.
+			$$lib_graphics_renderQueueAction(Graphics.Draw._queueOld, Graphics.Draw._text_queueOld, 0);
 			$$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 0);
 			
 			Game.GameWindow._frameEndHandlers.add(Graphics.Draw._renderer);
@@ -31,7 +34,16 @@ namespace Graphics {
 		
 		static function _renderer() {
 			// send the render queue to the platform renderer
-			return $$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 1);
+			$$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 1);
+			
+			// Swap the buffers. The old buffer stays in memory, in tact, while new events get drawn to [text]queue.
+			t = Graphics.Draw._queue;
+			Graphics.Draw._queue = Graphics.Draw._queueOld;
+			Graphics.Draw._queueOld = t;
+			
+			t = Graphics.Draw._text_queue;
+			Graphics.Draw._text_queue = Graphics.Draw._text_queueOld;
+			Graphics.Draw._text_queueOld = t;
 		}
 		
 		static function _rendererReset() {

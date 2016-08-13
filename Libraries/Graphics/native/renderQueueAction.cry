@@ -5,8 +5,9 @@
 	arg 1: object instance that contains the render event queue
 	arg 2: value list of integers representing the text characters to be drawn.
 	arg 3: an integer. 
-		0 -> send the queue to the platform for rendering.
-		1 -> reset the queue length to 0
+		0 -> just run the native data intializers.
+		1 -> send the queue to the platform for rendering.
+		2 -> reset render queues to 0
 	
 */
 import inline "FrameworkFunctions/3_arg.cry";
@@ -27,7 +28,6 @@ if (intArray1 == null) {
 	$_array_set(objArray1, 3, 0);
 	$_array_set(objArray1, 4, $_new_list('int'));
 }
-
 
 intList1 = $_cast('List<int>', $_array_get(objArray1, 4));
 
@@ -56,5 +56,3 @@ if (i == 1) {
 	$_array_set(objArray1, 3, 0);
 	$_list_clear($_force_parens(intList1));
 }
-
-// 0 is valid value of i and will simply used to run the initializers above.
