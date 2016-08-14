@@ -1,0 +1,4 @@
+function @type('object') lib_fileiocommon_getDiskObject(@type('Value') diskObjectArg) {
+	@type('ObjectInstance') objInst = $_cast('ObjectInstance', Value$diskObjectArg.internalValue);
+	return $_array_get(ObjectInstance$objInst.nativeData, 0);
+}

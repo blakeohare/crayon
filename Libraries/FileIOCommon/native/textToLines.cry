@@ -1,0 +1,11 @@
+/*
+	Convert a string into a list of strings, split on the newline, but contains the original newline character.
+	
+	arg 1: original string
+	arg 2: output list
+*/
+
+import inline "FrameworkFunctions/2_arg.cry";
+
+
+return killExecution(stack, pc, "Not implemented: textToLines");

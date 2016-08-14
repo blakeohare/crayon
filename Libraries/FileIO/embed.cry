@@ -1,75 +1,91 @@
-﻿namespace FileIO {
-	namespace File {
-		function readText(filepath) {
-			return $$lib_fileio_io_file_read_text(filepath);
-		}
-		
-		function writeText(filepath, content) {
-			return $$lib_fileio_io_file_write_text(filepath, content);
-		}
-	}
+﻿import FileIOCommon;
 
-	namespace Directory {
-		function current() {
-			return $$lib_fileio_io_current_directory();
-		}
-		
-		function list(filepath) {
-			return $$lib_fileio_io_directory_list(filepath);
-		}
+namespace FileIO {
+	
+	enum TextEncoding {
+		UTF8 = FileIOCommon.FiocFileFormat.TEXT_UTF8,
+		UTF8_BOM = FileIOCommon.FiocFileFormat.TEXT_UTF8_BOM,
+		UTF16 = FileIOCommon.FiocFileFormat.TEXT_UTF16,
+		ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
 	}
-
-	namespace Path {
-		function isDirectory(path) {
-			return $$lib_fileio_io_is_path_directory(path);
-		}
-		
-		function exists(path) {
-			return $$lib_fileio_io_path_exists(path);
-		}
-		
-		function join(path_segment_list) {
-			return $$lib_fileio_io_path_join(path_segment_list);
+	
+	class _FileIOHelper {
+		static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
+	}
+	
+	function pathJoin(parts) {
+		return _FileIOHelper.FIOC.pathJoin(parts);
+	}
+	
+	function pathExists(path) {
+		info = _FileIOHelper.FIOC.getPathInfo(path);
+		return info[0];
+	}
+	
+	function _validateOutput(statusCode) {
+		switch (statusCode) {
+			case FileIOCommon.FiocStatus.OK: return;
+			case FileIOCommon.FiocStatus.UNKNOWN_ERROR: Core.fail("An unknown error occurred."); break;
+			case FileIOCommon.FiocStatus.PATH_WALKED_ABOVE_DOMAIN: Core.fail("Given path walked above allowed domain. Too many ..'s"); break;
+			case FileIOCommon.FiocStatus.UNKNOWN_ENCODING: Core.fail("Unknown encoding"); break;
 		}
 	}
 	
-	namespace UserData {
-		namespace File {
-			function readText(filepath) {
-				return $$lib_fileio_user_data_file_read_text(filepath);
-			}
-			
-			function writeText(filepath, content) {
-				return $$lib_fileio_user_data_file_write_text(filepath, content);
-			}
-			
-			function delete(filepath) {
-				return $$lib_fileio_user_data_delete_file(filepath);
-			}
-		}
-
-		namespace Directory {
-			function list(path) {
-				return $$lib_fileio_user_data_directory_list(path);
-			}
-			
-			function create(path) {
-				return $$lib_fileio_user_data_make_directory(path);
-			}
-			
-			function delete(path, recursive) {
-				return $$lib_fileio_user_data_delete_directory(path, recursive);
-			}
-		}
-
-		namespace Path {
-			function isDirectory(path) {
-				return $$lib_fileio_user_data_is_path_directory(path);
-			}
-			
-			function exists(path) {
-				return $$lib_fileio_user_data_path_exists(path);
-			}
-		}
+	function fileWriteText(path, content, encoding = FileIO.TextEncoding.UTF8) {
+		FileIO._validateOutput(_FileIOHelper.FIOC.fileWrite(path, content + '', encoding));
+	}
+	
+	function fileReadText(path) {
+		output = [];
+		FileIO._validateOutput(_FileIOHelper.FIOC.fileRead(path, false, output));
+		return output[0];
+	}
+	
+	function fileReadLines(path) {
+		text = FileIOCommon.FiocHelper.textToLines(FileIO.fileReadText(path));
+	}
+	
+	function fileWriteBytes(path, bytes) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileWrite(path, bytes, FileIOCommon.FiocFileFormat.BINARY));
+	}
+	
+	function fileReadBytes(path) {
+		output = [];
+		FileIO._validateOutput(_FileIOHelper.FIOC.fileRead(path, true, output));
+		return output;
+	}
+	
+	function fileDelete(path) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileDelete(path));
+	}
+	
+	function fileMove(pathFrom, pathTo) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, false));
+	}
+	
+	function fileCopy(pathFrom, pathTo) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, true));
+	}
+	
+	function directoryList(path, includeFullPath = false) {
+		output = [];
+		FileIO._validateOutput(_FileIOHelper.FIOC.directoryList(path, includeFullPath, output));
+		return output;
+	}
+	
+	function directoryCreate(path, makeParents = false) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.directoryCreate(path, makeParents));
+	}
+	
+	function directoryDelete(path) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.directoryDelete(path));
+	}
+	
+	function directoryMove(pathFrom, pathTo) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.directoryMove(pathFrom, pathTo));
+	}
+	
+	function currentDirectory() {
+		return _FileIOHelper.FIOC.currentDirectoryString;
 	}
 }

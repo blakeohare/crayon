@@ -1,0 +1,14 @@
+/*
+	Create a directory
+	
+	arg 1: disk host object
+	arg 2: well-formed and sandboxed path
+	arg 3: boolean
+		true -> create all parent directories if they don't currently exist
+		false -> fail if the parent directory does not exist
+*/
+
+import inline "FrameworkFunctions/3_arg.cry";
+
+
+return killExecution(stack, pc, "Not implemented: directoryCreate");

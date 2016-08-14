@@ -1,0 +1,8 @@
+/*
+	Returns the user's home directory.
+	- Windows: "C:\Users\Cthulhu"
+	- Linux: "~"
+	- JavaScript: "/" (this is used for the virtualized disk)
+*/
+
+output = buildString($_lib_fileiocommon_getUserDirectory());

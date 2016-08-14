@@ -1,0 +1,12 @@
+/*
+	Delete a file.
+	
+	arg 1: disk host object
+	arg 2: well-formed and sandboxed path
+	
+*/
+
+import inline "FrameworkFunctions/2_arg.cry";
+
+
+return killExecution(stack, pc, "Not implemented: fileDelete");

@@ -1,0 +1,12 @@
+/*
+	Move a directory
+	
+	arg 1: disk host object
+	arg 2: well-formed and sandboxed path of where the directory currently is
+	arg 3: well-formed and sandboxed path of where to move the directory to
+*/
+
+import inline "FrameworkFunctions/3_arg.cry";
+
+
+return killExecution(stack, pc, "Not implemented: directoryMove");

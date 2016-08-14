@@ -1,0 +1,27 @@
+/*
+	Fetch information about a file.
+	
+	arg 1: disk host object
+	arg 2: well-formed and sandboxed path
+	arg 3: a bit mask of properties to fetch
+	arg 4: output list
+	
+	output[0] -> bool: exists
+	output[1] -> bool: is directory?
+	output[2] -> int: file size bytes // TODO: deal with integer overflow
+	output[3] -> bool: is readonly?
+	output[4] -> float: file created timestamp
+	output[5] -> float: file modified timestamp
+	
+	mask & 1 -> fetch size
+	mask & 2 -> fetch readonly
+	mask & 4 -> fetch created timestamp
+	mask & 8 -> fetch modified timestamp
+	
+	directory and existence status are always fetched.
+*/
+
+import inline "FrameworkFunctions/4_arg.cry";
+
+
+return killExecution(stack, pc, "Not implemented: fileInfo");
