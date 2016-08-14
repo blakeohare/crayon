@@ -34,7 +34,7 @@ namespace Crayon
                 orderedVars.Add(value);
             }
         }
-        
+
         public int GetVarId(Token variableToken)
         {
             int id;
@@ -43,9 +43,9 @@ namespace Crayon
                 return id;
             }
 
-            if (this.underlyingInstance != null && this.underlyingInstance.idsByVar.TryGetValue(variableToken.Value, out id))
+            if (this.underlyingInstance != null)
             {
-                return id;
+                return this.underlyingInstance.GetVarId(variableToken);
             }
 
             return -1;
