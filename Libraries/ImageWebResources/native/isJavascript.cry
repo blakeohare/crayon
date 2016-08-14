@@ -1,0 +1,10 @@
+/*
+	The name says it all.
+	
+	No args.
+	Output is a boolean.
+*/
+output = VALUE_FALSE;
+if ($_lib_imagewebresources_isJavascript()) {
+	output = VALUE_TRUE;
+}

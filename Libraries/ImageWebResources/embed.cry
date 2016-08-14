@@ -1,0 +1,96 @@
+import HTTP;
+import ImageResources;
+
+namespace ImageWebResources {
+	/*
+		For JavaScript, this will have the following nativeData...
+		
+		nativeData[0] -> is done
+		nativeData[1] -> downloader object (HTML image object)
+		nativeData[2] -> output object (canvas)
+		
+		Other platforms will not use nativeData.
+		
+	*/
+	class ImageDownloader {
+		
+		// For JavaScript, this is just the URL.
+		// For all other platforms, this is an HTTP request.
+		field _request;
+		
+		field _sent = false;
+		field _img = null;
+		
+		constructor(url) {
+			if ($$lib_imagewebresources_isJavascript()) {
+				this._request = url;
+			} else {
+				this._request = new HttpRequest(url).setMode(HTTP.RequestMode.BINARY);
+			}
+		}
+		
+		function download() {
+			Core.assert(!this._sent, "Request already sent.");
+			this._sent = true;
+			
+			if ($$lib_imagewebresources_isJavascript()) {
+				$$lib_imagewebresources_jsDownload(this._request, this, null);
+			} else {
+				this._request.send();
+			}
+		}
+		
+		function downloadAsync() {
+			Core.assert(!this._sent, "Request already sent.");
+			this._sent = true;
+			
+			if ($$lib_imagewebresources_isJavascript()) {
+				$$lib_imagewebresources_jsDownload(this._request, this, Core.getCurrentExecutionToken());
+			} else {
+				this._request.sendAsync();
+			}
+		}
+		
+		function isDone() {
+			if ($$lib_imagewebresources_isJavascript()) {
+				$$lib_imagewebresources_jsPoll(this);
+			} else {
+				return this._request.isDone();
+			}
+		}
+		
+		function getImage() {
+			if (this._img != null) return this._img;
+			Core.assert(this.isDone());
+			
+			nativeImage = new ImageResources.NativeImageData(ImageResources.NativeImageDataConstructionType.BLANK, null);
+			
+			// Common output vector between the next two implementations of the fetcher.
+			imgdata = [
+				false, // true if successful
+				nativeImage, // populate the native data
+				0, // width
+				0, // height
+			];
+			
+			// TODO: throw exceptions once exception support is available.
+			
+			if ($$lib_imagewebresources_isJavascript()) {
+				$$lib_imagewebresources_jsGetImage(this, imgdata);
+			} else {
+				response = this._request.getResponse();
+				$$lib_imagewebresources_bytesToImage(response, imgdata);
+			}
+			
+			Core.assert(imgdata[0], "Could not download image.");
+			
+			nativeImage.width = imgdata[2];
+			nativeImage.height = imgdata[3];
+			
+			this._img = new ImageResources.ImageResource(nativeImage.width, nativeImage.height, false);
+			this._img._nativeResource = nativeImage;
+			
+			return this._img;
+		}
+	}
+}
