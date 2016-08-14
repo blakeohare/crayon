@@ -3,6 +3,6 @@
 		if (url.startsWith('http://') || url.startsWith('https://')) {
 			return $$lib_web_launch_browser(url);
 		}
-		Core.assert(false, "launchBrowser can only launch URLs beginning with 'http://' or 'https://'.");
+		Core.fail("Can only open URLs beginning with 'http://' or 'https://'.");
 	}
 }

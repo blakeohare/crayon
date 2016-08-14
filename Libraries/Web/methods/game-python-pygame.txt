@@ -1,1 +1,1 @@
-$_lib_web_launchBrowser: _launch_browser([ARG:1])
+$_lib_web_launchBrowser: library_web_launch_browser([ARG:1])

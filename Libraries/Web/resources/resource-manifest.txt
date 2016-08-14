@@ -1,0 +1,9 @@
+BEGIN
+APPLICABLE-TO: game-java-awt
+COPYFILES: java: src/%PROJECT_ID%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBED: python
+END
