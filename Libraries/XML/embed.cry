@@ -1,9 +1,5 @@
-﻿/*
-	The XML library supports basic XML.
-*/
-namespace XML {
+﻿namespace XML {
 	enum XmlOption {
-		// TODO: use this
 		TRIM_WHITESPACE = 1,
 		
 		// TODO: use this
@@ -13,6 +9,14 @@ namespace XML {
 		ALLOW_INCOMPLETE_DOCUMENT = 4,
 		
 		FAIL_SILENTLY = 8,
+		
+		NAMESPACES = 16,
+		
+		// TODO: use this
+		TEXT_LOCATION_INFO = 32,
+		
+		// TODO: use this
+		PRESERVE_COMMENTS = 64,
 	}
 	
 	enum NodeType {
@@ -24,7 +28,7 @@ namespace XML {
 	class XmlElement {
 	
 		// the nativeData field of this dummy object contains some helper data structures for parsing.
-		static field _DUMMY = new XmlText(null);
+		static field _DUMMY = new Core.Object();
 	
 		field name;
 		field attributes;
@@ -38,12 +42,142 @@ namespace XML {
 		}
 	}
 	
+	// NOTE: this doesn't honor FAIL_SILENTLY and I'm leaving it that way.
+	// Eventaully there'll be try-catch support and it'll throw an exception which will negate the need of FAIL_SILENTLY.
+	class XmlNamespacedElement {
+		field name;
+		field alias;
+		field xmlns;
+		field children = [];
+		field type = NodeType.ELEMENT;
+		
+		// Attributes must be a list instead of a lookup dictionary, since names can now collide. 
+		// Lookup keys with alias:name are semantically meaningless and namespace:name are cumbersome.
+		field attributes = [];
+		
+		constructor(xmlnsLookupChain, element) {
+			elementXmlnsLookup = xmlnsLookupChain[-1];
+			
+			attributes = element.attributes;
+			children = element.children;
+			
+			// Check to see if there are any new xmlns definitions in this element.
+			attributeNames = attributes.keys();
+			pushNewLookup = false;
+			for (attrName : attributeNames) {
+				if (attrName == 'xmlns' || attrName.startsWith('xmlns:')) {
+					pushNewLookup = true;
+					break;
+				}
+			}
+			
+			// If there are, push a new alias lookup to the chain that's a copy of the preivous one.
+			// If not, just push a duplicate reference to the old one.
+			xmlnsLookupChain.add(pushNewLookup ? elementXmlnsLookup.clone() : elementXmlnsLookup);
+			elementXmlnsLookup = xmlnsLookupChain[-1];
+			
+			if (pushNewLookup) {
+				// Go through all the attributes.
+				// If you find an xmlns, add it to the lookup.
+				// If it's just a normal attribute, add it to this list.
+				normalAttrs = [];
+				for (attrName : attributeNames) {
+					if (attrName == 'xmlns') {
+						elementXmlnsLookup[''] = attributes[attrName];
+					} else if (attrName.startsWith('xmlns:')) {
+						alias = attrName['xmlns:'.length:];
+						ns = attributes[attrName];
+						elementXmlnsLookup[alias] = ns;
+					} else {
+						normalAttrs.add(attrName);
+					}
+				}
+			} else {
+				// If there were no xmlns declarations, then that means all the attributes are normal attribute values.
+				normalAttrs = attributeNames;
+			}
+			
+			// Go through all normal attributes, resolve their namespace, and add them to the attribute list.
+			for (normalAttr : normalAttrs) {
+				colonIndex = normalAttr.indexOf(':');
+				
+				if (colonIndex != -1) {
+					// If there is a colon, the lookup value is before the colon and the attribute name is after
+					alias = normalAttr[:colonIndex];
+					attrName = normalAttr[colonIndex + 1:];
+				} else {
+					// If there is no colon, then the whole attribute is the attribute name and the alias
+					// is denoted by the empty string, which will point to the most recent parent xmlns="..." definition.
+					alias = '';
+					attrName = normalAttr;
+				}
+				ns = elementXmlnsLookup.get(alias);
+				if (ns == null) {
+					if (alias == '') Core.fail("Default xmlns alias not found. '" + normalAttr + "' not defined.");
+					Core.fail("Unknown alias: '" + alias + "'. Cannot evaluate '" + normalAttr + "'.");
+				}
+				this.attributes.add(new XmlNamespacedAttribute(attrName, alias, ns, attributes[normalAttr]));
+			}
+			
+			// Recurse into children.
+			for (child : children) {
+				if (child.type == NodeType.ELEMENT) {
+					// pass along the current lookup chain.
+					this.children.add(new XmlNamespacedElement(xmlnsLookupChain, child));
+				} else {
+					// text and comment elements pass through untouched.
+					this.children.add(child);
+				}
+			}
+			
+			// Figure out the name, aias, and namespace of this element
+			name = element.name;
+			colonIndex = name.indexOf(':');
+			if (colonIndex == -1) {
+				alias = '';
+			} else {
+				alias = name[:colonIndex];
+				name = name[colonIndex + 1:];
+			}
+			ns = elementXmlnsLookup.get(alias);
+			if (ns == null) {
+				if (alias == '') Core.fail("Default xmlns alias not found. '" + name + "' not defined.");
+				Core.fail("Unknown alias: '" + alias + "'. Cannot evaluate '" + element.name + "'.");
+			}
+			this.name = name;
+			this.alias = alias;
+			this.xmlns = ns;
+			
+			// Pop the lookup we pushed at the beginning.
+			xmlnsLookupChain.pop();
+		}
+	}
+	
+	class XmlNamespacedAttribute {
+		field name;
+		field alias;
+		field xmlns;
+		field value;
+		
+		constructor(name, alias, xmlns, value) {
+			this.name = name;
+			this.alias = alias;
+			this.xmlns = xmlns;
+			this.value = value;
+		}
+	}
+	
 	class XmlText {
 		field value;
 		field type = NodeType.TEXT;
 		constructor(value) {
 			this.value = value;
 		}
+	}
+	
+	// Take the regular XML tree and convert it into an xml-namespace-aware tree.
+	function _convertToNamespaces(element) {
+		return new XmlNamespacedElement([{}], element);
 	}
 	
 	/*
@@ -57,11 +191,17 @@ namespace XML {
 	*/
 	function _objGen(data, dictReusable, options) {
 		children = [];
+		trim = (options & XML.XmlOption.TRIM_WHITESPACE) != 0;
 		for (child : data[4]) {
 			if (child[0]) {
 				children.add(XML._objGen(child, dictReusable, options));
 			} else {
-				children.add(new XmlText(child[1]));
+				value = child[1];
+				if (trim) {
+					value = value.trim();
+					if (value.length == 0) continue;
+				}
+				children.add(new XmlText(value));
 			}
 		}
 		keys = data[2];
@@ -73,6 +213,7 @@ namespace XML {
 		}
 		output = new XmlElement(data[1], dictReusable, children);
 		dictReusable.clear();
+		
 		return output;
 	}
 	
@@ -81,8 +222,14 @@ namespace XML {
 		error = $$lib_xml_parse(string, output, XmlElement._DUMMY);
 		if (error != null) {
 			if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
-			Core.assert(false, error);
+			Core.fail(error);
 		}
-		return XML._objGen(output[0], {}, options);
+		root = XML._objGen(output[0], {}, options);
+		
+		if ((options & XML.XmlOption.NAMESPACES) != 0) {
+			return XML._convertToNamespaces(root);
+		}
+		
+		return root;
 	}
 }
