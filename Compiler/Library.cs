@@ -9,6 +9,7 @@ namespace Crayon
         private string platformName;
         public string Name { get; set; }
         public string RootDirectory { get; set; }
+        private HashSet<string> onlyImportableFrom = null;
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
 
@@ -127,6 +128,34 @@ namespace Crayon
             {
                 this.filepathsByFunctionName[functionName] = moreSpecificFiles[functionName];
             }
+
+            if (values.ContainsKey("ONLY_ALLOW_IMPORT_FROM"))
+            {
+                this.onlyImportableFrom = new HashSet<string>();
+                foreach (string onlyImportFrom in values["ONLY_ALLOW_IMPORT_FROM"].Split(','))
+                {
+                    string libraryName = onlyImportFrom.Trim();
+                    this.onlyImportableFrom.Add(libraryName);
+                }
+            }
+        }
+
+        public bool IsAllowedImport(string currentLibrary)
+        {
+            // Empty list means it's open to everyone.
+            if (this.onlyImportableFrom == null || this.onlyImportableFrom.Count == 0)
+            {
+                return true;
+            }
+
+            // Non-empty list means it must be only accessible from a specific library and not top-level user code.
+            if (currentLibrary == null)
+            {
+                return false;
+            }
+
+            // Is the current library on the list?
+            return this.onlyImportableFrom.Contains(currentLibrary);
         }
 
         private Dictionary<string, string> filepathsByFunctionName;
@@ -226,7 +255,6 @@ namespace Crayon
 
             throw new InvalidOperationException("No native translation provided for " + functionName);
         }
-
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
         {

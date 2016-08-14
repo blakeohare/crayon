@@ -131,49 +131,55 @@ namespace Crayon
                 : null;
         }
 
-        private readonly HashSet<string> alreadyImported = new HashSet<string>();
+        private readonly Dictionary<string, Library> alreadyImported = new Dictionary<string, Library>();
         private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
 
         public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
-            if (alreadyImported.Contains(name))
+            Library library = alreadyImported.ContainsKey(name) ? alreadyImported[name] : null;
+            Executable[] embedCode = EMPTY_EXECUTABLE;
+            if (library == null)
             {
-                return EMPTY_EXECUTABLE;
+                string libraryManifestPath = this.GetSystemLibraryPath(name);
+
+                if (libraryManifestPath == null)
+                {
+                    throw new ParserException(throwToken, "Library manifest not found.");
+                }
+
+                library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);
+
+                alreadyImported.Add(name, library);
+
+                library.ExtractResources(parser.BuildContext.Platform, this.filesToCopy, this.contentToEmbed);
+
+                this.importedLibraries[name] = library;
+                this.librariesByKey[name.ToLowerInvariant()] = library;
+
+                string oldSystemLibrary = parser.CurrentSystemLibrary;
+                parser.CurrentSystemLibrary = name;
+
+                List<Executable> output = new List<Executable>();
+                Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
+                foreach (string embeddedFile in embeddedCode.Keys)
+                {
+                    string fakeName = "[" + embeddedFile + "]";
+                    string code = embeddedCode[embeddedFile];
+                    output.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
+                }
+
+                parser.CurrentSystemLibrary = oldSystemLibrary;
+                embedCode = output.ToArray();
             }
 
-            alreadyImported.Add(name);
-
-            // this is now either a DLL or a manifest path.
-            // once this has been converted entirely to manifest files, remove all references to DLL loading.
-            string libraryManifestPath = this.GetSystemLibraryPath(name);
-
-            if (libraryManifestPath == null)
+            // Even if already imported, still must check to see if this import is allowed here.
+            if (!library.IsAllowedImport(parser.CurrentSystemLibrary))
             {
-                throw new ParserException(throwToken, "Library manifest not found.");
+                throw new ParserException(throwToken, "This library cannot be imported from here.");
             }
 
-            Library library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);
-
-            library.ExtractResources(parser.BuildContext.Platform, this.filesToCopy, this.contentToEmbed);
-
-            this.importedLibraries[name] = library;
-            this.librariesByKey[name.ToLowerInvariant()] = library;
-
-            string oldSystemLibrary = parser.CurrentSystemLibrary;
-            parser.CurrentSystemLibrary = name;
-
-            List<Executable> output = new List<Executable>();
-            Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
-            foreach (string embeddedFile in embeddedCode.Keys)
-            {
-                string fakeName = "[" + embeddedFile + "]";
-                string code = embeddedCode[embeddedFile];
-                output.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
-            }
-
-            parser.CurrentSystemLibrary = oldSystemLibrary;
-            return output.ToArray();
+            return embedCode;
         }
 
         private Dictionary<string, string> filesToCopy = new Dictionary<string, string>();
