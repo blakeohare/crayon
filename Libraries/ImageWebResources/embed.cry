@@ -20,6 +20,7 @@ namespace ImageWebResources {
 		
 		field _sent = false;
 		field _img = null;
+		field _isDone = false;
 		
 		constructor(url) {
 			if ($$lib_imagewebresources_isJavascript()) {
@@ -38,6 +39,9 @@ namespace ImageWebResources {
 			} else {
 				this._request.send();
 			}
+			
+			this._isDone = true;
+			return this.getImage();
 		}
 		
 		function downloadAsync() {
@@ -67,7 +71,6 @@ namespace ImageWebResources {
 			
 			// Common output vector between the next two implementations of the fetcher.
 			imgdata = [
-				false, // true if successful
 				nativeImage, // populate the native data
 				0, // width
 				0, // height
@@ -76,16 +79,16 @@ namespace ImageWebResources {
 			// TODO: throw exceptions once exception support is available.
 			
 			if ($$lib_imagewebresources_isJavascript()) {
-				$$lib_imagewebresources_jsGetImage(this, imgdata);
+				success = $$lib_imagewebresources_jsGetImage(this, imgdata);
 			} else {
 				response = this._request.getResponse();
-				$$lib_imagewebresources_bytesToImage(response, imgdata);
+				success = $$lib_imagewebresources_bytesToImage(response, imgdata);
 			}
 			
-			Core.assert(imgdata[0], "Could not download image.");
+			Core.assert(success, "Could not download image.");
 			
-			nativeImage.width = imgdata[2];
-			nativeImage.height = imgdata[3];
+			nativeImage.width = imgdata[1];
+			nativeImage.height = imgdata[2];
 			
 			this._img = new ImageResources.ImageResource(nativeImage.width, nativeImage.height, false);
 			this._img._nativeResource = nativeImage;

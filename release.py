@@ -24,6 +24,7 @@ librariesForRelease = [
 	'GraphicsText',
 	'Http',
 	'ImageResources',
+	'ImageWebResources',
 	'JSON',
 	'Math',
 	'Random',
