@@ -85,7 +85,17 @@ def lib_http_sendRequestSyncImpl(requestNativeData, method, url, headers, conten
 	
 	request.get_method = lambda:method
 	output = opener.open(request)
-	content = output.read()
+	contentBytes = None
+	contentString = None
+	if outputIsBinary:
+		contentBytes = []
+		byte = output.read(1)
+		while byte != '':
+			contentBytes.append(ord(byte))
+			byte = output.read(1)
+	else:
+		contentString = output.read()
+		
 	headers = []
 	for header_key in output.headers.keys():
 		headers.append(header_key)
@@ -96,9 +106,9 @@ def lib_http_sendRequestSyncImpl(requestNativeData, method, url, headers, conten
 	return {
 		'statusCode': output.code,
 		'statusMessage': output.msg,
-		'isBinary': False,
-		'contentString': content,
-		'contentBytes': None, # TODO
+		'isBinary': outputIsBinary,
+		'contentString': contentString,
+		'contentBytes': contentBytes,
 		'headers': headers,
 	}
 

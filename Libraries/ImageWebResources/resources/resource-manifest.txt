@@ -3,3 +3,8 @@ BEGIN
 APPLICABLE-TO: game-csharp-opentk
 COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageWebResources/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBED: python
+END

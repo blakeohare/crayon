@@ -1,0 +1,2 @@
+$_lib_imagewebresources_isJavascript: False
+$_lib_imagewebresources_bytesToImage: lib_imagewebresources_imagedownloader_bytesToImage([ARG:1], [ARG:2])
