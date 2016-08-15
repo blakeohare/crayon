@@ -83,5 +83,42 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
 
             return 0;
         }
+
+        public static int FileRead(string path, bool isBytes, string[] stringOut, Value[] integers, List<Value> byteOutput)
+        {
+            try
+            {
+                if (isBytes)
+                {
+                    byte[] bytes = System.IO.File.ReadAllBytes(path);
+                    int length = bytes.Length;
+                    for (int i = 0; i < length; ++i)
+                    {
+                        byteOutput.Add(integers[bytes[i]]);
+                    }
+                }
+                else
+                {
+                    stringOut[0] = System.IO.File.ReadAllText(path);
+                }
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                return 4;
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+            return 0;
+        }
     }
 }
