@@ -81,11 +81,20 @@ namespace Crayon
 #if DEBUG
             if (args.Length == 0)
             {
-                string command;
-
-                command = @"C:\Crayon\UnitTests\UnitTests.build -target windows";
-
-                args = command.Split(' ');
+                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+                if (crayonHome != null)
+                {
+                    string debugArgsFile = System.IO.Path.Combine(crayonHome, "DEBUG_ARGS.txt");
+                    if (System.IO.File.Exists(debugArgsFile ))
+                    {
+                        string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
+                        string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
+                        if (lastArgSet.Length > 0)
+                        {
+                            args = lastArgSet.Split(' ');
+                        }
+                    }
+                }
             }
 #endif
 
