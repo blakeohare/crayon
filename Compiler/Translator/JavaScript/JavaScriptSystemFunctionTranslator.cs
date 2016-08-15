@@ -56,7 +56,7 @@ namespace Crayon.Translator.JavaScript
 
         protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            this.TranslateListJoin(output, array, sep);
         }
 
         protected override void TranslateArrayLength(List<string> output, Expression list)
@@ -670,9 +670,9 @@ namespace Crayon.Translator.JavaScript
             output.Add("C$common$checksubstring(");
             this.Translator.TranslateExpression(output, stringExpr);
             output.Add(", ");
-            this.Translator.TranslateExpression(output, lookFor);
-            output.Add(", ");
             this.Translator.TranslateExpression(output, index);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, lookFor);
             output.Add(")");
         }
 

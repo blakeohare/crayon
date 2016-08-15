@@ -41,7 +41,11 @@ namespace Crayon.Translator.Java
 
         protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            output.Add("String.join(");
+            this.Translator.TranslateExpression(output, sep);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, array);
+            output.Add(")");
         }
 
         protected override void TranslateArrayLength(List<string> output, Expression list)

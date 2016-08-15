@@ -123,7 +123,7 @@ C$common$multiplyList = function (list, size) {
 };
 
 C$common$substring = function (s, start, len) {
-    return len === null ? s.substring(start) : s.substring(start, s.length + len);
+    return len === null ? s.substring(start) : s.substring(start, start + len);
 };
 
 C$common$checksubstring = function (s, lookfor, index) {

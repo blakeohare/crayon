@@ -223,4 +223,21 @@ final class TranslationHelper {
 		} catch (InterruptedException e) {
 		}
 	}
+
+	public static String substring(String value, int startIndex, int length) {
+		return value.substring(startIndex, startIndex + length);
+	}
+
+	public static boolean checkStringSlice(String haystack, int index, String expectedValue) {
+		int evLength = expectedValue.length();
+		if (evLength + index > haystack.length()) return false;
+		if (evLength == 0) return true;
+		if (expectedValue.charAt(0) != haystack.charAt(index)) return false;
+		if (expectedValue.charAt(evLength - 1) != haystack.charAt(index + evLength - 1)) return false;
+		if (evLength <= 2) return true;
+		for (int i = evLength - 2; i > 1; --i) {
+			if (expectedValue.charAt(i) != haystack.charAt(index + i)) return false;
+		}
+		return true;
+	}
 }

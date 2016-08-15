@@ -297,7 +297,7 @@ function @type('string') lib_xml_popString(
 		start = i;
 		while (i < length) {
 			c = $_string_char_code_at(xml, i);
-			if ($_string_equals(c, stringType)) {
+			if (c == stringType) {
 				end = i;
 				i += 1;
 				break;
