@@ -10,6 +10,11 @@ COPYFILES: java: src/crayonlib/imagewebresources/%FILE%
 END
 
 BEGIN
+APPLICABLE-TO: game-javascript
+EMBED: javascript
+END
+
+BEGIN
 APPLICABLE-TO: game-python-pygame
 EMBED: python
 END

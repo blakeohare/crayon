@@ -6,8 +6,10 @@ namespace ImageWebResources {
 		For JavaScript, this will have the following nativeData...
 		
 		nativeData[0] -> is done
-		nativeData[1] -> downloader object (HTML image object)
+		nativeData[1] -> is successful?
 		nativeData[2] -> output object (canvas)
+		nativeData[3] -> width
+		nativeData[4] -> height
 		
 		Other platforms will not use nativeData.
 		
@@ -35,7 +37,10 @@ namespace ImageWebResources {
 			this._sent = true;
 			
 			if ($$lib_imagewebresources_isJavascript()) {
-				$$lib_imagewebresources_jsDownload(this._request, this, null);
+				$$lib_imagewebresources_jsDownload(this._request, this);
+				while (!this.isDone()) {
+					Core.sleep(0.001);
+				}
 			} else {
 				this._request.send();
 			}
@@ -49,18 +54,27 @@ namespace ImageWebResources {
 			this._sent = true;
 			
 			if ($$lib_imagewebresources_isJavascript()) {
-				$$lib_imagewebresources_jsDownload(this._request, this, Core.getCurrentExecutionToken());
+				$$lib_imagewebresources_jsDownload(this._request, this);
 			} else {
 				this._request.sendAsync();
 			}
 		}
 		
+		// If the user is polling isDone() in a loop, then insert thread sleeps.
+		field _jsIsDoneCounter = 0;
+		
 		function isDone() {
+			if (this._isDone) return true;
 			if ($$lib_imagewebresources_isJavascript()) {
-				$$lib_imagewebresources_jsPoll(this);
+				if (this._jsIsDoneCounter++ > 10) {
+					Core.sleep(0.001);
+					this._jsIsDoneCounter = 0;
+				}
+				this._isDone = $$lib_imagewebresources_jsPoll(this);
 			} else {
-				return this._request.isDone();
+				this._isDone = this._request.isDone();
 			}
+			return this._isDone;
 		}
 		
 		function getImage() {
