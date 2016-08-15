@@ -136,8 +136,18 @@ public class HttpHelper {
 			InputStream is = connection.getInputStream();
 			
 			if (outputIsBinary) {
-				// TODO: this
-				throw new RuntimeException();
+				java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+				int bytesRead = 1;
+				byte[] buffer = new byte[1024];
+				while (bytesRead > -1) {
+					bytesRead = is.read(buffer, 0, buffer.length);
+					if (bytesRead > -1) {
+						outputStream.write(buffer, 0, bytesRead);
+					}
+				}
+				
+				outputStream.flush();
+				responseBytes = outputStream.toByteArray();
 			} else {
 				StringBuilder sb = new StringBuilder();
 				char[] buffer = new char[1024];
@@ -171,7 +181,7 @@ public class HttpHelper {
 				}
 			}
 		} catch (Exception e1) {
-			
+			System.out.println(e1);
 		} finally {
 			if (connection != null) {
 				connection.disconnect();

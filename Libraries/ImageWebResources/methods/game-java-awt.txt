@@ -1,0 +1,2 @@
+$_lib_imagewebresources_isJavascript: TranslationHelper.alwaysFalse()
+$_lib_imagewebresources_bytesToImage: crayonlib.imagewebresources.ImageDownloader.bytesToImage([ARG:1], [ARG:2])

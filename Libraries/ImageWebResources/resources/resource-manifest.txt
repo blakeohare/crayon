@@ -5,6 +5,11 @@ COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageWebResources/%FILE%
 END
 
 BEGIN
+APPLICABLE-TO: game-java-awt
+COPYFILES: java: src/crayonlib/imagewebresources/%FILE%
+END
+
+BEGIN
 APPLICABLE-TO: game-python-pygame
 EMBED: python
 END
