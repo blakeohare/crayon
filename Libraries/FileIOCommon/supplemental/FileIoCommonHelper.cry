@@ -22,3 +22,16 @@ function @type('object') lib_fileiocommon_listToBytes(@type('List<Value>') listO
 	}
 	return bytes;
 }
+
+function @type('int') lib_fileiocommon_textToLines(
+	@type('string') text,
+	@type('List<Value>') output) {
+	
+	@type('List<string>') stringList = $_new_list('string');
+	$_lib_fileiocommon_textToLines(text, stringList);
+	@type('int') len = $_list_length(stringList);
+	for (@type('int') i = 0; i < len; i += 1) {
+		$_list_push(output, buildString($_list_get(stringList, i)));
+	}
+	return 0;
+}

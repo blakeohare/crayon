@@ -27,6 +27,7 @@ namespace FileIOCommon {
 		INVALID_ARGUMENT = 6,
 		ENCODING_FAIL = 7,
 		ACCESS_DENIED = 8,
+		CANNOT_OVERWRITE = 9,
 	}
 	
 	class FiocHelper {
@@ -169,10 +170,10 @@ namespace FileIOCommon {
 			return $$lib_fileiocommon_fileDelete(this.diskHost, path);
 		}
 		
-		function fileMove(pathFrom, pathTo, isCopy) {
+		function fileMove(pathFrom, pathTo, isCopy, allowOverwrite) {
 			pathFrom = this.normalizePathToAbsolute(pathFrom);
 			pathTo = this.normalizePathToAbsolute(pathTo);
-			return $$lib_fileiocommon_fileMove(this.diskHost, pathFrom, pathTo, isCopy);
+			return $$lib_fileiocommon_fileMove(this.diskHost, pathFrom, pathTo, isCopy, allowOverwrite);
 		}
 		
 		function directoryList(path, includeFullPath, filesOut) {

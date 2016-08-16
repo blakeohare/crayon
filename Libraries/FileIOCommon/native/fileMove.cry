@@ -5,9 +5,17 @@
 	arg 2: well-formed and sandboxed path of where the file currently is
 	arg 3: well-formed and sandboxed path of where to move/copy the file to
 	arg 4: bool: true for copy, false for move
+	arg 5: bool: allow overwrite?
 */
 
-import inline "FrameworkFunctions/4_arg.cry";
+import inline "FrameworkFunctions/5_arg.cry";
 
+int1 = $_lib_fileiocommon_fileMove(
+	lib_fileiocommon_getDiskObject(arg1),
+	$_cast('string', Value$arg2.internalValue),
+	$_cast('string', Value$arg3.internalValue),
+	$_cast('bool', Value$arg4.internalValue),
+	$_cast('bool', Value$arg5.internalValue));
 
-return killExecution(stack, pc, "Not implemented: fileMove");
+output = buildInteger(int1);
+	

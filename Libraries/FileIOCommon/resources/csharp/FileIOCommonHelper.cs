@@ -120,7 +120,7 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             }
             return 0;
         }
-        
+
         public static int FileWrite(string path, int format, string content, object bytesObj)
         {
             byte[] bytes = null;
@@ -223,6 +223,107 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
                 return 1;
             }
             return 0;
+        }
+
+        public static int FileMove(string fromPath, string toPath, bool isCopy, bool allowOverwrite)
+        {
+            if (!System.IO.File.Exists(fromPath))
+            {
+                return 4;
+            }
+
+            bool fileExists = System.IO.File.Exists(toPath);
+
+
+            try
+            {
+                if (fileExists)
+                {
+                    if (allowOverwrite)
+                    {
+                        // C# doesn't allow file overwrites. But we do! (if this bit is set)
+                        System.IO.File.Delete(toPath);
+                    }
+                    else
+                    {
+                        return 9;
+                    }
+                }
+
+                if (isCopy)
+                {
+                    System.IO.File.Copy(fromPath, toPath);
+                }
+                else
+                {
+                    System.IO.File.Move(fromPath, toPath);
+                }
+                return 0;
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return 8;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+        }
+
+        public static void TextToLines(string text, List<string> output)
+        {
+            List<string> builder = new List<string>();
+            int length = text.Length;
+            char c;
+            char c2;
+            for (int i = 0; i < length; ++i)
+            {
+                c = text[i];
+                if (c == '\n' || c == '\r')
+                {
+                    c2 = (i + 1 < length) ? text[i + 1] : '@';
+
+                    if (c == '\r' && c2 == '\n')
+                    {
+                        // Windows line ending
+                        builder.Add("\r\n");
+                        output.Add(string.Join("", builder));
+                        builder.Clear();
+                        ++i;
+                    }
+                    else if (c == '\n')
+                    {
+                        // Linux line ending
+                        builder.Add("\n");
+                        output.Add(string.Join("", builder));
+                        builder.Clear();
+                    }
+                    else if (c == '\r')
+                    {
+                        // legacy Mac line ending
+                        builder.Add("\r");
+                        output.Add(string.Join("", builder));
+                        builder.Clear();
+                    }
+                    else
+                    {
+                        builder.Add(c.ToString());
+                    }
+                }
+                else
+                {
+                    builder.Add(c.ToString());
+                }
+            }
+            output.Add(string.Join("", builder));
         }
     }
 }

@@ -34,6 +34,7 @@ namespace FileIO {
 			case FileIOCommon.FiocStatus.INVALID_ARGUMENT: Core.fail("The input is invalid."); break;
 			case FileIOCommon.FiocStatus.ENCODING_FAIL: Core.fail("The input could not be encoded into that encoding."); break;
 			case FileIOCommon.FiocStatus.ACCESS_DENIED: Core.fail("Access to that resources is not allowed."); break;
+			case FileIOCommon.FiocStatus.CANNOT_OVERWRITE: Core.fail("A file already exists at that location."); break;
 		}
 	}
 	
@@ -48,7 +49,7 @@ namespace FileIO {
 	}
 	
 	function fileReadLines(path) {
-		text = FileIOCommon.FiocHelper.textToLines(FileIO.fileReadText(path));
+		return FileIOCommon.FiocHelper.textToLines(FileIO.fileReadText(path));
 	}
 	
 	function fileWriteBytes(path, bytes) {
@@ -65,12 +66,12 @@ namespace FileIO {
 		return FileIO._validateOutput(_FileIOHelper.FIOC.fileDelete(path));
 	}
 	
-	function fileMove(pathFrom, pathTo) {
-		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, false));
+	function fileMove(pathFrom, pathTo, allowOverwrite = false) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, false, allowOverwrite));
 	}
 	
-	function fileCopy(pathFrom, pathTo) {
-		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, true));
+	function fileCopy(pathFrom, pathTo, allowOverwrite = false) {
+		return FileIO._validateOutput(_FileIOHelper.FIOC.fileMove(pathFrom, pathTo, true, allowOverwrite));
 	}
 	
 	function directoryList(path, includeFullPath = false) {
