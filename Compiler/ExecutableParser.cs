@@ -78,7 +78,19 @@ namespace Crayon
                         if (c != '\'' && c != '"') throw new ParserException(fileToken, "Inline imports are supposed to be strings.");
                         tokens.PopExpected(";");
                         string inlineImportFileName = fileToken.Value.Substring(1, fileToken.Value.Length - 2);
-                        string inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
+                        string inlineImportFileContents;
+                        if (inlineImportFileName.StartsWith("LIB:"))
+                        {
+                            string[] parts = inlineImportFileName.Split(':');
+                            string libraryName = parts[1];
+                            string filename = FileUtil.JoinPath(parts[2].Split('/'));
+                            Library library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName.ToLower());
+                            inlineImportFileContents = library.ReadFile(filename, false);
+                        }
+                        else
+                        {
+                            inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
+                        }
                         // TODO: Anti-pattern alert. Clean this up.
                         if (inlineImportFileContents.Contains("%%%"))
                         {

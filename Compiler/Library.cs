@@ -215,7 +215,7 @@ namespace Crayon
                 throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
             }
 
-            return this.ReadFile(FileUtil.JoinPath("native", this.filepathsByFunctionName[shortName]), false);
+            return "  import inline 'LIB:" + this.Name + ":native/" + this.filepathsByFunctionName[shortName] + "';\n";
         }
 
         Dictionary<string, string> translations = null;
@@ -353,7 +353,7 @@ namespace Crayon
             return output.ToArray();
         }
 
-        private string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
+        public string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
