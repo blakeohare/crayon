@@ -16,5 +16,32 @@
 
 import inline "FrameworkFunctions/4_arg.cry";
 
+string1 = null;
+object1 = null;
+if (Value$arg4.type != Types.INTEGER) {
+	int1 = 3; // UNKNOWN_ENCODING
+} else {
+	int1 = 0;
+	int2 = $_cast('int', Value$arg4.internalValue);
+	if (int2 == 0) {
+		object1 = lib_fileiocommon_listToBytes($_cast('List<Value>', Value$arg3.internalValue));
+		if (object1 == null) {
+			int1 = 6;
+		}
+	} else if (Value$arg3.type != Types.STRING) {
+		int1 = 6;
+	} else {
+		string1 = $_cast('string', Value$arg3.internalValue);
+	}
+	
+	if (int1 == 0) {
+		int1 = $_lib_fileiocommon_fileWrite(
+			lib_fileiocommon_getDiskObject(arg1),
+			$_cast('string', Value$arg2.internalValue),
+			int2,
+			string1,
+			object1);
+	}
+}
 
-return killExecution(stack, pc, "Not implemented: fileWrite");
+output = buildInteger(int1);

@@ -120,5 +120,109 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             }
             return 0;
         }
+        
+        public static int FileWrite(string path, int format, string content, object bytesObj)
+        {
+            byte[] bytes = null;
+            System.Text.Encoding encoding = null;
+            bool addBom = false;
+
+            switch (format)
+            {
+                case 0:
+                    bytes = (byte[])bytesObj;
+                    break;
+                case 1: // UTF8
+                    encoding = System.Text.Encoding.UTF8;
+                    break;
+                case 2: // UTF8 w/ BOM
+                    encoding = System.Text.Encoding.UTF8;
+                    addBom = true;
+                    break;
+                case 3: // UTF16
+                    encoding = System.Text.Encoding.Unicode;
+                    break;
+                case 4: // UTF32
+                    encoding = System.Text.Encoding.UTF32;
+                    break;
+                case 5: // ISO-8859-1
+                    encoding = System.Text.Encoding.ASCII;
+                    break;
+                default:
+                    return 3;
+            }
+
+            if (bytes == null)
+            {
+                try
+                {
+                    bytes = encoding.GetBytes(content);
+                }
+                catch (System.Text.EncoderFallbackException)
+                {
+                    return 7;
+                }
+            }
+
+            if (addBom)
+            {
+                byte[] newBytes = new byte[bytes.Length + 3];
+                Array.Copy(bytes, 0, newBytes, 3, bytes.Length);
+                bytes = newBytes;
+                bytes[0] = 239;
+                bytes[1] = 187;
+                bytes[2] = 191;
+            }
+
+            try
+            {
+                System.IO.File.WriteAllBytes(path, bytes);
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return 8;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        public static int FileDelete(string path)
+        {
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                {
+                    // C# will No-op deletions of non-existent files.
+                    // Throw an error for consistent behavior.
+                    return 4;
+                }
+                System.IO.File.Delete(path);
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+            return 0;
+        }
     }
 }

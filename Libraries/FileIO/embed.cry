@@ -6,6 +6,7 @@ namespace FileIO {
 		UTF8 = FileIOCommon.FiocFileFormat.TEXT_UTF8,
 		UTF8_BOM = FileIOCommon.FiocFileFormat.TEXT_UTF8_BOM,
 		UTF16 = FileIOCommon.FiocFileFormat.TEXT_UTF16,
+		UTF32 = FileIOCommon.FiocFileFormat.TEXT_UTF32,
 		ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
 	}
 	
@@ -28,6 +29,11 @@ namespace FileIO {
 			case FileIOCommon.FiocStatus.UNKNOWN_ERROR: Core.fail("An unknown error occurred."); break;
 			case FileIOCommon.FiocStatus.PATH_WALKED_ABOVE_DOMAIN: Core.fail("Given path walked above allowed domain. Too many ..'s"); break;
 			case FileIOCommon.FiocStatus.UNKNOWN_ENCODING: Core.fail("Unknown encoding"); break;
+			case FileIOCommon.FiocStatus.NOT_FOUND: Core.fail("The given path was not found."); break;
+			case FileIOCommon.FiocStatus.PATH_TO_LONG: Core.fail("The path is longer than the system allows."); break;
+			case FileIOCommon.FiocStatus.INVALID_ARGUMENT: Core.fail("The input is invalid."); break;
+			case FileIOCommon.FiocStatus.ENCODING_FAIL: Core.fail("The input could not be encoded into that encoding."); break;
+			case FileIOCommon.FiocStatus.ACCESS_DENIED: Core.fail("Access to that resources is not allowed."); break;
 		}
 	}
 	

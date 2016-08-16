@@ -13,7 +13,8 @@ namespace FileIOCommon {
 		TEXT_UTF8 = 1,
 		TEXT_UTF8_BOM = 2,
 		TEXT_UTF16 = 3,
-		TEXT_ISO_8859 = 4,
+		TEXT_UTF32 = 4,
+		TEXT_ISO_8859 = 5,
 	}
 	
 	enum FiocStatus {
@@ -23,6 +24,9 @@ namespace FileIOCommon {
 		UNKNOWN_ENCODING = 3,
 		NOT_FOUND = 4,
 		PATH_TO_LONG = 5,
+		INVALID_ARGUMENT = 6,
+		ENCODING_FAIL = 7,
+		ACCESS_DENIED = 8,
 	}
 	
 	class FiocHelper {
