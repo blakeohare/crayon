@@ -1,4 +1,7 @@
+$_lib_fileiocommon_directoryCreate: Library.FileIOCommon.FileIOCommonHelper.CreateDirectory([ARG:2], [ARG:3])
+$_lib_fileiocommon_directoryDelete: Library.FileIOCommon.FileIOCommonHelper.DeleteDirectory([ARG:2])
 $_lib_fileiocommon_directoryList: Library.FileIOCommon.FileIOCommonHelper.GetDirectoryList([ARG:2], [ARG:3], [ARG:4])
+$_lib_fileiocommon_directoryMove: Library.FileIOCommon.FileIOCommonHelper.MoveDirectory([ARG:2], [ARG:3])
 $_lib_fileiocommon_fileDelete: Library.FileIOCommon.FileIOCommonHelper.FileDelete([ARG:2])
 $_lib_fileiocommon_fileMove: Library.FileIOCommon.FileIOCommonHelper.FileMove([ARG:2], [ARG:3], [ARG:4], [ARG:5])
 $_lib_fileiocommon_fileRead: Library.FileIOCommon.FileIOCommonHelper.FileRead([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])

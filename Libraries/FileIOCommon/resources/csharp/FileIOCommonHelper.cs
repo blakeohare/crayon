@@ -359,5 +359,148 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             }
             output.Add(string.Join("", builder));
         }
+
+        public static int CreateDirectory(string path, bool createParents)
+        {
+            string parent;
+            try
+            {
+                parent = System.IO.Path.GetDirectoryName(path);
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+
+            bool parentExists = System.IO.Directory.Exists(parent);
+            if (parentExists)
+            {
+                if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
+                {
+                    return 10;
+                }
+                else
+                {
+                    return CreateDirectoryWithStatus(path);
+                }
+            }
+            else if (!createParents)
+            {
+                return 11;
+            }
+            else
+            {
+                if (IsWindows())
+                {
+                    string driveLetter = System.IO.Path.GetPathRoot(path);
+                    if (driveLetter == null) return 1; // path is made absolute before calling.
+                    if (!System.IO.Directory.Exists(driveLetter))
+                    {
+                        return 4; // drive not found.
+                    }
+
+                    // now that you know the root is found, walk up to it until you find something that exists.
+                    Stack<string> pathsToCreate = new Stack<string>();
+                    while (!System.IO.Directory.Exists(path))
+                    {
+                        pathsToCreate.Push(path);
+                        path = System.IO.Path.GetDirectoryName(path);
+                    }
+
+                    while (pathsToCreate.Count > 0)
+                    {
+                        int status = CreateDirectoryWithStatus(pathsToCreate.Pop());
+                        if (status != 0) return status;
+                    }
+                    return 0;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
+        private static int CreateDirectoryWithStatus(string path)
+        {
+            try
+            {
+                System.IO.Directory.CreateDirectory(path);
+                return 0;
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+        }
+
+        public static int DeleteDirectory(string path)
+        {
+            try
+            {
+                System.IO.Directory.Delete(path, true);
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return 8;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        public static int MoveDirectory(string from, string to)
+        {
+            string parentFolder;
+            try
+            {
+                parentFolder = System.IO.Path.GetDirectoryName(to);
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            if (!System.IO.Directory.Exists(parentFolder))
+            {
+                return 11;
+            }
+
+            try
+            {
+                System.IO.Directory.Move(from, to);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return 8;
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return 4;
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+            return 0;
+        }
     }
 }

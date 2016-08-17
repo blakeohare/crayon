@@ -7,5 +7,8 @@
 
 import inline "FrameworkFunctions/2_arg.cry";
 
+int1 = $_lib_fileiocommon_directoryDelete(
+	lib_fileiocommon_getDiskObject(arg1),
+	$_cast('string', Value$arg2.internalValue));
 
-return killExecution(stack, pc, "Not implemented: directoryDelete");
+output = buildInteger(int1);

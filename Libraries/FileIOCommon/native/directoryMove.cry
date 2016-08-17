@@ -8,5 +8,9 @@
 
 import inline "FrameworkFunctions/3_arg.cry";
 
+int1 = $_lib_fileiocommon_directoryMove(
+	lib_fileiocommon_getDiskObject(arg1),
+	$_cast('string', Value$arg2.internalValue),
+	$_cast('string', Value$arg3.internalValue));
 
-return killExecution(stack, pc, "Not implemented: directoryMove");
+output = buildInteger(int1);

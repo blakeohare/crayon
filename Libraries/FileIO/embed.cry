@@ -73,6 +73,8 @@ namespace FileIO {
 			case FileIOCommon.FiocStatus.ENCODING_FAIL: Core.fail("The input could not be encoded into that encoding."); break;
 			case FileIOCommon.FiocStatus.ACCESS_DENIED: Core.fail("Access to that resources is not allowed."); break;
 			case FileIOCommon.FiocStatus.CANNOT_OVERWRITE: Core.fail("A file already exists at that location."); break;
+			case FileIOCommon.FiocStatus.PATH_ALREADY_EXISTS: Core.fail("That path already exists."); break;
+			case FileIOCommon.FiocStatus.PARENT_DIR_DOES_NOT_EXIST: Core.fail("Parent path does not exist."); break;
 		}
 	}
 	

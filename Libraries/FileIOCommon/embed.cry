@@ -28,6 +28,8 @@ namespace FileIOCommon {
 		ENCODING_FAIL = 7,
 		ACCESS_DENIED = 8,
 		CANNOT_OVERWRITE = 9,
+		PATH_ALREADY_EXISTS = 10,
+		PARENT_DIR_DOES_NOT_EXIST = 11,
 	}
 	
 	class FiocHelper {
