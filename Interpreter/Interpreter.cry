@@ -145,8 +145,9 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
 
-	@type('Array<int>') intOutParam = $_new_array('int', 4);
-	@type('Array<string>') stringOutParam = $_new_array('string', 4);
+	@type('Array<int>') intOutParam = $_new_array('int', 16);
+	@type('Array<double>') floatOutParam = $_new_array('double', 16);
+	@type('Array<string>') stringOutParam = $_new_array('string', 16);
 
 	@type('Array<Value>') localsStack = ExecutionContext$ec.localsStack;
 	@type('Array<int>') localsStackSet = ExecutionContext$ec.localsStackSet;

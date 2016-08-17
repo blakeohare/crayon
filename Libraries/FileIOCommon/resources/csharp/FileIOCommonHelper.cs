@@ -47,6 +47,40 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             return path;
         }
 
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1);
+
+        public static void GetFileInfo(string path, int mask, int[] intOut, double[] floatOut)
+        {
+            bool fileExists = System.IO.File.Exists(path);
+            bool directoryExists = System.IO.Directory.Exists(path);
+
+            if (mask != 0)
+            {
+                DateTime epoch = new DateTime(1970, 1, 1);
+                // Since all information is readily available in FileInfo/DirectoryInfo, ignore mask and just set everything.
+                if (fileExists)
+                {
+                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(path);
+                    intOut[2] = fileInfo.Length > Int32.MaxValue ? Int32.MaxValue : (int) fileInfo.Length; // blarg.
+                    intOut[3] = fileInfo.IsReadOnly ? 1 : 0;
+                    long now = DateTime.Now.Ticks;
+                    floatOut[0] = fileInfo.CreationTimeUtc.Subtract(epoch).TotalSeconds;
+                    floatOut[1] = fileInfo.LastWriteTimeUtc.Subtract(epoch).TotalSeconds;
+                }
+                else if (directoryExists)
+                {
+                    System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
+                    intOut[3] = 0; // TODO
+                    floatOut[0] = dirInfo.CreationTimeUtc.Subtract(epoch).TotalSeconds;
+                    floatOut[1] = dirInfo.LastWriteTimeUtc.Subtract(epoch).TotalSeconds;
+                }
+            }
+
+            bool exists = fileExists || directoryExists;
+            intOut[0] = exists ? 1 : 0;
+            intOut[1] = directoryExists ? 1 : 0;
+        }
+
         public static int GetDirectoryList(string path, bool includeFullPath, List<string> output)
         {
             int trimLength = path.Length + 1;

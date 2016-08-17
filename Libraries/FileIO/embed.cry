@@ -14,13 +14,51 @@ namespace FileIO {
 		static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
 	}
 	
+	class FileInfo {
+		field path;
+		field exists;
+		field isDirectory;
+		field size;
+		field readonly;
+		field created;
+		field modified;
+		
+		constructor(path, info) {
+			this.path = path;
+			this.exists = info[0];
+			this.isDirectory = info[1];
+			if (this.exists) {
+				if (!this.isDirectory) {
+					this.size = info[2];
+				}
+				this.readonly = info[3];
+				this.created = info[4];
+				this.modified = info[5];
+			}
+		}
+	}
+	
 	function pathJoin(parts) {
 		return _FileIOHelper.FIOC.pathJoin(parts);
 	}
 	
 	function pathExists(path) {
-		info = _FileIOHelper.FIOC.getPathInfo(path);
+		info = _FileIOHelper.FIOC.getPathInfo(path, 0);
 		return info[0];
+	}
+	
+	function fileExists(path) {
+		info = _FileIOHelper.FIOC.getPathInfo(path, 0);
+		return info[0] && !info[1];
+	}
+	
+	function directoryExists(path) {
+		info = _FileIOHelper.FIOC.getPathInfo(path, 0);
+		return info[0] && info[1];
+	}
+	
+	function getPathInfo(path) {
+		return new FileInfo(path, _FileIOHelper.FIOC.getPathInfo(path, 15));
 	}
 	
 	function _validateOutput(statusCode) {
