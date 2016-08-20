@@ -360,7 +360,7 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             output.Add(string.Join("", builder));
         }
 
-        public static int CreateDirectory(string path, bool createParents)
+        public static int CreateDirectory(string path)
         {
             string parent;
             try
@@ -373,51 +373,18 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             }
 
             bool parentExists = System.IO.Directory.Exists(parent);
-            if (parentExists)
-            {
-                if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
-                {
-                    return 10;
-                }
-                else
-                {
-                    return CreateDirectoryWithStatus(path);
-                }
-            }
-            else if (!createParents)
+            if (!parentExists)
             {
                 return 11;
             }
+
+            if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
+            {
+                return 10;
+            }
             else
             {
-                if (IsWindows())
-                {
-                    string driveLetter = System.IO.Path.GetPathRoot(path);
-                    if (driveLetter == null) return 1; // path is made absolute before calling.
-                    if (!System.IO.Directory.Exists(driveLetter))
-                    {
-                        return 4; // drive not found.
-                    }
-
-                    // now that you know the root is found, walk up to it until you find something that exists.
-                    Stack<string> pathsToCreate = new Stack<string>();
-                    while (!System.IO.Directory.Exists(path))
-                    {
-                        pathsToCreate.Push(path);
-                        path = System.IO.Path.GetDirectoryName(path);
-                    }
-
-                    while (pathsToCreate.Count > 0)
-                    {
-                        int status = CreateDirectoryWithStatus(pathsToCreate.Pop());
-                        if (status != 0) return status;
-                    }
-                    return 0;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                return CreateDirectoryWithStatus(path);
             }
         }
 
@@ -499,6 +466,34 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
             catch (Exception)
             {
                 return 1;
+            }
+            return 0;
+        }
+
+        public static bool DirectoryExists(string path)
+        {
+            return System.IO.Directory.Exists(path);
+        }
+
+        public static string GetDirRoot(string path)
+        {
+            if (IsWindows())
+            {
+                return path.Split(':')[0] + ":\\";
+            }
+
+            return "/";
+        }
+
+        public static int GetDirParent(string path, string[] pathOut)
+        {
+            try
+            {
+                pathOut[0] = System.IO.Path.GetDirectoryName(path);
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                return 5;
             }
             return 0;
         }
