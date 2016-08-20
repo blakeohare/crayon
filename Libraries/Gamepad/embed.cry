@@ -191,6 +191,8 @@ namespace Gamepad {
 		// This can be called repeatedly
 		static function restoreSettingsFromUserData(deviceIdList) {
 			
+			if (Core.typeof(deviceIdList) != Core.Type.LIST) deviceIdList = [deviceIdList];
+			
 			if (!GamepadManager._isGamepadSupported) return 0;
 
 			// Read the file from disk and cache it to make successive or frequent reads
@@ -420,6 +422,9 @@ namespace Gamepad {
 		field _hardware_fingerprint;
 		field _counter = 0; // incremented each hardware pass. Used to denote if a value was set this frame or a previous frame.
 
+		field _quickMashyLookupByStringId = {};
+		field _quickMashyLookupByIntegerId = {};
+		
 		/*
 			List of 5 items:
 			- type (0 -> button, 1 -> single dimensional axis, 2 -> 2-dimensional axis X, 3 -> 2-dimensional axis Y)
@@ -567,6 +572,9 @@ namespace Gamepad {
 		}
 
 		function _updatePass(eventsOut) {
+			this._quickMashyLookupByStringId.clear();
+			this._quickMashyLookupByIntegerId.clear();
+			
 			$$lib_gamepad_poll_universe();
 			counter = this._counter++;
 			updated_indices = [];
@@ -645,7 +653,13 @@ namespace Gamepad {
 				iConfig = config[0];
 				sConfig = config[1];
 				for (buttonId : buttonIds) {
-					lookup = Core.typeof(buttonId) == Core.Type.INTEGER ? iConfig : sConfig;
+					if (Core.typeof(buttonId) == Core.Type.INTEGER) {
+						lookup = iConfig;
+						idLookup = this._quickMashyLookupByIntegerId;
+					} else {
+						lookup = sConfig;
+						idLookup = this._quickMashyLookupByStringId;
+					}
 					binding = lookup.get(buttonId);
 					isDigital = binding[0];
 					dim = binding[1];
@@ -653,6 +667,7 @@ namespace Gamepad {
 						case 1:
 							value = this._getValueForSignedIndex(binding[2], isDigital, isDigital, false);
 							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+							idLookup[buttonId] = value;
 							break;
 
 						case 2:
@@ -660,6 +675,7 @@ namespace Gamepad {
 							valuePos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
 							value = GamepadDevice._consolidateAxisValues(valueNeg, valuePos, isDigital);
 							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+							idLookup[buttonId] = value;
 							break;
 
 						case 4:
@@ -670,6 +686,7 @@ namespace Gamepad {
 							x = GamepadDevice._consolidateAxisValues(xNeg, xPos, isDigital);
 							y = GamepadDevice._consolidateAxisValues(yNeg, yPos, isDigital);
 							eventsOut.add(new GamepadEvent(this, buttonId, null, x, y));
+							idLookup[buttonId] = [x, y];
 							break;
 					}
 				}
@@ -882,6 +899,13 @@ namespace Gamepad {
 				}
 			}
 			return null;
+		}
+
+		function getState(buttonId) {
+			lookup = Core.typeof(buttonId) == Core.Type.STRING
+				? this._quickMashyLookupByStringId
+				: this._quickMashyLookupByIntegerId;
+			return lookup.get(buttonId);
 		}
 
 		function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
