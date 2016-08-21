@@ -1,5 +1,5 @@
 ﻿import Core;
-import FileIO;
+import UserData;
 import Game;
 import Math;
 
@@ -201,8 +201,8 @@ namespace Gamepad {
 				ordering = [];
 				config = {};
 				file = $$lib_gamepad_get_save_file_path();
-				if (file == null || !FileIO.UserData.Path.exists(file)) return 0;
-				for (line : FileIO.UserData.File.readText(file).split('\n')) {
+				if (file == null || !UserData.fileExists(file)) return 0;
+				for (line : UserData.fileReadText(file).split('\n')) {
 					cols = line.trim().split(',');
 					if (cols.length > 2) {
 						fingerprint = cols[0].trim();
@@ -312,14 +312,14 @@ namespace Gamepad {
 
 			file = $$lib_gamepad_get_save_file_path();
 			if (file == null) return;
-			exists = FileIO.UserData.Path.exists(file);
-			if (exists && FileIO.UserData.Path.isDirectory(file)) return;
+			exists = UserData.fileExists(file);
+			if (exists) return;
 
 			existingOrder = [];
 			deviceDataById = {};
 
 			if (exists) {
-				for (line : FileIO.UserData.File.readText(file).split('\n')) {
+				for (line : UserData.fileReadText(file).split('\n')) {
 					parts = line.split(':');
 					if (parts.length > 2) {
 						id = parts[0].trim();
@@ -386,7 +386,7 @@ namespace Gamepad {
 					data = [id, data.length] + data;
 					lines.add(data.join(','));
 				}
-				FileIO.UserData.File.writeText(file, lines.join('\n'));
+				UserData.fileWriteText(file, lines.join('\n'));
 			}
 		}
 
