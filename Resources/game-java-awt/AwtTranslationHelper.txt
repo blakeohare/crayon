@@ -246,7 +246,8 @@ class AwtTranslationHelper {
         return null;
     }
 
-    public static BufferedImage scaleImage(BufferedImage image, int width, int height) {
+    public static BufferedImage scaleImage(Object imageObj, int width, int height) {
+		BufferedImage image = (BufferedImage) imageObj;
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
         Graphics2D g = newImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
