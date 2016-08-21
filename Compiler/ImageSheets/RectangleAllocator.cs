@@ -71,22 +71,28 @@ namespace Crayon.ImageSheets
                     {
                         currentChunk = new Chunk() { IsJPEG = false, Width = 1024, Height = 1024 };
                         tiledChunks.Add(currentChunk);
+                        x = 0;
+                        topY = 0;
+                        bottomY = 0;
                     }
 
                     int right = x + currentImage.Width;
-                    if (right >= 1024)
+                    if (right > 1024)
                     {
                         // move to the next row.
                         x = 0;
                         topY = bottomY;
-                        bottomY = topY + currentImage.Height;
-                        if (bottomY >= 1024)
-                        {
-                            // move to the next chunk.
-                            --i;
-                            currentChunk = null;
-                            continue;
-                        }
+                        bottomY = topY;
+                    }
+
+                    bottomY = System.Math.Max(bottomY, topY + currentImage.Height);
+
+                    if (bottomY > 1024)
+                    {
+                        // move to the next chunk.
+                        --i;
+                        currentChunk = null;
+                        continue;
                     }
 
                     currentChunk.Members.Add(currentImage);
@@ -99,6 +105,11 @@ namespace Crayon.ImageSheets
                 {
                     chunk.GenerateTiles();
                 }
+            }
+
+            foreach (Chunk chunk in solitaryChunks)
+            {
+                chunk.GenerateTiles();
             }
 
             tiledChunks.AddRange(solitaryChunks);
