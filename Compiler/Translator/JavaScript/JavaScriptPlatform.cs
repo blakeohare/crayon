@@ -5,12 +5,21 @@ namespace Crayon.Translator.JavaScript
 {
     class JavaScriptPlatform : AbstractPlatform
     {
-        private string jsFolderPrefix;
+        private string jsFilePrefix;
 
-        public JavaScriptPlatform(bool isMin, string jsFolderPrefix)
+        public JavaScriptPlatform(bool isMin, string jsFilePrefix)
             : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), false)
         {
-            this.jsFolderPrefix = jsFolderPrefix;
+            if (jsFilePrefix == null)
+            {
+                jsFilePrefix = "";
+            }
+            else
+            {
+                if (!jsFilePrefix.StartsWith("/")) jsFilePrefix = "/" + jsFilePrefix;
+                if (!jsFilePrefix.EndsWith("/")) jsFilePrefix += "/";
+            }
+            this.jsFilePrefix = jsFilePrefix;
         }
 
         public override bool IsAsync { get { return true; } }
@@ -100,7 +109,7 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text,
                 TextContent = libraryManager.EmbeddedContent,
             };
-            
+
             Dictionary<string, string> textResources = new Dictionary<string, string>();
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
@@ -125,7 +134,7 @@ namespace Crayon.Translator.JavaScript
                 TextContent = BuildTextResourcesCodeFile(textResources),
                 Type = FileOutputType.Text,
             };
-            
+
             output["index.html"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -145,11 +154,11 @@ namespace Crayon.Translator.JavaScript
 
             return output;
         }
-        
+
         private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
         {
             List<string> output = new List<string>();
-            output.Add("C$common$jsFilePrefix = '" + this.jsFolderPrefix + "';\n");
+            output.Add("C$common$jsFilePrefix = '" + this.jsFilePrefix + "';\n");
             string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
             for (int i = 0; i < keys.Length; ++i)
             {
