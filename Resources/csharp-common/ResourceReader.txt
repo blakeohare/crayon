@@ -43,12 +43,9 @@ namespace %%%PROJECT_ID%%%
 
         public static System.IO.Stream GetResourceStream(string path)
         {
-            lock (resMutex)
-            {
-                System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
-                path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
-                return assembly.GetManifestResourceStream(path);
-            }
+            System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
+            path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
+            return assembly.GetManifestResourceStream(path);
         }
 
 		private const int BUFFER_LENGTH = 1000;
@@ -56,32 +53,35 @@ namespace %%%PROJECT_ID%%%
 
 		public static List<byte> ReadBytes(string path)
 		{
-			System.IO.Stream stream = GetResourceStream(path);
-			if (stream == null)
-			{
-				return null;
-			}
-			StringBuilder sb = new StringBuilder();
-			List<byte> output = new List<byte>();
+            lock (resMutex)
+            {
+				System.IO.Stream stream = GetResourceStream(path);
+				if (stream == null)
+				{
+					return null;
+				}
+				StringBuilder sb = new StringBuilder();
+				List<byte> output = new List<byte>();
 
-			int bytesRead = 1;
-			while (bytesRead > 0)
-			{
-				bytesRead = stream.Read(BUFFER, 0, BUFFER_LENGTH);
-				if (bytesRead == BUFFER_LENGTH)
+				int bytesRead = 1;
+				while (bytesRead > 0)
 				{
-					output.AddRange(BUFFER);
-				}
-				else
-				{
-					for (int i = 0; i < bytesRead; ++i)
+					bytesRead = stream.Read(BUFFER, 0, BUFFER_LENGTH);
+					if (bytesRead == BUFFER_LENGTH)
 					{
-						output.Add(BUFFER[i]);
+						output.AddRange(BUFFER);
 					}
-					bytesRead = 0;
+					else
+					{
+						for (int i = 0; i < bytesRead; ++i)
+						{
+							output.Add(BUFFER[i]);
+						}
+						bytesRead = 0;
+					}
 				}
+				return output;
 			}
-			return output;
 		}
 	}
 }
