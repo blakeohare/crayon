@@ -217,7 +217,7 @@ namespace Graphics {
 
 		function _createResCopy(res) {
 			output = [res, res];
-			if ($$lib_graphics_isPlatformUsingTextureAtlas()) {
+			if (!$$lib_graphics_isPlatformUsingTextureAtlas()) {
 				// for non-atlas platforms, create a copy of the texture resource.
 				newRes = new GraphicsTextureResource();
 				newRes.width = res.width;

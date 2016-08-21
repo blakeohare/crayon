@@ -2,6 +2,11 @@
 
 /*
 	valueStack[n + 0] -> Draw queue wrapper object.
+		nativeData[0] -> event queue
+		nativeData[1] -> event queue length
+		nativeData[2] -> image queue
+		nativeData[3] -> image queue length
+		
 	valueStack[n + 1] -> GrahpicsTexture instance
 	
 	valueStack[n + 2] -> BIT MASK

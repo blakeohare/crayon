@@ -291,3 +291,6 @@ def _gfxRenderChar(fontFace, codePoint, size, isBold, isItalic, r, g, b):
   text = chr(codePoint)
   img = font.render(text, True, (r, g, b))
   return img
+
+def _gfxScale(img, width, height):
+  return pygame.transform.scale(img, (width, height))
