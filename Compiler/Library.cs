@@ -220,7 +220,7 @@ namespace Crayon
 
         Dictionary<string, string> translations = null;
 
-        public string TranslateNativeInvocation(AbstractPlatform translator, string functionName, object[] args)
+        public string TranslateNativeInvocation(Token throwToken, AbstractPlatform translator, string functionName, object[] args)
         {
             if (this.translations == null)
             {
@@ -253,7 +253,7 @@ namespace Crayon
                 return output;
             }
 
-            throw new InvalidOperationException("No native translation provided for " + functionName);
+            throw new ParserException(throwToken, "No native translation provided for " + functionName);
         }
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
