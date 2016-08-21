@@ -5,7 +5,11 @@
 */
 
 namespace UserData {
-	
+
+/*
+	TODO: there is a bug here where enums of the same name but in different namespaces collide.
+	Once that's fixed, uncomment this. 
+
 	// It's okay to duplicate this across other libraries that also use FileIOCommon. 
 	// Wasteful enums do not affect the size of the output.
 	enum TextEncoding {
@@ -15,7 +19,7 @@ namespace UserData {
 		UTF32 = FileIOCommon.FiocFileFormat.TEXT_UTF32,
 		ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
 	}
-	
+//*/
 	function getProjectSandboxDirectory() {
 		if (FileIOCommon.FiocHelper.IS_WINDOWS) {
 			return FileIOCommon.FiocHelper.USER_DIRECTORY.join('\\') + '\\' + Core.getProjectId();
@@ -52,7 +56,7 @@ namespace UserData {
 		return _FileIOHelper.FIOC.getPathInfoObj(path);
 	}
 	
-	function fileWriteText(path, content, encoding = UserData.TextEncoding.UTF8) {
+	function fileWriteText(path, content, encoding = FileIOCommon.FiocFileFormat.TEXT_UTF8) {
 		return _FileIOHelper.FIOC.fileWriteText(path, content, encoding);
 	}
 	
