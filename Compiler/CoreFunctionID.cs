@@ -32,6 +32,8 @@
         INT_QUEUE_WRITE_16 = 28,
         EXECUTION_CONTEXT_COUNTER = 29,
         SLEEP = 30,
+        PROJECT_ID = 31,
+        IS_JAVASCRIPT = 32,
     }
 
     public static class CoreFunctionIDHelper
@@ -70,6 +72,8 @@
                 case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16;
                 case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
                 case "sleep": return (int)CoreFunctionID.SLEEP;
+                case "projectId": return (int)CoreFunctionID.PROJECT_ID;
+                case "isJavaScript": return (int)CoreFunctionID.IS_JAVASCRIPT;
                 default: return -1;
             }
         }

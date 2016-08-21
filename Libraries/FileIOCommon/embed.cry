@@ -59,7 +59,6 @@ namespace FileIOCommon {
 	class FiocHelper {
 		
 		field sep; // system path delimiter
-		field otherSep; // the other acceptable but non-standard delimiter. For / platforms, this is \ and vice-veras.
 		
 		/*
 			If null, there is no limitation to where the writes can be placed.
@@ -86,11 +85,10 @@ namespace FileIOCommon {
 			$$lib_fileiocommon_initializeDisk(this.diskHost, jsUseLocalStorage);
 			this.currentDirectoryString = virtualDiskRoot ?? $$lib_fileiocommon_getCurrentDirectory();
 			this.currentDirectoryList = this.currentDirectoryString.replace('\\', '/').split('/');
-			this.isWindowsDisk = sep == '\\' && FiocHelper.IS_WINDOWS;
-			if (!this.isWindowsDisk) sep = '/';
+			this.isWindowsDisk = FiocHelper.IS_WINDOWS;
+			if (!this.isWindowsDisk || virtualDiskRoot != null) sep = '/';
 			this.sep = sep;
-			this.otherSep = sep == '/' ? '\\' : '/';
-			this.virtualDiskRoot = virtualDiskRoot;
+			this.virtualDiskRoot = virtualDiskRoot.replace('\\', '/');
 		}
 		
 		function _validateOutput(statusCode, output = null) {
@@ -124,6 +122,18 @@ namespace FileIOCommon {
 		*/
 		field _normalizedPaths = {};
 		
+		/*
+			Convert any path into the actual path on the device.
+			For absolute disk paths, this ideally won't do anything.
+			For relative disk paths, this will add the current directory.
+			For virtual disk root paths (absolute or relative), this will give the absolute path on disk to the file and 
+			  throw an error if it exceeds the bounds of that virtual root
+			For *nix paths that begin with ~, this will canonicalize it into the actual path that begins with /
+			If present, "file://" gets truncated.
+			The path returned will ALWAYS use /'s instead of \'s. It is up to the platform implementation to convert /'s 
+			  into \'s if on Windows.
+			/'s and \'s are treated equally regardless of platform for input.
+		*/
 		function normalizePathToAbsolute(path) {
 			cached = this._normalizedPaths.get(path);
 			if (cached != null) return cached;
@@ -131,36 +141,46 @@ namespace FileIOCommon {
 			
 			original = path;
 			
-			// TODO: move the rest of the implementation to translated code.
+			path = path.replace('\\', '/');
+			if (path.startsWith('file://')) path = path['file://'.length:];
 			
 			if (path == '') path = '.';
 			
-			if (path.contains('\\')) {
-				path = path.replace('\\', '/');
-			}
-			
-			parts = path.split('/');
-			first = parts[0];
-			
-			isRelative = false;
-			if (this.isWindowsDisk) {
-				if (!first.contains(':')) {
-					isRelative = true;
+			if (this.virtualDiskRoot != null) {
+				// virtual disk paths, as far as the user is concerned, always begin at '/' as a root and the root is the current directory
+				// so that relative and absolute paths behave identically.
+				// Add the actual device's virtual disk folder path to the front of the path.
+				path = this.virtualDiskRoot + '/' + path;
+				isRelative = false;
+			} else if (this.isWindowsDisk) {
+				// On Windows, basically determine if there is a drive letter.
+				if (path.length > 1 && path[1] == ':') {
+					isRelative = false;
+					if (path.length == 2) {
+						path += '/';
+					} else {
+						if (path[2] != '/') {
+							path = path[0] + ':/' + path[2:]; // C:foo gets canonicalized into C:/foo
+						}
+					}
 				} else {
-					// Absolute paths must be drive letters + ':\...'
-					if (first.length != 2 && first[1] != ':') Core.fail("Invalid path");
+					isRelative = true;
 				}
 			} else {
-				if (first == '~') {
-					parts = FiocHelper.USER_DIRECTORY + parts[1:];
-				} else if (first != '') { // i.e. did not begin with slash.
+				if (path.startsWith('/')) isRelative = false;
+				else if (path.startsWith('~/')) {
+					path = FiocHelper.USER_DIRECTORY + path[1:];
+					isRelative = false;
+				} else {
 					isRelative = true;
 				}
 			}
 			
 			if (isRelative) {
-				parts = this.currentDirectoryList + parts;
+				path = this.currentDirectoryString + '/' + path;
 			}
+			
+			parts = path.replace('\\', '/').split('/');
 			
 			// walk the directory components and apply . and .. accordingly
 			output = [];
@@ -172,7 +192,9 @@ namespace FileIOCommon {
 						// ignore
 						break;
 					case '..':
-						if (output.length == 0) Core.fail("Path walked above allowed domain.");
+						if (output.length == 0) {
+							return this._validateOutput(FileIOCommon.FiocStatus.PATH_WALKED_ABOVE_DOMAIN);
+						}
 						output.pop();
 						break;
 					default:
@@ -181,9 +203,20 @@ namespace FileIOCommon {
 				}
 			}
 			
-			path = output.join(this.sep);
-			this._normalizedPaths[original] = path;
-			return path;
+			hardwarePath = output.join('/');
+			if (!this.isWindowsDisk) {
+				hardwarePath = '/' + hardwarePath;
+			}
+			
+			if (this.virtualDiskRoot != null &&
+				!hardwarePath.startsWith(this.virtualDiskRoot)) {
+				
+				return this._validateOutput(FileIOCommon.FiocStatus.PATH_WALKED_ABOVE_DOMAIN);
+			}
+			
+			this._normalizedPaths[original] = hardwarePath;
+			
+			return hardwarePath;
 		}
 		
 		/*
@@ -196,6 +229,7 @@ namespace FileIOCommon {
 		*/
 		field infoReusable = [null] * 6;
 		function getPathInfo(path, mask) {
+			if (this.virtualDiskRoot != null) this.ensureVirtualRootExists();
 			path = this.normalizePathToAbsolute(path);
 			return $$lib_fileiocommon_fileInfo(this.diskHost, path, mask, this.infoReusable);
 		}
@@ -217,6 +251,7 @@ namespace FileIOCommon {
 		}
 		
 		function fileWriteImpl(path, content, format) {
+			this.ensureVirtualRootExists();
 			path = this.normalizePathToAbsolute(path);
 			// content and format may be bad values.
 			return $$lib_fileiocommon_fileWrite(this.diskHost, path, content, format);
@@ -231,6 +266,7 @@ namespace FileIOCommon {
 		}
 		
 		function fileReadImpl(path, readAsBinary, contentsOut) {
+			this.ensureVirtualRootExists();
 			path = this.normalizePathToAbsolute(path);
 			return $$lib_fileiocommon_fileRead(this.diskHost, path, readAsBinary, contentsOut);
 		}
@@ -261,12 +297,23 @@ namespace FileIOCommon {
 		}
 		
 		function directoryList(path, includeFullPath) {
+			this.ensureVirtualRootExists();
 			output = [];
 			path = this.normalizePathToAbsolute(path);
 			return this._validateOutput($$lib_fileiocommon_directoryList(this.diskHost, path, includeFullPath, output), output);
 		}
 		
+		function ensureVirtualRootExists() {
+			if (this.virtualDiskRoot != null) {
+				$$lib_fileiocommon_fileInfo(this.diskHost, this.virtualDiskRoot, 0, this.infoReusable);
+				if (!this.infoReusable[1]) {
+					$$lib_fileiocommon_directoryCreate(this.diskHost, this.virtualDiskRoot, true);
+				}
+			}
+		}
+		
 		function directoryCreate(path, createParentsIfNecessary) {
+			this.ensureVirtualRootExists();
 			path = this.normalizePathToAbsolute(path);
 			return this._validateOutput($$lib_fileiocommon_directoryCreate(this.diskHost, path, createParentsIfNecessary));
 		}

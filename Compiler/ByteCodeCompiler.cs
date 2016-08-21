@@ -41,7 +41,7 @@ namespace Crayon
             header.Concat(tokenData);
             header.Concat(fileContent);
             header.Concat(switchStatements);
-            header.Add(null, OpCode.FINALIZE_INITIALIZATION);
+            header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID);
 
             ByteBuffer output = new Crayon.ByteBuffer();
             // TODO: surgically remove the need for this 0 to be here.

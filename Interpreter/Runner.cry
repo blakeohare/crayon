@@ -92,7 +92,8 @@ function @type('int') main() {
 
 		-1, // the global name ID for "length"
 		$_new_array('int', 10), // primitive method to function ID fallback lookup
-		resources // resource database
+		resources, // resource database
+		null // project ID (set during finalize initialization)
 		));
 
 	runInterpreter(ExecutionContext$executionContext.id);

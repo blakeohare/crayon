@@ -475,6 +475,18 @@
 			return suspendInterpreterWithLock();
 		}
 		break;
+
+	case 31: $_comment('projectId');
+		output = buildCommonString(ProgramData$p.projectId);
+		break;
+
+	case 32: $_comment('isJavaScript');
+		if (%%%IS_JAVASCRIPT%%%) {
+			output = VALUE_TRUE;
+		} else {
+			output = VALUE_FALSE;
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

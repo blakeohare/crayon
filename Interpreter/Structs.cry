@@ -47,6 +47,7 @@ struct ProgramData {
 	@type('int') lengthId,
 	@type('Array<int>') primitiveMethodFunctionIdFallbackLookup,
 	@type('ResourceDB') resourceDatabase,
+	@type('string') projectId,
 }
 
 struct ExecutionContext {

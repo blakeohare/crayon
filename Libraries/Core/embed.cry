@@ -12,7 +12,7 @@
 		OBJECT = 7,
 		FUNCTION = 8,
 	}
-
+	
 	function assert(condition, message = null) {
 		return $$$('assert', condition, message);
 	}
@@ -98,6 +98,10 @@
 	
 	function getExecutionIterationCounter() {
 		return $$$('execCounter');
+	}
+	
+	function getProjectId() {
+		return $$$('projectId');
 	}
 	
 	// Interanlly called by fp.invoke(args)

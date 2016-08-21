@@ -100,6 +100,7 @@ namespace Crayon
             replacements.Add("IS_CHAR_A_NUMBER", this.platform.IsCharANumber ? "true" : "false");
             replacements.Add("INT_IS_FLOOR", this.platform.IntIsFloor ? "true" : "false");
             replacements.Add("IS_THREAD_BLOCKING_ALLOWED", this.platform.IsThreadBlockingAllowed ? "true" : "false");
+            replacements.Add("IS_JAVASCRIPT", this.platform.LanguageId == LanguageId.JAVASCRIPT ? "true" : "false");
             return replacements;
         }
 

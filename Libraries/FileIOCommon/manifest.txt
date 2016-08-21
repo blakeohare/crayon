@@ -3,4 +3,4 @@ AUTHOR: Blake O'Hare
 DOCUMENTATION: http://crayonlang.org/docs/0.2.0/fileio
 DESCRIPTION: Underlying implementation for FileIO and UserData.
 
-ONLY_ALLOW_IMPORT_FROM: FileIO
+ONLY_ALLOW_IMPORT_FROM: FileIO, UserData

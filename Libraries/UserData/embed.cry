@@ -1,10 +1,10 @@
 ﻿import FileIOCommon;
 
 /*
-	Please this keep this in sync with the UserData library.
+	Please this keep this in sync with the FileIO library.
 */
 
-namespace FileIO {
+namespace UserData {
 	
 	// It's okay to duplicate this across other libraries that also use FileIOCommon. 
 	// Wasteful enums do not affect the size of the output.
@@ -16,8 +16,20 @@ namespace FileIO {
 		ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
 	}
 	
+	function getProjectSandboxDirectory() {
+		if (FileIOCommon.FiocHelper.IS_WINDOWS) {
+			return FileIOCommon.FiocHelper.USER_DIRECTORY.join('\\') + '\\' + Core.getProjectId();
+		}
+		
+		if ($$$('isJavaScript')) {
+			return '/' + Core.getProjectId();
+		}
+		
+		return '~/.' + Core.getProjectId().lower();
+	}
+	
 	class _FileIOHelper {
-		static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
+		static field FIOC = new FileIOCommon.FiocHelper('/', UserData.getProjectSandboxDirectory(), true);
 	}
 	
 	function pathJoin(parts) {
@@ -40,7 +52,7 @@ namespace FileIO {
 		return _FileIOHelper.FIOC.getPathInfoObj(path);
 	}
 	
-	function fileWriteText(path, content, encoding = FileIO.TextEncoding.UTF8) {
+	function fileWriteText(path, content, encoding = UserData.TextEncoding.UTF8) {
 		return _FileIOHelper.FIOC.fileWriteText(path, content, encoding);
 	}
 	
@@ -89,6 +101,6 @@ namespace FileIO {
 	}
 	
 	function currentDirectory() {
-		return _FileIOHelper.FIOC.currentDirectoryString;
+		return '/';
 	}
 }

@@ -6,7 +6,7 @@ ProgramData$p.stringSwitchLookups = $_convert_list_to_array('Dictionary<string, 
 ProgramData$p.sourceCode = $_convert_list_to_array('string', ProgramData$p.sourceCodeBuilder);
 ProgramData$p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(ProgramData$p.invIdentifiers);
 ProgramData$p.funcArgs = $_new_array('Value', $_array_length(ProgramData$p.identifiers)); // WAY over-allocated but that's okay for now, I guess.
-
+ProgramData$p.projectId = $_array_get(ProgramData$p.stringArgs, pc);
 ProgramData$p.identifiersBuilder = null;
 ProgramData$p.literalTableBuilder = null;
 ProgramData$p.integerSwitchLookupsBuilder = null;

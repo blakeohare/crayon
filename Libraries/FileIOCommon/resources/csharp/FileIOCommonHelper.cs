@@ -24,7 +24,7 @@ namespace %%%PROJECT_ID%%%.Library.FileIOCommon
         {
             if (IsWindows())
             {
-                return Environment.GetEnvironmentVariable("USERPROFILE");
+                return Environment.GetEnvironmentVariable("APPDATA");
             }
             return "~";
         }
