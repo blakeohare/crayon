@@ -14,11 +14,12 @@
 */
 
 import inline "FrameworkFunctions/2_arg.cry";
+if (%%%IS_JAVASCRIPT%%%) {
+	string1 = $_cast('string', Value$arg1.internalValue); // URL
+	objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue); // nativeData host
+	objArray1 = $_new_array('object', 5);
+	ObjectInstance$objInstance1.nativeData = objArray1;
+	$_array_set(objArray1, 0, false); // not done
 
-string1 = $_cast('string', Value$arg1.internalValue); // URL
-objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue); // nativeData host
-objArray1 = $_new_array('object', 5);
-ObjectInstance$objInstance1.nativeData = objArray1;
-$_array_set(objArray1, 0, false); // not done
-
-$_lib_imagewebresources_jsDownload(string1, objArray1);
+	$_lib_imagewebresources_jsDownload(string1, objArray1);
+}

@@ -25,7 +25,7 @@ namespace ImageWebResources {
 		field _isDone = false;
 		
 		constructor(url) {
-			if ($$lib_imagewebresources_isJavascript()) {
+			if ($$$('isJavaScript')) {
 				this._request = url;
 			} else {
 				this._request = new HttpRequest(url).setMode(HTTP.RequestMode.BINARY);
@@ -36,7 +36,7 @@ namespace ImageWebResources {
 			Core.assert(!this._sent, "Request already sent.");
 			this._sent = true;
 			
-			if ($$lib_imagewebresources_isJavascript()) {
+			if ($$$('isJavaScript')) {
 				$$lib_imagewebresources_jsDownload(this._request, this);
 				while (!this.isDone()) {
 					Core.sleep(0.001);
@@ -53,7 +53,7 @@ namespace ImageWebResources {
 			Core.assert(!this._sent, "Request already sent.");
 			this._sent = true;
 			
-			if ($$lib_imagewebresources_isJavascript()) {
+			if ($$$('isJavaScript')) {
 				$$lib_imagewebresources_jsDownload(this._request, this);
 			} else {
 				this._request.sendAsync();
@@ -65,7 +65,7 @@ namespace ImageWebResources {
 		
 		function isDone() {
 			if (this._isDone) return true;
-			if ($$lib_imagewebresources_isJavascript()) {
+			if ($$$('isJavaScript')) {
 				if (this._jsIsDoneCounter++ > 10) {
 					Core.sleep(0.001);
 					this._jsIsDoneCounter = 0;
@@ -92,7 +92,7 @@ namespace ImageWebResources {
 			
 			// TODO: throw exceptions once exception support is available.
 			
-			if ($$lib_imagewebresources_isJavascript()) {
+			if ($$$('isJavaScript')) {
 				success = $$lib_imagewebresources_jsGetImage(this, imgdata);
 			} else {
 				response = this._request.getResponse();

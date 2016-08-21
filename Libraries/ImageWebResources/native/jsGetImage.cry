@@ -17,27 +17,29 @@
 
 import inline "FrameworkFunctions/2_arg.cry";
 
-// get the native data from the response
-objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
-objArray1 = ObjectInstance$objInstance1.nativeData;
+if (%%%IS_JAVASCRIPT%%%) {
+	// get the native data from the response
+	objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+	objArray1 = ObjectInstance$objInstance1.nativeData;
 
-// get the output vector
-list1 = $_cast('List<Value>', Value$arg2.internalValue);
+	// get the output vector
+	list1 = $_cast('List<Value>', Value$arg2.internalValue);
 
-output = VALUE_FALSE;
-if ($_cast('bool', $_array_get(objArray1, 1))) {
-	output = VALUE_TRUE;
-	object1 = $_array_get(objArray1, 2);
-	value = $_list_get(list1, 0); // imageNativeData
-	objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
-	objArray2 = $_new_array('object', 3); // imageNativeData's nativeData
-	ObjectInstance$objInstance1.nativeData = objArray2;
-	int1 = $_cast('int', $_array_get(objArray1, 3)); // width
-	int2 = $_cast('int', $_array_get(objArray1, 4)); // height
-	$_array_set(objArray2, 0, object1);
-	$_array_set(objArray2, 1, int1);
-	$_array_set(objArray2, 2, int2);
-	
-	$_list_set(list1, 1, buildInteger(int1)); // width
-	$_list_set(list1, 2, buildInteger(int2)); // height
+	output = VALUE_FALSE;
+	if ($_cast('bool', $_array_get(objArray1, 1))) {
+		output = VALUE_TRUE;
+		object1 = $_array_get(objArray1, 2);
+		value = $_list_get(list1, 0); // imageNativeData
+		objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+		objArray2 = $_new_array('object', 3); // imageNativeData's nativeData
+		ObjectInstance$objInstance1.nativeData = objArray2;
+		int1 = $_cast('int', $_array_get(objArray1, 3)); // width
+		int2 = $_cast('int', $_array_get(objArray1, 4)); // height
+		$_array_set(objArray2, 0, object1);
+		$_array_set(objArray2, 1, int1);
+		$_array_set(objArray2, 2, int2);
+		
+		$_list_set(list1, 1, buildInteger(int1)); // width
+		$_list_set(list1, 2, buildInteger(int2)); // height
+	}
 }

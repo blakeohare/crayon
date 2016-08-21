@@ -70,7 +70,7 @@ namespace Graphics {
 			for (walker = num / 2; walker > 0; walker /= 2) {
 				num |= walker;
 			}
-			return walker + 1;
+			return num + 1;
 		}
 		
 		// TODO: make this private
