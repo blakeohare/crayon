@@ -88,7 +88,7 @@ namespace FileIOCommon {
 			this.isWindowsDisk = FiocHelper.IS_WINDOWS;
 			if (!this.isWindowsDisk || virtualDiskRoot != null) sep = '/';
 			this.sep = sep;
-			this.virtualDiskRoot = virtualDiskRoot.replace('\\', '/');
+			this.virtualDiskRoot = virtualDiskRoot != null ? virtualDiskRoot.replace('\\', '/') : null;
 		}
 		
 		function _validateOutput(statusCode, output = null) {
