@@ -131,7 +131,7 @@ namespace ImageResources {
 			
 			statusOut = [false, true];
 			if ($$lib_imageresources_yieldRequiredByPlatform()) {
-				
+				loader = new ImageResources.ImageLoader();
 				loader._nativeImage = nativeImage;
 				$$lib_imageresources_loadAsynchronous(
 					nativeImage,

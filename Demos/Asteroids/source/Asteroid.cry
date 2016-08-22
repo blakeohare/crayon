@@ -13,31 +13,31 @@ class Asteroid {
     static field SIZE_TO_RADIUS = {
         AsteroidSize.BIG: 80,
         AsteroidSize.MEDIUM: 40,
-        AsteroidSize.SMALL: 20
+        AsteroidSize.SMALL: 20,
     };
 
     static field SIZE_TO_VELOCITY = {
         AsteroidSize.BIG: .8,
         AsteroidSize.MEDIUM: 2.4,
-        AsteroidSize.SMALL: 3.6
+        AsteroidSize.SMALL: 3.3,
     };
 
     static field SIZE_TO_ROTATION_SPEED = {
         AsteroidSize.BIG: Math.PI * 2 / 150,
         AsteroidSize.MEDIUM: Math.PI * 2 / 80,
-        AsteroidSize.SMALL: Math.PI * 2 / 25
+        AsteroidSize.SMALL: Math.PI * 2 / 40,
     };
 
     static field SIZE_TO_POINT_COUNT = {
-        AsteroidSize.BIG: 40,
-        AsteroidSize.MEDIUM: 20,
-        AsteroidSize.SMALL: 10
+        AsteroidSize.BIG: 32,
+        AsteroidSize.MEDIUM: 16,
+        AsteroidSize.SMALL: 10,
     };
 
     static field SIZE_TO_BUMPS = {
         AsteroidSize.BIG: 12,
         AsteroidSize.MEDIUM: 9,
-        AsteroidSize.SMALL: 6
+        AsteroidSize.SMALL: 6,
     };
 
     field x;

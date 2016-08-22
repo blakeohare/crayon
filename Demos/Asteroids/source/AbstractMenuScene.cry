@@ -13,7 +13,7 @@ class AbstractMenuScene : AbstractScene {
 
     function update(keysPressed, keysPressedThisFrame) {
         this.counter++;
-        if (this.counter > 10 && // delay recognition of key presses just in case the player is firing their lazor wildly while they die, the way we all hope to die.
+        if (this.counter > FPS / 2 && // delay recognition of key presses just in case the player is firing their lazor wildly while they die, the way we all hope to die.
             (keysPressedThisFrame.get(KeyboardKey.SPACE, false) ||
             keysPressedThisFrame.get(KeyboardKey.ENTER, false))) {
 
