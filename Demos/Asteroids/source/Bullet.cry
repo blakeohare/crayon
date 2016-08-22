@@ -1,3 +1,6 @@
+import Graphics;
+import Math;
+
 const BULLET_VELOCITY = 4;
 const BULLET_RADIUS = 4;
 
@@ -28,6 +31,6 @@ class Bullet {
     function render() {
         left = Math.floor(this.x - BULLET_RADIUS);
         top = Math.floor(this.y - BULLET_RADIUS);
-        GFX.Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
+        Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
     }
 }

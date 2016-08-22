@@ -1,4 +1,4 @@
-import GFX;
+import Graphics;
 import Math;
 import Random;
 
@@ -17,15 +17,15 @@ class Asteroid {
     };
 
     static field SIZE_TO_VELOCITY = {
-        AsteroidSize.BIG: 1,
-        AsteroidSize.MEDIUM: 3,
-        AsteroidSize.SMALL: 4.5
+        AsteroidSize.BIG: .8,
+        AsteroidSize.MEDIUM: 2.4,
+        AsteroidSize.SMALL: 3.6
     };
 
     static field SIZE_TO_ROTATION_SPEED = {
         AsteroidSize.BIG: Math.PI * 2 / 150,
         AsteroidSize.MEDIUM: Math.PI * 2 / 80,
-        AsteroidSize.SMALL: Math.PI * 2 / 30
+        AsteroidSize.SMALL: Math.PI * 2 / 25
     };
 
     static field SIZE_TO_POINT_COUNT = {
@@ -109,7 +109,7 @@ class Asteroid {
                     ay = this.renderPointsY[i] + oy;
                     bx = this.renderPointsX[(i + 1) % this.pointCount] + ox;
                     by = this.renderPointsY[(i + 1) % this.pointCount] + oy;
-                    GFX.Draw.line(ax, ay, bx, by, 1, 0, 255, 0);
+                    Draw.line(ax, ay, bx, by, 1, 0, 255, 0);
                 }
             }
         }

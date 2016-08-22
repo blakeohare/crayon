@@ -1,3 +1,6 @@
+import Graphics;
+import Random;
+
 class PlayScene : AbstractScene {
 
     field player;
@@ -99,7 +102,7 @@ class PlayScene : AbstractScene {
     }
 
     function render() {
-        GFX.Draw.fill(0, 0, 0);
+        Draw.fill(0, 0, 0);
 
         for (asteroid : this.asteroids) {
             asteroid.render();

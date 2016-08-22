@@ -1,14 +1,19 @@
-import GFX;
+import Graphics;
+import ImageResources;
 
 class ImageLibrary {
     static field images = {};
-
+	static field imageSheet = null;
+	
     constructor() { }
 
     static function get(path) {
         img = ImageLibrary.images.get(path);
         if (img == null) {
-            img = ImageLoader.fromResource('images/' + path).getImage();
+			if (ImageLibrary.imageSheet == null) {
+				ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
+			}
+			img = GraphicsTexture.createImage(ImageLibrary.imageSheet.getImage('images/' + path));
             ImageLibrary.images[path] = img;
         }
         return img;

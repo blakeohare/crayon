@@ -1,5 +1,5 @@
 import Game;
-import GFX;
+import Graphics;
 
 class AbstractMenuScene : AbstractScene {
     field textImg;
@@ -20,13 +20,13 @@ class AbstractMenuScene : AbstractScene {
             this.next = new PlayScene(false);
         }
 
-        this.bg.update({}, {});
+        this.bg.update({}, {}); // run update so the asteroids still move, but pass empty input
     }
 
     function render() {
         // Continue to draw background but dim it.
         this.bg.render();
-        GFX.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 128);
+        Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 128);
 
         // show text in the top quarter of the screen.
         this.textImg.draw((GAME_WIDTH - this.textImg.width) / 2, GAME_HEIGHT / 4 - this.textImg.height / 2);

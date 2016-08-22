@@ -9,7 +9,7 @@ function main() {
 
     window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
 
-    activeScene = new LoadingScene();
+    activeScene = new TitleScene();
 
     pressedKeys = {};
     pressedThisFrame = {};

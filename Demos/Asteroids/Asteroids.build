@@ -3,27 +3,25 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
-	<spritesheets>
+	<imagesheets>
 		<sheet id="everything">
 			<prefix>*</prefix>
 		</sheet>
-	</spritesheets>
+	</imagesheets>
+	
+	<guidseed>org.crayonlang.demos.asteroids,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->
-	<target name="js_local">
-		<platform>game-javascript</platform>
-	</target>
-	
-	<target name="js_remote">
+	<target name="javascript">
 		<platform>game-javascript</platform>
 		<jsfileprefix>/demos/asteroids/</jsfileprefix>
 	</target>
 	
-	<target name="windows">
+	<target name="csharp">
 		<platform>game-csharp-opentk</platform>
 	</target>
 	
-	<target name="javaawt">
+	<target name="java">
 		<platform>game-java-awt</platform>
 	</target>
 	

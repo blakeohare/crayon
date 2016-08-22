@@ -1,3 +1,6 @@
+import Graphics;
+import Math;
+
 const SHIP_ROTATION_SPEED = 2 * Math.PI / 80;
 const SHIP_ACCELERATION = 1.0;
 
@@ -59,12 +62,12 @@ class Ship {
         y3 = Math.floor(SHIP_WING_RADIUS * Math.sin(ang2) + this.y);
 
         // starboard
-        GFX.Draw.line(x1, y1, x2, y2, 2, 0, 255, 0);
+        Draw.line(x1, y1, x2, y2, 2, 0, 255, 0);
 
         // port
-        GFX.Draw.line(x1, y1, x3, y3, 2, 0, 255, 0);
+        Draw.line(x1, y1, x3, y3, 2, 0, 255, 0);
 
         // aft
-        GFX.Draw.line(x3, y3, x2, y2, 2, 0, 255, 0);
+        Draw.line(x3, y3, x2, y2, 2, 0, 255, 0);
     }
 }
