@@ -3,21 +3,18 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
+	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
+	
 	<!-- Targets -->
-	<target name="js_local">
+	<target name="javascript">
 		<platform>game-javascript</platform>
 	</target>
 	
-	<target name="js_remote">
-		<platform>game-javascript</platform>
-		<jsfileprefix>/projects/polarity/</jsfileprefix>
-	</target>
-	
-	<target name="windows">
+	<target name="csharp">
 		<platform>game-csharp-opentk</platform>
 	</target>
 	
-	<target name="javaawt">
+	<target name="java">
 		<platform>game-java-awt</platform>
 	</target>
 	
