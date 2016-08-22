@@ -122,7 +122,10 @@ namespace Crayon.Translator.JavaScript
                 output["resources/images/" + filename] = imageSheetFile;
             }
 
-            textResources["imageresmanifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
+            if (resourceDatabase.ImageSheetManifestFile != null)
+            {
+                textResources["imageresmanifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
+            }
 
             foreach (FileOutput audioFile in resourceDatabase.AudioResources)
             {

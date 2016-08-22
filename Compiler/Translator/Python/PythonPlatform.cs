@@ -76,7 +76,10 @@ namespace Crayon.Translator.Python
             };
 
             output["resources/byte_code.txt"] = resourceDatabase.ByteCodeFile;
-            output["resources/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            if (resourceDatabase.ImageSheetManifestFile != null)
+            {
+                output["resources/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            }
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)
