@@ -145,7 +145,8 @@ namespace Crayon
 
                 if (libraryManifestPath == null)
                 {
-                    throw new ParserException(throwToken, "Library manifest not found.");
+                    // TODO: show suggestions of similarly named libraries
+                    throw new ParserException(throwToken, "Library not found.");
                 }
 
                 library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);
