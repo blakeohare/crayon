@@ -1,14 +1,26 @@
+import Math;
 import Random;
 
 function randomEdgePoint() {
     switch (Random.randomInt(4)) {
         case 0: // left
             return [20, Random.randomInt(20, SCREEN_HEIGHT - 20)];
+			
         case 1: // right
             return [SCREEN_WIDTH - 20, Random.randomInt(20, SCREEN_HEIGHT - 20)];
+			
         case 2: // top
             return [Random.randomInt(20, SCREEN_WIDTH - 20), 20];
+			
         case 3: // bottom
             return [Random.randomInt(20, SCREEN_WIDTH - 20), SCREEN_HEIGHT - 20];
     }
+}
+
+function getDirectionFromAngle(theta) {
+	theta = theta % (2 * Math.PI);
+	if (theta < Math.PI / 4 || theta > 7 * Math.PI / 4) return 'e';
+	if (theta < 3 * Math.PI / 4) return 'n';
+	if (theta < 5 * Math.PI / 4) return 'w';
+	return 's';
 }

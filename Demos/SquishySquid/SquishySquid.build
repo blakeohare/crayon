@@ -20,20 +20,16 @@
 		<platform>game-csharp-ios</platform>
 	</target>
 	
-	<target name="js_local">
-		<platform>game-javascript</platform>
-	</target>
-	
-	<target name="js_remote">
+	<target name="javascript">
 		<platform>game-javascript</platform>
 		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
 	</target>
 	
-	<target name="windows">
+	<target name="csharp">
 		<platform>game-csharp-opentk</platform>
 	</target>
 	
-	<target name="javaawt">
+	<target name="java">
 		<platform>game-java-awt</platform>
 	</target>
 	

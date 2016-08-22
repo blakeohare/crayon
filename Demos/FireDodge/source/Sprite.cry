@@ -1,0 +1,140 @@
+import Math;
+
+class Sprite {
+
+    field position;
+    field targetPosition;
+    field dx = 0;
+    field dy = 0;
+    field velocity;
+    field isDead = false;
+    field isMoving = false;
+	
+    constructor(position) {
+        this.position = position;
+    }
+
+    function update() {
+		this.isMoving = this.targetPosition != null;
+		
+        if (this.isMoving) {
+			// Determine how far the target is
+            dx = this.targetPosition[0] - this.position[0];
+            dy = this.targetPosition[1] - this.position[1];
+            distance = (dx ** 2 + dy ** 2) ** .5;
+			
+            if (distance < this.velocity) {
+				// If the distance is so small that it's less than the per-frame velocity, just
+				// set the target as the current position and clear the targetPosition.
+                this.position = this.targetPosition;
+                this.targetPosition = null;
+            } else {
+				// Otherwise, move in that direction according to the sprite's velocity.
+                ratio = this.velocity / distance;
+                dx *= ratio;
+                dy *= ratio;
+                this.position[0] += dx;
+                this.position[1] += dy;
+            }
+        }
+    }
+	
+	function getImage(gameCounter) {
+		fail("Overriden");
+	}
+	
+	function render(gameCounter) {
+		image = this.getImage(gameCounter);
+		
+		// The sprite's coordinate is the center of the sprite.
+		// .draw requires the top left corner of the image, so subtract half the width and height.
+		x = floor(this.position[0] - image.width / 2);
+		y = floor(this.position[1] - image.height / 2);
+		image.draw(x, y);
+	}
+}
+
+class Player : Sprite {
+	// Player starts out facing South.
+    field lastDir = 's';
+	
+	static field playerImagesByDirection = {};
+	static field playerDeadImage = ImageLibrary.get('images/player/dead.png');
+	
+	static constructor() {
+		// populate the image lookup for the player.
+		for (direction : ['n', 's', 'e', 'w']) {
+			images = [];
+			for (i = 1; i <= 3; ++i) {
+				images.add(ImageLibrary.get('images/player/' + direction + i + '.png'));
+			}
+			images.add(images[1]);
+			Player.playerImagesByDirection[direction] = images;
+		}
+	}
+	
+	constructor(position) : base(position) {
+		this.velocity = 3.0;
+	}
+	
+	function update() {
+		base.update();
+		
+		if (this.targetPosition != null) {
+			
+			angle = -Math.arctan(
+				this.targetPosition[1] - this.position[1],
+				this.targetPosition[0] - this.position[0]);
+
+			this.lastDir = getDirectionFromAngle(angle);
+		}
+	}
+	
+	// Return the proper image for the current player's state
+	function getImage(gameCounter) {
+		if (this.isDead) {
+			// If the player died, show him collapsed
+			return Player.playerDeadImage;
+		}
+
+		// Get a list of images to cycle through based on the current player's direction
+		images = Player.playerImagesByDirection[this.lastDir];
+		
+		// If the player isn't moving, then show a still image
+		if (!this.isMoving) {
+			return images[1];
+		}
+		
+		// If the player is moving, cycle through the images.
+		return images[gameCounter / 6 % images.length];
+	}
+}
+
+class Fire : Sprite {
+	static field fireImages = [];
+	
+	static constructor() {
+		for (i = 1; i <= 2; ++i) {
+			Fire.fireImages.add(ImageLibrary.get('images/fire/fire' + i + '.png'));
+		}
+	}
+	
+	constructor(position) : base(position) {
+		this.velocity = 1.3;
+	}
+	
+	function update() {
+		base.update();
+		
+		// If the fire isn't moving anywhere, pick a random point along the edge
+		// to move it towards.
+        if (this.targetPosition == null) {
+            this.targetPosition = randomEdgePoint();
+        }
+	}
+	
+	// Cycle through the fire images.
+	function getImage(gameCounter) {
+		return Fire.fireImages[gameCounter / 2 % Fire.fireImages.length];
+	}
+}

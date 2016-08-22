@@ -3,27 +3,25 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
-	<spritesheets>
+	<imagesheets>
 		<sheet id="everything">
 			<prefix>*</prefix>
 		</sheet>
-	</spritesheets>
+	</imagesheets>
 
-	<!-- Targets -->
-	<target name="js_local">
-		<platform>game-javascript</platform>
-	</target>
+	<guidseed>org.crayonlang.demos.firedodge,v0.2.0,%TARGET_NAME%</guidseed>
 	
-	<target name="js_remote">
+	<!-- Targets -->
+	<target name="javascript">
 		<platform>game-javascript</platform>
 		<jsfileprefix>/demos/firedodge/</jsfileprefix>
 	</target>
 	
-	<target name="windows">
+	<target name="csharp">
 		<platform>game-csharp-opentk</platform>
 	</target>
 	
-	<target name="javaawt">
+	<target name="java">
 		<platform>game-java-awt</platform>
 	</target>
 	
@@ -32,6 +30,10 @@
 	</target>
 	
 	<target name="android">
-		<platform>csharp-android</platform>
+		<platform>game-csharp-android</platform>
+	</target>
+	
+	<target name="ios">
+		<platform>game-csharp-ios</platform>
 	</target>
 </build>

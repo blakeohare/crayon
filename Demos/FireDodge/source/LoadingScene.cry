@@ -1,4 +1,5 @@
-import GFX;
+import Graphics;
+import ImageResources;
 import Math;
 
 class LoadingScene : AbstractScene {
@@ -7,7 +8,7 @@ class LoadingScene : AbstractScene {
     field loader;
 
     constructor() : base() {
-        this.loader = ImageSheetLoader.fromIds('everything');
+        this.loader = ImageSheet.loadFromResourcesAsync('everything');
     }
 
     function processInput(events) {
@@ -17,7 +18,8 @@ class LoadingScene : AbstractScene {
     function update() {
         this.progress = this.loader.getProgress();
         if (this.loader.isDone()) {
-            this.next = new PlayScene();
+			ImageLibrary.initializeWithImageSheet(this.loader);
+            this.switchScene(new PlayScene());
         }
     }
 
@@ -26,7 +28,9 @@ class LoadingScene : AbstractScene {
         top = 10;
         width = 400;
         height = 20;
-        GFX.Draw.rectangle(left - 1, top - 1, width + 2, height + 2, 128, 128, 128);
-        GFX.Draw.rectangle(left, top, floor(width * this.progress), height, 0, 128, 255);
+		
+		Draw.fill(0, 0, 0);
+        Draw.rectangle(left - 1, top - 1, width + 2, height + 2, 128, 128, 128);
+        Draw.rectangle(left, top, floor(width * this.progress), height, 0, 128, 255);
     }
 }

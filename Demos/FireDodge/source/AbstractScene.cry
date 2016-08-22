@@ -1,0 +1,21 @@
+class AbstractScene {
+    field nextScene = null;
+
+    constructor() { }
+
+	function switchScene(nextScene) {
+		this.nextScene = nextScene;
+	}
+	
+    function processInput(events) {
+        fail("Overriden");
+    }
+
+    function update() {
+        fail("Overriden");
+    }
+
+    function render() {
+        fail("Overriden");
+    }
+}

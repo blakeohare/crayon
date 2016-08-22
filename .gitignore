@@ -3,14 +3,6 @@
 bin
 obj
 /Compiler/CrayonOSX.userprefs
-/Demos/*/output/android
-/Demos/*/output/cwin
-/Demos/*/output/ios
-/Demos/*/output/javaawt
-/Demos/*/output/js_local
-/Demos/*/output/js_remote
-/Demos/*/output/python
-/Demos/*/output/windows
 /Docs/sql.txt
 /Release
 /Compiler/.vs

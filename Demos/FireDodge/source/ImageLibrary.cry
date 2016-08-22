@@ -1,0 +1,40 @@
+import Graphics;
+
+class ImageLibrary {
+    static field images = {};
+	static field text = {};
+	static field sheet = null;
+	
+	static function initializeWithImageSheet(sheet) {
+		ImageLibrary.sheet = sheet;
+	}
+	
+	static function getTextChar(char) {
+		image = ImageLibrary.text.get(char);
+		if (image == null) {
+			image = ImageLibrary.get('images/text/' + char + '.png');
+			ImageLibrary.text[char] = image;
+		}
+		return image;
+	}
+	
+    static function get(path) {
+        img = ImageLibrary.images.get(path);
+        if (img == null) {
+            if (path.startsWith('images/player/w')) {
+				// Instead of saving west-facing images, just get the
+				// east-facing image and flip it.
+				eastImagePath = path.replace('images/player/w', 'images/player/e');
+                img = ImageLibrary.get(eastImagePath);
+                img = img.flip(true, false);
+            } else {
+                rawResource = ImageLibrary.sheet.getImage(path);
+				img = GraphicsTexture.createImage(rawResource);
+            }
+
+			// cache the image.
+            ImageLibrary.images[path] = img;
+        }
+        return img;
+    }
+}
