@@ -129,7 +129,7 @@ def gfxRender():
         if command == 1:
           t.fill(color)
         else:
-          pygame.draw.ellipse(t, color, (0, 0, w[0], h[0]))
+          pygame.draw.ellipse(t, color, (0, 0, area[2], area[3]))
         t.set_alpha(alpha)
         screen.blit(t, area[:2])
     elif command == 4 or command == 5:
