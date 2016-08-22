@@ -153,7 +153,7 @@ if (bool1) {
 					if (Value$value.type == Types.NULL) {
 						return killExecution(stack, pc, "Invoked method on null.");
 					}
-					return killExecution(stack, pc, "Unknown method.");
+					return killExecution(stack, pc, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
 				}
 				type = FunctionInvocationType.PRIMITIVE_METHOD;
 				break;

@@ -62,12 +62,12 @@ class PlayScene : AbstractScene {
 				
 				// Check for player touching a fire.
 				px = this.player.position[0];
-				py = this.player.position[1];
+				py = this.player.position[1] + 10; // it makes more visual sense to move the vulnerable point towards his feet.
 				for (fire : this.fires) {
 					dx = fire.position[0] - px;
 					dy = fire.position[1] - py;
 					distance = (dx ** 2 + dy ** 2) * .5;
-					if (distance < 20) {
+					if (distance < 30) {
 						this.player.isDead = true;
 						this.mode = GameMode.YOU_DIED;
 						this.modeCounter = 0;

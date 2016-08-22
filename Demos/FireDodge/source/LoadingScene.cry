@@ -6,6 +6,7 @@ class LoadingScene : AbstractScene {
     field phase = 'start';
     field progress = 0.0;
     field loader;
+	field minLoadDuration = FPS * 3 / 4; // show the progress bar for at least three quarters of a seconds.
 
     constructor() : base() {
         this.loader = ImageSheet.loadFromResourcesAsync('everything');
@@ -16,21 +17,33 @@ class LoadingScene : AbstractScene {
     }
 
     function update() {
-        this.progress = this.loader.getProgress();
-        if (this.loader.isDone()) {
+		// force the progress bar to ease into completion so that it doesn't appear in a flicker
+		newProgress = this.loader.getProgress();
+		delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
+        this.progress += delta;
+
+        if (this.loader.isDone() && this.progress > .999) {
 			ImageLibrary.initializeWithImageSheet(this.loader);
             this.switchScene(new PlayScene());
         }
     }
 
     function render() {
-        left = 10;
-        top = 10;
-        width = 400;
-        height = 20;
+		width = 400;
+        height = 30;
 		
-		Draw.fill(0, 0, 0);
-        Draw.rectangle(left - 1, top - 1, width + 2, height + 2, 128, 128, 128);
-        Draw.rectangle(left, top, floor(width * this.progress), height, 0, 128, 255);
+		left = (SCREEN_WIDTH - width) / 2;
+		top = (SCREEN_HEIGHT - height) / 2;
+		
+		margin = 10;
+		
+		Draw.fill(40, 0, 0);
+        Draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 80, 80, 80);
+		Draw.rectangle(left, top, width, height, 0, 0, 0);
+
+		barWidth = floor(width * this.progress);
+        Draw.rectangle(left, top, barWidth, height, 255, 128, 0);
+        Draw.rectangle(left, top, barWidth, height / 5, 255, 255, 0);
+        Draw.rectangle(left, top + height * 4 / 5, barWidth, height / 5, 255, 0, 0);
     }
 }
