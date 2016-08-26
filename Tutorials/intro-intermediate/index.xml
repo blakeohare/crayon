@@ -1,0 +1,219 @@
+<content
+	title="Introduction to Crayon for Intermediate Programmers"
+	versions="0.2.0"
+	author="blake">
+	
+	This tutorial is geared towards programmers who already know at least one or two other programming languages. 
+	It will avoid explaining conceptual fundamentals such as strings, if statements, while loops, etc. and instead
+	focus on porting your existing knowledge of these language-independent subjects to Crayon. On the other hand, 
+	if the middle of the previous sentence looked like it had wildly incorrect grammar, you may want to start with
+	the <link url="/tutorials/beginners">Beginner's Tutorial</link> instead.
+	
+	<warning>
+		I just want to see what the warning box looks like.
+	</warning>
+	
+	Crayon is a programming language that targets multiple platforms. The output of the compiler is the 
+	source code of the virtual machine coupled with the compiled byte code of your program.
+	
+	If you have not <link url="/download">downloaded</link> Crayon and <link url="download/installation">set up
+	your environment</link>, please do so now.
+	
+	!Creating a Hello World Project
+	
+	Create a new directory caled HelloWorld for your project somewhere. Create two subdirectories called
+	'source' and 'output' in here.
+
+	At the core of each Crayon project is a build definition file, which is composed of relatively simple
+	XML. This file defines the various platforms you want to target and other options that you can configure
+	for these platforms.
+
+	There is a wonderful universe of options and configurations that I could ramble about for a long time.
+	But for the sake of actually getting something working, copy and paste this mostly one-size-fits-all 
+	build definition into your HelloWorld.build file:
+	
+	<code syntax="xml">
+		<build>
+		  <projectname>HelloWorld</projectname>
+		  <source>source/</source>
+		  <output>output/%TARGET_NAME%</output>
+
+		  <!-- Targets -->
+		  <target name="javascript">
+			<platform>game-javascript</platform>
+		  </target>
+
+		  <target name="java">
+			<platform>game-java-awt</platform>
+		  </target>
+
+		  <target name="python">
+			<platform>game-python-pygame</platform>
+		  </target>
+
+		  <target name="csharp">
+			<platform>game-csharp-opentk</platform>
+		  </target>
+		</build>
+	</code>
+	
+	When you compile, you will invoke crayon.exe from the command line and pass it a path to a .build
+	file and a `-target` flag followed by one of the target names. Like this:
+	
+	<code>
+		C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
+	</code>
+	
+	The source code is compiled from the files in the directory defined by the value of the `&lt;source&gt;`
+	element and the output goes into the directory defined by the vaule of the `&lt;output&gt;` element. The
+	four platforms available are listed in the build definition above.
+	
+	But of course in order for this to work, you will first need some actual source code.
+	
+	In the source folder, create a file called main.cry (the name of the file isn't terribly important,
+	as long as it ends in a .cry file extension) and paste the following code:
+	
+	<code syntax="crayon" highlight="print">
+	
+		function main() {
+			print("Hello, World!");
+		}
+		
+	</code>
+
+	Run the compilation command for the platform you wish to use. Note that the output of Crayon is actually
+	the source code of a program in the platform you choose, not an executable that is necessarily ready to run,
+	so in order to run it you may need some pre-requisite libraries or frameworks. Use the chart below to figure
+	out which platform is most convenient for you to run.
+	
+	<table>
+		<row>
+			<cell>game-csharp-opentk</cell>
+			<cell>C# and OpenGL (using OpenTK)</cell>
+			<cell>
+				Use this if you have a C# build environemnt set up, preferably Visual Studio. The output 
+				that Crayon generates provides the necessary OpenTK and Tao DLL files, so if you can 
+				compile C#, you should be good to go.
+			</cell>
+		</row>
+		
+		<row>
+			<cell>game-java-awt</cell>
+			<cell>Java using AWT</cell>
+			<cell>
+				These creates a vanilla client-side Java project that uses AWT so it will run in desktop
+				environments but lacks some support for certain features such as sound and gamepad. This
+				will not run in Android. This includes an Ant build file.
+			</cell>
+		</row>
+		
+		<row>
+			<cell>game-python-pygame</cell>
+			<cell>Python using PyGame</cell>
+			<cell>
+				Exports your project as a PyGame program. It will run in Python 2.5+ or Python 3, as
+				long as you have PyGame installed. This is however one of the slower platforms as the
+				lack of a switch statement makes the VM hard to translate.
+			</cell>
+		</row>
+		
+		<row>
+			<cell>game-javascript</cell>
+			<cell>JavaScript</cell>
+			<cell>
+				Creates a basic JavaScript project that runs using HTML5 Canvas. Should run locally 
+				without a server as long as your project doesn't require files such as images or sounds.
+				If you do wish to upload your project to a server, provide an additional jsfileprefix
+				element in the build file to indicate the file prefix of where it is uploaded to. This
+				is demonstrated in the js_remote target in the above build file sample.
+			</cell>
+		</row>
+	</table>
+	
+	I will be using Python in this tutorial but you can follow along in any platform.
+
+	Run the compilation command:
+	
+	<code>
+		C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
+	</code>
+	
+	If you see an error message that says "'crayon' is not recognized as an internal or external command,
+	operable program or batch file." then your environment is not correctly configured. Revisit the
+	<link url="http://crayonlang.org/download/installation">installation instructions</link> or go to the
+	IRC channel for help.
+	
+	If it worked, you'll notice there is now a folder called "output" which contains a folder called
+	"python". In this folder there is an game.py which will display the following message when run:
+	
+	<image file="images/helloworld.png" />
+	
+	Congratulations on running your first Crayon program.
+
+	!Code structure and Execution Starting Point
+
+	Unlike most scripting languages, Crayon requires all code to be wrapped in a function or method
+	within a class. Each program must have a function definition called `main` which is where execution
+	begins. When the function ends, the program will end. The order of how things are defined is not
+	important, nor is the name of the files they are in. File layout is also irrelevant as all code
+	is more or less combined together into one big mushy ball at the beginning of the compilation phase,
+	much like C# code within the same assembly.
+	
+	!Types, Variables, and Math
+	
+	Like most programming languages, there are types and variables. The basic types are the following:
+
+	<table>
+		<row>
+			<cell><b>Booleans</b></cell>
+			<cell>Boolean value, which is either `true` or `false`.</cell>
+		</row>
+		<row>
+			<cell><b>Integers</b></cell>
+			<cell>Positive or negative whole numbers.</cell>
+		</row>
+		<row>
+			<cell><b>Floats</b></cell>
+			<cell>Floating point numbers, i.e. decimals.</cell>
+		</row>
+		<row>
+			<cell><b>Strings</b></cell>
+			<cell>Strings of text characters.</cell>
+		</row>
+		<row>
+			<cell><b>Null</b></cell>
+			<cell>The lack of a value.</cell>
+		</row>
+		<row>
+			<cell><b>Lists</b></cell>
+			<cell>Linear collections of values.</cell>
+		</row>
+		<row>
+			<cell><b>Dictionaries</b></cell>
+			<cell>Non-ordered collections of values with key lookups.</cell>
+		</row>
+		<row>
+			<cell><b>Object Instance</b></cell>
+			<cell>An Instance of an object (covered in the OOP tutorial).</cell>
+		</row>
+	</table>
+	
+	Variables can be used to store values of any type. Assigning a value to a variable is done by
+	placing an equals sign after the variable name followed by the value you want to assign, followed
+	by a semicolon. Because Crayon is not type safe, the same variable can be reused to store different
+	kinds of types.
+	
+	<code language="crayon">
+		cake = 3.14159; // the cake is a pi
+		cake = "Y"; // the cake is a Y
+		cake = null; // the cake is a lie
+	</code>
+	
+	Variable names can only contain alphanumeric characters and underscores. However, it cannot
+	begin with a number.
+
+	There are various operators that can be used to manipulate values. These are generally consistent
+	with most C-style languages.
+
+	Here is an exhaustive list of all of the operators:
+</content>
