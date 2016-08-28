@@ -165,11 +165,10 @@ LIB$fileiocommon$fakedisk$listdir = function(disk, path, includeFullPath, filesO
 	if (dir == null || !dir.d) return 4;
 	var prefix = '';
 	if (includeFullPath) {
-		LIB$fileiocommon$fakedisk$getNormalizedPath(path);
-		if (prefix.length == 0) prefix = '/';
+		var parts = LIB$fileiocommon$fakedisk$getNormalizedPath(path);
+		if (parts.length == 0) prefix = '/';
 		else {
-			prefix.pop();
-			prefix = '/' + prefix.join('/') + '/';
+			prefix = '/' + parts.join('/') + '/';
 		}
 	}
 	for (var file in dir.f) {
@@ -198,9 +197,9 @@ LIB$fileiocommon$fakedisk$movedir = function(disk, fromPath, toPath) {
 	if (toDir == null || !toDir.d) return 11;
 	var toItem = LIB$fileiocommon$fakedisk$getNode(disk, toPath, false);
 	if (toItem != null) return 1;
-	var fromParent = LIB$fileiocommon$fakedisk$getNode(disk, fromPath, false);
+	var fromParent = LIB$fileiocommon$fakedisk$getNode(disk, fromPath, true);
 	delete fromParent.f[fromName];
-	toDir[toName] = fromDir;
+	toDir.f[toName] = fromDir;
 	LIB$fileiocommon$fakedisk$pushChanges(disk);
 	return 0;
 };
@@ -253,6 +252,7 @@ LIB$fileiocommon$fakedisk$mkdir = function(disk, path) {
 		f: {}
 	};
 	LIB$fileiocommon$fakedisk$pushChanges(disk);
+	return 0;
 };
 
 /*
@@ -337,6 +337,12 @@ LIB$fileiocommon$fakedisk$getNextId = function(disk) {
 	return id;
 };
 
+LIB$fileiocommon$fakedisk$removeBom = function(s) {
+	return (s.length > 2 && s.charCodeAt(0) == 239 && s.charCodeAt(1) == 187 && s.charCodeAt(2) == 191)
+		? s.substring(3)
+		: s;
+};
+
 /*
 	status codes:
 		0 -> OK
@@ -353,7 +359,7 @@ LIB$fileiocommon$fakedisk$fileRead = function(disk, path, readAsBytes, stringOut
 	
 	// is a string and read as string...
 	if (!file.b && !readAsBytes) {
-		stringOut[0] = content;
+		stringOut[0] = LIB$fileiocommon$fakedisk$removeBom(content);
 		return 0;
 	}
 	
@@ -374,7 +380,7 @@ LIB$fileiocommon$fakedisk$fileRead = function(disk, path, readAsBytes, stringOut
 		}
 		
 		if (!readAsBytes) {
-			stringOut[0] = sb.join('');
+			stringOut[0] = LIB$fileiocommon$fakedisk$removeBom(sb.join(''));
 		}
 		return 0;
 	}

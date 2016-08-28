@@ -23,9 +23,14 @@ class FileIOShim {
 	}
 	
 	function pathJoin(pathParts) {
-		return this.isUserData
+		output = this.isUserData
 			? UserData.pathJoin(pathParts)
 			: FileIO.pathJoin(pathParts);
+		
+		// TODO: should redundant slashes be handled by FileIOCommon's pathJoin?
+		output = output.replace('//', '/');
+		
+		return output;
 	}
 	
 	function fileWriteText(path, text) {
@@ -62,6 +67,12 @@ class FileIOShim {
 		return this.isUserData
 			? UserData.directoryCreate(path, createParents)
 			: FileIO.directoryCreate(path, createParents);
+	}
+	
+	function directoryMove(pathFrom, pathTo) {
+		return this.isUserData
+			? UserData.directoryMove(pathFrom, pathTo)
+			: FileIO.directoryMove(pathFrom, pathTo);
 	}
 	
 	function directoryDelete(path) {
