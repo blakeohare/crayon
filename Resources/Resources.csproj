@@ -36,9 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="javascript-common\common.js" />
-    <EmbeddedResource Include="javascript-common\fake_disk.js" />
-    <EmbeddedResource Include="javascript-common\file_io.js" />
-    <EmbeddedResource Include="game-csharp-ios\CryImage.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="game-javascript\drawing.js" />
@@ -128,6 +125,7 @@
     <EmbeddedResource Include="game-csharp-ios\ProjectFile.csproj.txt" />
     <EmbeddedResource Include="game-csharp-ios\SolutionFile.sln.txt" />
     <EmbeddedResource Include="game-csharp-ios\AppDelegate.txt" />
+    <EmbeddedResource Include="game-csharp-ios\CryImage.txt" />
     <EmbeddedResource Include="game-csharp-ios\EntitlementsPlist.txt" />
     <EmbeddedResource Include="game-csharp-ios\GameViewController.txt" />
     <EmbeddedResource Include="game-csharp-ios\Graphics2dRenderer.txt" />

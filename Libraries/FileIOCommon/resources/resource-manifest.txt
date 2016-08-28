@@ -8,3 +8,8 @@ BEGIN
 APPLICABLE-TO: game-python-pygame
 EMBED: python
 END
+
+BEGIN
+APPLICABLE-TO: game-javascript
+EMBED: javascript
+END

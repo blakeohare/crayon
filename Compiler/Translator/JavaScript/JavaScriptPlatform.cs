@@ -63,8 +63,6 @@ namespace Crayon.Translator.JavaScript
 
             foreach (string jsFile in new string[] {
                 "common.js",
-                "file_io.js",
-                "fake_disk.js",
             })
             {
                 codeJs.Add(Util.ReadResourceFileInternally("javascript-common/" + jsFile));
