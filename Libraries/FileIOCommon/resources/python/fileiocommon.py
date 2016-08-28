@@ -10,8 +10,9 @@ def lib_fileiocommon_getCurrentDirectory():
 	return os.getcwd()
 
 def lib_fileiocommon_getDirectoryList(path, includeFullPath, output):
+	path = path.replace('/', os.sep)
 	prefix = (path + os.sep) if includeFullPath else ''
-	
+
 	try:
 		files = os.listdir(path)
 	except:
@@ -35,6 +36,9 @@ def lib_fileiocommon_fileRead(path, isBytes, stringOut, integers, byteOutput):
 		else:
 			c = open(path, 'rt')
 			text = c.read()
+			if text[:3] == ''.join(chr(239) + chr(187) + chr(191)):
+				text = text[3:]
+			print "I read this: " + text + '\n' + ('-' * 20)
 			stringOut[0] = text
 	except:
 		if not os.path.exists(path):

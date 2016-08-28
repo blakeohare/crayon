@@ -807,6 +807,9 @@ namespace Crayon
 
         private static void EnsureUsed(Token token, bool outputUsed)
         {
+            // TODO: maybe reword the expression to something along the lines of "use an if statement" if it's a ternary
+            // expression in which case it actually does do something.
+
             if (!outputUsed)
             {
                 throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
