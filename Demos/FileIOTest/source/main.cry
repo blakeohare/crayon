@@ -23,7 +23,7 @@ function doThings(isUserData) {
 	assert(io.directoryExists(io.currentDirectory), "Directory should have been created.");
 	
 	print("Writing and reading back a file...");
-	file1Contents = "This\nis\rna\rtest.";
+	file1Contents = "This\nis\r\na\rtest.";
 	io.fileWriteText(io.currentDirectory + '/file1.txt', file1Contents);
 	readback = io.fileReadText(io.currentDirectory + '\\file1.txt');
 	assert(file1Contents == readback, "File contents did not match.");
