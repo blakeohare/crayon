@@ -61,6 +61,12 @@ namespace %%%PROJECT_ID%%%
 			this.Mouse.ButtonUp += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, false);
 			this.Keyboard.KeyDown += (sender, e) => this.KeyEvent(e.Key, true);
 			this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
+
+            System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("icon.ico");
+            if (bmp != null)
+            {
+                this.Icon = System.Drawing.Icon.FromHandle(bmp.GetHicon());
+            }
 		}
 
 		public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight, int executionContextId)

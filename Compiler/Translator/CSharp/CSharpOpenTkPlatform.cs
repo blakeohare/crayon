@@ -95,7 +95,7 @@ namespace Crayon.Translator.CSharp
                 ? "<ApplicationIcon>icon.ico</ApplicationIcon>"
                 : "";
             replacements["CSHARP_CONTENT_ICON"] = hasIcon
-                ? "<Content Include=\"icon.ico\" />"
+                ? "<EmbeddedResource Include=\"icon.ico\" />"
                 : "";
 
             foreach (string file in new string[]
