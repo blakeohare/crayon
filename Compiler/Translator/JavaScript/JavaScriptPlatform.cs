@@ -43,13 +43,25 @@ namespace Crayon.Translator.JavaScript
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
+            bool hasIcon = buildContext.IconFilePath != null;
+
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
                 { "PROJECT_ID", projectId },
 
                 // TODO: create a field in the build file
                 { "BUILD_FILE_DEFINED_TITLE", "Untitled" },
+                { "FAVICON", hasIcon ? "<link rel=\"shortcut icon\" href=\"" + this.jsFilePrefix + "favicon.ico\">" : "" },
             };
+
+            if (hasIcon)
+            {
+                output["favicon.ico"] = new FileOutput()
+                {
+                    Type = FileOutputType.Binary,
+                    BinaryContent = Util.GetIconFileBytesFromImageFile(buildContext.IconFilePath),
+                };
+            }
 
             output["bytecode.js"] = new FileOutput()
             {
