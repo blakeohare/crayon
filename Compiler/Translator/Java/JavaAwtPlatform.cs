@@ -35,6 +35,16 @@ namespace Crayon.Translator.Java
                 { "COPYRIGHT", "©" },
             };
 
+            bool hasIcon = buildContext.IconFilePath != null;
+            if (hasIcon)
+            {
+                output["resources/icon.png"] = new FileOutput()
+                {
+                    Type = FileOutputType.Copy,
+                    AbsoluteInputPath = buildContext.IconFilePath,
+                };
+            }
+
             foreach (string awtFile in new string[] {
                 "AwtTranslationHelper",
             })

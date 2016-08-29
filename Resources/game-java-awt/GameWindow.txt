@@ -62,8 +62,12 @@ class GameWindow {
         canvasHost.setPreferredSize(new Dimension(pixelWidth, pixelHeight));
         canvasHost.setLayout(null);
 
-        //frame.pack();
+		// TODO: even though this returns null, it's because it catches an exception.
+		// Would prefer to check in a more robust way to shave a few CPU cycles from startup time.
+		java.awt.Image icon = AwtTranslationHelper.loadImageFromLocalFile("icon.png");
+
         frame.setVisible(true);
+		frame.setIconImage(icon);
 
         frame.addWindowListener(new WindowAdapter() { 
             @Override 
