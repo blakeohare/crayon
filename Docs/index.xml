@@ -1,0 +1,41 @@
+<content
+	title="Docs Main"
+	versions="0.2.0"
+	author="blake">
+
+	!Basics
+	<list>
+		<item><link doc="article:installation">Installation</link></item>
+		<item><link doc="article:syntax">Syntax</link></item>
+		<item><link doc="article:types">Type System</link></item>
+		<item><link doc="article:oop">Object Oriented Programming</link></item>
+		<item><link doc="article:project">Project Structure & Build Files</link></item>
+		<item><link doc="article:styles">Style Best Practices</link></item>
+	</list>
+
+	!General Libraries
+	<list>
+		<item><link doc="core">Core</link></item>
+		<item><link doc="easing">Easing</link></item>
+		<item><link doc="fileio">FileIO</link></item>
+		<item><link doc="http">Http</link></item>
+		<item><link doc="imageresources">ImageResources</link></item>
+		<item><link doc="imagewebresources">ImageWebResources</link></item>
+		<item><link doc="json">Json</link></item>
+		<item><link doc="math">Math</link></item>
+		<item><link doc="random">Random</link></item>
+		<item><link doc="resources">Resources</link></item>
+		<item><link doc="userdata">UserData</link></item>
+		<item><link doc="web">Web</link></item>
+	</list>
+
+	!Game2D Libraries
+	<list>
+		<item><link doc="audio">Audio</link></item>
+		<item><link doc="game2d">Game2D</link></item>
+		<item><link doc="gamepad">Gamepad</link></item>
+		<item><link doc="graphicstext">GraphicsText</link></item>
+		<item><link doc="xml">Xml</link></item>
+	</list>
+
+</content>
