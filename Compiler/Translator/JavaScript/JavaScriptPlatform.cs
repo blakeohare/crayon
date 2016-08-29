@@ -48,9 +48,7 @@ namespace Crayon.Translator.JavaScript
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
                 { "PROJECT_ID", projectId },
-
-                // TODO: create a field in the build file
-                { "BUILD_FILE_DEFINED_TITLE", "Untitled" },
+                { "DEFAULT_TITLE", buildContext.DefaultTitle ?? "Untitled" },
                 { "FAVICON", hasIcon ? "<link rel=\"shortcut icon\" href=\"" + this.jsFilePrefix + "favicon.ico\">" : "" },
             };
 

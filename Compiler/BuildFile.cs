@@ -21,6 +21,7 @@ namespace Crayon
         public bool ReadableByteCode { get; set; }
         public string GuidSeed { get; set; }
         public string IconFilePath { get; set; }
+        public string DefaultTitle { get; set; }
 
         public enum VarType
         {
@@ -72,6 +73,9 @@ namespace Crayon
 
             [XmlElement("icon")]
             public string IconFilePath { get; set; }
+
+            [XmlElement("title")]
+            public string DefaultTitle { get; set; }
 
             private bool TranslateStringToBoolean(string value)
             {
@@ -190,6 +194,7 @@ namespace Crayon
             flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
             flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
             flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
+            flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
 
             return new BuildContext()
             {
@@ -205,6 +210,7 @@ namespace Crayon
                 BuildVariableLookup = varLookup,
                 GuidSeed = flattened.GuidSeed,
                 IconFilePath = flattened.IconFilePath,
+                DefaultTitle = flattened.DefaultTitle,
             };
         }
 

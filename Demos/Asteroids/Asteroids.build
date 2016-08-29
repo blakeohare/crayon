@@ -1,5 +1,6 @@
 <build>
 	<projectname>Asteroids</projectname>
+	<title>Asteroids</title>
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	<icon>assets/icon.png</icon>
