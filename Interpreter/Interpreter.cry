@@ -296,6 +296,29 @@ function @type('InterpreterResult') killExecutionWithTokenOverride(
 
 	StackFrame$stack.pc = pc;
 
+	if (%%%IS_RELEASE%%%) {
+		// unwind library code as that is not very useful for non-library-developers
+		while (StackFrame$stack.previous != null)
+		{
+			@type('string') filename = null;
+			tokenList = $_array_get(allTokens, StackFrame$stack.pc);
+			if (tokenList != null)
+			{
+				token = $_list_get(tokenList, 0);
+				filename = $_array_get($_string_split($_array_get(allFiles, Token$token.fileId), "\n"), 0);
+				if ($_string_endswith($_string_lower(filename), ".cry"))
+				{
+					break;
+				}
+				stack = StackFrame$stack.previous;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
 	while (stack != null) {
 		pc = StackFrame$stack.pc;
 		stack = StackFrame$stack.previous;

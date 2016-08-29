@@ -15,6 +15,11 @@ namespace Crayon
             Dictionary<string, string> constants = new Dictionary<string, string>()
             {
                 { "OPEN_GL_ELLIPSE_POINT_COUNT", "60" },
+#if DEBUG
+                { "IS_RELEASE", "false" },
+#else  
+                { "IS_RELEASE", "true" },
+#endif
             };
 
             Dictionary<string, Type> enumReplacementsByPrefix = new Dictionary<string, Type>()
