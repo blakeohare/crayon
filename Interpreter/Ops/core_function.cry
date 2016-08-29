@@ -66,10 +66,14 @@
 		break;
 
 	case 7: $_comment('assert');
-		import inline "FrameworkFunctions/2_arg.cry";
+		import inline "FrameworkFunctions/3_arg.cry";
 		if (Value$arg1.type != Types.BOOLEAN) return killExecution(stack, pc, "Assertion expression must be a boolean.");
 		if ($_cast('bool', Value$arg1.internalValue)) output = VALUE_NULL;
-		else return killExecution(stack, pc, $_string_concat("Assertion failed: ", valueToString(arg2)));
+		else {
+			string1 = valueToString(arg2);
+			if ($_cast('bool', Value$arg3.internalValue)) string1 = $_string_concat("Assertion failed: ", string1);
+			return killExecution(stack, pc, string1);
+		}
 		break;
 
 	case 8: $_comment('chr');

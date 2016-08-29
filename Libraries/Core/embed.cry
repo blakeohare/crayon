@@ -14,11 +14,11 @@
 	}
 	
 	function assert(condition, message = null) {
-		return $$$('assert', condition, message);
+		return $$$('assert', condition, message, true);
 	}
 	
 	function fail(message) {
-		return $$$('assert', false, message);
+		return $$$('assert', false, message, false);
 	}
 
 	function chr(value) {
