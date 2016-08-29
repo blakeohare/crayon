@@ -254,7 +254,7 @@ namespace Crayon
                         break;
 
                     case FileOutputType.Copy:
-                        string absolutePath = FileUtil.JoinPath(inputDirectory, file.RelativeInputPath);
+                        string absolutePath = file.AbsoluteInputPath ?? FileUtil.JoinPath(inputDirectory, file.RelativeInputPath);
                         FileUtil.CopyFile(absolutePath, fullOutputPath);
                         break;
 

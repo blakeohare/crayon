@@ -114,6 +114,11 @@ def _pygame_initialize_screen(width, height, pixel_dimensions, execId):
   _global_vars['virtual_screen'] = virtual_screen
   _global_vars['scaled_mode'] = scaled_mode
 
+  iconPath = 'resources' + os.sep + 'icon.png'
+  if os.path.exists(iconPath):
+    icon = pygame.image.load(iconPath)
+    pygame.display.set_icon(icon)
+
   while v_runInterpreter(execId) == 2:
     gfxRender()
     _pygame_end_of_frame()

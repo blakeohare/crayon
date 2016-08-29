@@ -18,7 +18,8 @@ namespace Crayon.Translator.CSharp
             string projectId,
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            string iconFilePath)
         {
             List<string> embeddedResources = new List<string>();
 

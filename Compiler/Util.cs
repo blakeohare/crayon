@@ -157,6 +157,17 @@ namespace Crayon
             return Util.ReadBytesInternally(typeof(Util).Assembly, path);
         }
 
+        public static byte[] GetIconFileBytesFromImageFile(string filePath)
+        {
+            // TODO: test on OSX
+            // TODO: scaling
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(filePath);
+            System.Drawing.Icon.FromHandle(bmp.GetHicon()).Save(ms);
+            byte[] bytes = ms.ToArray();
+            return bytes;
+        }
+
         public static byte[] ReadBytesInternally(System.Reflection.Assembly assembly, string path)
         {
             string canonicalizedPath = path.Replace('/', '.');

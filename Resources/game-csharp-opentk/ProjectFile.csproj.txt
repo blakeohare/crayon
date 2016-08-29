@@ -36,6 +36,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    %%%CSHARP_APP_ICON%%%
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
 %%%EMBEDDED_RESOURCES%%%
+  </ItemGroup>
+  <ItemGroup>
+    %%%CSHARP_CONTENT_ICON%%%
   </ItemGroup>
   <ItemGroup>
     <None Include="DependencyLicenses.txt">

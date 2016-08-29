@@ -188,6 +188,10 @@ namespace Crayon
 
             buildContext.SourceFolder = System.IO.Path.Combine(workingDirectory, buildContext.SourceFolder).Replace('/', '\\');
             buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
+            if (buildContext.IconFilePath != null)
+            {
+                buildContext.IconFilePath = System.IO.Path.Combine(workingDirectory, buildContext.IconFilePath).Replace('/', '\\');
+            }
 
             if (!FileUtil.DirectoryExists(buildContext.SourceFolder))
             {

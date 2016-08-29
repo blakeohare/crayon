@@ -14,7 +14,8 @@ namespace Crayon.Translator.CSharp
             string projectId,
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase,
+            string iconFilePath)
         {
             files[projectId + ".sln"] = new FileOutput()
             {

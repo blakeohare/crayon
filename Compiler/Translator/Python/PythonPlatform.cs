@@ -36,6 +36,16 @@ namespace Crayon.Translator.Python
                 { "PROJECT_ID", projectId },
             };
 
+            bool hasIcon = buildContext.IconFilePath != null;
+            if (hasIcon)
+            {
+                output["resources/icon.png"] = new FileOutput()
+                {
+                    Type = FileOutputType.Copy,
+                    AbsoluteInputPath = buildContext.IconFilePath,
+                };
+            }
+
             foreach (string file in new string[] {
                 "Imports.py",
                 "Header.py",

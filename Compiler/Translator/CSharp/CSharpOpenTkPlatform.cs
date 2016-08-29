@@ -14,8 +14,20 @@ namespace Crayon.Translator.CSharp
             string projectId,
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
-            ResourceDatabase resourceDatabase)
+            ResourceDatabase resourceDatabase, 
+            string iconFilePath)
         {
+            bool hasIcon = iconFilePath != null;
+            if (hasIcon)
+            {
+                byte[] iconFile = Util.GetIconFileBytesFromImageFile(iconFilePath);
+                files[projectId + "/icon.ico"] = new FileOutput()
+                {
+                    Type = FileOutputType.Binary,
+                    BinaryContent = iconFile,
+                };
+            }
+
             foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
             {
                 files[projectId + "/" + binary + ".dll"] = new FileOutput()
@@ -79,6 +91,12 @@ namespace Crayon.Translator.CSharp
                 embeddedResourceReplacement.Add("    <EmbeddedResource Include=\"" + embeddedResource + "\" />");
             }
             replacements["EMBEDDED_RESOURCES"] = string.Join("\r\n", embeddedResourceReplacement);
+            replacements["CSHARP_APP_ICON"] = hasIcon
+                ? "<ApplicationIcon>icon.ico</ApplicationIcon>"
+                : "";
+            replacements["CSHARP_CONTENT_ICON"] = hasIcon
+                ? "<Content Include=\"icon.ico\" />"
+                : "";
 
             foreach (string file in new string[]
             {
