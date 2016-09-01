@@ -9,7 +9,14 @@ if (valueStackSize + int1 > valueStackCapacity) {
 	}
 }
 
-for (i = int1 - 1; i >= 0; i -= 1) {
-	$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, i)));
-	valueStackSize += 1;
+if ($_has_increment()) {
+	i = int1;
+	while ($_prefix_decrement(i) >= 0) {
+		$_array_set(valueStack, $_postfix_increment(valueStackSize), $_array_get(literalTable, $_array_get(row, i)));
+	}
+} else {
+	for (i = int1 - 1; i >= 0; i -= 1) {
+		$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, i)));
+		valueStackSize += 1;
+	}
 }
