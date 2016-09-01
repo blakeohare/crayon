@@ -1,0 +1,5 @@
+1. Copy the contents of this directory to C:\Crayon
+2. Create an environment variable called CRAYON_HOME and set it to C:\Crayon
+3. Add ;%CRAYON_HOME% to your PATH environment variable.
+
+You are done.
