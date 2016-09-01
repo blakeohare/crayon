@@ -48,12 +48,6 @@ namespace Crayon
             foreach (string file in FILES)
             {
                 string fileId = file.Split('.')[0];
-
-                if (fileId.StartsWith("OpenGl") && !this.platform.IsOpenGlBased)
-                {
-                    continue;
-                }
-
                 string code = Util.ReadInterpreterFileInternally(file);
                 filesById[fileId] = code;
                 orderedFileIds.Add(fileId);
@@ -91,7 +85,6 @@ namespace Crayon
             replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
             replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
             replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
-            replacements.Add("IS_OPEN_GL_BASED", this.platform.IsOpenGlBased ? "true" : "false");
             replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
             replacements.Add("IS_BYTECODE_LOADED_DIRECTLY", this.platform.IsByteCodeLoadedDirectly ? "true" : "false");
             replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);

@@ -5,7 +5,7 @@ namespace Crayon.Translator.CSharp
     class CSharpXamarinAndroidPlatform : CSharpPlatform
     {
         public CSharpXamarinAndroidPlatform() : base(
-            new CSharpXamarinAndroidSystemFunctionTranslator(), true)
+            new CSharpXamarinAndroidSystemFunctionTranslator())
         { }
 
         public override string PlatformShortId { get { return "game-csharp-android"; } }

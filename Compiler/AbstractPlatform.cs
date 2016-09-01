@@ -29,9 +29,7 @@ namespace Crayon
         public abstract string PlatformShortId { get; }
 
         public string LibraryBigSwitchStatement { get; set; }
-
-        public bool IsOpenGlBased { get; private set; }
-
+        
         public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
         public AbstractPlatform(
@@ -39,8 +37,7 @@ namespace Crayon
             LanguageId language,
             bool isMin,
             AbstractTranslator translator,
-            AbstractSystemFunctionTranslator systemFunctionTranslator,
-            bool isOpenGlBased)
+            AbstractSystemFunctionTranslator systemFunctionTranslator)
         {
             this.PlatformId = platform;
             this.LanguageId = language;
@@ -48,7 +45,6 @@ namespace Crayon
             this.IsMin = isMin;
             this.Translator = translator;
             this.SystemFunctionTranslator = systemFunctionTranslator;
-            this.IsOpenGlBased = isOpenGlBased;
             this.Translator.Platform = this;
             this.SystemFunctionTranslator.Platform = this;
             this.SystemFunctionTranslator.Translator = translator;

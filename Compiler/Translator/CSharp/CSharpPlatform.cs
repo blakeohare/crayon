@@ -7,8 +7,8 @@ namespace Crayon.Translator.CSharp
 {
     abstract class CSharpPlatform : AbstractPlatform
     {
-        public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator, bool isOpenGlBased)
-            : base(PlatformId.CSHARP_OPENTK, LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator, isOpenGlBased)
+        public CSharpPlatform(CSharpSystemFunctionTranslator systemFunctionTranslator)
+            : base(PlatformId.CSHARP_OPENTK, LanguageId.CSHARP, false, new CSharpTranslator(), systemFunctionTranslator)
         { }
 
         public override bool IsAsync { get { return true; } }

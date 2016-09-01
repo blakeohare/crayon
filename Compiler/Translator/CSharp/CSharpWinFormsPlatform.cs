@@ -7,7 +7,7 @@ namespace Crayon.Translator.CSharp
 {
     class CSharpWinFormsPlatform : CSharpPlatform
     {
-        public CSharpWinFormsPlatform() : base(new CSharpWinFormsSystemFunctionTranslator(), false)
+        public CSharpWinFormsPlatform() : base(new CSharpWinFormsSystemFunctionTranslator())
         {
 
         }

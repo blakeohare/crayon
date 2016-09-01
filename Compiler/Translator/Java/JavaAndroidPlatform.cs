@@ -8,7 +8,7 @@ namespace Crayon.Translator.Java
     internal class JavaAndroidPlatform : JavaPlatform
     {
         public JavaAndroidPlatform()
-            : base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator(), true)
+            : base(PlatformId.JAVA_ANDROID, new JavaAndroidSystemFunctionTranslator())
         { }
 
         public override string PlatformShortId { get { return "game-java-android"; } }

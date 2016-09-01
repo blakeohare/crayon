@@ -5,7 +5,7 @@ namespace Crayon.Translator.CSharp
     internal class CSharpXamarinIosPlatform : CSharpPlatform
     {
         public CSharpXamarinIosPlatform()
-            : base(new CSharpXamarinIosSystemFunctionTranslator(), true)
+            : base(new CSharpXamarinIosSystemFunctionTranslator())
         { }
 
         public override string PlatformShortId { get { return "game-csharp-ios"; } }

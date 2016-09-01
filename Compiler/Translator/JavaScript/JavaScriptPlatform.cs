@@ -8,7 +8,7 @@ namespace Crayon.Translator.JavaScript
         private string jsFilePrefix;
 
         public JavaScriptPlatform(bool isMin, string jsFilePrefix)
-            : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator(), false)
+            : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator())
         {
             if (jsFilePrefix == null)
             {

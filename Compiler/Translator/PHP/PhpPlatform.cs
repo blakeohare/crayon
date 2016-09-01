@@ -9,8 +9,7 @@ namespace Crayon.Translator.Php
             Crayon.PlatformId.PHP_SERVER,
             Crayon.LanguageId.PHP,
             false, new PhpTranslator(),
-            new PhpSystemFunctionTranslator(),
-            false)
+            new PhpSystemFunctionTranslator())
         { }
 
         public override string PlatformShortId { get { return "server-php"; } }

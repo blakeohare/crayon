@@ -10,7 +10,7 @@ namespace Crayon.Translator.Java
         public override bool TrimBom { get { return true; } } // Seriously, Oracle?
 
         public JavaAwtPlatform()
-            : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator(), false)
+            : base(PlatformId.JAVA_AWT, new JavaAwtSystemFunctionTranslator())
         { }
 
         public override string PlatformShortId { get { return "game-java-awt"; } }
