@@ -57,6 +57,8 @@ for platform in ('windows', 'mono'):
 		shutil.rmtree(copyToDir)
 	os.makedirs(copyToDir)
 	shutil.copyfile('../Compiler/bin/Release/Crayon.exe', copyToDir + '/crayon.exe')
+	shutil.copyfile('../Compiler/bin/Release/Interpreter.dll', copyToDir + '/Interpreter.dll')
+	shutil.copyfile('../Compiler/bin/Release/Resources.dll', copyToDir + '/Resources.dll')
 	shutil.copyfile('../Compiler/bin/Release/LICENSE.txt', copyToDir + '/LICENSE.txt')
 	shutil.copyfile('../README.md', copyToDir + '/README.md')
 	if platform == 'windows':
