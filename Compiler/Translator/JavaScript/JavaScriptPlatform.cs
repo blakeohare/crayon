@@ -5,22 +5,9 @@ namespace Crayon.Translator.JavaScript
 {
     class JavaScriptPlatform : AbstractPlatform
     {
-        private string jsFilePrefix;
-
-        public JavaScriptPlatform(string jsFilePrefix)
+        public JavaScriptPlatform()
             : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator())
-        {
-            if (jsFilePrefix == null)
-            {
-                jsFilePrefix = "";
-            }
-            else
-            {
-                if (!jsFilePrefix.StartsWith("/")) jsFilePrefix = "/" + jsFilePrefix;
-                if (!jsFilePrefix.EndsWith("/")) jsFilePrefix += "/";
-            }
-            this.jsFilePrefix = jsFilePrefix;
-        }
+        { }
 
         public override bool IsAsync { get { return true; } }
         public override bool SupportsListClear { get { return false; } }
@@ -41,6 +28,14 @@ namespace Crayon.Translator.JavaScript
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager)
         {
+            string jsFilePrefix = "";
+            if (buildContext.JsFilePrefix != null)
+            {
+                jsFilePrefix = buildContext.JsFilePrefix;
+                if (!jsFilePrefix.StartsWith("/")) jsFilePrefix = "/" + jsFilePrefix;
+                if (!jsFilePrefix.EndsWith("/")) jsFilePrefix += "/";
+            }
+
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
             bool hasIcon = buildContext.IconFilePath != null;
@@ -49,7 +44,7 @@ namespace Crayon.Translator.JavaScript
             {
                 { "PROJECT_ID", projectId },
                 { "DEFAULT_TITLE", buildContext.DefaultTitle ?? "Untitled" },
-                { "FAVICON", hasIcon ? "<link rel=\"shortcut icon\" href=\"" + this.jsFilePrefix + "favicon.ico\">" : "" },
+                { "FAVICON", hasIcon ? "<link rel=\"shortcut icon\" href=\"" + jsFilePrefix + "favicon.ico\">" : "" },
             };
 
             if (hasIcon)
@@ -99,7 +94,7 @@ namespace Crayon.Translator.JavaScript
             }
 
             string codeJsText = Constants.DoReplacements(string.Join("", codeJs), replacements);
-            
+
             output["code.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -137,7 +132,7 @@ namespace Crayon.Translator.JavaScript
 
             output["resources.js"] = new FileOutput()
             {
-                TextContent = BuildTextResourcesCodeFile(textResources),
+                TextContent = BuildTextResourcesCodeFile(textResources, jsFilePrefix),
                 Type = FileOutputType.Text,
             };
 
@@ -146,14 +141,14 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
             };
-            
+
             return output;
         }
 
-        private string BuildTextResourcesCodeFile(Dictionary<string, string> files)
+        private string BuildTextResourcesCodeFile(Dictionary<string, string> files, string jsFilePrefix)
         {
             List<string> output = new List<string>();
-            output.Add("C$common$jsFilePrefix = '" + this.jsFilePrefix + "';\n");
+            output.Add("C$common$jsFilePrefix = '" + jsFilePrefix + "';\n");
             string[] keys = files.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
             for (int i = 0; i < keys.Length; ++i)
             {

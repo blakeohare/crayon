@@ -66,7 +66,7 @@ namespace Crayon
                 case "game-csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
                 case "game-java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
                 case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
-                case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform(buildContext.JsFilePrefix);
+                case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform();
                 case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
                 case "server-php": return new Crayon.Translator.Php.PhpPlatform();
                 case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
