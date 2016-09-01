@@ -13,8 +13,7 @@ namespace Crayon.Translator.Php
         { }
 
         public override string PlatformShortId { get { return "server-php"; } }
-
-        public override bool ImagesLoadInstantly { get { return true; } }
+        
         public override bool IsArraySameAsList { get { return true; } }
         public override bool IsAsync { get { return false; } }
         public override bool IsStronglyTyped { get { return false; } }

@@ -19,7 +19,6 @@ namespace Crayon
         public abstract bool IsAsync { get; }
         public abstract bool SupportsListClear { get; }
         public abstract bool IsStronglyTyped { get; }
-        public abstract bool ImagesLoadInstantly { get; }
         public abstract bool IsArraySameAsList { get; }
         public abstract bool IsCharANumber{ get; }
         public abstract bool IntIsFloor { get; }

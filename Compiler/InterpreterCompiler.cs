@@ -84,7 +84,6 @@ namespace Crayon
             Dictionary<string, string> replacements = new Dictionary<string, string>();
             replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
             replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
-            replacements.Add("IMAGES_LOAD_INSTANTLY", this.platform.ImagesLoadInstantly ? "true" : "false");
             replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
             replacements.Add("IS_BYTECODE_LOADED_DIRECTLY", this.platform.IsByteCodeLoadedDirectly ? "true" : "false");
             replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
