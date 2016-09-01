@@ -1265,8 +1265,7 @@ namespace Crayon
         {
             if (!outputUsed) throw new ParserException(dotStep.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, dotStep.Root, true);
-            int primitiveMethodId = Constants.GetPrimitiveFieldId(dotStep.StepToken.Value);
-            buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value), primitiveMethodId);
+            buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value));
         }
 
         private void CompileBooleanConstant(Parser parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)

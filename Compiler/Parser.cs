@@ -406,6 +406,7 @@ namespace Crayon
 
         private static readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>(
             new string[] {
+                "abstract",
                 "base",
                 "break",
                 "case",
@@ -420,6 +421,7 @@ namespace Crayon
                 "enum",
                 "false",
                 "field",
+                "final",
                 "finally",
                 "for",
                 "function",
