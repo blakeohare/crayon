@@ -8,7 +8,6 @@ namespace Crayon.Translator
     internal abstract class AbstractTranslator
     {
         public AbstractPlatform Platform { get; set; }
-        protected bool IsMin { get { return this.Platform.IsMin; } }
 
         public virtual string NL { get { return "\n"; } }
 
@@ -177,7 +176,7 @@ namespace Crayon.Translator
         protected abstract string TabString { get; }
 
         private string tabIndention = "";
-        public string CurrentTabIndention { get { return (this.IsMin && !(this is Python.PythonTranslator)) ? "" : this.tabIndention; } }
+        public string CurrentTabIndention { get { return this.tabIndention; } }
 
         public void Translate(List<string> output, Executable[] lines)
         {

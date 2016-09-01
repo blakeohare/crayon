@@ -83,7 +83,7 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, list);
             output.Add("[");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten("] = "));
+            output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
 
@@ -386,7 +386,7 @@ namespace Crayon.Translator.Python
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add(this.Shorten(" * "));
+            output.Add(" * ");
             this.Translator.TranslateExpression(output, num);
         }
 
@@ -406,7 +406,7 @@ namespace Crayon.Translator.Python
                 else
                 {
                     output.Add("[None]");
-                    output.Add(this.Shorten(" * "));
+                    output.Add(" * ");
                     output.Add("" + length);
                 }
             }

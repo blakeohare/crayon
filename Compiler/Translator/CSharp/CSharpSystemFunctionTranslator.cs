@@ -57,7 +57,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, list);
             output.Add("[");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten("] = "));
+            output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
 

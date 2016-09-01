@@ -37,7 +37,7 @@ namespace Crayon
         // Syntax parsing is currently stateless. Which is nice. In an ideal world.
         // One day I will undo this for a more reasonable solution.
         public static bool IsTranslateMode_STATIC_HACK { get; set; }
-        
+
         public Executable CurrentCodeContainer { get; set; }
 
         public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
@@ -56,11 +56,6 @@ namespace Crayon
         public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
         public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
-
-        public bool PreserveTranslationComments
-        {
-            get { return this.NullablePlatform != null && !this.NullablePlatform.IsMin; }
-        }
 
         public bool RemoveBreaksFromSwitch
         {

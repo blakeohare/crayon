@@ -70,7 +70,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, list);
             output.Add("[");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten("] = "));
+            output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
 
@@ -120,10 +120,7 @@ namespace Crayon.Translator.JavaScript
         protected override void TranslateComment(List<string> output, StringConstant commentValue)
         {
 #if DEBUG
-            if (!this.IsMin)
-            {
-                output.Add("// " + commentValue.Value);
-            }
+            output.Add("// " + commentValue.Value);
 #endif
         }
 
@@ -150,7 +147,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, dictionary);
             output.Add("[");
             this.Translator.TranslateExpression(output, key);
-            output.Add(this.Shorten("] !== undefined)"));
+            output.Add("] !== undefined)");
         }
 
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
@@ -189,7 +186,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, dictionary);
             output.Add("[");
             this.Translator.TranslateExpression(output, key);
-            output.Add(this.Shorten("] = "));
+            output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
 
@@ -218,7 +215,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("Math.pow(");
             this.Translator.TranslateExpression(output, baseNum);
-            output.Add(this.Shorten(", "));
+            output.Add(", ");
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
@@ -297,7 +294,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, list);
             output.Add(".splice(");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten(", 0, "));
+            output.Add(", 0, ");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
@@ -319,7 +316,7 @@ namespace Crayon.Translator.JavaScript
         protected override void TranslateListLastIndex(List<string> output, Expression list)
         {
             this.Translator.TranslateExpression(output, list);
-            output.Add(this.Shorten(".length - 1"));
+            output.Add(".length - 1");
         }
 
         protected override void TranslateListLength(List<string> output, Expression list)
@@ -348,7 +345,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, list);
             output.Add(".splice(");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten(", 1)"));
+            output.Add(", 1)");
         }
 
         protected override void TranslateListReverseInPlace(List<string> output, Expression list)
@@ -362,7 +359,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, list);
             output.Add("[");
             this.Translator.TranslateExpression(output, index);
-            output.Add(this.Shorten("] = "));
+            output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
 
@@ -384,7 +381,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("C$common$multiplyList(");
             this.Translator.TranslateExpression(output, list);
-            output.Add(this.Shorten(", "));
+            output.Add(", ");
             this.Translator.TranslateExpression(output, num);
             output.Add(")");
         }
@@ -500,7 +497,7 @@ namespace Crayon.Translator.JavaScript
         {
             if (strongCast)
             {
-                output.Add(this.Shorten("('' + "));
+                output.Add("('' + ");
                 this.Translator.TranslateExpression(output, thing);
                 output.Add(")");
             }
@@ -549,14 +546,14 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, haystack);
             output.Add(".indexOf(");
             this.Translator.TranslateExpression(output, needle);
-            output.Add(this.Shorten(") != -1)"));
+            output.Add(") != -1)");
         }
 
         protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
         {
             output.Add("C$common$stringEndsWith(");
             this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(this.Shorten(", "));
+            output.Add(", ");
             this.Translator.TranslateExpression(output, findMe);
             output.Add(")");
         }
@@ -644,7 +641,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, stringExpr);
             output.Add(".indexOf(");
             this.Translator.TranslateExpression(output, findMe);
-            output.Add(this.Shorten(") == 0)"));
+            output.Add(") == 0)");
         }
 
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
@@ -703,7 +700,7 @@ namespace Crayon.Translator.JavaScript
         protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
         {
             this.Translator.TranslateExpression(output, numerator);
-            output.Add(this.Shorten(" / "));
+            output.Add(" / ");
             this.Translator.TranslateExpression(output, denominator);
         }
 
@@ -711,7 +708,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("Math.floor(");
             this.Translator.TranslateExpression(output, numerator);
-            output.Add(this.Shorten(" / "));
+            output.Add(" / ");
             this.Translator.TranslateExpression(output, denominator);
             output.Add(")");
         }

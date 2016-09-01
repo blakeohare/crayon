@@ -8,7 +8,7 @@ namespace Crayon.Translator.Php
         public PhpPlatform() : base(
             Crayon.PlatformId.PHP_SERVER,
             Crayon.LanguageId.PHP,
-            false, new PhpTranslator(),
+            new PhpTranslator(),
             new PhpSystemFunctionTranslator())
         { }
 

@@ -7,8 +7,8 @@ namespace Crayon.Translator.JavaScript
     {
         private string jsFilePrefix;
 
-        public JavaScriptPlatform(bool isMin, string jsFilePrefix)
-            : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, isMin, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator())
+        public JavaScriptPlatform(string jsFilePrefix)
+            : base(PlatformId.JAVASCRIPT_CANVAS, LanguageId.JAVASCRIPT, new JavaScriptTranslator(), new JavaScriptSystemFunctionTranslator())
         {
             if (jsFilePrefix == null)
             {
@@ -99,12 +99,7 @@ namespace Crayon.Translator.JavaScript
             }
 
             string codeJsText = Constants.DoReplacements(string.Join("", codeJs), replacements);
-
-            if (this.IsMin)
-            {
-                codeJsText = JavaScriptMinifier.Minify(codeJsText);
-            }
-
+            
             output["code.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -151,18 +146,7 @@ namespace Crayon.Translator.JavaScript
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
             };
-
-            if (this.IsMin)
-            {
-                // TODO: redo this so that minification is smarter.
-                // When you do, you'll have to solve the problem of functions being invoked from handlers in HTML (templates and generated).
-                foreach (string filename in output.Keys.Where(name => name.EndsWith(".js")))
-                {
-                    FileOutput file = output[filename];
-                    file.TextContent = this.MinifyCode(file.TextContent);
-                }
-            }
-
+            
             return output;
         }
 
@@ -186,11 +170,6 @@ namespace Crayon.Translator.JavaScript
         // TODO: minify variable names by actually parsing the code and resolving stuff.
         private string MinifyCode(string data)
         {
-            if (!this.IsMin)
-            {
-                return data;
-            }
-
             string[] lines = data.Split('\n');
             List<string> output = new List<string>();
             int counter = -1;

@@ -14,7 +14,7 @@ namespace Crayon.Translator.Java
         public override bool IsThreadBlockingAllowed{ get { return true; } }
 
         public JavaPlatform(PlatformId platform, JavaSystemFunctionTranslator systemFunctionTranslator)
-            : base(platform, LanguageId.JAVA, false, new JavaTranslator(), systemFunctionTranslator)
+            : base(platform, LanguageId.JAVA, new JavaTranslator(), systemFunctionTranslator)
         { }
 
         public string TranslateType(string original, bool wrapped)

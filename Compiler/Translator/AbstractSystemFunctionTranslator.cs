@@ -9,15 +9,7 @@ namespace Crayon.Translator
 
         public AbstractPlatform Platform { get; set; }
         public AbstractTranslator Translator { get; set; }
-
-        protected bool IsMin { get { return this.Platform.IsMin; } }
-
-        protected string Shorten(string value)
-        {
-            if (this.Platform.IsMin) return value.Replace(" ", "");
-            return value;
-        }
-
+        
         public void Translate(string tab, List<string> output, SystemFunctionCall functionCall)
         {
             Expression[] args = functionCall.Args;

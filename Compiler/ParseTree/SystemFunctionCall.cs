@@ -34,11 +34,6 @@ namespace Crayon.ParseTree
                 }
             }
 
-            if (this.Name == "$_comment" && !parser.PreserveTranslationComments)
-            {
-                return null;
-            }
-
             if (this.Name == "$_has_increment")
             {
                 bool hasIncrement = !parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.Python.PythonPlatform));

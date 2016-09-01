@@ -7,7 +7,6 @@ namespace Crayon
 {
     internal abstract class AbstractPlatform
     {
-        public bool IsMin { get; private set; }
         public AbstractTranslator Translator { get; private set; }
         public AbstractSystemFunctionTranslator SystemFunctionTranslator { get; private set; }
         public InterpreterCompiler InterpreterCompiler { get; private set; }
@@ -35,14 +34,12 @@ namespace Crayon
         public AbstractPlatform(
             PlatformId platform,
             LanguageId language,
-            bool isMin,
             AbstractTranslator translator,
             AbstractSystemFunctionTranslator systemFunctionTranslator)
         {
             this.PlatformId = platform;
             this.LanguageId = language;
-
-            this.IsMin = isMin;
+            
             this.Translator = translator;
             this.SystemFunctionTranslator = systemFunctionTranslator;
             this.Translator.Platform = this;
