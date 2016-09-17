@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="*.cs" />
     <Compile Include="Crayon\*.cs" />
+    <Compile Include="Libraries\*\*.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

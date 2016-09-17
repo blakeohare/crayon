@@ -31,28 +31,6 @@ namespace %%%PROJECT_ID%%%
             return output + 1;
         }
 
-		public static object ImagetteFlushToNativeBitmap(Imagette imagette)
-		{
-            int width = RoundUpToPowerOfTwo(imagette.width);
-            int height = RoundUpToPowerOfTwo(imagette.height);
-
-            Android.Graphics.Bitmap output = Android.Graphics.Bitmap.CreateBitmap(
-                width,
-                height,
-                Android.Graphics.Bitmap.Config.Argb4444);
-
-            Android.Graphics.Canvas canvas = new Android.Graphics.Canvas(output);
-            int length = imagette.nativeBitmaps.Count;
-            for (int i = 0; i < length; ++i)
-            {
-                int x = imagette.xs[i];
-                int y = imagette.ys[i];
-                canvas.DrawBitmap((Android.Graphics.Bitmap)imagette.nativeBitmaps[i], x, y, null);
-            }
-
-            return output;
-		}
-
 		public static void InitializeScreen(int width, int height, int screenWidth, int screenHeight, int executionContextId)
 		{
 			// As there is no "window", the screen width and height arguments are ignored.

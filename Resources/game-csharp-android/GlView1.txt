@@ -106,9 +106,6 @@ namespace %%%PROJECT_ID%%%
         {
             base.OnUpdateFrame(e);
 			
-            CrayonWrapper.v_GL_VIRTUAL_SIZE = 0;
-            CrayonWrapper.v_GL_IMAGES_VIRTUAL_SIZE = 0;
-
 			int vmStatus = CrayonWrapper.v_runInterpreter(ExecutionContextId);
             if (vmStatus == 1 || // finished
 				vmStatus == 3) // error
@@ -135,9 +132,7 @@ namespace %%%PROJECT_ID%%%
 
             if (LogicalViewInitialized)
             {
-                this.RenderEvents(
-                    CrayonWrapper.v_GL_DATA, CrayonWrapper.v_GL_VIRTUAL_SIZE, CrayonWrapper.v_GL_IMAGES,
-                    GlView1.LogicalWidth, GlView1.LogicalHeight);
+                this.RenderEvents();
             }
 
 			GL.Finish();
@@ -166,14 +161,24 @@ namespace %%%PROJECT_ID%%%
 
             return textureId;
         }
+		
+        // defaults are valid and empty
+        private static int[] renderEvents = new int[0];
+        private static int renderEventsLength = 0;
+        private static object[][] imagesNativeData = null;
+        private static List<int> textChars = null;
 
-        private void RenderEvents(
-            int[] commands,
-            int commandsLength,
-            Image[] images,
-            int screenWidth,
-            int screenHeight)
+        public static void SetRenderData(int[] events, int eventsLength, object[][] imagesNativeData, List<int> textChars)
         {
+            GlView1.renderEvents = events;
+            GlView1.renderEventsLength = eventsLength;
+            GlView1.imagesNativeData = imagesNativeData;
+            GlView1.textChars = textChars;
+        }
+
+        private void RenderEvents()
+        {
+			/*
             float left = 0;
             float top = 0;
             float bottom = 0;
@@ -379,6 +384,7 @@ namespace %%%PROJECT_ID%%%
                         break;
                 }
             }
+			//*/
         }
     }
 }

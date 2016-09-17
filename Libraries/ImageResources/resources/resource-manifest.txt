@@ -1,0 +1,5 @@
+
+BEGIN
+APPLICABLE-TO: game-csharp-android
+COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageResources/%FILE%
+END
