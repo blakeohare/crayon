@@ -18,14 +18,14 @@ namespace %%%PROJECT_ID%%%
             LogicalWidth = 200;
             LogicalHeight = 350;
             LogicalViewInitialized = false;
-			ExecutionContextId = 0;
-			
+            ExecutionContextId = 0;
+
             this.Touch += (sender, e) =>
             {
                 this.ApplyTouchEvent(e.Event);
             };
         }
-		
+
         private static List<PlatformRelayObject> events = new List<PlatformRelayObject>();
 
         public static List<PlatformRelayObject> GetEvents()
@@ -35,7 +35,7 @@ namespace %%%PROJECT_ID%%%
             events.Clear();
             return output;
         }
-		
+
         public static void InjectBackButtonEvent()
         {
             events.Add(new PlatformRelayObject(1, 2, 0, 0, 0, null));
@@ -64,12 +64,12 @@ namespace %%%PROJECT_ID%%%
         public static int LogicalWidth { get; set; }
         public static int LogicalHeight { get; set; }
         public static bool LogicalViewInitialized { get; set; }
-		public static int ExecutionContextId { get; set; }
+        public static int ExecutionContextId { get; set; }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            
+
             Run();
         }
 
@@ -101,14 +101,14 @@ namespace %%%PROJECT_ID%%%
             }
             throw new Exception("Can't load egl, aborting");
         }
-		
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-			
-			int vmStatus = CrayonWrapper.v_runInterpreter(ExecutionContextId);
+
+            int vmStatus = CrayonWrapper.v_runInterpreter(ExecutionContextId);
             if (vmStatus == 1 || // finished
-				vmStatus == 3) // error
+                vmStatus == 3) // error
             {
                 // TODO: force exit app here.
             }
@@ -135,7 +135,7 @@ namespace %%%PROJECT_ID%%%
                 this.RenderEvents();
             }
 
-			GL.Finish();
+            GL.Finish();
 
             SwapBuffers();
         }
@@ -144,7 +144,7 @@ namespace %%%PROJECT_ID%%%
         private static float[] textureCoords = new float[8];
         private static byte[] colors = new byte[16];
 
-        private int LoadTexture(Android.Graphics.Bitmap bitmap)
+        private int LoadTexture(Library.ImageResources.AndroidBitmap bitmap)
         {
             int[] intPtr = new int[1];
             GL.GenTextures(1, intPtr);
@@ -157,11 +157,11 @@ namespace %%%PROJECT_ID%%%
             GL.TexParameterx(All.Texture2D, All.TextureWrapS, (int)All.ClampToEdge);
             GL.TexParameterx(All.Texture2D, All.TextureWrapT, (int)All.ClampToEdge);
 
-            Android.Opengl.GLUtils.TexImage2D((int)All.Texture2D, 0, bitmap, 0);
+            Android.Opengl.GLUtils.TexImage2D((int)All.Texture2D, 0, bitmap.GetNativeBitmap(), 0);
 
             return textureId;
         }
-		
+
         // defaults are valid and empty
         private static int[] renderEvents = new int[0];
         private static int renderEventsLength = 0;
@@ -178,34 +178,49 @@ namespace %%%PROJECT_ID%%%
 
         private void RenderEvents()
         {
-			/*
+            int[] renderEvents = GlView1.renderEvents;
+            int renderEventsLength = GlView1.renderEventsLength;
+            object[][] imagesNativeData = GlView1.imagesNativeData;
+            List<int> textChars = GlView1.textChars;
+
             float left = 0;
             float top = 0;
             float bottom = 0;
             float right = 0;
+            int startX, startY, endX, endY;
 
-            int targetX, targetY, sourceX, sourceY, targetWidth, targetHeight, sourceWidth, sourceHeight;
+            int ax, ay;
+            float axf, ayf, bxf, byf, cxf, cyf, dxf, dyf;
             float textureWidth, textureHeight, textureLeft, textureTop, textureRight, textureBottom;
+            float croppedLeft, croppedTop, croppedRight, croppedBottom;
+            int textureResourceWidth, textureResourceHeight;
+            float angle, rCos, rSin, tx, ty;
 
-            Image image;
             int imageIndex = 0;
-            int imageWidth, imageHeight;
-            CompositeImage compositeImage;
-			double angle = 0;
+            int cropWidth, cropHeight;
+            int width, height;
+            int textureId = 0;
+            int mask = 0;
+            bool rotated;
 
+            object[] textureNativeData = null;
+            object[] textureResourceNativeData = null;
+
+            int screenWidth = GlView1.LogicalWidth;
+            int screenHeight = GlView1.LogicalHeight;
             byte red, green, blue, alpha;
             int j;
 
-            for (int i = 0; i < commandsLength; i += 16)
+            for (int i = 0; i < renderEventsLength; i += 16)
             {
-                switch (commands[i])
+                switch (renderEvents[i])
                 {
                     case 1:
                         // Render rectangle
-                        left = commands[i | 1];
-                        top = commands[i | 2];
-                        right = left + commands[i | 3];
-                        bottom = top + commands[i | 4];
+                        left = renderEvents[i | 1];
+                        top = renderEvents[i | 2];
+                        right = left + renderEvents[i | 3];
+                        bottom = top + renderEvents[i | 4];
 
                         squareVertices[0] = left;
                         squareVertices[1] = top;
@@ -216,10 +231,10 @@ namespace %%%PROJECT_ID%%%
                         squareVertices[6] = right;
                         squareVertices[7] = bottom;
 
-                        red = (byte)(commands[i | 5] & 255);
-                        green = (byte)(commands[i | 6] & 255);
-                        blue = (byte)(commands[i | 7] & 255);
-                        alpha = (byte)(commands[i | 8] & 255);
+                        red = (byte)renderEvents[i | 5];
+                        green = (byte)renderEvents[i | 6];
+                        blue = (byte)renderEvents[i | 7];
+                        alpha = (byte)renderEvents[i | 8];
                         for (j = 0; j < 16; j += 4)
                         {
                             colors[j | 0] = red;
@@ -241,10 +256,10 @@ namespace %%%PROJECT_ID%%%
                     case 2:
                         // Render ellipse
                         // TODO: actually implement this. Right now this is just copied code from rectangles.
-                        left = commands[i | 1];
-                        top = commands[i | 2];
-                        right = left + commands[i | 3];
-                        bottom = top + commands[i | 4];
+                        left = renderEvents[i | 1];
+                        top = renderEvents[i | 2];
+                        right = left + renderEvents[i | 3];
+                        bottom = top + renderEvents[i | 4];
 
                         squareVertices[0] = left;
                         squareVertices[1] = top;
@@ -255,10 +270,10 @@ namespace %%%PROJECT_ID%%%
                         squareVertices[6] = right;
                         squareVertices[7] = bottom;
 
-                        red = (byte)(commands[i | 5] & 255);
-                        green = (byte)(commands[i | 6] & 255);
-                        blue = (byte)(commands[i | 7] & 255);
-                        alpha = (byte)(commands[i | 8] & 255);
+                        red = (byte)renderEvents[i | 5];
+                        green = (byte)renderEvents[i | 6];
+                        blue = (byte)renderEvents[i | 7];
+                        alpha = (byte)renderEvents[i | 8];
                         for (j = 0; j < 16; j += 4)
                         {
                             colors[j | 0] = red;
@@ -278,49 +293,100 @@ namespace %%%PROJECT_ID%%%
                         break;
 
                     case 3:
+                        // Render line
+                        break;
+
+                    case 4:
+                        // Render triangle
+                        break;
+
+                    case 5:
+                        // Render quad
+                        break;
+
+                    case 6:
                         // Render image
-                        image = images[imageIndex++];
-                        imageWidth = image.width;
-                        imageHeight = image.height;
-                        targetX = commands[i | 1];
-                        targetY = commands[i | 2];
-                        targetWidth = commands[i | 3];
-                        targetHeight = commands[i | 4];
-                        sourceX = commands[i | 5];
-                        sourceY = commands[i | 6];
-                        sourceWidth = commands[i | 7];
-                        sourceHeight = commands[i | 8];
-                        alpha = (byte)(commands[i | 9] & 255);
+                        textureNativeData = imagesNativeData[imageIndex++];
+                        textureResourceNativeData = (object[])textureNativeData[0];
 
-                        left = targetX;
-                        right = targetX + targetWidth;
-                        top = targetY;
-                        bottom = targetY + targetHeight;
-
-                        if (targetX < screenWidth && targetY < screenHeight && bottom >= 0 && right >= 0)
+                        if (!(bool)textureResourceNativeData[1])
                         {
-                            textureWidth = image.textureRight - image.textureLeft;
-                            textureHeight = image.textureBottom - image.textureTop;
+                            textureId = LoadTexture((Library.ImageResources.AndroidBitmap)textureResourceNativeData[3]);
+                            textureResourceNativeData[2] = textureId;
+                            textureResourceNativeData[1] = true;
+                        }
 
-                            textureLeft = image.textureLeft + textureWidth * sourceX / image.width;
-                            textureTop = image.textureTop + textureHeight * sourceY / image.height;
-                            textureRight = textureLeft + textureWidth * sourceWidth / image.width;
-                            textureBottom = textureTop + textureHeight * sourceHeight / image.height;
-                            compositeImage = image.compositeResource;
-                            if (!compositeImage.loaded)
-                            {
-                                compositeImage.glTextureId = LoadTexture((Android.Graphics.Bitmap)compositeImage.nativeBitmap);
-                                compositeImage.loaded = true;
-                            }
+                        mask = renderEvents[i | 1];
+                        rotated = (mask & 4) != 0;
+                        textureId = (int)textureResourceNativeData[2];
+                        alpha = 255;
+                        startX = renderEvents[i | 8]; // left
+                        startY = renderEvents[i | 9]; // top
 
-                            squareVertices[0] = left;
-                            squareVertices[1] = top;
-                            squareVertices[2] = left;
-                            squareVertices[3] = bottom;
-                            squareVertices[4] = right;
-                            squareVertices[5] = top;
-                            squareVertices[6] = right;
-                            squareVertices[7] = bottom;
+                        textureLeft = (float)(double)textureNativeData[1];
+                        textureTop = (float)(double)textureNativeData[2];
+                        textureRight = (float)(double)textureNativeData[3];
+                        textureBottom = (float)(double)textureNativeData[4];
+                        width = (int)textureNativeData[5];
+                        height = (int)textureNativeData[6];
+
+                        textureWidth = textureRight - textureLeft;
+                        textureHeight = textureBottom - textureTop;
+                        textureResourceWidth = (int)textureResourceNativeData[4];
+                        textureResourceHeight = (int)textureResourceNativeData[5];
+
+                        // slice
+                        if ((mask & 1) != 0)
+                        {
+                            ax = renderEvents[i | 2];
+                            ay = renderEvents[i | 3];
+                            cropWidth = renderEvents[i | 4];
+                            cropHeight = renderEvents[i | 5];
+
+                            croppedLeft = textureLeft + textureWidth * ax / width;
+                            croppedRight = croppedLeft + textureWidth * (ax + cropWidth) / width;
+                            croppedTop = textureTop + textureHeight * ay / height;
+                            croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
+
+                            textureLeft = croppedLeft;
+                            textureRight = croppedRight;
+                            textureTop = croppedTop;
+                            textureBottom = croppedBottom;
+                            width = cropWidth;
+                            height = cropHeight;
+                        }
+
+                        // stretch
+                        if ((mask & 2) != 0)
+                        {
+                            width = renderEvents[i | 6];
+                            height = renderEvents[i | 7];
+                        }
+
+                        if (rotated)
+                        {
+                            angle = renderEvents[i | 10] / 1048576.0f;
+                            rCos = (float)Math.Cos(angle);
+                            rSin = (float)Math.Sin(angle);
+                            tx = width * 0.5f;
+                            ty = height * 0.5f;
+                            axf = (rCos * -tx - rSin * -ty) + startX;
+                            ayf = (rSin * -tx + rCos * -ty) + startY;
+                            bxf = (rCos * tx - rSin * -ty) + startX;
+                            byf = (rSin * tx + rCos * -ty) + startY;
+                            cxf = (rCos * -tx - rSin * ty) + startX;
+                            cyf = (rSin * -tx + rCos * ty) + startY;
+                            dxf = (rCos * tx - rSin * ty) + startX;
+                            dyf = (rSin * tx + rCos * ty) + startY;
+
+                            squareVertices[0] = axf;
+                            squareVertices[1] = ayf;
+                            squareVertices[2] = cxf;
+                            squareVertices[3] = cyf;
+                            squareVertices[4] = bxf;
+                            squareVertices[5] = byf;
+                            squareVertices[6] = dxf;
+                            squareVertices[7] = dyf;
 
                             textureCoords[0] = textureLeft;
                             textureCoords[1] = textureTop;
@@ -331,60 +397,46 @@ namespace %%%PROJECT_ID%%%
                             textureCoords[6] = textureRight;
                             textureCoords[7] = textureBottom;
 
-                            GL.Enable(All.Blend);
-                            GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
-                            GL.Enable(All.Texture2D);
-                            GL.BindTexture(All.Texture2D, compositeImage.glTextureId);
-                            GL.EnableClientState(All.VertexArray);
-                            GL.EnableClientState(All.TextureCoordArray);
-                            GL.DisableClientState(All.ColorArray);
-                            GL.VertexPointer(2, All.Float, 0, squareVertices);
-                            GL.TexCoordPointer(2, All.Float, 0, textureCoords);
-                            GL.DrawArrays(All.TriangleStrip, 0, 4);
                         }
-                        break;
+                        else
+                        {
+                            endX = startX + width;
+                            endY = startY + height;
 
-                    case 4:
-                        // Render image, rotated
-                        image = images[imageIndex++];
-                        targetX = commands[i | 1];
-                        targetY = commands[i | 2];
-                        targetWidth = commands[i | 3];
-                        targetHeight = commands[i | 4];
-                        angle = commands[i | 5] / 1000000.0;
+                            squareVertices[0] = startX;
+                            squareVertices[1] = startY;
+                            squareVertices[2] = startX;
+                            squareVertices[3] = endY;
+                            squareVertices[4] = endX;
+                            squareVertices[5] = startY;
+                            squareVertices[6] = endX;
+                            squareVertices[7] = endY;
 
-                        // ROFLHACK, overwrite the existing draw command with a non rotated version and then
-						// reset the counter back to the previous command.
-						// TODO: implement rotation for real.
-                        commands[i] = 3;
-                        commands[i | 1] = targetX - image.width / 2;
-                        commands[i | 2] = targetY - image.height / 2;
-                        commands[i | 3] = image.width;
-                        commands[i | 4] = image.height;
-                        commands[i | 5] = 0;
-                        commands[i | 6] = 0;
-                        commands[i | 7] = image.width;
-                        commands[i | 8] = image.height;
-                        commands[i | 9] = 255;
-                        i -= 16;
-						imageIndex--;
-
-                        break;
-
-                    case 5:
-                        //throw new NotImplementedException("Render line");
-                        break;
-
-                    case 6:
-                        //throw new NotImplementedException("Render triangle");
+                            textureCoords[0] = textureLeft;
+                            textureCoords[1] = textureTop;
+                            textureCoords[2] = textureLeft;
+                            textureCoords[3] = textureBottom;
+                            textureCoords[4] = textureRight;
+                            textureCoords[5] = textureTop;
+                            textureCoords[6] = textureRight;
+                            textureCoords[7] = textureBottom;
+                        }
+                        GL.Enable(All.Blend);
+                        GL.BlendFunc(All.SrcAlpha, All.OneMinusSrcAlpha);
+                        GL.Enable(All.Texture2D);
+                        GL.BindTexture(All.Texture2D, textureId);
+                        GL.EnableClientState(All.VertexArray);
+                        GL.EnableClientState(All.TextureCoordArray);
+                        GL.DisableClientState(All.ColorArray);
+                        GL.VertexPointer(2, All.Float, 0, squareVertices);
+                        GL.TexCoordPointer(2, All.Float, 0, textureCoords);
+                        GL.DrawArrays(All.TriangleStrip, 0, 4);
                         break;
 
                     default:
-                        //throw new NotImplementedException("Unknown render command");
-                        break;
+                        throw new NotImplementedException("Unknown render command");
                 }
             }
-			//*/
         }
     }
 }

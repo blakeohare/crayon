@@ -40,6 +40,11 @@ namespace %%%PROJECT_ID%%%.Library.ImageResources
             this.GetCanvas().DrawBitmap(otherBmp.bmp, targetX, targetY, null);
         }
 
+        public Android.Graphics.Bitmap GetNativeBitmap()
+        {
+            return this.bmp;
+        }
+
         public Android.Graphics.Canvas GetCanvas()
         {
             if (this.canvas == null)
