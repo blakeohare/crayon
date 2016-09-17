@@ -78,7 +78,9 @@ objInstance2 = $_cast('ObjectInstance', Value$value.internalValue);
 objArray1 = ObjectInstance$objInstance2.nativeData;
 $_array_set(objArrayArray1, int1, objArray1);
 
-bool1 = true;
+bool1 = true; // is valid operation
+bool2 = false; // is noop
+
 
 // Bit mask
 value = $_array_get(valueStack, valueStackSize + 2);
@@ -95,8 +97,6 @@ if ((int1 & 4) != 0) {
 	int2 = $_int(canonicalizeAngle(float1) * 1048576);
 	$_array_set(intArray1, len | 10, int2);
 }
-
-bool2 = false; // is noop
 
 // alpha
 if (bool1 && (int1 & 8) != 0) {
@@ -138,10 +138,13 @@ for (i = 0; i < 8; i += 1) {
 
 // stretching
 if ((int1 & 2) != 0) {
-	int2 = $_array_get(intArray1, len + 8);
+	// target width
+	int2 = $_array_get(intArray1, len + 6);
 	if (int2 < 0) bool1 = false;
 	else if (int2 == 0) bool2 = true;
-	int2 = $_array_get(intArray1, len + 9);
+	
+	// target height
+	int2 = $_array_get(intArray1, len + 7);
 	if (int2 < 0) bool1 = false;
 	else if (int2 == 0) bool2 = true;
 }
