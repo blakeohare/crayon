@@ -1,0 +1,23 @@
+/*
+	arg1 -> NativeImageData instance that is being unlocked and may have blitted changes.
+	
+	nativeData[0] -> the raw bitmap resource
+	...
+	nativeData[3] -> the pixel edit session e.g. a System.Drawing.Graphics instance in .NET.
+	
+	If present, flush the changes in the session to the bitmap and then clear the session instance.
+*/
+import inline "FrameworkFunctions/1_arg.cry";
+
+if (%%%IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS%%%) {
+	objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+
+	objArray1 = ObjectInstance$objInstance1.nativeData;
+	if (objArray1 != null) {
+		object1 = $_array_get(objArray1, 3);
+		if (object1 != null) {
+			$_lib_imageresources_flushPixelEditSession(object1);
+			$_array_set(objArray1, 3, null);
+		}
+	}
+}

@@ -207,20 +207,29 @@ namespace %%%PROJECT_ID%%%
             object targetBmp, object sourceBmp,
             int targetX, int targetY,
             int sourceX, int sourceY,
-            int width, int height)
+            int width, int height,
+			object graphicsSession)
         {
-            // TODO: preserve the graphics instance on the nativeData so that this doesn't have to be re-created every time.
             System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
             System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target);
-            g.DrawImage(
+            ((System.Drawing.Graphics)graphicsSession).DrawImage(
                 source,
                 new System.Drawing.Rectangle(targetX, targetY, width, height),
                 new System.Drawing.Rectangle(sourceX, sourceY, width, height),
                 System.Drawing.GraphicsUnit.Pixel);
-            g.Flush();
-            g.Dispose();
         }
+
+		public static object GetPixelEditSession(object nativeImageResource)
+		{
+			return System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)nativeImageResource);
+		}
+
+		public static void FlushPixelEditSession(object graphicsObj)
+		{
+			System.Drawing.Graphics g = (System.Drawing.Graphics)graphicsObj;
+			g.Flush();
+			g.Dispose();
+		}
 
         public static bool LoadFont(bool isSystem, string name, int fontId)
         {

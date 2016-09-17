@@ -42,6 +42,7 @@ namespace Graphics {
 					img.blit(atlasDummyWrapper, 0, 0);
 					img.unlock();
 					$$lib_graphics_initializeTextureResource(textureResource, img);
+					GraphicsTextureResource.database[key] = textureResource;
 				}
 				x = imageResource._x;
 				y = imageResource._y;

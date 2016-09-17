@@ -11,6 +11,7 @@ namespace ImageResources {
 		// nativeData[0] -> native bitmap resource
 		// nativeData[1] -> bitmap width
 		// nativeData[2] -> bitmap height
+		// nativeData[3] -> pixel edit session
 		
 		field width;
 		field height;
@@ -59,6 +60,7 @@ namespace ImageResources {
 		}
 		
 		function unlock() {
+			$$lib_imageresources_flushImageChanges(this);
 			this._locked = false;
 		}
 		
@@ -104,6 +106,7 @@ namespace ImageResources {
 			h = sourceBottom - sourceTop;
 			if (w == 0 || h == 0) return;
 			
+			// initializes the pixel edit session in nativeData[3] if not present
 			$$lib_imageresources_blit(this, other, targetLeft, targetTop, sourceLeft, sourceTop, w, h);
 		}
 		
