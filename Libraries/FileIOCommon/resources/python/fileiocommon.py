@@ -38,7 +38,6 @@ def lib_fileiocommon_fileRead(path, isBytes, stringOut, integers, byteOutput):
 			text = c.read()
 			if text[:3] == ''.join(chr(239) + chr(187) + chr(191)):
 				text = text[3:]
-			print "I read this: " + text + '\n' + ('-' * 20)
 			stringOut[0] = text
 	except:
 		if not os.path.exists(path):
