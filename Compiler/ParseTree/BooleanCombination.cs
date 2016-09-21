@@ -25,12 +25,43 @@ namespace Crayon.ParseTree
                 this.Expressions[i] = this.Expressions[i].Resolve(parser);
             }
 
-            for (int i = 0; i < this.Ops.Length; ++i)
+            if (this.Expressions[0] is BooleanConstant)
             {
-                if (this.Expressions[i] is BooleanConstant)
+                List<Expression> expressions = new List<Expression>(this.Expressions);
+                List<Token> ops = new List<Token>(this.Ops);
+                while (ops.Count > 0 && expressions[0] is BooleanConstant)
                 {
-                    // TODO: this can be optimized
-                    // but I am in a hurry right now.
+                    bool boolValue = ((BooleanConstant)expressions[0]).Value;
+                    bool isAnd = ops[0].Value == "&&";
+                    if (isAnd)
+                    {
+                        if (boolValue)
+                        {
+                            expressions.RemoveAt(0);
+                            ops.RemoveAt(0);
+                        }
+                        else
+                        {
+                            return new BooleanConstant(this.FirstToken, false, this.FunctionOrClassOwner);
+                        }
+                    }
+                    else
+                    {
+                        if (boolValue)
+                        {
+                            return new BooleanConstant(this.FirstToken, true, this.FunctionOrClassOwner);
+                        }
+                        else
+                        {
+                            expressions.RemoveAt(0);
+                            ops.RemoveAt(0);
+                        }
+                    }
+                }
+
+                if (expressions.Count == 1)
+                {
+                    return expressions[0];
                 }
             }
 
