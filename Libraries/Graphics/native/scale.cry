@@ -42,16 +42,15 @@ if (!%%%LIB_GRAPHICS_USES_TEXTURE_ATLAS%%%) {
 	object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 3); // original image
 	
 	// New GraphicsTextureResource. Add nativeData.
-	objInstance1 = $_cast('ObjectInstance', Value$arg5.internalValue);
+	objInstance1 = $_cast('ObjectInstance', Value$arg6.internalValue);
 	objArray1 = $_new_array('object', 6);
 	ObjectInstance$objInstance1.nativeData = objArray1;
 	$_array_set(objArray1, 0, false);
 	$_array_set(objArray1, 1, true);
 	$_array_set(objArray1, 2, 0);
+	$_array_set(objArray1, 3, $_lib_graphics_scale(object1, int1, int2));
 	$_array_set(objArray1, 4, int1);
 	$_array_set(objArray1, 5, int2);
-	
-	$_array_set(objArray1, 3, $_lib_graphics_scale(object1, int1, int2));
 }
 
 // Copy the original GraphicsTexture's native data to the new GraphicsTexture
@@ -70,7 +69,7 @@ for (i = 4; i >= 1; i -= 1) { // leave off width and height since we overwrite t
 $_array_set(objArray1, 5, int1);
 $_array_set(objArray1, 6, int2);
 // Now add a pointer to the new GraphicsTextureResource's native data
-objInstance1 = $_cast('ObjectInstance', Value$arg5.internalValue);
+objInstance1 = $_cast('ObjectInstance', Value$arg6.internalValue);
 
 $_array_set(objArray1, 0, ObjectInstance$objInstance1.nativeData);
 
