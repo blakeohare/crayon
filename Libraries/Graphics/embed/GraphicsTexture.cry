@@ -41,7 +41,7 @@ namespace Graphics {
 					img.lock();
 					img.blit(atlasDummyWrapper, 0, 0);
 					img.unlock();
-					$$lib_graphics_initializeTextureResource(textureResource, img);
+					$$lib_graphics_initializeTextureResource(textureResource, true, img);
 					GraphicsTextureResource.database[key] = textureResource;
 				}
 				x = imageResource._x;
@@ -58,7 +58,7 @@ namespace Graphics {
 				textureResource = new GraphicsTextureResource();
 				textureResource.width = width;
 				textureResource.height = height;
-				$$lib_graphics_initializeTextureResource(textureResource, img);
+				$$lib_graphics_initializeTextureResource(textureResource, true, img);
 				textureCoords = [0.0, 0.0, 1.0, 1.0];
 			}
 			texture = new GraphicsTexture(textureResource, width, height);
@@ -223,6 +223,7 @@ namespace Graphics {
 				newRes = new GraphicsTextureResource();
 				newRes.width = res.width;
 				newRes.height = res.height;
+				$$lib_graphics_initializeTextureResource(newRes, false, res);
 				output[1] = newRes;
 			}
 			return output;
