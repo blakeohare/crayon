@@ -345,7 +345,7 @@ namespace Crayon.ParseTree
                 {
                     // TODO: definition of a field or a method? from this class or a parent?
                     // TODO: check to see if this is already resolved before now.
-                    throw new ParserException(fd.FirstToken, "This overrides a previous definition.");
+                    throw new ParserException(fd.FirstToken, "This overrides a previous definition of a member named '" + fd.NameToken.Value + "'.");
                 }
 
                 fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
