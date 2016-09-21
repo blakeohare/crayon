@@ -1,7 +1,9 @@
-﻿// returns null on platforms where user data is not supported.
-
+﻿
 output = VALUE_NULL;
-string1 = $_lib_gamepad_config_file_path();
-if (string1 != null) {
-	output = buildString(string1);
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	// returns null on platforms where user data is not supported.
+	string1 = $_lib_gamepad_config_file_path();
+	if (string1 != null) {
+		output = buildString(string1);
+	}
 }

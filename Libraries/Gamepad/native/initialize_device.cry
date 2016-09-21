@@ -11,15 +11,17 @@
 */
 import inline "FrameworkFunctions/3_arg.cry";
 
-int1 = $_cast('int', Value$arg1.internalValue);
-objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
-list1 = $_cast('List<Value>', Value$arg3.internalValue);
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	int1 = $_cast('int', Value$arg1.internalValue);
+	objInstance1 = $_cast('ObjectInstance', Value$arg2.internalValue);
+	list1 = $_cast('List<Value>', Value$arg3.internalValue);
 
-object1 = $_lib_gamepad_get_device_reference(int1);
-ObjectInstance$objInstance1.nativeData = $_new_array('object', 1);
-$_array_set(ObjectInstance$objInstance1.nativeData, 0, object1);
+	object1 = $_lib_gamepad_get_device_reference(int1);
+	ObjectInstance$objInstance1.nativeData = $_new_array('object', 1);
+	$_array_set(ObjectInstance$objInstance1.nativeData, 0, object1);
 
-$_list_set(list1, 0, buildString($_lib_gamepad_get_name(int1, object1)));
-$_list_set(list1, 1, buildInteger($_lib_gamepad_get_button_count(int1, object1)));
-$_list_set(list1, 2, buildInteger($_lib_gamepad_get_axis_1d_count(int1, object1)));
-$_list_set(list1, 3, buildInteger($_lib_gamepad_get_axis_2d_count(int1, object1)));
+	$_list_set(list1, 0, buildString($_lib_gamepad_get_name(int1, object1)));
+	$_list_set(list1, 1, buildInteger($_lib_gamepad_get_button_count(int1, object1)));
+	$_list_set(list1, 2, buildInteger($_lib_gamepad_get_axis_1d_count(int1, object1)));
+	$_list_set(list1, 3, buildInteger($_lib_gamepad_get_axis_2d_count(int1, object1)));
+}

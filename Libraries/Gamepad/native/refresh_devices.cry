@@ -1,3 +1,5 @@
-﻿// No-op on most platforms.
-
-$_lib_gamepad_refresh_devices();
+﻿
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	// No-op on most platforms.
+	$_lib_gamepad_refresh_devices();
+}

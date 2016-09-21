@@ -1,2 +1,4 @@
 ﻿
-$_lib_gamepad_poll_universe();
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	$_lib_gamepad_poll_universe();
+}
