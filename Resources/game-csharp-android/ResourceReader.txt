@@ -44,38 +44,42 @@ namespace %%%PROJECT_ID%%%
 			return -1;
         }
         
+		private static readonly object ASSET_MUTEX = new object();
         private static readonly byte[] BUFFER = new byte[1000];
         
 		private static byte[] ReadAsset(string pathInAssetsFolder)
 		{
-			System.IO.Stream stream = Assets.Open(pathInAssetsFolder);
-
             List<byte> resource = new List<byte>();
 
-            int bytesRead;
-            while (true)
-            {
-                bytesRead = stream.Read(BUFFER, 0, BUFFER.Length);
-                if (bytesRead > 0)
-                {
-                    if (bytesRead == BUFFER.Length)
-                    {
-                        resource.AddRange(BUFFER);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < bytesRead; ++i)
-                        {
-                            resource.Add(BUFFER[i]);
-                        }
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            
+			lock (ASSET_MUTEX)
+			{
+				System.IO.Stream stream = Assets.Open(pathInAssetsFolder);
+
+				int bytesRead;
+				while (true)
+				{
+					bytesRead = stream.Read(BUFFER, 0, BUFFER.Length);
+					if (bytesRead > 0)
+					{
+						if (bytesRead == BUFFER.Length)
+						{
+							resource.AddRange(BUFFER);
+						}
+						else
+						{
+							for (int i = 0; i < bytesRead; ++i)
+							{
+								resource.Add(BUFFER[i]);
+							}
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+
 			return resource.ToArray();
 		}
 
