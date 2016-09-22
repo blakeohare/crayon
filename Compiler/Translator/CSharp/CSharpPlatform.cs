@@ -24,7 +24,8 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase,
-            string iconFilePath);
+            string iconFilePath,
+            BuildContext buildContext);
 
         private static string GetGuid(string seed, string salt)
         {
@@ -175,7 +176,7 @@ namespace Crayon.Translator.CSharp
             }
 
             // Add files for specific C# platform
-            this.PlatformSpecificFiles(projectId, output, replacements, resourceDatabase, buildContext.IconFilePath);
+            this.PlatformSpecificFiles(projectId, output, replacements, resourceDatabase, buildContext.IconFilePath, buildContext);
 
             Dictionary<string, string> libraryResourceFiles = this.LibraryManager.CopiedFiles;
             foreach (string file in libraryResourceFiles.Keys)

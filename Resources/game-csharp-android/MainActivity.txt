@@ -10,7 +10,7 @@ namespace %%%PROJECT_ID%%%
         Icon = "@drawable/icon",
         Theme = "@android:style/Theme.NoTitleBar",
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.KeyboardHidden,
-        ScreenOrientation = ScreenOrientation.Portrait
+        ScreenOrientation = ScreenOrientation.%%%XAMARIN_ANDROID_ORIENTATION%%%
 #if __ANDROID_11__
 		,HardwareAccelerated=false
 #endif

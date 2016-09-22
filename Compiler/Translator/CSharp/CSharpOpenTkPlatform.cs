@@ -15,7 +15,8 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase, 
-            string iconFilePath)
+            string iconFilePath,
+            BuildContext buildContext)
         {
             bool hasIcon = iconFilePath != null;
             if (hasIcon)

@@ -17,7 +17,8 @@ namespace Crayon.Translator.CSharp
             Dictionary<string, FileOutput> files,
             Dictionary<string, string> replacements,
             ResourceDatabase resourceDatabase,
-            string iconFilePath)
+            string iconFilePath,
+            BuildContext buildContext)
         {
             files[projectId + ".sln"] = new FileOutput()
             {
@@ -92,6 +93,16 @@ namespace Crayon.Translator.CSharp
             
             replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\r\n", additionalAndroidAssets);
             replacements["ANDROID_RAW_RESOURCES"] = "\r\n" + string.Join("\r\n", androidResourcesForProjectFile);
+            string orientationString;
+            switch (MobileOrientationUtil.Parse(buildContext.Orientation)) {
+                case MobileOrientation.AUTO: orientationString = "FullSensor"; break;
+                case MobileOrientation.LANDSCAPE: orientationString = "Landscape"; break;
+                case MobileOrientation.LANDSCAPES: orientationString = "SensorLandscape"; break;
+                case MobileOrientation.PORTRAIT: orientationString = "Portrait"; break;
+                case MobileOrientation.PORTRAITS: orientationString = "SensorPortrait"; break;
+                default: throw new System.Exception(); // Need to define value here.
+            }
+            replacements["XAMARIN_ANDROID_ORIENTATION"] = orientationString;
 
             files[projectId + "/Resources/drawable/Icon.png"] = new FileOutput()
             {

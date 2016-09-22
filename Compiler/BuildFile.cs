@@ -22,6 +22,7 @@ namespace Crayon
         public string GuidSeed { get; set; }
         public string IconFilePath { get; set; }
         public string DefaultTitle { get; set; }
+        public string Orientation { get; set; }
 
         public enum VarType
         {
@@ -76,6 +77,9 @@ namespace Crayon
 
             [XmlElement("title")]
             public string DefaultTitle { get; set; }
+
+            [XmlElement("orientation")]
+            public string Orientation { get; set; } // values = { portrait | landscape | auto }
 
             private bool TranslateStringToBoolean(string value)
             {
@@ -195,6 +199,7 @@ namespace Crayon
             flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
             flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
             flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
+            flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
 
             return new BuildContext()
             {
@@ -211,6 +216,7 @@ namespace Crayon
                 GuidSeed = flattened.GuidSeed,
                 IconFilePath = flattened.IconFilePath,
                 DefaultTitle = flattened.DefaultTitle,
+                Orientation = flattened.Orientation,
             };
         }
 
