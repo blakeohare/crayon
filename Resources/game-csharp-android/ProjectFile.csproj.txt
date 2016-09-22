@@ -64,7 +64,7 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\ByteCode.txt" />
+    <AndroidAsset Include="Assets\Text\ByteCode.txt" />
 	%%%ADDITIONAL_ANDROID_ASSETS%%%
 	%%%ANDROID_RAW_RESOURCES%%%
   </ItemGroup>

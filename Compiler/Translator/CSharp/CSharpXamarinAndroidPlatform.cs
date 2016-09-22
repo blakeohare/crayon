@@ -37,12 +37,12 @@ namespace Crayon.Translator.CSharp
                     files[projectId + "/Assets/ImageSheets/" + tileName] = resourceDatabase.ImageSheetFiles[tileName];
                 }
 
-                files[projectId + "/Assets/imageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
-                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\imageSheetManifest.txt\" />");
+                files[projectId + "/Assets/Text/imageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\Text\\imageSheetManifest.txt\" />");
             }
 
-            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceManifest.txt\" />");
-            files[projectId + "/Assets/resourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\Text\\resourceManifest.txt\" />");
+            files[projectId + "/Assets/Text/resourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             /*
                 There's another layer of file resource indirection here since Android makes a distinction between
@@ -77,15 +77,19 @@ namespace Crayon.Translator.CSharp
                 androidResourceId++;
             }
 
-            files[projectId + "/Assets/resourceLookup.txt"] = new FileOutput()
+            files[projectId + "/Assets/Text/resourceLookup.txt"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TextContent = string.Join("\n", androidResourceLookupFile)
             };
-            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\resourceLookup.txt\" />");
-
-            files[projectId + "/Assets/resourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-
+            additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\Text\\resourceLookup.txt\" />");
+            
+            foreach (FileOutput textFile in resourceDatabase.TextResources)
+            {
+                files[projectId + "/Assets/Text/" + textFile.CanonicalFileName] = textFile;
+                additionalAndroidAssets.Add("    <AndroidAsset Include=\"Assets\\Text\\" + textFile.CanonicalFileName + "\" />");
+            }
+            
             replacements["ADDITIONAL_ANDROID_ASSETS"] = string.Join("\r\n", additionalAndroidAssets);
             replacements["ANDROID_RAW_RESOURCES"] = "\r\n" + string.Join("\r\n", androidResourcesForProjectFile);
 
@@ -128,7 +132,7 @@ namespace Crayon.Translator.CSharp
                     replacements),
             };
 
-            files[projectId + "/Assets/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            files[projectId + "/Assets/Text/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
 
             foreach (string filename in new string[] {
                 "AssemblyInfo",

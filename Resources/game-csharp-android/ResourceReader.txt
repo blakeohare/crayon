@@ -85,7 +85,7 @@ namespace %%%PROJECT_ID%%%
 
         public static string ReadTextResource(string path)
         {
-            byte[] bytes = ReadAsset(path);
+            byte[] bytes = ReadAsset("Text/" + path);
             if (bytes == null)
             {
                 return null;
