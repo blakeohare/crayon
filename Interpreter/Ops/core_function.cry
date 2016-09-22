@@ -491,6 +491,14 @@
 			output = VALUE_FALSE;
 		}
 		break;
+
+	case 33: $_comment('isAndroid');
+		if (%%%IS_ANDROID%%%) {
+			output = VALUE_TRUE;
+		} else {
+			output = VALUE_FALSE;
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

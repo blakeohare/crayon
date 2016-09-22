@@ -5,6 +5,11 @@ COPYFILES: csharp: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
 END
 
 BEGIN
+APPLICABLE-TO: game-csharp-android
+COPYFILES: csharp-android: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
+END
+
+BEGIN
 APPLICABLE-TO: game-java-awt
 COPYFILES: java: src/crayonlib/fileiocommon/%FILE%
 END

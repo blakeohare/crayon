@@ -34,6 +34,7 @@
         SLEEP = 30,
         PROJECT_ID = 31,
         IS_JAVASCRIPT = 32,
+        IS_ANDROID = 33,
     }
 
     public static class CoreFunctionIDHelper
@@ -74,6 +75,7 @@
                 case "sleep": return (int)CoreFunctionID.SLEEP;
                 case "projectId": return (int)CoreFunctionID.PROJECT_ID;
                 case "isJavaScript": return (int)CoreFunctionID.IS_JAVASCRIPT;
+                case "isAndroid": return (int)CoreFunctionID.IS_ANDROID;
                 default: return -1;
             }
         }

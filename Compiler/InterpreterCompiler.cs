@@ -93,6 +93,7 @@ namespace Crayon
             replacements.Add("INT_IS_FLOOR", this.platform.IntIsFloor ? "true" : "false");
             replacements.Add("IS_THREAD_BLOCKING_ALLOWED", this.platform.IsThreadBlockingAllowed ? "true" : "false");
             replacements.Add("IS_JAVASCRIPT", this.platform.LanguageId == LanguageId.JAVASCRIPT ? "true" : "false");
+            replacements.Add("IS_ANDROID", this.platform.PlatformShortId == "game-csharp-android" ? "true" : "false");
             return replacements;
         }
 

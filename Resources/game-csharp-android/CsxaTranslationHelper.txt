@@ -5,6 +5,11 @@ namespace %%%PROJECT_ID%%%
 {
 	public static class CsxaTranslationHelper
 	{
+        public static string GetUserDataDirectory(string projectId)
+        {
+            return System.IO.Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, projectId);
+        }
+
 		public static int GetMaxTextureSize() {
 			return 1024;
 		}
