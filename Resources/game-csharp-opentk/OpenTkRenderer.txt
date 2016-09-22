@@ -466,7 +466,7 @@ namespace %%%PROJECT_ID%%%
                             cropHeight = commands[i | 5];
 							
 							croppedLeft = textureLeft + textureWidth * ax / width;
-							croppedRight = croppedLeft + textureWidth * (ax + cropWidth) / width;
+							croppedRight = textureLeft + textureWidth * (ax + cropWidth) / width;
 							croppedTop = textureTop + textureHeight * ay / height;
 							croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
 
