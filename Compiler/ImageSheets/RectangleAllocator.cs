@@ -58,7 +58,7 @@ namespace Crayon.ImageSheets
                  * Create some sort of threshold where tiles can be combined.
                  * Add a flag to disable tiling (i.e. 1 chunk = 1 tile) for non-JS platoforms.
                  */
-                Image[] sortedImages = images.OrderBy(img => GetSortKey(img)).ToArray();
+                Image[] sortedImages = tileableImages.OrderBy(img => GetSortKey(img)).ToArray();
                 Chunk currentChunk = null;
 
                 int x = 0;

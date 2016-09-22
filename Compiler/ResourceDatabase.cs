@@ -226,12 +226,16 @@ namespace Crayon
                         manifest.Add("C," + width + "," + height);
                         foreach (ImageSheets.Tile tile in chunk.Tiles)
                         {
-                            tile.GeneratedFilename = "t" + (tileCounter++) + (chunk.IsJPEG ? ".jpg" : ".png");
+                            tile.GeneratedFilename = "t" + (tileCounter++) + ".png";
                             manifest.Add("T," + tile.GeneratedFilename + "," + tile.ChunkX + "," + tile.ChunkY + "," + tile.Width + "," + tile.Height + "," + tile.Bytes);
 
                             if (tile.IsDirectCopy)
                             {
-                                this.ImageSheetFiles[tile.GeneratedFilename] = tile.OriginalFile;
+                                this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
+                                {
+                                    Bitmap = tile.OriginalFile.Bitmap,
+                                    Type = FileOutputType.Image,
+                                };
                             }
                             else
                             {

@@ -20,6 +20,16 @@ namespace Crayon.ImageSheets
 
         public void GenerateTiles()
         {
+            if (this.IsJPEG)
+            {
+                return;
+            }
+
+            if (this.Width != 1024 || this.Height != 1024)
+            {
+                return;
+            }
+
             Tile[] tiles = new Tile[16];
             SystemBitmap.Graphics[] graphics = new SystemBitmap.Graphics[16];
             foreach (Image member in this.Members)
