@@ -6,6 +6,8 @@
 
 import inline "FrameworkFunctions/1_arg.cry";
 
-string1 = $_cast('string', Value$arg1.internalValue);
-string2 = $_lib_userdata_getProjectSandboxDirectory(string1);
-output = buildString(string2);
+if (%%%IS_ANDROID%%% || %%%IS_JAVASCRIPT%%%) {
+	string1 = $_cast('string', Value$arg1.internalValue);
+	string2 = $_lib_userdata_getProjectSandboxDirectory(string1);
+	output = buildString(string2);
+}
