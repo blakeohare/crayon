@@ -12,6 +12,8 @@
 */
 import inline "FrameworkFunctions/6_arg.cry";
 
+// The output (arg2) is an uninitialized GraphicsTexture
+// Create a copy of the original (arg1) GraphicsTexture's nativeData.
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
@@ -19,7 +21,6 @@ objArray2 = $_new_array('object', 7);
 ObjectInstance$objInstance2.nativeData = objArray2;
 bool1 = $_cast('bool', Value$arg3.internalValue);
 bool2 = $_cast('bool', Value$arg4.internalValue);
-
 i = 6;
 while (i >= 0) {
 	$_array_set(objArray2, i, $_array_get(objArray1, i));
@@ -27,6 +28,9 @@ while (i >= 0) {
 }
 
 if (%%%LIB_GRAPHICS_USES_TEXTURE_ATLAS%%%) {
+
+	// For texture atlas based frameworks, simply swap the left-right and top-bottom bounds.
+
 	/*
 		objArray1[1] -> texture left
 		objArray1[2] -> texture top
@@ -45,28 +49,27 @@ if (%%%LIB_GRAPHICS_USES_TEXTURE_ATLAS%%%) {
 	}
 	
 } else {
-	// objArray2 is the nativeData of the GraphicsTexture. It's [0] element must be set to the nativeData of the 
-	// the new GraphicsTextureResource, which will now be objArray1.
-	objArray1 = $_new_array('object', 6);
-	$_array_set(objArray2, 0, objArray1);
-	// we no longer need objArray2 (the native data of the GraphicsTexture).
-	// set objArray2 now to the nativeData of the original GraphicsTextureResource.
-	objInstance1 = $_cast('ObjectInstance', Value$arg5.internalValue);
-	objArray2 = ObjectInstance$objInstance1.nativeData;
-	// and then copy it to the new one.
-	for (i = 5; i >= 0; i -= 1) {
-		$_array_set(objArray1, i, $_array_get(objArray2, i));
-	}
-	// Now set the new native data to the new GraphicsTextureResource in arg6
-	objInstance1 = $_cast('ObjectInstance', Value$arg5.internalValue);
-	ObjectInstance$objInstance1.nativeData = objArray1;
+
+	// For non-texture atlas based frameworks, the GraphicsTextureResource is a copy and can be 
+	// freely manipulated. However, the GraphicsTexture.NativeData[0] pointer is to the old
+	// GraphicsTextureResource and must be updated to the new one on arg6. 
 	
-	// This is the actual image instance
+	// the new GraphicsTextureResource
+	objInstance1 = $_cast('ObjectInstance', Value$arg6.internalValue);
+	objArray1 = ObjectInstance$objInstance1.nativeData;
+	
+	// the new GraphicsTexture (which current points to the old GraphicsTextureResource)
+	objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
+	// update to point to the new one (i.e. objArray1)
+	$_array_set(ObjectInstance$objInstance2.nativeData, 0, objArray1);
+	
+	// Now do the actual flipping. The bitmap is located in nativeData[3]
 	object1 = $_array_get(objArray1, 3);
 	// Do the flip.
 	object1 = $_lib_graphics_flipTexture(object1, bool1, bool2);
-	// And apply it back to the nativeData.
 	$_array_set(objArray1, 3, object1);
 }
 
+// return the new GraphicsTexture so that this system call can return directly from user code and 
+// save one single VM cycle.
 output = arg2;
