@@ -110,7 +110,7 @@ namespace %%%PROJECT_ID%%%
             if (vmStatus == 1 || // finished
                 vmStatus == 3) // error
             {
-                // TODO: force exit app here.
+                System.Environment.Exit(1);
             }
         }
 
