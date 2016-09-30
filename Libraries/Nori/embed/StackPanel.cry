@@ -1,0 +1,103 @@
+namespace Nori {
+	
+	enum StackOrientation {
+		TOP_DOWN,
+		BOTTOM_UP,
+		LEFT_RIGHT,
+		RIGHT_LEFT,
+	}
+	
+	class StackPanel : Panel {
+		field orientation = StackOrientation.TOP_DOWN;
+		
+		constructor() : base() { }
+		
+		function renderCalculateSize(
+			isHorizontal,
+			availableSizePixels, // null for this means use compact layout scheme
+			defaultAlign,
+			forcedAlign) {
+			
+			nativeData = this.fauxNativeData;
+			
+			if (isHorizontal
+				? (this.orientation == StackOrientation.TOP_DOWN || this.orientation == StackOrientation.BOTTOM_UP)
+				: (this.orientation == StackOrientation.LEFT_RIGHT || this.orientation == StackOrientation.RIGHT_LEFT)) {
+				
+				// Layout in the transverse direction of the stack panel flow.
+				// Basically everything is occupying the same space and this call should just be treated as a passthrough.
+				
+				if (availableSizePixels == null) {
+					// render children first, then figure out max.
+					maxSize = 0;
+					for (child : this.children) {
+						child.renderCalculateSize(isHorizontal, null, null, null);
+						size = child.fauxNativeData[isHorizontal ? 'render-outer-width' : 'render-outer-height'];
+						if (size > maxSize) {
+							maxSize = size;
+						}
+					}
+					if (isHorizontal) {
+						marginLeft = nativeData.get('margin-left', 0);
+						marginRight = nativeData.get('margin-right', 0);
+						fullSize = marginLeft + maxSize + marginRight;
+						nativeData['render-outer-width'] = fullSize;
+						nativeData['render-outer-x'] = 0;
+						nativeData['render-inner-width'] = maxSize;
+						nativeData['render-inner-x'] = marginLeft;
+					} else {
+						marginTop = nativeData.get('margin-top', 0);
+						marginBottom = nativeData.get('margin-bottom', 0);
+						fullSize = marginTop + maxSize + marginBottom;
+						nativeData['render-outer-height'] = fullSize;
+						nativeData['render-outer-y'] = 0;
+						nativeData['render-inner-height'] = maxSize;
+						nativeData['render-inner-y'] = marginTop;
+					}
+					// now the stack frame is fixed width.
+				} else {
+					// calculate your own layout first, then apply to children.
+					base.renderCalculateSize(isHorizontal, availableSizePixels, defaultAlign, forcedAlign);
+				}
+				
+				innerSize = nativeData[isHorizontal ? 'render-inner-width' : 'render-inner-height'];
+				for (child : this.children) {
+					child.renderCalculateSize(isHorizontal, innerSize, Alignment.CENTER, null);
+				}
+			} else {
+				// This is the stacking direction.
+				// Final inner size should be the summation of the outer sizes of children
+				totalSize = 0;
+				for (child : this.children) {
+					child.renderCalculateSize(isHorizontal, null, null, null);
+					totalSize += child.fauxNativeData[isHorizontal ? 'render-outer-width' : 'render-outer-height'];
+				}
+				switch (this.orientation) {
+					case StackOrientation.TOP_DOWN:
+						y = 0;
+						for (child : this.children) {
+							if (y > 0) {
+								child.fauxNativeData['render-inner-y'] += y;
+								child.fauxNativeData['render-outer-y'] += y;
+							}
+							y += child.fauxNativeData['render-outer-height'];
+						}
+						break;
+					case StackOrientation.LEFT_RIGHT:
+						x = 0;
+						for (child : this.children) {
+							if (x > 0) {
+								child.fauxNativeData['render-inner-x'] += x;
+								child.fauxNativeData['render-outer-x'] += x;
+							}
+							x += child.fauxNativeData['render-outer-width'];
+						}
+						break;
+					default:
+						Core.fail("TODO");
+						break;
+				}
+			}
+		}
+	}
+}

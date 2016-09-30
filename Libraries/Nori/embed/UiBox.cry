@@ -1,0 +1,53 @@
+namespace Nori {
+
+	/*
+		Represents a physical set of elements that are rendered.
+		A UiBox corresponds to...
+		- A Window's renderable area excluding nested scroll panels
+		- A hover box (such as a tool tip)
+		- A scroll panel
+		
+		Each UI Box contains a single element, and a physically enforced width and height.
+		
+		It is important to note that a UI Box is not an element. Some elements _have_ a UIBox.
+		
+		For hit testing, the element is returned without recursing into UI Boxes.
+		If that element returned has a UI Box, then hit testing recurses into it.
+		
+	*/
+	class UiBox {
+		
+		/*
+			nativeData[0] -> actual platform ui container (<div>, Border, JPane, etc.)
+		*/
+		
+		field element;
+		field width;
+		field height;
+		
+		constructor(element, width, height) {
+			this.element = element;
+			this.width = width;
+			this.height = height;
+		}
+		
+		function renderCalculateSize(
+			isHorizontal,
+			availableSizePixels, // null for this means use compact layout scheme
+			defaultAlign,
+			forcedAlign) {
+			
+			availableSize = isHorizontal ? this.width : this.height;
+			
+			if (this.element != null) {
+				this.element.renderCalculateSize(isHorizontal, availableSize, defaultAlign, forcedAlign);
+			}
+		}
+		
+		function render(parentUiBox) {
+			if (this.element != null) {
+				this.element.render(this);
+			}
+		}
+	}
+}

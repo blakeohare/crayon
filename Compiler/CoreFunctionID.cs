@@ -35,6 +35,7 @@
         PROJECT_ID = 31,
         IS_JAVASCRIPT = 32,
         IS_ANDROID = 33,
+        ALLOC_NATIVE_DATA = 34,
     }
 
     public static class CoreFunctionIDHelper
@@ -76,6 +77,7 @@
                 case "projectId": return (int)CoreFunctionID.PROJECT_ID;
                 case "isJavaScript": return (int)CoreFunctionID.IS_JAVASCRIPT;
                 case "isAndroid": return (int)CoreFunctionID.IS_ANDROID;
+                case "allocNativeData": return (int)CoreFunctionID.ALLOC_NATIVE_DATA;
                 default: return -1;
             }
         }

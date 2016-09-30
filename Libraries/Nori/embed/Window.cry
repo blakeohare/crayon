@@ -1,84 +1,67 @@
-import Math;
-
 namespace Nori {
-
-	/*
-		nativeData[0] -> root UI element
-		nativeData[1] -> platform window object
-	*/
-
+	
 	class Window {
-		field content = null;
 		
-		field bounds = [0, 0, 600, 400];
 		field result = null;
-		field _isShown = false;
-		field _closeTimeResumeToken = null;
+		field uiBox = null;
+		field title = 'Window';
+		field width = 500;
+		field height = 300;
 		
-		constructor() { }
-		
-		function close() {
-			$$lib_nori_closeWindowAndMaybeResumeExecution(this, this._closeTimeResumeToken);
+		constructor() {
+			$$$('allocNativeData', this, 1);
 		}
 		
-		function show() { return this._showImpl(true); }
-		function showNonBlocking() { return this._showImpl(false); }
+		function onLoad() {
+			// override me.
+		}
 		
-		function _showImpl(blocking) {
-			if (this._isShown)
-				Core.assert(false, "Window is already shown.");
-			this._isShown = true;
-			
-			token = Core.getCurrentExecutionToken();
-			instantResumeToken = null;
-			this._closeTimeResumeToken = null;
-			if (blocking) {
-				this._closeTimeResumeToken = token;
+		function setTitle(title) {
+			this.title = title;
+			return this;
+		}
+		
+		function setWidth(width) {
+			this.width = width;
+			return this;
+		}
+		
+		function setHeight(height) {
+			this.height = height;
+			return this;
+		}
+		
+		function show() {
+			return this._showImpl(false);
+		}
+		
+		function showBlocking() {
+			return this._showImpl(true);
+		}
+		
+		function _showImpl(isBlocking) {
+			if (isBlocking) {
+				onOpenExecId = null;
+				onCloseExecId = $$$('execId');
 			} else {
-				instantResumeToken = token;
+				onOpenExecId = $$$('execId');
+				onCloseExecId = null;
 			}
 			
-			$$lib_nori_openWindowAndSuspendExecution(
-				this,
-				Math.floor(this.bounds[2]),
-				Math.floor(this.bounds[3]),
-				this._internalRender,
-				this._invokeMouseEvent,
-				this._closeTimeResumeToken,
-				instantResumeToken);
+			$$lib_nori_windowShow(
+				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad);
 			
-			return blocking ? this.result : null;
-		}
-			
-		function _invokeMouseEvent(sender, handlers, button, x, y) {
-			for (handler : handlers) {
-				handler(sender, new MouseEventArgs(button, x, y));
+			if (isBlocking) {
+				return this.result;
 			}
 		}
 		
-		function findElement(id) {
-			if (this.content != null) {
-				return this.content.findElement(id);
-			}
-		}
-		
-		function setSize(width, height) {
-			this.bounds[2] = Math.floor(width);
-			this.bounds[3] = Math.floor(height);
-			return this;
-		}
-		
-		function setContent(element) {
-			this.content = element;
-			return this;
-		}
-		
-		field boundsOut = [null] * 4;
-		
-		function _internalRender() {
-			if (this.content != null) {
-				this.content._internalRender(this, this.bounds, this.boundsOut);
-			}
+		function render() {
+			this.uiBox.width = this.width;
+			this.uiBox.height = this.height;
+			this.uiBox.renderCalculateSize(true, this.width, Alignment.STRETCH, null);
+			this.uiBox.renderCalculateSize(false, this.height, Alignment.STRETCH, null);
+			this.uiBox.render(null);
 		}
 	}
 }

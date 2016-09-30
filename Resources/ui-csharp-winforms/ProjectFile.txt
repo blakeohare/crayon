@@ -74,6 +74,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Libraries\*\*.cs" />
   </ItemGroup>
   <ItemGroup>
 %%%EMBEDDED_RESOURCES%%%

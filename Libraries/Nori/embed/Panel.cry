@@ -1,0 +1,19 @@
+namespace Nori {
+	
+	class Panel : Element {
+		
+		field children = [];
+		field xOffsets = [];
+		field yOffsets = [];
+		
+		constructor() : base() {
+			this.isPanel = true;
+		}
+		
+		function render(uiBox, xOffset, yOffset) {
+			for (child : this.children) {
+				child.render(uiBox);
+			}
+		}
+	}
+}

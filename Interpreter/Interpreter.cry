@@ -103,6 +103,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('ObjectInstance') objInstance2 = null;
 	@type('object') object1 = null;
 	@type('object') object2 = null;
+	@type('object') object3 = null;
 	@type('List<Value>') list1 = null;
 	@type('List<Value>') list2 = null;
 	@type('DictImpl') dictImpl = null;
