@@ -13,11 +13,11 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             {
                 this.Load += (sender, e) => { this.LoadHandler(); };
                 this.FormClosed += (sender, e) => { this.PostCloseHandler(); };
+                this.ClientSizeChanged += (sender, e) => { this.SizeChangedHandler(this.ClientSize.Width, this.ClientSize.Height); };
             }
 
             private void LoadHandler()
             {
-                TranslationHelper.RunInterpreter(this.RenderFunctionPointer);
                 TranslationHelper.RunInterpreter(this.OnLoadFunctionPointer);
 
                 if (!this.IsBlocking)
@@ -34,6 +34,12 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                     // Continue on with the VM context that launched this window.
                     TranslationHelper.RunInterpreter(this.BackgroundExecutionContextId);
                 }
+            }
+
+            private void SizeChangedHandler(int newWidth, int newHeight)
+            {
+                // TODO: update width and height properties
+                TranslationHelper.RunInterpreter(this.RenderFunctionPointer);
             }
         }
 
@@ -52,12 +58,15 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             bool isBlocking,
             int currentExecutionContextId,
             Value renderFunctionPointer,
-            Value onLoadFunctionPointer)
+            Value onLoadFunctionPointer,
+            int width,
+            int height)
         {
             NoriWindow window = (NoriWindow)nativeWindowInstance;
             window.IsBlocking = isBlocking;
             window.RenderFunctionPointer = renderFunctionPointer;
             window.OnLoadFunctionPointer = onLoadFunctionPointer;
+            window.ClientSize = new System.Drawing.Size(width, height);
 
             TranslationHelper.RunInterpreter(renderFunctionPointer);
             if (isBlocking)

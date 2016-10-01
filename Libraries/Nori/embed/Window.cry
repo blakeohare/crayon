@@ -59,7 +59,7 @@ namespace Nori {
 			}
 			
 			$$lib_nori_windowShow(
-				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad);
+				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad, this.width, this.height);
 			
 			if (isBlocking) {
 				return this.result;
