@@ -17,5 +17,13 @@ namespace Nori {
 			$$lib_nori_render_rectangleLayout(this, uiBox, x, y, width, height);
 			$$lib_nori_render_rectangleVisuals(this, this.red, this.green, this.blue, this.alpha);
 		}
+		
+		function setColor(r, g, b, a = 255) {
+			this.red = r;
+			this.green = g;
+			this.blue = b;
+			this.alpha = a;
+			return this;
+		}
 	}
 }

@@ -4,16 +4,26 @@ namespace Nori {
 		
 		field result = null;
 		field uiBox = null;
+		field content = null;
 		field title = 'Window';
 		field width = 500;
 		field height = 300;
 		
 		constructor() {
+			this.uiBox = new UiBox(this, this.width, this.height, false);
 			$$$('allocNativeData', this, 1);
+			$$lib_nori_windowInstantiate(this, this.uiBox);
 		}
 		
 		function onLoad() {
 			// override me.
+			print("==== Window onLoad ====");
+		}
+		
+		function setContent(element) {
+			this.content = element;
+			this.uiBox.setChild(element);
+			return this;
 		}
 		
 		function setTitle(title) {
@@ -59,8 +69,8 @@ namespace Nori {
 		function render() {
 			this.uiBox.width = this.width;
 			this.uiBox.height = this.height;
-			this.uiBox.renderCalculateSize(true, this.width, Alignment.STRETCH, null);
-			this.uiBox.renderCalculateSize(false, this.height, Alignment.STRETCH, null);
+			this.uiBox.renderCalculateSize(true, this.width, true, Alignment.STRETCH);
+			this.uiBox.renderCalculateSize(false, this.height, true, Alignment.STRETCH);
 			this.uiBox.render(null);
 		}
 	}

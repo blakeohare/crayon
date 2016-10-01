@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace %%%PROJECT_ID%%%.Library.Nori
 {
     internal static class WindowUtil
@@ -20,11 +17,13 @@ namespace %%%PROJECT_ID%%%.Library.Nori
 
             private void LoadHandler()
             {
-                CrayonWrapper.v_runInterpreterWithFunctionPointer(this.OnLoadFunctionPointer, new Value[0]);
+                TranslationHelper.RunInterpreter(this.RenderFunctionPointer);
+                TranslationHelper.RunInterpreter(this.OnLoadFunctionPointer);
+
                 if (!this.IsBlocking)
                 {
                     // Continue running the same VM context.
-                    CrayonWrapper.v_runInterpreter(this.BackgroundExecutionContextId);
+                    TranslationHelper.RunInterpreter(this.BackgroundExecutionContextId);
                 }
             }
 
@@ -33,14 +32,18 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                 if (this.IsBlocking)
                 {
                     // Continue on with the VM context that launched this window.
-                    CrayonWrapper.v_runInterpreter(this.BackgroundExecutionContextId);
+                    TranslationHelper.RunInterpreter(this.BackgroundExecutionContextId);
                 }
             }
         }
 
-        public static object InstaniateWindow()
+        public static void InstaniateWindow(object[] windowNativeData, object[] uiBoxNativeData)
         {
-            return new NoriWindow();
+            NoriWindow window = new NoriWindow();
+            System.Windows.Forms.Panel uiBoxPanel = new System.Windows.Forms.Panel();
+            window.Controls.Add(uiBoxPanel);
+            windowNativeData[0] = window;
+            uiBoxNativeData[0] = uiBoxPanel;
         }
 
         public static void ShowWindow(
@@ -56,7 +59,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             window.RenderFunctionPointer = renderFunctionPointer;
             window.OnLoadFunctionPointer = onLoadFunctionPointer;
 
-            CrayonWrapper.v_runInterpreterWithFunctionPointer(renderFunctionPointer, new Value[0]);
+            TranslationHelper.RunInterpreter(renderFunctionPointer);
             if (isBlocking)
             {
                 window.ShowDialog();

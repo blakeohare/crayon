@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace %%%PROJECT_ID%%%.Library.Nori
 {
@@ -13,7 +12,27 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             int width,
             int height)
         {
-            throw new Exception("Implement me");
+            Panel rectangle = rectangleObj as Panel;
+            if (rectangleObj == null)
+            {
+                rectangle = new Panel();
+                ((Panel)uiBoxObj).Controls.Add(rectangle);
+            }
+
+            rectangle.Location = new System.Drawing.Point(x, y);
+            rectangle.Size = new System.Drawing.Size(width, height);
+
+            return rectangle;
+        }
+
+        public static void UiBoxLayout(
+            object uiBoxObj,
+            int width,
+            int height,
+            bool clipping)
+        {
+            Panel uiBox = (Panel)uiBoxObj;
+            uiBox.Size = new System.Drawing.Size(width, height);
         }
     }
 }

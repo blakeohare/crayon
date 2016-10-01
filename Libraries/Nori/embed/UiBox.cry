@@ -21,32 +21,49 @@ namespace Nori {
 			nativeData[0] -> actual platform ui container (<div>, Border, JPane, etc.)
 		*/
 		
-		field element;
+		field parent;
+		field child;
 		field width;
 		field height;
+		field isClipping;
 		
-		constructor(element, width, height) {
-			this.element = element;
+		constructor(parent, width, height, isClipping) {
+			$$$('allocNativeData', this, 1);
+			this.parent = parent;
 			this.width = width;
 			this.height = height;
+			this.isClipping = isClipping;
+		}
+		
+		function setChild(element) {
+			this.child = element;
+			return this;
 		}
 		
 		function renderCalculateSize(
 			isHorizontal,
-			availableSizePixels, // null for this means use compact layout scheme
-			defaultAlign,
-			forcedAlign) {
+			containerSize,
+			shouldConstrainSize, // true for things like windows and hover boxes, false for clipping elements like scroll panels.
+			defaultAlign) { // Generally this is STRETCH for Windows and LEADING for other containers
 			
-			availableSize = isHorizontal ? this.width : this.height;
-			
-			if (this.element != null) {
-				this.element.renderCalculateSize(isHorizontal, availableSize, defaultAlign, forcedAlign);
+			if (isHorizontal) {
+				this.width = containerSize;
+			} else {
+				this.height = containerSize;
+			}
+			if (this.child != null) {
+				this.child.renderCalculateSize(
+					isHorizontal,
+					isHorizontal ? this.width : this.height,
+					defaultAlign,
+					null);
 			}
 		}
 		
 		function render(parentUiBox) {
-			if (this.element != null) {
-				this.element.render(this);
+			$$lib_nori_render_uiBoxLayout(this, this.width, this.height, this.isClipping);
+			if (this.child != null) {
+				this.child.render(this);
 			}
 		}
 	}

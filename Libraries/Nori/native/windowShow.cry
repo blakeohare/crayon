@@ -11,10 +11,6 @@ import inline "FrameworkFunctions/6_arg.cry";
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
 object1 = $_array_get(objArray1, 0);
-if (object1 == null) {
-	object1 = $_lib_nori_windowInstantiate();
-	$_array_set(objArray1, 0, object1);
-}
 
 string1 = $_cast('string', Value$arg2.internalValue);
 bool1 = $_cast('bool', Value$arg3.internalValue);

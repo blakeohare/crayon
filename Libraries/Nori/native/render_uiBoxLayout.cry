@@ -1,0 +1,15 @@
+﻿/*
+	arg 1: UI Box instance
+	arg 2: width
+	arg 3: height
+	arg 4: (bool) is clipping?
+*/
+import inline "FrameworkFunctions/4_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue); // UI Box instance
+object1 = $_array_get(ObjectInstance$objInstance1.nativeData, 0); // native UI Box container 
+$_lib_nori_render_uiBoxLayout(
+	object1,
+	$_cast('int', Value$arg2.internalValue),
+	$_cast('int', Value$arg3.internalValue),
+	$_cast('bool', Value$arg4.internalValue));

@@ -1,4 +1,5 @@
 $_lib_nori_render_rectangleLayout: Library.Nori.LayoutRenderer.RectangleLayout([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 $_lib_nori_render_rectangleVisuals: Library.Nori.VisualsRenderer.RectangleVisuals([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+$_lib_nori_render_uiBoxLayout: Library.Nori.LayoutRenderer.UiBoxLayout([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 $_lib_nori_windowShow: Library.Nori.WindowUtil.ShowWindow([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
-$_lib_nori_windowInstantiate: Library.Nori.WindowUtil.InstaniateWindow()
+$_lib_nori_windowInstantiate: Library.Nori.WindowUtil.InstaniateWindow([ARG:1], [ARG:2])

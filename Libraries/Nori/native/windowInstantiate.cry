@@ -1,0 +1,14 @@
+/*
+	arg 1: Window instance
+	arg 2: UI Box instance
+	
+	Set the native data instance for both.
+*/
+import inline "FrameworkFunctions/2_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
+
+$_lib_nori_windowInstantiate(
+	ObjectInstance$objInstance1.nativeData,
+	ObjectInstance$objInstance2.nativeData);

@@ -16,6 +16,24 @@ namespace %%%PROJECT_ID%%%
 			Environment.OSVersion.Platform == PlatformID.Win32Windows ||
 			Environment.OSVersion.Platform == PlatformID.WinCE;
 
+        public static void RunInterpreter(int executionContextId)
+        {
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreter(executionContextId));
+        }
+
+        public static void RunInterpreter(Value functionPointer, params Value[] args)
+        {
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreterWithFunctionPointer(functionPointer, args));
+        }
+
+        private static void CrashIfStatusIsBad(int status)
+        {
+            if (status == 3)
+            {
+                System.Environment.Exit(1);
+            }
+        }
+
 		public static void ShuffleInPlace(List<Value> list)
 		{
 			if (list.Count < 2) return;
@@ -126,11 +144,13 @@ namespace %%%PROJECT_ID%%%
 			}
 		}
 
-		public static bool AlwaysTrue() {
+		public static bool AlwaysTrue()
+		{
 			return true;
 		}
 
-		public static bool AlwaysFalse() {
+		public static bool AlwaysFalse()
+		{
 			return false;
 		}
 	}

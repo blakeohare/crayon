@@ -18,7 +18,9 @@ namespace Nori {
 		field fauxNativeData = {};
 		field isPanel = false;
 		
-		constructor() { }
+		constructor() {
+			$$$('allocNativeData', this, 2);
+		}
 		
 		function render(uiBox) {
 			// some elements do not render.
