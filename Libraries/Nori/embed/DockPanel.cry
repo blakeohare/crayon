@@ -9,6 +9,10 @@ namespace Nori {
 	class DockPanel : Panel {
 		constructor() : base() { }
 		
+		static function setDirection(element, direction) {
+			element.fauxNativeData['dock'] = direction;
+		}
+		
 		function renderCalculateSize(
 			isHorizontal,
 			availableSizePixels,
@@ -78,7 +82,8 @@ namespace Nori {
 					}
 					nativeData['render-inner-width'] = width;
 					nativeData['render-outer-width'] = outerWidth;
-					nativeData['render-outer-x'] = leadingMargin;
+					nativeData['render-outer-x'] = 0;
+					nativeData['render-margin-left'] = leadingMargin;
 				} else {
 					coordTop = 0;
 					coordBottom = childNativeData['render-outer-height'];
@@ -113,11 +118,81 @@ namespace Nori {
 					}
 					nativeData['render-inner-height'] = height;
 					nativeData['render-outer-height'] = outerHeight;
-					nativeData['render-outer-y'] = leadingMargin;
+					nativeData['render-outer-y'] = 0;
+					nativeData['render-margin-top'] = leadingMargin;
 				}
 			} else {
-				// Test out the logic above first.
-				Core.fail("Implement me!");
+				length = this.children.length;
+				offset = leadingMargin;
+				remainingAvailableSize = availableSizePixels - leadingMargin - trailingMargin;
+				innerWidth = remainingAvailableSize;
+				if (isHorizontal) {
+					for (i = 0; i < length - 1; ++i) {
+						child = this.children[i];
+						childNativeData = child.fauxNativeData;
+						switch (childNativeData.get('dock', DockDirection.TOP)) {
+							case DockDirection.TOP:
+							case DockDirection.BOTTOM:
+								child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
+								childNativeData['render-outer-x'] = offset;
+								break;
+							case DockDirection.LEFT:
+								child.renderCalculateSize(true, null, null, Alignment.LEADING);
+								childNativeData['render-outer-x'] = offset;
+								width = childNativeData['render-outer-width'];
+								offset += width;
+								remainingAvailableSize -= width;
+								break;
+							case DockDirection.RIGHT:
+								child.renderCalculateSize(true, null, null, Alignment.TRAILING);
+								width = childNativeData['render-outer-width'];
+								remainingAvailableSize -= width;
+								childNativeData['render-outer-x'] = offset + remainingAvailableSize;
+								break;
+						}
+					}
+					child = this.children[-1];
+					child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
+					child.fauxNativeData['render-outer-x'] = offset;
+					
+					nativeData['render-inner-width'] = innerWidth;
+					nativeData['render-outer-width'] = availableSizePixels;
+					nativeData['render-outer-x'] = 0;
+					nativeData['render-margin-left'] = leadingMargin;
+				} else {
+					for (i = 0; i < length - 1; ++i) {
+						child = this.children[i];
+						childNativeData = child.fauxNativeData;
+						switch (childNativeData.get('dock', DockDirection.TOP)) {
+							case DockDirection.LEFT:
+							case DockDirection.RIGHT:
+								child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
+								childNativeData['render-outer-y'] = offset;
+								break;
+							case DockDirection.TOP:
+								child.renderCalculateSize(false, null, null, Alignment.LEADING);
+								childNativeData['render-outer-y'] = offset;
+								height = childNativeData['render-outer-height'];
+								offset += height;
+								remainingAvailableSize -= height;
+								break;
+							case DockDirection.BOTTOM:
+								child.renderCalculateSize(false, null, null, Alignment.TRAILING);
+								height = childNativeData['render-outer-height'];
+								remainingAvailableSize -= height;
+								childNativeData['render-outer-y'] = offset + remainingAvailableSize;
+								break;
+						}
+					}
+					child = this.children[-1];
+					child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
+					child.fauxNativeData['render-outer-y'] = offset;
+					
+					nativeData['render-inner-height'] = innerWidth;
+					nativeData['render-outer-height'] = availableSizePixels;
+					nativeData['render-outer-y'] = 0;
+					nativeData['render-margin-top'] = leadingMargin;
+				}
 			}
 		}
 	}

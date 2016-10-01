@@ -7,6 +7,20 @@ namespace Nori {
 		TRAILING,
 	}
 	
+	enum HorizontalAlignment {
+		STRETCH = Alignment.STRETCH,
+		LEFT = Alignment.LEADING,
+		CENTER = Alignment.CENTER,
+		RIGHT = Alignment.TRAILING,
+	}
+	
+	enum VerticalAlignment {
+		STRETCH = Alignment.STRETCH,
+		TOP = Alignment.LEADING,
+		CENTER = Alignment.CENTER,
+		BOTTOM = Alignment.TRAILING,
+	}
+	
 	class Element {
 		/*
 			nativeData[0] -> Actual platform UI element
@@ -17,9 +31,36 @@ namespace Nori {
 		// goal is to eventually convert this to nativeData with integer lookups
 		field fauxNativeData = {};
 		field isPanel = false;
+		field alreadyAddedToUiTree = false;
 		
 		constructor() {
 			$$$('allocNativeData', this, 2);
+		}
+		
+		function setSize(width, height) {
+			this.fauxNativeData['suggested-width'] = width;
+			this.fauxNativeData['suggested-height'] = height;
+			return this;
+		}
+		
+		function setWidth(width) {
+			this.fauxNativeData['suggested-width'] = width;
+			return this;
+		}
+		
+		function setHeight(height) {
+			this.fauxNativeData['suggested-height'] = height;
+			return this;
+		}
+		
+		function setHorizontalAlignment(alignment) {
+			this.fauxNativeData['align-x'] = alignment;
+			return this;
+		}
+		
+		function setVerticalAlignment(alignment) {
+			this.fauxNativeData['align-y'] = alignment;
+			return this;
 		}
 		
 		function render(uiBox) {

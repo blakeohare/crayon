@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace %%%PROJECT_ID%%%.Library.Nori
@@ -33,6 +34,24 @@ namespace %%%PROJECT_ID%%%.Library.Nori
         {
             Panel uiBox = (Panel)uiBoxObj;
             uiBox.Size = new System.Drawing.Size(width, height);
+        }
+
+        public static void UiBoxRemoveElements(object panelObj, object[] elementsToRemove)
+        {
+            Panel panel = (Panel)panelObj;
+            HashSet<Control> removeThese = new HashSet<Control>();
+            for (int i = 0; i < elementsToRemove.Length; ++i)
+            {
+                removeThese.Add((Control)elementsToRemove[i]);
+            }
+
+            for (int i = panel.Controls.Count - 1; i >= 0; --i)
+            {
+                if (removeThese.Contains(panel.Controls[i]))
+                {
+                    panel.Controls.RemoveAt(i);
+                }
+            }
         }
     }
 }

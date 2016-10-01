@@ -3,3 +3,4 @@ $_lib_nori_render_rectangleVisuals: Library.Nori.VisualsRenderer.RectangleVisual
 $_lib_nori_render_uiBoxLayout: Library.Nori.LayoutRenderer.UiBoxLayout([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 $_lib_nori_windowShow: Library.Nori.WindowUtil.ShowWindow([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
 $_lib_nori_windowInstantiate: Library.Nori.WindowUtil.InstaniateWindow([ARG:1], [ARG:2])
+$_lib_nori_removeElementsFromUiBox: Library.Nori.LayoutRenderer.UiBoxRemoveElements([ARG:1], [ARG:2])
