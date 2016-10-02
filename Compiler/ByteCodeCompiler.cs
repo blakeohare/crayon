@@ -802,6 +802,7 @@ namespace Crayon
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
             else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
+            else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
             else throw new NotImplementedException();
         }
 
@@ -814,6 +815,13 @@ namespace Crayon
             {
                 throw new ParserException(token, "Cannot have this expression here. It does nothing. Did you mean to store this output into a variable or return it?");
             }
+        }
+
+        private void CompileIsComparison(Parser parser, ByteBuffer buffer, IsComparison isComp, bool outputUsed)
+        {
+            EnsureUsed(isComp.IsToken, outputUsed);
+            this.CompileExpression(parser, buffer, isComp.Expression, true);
+            buffer.Add(isComp.IsToken, OpCode.IS_COMPARISON, isComp.ClassDefinition.ClassID);
         }
 
         private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, Expression[] argsOverrideOrNull, Token tokenOverrideOrNull, bool outputUsed)

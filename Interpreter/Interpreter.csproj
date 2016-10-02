@@ -144,6 +144,7 @@
     <EmbeddedResource Include="ValueUtil.cry" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Ops\is_comparison.cry" />
     <None Include="PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

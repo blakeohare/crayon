@@ -202,18 +202,24 @@ namespace Crayon
 
         private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
 
-        private static Expression ParseInstantiate(TokenStream tokens, Executable owner)
+        private static string PopClassName(TokenStream tokens, Token firstToken)
         {
-            Token newToken = tokens.PopExpected("new");
-            Token classNameToken = tokens.Pop();
-            Parser.VerifyIdentifier(classNameToken);
-            string name = classNameToken.Value;
+            Parser.VerifyIdentifier(firstToken);
+            string name = firstToken.Value;
             while (tokens.PopIfPresent("."))
             {
                 Token nameNext = tokens.Pop();
                 Parser.VerifyIdentifier(nameNext);
                 name += "." + nameNext.Value;
             }
+            return name;
+        }
+
+        private static Expression ParseInstantiate(TokenStream tokens, Executable owner)
+        {
+            Token newToken = tokens.PopExpected("new");
+            Token classNameToken = tokens.Pop();
+            string name = PopClassName(tokens, classNameToken);
 
             List<Expression> args = new List<Expression>();
             tokens.PopExpected("(");
@@ -305,6 +311,13 @@ namespace Crayon
                         args.Add(Parse(tokens, owner));
                     }
                     root = new FunctionCall(root, openParen, args, owner);
+                }
+                else if (tokens.IsNext("is"))
+                {
+                    Token isToken = tokens.Pop();
+                    Token classToken = tokens.Pop();
+                    string className = PopClassName(tokens, classToken);
+                    root = new IsComparison(root, isToken, classToken, className, owner);
                 }
                 else
                 {
