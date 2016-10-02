@@ -13,6 +13,7 @@ namespace NoriXml {
 					'Grid': NoriXml.instantiate_Grid,
 					'Rectangle': NoriXml.instantiate_Rectangle,
 					'StackPanel': NoriXml.instantiate_StackPanel,
+					'TextArea': NoriXml.instantiate_TextArea,
 					'Window': NoriXml.instantiate_Window,
 				};
 			}

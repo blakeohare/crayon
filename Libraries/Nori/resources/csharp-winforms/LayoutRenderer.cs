@@ -26,6 +26,30 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             return rectangle;
         }
 
+        public static object TextAreaLayout(
+            object textAreaObj,
+            object uiBoxObj,
+            int x,
+            int y,
+            int width,
+            int height)
+        {
+            TextBox textArea = textAreaObj as TextBox;
+            if (textArea == null)
+            {
+                textArea = new TextBox()
+                {
+                    Multiline = true,
+                };
+                ((Panel)uiBoxObj).Controls.Add(textArea);
+            }
+
+            textArea.Location = new System.Drawing.Point(x, y);
+            textArea.Size = new System.Drawing.Size(width, height);
+
+            return textArea;
+        }
+
         public static void UiBoxLayout(
             object uiBoxObj,
             int width,

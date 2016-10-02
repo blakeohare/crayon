@@ -14,5 +14,11 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             Panel panel = (Panel)rectangleObj;
             panel.BackColor = System.Drawing.Color.FromArgb(alpha, red, green, blue);
         }
+
+        public static void TextAreaVisuals(
+            object textAreaObj)
+        {
+
+        }
     }
 }
