@@ -1,0 +1,147 @@
+import Nori;
+import XML;
+
+namespace NoriXml {
+	static class NoriXmlHelper {
+		static field constructorLookup = null;
+		
+		static function instantiateByName(name) {
+			if (NoriXmlHelper.constructorLookup == null) {
+				NoriXmlHelper.constructorLookup = {
+					'Canvas': NoriXml.instantiate_Canvas,
+					'DockPanel': NoriXml.instantiate_DockPanel,
+					'Grid': NoriXml.instantiate_Grid,
+					'Rectangle': NoriXml.instantiate_Rectangle,
+					'StackPanel': NoriXml.instantiate_StackPanel,
+					'Window': NoriXml.instantiate_Window,
+				};
+			}
+			
+			fp = NoriXmlHelper.constructorLookup.get(name);
+			if (fp == null) Core.fail("Could not instantiate element from XML: '" + name + "'");
+			return fp();
+		}
+		
+		static function applyAttribute(element, elementName, attributeName, attributeValue) {
+			switch (elementName) {
+				case 'Window': 
+					switch (attributeName) {
+						case 'title': return element.setTitle(attributeValue);
+						case 'width': return element.setWidth(NoriXmlHelper.getIntOrThrow(attributeName, attributeValue));
+						case 'height': return element.setHeight(NoriXmlHelper.getIntOrThrow(attributeName, attributeValue));
+					}
+			}
+			nd = element.fauxNativeData;
+			switch (attributeName) {
+				case 'horizontalAlignment':
+					switch (attributeValue) {
+						case 'stretch': nd['align-x'] = Nori.Alignment.STRETCH; return;
+						case 'left': nd['align-x'] = Nori.Alignment.LEADING; return;
+						case 'right': nd['align-x'] = Nori.Alignment.TRAILING; return;
+						case 'center': nd['align-x'] = Nori.Alignment.CENTER; return;
+						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+					}
+				case 'verticalAlignment':
+					switch (attributeValue) {
+						case 'stretch': nd['align-y'] = Nori.Alignment.STRETCH; return;
+						case 'top': nd['align-y'] = Nori.Alignment.LEADING; return;
+						case 'bottom': nd['align-y'] = Nori.Alignment.TRAILING; return;
+						case 'center': nd['align-y'] = Nori.Alignment.CENTER; return;
+						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+					}
+				case 'width': nd['suggested-width'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
+				case 'height': nd['suggested-height'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
+				case 'color':
+					color = NoriXmlHelper.getColorOrThrow(attributeName, attributeValue);
+					element.setColor(color[0], color[1], color[2], color[3]);
+					return;
+				case 'dock':
+					switch (attributeValue) {
+						case 'top': direction = Nori.DockDirection.TOP; break;
+						case 'bottom': direction = Nori.DockDirection.BOTTOM; break;
+						case 'left': direction = Nori.DockDirection.LEFT; break;
+						case 'right': direction = Nori.DockDirection.RIGHT; break;
+						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+					}
+					return DockPanel.setDirection(element, direction);
+					
+				default: break;
+			}
+			
+			Core.fail("TODO: extensible properties.");
+		}
+		
+		static function getColorOrThrow(name, value) {
+			switch (value) {
+				case 'red': return [255, 0, 0, 255];
+				case 'green': return [0, 128, 0, 255];
+				case 'blue': return [0, 0, 255, 255];
+				case 'yellow': return [255, 255, 0, 255];
+				case 'orange': return [255, 128, 0, 255];
+				case 'purple': return [128, 0, 128, 255];
+				case 'white': return [255, 255, 255, 255];
+				case 'black': return [0, 0, 0, 255];
+				case 'gray': return [128, 128, 128, 255];
+				case 'brown': return [128, 64, 0, 255];
+				case 'transparent': return [0, 0, 0, 0];
+			}
+			parts = value.split(',');
+			for (i = 0; i < parts.length; ++i) {
+				c = Core.parseInt(parts[i]);
+				if (c == null || c < 0 || c > 255) Core.fail("Invalid color component value for " + name + ": " + parts[i]);
+				parts[i] = c;
+			}
+			
+			if (parts.length == 3) parts.add(255);
+			if (parts.length != 4) Core.fail("Expected 3 or 4 color components for attribute " + name + ". Found '" + value + "' instead.");
+			return parts;
+		}
+		
+		static function getIntOrThrow(name, value) {
+			output = Core.parseInt(value);
+			if (output == null) {
+				Core.fail("The " + name + " attribute expects an integer. Found '" + value + "' instead.");
+			}
+			return output;
+		}
+		
+		static function invalidEnum(name, value) {
+			Core.fail("Unrecognized value for attribute " + name + ": '" + value + "'");
+		}
+	}
+	
+	function parse(xml) {
+		uiTree = XML.parse(xml);
+		return NoriXml.buildElement(uiTree, null);
+	}
+	
+	function buildElement(xmlElement, parent) {
+		name = xmlElement.name;
+		element = NoriXmlHelper.instantiateByName(name);
+		attributes = xmlElement.attributes;
+		for (attribute : attributes.keys()) {
+			value = attributes[attribute];
+			NoriXmlHelper.applyAttribute(element, name, attribute, value);
+		}
+		
+		if (xmlElement.children.length > 0) {
+			children = [];
+			for (child : xmlElement.children) {
+				if (child.type == NodeType.ELEMENT) {
+					children.add(buildElement(child, element));
+				}
+			}
+			
+			if (name == 'Window') {
+				Core.assert(children.length == 1, "Window cannot have more than one child.");
+				element.setContent(children[0]);
+			} else {
+				for (child : children) {
+					element.addChild(child);
+				}
+			}
+		}
+		
+		return element;
+	}
+}

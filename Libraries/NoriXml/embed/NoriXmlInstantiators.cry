@@ -1,0 +1,10 @@
+import Nori;
+
+namespace NoriXml {
+	function instantiate_Canvas() { return new Nori.Canvas(); }
+	function instantiate_DockPanel() { return new Nori.DockPanel(); }
+	function instantiate_Grid() { return new Nori.Grid(); }
+	function instantiate_Rectangle() { return new Nori.Rectangle(); }
+	function instantiate_StackPanel() { return new Nori.StackPanel(); }
+	function instantiate_Window() { return new Nori.Window(); }
+}
