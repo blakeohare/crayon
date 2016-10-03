@@ -4,6 +4,17 @@ namespace %%%PROJECT_ID%%%
 {
     static class WinFormsTranslationHelper
     {
+        private static System.Drawing.Icon defaultIconCache = null;
+        internal static System.Drawing.Icon GetDefaultIcon()
+        {
+            if (defaultIconCache == null)
+            {
+                System.Drawing.Bitmap icon = ResourceReader.ReadImageFile("DefaultIcon.png");
+                defaultIconCache = System.Drawing.Icon.FromHandle(icon.GetHicon());
+            }
+            return defaultIconCache;
+        }
+
         internal static int TODO_deleteFile()
         {
             throw new NotImplementedException();

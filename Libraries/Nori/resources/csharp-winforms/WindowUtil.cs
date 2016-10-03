@@ -44,6 +44,8 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                 this.Load += (sender, e) => { this.LoadHandler(); };
                 this.FormClosed += (sender, e) => { this.PostCloseHandler(); };
                 this.ClientSizeChanged += (sender, e) => { this.SizeChangedHandler(this.ClientSize.Width, this.ClientSize.Height); };
+
+                this.Icon = WinFormsTranslationHelper.GetDefaultIcon();
             }
 
             private void LoadHandler()
