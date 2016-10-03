@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace %%%PROJECT_ID%%%.Library.Nori
@@ -15,8 +16,12 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             public Panel MenuHost { get; set; }
             public Panel ContentHost { get; set; }
 
-            public NoriWindow() : base()
+            private List<Value> sizeRelay;
+
+            public NoriWindow(List<Value> sizeRelay) : base()
             {
+                this.sizeRelay = sizeRelay;
+
                 this.MenuShown = false;
                 this.MenuHost = new Panel()
                 {
@@ -62,7 +67,10 @@ namespace %%%PROJECT_ID%%%.Library.Nori
 
             private void SizeChangedHandler(int newWidth, int newHeight)
             {
-                // TODO: update width and height properties
+                int menuHeight = this.MenuShown ? this.MainMenuStrip.Height : 0;
+                this.sizeRelay[0] = CrayonWrapper.v_buildInteger(newWidth);
+                this.sizeRelay[1] = CrayonWrapper.v_buildInteger(newHeight - menuHeight);
+
                 this.RunRenderer();
             }
 
@@ -96,9 +104,9 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             }
         }
 
-        public static void InstaniateWindow(object[] windowNativeData, object[] uiBoxNativeData)
+        public static void InstaniateWindow(object[] windowNativeData, object[] uiBoxNativeData, List<Value> sizeRelay)
         {
-            NoriWindow window = new NoriWindow();
+            NoriWindow window = new NoriWindow(sizeRelay);
             Panel uiBoxPanel = new System.Windows.Forms.Panel();
             window.ContentHost.Controls.Add(uiBoxPanel);
             windowNativeData[0] = window;

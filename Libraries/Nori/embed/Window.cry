@@ -10,16 +10,17 @@ namespace Nori {
 		field height = 300;
 		field menuBar = null;
 		field menuDirty = true;
+		field sizeRelay;
 		
 		constructor() {
+			this.sizeRelay = [this.width, this.height];
 			this.uiBox = new UiBox(this, this.width, this.height, false);
 			$$$('allocNativeData', this, 1);
-			$$lib_nori_windowInstantiate(this, this.uiBox);
+			$$lib_nori_windowInstantiate(this, this.uiBox, this.sizeRelay);
 		}
 		
 		function onLoad() {
 			// override me.
-			print("==== Window onLoad ====");
 		}
 		
 		function setContent(element) {
@@ -87,7 +88,8 @@ namespace Nori {
 		function render() {
 			if (this.menuDirty) this._updateMenu();
 			
-			// TODO: the menu may consume some vertical height which needs to be taken into account here.
+			this.width = this.sizeRelay[0];
+			this.height = this.sizeRelay[1];
 			
 			this.uiBox.width = this.width;
 			this.uiBox.height = this.height;
