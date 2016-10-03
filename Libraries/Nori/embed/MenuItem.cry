@@ -1,0 +1,87 @@
+namespace Nori {
+	enum ShortCutModifier {
+		CTRL, // represents the CTRL key on all platforms
+		CTRL_COMMAND, // represents CMD on OSX, but falls back to CTRL on other platforms.
+		COMMAND, // represents the CMD key on OSX (and will not exist on other platforms)
+		SHIFT,
+		ALT,
+		FN, // FUNCTION key (generally only on laptops)
+	}
+	
+	class MenuItem {
+		field text = '';
+		field shortcutText = '';
+		field items = [];
+		field isCheckbox = false;
+		field checked;
+		field isSeparator = false;
+		field command = null;
+		field isDirty = false;
+		field parent = null;
+		field window = null;
+		
+		constructor() { }
+		
+		function setCommand(command) {
+			this.command = command;
+			return this;
+		}
+		
+		function setText(text) {
+			this.text = text;
+			this.isDirty = true;
+			return this;
+		}
+		
+		function addChild(item) {
+			if (item.parent != null) Core.fail("Cannot add a menu item to the menu bar multiple times.");
+			item.parent = this;
+			this.isDirty = true;
+			this.items.add(item);
+		}
+		
+		function notifyWindowThatMenuIsDirty() {
+			if (this.window == null) {
+				walker = this.parent;
+				while (walker is Nori.MenuItem) {
+					if (walker == null) return;
+					if (walker.window != null) {
+						this.window = walker.window;
+						break;
+					}
+					walker = walker.parent;
+				}
+				if (walker != null) this.window = walker.window;
+				// If the top level MenuBar is not added to a window yet, window may still be null.
+			}
+			
+			if (this.window != null) {
+				this.window.menuDirty = true;
+			}
+		}
+		
+		function _getDescriptor() {
+			children = this.items.length == 0 ? null : [];
+			for (child : this.items) {
+				children.add(child._getDescriptor());
+			}
+			return [
+				true, // is menu item (not separator)
+				this.text,
+				true, // is enabled
+				this.checked == true,
+				this.shortcutText,
+				children,
+			];
+		}
+	}
+	
+	class MenuSeparator {
+		field isSeparator = true;
+		field isDirty = false;
+		constructor() { }
+		function _getDescriptor() {
+			return [false]; // is menu item (not separator)
+		}
+	}
+}

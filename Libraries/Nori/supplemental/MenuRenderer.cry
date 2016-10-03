@@ -1,0 +1,52 @@
+
+/*
+	menu items are indicated by a list of Crayon values
+	menuItem[0] -> true (is a menu item)
+	menuItem[1] -> text
+	menuItem[2] -> is enabled?
+	menuItem[3] -> has a checkbox?
+	menuItem[4] -> shortcut text
+	menuItem[5] -> children menu items or null
+	
+	These are all Value Lists and Value primitives. This function needs to convert them into 
+	object arrays and platform primitives for easier consumption by platform code.
+*/
+function @type('Array<object>') libNoriUnwrapMenus(@type('Value') menuBarList) {
+	
+	@type('List<Value>') items = $_cast('List<Value>', Value$menuBarList.internalValue);
+	@type('int') length = $_list_length(items);
+	@type('Array<object>') output = $_new_array('object', length);
+	
+	for (@type('int') i = 0; i < length; i += 1) {
+		@type('Value') item = $_array_get(items, i);
+		$_array_set(output, i, libNoriUnwrapMenuItem(item));
+	}
+	
+	return output;
+}
+
+function @type('Array<object>') libNoriUnwrapMenuItem(@type('Value') menuItemDescriptorArray) {
+	@type('List<Value>') menu = $_cast('List<Value>', Value$menuItemDescriptorArray.internalValue);
+	@type('Value') value = $_list_get(menu, 0);
+	@type('Array<object>') output = null;
+	
+	if ($_cast('bool', Value$value.internalValue)) {
+		output = $_new_array('object', 6);
+		$_array_set(output, 0, true);
+		value = $_list_get(menu, 1);
+		$_array_set(output, 1, $_cast('string', Value$value.internalValue));
+		value = $_list_get(menu, 2);
+		$_array_set(output, 2, $_cast('bool', Value$value.internalValue));
+		value = $_list_get(menu, 3);
+		$_array_set(output, 3, $_cast('bool', Value$value.internalValue));
+		value = $_list_get(menu, 4);
+		$_array_set(output, 4, $_cast('string', Value$value.internalValue));
+		value = $_list_get(menu, 5);
+		if (Value$value.type == Types.NULL) $_array_set(output, 5, null);
+		else $_array_set(output, 5, libNoriUnwrapMenus(value));
+	} else {
+		output = $_new_array('object', 1);
+		$_array_set(output, 0, false);
+	}
+	return output;
+}

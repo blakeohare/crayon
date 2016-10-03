@@ -8,6 +8,8 @@ namespace Nori {
 		field title = 'Window';
 		field width = 500;
 		field height = 300;
+		field menuBar = null;
+		field menuDirty = true;
 		
 		constructor() {
 			this.uiBox = new UiBox(this, this.width, this.height, false);
@@ -41,6 +43,19 @@ namespace Nori {
 			return this;
 		}
 		
+		function setMenu(menuBar) {
+			this.menuBar = menuBar;
+			this._updateMenu();
+			return this;
+		}
+		
+		function _updateMenu() {
+			if (this.menuDirty) {
+				$$lib_nori_windowUpdateMenu(this, this.menuBar == null ? null : Nori.MenuBar._buildList(this.menuBar));
+				this.menuDirty = false;
+			}
+		}
+		
 		function show() {
 			return this._showImpl(false);
 		}
@@ -50,6 +65,9 @@ namespace Nori {
 		}
 		
 		function _showImpl(isBlocking) {
+			
+			this._updateMenu();
+			
 			if (isBlocking) {
 				onOpenExecId = null;
 				onCloseExecId = $$$('execId');
@@ -67,6 +85,10 @@ namespace Nori {
 		}
 		
 		function render() {
+			if (this.menuDirty) this._updateMenu();
+			
+			// TODO: the menu may consume some vertical height which needs to be taken into account here.
+			
 			this.uiBox.width = this.width;
 			this.uiBox.height = this.height;
 			this.uiBox.renderCalculateSize(true, this.width, true, Alignment.STRETCH);

@@ -13,6 +13,7 @@ namespace Nori {
 		}
 		
 		function addChild(element) {
+			if (!element is Nori.Element) Core.fail("Only Nori.Element objects can be added to a panel.");
 			if (element.alreadyAddedToUiTree) Core.fail("Cannot change a UI Element's parent after it has already been set.");
 			element.alreadyAddedToUiTree = true;
 			if (this.onlyOneChild) {

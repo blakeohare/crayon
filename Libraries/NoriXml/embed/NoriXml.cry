@@ -5,12 +5,22 @@ namespace NoriXml {
 	static class NoriXmlHelper {
 		static field constructorLookup = null;
 		
+		static field isElement = {
+			'MenuBar': false,
+			'MenuItem': false,
+			'MenuSeparator': false,
+			'Window': false,
+		};
+		
 		static function instantiateByName(name) {
 			if (NoriXmlHelper.constructorLookup == null) {
 				NoriXmlHelper.constructorLookup = {
 					'Canvas': NoriXml.instantiate_Canvas,
 					'DockPanel': NoriXml.instantiate_DockPanel,
 					'Grid': NoriXml.instantiate_Grid,
+					'MenuBar': NoriXml.instantiate_MenuBar,
+					'MenuItem': NoriXml.instantiate_MenuItem,
+					'MenuSeparator': NoriXml.instantiate_MenuSeparator,
 					'Rectangle': NoriXml.instantiate_Rectangle,
 					'StackPanel': NoriXml.instantiate_StackPanel,
 					'TextArea': NoriXml.instantiate_TextArea,
@@ -23,50 +33,72 @@ namespace NoriXml {
 			return fp();
 		}
 		
+		static function elementDoesNotHaveAttribute(elementName, attributeName) {
+			return Core.fail("'" + elementName + "' does not have an attribute named '" + attributeName + "'");
+		}
+		
 		static function applyAttribute(element, elementName, attributeName, attributeValue) {
-			switch (elementName) {
-				case 'Window': 
+			if (!element is Nori.Element) {
+				if (element is Nori.Window) {
 					switch (attributeName) {
 						case 'title': return element.setTitle(attributeValue);
 						case 'width': return element.setWidth(NoriXmlHelper.getIntOrThrow(attributeName, attributeValue));
 						case 'height': return element.setHeight(NoriXmlHelper.getIntOrThrow(attributeName, attributeValue));
+						default: return NoriXmlHelper.elementDoesNotHaveAttribute(elementName, attributeName);
 					}
-			}
-			nd = element.fauxNativeData;
-			switch (attributeName) {
-				case 'horizontalAlignment':
-					switch (attributeValue) {
-						case 'stretch': nd['align-x'] = Nori.Alignment.STRETCH; return;
-						case 'left': nd['align-x'] = Nori.Alignment.LEADING; return;
-						case 'right': nd['align-x'] = Nori.Alignment.TRAILING; return;
-						case 'center': nd['align-x'] = Nori.Alignment.CENTER; return;
-						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
-					}
-				case 'verticalAlignment':
-					switch (attributeValue) {
-						case 'stretch': nd['align-y'] = Nori.Alignment.STRETCH; return;
-						case 'top': nd['align-y'] = Nori.Alignment.LEADING; return;
-						case 'bottom': nd['align-y'] = Nori.Alignment.TRAILING; return;
-						case 'center': nd['align-y'] = Nori.Alignment.CENTER; return;
-						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
-					}
-				case 'width': nd['suggested-width'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
-				case 'height': nd['suggested-height'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
-				case 'color':
-					color = NoriXmlHelper.getColorOrThrow(attributeName, attributeValue);
-					element.setColor(color[0], color[1], color[2], color[3]);
-					return;
-				case 'dock':
-					switch (attributeValue) {
-						case 'top': direction = Nori.DockDirection.TOP; break;
-						case 'bottom': direction = Nori.DockDirection.BOTTOM; break;
-						case 'left': direction = Nori.DockDirection.LEFT; break;
-						case 'right': direction = Nori.DockDirection.RIGHT; break;
-						default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
-					}
-					return DockPanel.setDirection(element, direction);
+				}
 					
-				default: break;
+				if (element is Nori.MenuItem) {
+					switch (attributeName) {
+						case 'text': return element.setText(attributeValue);
+						default: return NoriXmlHelper.elementDoesNotHaveAttribute(elementName, attributeName);
+					}
+				}
+			}
+			if (NoriXmlHelper.isElement.get(elementName, true)) {
+				nd = element.fauxNativeData;
+				switch (attributeName) {
+					case 'horizontalAlignment':
+						switch (attributeValue) {
+							case 'stretch': nd['align-x'] = Nori.Alignment.STRETCH; return;
+							case 'left': nd['align-x'] = Nori.Alignment.LEADING; return;
+							case 'right': nd['align-x'] = Nori.Alignment.TRAILING; return;
+							case 'center': nd['align-x'] = Nori.Alignment.CENTER; return;
+							default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+						}
+					case 'verticalAlignment':
+						switch (attributeValue) {
+							case 'stretch': nd['align-y'] = Nori.Alignment.STRETCH; return;
+							case 'top': nd['align-y'] = Nori.Alignment.LEADING; return;
+							case 'bottom': nd['align-y'] = Nori.Alignment.TRAILING; return;
+							case 'center': nd['align-y'] = Nori.Alignment.CENTER; return;
+							default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+						}
+					case 'width': nd['suggested-width'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
+					case 'height': nd['suggested-height'] = NoriXmlHelper.getIntOrThrow(attributeName, attributeValue); return;
+					case 'color':
+						color = NoriXmlHelper.getColorOrThrow(attributeName, attributeValue);
+						element.setColor(color[0], color[1], color[2], color[3]);
+						return;
+					case 'dock':
+						switch (attributeValue) {
+							case 'top': direction = Nori.DockDirection.TOP; break;
+							case 'bottom': direction = Nori.DockDirection.BOTTOM; break;
+							case 'left': direction = Nori.DockDirection.LEFT; break;
+							case 'right': direction = Nori.DockDirection.RIGHT; break;
+							default: return NoriXmlHelper.invalidEnum(attributeName, attributeValue);
+						}
+						return DockPanel.setDirection(element, direction);
+					case 'margin':
+						margin = NoriXmlHelper.getIntTupleOrThrow(attributeName, attributeValue, 4);
+						nd['margin-left'] = margin[0];
+						nd['margin-top'] = margin[1];
+						nd['margin-right'] = margin[2];
+						nd['margin-bottom'] = margin[3];
+						return;
+						
+					default: break;
+				}
 			}
 			
 			Core.fail("TODO: extensible properties.");
@@ -98,6 +130,20 @@ namespace NoriXml {
 			return parts;
 		}
 		
+		static function getIntTupleOrThrow(name, value, length) {
+			parts = value.split(',');
+			if (parts.length == 1) {
+				parts *= length;
+			}
+			if (parts.length != length) Core.fail("Expected 1 or " + length + " components for attribute '" + name + "'. Found " + parts.length + " instead.");
+			for (i = 0; i < length; ++i) {
+				v = Core.parseInt(parts[i]);
+				if (v == null) Core.fail("Unexpected value for attribute '" + name + "': '" + parts[i] + "'");
+				parts[i] = v;
+			}
+			return parts;
+		}
+		
 		static function getIntOrThrow(name, value) {
 			output = Core.parseInt(value);
 			if (output == null) {
@@ -113,10 +159,11 @@ namespace NoriXml {
 	
 	function parse(xml) {
 		uiTree = XML.parse(xml);
-		return NoriXml.buildElement(uiTree, null);
+		return NoriXml.buildElement(uiTree, null, null);
 	}
 	
-	function buildElement(xmlElement, parent) {
+	// TODO: get rid of parentName and use 'is' operator when ready.
+	function buildElement(xmlElement, parent, parentName) {
 		name = xmlElement.name;
 		element = NoriXmlHelper.instantiateByName(name);
 		attributes = xmlElement.attributes;
@@ -129,17 +176,33 @@ namespace NoriXml {
 			children = [];
 			for (child : xmlElement.children) {
 				if (child.type == NodeType.ELEMENT) {
-					children.add(buildElement(child, element));
+					children.add(buildElement(child, element, name));
 				}
 			}
 			
-			if (name == 'Window') {
-				Core.assert(children.length == 1, "Window cannot have more than one child.");
-				element.setContent(children[0]);
-			} else {
+			content = ''; // no-ops in the foreach loop if not set and doesn't require new allocation like an empty list.
+			if (element is Nori.Window) {
+				hasContent = false;
+				hasMenu = false;
 				for (child : children) {
-					element.addChild(child);
+					if (child is Nori.MenuBar) {
+						Core.assert(!hasMenu, "Window may only have one MenuBar");
+						hasMenu = true;
+						element.setMenu(child);
+					} else {
+						Core.assert(!hasContent, "Window may only have one content element.");
+						hasContent = true;
+						element.setContent(child);
+					}
 				}
+				
+			} else {
+				content = children;
+			}
+			
+			for (child : content) {
+				print(element);
+				element.addChild(child);
 			}
 		}
 		
