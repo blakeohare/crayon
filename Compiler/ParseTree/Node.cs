@@ -69,5 +69,25 @@ namespace Crayon.ParseTree
 
             return null;
         }
+
+        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, Executable> lookup, string[] imports, string name)
+        {
+            Executable ex = DoNameLookup(lookup, imports, name);
+            if (ex == null)
+            {
+                string message = "No class named '" + name + "' was found.";
+                if (name.Contains("."))
+                {
+                    message += " Did you forget to import a library?";
+                }
+                throw new ParserException(nameToken, message);
+            }
+
+            if (ex is ClassDefinition)
+            {
+                return (ClassDefinition)ex;
+            }
+            throw new ParserException(nameToken, "This is not a class.");
+        }
     }
 }

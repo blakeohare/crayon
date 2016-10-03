@@ -74,8 +74,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Libraries\*\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DefaultIcon.png" />
 %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
   <ItemGroup>

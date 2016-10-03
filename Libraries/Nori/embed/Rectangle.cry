@@ -1,48 +1,29 @@
 namespace Nori {
-
-	enum FillStyle {
-		SOLID,
-		GRADIENT,
-	}
-	
 	class Rectangle : Element {
-		static field DEFAULT_COLOR = [128, 128, 128, 255];
 		
-		field color; // null or [r, g, b]
-		field gradient; // null or [r, g, b, r, g, b, theta] // TODO: positioning params
-		field fillType = Nori.FillStyle.SOLID;
+		field red;
+		field green;
+		field blue;
+		field alpha;
 		
-		constructor() : base() {
-			
+		constructor() : base() { }
+		
+		function render(uiBox) {
+			nativeData = this.fauxNativeData;
+			x = nativeData['render-outer-x'] + nativeData['render-margin-left'];
+			y = nativeData['render-outer-y'] + nativeData['render-margin-top'];
+			width = nativeData['render-inner-width'];
+			height = nativeData['render-inner-height'];
+			$$lib_nori_render_rectangleLayout(this, uiBox, x, y, width, height);
+			$$lib_nori_render_rectangleVisuals(this, this.red, this.green, this.blue, this.alpha);
 		}
 		
 		function setColor(r, g, b, a = 255) {
-			if (this.color == null) this.color = [r, g, b, a];
-			else {
-				// TODO: this is probably going to be a painfully common pattern. So instead,
-				// you should create a native $_lib_nori_fastAssign(list, offset, var1, var2, ...)
-				this.color[0] = r;
-				this.color[1] = g;
-				this.color[2] = b;
-				this.color[3] = a;
-			}
+			this.red = r;
+			this.green = g;
+			this.blue = b;
+			this.alpha = a;
 			return this;
-		}
-		
-		function _internalRenderCreate(uiRoot, currentBounds) {
-			if (this.fillType == Nori.FillStyle.SOLID) {
-				$$lib_nori_rectangleSolidRenderCreate(uiRoot, this._handlers, this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
-			} else {
-				Core.assert(false); // Not implemented
-			}
-		}
-		
-		function _internalRenderUpdate(currentBounds) {
-			if (this.fillType == Nori.FillStyle.SOLID) {
-				$$lib_nori_rectangleSolidRenderUpdate(this, currentBounds, this.color ?? Rectangle.DEFAULT_COLOR);
-			} else {
-				Core.assert(false); // Not implemented
-			}
 		}
 	}
 }

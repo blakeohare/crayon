@@ -64,6 +64,12 @@ namespace Crayon.Translator.CSharp
                 }
             }
 
+            files[projectId + "/DefaultIcon.png"] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = Util.ReadResourceBytesInternally("ui-csharp-winforms/DefaultIcon.png"),
+            };
+
             List<string> embeddedResourceReplacement = new List<string>();
             foreach (string embeddedResource in embeddedResources)
             {

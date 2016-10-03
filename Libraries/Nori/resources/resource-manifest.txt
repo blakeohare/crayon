@@ -1,0 +1,5 @@
+
+BEGIN
+APPLICABLE-TO: ui-csharp-winforms
+COPYFILES: csharp-winforms: %PROJECT_ID%/Libraries/Nori/%FILE%
+END

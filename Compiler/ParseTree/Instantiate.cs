@@ -101,28 +101,7 @@ namespace Crayon.ParseTree
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
-
-            Executable ex = Expression.DoNameLookup(lookup, imports, this.Name);
-            if (ex == null)
-            {
-                string name = this.Name;
-                string message = "No class named '" + name + "' was found.";
-                if (name.Contains('.'))
-                {
-                    message += " Did you forget to import a library?";
-                }
-                throw new ParserException(this.NameToken, message);
-            }
-
-            if (ex is ClassDefinition)
-            {
-                this.Class = (ClassDefinition)ex;
-            }
-            else
-            {
-                throw new ParserException(this.NameToken, "This is not a class.");
-            }
-
+            this.Class = Node.DoClassLookup(this.NameToken, lookup, imports, this.Name);
             return this;
         }
 

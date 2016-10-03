@@ -30,6 +30,7 @@
         FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
         FUNCTION_DEFINITION, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
         INDEX,
+        IS_COMPARISON, // pops stack, checks if value is an instance of the given class, pushes a boolean. 1: class ID
         ITERATION_STEP, // stack is in the following state: [index, local scope ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
         JUMP,
         JUMP_IF_FALSE,

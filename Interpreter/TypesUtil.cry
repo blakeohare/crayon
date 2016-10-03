@@ -11,3 +11,16 @@
 		case Types.FUNCTION: return "function";
 	}
 }
+
+function @type('bool') isClassASubclassOf(@type('int') subClassId, @type('int') parentClassId) {
+	if (subClassId == parentClassId) return true;
+	@type('ProgramData') p = $_get_program_data();
+	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
+	@type('int') classIdWalker = subClassId;
+	while (classIdWalker != -1) {
+		if (classIdWalker == parentClassId) return true;
+		@type('ClassInfo') classInfo = $_array_get(classTable, classIdWalker);
+		classIdWalker = ClassInfo$classInfo.baseClassId;
+	}
+	return false;
+}

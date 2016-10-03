@@ -1,124 +1,173 @@
 namespace Nori {
-
-	/*
-		nativeData[0] -> native UI tree object
-	*/
-
-	enum _HandlerIndex {
-		MOUSE_DOWN = 0,
-		MOUSE_UP = 1,
-		MOUSE_ENTER = 2,
-		MOUSE_LEAVE = 3,
-		MOUSE_MOVE = 4,
+	
+	enum Alignment {
+		STRETCH,
+		LEADING,
+		CENTER,
+		TRAILING,
 	}
 	
-	enum MouseButton {
-		NONE = 0,
-		LEFT = 1,
-		CENTER = 2,
-		RIGHT = 3,
+	enum HorizontalAlignment {
+		STRETCH = Alignment.STRETCH,
+		LEFT = Alignment.LEADING,
+		CENTER = Alignment.CENTER,
+		RIGHT = Alignment.TRAILING,
 	}
 	
-	class MouseEventArgs {
-		field button;
-		field x;
-		field y;
-		constructor(button, x, y) {
-			this.button = button;
-			this.x = x;
-			this.y = y;
-		}
+	enum VerticalAlignment {
+		STRETCH = Alignment.STRETCH,
+		TOP = Alignment.LEADING,
+		CENTER = Alignment.CENTER,
+		BOTTOM = Alignment.TRAILING,
 	}
 	
 	class Element {
-		
-		field _id;
-		
-		// TODO: This isn't a very good mechanism.
-		// Should use a render-pass counter or something.
-		field inTree = false;
-		
-		field renderTemplate = null;
-		field children = null;
-		
 		/*
-			If null, use all default values.
-			Otherwise, this is a list of (possibly nullable) integers whose index
-			are described by _PositioningIndex
+			nativeData[0] -> Actual platform UI element
+			nativeData[1] -> Dictionary<int, int> eventually replace fauxNativeData.
+			
 		*/
-		field positioning = null;
-		static field DEFAULT_POSITIONING = [0, 0, 0, null, 0, 0, 0, null]; // call .clone on this when needed or just use ?? operator when derferencing positioning.
+		// dictionary of strings to values
+		// goal is to eventually convert this to nativeData with integer lookups
+		field fauxNativeData = {};
+		field isPanel = false;
+		field alreadyAddedToUiTree = false;
 		
-		field _handlers = [null] * 5;
-		
-		function addMouseDownHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_DOWN); }
-		function addMouseUpHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_UP); }
-		function addMouseEnterHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_ENTER); }
-		function addMouseLeaveHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_LEAVE); }
-		function addMouseMoveHandler(handler) { return this._addHandler(handler, _HandlerIndex.MOUSE_MOVE); }
-		
-		function _addHandler(handler, index) {
-			list = this._handlers[index];
-			if (list == null) { list = []; this._handlers[index] = list; }
-			return list.add(handler);
-		}
-		
-		constructor() { }
-		
-		function setId(id) {
-			this._id = id;
-			return this;
-		}
-		
-		function findElement(id) {
-			return null;
-		}
-		
-		function setLeft(x) {
-			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
-			this.positioning[_PositioningIndex.LEFT_MARGIN] = x;
-			return this;
-		}
-		
-		function setTop(y) {
-			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
-			this.positioning[_PositioningIndex.TOP_MARGIN] = y;
-			return this;
-		}
-		
-		function setPosition(x, y) {
-			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
-			this.positioning[_PositioningIndex.LEFT_MARGIN] = x;
-			this.positioning[_PositioningIndex.TOP_MARGIN] = y;
-			return this;
+		constructor() {
+			$$$('allocNativeData', this, 2);
 		}
 		
 		function setSize(width, height) {
-			if (this.positioning == null) this.positioning = Element.DEFAULT_POSITIONING.clone();
-			this.positioning[_PositioningIndex.WIDTH] = width;
-			this.positioning[_PositioningIndex.HEIGHT] = height;
+			this.fauxNativeData['suggested-width'] = width;
+			this.fauxNativeData['suggested-height'] = height;
 			return this;
 		}
 		
-		function _internalRenderUpdate(bounds) {
-			Core.assert(false);
+		function setWidth(width) {
+			this.fauxNativeData['suggested-width'] = width;
+			return this;
 		}
 		
-		function _internalRenderCreate(uiRoot, bounds) {
-			Core.assert(false);
+		function setHeight(height) {
+			this.fauxNativeData['suggested-height'] = height;
+			return this;
 		}
 		
-		function _internalRender(uiRoot, availableBounds, boundsOut) {
-			NORI_NATIVE_getBounds(
-				this.positioning ?? Element.DEFAULT_POSITIONING,
-				availableBounds,
-				boundsOut);
+		function setHorizontalAlignment(alignment) {
+			this.fauxNativeData['align-x'] = alignment;
+			return this;
+		}
+		
+		function setVerticalAlignment(alignment) {
+			this.fauxNativeData['align-y'] = alignment;
+			return this;
+		}
+		
+		function render(uiBox) {
+			// some elements do not render.
+		}
+		
+		function calculateDefaultSize() {
+			// Override as appropriate.
+			this.fauxNativeData['default-width'] = 0;
+			this.fauxNativeData['default-height'] = 0;
+		}
+		
+		function renderCalculateSize(
+			isHorizontal,
+			availableSizePixels, // null for this means use compact layout scheme
+			defaultAlign,
+			forcedAlign) {
 			
-			if (this.inTree) {
-				this._internalRenderUpdate(boundsOut);
+			nativeData = this.fauxNativeData;
+			align = forcedAlign ?? nativeData.get(isHorizontal ? 'align-x' : 'align-y') ?? defaultAlign;
+			leadingMargin = nativeData.get(isHorizontal ? 'margin-left' : 'margin-top', 0);
+			trailingMargin = nativeData.get(isHorizontal ? 'margin-right' : 'margin-bottom', 0);
+			suggestedSize = nativeData.get(isHorizontal ? 'suggested-width' : 'suggested-height', null);
+			
+			if (suggestedSize == null) {
+				if (nativeData.get('default-size-dirty', false)) {
+					this.calculateDefaultSize();
+					nativeData['default-size-dirty'] = false;
+				}
+				suggestedSize = nativeData.get(isHorizontal ? 'default-width' : 'default-height', 0);
+			}
+			
+			Element.renderPerformElementLayout(
+				nativeData, isHorizontal, leadingMargin, trailingMargin, suggestedSize, availableSizePixels, align);
+		}
+		
+		/*
+			Calculates coordinates based on layout factors.
+			
+			+-------OUTER-------+
+			|                   |
+			|   +---INNER----+  |
+			|   |            |  |
+			|   |            |  |
+			|   |            |  |
+			|   +------------+  |
+			|      MARGINS      |
+			+-------------------+
+			
+			render-inner-width: width of inner box
+			render-inner-height: height of inner box
+			render-margin-left: distance between outer and inner box left sides
+			render-margin-top: distance between outer and inner box top sides
+			render-outer-width: width of outer box
+			render-outer-height: height of outer box
+			render-outer-x: left of outer box
+			render-outer-y: top of outer box
+			
+			The top left corner of the outer box is assumed to be (0, 0) at the time this 
+			function ends, but outer-x and outer-y will be manipulated by panel layout logic
+			afterwards.
+		*/
+		static function renderPerformElementLayout(
+			fnd, isHorizontal, marginLeading, marginTrailing, suggestedSize, availableSize, alignment) {
+			
+			// TODO: convert this to a native function
+			
+			if (availableSize == null) {
+				innerSize = suggestedSize;
+				outerSize = suggestedSize + marginLeading + marginTrailing;
+				offset = marginLeading;
 			} else {
-				this.inTree = true;
-				this._internalRenderCreate(uiRoot, boundsOut);
+				switch (alignment) {
+					case Alignment.STRETCH:
+						outerSize = availableSize;
+						innerSize = availableSize - marginLeading - marginTrailing;
+						if (innerSize < 0) innerSize = 0;
+						offset = marginLeading;
+						break;
+					case Alignment.LEADING:
+						innerSize = suggestedSize;
+						outerSize = marginLeading + marginTrailing + suggestedSize;
+						offset = marginLeading;
+						break;
+					case Alignment.TRAILING:
+						innerSize = suggestedSize;
+						outerSize = marginLeading + marginTrailing + suggestedSize;
+						offset = availableSize - innerSize - marginTrailing;
+						break;
+					case Alignment.CENTER:
+						innerSize = suggestedSize;
+						outerSize = suggestedSize;
+						offset = (availableSize - suggestedSize) / 2;
+						break;
+				}
+			}
+			
+			if (isHorizontal) {
+				fnd['render-inner-width'] = innerSize;
+				fnd['render-outer-width'] = outerSize;
+				fnd['render-margin-left'] = offset;
+				fnd['render-outer-x'] = 0;
+			} else {
+				fnd['render-inner-height'] = innerSize;
+				fnd['render-outer-height'] = outerSize;
+				fnd['render-margin-top'] = offset;
+				fnd['render-outer-y'] = 0;
 			}
 		}
 	}

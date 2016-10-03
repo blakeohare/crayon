@@ -1,0 +1,31 @@
+/*
+	arg 1: window instance
+	arg 2: (string) title of the window
+	arg 3: (bool) is show blocking?
+	arg 4: (int) current execution context ID
+	arg 5: (function pointer) render
+	arg 6: (function pointer) onLoad
+	arg 7: (function pointer) invokeMenuHandler
+	arg 8: (int) width
+	arg 9: (int) height
+*/
+import inline "FrameworkFunctions/9_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+object1 = $_array_get(objArray1, 0);
+
+string1 = $_cast('string', Value$arg2.internalValue);
+bool1 = $_cast('bool', Value$arg3.internalValue);
+int1 = $_cast('int', Value$arg4.internalValue);
+
+// This is okay to call even if the platform doesn't require the VM to suspend.
+prepareToSuspend(ec, stack, valueStackSize, pc);
+
+$_lib_nori_windowShow(
+	object1,
+	string1,
+	bool1,
+	int1,
+	arg5, arg6, arg7,
+	$_cast('int', Value$arg8.internalValue), $_cast('int', Value$arg9.internalValue));

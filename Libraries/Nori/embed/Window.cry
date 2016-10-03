@@ -1,84 +1,108 @@
-import Math;
-
 namespace Nori {
-
-	/*
-		nativeData[0] -> root UI element
-		nativeData[1] -> platform window object
-	*/
-
+	
 	class Window {
-		field content = null;
 		
-		field bounds = [0, 0, 600, 400];
 		field result = null;
-		field _isShown = false;
-		field _closeTimeResumeToken = null;
+		field uiBox = null;
+		field content = null;
+		field title = 'Window';
+		field width = 500;
+		field height = 300;
+		field menuBar = null;
+		field menuDirty = true;
+		field sizeRelay;
 		
-		constructor() { }
-		
-		function close() {
-			$$lib_nori_closeWindowAndMaybeResumeExecution(this, this._closeTimeResumeToken);
+		constructor() {
+			this.sizeRelay = [this.width, this.height];
+			this.uiBox = new UiBox(this, this.width, this.height, false);
+			$$$('allocNativeData', this, 1);
+			$$lib_nori_windowInstantiate(this, this.uiBox, this.sizeRelay);
 		}
 		
-		function show() { return this._showImpl(true); }
-		function showNonBlocking() { return this._showImpl(false); }
-		
-		function _showImpl(blocking) {
-			if (this._isShown)
-				Core.assert(false, "Window is already shown.");
-			this._isShown = true;
-			
-			token = Core.getCurrentExecutionToken();
-			instantResumeToken = null;
-			this._closeTimeResumeToken = null;
-			if (blocking) {
-				this._closeTimeResumeToken = token;
-			} else {
-				instantResumeToken = token;
-			}
-			
-			$$lib_nori_openWindowAndSuspendExecution(
-				this,
-				Math.floor(this.bounds[2]),
-				Math.floor(this.bounds[3]),
-				this._internalRender,
-				this._invokeMouseEvent,
-				this._closeTimeResumeToken,
-				instantResumeToken);
-			
-			return blocking ? this.result : null;
-		}
-			
-		function _invokeMouseEvent(sender, handlers, button, x, y) {
-			for (handler : handlers) {
-				handler(sender, new MouseEventArgs(button, x, y));
-			}
-		}
-		
-		function findElement(id) {
-			if (this.content != null) {
-				return this.content.findElement(id);
-			}
-		}
-		
-		function setSize(width, height) {
-			this.bounds[2] = Math.floor(width);
-			this.bounds[3] = Math.floor(height);
-			return this;
+		function onLoad() {
+			// override me.
 		}
 		
 		function setContent(element) {
 			this.content = element;
+			this.uiBox.setChild(element);
 			return this;
 		}
 		
-		field boundsOut = [null] * 4;
+		function setTitle(title) {
+			this.title = title;
+			return this;
+		}
 		
-		function _internalRender() {
-			if (this.content != null) {
-				this.content._internalRender(this, this.bounds, this.boundsOut);
+		function setWidth(width) {
+			this.width = width;
+			return this;
+		}
+		
+		function setHeight(height) {
+			this.height = height;
+			return this;
+		}
+		
+		function setMenu(menuBar) {
+			this.menuBar = menuBar;
+			this._updateMenu();
+			return this;
+		}
+		
+		function _updateMenu() {
+			if (this.menuDirty) {
+				$$lib_nori_windowUpdateMenu(this, this.menuBar == null ? null : Nori.MenuBar._buildList(this.menuBar));
+				this.menuDirty = false;
 			}
 		}
+		
+		function show() {
+			return this._showImpl(false);
+		}
+		
+		function showBlocking() {
+			return this._showImpl(true);
+		}
+		
+		function _showImpl(isBlocking) {
+			
+			this._updateMenu();
+			
+			if (isBlocking) {
+				onOpenExecId = null;
+				onCloseExecId = $$$('execId');
+			} else {
+				onOpenExecId = $$$('execId');
+				onCloseExecId = null;
+			}
+			
+			$$lib_nori_windowShow(
+				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad, this._handleCommand, this.width, this.height);
+			
+			if (isBlocking) {
+				return this.result;
+			}
+		}
+		
+		function render() {
+			if (this.menuDirty) this._updateMenu();
+			
+			this.width = this.sizeRelay[0];
+			this.height = this.sizeRelay[1];
+			
+			this.uiBox.width = this.width;
+			this.uiBox.height = this.height;
+			this.uiBox.renderCalculateSize(true, this.width, true, Alignment.STRETCH);
+			this.uiBox.renderCalculateSize(false, this.height, true, Alignment.STRETCH);
+			this.uiBox.render(null);
+		}
+		
+		function _handleCommand(commandToken) {
+			this.handleCommand(commandToken);
+		}
+		
+		// Override this in implementing classes.
+		function handleCommand(commandToken) { }
 	}
 }
