@@ -12,6 +12,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             public bool IsBlocking { get; set; }
             public Value OnLoadFunctionPointer { get; set; }
             public Value RenderFunctionPointer { get; set; }
+            public Value InvokeMenuHandlerFunctionPointer { get; set; }
 
             public bool MenuShown { get; set; }
             public Panel MenuHost { get; set; }
@@ -46,6 +47,16 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                 this.ClientSizeChanged += (sender, e) => { this.SizeChangedHandler(this.ClientSize.Width, this.ClientSize.Height); };
 
                 this.Icon = WinFormsTranslationHelper.GetDefaultIcon();
+            }
+
+            public void InvokeHandler(string token)
+            {
+                if (token != null && token.Length != 0)
+                {
+                    TranslationHelper.RunInterpreter(
+                        this.InvokeMenuHandlerFunctionPointer,
+                        new Value[] { CrayonWrapper.v_buildString(token) });
+                }
             }
 
             private void LoadHandler()
@@ -123,6 +134,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             int currentExecutionContextId,
             Value renderFunctionPointer,
             Value onLoadFunctionPointer,
+            Value invokeMenuHandlerFunctionPointer,
             int width,
             int height)
         {
@@ -130,6 +142,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             window.IsBlocking = isBlocking;
             window.RenderFunctionPointer = renderFunctionPointer;
             window.OnLoadFunctionPointer = onLoadFunctionPointer;
+            window.InvokeMenuHandlerFunctionPointer = invokeMenuHandlerFunctionPointer;
             window.ClientSize = new Size(width, height);
             window.Text = title;
 
@@ -159,7 +172,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                     object[] menuItem = (object[])menuData[i];
                     if ((bool)menuItem[0])
                     {
-                        strip.Items.Add(GenerateMenuItem(menuItem));
+                        strip.Items.Add(GenerateMenuItem(window, menuItem));
                     }
                 }
             }
@@ -167,7 +180,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             window.RunRenderer();
         }
 
-        private static ToolStripItem GenerateMenuItem(object[] menuItem)
+        private static ToolStripItem GenerateMenuItem(NoriWindow window, object[] menuItem)
         {
             if (!(bool)menuItem[0])
             {
@@ -175,14 +188,16 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             }
 
             string name = (string)menuItem[1];
+            string token = (string)menuItem[5];
             ToolStripMenuItem item = new ToolStripMenuItem(name);
-            if (menuItem[5] != null)
+            item.Click += (sender, e) => { window.InvokeHandler(token); };
+            if (menuItem[6] != null)
             {
-                object[] children = (object[])menuItem[5];
+                object[] children = (object[])menuItem[6];
                 for (int i = 0; i < children.Length; ++i)
                 {
                     object[] child = (object[])children[i];
-                    item.DropDownItems.Add(GenerateMenuItem(child));
+                    item.DropDownItems.Add(GenerateMenuItem(window, child));
                 }
             }
             return item;

@@ -54,6 +54,7 @@ namespace NoriXml {
 						case 'shortcut': return;
 						case 'checked': return;
 						case 'checkbox': return;
+						case 'token': return element.setCommandToken(attributeValue);
 						default: return NoriXmlHelper.elementDoesNotHaveAttribute(elementName, attributeName);
 					}
 				}

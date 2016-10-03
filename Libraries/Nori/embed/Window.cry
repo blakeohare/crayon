@@ -78,7 +78,7 @@ namespace Nori {
 			}
 			
 			$$lib_nori_windowShow(
-				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad, this.width, this.height);
+				this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad, this._handleCommand, this.width, this.height);
 			
 			if (isBlocking) {
 				return this.result;
@@ -97,5 +97,12 @@ namespace Nori {
 			this.uiBox.renderCalculateSize(false, this.height, true, Alignment.STRETCH);
 			this.uiBox.render(null);
 		}
+		
+		function _handleCommand(commandToken) {
+			this.handleCommand(commandToken);
+		}
+		
+		// Override this in implementing classes.
+		function handleCommand(commandToken) { }
 	}
 }

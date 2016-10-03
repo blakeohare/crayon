@@ -31,19 +31,14 @@ function @type('Array<object>') libNoriUnwrapMenuItem(@type('Value') menuItemDes
 	@type('Array<object>') output = null;
 	
 	if ($_cast('bool', Value$value.internalValue)) {
-		output = $_new_array('object', 6);
-		$_array_set(output, 0, true);
-		value = $_list_get(menu, 1);
-		$_array_set(output, 1, $_cast('string', Value$value.internalValue));
-		value = $_list_get(menu, 2);
-		$_array_set(output, 2, $_cast('bool', Value$value.internalValue));
-		value = $_list_get(menu, 3);
-		$_array_set(output, 3, $_cast('bool', Value$value.internalValue));
-		value = $_list_get(menu, 4);
-		$_array_set(output, 4, $_cast('string', Value$value.internalValue));
-		value = $_list_get(menu, 5);
-		if (Value$value.type == Types.NULL) $_array_set(output, 5, null);
-		else $_array_set(output, 5, libNoriUnwrapMenus(value));
+		output = $_new_array('object', 7);
+		for (@type('int') i = 0; i < 6; i += 1) {
+			value = $_list_get(menu, i);
+			$_array_set(output, i, Value$value.internalValue);
+		}
+		value = $_list_get(menu, 6);
+		if (Value$value.type == Types.NULL) $_array_set(output, 6, null);
+		else $_array_set(output, 6, libNoriUnwrapMenus(value));
 	} else {
 		output = $_new_array('object', 1);
 		$_array_set(output, 0, false);

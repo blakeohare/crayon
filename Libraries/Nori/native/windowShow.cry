@@ -5,10 +5,11 @@
 	arg 4: (int) current execution context ID
 	arg 5: (function pointer) render
 	arg 6: (function pointer) onLoad
-	arg 7: (int) width
-	arg 8: (int) height
+	arg 7: (function pointer) invokeMenuHandler
+	arg 8: (int) width
+	arg 9: (int) height
 */
-import inline "FrameworkFunctions/8_arg.cry";
+import inline "FrameworkFunctions/9_arg.cry";
 
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
@@ -26,5 +27,5 @@ $_lib_nori_windowShow(
 	string1,
 	bool1,
 	int1,
-	arg5, arg6,
-	$_cast('int', Value$arg7.internalValue), $_cast('int', Value$arg8.internalValue));
+	arg5, arg6, arg7,
+	$_cast('int', Value$arg8.internalValue), $_cast('int', Value$arg9.internalValue));

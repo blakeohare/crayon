@@ -15,15 +15,15 @@ namespace Nori {
 		field isCheckbox = false;
 		field checked;
 		field isSeparator = false;
-		field command = null;
+		field token = null;
 		field isDirty = false;
 		field parent = null;
 		field window = null;
 		
 		constructor() { }
 		
-		function setCommand(command) {
-			this.command = command;
+		function setCommandToken(token) {
+			this.token = token;
 			return this;
 		}
 		
@@ -40,7 +40,7 @@ namespace Nori {
 			this.items.add(item);
 		}
 		
-		function notifyWindowThatMenuIsDirty() {
+		function getWindow() {
 			if (this.window == null) {
 				walker = this.parent;
 				while (walker is Nori.MenuItem) {
@@ -54,6 +54,19 @@ namespace Nori {
 				if (walker != null) this.window = walker.window;
 				// If the top level MenuBar is not added to a window yet, window may still be null.
 			}
+			return this.window;
+		}
+		
+		function invokeCommand() {
+			if (this.token == null) return;
+			if (this.window == null) this.getWindow();
+			if (this.window != null) {
+				this.window.handleCommand(this.token);
+			}
+		}
+		
+		function notifyWindowThatMenuIsDirty() {
+			if (this.window == null) this.getWindow();
 			
 			if (this.window != null) {
 				this.window.menuDirty = true;
@@ -71,6 +84,7 @@ namespace Nori {
 				true, // is enabled
 				this.checked == true,
 				this.shortcutText,
+				this.token,
 				children,
 			];
 		}
