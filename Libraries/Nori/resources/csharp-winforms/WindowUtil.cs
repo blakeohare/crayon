@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace %%%PROJECT_ID%%%.Library.Nori
@@ -86,7 +87,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                     this.MenuHost.Height = menuHeight;
                     this.ContentHost.Width = width;
                     this.ContentHost.Height = height - menuHeight;
-                    this.ContentHost.Location = new System.Drawing.Point(0, menuHeight);
+                    this.ContentHost.Location = new Point(0, menuHeight);
                 }
                 else
                 {
@@ -94,7 +95,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
                     this.MenuHost.Height = 0;
                     this.ContentHost.Width = width;
                     this.ContentHost.Height = height;
-                    this.ContentHost.Location = new System.Drawing.Point(0, 0);
+                    this.ContentHost.Location = new Point(0, 0);
                 }
 
                 if (this.RenderFunctionPointer != null)
@@ -107,7 +108,7 @@ namespace %%%PROJECT_ID%%%.Library.Nori
         public static void InstaniateWindow(object[] windowNativeData, object[] uiBoxNativeData, List<Value> sizeRelay)
         {
             NoriWindow window = new NoriWindow(sizeRelay);
-            Panel uiBoxPanel = new System.Windows.Forms.Panel();
+            Panel uiBoxPanel = new Panel();
             window.ContentHost.Controls.Add(uiBoxPanel);
             windowNativeData[0] = window;
             uiBoxNativeData[0] = uiBoxPanel;
@@ -127,7 +128,8 @@ namespace %%%PROJECT_ID%%%.Library.Nori
             window.IsBlocking = isBlocking;
             window.RenderFunctionPointer = renderFunctionPointer;
             window.OnLoadFunctionPointer = onLoadFunctionPointer;
-            window.ClientSize = new System.Drawing.Size(width, height);
+            window.ClientSize = new Size(width, height);
+            window.Text = title;
 
             TranslationHelper.RunInterpreter(renderFunctionPointer);
             if (isBlocking)
