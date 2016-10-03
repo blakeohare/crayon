@@ -2,32 +2,29 @@ import Nori;
 import XML;
 
 namespace NoriXml {
+	function registerFactoryMethod(name, builderFp) {
+		NoriXmlHelper.constructorLookup[name] = builderFp;
+	}
+	
 	static class NoriXmlHelper {
 		static field constructorLookup = null;
 		
-		static field isElement = {
-			'MenuBar': false,
-			'MenuItem': false,
-			'MenuSeparator': false,
-			'Window': false,
-		};
+		static constructor() {
+			NoriXmlHelper.constructorLookup = {
+				'Canvas': NoriXml.instantiate_Canvas,
+				'DockPanel': NoriXml.instantiate_DockPanel,
+				'Grid': NoriXml.instantiate_Grid,
+				'MenuBar': NoriXml.instantiate_MenuBar,
+				'MenuItem': NoriXml.instantiate_MenuItem,
+				'MenuSeparator': NoriXml.instantiate_MenuSeparator,
+				'Rectangle': NoriXml.instantiate_Rectangle,
+				'StackPanel': NoriXml.instantiate_StackPanel,
+				'TextArea': NoriXml.instantiate_TextArea,
+				'Window': NoriXml.instantiate_Window,
+			};
+		}
 		
 		static function instantiateByName(name) {
-			if (NoriXmlHelper.constructorLookup == null) {
-				NoriXmlHelper.constructorLookup = {
-					'Canvas': NoriXml.instantiate_Canvas,
-					'DockPanel': NoriXml.instantiate_DockPanel,
-					'Grid': NoriXml.instantiate_Grid,
-					'MenuBar': NoriXml.instantiate_MenuBar,
-					'MenuItem': NoriXml.instantiate_MenuItem,
-					'MenuSeparator': NoriXml.instantiate_MenuSeparator,
-					'Rectangle': NoriXml.instantiate_Rectangle,
-					'StackPanel': NoriXml.instantiate_StackPanel,
-					'TextArea': NoriXml.instantiate_TextArea,
-					'Window': NoriXml.instantiate_Window,
-				};
-			}
-			
 			fp = NoriXmlHelper.constructorLookup.get(name);
 			if (fp == null) Core.fail("Could not instantiate element from XML: '" + name + "'");
 			return fp();
@@ -58,8 +55,7 @@ namespace NoriXml {
 						default: return NoriXmlHelper.elementDoesNotHaveAttribute(elementName, attributeName);
 					}
 				}
-			}
-			if (NoriXmlHelper.isElement.get(elementName, true)) {
+			} else {
 				nd = element.fauxNativeData;
 				switch (attributeName) {
 					case 'horizontalAlignment':
