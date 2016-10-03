@@ -51,6 +51,9 @@ namespace NoriXml {
 				if (element is Nori.MenuItem) {
 					switch (attributeName) {
 						case 'text': return element.setText(attributeValue);
+						case 'shortcut': return;
+						case 'checked': return;
+						case 'checkbox': return;
 						default: return NoriXmlHelper.elementDoesNotHaveAttribute(elementName, attributeName);
 					}
 				}
@@ -159,11 +162,11 @@ namespace NoriXml {
 	
 	function parse(xml) {
 		uiTree = XML.parse(xml);
-		return NoriXml.buildElement(uiTree, null, null);
+		return NoriXml.buildElement(uiTree, null);
 	}
 	
-	// TODO: get rid of parentName and use 'is' operator when ready.
-	function buildElement(xmlElement, parent, parentName) {
+	function buildElement(xmlElement, parent) {
+		
 		name = xmlElement.name;
 		element = NoriXmlHelper.instantiateByName(name);
 		attributes = xmlElement.attributes;
@@ -176,7 +179,7 @@ namespace NoriXml {
 			children = [];
 			for (child : xmlElement.children) {
 				if (child.type == NodeType.ELEMENT) {
-					children.add(buildElement(child, element, name));
+					children.add(buildElement(child, element));
 				}
 			}
 			
@@ -195,13 +198,11 @@ namespace NoriXml {
 						element.setContent(child);
 					}
 				}
-				
 			} else {
 				content = children;
 			}
 			
 			for (child : content) {
-				print(element);
 				element.addChild(child);
 			}
 		}

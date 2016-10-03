@@ -79,6 +79,8 @@ namespace Nori {
 	class MenuSeparator {
 		field isSeparator = true;
 		field isDirty = false;
+		field parent;
+		field window;
 		constructor() { }
 		function _getDescriptor() {
 			return [false]; // is menu item (not separator)
