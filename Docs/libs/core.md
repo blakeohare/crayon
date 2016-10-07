@@ -21,6 +21,9 @@ Unlike most libraries, Core is implicitly imported in all files.
 [Classes](#classes)
 - [Object](#object)
 
+[Enums](#enums)
+- [Type](#type)
+
 ## Functions
 
 ### assert
@@ -164,7 +167,7 @@ Halts the VM for some number of seconds and then resumes.
 
 ### typeof
 
-Returns the primitive type of the given value. The return value is a value in the **Type** enum.
+Returns the primitive type of the given value. The return value is a value in the **[Type](#type)** enum.
 
 `Core.typeof(value)`
 
@@ -172,10 +175,28 @@ Returns the primitive type of the given value. The return value is a value in th
 | --- | --- | --- |
 | **value** | _anything_ | A value to determine the type of. |
 
-See also: [Core.isNumber](#isnumber), [Core.isString](#isstring)
+See also: [Core.Type](#type), [Core.isNumber](#isnumber), [Core.isString](#isstring)
 
 ## Classes
 
 ### Object
 
 An empty class that has no methods or fields. Can be used for generating unique references.
+
+## Enums
+
+### Type
+
+An enum of all the primitive types. 
+
+| Value | Description |
+| --- | --- |
+| NULL | The type of the `null` constant. |
+| BOOLEAN | The type of booleans (`true` or `false`). |
+| INTEGER | The type of integers. |
+| FLOAT | The type of floating point decimals. |
+| STRING | The type of strings. |
+| LIST | The type of lists. |
+| DICTIONARY | The type of dictionaries. |
+| OBJECT | The type of instances of classes. Note that specific class types are not distinguished in this enum. See the `is` operator. |
+| FUNCTION | A function pointer. |
