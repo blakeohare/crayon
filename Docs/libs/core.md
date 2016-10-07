@@ -35,7 +35,7 @@ Checks a boolean condition and throws an error if it is not true.
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
 | **condition** | _boolean_ | A condition to check. If this is true, nothing will happen. If this is false, an error will be thrown. |
-| **message** (optional) | _string_ | A mesage to display in the error output if the condition fails. |
+| **message** (optional) | _string_ | A message to display in the error output if the condition fails. |
 
 See also: [Core.fail](#fail)
 
