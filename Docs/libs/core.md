@@ -39,6 +39,8 @@ Checks a boolean condition and throws an error if it is not true.
 
 See also: [Core.fail](#fail)
 
+---
+
 ### chr
 
 Converts an ASCII code value into a 1-character string.
@@ -51,11 +53,15 @@ Converts an ASCII code value into a 1-character string.
 
 See also: [Core.ord](#ord)
 
+---
+
 ### currentTime
 
 Returns the current time from the operating system as a float indicating number of seconds from the Unix epoch (Jan 1st, 1970).
 
 `Core.currentTime()`
+
+---
 
 ### fail
 
@@ -68,6 +74,8 @@ Generates an error.
 | **message** | _string_ | Error message to display. |
 
 See also: [Core.assert](#assert)
+
+---
 
 ### isNumber
 
@@ -84,6 +92,8 @@ Note that this is roughly equivalent to the following expression (although sligh
 
 See also: [Core.typeof](#typeof)
 
+---
+
 ### isString
 
 Returns true if the given value is a string.
@@ -99,6 +109,8 @@ Note that this is equivalent to the following expression:
 
 See also: [Core.typeof](#typeof)
 
+---
+
 ### ord
 
 Returns the ASCII character code value for a given character as an integer.
@@ -110,6 +122,8 @@ Returns the ASCII character code value for a given character as an integer.
 | **character** | _string_ | A one-character string containing an ASCII character. |
 
 See also: [Core.chr](#chr)
+
+---
 
 ### parseFloat
 
@@ -123,6 +137,8 @@ Returns a float value represented by the given string. If the string does not re
 
 See also: [Core.parseInt](#parseint)
 
+---
+
 ### parseInt
 
 Returns an integer value represented by the given string. If the string does not represent a valid integer, then `null` is returned.
@@ -134,6 +150,8 @@ Returns an integer value represented by the given string. If the string does not
 | **stringValue** | _string_ | A string that represents an integer. |
 
 See also: [Core.parseFloat](#parsefloat)
+
+---
 
 ### print
 
@@ -155,6 +173,8 @@ Not all platforms support STDOUT.
 | JavaScript | console.log |
 | C#/Android | Log Cat |
 
+---
+
 ### sleep
 
 Halts the VM for some number of seconds and then resumes.
@@ -164,6 +184,8 @@ Halts the VM for some number of seconds and then resumes.
 | Argument | Type | Description |
 | --- | --- | --- |
 | **seconds** | _float_ | A float representing the number of seconds to pause the current execution. |
+
+---
 
 ### typeof
 
@@ -177,11 +199,15 @@ Returns the primitive type of the given value. The return value is a value in th
 
 See also: [Core.Type](#type), [Core.isNumber](#isnumber), [Core.isString](#isstring)
 
+---
+
 ## Classes
 
 ### Object
 
 An empty class that has no methods or fields. Can be used for generating unique references.
+
+---
 
 ## Enums
 
