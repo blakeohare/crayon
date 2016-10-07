@@ -4,6 +4,23 @@ Contains various common functions.
 
 Unlike most libraries, Core is implicitly imported in all files.
 
+[Functions](#functions)
+- [assert](#assert)
+- [chr](#chr)
+- [currenttime](#currenttime)
+- [fail](#fail)
+- [isnumber](#isnumber)
+- [isstring](#isstring)
+- [ord](#ord)
+- [parsefloat](#parsefloat)
+- [parseint](#parseint)
+- [print](#print)
+- [sleep](#sleep)
+- [typeof](#typeof)
+
+[Classes](#classes)
+- [Object](#object)
+
 ## Functions
 
 ### assert
@@ -17,7 +34,7 @@ Checks a boolean condition and throws an error if it is not true.
 | **condition** | _boolean_ | A condition to check. If this is true, nothing will happen. If this is false, an error will be thrown. |
 | **message** (optional) | _string_ | A mesage to display in the error output if the condition fails. |
 
-See also: Core.fail
+See also: [Core.fail](#fail)
 
 ### chr
 
@@ -29,7 +46,7 @@ Converts an ASCII code value into a 1-character string.
 | --- | --- | --- |
 | **value** | _integer_ | An integer between 0 and 255 that represents an ASCII value. |
 
-See also: Core.ord
+See also: [Core.ord](#ord)
 
 ### currentTime
 
@@ -47,6 +64,8 @@ Generates an error.
 | --- | --- | --- |
 | **message** | _string_ | Error message to display. |
 
+See also: [Core.assert](#assert)
+
 ### isNumber
 
 Returns true if the given value is a numeric type i.e. either an integer or float.
@@ -60,7 +79,7 @@ Note that this is roughly equivalent to the following expression (although sligh
 | --- | --- | --- |
 | **value** | _anything_ | Any value. True is returned if it is an integer or a float. |
 
-See also: Core.typeof
+See also: [Core.typeof](#typeof)
 
 ### isString
 
@@ -75,7 +94,7 @@ Note that this is equivalent to the following expression:
 | --- | --- | --- |
 | **value** | _anything_ | Any value. True is returned when this value is a string. `null` does not count as a string. |
 
-See also: Core.typeof
+See also: [Core.typeof](#typeof)
 
 ### ord
 
@@ -87,7 +106,7 @@ Returns the ASCII character code value for a given character as an integer.
 | --- | --- | --- |
 | **character** | _string_ | A one-character string containing an ASCII character. |
 
-See also: Core.chr
+See also: [Core.chr](#chr)
 
 ### parseFloat
 
@@ -99,7 +118,7 @@ Returns a float value represented by the given string. If the string does not re
 | --- | --- | --- |
 | **stringValue** | _string_ | A string that represents a number. |
 
-See also: Core.parseInt
+See also: [Core.parseInt](#parseint)
 
 ### parseInt
 
@@ -111,7 +130,7 @@ Returns an integer value represented by the given string. If the string does not
 | --- | --- | --- |
 | **stringValue** | _string_ | A string that represents an integer. |
 
-See also: Core.parseFloat
+See also: [Core.parseFloat](#parsefloat)
 
 ### print
 
@@ -153,7 +172,7 @@ Returns the primitive type of the given value. The return value is a value in th
 | --- | --- | --- |
 | **value** | _anything_ | A value to determine the type of. |
 
-See also: Core.isNumber, Core.isString
+See also: [Core.isNumber](#isnumber), [Core.isString](#isstring)
 
 ## Classes
 
