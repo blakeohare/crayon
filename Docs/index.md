@@ -2,18 +2,15 @@
 
 ## Basics
 
-- Installation
-- Syntax
-- Type System
-- Object Oriented Programming
-- Project Structure and Build Files
-- Style Best Practices
+- [Installation](installation/index.md)
+- [Syntax](syntax/index.md)
+- [Project Structure and Build Files](project/index.md)
 
 ## Libraries
 
 ### General Libraries
 
-- [Core](Docs/libs/core.md)
+- [Core](libs/core.md)
 - Easing
 - FileIO
 - Http
