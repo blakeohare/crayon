@@ -330,4 +330,126 @@ Returns the state of a button.
 
 # Configuring Gamepads
 
-TODO: explain this part
+Gamepads are tricky. They might have a left and right joystick, bumpers at the top, and buttons labelled as A, B, X, Y, or have shapes on them. However, all this is cosmetic plastic. From the hardware perspective, essentially only a few pieces of data are available...
+
+- The number of buttons
+- The number of axes
+- The pushed state of any button at any given moment
+- The position of any axis at any given moment
+- Sometimes the name of the device is reported by the platform
+
+The buttons and axes are given a numbered order. The names of these buttons and axes are not known on a hardware level. There are no standards as to what order buttons should appear in and it is entirely up to the hardware manufacturer. Generally they appear in a certain order but this order is not guaranteed. Especially with older or uniquely shaped devices.
+
+The Crayon Gamepad library provides methods to access any gamepad device that is currently connected. Furthermore you can access any button and axis and poll its current value. This isn't particularly helpful on its own since nothing has context.
+Configuring the gamepad is all about assigning friendly ID's to gamepads and their individual buttons and axes. 
+
+## Gamepad IDs
+
+Each GamepadDevice has an ID that can be accessed or set. This ID is used in various places. You can get a GamepadDevice reference from the GamepadManager by its ID. Also gamepad events that come in through the event queue are tagged with the ID of the device it came from.
+
+## Configuration IDs and Pushy Types
+
+Each Gamepad can have a mapping of friendly ID's to buttons/axes. Furthermore, and ID can map to a set of buttons or axes that behave like a single button. For example, consider a 2D joystick. This is comprised of two separate single-dimensional axes. However, logically, you will likely want to treat this as a single button that returns a two dimensional vector when queried. Further consider a retro-style platformer where the the perceived controller is a 4-directional pad that does not take into consideration how far a joystick is pushed in a direction. Just simply that it is "pushed in that direction or isn't". In that case, the button ID should be mapped to 2 axes, but return a 2 dimensional vector of integers where each dimension is one of { -1, 0, 1 }. 
+All of these scenarios are supported.
+
+Imagine an NES style game that is configured using a XBox 360 style controller. The configuration mapping of buttons to phsyical controls may look something like this...
+
+| Physical Button/Axis | Button ID |
+| --- | --- |
+| Button 0 | 'A' |
+| Button 1 | |
+| Button 2 | 'B' |
+| Button 3 | | 
+| Button 4 | | 
+| Button 5 | | 
+| Button 6 | | 
+| Button 7 | | 
+| Button 8 | | 
+| Button 9 | 'START' | 
+| Button 10 | 'SELECT' | 
+| Axis 1- | 'DIRECTION' (X-) |
+| Axis 1+ | 'DIRECTION' (X+) |
+| Axis 2- | 'DIRECTION' (Y-) |
+| Axis 2+ | 'DIRECTION' (Y+) |
+| Axis 3- | |
+| Axis 3+ | |
+| Axis 4- | |
+| Axis 4+ | |
+| Axis 5- | |
+| Axis 5+ | |
+| Axis 6- | |
+| Axis 6+ | |
+| Axis 7- | |
+| Axis 7+ | |
+
+Alternatively, suppose you plug in a very old controller that only has hardware buttons. For exmaple, it may actually be a gamepad modelled after the original NES controller and not report any axes at all (even though the D-Pad looks like an axis, it is simply digital buttons). Then the configuration may look something like this...
+
+| Physical Button/Axis | Button ID |
+| --- | --- |
+| Button 0 | 'DIRECTION' (X-) |
+| Button 1 | 'DIRECTION' (Y-) |
+| Button 2 | 'DIRECTION' (X+) |
+| Button 3 | 'DIRECTION' (Y+) |
+| Button 4 | 'B' |
+| Button 5 | 'A' |
+| Button 6 | 'START' |
+| Button 7 | 'SELECT' |
+
+By configuring these two very different devices, the game code can agnostically interpret their usage identically as it can now query ID's instead of having knowledge of the specs of the device.
+
+```
+vector = device.getState('DIRECTION') // e.g. [-1, 1] <-- user is pushing down+left
+jump = device.getState('A') // e.g. true <-- user is pushing the jump button
+shoot = device.getState('B') // e.g. false <-- user is not pushing the shoot button
+```
+
+There are a few ways to configure logical button IDs to their hardware counterparts. One is to ask the user specifically using a configuration menu. 
+
+There are several binding methods available on the GamepadDevice instance to do this. The following functions will check to see if any buttons or axes are currently being pushed that have no pre-existing configuration and will configure it to the given inputs. 
+- bindDigitalButton(buttonId)
+- bindDigitalAxis(buttonId, isPositive)
+- bindDigitalAxis2dX(buttonId, isPositive)
+- bindDigitalAxis2dY(buttonId, isPositive)
+- bindAnalogButton(buttonId)
+- bindAnalogAxis(buttonId, isPositive)
+- bindAnalogAxis2dX(buttonId, isPositive)
+- bindAnalogAxis2dY(buttonId, isPositive)
+
+If configuration is successful, then true is returned, otherwise false. These are intended to be shown on a screen that says something like "push the button you want to use for firing your laser". The code would look something like this...
+
+```
+// somewhere in your game loop...
+if (device.bindDigitalButton('laser')) {
+  // move on to next button to configure
+} else {
+  // ensure 'laser' is still checked next frame
+}
+```
+In the above example, the string 'laser' will be used as the button ID anytime the player pushes that button again. 
+
+Note that these binding methods are not blocking. They immediately return true or false depending on if a key is being pushed. 
+
+### Analog vs Digital bindings
+
+Any analog binding indicates that that button/axis should report its value as a float. Even if the hardware is actually a digital button, the value returned will still be a float (either 0.0 or 1.0). Digital bindings will report their values as booleans (or integers in the case of 1D and 2D vectors).
+
+### Button
+
+A button is a thing on the device you can push. It does not have a direction. Generally buttons will be bound as digital buttons. When you query the value, it will be a boolean. Analog buttons are commonly used as triggers because they are used like buttons but can have an "inbetween" value where they are partially pressed. An analog button reports its value as a number between 0.0 and 1.0.
+
+### Axis
+
+An axis is a thing on the device that can be pushed in a single dimension in either direction. When bound as an analog axis, its value will be reported as a float between -1.0 and 1.0. When bound as a digital axis, its value will be reported as one of the integers: -1, 0, or 1. 
+
+### 2D Axis
+
+A 2-dimensional axis bound to a single button ID will report its value as a vector. This vector will return the X and Y components. 
+An analog 2D axis will report its value as a list of two floats between -1.0 and 1.0. A digital 2D axis will report its value as a list of 2 integers (between -1 and 1).
+
+### Gamepad Configuration Stacks
+
+A gamepad has a configuration mapping of button ID's to its buttons and axes. However, it saves previous configurations as well in a stack where the topmost configuration in the stack is treated as the active configuration that is polled and configured. The purpose for this is make non-destructive changes with a way to return to a previous configuration. For example if you create a gamepad configuration menu where the user starts to configure a gamepad using the binding methods, a new empty configuration should be pushed to the device's stack. If the user finishes configuring the device, that configuration is now active. But if the user decides they don't want to re-configure the device and exits out, popping the stack will return the gamepad to its previous state.
+
+### Auto Configuring
+
+The Gamepad library comes with several enums of common gamepad layouts (XBox, PlayStation, SNES). All 3 of these enums have values that map to a common set of integers. You can push an "auto-configure" configuration to the stack using the device's `pushAutoConfiguration()` method. This will make the best guess possible as to the layout of the device. It might be wrong. But hey, we tried our best. You can then use any of the built in Button ID enums to reference buttons and axes. 
