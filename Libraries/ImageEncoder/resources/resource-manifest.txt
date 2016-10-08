@@ -4,3 +4,8 @@ APPLICABLE-TO: game-csharp-opentk
 APPLICABLE-TO: ui-csharp-winforms
 COPYFILES: desktopcsharp: %PROJECT_ID%/Libraries/ImageEncoder/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: game-python-pygame
+EMBED: python
+END

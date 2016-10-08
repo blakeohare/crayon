@@ -110,6 +110,11 @@ namespace Crayon.Translator.Python
                 }
             }
 
+            foreach (FileOutput image in resourceDatabase.ImageResources)
+            {
+                output["resources/images/" + image.CanonicalFileName] = image;
+            }
+
             return output;
         }
 
