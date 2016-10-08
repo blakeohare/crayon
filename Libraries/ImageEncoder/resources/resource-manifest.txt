@@ -1,0 +1,6 @@
+
+BEGIN
+APPLICABLE-TO: game-csharp-opentk
+APPLICABLE-TO: ui-csharp-winforms
+COPYFILES: desktopcsharp: %PROJECT_ID%/Libraries/ImageEncoder/%FILE%
+END

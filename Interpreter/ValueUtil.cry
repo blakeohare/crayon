@@ -709,3 +709,13 @@ function @type('double') getFloat(@type('Value') num) {
 	if (Value$num.type == Types.FLOAT) return $_cast('double', Value$num.internalValue);
 	return $_cast('int', Value$num.internalValue) + 0.0;
 }
+
+function @type('Array<object>') getNativeData(@type('Value') objValue) {
+	@type('ObjectInstance') obj = $_cast('ObjectInstance', Value$objValue.internalValue);
+	return ObjectInstance$obj.nativeData;
+}
+
+function @type('object') getNativeDataItem(@type('Value') objValue, @type('int') index) {
+	@type('ObjectInstance') obj = $_cast('ObjectInstance', Value$objValue.internalValue);
+	return $_array_get(ObjectInstance$obj.nativeData, index);
+}

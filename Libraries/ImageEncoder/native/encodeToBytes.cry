@@ -1,0 +1,18 @@
+/*
+	arg 1: ImageResources.NativeImageData instance
+	arg 2: image format enum
+		PNG - 1
+		JPEG - 2
+	arg 3: Empty list. Use for outputting byte values.
+*/
+import inline "FrameworkFunctions/3_arg.cry";
+
+object1 = getNativeDataItem(arg1, 0); // the platform bitmap instance
+int1 = $_cast('int', Value$arg2.internalValue);
+list1 = $_cast('List<Value>', Value$arg3.internalValue);
+valueArray1 = $_array_get(INTEGERS_CACHE, 0); // byte values
+
+int2 = $_lib_imageencoder_encodeImage(object1, int1, list1, valueArray1);
+
+// status code
+output = buildInteger(int2);
