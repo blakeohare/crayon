@@ -68,7 +68,7 @@ for platform in ('windows', 'mono'):
 		setupFile = readFile("setup-windows.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
 	if platform == 'mono':
-		setupFile = readFile("setup-mono.txt")
+		setupFile = readFile("setup-mono.md")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
 
 	for lib in librariesForRelease:

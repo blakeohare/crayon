@@ -1,6 +1,0 @@
-FOR OSX:
-- (TODO)
-
-
-FOR LINUX:
-- (TODO)
