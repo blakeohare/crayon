@@ -1,3 +1,0 @@
-$_lib_graphics_flipTexture: AwtTranslationHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
-$_lib_graphics_render: RenderEngine.setRenderQueues([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-$_lib_graphics_scale: AwtTranslationHelper.scaleImage([ARG:1], [ARG:2], [ARG:3])

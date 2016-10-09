@@ -1,7 +1,7 @@
 import Math;
 import ImageResources;
 
-namespace Graphics {
+namespace Graphics2D {
 	class GraphicsTexture {
 		/*
 			nativeData[0] -> weak reference to GraphicsTextureResource's nativeData
@@ -82,7 +82,7 @@ namespace Graphics {
 		}
 		
 		/*
-			[0] -> Graphics._DrawCommands.IMAGE,
+			[0] -> Graphics2D._DrawCommands.IMAGE,
 			
 			[1] -> optionFlagsBitMask {
 				1 - slice,
@@ -114,7 +114,7 @@ namespace Graphics {
 		*/
 		function draw(x, y) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				0,
 				0, 0, 0, 0,
 				0, 0,
@@ -125,7 +125,7 @@ namespace Graphics {
 
 		function drawWithAlpha(x, y, alpha) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				8,
 				0, 0, 0, 0,
 				0, 0,
@@ -137,7 +137,7 @@ namespace Graphics {
 		function drawRegion(x, y, sx, sy, width, height) {
 			if (width == 0 || height == 0) return;
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				1,
 				sx, sy, width, height,
 				0, 0,
@@ -149,7 +149,7 @@ namespace Graphics {
 		function drawStretched(x, y, width, height) {
 			if (width == 0 || height == 0) return;
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				2,
 				0, 0, 0, 0,
 				width, height,
@@ -161,7 +161,7 @@ namespace Graphics {
 		function drawRegionStretched(tx, ty, tw, th, sx, sy, sw, sh) {
 			if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				1 | 2,
 				sx, sy, sw, sh,
 				tw, th,
@@ -172,7 +172,7 @@ namespace Graphics {
 
 		function drawRegionStretchedWithAlpha(tx, ty, tw, th, sx, sy, sw, sh, alpha) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				1 | 2 | 8,
 				sx, sy, sw, sh,
 				tw, th,
@@ -183,7 +183,7 @@ namespace Graphics {
 
 		function drawRotated(x, y, theta) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				4,
 				0, 0, 0, 0,
 				0, 0,
@@ -194,7 +194,7 @@ namespace Graphics {
 
 		function drawRotatedWithAlpha(x, y, theta, alpha) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				4 | 8,
 				0, 0, 0, 0,
 				0, 0,
@@ -205,7 +205,7 @@ namespace Graphics {
 		
 		function drawWithOptions(tx, ty, tw, th, sx, sy, sw, sh, theta, alpha) {
 			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+				Graphics2D.Draw._queue, this,
 				1 | 2 | 4 | 8,
 				sx, sy, sw, sh,
 				tw, th,

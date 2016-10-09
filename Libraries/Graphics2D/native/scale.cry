@@ -48,7 +48,7 @@ if (!%%%LIB_GRAPHICS_USES_TEXTURE_ATLAS%%%) {
 	$_array_set(objArray1, 0, false);
 	$_array_set(objArray1, 1, true);
 	$_array_set(objArray1, 2, 0);
-	$_array_set(objArray1, 3, $_lib_graphics_scale(object1, int1, int2));
+	$_array_set(objArray1, 3, $_lib_graphics2d_scale(object1, int1, int2));
 	$_array_set(objArray1, 4, int1);
 	$_array_set(objArray1, 5, int2);
 }

@@ -1,2 +1,0 @@
-$_lib_graphics_gl_max_texture_size: 1024
-$_lib_graphics_render: GameWindow.SetRenderData([ARG:1], [ARG:2], [ARG:3], [ARG:4])
