@@ -195,7 +195,10 @@ namespace Crayon.Translator.Java
 
             foreach (FileOutput image in resourceDatabase.ImageResources)
             {
-                output["resources/images/" + image.CanonicalFileName] = image;
+                if (image.Type != FileOutputType.Ghost)
+                {
+                    output["resources/images/" + image.CanonicalFileName] = image;
+                }
             }
 
             foreach (FileOutput textFile in resourceDatabase.TextResources)
