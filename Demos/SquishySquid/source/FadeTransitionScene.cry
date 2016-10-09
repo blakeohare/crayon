@@ -1,4 +1,4 @@
-import Graphics;
+import Graphics2D;
 import Math;
 
 class FadeTransitionScene : AbstractScene {
@@ -41,6 +41,6 @@ class FadeTransitionScene : AbstractScene {
     function render() {
         this.getCurrentBackground().render();
         alpha = Math.floor(255 * this.getCurrentBlackness());
-        Graphics.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, alpha);
+        Graphics2D.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, alpha);
     }
 }

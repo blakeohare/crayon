@@ -1,5 +1,5 @@
 import Game;
-import Graphics;
+import Graphics2D;
 
 const FPS = 60;
 const SCREEN_WIDTH = 800;
