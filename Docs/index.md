@@ -14,7 +14,8 @@
 - Easing
 - FileIO
 - Http
-- ImageResources
+- [ImageEncoding](libs/imageencoding.md)
+- [ImageResources](libs/imageresources.md)
 - ImageWebResources
 - Json
 - Math
@@ -27,6 +28,6 @@
 ### Game-Related Libraries
 
 - Audio
-- Game
+- [Game](libs/game.md)
 - Gamepad
-- Graphics
+- [Graphics2D](libs/graphics2d.md)
