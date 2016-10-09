@@ -1,4 +1,4 @@
-﻿namespace HTTP {
+﻿namespace Http {
 
 	const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
 
@@ -170,13 +170,13 @@
 		static field _active_requests = null;
 		
 		field _url;
-		field _method = HTTP.Method.GET;
+		field _method = Http.Method.GET;
 		field _headers = [];
 		field _content = null;
-		field _mode = HTTP.RequestMode.TEXT;
+		field _mode = Http.RequestMode.TEXT;
 		field _isReady = false;
 		field _contentIsBinary = false;
-		field _userAgent = HTTP.DEFAULT_USER_AGENT;
+		field _userAgent = Http.DEFAULT_USER_AGENT;
 		field _contentType = null;
 		field _timesPolled = 0;
 		
@@ -224,7 +224,7 @@
 				this.setHeader('Content-Type', contentType);
 			}
 			if (this._method == null) {
-				this._method = HTTP.Method.POST;
+				this._method = Http.Method.POST;
 			}
 			return this;
 		}
@@ -247,10 +247,10 @@
 		function _sendImpl(isAsync) {
 		
 			method = {
-				HTTP.Method.GET: 'GET',
-				HTTP.Method.POST: 'POST',
-				HTTP.Method.PUT: 'PUT',
-				HTTP.Method.DELETE: 'DELETE',
+				Http.Method.GET: 'GET',
+				Http.Method.POST: 'POST',
+				Http.Method.PUT: 'PUT',
+				Http.Method.DELETE: 'DELETE',
 			}.get(this._method, this._method) + '';
 			
 			this._headers.add('User-Agent', this._userAgent);
@@ -288,7 +288,7 @@
 		
 		function getResponse() {
 			Core.assert(this._isReady, "Request not finished.");
-			return HTTP.HttpResponse._initialize(this);
+			return Http.HttpResponse._initialize(this);
 		}
 	}
 }

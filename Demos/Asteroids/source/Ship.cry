@@ -1,4 +1,4 @@
-import Graphics;
+import Graphics2D;
 import Math;
 
 const SHIP_ROTATION_SPEED = 2 * Math.PI / 80;

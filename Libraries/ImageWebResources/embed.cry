@@ -1,4 +1,4 @@
-import HTTP;
+import Http;
 import ImageResources;
 
 namespace ImageWebResources {
@@ -28,7 +28,7 @@ namespace ImageWebResources {
 			if ($$$('isJavaScript')) {
 				this._request = url;
 			} else {
-				this._request = new HttpRequest(url).setMode(HTTP.RequestMode.BINARY);
+				this._request = new HttpRequest(url).setMode(Http.RequestMode.BINARY);
 			}
 		}
 		

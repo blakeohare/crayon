@@ -1,4 +1,4 @@
-﻿namespace JSON {
+﻿namespace Json {
 	function parseJson(text) {
 		return $$lib_json_parse(text);
 	}

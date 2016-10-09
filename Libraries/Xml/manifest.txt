@@ -1,4 +1,4 @@
-NAME: XML
+NAME: Xml
 AUTHOR: Blake O'Hare
 DOCUMENTATION: http://crayonlang.org/docs/0.2.0/xml
 DESCRIPTION: Library for parsing simple XML.

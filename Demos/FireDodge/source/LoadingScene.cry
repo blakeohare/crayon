@@ -1,4 +1,4 @@
-import Graphics;
+import Graphics2D;
 import ImageResources;
 import Math;
 

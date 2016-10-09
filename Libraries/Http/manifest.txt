@@ -1,4 +1,4 @@
-NAME: HTTP
+NAME: Http
 AUTHOR: Blake O'Hare
 DOCUMENTATION: http://crayonlang.org/docs/0.2.0/http
 DESCRIPTION: Library for sending HTTP requests.

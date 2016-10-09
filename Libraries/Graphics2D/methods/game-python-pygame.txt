@@ -1,0 +1,3 @@
+$_lib_graphics2d_flipTexture: _flipTexture([ARG:1], [ARG:2], [ARG:3])
+$_lib_graphics2d_render: gfxRendererSetData([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_graphics2d_scale: _gfxScale([ARG:1], [ARG:2], [ARG:3])

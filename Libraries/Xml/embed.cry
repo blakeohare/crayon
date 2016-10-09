@@ -1,4 +1,4 @@
-﻿namespace XML {
+﻿namespace Xml {
 	enum XmlOption {
 		TRIM_WHITESPACE = 1,
 		
@@ -191,10 +191,10 @@
 	*/
 	function _objGen(data, dictReusable, options) {
 		children = [];
-		trim = (options & XML.XmlOption.TRIM_WHITESPACE) != 0;
+		trim = (options & Xml.XmlOption.TRIM_WHITESPACE) != 0;
 		for (child : data[4]) {
 			if (child[0]) {
-				children.add(XML._objGen(child, dictReusable, options));
+				children.add(Xml._objGen(child, dictReusable, options));
 			} else {
 				value = child[1];
 				if (trim) {
@@ -224,10 +224,10 @@
 			if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
 			Core.fail(error);
 		}
-		root = XML._objGen(output[0], {}, options);
+		root = Xml._objGen(output[0], {}, options);
 		
-		if ((options & XML.XmlOption.NAMESPACES) != 0) {
-			return XML._convertToNamespaces(root);
+		if ((options & Xml.XmlOption.NAMESPACES) != 0) {
+			return Xml._convertToNamespaces(root);
 		}
 		
 		return root;

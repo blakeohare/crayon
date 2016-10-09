@@ -1,6 +1,6 @@
-import  Game;
+import Game;
 
-namespace Graphics {
+namespace Graphics2D {
 	
 	enum _DrawCommands {
 		RECTANGLE = 1,
@@ -10,7 +10,7 @@ namespace Graphics {
 		QUAD = 5,
 		IMAGE = 6,
 		
-		TEXT = 7, // Not used directly in Graphics. Injected by GraphicsText
+		TEXT = 7, // Not used directly in Graphics2D. Injected by GraphicsText
 	}
 	
 	class Draw {
@@ -22,11 +22,11 @@ namespace Graphics {
 		
 		static constructor() {
 			// essentially no-ops, but runs the queue initializers.
-			$$lib_graphics_renderQueueAction(Graphics.Draw._queueOld, Graphics.Draw._text_queueOld, 0);
-			$$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 0);
+			$$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queueOld, Graphics2D.Draw._text_queueOld, 0);
+			$$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 0);
 			
-			Game.GameWindow._frameEndHandlers.add(Graphics.Draw._renderer);
-			Game.GameWindow._frameBeginHandlers.add(Graphics.Draw._rendererReset);
+			Game.GameWindow._frameEndHandlers.add(Graphics2D.Draw._renderer);
+			Game.GameWindow._frameBeginHandlers.add(Graphics2D.Draw._rendererReset);
 		}
 		
 		// TODO: static classes
@@ -34,26 +34,26 @@ namespace Graphics {
 		
 		static function _renderer() {
 			// send the render queue to the platform renderer
-			$$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 1);
+			$$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 1);
 			
 			// Swap the buffers. The old buffer stays in memory, in tact, while new events get drawn to [text]queue.
-			t = Graphics.Draw._queue;
-			Graphics.Draw._queue = Graphics.Draw._queueOld;
-			Graphics.Draw._queueOld = t;
+			t = Graphics2D.Draw._queue;
+			Graphics2D.Draw._queue = Graphics2D.Draw._queueOld;
+			Graphics2D.Draw._queueOld = t;
 			
-			t = Graphics.Draw._text_queue;
-			Graphics.Draw._text_queue = Graphics.Draw._text_queueOld;
-			Graphics.Draw._text_queueOld = t;
+			t = Graphics2D.Draw._text_queue;
+			Graphics2D.Draw._text_queue = Graphics2D.Draw._text_queueOld;
+			Graphics2D.Draw._text_queueOld = t;
 		}
 		
 		static function _rendererReset() {
 			// clear the render queue
 			Draw._text_queue = null;
-			return $$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 2);
+			return $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
 		}
 		
 		static function ellipse(left, top, width, height, r, g, b, a = 255) {
-			return $$$('intQueueWrite16', Graphics.Draw._queue,
+			return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 				_DrawCommands.ELLIPSE,
 				left, top, width, height, r, g, b, a);
 		}
@@ -66,7 +66,7 @@ namespace Graphics {
 			// probably the most common use case.
 			
 			if (startY == endY) { // horizontal
-				return $$$('intQueueWrite16', Graphics.Draw._queue,
+				return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 					_DrawCommands.RECTANGLE,
 					$$$('min', startX, endX), // left
 					startY - strokeWidth / 2, // top
@@ -76,7 +76,7 @@ namespace Graphics {
 			}
 			
 			if (startX == endX) { // vertical
-				return $$$('intQueueWrite16', Graphics.Draw._queue,
+				return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 					_DrawCommands.RECTANGLE,
 					startX - strokeWidth / 2, // left
 					$$$('min', startY, endY), // top
@@ -95,28 +95,28 @@ namespace Graphics {
 				that represents this line and use the platform's polygon drawing method
 				instead.
 			*/
-			if (strokeWidth < 3 && !$$lib_graphics_isOpenGlBased()) {
-				return $$$('intQueueWrite16', Graphics.Draw._queue,
+			if (strokeWidth < 3 && !$$lib_graphics2d_isOpenGlBased()) {
+				return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 					_DrawCommands.LINE,
 					startX, startY, endX, endY, strokeWidth, r, g, b, a);
 			}
 			
-			$$$('intQueueWrite16', Graphics.Draw._queue,
+			$$$('intQueueWrite16', Graphics2D.Draw._queue,
 				_DrawCommands.QUAD,
 				startX, startY, endX, endY, strokeWidth, 0, 0, 0, r, g, b, a);
 			// The above command is just a placeholder. Do the rest of the 
 			// transformation in translated code...
-			return $$lib_graphics_lineToQuad(Graphics.Draw._queue);
+			return $$lib_graphics2d_lineToQuad(Graphics2D.Draw._queue);
 		}
 
 		static function rectangle(left, top, width, height, r, g, b, a = 255) {
-			return $$$('intQueueWrite16', Graphics.Draw._queue,
+			return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 				_DrawCommands.RECTANGLE,
 				left, top, width, height, r, g, b, a);
 		}
 
 		static function triangle(ax, ay, bx, by, cx, cy, r, g, b, a = 255) {
-			return $$$('intQueueWrite16', Graphics.Draw._queue,
+			return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 				_DrawCommands.TRIANGLE,
 				ax, ay, bx, by, cx, cy, r, g, b, a);
 		}
@@ -124,15 +124,15 @@ namespace Graphics {
 		static function quad(ax, ay, bx, by, cx, cy, dx, dy, r, g, b, a = 255) {
 			// TODO: if this makes a bowtime, and this is an OpenGL based platform,
 			// decompose this into two triangle draws.
-			return $$$('intQueueWrite16', Graphics.Draw._queue,
+			return $$$('intQueueWrite16', Graphics2D.Draw._queue,
 				_DrawCommands.QUAD,
 				ax, ay, bx, by, cx, cy, dx, dy, r, g, b, a);
 		}
 		
 		static function fill(r, g, b) {
 			t = Game.GameWindow.instance;
-			$$lib_graphics_renderQueueAction(Graphics.Draw._queue, Graphics.Draw._text_queue, 2);
-			return Graphics.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
+			$$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
+			return Graphics2D.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
 		}
 	}
 }

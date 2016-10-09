@@ -1,7 +1,7 @@
 import Math;
 import ImageResources;
 
-namespace Graphics {
+namespace Graphics2D {
 	class GraphicsTexture {
 		/*
 			nativeData[0] -> weak reference to GraphicsTextureResource's nativeData
@@ -25,7 +25,7 @@ namespace Graphics {
 			width = imageResource._width;
 			height = imageResource._height;
 			
-			if ($$lib_graphics_isPlatformUsingTextureAtlas()) { // TODO: compile time constant functions
+			if ($$lib_graphics2d_isPlatformUsingTextureAtlas()) { // TODO: compile time constant functions
 				// only create a new texture resource if one doesn't exist that already has the same atlas backing it
 				key = atlasNativeResource.resourceFingerprint;
 				textureResource = GraphicsTextureResource.database.get(key);
@@ -41,7 +41,7 @@ namespace Graphics {
 					img.lock();
 					img.blit(atlasDummyWrapper, 0, 0);
 					img.unlock();
-					$$lib_graphics_initializeTextureResource(textureResource, true, img);
+					$$lib_graphics2d_initializeTextureResource(textureResource, true, img);
 					GraphicsTextureResource.database[key] = textureResource;
 				}
 				x = imageResource._x;
@@ -58,11 +58,11 @@ namespace Graphics {
 				textureResource = new GraphicsTextureResource();
 				textureResource.width = width;
 				textureResource.height = height;
-				$$lib_graphics_initializeTextureResource(textureResource, true, img);
+				$$lib_graphics2d_initializeTextureResource(textureResource, true, img);
 				textureCoords = [0.0, 0.0, 1.0, 1.0];
 			}
 			texture = new GraphicsTexture(textureResource, width, height);
-			$$lib_graphics_initializeTexture(texture, textureResource, textureCoords, width, height);
+			$$lib_graphics2d_initializeTexture(texture, textureResource, textureCoords, width, height);
 			return texture;
 		}
 		
@@ -82,7 +82,7 @@ namespace Graphics {
 		}
 		
 		/*
-			[0] -> Graphics._DrawCommands.IMAGE,
+			[0] -> Graphics2D._DrawCommands.IMAGE,
 			
 			[1] -> optionFlagsBitMask {
 				1 - slice,
@@ -113,8 +113,8 @@ namespace Graphics {
 			
 		*/
 		function draw(x, y) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				0,
 				0, 0, 0, 0,
 				0, 0,
@@ -124,8 +124,8 @@ namespace Graphics {
 		}
 
 		function drawWithAlpha(x, y, alpha) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				8,
 				0, 0, 0, 0,
 				0, 0,
@@ -136,8 +136,8 @@ namespace Graphics {
 
 		function drawRegion(x, y, sx, sy, width, height) {
 			if (width == 0 || height == 0) return;
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				1,
 				sx, sy, width, height,
 				0, 0,
@@ -148,8 +148,8 @@ namespace Graphics {
 
 		function drawStretched(x, y, width, height) {
 			if (width == 0 || height == 0) return;
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				2,
 				0, 0, 0, 0,
 				width, height,
@@ -160,8 +160,8 @@ namespace Graphics {
 
 		function drawRegionStretched(tx, ty, tw, th, sx, sy, sw, sh) {
 			if (tw == 0 || th == 0 || sw == 0 || sh == 0) return;
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				1 | 2,
 				sx, sy, sw, sh,
 				tw, th,
@@ -171,8 +171,8 @@ namespace Graphics {
 		}
 
 		function drawRegionStretchedWithAlpha(tx, ty, tw, th, sx, sy, sw, sh, alpha) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				1 | 2 | 8,
 				sx, sy, sw, sh,
 				tw, th,
@@ -182,8 +182,8 @@ namespace Graphics {
 		}
 
 		function drawRotated(x, y, theta) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				4,
 				0, 0, 0, 0,
 				0, 0,
@@ -193,8 +193,8 @@ namespace Graphics {
 		}
 
 		function drawRotatedWithAlpha(x, y, theta, alpha) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				4 | 8,
 				0, 0, 0, 0,
 				0, 0,
@@ -204,8 +204,8 @@ namespace Graphics {
 		}
 		
 		function drawWithOptions(tx, ty, tw, th, sx, sy, sw, sh, theta, alpha) {
-			return $$lib_graphics_addImageRenderEvent(
-				Graphics.Draw._queue, this,
+			return $$lib_graphics2d_addImageRenderEvent(
+				Graphics2D.Draw._queue, this,
 				1 | 2 | 4 | 8,
 				sx, sy, sw, sh,
 				tw, th,
@@ -218,12 +218,12 @@ namespace Graphics {
 
 		function _createResCopy(res) {
 			output = [res, res];
-			if (!$$lib_graphics_isPlatformUsingTextureAtlas()) {
+			if (!$$lib_graphics2d_isPlatformUsingTextureAtlas()) {
 				// for non-atlas platforms, create a copy of the texture resource.
 				newRes = new GraphicsTextureResource();
 				newRes.width = res.width;
 				newRes.height = res.height;
-				$$lib_graphics_initializeTextureResource(newRes, false, res);
+				$$lib_graphics2d_initializeTextureResource(newRes, false, res);
 				output[1] = newRes;
 			}
 			return output;
@@ -233,7 +233,7 @@ namespace Graphics {
 			if (!(h || v)) return this;
 			res = this._createResCopy(this._graphicsTextureResource);
 			output = new GraphicsTexture(res[1], this.width, this.height);
-			return $$lib_graphics_flip(this, output, h, v, res[0], res[1]);
+			return $$lib_graphics2d_flip(this, output, h, v, res[0], res[1]);
 		}
 
 		/*
@@ -260,7 +260,7 @@ namespace Graphics {
 			if (w == this.width && h == this.height) return img;
 			res = this._createResCopy(this._graphicsTextureResource);
 			output = new GraphicsTexture(res[1], w, h);
-			$$lib_graphics_scale(img, output, w, h, res[0], res[1]);
+			$$lib_graphics2d_scale(img, output, w, h, res[0], res[1]);
 			return output;
 		}
 	}

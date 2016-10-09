@@ -1,4 +1,4 @@
-namespace Graphics {
+namespace Graphics2D {
 	class GraphicsTextureResource {
 		
 		static field database = {}; // mapping of ImageResource version keys to GraphicsTextureResource instances.
