@@ -6,6 +6,11 @@ COPYFILES: desktopcsharp: %PROJECT_ID%/Libraries/ImageEncoder/%FILE%
 END
 
 BEGIN
+APPLICABLE-TO: game-java-awt
+COPYFILES: desktopjava: src/crayonlib/imageencoder/%FILE%
+END
+
+BEGIN
 APPLICABLE-TO: game-python-pygame
 EMBED: python
 END

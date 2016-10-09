@@ -193,6 +193,11 @@ namespace Crayon.Translator.Java
                 output["resources/images/" + tileFile] = resourceDatabase.ImageSheetFiles[tileFile];
             }
 
+            foreach (FileOutput image in resourceDatabase.ImageResources)
+            {
+                output["resources/images/" + image.CanonicalFileName] = image;
+            }
+
             foreach (FileOutput textFile in resourceDatabase.TextResources)
             {
                 output["resources/text/" + textFile.CanonicalFileName] = textFile;

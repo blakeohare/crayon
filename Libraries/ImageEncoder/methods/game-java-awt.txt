@@ -1,0 +1,1 @@
+$_lib_imageencoder_encodeImage: crayonlib.imageencoder.ImageEncoderUtil.encode([ARG:1], [ARG:2], [ARG:3], [ARG:4])
