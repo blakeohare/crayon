@@ -1,7 +1,7 @@
-﻿namespace MySQL {
+﻿namespace MySql {
 	
 	function connect(host, user, password, db) {
-		return new MySQL.Connection(host, user, password, db);
+		return new MySql.Connection(host, user, password, db);
 	}
 	
 	class Connection {
@@ -14,13 +14,13 @@
 		
 		function _queryImpl(output, sql) {
 			columnsOut = [];
-			error = $$lib_mysql_runQuery(this, output, sql, MySQL.Connection._reusableOut, columnsOut);
+			error = $$lib_mysql_runQuery(this, output, sql, MySql.Connection._reusableOut, columnsOut);
 			if (error != null) {
 				Core.assert(false, "MySQL encountered an error: " + error);
 			}
 			
 			if (output != null) {
-				output._results = MySQL.Connection._reusableOut[1];
+				output._results = MySql.Connection._reusableOut[1];
 				output._colCount = columnsOut.length / 2;
 				if (output._colCount != 0) {
 					output._columns = columnsOut[::2];
@@ -65,7 +65,7 @@
 			}
 			
 			this._queryImpl(null, sql.join());
-			return MySQL.Connection._reusableOut[0];
+			return MySql.Connection._reusableOut[0];
 		}
 	}
 	
