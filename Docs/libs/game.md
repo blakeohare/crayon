@@ -157,27 +157,42 @@ have special meaning in browsers and will cause inintended side effects if the p
 
 | Value | Description |
 | --- | --- |
-| **BACKSPACE** | |
-| **TAB** | |
-| **ENTER** | |
-| **SHIFT** | Both left and right shift. |
-| **CTRL** | Both left and right ctrl. |
 | **ALT** | Both left and right alt. |
-| **PAUSE** | |
+| **APOSTROPHE** | `'` |
+| **BACKSLASH** | `\` |
+| **BACKSPACE** | |
+| **BACKTICK** | `` ` `` |
 | **CAPS_LOCK** | |
-| **ESCAPE** | |
-| **SPACE** | |
-| **PAGE_UP** | |
-| **PAGE_DOWN** | |
-| **END** | |
-| **HOME** | |
-| **LEFT** | |
-| **UP** | |
-| **RIGHT** | |
-| **DOWN** | |
-| **PRINT_SCREEN** | |
-| **INSERT** | |
+| **CLOSE_BRACKET** | `]` |
+| **COMMA** | `,` |
+| **CONTEXT_MENU** | Sometimes known as the menu key. |
+| **CTRL** | Both left and right ctrl. |
 | **DELETE** | |
+| **DOWN** | Down arrow key. |
+| **END** | |
+| **ENTER** | |
+| **EQUALS** | `=` Sometimes referred to as the PLUS key. |
+| **ESCAPE** | |
+| **HOME** | |
+| **HYPHEN** | `-` Sometimes referred to as the MINUS key. |
+| **INSERT** | |
+| **LEFT** | Left arrow key. |
+| **NUM_LOCK** | |
+| **OPEN_BRAKET** | `[` |
+| **OS_COMMAND** | e.g. The Windows key. |
+| **PAGE_DOWN** | |
+| **PAGE_UP** | |
+| **PAUSE** | |
+| **PERIOD** | `.` |
+| **PRINT_SCREEN** | |
+| **RIGHT** | Right arrow key. |
+| **SCROLL_LOCK** | |
+| **SEMICOLON** | `;` |
+| **SHIFT** | Both left and right shift. |
+| **SLASH** | `/` |
+| **SPACE** | ` ` |
+| **TAB** | |
+| **UP** | Up arrow key. |
 | **NUM_0** | The following enum values correspond to both the numbers at the top of the keyboard and the num pad. No distinction is made. |
 | **NUM_1** | |
 | **NUM_2** | |
@@ -214,8 +229,6 @@ have special meaning in browsers and will cause inintended side effects if the p
 | **X** | |
 | **Y** | |
 | **Z** | |
-| **OS_COMMAND** | e.g. The Windows key. |
-| **CONTEXT_MENU** | |
 | **F1** | |
 | **F2** | |
 | **F3** | |
@@ -228,17 +241,4 @@ have special meaning in browsers and will cause inintended side effects if the p
 | **F10** | |
 | **F11** | |
 | **F12** | |
-| **NUM_LOCK** | |
-| **SCROLL_LOCK** | |
-| **SEMICOLON** | |
-| **EQUALS** | |
-| **COMMA** | |
-| **HYPHEN** | |
-| **PERIOD** | |
-| **SLASH** | |
-| **BACKTICK** | |
-| **OPEN_BRAKET** | |
-| **BACKSLASH** | |
-| **CLOSE_BRACKET** | |
-| **APOSTROPHE** | |
 
