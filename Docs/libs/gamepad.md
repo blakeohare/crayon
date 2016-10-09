@@ -19,9 +19,9 @@ The GamepadManager is a static class with various utility methods for interactin
 
 ### isGamepadSupported
 
-A static method that returns true if Gamepads are supported.
-
 `GamepadManager.isGamepadSupported()`
+
+A static method that returns true if Gamepads are supported.
 
 **Return value**: boolean
 
@@ -35,13 +35,13 @@ if (GamepadManager.isGamepadSupported()) {
 
 ### platformRequiresRefresh
 
+`GamepadManager.platformRequiresRefresh()`
+
 A static method that returns true if the current platform does not detect gamepads on startup and must be periodically checked.
 
 Notably this returns true in JavaScript projects, because the browser does not report the existence of a gamepad unless you first push a button after the page has loaded.
 
 Technically this method is not funcetionally necessary as it is safe to call refreshDevices multiple times on any platform. But it does allow for better UX i.e. displaying a message in your gamepad config UI that explicitly tells the user "Please push a button for the gamepad to show up".
-
-`GamepadManager.platformRequiresRefresh()`
 
 **Return value**: boolean
 
@@ -49,21 +49,21 @@ Technically this method is not funcetionally necessary as it is safe to call ref
 
 ### refreshDevices
 
-A static method that checks to see if any new devices are available. This must be called before accessing any Gamepad methods that interact with devices.
-
 `GamepadManager.refreshDevices()`
+
+A static method that checks to see if any new devices are available. This must be called before accessing any Gamepad methods that interact with devices.
 
 **Return value**: nothing
 
-See also: [platformRequiresRefresh](#platformrequiresrefresh)
+See also: [GamepadManager.platformRequiresRefresh](#platformrequiresrefresh)
 
 ---
 
 ### getDeviceCount
 
-A static method that returns the number of devices that are currently available.
-
 `GamepadManager.getDeviceCount()`
+
+A static method that returns the number of devices that are currently available.
 
 **Return value**: integer
 
@@ -71,9 +71,9 @@ A static method that returns the number of devices that are currently available.
 
 ### getDeviceByIndex
 
-A static method that returns a GamepadDevice instance by providing its index value.
-
 `GamepadManager.getDeviceByIndex(index)`
+
+A static method that returns a GamepadDevice instance by providing its index value.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -93,9 +93,9 @@ See also: [GamepadManager.getDeviceCount](#getdevicecount), [GamepadDevice](#cla
 
 ### getDeviceById
 
-A static method that returns a GamepadDevice instance by providing the ID value previously assigned to it.
-
 `GamepadManager.getDeviceByIndex(id)`
+
+A static method that returns a GamepadDevice instance by providing the ID value previously assigned to it.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -119,9 +119,9 @@ See also: [GamepadDevice](#class-gamepaddevice)
 
 ### restoreSettingsFromUserData
 
-Checks to see if there is a previously saved gamepad configuration in UserData. If so, configure as many gamepad devices as possible and assign ID's accordingly. Return the number of gamepads successfully configured.
-
 `GamepadManager.restoreSettingsFromUserData(deviceIdOrIdList)`
+
+Checks to see if there is a previously saved gamepad configuration in UserData. If so, configure as many gamepad devices as possible and assign ID's accordingly. Return the number of gamepads successfully configured.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -135,9 +135,9 @@ See also: [GamepadManager.saveSettingsToUserData](#savesettingstouserdata)
 
 ### saveSettingsToUserData
 
-Saves the current gamepad configuration to UserData so that it can be re-used the next time this program runs.
-
 `GamepadManager.saveSettingsToUserData()`
+
+Saves the current gamepad configuration to UserData so that it can be re-used the next time this program runs.
 
 **Return value**: nothing
 
@@ -149,9 +149,9 @@ See also: [GamepadManager.restoreSettingsFromUserData](#restoresettingsfromuserd
 
 ### clearAllIds
 
-Clears all the ID's that are currently configured to GamepadDevices.
-
 `GamepadManager.clearAllIds()`
+
+Clears all the ID's that are currently configured to GamepadDevices.
 
 **Return value**: nothing
 
@@ -165,9 +165,9 @@ Represents a physical gamepad device.
 
 ### getId
 
-Returns the user-assigned ID to this device.
-
 `device.getId()`
+
+Returns the user-assigned ID to this device.
 
 **Return value**: integer, string, or `null` if not set
 
@@ -175,9 +175,9 @@ Returns the user-assigned ID to this device.
 
 ### setId
 
-Sets an ID for this device.
-
 `device.setId(id)`
+
+Sets an ID for this device.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -189,9 +189,9 @@ Sets an ID for this device.
 
 ### clearId
 
-Clears the ID for this device.
-
 `device.clearId()`
+
+Clears the ID for this device.
 
 **Return value**: nothing
 
@@ -199,9 +199,9 @@ Clears the ID for this device.
 
 ### pushAutoConfigure
 
-Pushes a configuration to the GamepadDevice's configuration stack that makes its best guess as to how the buttons ought to be configured.
-
 `device.pushAutoConfigure()`
+
+Pushes a configuration to the GamepadDevice's configuration stack that makes its best guess as to how the buttons ought to be configured.
 
 **Return value**: nothing
 
@@ -211,9 +211,9 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### pushEmptyConfig
 
-Pushes an empty configuration to the GamepadDevice's configuration stack.
-
 `device.pushEmptyConfig()`
+
+Pushes an empty configuration to the GamepadDevice's configuration stack.
 
 **Return value**: nothing
 
@@ -223,9 +223,9 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### popConfig
 
-Pops the active configuration off of the GamepadDevice's configuration stack.
-
 `device.popConfig()`
+
+Pops the active configuration off of the GamepadDevice's configuration stack.
 
 **Return value**: nothing
 
@@ -235,9 +235,9 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### flattenConfigs
 
-Removes all items in the GamepadDevice's configuration stack other than the active one.
-
 `device.flattenConfigs()`
+
+Removes all items in the GamepadDevice's configuration stack other than the active one.
 
 **Return value**: nothing
 
@@ -247,9 +247,9 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### clearBinding
 
-Removes the binding for the given button ID in the active configuration.
-
 `device.clearBinding(buttonId)`
+
+Removes the binding for the given button ID in the active configuration.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -265,9 +265,9 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### clearBindings
 
-Removes all bindings in the active configuration.
-
 `device.clearBindings()`
+
+Removes all bindings in the active configuration.
 
 **Return value**: nothing
 
@@ -277,11 +277,11 @@ Read more about [Configuring Gamepads](#configuring-gamepads)
 
 ### getName
 
+`device.getName()`
+
 Returns the name of this device as reported by the hardware. This is a product string such as "Lodgy-Tek Stick-o-Joy 5000". 
 
 This value should be shown to the user in any configuration UI to help identify specific devices.
-
-`device.getName()`
 
 **Return value**: string
 
@@ -291,9 +291,9 @@ Note: some platforms are unable to identify the product name and will instead re
 
 ### getButtonCount
 
-Returns the number of buttons on this device.
-
 `device.getButtonCount()`
+
+Returns the number of buttons on this device.
 
 **Return value**: integer
 
@@ -303,9 +303,9 @@ This is the number of push-buttons on this device. Axes and directional pads do 
 
 ### getAxisCount
 
-Returns the number of axes on this device.
-
 `device.getAxisCount()`
+
+Returns the number of axes on this device.
 
 **Return value**: integer
 
@@ -315,9 +315,9 @@ This is the number of hardware axes on this device. Note that a single "joystick
 
 ### getButtonState
 
-Returns the state of a button.
-
 `device.getButtonState(index)`
+
+Returns the state of a button.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -325,7 +325,49 @@ Returns the state of a button.
 
 **Return value**: boolean
 
-...
+---
+
+### bindDigitalButton
+
+`device.bindDigitalButton(buttonId)`
+
+Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as a digital button.
+A digital button returns a boolean when queried. 
+
+- If binding is successful, `true` is returned.
+- If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and `false` is returned.
+- If no buttons or axes are pressed, `false` is returned.
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| **buttonId** | _string or integer_ | Button ID to bind. |
+
+See also: [GamepadDevice.bindAnalogButton](#bindanalogbutton)
+
+Read more about [Configuring Gamepads](#configuring-gamepads)
+
+---
+
+### bindAnalogButton
+
+`device.bindAnalogButton(buttonId)`
+
+Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as an analog button.
+An analog button returns a float between 0.0 and 1.0 when queried. 
+
+- If binding is successful, `true` is returned.
+- If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and `false` is returned.
+- If no buttons or axes are pressed, `false` is returned.
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| **buttonId** | _string or integer_ | Button ID to bind. |
+
+See also: [GamepadDevice.bindDigitalButton](#binddigitalbutton)
+
+Read more about [Configuring Gamepads](#configuring-gamepads)
+
+---
 
 
 # Configuring Gamepads
