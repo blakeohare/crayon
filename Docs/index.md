@@ -11,23 +11,23 @@
 ### General Libraries
 
 - [Core](libs/core.md)
-- Easing
-- FileIO
-- Http
-- [ImageEncoding](libs/imageencoding.md)
+- [Easing](libs/easing.md)
+- [FileIO](libs/fileio.md)
+- [Http](libs/http.md)
+- [ImageEncoder](libs/imageencoder.md)
 - [ImageResources](libs/imageresources.md)
-- ImageWebResources
-- Json
-- Math
-- Random
-- Resources
-- UserData
-- Web
-- Xml
+- [ImageWebResources](libs/imagewebresources.md)
+- [Json](libs/json.md)
+- [Math](libs/math.md)
+- [Random](libs/random.md)
+- [Resources](libs/resources.md)
+- [UserData](libs/userdata.md)
+- [Web](libs/web.md)
+- [Xml](libs/xml.md)
 
 ### Game-Related Libraries
 
-- Audio
+- [Audio](libs/audio.md)
 - [Game](libs/game.md)
-- Gamepad
+- [Gamepad](libs/gamepad.md)
 - [Graphics2D](libs/graphics2d.md)
