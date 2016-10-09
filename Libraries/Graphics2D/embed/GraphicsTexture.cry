@@ -19,7 +19,7 @@ namespace Graphics2D {
 		field height;
 		
 		static field REUSABLE_WIDTH_HEIGHT_OUT = [0, 0];
-		static function createImage(imageResource) {
+		static function load(imageResource) {
 			atlasNativeResource = imageResource._nativeResource;
 			atlasNativeResource.verifyUnlocked();
 			width = imageResource._width;

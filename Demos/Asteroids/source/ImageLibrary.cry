@@ -13,7 +13,7 @@ class ImageLibrary {
 			if (ImageLibrary.imageSheet == null) {
 				ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
 			}
-			img = GraphicsTexture.createImage(ImageLibrary.imageSheet.getImage('images/' + path));
+			img = GraphicsTexture.load(ImageLibrary.imageSheet.getImage('images/' + path));
             ImageLibrary.images[path] = img;
         }
         return img;

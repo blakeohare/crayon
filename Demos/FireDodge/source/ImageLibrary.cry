@@ -29,7 +29,7 @@ class ImageLibrary {
                 img = img.flip(true, false);
             } else {
                 rawResource = ImageLibrary.sheet.getImage(path);
-				img = GraphicsTexture.createImage(rawResource);
+				img = GraphicsTexture.load(rawResource);
             }
 
 			// cache the image.

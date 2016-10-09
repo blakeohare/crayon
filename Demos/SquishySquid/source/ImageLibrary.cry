@@ -8,7 +8,7 @@ static class ImageLibrary {
     static function get(path) {
         texture = ImageLibrary.textures.get(path);
         if (texture == null) {
-            texture = GraphicsTexture.createImage(ImageLibrary.getResource(path));
+            texture = GraphicsTexture.load(ImageLibrary.getResource(path));
             ImageLibrary.textures[path] = texture;
         }
         return texture;
