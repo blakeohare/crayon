@@ -49,6 +49,11 @@
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">
       <Project>{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}</Project>
       <Name>Interpreter</Name>
