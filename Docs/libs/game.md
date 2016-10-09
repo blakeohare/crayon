@@ -46,7 +46,7 @@ equivalent to calling `Core.sleep(t)`. If clockTick is not invoked, the window w
 `gameWindow.pumpEvents()`
 
 Returns a list of events that have occurred since the last time this method was invoked. 
-Events are instances of (EventType)[#class-eventtype]
+Events are instances of [EventType](#class-eventtype)
 
 ---
 
@@ -68,11 +68,11 @@ This is an abstract class for various types of event objects.
 
 ## Fields
 
-### event.type
+### type
 
 `event.type`
 
-Field indicating what kind of event this is. The value is from the enum (EventType)[#enum-eventtype].
+Field indicating what kind of event this is. The value is from the enum [EventType](#enum-eventtype).
 
 ---
 
@@ -82,11 +82,11 @@ This is an event indicating one of various quit events.
 
 ## Fields
 
-### quitEvent.quitType
+### quitType
 
 `event.quitType`
 
-Field indicating what kind of quit event this is. The value is from the enum (EventQuitType)[#enum-eventquittype].
+Field indicating what kind of quit event this is. The value is from the enum [EventQuitType](#enum-eventquittype).
 
 ---
 
@@ -96,7 +96,7 @@ This is an event indicating some sort of keyboard event. The `.type` field will 
 
 ## Fields
 
-### keyEvent.key
+### key
 
 `event.key`
 
@@ -104,12 +104,70 @@ This is the key that is pressed. This is an enum value from [KeyboardKey](#enum-
 
 ---
 
-### keyEvent.down
+### down
 
 `event.down`
 
 This is a boolean indicating whether the key was pushed down. 
 This is redundant with checking if the .type field is `EventType.KEY_DOWN` and exists as a convenience.
+
+---
+
+# Class: MouseEvent
+
+Abstract base class for other mouse event types. This class only contains cursor location information.
+
+## Fields
+
+### x & y
+
+`event.x`
+
+`event.y`
+
+Location on the screen where the mouse event occurred. 
+Note that this uses logical coordinates (the `width` and `height` parameters of [GameWindow](#gamewindow-constructor)) 
+as opposed to the actual physical screen size.
+
+# Class: MouseClickEvent
+
+## Fields
+
+### button
+
+`mouseClickEvent.button`
+
+The button that was clicked. This is a value in the [EventButton](#enum-eventbutton) enum.
+Note that this is redundant with checking the event's `.type` value.
+
+---
+
+### down
+
+`mosueClickEvent.down`
+
+A boolean indicating whether the event was for a pressing a button down (as opposed to releasing a button). 
+Note that this is redundant with checking the event's `.type` value.
+
+---
+
+# Class: MouseMoveEvent
+
+Class for events for when the mouse moves. This class does not contain any fields as its base class ([MouseEvent](#class-mouseevent)) already contains the coordinates.
+
+---
+
+# Class: MouseScrollEvent
+
+Class for events for when the mouse wheel is scrolled.
+
+## Fields
+
+### amount
+
+`mouseScrollEvent.amount`
+
+A float indicating how much the mouse wheel has been scrolled.
 
 ---
 
@@ -131,7 +189,7 @@ Enum defining the various types of events.
 | **GAMEPAD_HARDWARE** | A gamepad button or axis was pushed. |
 | **GAMEPAD** | A gamepad button or axis that has been configured was pushed. |
 
-See also: (event.type)[#event-type]
+See also: [event.type](#event-type)
 
 ---
 
@@ -139,13 +197,28 @@ See also: (event.type)[#event-type]
 
 Enum defining the various types of quit events.
 
-See also: (QuitEvent)[#class-quitevent]
+See also: [QuitEvent](#class-quitevent)
 
 | Value | Description |
 | --- | --- |
 | **ALT_F4** | User pressed Alt + F4. |
 | **CLOSE_BUTTON** | User pressed the close button on the window. |
 | **BACK_BUTTON** | User pressed the back button on a mobile device. |
+
+---
+
+# Enum: EventButton
+
+Enum defining the various mouse buttons.
+
+See also: [MouseClickEvent](#class-mouseclickevent)
+
+| Value | Description |
+| --- | --- |
+| **LEFT** | Left mouse button. |
+| **RIGHT** | Right mouse button. |
+
+---
 
 # Enum: KeyboardKey
 
@@ -241,4 +314,3 @@ have special meaning in browsers and will cause inintended side effects if the p
 | **F10** | |
 | **F11** | |
 | **F12** | |
-
