@@ -102,7 +102,7 @@ namespace Crayon.Translator
                 case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
                 case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
                 case "_string_char_code_at": VerifyCount(functionCall, 2); TranslateStringCharCodeAt(output, args[0], args[1]); break;
-                case "_string_compare": VerifyCount(functionCall, 2); TranslateStringCompare(output, args[0], args[1]); break;
+                case "_string_compare_is_reverse": VerifyCount(functionCall, 2); TranslateStringCompareIsReverse(output, args[0], args[1]); break;
                 case "_string_concat": VerifyCountAtLeast(functionCall, 2); TranslateStringConcat(output, args); break;
                 case "_string_contains": VerifyCount(functionCall, 2); TranslateStringContains(output, args[0], args[1]); break;
                 case "_string_endswith": VerifyCount(functionCall, 2); TranslateStringEndsWith(output, args[0], args[1]); break;
@@ -201,7 +201,7 @@ namespace Crayon.Translator
         protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
         protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
         protected abstract void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index);
-        protected abstract void TranslateStringCompare(List<string> output, Expression a, Expression b);
+        protected abstract void TranslateStringCompareIsReverse(List<string> output, Expression a, Expression b);
         protected abstract void TranslateStringConcat(List<string> output, Expression[] values);
         protected abstract void TranslateStringContains(List<string> output, Expression haystack, Expression needle);
         protected abstract void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe);

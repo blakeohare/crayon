@@ -535,11 +535,11 @@ namespace Crayon.Translator.Python
             output.Add("])");
         }
 
-        protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
+        protected override void TranslateStringCompareIsReverse(List<string> output, Expression a, Expression b)
         {
-            output.Add("cmp(");
+            output.Add("(");
             this.Translator.TranslateExpression(output, a);
-            output.Add(", ");
+            output.Add(" > ");
             this.Translator.TranslateExpression(output, b);
             output.Add(")");
         }

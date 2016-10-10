@@ -361,7 +361,7 @@ function @type('bool') sortValues(
 function @type('bool') stringCompare(@type('Value') a, @type('Value') b) {
 	@type('string') aString = $_cast('string', Value$a.internalValue);
 	@type('string') bString = $_cast('string', Value$b.internalValue);
-	return $_string_compare(aString, bString) > 0;
+	return $_string_compare_is_reverse(aString, bString);
 }
 
 function @type('bool') numberCompare(@type('Value') a, @type('Value') b) {
@@ -638,10 +638,7 @@ function @type('bool') sortHelperIsRevOrder(
 	@type('int') indexRight) {
 
 	if (isString) {
-		if ($_string_compare($_array_get(keyStringList, indexLeft), $_array_get(keyStringList, indexRight)) > 0) {
-			return true;
-		}
-		return false;
+		return $_string_compare_is_reverse($_array_get(keyStringList, indexLeft), $_array_get(keyStringList, indexRight));
 	}
 
 	return $_array_get(keyNumList, indexLeft) > $_array_get(keyNumList, indexRight);

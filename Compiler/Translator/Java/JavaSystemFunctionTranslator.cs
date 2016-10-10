@@ -537,12 +537,13 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
 
-        protected override void TranslateStringCompare(List<string> output, Expression a, Expression b)
+        protected override void TranslateStringCompareIsReverse(List<string> output, Expression a, Expression b)
         {
+            output.Add("(");
             this.Translator.TranslateExpression(output, a);
             output.Add(".compareTo(");
             this.Translator.TranslateExpression(output, b);
-            output.Add(")");
+            output.Add(") > 0)");
         }
 
         protected override void TranslateStringConcat(List<string> output, Expression[] values)
