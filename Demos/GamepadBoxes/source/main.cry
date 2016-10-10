@@ -1,0 +1,81 @@
+import Game;
+import Gamepad;
+import Graphics2D;
+import Math;
+
+const FPS = 60;
+const WIDTH = 800;
+const HEIGHT = 500;
+
+const PLAYER_SIZE = 30;
+
+function main() {
+	
+	window = new GameWindow('Gamepad Boxes', FPS, WIDTH, HEIGHT);
+	pressedKeys = {};
+	gamepadVector = [0, 0];
+	activeGamepad = null;
+	
+	redLocation = [WIDTH / 4.0, HEIGHT / 3.0];
+	yellowLocation = [WIDTH / 2.0, HEIGHT * 2 / 3.0];
+	blueLocation = [WIDTH * 3 / 4.0, HEIGHT / 3.0];
+	
+	while (true) {
+		for (event : window.pumpEvents()) {
+			switch (event.type) {
+				case EventType.QUIT:
+					return;
+				
+				case EventType.KEY_DOWN:
+					pressedKeys[event.key] = true;
+					break;
+				
+				case EventType.KEY_UP:
+					pressedKeys[event.key] = false;
+					break;
+				
+				case EventType.GAMEPAD:
+					// TODO: show some sort of visual feedback just to show how
+					// this event is meant to be used.
+					break;
+			}
+		}
+		
+		if (activeGamepad == null && GamepadManager.isGamepadSupported()) {
+			GamepadManager.refreshDevices();
+			if (GamepadManager.getDeviceCount() > 0) {
+				activeGamepad = GamepadManager.getDeviceByIndex(0);
+				activeGamepad.pushAutoConfigure();
+			}
+			
+		}
+		
+		if (activeGamepad != null) {
+			updatePlayer(activeGamepad, XBoxButtonId.AXIS1, redLocation);
+			updatePlayer(activeGamepad, XBoxButtonId.AXIS2, blueLocation);
+			updatePlayer(activeGamepad, XBoxButtonId.DPAD, yellowLocation, true);
+		}
+		
+		Draw.fill(0, 0, 0);
+		
+		drawRectangle(blueLocation[0], blueLocation[1], 0, 128, 255);
+		drawRectangle(redLocation[0], redLocation[1], 255, 80, 0);
+		drawRectangle(yellowLocation[0], yellowLocation[1], 220, 255, 0);
+		
+		window.clockTick();
+	}
+}
+
+const PLAYER_VELOCITY = 5.0;
+
+function updatePlayer(gamepad, buttonId, location, debug = false) {
+	movementVector = gamepad.getCurrentState(buttonId);
+	if (movementVector != null) {
+		location[0] += movementVector[0] * PLAYER_VELOCITY;
+		location[1] += movementVector[1] * PLAYER_VELOCITY;
+	}
+}
+
+function drawRectangle(x, y, red, green, blue) {
+	Draw.rectangle(x - PLAYER_SIZE, y - PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE, red, green, blue);
+}

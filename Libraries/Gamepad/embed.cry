@@ -12,18 +12,17 @@ namespace Gamepad {
 		BUTTON_RIGHT = 2,
 		BUTTON_UP = 3,
 		BUTTON_DOWN = 4,
-		DPAD_LEFT = 5,
-		DPAD_RIGHT = 6,
-		DPAD_UP = 7,
-		DPAD_DOWN = 8,
-		AXIS1 = 9,
-		AXIS2 = 10,
-		LEFT_TRIGGER = 11,
-		RIGHT_TRIGGER = 12,
-		LEFT_BUMPER = 13,
-		RIGHT_BUMPER = 14,
-		START = 15,
-		BACK = 16,
+		DPAD = 5,
+		AXIS1 = 6,
+		AXIS2 = 7,
+		LEFT_TRIGGER = 8,
+		RIGHT_TRIGGER = 9,
+		LEFT_BUMPER = 10,
+		RIGHT_BUMPER = 11,
+		START = 12,
+		BACK = 13,
+		AXIS1_BUTTON = 14,
+		AXIS2_BUTTON = 15,
 	}
     
 	enum XBoxButtonId {
@@ -31,12 +30,11 @@ namespace Gamepad {
 		B = ButtonId.BUTTON_RIGHT,
 		Y = ButtonId.BUTTON_UP,
 		A = ButtonId.BUTTON_DOWN,
-		DPAD_LEFT = ButtonId.DPAD_LEFT,
-		DPAD_RIGHT = ButtonId.DPAD_RIGHT,
-		DPAD_UP = ButtonId.DPAD_UP,
-		DPAD_DOWN = ButtonId.DPAD_DOWN,
+		DPAD = ButtonId.DPAD,
 		AXIS1 = ButtonId.AXIS1,
 		AXIS2 = ButtonId.AXIS2,
+		AXIS1_BUTTON = ButtonId.AXIS1_BUTTON,
+		AXIS2_BUTTON = ButtonId.AXIS2_BUTTON,
 		LEFT_TRIGGER = ButtonId.LEFT_TRIGGER,
 		RIGHT_TRIGGER = ButtonId.RIGHT_TRIGGER,
 		LEFT_BUMPER = ButtonId.LEFT_BUMPER,
@@ -50,10 +48,7 @@ namespace Gamepad {
 		CIRCLE = ButtonId.BUTTON_RIGHT,
 		TRIANGLE = ButtonId.BUTTON_UP,
 		X = ButtonId.BUTTON_DOWN,
-		DPAD_LEFT = ButtonId.DPAD_LEFT,
-		DPAD_RIGHT = ButtonId.DPAD_RIGHT,
-		DPAD_UP = ButtonId.DPAD_UP,
-		DPAD_DOWN = ButtonId.DPAD_DOWN,
+		DPAD = ButtonId.DPAD,
 		AXIS1 = ButtonId.AXIS1,
 		AXIS2 = ButtonId.AXIS2,
 		LEFT_BUMPER2 = ButtonId.LEFT_TRIGGER,
@@ -69,17 +64,14 @@ namespace Gamepad {
 		A = ButtonId.BUTTON_RIGHT,
 		X = ButtonId.BUTTON_UP,
 		B = ButtonId.BUTTON_DOWN,
-		LEFT = ButtonId.DPAD_LEFT,
-		RIGHT = ButtonId.DPAD_RIGHT,
-		UP = ButtonId.DPAD_UP,
-		DOWN = ButtonId.DPAD_DOWN,
+		DPAD = ButtonId.DPAD,
 		L = ButtonId.LEFT_BUMPER,
 		R = ButtonId.RIGHT_BUMPER,
 		START = ButtonId.START,
 		SELECT = ButtonId.BACK,
 	}
 
-	class GamepadManager {
+	static class GamepadManager {
 		
 		static field _devices = null;
 		static field _isGamepadSupported = $$lib_gamepad_is_supported();
@@ -90,10 +82,6 @@ namespace Gamepad {
 
 		static constructor() {
 			GameWindow._eventPumpHandlers.add(GamepadManager._eventPump);
-		}
-
-		constructor() {
-			Core.assert(false); // TODO: private constructors/static classes
 		}
 
 		static function isGamepadSupported() {
@@ -183,7 +171,7 @@ namespace Gamepad {
 			- 1, 2, or 4 -> dimensionality
 			- 0 to 3 -> index in the binding
 		*/
-		
+
 		static field _settingsCacheDeviceOrder = null;
 		static field _settingsCacheDeviceConfig = null;
 
@@ -229,7 +217,6 @@ namespace Gamepad {
 				GamepadManager._settingsCacheDeviceConfig = config;
 			}
 
-			
 			GamepadManager.refreshDevices();
 			unassignedDevices = {};
 			availableIds = deviceIdList.clone(); // do not mutate incoming list.
@@ -251,8 +238,7 @@ namespace Gamepad {
 			for (fingerprint : GamepadManager._settingsCacheDeviceOrder) {
 				if (availableIds.length > 0) {
 					devicesWithFingerprint = unassignedDevices.get(fingerprint);
-					if (devicesWithFingerprint != null && devicesWithFingerprint.length > 0)
-					{
+					if (devicesWithFingerprint != null && devicesWithFingerprint.length > 0) {
 						device = devicesWithFingerprint[0];
 						playerId = availableIds[0];
 						config = GamepadManager._settingsCacheDeviceConfig[fingerprint];
@@ -286,13 +272,11 @@ namespace Gamepad {
 									bindingLookup[buttonId] = binding;
 								}
 								
-								print("Is Positive? " + isPositive + ", dim index: " + dimIndex);
 								binding[2 + dimIndex] = mashyIndex * (isPositive ? 1 : -1);
 							}
 						}
 
-						if (configurationSuccesses)
-						{
+						if (configurationSuccesses) {
 							device.setId(playerId);
 							devicesConfigured++;
 							availableIds.remove(0);
@@ -481,14 +465,14 @@ namespace Gamepad {
 				hardware_sources.add([0, i, 'b:' + i, false, -1]);
 			}
 
+			for (i = 0; i < this._axis_1d_count; ++i) {
+				hardware_sources.add([1, i, 'a:' + i, 0.0, -1]);
+			}
+
 			for (i = 0; i < this._axis_2d_count; ++i) {
 				hardware_sources.add(
 					[2, i, 'h:' + i + ':x', 0, -1],
 					[3, i, 'h:' + i + ':y', 0, -1]);
-			}
-
-			for (i = 0; i < this._axis_1d_count; ++i) {
-				hardware_sources.add([1, i, 'a:' + i, 0.0, -1]);
 			}
 
 			this._hardware_mashies = hardware_sources;
@@ -616,22 +600,22 @@ namespace Gamepad {
 						// go ahead and query both values and set them both.
 						$$lib_gamepad_get_axis_2d_state(this, mashy[1], GamepadDevice._hat_check_reusable);
 						if (GamepadDevice._hat_check_reusable[0] != mashy[3]) {
-							oldValue = mashy[3];
-							newValue = GamepadDevice._hat_check_reusable[0];
-							mashy[3] = newValue;
+							old_value = mashy[3];
+							new_value = GamepadDevice._hat_check_reusable[0];
+							mashy[3] = new_value;
 							mashy[4] = counter;
 							updated_indices.add(i);
-							this._pushButtonIdsForAxis(i, oldValue, newValue, buttonIdBySignedIndex, buttonIds);
+							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
 						}
 						++i; // go ahead and do Y since we already queried the value from hardware.
 						mashy = this._hardware_mashies[i];
 						if (GamepadDevice._hat_check_reusable[1] != mashy[3]) {
-							oldValue = mashy[3];
-							newValue = GamepadDevice._hat_check_reusable[1];
-							mashy[3] = newValue;
+							old_value = mashy[3];
+							new_value = GamepadDevice._hat_check_reusable[1];
+							mashy[3] = new_value;
 							mashy[4] = counter;
 							updated_indices.add(i);
-							this._pushButtonIdsForAxis(i, oldValue, newValue, buttonIdBySignedIndex, buttonIds);
+							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
 						}
 						break;
 
@@ -656,9 +640,11 @@ namespace Gamepad {
 					if (Core.typeof(buttonId) == Core.Type.INTEGER) {
 						lookup = iConfig;
 						idLookup = this._quickMashyLookupByIntegerId;
+						currentIdLookup = this._currentStateMashyLookupByIntegerId;
 					} else {
 						lookup = sConfig;
 						idLookup = this._quickMashyLookupByStringId;
+						currentIdLookup = this._currentStateMashyLookupByStringId;
 					}
 					binding = lookup.get(buttonId);
 					isDigital = binding[0];
@@ -668,6 +654,7 @@ namespace Gamepad {
 							value = this._getValueForSignedIndex(binding[2], isDigital, isDigital, false);
 							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
 							idLookup[buttonId] = value;
+							currentIdLookup[buttonId] = value;
 							break;
 
 						case 2:
@@ -676,6 +663,7 @@ namespace Gamepad {
 							value = GamepadDevice._consolidateAxisValues(valueNeg, valuePos, isDigital);
 							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
 							idLookup[buttonId] = value;
+							currentIdLookup[buttonId] = value;
 							break;
 
 						case 4:
@@ -683,10 +671,13 @@ namespace Gamepad {
 							xPos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
 							yNeg = this._getValueForSignedIndex(binding[4], isDigital, false, true);
 							yPos = this._getValueForSignedIndex(binding[5], isDigital, false, true);
+							
 							x = GamepadDevice._consolidateAxisValues(xNeg, xPos, isDigital);
 							y = GamepadDevice._consolidateAxisValues(yNeg, yPos, isDigital);
 							eventsOut.add(new GamepadEvent(this, buttonId, null, x, y));
-							idLookup[buttonId] = [x, y];
+							vec = [x, y];
+							idLookup[buttonId] = vec;
+							currentIdLookup[buttonId] = vec;
 							break;
 					}
 				}
@@ -759,7 +750,53 @@ namespace Gamepad {
 
 		function pushAutoConfigure() {
 			this.pushEmptyConfig();
-			Core.assert(false, "pushAutoConfigure not implemented.");
+			buttons = this.getButtonCount();
+			axes = this.getAxisCount();
+			// TODO: Test other gamepads on other platforms.
+			// JavaScript, OpenTK, and PyGame all report button counts differently.
+			// PyGame is the most accurate reporting D-Pads and Axes separately
+			// JavaScript reports D-Pads and the triggers as buttons
+			// OpenTK treats all axis-like things as analog axes (but merely reports a digital value for D-Pads) and even reports triggers as axes (but PyGame does as well)
+			// Triggers as axes only applies to XBox-style controllers. PS2-style controllers have quadruple-bumpers.
+			if (buttons == 10 && axes == 7) {
+				// XBox 360 or similar
+				this.manualBindButton(XBoxButtonId.AXIS1, false, [
+					['a', 0, false],
+					['a', 0, true],
+					['a', 1, true],
+					['a', 1, false],
+				]);
+				
+				this.manualBindButton(XBoxButtonId.AXIS2, false, [
+					['a', 4, false],
+					['a', 4, true],
+					['a', 3, false],
+					['a', 3, true],
+				]);
+				
+				this.manualBindButton(XBoxButtonId.DPAD, true, [
+					['a', 5, false],
+					['a', 5, true],
+					['a', 6, true],
+					['a', 6, false],
+				]);
+				
+				this.manualBindButton(XBoxButtonId.A, true, [['b', 0]]);
+				this.manualBindButton(XBoxButtonId.B, true, [['b', 1]]);
+				this.manualBindButton(XBoxButtonId.X, true, [['b', 2]]);
+				this.manualBindButton(XBoxButtonId.Y, true, [['b', 3]]);
+				this.manualBindButton(XBoxButtonId.LEFT_BUMPER, true, [['b', 4]]);
+				this.manualBindButton(XBoxButtonId.RIGHT_BUMPER, true, [['b', 5]]);
+				this.manualBindButton(XBoxButtonId.BACK, true, [['b', 6]]);
+				this.manualBindButton(XBoxButtonId.START, true, [['b', 7]]);
+				this.manualBindButton(XBoxButtonId.AXIS1_BUTTON, true, [['b', 8]]);
+				this.manualBindButton(XBoxButtonId.AXIS2_BUTTON, true, [['b', 9]]);
+				
+				this.manualBindButton(XBoxButtonId.LEFT_TRIGGER, false, [['a', 2, false]]);
+				this.manualBindButton(XBoxButtonId.RIGHT_TRIGGER, false, [['a', 2, true]]);
+			} else {
+				
+			}
 		}
 
 		function pushEmptyConfig() {
@@ -809,17 +846,17 @@ namespace Gamepad {
 
 		function getButtonState(index) {
 			// TODO: more efficient integer assertion
-			if (floor(index) != index) Core.assert(false, "index must be an integer.");
+			if (floor(index) != index) Core.fail("index must be an integer.");
 
 			if (index >= 0 && index < this._button_count) {
 				return $$lib_gamepad_get_button_state(this, index);
 			}
-			Core.assert(false, "Button index out of range.");
+			Core.fail("Button index out of range.");
 		}
 
 		function getAxisState(index) {
 			// TODO: more efficient integer assertion
-			if (floor(index) != index) Core.assert(false, "index must be an integer.");
+			if (floor(index) != index) Core.fail("index must be an integer.");
 
 			if (index >= 0 && index < this._axis_count) {
 				if (index < this._axis_1d_count) {
@@ -829,7 +866,7 @@ namespace Gamepad {
 				$$lib_gamepad_get_axis_2d_state(this, index / 2, GamepadDevice._hat_check_reusable);
 				return GamepadDevice._hat_check_reusable[index % 2] * 1.0;
 			}
-			Core.assert(false, "Digital Axis index out of range.");
+			Core.fail("Digital Axis index out of range.");
 		}
 
 		function _getLookupForId(buttonId) {
@@ -837,7 +874,7 @@ namespace Gamepad {
 			t = Core.typeof(buttonId);
 			if (t == Core.Type.INTEGER) return top[0];
 			if (t == Core.Type.STRING) return top[1];
-			Core.assert(false, "Invalid button ID type.");
+			Core.fail("Invalid button ID type.");
 		}
 
 		function _isHardwareMashyBoundAnywhere(index) {
@@ -901,11 +938,22 @@ namespace Gamepad {
 			return null;
 		}
 
-		function getState(buttonId) {
+		function getChangedState(buttonId) {
 			lookup = Core.typeof(buttonId) == Core.Type.STRING
 				? this._quickMashyLookupByStringId
 				: this._quickMashyLookupByIntegerId;
 			return lookup.get(buttonId);
+		}
+		
+		field _currentStateMashyLookupByStringId = {};
+		field _currentStateMashyLookupByIntegerId = {};
+		function getCurrentState(buttonId) {
+			lookup = Core.typeof(buttonId) == Core.Type.STRING
+				? this._currentStateMashyLookupByStringId
+				: this._currentStateMashyLookupByIntegerId;
+			output = lookup.get(buttonId);
+			
+			return output;
 		}
 
 		function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
@@ -983,6 +1031,41 @@ namespace Gamepad {
 			return this._bind2dAxis(buttonId, isPositive == true, false, false);
 		}
 
+		/*
+			sources is a list of sources of size 1, 2, or 4 for a button, 1D axis or 2D axis respectively.
+			
+			Each source item is itself a list.
+			[
+				'a' or 'b',
+				index,
+				boolean for positive
+			]
+		*/
+		function manualBindButton(buttonId, isDigital, sources) {
+			length = sources.length;
+			switch (length) {
+				case 1:
+				case 2:
+				case 4:
+					binding = this._getOrCreateBindingTuple(buttonId, isDigital, length);
+					for (i = 0; i < length; ++i) {
+						source = sources[i];
+						index = this._getIndexForSource(source[0] == 'a', Math.floor(source[1]), source.length < 3 || source[2] == true);
+						binding[2 + i] = index;
+					}
+					break;
+				default:
+					return Core.fail("Sources list must have 1, 2, or 4 sources.");
+			}
+		}
+		
+		function _getIndexForSource(isAxis, index, isPositive) {
+			
+			if (isAxis) index += this._button_count;
+			index++;
+			return isPositive ? index : -index;
+		}
+		
 		function _freeAndGetIndex(hardwareId, isPositive) {
 			index = this._mashy_fingerprint_to_index.get(hardwareId);
 			if (index != null) {
