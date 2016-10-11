@@ -935,7 +935,7 @@ namespace Gamepad {
 				for (configKey : lookup.keys()) {
 					parts = configKey.split(':').map(Core.parseInt);
 					if (buttons >= parts[0] && axes >= parts[1]) {
-						distance = (parts[0] - buttons) + (parts[1] - axes) * 5; 
+						distance = Math.abs(parts[0] - buttons) + Math.abs(parts[1] - axes) * 5; 
 						if (bestConfigDistance == null || bestConfigDistance > distance) {
 							bestConfigDistance = distance;
 							bestConfigKey = configKey;

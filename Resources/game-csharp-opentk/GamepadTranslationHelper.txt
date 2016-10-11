@@ -38,7 +38,12 @@ namespace %%%PROJECT_ID%%%
 
 		public static string GetDeviceName(object nativeDevice)
 		{
-			string rawDescription = ((JoystickDevice)nativeDevice).Description;
+			JoystickDevice jsDevice = (JoystickDevice)nativeDevice;
+			string rawDescription = jsDevice.Description;
+			if (rawDescription == null)
+			{
+				rawDescription = GetDeviceButtonCount(jsDevice) + " Buttons/" + GetDeviceAxis1dCount(jsDevice) + " Axes";
+			}
 			int ignoreThrough = rawDescription.IndexOf('#');
 			if (ignoreThrough != -1)
 			{
