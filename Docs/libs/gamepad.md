@@ -327,6 +327,74 @@ Returns the state of a button.
 
 ---
 
+### getAxisState
+
+`device.getAxisState(index)`
+
+Returns the state of an axis.
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| **index** | _integer_ | The index of the axis. This must be between `0` and `n - 1` where `n` is the value returned by `getAxisCount()` |
+
+**Return value**: float
+
+---
+
+### getCurrentState
+
+`device.getCurrentState(buttonId)`
+
+Returns the state of the given configured button.
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| ***buttonId*** | _integer or string_ | The button ID of a button or 1D or 2D axis that has been configured. |
+
+**Return value**: Boolean, float, integer, or 2D vector of floats or ints. 
+
+| Button is configured to... | Return value |
+| --- | --- | --- |
+| Digital button | Boolean |
+| Analog button | Float from 0.0 to 1.0 |
+| Digital 1D Axis | Integer from -1 to 1 |
+| Analog 1D Axis | Float from -1.0 to 1.0 |
+| Digital 2D Axis | List of 2 integers that range from -1 to 1 |
+| Analog 2D Axis | List of 2 floats that range from -1.0 to 1.0 |
+
+---
+
+### manualBindButton
+
+***WARNING:*** This method was only meant to be used as an internal API. It's not pretty and will likely change before release.
+
+`device.manualBindButton(buttonId, isDigital, listOfHardwareSources)`
+
+Manually binds a buttonId to a specific hardware source or sources.
+
+The list of hardware sources must have 1, 2, or 4 sources which correspond to a button, 1D axis, or 2D axis.
+
+| Source count | Format |
+| --- | --- |
+| 1 | Source represents the button. |
+| 2 | Sources represent the negative and positive axis respectively. |
+| 4 | Sources represent the negative X axis, positive X axis, negative Y axis, and positive Y axis |
+
+A source itself is a list of values. If the source refers to an actual hardware button, it will have two items:
+
+```
+source = ['b', buttonIndex];
+```
+
+If a source refers to a hardware axis, it will have 3 items:
+
+```
+source = ['a', axisIndex, isPositive]
+```
+
+
+---
+
 ### bindDigitalButton
 
 `device.bindDigitalButton(buttonId)`
@@ -440,9 +508,9 @@ Alternatively, suppose you plug in a very old controller that only has hardware 
 By configuring these two very different devices, the game code can agnostically interpret their usage identically as it can now query ID's instead of having knowledge of the specs of the device.
 
 ```
-vector = device.getState('DIRECTION') // e.g. [-1, 1] <-- user is pushing down+left
-jump = device.getState('A') // e.g. true <-- user is pushing the jump button
-shoot = device.getState('B') // e.g. false <-- user is not pushing the shoot button
+vector = device.getCurrentState('DIRECTION') // e.g. [-1, 1] <-- user is pushing down+left
+jump = device.getCurrentState('A') // e.g. true <-- user is pushing the jump button
+shoot = device.getCurrentState('B') // e.g. false <-- user is not pushing the shoot button
 ```
 
 There are a few ways to configure logical button IDs to their hardware counterparts. One is to ask the user specifically using a configuration menu. 

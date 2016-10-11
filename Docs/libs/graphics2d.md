@@ -260,7 +260,18 @@ The `source`-prefixed arguments represent the region within the image.
 
 ### drawRegionStretchedWithAlpha
 
-`texture.drawRegionStretched(targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight, alpha)`
+```
+texture.drawRegionStretched(
+    targetX,
+    targetY,
+    targetWidth,
+    targetHeight,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    alpha)
+```
 
 Identical to drawRegionStretched, but with an alpha value.
 
@@ -315,7 +326,19 @@ Identical to drawRotated except with alpha.
 
 ### drawWithOptions
 
-`texture.drawWithOptions(targetCenterX, targetCenterY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight, theta, alpha)`
+```
+texture.drawWithOptions(
+    targetCenterX,
+    targetCenterY,
+    targetWidth,
+    targetHeight,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    theta,
+    alpha)
+```
 
 Draws the image onto the screen with all available options: stretch/shrink, crop, rotate, alpha. 
 
