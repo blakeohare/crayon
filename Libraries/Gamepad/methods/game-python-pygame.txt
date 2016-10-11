@@ -13,3 +13,4 @@ $_lib_gamepad_poll_universe: _always_true()
 $_lib_gamepad_refresh_devices: _always_true()
 $_lib_gamepad_config_file_path: ".crayon-pygame.gamepad.config"
 $_lib_gamepad_getPlatform: 2
+$_lib_gamepad_jsIsOsx: 0

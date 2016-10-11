@@ -878,6 +878,26 @@ namespace Gamepad {
 							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
 						},
 					};
+					
+					if ($$lib_gamepad_jsIsOsx() == 1) {
+						lookup['16:5'] = {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 1, 2, '-+', '-+'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 4, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
+							XBoxButtonId.A: ['digital', 1, 'button', 1],
+							XBoxButtonId.B: ['digital', 1, 'button', 2],
+							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+							XBoxButtonId.START: ['digital', 1, 'button', 9],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+						};
+					}
 					break;
 				default:
 					lookup = {}; // this line should never happen anyway.

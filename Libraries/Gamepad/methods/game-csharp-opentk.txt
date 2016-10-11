@@ -13,3 +13,4 @@ $_lib_gamepad_poll_universe: GamepadTranslationHelper.Poll()
 $_lib_gamepad_refresh_devices: TranslationHelper.AlwaysTrue()
 $_lib_gamepad_config_file_path: ".crayon-csotk.gamepad.config"
 $_lib_gamepad_getPlatform: 1
+$_lib_gamepad_jsIsOsx: 0

@@ -1,0 +1,8 @@
+/*
+	returns 1 if:
+	- this is JavaScript AND...
+	- this is OSX
+	
+	otherwise, return 0
+*/
+output = buildInteger($_lib_gamepad_jsIsOsx());
