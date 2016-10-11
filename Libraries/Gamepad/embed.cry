@@ -755,8 +755,10 @@ namespace Gamepad {
 			
 			sig = buttons + ':' + axes;
 			
+			isOpenTk = false;
 			switch ($$lib_gamepad_getPlatform()) {
 				case 1: // OpenTK
+					isOpenTk = true;
 					lookup = {
 						'10:7': {
 							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
@@ -796,9 +798,12 @@ namespace Gamepad {
 					break;
 				case 2: // PyGame
 					// PyGame's hats are appended to the end of the axes list.
+					
+					isP880 = this.getName().contains('P880'); // an odd specimen of a gamepad
+					
 					lookup = {
 						'10:7': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
 							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
 							XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
 							XBoxButtonId.A: ['digital', 1, 'button', 0],
@@ -811,37 +816,57 @@ namespace Gamepad {
 							XBoxButtonId.START: ['digital', 1, 'button', 7],
 							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
 							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
 						},
 						'12:6': {
 							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', isP880 ? 3 : 2, isP880 ? 2 : 3, '-+', '-+'],
 							XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
-							XBoxButtonId.A: ['digital', 1, 'button', 1],
-							XBoxButtonId.B: ['digital', 1, 'button', 2],
-							XBoxButtonId.X: ['digital', 1, 'button', 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-							XBoxButtonId.START: ['digital', 1, 'button', 9],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+							XBoxButtonId.A: ['digital', 1, 'button', isP880 ? 2 : 1],
+							XBoxButtonId.B: ['digital', 1, 'button', isP880 ? 3 : 2],
+							XBoxButtonId.X: ['digital', 1, 'button', isP880 ? 0 : 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', isP880 ? 1 : 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', isP880 ? 6 : 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', isP880 ? 7 : 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', isP880 ? 11 : 8],
+							XBoxButtonId.START: ['digital', 1, 'button', isP880 ? 10 : 9],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', isP880 ? 8 : 10],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', isP880 ? 9 : 11],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', isP880 ? 4 : 6],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', isP880 ? 5 : 7],
 						},
 					};
 					break;
 				case 3: // JavaScript
+					isXbox = this.getName().contains('xinput');
 					lookup = {
+						'16:4': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 2, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
+							XBoxButtonId.A: ['digital', 1, 'button', 2],
+							XBoxButtonId.B: ['digital', 1, 'button', 3],
+							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', 1],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 6],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 7],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 11],
+							XBoxButtonId.START: ['digital', 1, 'button', 10],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 4],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 5],
+						},
 						'17:4': {
 							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
 							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'button', 15, 'button', 16, 'button', 13, 'button', 14],
-							XBoxButtonId.A: ['digital', 1, 'button', 1],
-							XBoxButtonId.B: ['digital', 1, 'button', 2],
-							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.DPAD: isXbox
+								? ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13]
+								: ['digital', 4, 'button', 15, 'button', 16, 'button', 13, 'button', 14],
+							XBoxButtonId.A: ['digital', 1, 'button', isXbox ? 0 : 1],
+							XBoxButtonId.B: ['digital', 1, 'button', isXbox ? 1 : 2],
+							XBoxButtonId.X: ['digital', 1, 'button', isXbox ? 2 : 0],
 							XBoxButtonId.Y: ['digital', 1, 'button', 3],
 							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
 							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
@@ -858,6 +883,48 @@ namespace Gamepad {
 					lookup = {}; // this line should never happen anyway.
 					break;
 			}
+			
+			// Add small configs
+			lookup['10:4'] = {
+				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+				XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
+				XBoxButtonId.A: ['digital', 1, 'button', 2],
+				XBoxButtonId.B: ['digital', 1, 'button', 1],
+				XBoxButtonId.X: ['digital', 1, 'button', 3],
+				XBoxButtonId.Y: ['digital', 1, 'button', 0],
+				XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+				XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+				XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+				XBoxButtonId.START: ['digital', 1, 'button', 9],
+			};
+			lookup['10:2'] = {
+				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+				XBoxButtonId.A: ['digital', 1, 'button', 2],
+				XBoxButtonId.B: ['digital', 1, 'button', 1],
+				XBoxButtonId.X: ['digital', 1, 'button', 3],
+				XBoxButtonId.Y: ['digital', 1, 'button', 0],
+				XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+				XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+				XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+				XBoxButtonId.START: ['digital', 1, 'button', 9],
+			};
+			lookup['6:2'] = {
+				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+				XBoxButtonId.A: ['digital', 1, 'button', 2],
+				XBoxButtonId.B: ['digital', 1, 'button', 1],
+				XBoxButtonId.X: ['digital', 1, 'button', 3],
+				XBoxButtonId.Y: ['digital', 1, 'button', 0],
+				XBoxButtonId.BACK: ['digital', 1, 'button', 4],
+				XBoxButtonId.START: ['digital', 1, 'button', 5],
+			};
+			// NES!
+			lookup['4:2'] = {
+				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+				XBoxButtonId.A: ['digital', 1, 'button', 0],
+				XBoxButtonId.B: ['digital', 1, 'button', 1],
+				XBoxButtonId.BACK: ['digital', 1, 'button', 2],
+				XBoxButtonId.START: ['digital', 1, 'button', 3],
+			};
 			
 			config = lookup.get(sig);
 			if (config == null) {
@@ -877,10 +944,12 @@ namespace Gamepad {
 				}
 				
 				if (bestConfigKey == null) {
-					// If there is no fit (i.e. the current number of axes or buttons is lower than any of the configs allow) then just allocate what you can.
-					// It's a weird controller anyway, so they're probably used to auto configuring not doing what it should.
+					// If there is no tightest fit, then just fail silently.
+					// This particular gamepad is lacking basic functionality and an auto-configure would be missing many of the buttons.
+					config = {};
+				} else {
+					config = lookup[bestConfigKey];
 				}
-				config = lookup[bestConfigKey];
 			}
 			
 			for (buttonId : config.keys()) {
