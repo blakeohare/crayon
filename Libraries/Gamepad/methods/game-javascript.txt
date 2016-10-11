@@ -12,3 +12,4 @@ $_lib_gamepad_get_axis_2d_state: 0
 $_lib_gamepad_poll_universe: C$common$alwaysTrue()
 $_lib_gamepad_refresh_devices: C$gamepad$refresh()
 $_lib_gamepad_config_file_path: ".crayon-js.gamepad.config"
+$_lib_gamepad_getPlatform: 3

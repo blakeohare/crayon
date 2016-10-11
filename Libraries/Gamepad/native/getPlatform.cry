@@ -1,0 +1,6 @@
+/*
+	Returns an integer uniquely identifying this platform.
+	
+	This is used by the auto-configure to make some decisions based on how that platform reports buttons and axes.
+*/
+output = buildInteger($_lib_gamepad_getPlatform());

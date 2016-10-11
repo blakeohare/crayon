@@ -35,8 +35,29 @@ function main() {
 					break;
 				
 				case EventType.GAMEPAD:
-					// TODO: show some sort of visual feedback just to show how
-					// this event is meant to be used.
+					// TODO: show actual visual feedback instead of STDOUT display.
+					name = null;
+					value = null;
+					switch (event.buttonId) {
+						case XBoxButtonId.AXIS1: name = "Axis 1"; value = [event.x, event.y]; break;
+						case XBoxButtonId.AXIS2: name = "Axis 2"; value = [event.x, event.y]; break;
+						case XBoxButtonId.DPAD: name = "D-Pad"; value = [event.x, event.y]; break;
+						case XBoxButtonId.A: name = "A"; value = event.value; break;
+						case XBoxButtonId.B: name = "B"; value = event.value; break;
+						case XBoxButtonId.X: name = "X"; value = event.value; break;
+						case XBoxButtonId.Y: name = "Y"; value = event.value; break;
+						case XBoxButtonId.START: name = "Start"; value = event.value; break;
+						case XBoxButtonId.BACK: name = "Back"; value = event.value; break;
+						case XBoxButtonId.LEFT_BUMPER: name = "L-Bumper"; value = event.value; break;
+						case XBoxButtonId.RIGHT_BUMPER: name = "R-Bumper"; value = event.value; break;
+						case XBoxButtonId.LEFT_TRIGGER: name = "L-Trigger"; value = event.value; break;
+						case XBoxButtonId.RIGHT_TRIGGER: name = "R-Trigger"; value = event.value; break;
+						case XBoxButtonId.AXIS1_BUTTON: name = "Axis 1 Button"; value = event.value; break;
+						case XBoxButtonId.AXIS2_BUTTON: name = "Axis 2 Button"; value = event.value; break;
+					}
+					if (name != null) {
+						print(name + " --> " + value);
+					}
 					break;
 			}
 		}

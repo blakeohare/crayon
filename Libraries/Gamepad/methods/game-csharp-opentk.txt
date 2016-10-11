@@ -12,3 +12,4 @@ $_lib_gamepad_get_axis_2d_state: GamepadTranslationHelper.GetDeviceAxis2dState([
 $_lib_gamepad_poll_universe: GamepadTranslationHelper.Poll()
 $_lib_gamepad_refresh_devices: TranslationHelper.AlwaysTrue()
 $_lib_gamepad_config_file_path: ".crayon-csotk.gamepad.config"
+$_lib_gamepad_getPlatform: 1

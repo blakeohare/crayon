@@ -752,50 +752,169 @@ namespace Gamepad {
 			this.pushEmptyConfig();
 			buttons = this.getButtonCount();
 			axes = this.getAxisCount();
-			// TODO: Test other gamepads on other platforms.
-			// JavaScript, OpenTK, and PyGame all report button counts differently.
-			// PyGame is the most accurate reporting D-Pads and Axes separately
-			// JavaScript reports D-Pads and the triggers as buttons
-			// OpenTK treats all axis-like things as analog axes (but merely reports a digital value for D-Pads) and even reports triggers as axes (but PyGame does as well)
-			// Triggers as axes only applies to XBox-style controllers. PS2-style controllers have quadruple-bumpers.
-			if (buttons == 10 && axes == 7) {
-				// XBox 360 or similar
-				this.manualBindButton(XBoxButtonId.AXIS1, false, [
-					['a', 0, false],
-					['a', 0, true],
-					['a', 1, true],
-					['a', 1, false],
-				]);
+			
+			sig = buttons + ':' + axes;
+			
+			switch ($$lib_gamepad_getPlatform()) {
+				case 1: // OpenTK
+					lookup = {
+						'10:7': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
+							XBoxButtonId.A: ['digital', 1, 'button', 0],
+							XBoxButtonId.B: ['digital', 1, 'button', 1],
+							XBoxButtonId.X: ['digital', 1, 'button', 2],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 6],
+							XBoxButtonId.START: ['digital', 1, 'button', 7],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+						},
+						'12:6': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
+							XBoxButtonId.A: ['digital', 1, 'button', 1],
+							XBoxButtonId.B: ['digital', 1, 'button', 2],
+							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+							XBoxButtonId.START: ['digital', 1, 'button', 9],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+						},
+					};
+					break;
+				case 2: // PyGame
+					// PyGame's hats are appended to the end of the axes list.
+					lookup = {
+						'10:7': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
+							XBoxButtonId.A: ['digital', 1, 'button', 0],
+							XBoxButtonId.B: ['digital', 1, 'button', 1],
+							XBoxButtonId.X: ['digital', 1, 'button', 2],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 6],
+							XBoxButtonId.START: ['digital', 1, 'button', 7],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+						},
+						'12:6': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
+							XBoxButtonId.A: ['digital', 1, 'button', 1],
+							XBoxButtonId.B: ['digital', 1, 'button', 2],
+							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+							XBoxButtonId.START: ['digital', 1, 'button', 9],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+						},
+					};
+					break;
+				case 3: // JavaScript
+					lookup = {
+						'17:4': {
+							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
+							XBoxButtonId.DPAD: ['digital', 4, 'button', 15, 'button', 16, 'button', 13, 'button', 14],
+							XBoxButtonId.A: ['digital', 1, 'button', 1],
+							XBoxButtonId.B: ['digital', 1, 'button', 2],
+							XBoxButtonId.X: ['digital', 1, 'button', 0],
+							XBoxButtonId.Y: ['digital', 1, 'button', 3],
+							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+							XBoxButtonId.START: ['digital', 1, 'button', 9],
+							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+						},
+					};
+					break;
+				default:
+					lookup = {}; // this line should never happen anyway.
+					break;
+			}
+			
+			config = lookup.get(sig);
+			if (config == null) {
+				// First find the "tightest" fit and use that configuration.
 				
-				this.manualBindButton(XBoxButtonId.AXIS2, false, [
-					['a', 4, false],
-					['a', 4, true],
-					['a', 3, false],
-					['a', 3, true],
-				]);
+				bestConfigKey = null;
+				bestConfigDistance = null;
+				for (configKey : lookup.keys()) {
+					parts = configKey.split(':').map(Core.parseInt);
+					if (buttons >= parts[0] && axes >= parts[1]) {
+						distance = (parts[0] - buttons) + (parts[1] - axes) * 5; 
+						if (bestConfigDistance == null || bestConfigDistance > distance) {
+							bestConfigDistance = distance;
+							bestConfigKey = configKey;
+						}
+					}
+				}
 				
-				this.manualBindButton(XBoxButtonId.DPAD, true, [
-					['a', 5, false],
-					['a', 5, true],
-					['a', 6, true],
-					['a', 6, false],
-				]);
+				if (bestConfigKey == null) {
+					// If there is no fit (i.e. the current number of axes or buttons is lower than any of the configs allow) then just allocate what you can.
+					// It's a weird controller anyway, so they're probably used to auto configuring not doing what it should.
+				}
+				config = lookup[bestConfigKey];
+			}
+			
+			for (buttonId : config.keys()) {
+				t = config[buttonId];
+				isDigital = t[0] == 'digital';
+				dim = t[1];
+				buttonConfig = [];
+				index = 2;
+				while (buttonConfig.length < dim) {
+					switch (t[index++]) {
+						case 'button':
+							buttonIndex = t[index++];
+							buttonConfig.add(['b', buttonIndex]);
+							break;
+						case 'axes':
+							xAxisIndex = t[index++];
+							yAxisIndex = t[index++];
+							xDirNormal = t[index++] == '-+';
+							yDirNormal = t[index++] == '-+';
+							buttonConfig.add(['a', xAxisIndex, !xDirNormal]);
+							buttonConfig.add(['a', xAxisIndex, xDirNormal]);
+							buttonConfig.add(['a', yAxisIndex, !yDirNormal]);
+							buttonConfig.add(['a', yAxisIndex, yDirNormal]);
+							break;
+						case 'halfxis':
+							axisIndex = t[index++];
+							isPositive = t[index++] == '+';
+							buttonConfig.add(['a', axisIndex, isPositive]);
+							break;
+						default: return Core.fail("Unknown value");
+					}
+				}
 				
-				this.manualBindButton(XBoxButtonId.A, true, [['b', 0]]);
-				this.manualBindButton(XBoxButtonId.B, true, [['b', 1]]);
-				this.manualBindButton(XBoxButtonId.X, true, [['b', 2]]);
-				this.manualBindButton(XBoxButtonId.Y, true, [['b', 3]]);
-				this.manualBindButton(XBoxButtonId.LEFT_BUMPER, true, [['b', 4]]);
-				this.manualBindButton(XBoxButtonId.RIGHT_BUMPER, true, [['b', 5]]);
-				this.manualBindButton(XBoxButtonId.BACK, true, [['b', 6]]);
-				this.manualBindButton(XBoxButtonId.START, true, [['b', 7]]);
-				this.manualBindButton(XBoxButtonId.AXIS1_BUTTON, true, [['b', 8]]);
-				this.manualBindButton(XBoxButtonId.AXIS2_BUTTON, true, [['b', 9]]);
-				
-				this.manualBindButton(XBoxButtonId.LEFT_TRIGGER, false, [['a', 2, false]]);
-				this.manualBindButton(XBoxButtonId.RIGHT_TRIGGER, false, [['a', 2, true]]);
-			} else {
-				
+				this.manualBindButton(buttonId, isDigital, buttonConfig);
 			}
 		}
 
