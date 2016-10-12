@@ -4,5 +4,12 @@
 	- this is OSX
 	
 	otherwise, return 0
+	
+	Return null constant on platforms that don't support gamepads since this code doesn't get run anyway.
 */
-output = buildInteger($_lib_gamepad_jsIsOsx());
+
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	output = buildInteger($_lib_gamepad_jsIsOsx());
+} else {
+	output = VALUE_NULL;
+}

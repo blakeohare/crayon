@@ -3,4 +3,9 @@
 	
 	This is used by the auto-configure to make some decisions based on how that platform reports buttons and axes.
 */
-output = buildInteger($_lib_gamepad_getPlatform());
+
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+	output = buildInteger($_lib_gamepad_getPlatform());
+} else {
+	output = VALUE_NULL;
+}
