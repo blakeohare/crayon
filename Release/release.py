@@ -3,6 +3,7 @@ VERSION = '0.2.0'
 import shutil
 import os
 import io
+import sys
 
 def copyDirectory(source, target):
 	source = source.replace('/', os.sep)
@@ -29,36 +30,58 @@ def writeFile(path, content, lineEnding):
 	ucontent = unicode(content, 'utf-8')
 	with io.open(path.replace('/', os.sep), 'w', newline=lineEnding) as f:
 		f.write(ucontent)
-	
 
-librariesForRelease = [
-	'Audio',
-	'Core',
-	'Easing',
-	'FileIO',
-	'FileIOCommon',
-	'Game',
-	'Gamepad',
-	'Graphics2D',
-	'GraphicsText',
-	'Http',
-	'ImageEncoder',
-	'ImageResources',
-	'ImageWebResources',
-	'Json',
-	'Math',
-	'Random',
-	'Resources',
-	'UserData',
-	'Web',
-	'Xml',
-]
+def runCommand(cmd):
+	c = os.popen(cmd)
+	output = c.read()
+	c.close()
+	return output
 
-for platform in ('windows', 'mono'):
+def main(args):
+	librariesForRelease = [
+		'Audio',
+		'Core',
+		'Easing',
+		'FileIO',
+		'FileIOCommon',
+		'Game',
+		'Gamepad',
+		'Graphics2D',
+		'GraphicsText',
+		'Http',
+		'ImageEncoder',
+		'ImageResources',
+		'ImageWebResources',
+		'Json',
+		'Math',
+		'Random',
+		'Resources',
+		'UserData',
+		'Web',
+		'Xml',
+	]
+
+	if len(args) != 1:
+		print("usage: python release.py windows|mono")
+		return
+
+	platform = args[0]
+
+	if not platform in ('windows', 'mono'):
+		print ("Invalid platform: " + platform)
+		return
+
 	copyToDir = 'crayon-' + VERSION + '-' + platform
 	if os.path.exists(copyToDir):
 		shutil.rmtree(copyToDir)
 	os.makedirs(copyToDir)
+
+	if platform == 'mono':
+		print runCommand('xbuild /p:Configuration=Release ../Compiler/CrayonOSX.sln')
+	else:
+		pass
+		# TODO: invoke msbuild
+
 	shutil.copyfile('../Compiler/bin/Release/Crayon.exe', copyToDir + '/crayon.exe')
 	shutil.copyfile('../Compiler/bin/Release/Interpreter.dll', copyToDir + '/Interpreter.dll')
 	shutil.copyfile('../Compiler/bin/Release/Resources.dll', copyToDir + '/Resources.dll')
@@ -75,3 +98,7 @@ for platform in ('windows', 'mono'):
 		sourcePath = '../Libraries/' + lib
 		targetPath = copyToDir + '/libs/' + lib
 		copyDirectory(sourcePath, targetPath)
+
+	print("Release directory created: " + copyToDir)
+
+main(sys.argv[1:])
