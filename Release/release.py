@@ -14,9 +14,9 @@ def copyDirectory(source, target):
 		fulltargetpath = os.path.join(target, file)
 		if os.path.isdir(fullpath):
 			copyDirectory(fullpath, fulltargetpath)
-		elif file.endswith('.txt') or file.endswith('.cry'):
-			# The intent of this is to avoid os generated files like thumbs.db
-			# Tweak if new file types are added.
+		elif file.lower() in ('.ds_store', 'thumbs.db'):
+			pass
+		else:
 			shutil.copyfile(fullpath, fulltargetpath)
 
 def readFile(path):
