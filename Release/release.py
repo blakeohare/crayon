@@ -79,8 +79,11 @@ def main(args):
 	if platform == 'mono':
 		print runCommand('xbuild /p:Configuration=Release ../Compiler/CrayonOSX.sln')
 	else:
-		pass
-		# TODO: invoke msbuild
+		print runCommand(' '.join([
+			r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe',
+			'/p:Configuration=Release',
+			r'..\Compiler\CrayonWindows.sln'
+		]))
 
 	shutil.copyfile('../Compiler/bin/Release/Crayon.exe', copyToDir + '/crayon.exe')
 	shutil.copyfile('../Compiler/bin/Release/Interpreter.dll', copyToDir + '/Interpreter.dll')
