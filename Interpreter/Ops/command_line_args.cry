@@ -1,0 +1,9 @@
+﻿stringList = $_command_line_args();
+list1 = $_new_list('Value');
+for (i = 0; i < $_array_length(stringList); i += 1) {
+	$_list_push(list1, buildString($_array_get(stringList, i)));
+}
+value = new Value(Types.LIST, list1);
+import inline "ValueStackCapacityCheck.cry";
+$_array_set(valueStack, valueStackSize, value);
+valueStackSize += 1;

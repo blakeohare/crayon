@@ -108,6 +108,11 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
 
+        protected override void TranslateCommandLineArgs(List<string> output)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void TranslateComment(List<string> output, StringConstant commentValue)
         {
             output.Add("// ");

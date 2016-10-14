@@ -38,6 +38,7 @@ namespace Crayon.Translator
                 case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
                 case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
                 case "_chr": VerifyCount(functionCall, 1); TranslateChr(output, args[0]); break;
+                case "_command_line_args": VerifyCount(functionCall, 0); TranslateCommandLineArgs(output); break;
                 case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
                 case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
                 case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
@@ -144,6 +145,7 @@ namespace Crayon.Translator
         protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
         protected abstract void TranslateCharToString(List<string> output, Expression charValue);
         protected abstract void TranslateChr(List<string> output, Expression asciiValue);
+        protected abstract void TranslateCommandLineArgs(List<string> output);
         protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
         protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
         protected abstract void TranslateCos(List<string> output, Expression value);

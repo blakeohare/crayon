@@ -53,7 +53,7 @@ namespace Crayon
             // artificially inject a function call to main() at the very end after all declarations are done.
             if (parser.MainFunctionHasArg)
             {
-                output.Add(null, OpCode.DEF_LIST, 0); // TODO: op code to build a list of the command line args. For now just pass in an empty list.
+                output.Add(null, OpCode.COMMAND_LINE_ARGS);
                 output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
             }
             else

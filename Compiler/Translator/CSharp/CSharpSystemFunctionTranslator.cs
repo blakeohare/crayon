@@ -119,6 +119,11 @@ namespace Crayon.Translator.CSharp
             output.Add(").ToString()");
         }
 
+        protected override void TranslateCommandLineArgs(List<string> output)
+        {
+            output.Add("TranslationHelper.GetCmdLineArgs()");
+        }
+
         protected override void TranslateComment(List<string> output, StringConstant commentValue)
         {
 #if DEBUG

@@ -182,6 +182,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'Ops/call_function.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'Ops/call_lib_function.cry'; break;
 			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'Ops/class_definition.cry'; break;
+			case OpCodes.COMMAND_LINE_ARGS: $_comment('COMMAND_LINE_ARGS'); import inline 'Ops/command_line_args.cry'; break;
 			case OpCodes.CORE_FUNCTION: $_comment('CORE_FUNCTION'); import inline 'Ops/core_function.cry'; break;
 			case OpCodes.DEF_DICTIONARY: $_comment('DEF_DICT'); import inline 'Ops/def_dictionary.cry'; break;
 			case OpCodes.DEF_LIST: $_comment('DEF_LIST'); import inline 'Ops/def_list.cry'; break;

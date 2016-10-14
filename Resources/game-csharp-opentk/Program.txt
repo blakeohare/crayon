@@ -6,6 +6,7 @@ namespace %%%PROJECT_ID%%%
 	{
 		public static void Main(string[] args)
 		{
+			TranslationHelper.SetCmdLineArgs(args);
 			CrayonWrapper.v_main();
 		}
 	}

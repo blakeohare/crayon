@@ -131,6 +131,11 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
+        protected override void TranslateCommandLineArgs(List<string> output)
+        {
+            output.Add("sys.argv[1:]");
+        }
+
         protected override void TranslateComment(List<string> output, StringConstant commentValue)
         {
 #if DEBUG

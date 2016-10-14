@@ -117,6 +117,11 @@ namespace Crayon.Translator.JavaScript
             output.Add(")");
         }
 
+        protected override void TranslateCommandLineArgs(List<string> output)
+        {
+            output.Add("[]");
+        }
+
         protected override void TranslateComment(List<string> output, StringConstant commentValue)
         {
 #if DEBUG

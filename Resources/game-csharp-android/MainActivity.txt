@@ -34,7 +34,7 @@ namespace %%%PROJECT_ID%%%
 			// Create our OpenGL view, and display it
 			this.view = new GlView1(this);
             SetContentView(this.view);
-			
+			TranslationHelper.SetCmdLineArgs(new string[0]); // There are no args.
             CrayonWrapper.v_main();
         }
 

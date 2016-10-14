@@ -34,6 +34,10 @@ namespace %%%PROJECT_ID%%%
             }
         }
 
+        private static string[] cmdLineArgs = null;
+        public static void SetCmdLineArgs(string[] args) { cmdLineArgs = args.ToArray(); }
+        public static string[] GetCmdLineArgs() { return cmdLineArgs; }
+
 		public static void ShuffleInPlace(List<Value> list)
 		{
 			if (list.Count < 2) return;

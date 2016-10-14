@@ -34,6 +34,10 @@ final class TranslationHelper {
         return programData;
     }
 
+	private static String[] cmdLineArgs = null;
+	public static void setCmdLineArgs(String[] args) { cmdLineArgs = args; }
+	public static String[] getCmdLineArgs() { return cmdLineArgs; }
+
     public static boolean isValidInteger(String value) {
         try {
             Integer.parseInt(value);
