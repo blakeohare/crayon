@@ -22,26 +22,18 @@ namespace Crayon.ParseTree
 
         public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Executable owner)
         {
-            // TODO: don't pop from the front, you fool. that's silly slow.
-            List<Expression> mutableList = new List<Expression>(expressions);
-            List<Token> mutableOps = new List<Token>(ops);
-            Expression left = mutableList[0];
-            Expression right = mutableList[1];
+            int expressionIndex = 0;
+            int opIndex = 0;
+            Expression left = expressions[expressionIndex++];
+            Expression right = expressions[expressionIndex++];
 
-            // Pop! Pop! \o/
-            mutableList.RemoveAt(0);
-            mutableList.RemoveAt(0);
-
-            Token op = mutableOps[0];
-            mutableOps.RemoveAt(0);
+            Token op = ops[opIndex++];
 
             BinaryOpChain boc = new BinaryOpChain(left, op, right, owner);
-            while (mutableList.Count > 0)
+            while (expressionIndex < expressions.Count)
             {
-                right = mutableList[0];
-                mutableList.RemoveAt(0);
-                op = mutableOps[0];
-                mutableOps.RemoveAt(0);
+                right = expressions[expressionIndex++];
+                op = ops[opIndex++];
                 boc = new BinaryOpChain(boc, op, right, owner);
             }
 
