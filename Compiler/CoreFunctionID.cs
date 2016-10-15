@@ -36,6 +36,7 @@
         IS_JAVASCRIPT = 32,
         IS_ANDROID = 33,
         ALLOC_NATIVE_DATA = 34,
+        SET_NATIVE_DATA = 35,
     }
 
     public static class CoreFunctionIDHelper
@@ -78,6 +79,7 @@
                 case "isJavaScript": return (int)CoreFunctionID.IS_JAVASCRIPT;
                 case "isAndroid": return (int)CoreFunctionID.IS_ANDROID;
                 case "allocNativeData": return (int)CoreFunctionID.ALLOC_NATIVE_DATA;
+                case "setNativeData": return (int)CoreFunctionID.SET_NATIVE_DATA;
                 default: return -1;
             }
         }

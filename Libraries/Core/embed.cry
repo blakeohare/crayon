@@ -112,5 +112,74 @@
 		return fp(args);
 	}
 	
+	enum _LIB_CORE_ExType {
+		
+		FATAL = 0,
+		
+		GENERIC_EXCEPTION = 1,
+		
+		ASSERTION_FAILED = 2,
+		DIVISION_BY_ZERO = 3,
+		INDEX_OUT_OF_RANGE = 4,
+		INVALID_ARGUMENT = 5,
+		INVALID_ASSIGNMENT = 6,
+		INVALID_INVOCATION = 7,
+		UNKNOWN_FIELD = 8,
+		UNSUPPORTED_OPERATION = 9,
+	}
+	
+	/*
+		When there are VM-generated exceptions (as opposed to exceptions thrown directly from code with the 
+		throw keyword) the easiest way to go about this is to simply treat it as a function invocation to this 
+		particular function which itself just uses the throw keyword.
+	*/
+	function _LIB_CORE_generateException(type, message) {
+		switch (type) {
+			case _LIB_CORE_ExType.FATAL: e = new FatalException(message); break;
+			case _LIB_CORE_ExType.ASSERTION_FAILED: e = new AssertionFailedException(message); break;
+			case _LIB_CORE_ExType.DIVISION_BY_ZERO: e = new DivisionByZeroException(message); break;
+			case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: e = new IndexOutOfRangeException(message); break;
+			case _LIB_CORE_ExType.INVALID_ARGUMENT: e = new InvalidArgumentException(message); break;
+			case _LIB_CORE_ExType.INVALID_ASSIGNMENT: e = new InvalidAssignmentException(message); break;
+			case _LIB_CORE_ExType.INVALID_INVOCATION: e = new InvalidInvocation(message); break;
+			case _LIB_CORE_ExType.UNKNOWN_FIELD: e = new UnknownFieldException(message); break;
+			case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: e = new UnsupportedOperationException(message); break;
+			default: e = new Exception(message); break;
+		}
+		
+		// SOON.
+		// throw e;
+	}
+	
 	class Object { } // Sometimes you just need a dummy object.
+	
+	class Exception {
+		/*
+			nativeData[0] -> (boolean) is fatal exception?
+		*/
+		field message;
+		field cause;
+		
+		constructor(message = null, cause = null) {
+			$$$('allocNativeData', this, 1);
+			$$$('setNativeData', this, 0, 0); // is fatal? 0 -> no
+			this.message = message;
+			this.cause = cause;
+		}
+	}
+	
+	class FatalException : Exception {
+		constructor(m = null, c = null) : base(m, c) {
+			$$$('setNativeData', this, 0, 1); // is fatal? 1 -> yes
+		}
+	}
+	
+	class AssertionFailedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class DivisionByZeroException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidArgumentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidInvocation : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 }

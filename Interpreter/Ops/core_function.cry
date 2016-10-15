@@ -507,6 +507,15 @@
 		objArray1 = $_new_array('object', int1);
 		ObjectInstance$objInstance1.nativeData = objArray1;
 		break;
+
+	case 35: $_comment('setNativeData');
+		import inline "FrameworkFunctions/3_arg.cry";
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		$_array_set(
+			ObjectInstance$objInstance1.nativeData,
+			$_cast('int', Value$arg2.internalValue),
+			Value$arg3.internalValue);
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?
