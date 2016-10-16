@@ -10,8 +10,9 @@ namespace Crayon
             public int[] ByteCode { get; set; }
             public Token Token { get; set; }
             public string StringArg { get; set; }
+            public ByteCodeEsfToken EsfToken { get; set; }
         }
-
+        
         private List<ByteRow> rows = new List<ByteRow>();
 
         public ByteBuffer() { }
