@@ -575,5 +575,6 @@ namespace Crayon
         }
 
         public string CurrentNamespace { get; private set; }
+        public int ValueStackDepth { get; set; }
     }
 }

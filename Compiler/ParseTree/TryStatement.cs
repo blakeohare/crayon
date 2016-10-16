@@ -14,6 +14,7 @@ namespace Crayon.ParseTree
         public Executable[] CatchBlock { get; set; }
         public Executable[] FinallyBlock { get; set; }
         public int ExceptionVariableLocalScopeId { get; set; }
+        public int ValueStackDepth { get; set; }
 
         public TryStatement(
             Token tryToken,
@@ -52,9 +53,10 @@ namespace Crayon.ParseTree
             }
             return output;
         }
-        
+
         internal override IList<Executable> Resolve(Parser parser)
         {
+            this.ValueStackDepth = parser.ValueStackDepth;
             List<Executable> builder = new List<Executable>();
             foreach (Executable ex in this.TryBlock)
             {
