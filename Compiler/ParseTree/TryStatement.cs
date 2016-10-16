@@ -7,34 +7,64 @@ namespace Crayon.ParseTree
     internal class TryStatement : Executable
     {
         public Token TryToken { get; set; }
-        public Token CatchToken { get; set; }
         public Token FinallyToken { get; set; }
-        public Token ExceptionToken { get; set; }
         public Executable[] TryBlock { get; set; }
-        public Executable[] CatchBlock { get; set; }
+        public CatchBlock[] CatchBlocks { get; set; }
         public Executable[] FinallyBlock { get; set; }
-        public int ExceptionVariableLocalScopeId { get; set; }
         public int ValueStackDepth { get; set; }
 
+        public class CatchBlock
+        {
+            public Token CatchToken { get; set; }
+            public Token[] TypeTokens { get; set; }
+            public string[] Types { get; set; }
+            public Token ExceptionVariableToken { get; set; }
+            public int VariableLocalScopeId { get; set; }
+            public Executable[] Code { get; set; }
+            public ClassDefinition[] TypeClasses { get; set; }
+        }
+
+        // pardon the double-plurals for the jaggy 2D arrays
         public TryStatement(
             Token tryToken,
             IList<Executable> tryBlock,
-            Token catchToken,
-            Token exceptionVariableToken,
-            IList<Executable> catchBlock,
+            List<Token> catchTokens,
+            List<Token> exceptionVariableTokens,
+            List<Token[]> catchBlockTypeTokenses, // tricksy tokenses
+            List<string[]> catchBlockTypeses,
+            List<Executable[]> catchBlockExecutableses,
             Token finallyToken,
             IList<Executable> finallyBlock,
             Executable owner) : base(tryToken, owner)
         {
             this.TryToken = tryToken;
-            this.CatchToken = catchToken;
-            this.FinallyToken = finallyToken;
-            this.ExceptionToken = exceptionVariableToken;
             this.TryBlock = tryBlock.ToArray();
-            this.CatchBlock = catchBlock == null ? null : catchBlock.ToArray();
+
+            int catchBlockCount = catchTokens.Count; // individual catch-related inputs are trusted to all have same length
+            this.CatchBlocks = new CatchBlock[catchBlockCount];
+            for (int i = 0; i < catchBlockCount; ++i)
+            {
+                Token catchToken = catchTokens[i];
+                Token variableName = exceptionVariableTokens[i];
+                Token[] catchBlockTypeTokens = catchBlockTypeTokenses[i];
+                string[] catchBlockTypes = catchBlockTypeses[i];
+                Executable[] catchBlockExecutables = catchBlockExecutableses[i];
+
+                this.CatchBlocks[i] = new CatchBlock()
+                {
+                    CatchToken = catchToken,
+                    Code = catchBlockExecutables,
+                    ExceptionVariableToken = variableName,
+                    Types = catchBlockTypes,
+                    TypeTokens = catchBlockTypeTokens,
+                    VariableLocalScopeId = -1,
+                };
+            }
+
+            this.FinallyToken = finallyToken;
             this.FinallyBlock = finallyBlock == null ? null : finallyBlock.ToArray();
 
-            if (this.CatchBlock == null && this.FinallyBlock == null)
+            if (this.CatchBlocks.Length == 0 && this.FinallyBlock == null)
             {
                 throw new ParserException(this.TryToken, "Cannot have a try block without a catch or finally block.");
             }
@@ -43,9 +73,9 @@ namespace Crayon.ParseTree
         private IEnumerable<Executable> GetAllExecutables()
         {
             IEnumerable<Executable> output = this.TryBlock;
-            if (this.CatchBlock != null)
+            foreach (CatchBlock cb in this.CatchBlocks)
             {
-                output = output.Concat<Executable>(this.CatchBlock);
+                output = output.Concat<Executable>(cb.Code);
             }
             if (this.FinallyBlock != null)
             {
@@ -57,31 +87,23 @@ namespace Crayon.ParseTree
         internal override IList<Executable> Resolve(Parser parser)
         {
             this.ValueStackDepth = parser.ValueStackDepth;
-            List<Executable> builder = new List<Executable>();
+
             foreach (Executable ex in this.TryBlock)
             {
-                builder.AddRange(ex.Resolve(parser));
-            }
-            this.TryBlock = builder.ToArray();
-
-            if (this.CatchBlock != null)
-            {
-                builder.Clear();
-                foreach (Executable ex in this.CatchBlock)
-                {
-                    builder.AddRange(ex.Resolve(parser));
-                }
-                this.CatchBlock = builder.ToArray();
+                ex.Resolve(parser);
             }
 
-            if (this.FinallyBlock != null)
+            foreach (CatchBlock cb in this.CatchBlocks)
             {
-                builder.Clear();
-                foreach (Executable ex in this.FinallyBlock)
+                foreach (Executable ex in cb.Code)
                 {
-                    builder.AddRange(ex.Resolve(parser));
+                    ex.Resolve(parser);
                 }
-                this.FinallyBlock = builder.ToArray();
+            }
+
+            foreach (Executable ex in this.FinallyBlock)
+            {
+                ex.Resolve(parser);
             }
 
             return Listify(this);
@@ -90,7 +112,39 @@ namespace Crayon.ParseTree
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
-            if (this.CatchBlock != null) this.BatchExecutableNameResolver(parser, lookup, imports, this.CatchBlock);
+
+            foreach (CatchBlock cb in this.CatchBlocks)
+            {
+                string[] types = cb.Types;
+                Token[] typeTokens = cb.TypeTokens;
+                int typeCount = types.Length;
+                cb.TypeClasses = new ClassDefinition[typeCount];
+                for (int i = 0; i < typeCount; ++i)
+                {
+                    string typeName = types[i] ?? "Core.Exception";
+                    Token token = typeTokens[i] ?? cb.CatchToken;
+                    ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, typeName, true);
+                    cb.TypeClasses[i] = resolvedType;
+
+                    // There's only one type, it doesn't resolve into a class, there's no variable, and there's no '.' in the type name.
+                    if (resolvedType == null &&
+                        typeCount == 1 &&
+                        cb.ExceptionVariableToken == null &&
+                        !typeName.Contains("."))
+                    {
+                        // ...that means this is not a type but is actually a variable.
+
+                        // Change the type to "Core.Exception", move this token to a variable
+                        types[0] = "Core.Exception";
+                        cb.ExceptionVariableToken = token;
+                        typeTokens[0] = null;
+                        --i; // and then try resolving again.
+                    }
+                }
+
+                this.BatchExecutableNameResolver(parser, lookup, imports, cb.Code);
+            }
+
             if (this.FinallyBlock != null) this.BatchExecutableNameResolver(parser, lookup, imports, this.FinallyBlock);
 
             return this;
@@ -103,22 +157,22 @@ namespace Crayon.ParseTree
                 ex.PerformLocalIdAllocation(varIds, phase);
             }
 
-            if (this.CatchBlock != null)
+            foreach (CatchBlock cb in this.CatchBlocks)
             {
-                if (this.ExceptionToken != null)
+                if (cb.ExceptionVariableToken != null)
                 {
                     if ((phase & VariableIdAllocPhase.REGISTER) != 0)
                     {
-                        varIds.RegisterVariable(this.ExceptionToken.Value);
+                        varIds.RegisterVariable(cb.ExceptionVariableToken.Value);
                     }
 
                     if ((phase & VariableIdAllocPhase.ALLOC) != 0)
                     {
-                        this.ExceptionVariableLocalScopeId = varIds.GetVarId(this.ExceptionToken);
+                        cb.VariableLocalScopeId = varIds.GetVarId(cb.ExceptionVariableToken);
                     }
                 }
 
-                foreach (Executable ex in this.CatchBlock)
+                foreach (Executable ex in cb.Code)
                 {
                     ex.PerformLocalIdAllocation(varIds, phase);
                 }
@@ -135,9 +189,17 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
-            foreach (Executable ex in this.TryBlock.Concat(this.CatchBlock).Concat(this.FinallyBlock))
+            foreach (Executable ex in this.TryBlock.Concat(this.FinallyBlock))
             {
                 ex.GetAllVariablesReferenced(vars);
+            }
+
+            foreach (CatchBlock cb in this.CatchBlocks)
+            {
+                foreach (Executable ex in cb.Code)
+                {
+                    ex.GetAllVariablesReferenced(vars);
+                }
             }
         }
     }
