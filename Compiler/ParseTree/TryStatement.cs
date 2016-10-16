@@ -108,7 +108,7 @@ namespace Crayon.ParseTree
 
             return Listify(this);
         }
-        
+
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
@@ -154,6 +154,14 @@ namespace Crayon.ParseTree
                         --i; // and then try resolving again.
                     }
                 }
+
+                /*
+                    TODO: throw an error or warning if an exception catch is followed by a more specific catch.
+                    e.g.
+                    try { ... }
+                    catch (Exception) { ... }
+                    catch (InvalidArgumentException) { ... }
+                */
 
                 this.BatchExecutableNameResolver(parser, lookup, imports, cb.Code);
             }
