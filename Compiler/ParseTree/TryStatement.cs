@@ -108,10 +108,12 @@ namespace Crayon.ParseTree
 
             return Listify(this);
         }
-
+        
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
+
+            ClassDefinition simpleException = Node.DoClassLookup(null, lookup, imports, "Core.Exception");
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
@@ -124,6 +126,17 @@ namespace Crayon.ParseTree
                     string typeName = types[i] ?? "Core.Exception";
                     Token token = typeTokens[i] ?? cb.CatchToken;
                     ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, typeName, true);
+                    if (!resolvedType.ExtendsFrom(simpleException))
+                    {
+                        if (resolvedType.BaseClass == null && resolvedType.LibraryName == null)
+                        {
+                            throw new ParserException(token, "This class does not extend from Core.Exception.");
+                        }
+                        else
+                        {
+                            throw new ParserException(token, "Only classes that extend from Core.Exception may be caught.");
+                        }
+                    }
                     cb.TypeClasses[i] = resolvedType;
 
                     // There's only one type, it doesn't resolve into a class, there's no variable, and there's no '.' in the type name.
