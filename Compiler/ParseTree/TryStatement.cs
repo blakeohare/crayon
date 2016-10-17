@@ -86,6 +86,12 @@ namespace Crayon.ParseTree
 
         internal override IList<Executable> Resolve(Parser parser)
         {
+            if (this.TryBlock.Length == 0)
+            {
+                // No try? The finally then just functions as normal unwrapped code.
+                return this.FinallyBlock;
+            }
+
             this.ValueStackDepth = parser.ValueStackDepth;
 
             foreach (Executable ex in this.TryBlock)
