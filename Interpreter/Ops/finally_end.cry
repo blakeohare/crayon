@@ -1,2 +1,17 @@
 ﻿
-return killExecution(stack, pc, "Not implemented: FINALLY_END");
+value = ExecutionContext$ec.activeException;
+if (value == null || ExecutionContext$ec.activeExceptionHandled) {
+	switch (StackFrame$stack.postFinallyBehavior) {
+		case PostFinallyBehavior.NOTHING:
+			ExecutionContext$ec.activeException = null;
+			break;
+		case PostFinallyBehavior.BREAK:
+			return killExecution(stack, pc, "TODO: PFB->BREAK");
+		case PostFinallyBehavior.CONTINUE:
+			return killExecution(stack, pc, "TODO: PFB->CONTINUE");
+		case PostFinallyBehavior.RETURN:
+			return killExecution(stack, pc, "TODO: PFB->RETURN");
+	}
+} else {
+	return killExecution(stack, pc, "TODO: bubble exceptions.");
+}

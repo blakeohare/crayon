@@ -155,3 +155,14 @@ enum PrimitiveMethodName {
 	UPPER,
 	VALUES,
 }
+
+/*
+	Once a finally block ends, what should the VM do?
+	This is all of course superceded by the presence of an uncaught exception.
+*/
+enum PostFinallyBehavior {
+	NOTHING = 0,
+	BREAK = 1,
+	CONTINUE = 2,
+	RETURN = 3,
+}

@@ -404,7 +404,8 @@ if (bool1) {
 			value, // the value of the 'this' keyword
 			valueStackSize,
 			0, // for static constructor use only
-			StackFrame$stack.depth + 1); 
+			StackFrame$stack.depth + 1,
+			PostFinallyBehavior.NOTHING); 
 
 		// now that we're in the new stack frame, flush out all the passed args to the local stack since their
 		// ID's are allocated with args first.

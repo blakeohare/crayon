@@ -323,7 +323,8 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 		null, // value of 'this' keyword.
 		valueStackSize,
 		classId, // mark class as initialized when RETURN runs.
-		StackFrame$stack.depth + 1); 
+		StackFrame$stack.depth + 1,
+		PostFinallyBehavior.NOTHING);
 }
 
 /*

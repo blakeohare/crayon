@@ -40,7 +40,8 @@ function @type('int') main() {
 		null, // object context
 		0, // valueStackSize
 		0, // static initialization class ID marker upon completion (not applicable here)
-		1); // stack depth
+		1, // stack depth
+		PostFinallyBehavior.NOTHING);
 
 	@type('ExecutionContext') executionContext = new ExecutionContext(
 		0, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
@@ -55,7 +56,11 @@ function @type('int') main() {
 		localsStackSet,
 		1, // localsStackSetToken
 
-		0); // executionCounter
+		0, // executionCounter
+
+		false, // exception handled
+		null // active exception
+		);
 
 	@type('Dictionary<int, ExecutionContext>') executionContexts = $_new_dictionary('int', 'ExecutionContext');
 	$_dictionary_set(executionContexts, 0, executionContext);
@@ -151,7 +156,8 @@ function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, 
 		null, // object context
 		0, // valueStackSize
 		0, // static initialization class ID marker upon completion (not applicable here)
-		1); // stack depth
+		1, // stack depth
+		PostFinallyBehavior.NOTHING);
 
 	@type('ExecutionContext') executionContext = new ExecutionContext(
 		newId, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
@@ -166,7 +172,11 @@ function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, 
 		localsSet,
 		1, // localsStackSetToken
 
-		0); // executionContext
+		0, // executionContext
+		
+		false, // exception handled
+		null // active exception
+		);
 
 	$_dictionary_set(ProgramData$p.executionContexts, newId, executionContext);
 	return runInterpreter(newId);

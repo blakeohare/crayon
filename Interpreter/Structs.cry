@@ -61,6 +61,8 @@ struct ExecutionContext {
 	@type('Array<int>') localsStackSet,
 	@type('int') localsStackSetToken,
 	@type('int') executionCounter,
+	@type('bool') activeExceptionHandled,
+	@type('Value') activeException,
 }
 
 struct StackFrame {
@@ -74,6 +76,7 @@ struct StackFrame {
 	@type('int') valueStackPopSize, // size of the value stack when this frame is popped.
 	@type('int') markClassAsInitialized,
 	@type('int') depth, // stack depth for infinite recursion detection
+	@type('int') postFinallyBehavior, // value defined in PostFinallyBehavior enum
 }
 
 struct InterpreterResult {
