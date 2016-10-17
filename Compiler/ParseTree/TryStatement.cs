@@ -86,33 +86,18 @@ namespace Crayon.ParseTree
 
         internal override IList<Executable> Resolve(Parser parser)
         {
-            if (this.TryBlock.Length == 0)
-            {
-                // No try? The finally then just functions as normal unwrapped code.
-                return this.FinallyBlock;
-            }
-
             this.ValueStackDepth = parser.ValueStackDepth;
 
-            foreach (Executable ex in this.TryBlock)
-            {
-                ex.Resolve(parser);
-            }
-
+            this.TryBlock = Executable.Resolve(parser, this.TryBlock).ToArray();
             foreach (CatchBlock cb in this.CatchBlocks)
             {
-                foreach (Executable ex in cb.Code)
-                {
-                    ex.Resolve(parser);
-                }
+                cb.Code = Executable.Resolve(parser, cb.Code).ToArray();
             }
+            this.FinallyBlock = Executable.Resolve(parser, this.FinallyBlock).ToArray();
 
-            foreach (Executable ex in this.FinallyBlock)
-            {
-                ex.Resolve(parser);
-            }
-
-            return Listify(this);
+            return this.TryBlock.Length == 0
+                ? this.FinallyBlock // No try? The finally then just functions as normal unwrapped code.
+                : Listify(this);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

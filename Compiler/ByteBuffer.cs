@@ -113,12 +113,13 @@ namespace Crayon
             }
         }
 
-        public void SetEsfToken(int index, int catchOffset, int finallyOffset)
+        public void SetEsfToken(int index, int catchOffset, int finallyOffset, int valueStackDepth)
         {
             this.rows[index].EsfToken = new ByteCodeEsfToken()
             {
                 ExceptionSortPcOffsetFromTry = catchOffset,
-                FinallyPcOffsetFromTry = finallyOffset
+                FinallyPcOffsetFromTry = finallyOffset,
+                ValueStackDepth = valueStackDepth,
             };
         }
     }

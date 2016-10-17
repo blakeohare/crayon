@@ -139,5 +139,9 @@
         // used to individually set the ESF for each row.
         public int ExceptionSortPcOffsetFromTry { get; set; }
         public int FinallyPcOffsetFromTry { get; set; }
+
+        // When an exception occurs in mid-expression, the value stack needs to be popped to the correct length to prevent stack corruption.
+        // e.g. myList = [1, 2, 3, functionThatThrowsException()] will leave 3 items on the stack when the catch starts to run.
+        public int ValueStackDepth { get; set; }
     }
 }

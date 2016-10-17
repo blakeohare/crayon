@@ -272,7 +272,7 @@ namespace Crayon
 
             int offsetToCatch = tryCode.Size + 1;
             int offsetToFinally = offsetToCatch + allCatchBlocks.Size;
-            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally);
+            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally, tryStatement.ValueStackDepth);
         }
 
         private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
