@@ -170,6 +170,14 @@ namespace Crayon
             ByteBuffer tryCode = new ByteBuffer();
             this.Compile(parser, tryCode, tryStatement.TryBlock);
 
+            if (tryStatement.TryBlock.Length > 0 && tryStatement.TryBlock[0] is TryStatement)
+            {
+                // If the try block begins with another try block, that'll mess with the EsfToken metadata
+                // which is declared at the beginning of the try block's PC and is singular.
+                // Get around this limitation by tacking on a noop (JUMP +0) in this reasonably rare edge case.
+                tryCode.AddFrontSlow(null, OpCode.JUMP, 0);
+            }
+
             List<ByteBuffer> catchBlocks = new List<ByteBuffer>();
 
             for (int i = 0; i < tryStatement.CatchBlocks.Length; ++i)
@@ -256,10 +264,15 @@ namespace Crayon
                 }
             }
 
+            int tryBegin = buffer.Size;
             buffer.Concat(tryCode);
             buffer.Add(null, OpCode.JUMP, allCatchBlocks.Size);
             buffer.Concat(allCatchBlocks);
             buffer.Concat(finallyCode);
+
+            int offsetToCatch = tryCode.Size + 1;
+            int offsetToFinally = offsetToCatch + allCatchBlocks.Size;
+            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally);
         }
 
         private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)

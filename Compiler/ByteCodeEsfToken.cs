@@ -138,6 +138,6 @@
         // beginning of the try block, it gives relative position that can be used at runtime that can be
         // used to individually set the ESF for each row.
         public int ExceptionSortPcOffsetFromTry { get; set; }
-        public int FinalPcOffsetFromTry { get; set; }
+        public int FinallyPcOffsetFromTry { get; set; }
     }
 }

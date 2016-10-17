@@ -112,5 +112,14 @@ namespace Crayon
                 }
             }
         }
+
+        public void SetEsfToken(int index, int catchOffset, int finallyOffset)
+        {
+            this.rows[index].EsfToken = new ByteCodeEsfToken()
+            {
+                ExceptionSortPcOffsetFromTry = catchOffset,
+                FinallyPcOffsetFromTry = finallyOffset
+            };
+        }
     }
 }
