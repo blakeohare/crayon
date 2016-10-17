@@ -14,6 +14,5 @@ float1 = $_cast('double', Value$arg4.internalValue);
 bool2 = $_cast('bool', Value$arg5.internalValue);
 
 if (lib_audio_music_play(objInstance1, bool1, string1, float1, bool2) == -1) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "Music file not found.";
+	return killExecution(stack, pc, "Music file not found.");
 }

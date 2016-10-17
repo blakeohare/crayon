@@ -1,24 +1,15 @@
-﻿
-// TODO: add a boolean for failing silently.
-
-// $parse_json(string)
+﻿/*
+	arg 1: the string to parse.
+*/
 import inline "FrameworkFunctions/1_arg.cry";
 
-if (Value$arg1.type != Types.STRING) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "$parse_json requires a string argument.";
-} else {
-	string1 = $_cast('string', Value$arg1.internalValue);
-	bool1 = true; // is error
-	if ($_string_length(string1) > 0) {
-		output = $_lib_json_parse(string1);
-		if (output != null) {
-			bool1 = false;
-		}
-	}
 
-	if (bool1) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "Attempted to parse an invalid JSON string.";
+string1 = $_cast('string', Value$arg1.internalValue);
+if ($_string_length(string1) > 0) {
+	output = $_lib_json_parse(string1);
+	if (output != null) {
+		bool1 = false;
+	} else {
+		output = VALUE_NULL;
 	}
 }

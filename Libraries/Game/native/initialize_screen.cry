@@ -19,8 +19,7 @@ if (Value$arg3.type != Types.NULL) {
 }
 
 if (bool1) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "screen dimensions must be integers.";
+	return killExecution(stack, pc, "screen dimensions must be integers.");
 } else {
 	int1 = $_cast('int', Value$arg1.internalValue);
 	int2 = $_cast('int', Value$arg2.internalValue);
@@ -32,8 +31,7 @@ if (bool1) {
 	}
 
 	if (int1 < 1 || int2 < 1 || (bool2 && int3 < 1) || (bool2 && int4 < 1)) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "screen dimensions must be positive.";
+		return killExecution(stack, pc, "screen dimensions must be positive.");
 	}
 
 	prepareToSuspend(ec, stack, valueStackSize, pc);

@@ -6,15 +6,11 @@ if (Value$arg1.type == Types.INTEGER) {
 } else if (Value$arg1.type == Types.FLOAT) {
 	float1 = $_cast('double', Value$arg1.internalValue);
 } else {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "fps must be a number.";
+	return killExecution(stack, pc, "fps must be a number.");
 }
 
-if (!lib_func_error_occurred) {
-	if (float1 <= 0) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "fps must be a positive number.";
-	} else {
-		$_lib_game_initialize_game_with_fps(float1);
-	}
+if (float1 <= 0) {
+	return killExecution(stack, pc, "fps must be a positive number.");
+} else {
+	$_lib_game_initialize_game_with_fps(float1);
 }

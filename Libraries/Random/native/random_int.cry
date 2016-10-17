@@ -15,19 +15,16 @@ if (Value$arg2.type == Types.NULL) {
 	}
 
 	if (bool1) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "randomInt(max) requires a positive integer argument.";
+		return killExecution(stack, pc, "randomInt(max) requires a positive integer argument.");
 	}
 } else {
 	if (Value$arg1.type != Types.INTEGER || Value$arg2.type != Types.INTEGER) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "randomInt(start, end) requires integer arguments.";
+		return killExecution(stack, pc, "randomInt(start, end) requires integer arguments.");
 	} else {
 		int1 = $_cast('int', Value$arg1.internalValue);
 		int2 = $_cast('int', Value$arg2.internalValue);
 		if (int2 <= int1) {
-			lib_func_error_occurred = true;
-			lib_func_error_message = "randomInt: first argument must be less than the second.";
+			return killExecution(stack, pc, "randomInt: first argument must be less than the second.");
 		} else if (int2 == int1 + 1) { // silly, but possible
 			output = buildInteger(int1);
 		} else {

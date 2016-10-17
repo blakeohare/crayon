@@ -1,5 +1,6 @@
 ﻿namespace Json {
 	function parseJson(text) {
+		if (Core.typeof(text) != Core.Type.STRING) Core.fail("parseJson requires a string argument.");
 		return $$lib_json_parse(text);
 	}
 }

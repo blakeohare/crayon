@@ -74,9 +74,6 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('bool') first = false;
 	@type('bool') primitiveMethodToCoreLibraryFallback = false;
 
-	@type('bool') lib_func_error_occurred = false;
-	@type('string') lib_func_error_message = "";
-
 	// These are all general purpose variables that can be used by any op.
 	// Declared once before the interpreter runs to prevent overhead per VM cycle.
 	@type('bool') bool1 = false;
