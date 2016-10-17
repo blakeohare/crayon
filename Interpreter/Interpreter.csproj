@@ -66,6 +66,7 @@
     <EmbeddedResource Include="Ops\call_function.cry" />
     <EmbeddedResource Include="Ops\call_lib_function.cry" />
     <EmbeddedResource Include="Ops\class_definition.cry" />
+    <EmbeddedResource Include="Ops\command_line_args.cry" />
     <EmbeddedResource Include="Ops\core_function.cry" />
     <EmbeddedResource Include="Ops\def_dictionary.cry" />
     <EmbeddedResource Include="Ops\def_list.cry" />
@@ -75,11 +76,15 @@
     <EmbeddedResource Include="Ops\deref_static_field.cry" />
     <EmbeddedResource Include="Ops\duplicate_stack_top.cry" />
     <EmbeddedResource Include="Ops\equals.cry" />
+    <EmbeddedResource Include="Ops\exception_handled_toggle.cry" />
     <EmbeddedResource Include="Ops\finalize_initialization.cry" />
+    <EmbeddedResource Include="Ops\finally_end.cry" />
     <EmbeddedResource Include="Ops\function_definition.cry" />
     <EmbeddedResource Include="Ops\index.cry" />
+    <EmbeddedResource Include="Ops\is_comparison.cry" />
     <EmbeddedResource Include="Ops\iteration_step.cry" />
     <EmbeddedResource Include="Ops\jump.cry" />
+    <EmbeddedResource Include="Ops\jump_if_exception_of_type.cry" />
     <EmbeddedResource Include="Ops\jump_if_false.cry" />
     <EmbeddedResource Include="Ops\jump_if_false_no_pop.cry" />
     <EmbeddedResource Include="Ops\jump_if_true.cry" />
@@ -144,8 +149,6 @@
     <EmbeddedResource Include="ValueUtil.cry" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Ops\is_comparison.cry" />
-    <EmbeddedResource Include="Ops\command_line_args.cry" />
     <None Include="PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

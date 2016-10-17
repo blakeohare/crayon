@@ -167,8 +167,99 @@ namespace Crayon
 
         private void CompileTryStatement(Parser parser, ByteBuffer buffer, TryStatement tryStatement)
         {
-            // TODO: still designing this.
-            throw new ParserException(tryStatement.FirstToken, "Try-catch-finally is not implemented yet.");
+            ByteBuffer tryCode = new ByteBuffer();
+            this.Compile(parser, tryCode, tryStatement.TryBlock);
+
+            List<ByteBuffer> catchBlocks = new List<ByteBuffer>();
+
+            for (int i = 0; i < tryStatement.CatchBlocks.Length; ++i)
+            {
+                TryStatement.CatchBlock catchBlock = tryStatement.CatchBlocks[i];
+                ByteBuffer catchBlockBuffer = new ByteBuffer();
+                this.Compile(parser, catchBlockBuffer, catchBlock.Code);
+                catchBlocks.Add(catchBlockBuffer);
+            }
+
+            ByteBuffer finallyCode = new ByteBuffer();
+            this.Compile(parser, finallyCode, tryStatement.FinallyBlock);
+            finallyCode.Add(null, OpCode.FINALLY_END, new int[] { 0, 0, 0, 0 }); // break and continue offsets and 0|1 flags indicating if they've been set
+
+
+            // All user code is now compiled and offsets are sort of known.
+            // Now build a lookup jump router thingy for all the catch blocks, if any.
+
+            ByteBuffer allCatchBlocks = new ByteBuffer();
+            if (catchBlocks.Count > 0)
+            {
+                /*
+                    It'll look something like this...
+                    0   EXCEPTION_HANDLED_TOGGLE true
+                    1   JUMP_IF_EXCEPTION_IS_TYPE offset type1, type2, ...
+                    2   JUMP_IF_EXCEPTION_IS_TYPE offset type3
+                    3   EXCEPTION_HANDLED_TOGGLE false
+                    4   JUMP [to finally]
+
+                    5   catch block 1
+                        ...
+                    22  last line in catch block 1
+                    23  JUMP [to finally]
+
+                    24  catch block 2...
+                        ...
+                    72  last line in catch block 2
+                    
+                    73  finally code begins...
+                */
+
+                // Add jumps to the end of each catch block to jump to the end.
+                // Going in reverse order is easier for this.
+                int totalSize = 0;
+                for (int i = catchBlocks.Count - 1; i >= 0; --i)
+                {
+                    ByteBuffer catchBlockBuffer = catchBlocks[i];
+                    if (totalSize > 0) // omit the last block since a JUMP 0 is pointless.
+                    {
+                        catchBlockBuffer.Add(null, OpCode.JUMP, totalSize);
+                    }
+                    totalSize += catchBlockBuffer.Size;
+                }
+
+                // Now generate the header. This is also done backwards since it's easier.
+                ByteBuffer exceptionSortHeader = new ByteBuffer();
+
+                // Start with the last 2 instructions.
+                exceptionSortHeader.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 0);
+                exceptionSortHeader.Add(null, OpCode.JUMP, totalSize);
+
+                int offset = 2;
+
+                // iterate forwards through the catch blocks
+                for (int i = 0; i < catchBlocks.Count; ++i)
+                {
+                    TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
+                    ByteBuffer cbByteBuffer = catchBlocks[i];
+
+                    // for each catch block insert a type-check-jump
+                    List<int> typeCheckArgs = new List<int>() { offset }; // first arg is offset, successive args are all class ID's
+                    typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
+                    exceptionSortHeader.AddFrontSlow(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
+
+                    // and then add the size of that block to the running total offset
+                    offset += cbByteBuffer.Size;
+                }
+
+                allCatchBlocks.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 1);
+                allCatchBlocks.Concat(exceptionSortHeader);
+                foreach (ByteBuffer catchBlock in catchBlocks)
+                {
+                    allCatchBlocks.Concat(catchBlock);
+                }
+            }
+
+            buffer.Concat(tryCode);
+            buffer.Add(null, OpCode.JUMP, allCatchBlocks.Size);
+            buffer.Concat(allCatchBlocks);
+            buffer.Concat(finallyCode);
         }
 
         private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)

@@ -1,0 +1,2 @@
+﻿
+return killExecution(stack, pc, "Not implemented: JUMP_IF_EXCEPTION_OF_TYPE");

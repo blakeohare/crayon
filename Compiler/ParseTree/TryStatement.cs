@@ -62,7 +62,7 @@ namespace Crayon.ParseTree
             }
 
             this.FinallyToken = finallyToken;
-            this.FinallyBlock = finallyBlock == null ? null : finallyBlock.ToArray();
+            this.FinallyBlock = finallyBlock == null ? new Executable[0] : finallyBlock.ToArray();
 
             if (this.CatchBlocks.Length == 0 && this.FinallyBlock == null)
             {

@@ -12,7 +12,7 @@ namespace Crayon
             public string StringArg { get; set; }
             public ByteCodeEsfToken EsfToken { get; set; }
         }
-        
+
         private List<ByteRow> rows = new List<ByteRow>();
 
         public ByteBuffer() { }
@@ -31,8 +31,8 @@ namespace Crayon
 
         public void Add(Token token, OpCode op, string stringValue, params int[] args)
         {
-            List<int> nums = new List<int>(args);
-            nums.Insert(0, (int)op);
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
             int[] byteCode = nums.ToArray();
 
             this.rows.Add(new ByteRow()
@@ -46,6 +46,19 @@ namespace Crayon
         public void Add(Token token, OpCode op, params int[] args)
         {
             this.Add(token, op, null, args);
+        }
+
+        public void AddFrontSlow(Token token, OpCode op, params int[] args)
+        {
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
+            int[] byteCode = nums.ToArray();
+
+            this.rows.Insert(0, new ByteRow()
+            {
+                ByteCode = byteCode,
+                Token = token,
+            });
         }
 
         public List<int[]> ToIntList()
