@@ -48,6 +48,7 @@ struct ProgramData {
 	@type('Array<int>') primitiveMethodFunctionIdFallbackLookup,
 	@type('ResourceDB') resourceDatabase,
 	@type('string') projectId,
+	@type('Array<Array<int>>') esfData,
 }
 
 struct ExecutionContext {

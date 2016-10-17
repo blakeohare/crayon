@@ -41,6 +41,7 @@ namespace Crayon
             header.Concat(tokenData);
             header.Concat(fileContent);
             header.Concat(switchStatements);
+            header.Add(null, OpCode.ESF_LOOKUP); // once the final PC's are established, come back and fill this in.
             header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID);
 
             ByteBuffer output = new Crayon.ByteBuffer();
@@ -68,9 +69,14 @@ namespace Crayon
             output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
+            // Now that ops (and PCs) have been finalized, fill in ESF data with absolute PC's
+            int[] esfOps = output.GetFinalizedEsfData();
+            int esfPc = output.GetEsfPc();
+            output.SetArgs(esfPc, esfOps);
+
             return output;
         }
-
+        
         private ByteBuffer BuildSwitchStatementTables(Parser parser)
         {
             ByteBuffer output = new Crayon.ByteBuffer();

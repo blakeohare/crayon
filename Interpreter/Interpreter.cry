@@ -142,6 +142,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<int, int>') integerSwitch = null;
 	@type('Dictionary<string, int>') stringSwitch = null;
+	@type('Array<Array<int>>') esfData = ProgramData$p.esfData;
 
 	@type('Array<int>') intOutParam = $_new_array('int', 16);
 	@type('Array<double>') floatOutParam = $_new_array('double', 16);
@@ -189,6 +190,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 			case OpCodes.DEREF_STATIC_FIELD: $_comment('DEREF_STATIC_FIELD'); import inline 'Ops/deref_static_field.cry'; break;
 			case OpCodes.DUPLICATE_STACK_TOP: $_comment('DUPLICATE_STACK_TOP'); import inline 'Ops/duplicate_stack_top.cry'; break;
 			case OpCodes.EQUALS: $_comment('EQUALS'); import inline 'Ops/equals.cry'; break;
+			case OpCodes.ESF_LOOKUP: $_comment('ESF_LOOKUP'); import inline 'Ops/esf_lookup.cry'; break;
 			case OpCodes.EXCEPTION_HANDLED_TOGGLE: $_comment('EXCEPTION_HANDLED_TOGGLE'); import inline 'Ops/exception_handled_toggle.cry'; break;
 			case OpCodes.FINALIZE_INITIALIZATION: $_comment('FINALIZE_INITIALIZATION'); import inline 'Ops/finalize_initialization.cry'; break;
 			case OpCodes.FINALLY_END: $_comment('FINALLY_END'); import inline 'Ops/finally_end.cry'; break;

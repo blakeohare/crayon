@@ -28,6 +28,7 @@
         DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID
         DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
         EQUALS, // 1: 1 to reverse results
+        ESF_LOOKUP, // [4n args, n = ESF token count] 4n+0: PC of try, 4n+1: PC of exception-sorter, 4n+2: PC of finally, 4n+3: value stack depth
         EXCEPTION_HANDLED_TOGGLE, // 1: boolean (0|1) indicating if the ExecutionContext's current exception should be marked as handled.
         FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
         FINALLY_END, // indicates the end of a finally block. Responsible for bubbling exceptions or returning from the function if appropriate

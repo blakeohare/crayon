@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon
@@ -121,6 +122,46 @@ namespace Crayon
                 FinallyPcOffsetFromTry = finallyOffset,
                 ValueStackDepth = valueStackDepth,
             };
+        }
+
+        public int[] GetFinalizedEsfData()
+        {
+            List<int> esfData = new List<int>();
+            int size = this.Size;
+            ByteRow row;
+            for (int pc = 0; pc < size; ++pc)
+            {
+                row = this.rows[pc];
+                if (row.EsfToken != null)
+                {
+                    esfData.Add(pc);
+                    esfData.Add(pc + row.EsfToken.ExceptionSortPcOffsetFromTry);
+                    esfData.Add(pc + row.EsfToken.FinallyPcOffsetFromTry);
+                    esfData.Add(row.EsfToken.ValueStackDepth);
+                }
+            }
+            return esfData.ToArray();
+        }
+
+        public int GetEsfPc()
+        {
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
+            {
+                if (this.rows[i].ByteCode[0] == (int)OpCode.ESF_LOOKUP)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("ESF_LOOKUP op not found.");
+        }
+
+        public void SetArgs(int index, int[] newArgs)
+        {
+            ByteRow row = this.rows[index];
+            List<int> newByteRow = new List<int>() { row.ByteCode[0] };
+            newByteRow.AddRange(newArgs);
+            row.ByteCode = newByteRow.ToArray();
         }
     }
 }

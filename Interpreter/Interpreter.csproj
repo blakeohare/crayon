@@ -76,6 +76,7 @@
     <EmbeddedResource Include="Ops\deref_static_field.cry" />
     <EmbeddedResource Include="Ops\duplicate_stack_top.cry" />
     <EmbeddedResource Include="Ops\equals.cry" />
+    <EmbeddedResource Include="Ops\esf_lookup.cry" />
     <EmbeddedResource Include="Ops\exception_handled_toggle.cry" />
     <EmbeddedResource Include="Ops\finalize_initialization.cry" />
     <EmbeddedResource Include="Ops\finally_end.cry" />
