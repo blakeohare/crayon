@@ -77,6 +77,7 @@ struct StackFrame {
 	@type('int') markClassAsInitialized,
 	@type('int') depth, // stack depth for infinite recursion detection
 	@type('int') postFinallyBehavior, // value defined in PostFinallyBehavior enum
+	@type('Value') returnValueTempStorage, // return value when you return but still need to run a finally block
 }
 
 struct InterpreterResult {

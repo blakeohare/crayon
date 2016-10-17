@@ -324,7 +324,8 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 		valueStackSize,
 		classId, // mark class as initialized when RETURN runs.
 		StackFrame$stack.depth + 1,
-		PostFinallyBehavior.NOTHING);
+		PostFinallyBehavior.NOTHING,
+		null); // temp return value
 }
 
 /*
@@ -377,4 +378,12 @@ function @type('Array<Array<int>>') generateEsfData(@type('int') byteCodeLength,
 	}
 
 	return output;
+}
+
+function @type('int') markClassAsInitialized(@type('StackFrame') stack, @type('int') classId) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ClassInfo') classInfo = $_array_get(ProgramData$p.classTable, StackFrame$stack.markClassAsInitialized);
+	ClassInfo$classInfo.staticInitializationState = 2; // mark class as completely ready to use.
+	$_list_pop(ProgramData$p.classStaticInitializationStack);
+	return 0;
 }

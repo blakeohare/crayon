@@ -405,7 +405,8 @@ if (bool1) {
 			valueStackSize,
 			0, // for static constructor use only
 			StackFrame$stack.depth + 1,
-			PostFinallyBehavior.NOTHING); 
+			PostFinallyBehavior.NOTHING,
+			null); // temp return value
 
 		// now that we're in the new stack frame, flush out all the passed args to the local stack since their
 		// ID's are allocated with args first.
