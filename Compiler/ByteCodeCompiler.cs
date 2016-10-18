@@ -215,8 +215,8 @@ namespace Crayon
                 /*
                     It'll look something like this...
                     0   EXCEPTION_HANDLED_TOGGLE true
-                    1   JUMP_IF_EXCEPTION_IS_TYPE offset type1, type2, ...
-                    2   JUMP_IF_EXCEPTION_IS_TYPE offset type3
+                    1   JUMP_IF_EXCEPTION_IS_TYPE offset varId type1, type2, ...
+                    2   JUMP_IF_EXCEPTION_IS_TYPE offset varId type3
                     3   EXCEPTION_HANDLED_TOGGLE false
                     4   JUMP [to finally]
 
@@ -259,9 +259,10 @@ namespace Crayon
                 {
                     TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
                     ByteBuffer cbByteBuffer = catchBlocks[i];
+                    int variableId = cb.VariableLocalScopeId;
 
                     // for each catch block insert a type-check-jump
-                    List<int> typeCheckArgs = new List<int>() { offset }; // first arg is offset, successive args are all class ID's
+                    List<int> typeCheckArgs = new List<int>() { offset, variableId }; // first arg is offset, second is variable ID (or -1), successive args are all class ID's
                     typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
                     exceptionSortHeader.AddFrontSlow(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
 
