@@ -1,2 +1,2 @@
 ﻿
-return killExecution(stack, pc, "Not implemented: EXCEPTION_HANDLED_TOGGLE");
+ExecutionContext$ec.activeExceptionHandled = $_array_get(row, 0) == 1;

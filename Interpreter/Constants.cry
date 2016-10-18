@@ -54,6 +54,7 @@
     SWITCH_INT, // 1: integer switch ID, 2: offset for default case
     SWITCH_STRING, // 1: string switch ID, 2: offset for default case
     THIS, // pushes the current object context onto the stack.
+	THROW, // throw an exception (exception is popped from the value stack)
     TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
     USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
     VERIFY_TYPE_IS_ITERABLE, // verifies the last item on the stack is a list

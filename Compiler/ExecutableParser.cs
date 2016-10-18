@@ -161,6 +161,7 @@ namespace Crayon
                     case "continue": return ParseContinue(tokens, owner);
                     case "const": return ParseConst(parser, tokens, owner);
                     case "constructor": return ParseConstructor(parser, tokens, owner);
+                    case "throw": return ParseThrow(parser, tokens, owner);
                     default: break;
                 }
             }
@@ -181,6 +182,14 @@ namespace Crayon
             }
 
             return new ExpressionAsExecutable(expr, owner);
+        }
+
+        private static Executable ParseThrow(Parser parser, TokenStream tokens, Executable owner)
+        {
+            Token throwToken = tokens.PopExpected("throw");
+            Expression throwExpression = ExpressionParser.Parse(tokens, owner);
+            tokens.PopExpected(";");
+            return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
         private static Executable ParseConstructor(Parser parser, TokenStream tokens, Executable owner)

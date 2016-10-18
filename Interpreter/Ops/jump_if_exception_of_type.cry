@@ -1,2 +1,10 @@
 ﻿
-return killExecution(stack, pc, "Not implemented: JUMP_IF_EXCEPTION_OF_TYPE");
+value = ExecutionContext$ec.activeException;
+objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+int1 = ObjectInstance$objInstance1.classId;
+for (i = $_array_length(row) - 1; i >= 1; i -= 1) {
+	if (isClassASubclassOf(int1, $_array_get(row, i))) {
+		i = 0;
+		pc += $_array_get(row, 0);
+	}
+}

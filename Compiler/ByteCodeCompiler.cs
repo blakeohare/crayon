@@ -76,10 +76,10 @@ namespace Crayon
 
             return output;
         }
-        
+
         private ByteBuffer BuildSwitchStatementTables(Parser parser)
         {
-            ByteBuffer output = new Crayon.ByteBuffer();
+            ByteBuffer output = new ByteBuffer();
             List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
             for (int i = 0; i < intSwitches.Count; ++i)
             {
@@ -168,7 +168,14 @@ namespace Crayon
             else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
             else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
             else if (line is TryStatement) this.CompileTryStatement(parser, buffer, (TryStatement)line);
+            else if (line is ThrowStatement) this.CompileThrowStatement(parser, buffer, (ThrowStatement)line);
             else throw new NotImplementedException("Invalid target for byte code compilation");
+        }
+
+        private void CompileThrowStatement(Parser parser, ByteBuffer buffer, ThrowStatement throwStatement)
+        {
+            this.CompileExpression(parser, buffer, throwStatement.Expression, true);
+            buffer.Add(throwStatement.FirstToken, OpCode.THROW);
         }
 
         private void CompileTryStatement(Parser parser, ByteBuffer buffer, TryStatement tryStatement)

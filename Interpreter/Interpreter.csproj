@@ -104,6 +104,7 @@
     <EmbeddedResource Include="Ops\switch_int.cry" />
     <EmbeddedResource Include="Ops\switch_string.cry" />
     <EmbeddedResource Include="Ops\this.cry" />
+    <EmbeddedResource Include="Ops\throw.cry" />
     <EmbeddedResource Include="Ops\token_data.cry" />
     <EmbeddedResource Include="Ops\user_code_start.cry" />
     <EmbeddedResource Include="Ops\verify_type_is_iterable.cry" />
