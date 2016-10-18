@@ -3,6 +3,10 @@ function @type('InterpreterResult') errorResult(@type('string') error) {
 	return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error);
 }
 
+function @type('InterpreterResult') uncaughtExceptionResult(@type('Value') exception) {
+	return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(exception));
+}
+
 function @type('InterpreterResult') suspendInterpreter() {
 	return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null);
 }
@@ -422,4 +426,11 @@ function @type('int') valueStackIncreaseCapacity(@type('ExecutionContext') ec) {
 	}
 	ExecutionContext$ec.valueStack = newStack;
 	return 0;
+}
+
+function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance) {
+	@type('ObjectInstance') objInstance = $_cast('ObjectInstance', Value$exceptionInstance.internalValue);
+	@type('List<int>') pcs = $_cast('List<int>', $_array_get(ObjectInstance$objInstance.nativeData, 1));
+	// TODO: compile-time field labelling for easy access at runtime from the ObjectInstance
+	return "An uncaught exception of sorts.";
 }

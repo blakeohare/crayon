@@ -6,7 +6,7 @@ value = $_array_get(valueStack, valueStackSize - 1);
 // TODO: check to verify that the object being thrown is actually an instance of Core.Exception.
 objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
-bool1 = $_cast('bool', $_array_get(objArray1, 0));
+bool1 = $_cast('bool', $_array_get(objArray1, 0)); // is fatal exception?
 intList1 = $_new_list('int');
 $_array_set(objArray1, 1, intList1);
 $_list_push(intList1, pc);
@@ -17,7 +17,7 @@ ExecutionContext$ec.activeExceptionHandled = false;
 // save PC to the stack frame object. If the bubble process doesn't unwind any frames, this will be re-read.
 StackFrame$stack.pc = pc;
 
-// Bubble the exception
+// Bubble the exception until you reach the top of the stack, there is catch/finally (ESF) info, or if this a fatal exception.
 while (stack != null && (intArray1 == null || bool1)) {
 	stack = StackFrame$stack.previous;
 	if (stack != null) {
@@ -30,7 +30,7 @@ while (stack != null && (intArray1 == null || bool1)) {
 // Did you get all the way to the top?
 if (stack == null) {
 	// Exception is uncaught.
-	return errorResult("Uncaught exception");
+	return uncaughtExceptionResult(value);
 }
 
 // If you got to this point, that means there's a catch or finally.
