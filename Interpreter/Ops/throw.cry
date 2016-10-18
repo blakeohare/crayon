@@ -3,18 +3,28 @@
 
 intArray1 = $_array_get(esfData, pc);
 value = $_array_get(valueStack, valueStackSize - 1);
+// TODO: check to verify that the object being thrown is actually an instance of Core.Exception.
+objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+bool1 = $_cast('bool', $_array_get(objArray1, 0));
+intList1 = $_new_list('int');
+$_array_set(objArray1, 1, intList1);
+$_list_push(intList1, pc);
+
 ExecutionContext$ec.activeException = value;
 ExecutionContext$ec.activeExceptionHandled = false;
 
-// save all the stack frame locals into the stack frame object. If the bubble process doesn't unwind any frames, this will be re-read.
+// save PC to the stack frame object. If the bubble process doesn't unwind any frames, this will be re-read.
 StackFrame$stack.pc = pc;
-StackFrame$stack.localsStackOffset = localsStackOffset;
-StackFrame$stack.localsStackSetToken = localsStackSetToken;
 
 // Bubble the exception
-while (stack != null && intArray1 == null) {
+while (stack != null && (intArray1 == null || bool1)) {
 	stack = StackFrame$stack.previous;
-	intArray1 = $_array_get(esfData, StackFrame$stack.pc);
+	if (stack != null) {
+		pc = StackFrame$stack.pc;
+		$_list_push(intList1, pc);
+		intArray1 = $_array_get(esfData, pc);
+	}
 }
 
 // Did you get all the way to the top?
@@ -24,8 +34,6 @@ if (stack == null) {
 }
 
 // If you got to this point, that means there's a catch or finally.
-
-pc = StackFrame$stack.pc;
 
 int1 = $_array_get(intArray1, 0); // get the PC for the exception sorter
 if (int1 < pc) {

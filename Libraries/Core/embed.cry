@@ -154,13 +154,14 @@
 		/*
 			nativeData[0] -> (boolean) is fatal exception?
 			nativeData[1] -> (List<int>) list of PC's this exception bubbles through
+				PC trace is only set when throw is invoked.
 		*/
 		field message;
 		field cause;
 		
 		constructor(message = null, cause = null) {
 			$$$('allocNativeData', this, 2);
-			$$$('setNativeData', this, 0, 0); // is fatal? 0 -> no
+			$$$('setNativeData', this, 0, false); // is fatal?
 			this.message = message;
 			this.cause = cause;
 		}
@@ -168,7 +169,7 @@
 	
 	class FatalException : Exception {
 		constructor(m = null, c = null) : base(m, c) {
-			$$$('setNativeData', this, 0, 1); // is fatal? 1 -> yes
+			$$$('setNativeData', this, 0, true); // is fatal?
 		}
 	}
 	
