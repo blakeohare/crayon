@@ -156,6 +156,7 @@
 			nativeData[1] -> (List<int>) list of PC's this exception bubbles through
 				PC trace is only set when throw is invoked.
 		*/
+		
 		field message;
 		field cause;
 		

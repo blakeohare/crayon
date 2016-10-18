@@ -494,7 +494,13 @@ namespace Crayon
 
             args.AddRange(members);
 
-            buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
+            string fullyQualifiedName = classDefinition.NameToken.Value;
+            if (classDefinition.Namespace != "")
+            {
+                fullyQualifiedName = classDefinition.Namespace + "." + fullyQualifiedName;
+            }
+
+            buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
         }
 
         private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)

@@ -29,6 +29,7 @@ function @type('InterpreterResult') interpreterFinished(@type('ExecutionContext'
 function @omitReturn @type('InterpreterResult') interpret(@type('int') executionContextId) {
 
 	@type('ProgramData') p = $_get_program_data();
+
 	@type('Dictionary<int, ExecutionContext>') executionContexts = ProgramData$p.executionContexts;
 	if (!$_dictionary_contains(executionContexts, executionContextId)) {
 		// Stale context ID's may possibly be invoked. Pretend that they run and finish.
@@ -142,6 +143,7 @@ function @omitReturn @type('InterpreterResult') interpret(@type('int') execution
 	@type('Value') arg10 = null;
 
 	@type('Array<int>') globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
+	@type('MagicNumbers') magicNumbers = ProgramData$p.magicNumbers;
 	@type('Array<Dictionary<int, int>>') integerSwitches = ProgramData$p.integerSwitchLookups;
 	@type('Array<Dictionary<string, int>>') stringSwitches = ProgramData$p.stringSwitchLookups;
 	@type('Dictionary<int, int>') integerSwitch = null;

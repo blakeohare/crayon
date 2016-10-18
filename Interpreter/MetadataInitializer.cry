@@ -88,7 +88,7 @@ function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @
 			n + 3 -> function ID
 			n + 4 -> not used
 */
-function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @type('Array<int>') args) {
+function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @type('Array<int>') args, @type('string') className) {
 	@type('int') i = 0;
 	@type('int') memberId = 0;
 	@type('int') globalId = 0;
@@ -123,7 +123,8 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		null, // Array of member ID -> function IDs (with -1 fallback)
 		null, // Field initialization command by member ID
 		null, // Literal starting value by member ID
-		null); // Global nameID -> member ID
+		null, // Global nameID -> member ID
+		className); // fully qualified class name
 
 	@type('Array<ClassInfo>') classTable = getClassTable(p, classId);
 
@@ -198,6 +199,10 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
 	ClassInfo$classInfo.globalIdToMemberId = globalNameIdToMemberId;
 
+	if ($_string_equals("Core.Exception", className)) {
+		@type('MagicNumbers') mn = ProgramData$p.magicNumbers;
+		MagicNumbers$mn.coreExceptionClassId = classId;
+	}
 	return 0;
 }
 

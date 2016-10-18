@@ -49,6 +49,7 @@ struct ProgramData {
 	@type('ResourceDB') resourceDatabase,
 	@type('string') projectId,
 	@type('Array<Array<int>>') esfData,
+	@type('MagicNumbers') magicNumbers,
 }
 
 struct ExecutionContext {
@@ -144,6 +145,9 @@ struct ClassInfo {
 	// TODO: another thought is to allocate an array for all global ID's to map to member ID's. This would be a lot of
 	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized
 	// codebase.
+
+	// Primarily for the purposes of Exception stack traces.
+	@type('string') fullyQualifiedName,
 }
 
 struct FunctionInfo {
@@ -208,4 +212,8 @@ struct ResourceInfo {
 struct ResourceDB {
 	@type('Dictionary<string, Array<string>>') filesPerDirectory,
 	@type('Dictionary<string, ResourceInfo>') fileInfo,
+}
+
+struct MagicNumbers {
+	@type('int') coreExceptionClassId,
 }

@@ -3,8 +3,16 @@
 
 intArray1 = $_array_get(esfData, pc);
 value = $_array_get(valueStack, valueStackSize - 1);
-// TODO: check to verify that the object being thrown is actually an instance of Core.Exception.
-objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+bool2 = Value$value.type == Types.INSTANCE;
+if (bool2) {
+	objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+	if (!isClassASubclassOf(ObjectInstance$objInstance1.classId, MagicNumbers$magicNumbers.coreExceptionClassId)) {
+		bool2 = false;
+	}
+}
+
+if (!bool2) return killExecution(stack, pc, "Thrown value is not an exception.");
+
 objArray1 = ObjectInstance$objInstance1.nativeData;
 bool1 = $_cast('bool', $_array_get(objArray1, 0)); // is fatal exception?
 intList1 = $_new_list('int');
