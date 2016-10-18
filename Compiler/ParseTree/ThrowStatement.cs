@@ -4,6 +4,8 @@ namespace Crayon.ParseTree
 {
     internal class ThrowStatement : Executable
     {
+        public override bool IsTerminator { get { return true; } }
+
         public Expression Expression { get; set; }
         public Token ThrowToken { get; set; }
 

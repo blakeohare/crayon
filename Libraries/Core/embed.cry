@@ -135,20 +135,17 @@
 	*/
 	function _LIB_CORE_generateException(type, message) {
 		switch (type) {
-			case _LIB_CORE_ExType.FATAL: e = new FatalException(message); break;
-			case _LIB_CORE_ExType.ASSERTION_FAILED: e = new AssertionFailedException(message); break;
-			case _LIB_CORE_ExType.DIVISION_BY_ZERO: e = new DivisionByZeroException(message); break;
-			case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: e = new IndexOutOfRangeException(message); break;
-			case _LIB_CORE_ExType.INVALID_ARGUMENT: e = new InvalidArgumentException(message); break;
-			case _LIB_CORE_ExType.INVALID_ASSIGNMENT: e = new InvalidAssignmentException(message); break;
-			case _LIB_CORE_ExType.INVALID_INVOCATION: e = new InvalidInvocation(message); break;
-			case _LIB_CORE_ExType.UNKNOWN_FIELD: e = new UnknownFieldException(message); break;
-			case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: e = new UnsupportedOperationException(message); break;
-			default: e = new Exception(message); break;
+			case _LIB_CORE_ExType.FATAL: throw new FatalException(message);
+			case _LIB_CORE_ExType.ASSERTION_FAILED: throw new AssertionFailedException(message);
+			case _LIB_CORE_ExType.DIVISION_BY_ZERO: throw new DivisionByZeroException(message);
+			case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: throw new IndexOutOfRangeException(message);
+			case _LIB_CORE_ExType.INVALID_ARGUMENT: throw new InvalidArgumentException(message);
+			case _LIB_CORE_ExType.INVALID_ASSIGNMENT: throw new InvalidAssignmentException(message);
+			case _LIB_CORE_ExType.INVALID_INVOCATION: throw new InvalidInvocation(message);
+			case _LIB_CORE_ExType.UNKNOWN_FIELD: throw new UnknownFieldException(message);
+			case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: throw new UnsupportedOperationException(message);
+			default: throw new Exception(message);
 		}
-		
-		// SOON.
-		// throw e;
 	}
 	
 	class Object { } // Sometimes you just need a dummy object.
@@ -156,12 +153,13 @@
 	class Exception {
 		/*
 			nativeData[0] -> (boolean) is fatal exception?
+			nativeData[1] -> (List<int>) list of PC's this exception bubbles through
 		*/
 		field message;
 		field cause;
 		
 		constructor(message = null, cause = null) {
-			$$$('allocNativeData', this, 1);
+			$$$('allocNativeData', this, 2);
 			$$$('setNativeData', this, 0, 0); // is fatal? 0 -> no
 			this.message = message;
 			this.cause = cause;
