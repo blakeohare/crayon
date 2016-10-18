@@ -157,8 +157,9 @@
 				PC trace is only set when throw is invoked.
 		*/
 		
-		field message;
+		// Do not re-order these. message field position within the class is assumed at compile time.
 		field cause;
+		field message; 
 		
 		constructor(message = null, cause = null) {
 			$$$('allocNativeData', this, 2);
