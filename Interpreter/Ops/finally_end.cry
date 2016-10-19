@@ -40,5 +40,5 @@ if (value == null || ExecutionContext$ec.activeExceptionHandled) {
 			break;
 	}
 } else {
-	return killExecution(stack, pc, "TODO: bubble exceptions.");
+	import inline "BubbleException.cry";
 }

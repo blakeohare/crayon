@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BinaryOpsUtil.cry" />
+    <EmbeddedResource Include="BubbleException.cry" />
     <EmbeddedResource Include="ByteCodeLoader.cry" />
     <EmbeddedResource Include="Constants.cry" />
     <EmbeddedResource Include="FrameworkFunctions\10_arg.cry" />
