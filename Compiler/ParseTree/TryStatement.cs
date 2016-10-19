@@ -117,6 +117,10 @@ namespace Crayon.ParseTree
                     string typeName = types[i] ?? "Core.Exception";
                     Token token = typeTokens[i] ?? cb.CatchToken;
                     ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, typeName, true);
+                    if (resolvedType == null)
+                    {
+                        throw new ParserException(token, "Could not resolve class name for catch.");
+                    }
                     if (!resolvedType.ExtendsFrom(simpleException))
                     {
                         if (resolvedType.BaseClass == null && resolvedType.LibraryName == null)

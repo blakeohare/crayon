@@ -1,4 +1,4 @@
-﻿namespace Core {
+namespace Core {
 	const CRAYON_VERSION = "0.2.0";
 
 	enum Type {
@@ -113,11 +113,9 @@
 	}
 	
 	enum _LIB_CORE_ExType {
-		
+		// These must be kept in sync with CoreExceptionTypes in Constants.cry in the interpreter.
 		FATAL = 0,
-		
 		GENERIC_EXCEPTION = 1,
-		
 		ASSERTION_FAILED = 2,
 		DIVISION_BY_ZERO = 3,
 		INDEX_OUT_OF_RANGE = 4,
@@ -157,7 +155,8 @@
 				PC trace is only set when throw is invoked.
 		*/
 		
-		// Do not re-order these. message field position within the class is assumed at compile time.
+		// Do not re-order these.
+		// .message field position within the class is assumed at compile time.
 		field cause;
 		field message; 
 		

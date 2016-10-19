@@ -11,7 +11,8 @@ if (Value$root.type == Types.LIST) {
 		i = $_cast('int', Value$value.internalValue);
 		list1 = $_cast('List<Value>', Value$root.internalValue);
 		if (i < 0) i += $_list_length(list1);
-		if (i < 0 || i >= $_list_length(list1)) return killExecution(stack, pc, "List index is out of bounds");
+		if (i < 0 || i >= $_list_length(list1)) return generateException(stack, pc, valueStackSize, ec,
+			CoreExceptionTypes.INDEX_OUT_OF_RANGE, "List index is out of bounds");
 		else {
 			$_array_set(valueStack, valueStackSize - 1, $_list_get(list1, i));
 		}

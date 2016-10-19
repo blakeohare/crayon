@@ -121,6 +121,21 @@ enum InterpreterResultStatus {
 	SUSPENDED = 2,
 	FATAL_ERROR = 3,
 	SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
+	REINVOKE = 5, // interpret should immediately re-invoke itself instead of returning result. This is generally done as a clean stop and re-start on a particular function such as the exception invoker in Core.
+}
+
+enum CoreExceptionTypes {
+	// These absolutely must be in sync with Core/embed.cry's _LIB_CORE_ExType
+	FATAL = 0,
+	GENERIC_EXCEPTION = 1,
+	ASSERTION_FAILED = 2,
+	DIVISION_BY_ZERO = 3,
+	INDEX_OUT_OF_RANGE = 4,
+	INVALID_ARGUMENT = 5,
+	INVALID_ASSIGNMENT = 6,
+	INVALID_INVOCATION = 7,
+	UNKNOWN_FIELD = 8,
+	UNSUPPORTED_OPERATION = 9,
 }
 
 const INTEGER_POSITIVE_CACHE = 1000;

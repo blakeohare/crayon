@@ -26,16 +26,76 @@ function @type('InterpreterResult') interpreterFinished(@type('ExecutionContext'
 	return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
 }
 
-function @omitReturn @type('InterpreterResult') interpret(@type('int') executionContextId) {
+// This will push a stack frame onto the stack as though _LIB_CORE_generateExeption(type, message) is being called.
+// But then it will return an REINVOKE status. The idea is this will be called with a return from interpretImpl.
+function @type('InterpreterResult') generateException(
+		@type('StackFrame') stack,
+		@type('int') pc,
+		@type('int') valueStackSize,
+		@type('ExecutionContext') ec,
+		@type('int') type,
+		@type('string') message) {
+
+	ExecutionContext$ec.currentValueStackSize = valueStackSize;
+	StackFrame$stack.pc = pc;
+	ExecutionContext$ec.localsStackSetToken = StackFrame$stack.localsStackSetToken + 1;
+	@type('ProgramData') p = $_get_program_data();
+	@type('MagicNumbers') mn = ProgramData$p.magicNumbers;
+	@type('int') generateExceptionFunctionId = MagicNumbers$mn.coreGenerateExceptionFunctionId;
+	@type('FunctionInfo') functionInfo = $_array_get(ProgramData$p.functionTable, generateExceptionFunctionId);
+	pc = FunctionInfo$functionInfo.pc;
+	if ($_array_length(ExecutionContext$ec.localsStack) <= FunctionInfo$functionInfo.localsSize + StackFrame$stack.localsStackOffsetEnd) {
+		increaseLocalsStackCapacity(ec, FunctionInfo$functionInfo.localsSize);
+	}
+	@type('int') localsIndex = StackFrame$stack.localsStackOffsetEnd;
+	$_array_set(ExecutionContext$ec.localsStack, localsIndex, buildInteger(type));
+	$_array_set(ExecutionContext$ec.localsStack, localsIndex + 1, buildString(message));
+	$_array_set(ExecutionContext$ec.localsStackSet, localsIndex, ExecutionContext$ec.localsStackSetToken);
+	$_array_set(ExecutionContext$ec.localsStackSet, localsIndex + 1, ExecutionContext$ec.localsStackSetToken);
+
+	ExecutionContext$ec.stackTop = new StackFrame(
+		pc + 1, // won't have the end of the interpreter loop to do the +1 for us.
+		ExecutionContext$ec.localsStackSetToken,
+		StackFrame$stack.localsStackOffsetEnd,
+		StackFrame$stack.localsStackOffsetEnd + FunctionInfo$functionInfo.localsSize,
+		stack,
+		false,
+		null,
+		valueStackSize,
+		0,
+		StackFrame$stack.depth + 1,
+		PostFinallyBehavior.NOTHING,
+		null);
+	return new InterpreterResult(InterpreterResultStatus.REINVOKE, null);
+}
+
+function @type('InterpreterResult') interpret(@type('int') executionContextId) {
+	@type('InterpreterResult') output = interpretImpl(executionContextId);
+	while (InterpreterResult$output.status == InterpreterResultStatus.REINVOKE) {
+		output = interpretImpl(executionContextId);
+	}
+	return output;
+}
+
+function @type('ExecutionContext') interpreterGetExecutionContext(@type('int') executionContextId) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('Dictionary<int, ExecutionContext>') executionContexts = ProgramData$p.executionContexts;
+	if (!$_dictionary_contains(executionContexts, executionContextId)) {
+		return null;
+	}
+	return $_dictionary_get_guaranteed(executionContexts, executionContextId);
+}
+
+function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') executionContextId) {
 
 	@type('ProgramData') p = $_get_program_data();
 
 	@type('Dictionary<int, ExecutionContext>') executionContexts = ProgramData$p.executionContexts;
-	if (!$_dictionary_contains(executionContexts, executionContextId)) {
+	@type('ExecutionContext') ec = interpreterGetExecutionContext(executionContextId);
+	if (ec == null) {
 		// Stale context ID's may possibly be invoked. Pretend that they run and finish.
 		return interpreterFinished(null);
 	}
-	@type('ExecutionContext') ec = $_dictionary_get_guaranteed(executionContexts, executionContextId);
 
 	ExecutionContext$ec.executionCounter += 1;
 

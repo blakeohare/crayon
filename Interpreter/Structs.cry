@@ -82,7 +82,7 @@ struct StackFrame {
 }
 
 struct InterpreterResult {
-	@type('int') status,
+	@type('int') status, // InterpreterResultStatus enum
 	@type('string') errorMessage,
 }
 
@@ -216,4 +216,5 @@ struct ResourceDB {
 
 struct MagicNumbers {
 	@type('int') coreExceptionClassId,
+	@type('int') coreGenerateExceptionFunctionId,
 }
