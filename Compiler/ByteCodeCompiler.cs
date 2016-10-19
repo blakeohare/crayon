@@ -266,8 +266,8 @@ namespace Crayon
                     typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
                     exceptionSortHeader.AddFrontSlow(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
 
-                    // and then add the size of that block to the running total offset
-                    offset += cbByteBuffer.Size;
+                    // and then add the size of that block to the running total offset + the size of the JUMP_IF_EXCEPTION_OF_TYPE which is 1.
+                    offset += cbByteBuffer.Size + 1;
                 }
 
                 allCatchBlocks.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 1);
