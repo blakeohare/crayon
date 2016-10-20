@@ -211,8 +211,10 @@ if (bool1) {
 					case PrimitiveMethodName.ENDS_WITH: import inline 'PrimitiveMethods/string_ends_with.cry'; break;
 					case PrimitiveMethodName.INDEX_OF: import inline 'PrimitiveMethods/string_index_of.cry'; break;
 					case PrimitiveMethodName.LOWER: import inline 'PrimitiveMethods/string_lower.cry'; break;
+					case PrimitiveMethodName.LTRIM: import inline 'PrimitiveMethods/string_ltrim.cry'; break;
 					case PrimitiveMethodName.REPLACE: import inline 'PrimitiveMethods/string_replace.cry'; break;
 					case PrimitiveMethodName.REVERSE: import inline 'PrimitiveMethods/string_reverse.cry'; break;
+					case PrimitiveMethodName.RTRIM: import inline 'PrimitiveMethods/string_rtrim.cry'; break;
 					case PrimitiveMethodName.SPLIT: import inline 'PrimitiveMethods/string_split.cry'; break;
 					case PrimitiveMethodName.STARTS_WITH: import inline 'PrimitiveMethods/string_starts_with.cry'; break;
 					case PrimitiveMethodName.TRIM: import inline 'PrimitiveMethods/string_trim.cry'; break;

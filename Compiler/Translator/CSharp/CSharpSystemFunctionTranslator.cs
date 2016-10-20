@@ -464,7 +464,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-        
+
         protected override void TranslateRandomFloat(List<string> output)
         {
             output.Add("TranslationHelper.GetRandomNumber()");
@@ -629,6 +629,12 @@ namespace Crayon.Translator.CSharp
             output.Add(".ToLowerInvariant()");
         }
 
+        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".TrimStart()");
+        }
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("double.Parse(");
@@ -658,6 +664,12 @@ namespace Crayon.Translator.CSharp
             output.Add("TranslationHelper.StringReverse(");
             this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
+        }
+
+        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".TrimEnd()");
         }
 
         protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)

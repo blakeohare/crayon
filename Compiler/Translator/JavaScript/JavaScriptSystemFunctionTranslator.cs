@@ -603,6 +603,13 @@ namespace Crayon.Translator.JavaScript
             output.Add(".toLowerCase()");
         }
 
+        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("C$common$stringTrimOneSide(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(", true)");
+        }
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("parseFloat(");
@@ -631,6 +638,13 @@ namespace Crayon.Translator.JavaScript
         {
             this.Translator.TranslateExpression(output, stringValue);
             output.Add(".split('').reverse().join('')");
+        }
+
+        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("C$common$stringTrimOneSide(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(", false)");
         }
 
         protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)

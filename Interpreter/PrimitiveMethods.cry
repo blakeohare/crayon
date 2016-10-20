@@ -21,12 +21,14 @@
 	if ($_dictionary_contains(nameLookups, 'join')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'join'), PrimitiveMethodName.JOIN);
 	if ($_dictionary_contains(nameLookups, 'keys')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'keys'), PrimitiveMethodName.KEYS);
 	if ($_dictionary_contains(nameLookups, 'lower')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'lower'), PrimitiveMethodName.LOWER);
+	if ($_dictionary_contains(nameLookups, 'ltrim')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'ltrim'), PrimitiveMethodName.LTRIM);
 	if ($_dictionary_contains(nameLookups, 'map')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'map'), PrimitiveMethodName.MAP);
 	if ($_dictionary_contains(nameLookups, 'merge')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'merge'), PrimitiveMethodName.MERGE);
 	if ($_dictionary_contains(nameLookups, 'pop')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'pop'), PrimitiveMethodName.POP);
 	if ($_dictionary_contains(nameLookups, 'remove')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'remove'), PrimitiveMethodName.REMOVE);
 	if ($_dictionary_contains(nameLookups, 'replace')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'replace'), PrimitiveMethodName.REPLACE);
 	if ($_dictionary_contains(nameLookups, 'reverse')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'reverse'), PrimitiveMethodName.REVERSE);
+	if ($_dictionary_contains(nameLookups, 'rtrim')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'rtrim'), PrimitiveMethodName.RTRIM);
 	if ($_dictionary_contains(nameLookups, 'shuffle')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'shuffle'), PrimitiveMethodName.SHUFFLE);
 	if ($_dictionary_contains(nameLookups, 'sort')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'sort'), PrimitiveMethodName.SORT);
 	if ($_dictionary_contains(nameLookups, 'split')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'split'), PrimitiveMethodName.SPLIT);
@@ -47,8 +49,10 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.ENDS_WITH:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.INDEX_OF:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.LOWER:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.LTRIM:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.REPLACE:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.REVERSE:
+			case Types.STRING + MAX_TYPE * PrimitiveMethodName.RTRIM:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.SPLIT:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.STARTS_WITH:
 			case Types.STRING + MAX_TYPE * PrimitiveMethodName.TRIM:

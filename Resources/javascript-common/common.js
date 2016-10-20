@@ -145,3 +145,27 @@ C$common$getBool = function (b) {
 C$common$enqueueVmResume = function (seconds, execId) {
     window.setTimeout(v_runInterpreter, Math.floor(seconds * 1000), execId);
 };
+
+C$common$stringTrimOneSide = function (value, isLeft) {
+    var i = isLeft ? 0 : value.length - 1;
+    var end = isLeft ? value.length : -1;
+    var step = isLeft ? 1 : -1;
+    var c;
+    var trimming = true;
+    while (trimming && i != end) {
+        c = value.charAt(i);
+        switch (c) {
+            case ' ':
+            case '\n':
+            case '\t':
+            case '\r':
+                i += step;
+                break;
+            default:
+                trimming = false;
+                break;
+        }
+    }
+
+    return isLeft ? value.substring(i) : value.substring(0, i);
+};

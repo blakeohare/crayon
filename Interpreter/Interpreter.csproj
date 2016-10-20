@@ -138,8 +138,10 @@
     <EmbeddedResource Include="PrimitiveMethods\string_ends_with.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_index_of.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_lower.cry" />
+    <EmbeddedResource Include="PrimitiveMethods\string_ltrim.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_replace.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_reverse.cry" />
+    <EmbeddedResource Include="PrimitiveMethods\string_rtrim.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_split.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_starts_with.cry" />
     <EmbeddedResource Include="PrimitiveMethods\string_trim.cry" />
