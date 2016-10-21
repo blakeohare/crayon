@@ -167,5 +167,5 @@ C$common$stringTrimOneSide = function (value, isLeft) {
         }
     }
 
-    return isLeft ? value.substring(i) : value.substring(0, i);
+    return isLeft ? value.substring(i) : value.substring(0, i + 1);
 };

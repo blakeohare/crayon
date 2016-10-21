@@ -618,9 +618,9 @@ namespace Crayon.Translator.Java
 
         protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
         {
-            output.Add("TranslationHelper.stringLtrim(");
+            output.Add("TranslationHelper.trimSide(");
             this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
+            output.Add(", true)");
         }
 
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
@@ -656,9 +656,9 @@ namespace Crayon.Translator.Java
 
         protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
         {
-            output.Add("TranslationHelper.stringRtrim(");
+            output.Add("TranslationHelper.trimSide(");
             this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
+            output.Add(", false)");
         }
 
         protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
