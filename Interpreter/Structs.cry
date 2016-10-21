@@ -48,6 +48,8 @@ struct ProgramData {
 	@type('Array<int>') primitiveMethodFunctionIdFallbackLookup,
 	@type('ResourceDB') resourceDatabase,
 	@type('string') projectId,
+	@type('Array<Array<int>>') esfData,
+	@type('MagicNumbers') magicNumbers,
 }
 
 struct ExecutionContext {
@@ -60,6 +62,8 @@ struct ExecutionContext {
 	@type('Array<int>') localsStackSet,
 	@type('int') localsStackSetToken,
 	@type('int') executionCounter,
+	@type('bool') activeExceptionHandled,
+	@type('Value') activeException,
 }
 
 struct StackFrame {
@@ -73,10 +77,12 @@ struct StackFrame {
 	@type('int') valueStackPopSize, // size of the value stack when this frame is popped.
 	@type('int') markClassAsInitialized,
 	@type('int') depth, // stack depth for infinite recursion detection
+	@type('int') postFinallyBehavior, // value defined in PostFinallyBehavior enum
+	@type('Value') returnValueTempStorage, // return value when you return but still need to run a finally block
 }
 
 struct InterpreterResult {
-	@type('int') status,
+	@type('int') status, // InterpreterResultStatus enum
 	@type('string') errorMessage,
 }
 
@@ -139,6 +145,9 @@ struct ClassInfo {
 	// TODO: another thought is to allocate an array for all global ID's to map to member ID's. This would be a lot of
 	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized
 	// codebase.
+
+	// Primarily for the purposes of Exception stack traces.
+	@type('string') fullyQualifiedName,
 }
 
 struct FunctionInfo {
@@ -203,4 +212,9 @@ struct ResourceInfo {
 struct ResourceDB {
 	@type('Dictionary<string, Array<string>>') filesPerDirectory,
 	@type('Dictionary<string, ResourceInfo>') fileInfo,
+}
+
+struct MagicNumbers {
+	@type('int') coreExceptionClassId,
+	@type('int') coreGenerateExceptionFunctionId,
 }

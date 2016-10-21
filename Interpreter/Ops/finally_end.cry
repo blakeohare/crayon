@@ -1,0 +1,44 @@
+﻿
+value = ExecutionContext$ec.activeException;
+if (value == null || ExecutionContext$ec.activeExceptionHandled) {
+	switch (StackFrame$stack.postFinallyBehavior) {
+		case PostFinallyBehavior.NOTHING:
+			ExecutionContext$ec.activeException = null;
+			break;
+
+		case PostFinallyBehavior.BREAK:
+			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->BREAK");
+
+		case PostFinallyBehavior.CONTINUE:
+			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->CONTINUE");
+
+		case PostFinallyBehavior.RETURN:
+			// A lot of this is taken from the RETURN op.
+
+			// is this the static constructor returning?
+			if (StackFrame$stack.markClassAsInitialized != 0) {
+				markClassAsInitialized(stack, StackFrame$stack.markClassAsInitialized);
+			}
+
+			if (StackFrame$stack.returnValueUsed) {
+				valueStackSize = StackFrame$stack.valueStackPopSize;
+				value = StackFrame$stack.returnValueTempStorage;
+				stack = StackFrame$stack.previous;
+				import inline "ValueStackCapacityCheck.cry";
+				$_array_set(valueStack, valueStackSize, value);
+				valueStackSize += 1;
+			} else {
+				// discard the return value. Set the value stack size back the way it was.
+				valueStackSize = StackFrame$stack.valueStackPopSize;
+				stack = StackFrame$stack.previous;
+			}
+
+			pc = StackFrame$stack.pc;
+			localsStackOffset = StackFrame$stack.localsStackOffset;
+			localsStackSetToken = StackFrame$stack.localsStackSetToken;
+
+			break;
+	}
+} else {
+	import inline "BubbleException.cry";
+}

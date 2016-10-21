@@ -89,7 +89,7 @@ if (bool1) {
 				$_array_set(funcArgs, i, $_list_get(list1, i));
 			}
 		} else {
-			return killExecution(stack, pc, "Function pointers' .invoke method requires a list argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
 		}
 
 	} else {
@@ -142,7 +142,7 @@ if (bool1) {
 						valueStackSize += 1;
 					}
 				} else {
-					return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
+					return $_exception(CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field."); // TODO: use the class name and field name.
 				}
 				break;
 			default:
@@ -151,9 +151,9 @@ if (bool1) {
 				functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
 				if (functionId < 0) {
 					if (Value$value.type == Types.NULL) {
-						return killExecution(stack, pc, "Invoked method on null.");
+						return $_exception(CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
 					}
-					return killExecution(stack, pc, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
+					return $_exception(CoreExceptionTypes.INVALID_INVOCATION, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
 				}
 				type = FunctionInvocationType.PRIMITIVE_METHOD;
 				break;
@@ -194,7 +194,7 @@ if (bool1) {
 					break;
 			}
 		} else {
-			return killExecution(stack, pc, "This type cannot be invoked like a function.");
+			return $_exception(CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
 		}
 	}
 
@@ -211,8 +211,10 @@ if (bool1) {
 					case PrimitiveMethodName.ENDS_WITH: import inline 'PrimitiveMethods/string_ends_with.cry'; break;
 					case PrimitiveMethodName.INDEX_OF: import inline 'PrimitiveMethods/string_index_of.cry'; break;
 					case PrimitiveMethodName.LOWER: import inline 'PrimitiveMethods/string_lower.cry'; break;
+					case PrimitiveMethodName.LTRIM: import inline 'PrimitiveMethods/string_ltrim.cry'; break;
 					case PrimitiveMethodName.REPLACE: import inline 'PrimitiveMethods/string_replace.cry'; break;
 					case PrimitiveMethodName.REVERSE: import inline 'PrimitiveMethods/string_reverse.cry'; break;
+					case PrimitiveMethodName.RTRIM: import inline 'PrimitiveMethods/string_rtrim.cry'; break;
 					case PrimitiveMethodName.SPLIT: import inline 'PrimitiveMethods/string_split.cry'; break;
 					case PrimitiveMethodName.STARTS_WITH: import inline 'PrimitiveMethods/string_starts_with.cry'; break;
 					case PrimitiveMethodName.TRIM: import inline 'PrimitiveMethods/string_trim.cry'; break;
@@ -273,7 +275,7 @@ if (bool1) {
 				bool1 = true;
 				// functionId has been set.
 			} else {
-				return killExecution(stack, pc, "primitive method not found.");
+				return $_exception(CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
 			}
 		} else {
 			if (returnValueUsed) {
@@ -373,7 +375,8 @@ if (bool1) {
 
 		if (argCount < FunctionInfo$functionInfo.minArgs ||
 			argCount > FunctionInfo$functionInfo.maxArgs) {
-			return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
+			pc = StackFrame$stack.pc;
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
 		}
 
 		int1 = FunctionInfo$functionInfo.localsSize;
@@ -404,7 +407,9 @@ if (bool1) {
 			value, // the value of the 'this' keyword
 			valueStackSize,
 			0, // for static constructor use only
-			StackFrame$stack.depth + 1); 
+			StackFrame$stack.depth + 1,
+			PostFinallyBehavior.NOTHING,
+			null); // temp return value
 
 		// now that we're in the new stack frame, flush out all the passed args to the local stack since their
 		// ID's are allocated with args first.
@@ -427,7 +432,7 @@ if (bool1) {
 		}
 
 		if (StackFrame$stack.depth > 1000) {
-			return killExecution(stack, pc, "Stack overflow.");
+			return $_exception(CoreExceptionTypes.FATAL, "Stack overflow.");
 		}
 	}
 }

@@ -11,7 +11,7 @@ if (ClassInfo$classInfo.staticInitializationState < 2) {
 	stackFrame2 = maybeInvokeStaticConstructor(p, ec, stack, classInfo, valueStackSize, intOutParam);
 
 	if ($_array_get(intOutParam, 0) == 1) {
-		return killExecution(stack, pc, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+		return $_exception(CoreExceptionTypes.FATAL, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
 	}
 
 	if (stackFrame2 != null) {

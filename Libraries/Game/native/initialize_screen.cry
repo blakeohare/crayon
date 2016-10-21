@@ -1,51 +1,23 @@
-﻿
-// $game_initialize_screen_scaled(gameWidth, gameHeight, pixelWidth, pixelHeight)
+﻿/*
+	arg 1: game width
+	arg 2: game height
+	arg 3: screen width
+	arg 4: screen height
+	
+	All arguments are verified to be positive integers.
+*/
 import inline "FrameworkFunctions/4_arg.cry";
 
-bool1 = false;
-bool2 = false; // 4 args supplied.
+int1 = $_cast('int', Value$arg1.internalValue);
+int2 = $_cast('int', Value$arg2.internalValue);
+int3 = $_cast('int', Value$arg3.internalValue);
+int4 = $_cast('int', Value$arg4.internalValue);
 
-if (Value$arg1.type != Types.INTEGER ||
-	Value$arg2.type != Types.INTEGER) {
-		bool1 = true;
-}
+prepareToSuspend(ec, stack, valueStackSize, pc);
 
-if (Value$arg3.type != Types.NULL) {
-	if (Value$arg3.type != Types.INTEGER ||
-		Value$arg4.type != Types.INTEGER) {
-		bool1 = true;
-	}
-	bool2 = true;
-}
+$_lib_game_initialize_screen(int1, int2, int3, int4, ExecutionContext$ec.id);
 
-if (bool1) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "screen dimensions must be integers.";
-} else {
-	int1 = $_cast('int', Value$arg1.internalValue);
-	int2 = $_cast('int', Value$arg2.internalValue);
-	bool1 = false;
-	if (bool2) {
-		int3 = $_cast('int', Value$arg3.internalValue);
-		int4 = $_cast('int', Value$arg4.internalValue);
-		bool1 = true;
-	}
-
-	if (int1 < 1 || int2 < 1 || (bool2 && int3 < 1) || (bool2 && int4 < 1)) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "screen dimensions must be positive.";
-	}
-
-	prepareToSuspend(ec, stack, valueStackSize, pc);
-	if (!bool2) {
-		int3 = int1;
-		int4 = int2;
-	}
-	$_lib_game_initialize_screen(int1, int2, int3, int4, ExecutionContext$ec.id);
-	
-	// It's possible that the above call will block entirely and not yield until the game is closed.
-	// It will, however, simply call the same executionContextId and the stack information will be updated.
-	// In which case, the following return will not have any effect when suddnely re-invoked.
-	return suspendInterpreter();
-}
- 
+// It's possible that the above call will block entirely and not yield until the game is closed.
+// It will, however, simply call the same executionContextId and the stack information will be updated.
+// In which case, the following return will not have any effect when suddnely re-invoked.
+return suspendInterpreter();

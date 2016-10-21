@@ -1,40 +1,63 @@
-﻿// row[0]:
+﻿// WARNING: if you modify this, be sure to check FINALLY_END op to see if changes are needed there as well.
+
+// row[0]:
 //   0 --> no return value on stack, implicit null.
 //   1 --> return value is on the stack.
 
-if (StackFrame$stack.previous == null) {
-	// returning from the root stack
-	return interpreterFinished(ec);
-}
+// Check to see if there is a finally block that needs to run first.
+if ($_array_get(esfData, pc) != null) {
+	
+	// Get ESF data
+	intArray1 = $_array_get(esfData, pc);
 
-// is this the static constructor returning?
-if (StackFrame$stack.markClassAsInitialized != 0) {
-	classInfo = $_array_get(classTable, StackFrame$stack.markClassAsInitialized);
-	ClassInfo$classInfo.staticInitializationState = 2; // mark class as completely ready to use.
-	$_list_pop(ProgramData$p.classStaticInitializationStack);
-}
+	// Jump to the finally block
+	pc = $_array_get(intArray1, 1) - 1;
 
-if (StackFrame$stack.returnValueUsed) {
+	// Stash the return value on the stack frame temporarily
 	if ($_array_get(row, 0) == 0) {
-		// returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
-		valueStackSize = StackFrame$stack.valueStackPopSize;
-		stack = StackFrame$stack.previous;
-		import inline "ValueStackCapacityCheck.cry"; // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
-		$_array_set(valueStack, valueStackSize, VALUE_NULL);
+		StackFrame$stack.returnValueTempStorage = VALUE_NULL;
 	} else {
-		value = $_array_get(valueStack, valueStackSize - 1);
+		StackFrame$stack.returnValueTempStorage = $_array_get(valueStack, valueStackSize - 1);
+	}
+
+	// Adjust the value stack to ensure it is the correct size.
+	// e.g. avoid stack corruption when returning from a foreach loop within a try block
+	valueStackSize = StackFrame$stack.valueStackPopSize + $_array_get(intArray1, 2);
+	StackFrame$stack.postFinallyBehavior = PostFinallyBehavior.RETURN;
+} else {
+
+	if (StackFrame$stack.previous == null) {
+		// returning from the root stack
+		return interpreterFinished(ec);
+	}
+
+	// is this the static constructor returning?
+	if (StackFrame$stack.markClassAsInitialized != 0) {
+		markClassAsInitialized(stack, StackFrame$stack.markClassAsInitialized);
+	}
+
+	if (StackFrame$stack.returnValueUsed) {
+		if ($_array_get(row, 0) == 0) {
+			// returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
+			valueStackSize = StackFrame$stack.valueStackPopSize;
+			stack = StackFrame$stack.previous;
+			import inline "ValueStackCapacityCheck.cry"; // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
+			$_array_set(valueStack, valueStackSize, VALUE_NULL);
+		} else {
+			value = $_array_get(valueStack, valueStackSize - 1);
+			valueStackSize = StackFrame$stack.valueStackPopSize;
+			stack = StackFrame$stack.previous;
+			// no capacity check needed since the value was already on the stack.
+			$_array_set(valueStack, valueStackSize, value);
+		}
+		valueStackSize += 1;
+	} else {
+		// discard the return value. Set the value stack size back the way it was.
 		valueStackSize = StackFrame$stack.valueStackPopSize;
 		stack = StackFrame$stack.previous;
-		// no capacity check needed since the value was already on the stack.
-		$_array_set(valueStack, valueStackSize, value);
 	}
-	valueStackSize += 1;
-} else {
-	// discard the return value. Set the value stack size back the way it was.
-	valueStackSize = StackFrame$stack.valueStackPopSize;
-	stack = StackFrame$stack.previous;
-}
 
-pc = StackFrame$stack.pc;
-localsStackOffset = StackFrame$stack.localsStackOffset;
-localsStackSetToken = StackFrame$stack.localsStackSetToken;
+	pc = StackFrame$stack.pc;
+	localsStackOffset = StackFrame$stack.localsStackOffset;
+	localsStackSetToken = StackFrame$stack.localsStackSetToken;
+}

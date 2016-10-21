@@ -10,5 +10,5 @@ if (Value$value.type == Types.STRING) {
 		pc += $_array_get(row, 1); // default
 	}
 } else {
-	return killExecution(stack, pc, "Switch statement expects a string.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects a string.");
 }

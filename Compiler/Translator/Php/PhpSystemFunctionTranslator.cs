@@ -70,7 +70,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, message);
             output.Add(")");
         }
-        
+
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             output.Add("bytecode_get_iargs()");
@@ -599,6 +599,13 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
 
+        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("ltrim(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(")");
+        }
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("floatval(");
@@ -628,6 +635,13 @@ namespace Crayon.Translator.Php
         protected override void TranslateStringReverse(List<string> output, Expression stringValue)
         {
             output.Add("str_reverse(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(")");
+        }
+
+        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("rtrim(");
             this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
         }

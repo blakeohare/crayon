@@ -33,7 +33,7 @@ namespace Crayon.ParseTree
         }
 
         internal abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
-        
+
         internal abstract void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         public static Executable DoNameLookup(Dictionary<string, Executable> lookup, string[] imports, string name)
@@ -72,9 +72,19 @@ namespace Crayon.ParseTree
 
         internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, Executable> lookup, string[] imports, string name)
         {
+            return DoClassLookup(nameToken, lookup, imports, name, false);
+        }
+
+        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, Executable> lookup, string[] imports, string name, bool failSilently)
+        {
             Executable ex = DoNameLookup(lookup, imports, name);
             if (ex == null)
             {
+                if (failSilently)
+                {
+                    return null;
+                }
+
                 string message = "No class named '" + name + "' was found.";
                 if (name.Contains("."))
                 {
@@ -87,6 +97,9 @@ namespace Crayon.ParseTree
             {
                 return (ClassDefinition)ex;
             }
+
+            // Still throw an exception if the found item is not a class. This is used by code to check if 
+            // something is a valid variable name or a class name. Colliding with something else is bad.
             throw new ParserException(nameToken, "This is not a class.");
         }
     }

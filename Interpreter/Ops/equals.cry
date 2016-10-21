@@ -17,7 +17,7 @@ if (%%%STRONGLY_TYPED%%%) {
 			objInstance2 = $_cast('ObjectInstance', Value$rightValue.internalValue);
 			bool1 = ObjectInstance$objInstance1.objectId == ObjectInstance$objInstance2.objectId;
 		} else {
-			return killExecution(stack, pc, "== and != not defined here.");
+			return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
 		}
 	} else {
 		int2 = Value$rightValue.type;

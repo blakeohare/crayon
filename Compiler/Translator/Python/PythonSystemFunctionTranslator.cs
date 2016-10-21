@@ -615,6 +615,12 @@ namespace Crayon.Translator.Python
             output.Add(".lower()");
         }
 
+        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".lstrip()");
+        }
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("float(");
@@ -643,6 +649,12 @@ namespace Crayon.Translator.Python
         {
             this.Translator.TranslateExpression(output, stringValue);
             output.Add("[::-1]");
+        }
+
+        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
+        {
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(".rstrip()");
         }
 
         protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)

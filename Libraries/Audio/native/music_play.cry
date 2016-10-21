@@ -1,9 +1,11 @@
 ﻿/*
-	args[0] -> (Value) musicObject
-	args[1] -> (boolean) is embedded resource
-	args[2] -> (string) path to music file
-	args[3] -> (float) starting volume (not an int type, ever)
-	args[4] -> (boolean) loop
+	arg 1: (Value) musicObject
+	arg 2: (boolean) is embedded resource
+	arg 3: (string) path to music file
+	arg 4: (float) starting volume (not an int type, ever)
+	arg 5: (boolean) loop
+	
+	return value: true if the file was found, false if not.
 */
 import inline "FrameworkFunctions/5_arg.cry";
 
@@ -13,7 +15,7 @@ string1 = $_cast('string', Value$arg3.internalValue);
 float1 = $_cast('double', Value$arg4.internalValue);
 bool2 = $_cast('bool', Value$arg5.internalValue);
 
+output = VALUE_TRUE;
 if (lib_audio_music_play(objInstance1, bool1, string1, float1, bool2) == -1) {
-	lib_func_error_occurred = true;
-	lib_func_error_message = "Music file not found.";
+	output = VALUE_FALSE;
 }

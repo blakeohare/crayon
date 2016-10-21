@@ -1,39 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon
 {
     internal class ByteBuffer
     {
-        private List<int[]> byteCode = new List<int[]>();
-        private List<Token> tokens = new List<Token>();
-        private List<string> stringArgs = new List<string>();
+        private class ByteRow
+        {
+            public int[] ByteCode { get; set; }
+            public Token Token { get; set; }
+            public string StringArg { get; set; }
+            public ByteCodeEsfToken EsfToken { get; set; }
+        }
+
+        private List<ByteRow> rows = new List<ByteRow>();
 
         public ByteBuffer() { }
 
         public OpCode LastOp
         {
-            get
-            {
-                return (OpCode)this.byteCode[this.byteCode.Count - 1][0];
-            }
+            get { return (OpCode)this.rows[this.rows.Count - 1].ByteCode[0]; }
         }
 
-        public int Size { get { return this.byteCode.Count; } }
+        public int Size { get { return this.rows.Count; } }
 
         public void Concat(ByteBuffer other)
         {
-            this.byteCode.AddRange(other.byteCode);
-            this.tokens.AddRange(other.tokens);
-            this.stringArgs.AddRange(other.stringArgs);
+            this.rows.AddRange(other.rows);
         }
 
         public void Add(Token token, OpCode op, string stringValue, params int[] args)
         {
-            List<int> nums = new List<int>(args);
-            nums.Insert(0, (int)op);
-            this.byteCode.Add(nums.ToArray());
-            this.tokens.Add(token);
-            this.stringArgs.Add(stringValue);
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
+            int[] byteCode = nums.ToArray();
+
+            this.rows.Add(new ByteRow()
+            {
+                ByteCode = byteCode,
+                StringArg = stringValue,
+                Token = token
+            });
         }
 
         public void Add(Token token, OpCode op, params int[] args)
@@ -41,19 +49,32 @@ namespace Crayon
             this.Add(token, op, null, args);
         }
 
+        public void AddFrontSlow(Token token, OpCode op, params int[] args)
+        {
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
+            int[] byteCode = nums.ToArray();
+
+            this.rows.Insert(0, new ByteRow()
+            {
+                ByteCode = byteCode,
+                Token = token,
+            });
+        }
+
         public List<int[]> ToIntList()
         {
-            return this.byteCode;
+            return new List<int[]>(this.rows.Select<ByteRow, int[]>(row => row.ByteCode));
         }
 
         public List<string> ToStringList()
         {
-            return this.stringArgs;
+            return new List<string>(this.rows.Select<ByteRow, string>(row => row.StringArg));
         }
 
         public List<Token> ToTokenList()
         {
-            return this.tokens;
+            return new List<Token>(this.rows.Select<ByteRow, Token>(row => row.Token));
         }
 
         public void ResolveContinues()
@@ -66,12 +87,14 @@ namespace Crayon
         // step condition must be run before returning to the top.
         public void ResolveContinues(bool resolveAsJumpToEnd)
         {
-            for (int i = 0; i < this.byteCode.Count; ++i)
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
             {
-                if (this.byteCode[i][0] == (int)OpCode.CONTINUE)
+                ByteRow row = this.rows[i];
+                if (row.ByteCode[0] == (int)OpCode.CONTINUE)
                 {
-                    this.byteCode[i] = resolveAsJumpToEnd
-                        ? new int[] { (int)OpCode.JUMP, this.byteCode.Count - i - 1 }
+                    row.ByteCode = resolveAsJumpToEnd
+                        ? new int[] { (int)OpCode.JUMP, size - i - 1 }
                         : new int[] { (int)OpCode.JUMP, -i - 1 };
                 }
             }
@@ -80,13 +103,65 @@ namespace Crayon
         // Breaks should be resolved into JUMPS that go to the end of the current byte code buffer.
         public void ResolveBreaks()
         {
-            for (int i = 0; i < this.byteCode.Count; ++i)
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
             {
-                if (this.byteCode[i][0] == (int)OpCode.BREAK)
+                ByteRow row = this.rows[i];
+                if (row.ByteCode[0] == (int)OpCode.BREAK)
                 {
-                    this.byteCode[i] = new int[] { (int)OpCode.JUMP, this.byteCode.Count - i - 1 };
+                    row.ByteCode = new int[] { (int)OpCode.JUMP, size - i - 1 };
                 }
             }
+        }
+
+        public void SetEsfToken(int index, int catchOffset, int finallyOffset, int valueStackDepth)
+        {
+            this.rows[index].EsfToken = new ByteCodeEsfToken()
+            {
+                ExceptionSortPcOffsetFromTry = catchOffset,
+                FinallyPcOffsetFromTry = finallyOffset,
+                ValueStackDepth = valueStackDepth,
+            };
+        }
+
+        public int[] GetFinalizedEsfData()
+        {
+            List<int> esfData = new List<int>();
+            int size = this.Size;
+            ByteRow row;
+            for (int pc = 0; pc < size; ++pc)
+            {
+                row = this.rows[pc];
+                if (row.EsfToken != null)
+                {
+                    esfData.Add(pc);
+                    esfData.Add(pc + row.EsfToken.ExceptionSortPcOffsetFromTry);
+                    esfData.Add(pc + row.EsfToken.FinallyPcOffsetFromTry);
+                    esfData.Add(row.EsfToken.ValueStackDepth);
+                }
+            }
+            return esfData.ToArray();
+        }
+
+        public int GetEsfPc()
+        {
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
+            {
+                if (this.rows[i].ByteCode[0] == (int)OpCode.ESF_LOOKUP)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("ESF_LOOKUP op not found.");
+        }
+
+        public void SetArgs(int index, int[] newArgs)
+        {
+            ByteRow row = this.rows[index];
+            List<int> newByteRow = new List<int>() { row.ByteCode[0] };
+            newByteRow.AddRange(newArgs);
+            row.ByteCode = newByteRow.ToArray();
         }
     }
 }

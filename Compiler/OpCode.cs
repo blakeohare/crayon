@@ -28,12 +28,16 @@
         DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID
         DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
         EQUALS, // 1: 1 to reverse results
+        ESF_LOOKUP, // [4n args, n = ESF token count] 4n+0: PC of try, 4n+1: PC of exception-sorter, 4n+2: PC of finally, 4n+3: value stack depth
+        EXCEPTION_HANDLED_TOGGLE, // 1: boolean (0|1) indicating if the ExecutionContext's current exception should be marked as handled.
         FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
+        FINALLY_END, // indicates the end of a finally block. Responsible for bubbling exceptions or returning from the function if appropriate
         FUNCTION_DEFINITION, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
         INDEX,
         IS_COMPARISON, // pops stack, checks if value is an instance of the given class, pushes a boolean. 1: class ID
         ITERATION_STEP, // stack is in the following state: [index, local scope ID, list]. If the index exceeds the length of the list, the loop stops and jumps over the body of the loop, which is arg 1.
         JUMP,
+        JUMP_IF_EXCEPTION_OF_TYPE, // 1: offset to jump, 2+: list of class ID's
         JUMP_IF_FALSE,
         JUMP_IF_FALSE_NO_POP,
         JUMP_IF_TRUE,
@@ -52,6 +56,7 @@
         SWITCH_INT, // 1: integer switch ID, 2: offset for default case
         SWITCH_STRING, // 1: string switch ID, 2: offset for default case
         THIS, // pushes the current object context onto the stack.
+        THROW, // throw an exception (exception is popped from the value stack)
         TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
         USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
         VERIFY_TYPE_IS_ITERABLE, // verifies the last item on the stack is a list

@@ -1,12 +1,12 @@
 ﻿
 if (argCount != 2) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
 }
 
 value = $_array_get(funcArgs, 0);
 value2 = $_array_get(funcArgs, 1);
 if (Value$value.type != Types.INTEGER) {
-	return killExecution(stack, pc, "First argument of list.insert must be an integer index.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "First argument of list.insert must be an integer index.");
 }
 
 int1 = $_cast('int', Value$value.internalValue);
@@ -18,7 +18,7 @@ if (int1 == len) {
 	$_list_push(list1, value2);
 } else {
 	if (int1 < 0 || int1 >= len) {
-		return killExecution(stack, pc, "Index out of range.");
+		return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index out of range.");
 	}
 	$_list_insert(list1, int1, value2);
 }

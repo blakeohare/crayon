@@ -40,6 +40,9 @@
 			$_array_set(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 2, functionId);
 		} else if ($_string_equals("_LIB_CORE_invoke", name)) {
 			$_array_set(ProgramData$p.primitiveMethodFunctionIdFallbackLookup, 3, functionId);
+		} else if ($_string_equals("_LIB_CORE_generateException", name)) {
+			@type('MagicNumbers') mn = ProgramData$p.magicNumbers;
+			MagicNumbers$mn.coreGenerateExceptionFunctionId = functionId;
 		}
 	}
 
@@ -88,7 +91,7 @@ function @type('Array<FunctionInfo>') getFunctionTable(@type('ProgramData') p, @
 			n + 3 -> function ID
 			n + 4 -> not used
 */
-function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @type('Array<int>') args) {
+function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @type('Array<int>') args, @type('string') className) {
 	@type('int') i = 0;
 	@type('int') memberId = 0;
 	@type('int') globalId = 0;
@@ -123,7 +126,8 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 		null, // Array of member ID -> function IDs (with -1 fallback)
 		null, // Field initialization command by member ID
 		null, // Literal starting value by member ID
-		null); // Global nameID -> member ID
+		null, // Global nameID -> member ID
+		className); // fully qualified class name
 
 	@type('Array<ClassInfo>') classTable = getClassTable(p, classId);
 
@@ -198,6 +202,10 @@ function @type('int') initializeClass(@type('int') pc, @type('ProgramData') p, @
 	ClassInfo$classInfo.memberCount = $_list_length(functionIds);
 	ClassInfo$classInfo.globalIdToMemberId = globalNameIdToMemberId;
 
+	if ($_string_equals("Core.Exception", className)) {
+		@type('MagicNumbers') mn = ProgramData$p.magicNumbers;
+		MagicNumbers$mn.coreExceptionClassId = classId;
+	}
 	return 0;
 }
 
@@ -323,5 +331,67 @@ function @type('StackFrame') maybeInvokeStaticConstructor(
 		null, // value of 'this' keyword.
 		valueStackSize,
 		classId, // mark class as initialized when RETURN runs.
-		StackFrame$stack.depth + 1); 
+		StackFrame$stack.depth + 1,
+		PostFinallyBehavior.NOTHING,
+		null); // temp return value
+}
+
+/*
+	There are 4n args that correspond to the n ESF tokens.
+
+	4n + 0: PC of the beginning of the try block
+	4n + 1: PC of the beginning of the exception sorting code
+	4n + 2: PC of the finally block
+	4n + 3: the desired value stack depth when jumping to either the catch or finally
+
+	Final ESF data should be a per-row list of 3 values OR null if there is no ESF data:
+	[pc][0] -> pc of exception sorter
+	[pc][1] -> pc of finally
+	[pc][2] -> the size that the stack frame's value stack needs to be when you start executing at that point
+		the reason for this is because it's not always 0 due to foreach loops which push 3 values to the value stack while they are running.
+*/
+function @type('Array<Array<int>>') generateEsfData(@type('int') byteCodeLength, @type('Array<int>') esfArgs) {
+	@type('Array<Array<int>>') output = $_new_array('Array<int>', byteCodeLength);
+
+	@type('List<Array<int>>') esfTokenStack = $_new_list('Array<int>');
+	@type('Array<int>') esfTokenStackTop = null;
+	@type('int') esfArgIterator = 0;
+	@type('int') esfArgLength = $_array_length(esfArgs);
+	@type('int') j = 0;
+
+	for (@type('int') pc = 0; pc < byteCodeLength; pc += 1) {
+		// Check to see if a new ESF arg needs to be pushed onto the stack.
+		if (esfArgIterator < esfArgLength && pc == $_array_get(esfArgs, esfArgIterator)) {
+			// push the next esf arg onto the stack.
+			esfTokenStackTop = $_new_array('int', 3);
+			for (j = 1; j < 4; j += 1) {
+				$_array_set(esfTokenStackTop, j - 1, $_array_get(esfArgs, esfArgIterator + j));
+			}
+			$_list_push(esfTokenStack, esfTokenStackTop);
+			esfArgIterator += 4;
+		}
+
+		// Check to see if the top of the ESF stack needs to be popped
+		while (esfTokenStackTop != null && $_array_get(esfTokenStackTop, 1) <= pc) {
+			$_list_pop(esfTokenStack);
+			if ($_list_length(esfTokenStack) == 0) {
+				esfTokenStackTop = null;
+			} else {
+				esfTokenStackTop = $_list_get(esfTokenStack, $_list_length(esfTokenStack) - 1);
+			}
+		}
+
+		// Set the stack top to the current row
+		$_array_set(output, pc, esfTokenStackTop);
+	}
+
+	return output;
+}
+
+function @type('int') markClassAsInitialized(@type('StackFrame') stack, @type('int') classId) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('ClassInfo') classInfo = $_array_get(ProgramData$p.classTable, StackFrame$stack.markClassAsInitialized);
+	ClassInfo$classInfo.staticInitializationState = 2; // mark class as completely ready to use.
+	$_list_pop(ProgramData$p.classStaticInitializationStack);
+	return 0;
 }

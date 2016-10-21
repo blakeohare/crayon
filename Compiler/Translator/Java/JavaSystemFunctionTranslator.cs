@@ -616,6 +616,13 @@ namespace Crayon.Translator.Java
             output.Add(".toLowerCase()");
         }
 
+        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("TranslationHelper.stringLtrim(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(")");
+        }
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("Double.parseDouble(");
@@ -643,6 +650,13 @@ namespace Crayon.Translator.Java
         protected override void TranslateStringReverse(List<string> output, Expression stringValue)
         {
             output.Add("TranslationHelper.reverseString(");
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add(")");
+        }
+
+        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
+        {
+            output.Add("TranslationHelper.stringRtrim(");
             this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
         }

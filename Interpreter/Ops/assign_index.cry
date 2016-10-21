@@ -13,17 +13,17 @@ if (type == Types.LIST) {
 		if (i < 0) {
 			i += $_list_length(list1);
 			if (i < 0) {
-				return killExecution(stack, pc, "Index is out of range.");
+				return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
 			}
 		}
 
 		if (i >= $_list_length(list1)) {
-			return killExecution(stack, pc, "Index is out of range.");
+			return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
 		}
 
 		$_list_set(list1, i, value);
 	} else {
-		return killExecution(stack, pc, "List index must be an integer.");
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "List index must be an integer.");
 	}
 } else if (type == Types.DICTIONARY) {
 	keyType = Value$value2.type;
@@ -35,13 +35,13 @@ if (type == Types.LIST) {
 		objInstance1 = $_cast('ObjectInstance', Value$value2.internalValue);
 		intKey = ObjectInstance$objInstance1.objectId;
 	} else {
-		return killExecution(stack, pc, "Invalid key for a dictionary.");
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid key for a dictionary.");
 	}
 
 	dictImpl = $_cast('DictImpl', Value$root.internalValue);
 	bool2 = DictImpl$dictImpl.size > 0; // already contains stuff
 	if (bool2 && DictImpl$dictImpl.keyType != keyType) {
-		return killExecution(stack, pc, "Cannot have multiple keys in one dictionary with different types.");
+		return $_exception(CoreExceptionTypes.INVALID_KEY, "Cannot have multiple keys in one dictionary with different types.");
 	}
 	if (keyType == Types.STRING) {
 		if (!$_dictionary_contains(DictImpl$dictImpl.keyStringLookup, stringKey)) {
@@ -63,7 +63,7 @@ if (type == Types.LIST) {
 		$_dictionary_set(DictImpl$dictImpl.valueIntLookup, intKey, value);
 	}
 } else {
-	return killExecution(stack, pc, $_string_concat(getTypeFromId(type), " type does not support assigning to an index."));
+	return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, $_string_concat(getTypeFromId(type), " type does not support assigning to an index."));
 }
 
 if (bool1) {

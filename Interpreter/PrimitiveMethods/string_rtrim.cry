@@ -1,0 +1,6 @@
+﻿
+if (argCount > 0) {
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string rtrim method", 0, argCount));
+}
+
+output = buildString($_string_rtrim(string1));

@@ -3,12 +3,12 @@ if (argCount != 1) {
 	if (argCount == 0) {
 		value2 = VALUE_EMPTY_STRING;
 	} else {
-		return killExecution(stack, pc, primitiveMethodWrongArgCountError("list join method", 1, argCount));
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list join method", 1, argCount));
 	}
 } else {
 	value2 = $_array_get(funcArgs, 0);
 	if (Value$value2.type != Types.STRING) {
-		return killExecution(stack, pc, "Argument of list.join needs to be a string.");
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Argument of list.join needs to be a string.");
 	}
 }
 

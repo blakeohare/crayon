@@ -18,11 +18,11 @@ if (Value$value2.type == Types.INSTANCE) {
 		if (int2 == -1) {
 			$_array_set(ObjectInstance$objInstance1.members, int1, value);
 		} else {
-			return killExecution(stack, pc, "Cannot override a method.");
+			return $_exception(CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot override a method with assignment.");
 		}
 	}
 } else {
-	return killExecution(stack, pc, "Cannot assign to a field on this type.");
+	return $_exception(CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot assign to a field on this type.");
 }
 
 if ($_array_get(row, 1) == 1) {

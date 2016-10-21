@@ -1,11 +1,11 @@
 ﻿
 if (argCount > 0) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
 }
 
 len = $_list_length(list1);
 if (len < 1) {
-	return killExecution(stack, pc, "Cannot pop from an empty list.");
+	return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Cannot pop from an empty list.");
 }
 
 if (returnValueUsed) {

@@ -230,7 +230,7 @@ namespace Crayon.ParseTree
 
             return Listify(this);
         }
-        
+
         public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
         {
             List<ClassDefinition> baseClasses = new List<ClassDefinition>();
@@ -385,6 +385,17 @@ namespace Crayon.ParseTree
         {
             // Not called in this way.
             throw new System.NotImplementedException();
+        }
+
+        public bool ExtendsFrom(ClassDefinition cd)
+        {
+            ClassDefinition walker = this;
+            while (walker != null)
+            {
+                if (walker == cd) return true;
+                walker = walker.BaseClass;
+            }
+            return false;
         }
     }
 }

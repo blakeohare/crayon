@@ -1,6 +1,14 @@
-﻿
-// $$lib_random_random_int(start, end = null)
-// if end is missing, start is 0 and end is the first arg.
+﻿/*
+	There are two usage patterns:
+	
+	BOTH start and end specified:
+		arg 1: start
+		arg 2: end
+
+	OR only end specified:
+		arg 1: end
+		arg 2: null
+*/
 import inline "FrameworkFunctions/2_arg.cry";
 
 if (Value$arg2.type == Types.NULL) {
@@ -15,19 +23,16 @@ if (Value$arg2.type == Types.NULL) {
 	}
 
 	if (bool1) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "randomInt(max) requires a positive integer argument.";
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(max) requires a positive integer argument.");
 	}
 } else {
 	if (Value$arg1.type != Types.INTEGER || Value$arg2.type != Types.INTEGER) {
-		lib_func_error_occurred = true;
-		lib_func_error_message = "randomInt(start, end) requires integer arguments.";
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(start, end) requires integer arguments.");
 	} else {
 		int1 = $_cast('int', Value$arg1.internalValue);
 		int2 = $_cast('int', Value$arg2.internalValue);
 		if (int2 <= int1) {
-			lib_func_error_occurred = true;
-			lib_func_error_message = "randomInt: first argument must be less than the second.";
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt: first argument must be less than the second.");
 		} else if (int2 == int1 + 1) { // silly, but possible
 			output = buildInteger(int1);
 		} else {

@@ -41,6 +41,7 @@ namespace Crayon
             header.Concat(tokenData);
             header.Concat(fileContent);
             header.Concat(switchStatements);
+            header.Add(null, OpCode.ESF_LOOKUP); // once the final PC's are established, come back and fill this in.
             header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID);
 
             ByteBuffer output = new Crayon.ByteBuffer();
@@ -68,12 +69,17 @@ namespace Crayon
             output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
+            // Now that ops (and PCs) have been finalized, fill in ESF data with absolute PC's
+            int[] esfOps = output.GetFinalizedEsfData();
+            int esfPc = output.GetEsfPc();
+            output.SetArgs(esfPc, esfOps);
+
             return output;
         }
 
         private ByteBuffer BuildSwitchStatementTables(Parser parser)
         {
-            ByteBuffer output = new Crayon.ByteBuffer();
+            ByteBuffer output = new ByteBuffer();
             List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
             for (int i = 0; i < intSwitches.Count; ++i)
             {
@@ -162,13 +168,125 @@ namespace Crayon
             else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
             else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
             else if (line is TryStatement) this.CompileTryStatement(parser, buffer, (TryStatement)line);
+            else if (line is ThrowStatement) this.CompileThrowStatement(parser, buffer, (ThrowStatement)line);
             else throw new NotImplementedException("Invalid target for byte code compilation");
+        }
+
+        private void CompileThrowStatement(Parser parser, ByteBuffer buffer, ThrowStatement throwStatement)
+        {
+            this.CompileExpression(parser, buffer, throwStatement.Expression, true);
+            buffer.Add(throwStatement.FirstToken, OpCode.THROW);
         }
 
         private void CompileTryStatement(Parser parser, ByteBuffer buffer, TryStatement tryStatement)
         {
-            // TODO: still designing this.
-            throw new ParserException(tryStatement.FirstToken, "Try-catch-finally is not implemented yet.");
+            ByteBuffer tryCode = new ByteBuffer();
+            this.Compile(parser, tryCode, tryStatement.TryBlock);
+
+            if (tryStatement.TryBlock.Length > 0 && tryStatement.TryBlock[0] is TryStatement)
+            {
+                // If the try block begins with another try block, that'll mess with the EsfToken metadata
+                // which is declared at the beginning of the try block's PC and is singular.
+                // Get around this limitation by tacking on a noop (JUMP +0) in this reasonably rare edge case.
+                tryCode.AddFrontSlow(null, OpCode.JUMP, 0);
+            }
+
+            List<ByteBuffer> catchBlocks = new List<ByteBuffer>();
+
+            for (int i = 0; i < tryStatement.CatchBlocks.Length; ++i)
+            {
+                TryStatement.CatchBlock catchBlock = tryStatement.CatchBlocks[i];
+                ByteBuffer catchBlockBuffer = new ByteBuffer();
+                this.Compile(parser, catchBlockBuffer, catchBlock.Code);
+                catchBlocks.Add(catchBlockBuffer);
+            }
+
+            ByteBuffer finallyCode = new ByteBuffer();
+            this.Compile(parser, finallyCode, tryStatement.FinallyBlock);
+            finallyCode.Add(null, OpCode.FINALLY_END, new int[] { 0, 0, 0, 0 }); // break and continue offsets and 0|1 flags indicating if they've been set
+
+
+            // All user code is now compiled and offsets are sort of known.
+            // Now build a lookup jump router thingy for all the catch blocks, if any.
+
+            ByteBuffer allCatchBlocks = new ByteBuffer();
+            if (catchBlocks.Count > 0)
+            {
+                /*
+                    It'll look something like this...
+                    0   EXCEPTION_HANDLED_TOGGLE true
+                    1   JUMP_IF_EXCEPTION_IS_TYPE offset varId type1, type2, ...
+                    2   JUMP_IF_EXCEPTION_IS_TYPE offset varId type3
+                    3   EXCEPTION_HANDLED_TOGGLE false
+                    4   JUMP [to finally]
+
+                    5   catch block 1
+                        ...
+                    22  last line in catch block 1
+                    23  JUMP [to finally]
+
+                    24  catch block 2...
+                        ...
+                    72  last line in catch block 2
+                    
+                    73  finally code begins...
+                */
+
+                // Add jumps to the end of each catch block to jump to the end.
+                // Going in reverse order is easier for this.
+                int totalSize = 0;
+                for (int i = catchBlocks.Count - 1; i >= 0; --i)
+                {
+                    ByteBuffer catchBlockBuffer = catchBlocks[i];
+                    if (totalSize > 0) // omit the last block since a JUMP 0 is pointless.
+                    {
+                        catchBlockBuffer.Add(null, OpCode.JUMP, totalSize);
+                    }
+                    totalSize += catchBlockBuffer.Size;
+                }
+
+                // Now generate the header. This is also done backwards since it's easier.
+                ByteBuffer exceptionSortHeader = new ByteBuffer();
+
+                // Start with the last 2 instructions.
+                exceptionSortHeader.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 0);
+                exceptionSortHeader.Add(null, OpCode.JUMP, totalSize);
+
+                int offset = 2;
+
+                // iterate forwards through the catch blocks
+                for (int i = 0; i < catchBlocks.Count; ++i)
+                {
+                    TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
+                    ByteBuffer cbByteBuffer = catchBlocks[i];
+                    int variableId = cb.VariableLocalScopeId;
+
+                    // for each catch block insert a type-check-jump
+                    List<int> typeCheckArgs = new List<int>() { offset, variableId }; // first arg is offset, second is variable ID (or -1), successive args are all class ID's
+                    typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
+                    exceptionSortHeader.AddFrontSlow(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
+
+                    // and then add the size of that block to the running total offset + the size of the JUMP_IF_EXCEPTION_OF_TYPE which is 1.
+                    offset += cbByteBuffer.Size + 1;
+                }
+
+                allCatchBlocks.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 1);
+                allCatchBlocks.Concat(exceptionSortHeader);
+                foreach (ByteBuffer catchBlock in catchBlocks)
+                {
+                    allCatchBlocks.Concat(catchBlock);
+                }
+            }
+
+            int tryBegin = buffer.Size;
+            buffer.Concat(tryCode);
+            buffer.Add(null, OpCode.JUMP, allCatchBlocks.Size);
+            buffer.Concat(allCatchBlocks);
+            buffer.Concat(finallyCode);
+
+            int offsetToCatch = tryCode.Size + 1;
+            int offsetToFinally = offsetToCatch + allCatchBlocks.Size;
+            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally, tryStatement.ValueStackDepth);
         }
 
         private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
@@ -376,7 +494,13 @@ namespace Crayon
 
             args.AddRange(members);
 
-            buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, args.ToArray());
+            string fullyQualifiedName = classDefinition.NameToken.Value;
+            if (classDefinition.Namespace != "")
+            {
+                fullyQualifiedName = classDefinition.Namespace + "." + fullyQualifiedName;
+            }
+
+            buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
         }
 
         private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)

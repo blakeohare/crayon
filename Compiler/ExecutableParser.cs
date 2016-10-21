@@ -11,7 +11,7 @@ namespace Crayon
         public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot, Executable owner)
         {
             string value = tokens.PeekValue();
-            
+
             if (!simpleOnly)
             {
                 Token staticToken = null;
@@ -91,12 +91,9 @@ namespace Crayon
                         {
                             inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
                         }
-                        // TODO: Anti-pattern alert. Clean this up.
-                        if (inlineImportFileContents.Contains("%%%"))
-                        {
-                            Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
-                            inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
-                        }
+                        Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
+                        inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
+
                         Token[] inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
 
                         tokens.InsertTokens(inlineTokens);
@@ -161,6 +158,7 @@ namespace Crayon
                     case "continue": return ParseContinue(tokens, owner);
                     case "const": return ParseConst(parser, tokens, owner);
                     case "constructor": return ParseConstructor(parser, tokens, owner);
+                    case "throw": return ParseThrow(parser, tokens, owner);
                     default: break;
                 }
             }
@@ -181,6 +179,14 @@ namespace Crayon
             }
 
             return new ExpressionAsExecutable(expr, owner);
+        }
+
+        private static Executable ParseThrow(Parser parser, TokenStream tokens, Executable owner)
+        {
+            Token throwToken = tokens.PopExpected("throw");
+            Expression throwExpression = ExpressionParser.Parse(tokens, owner);
+            tokens.PopExpected(";");
+            return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
         private static Executable ParseConstructor(Parser parser, TokenStream tokens, Executable owner)
@@ -326,7 +332,7 @@ namespace Crayon
 
             while (!tokens.PopIfPresent("}"))
             {
-                Dictionary<string, List<Annotation>> annotations = null; 
+                Dictionary<string, List<Annotation>> annotations = null;
 
                 while (tokens.IsNext("@"))
                 {
@@ -705,29 +711,94 @@ namespace Crayon
         {
             Token tryToken = tokens.PopExpected("try");
             IList<Executable> tryBlock = Parser.ParseBlock(parser, tokens, true, owner);
-            Token catchToken = null;
-            IList<Executable> catchBlock = null;
-            Token exceptionToken = null;
+
+            List<Token> catchTokens = new List<Token>();
+            List<string[]> exceptionTypes = new List<string[]>();
+            List<Token[]> exceptionTypeTokens = new List<Token[]>();
+            List<Token> exceptionVariables = new List<Token>();
+            List<Executable[]> catchBlocks = new List<Executable[]>();
+
             Token finallyToken = null;
             IList<Executable> finallyBlock = null;
 
-            if (tokens.IsNext("catch"))
+            while (tokens.IsNext("catch"))
             {
-                catchToken = tokens.Pop();
+                /*
+                    Parse patterns:
+                        All exceptions:
+                            1a: catch { ... } 
+                            1b: catch (e) { ... }
+
+                        A certain exception:
+                            2a: catch (ExceptionName) { ... }
+                            2b: catch (ExceptionName e) { ... }
+                    
+                        Certain exceptions:
+                            3a: catch (ExceptionName1 | ExceptionName2) { ... }
+                            3b: catch (ExceptionName1 | ExceptionName2 e) { ... }
+                    
+                    Non-Context-Free alert:
+                        Note that if the exception variable does not contain a '.' character, 1b and 2a are 
+                        ambiguous at parse time. Treat them both as 1b and then if the classname resolution
+                        fails, treat this as a variable.
+                        
+                        This is actually kind of bad because a typo in the classname will not be known.
+                        e.g "catch (Excpetion) {" will compile as a variable called "Excpetion"
+
+                        End-user workarounds:
+                        - always use a variable name OR
+                        - always fully qualify exception types e.g. Core.Exception
+                        Long-term plan:
+                        - add warning support and emit warnings for:
+                            - unused variables
+                            - style-breaking uppercase variables.
+                */
+
+                Token catchToken = tokens.PopExpected("catch");
+
+                List<string> classNames = new List<string>();
+                List<Token> classTokens = new List<Token>();
+                Token variableToken = null;
+
                 if (tokens.PopIfPresent("("))
                 {
-                    exceptionToken = tokens.Pop();
-                    char firstChar = exceptionToken.Value[0];
-                    if (firstChar != '_' &&
-                        !(firstChar >= 'a' && firstChar <= 'z') &&
-                        !(firstChar >= 'A' && firstChar <= 'Z'))
+                    // This first one might actually be a variable. Assume class for now and sort it out later.
+                    // (and by "later" I mean the ResolveNames phase)
+                    Token classFirstToken = tokens.Pop();
+                    string className = ParserUtil.PopClassNameWithFirstTokenAlreadyPopped(tokens, classFirstToken);
+                    classNames.Add(className);
+                    classTokens.Add(classFirstToken);
+
+                    while (tokens.PopIfPresent("|"))
                     {
-                        throw new ParserException(exceptionToken, "Invalid name for variable.");
+                        classFirstToken = tokens.Pop();
+                        className = ParserUtil.PopClassNameWithFirstTokenAlreadyPopped(tokens, classFirstToken);
+                        classNames.Add(className);
+                        classTokens.Add(classFirstToken);
                     }
+
+                    if (!tokens.IsNext(")"))
+                    {
+                        variableToken = tokens.Pop();
+                        Parser.VerifyIdentifier(variableToken);
+                    }
+
                     tokens.PopExpected(")");
                 }
+                else
+                {
+                    classNames.Add(null);
+                    classTokens.Add(null);
+                }
 
-                catchBlock = Parser.ParseBlock(parser, tokens, true, owner);
+                Executable[] catchBlockCode = Parser.ParseBlock(parser, tokens, true, owner).ToArray();
+
+
+                catchTokens.Add(catchToken);
+                exceptionTypes.Add(classNames.ToArray());
+                exceptionTypeTokens.Add(classTokens.ToArray());
+                exceptionVariables.Add(variableToken);
+                catchBlocks.Add(catchBlockCode);
             }
 
             if (tokens.IsNext("finally"))
@@ -736,7 +807,7 @@ namespace Crayon
                 finallyBlock = Parser.ParseBlock(parser, tokens, true, owner);
             }
 
-            return new TryStatement(tryToken, tryBlock, catchToken, exceptionToken, catchBlock, finallyToken, finallyBlock, owner);
+            return new TryStatement(tryToken, tryBlock, catchTokens, exceptionVariables, exceptionTypeTokens, exceptionTypes, catchBlocks, finallyToken, finallyBlock, owner);
         }
 
         private static Executable ParseBreak(TokenStream tokens, Executable owner)

@@ -112,10 +112,12 @@ namespace Crayon.Translator
                 case "_string_index_of": VerifyCount(functionCall, 2, 3); TranslateStringIndexOf(output, args[0], args[1], args.Length == 3 ? args[2] : null); break;
                 case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
                 case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
+                case "_string_ltrim": VerifyCount(functionCall, 1); TranslateStringLtrim(output, args[0]); break;
                 case "_string_parse_float": VerifyCount(functionCall, 1); TranslateStringParseFloat(output, args[0]); break;
                 case "_string_parse_int": VerifyCount(functionCall, 1); TranslateStringParseInt(output, args[0]); break;
                 case "_string_reverse": VerifyCount(functionCall, 1); TranslateStringReverse(output, args[0]); break;
                 case "_string_replace": VerifyCount(functionCall, 3); TranslateStringReplace(output, args[0], args[1], args[2]); break;
+                case "_string_rtrim": VerifyCount(functionCall, 1); TranslateStringRtrim(output, args[0]); break;
                 case "_string_split": VerifyCount(functionCall, 2); TranslateStringSplit(output, args[0], args[1]); break;
                 case "_string_startswith": VerifyCount(functionCall, 2); TranslateStringStartsWith(output, args[0], args[1]); break;
                 case "_string_substring": VerifyCount(functionCall, 2, 3); TranslateStringSubstring(output, args[0], args[1], args.Length > 2 ? args[2] : null); break;
@@ -212,10 +214,12 @@ namespace Crayon.Translator
         protected abstract void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom);
         protected abstract void TranslateStringLength(List<string> output, Expression stringValue);
         protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
+        protected abstract void TranslateStringLtrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringParseFloat(List<string> output, Expression stringValue);
         protected abstract void TranslateStringParseInt(List<string> output, Expression value);
         protected abstract void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith);
         protected abstract void TranslateStringReverse(List<string> output, Expression stringValue);
+        protected abstract void TranslateStringRtrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep);
         protected abstract void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe);
         protected abstract void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength);

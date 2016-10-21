@@ -1,2 +1,2 @@
 ﻿
-initializeClass(pc, p, row);
+initializeClass(pc, p, row, $_array_get(stringArgs, pc));

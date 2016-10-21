@@ -1,6 +1,6 @@
 ﻿
 if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
 }
 
 value = $_array_get(funcArgs, 0);

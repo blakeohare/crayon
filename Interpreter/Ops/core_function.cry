@@ -10,7 +10,7 @@
 				output = buildInteger($_parse_int(string1));
 			}
 		} else {
-			return killExecution(stack, pc, "parseInt requires a string argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "parseInt requires a string argument.");
 		}
 		break;
 
@@ -25,7 +25,7 @@
 				output = buildFloat($_array_get(floatList1, 1));
 			}
 		} else {
-			return killExecution(stack, pc, "parseFloat requires a string argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "parseFloat requires a string argument.");
 		}
 		break;
 
@@ -67,12 +67,12 @@
 
 	case 7: $_comment('assert');
 		import inline "FrameworkFunctions/3_arg.cry";
-		if (Value$arg1.type != Types.BOOLEAN) return killExecution(stack, pc, "Assertion expression must be a boolean.");
+		if (Value$arg1.type != Types.BOOLEAN) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
 		if ($_cast('bool', Value$arg1.internalValue)) output = VALUE_NULL;
 		else {
 			string1 = valueToString(arg2);
 			if ($_cast('bool', Value$arg3.internalValue)) string1 = $_string_concat("Assertion failed: ", string1);
-			return killExecution(stack, pc, string1);
+			return $_exception(CoreExceptionTypes.ASSERTION_FAILED, string1);
 		}
 		break;
 
@@ -85,7 +85,7 @@
 				output = buildCommonString($_chr(int1));
 			}
 		}
-		if (output == null) return killExecution(stack, pc, "chr requires an integer between 0 and 255");
+		if (output == null) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "chr requires an integer between 0 and 255");
 		break;
 
 	case 9: $_comment('ord');
@@ -97,7 +97,7 @@
 				output = buildInteger($_string_char_code_at(string1, 0));
 			}
 		}
-		if (output == null) return killExecution(stack, pc, "ord requires a 1 character string.");
+		if (output == null) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "ord requires a 1 character string.");
 		break;
 
 	case 10: $_comment('currentTime');
@@ -113,7 +113,7 @@
 		list2 = $_cast('List<Value>', Value$arg2.internalValue); // keys
 		sortLists(list2, list1, intOutParam);
 		if ($_array_get(intOutParam, 0) > 0) {
-			return killExecution(stack, pc, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 		}
 		break;
 
@@ -134,7 +134,7 @@
 				output = arg1;
 			}
 		} else {
-			return killExecution(stack, pc, "abs requires a number as input.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");
 		}
 
 		break;
@@ -147,11 +147,11 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, pc, "arccos requires a number as input.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
 		}
 
 		if (float1 < -1 || float1  > 1) {
-			return killExecution(stack, pc, "arccos requires a number in the range of -1 to 1.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
 		}
 		output = buildFloat($_math_arc_cos(float1));
 		break;
@@ -164,11 +164,11 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, pc, "arcsin requires a number as input.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
 		}
 
 		if (float1 < -1 || float1  > 1) {
-			return killExecution(stack, pc, "arcsin requires a number in the range of -1 to 1.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
 		}
 		output = buildFloat($_math_arc_sin(float1));
 		break;
@@ -193,7 +193,7 @@
 		}
 
 		if (bool1) {
-			return killExecution(stack, pc, "arctan requires numeric arguments.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
 		}
 		output = buildFloat($_math_arc_tan(float1, float2));
 		break;
@@ -207,7 +207,7 @@
 			int1 = $_cast('int', Value$arg1.internalValue);
 			output = buildFloat($_math_cos(int1));
 		} else {
-			return killExecution(stack, pc, "cos requires a number argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
 		}
 		break;
 
@@ -244,7 +244,7 @@
 		else bool1 = true;
 
 		if (bool1) {
-			return killExecution(stack, pc, "ensureRange requires numeric arguments.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "ensureRange requires numeric arguments.");
 		}
 
 		if (float1 < float2) {
@@ -274,7 +274,7 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			output = arg1;
 		} else {
-			return killExecution(stack, pc, "floor expects a numeric argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "floor expects a numeric argument.");
 		}
 		break;
 
@@ -290,7 +290,7 @@
 		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
 		else bool1 = true;
 
-		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
+		if (bool1) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
 
 		if (float1 >= float2) {
 			output = arg1;
@@ -311,7 +311,7 @@
 		else if (Value$arg2.type == Types.INTEGER) float2 = $_cast('int', Value$arg2.internalValue);
 		else bool1 = true;
 
-		if (bool1) return killExecution(stack, pc, "max requires numeric arguments.");
+		if (bool1) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
 
 		if (float1 <= float2) {
 			output = arg1;
@@ -352,7 +352,7 @@
 		import inline "FrameworkFunctions/1_arg.cry";
 		if (Value$arg1.type == Types.INTEGER) float1 = $_cast('double', $_cast('int', Value$arg1.internalValue));
 		else if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
-		else return killExecution(stack, pc, "sign requires a number as input.");
+		else return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
 
 		if (float1 == 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 0);
 		else if (float1 > 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
@@ -366,7 +366,7 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, pc, "sin requires a number argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
 		}
 		output = buildFloat($_math_sin(float1));
 		break;
@@ -381,7 +381,7 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, pc, "tan requires a number argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
 		}
 		output = buildFloat($_math_tan(float1));
 		break;
@@ -400,11 +400,11 @@
 		} else if (Value$arg1.type == Types.INTEGER) {
 			float1 = $_cast('int', Value$arg1.internalValue);
 		} else {
-			return killExecution(stack, pc, "logarithms require a number argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
 		}
 
 		if (float1 <= 0) {
-			return killExecution(stack, pc, "logarithms require positive inputs.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
 		}
 
 		output = buildFloat(fixFuzzyFloatPrecision($_math_log(float1) * $_cast('double', Value$arg2.internalValue)));
@@ -447,7 +447,7 @@
 				float1 = $_cast('double', Value$value.internalValue) + .5;
 				int2 = $_int(float1);
 			} else {
-				return killExecution(stack, pc, "Input must be integers.");
+				return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Input must be integers.");
 			}
 			$_array_set(intArray1, len + i, int2);
 		}
@@ -506,6 +506,29 @@
 		int1 = $_cast('int', Value$arg2.internalValue);
 		objArray1 = $_new_array('object', int1);
 		ObjectInstance$objInstance1.nativeData = objArray1;
+		break;
+
+	case 35: $_comment('setNativeData');
+		import inline "FrameworkFunctions/3_arg.cry";
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		$_array_set(
+			ObjectInstance$objInstance1.nativeData,
+			$_cast('int', Value$arg2.internalValue),
+			Value$arg3.internalValue);
+		break;
+
+	case 36: $_comment('getExceptionTrace');
+		import inline "FrameworkFunctions/1_arg.cry";
+		intList1 = $_cast('List<int>', getNativeDataItem(arg1, 1));
+		list1 = $_new_list('Value');
+		output = new Value(Types.LIST, list1);
+		if (intList1 != null) {
+			stringList1 = tokenHelperConvertPcsToStackTraceStrings(intList1);
+			for (i = 0; i < $_list_length(stringList1); i += 1) {
+				$_list_push(list1, buildString($_list_get(stringList1, i)));
+			}
+			$_list_reverse_in_place(list1);
+		}
 		break;
 }
 

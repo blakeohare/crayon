@@ -1,5 +1,5 @@
 ﻿if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
 }
 
 value2 = $_array_get(funcArgs, 0);
@@ -41,5 +41,5 @@ if (DictImpl$dictImpl.size > 0 && DictImpl$dictImpl.keyType == Value$value2.type
 }
 
 if (bool2) {
-	return killExecution(stack, pc, "dictionary does not contain the given key.");
+	return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "dictionary does not contain the given key.");
 }

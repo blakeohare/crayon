@@ -1,6 +1,6 @@
 ﻿
 if (argCount > 0) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
 }
 
 if (DictImpl$dictImpl.keyType == Types.STRING) {

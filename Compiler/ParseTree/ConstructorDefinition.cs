@@ -59,6 +59,8 @@ namespace Crayon.ParseTree
 
         internal override IList<Executable> Resolve(Parser parser)
         {
+            parser.ValueStackDepth = 0;
+
             this.FunctionID = parser.GetNextFunctionId();
 
             for (int i = 0; i < this.ArgNames.Length; ++i)

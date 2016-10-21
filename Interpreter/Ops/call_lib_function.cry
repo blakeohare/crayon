@@ -1,6 +1,4 @@
-﻿lib_func_error_occurred = false; // error occurred
-
-/*
+﻿/*
 	TODO:
 		1) somehow port some of the speed critical library functions to Core. For example, with GFX, use the render event queue system
 			for all platforms, not just OpenGL and simply make everything a call to writing integers to the event queue which is a super
@@ -40,9 +38,7 @@ switch ($_array_get(row, 0)) {
 	%%%LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT%%%
 }
 
-if (lib_func_error_occurred) {
-	return killExecution(stack, pc, lib_func_error_message);
-} else if ($_array_get(row, 2) == 1) { // output used?
+if ($_array_get(row, 2) == 1) { // output used?
 	import inline "ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, output);
 	valueStackSize += 1;

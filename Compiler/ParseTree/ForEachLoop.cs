@@ -22,7 +22,9 @@ namespace Crayon.ParseTree
         internal override IList<Executable> Resolve(Parser parser)
         {
             this.IterationExpression = this.IterationExpression.Resolve(parser);
+            parser.ValueStackDepth += 3;
             this.Code = Resolve(parser, this.Code).ToArray();
+            parser.ValueStackDepth -= 3;
             return Listify(this);
         }
 

@@ -1,5 +1,5 @@
 ﻿/*
-	arg[0] -> a re-usable value list to push event fields onto
+	arg 1 -> a re-usable value list to push event fields onto
 */
 
 import inline "FrameworkFunctions/1_arg.cry";

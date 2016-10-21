@@ -1,11 +1,11 @@
 ﻿
 if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list map method", 1, argCount));
 }
 
 value2 = $_array_get(funcArgs, 0);
 if (Value$value2.type != Types.FUNCTION) {
-	return killExecution(stack, pc, "list map method requires a function pointer as its argument.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "list map method requires a function pointer as its argument.");
 }
 
 // TODO: consider checking arg length?
