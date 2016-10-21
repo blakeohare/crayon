@@ -596,6 +596,8 @@ function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance)
 	@type('string') exceptionName = ClassInfo$classInfo.fullyQualifiedName;
 	@type('string') message = valueToString($_array_get(ObjectInstance$objInstance.members, 1));
 	@type('List<string>') trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
+	$_list_pop(trace);
+	$_list_push(trace, "Stack Trace:");
 	$_list_reverse_in_place(trace);
 
 	@type('string') stackTrace = $_array_join(trace, "\n");
