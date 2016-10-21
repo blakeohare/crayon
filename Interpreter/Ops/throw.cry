@@ -15,7 +15,13 @@ if (!bool2) return killExecution(stack, pc, "Thrown value is not an exception.")
 objArray1 = ObjectInstance$objInstance1.nativeData;
 intList1 = $_new_list('int');
 $_array_set(objArray1, 1, intList1);
-$_list_push(intList1, pc);
+
+// Do not push token if this is from _LIB_CORE_generateException
+if (!isPcFromCore(pc)) {
+	// This is purely based on TokenData. If there is no token data, then it doesn't matter anyway as this is notably used
+	// for printing the human-readable stack trace.
+	$_list_push(intList1, pc);
+}
 
 ExecutionContext$ec.activeException = value;
 

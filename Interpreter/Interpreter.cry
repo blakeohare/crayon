@@ -587,12 +587,26 @@ function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance)
 	@type('ProgramData') p = $_get_program_data();
 	@type('ClassInfo') classInfo = $_array_get(ProgramData$p.classTable, ObjectInstance$objInstance.classId);
 	@type('List<int>') pcs = $_cast('List<int>', $_array_get(ObjectInstance$objInstance.nativeData, 1));
-	@type('Token') token = null;
-
+	@type('string') codeFormattedPointer = '';
+	
+	@type('List<Token>') tokensAtPc = $_array_get(ProgramData$p.tokenData, $_list_get(pcs, 0));
+	if (tokensAtPc != null) {
+		codeFormattedPointer = $_string_concat("\n\n", tokenHelperGetFormattedPointerToToken($_list_get(tokensAtPc, 0)));
+	}
 	@type('string') exceptionName = ClassInfo$classInfo.fullyQualifiedName;
 	@type('string') message = valueToString($_array_get(ObjectInstance$objInstance.members, 1));
 	@type('List<string>') trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
 	$_list_reverse_in_place(trace);
+
 	@type('string') stackTrace = $_array_join(trace, "\n");
-	return $_string_concat(stackTrace, "\n", exceptionName, ": ", message);
+	return $_string_concat(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
+}
+
+function @type('bool') isPcFromCore(@type('int') pc) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('List<Token>') tokens = $_array_get(ProgramData$p.tokenData, pc);
+	if (tokens == null) return false;
+	@type('Token') token = $_list_get(tokens, 0);
+	@type('string') filename = tokenHelperGetFileLine(Token$token.fileId, 0);
+	return $_string_equals("[Core]", filename);
 }
