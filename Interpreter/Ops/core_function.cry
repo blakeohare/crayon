@@ -516,6 +516,20 @@
 			$_cast('int', Value$arg2.internalValue),
 			Value$arg3.internalValue);
 		break;
+
+	case 36: $_comment('getExceptionTrace');
+		import inline "FrameworkFunctions/1_arg.cry";
+		intList1 = $_cast('List<int>', getNativeDataItem(arg1, 1));
+		list1 = $_new_list('Value');
+		output = new Value(Types.LIST, list1);
+		if (intList1 != null) {
+			stringList1 = tokenHelperConvertPcsToStackTraceStrings(intList1);
+			for (i = 0; i < $_list_length(stringList1); i += 1) {
+				$_list_push(list1, buildString($_list_get(stringList1, i)));
+			}
+			$_list_reverse_in_place(list1);
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

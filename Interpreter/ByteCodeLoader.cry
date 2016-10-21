@@ -2,11 +2,6 @@
 // Many of these read functions take in an integer _pointer_ as an index. This is accomplished
 // by passing in a reference to an integer array of length 1.
 
-function @type('Array<string>') generateSourceFiles() {
-	@type('ProgramData') p = $_get_program_data();
-	return ProgramData$p.sourceCode;
-}
-
 function @type('string') read_till(@type('Array<int>') index, @type('string') raw, @type('int') length, @type('char') char) {
 	@type('List<char>') output = $_new_list('char');
 	if (!%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {

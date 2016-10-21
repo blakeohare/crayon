@@ -346,21 +346,116 @@ function @type('int') canonicalizeListSliceArgs(
 	return 1;
 }
 
-function @type('InterpreterResult') killExecution(@type('StackFrame') stack, @type('int') pc, @type('string') message) {
-	return killExecutionWithTokenOverride(stack, pc, null, message);
+function @type('List<Token>') generateTokenListFromPcs(@type('List<int>') pcs) {
+	@type('List<Token>') output = $_new_list('Token');
+	@type('ProgramData') p = $_get_program_data();
+	@type('Array<List<Token>>') tokensByPc = ProgramData$p.tokenData;
+	@type('Token') token = null;
+	@type('int') i = 0;
+	while (i < $_list_length(pcs)) {
+		@type('List<Token>') localTokens = $_array_get(tokensByPc, $_list_get(pcs, i));
+		if (localTokens == null) {
+			if ($_list_length(output) > 0) { // Don't push null token data if there is no data. This is the root scope that invokes main.
+				$_list_push(output, null);
+			}
+		} else {
+			token = $_list_get(localTokens, 0);
+			if (%%%IS_RELEASE%%%) {
+				if ($_list_length(output) > 0 || !tokenHelplerIsFilePathLibrary(Token$token.fileId, ProgramData$p.sourceCode)) {
+					$_list_push(output, token);
+				}
+			} else {
+				$_list_push(output, token);
+			}
+		}
+		i += 1;
+	}
+
+	if (%%%IS_RELEASE%%%) {
+		// On release builds, pop the top of the stack such that the exception appears to originate from user code.
+		@type('int') length = $_list_length(output);
+		while (length > 0) {
+			 token = $_list_get(output, length - 1); // top token
+			 if (tokenHelplerIsFilePathLibrary(Token$token.fileId, allFiles)) {
+				$_list_pop(output);
+				length -= 1;
+			 } else {
+				length = -1; // cheesy break
+			 }
+		}
+	}
+
+	return output;
 }
 
-function @type('InterpreterResult') killExecutionWithTokenOverride(
+function @type('List<string>') tokenHelperConvertPcsToStackTraceStrings(@type('List<int>') pcs) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('List<Token>') tokens = generateTokenListFromPcs(pcs);
+	@type('Array<string>') files = ProgramData$p.sourceCode;
+	@type('List<string>') output = $_new_list('string');
+	for (@type('int') i = 0; i < $_list_length(tokens); i += 1) {
+		@type('Token') token = $_list_get(tokens, i);
+		if (token == null) {
+			$_list_push(output, "[No stack information]");
+		} else {
+			@type('int') line = Token$token.lineIndex;
+			@type('int') col = Token$token.colIndex;
+			
+			@type('string') fileData = $_array_get(files, Token$token.fileId);
+			@type('Array<string>') lines = $_string_split(fileData, '\n');
+			@type('string') filename = $_array_get(lines, 0);
+			@type('string') linevalue = $_array_get(lines, line + 1);
+		
+			$_list_push(
+				output,
+				$_string_concat(filename, ", Line: ", $_string_cast_weak(line + 1), ", Col: ", $_string_cast_weak(col + 1)));
+		}
+	}
+
+	return output;
+}
+
+function @type('string') tokenHelperGetFormattedPointerToToken(@type('Token') token) {
+	@type('string') line = tokenHelperGetFileLine(Token$token.fileId, Token$token.lineIndex + 1);
+	if (line == null) return null;
+	@type('int') columnIndex = Token$token.colIndex;
+	@type('int') lineLength = $_string_length(line);
+	line = $_string_ltrim(line);
+	line = $_string_replace(line, '\t', ' ');
+	@type('int') offset = lineLength - $_string_length(line);
+	columnIndex -= offset;
+	@type('string') line2 = "";
+	while (columnIndex > 0) {
+		columnIndex -= 1;
+		line2 = $_string_concat(line2, ' ');
+	}
+	line2 = $_string_concat(line2, '^');
+	return $_string_concat(line, "\n", line2);
+}
+
+function @type('string') tokenHelperGetFileLine(@type('int') fileId, @type('int') lineNum) {
+	@type('ProgramData') p = $_get_program_data();
+	@type('string') sourceCode = $_array_get(ProgramData$p.sourceCode, fileId);
+	if (sourceCode == null) return null;
+	return $_array_get($_string_split(sourceCode, "\n"), lineNum);
+}
+
+function @type('bool') tokenHelplerIsFilePathLibrary(@type('int') fileId, @type('Array<string>') allFiles) {
+	@type('string') filename = tokenHelperGetFileLine(fileId, 0); // line 0 is the file name
+	return !$_string_endswith($_string_lower(filename), ".cry");
+}
+
+function @type('InterpreterResult') killExecution(
 		@type('StackFrame') stack,
 		@type('int') pc,
-		@type('Token') firstTokenOverride,
 		@type('string') message) {
+
 	@type('string') fullMessage = '';
 	@type('ProgramData') programData = $_get_program_data();
 	@type('Array<List<Token>>') allTokens = ProgramData$programData.tokenData;
 	@type('List<Token>') tokenList = null;
 	@type('Token') token = null;
-	@type('Array<string>') allFiles = generateSourceFiles();
+	@type('Array<string>') allFiles = ProgramData$programData.sourceCode;
 	@type('bool') first = true;
 	@type('int') line = 0;
 	@type('int') col = 0;
@@ -400,9 +495,6 @@ function @type('InterpreterResult') killExecutionWithTokenOverride(
 		tokenList = $_array_get(allTokens, pc);
 		if (tokenList != null) {
 			token = $_list_get(tokenList, 0);
-		}
-		if (first && firstTokenOverride != null) {
-			token = firstTokenOverride;
 		}
 
 		if (token != null) {
@@ -495,9 +587,12 @@ function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance)
 	@type('ProgramData') p = $_get_program_data();
 	@type('ClassInfo') classInfo = $_array_get(ProgramData$p.classTable, ObjectInstance$objInstance.classId);
 	@type('List<int>') pcs = $_cast('List<int>', $_array_get(ObjectInstance$objInstance.nativeData, 1));
-	// TODO: compile-time field labelling for easy access at runtime from the ObjectInstance
-	@type('string') message = $_string_concat("Uncaught exception of type: ", ClassInfo$classInfo.fullyQualifiedName);
-	message = $_string_concat(message, "\n");
-	message = $_string_concat(message, valueToString($_array_get(ObjectInstance$objInstance.members, 1)));
-	return message;
+	@type('Token') token = null;
+
+	@type('string') exceptionName = ClassInfo$classInfo.fullyQualifiedName;
+	@type('string') message = valueToString($_array_get(ObjectInstance$objInstance.members, 1));
+	@type('List<string>') trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
+	$_list_reverse_in_place(trace);
+	@type('string') stackTrace = $_array_join(trace, "\n");
+	return $_string_concat(stackTrace, "\n", exceptionName, ": ", message);
 }

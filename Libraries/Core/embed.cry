@@ -166,6 +166,10 @@ namespace Core {
 			this.message = message;
 			this.cause = cause;
 		}
+		
+		function getTrace() {
+			return $$$('getExceptionTrace', this);
+		}
 	}
 	
 	class FatalException : Exception {
