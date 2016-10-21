@@ -77,7 +77,13 @@ namespace Crayon
 
                 return string.Join("", replaced);
             }
-            return text;
+
+            // Hackity hack hack hack. Oh well.
+            // TODO: in the resolver, add variable references to these arguments and then return a normal function invocations.
+            // That would be the mildly cleaner way of doing this.
+            return text.Replace(
+                "$_exception(",
+                "generateException(stack, pc, valueStackSize, ec, ");
         }
     }
 }

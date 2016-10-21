@@ -91,12 +91,9 @@ namespace Crayon
                         {
                             inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
                         }
-                        // TODO: Anti-pattern alert. Clean this up.
-                        if (inlineImportFileContents.Contains("%%%"))
-                        {
-                            Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
-                            inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
-                        }
+                        Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
+                        inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
+
                         Token[] inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
 
                         tokens.InsertTokens(inlineTokens);

@@ -79,22 +79,28 @@ namespace Crayon
             return output;
         }
 
+        private Dictionary<string, string> replacementsDictionary = null;
+
         public Dictionary<string, string> BuildReplacementsDictionary()
         {
-            Dictionary<string, string> replacements = new Dictionary<string, string>();
-            replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
-            replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
-            replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
-            replacements.Add("IS_BYTECODE_LOADED_DIRECTLY", this.platform.IsByteCodeLoadedDirectly ? "true" : "false");
-            replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
-            replacements.Add("LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT", this.platform.LibraryBigSwitchStatement);
-            replacements.Add("IS_PHP", (this.platform is Crayon.Translator.Php.PhpPlatform) ? "true" : "false");
-            replacements.Add("IS_CHAR_A_NUMBER", this.platform.IsCharANumber ? "true" : "false");
-            replacements.Add("INT_IS_FLOOR", this.platform.IntIsFloor ? "true" : "false");
-            replacements.Add("IS_THREAD_BLOCKING_ALLOWED", this.platform.IsThreadBlockingAllowed ? "true" : "false");
-            replacements.Add("IS_JAVASCRIPT", this.platform.LanguageId == LanguageId.JAVASCRIPT ? "true" : "false");
-            replacements.Add("IS_ANDROID", this.platform.PlatformShortId == "game-csharp-android" ? "true" : "false");
-            return replacements;
+            if (replacementsDictionary == null)
+            {
+                Dictionary<string, string> replacements = new Dictionary<string, string>();
+                replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
+                replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");
+                replacements.Add("IS_ARRAY_SAME_AS_LIST", this.platform.IsArraySameAsList ? "true" : "false");
+                replacements.Add("IS_BYTECODE_LOADED_DIRECTLY", this.platform.IsByteCodeLoadedDirectly ? "true" : "false");
+                replacements.Add("PLATFORM_SHORT_ID", this.platform.PlatformShortId);
+                replacements.Add("LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT", this.platform.LibraryBigSwitchStatement);
+                replacements.Add("IS_PHP", (this.platform is Crayon.Translator.Php.PhpPlatform) ? "true" : "false");
+                replacements.Add("IS_CHAR_A_NUMBER", this.platform.IsCharANumber ? "true" : "false");
+                replacements.Add("INT_IS_FLOOR", this.platform.IntIsFloor ? "true" : "false");
+                replacements.Add("IS_THREAD_BLOCKING_ALLOWED", this.platform.IsThreadBlockingAllowed ? "true" : "false");
+                replacements.Add("IS_JAVASCRIPT", this.platform.LanguageId == LanguageId.JAVASCRIPT ? "true" : "false");
+                replacements.Add("IS_ANDROID", this.platform.PlatformShortId == "game-csharp-android" ? "true" : "false");
+                this.replacementsDictionary = replacements;
+            }
+            return this.replacementsDictionary;
         }
 
         public StructDefinition[] GetStructDefinitions()
