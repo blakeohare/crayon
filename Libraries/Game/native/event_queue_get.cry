@@ -1,7 +1,6 @@
 ﻿/*
-	Args:
-	[0] -> event instance
-	[1] -> event queue index (predetermined to be safely in range)
+	arg 1: event instance
+	arg 2: event queue index (predetermined to be safely in range)
 
 */
 

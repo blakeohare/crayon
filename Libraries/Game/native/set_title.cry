@@ -1,6 +1,8 @@
-﻿// $game_set_title(string)
+﻿/*
+	arg 1: title
+	
+	Argument is guaranteed to be a non-empty string.
+*/
 import inline "FrameworkFunctions/1_arg.cry";
 
-// TODO: disallow empty string?
-string1 = valueToString(arg1);
-$_lib_game_set_title(string1);
+$_lib_game_set_title($_cast('string', Value$arg1.internalValue));

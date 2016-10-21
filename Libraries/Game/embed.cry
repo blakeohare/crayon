@@ -152,15 +152,15 @@ namespace Game {
 		field fps;
 
 		constructor(title, fps, width, height, screenWidth = null, screenHeight = null) {
-			Core.assert(isString(title), "Title must be a string.");
+			Core.assert(Core.isString(title), "Title must be a string.");
 			t = " must be a number.";
 			w = "width";
 			h = "height";
-			Core.assert(isNumber(fps), "FPS" + t);
-			Core.assert(isNumber(width), "width" + t);
-			Core.assert(isNumber(height), "height" + t);
-			Core.assert(screenWidth == null || isNumber(screenWidth), "screen " + w + t);
-			Core.assert(screenHeight == null || isNumber(screenHeight), "screen " + h + t);
+			Core.assert(Core.isNumber(fps), "FPS" + t);
+			Core.assert(Core.isNumber(width), "width" + t);
+			Core.assert(Core.isNumber(height), "height" + t);
+			Core.assert(screenWidth == null || Core.isNumber(screenWidth), "screen " + w + t);
+			Core.assert(screenHeight == null || Core.isNumber(screenHeight), "screen " + h + t);
 
 			Core.assert(GameWindow.instance == null, "Cannot create multiple GameWindows.");
 			GameWindow.instance = this;
@@ -243,6 +243,8 @@ namespace Game {
 		}
 
 		function setTitle(title) {
+			title += '';
+			if (title.length == 0) throw new Core.InvalidArgumentException("Title cannot be empty.");
 			return $$lib_game_set_title(title);
 		}
 	}

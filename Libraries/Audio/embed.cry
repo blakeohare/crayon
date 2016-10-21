@@ -11,6 +11,10 @@ namespace Audio {
 		TRANSITION_OUT = 5,
 	}
 
+	class MusicNotFoundException : Exception {
+		constructor(m) : base(m) { }
+	}
+
 	/*
 		nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
 	*/
@@ -114,12 +118,14 @@ namespace Audio {
 							Music.currentMusic = Music.enqueuedMusic;
 							Music.currentIsLoop = Music.enqueuedIsLoop;
 							if (Music.enqueuedInTransitionDuration == null) {
-								$$lib_audio_music_play(
+								found = $$lib_audio_music_play(
 									Music.currentMusic,
 									Music.currentMusic._isResource,
 									Music.currentMusic._path,
 									Music.mainVolume,
 									Music.currentIsLoop);
+								if (!found) throw new Audio.MusicNotFoundException("Music file not found: " + Music.currentMusic._path);
+								
 								Music.currentState = Music.currentIsLoop
 									? _MusicState.PLAYING_LOOPING
 									: _MusicState.PLAYING_NORMAL;
