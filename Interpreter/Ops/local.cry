@@ -5,5 +5,5 @@ if ($_array_get(localsStackSet, int1) == localsStackSetToken) {
 	$_array_set(valueStack, valueStackSize, $_array_get(localsStack, int1));
 	valueStackSize += 1;
 } else {
-	return killExecution(stack, pc, "Variable used before it was set.");
+	return $_exception(CoreExceptionTypes.UNASSIGNED_VARIABLE, "Variable used before it was set.");
 }

@@ -245,14 +245,14 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int << int');
 			int1 = $_cast('int', right);
-			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
+			if (int1 < 0) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
 			value = buildInteger($_cast('int', left) << int1); break;
 
 		// int >> int
 		case (Types.INTEGER * MAX_OP + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int >> int');
 			int1 = $_cast('int', right);
-			if (int1 < 0) return killExecution(stack, pc, "Cannot bit shift by a negative number.");
+			if (int1 < 0) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
 			value = buildInteger($_cast('int', left) >> int1); break;
 
 		// int < int
@@ -349,7 +349,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		case (Types.LIST * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.INTEGER:
 			$_comment('list * int');
 			int1 = $_cast('int', right);
-			if (int1 < 0) return killExecution(stack, pc, "Cannot multiply list by negative number.");
+			if (int1 < 0) return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
 			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', left), int1));
 			break;
 
@@ -357,13 +357,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		case (Types.INTEGER * MAX_OP + BinaryOps.MULTIPLICATION) * MAX_TYPE + Types.LIST:
 			$_comment('int * list');
 			int1 = $_cast('int', left);
-			if (int1 < 0) return killExecution(stack, pc, "Cannot multiply list by negative number.");
+			if (int1 < 0) return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
 			value = new Value(Types.LIST, $_multiply_list($_cast('List<Value>', right), int1));
 			break;
 
 		default:
 			$_comment('unrecognized op');
-			return killExecution(stack, pc, $_string_concat("The '", getBinaryOpFromId($_array_get(row, 0)), "' operator is not supported for these types: ", getTypeFromId(Value$leftValue.type), " and ", getTypeFromId(Value$rightValue.type)));
+			return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, $_string_concat("The '", getBinaryOpFromId($_array_get(row, 0)), "' operator is not supported for these types: ", getTypeFromId(Value$leftValue.type), " and ", getTypeFromId(Value$rightValue.type)));
 			break;
 	}
 }

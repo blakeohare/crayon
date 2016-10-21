@@ -1,11 +1,11 @@
 ﻿
 if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
 }
 
 value = $_array_get(funcArgs, 0);
 if (Value$value.type != Types.INTEGER) {
-	return killExecution(stack, pc, "Argument of list.remove must be an integer index.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Argument of list.remove must be an integer index.");
 }
 
 int1 = $_cast('int', Value$value.internalValue);
@@ -14,7 +14,7 @@ len = $_list_length(list1);
 if (int1 < 0) int1 += len;
 
 if (int1 < 0 || int1 >= len) {
-	return killExecution(stack, pc, "Index out of range.");
+	return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index out of range.");
 }
 
 if (returnValueUsed) {

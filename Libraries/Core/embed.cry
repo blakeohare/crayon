@@ -122,8 +122,12 @@ namespace Core {
 		INVALID_ARGUMENT = 5,
 		INVALID_ASSIGNMENT = 6,
 		INVALID_INVOCATION = 7,
-		UNKNOWN_FIELD = 8,
-		UNSUPPORTED_OPERATION = 9,
+		INVALID_KEY = 8,
+		KEY_NOT_FOUND = 9,
+		NULL_REFERENCE = 10,
+		UNASSIGNED_VARIABLE = 11,
+		UNKNOWN_FIELD = 12,
+		UNSUPPORTED_OPERATION = 13,
 	}
 	
 	/*
@@ -139,7 +143,11 @@ namespace Core {
 			case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: throw new IndexOutOfRangeException(message);
 			case _LIB_CORE_ExType.INVALID_ARGUMENT: throw new InvalidArgumentException(message);
 			case _LIB_CORE_ExType.INVALID_ASSIGNMENT: throw new InvalidAssignmentException(message);
-			case _LIB_CORE_ExType.INVALID_INVOCATION: throw new InvalidInvocation(message);
+			case _LIB_CORE_ExType.INVALID_INVOCATION: throw new InvalidInvocationException(message);
+			case _LIB_CORE_ExType.INVALID_KEY: throw new InvalidKeyException(message);
+			case _LIB_CORE_ExType.KEY_NOT_FOUND: throw new KeyNotFoundException(message);
+			case _LIB_CORE_ExType.NULL_REFERENCE: throw new NullReferenceException(message);
+			case _LIB_CORE_ExType.UNASSIGNED_VARIABLE: throw new UnassignedVariableException(message);
 			case _LIB_CORE_ExType.UNKNOWN_FIELD: throw new UnknownFieldException(message);
 			case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: throw new UnsupportedOperationException(message);
 			default: throw new Exception(message);
@@ -183,7 +191,11 @@ namespace Core {
 	class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class InvalidArgumentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidInvocation : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class UnassignedVariableException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 }

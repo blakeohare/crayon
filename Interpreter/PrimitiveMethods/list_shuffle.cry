@@ -1,6 +1,6 @@
 ﻿
 if (argCount > 0) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
 }
 
 $_list_shuffle_in_place(list1);

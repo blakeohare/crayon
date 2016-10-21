@@ -89,7 +89,7 @@ if (bool1) {
 				$_array_set(funcArgs, i, $_list_get(list1, i));
 			}
 		} else {
-			return killExecution(stack, pc, "Function pointers' .invoke method requires a list argument.");
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
 		}
 
 	} else {
@@ -142,7 +142,7 @@ if (bool1) {
 						valueStackSize += 1;
 					}
 				} else {
-					return killExecution(stack, pc, "Unknown field."); // TODO: use the class name and field name.
+					return $_exception(CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field."); // TODO: use the class name and field name.
 				}
 				break;
 			default:
@@ -151,9 +151,9 @@ if (bool1) {
 				functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
 				if (functionId < 0) {
 					if (Value$value.type == Types.NULL) {
-						return killExecution(stack, pc, "Invoked method on null.");
+						return $_exception(CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
 					}
-					return killExecution(stack, pc, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
+					return $_exception(CoreExceptionTypes.INVALID_INVOCATION, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
 				}
 				type = FunctionInvocationType.PRIMITIVE_METHOD;
 				break;
@@ -194,7 +194,7 @@ if (bool1) {
 					break;
 			}
 		} else {
-			return killExecution(stack, pc, "This type cannot be invoked like a function.");
+			return $_exception(CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
 		}
 	}
 
@@ -275,7 +275,7 @@ if (bool1) {
 				bool1 = true;
 				// functionId has been set.
 			} else {
-				return killExecution(stack, pc, "primitive method not found.");
+				return $_exception(CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
 			}
 		} else {
 			if (returnValueUsed) {
@@ -375,7 +375,8 @@ if (bool1) {
 
 		if (argCount < FunctionInfo$functionInfo.minArgs ||
 			argCount > FunctionInfo$functionInfo.maxArgs) {
-			return killExecution(stack, StackFrame$stack.pc, "Incorrect number of args were passed to this function.");
+			pc = StackFrame$stack.pc;
+			return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
 		}
 
 		int1 = FunctionInfo$functionInfo.localsSize;
@@ -431,7 +432,7 @@ if (bool1) {
 		}
 
 		if (StackFrame$stack.depth > 1000) {
-			return killExecution(stack, pc, "Stack overflow.");
+			return $_exception(CoreExceptionTypes.FATAL, "Stack overflow.");
 		}
 	}
 }

@@ -75,7 +75,7 @@ namespace Crayon
                     replaced.Add(parts[parts.Length - 1]);
                 }
 
-                return string.Join("", replaced);
+                text = string.Join("", replaced);
             }
 
             // Hackity hack hack hack. Oh well.

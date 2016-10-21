@@ -7,10 +7,10 @@ if (value == null || ExecutionContext$ec.activeExceptionHandled) {
 			break;
 
 		case PostFinallyBehavior.BREAK:
-			return killExecution(stack, pc, "TODO: PFB->BREAK");
+			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->BREAK");
 
 		case PostFinallyBehavior.CONTINUE:
-			return killExecution(stack, pc, "TODO: PFB->CONTINUE");
+			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->CONTINUE");
 
 		case PostFinallyBehavior.RETURN:
 			// A lot of this is taken from the RETURN op.

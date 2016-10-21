@@ -9,5 +9,5 @@ if (Value$value.type == Types.INTEGER) {
 		pc += $_array_get(row, 1); // default
 	}
 } else {
-	return killExecution(stack, pc, "Switch statement expects an integer.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects an integer.");
 }

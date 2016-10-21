@@ -1,6 +1,6 @@
 ﻿
 if (argCount > 0) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
 }
 
 if (%%%PLATFORM_SUPPORTS_LIST_CLEAR%%%) {

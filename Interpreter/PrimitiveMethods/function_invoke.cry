@@ -7,7 +7,7 @@ if (argCount == 1) {
 } else if (argCount == 0) {
 	$_array_set(funcArgs, 1, VALUE_NULL);
 } else {
-	return killExecution(stack, pc, "invoke requires a list of arguments.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
 }
 $_array_set(funcArgs, 0, value);
 argCount = 2;

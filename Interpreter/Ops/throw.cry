@@ -10,7 +10,7 @@ if (bool2) {
 	}
 }
 
-if (!bool2) return killExecution(stack, pc, "Thrown value is not an exception.");
+if (!bool2) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Thrown value is not an exception."); // meta!
 
 objArray1 = ObjectInstance$objInstance1.nativeData;
 intList1 = $_new_list('int');

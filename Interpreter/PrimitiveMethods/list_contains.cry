@@ -1,6 +1,6 @@
 ﻿
 if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 }
 
 value2 = $_array_get(funcArgs, 0);

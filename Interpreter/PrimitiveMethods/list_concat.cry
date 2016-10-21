@@ -1,10 +1,10 @@
 ﻿
 if (argCount != 1) {
-	return killExecution(stack, pc, primitiveMethodWrongArgCountError("list concat method", 1, argCount));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list concat method", 1, argCount));
 }
 value2 = $_array_get(funcArgs, 0);
 if (Value$value2.type != Types.LIST) {
-	return killExecution(stack, pc, "list concat methods requires a list as an argument.");
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "list concat methods requires a list as an argument.");
 }
 list2 = $_cast('List<Value>', Value$value2.internalValue);
 

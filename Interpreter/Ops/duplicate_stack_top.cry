@@ -16,5 +16,5 @@ if ($_array_get(row, 0) == 1) {
 	valueStackSize += 2;
 } else {
 	// This should not happen. All occurrences of duplicate stack top are either for size 1 or 2.
-	return killExecution(stack, StackFrame$stack.pc, "Error");
+	return $_exception(CoreExceptionTypes.FATAL, "?");
 }

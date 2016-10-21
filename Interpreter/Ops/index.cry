@@ -6,7 +6,7 @@ root = $_array_get(valueStack, valueStackSize - 1);
 
 if (Value$root.type == Types.LIST) {
 	if (Value$value.type != Types.INTEGER) {
-		return killExecution(stack, pc, "List index must be an integer.");
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "List index must be an integer.");
 	} else {
 		i = $_cast('int', Value$value.internalValue);
 		list1 = $_cast('List<Value>', Value$root.internalValue);
@@ -21,9 +21,9 @@ if (Value$root.type == Types.LIST) {
 	keyType = Value$value.type;
 	if (keyType != DictImpl$dictImpl.keyType) {
 		if (DictImpl$dictImpl.size == 0) {
-			return killExecution(stack, pc, "Key not found. Dictionary is empty.");
+			return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "Key not found. Dictionary is empty.");
 		}
-		return killExecution(stack, pc,
+		return $_exception(CoreExceptionTypes.INVALID_KEY,
 			$_string_concat("Incorrect key type. This dictionary contains ", getTypeFromId(DictImpl$dictImpl.keyType), " keys. Provided key is a ", getTypeFromId(keyType), "."));
 	} else {
 		if (keyType == Types.INTEGER) {
@@ -35,9 +35,9 @@ if (Value$root.type == Types.LIST) {
 			intKey = ObjectInstance$objInstance1.objectId;
 		} else {
 			if (DictImpl$dictImpl.size == 0) {
-				return killExecution(stack, pc, "Key not found. Dictionary is empty.");
+				return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "Key not found. Dictionary is empty.");
 			}
-			return killExecution(stack, pc, "Key not found.");
+			return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
 		}
 
 		if (keyType == Types.STRING) {
@@ -45,33 +45,33 @@ if (Value$root.type == Types.LIST) {
 			if ($_dictionary_contains(dictStringValueLookup, stringKey)) {
 				output = $_dictionary_get_guaranteed(dictStringValueLookup, stringKey);
 			} else {
-				return killExecution(stack, pc, $_string_concat("Key not found: '", stringKey, "'"));
+				return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, $_string_concat("Key not found: '", stringKey, "'"));
 			}
 		} else {
 			dictIntValueLookup = $_cast('Dictionary<int, Value>', DictImpl$dictImpl.valueIntLookup);
 			if ($_dictionary_contains(dictIntValueLookup, intKey)) {
 				output = $_dictionary_get_guaranteed(dictIntValueLookup, intKey);
 			} else {
-				return killExecution(stack, pc, "Key not found.");
+				return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
 			}
 		}
 
-		if (output == null) return killExecution(stack, pc, "Key not found.");
+		if (output == null) return $_exception(CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
 
 		$_array_set(valueStack, valueStackSize - 1, output);
 	}
 } else if (Value$root.type == Types.STRING) {
 	string1 = $_cast('string', Value$root.internalValue);
 	if (Value$value.type != Types.INTEGER) {
-		return killExecution(stack, pc, "indexes into strings must be integers.");
+		return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "String indices must be integers.");
 	}
 	int1 = $_cast('int', Value$value.internalValue);
 	if (int1 < 0) int1 += $_string_length(string1);
 	if (int1 < 0 || int1 >= $_string_length(string1)) {
-		return killExecution(stack, pc, "String index out of range.");
+		return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "String index out of range.");
 	}
 	// Single char strings are common.
 	$_array_set(valueStack, valueStackSize - 1, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
 } else {
-	return killExecution(stack, pc, "Cannot index into this type: " + getTypeFromId(Value$root.type));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot index into this type: " + getTypeFromId(Value$root.type));
 }
