@@ -7,13 +7,14 @@ namespace Crayon
     internal class Library
     {
         private string platformName;
+        private string languageName;
         public string Name { get; set; }
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
 
-        public Library(string name, string libraryManifestPath, string platformName)
+        public Library(string name, string libraryManifestPath, string platformName, string languageName)
         {
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
@@ -22,6 +23,7 @@ namespace Crayon
             Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
 
             this.platformName = platformName;
+            this.languageName = languageName;
             string platformPrefix = "[" + platformName + "]";
 
             foreach (string line in manifest)
@@ -220,12 +222,12 @@ namespace Crayon
 
         Dictionary<string, string> translations = null;
 
-        public string TranslateNativeInvocation(Token throwToken, AbstractPlatform translator, string functionName, object[] args)
+        private Dictionary<string, string> GetMethodTranslations(string platformName)
         {
-            if (this.translations == null)
+            string methodTranslations = this.ReadFile(System.IO.Path.Combine("methods", platformName + ".txt"), true);
+            Dictionary<string, string> translations = new Dictionary<string, string>();
+            if (methodTranslations != null)
             {
-                string methodTranslations = this.ReadFile(System.IO.Path.Combine("methods", this.platformName + ".txt"), false);
-                this.translations = new Dictionary<string, string>();
                 foreach (string line in methodTranslations.Split('\n'))
                 {
                     string[] parts = line.Trim().Split(':');
@@ -237,9 +239,20 @@ namespace Crayon
                         {
                             value += ":" + parts[i];
                         }
-                        this.translations[key.Trim()] = value.Trim();
+                        translations[key.Trim()] = value.Trim();
                     }
                 }
+            }
+            return translations;
+        }
+
+        public string TranslateNativeInvocation(Token throwToken, AbstractPlatform translator, string functionName, object[] args)
+        {
+            if (this.translations == null)
+            {
+                Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
+                Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
+                this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
             }
 
             if (this.translations.ContainsKey(functionName))
@@ -253,7 +266,11 @@ namespace Crayon
                 return output;
             }
 
-            throw new ParserException(throwToken, "No native translation provided for " + functionName);
+            // Use this to determine which function is causing the problem:
+            string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
+            MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
+
+            throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
         }
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)

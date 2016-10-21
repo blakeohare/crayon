@@ -201,5 +201,17 @@ namespace Crayon
 
             return output.ToArray();
         }
+
+        public static Dictionary<string, string> FlattenDictionary(Dictionary<string, string> bottom, Dictionary<string, string> top)
+        {
+            if (bottom.Count == 0) return new Dictionary<string, string>(top);
+
+            Dictionary<string, string> output = new Dictionary<string, string>(bottom);
+            foreach (string key in top.Keys)
+            {
+                output[key] = top[key];
+            }
+            return output;
+        }
     }
 }

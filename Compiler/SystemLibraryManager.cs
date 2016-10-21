@@ -149,11 +149,14 @@ namespace Crayon
                     throw new ParserException(throwToken, "Library not found.");
                 }
 
-                library = new Library(name, libraryManifestPath, parser.BuildContext.Platform);
+                string platform = parser.BuildContext.Platform;
+                string language = platform.Split('-')[1];
+
+                library = new Library(name, libraryManifestPath, platform, language);
 
                 alreadyImported.Add(name, library);
 
-                library.ExtractResources(parser.BuildContext.Platform, this.filesToCopy, this.contentToEmbed);
+                library.ExtractResources(platform, this.filesToCopy, this.contentToEmbed);
 
                 this.importedLibraries[name] = library;
                 this.librariesByKey[name.ToLowerInvariant()] = library;
