@@ -280,15 +280,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, listB);
             output.Add(")");
         }
-
-        protected override void TranslateListGet(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("]");
-        }
-
+        
         protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
         {
             this.Translator.TranslateExpression(output, list);
@@ -616,13 +608,7 @@ namespace Crayon.Translator.CSharp
             }
             output.Add(")");
         }
-
-        protected override void TranslateStringLength(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".Length");
-        }
-
+        
         protected override void TranslateStringLower(List<string> output, Expression stringValue)
         {
             this.Translator.TranslateExpression(output, stringValue);

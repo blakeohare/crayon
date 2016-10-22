@@ -28,7 +28,6 @@ namespace Crayon.Translator
                 case "_array_get": VerifyCount(functionCall, 2); TranslateArrayGet(output, args[0], args[1]); break;
                 case "_array_join": VerifyCount(functionCall, 2); TranslateArrayJoin(output, args[0], args[1]); break;
                 case "_array_length": VerifyCount(functionCall, 1); TranslateArrayLength(output, args[0]); break;
-                case "_array_set": VerifyCount(functionCall, 3); TranslateArraySet(output, args[0], args[1], args[2]); break;
                 case "_assert": VerifyCount(functionCall, 1); TranslateAssert(output, args[0]); break;
                 case "_byte_code_get_int_args": VerifyCount(functionCall, 0); TranslateByteCodeGetIntArgs(output); break;
                 case "_byte_code_get_ops": VerifyCount(functionCall, 0); TranslateByteCodeGetOps(output); break;
@@ -41,7 +40,6 @@ namespace Crayon.Translator
                 case "_command_line_args": VerifyCount(functionCall, 0); TranslateCommandLineArgs(output); break;
                 case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
                 case "_convert_list_to_array": VerifyCount(functionCall, 2); TranslateConvertListToArray(output, (StringConstant)args[0], args[1]); break;
-                case "_current_time_seconds": VerifyCount(functionCall, 0); TranslateCurrentTimeSeconds(output); break;
                 case "_dictionary_contains": VerifyCount(functionCall, 2); TranslateDictionaryContains(output, args[0], args[1]); break;
                 case "_dictionary_get_guaranteed": VerifyCount(functionCall, 2); TranslateDictionaryGetGuaranteed(output, args[0], args[1]); break;
                 case "_dictionary_get_keys": VerifyCount(functionCall, 2); TranslateDictionaryGetKeys(output, ((StringConstant)args[0]).Value, args[1]); break;
@@ -57,7 +55,6 @@ namespace Crayon.Translator
                 case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
                 case "_list_clear": VerifyCount(functionCall, 1); TranslateListClear(output, args[0]); break;
                 case "_list_concat": VerifyCount(functionCall, 2); TranslateListConcat(output, args[0], args[1]); break;
-                case "_list_get": VerifyCount(functionCall, 2); TranslateListGet(output, args[0], args[1]); break;
                 case "_list_insert": VerifyCount(functionCall, 3); TranslateListInsert(output, args[0], args[1], args[2]); break;
                 case "_list_join": VerifyCount(functionCall, 2); TranslateListJoin(output, args[0], args[1]); break;
                 case "_list_join_chars": VerifyCount(functionCall, 1); TranslateListJoinChars(output, args[0]); break;
@@ -110,7 +107,6 @@ namespace Crayon.Translator
                 case "_string_equals": VerifyCount(functionCall, 2); TranslateStringEquals(output, args[0], args[1]); break;
                 case "_string_from_code": VerifyCount(functionCall, 1); TranslateStringFromCode(output, args[0]); break;
                 case "_string_index_of": VerifyCount(functionCall, 2, 3); TranslateStringIndexOf(output, args[0], args[1], args.Length == 3 ? args[2] : null); break;
-                case "_string_length": VerifyCount(functionCall, 1); TranslateStringLength(output, args[0]); break;
                 case "_string_lower": VerifyCount(functionCall, 1); TranslateStringLower(output, args[0]); break;
                 case "_string_ltrim": VerifyCount(functionCall, 1); TranslateStringLtrim(output, args[0]); break;
                 case "_string_parse_float": VerifyCount(functionCall, 1); TranslateStringParseFloat(output, args[0]); break;
@@ -127,7 +123,11 @@ namespace Crayon.Translator
                 case "_thread_sleep": VerifyCount(functionCall, 1); TranslateThreadSleep(output, args[0]); break;
                 case "_unsafe_float_division": VerifyCount(functionCall, 2); TranslateUnsafeFloatDivision(output, args[0], args[1]); break;
                 case "_unsafe_integer_division": VerifyCount(functionCall, 2); TranslateUnsafeIntegerDivision(output, args[0], args[1]); break;
-                default: throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);
+                default:
+                    //throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);
+                    // Eventually this will be removed and AssociatedLibrary will be set to Core and this entire switch statement can go away.
+                    output.Add(functionCall.HACK_CoreLibraryReference.TranslateNativeInvocation(functionCall.FirstToken, this.Platform, fullName, args));
+                    break; 
             }
         }
 
@@ -138,7 +138,6 @@ namespace Crayon.Translator
         protected abstract void TranslateArrayGet(List<string> output, Expression list, Expression index);
         protected abstract void TranslateArrayJoin(List<string> output, Expression array, Expression sep);
         protected abstract void TranslateArrayLength(List<string> output, Expression list);
-        protected abstract void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateAssert(List<string> output, Expression message);
         protected abstract void TranslateByteCodeGetIntArgs(List<string> output);
         protected abstract void TranslateByteCodeGetOps(List<string> output);
@@ -151,7 +150,6 @@ namespace Crayon.Translator
         protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
         protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
         protected abstract void TranslateCos(List<string> output, Expression value);
-        protected abstract void TranslateCurrentTimeSeconds(List<string> output);
         protected abstract void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key);
         protected abstract void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key);
         protected abstract void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary);
@@ -170,7 +168,6 @@ namespace Crayon.Translator
         protected abstract void TranslateIsWindowsProgram(List<string> output);
         protected abstract void TranslateListClear(List<string> output, Expression list);
         protected abstract void TranslateListConcat(List<string> output, Expression listA, Expression listB);
-        protected abstract void TranslateListGet(List<string> output, Expression list, Expression index);
         protected abstract void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value);
         protected abstract void TranslateListJoin(List<string> output, Expression list, Expression sep);
         protected abstract void TranslateListJoinChars(List<string> output, Expression list);
@@ -212,7 +209,6 @@ namespace Crayon.Translator
         protected abstract void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b);
         protected abstract void TranslateStringFromCode(List<string> output, Expression characterCode);
         protected abstract void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom);
-        protected abstract void TranslateStringLength(List<string> output, Expression stringValue);
         protected abstract void TranslateStringLower(List<string> output, Expression stringValue);
         protected abstract void TranslateStringLtrim(List<string> output, Expression stringValue);
         protected abstract void TranslateStringParseFloat(List<string> output, Expression stringValue);

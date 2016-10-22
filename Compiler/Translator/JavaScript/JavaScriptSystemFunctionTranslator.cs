@@ -64,16 +64,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, list);
             output.Add(".length");
         }
-
-        protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("] = ");
-            this.Translator.TranslateExpression(output, value);
-        }
-
+        
         protected override void TranslateAssert(List<string> output, Expression message)
         {
             output.Add("throw ");
@@ -139,11 +130,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("Math.cos(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateCurrentTimeSeconds(List<string> output)
-        {
-            output.Add("C$common$now()");
         }
 
         protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
@@ -285,15 +271,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, listB);
             output.Add(")");
         }
-
-        protected override void TranslateListGet(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("]");
-        }
-
+        
         protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
         {
             this.Translator.TranslateExpression(output, list);
@@ -590,13 +568,7 @@ namespace Crayon.Translator.JavaScript
             }
             output.Add(")");
         }
-
-        protected override void TranslateStringLength(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".length");
-        }
-
+        
         protected override void TranslateStringLower(List<string> output, Expression stringValue)
         {
             this.Translator.TranslateExpression(output, stringValue);

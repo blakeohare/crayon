@@ -9,6 +9,7 @@ namespace Crayon.ParseTree
         public string Name { get; private set; }
         public Expression[] Args { get; private set; }
         public Library AssociatedLibrary { get; private set; }
+        public Library HACK_CoreLibraryReference { get; private set; }
 
         public SystemFunctionCall(Token token, Expression[] args, Executable owner)
             : base(token, owner)
@@ -33,6 +34,10 @@ namespace Crayon.ParseTree
                     this.AssociatedLibrary = library;
                 }
             }
+
+            // TODO: Eventaully remove this and have Core as a default when $_lib_ is not present.
+            // This is part of an effort to move ALL system function calls to the Core library.
+            this.HACK_CoreLibraryReference = parser.SystemLibraryManager.GetLibraryFromKey("core");
 
             if (this.Name == "$_has_increment")
             {

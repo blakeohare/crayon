@@ -1,0 +1,4 @@
+$_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_current_time_seconds: System.currentTimeMillis() / 1000.0
+$_list_get: [ARG:1].get([ARG:2])
+$_string_length: [ARG:1].length()

@@ -1,0 +1,4 @@
+$_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_current_time_seconds: time.time()
+$_list_get: [ARG:1][[ARG:2]]
+$_string_length: len([ARG:1])

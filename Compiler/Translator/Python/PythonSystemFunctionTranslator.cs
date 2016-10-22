@@ -78,15 +78,6 @@ namespace Crayon.Translator.Python
             output.Add(")");
         }
 
-        protected override void TranslateArraySet(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("] = ");
-            this.Translator.TranslateExpression(output, value);
-        }
-
         protected override void TranslateAssert(List<string> output, Expression message)
         {
             output.Add("create_assertion(");
@@ -153,11 +144,6 @@ namespace Crayon.Translator.Python
             output.Add("math.cos(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        protected override void TranslateCurrentTimeSeconds(List<string> output)
-        {
-            output.Add("time.time()");
         }
 
         // Not safe for dictionaries that can contain a value of None.
@@ -290,14 +276,6 @@ namespace Crayon.Translator.Python
             output.Add(" + ");
             this.Translator.TranslateExpression(output, listB);
             output.Add(")");
-        }
-
-        protected override void TranslateListGet(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("]");
         }
 
         protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
@@ -599,13 +577,6 @@ namespace Crayon.Translator.Python
                 output.Add(", ");
                 this.Translator.TranslateExpression(output, optionalStartFrom);
             }
-            output.Add(")");
-        }
-
-        protected override void TranslateStringLength(List<string> output, Expression stringValue)
-        {
-            output.Add("len(");
-            this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
         }
 

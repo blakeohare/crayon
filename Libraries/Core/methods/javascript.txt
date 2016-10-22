@@ -1,0 +1,4 @@
+$_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_current_time_seconds: C$common$now()
+$_list_get: [ARG:1][[ARG:2]]
+$_string_length: [ARG:1].length
