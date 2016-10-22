@@ -12,6 +12,7 @@ namespace Crayon
             public Token Token { get; set; }
             public string StringArg { get; set; }
             public ByteCodeEsfToken EsfToken { get; set; }
+            public int ValueStackSizeChange { get; set; }
         }
 
         private List<ByteRow> rows = new List<ByteRow>();
@@ -88,14 +89,23 @@ namespace Crayon
         public void ResolveContinues(bool resolveAsJumpToEnd)
         {
             int size = this.Size;
+            int[] byteCode;
             for (int i = 0; i < size; ++i)
             {
-                ByteRow row = this.rows[i];
-                if (row.ByteCode[0] == (int)OpCode.CONTINUE)
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
                 {
-                    row.ByteCode = resolveAsJumpToEnd
-                        ? new int[] { (int)OpCode.JUMP, size - i - 1 }
-                        : new int[] { (int)OpCode.JUMP, -i - 1 };
+                    case OpCode.CONTINUE:
+                    case OpCode.FINALLY_END:
+                        int index = (OpCode)byteCode[0] == OpCode.CONTINUE ? 1 : 3;
+                        if (byteCode[index] == 0)
+                        {
+                            byteCode[index] = 1;
+                            byteCode[index + 1] = resolveAsJumpToEnd
+                                ? size - i - 1
+                                : -i - 1;
+                        }
+                        break;
                 }
             }
         }
@@ -104,23 +114,75 @@ namespace Crayon
         public void ResolveBreaks()
         {
             int size = this.Size;
+            int[] byteCode;
             for (int i = 0; i < size; ++i)
             {
-                ByteRow row = this.rows[i];
-                if (row.ByteCode[0] == (int)OpCode.BREAK)
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
                 {
-                    row.ByteCode = new int[] { (int)OpCode.JUMP, size - i - 1 };
+                    case OpCode.BREAK:
+                    case OpCode.FINALLY_END:
+                        if (byteCode[1] == 0)
+                        {
+                            byteCode[1] = 1;
+                            byteCode[2] = size - i - 1;
+                        }
+                        break;
                 }
             }
         }
 
-        public void SetEsfToken(int index, int catchOffset, int finallyOffset, int valueStackDepth)
+        // Try catch code can be resolved with this function at any time
+        // Finally code MUST be resolved right before adding the FINALLY_END op to the byte buffer.
+        public void ResolveBreaksAndContinuesForFinally(bool isInTryCatch)
+        {
+            // If it's in the finally, then set status as 1 and jump to the last instruction
+            // If it's in the try/catch, just set the status to 2 which will indicate use ESF data
+            bool isInFinally = !isInTryCatch;
+            int[] byteCode;
+            int size = this.Size;
+            int endOffset;
+            for (int i = 0; i < size; ++i)
+            {
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
+                {
+                    case OpCode.BREAK:
+                    case OpCode.CONTINUE:
+                    case OpCode.FINALLY_END:
+                        endOffset = size - i - 1;
+                        if (isInTryCatch)
+                        {
+                            // Set the jump type to 2 which means just use the finally offset in the ESF data.
+                            byteCode[1] = 2;
+                            if ((OpCode)byteCode[0] == OpCode.FINALLY_END)
+                            {
+                                byteCode[3] = 2;
+                            }
+                        }
+                        else
+                        {
+                            // Set the jump to go to the end of the byte buffer. This is right before
+                            // the FINALLY_END op has been added to this buffer.
+                            byteCode[1] = 1;
+                            byteCode[2] = size - i - 1;
+                            if ((OpCode)byteCode[0] == OpCode.FINALLY_END)
+                            {
+                                byteCode[3] = 1;
+                                byteCode[4] = byteCode[2];
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        public void SetEsfToken(int index, int catchOffset, int finallyOffset)
         {
             this.rows[index].EsfToken = new ByteCodeEsfToken()
             {
                 ExceptionSortPcOffsetFromTry = catchOffset,
                 FinallyPcOffsetFromTry = finallyOffset,
-                ValueStackDepth = valueStackDepth,
             };
         }
 
@@ -137,10 +199,31 @@ namespace Crayon
                     esfData.Add(pc);
                     esfData.Add(pc + row.EsfToken.ExceptionSortPcOffsetFromTry);
                     esfData.Add(pc + row.EsfToken.FinallyPcOffsetFromTry);
-                    esfData.Add(row.EsfToken.ValueStackDepth);
                 }
             }
             return esfData.ToArray();
+        }
+
+        public int[] GetFinalizedValueStackDepthData()
+        {
+            List<int> vsdData = new List<int>();
+            int size = this.Size;
+            ByteRow row;
+            for (int pc = 0; pc < size; ++pc)
+            {
+                row = this.rows[pc];
+                if (row.ValueStackSizeChange != 0)
+                {
+                    vsdData.Add(pc);
+                    vsdData.Add(row.ValueStackSizeChange);
+                }
+            }
+            return vsdData.ToArray();
+        }
+
+        public void SetLastValueStackDepthOffset(int offset)
+        {
+            this.rows[this.rows.Count - 1].ValueStackSizeChange += offset;
         }
 
         public int GetEsfPc()

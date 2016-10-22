@@ -50,6 +50,7 @@ struct ProgramData {
 	@type('string') projectId,
 	@type('Array<Array<int>>') esfData,
 	@type('MagicNumbers') magicNumbers,
+	@type('Array<int>') valueStackDepthByPc,
 }
 
 struct ExecutionContext {

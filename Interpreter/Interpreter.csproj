@@ -62,12 +62,14 @@
     <EmbeddedResource Include="Ops\assign_this_step.cry" />
     <EmbeddedResource Include="Ops\binary_op.cry" />
     <EmbeddedResource Include="Ops\boolean_not.cry" />
+    <EmbeddedResource Include="Ops\break.cry" />
     <EmbeddedResource Include="Ops\build_switch_int.cry" />
     <EmbeddedResource Include="Ops\build_switch_string.cry" />
     <EmbeddedResource Include="Ops\call_function.cry" />
     <EmbeddedResource Include="Ops\call_lib_function.cry" />
     <EmbeddedResource Include="Ops\class_definition.cry" />
     <EmbeddedResource Include="Ops\command_line_args.cry" />
+    <EmbeddedResource Include="Ops\continue.cry" />
     <EmbeddedResource Include="Ops\core_function.cry" />
     <EmbeddedResource Include="Ops\def_dictionary.cry" />
     <EmbeddedResource Include="Ops\def_list.cry" />
@@ -108,6 +110,7 @@
     <EmbeddedResource Include="Ops\throw.cry" />
     <EmbeddedResource Include="Ops\token_data.cry" />
     <EmbeddedResource Include="Ops\user_code_start.cry" />
+    <EmbeddedResource Include="Ops\value_stack_depth.cry" />
     <EmbeddedResource Include="Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="PrimitiveMethods.cry" />
     <EmbeddedResource Include="PrimitiveMethods\dict_clear.cry" />

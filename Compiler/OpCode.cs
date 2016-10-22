@@ -11,14 +11,14 @@
         ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
         BINARY_OP,
         BOOLEAN_NOT, // no args.
-        BREAK, // no ops. This should be resolved into a jump before actually being run.
+        BREAK, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
         BUILD_SWITCH_INT, // 2n args: (1: integer key, 2: offset value) <- repeat, the order that these appear indicates the switch ID
         BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
         CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
         CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
         CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
         COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
-        CONTINUE, // no ops. This should be resolved into a jump before actually being run.
+        CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
         CORE_FUNCTION, // 1: function ID
         DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
         DEF_DICTIONARY, // 1: size
@@ -31,7 +31,7 @@
         ESF_LOOKUP, // [4n args, n = ESF token count] 4n+0: PC of try, 4n+1: PC of exception-sorter, 4n+2: PC of finally, 4n+3: value stack depth
         EXCEPTION_HANDLED_TOGGLE, // 1: boolean (0|1) indicating if the ExecutionContext's current exception should be marked as handled.
         FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
-        FINALLY_END, // indicates the end of a finally block. Responsible for bubbling exceptions or returning from the function if appropriate
+        FINALLY_END, // indicates the end of a finally block. Responsible for bubbling exceptions or returning from the function if appropriate 1: break JUMP offset, 2: continue JUMP offset, 3: 0|1 bool if break offset has been set, 4: 0|1 bool if continue offset has been set
         FUNCTION_DEFINITION, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
         INDEX,
         IS_COMPARISON, // pops stack, checks if value is an instance of the given class, pushes a boolean. 1: class ID
@@ -59,6 +59,7 @@
         THROW, // throw an exception (exception is popped from the value stack)
         TOKEN_DATA, // 1: PC of where this token data applies (you must add the value of USER_CODE_START at runtime), 2: line, 3: col, 4: file ID
         USER_CODE_START, // 1: PC of where the user-compiled code begins. PC in token information will add this number.
+        VALUE_STACK_DEPTH, // (2n args), 2n + 0: PC, 2n + 1: change in value stack depth typically as the result of a foreach loop. This is just the base depth outside of expressions. These are flattened into absolute depths and create a per-PC lookup for jumps such as breaks and try/catch/finally stuff.
         VERIFY_TYPE_IS_ITERABLE, // verifies the last item on the stack is a list
     }
 }

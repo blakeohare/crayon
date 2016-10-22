@@ -1,0 +1,27 @@
+﻿/*
+	2n arguments:
+	* 2n + 0 -> PC
+	* 2n + 1 -> delta in value stack depth
+
+	This op creates a single int array of the base value stack depth at any given PC.
+	This will be used whenever a special kind of JUMP occurs.
+	- going from a try block to a finally
+	- going from a finally to basically anywhere else
+	- in the debugger when the next line to execute is set arbitrarily
+
+*/
+
+len = $_array_length(ops); // total PC count
+intArray1 = $_new_array('int', len); // output
+int1 = 0; // row index
+int2 = $_array_length(row); // row length
+int3 = 0; // depth total
+for (i = 0; i < len; i += 1) {
+	if (int1 < int2 && i == $_array_get(row, int1)) {
+		int3 += $_array_get(row, int1 + 1);
+		int1 += 2;
+	}
+	$_array_set(intArray1, i, int3);
+}
+
+ProgramData$p.valueStackDepthByPc = intArray1;

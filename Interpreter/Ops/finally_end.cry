@@ -7,10 +7,32 @@ if (value == null || ExecutionContext$ec.activeExceptionHandled) {
 			break;
 
 		case PostFinallyBehavior.BREAK:
-			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->BREAK");
+			ExecutionContext$ec.activeException = null;
+			int1 = $_array_get(row, 0);
+			if (int1 == 1) {
+				pc += $_array_get(row, 1);
+			} else if (int1 == 2) {
+				intArray1 = $_array_get(esfData, pc);
+				pc = $_array_get(intArray1, 1);
+			} else {
+				// TODO: compile-time error
+				return $_exception(CoreExceptionTypes.FATAL, "break exists without a loop");
+			}
+			break;
 
 		case PostFinallyBehavior.CONTINUE:
-			return $_exception(CoreExceptionTypes.FATAL, "TODO: PFB->CONTINUE");
+			ExecutionContext$ec.activeException = null;
+			int1 = $_array_get(row, 2);
+			if (int1 == 1) {
+				pc += $_array_get(row, 3);
+			} else if (int1 == 2) {
+				intArray1 = $_array_get(esfData, pc);
+				pc = $_array_get(intArray1, 1);
+			} else {
+				// TODO: compile-time error
+				return $_exception(CoreExceptionTypes.FATAL, "continue exists without a loop");
+			}
+			break;
 
 		case PostFinallyBehavior.RETURN:
 			// A lot of this is taken from the RETURN op.

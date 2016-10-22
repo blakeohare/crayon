@@ -41,10 +41,14 @@ namespace Crayon
             header.Concat(tokenData);
             header.Concat(fileContent);
             header.Concat(switchStatements);
-            header.Add(null, OpCode.ESF_LOOKUP); // once the final PC's are established, come back and fill this in.
+
+            // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
+            header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
+            header.Add(null, OpCode.VALUE_STACK_DEPTH); // changes in the depth of the value stack at given PC's
+
             header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID);
 
-            ByteBuffer output = new Crayon.ByteBuffer();
+            ByteBuffer output = new ByteBuffer();
             output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
             output.Concat(header);
             output.Concat(userCode);
@@ -67,10 +71,12 @@ namespace Crayon
             output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
-            // Now that ops (and PCs) have been finalized, fill in ESF data with absolute PC's
+            // Now that ops (and PCs) have been finalized, fill in ESF and Value Stack Depth data with absolute PC's
             int[] esfOps = output.GetFinalizedEsfData();
+            int[] valueStackDepthOps = output.GetFinalizedValueStackDepthData();
             int esfPc = output.GetEsfPc();
             output.SetArgs(esfPc, esfOps);
+            output.SetArgs(esfPc + 1, valueStackDepthOps);
 
             return output;
         }
@@ -201,7 +207,17 @@ namespace Crayon
 
             ByteBuffer finallyCode = new ByteBuffer();
             this.Compile(parser, finallyCode, tryStatement.FinallyBlock);
-            finallyCode.Add(null, OpCode.FINALLY_END, new int[] { 0, 0, 0, 0 }); // break and continue offsets and 0|1 flags indicating if they've been set
+            finallyCode.ResolveBreaksAndContinuesForFinally(false);
+            finallyCode.Add(null, OpCode.FINALLY_END, 
+                new int[] {
+                    // First 2 args are the same as a BREAK op code
+                    // Last 2 args are the same as a CONTINUE op code
+                    // These are all 0 and are resolved into their final values in the same pass as BREAK and CONTINUE
+                    0, // break flag 0|1|2
+                    0, // break offset
+                    0, // continue flag 0|1|2
+                    0 // continue offset
+                }); 
 
 
             // All user code is now compiled and offsets are sort of known.
@@ -280,11 +296,13 @@ namespace Crayon
             buffer.Concat(tryCode);
             buffer.Add(null, OpCode.JUMP, allCatchBlocks.Size);
             buffer.Concat(allCatchBlocks);
+            buffer.ResolveBreaksAndContinuesForFinally(true);
+
             buffer.Concat(finallyCode);
 
             int offsetToCatch = tryCode.Size + 1;
             int offsetToFinally = offsetToCatch + allCatchBlocks.Size;
-            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally, tryStatement.ValueStackDepth);
+            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally);
         }
 
         private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
@@ -293,6 +311,8 @@ namespace Crayon
             buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId));
             this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
             buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_TYPE_IS_ITERABLE);
+
+            buffer.SetLastValueStackDepthOffset(3);
 
             ByteBuffer body = new ByteBuffer();
             ByteBuffer body2 = new Crayon.ByteBuffer();
@@ -311,6 +331,7 @@ namespace Crayon
             buffer.Add(null, OpCode.POP); // list
             buffer.Add(null, OpCode.POP); // var ID
             buffer.Add(null, OpCode.POP); // index
+            buffer.SetLastValueStackDepthOffset(-3);
         }
 
         private void CompileSwitchStatement(Parser parser, ByteBuffer buffer, SwitchStatement switchStatement)
@@ -611,12 +632,12 @@ namespace Crayon
 
         private void CompileBreakStatement(Parser parser, ByteBuffer buffer, BreakStatement breakStatement)
         {
-            buffer.Add(breakStatement.FirstToken, OpCode.BREAK);
+            buffer.Add(breakStatement.FirstToken, OpCode.BREAK, 0, 0);
         }
 
         private void CompileContinueStatement(Parser parser, ByteBuffer buffer, ContinueStatement continueStatement)
         {
-            buffer.Add(continueStatement.FirstToken, OpCode.CONTINUE);
+            buffer.Add(continueStatement.FirstToken, OpCode.CONTINUE, 0, 0);
         }
 
         private void CompileForLoop(Parser parser, ByteBuffer buffer, ForLoop forLoop)
