@@ -84,6 +84,11 @@ namespace Crayon
 
                 string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
 
+                if (lookup.ContainsKey(fullyQualifiedName))
+                {
+                    // TODO: token information from two locations
+                    throw new ParserException(item.FirstToken, "Two items have identical fully-qualified names: '" + fullyQualifiedName + "'");
+                }
                 lookup[fullyQualifiedName] = item;
             }
 
@@ -213,15 +218,10 @@ namespace Crayon
                 cd.ResolveMemberIds();
             }
 
-            /*
-             * 0 - not resolved
-             * 1 - currently being resolved
-             * 2 - fully resolved
-             */
             foreach (Executable ex in definitionsByFullyQualifiedNames.Values
                 .Where<Executable>(ex => ex is ConstStatement || ex is EnumDefinition))
             {
-                parser.ConstantAndEnumResolutionState[ex] = 0;
+                parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
             }
         }
 

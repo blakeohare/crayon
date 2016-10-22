@@ -33,13 +33,13 @@ namespace Crayon.ParseTree
         {
             if (!parser.IsTranslateMode)
             {
-                int resolutionState = parser.ConstantAndEnumResolutionState[this];
-                if (resolutionState == 2) return new Executable[0];
-                if (resolutionState == 1)
+                ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
+                if (resolutionState == ConstantResolutionState.RESOLVED) return new Executable[0];
+                if (resolutionState == ConstantResolutionState.RESOLVING)
                 {
                     throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
                 }
-                parser.ConstantAndEnumResolutionState[this] = 1;
+                parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVING;
             }
             HashSet<int> consumed = new HashSet<int>();
 
@@ -76,7 +76,7 @@ namespace Crayon.ParseTree
                     this.IntValue[itemName] = ic.Value;
                 }
             }
-            parser.ConstantAndEnumResolutionState[this] = 2;
+            parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
 
             int next = 0;
             for (int i = 0; i < this.Items.Length; ++i)

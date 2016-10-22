@@ -17,7 +17,7 @@ namespace Crayon.ParseTree
 
         internal override Expression Resolve(Parser parser)
         {
-            if (parser.ConstantAndEnumResolutionState[this.ConstStatement] != 2)
+            if (parser.ConstantAndEnumResolutionState[this.ConstStatement] != ConstantResolutionState.RESOLVED)
             {
                 this.ConstStatement.Resolve(parser);
             }

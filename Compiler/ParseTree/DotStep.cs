@@ -30,8 +30,8 @@ namespace Crayon.ParseTree
             {
                 EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
 
-                int resolutionState = parser.ConstantAndEnumResolutionState[enumDef];
-                if (resolutionState != 2)
+                ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[enumDef];
+                if (resolutionState != ConstantResolutionState.RESOLVED)
                 {
                     enumDef.Resolve(parser);
                 }
