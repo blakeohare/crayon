@@ -21,12 +21,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("TranslationHelper.AlwaysFalse()");
         }
-
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("\".\"");
-        }
-
+        
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("ResourceReader.ReadTextResource(");

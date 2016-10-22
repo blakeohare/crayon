@@ -1,4 +1,23 @@
+
+$_array_get: [ARG:1][[ARG:2]]
+$_array_join: string.Join([ARG:2], [ARG:1])
+$_array_length: [ARG:1].Length
 $_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_assert: TranslationHelper.Assertion([ARG:1])
 $_current_time_seconds: (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
+$_dictionary_contains: [ARG:1].ContainsKey([ARG:2])
+$_list_clear: [ARG:1].Clear()
+$_list_concat: TranslationHelper.ValueListConcat([ARG:1], [ARG:2])
 $_list_get: [ARG:1][[ARG:2]]
+$_list_insert: [ARG:1].Insert([ARG:2], [ARG:3])
+$_list_join: string.Join([ARG:2], [ARG:1])
+$_list_join_chars: string.Join("", [ARG:1])
+$_list_last_index: [ARG:1].Count - 1
+$_list_length: [ARG:1].Count
+$_list_pop: [ARG:1].RemoveAt([ARG:1].Count - 1)
+$_list_push: [ARG:1].Add([ARG:2])
+$_list_remove_at: [ARG:1].RemoveAt([ARG:2])
+$_list_reverse_in_place: [ARG:1].Reverse()
+$_list_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_list_shuffle_in_place: TranslationHelper.ShuffleInPlace([ARG:1])
 $_string_length: [ARG:1].Length

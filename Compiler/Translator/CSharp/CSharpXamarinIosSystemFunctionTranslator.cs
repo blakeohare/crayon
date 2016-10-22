@@ -16,10 +16,5 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("ResourceReader.GetResourceManifest()");
         }
-
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("CsxiTranslationHelper.AppDataRoot");
-        }
     }
 }

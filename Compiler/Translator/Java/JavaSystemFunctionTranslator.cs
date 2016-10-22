@@ -30,37 +30,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, dx);
             output.Add(")");
         }
-
-        protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("]");
-        }
-
-        protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
-        {
-            output.Add("String.join(");
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, array);
-            output.Add(")");
-        }
-
-        protected override void TranslateArrayLength(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".length");
-        }
         
-        protected override void TranslateAssert(List<string> output, Expression message)
-        {
-            output.Add("TranslationHelper.assertion(");
-            this.Translator.TranslateExpression(output, message);
-            output.Add(")");
-        }
-
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             throw new NotImplementedException();
@@ -145,14 +115,6 @@ namespace Crayon.Translator.Java
         {
             output.Add("Math.cos(");
             this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-        
-        protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
-        {
-            this.Translator.TranslateExpression(output, dictionary);
-            output.Add(".containsKey(");
-            this.Translator.TranslateExpression(output, key);
             output.Add(")");
         }
 
@@ -263,108 +225,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, number);
             output.Add(")"); // meh
         }
-
-        protected override void TranslateListClear(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".clear()");
-        }
-
-        protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
-        {
-            output.Add("TranslationHelper.concatLists(");
-            this.Translator.TranslateExpression(output, listA);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, listB);
-            output.Add(")");
-        }
         
-        protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".add(");
-            this.Translator.TranslateExpression(output, index);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateListJoin(List<string> output, Expression list, Expression sep)
-        {
-            output.Add("TranslationHelper.joinList(");
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListJoinChars(List<string> output, Expression list)
-        {
-            output.Add("TranslationHelper.joinChars(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListLastIndex(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".size() - 1");
-        }
-
-        protected override void TranslateListLength(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".size()");
-        }
-
-        protected override void TranslateListPop(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".remove(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".size() - 1)");
-        }
-
-        protected override void TranslateListPush(List<string> output, Expression list, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".add(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".remove(");
-            this.Translator.TranslateExpression(output, index);
-            output.Add(")");
-        }
-
-        protected override void TranslateListReverseInPlace(List<string> output, Expression list)
-        {
-            output.Add("TranslationHelper.reverseList(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".set(");
-            this.Translator.TranslateExpression(output, index);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateListShuffleInPlace(List<string> output, Expression list)
-        {
-            output.Add("TranslationHelper.shuffleInPlace(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
         protected override void TranslateMathLog(List<string> output, Expression value)
         {
             output.Add("Math.log(");

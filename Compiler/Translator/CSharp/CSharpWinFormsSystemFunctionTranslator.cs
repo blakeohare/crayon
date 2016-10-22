@@ -12,11 +12,6 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, expression);
             output.Add(")");
         }
-
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("WinFormsTranslationHelper.TODO_appDataRoot()");
-        }
         
         protected override void TranslateResourceGetManifest(List<string> output)
         {

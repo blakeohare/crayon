@@ -1,4 +1,23 @@
+
+$_array_get: [ARG:1][[ARG:2]]
+$_array_join: String.join([ARG:2], [ARG:1])
+$_array_length: [ARG:1].length
 $_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_assert: TranslationHelper.assertion([ARG:1])
 $_current_time_seconds: System.currentTimeMillis() / 1000.0
+$_dictionary_contains: [ARG:1].containsKey([ARG:2])
+$_list_clear: [ARG:1].clear()
+$_list_concat: TranslationHelper.concatLists([ARG:1], [ARG:2])
 $_list_get: [ARG:1].get([ARG:2])
+$_list_insert: [ARG:1].add([ARG:2], [ARG:3])
+$_list_join: TranslationHelper.joinList([ARG:2], [ARG:1])
+$_list_join_chars: TranslationHelper.joinChars([ARG:1])
+$_list_last_index: [ARG:1].size() - 1
+$_list_length: [ARG:1].size()
+$_list_pop: [ARG:1].remove([ARG:1].size() - 1)
+$_list_push: [ARG:1].add([ARG:2])
+$_list_remove_at: [ARG:1].remove([ARG:2])
+$_list_reverse_in_place: TranslationHelper.reverseList([ARG:1])
+$_list_set: [ARG:1].set([ARG:2], [ARG:3])
+$_list_shuffle_in_place: TranslationHelper.shuffleInPlace([ARG:1])
 $_string_length: [ARG:1].length()

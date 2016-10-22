@@ -33,12 +33,7 @@ namespace Crayon.Translator.Java
         {
             output.Add("AwtTranslationHelper.getRawByteCodeString()");
         }
-
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("AwtTranslationHelper.getAppDataRoot()");
-        }
-
+        
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AwtTranslationHelper.getTextResource(\"text/\" + ");

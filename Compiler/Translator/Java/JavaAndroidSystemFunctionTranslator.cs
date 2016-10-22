@@ -28,11 +28,6 @@ namespace Crayon.Translator.Java
             output.Add("AndroidTranslationHelper.getRawByteCodeString()");
         }
 
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("AndroidTranslationHelper.getAppDataRoot()");
-        }
-
         protected override void TranslateResourceReadText(List<string> output, Expression path)
         {
             output.Add("AndroidTranslationHelper.resourceReadText(");

@@ -1,4 +1,24 @@
+
+$_app_data_root: die('optimize $_app_data_root out')
+$_array_get: [ARG:1]->r[[ARG:2]]
+$_array_join: implode([ARG:2], [ARG:1])
+$_array_length: count([ARG:1]->r)
 $_array_set: [ARG:1]->r[[ARG:2]] = [ARG:3]
+$_assert: pth_assert([ARG:1])
 $_current_time_seconds: pth_current_time()
+$_dictionary_contains: isset([ARG:1]->r[[ARG:2]])
+$_list_clear: pth_list_clear([ARG:1])
+$_list_concat: new Rf(array_merge([ARG:1]->r, [ARG:2]->r))
 $_list_get: [ARG:1]->r[[ARG:2]]
+$_list_insert: new Rf(array_splice([ARG:1]->r, [ARG:2], 0, array([ARG:3])))
+$_list_join: implode([ARG:2], [ARG:1]->r)
+$_list_join_chars: implode('', [ARG:1]->r)
+$_list_last_index: count([ARG:1]->r) - 1
+$_list_length: count([ARG:1]->r)
+$_list_pop: array_pop([ARG:1]->r)
+$_list_push: array_push([ARG:1]->r, [ARG:2])
+$_list_remove_at: array_splice([ARG:1]->r, [ARG:2], 1)
+$_list_reverse_in_place: pth_list_reverse([ARG:1])
+$_list_set: [ARG:1]->r[[ARG:2]] = [ARG:3]
+$_list_shuffle_in_place: shuffle([ARG:1]->r)
 $_string_length: strlen([ARG:1])

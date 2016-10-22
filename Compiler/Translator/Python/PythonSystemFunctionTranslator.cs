@@ -27,11 +27,6 @@ namespace Crayon.Translator.Python
             output.Add("RESOURCES.getManifest()");
         }
 
-        protected override void TranslateAppDataRoot(List<string> output)
-        {
-            output.Add("get_app_data_root()");
-        }
-
         protected override void TranslateArcCos(List<string> output, Expression value)
         {
             output.Add("math.acos(");
@@ -52,36 +47,6 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, dy);
             output.Add(", ");
             this.Translator.TranslateExpression(output, dx);
-            output.Add(")");
-        }
-
-        protected override void TranslateArrayGet(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("]");
-        }
-
-        protected override void TranslateArrayJoin(List<string> output, Expression array, Expression sep)
-        {
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(".join(");
-            this.Translator.TranslateExpression(output, array);
-            output.Add(")");
-        }
-
-        protected override void TranslateArrayLength(List<string> output, Expression list)
-        {
-            output.Add("len(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateAssert(List<string> output, Expression message)
-        {
-            output.Add("create_assertion(");
-            this.Translator.TranslateExpression(output, message);
             output.Add(")");
         }
 
@@ -144,16 +109,6 @@ namespace Crayon.Translator.Python
             output.Add("math.cos(");
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
-        }
-
-        // Not safe for dictionaries that can contain a value of None.
-        protected override void TranslateDictionaryContains(List<string> output, Expression dictionary, Expression key)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, dictionary);
-            output.Add(".get(");
-            this.Translator.TranslateExpression(output, key);
-            output.Add(", None) != None)");
         }
 
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
@@ -260,103 +215,6 @@ namespace Crayon.Translator.Python
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
             output.Add("(sys.platform == 'win32')");
-        }
-
-        protected override void TranslateListClear(List<string> output, Expression list)
-        {
-            output.Add("_clear_list(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListConcat(List<string> output, Expression listA, Expression listB)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, listA);
-            output.Add(" + ");
-            this.Translator.TranslateExpression(output, listB);
-            output.Add(")");
-        }
-
-        protected override void TranslateListInsert(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".insert(");
-            this.Translator.TranslateExpression(output, index);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateListJoin(List<string> output, Expression list, Expression sep)
-        {
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(".join(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListJoinChars(List<string> output, Expression list)
-        {
-            output.Add("''.join(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListLastIndex(List<string> output, Expression list)
-        {
-            output.Add("-1");
-        }
-
-        protected override void TranslateListLength(List<string> output, Expression list)
-        {
-            output.Add("len(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
-        }
-
-        protected override void TranslateListPop(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".pop()");
-        }
-
-        protected override void TranslateListPush(List<string> output, Expression list, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".append(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateListRemoveAt(List<string> output, Expression list, Expression index)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".pop(");
-            this.Translator.TranslateExpression(output, index);
-            output.Add(")");
-        }
-
-        protected override void TranslateListReverseInPlace(List<string> output, Expression list)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add(".reverse()");
-        }
-
-        protected override void TranslateListSet(List<string> output, Expression list, Expression index, Expression value)
-        {
-            this.Translator.TranslateExpression(output, list);
-            output.Add("[");
-            this.Translator.TranslateExpression(output, index);
-            output.Add("] = ");
-            this.Translator.TranslateExpression(output, value);
-        }
-
-        protected override void TranslateListShuffleInPlace(List<string> output, Expression list)
-        {
-            output.Add("random.shuffle(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(")");
         }
 
         protected override void TranslateMathLog(List<string> output, Expression value)
