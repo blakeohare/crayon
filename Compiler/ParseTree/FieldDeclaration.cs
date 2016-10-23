@@ -37,8 +37,6 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        private static readonly VariableIdAllocator EMPTY_ID_ALLOC = new VariableIdAllocator();
-
         internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Throws if it finds any variable.
