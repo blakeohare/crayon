@@ -1003,3 +1003,22 @@ function main() {
 }
 ```
 
+Here is the result:
+
+![Bad Kitty Demo](images/images_demo.jpg)
+
+There are actually quite a handful of drawing methods on the image object that let you do more interesting things than strictly copying it, such as drawing it at different opacities, sizes, angles, or only drawing certain portions of the image, which can all be found in the documentation for Graphics2D.GraphicsTexture.
+
+For example, you can make the image appear cropped and stretched...
+
+```crayon
+    image.drawRegionStretched(
+		0, 0, // screen top-left
+		windowWidth, windowHeight, // size on screen
+		151, 108, // original image crop top-left
+		80, 57); // original image crop size
+```
+
+![Bad Kitty Demo Crop/Stretch](images/images_demo_stretch.jpg)
+
+
