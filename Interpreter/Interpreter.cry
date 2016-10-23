@@ -364,7 +364,9 @@ function @type('List<Token>') generateTokenListFromPcs(@type('List<int>') pcs) {
 		} else {
 			token = $_list_get(localTokens, 0);
 			if (%%%IS_RELEASE%%%) {
-				if ($_list_length(output) > 0 || !tokenHelplerIsFilePathLibrary(Token$token.fileId, ProgramData$p.sourceCode)) {
+				if ($_list_length(output) > 0 ||
+					(token != null &&
+					!tokenHelplerIsFilePathLibrary(Token$token.fileId, ProgramData$p.sourceCode))) {
 					$_list_push(output, token);
 				}
 			} else {
@@ -379,7 +381,7 @@ function @type('List<Token>') generateTokenListFromPcs(@type('List<int>') pcs) {
 		@type('int') length = $_list_length(output);
 		while (length > 0) {
 			 token = $_list_get(output, length - 1); // top token
-			 if (tokenHelplerIsFilePathLibrary(Token$token.fileId, allFiles)) {
+			 if (token != null && tokenHelplerIsFilePathLibrary(Token$token.fileId, ProgramData$p.sourceCode)) {
 				$_list_pop(output);
 				length -= 1;
 			 } else {
@@ -483,16 +485,17 @@ function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance)
 	@type('List<int>') pcs = $_cast('List<int>', $_array_get(ObjectInstance$objInstance.nativeData, 1));
 	@type('string') codeFormattedPointer = '';
 	
-	@type('List<Token>') tokensAtPc = $_array_get(ProgramData$p.tokenData, $_list_get(pcs, 0));
-	if (tokensAtPc != null) {
-		codeFormattedPointer = $_string_concat("\n\n", tokenHelperGetFormattedPointerToToken($_list_get(tokensAtPc, 0)));
-	}
 	@type('string') exceptionName = ClassInfo$classInfo.fullyQualifiedName;
 	@type('string') message = valueToString($_array_get(ObjectInstance$objInstance.members, 1));
 	@type('List<string>') trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
 	$_list_pop(trace);
 	$_list_push(trace, "Stack Trace:");
 	$_list_reverse_in_place(trace);
+	
+	@type('List<Token>') tokensAtPc = $_array_get(ProgramData$p.tokenData, $_list_get(pcs, 0));
+	if (tokensAtPc != null) {
+		codeFormattedPointer = $_string_concat("\n\n", tokenHelperGetFormattedPointerToToken($_list_get(tokensAtPc, 0)));
+	}
 
 	@type('string') stackTrace = $_array_join(trace, "\n");
 	return $_string_concat(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
