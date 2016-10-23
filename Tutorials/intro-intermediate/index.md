@@ -13,7 +13,7 @@ source code of the virtual machine coupled with the compiled byte code of your p
 If you have not [downloaded](http://crayonlang.org/download) Crayon and [set up
 your environment](http://crayonlang.org/download/installation), please do so now.
 	
-# [Creating a Hello World Project](#hello-world)
+# Creating a Hello World Project
 	
 Create a new directory caled HelloWorld for your project somewhere. Create two subdirectories called
 'source' and 'output' in here.
