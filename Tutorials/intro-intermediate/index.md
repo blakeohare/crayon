@@ -1,5 +1,18 @@
 # Introduction to Crayon for Intermediate Programmers
 
+- [Creating a Hello World Project](#creating-a-hello-world-project)
+- [Code structure and Execution Starting Point](#code-structure-and-execution-starting-point)
+- [Types, Variables, and Math](#types-variables-and-math)
+	- [Incremental Assignment](#incremental-assignment)
+- [Control Flow](#control-flow)
+	- [If Statements](#if-statements)
+	- [While Loops](#while-loops)
+	- [For Loops](#for-loops)
+	- [Do-While Loops](#do-while-loops)
+	- [Switch Statements](#switch-statements)
+- [Built in Libraries](#built-in-libraries)
+- [A Bare Bones "Game"](#a-bare-bones-game)
+
 This tutorial is geared towards programmers who already know at least one or two other programming
 languages. It will avoid explaining conceptual fundamentals such as strings, if statements, while
 loops, etc. and instead focus on porting your existing knowledge of these language-independent
