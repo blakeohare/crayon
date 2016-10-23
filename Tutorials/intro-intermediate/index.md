@@ -760,16 +760,16 @@ Dictionaries, like lists, also have fields and methods. This table lists all of 
 
 | Operation | Description | Complexity |
 | --- | --- | --- |
-| .length | Returns the size of the dictionary. This is a field, not a method, so parenthesis are not required. | O(1) |
-| .clear() | Empties the dictionary and sets the size to 0. | O(1) |
-| .clone() | Returns a new shallow copy of the dictionary. | O(n) |
-| .contains(key) | Checks to see if the given key exists in the dictionary. | O(1) |
-| .get(key) | Returns the value that has the given key if it exists. If it doesn't exists, returns null. | O(1) |
-| .get(key, defaultValue) | Returns the value that has the given key. If the key does not exist, then return the given default value instead. | O(1) |
-| .keys() | Returns a list of all the keys in the dictionary. The order that is returned is not deterministic and may vary, especially from platform to platform. | O(n) |
-| .merge(anotherDictionary) | Takes all the keys from the given dictionary and adds them and their values to the original dictionary. They must have the same key type. This method does not have a return value. | O(n) |
-| .remove(key) | Removes the item with the given key. If the item does not exist, this generates an error. | O(1) |
-| .values() | Returns a list of all the values in the dictionary. The order that is returned is also not deterministic. You may not assume that this order corresponds to the same order returned by the keys. | O(n) |
+| **.length** | Returns the size of the dictionary. This is a field, not a method, so parenthesis are not required. | O(1) |
+| **.clear()** | Empties the dictionary and sets the size to 0. | O(1) |
+| **.clone()** | Returns a new shallow copy of the dictionary. | O(n) |
+| **.contains(key)** | Checks to see if the given key exists in the dictionary. | O(1) |
+| **.get(key)** | Returns the value that has the given key if it exists. If it doesn't exists, returns null. | O(1) |
+| **.get(key, defaultValue)** | Returns the value that has the given key. If the key does not exist, then return the given default value instead. | O(1) |
+| **.keys()** | Returns a list of all the keys in the dictionary. The order that is returned is not deterministic and may vary, especially from platform to platform. | O(n) |
+| **.merge(anotherDictionary)** | Takes all the keys from the given dictionary and adds them and their values to the original dictionary. They must have the same key type. This method does not have a return value. | O(n) |
+| **.remove(key)** | Removes the item with the given key. If the item does not exist, this generates an error. | O(1) |
+| **.values()** | Returns a list of all the values in the dictionary. The order that is returned is also not deterministic. You may not assume that this order corresponds to the same order returned by the keys. | O(n) |
 
 Note that when you use object instances as keys, the pointer value is used as the index like an integer. Similar objects will not create key collisions. They must be the same reference.
 
@@ -1012,13 +1012,68 @@ There are actually quite a handful of drawing methods on the image object that l
 For example, you can make the image appear cropped and stretched...
 
 ```crayon
-    image.drawRegionStretched(
-		0, 0, // screen top-left
-		windowWidth, windowHeight, // size on screen
-		151, 108, // original image crop top-left
-		80, 57); // original image crop size
+image.drawRegionStretched(
+	0, 0, // screen top-left
+	windowWidth, windowHeight, // size on screen
+	151, 108, // original image crop top-left
+	80, 57); // original image crop size
 ```
 
 ![Bad Kitty Demo Crop/Stretch](images/images_demo_stretch.jpg)
+
+## Asynchronous Image Loading
+
+You can load images asynchronously. Instead of invoking `ImageLoader.loadFromResources(path)` call `ImageLoader.loadFromResourcesAsync(path)`. This will return an `ImageLoader` instance instead of an ImageResource. An ImageLoader has `.isDone()` and `.getImage()` methods. `.isDone()` returns a boolean and once it starts returning true, you can call `.getImage()` which returns the image resource.
+
+## Image Sheets
+
+Loading individual images is tedious, both from a code perspective and a CPU perspective. If you lots of tiny images and export to JavaScript, that will equate to millions of tiny HTTP requests. With a slight delay for each, your program will load really slowly and likely just get shut down by the browser as an unresponsive page. If those thousands of tiny images (imagine a retro style adventure game with lots of 16x16 tiles) were all stored in one massive image, that image would take a second or two to load. Which is really good, not only for minimizing HTTP chattiness, but also loading from a slow hard drive.
+
+The notion of ImageSheets are built into the ImageResources library and build file. 
+
+An image sheet is a logical collection of images defined by a series of file prefixes. At compile time, these image resources will be combined into large sheets of images. ImageResources will load these as single images, but still return individual ImageResource instances that behave exactly like their original non-aggregated counterpart.
+
+Here's an example of a series of ImageSheet definitions:
+
+```xml
+<build>
+  
+  ...
+  
+  <!-- Image sheets -->
+  <imagesheets>
+    <sheet id="sprites">
+      <prefix>images/player/</prefix>
+      <prefix>images/enemies/</prefix>
+      <prefix>images/items/</prefix>
+    </sheet>
+    <sheet id="tiles">
+      <prefix>images/tiles/</prefix>
+    </sheet>
+    <sheet id="everything_else">
+      <prefix>*</prefix>
+    </sheet>
+  </imagesheets>
+  
+  ...
+
+</build>
+```
+
+In order to load these, you must use `ImageSheet` instead of `ImageLoader`. Like ImageLoader, image sheets can be loaded either synchronously or asynchronously.
+
+```crayon
+imageSheet = ImageSheet.loadFromResources(sheetId);
+
+...
+
+imageSheet = ImageSheet.loadFromResourcesAsync(sheetId);
+```
+
+For asynchronous loading image sheets, there are two methods to check the current status: 
+* `imageSheet.isDone()` returns a boolean if it is done.
+* `imageSheet.getProgress()` returns a float ratio between 0.0 and 1.0.
+
+After loading is complete, images can be accessed using `imageSheet.getImage(path)` which will synchronously return an ImageResource instance.
 
 
