@@ -101,7 +101,7 @@ for help.
 If it worked, you'll notice there is now a folder called "output" which contains a folder called
 "python". In this folder there is an game.py which will display the following message when run:
 
-![Hello World](./images/helloworld.png | width=600)
+![Hello World](./images/helloworld.png)
 
 Congratulations on running your first Crayon program.
 
