@@ -497,7 +497,7 @@ function @type('string') unrollExceptionOutput(@type('Value') exceptionInstance)
 		codeFormattedPointer = $_string_concat("\n\n", tokenHelperGetFormattedPointerToToken($_list_get(tokensAtPc, 0)));
 	}
 
-	@type('string') stackTrace = $_array_join(trace, "\n");
+	@type('string') stackTrace = $_list_join(trace, "\n");
 	return $_string_concat(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
 }
 
