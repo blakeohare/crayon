@@ -557,3 +557,389 @@ C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
 
 Run it and you'll see the following...
 
+![Bare Bones Game](images/bare-bones-game.png)
+
+The box changes color every time you press a key. Let's change it so that it only changes color when the user presses the space bar and it also moves around when the user presses and holds the arrow keys...
+
+```crayon
+import Game;
+import GFX;
+
+function main() {
+  title = "Test Game";
+  fps = 30;
+  windowWidth = 640;
+  windowHeight = 480;
+  window = new Game.GameWindow(title, fps, windowWidth, windowHeight);
+
+  color = "red";
+
+  // This is a dictionary. It will track the state of each arrow key.
+  keysPressed = {
+    "left": false,
+    "right": false,
+    "up": false,
+    "down": false,
+  }
+  left = 200;
+  top = 100;
+
+  while (true) {
+    events = window.pumpEvents();
+    for (event : events) {
+      if (event.type == Game.EventType.QUIT) {
+        return;
+      }
+
+      // if the user presses any key...
+      if (event.type == Game.EventType.KEY_DOWN || event.type == Game.EventType.KEY_UP) {
+        isPress = event.type == Game.EventType.KEY_DOWN;
+        switch (event.key) {
+          case Game.KeyboardKey.SPACE:
+            if (isPress) {
+              if (color == "red") {
+                color = "blue";
+              } else {
+                color = "red";
+              }
+            }
+            break;
+          case Game.KeyboardKey.LEFT:
+            keysPressed["left"] = isPress;
+            break;
+          case Game.KeyboardKey.RIGHT:
+            keysPressed["right"] = isPress;
+            break;
+          case Game.KeyboardKey.UP:
+            keysPressed["up"] = isPress;
+            break;
+          case Game.KeyboardKey.DOWN:
+            keysPressed["down"] = isPress;
+            break;
+        }
+      }
+    }
+
+    velocity = 4;
+    if (keysPressed["left"]) x -= velocity;
+    if (keysPressed["right"]) x += velocity;
+    if (keysPressed["up"]) y -= velocity;
+    if (keysPressed["down"]) y += velocity;
+
+    GFX.Draw.fill(0, 0, 0); // fill the screen with black
+
+    width = 50;
+    height = 50;
+
+    // determine color for the box.
+    if (color == "red") {
+      r = 255;
+      g = 0;
+      b = 0;
+    } else {
+      r = 0;
+      g = 0;
+      b = 255;
+    }
+
+    // draw the box
+    GFX.Draw.rectangle(x, y, width, height, r, g, b);
+
+    window.clockTick();
+  }
+}
+```
+
+I'd totally show a screenshot of the new program, but it looks unremarkably different than the previous screenshot.
+
+# Lists and Dictionaries
+
+## Lists
+
+Lists are ordered collections of values. They are denoted with square brackets, [], where the values in the list are delimited by commas.
+
+```crayon
+things = ["a", "b", "c"];
+```
+
+To extract an item from a list, place brackets after the list with the integer index of the item in the list.
+
+```crayon
+things = ["a", "b", "c"];
+firstItem = things[0];
+lastItem = things[2];
+```
+
+The index counts from 0 and must always be an integer type. Floats that happen to be whole numbers are not valid indexes.
+
+To add an item to a list, there is a method called add which will add a new item to the end of the list.
+
+```crayon
+things = ["a", "b", "c"];
+things.add("d");
+```
+
+Here is a list of all the methods and fields that can be called on a list, what they do, and their complexity as a function of the length of the list.
+
+| Operation | Description | Complexity |
+| --- | --- | --- |
+| **.length** | Returns the length of the list. This is a field, not a method, so parenthesis are not required. | O(1) |
+| **.add(item)** | Adds an item to the end of a list. | O(1) amortized |
+| **.choice()** | Returns a random item from the list. | O(1) |
+| **.clear()**	Removes all elements of the list and changes size to 0. | O(1) |
+| **.clone()** | Returns a shallow copy of the list. | O(n) |
+| **.concat(secondList)** | Appends all the items in the secondList to the end of this list. | O(n) |
+| **.contains(item)** | Returns true if the list contains the given item. Iterates sequentially through the list from the beginning and uses the same logic as == for comparing each item. | O(n) |
+| **.filter(function)** | Returns a new copy of the list with some items removed. The function passed in should return true or false and take in one argument, which will be used on each item in the list. Returning true means the item will be preserved in the new copy. | O(n * f(item)) |
+| **.insert(index, item)** | Inserts an element into the list such that it will exist at the given index. | O(n) |
+| **.join(separator)** | Joins the list together into one string, using the given separator to delimit the items. Uses the same logic to conver the items to a string as when you append the item to a string (e.g. "" + foo) | O(n) |
+| **.map(function)** | Returns a new list where the given function has been called on each of the items. The new list is all the return values from the function. | O(n * f(item)) |
+| **.pop()** | Removes the last item from the list. Does not return anything. | O(1) |
+| **.remove(index)** | Removes the item in the list at the given index. | O(n) |
+| **.reverse()** | Reverses the list in place. Does not return a copy. | O(n) |
+| **.shuffle()** | Randomizes the order of the list. | O(n) |
+| **.sort()** | Sorts the list if it contains only strings or integers. | O(n log n) |
+| **.sort(function)** | Sorts the list. The given function should return a sort key that can be used for sorting. Sort keys must be numbers or strings. | O(n log n + n * f(item)) |
+
+## Dictionaries
+
+In the game example, I snuck in an example of a dictionary, in hopes that you'd go along with it by context:
+
+```crayon
+keysPressed = {
+  "up": false,
+  "down": false,
+  "left": false,
+  "right": false
+};
+```
+
+Dictionaries are values that allow you to store multiple values in one value. The members of a dictionary (those 4 falses) can be looked up and accessed via some sort of unique key (the 4 strings). A dictionary cannot hold multiple values per key, however a value can be a list.
+
+The keys of a dictionary must be either integers, strings, or object instances but you cannot intermix both. The values of a dictionary can be any type, even mixed in the same dictionary.
+
+The following is perfectly valid:
+
+```crayon
+myDictionary = {
+  4: false,
+  10: "Ponies",
+  -3: null,
+  928375811: { "Hey, look!": "A nested dictionary!" }
+};
+```
+
+However, this is not valid:
+
+```crayon
+myDictionary = {
+  1: true,
+  "one": true
+};
+```
+
+Items in the dictionary are access by their keys, using brackets, much like lists.
+
+```crayon
+myDictionary = {
+  "a": 1,
+  "b": 2,
+  "c": 3
+};
+print(myDictionary["b"]); // 2
+print(myDictionary["d"]); // error! D:
+```
+
+Adding an item to a dictionary is also done with brackets...
+
+```crayon
+myDictionary["x"] = 24;
+```
+
+Dictionaries, like lists, also have fields and methods. This table lists all of them:
+
+| Operation | Description | Complexity |
+| --- | --- | --- |
+| .length | Returns the size of the dictionary. This is a field, not a method, so parenthesis are not required. | O(1) |
+| .clear() | Empties the dictionary and sets the size to 0. | O(1) |
+| .clone() | Returns a new shallow copy of the dictionary. | O(n) |
+| .contains(key) | Checks to see if the given key exists in the dictionary. | O(1) |
+| .get(key) | Returns the value that has the given key if it exists. If it doesn't exists, returns null. | O(1) |
+| .get(key, defaultValue) | Returns the value that has the given key. If the key does not exist, then return the given default value instead. | O(1) |
+| .keys() | Returns a list of all the keys in the dictionary. The order that is returned is not deterministic and may vary, especially from platform to platform. | O(n) |
+| .merge(anotherDictionary) | Takes all the keys from the given dictionary and adds them and their values to the original dictionary. They must have the same key type. This method does not have a return value. | O(n) |
+| .remove(key) | Removes the item with the given key. If the item does not exist, this generates an error. | O(1) |
+| .values() | Returns a list of all the values in the dictionary. The order that is returned is also not deterministic. You may not assume that this order corresponds to the same order returned by the keys. | O(n) |
+
+Note that when you use object instances as keys, the pointer value is used as the index like an integer. Similar objects will not create key collisions. They must be the same reference.
+
+# Using the Mouse
+ 
+Now let's modify the rectangle moving "game" to move to where the user clicks the mouse.
+
+Just like how the previous version of our game checked for events of type `KEY_DOWN` and `KEY_UP`, there is also `MOUSE_LEFT_DOWN`, `MOUSE_LEFT_UP`, `MOUSE_RIGHT_DOWN`, `MOUSE_RIGHT_UP`, and `MOUSE_MOVE`. If the event is any type of mouse event, then there are `x` and `y` fields on the event objects, which return the integer coordinates of where the event took place.
+
+In the following example, the x and y coordinates of the most recent `MOUSE_LEFT_DOWN` event are stored as target coordinates, which the rectangle eases towards. It does this by storing the current coordinates in a separate set of variables and then moving those current coordinates closer to the target coordinates using a weighted average of the two.
+
+```crayon
+import Game;
+import GFX;
+
+function main() {
+  title = "Test Game";
+  fps = 30;
+  windowWidth = 640;
+  windowHeight = 480;
+  window = new Game.GameWindow(title, fps, windowWidth, windowHeight);
+
+  currentLeft = 200;
+  currentTop = 100;
+  targetLeft = currentLeft;
+  targetTop = currentTop;
+
+  boxWidth = 50;
+  boxHeight = 50;
+
+  while (true) {
+    events = window.pumpEvents();
+    for (event : events) {
+      switch (event.type) {
+        case Game.EventType.QUIT:
+          return;
+        case Game.EventType.MOUSE_LEFT_DOWN:
+          targetX = event.x - boxWidth / 2;
+          targetY = event.y - boxHeight / 2;
+          break;
+      }
+    }
+
+    // remember that integer math will preserve numbers as integers. These won't turn into decimals.
+    currentLeft = (9 * currentLeft + targetLeft) / 10;
+    currentTop = (9 * currentTop + targetTop) / 10;
+
+    GFX.Draw.fill(0, 0, 0); // fill the screen with black
+
+    // draw the box
+    GFX.Draw.rectangle(currentLeft, currentTop, boxWidth, boxHeight, 255, 0, 0);
+
+    window.clockTick();
+  }
+}
+```
+
+Again, I'd love to post a screenshot, but visually, it really looks no different than before.
+
+# More Advanced Drawing
+
+In addition to rectangles, you can also draw ellipses and lines.
+
+```crayon
+GFX.Draw.ellipse(left, top, width, height, red, green, blue, alpha);
+```
+
+Basically the function for drawing an ellipse is completely identical to drawing a rectangle. It just inscribes an ellipse into the rectangle you lay out.
+
+Drawing a line is slightly differnt...
+
+```crayon
+GFX.Draw.line(startX, startY, endX, endY, lineWidth, red, green, blue, alpha);
+```
+
+This draws a line from the starting coordinates to the ending coordinates with the given width and color.
+
+The following is a simple demo app that draws a clock face of the current time.
+
+I will use this opportunity to randomly mention that you can define variables outside of functions if the value does not change. These are called constants and use the `const` keyword. It's customary to name constant values in ALL_CAPS with underscores delimiting the words.
+
+```crayon
+import Game;
+import GFX;
+import Math;
+
+const FPS = 30;
+const SCREEN_WIDTH = 640;
+const SCREEN_HEIGHT = 480;
+const CENTER_X = SCREEN_WIDTH / 2;
+const CENTER_Y = SCREEN_HEIGHT / 2;
+const CLOCK_RADIUS = 220;
+const NOTCH_RADIUS = 200;
+const MINUTE_HAND_RADIUS = CLOCK_RADIUS - 10;
+const HOUR_HAND_RADIUS = CLOCK_RADIUS * 3 / 5;
+const SECOND_HAND_RADIUS = MINUTE_HAND_RADIUS;
+
+function main() {
+  window = new GameWindow("Current Time", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  while (true) {
+    // No matter how furious you click or type, the time will not change.
+    ignoredEvents = window.pumpEvents();
+
+    epochTime = Math.floor(Core.currentTime());
+    clockTime = epochTime % (60 * 60 * 12); // mod the time by 12 hours
+
+    second = clockTime % 60;
+    totalMinutes = clockTime / 60;
+    minute = totalMinutes % 60;
+    hour = totalMinutes / 60; 
+
+    // Draw the clock face.
+    GFX.Draw.ellipse(
+      CENTER_X - CLOCK_RADIUS,
+      CENTER_Y - CLOCK_RADIUS,
+      CLOCK_RADIUS * 2,
+      CLOCK_RADIUS * 2,
+      255, 255, 255); // white
+
+    // Draw 12 notches
+    for (i = 0; i < 12; ++i) {
+      // Warning: trigonometry ahead
+
+      // Just like above in our code, libraries sometimes have their own const values. Like Math.PI.
+      angle = i * 2 * Math.PI / 12;
+      x = Math.floor(Math.cos(angle) * NOTCH_RADIUS) + CENTER_X;
+      y = Math.floor(Math.sin(angle) * NOTCH_RADIUS) + CENTER_Y;
+      GFX.Draw.rectangle(
+        x - 10, y - 10, 20, 20, 
+        0, 128, 255); // a nice shade of blue
+    }
+
+    hourAngle = 2 * Math.PI * hour / 12.0;
+    minuteAngle = 2 * Math.PI * minute / 60.0;
+    secondAngle = 2 * Math.PI * second / 60.0;
+
+    // the clock hands are oriented such that they point up at "time 0" so
+    // the sin and cos are swapped from what you're typically used to.
+    hour_x = CENTER_X + Math.floor(Math.sin(hour_angle) * HOUR_HAND_RADIUS);
+    hour_y = CENTER_Y - Math.floor(Math.cos(hour_angle) * HOUR_HAND_RADIUS);
+    minute_x = CENTER_X + Math.floor(Math.sin(minute_angle) * MINUTE_HAND_RADIUS);
+    minute_y = CENTER_Y - Math.floor(Math.cos(minute_angle) * MINUTE_HAND_RADIUS);
+    second_x = CENTER_X + Math.floor(Math.sin(second_angle) * SECOND_HAND_RADIUS);
+    second_y = CENTER_Y - Math.floor(Math.cos(second_angle) * SECOND_HAND_RADIUS);
+
+    GFX.Draw.line(hour_x, hour_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    GFX.Draw.line(minute_x, minute_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    GFX.Draw.line(second_x, second_y, CENTER_X, CENTER_Y, 3, 0, 0, 0, 255);
+
+    // name unrelated to the fact that we're rendering a ticking clock...
+    window.clockTick();
+  }
+}
+```
+
+The result of which will look something like this...
+
+![clock image](clock.png)
+
+# Images
+
+For most normal 2D games, you'll mostly be using images rather than raw geometry.
+
+To include an image in the program's resources, place it somewhere within the directory as your code. The path relative to the root of the build file's `source` is the path that will be used to load it. For example, if you put a file called `foo.png` inside a directory called `images`, which is in the folder pointed at by `<source>` in the build file, then you would load it as `images/foo.png`.
+
+To initialize the asynchronous loading of an image, do the following...
+
+```crayon
+imageLoader = GFX.ImageLoader.fromResource("image/foo.png");
+```
+
+
