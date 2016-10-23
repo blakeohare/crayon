@@ -138,10 +138,8 @@ namespace Crayon
         {
             // If it's in the finally, then set status as 1 and jump to the last instruction
             // If it's in the try/catch, just set the status to 2 which will indicate use ESF data
-            bool isInFinally = !isInTryCatch;
             int[] byteCode;
             int size = this.Size;
-            int endOffset;
             for (int i = 0; i < size; ++i)
             {
                 byteCode = this.rows[i].ByteCode;
@@ -150,7 +148,6 @@ namespace Crayon
                     case OpCode.BREAK:
                     case OpCode.CONTINUE:
                     case OpCode.FINALLY_END:
-                        endOffset = size - i - 1;
                         if (isInTryCatch)
                         {
                             // Set the jump type to 2 which means just use the finally offset in the ESF data.
