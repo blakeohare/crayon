@@ -563,7 +563,7 @@ The box changes color every time you press a key. Let's change it so that it onl
 
 ```crayon
 import Game;
-import GFX;
+import Graphics2D;
 
 function main() {
   title = "Test Game";
@@ -626,7 +626,7 @@ function main() {
     if (keysPressed["up"]) y -= velocity;
     if (keysPressed["down"]) y += velocity;
 
-    GFX.Draw.fill(0, 0, 0); // fill the screen with black
+    Graphics2D.Draw.fill(0, 0, 0); // fill the screen with black
 
     width = 50;
     height = 50;
@@ -643,7 +643,7 @@ function main() {
     }
 
     // draw the box
-    GFX.Draw.rectangle(x, y, width, height, r, g, b);
+    Graphics2D.Draw.rectangle(x, y, width, height, r, g, b);
 
     window.clockTick();
   }
@@ -783,7 +783,7 @@ In the following example, the x and y coordinates of the most recent `MOUSE_LEFT
 
 ```crayon
 import Game;
-import GFX;
+import Graphics2D;
 
 function main() {
   title = "Test Game";
@@ -817,10 +817,10 @@ function main() {
     currentLeft = (9 * currentLeft + targetLeft) / 10;
     currentTop = (9 * currentTop + targetTop) / 10;
 
-    GFX.Draw.fill(0, 0, 0); // fill the screen with black
+    Graphics2D.Draw.fill(0, 0, 0); // fill the screen with black
 
     // draw the box
-    GFX.Draw.rectangle(currentLeft, currentTop, boxWidth, boxHeight, 255, 0, 0);
+    Graphics2D.Draw.rectangle(currentLeft, currentTop, boxWidth, boxHeight, 255, 0, 0);
 
     window.clockTick();
   }
@@ -834,7 +834,7 @@ Again, I'd love to post a screenshot, but visually, it really looks no different
 In addition to rectangles, you can also draw ellipses and lines.
 
 ```crayon
-GFX.Draw.ellipse(left, top, width, height, red, green, blue, alpha);
+Graphics2D.Draw.ellipse(left, top, width, height, red, green, blue, alpha);
 ```
 
 Basically the function for drawing an ellipse is completely identical to drawing a rectangle. It just inscribes an ellipse into the rectangle you lay out.
@@ -842,7 +842,7 @@ Basically the function for drawing an ellipse is completely identical to drawing
 Drawing a line is slightly differnt...
 
 ```crayon
-GFX.Draw.line(startX, startY, endX, endY, lineWidth, red, green, blue, alpha);
+Graphics2D.Draw.line(startX, startY, endX, endY, lineWidth, red, green, blue, alpha);
 ```
 
 This draws a line from the starting coordinates to the ending coordinates with the given width and color.
@@ -853,7 +853,7 @@ I will use this opportunity to randomly mention that you can define variables ou
 
 ```crayon
 import Game;
-import GFX;
+import Graphics2D;
 import Math;
 
 const FPS = 30;
@@ -883,7 +883,7 @@ function main() {
     hour = totalMinutes / 60; 
 
     // Draw the clock face.
-    GFX.Draw.ellipse(
+    Graphics2D.Draw.ellipse(
       CENTER_X - CLOCK_RADIUS,
       CENTER_Y - CLOCK_RADIUS,
       CLOCK_RADIUS * 2,
@@ -898,7 +898,7 @@ function main() {
       angle = i * 2 * Math.PI / 12;
       x = Math.floor(Math.cos(angle) * NOTCH_RADIUS) + CENTER_X;
       y = Math.floor(Math.sin(angle) * NOTCH_RADIUS) + CENTER_Y;
-      GFX.Draw.rectangle(
+      Graphics2D.Draw.rectangle(
         x - 10, y - 10, 20, 20, 
         0, 128, 255); // a nice shade of blue
     }
@@ -916,9 +916,9 @@ function main() {
     second_x = CENTER_X + Math.floor(Math.sin(second_angle) * SECOND_HAND_RADIUS);
     second_y = CENTER_Y - Math.floor(Math.cos(second_angle) * SECOND_HAND_RADIUS);
 
-    GFX.Draw.line(hour_x, hour_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
-    GFX.Draw.line(minute_x, minute_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
-    GFX.Draw.line(second_x, second_y, CENTER_X, CENTER_Y, 3, 0, 0, 0, 255);
+    Graphics2D.Draw.line(hour_x, hour_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    Graphics2D.Draw.line(minute_x, minute_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    Graphics2D.Draw.line(second_x, second_y, CENTER_X, CENTER_Y, 3, 0, 0, 0, 255);
 
     // name unrelated to the fact that we're rendering a ticking clock...
     window.clockTick();
@@ -928,18 +928,78 @@ function main() {
 
 The result of which will look something like this...
 
-![clock image](clock.png)
+![clock image](images/clock.png)
 
 # Images
 
 For most normal 2D games, you'll mostly be using images rather than raw geometry.
 
-To include an image in the program's resources, place it somewhere within the directory as your code. The path relative to the root of the build file's `source` is the path that will be used to load it. For example, if you put a file called `foo.png` inside a directory called `images`, which is in the folder pointed at by `<source>` in the build file, then you would load it as `images/foo.png`.
+To include an image in the program's resources, place it somewhere within the directory as your code. The path relative to the root of the build file's `<source>` is the path that will be used to load it. For example, if you put a file called `foo.png` inside a directory called `images`, which is in the folder pointed at by `<source>` in the build file, then you would load it as `images/foo.png`.
 
-To initialize the asynchronous loading of an image, do the following...
+To load the image, do the following...
 
 ```crayon
-imageLoader = GFX.ImageLoader.fromResource("image/foo.png");
+import ImageResources;
+
+...
+
+rawImageResource = ImageLoader.loadFromResources("images/foo.png");
 ```
 
+`rawImageResource` is now exactly that, a rawImageResource that represents a bitmap. With the resource, you can do various things with it using libraries such as edit the pixels, upload the image somewhere, but in our case, we're interested in getting it to appear on the screen. In order to do this, the image needs to be loaded into the graphics engine...
+
+```crayon
+import Graphics2D;
+import ImageResources;
+
+...
+
+rawImage = ImageLoader.loadFromResource("images/foo.png");
+usableImage = GraphicsTexture.load(rawImage);
+
+...
+
+usableImage.draw(0, 0);
+```
+
+`GraphicsTexture.load` returns an instance of a GraphicsTexture object from an ImageResource object that can be used to display the image on the screen. The coordinates indicate where you want the top left portion of the image to appear.
+
+Here's an end-to-end example. The following image is `images/bad_kitty.jpg` which exists in the `<source>` directory.
+
+![Bad Kitty](images/bad_kitty.jpg)
+
+```crayon
+import Game;
+import Graphics2D;
+import ImageResources;
+
+function main() {
+  title = "Images";
+  fps = 30;
+  windowWidth = 640;
+  windowHeight = 480;
+  window = new Game.GameWindow(title, fps, windowWidth, windowHeight);
+  
+  rawImage = ImageLoader.loadFromResources('images/bad_kitty.jpg');
+  image = GraphicsTexture.load(rawImage);
+
+  while (true) {
+
+    events = window.pumpEvents();
+    for (event : events) {
+      if (event.type == Game.EventType.QUIT) {
+        return;
+      }
+
+    }
+
+    Graphics2D.Draw.fill(0, 0, 0);
+
+    // Display bad_kitty.jpg in the top left corner with a 20 pixel margin
+    image.draw(20, 20); 
+
+    window.clockTick();
+  }
+}
+```
 
