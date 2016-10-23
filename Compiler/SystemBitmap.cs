@@ -1,4 +1,6 @@
-﻿namespace Crayon
+﻿using System.Collections.Generic;
+
+namespace Crayon
 {
     /**
      * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
@@ -79,6 +81,7 @@
 #elif OSX
                 this.context = new Cairo.Context(owner.bitmap);
 #endif
+                undisposed.Add(this);
             }
 
             public void Blit(SystemBitmap bmp, int x, int y)
@@ -92,6 +95,8 @@
 #endif
             }
 
+            private static List<Graphics> undisposed = new List<Graphics>();
+
             public void Cleanup()
             {
 #if WINDOWS
@@ -99,6 +104,16 @@
 #elif OSX
                 this.context.Dispose();
 #endif
+                undisposed.Remove(this);
+            }
+
+            public static void EnsureCleanedUp()
+            {
+                if (undisposed.Count > 0)
+                {
+                    // Did not call Cleanup() on a graphics instance.
+                    throw new System.InvalidOperationException();
+                }
             }
         }
     }

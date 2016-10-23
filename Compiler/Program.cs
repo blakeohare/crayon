@@ -26,6 +26,7 @@ namespace Crayon
 #if DEBUG
             // First chance exceptions should crash in debug builds.
             Program.Compile(args);
+            SystemBitmap.Graphics.EnsureCleanedUp();
 #else
 
             if (args.Length == 0)

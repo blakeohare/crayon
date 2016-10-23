@@ -69,6 +69,14 @@ namespace Crayon.ImageSheets
 
                 this.Tiles = new List<Tile>(tiles.Where(t => t != null));
             }
+
+            foreach (SystemBitmap.Graphics graphicsInstance in graphics)
+            {
+                if (graphicsInstance != null)
+                {
+                    graphicsInstance.Cleanup();
+                }
+            }
         }
     }
 }
