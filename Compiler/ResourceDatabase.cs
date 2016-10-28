@@ -177,7 +177,11 @@ namespace Crayon
                             this.ImageResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
-                                RelativeInputPath = FileUtil.JoinPath(sourceRoot, originalFilepath),
+                                // still load into a bitmap as the width and height are needed.
+                                // TODO: eventually clean this up so I don't need to do this or put width and 
+                                // height into the FileOutput so that I don't have to keep this resource in memory.
+                                Bitmap = new SystemBitmap(FileUtil.JoinPath(sourceRoot, originalFilepath)),
+                                RelativeInputPath = originalFilepath,
                                 OriginalPath = originalFilepath,
                             });
                         }
