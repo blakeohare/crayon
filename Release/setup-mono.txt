@@ -1,0 +1,26 @@
+=== VERIFYING MONO ===
+
+In order to run Crayon, you must have mono installed. To test if you have mono, open a bash shell
+and type "mono" and see if usage notes are displayed. If you see "command not found", then you need
+to install it: http://www.mono-project.com/download/
+
+
+=== SETTING UP CRAYON ===
+
+Once you have verified mono is ready, create a directory called Crayon in a location where you don't
+mind for Crayon to reside.
+
+For example, /Users/yourname/Crayon
+I will use this directory as an example through the rest of this document. Any directory will do.
+
+Copy the entire contents of this directory (where this file you are reading is) to /Users/yourname/Crayon
+
+Edit your ~/.bash_profile file and add the following lines:
+
+export CRAYON_HOME=/Users/yourname/Crayon
+alias crayon='mono $CRAYON_HOME/crayon.exe'
+
+Restart any bash shell windows you may have open.
+
+To see if everything is working correctly, open a bash shell and type "crayon" (without quotes) 
+and you should see usage notes.
