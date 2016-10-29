@@ -42,8 +42,8 @@ function main() {
 		
 		x = dotLocation[0];
 		y = dotLocation[1];
-		width = 12;
-		height = 12;
+		width = 50;
+		height = 50;
 		left = x - width / 2;
 		top = y - height / 2;
 		
