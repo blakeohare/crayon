@@ -15,3 +15,4 @@ Luckily the UserData library abstracts all of these methods for the developer an
 
 Most of the UserData library mirrors very closely to the FileIO library. To illustrate it in action, this tutorial is just a simple demo program with a blue dot that will appear the last place you click in the window. When you close the program and restart it, the dot will start in the last position it appeared previously.
 
+![UserData Tutorial Preview](preview.png)
