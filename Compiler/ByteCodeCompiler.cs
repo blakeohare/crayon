@@ -946,7 +946,14 @@ namespace Crayon
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
             else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
             else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
+            else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else throw new NotImplementedException();
+        }
+
+        private void CompileClassReferenceLiteral(Parser parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)
+        {
+            if (!outputUsed) throw new ParserException(classRef.FirstToken, "This class reference expression does nothing.");
+            buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
         }
 
         private static void EnsureUsed(Token token, bool outputUsed)

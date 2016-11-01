@@ -165,6 +165,11 @@ namespace Crayon.ParseTree
                     return new FieldReference(this.FirstToken, fieldDec, this.FunctionOrClassOwner);
                 }
 
+                if (field == "class")
+                {
+                    return new ClassReferenceLiteral(this.FirstToken, cd, this.FunctionOrClassOwner);
+                }
+
                 // TODO: nested classes, enums, constants
 
                 // TODO: show spelling suggestions.
@@ -264,6 +269,10 @@ namespace Crayon.ParseTree
                 // TODO: show suggestions in the error message for anything close to what was typed.
                 throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
             }
+
+            // This is done here in the resolver instead of the parser because some unallowed 
+            // field names (such as .class) are valid.
+            Parser.VerifyIdentifier(this.StepToken);
 
             return this;
         }

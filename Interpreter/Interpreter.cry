@@ -184,6 +184,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 	@type('StackFrame') stackFrame2 = null;
 	@type('Value') leftValue = null;
 	@type('Value') rightValue = null;
+	@type('ClassValue') classValue = null;
 
 	@type('int') op = 0;
 	@type('object') left = 0;

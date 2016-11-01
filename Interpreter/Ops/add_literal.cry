@@ -14,4 +14,12 @@ if (type == Types.NULL) {
 	$_list_push(ProgramData$p.literalTableBuilder, buildFloat($_string_parse_float($_array_get(stringArgs, pc))));
 } else if (type == Types.STRING) {
 	$_list_push(ProgramData$p.literalTableBuilder, buildCommonString($_array_get(stringArgs, pc)));
+} else if (type == Types.CLASS) {
+	
+	classValue = new ClassValue(
+		// TODO: going to need to update this for interfaces. Negative numbers too hacky?
+		false, // is interface? 
+		$_array_get(row, 1)); // class ID
+
+	$_list_push(ProgramData$p.literalTableBuilder, new Value(Types.CLASS, classValue));
 }

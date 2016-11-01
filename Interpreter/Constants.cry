@@ -114,8 +114,9 @@ enum Types {
 	DICTIONARY = %%%TYPE_ID_DICTIONARY%%%,
 	INSTANCE = %%%TYPE_ID_INSTANCE%%%,
 	FUNCTION = %%%TYPE_ID_FUNCTION%%%,
+	CLASS = %%%TYPE_ID_CLASS%%%,
 }
-const MAX_TYPE = Types.FUNCTION + 1;
+const MAX_TYPE = Types.CLASS + 1;
 
 enum InterpreterResultStatus {
 	FINISHED = 1,
@@ -153,6 +154,7 @@ enum PrimitiveMethodName {
 	CLONE,
 	CONCAT,
 	CONTAINS,
+	CREATE_INSTANCE,
 	ENDS_WITH,
 	FILTER,
 	GET,

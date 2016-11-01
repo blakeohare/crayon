@@ -241,7 +241,12 @@ namespace Crayon
                 {
                     Token dotToken = tokens.Pop();
                     Token stepToken = tokens.Pop();
-                    Parser.VerifyIdentifier(stepToken);
+                    // HACK alert: "class" is a valid field on a class. 
+                    // ParserVerifyIdentifier is invoked downstream for non-resolved fields.
+                    if (stepToken.Value != "class")
+                    {
+                        Parser.VerifyIdentifier(stepToken);
+                    }
                     root = new DotStep(root, dotToken, stepToken, owner);
                 }
                 else if (tokens.IsNext("["))

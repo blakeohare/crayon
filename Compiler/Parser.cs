@@ -70,6 +70,7 @@ namespace Crayon
         public int GetBoolConstant(bool value) { return this.literalLookup.GetBoolId(value); }
         public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
         public int GetNullConstant() { return this.literalLookup.GetNullId(); }
+        public int GetClassRefConstant(ClassDefinition value) { return this.literalLookup.GetClassRefId(value); }
 
         public int GetLiteralId(Expression value)
         {

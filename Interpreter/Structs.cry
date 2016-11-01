@@ -169,6 +169,12 @@ struct FunctionDefinition {
 	@type('string') name,
 }
 
+// Used as the internalValue of a Value instance for Class definition types.
+struct ClassValue {
+	@type('bool') isInterface,
+	@type('int') classId, // or interface ID (when that is eventually implemented)
+}
+
 struct ObjectInstance {
 	@type('int') classId,
 	@type('int') objectId,

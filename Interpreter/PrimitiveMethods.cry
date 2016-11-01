@@ -12,6 +12,7 @@
 	if ($_dictionary_contains(nameLookups, 'clone')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clone'), PrimitiveMethodName.CLONE);
 	if ($_dictionary_contains(nameLookups, 'concat')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'concat'), PrimitiveMethodName.CONCAT);
 	if ($_dictionary_contains(nameLookups, 'contains')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'contains'), PrimitiveMethodName.CONTAINS);
+	if ($_dictionary_contains(nameLookups, 'createInstance')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'createInstance'), PrimitiveMethodName.CREATE_INSTANCE);
 	if ($_dictionary_contains(nameLookups, 'endsWith')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'endsWith'), PrimitiveMethodName.ENDS_WITH);
 	if ($_dictionary_contains(nameLookups, 'filter')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'filter'), PrimitiveMethodName.FILTER);
 	if ($_dictionary_contains(nameLookups, 'get')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'get'), PrimitiveMethodName.GET);
@@ -81,6 +82,7 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
 			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.INVOKE:
+			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.CREATE_INSTANCE:
 				return output;
 			default:
 				return -1;

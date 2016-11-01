@@ -58,6 +58,11 @@ namespace Crayon
             return this.GetIdForValue("s" + value, Types.STRING, value);
         }
 
+        public int GetClassRefId(Crayon.ParseTree.ClassDefinition value)
+        {
+            return this.GetIdForValue("c" + value.ClassID, Types.CLASS, value.ClassID);
+        }
+
         public int GetNameId(string value)
         {
             int id;
@@ -95,6 +100,12 @@ namespace Crayon
                     case Types.STRING:
                         output.Add(null, OpCode.ADD_LITERAL, value.ToString(), (int)Types.STRING);
                         break;
+                    case Types.CLASS:
+                        output.Add(null, OpCode.ADD_LITERAL, (int)Types.CLASS, (int)value);
+                        break;
+                    default:
+                        // unknown literal type.
+                        throw new System.InvalidOperationException();
                 }
             }
 

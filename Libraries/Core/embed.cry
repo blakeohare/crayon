@@ -11,6 +11,7 @@ namespace Core {
 		DICTIONARY = 6,
 		OBJECT = 7,
 		FUNCTION = 8,
+		CLASS = 9,
 	}
 	
 	function assert(condition, message = null) {

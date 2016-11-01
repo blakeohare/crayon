@@ -11,5 +11,6 @@
         DICTIONARY = 7,
         INSTANCE = 8,
         FUNCTION = 9,
+        CLASS = 10,
     }
 }
