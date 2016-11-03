@@ -149,6 +149,8 @@ const INTEGER_NEGATIVE_CACHE = 100;
 
 enum PrimitiveMethodName {
 	ADD,
+	ARG_COUNT_MAX,
+	ARG_COUNT_MIN,
 	CHOICE,
 	CLEAR,
 	CLONE,
@@ -161,6 +163,7 @@ enum PrimitiveMethodName {
 	INDEX_OF,
 	INSERT,
 	INVOKE,
+	IS_A,
 	JOIN,
 	KEYS,
 	LOWER,

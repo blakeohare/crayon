@@ -7,6 +7,8 @@
 	}
 
 	if ($_dictionary_contains(nameLookups, 'add')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'add'), PrimitiveMethodName.ADD);
+	if ($_dictionary_contains(nameLookups, 'argCountMax')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'argCountMax'), PrimitiveMethodName.ARG_COUNT_MAX);
+	if ($_dictionary_contains(nameLookups, 'argCountMin')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'argCountMin'), PrimitiveMethodName.ARG_COUNT_MIN);
 	if ($_dictionary_contains(nameLookups, 'choice')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'choice'), PrimitiveMethodName.CHOICE);
 	if ($_dictionary_contains(nameLookups, 'clear')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clear'), PrimitiveMethodName.CLEAR);
 	if ($_dictionary_contains(nameLookups, 'clone')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'clone'), PrimitiveMethodName.CLONE);
@@ -19,6 +21,7 @@
 	if ($_dictionary_contains(nameLookups, 'indexOf')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'indexOf'), PrimitiveMethodName.INDEX_OF);
 	if ($_dictionary_contains(nameLookups, 'insert')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'insert'), PrimitiveMethodName.INSERT);
 	if ($_dictionary_contains(nameLookups, 'invoke')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'invoke'), PrimitiveMethodName.INVOKE);
+	if ($_dictionary_contains(nameLookups, 'isA')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'isA'), PrimitiveMethodName.IS_A);
 	if ($_dictionary_contains(nameLookups, 'join')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'join'), PrimitiveMethodName.JOIN);
 	if ($_dictionary_contains(nameLookups, 'keys')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'keys'), PrimitiveMethodName.KEYS);
 	if ($_dictionary_contains(nameLookups, 'lower')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'lower'), PrimitiveMethodName.LOWER);
@@ -81,8 +84,11 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.MERGE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.REMOVE:
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
+			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MAX:
+			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MIN:
 			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.INVOKE:
 			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.CREATE_INSTANCE:
+			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.IS_A:
 				return output;
 			default:
 				return -1;

@@ -530,6 +530,45 @@
 			$_list_reverse_in_place(list1);
 		}
 		break;
+
+	case 37: $_comment('reflectAllClasses');
+		list1 = $_new_list('Value');
+		output = new Value(Types.LIST, list1);
+		for (i = 1; i < $_array_length(ProgramData$p.classTable); i += 1) {
+			classInfo = $_array_get(ProgramData$p.classTable, i);
+			if (classInfo == null) {
+				// TODO: why is the class table not sized to its actual size?
+				i += $_array_length(ProgramData$p.classTable);
+			} else {
+				$_list_push(list1, new Value(Types.CLASS, new ClassValue(false, ClassInfo$classInfo.id)));
+			}
+		}
+		break;
+
+	case 38: $_comment('reflectGetMethods');
+		import inline "FrameworkFunctions/1_arg.cry";
+		list1 = $_new_list('Value');
+		output = new Value(Types.LIST, list1);
+		if (Value$arg1.type == Types.INSTANCE) {
+			objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+			classInfo = $_array_get(ProgramData$p.classTable, ObjectInstance$objInstance1.classId);
+			for (i = 0; i < $_array_length(ClassInfo$classInfo.functionIds); i += 1) {
+				functionId = $_array_get(ClassInfo$classInfo.functionIds, i);
+				if (functionId != -1) {
+					$_list_push(list1, new Value(Types.FUNCTION, new FunctionPointer(
+						FunctionPointerType.METHOD,
+						arg1,
+						ObjectInstance$objInstance1.classId,
+						functionId)));
+				}
+			}
+		} else {
+			classValue = $_cast('ClassValue', Value$arg1.internalValue);
+			classInfo = $_array_get(ProgramData$p.classTable, ClassValue$classValue.classId);
+			// all static method info is resolved at compile time.
+			return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

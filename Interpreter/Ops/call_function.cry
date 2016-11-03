@@ -159,22 +159,29 @@ if (bool1) {
 				// Note: a static constructor will never need to run because it will have already happened
 				// at the time that you fetched the class reference.
 
-				// As of right now, .createInstance(args) is the only possible value for functionId.
-				// If that changes, this code will need to be updated.
-				type = FunctionInvocationType.CONSTRUCTOR;
-				classValue = $_cast('ClassValue', Value$value.internalValue);
-				if (ClassValue$classValue.isInterface) {
-					return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
+				functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, Value$value.type, classId); // enum value in PrimitiveMethodName
+				if (functionId < 0) {
+					return $_exception(CoreExceptionTypes.INVALID_INVOCATION, $_string_concat(getTypeFromId(Value$value.type), " does not have that method."));
 				}
-				classId = ClassValue$classValue.classId;
-				if (!returnValueUsed) {
-					// This is kind of silly.
-					// Try removing it and verify there is no stack corruption.
-					return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
-				}
+				
+				if ($_array_get(globalNameIdToPrimitiveMethodName, classId) == PrimitiveMethodName.CREATE_INSTANCE) {
+					type = FunctionInvocationType.CONSTRUCTOR;
+					classValue = $_cast('ClassValue', Value$value.internalValue);
+					if (ClassValue$classValue.isInterface) {
+						return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
+					}
+					classId = ClassValue$classValue.classId;
+					if (!returnValueUsed) {
+						// TODO: This is kind of silly.
+						// Try removing it and verify there is no stack corruption.
+						return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
+					}
 
-				classInfo = $_array_get(ProgramData$p.classTable, classId);
-				functionId = ClassInfo$classInfo.constructorFunctionId;
+					classInfo = $_array_get(ProgramData$p.classTable, classId);
+					functionId = ClassInfo$classInfo.constructorFunctionId;
+				} else {
+					type = FunctionInvocationType.PRIMITIVE_METHOD;
+				}
 				break;
 
 			default:
@@ -293,7 +300,17 @@ if (bool1) {
 				$_comment('...on a function pointer');
 				functionPointer1 = $_cast('FunctionPointer', Value$value.internalValue);
 				switch (functionId) {
+					case PrimitiveMethodName.ARG_COUNT_MAX: import inline 'PrimitiveMethods/function_arg_count_max.cry'; break;
+					case PrimitiveMethodName.ARG_COUNT_MIN: import inline 'PrimitiveMethods/function_arg_count_min.cry'; break;
 					case PrimitiveMethodName.INVOKE: import inline 'PrimitiveMethods/function_invoke.cry'; break;
+					default: output = null; break;
+				}
+				break;
+			case Types.CLASS:
+				$_comment('...on a class definition');
+				classValue = $_cast('ClassValue', Value$value.internalValue);
+				switch (functionId) {
+					case PrimitiveMethodName.IS_A: import inline 'PrimitiveMethods/class_is_a.cry'; break;
 					default: output = null; break;
 				}
 				break;

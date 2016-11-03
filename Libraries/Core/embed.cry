@@ -186,7 +186,7 @@ namespace Core {
 			$$$('setNativeData', this, 0, true); // is fatal?
 		}
 	}
-	
+
 	class AssertionFailedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class DivisionByZeroException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
@@ -195,8 +195,35 @@ namespace Core {
 	class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class NotImplementedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class UnassignedVariableException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+	namespace Reflection {
+		function getClasses(commonBaseClass = null) {
+			output = $$$('reflectAllClasses');
+			if (commonBaseClass != null) {
+				filtered = [];
+				for (c : output) {
+					if (c.isA(commonBaseClass)) {
+						filtered.add(c);
+					}
+				}
+				return filtered;
+			}
+			return output;
+		}
+		
+		function getMethods(instanceOrClass) {
+			switch (Core.typeof(instanceOrClass)) {
+				case Core.Type.OBJECT:
+				case Core.Type.CLASS:
+					return $$$('reflectGetMethods', instanceOrClass);
+				default:
+					throw new Core.InvalidArgumentException("Can only get methods from an instance or class reference.");
+			}
+		}
+	}
 }

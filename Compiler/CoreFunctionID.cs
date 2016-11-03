@@ -38,6 +38,8 @@
         ALLOC_NATIVE_DATA = 34,
         SET_NATIVE_DATA = 35,
         GET_EXCEPTION_TRACE = 36,
+        REFLECT_ALL_CLASSES = 37,
+        REFLECT_GET_METHODS = 38,
     }
 
     public static class CoreFunctionIDHelper
@@ -82,6 +84,8 @@
                 case "allocNativeData": return (int)CoreFunctionID.ALLOC_NATIVE_DATA;
                 case "setNativeData": return (int)CoreFunctionID.SET_NATIVE_DATA;
                 case "getExceptionTrace": return (int)CoreFunctionID.GET_EXCEPTION_TRACE;
+                case "reflectAllClasses": return (int)CoreFunctionID.REFLECT_ALL_CLASSES;
+                case "reflectGetMethods": return (int)CoreFunctionID.REFLECT_GET_METHODS;
                 default: return -1;
             }
         }
