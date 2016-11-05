@@ -1,7 +1,8 @@
 ﻿// This code runs for the 'throw' statement.
 // It will pop 1 value off the stack
 
-value = $_array_get(valueStack, valueStackSize - 1);
+valueStackSize -= 1;
+value = $_array_get(valueStack, valueStackSize);
 bool2 = Value$value.type == Types.INSTANCE;
 if (bool2) {
 	objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
