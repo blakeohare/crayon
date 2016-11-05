@@ -262,13 +262,10 @@ namespace Crayon
                 // Now generate the header. This is also done backwards since it's easier.
                 ByteBuffer exceptionSortHeader = new ByteBuffer();
 
-                // Start with the last 2 instructions.
-                exceptionSortHeader.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 0);
-                exceptionSortHeader.Add(null, OpCode.JUMP, totalSize);
+                int offset = 2 // EXCEPTION_HANDLED_TOGGLE + final JUMP
+                    + catchBlocks.Count - 1; // remaining jump instructions to jump over
 
-                int offset = 2;
-
-                // iterate forwards through the catch blocks
+                // Add all the JUMP_IF_EXCEPTION_OF_TYPE instructions.
                 for (int i = 0; i < catchBlocks.Count; ++i)
                 {
                     TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
@@ -278,11 +275,16 @@ namespace Crayon
                     // for each catch block insert a type-check-jump
                     List<int> typeCheckArgs = new List<int>() { offset, variableId }; // first arg is offset, second is variable ID (or -1), successive args are all class ID's
                     typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
-                    exceptionSortHeader.AddFrontSlow(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
+                    exceptionSortHeader.Add(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
 
-                    // and then add the size of that block to the running total offset + the size of the JUMP_IF_EXCEPTION_OF_TYPE which is 1.
-                    offset += cbByteBuffer.Size + 1;
+                    // add the block to the running total
+                    offset += cbByteBuffer.Size;
+
+                    // ...but subtract 1 for the JUMP_IF_EXCEPTION_OF_TYPE you just added.
+                    offset -= 1;
                 }
+                exceptionSortHeader.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 0);
+                exceptionSortHeader.Add(null, OpCode.JUMP, totalSize);
 
                 allCatchBlocks.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 1);
                 allCatchBlocks.Concat(exceptionSortHeader);
