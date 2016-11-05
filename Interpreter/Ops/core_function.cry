@@ -569,6 +569,13 @@
 			return $_exception(CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
 		}
 		break;
+
+	case 39: $_comment('reflectGetClass');
+		import inline "FrameworkFunctions/1_arg.cry";
+		if (Value$arg1.type != Types.INSTANCE) return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
+		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+		output = new Value(Types.CLASS, new ClassValue(false, ObjectInstance$objInstance1.classId));
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

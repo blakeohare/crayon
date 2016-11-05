@@ -40,6 +40,7 @@
         GET_EXCEPTION_TRACE = 36,
         REFLECT_ALL_CLASSES = 37,
         REFLECT_GET_METHODS = 38,
+        REFLECT_GET_CLASS = 39,
     }
 
     public static class CoreFunctionIDHelper
@@ -86,6 +87,7 @@
                 case "getExceptionTrace": return (int)CoreFunctionID.GET_EXCEPTION_TRACE;
                 case "reflectAllClasses": return (int)CoreFunctionID.REFLECT_ALL_CLASSES;
                 case "reflectGetMethods": return (int)CoreFunctionID.REFLECT_GET_METHODS;
+                case "reflectGetClass": return (int)CoreFunctionID.REFLECT_GET_CLASS;
                 default: return -1;
             }
         }

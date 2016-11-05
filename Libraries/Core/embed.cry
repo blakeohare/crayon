@@ -203,6 +203,11 @@ namespace Core {
 	class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 
 	namespace Reflection {
+	
+		function getClassFromInstance(instance) {
+			return $$$('reflectGetClass', instance);
+		}
+		
 		function getClasses(commonBaseClass = null) {
 			output = $$$('reflectAllClasses');
 			if (commonBaseClass != null) {
