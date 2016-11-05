@@ -270,7 +270,7 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
+            throw new ParserException(throwToken, "The " + this.Name + " library does not support " + this.platformName + " projects.");
         }
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)

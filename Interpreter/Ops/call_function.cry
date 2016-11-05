@@ -302,6 +302,7 @@ if (bool1) {
 				switch (functionId) {
 					case PrimitiveMethodName.ARG_COUNT_MAX: import inline 'PrimitiveMethods/function_arg_count_max.cry'; break;
 					case PrimitiveMethodName.ARG_COUNT_MIN: import inline 'PrimitiveMethods/function_arg_count_min.cry'; break;
+					case PrimitiveMethodName.GET_NAME: import inline 'PrimitiveMethods/function_get_name.cry'; break;
 					case PrimitiveMethodName.INVOKE: import inline 'PrimitiveMethods/function_invoke.cry'; break;
 					default: output = null; break;
 				}
@@ -310,6 +311,7 @@ if (bool1) {
 				$_comment('...on a class definition');
 				classValue = $_cast('ClassValue', Value$value.internalValue);
 				switch (functionId) {
+					case PrimitiveMethodName.GET_NAME: import inline 'PrimitiveMethods/class_get_name.cry'; break;
 					case PrimitiveMethodName.IS_A: import inline 'PrimitiveMethods/class_is_a.cry'; break;
 					default: output = null; break;
 				}

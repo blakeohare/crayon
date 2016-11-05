@@ -586,8 +586,8 @@ namespace Crayon
             };
 
             args.AddRange(offsetsForOptionalArgs);
-
-            buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION, args.ToArray());
+            
+            buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION, "<constructor>", args.ToArray());
             buffer.Concat(tBuffer);
         }
 
@@ -905,7 +905,9 @@ namespace Crayon
 
             buffer.Add(
                 funDef.FirstToken,
-                OpCode.FUNCTION_DEFINITION, args.ToArray());
+                OpCode.FUNCTION_DEFINITION,
+                funDef.NameToken.Value,
+                args.ToArray());
 
             buffer.Concat(tBuffer);
         }

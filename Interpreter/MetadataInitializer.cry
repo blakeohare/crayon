@@ -1,4 +1,4 @@
-﻿function @type('int') initializeFunction(@type('ProgramData') p, @type('Array<int>') args, @type('int') currentPc) {
+﻿function @type('int') initializeFunction(@type('ProgramData') p, @type('Array<int>') args, @type('int') currentPc, @type('string') stringArg) {
 
 	@type('int') functionId = $_array_get(args, 0);
 	@type('int') nameId = $_array_get(args, 1);
@@ -25,7 +25,8 @@
 		functionType,
 		classId,
 		localsCount,
-		pcOffsetsForOptionalArgs));
+		pcOffsetsForOptionalArgs,
+		stringArg)); // function name
 
 	// This is SUPER tacky.
 	// TODO: Do this name comparison at compile time and then stick that in the arguments which will also eliminate the

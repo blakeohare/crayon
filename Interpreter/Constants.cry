@@ -160,6 +160,7 @@ enum PrimitiveMethodName {
 	ENDS_WITH,
 	FILTER,
 	GET,
+	GET_NAME,
 	INDEX_OF,
 	INSERT,
 	INVOKE,

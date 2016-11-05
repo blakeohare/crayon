@@ -194,6 +194,7 @@ namespace Core {
 	class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+	class InvalidOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class NotImplementedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 	class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }

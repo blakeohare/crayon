@@ -113,6 +113,7 @@
     <EmbeddedResource Include="Ops\value_stack_depth.cry" />
     <EmbeddedResource Include="Ops\verify_type_is_iterable.cry" />
     <EmbeddedResource Include="PrimitiveMethods.cry" />
+    <EmbeddedResource Include="PrimitiveMethods\class_get_name.cry" />
     <EmbeddedResource Include="PrimitiveMethods\class_is_a.cry" />
     <EmbeddedResource Include="PrimitiveMethods\dict_clear.cry" />
     <EmbeddedResource Include="PrimitiveMethods\dict_clone.cry" />
@@ -124,6 +125,7 @@
     <EmbeddedResource Include="PrimitiveMethods\dict_values.cry" />
     <EmbeddedResource Include="PrimitiveMethods\function_arg_count_max.cry" />
     <EmbeddedResource Include="PrimitiveMethods\function_arg_count_min.cry" />
+    <EmbeddedResource Include="PrimitiveMethods\function_get_name.cry" />
     <EmbeddedResource Include="PrimitiveMethods\function_invoke.cry" />
     <EmbeddedResource Include="PrimitiveMethods\list_add.cry" />
     <EmbeddedResource Include="PrimitiveMethods\list_choice.cry" />

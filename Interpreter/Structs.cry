@@ -143,11 +143,6 @@ struct ClassInfo {
 	// the road for private/protected/public modifiers.
 	@type('Dictionary<int, int>') globalIdToMemberId,
 
-	// TODO: another thought is to allocate an array for all global ID's to map to member ID's. This would be a lot of
-	// space O(class count * number of var names), but not all that ridiculous. Several kilobytes in memory for an average sized
-	// codebase.
-
-	// Primarily for the purposes of Exception stack traces.
 	@type('string') fullyQualifiedName,
 }
 
@@ -161,11 +156,6 @@ struct FunctionInfo {
 	@type('int') associatedClassId,
 	@type('int') localsSize,
 	@type('Array<int>') pcOffsetsForOptionalArgs,
-}
-
-struct FunctionDefinition {
-	@type('int') pc,
-	@type('int') maxArgCount,
 	@type('string') name,
 }
 

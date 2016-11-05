@@ -1,0 +1,2 @@
+﻿functionInfo = $_array_get(ProgramData$p.functionTable, FunctionPointer$functionPointer1.functionId);
+output = buildString(FunctionInfo$functionInfo.name);

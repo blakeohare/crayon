@@ -1,0 +1,2 @@
+﻿classInfo = $_array_get(ProgramData$p.classTable, ClassValue$classValue.classId);
+output = buildString(ClassInfo$classInfo.fullyQualifiedName);

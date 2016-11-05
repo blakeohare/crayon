@@ -18,6 +18,7 @@
 	if ($_dictionary_contains(nameLookups, 'endsWith')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'endsWith'), PrimitiveMethodName.ENDS_WITH);
 	if ($_dictionary_contains(nameLookups, 'filter')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'filter'), PrimitiveMethodName.FILTER);
 	if ($_dictionary_contains(nameLookups, 'get')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'get'), PrimitiveMethodName.GET);
+	if ($_dictionary_contains(nameLookups, 'getName')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'getName'), PrimitiveMethodName.GET_NAME);
 	if ($_dictionary_contains(nameLookups, 'indexOf')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'indexOf'), PrimitiveMethodName.INDEX_OF);
 	if ($_dictionary_contains(nameLookups, 'insert')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'insert'), PrimitiveMethodName.INSERT);
 	if ($_dictionary_contains(nameLookups, 'invoke')) $_array_set(lookup, $_dictionary_get_guaranteed(nameLookups, 'invoke'), PrimitiveMethodName.INVOKE);
@@ -86,8 +87,10 @@ function @type('int') resolvePrimitiveMethodName2(@type('Array<int>') lookup, @t
 			case Types.DICTIONARY + MAX_TYPE * PrimitiveMethodName.VALUES:
 			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MAX:
 			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MIN:
+			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.GET_NAME:
 			case Types.FUNCTION + MAX_TYPE * PrimitiveMethodName.INVOKE:
 			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.CREATE_INSTANCE:
+			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.GET_NAME:
 			case Types.CLASS + MAX_TYPE * PrimitiveMethodName.IS_A:
 				return output;
 			default:
