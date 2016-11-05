@@ -1,0 +1,12 @@
+namespace CrayonUnit {
+		
+	class Test {
+		
+		// override if necessary
+		function setup() { }
+		
+		// override if necessary
+		function teardown() { }
+	}
+	
+}

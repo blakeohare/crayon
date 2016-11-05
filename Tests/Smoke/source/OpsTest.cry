@@ -1,0 +1,59 @@
+import CrayonUnit;
+
+class OpsTest : Test {
+
+	constructor() : base() { }
+
+	// Strings are used to verify correct output type (i.e. float vs int) since == comparisons won't catch that
+	
+	function testCompileTimeOperations() {
+		// These operations are performed at compile time.
+		
+		assertThat(2 + 5 + '').isEqualTo('7');
+		assertThat(2 - 5 + '').isEqualTo('-3');
+		assertThat(2 * 5 + '').isEqualTo('10');
+		assertThat(5 / 2 + '').isEqualTo('2');
+		assertThat(5 % 2 + '').isEqualTo('1');
+		assertThat(-5 % 2 + '').isEqualTo('1');
+		assertThat(2 ** 5 + '').isEqualTo('32');
+		assertThat((2 & 5) + '').isEqualTo('0');
+		assertThat((2 | 5) + '').isEqualTo('7');
+		assertThat((2 ^ 7) + '').isEqualTo('5');
+		
+		assertThat(2.0 + 5.0 + '').isEqualTo('7.0');
+		assertThat(2.0 - 5.0 + '').isEqualTo('-3.0');
+		assertThat(2.0 * 5.0 + '').isEqualTo('10.0');
+		assertThat(5.0 % 2.0 + '').isEqualTo('1.0');
+		assertThat(-5.0 % 2.0 + '').isEqualTo('1.0');
+		assertThat(2.0 ** 5.0 + '').isEqualTo('32.0');
+	}
+	
+	function testRunTimeOperations() {
+		
+		iTwo = 2;
+		fTwo = 2.0;
+		iFive = 5;
+		fFive = 5.0;
+		iSeven = 7;
+		
+		// These operations are performed at run time.
+		
+		assertThat(iTwo + iFive + '').isEqualTo('7');
+		assertThat(iTwo - iFive + '').isEqualTo('-3');
+		assertThat(iTwo * iFive + '').isEqualTo('10');
+		assertThat(iFive / iTwo + '').isEqualTo('2');
+		assertThat(iFive % iTwo + '').isEqualTo('1');
+		assertThat(-iFive % iTwo + '').isEqualTo('1');
+		assertThat(iTwo ** iFive + '').isEqualTo('32');
+		assertThat((iTwo & iFive) + '').isEqualTo('0');
+		assertThat((iTwo | iFive) + '').isEqualTo('7');
+		assertThat((iTwo ^ 7) + '').isEqualTo('5');
+		
+		assertThat(fTwo + fFive + '').isEqualTo('7.0');
+		assertThat(fTwo - fFive + '').isEqualTo('-3.0');
+		assertThat(fTwo * fFive + '').isEqualTo('10.0');
+		assertThat(fFive % fTwo + '').isEqualTo('1.0');
+		assertThat(-fFive % fTwo + '').isEqualTo('1.0');
+		assertThat(fTwo ** fFive + '').isEqualTo('32.0');
+	}
+}
