@@ -86,7 +86,7 @@ namespace Crayon.ParseTree
                     if (rightInt == 0) return MakeInt(tk, 1);
                     if (rightInt > 0) return MakeInt(tk, (int)Math.Pow(leftInt, rightInt));
                     return MakeFloat(tk, Math.Pow(leftInt, rightInt));
-                case "int % int": CheckZero(right); return MakeInt(tk, GetInt(left) % GetInt(right));
+                case "int % int": return MakeInt(tk, PositiveModInt(left, right));
                 case "int & int": return MakeInt(tk, GetInt(left) & GetInt(right));
                 case "int | int": return MakeInt(tk, GetInt(left) | GetInt(right));
                 case "int ^ int": return MakeInt(tk, GetInt(left) ^ GetInt(right));
@@ -115,7 +115,7 @@ namespace Crayon.ParseTree
                     leftInt = GetInt(left);
                     if (rightFloat == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftInt, rightFloat));
-                case "int % float": CheckZero(right); return MakeFloat(tk, GetInt(left) % GetFloat(right));
+                case "int % float": return MakeFloat(tk, PositiveModFloat(left, right));
                 case "int <= float": return MakeBool(tk, GetInt(left) <= GetFloat(right));
                 case "int >= float": return MakeBool(tk, GetInt(left) >= GetFloat(right));
                 case "int < float": return MakeBool(tk, GetInt(left) < GetFloat(right));
@@ -132,7 +132,7 @@ namespace Crayon.ParseTree
                     leftFloat = GetFloat(left);
                     if (rightInt == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftFloat, rightInt));
-                case "float % int": CheckZero(right); return MakeFloat(tk, GetFloat(left) % GetInt(right));
+                case "float % int": return MakeFloat(tk, PositiveModFloat(left, right));
                 case "float <= int": return MakeBool(tk, GetFloat(left) <= GetInt(right));
                 case "float >= int": return MakeBool(tk, GetFloat(left) >= GetInt(right));
                 case "float < int": return MakeBool(tk, GetFloat(left) < GetInt(right));
@@ -149,7 +149,7 @@ namespace Crayon.ParseTree
                     leftFloat = GetFloat(left);
                     if (rightFloat == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftFloat, rightFloat));
-                case "float % float": CheckZero(right); return MakeFloat(tk, GetFloat(left) % GetFloat(right));
+                case "float % float": return MakeFloat(tk, PositiveModFloat(left, right));
                 case "float <= float": return MakeBool(tk, GetFloat(left) <= GetFloat(right));
                 case "float >= float": return MakeBool(tk, GetFloat(left) >= GetFloat(right));
                 case "float < float": return MakeBool(tk, GetFloat(left) < GetFloat(right));
@@ -192,6 +192,30 @@ namespace Crayon.ParseTree
                 default:
                     throw new ParserException(opToken, "This operator is invalid for types: " + leftType + ", " + rightType + ".");
             }
+        }
+
+        private int PositiveModInt(Expression left, Expression right)
+        {
+            CheckZero(right);
+            int leftInt = GetInt(left);
+            int rightInt = GetInt(right);
+            int value = leftInt % rightInt;
+            if (value < 0) value += rightInt;
+            return value;
+        }
+
+        private double PositiveModFloat(Expression left, Expression right)
+        {
+            CheckZero(right);
+            double leftValue = left is FloatConstant
+                ? ((FloatConstant)left).Value
+                : (0.0 + ((IntegerConstant)left).Value);
+            double rightValue = right is FloatConstant
+                ? ((FloatConstant)right).Value
+                : (0.0 + ((IntegerConstant)right).Value);
+            double value = leftValue % rightValue;
+            if (value < 0) value += rightValue;
+            return value;
         }
 
         private void CheckZero(Expression expr)
