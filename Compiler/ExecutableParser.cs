@@ -6,9 +6,16 @@ namespace Crayon
 {
     internal static class ExecutableParser
     {
-        private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>("= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
+        private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>(
+            "= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
-        public static Executable Parse(Parser parser, TokenStream tokens, bool simpleOnly, bool semicolonPresent, bool isRoot, Executable owner)
+        public static Executable Parse(
+            Parser parser,
+            TokenStream tokens,
+            bool simpleOnly,
+            bool semicolonPresent,
+            bool isRoot,
+            Executable owner)
         {
             string value = tokens.PeekValue();
 
@@ -452,11 +459,15 @@ namespace Crayon
             Token first = tokens.Pop();
             Parser.VerifyIdentifier(first);
             List<Token> namespacePieces = new List<Token>() { first };
+            string namespaceBuilder = first.Value;
+            parser.RegisterNamespace(namespaceBuilder);
             while (tokens.PopIfPresent("."))
             {
                 Token nsToken = tokens.Pop();
                 Parser.VerifyIdentifier(nsToken);
                 namespacePieces.Add(nsToken);
+                namespaceBuilder += "." + nsToken.Value;
+                parser.RegisterNamespace(namespaceBuilder);
             }
 
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));

@@ -130,6 +130,8 @@ namespace Crayon
 
         public Executable[] ResolveInterpretedCode()
         {
+            this.parser.VerifyNoBadImports();
+
             // Resolve raw names into the actual things they refer to based on namespaces and imports.
             this.ResolveNames();
 

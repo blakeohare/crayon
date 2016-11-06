@@ -30,6 +30,29 @@ namespace Crayon
             return ++this.functionIdCounter;
         }
 
+        // These did not resolve into libraries. Which might be okay as long as there's a namespace that matches
+        // in the project.
+        private List<ImportStatement> unresolvedImports = new List<ImportStatement>();
+        private HashSet<string> allNamespaces = new HashSet<string>();
+
+        public void RegisterNamespace(string fullNamespace)
+        {
+            this.allNamespaces.Add(fullNamespace);
+        }
+
+        // This is called from the resolver once all namespaces are known.
+        public void VerifyNoBadImports()
+        {
+            foreach (ImportStatement import in unresolvedImports)
+            {
+                if (!allNamespaces.Contains(import.ImportPath))
+                {
+                    // TODO: show spelling suggestions
+                    throw new ParserException(import.FirstToken, "Unrecognized namespace or library: '" + import.ImportPath + "'");
+                }
+            }
+        }
+
         private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
         // HACK ALERT - Forgive me father for I have sinned.
@@ -347,7 +370,14 @@ namespace Crayon
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-                executables.AddRange(libraryEmbeddedCode);
+                if (libraryEmbeddedCode == null)
+                {
+                    this.unresolvedImports.Add(importStatement);
+                }
+                else
+                {
+                    executables.AddRange(libraryEmbeddedCode);
+                }
             }
 
             string[] namespaceImports = namespaceImportsBuilder.ToArray();

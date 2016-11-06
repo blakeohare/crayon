@@ -145,8 +145,9 @@ namespace Crayon
 
                 if (libraryManifestPath == null)
                 {
-                    // TODO: show suggestions of similarly named libraries
-                    throw new ParserException(throwToken, "Library not found.");
+                    // No library found. Could just be a local namespace import.
+                    // If this is a bogus import, it'll throw in the Resolver.
+                    return null;
                 }
 
                 string platform = parser.BuildContext.Platform;
