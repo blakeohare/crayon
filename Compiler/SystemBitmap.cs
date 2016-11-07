@@ -19,7 +19,7 @@ namespace Crayon
         public SystemBitmap(string filepath)
         {
 #if WINDOWS
-            this.bitmap = new System.Drawing.Bitmap(filepath);
+            this.bitmap = new System.Drawing.Bitmap(filepath.Replace('/', '\\'));
             this.bitmap.SetResolution(96, 96);
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;

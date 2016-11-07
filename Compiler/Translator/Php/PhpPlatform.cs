@@ -28,7 +28,6 @@ namespace Crayon.Translator.Php
             string projectId,
             Dictionary<string, Executable[]> finalCode,
             ICollection<StructDefinition> structDefinitions,
-            string fileCopySourceRoot,
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager)
         {

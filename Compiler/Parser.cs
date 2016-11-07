@@ -314,25 +314,32 @@ namespace Crayon
             return new Resolver(this, output).ResolveTranslatedCode();
         }
 
-        public Dictionary<string, string> GetCodeFiles(string rootFolder)
+        public Dictionary<string, string> GetCodeFiles()
         {
-            string[] files = FileUtil.GetAllFilePathsRelativeToRoot(rootFolder);
+            HashSet<string> alreadyTouched = new HashSet<string>();
             Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (string filepath in files)
+
+            foreach (FilePath sourceDir in this.BuildContext.SourceFolders)
             {
-                if (filepath.ToLowerInvariant().EndsWith(".cry"))
+                string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
+                foreach (string filepath in files)
                 {
-                    string fullpath = FileUtil.JoinPath(rootFolder, filepath);
-                    output[filepath] = FileUtil.ReadFileText(fullpath);
+                    if (filepath.ToLowerInvariant().EndsWith(".cry"))
+                    {
+                        string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
+                            filepath,
+                            this.BuildContext.ProjectDirectory);
+                        output[relativePath] = FileUtil.ReadFileText(filepath);
+                    }
                 }
             }
             return output;
         }
 
-        public Executable[] ParseAllTheThings(string rootFolder)
+        public Executable[] ParseAllTheThings()
         {
             List<Executable> output = new List<Executable>();
-            Dictionary<string, string> files = this.GetCodeFiles(rootFolder);
+            Dictionary<string, string> files = this.GetCodeFiles();
             // Only iterate through actual user files. Library imports will be inserted into the code when encountered
             // the first time for each library.
             foreach (string fileName in files.Keys)

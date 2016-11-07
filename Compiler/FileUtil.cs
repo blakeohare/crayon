@@ -118,6 +118,16 @@ namespace Crayon
             }
         }
 
+        public static string[] GetAllAbsoluteFilePathsDescendentsOf(string absoluteRoot)
+        {
+            string[] output = GetAllFilePathsRelativeToRoot(absoluteRoot);
+            for (int i = 0; i < output.Length; ++i)
+            {
+                output[i] = FileUtil.GetCanonicalizeUniversalPath(absoluteRoot + "/" + output[i]);
+            }
+            return output;
+        }
+
         // ignores silly files such as thumbs.db, .ds_store, .svn/*, etc
         public static string[] GetAllFilePathsRelativeToRoot(string root)
         {
@@ -187,11 +197,89 @@ namespace Crayon
             return output;
         }
 
+        public static string GetCanonicalizeUniversalPath(string path)
+        {
+            List<string> output = new List<string>();
+            foreach (string part in path.Replace('\\', '/').Split('/'))
+            {
+                switch (part)
+                {
+                    case "":
+                    case ".":
+                        break;
+
+                    case "..":
+                        if (output.Count > 0 && output[output.Count - 1] != "..")
+                        {
+                            output.RemoveAt(output.Count - 1);
+                        }
+                        else
+                        {
+                            output.Add("..");
+                        }
+                        break;
+
+                    default:
+                        output.Add(part);
+                        break;
+                }
+            }
+            return string.Join("/", output);
+        }
+
         private static string NormalizePath(string dir)
         {
             dir = dir.Trim().Replace('\\', '/').TrimEnd('/');
             if (dir.Length == 0) dir = "/";
             return dir.Replace('/', DIR_SEP[0]);
+        }
+
+        public static string ConvertAbsolutePathToRelativePath(string absolutePath, string relativeToThisAbsolutePath)
+        {
+            string[] partsTarget = GetCanonicalizeUniversalPath(absolutePath).Split('/');
+            string[] partsRelativeTo = GetCanonicalizeUniversalPath(relativeToThisAbsolutePath).Split('/');
+            int min = Math.Min(partsTarget.Length, partsRelativeTo.Length);
+            List<string> output = new List<string>();
+            for (int i = 0; i < min; ++i)
+            {
+                if (partsTarget[i] != partsRelativeTo[i])
+                {
+                    int dotDots = partsRelativeTo.Length - i;
+                    while (dotDots-- > 0)
+                    {
+                        output.Add("..");
+                    }
+                    for (int j = i; j < partsTarget.Length; ++j)
+                    {
+                        output.Add(partsTarget[j]);
+                    }
+                    break;
+                }
+
+                if (i == min - 1)
+                {
+                    if (partsTarget.Length == partsRelativeTo.Length)
+                    {
+                        return ".";
+                    }
+
+                    if (partsTarget.Length < partsRelativeTo.Length)
+                    {
+                        for (int j = 0; j < partsRelativeTo.Length - partsTarget.Length; ++j)
+                        {
+                            output.Add("..");
+                        }
+                    }
+                    else
+                    {
+                        for (int j = partsRelativeTo.Length; j < partsTarget.Length; ++j)
+                        {
+                            output.Add(partsTarget[j]);
+                        }
+                    }
+                }
+            }
+            return string.Join("/", output);
         }
     }
 }

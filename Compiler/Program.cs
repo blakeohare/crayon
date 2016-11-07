@@ -55,7 +55,7 @@ namespace Crayon
         {
             BuildContext buildContext = Program.GetBuildContext(args);
             AbstractPlatform platform = GetPlatformInstance(buildContext);
-            platform.Compile(buildContext, buildContext.SourceFolder, buildContext.OutputFolder);
+            platform.Compile(buildContext, buildContext.OutputFolder);
         }
 
         private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)
@@ -86,7 +86,7 @@ namespace Crayon
                 if (crayonHome != null)
                 {
                     string debugArgsFile = System.IO.Path.Combine(crayonHome, "DEBUG_ARGS.txt");
-                    if (System.IO.File.Exists(debugArgsFile ))
+                    if (System.IO.File.Exists(debugArgsFile))
                     {
                         string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
                         string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
@@ -122,81 +122,34 @@ namespace Crayon
                     throw new InvalidOperationException("Build file does not exist: " + buildFile);
                 }
 
-                buildContext = BuildContext.Parse(System.IO.File.ReadAllText(buildFile), target);
+                buildContext = BuildContext.Parse(workingDirectory, System.IO.File.ReadAllText(buildFile), target);
             }
 
             buildContext = buildContext ?? new BuildContext();
 
             // command line arguments override build file values if present.
 
-            if (argLookup.ContainsKey("min"))
-            {
-                buildContext.Minified = true;
-                argLookup.Remove("min");
-            }
-
-            if (argLookup.ContainsKey("readablebytecode"))
-            {
-                buildContext.ReadableByteCode = true;
-                argLookup.Remove("readablebytecode");
-            }
-
-            if (argLookup.ContainsKey("source"))
-            {
-                buildContext.SourceFolder = argLookup["source"];
-                argLookup.Remove("source");
-            }
-
-            if (argLookup.ContainsKey("output"))
-            {
-                buildContext.OutputFolder = argLookup["output"];
-                argLookup.Remove("output");
-            }
-
-            if (argLookup.ContainsKey("jsfileprefix"))
-            {
-                buildContext.JsFilePrefix = argLookup["jsfileprefix"];
-                argLookup.Remove("jsfileprefix");
-            }
-
-            if (argLookup.ContainsKey("platform"))
-            {
-                buildContext.Platform = argLookup["platform"];
-                argLookup.Remove("platform");
-            }
-
-            if (argLookup.ContainsKey("name"))
-            {
-                buildContext.ProjectID = argLookup["name"];
-                argLookup.Remove("name");
-            }
-
-            if (argLookup.Count > 0)
-            {
-                throw new InvalidOperationException("Unrecognized command line flags: " +
-                    string.Join(", ", argLookup.Keys.OrderBy<string, string>(s => s.ToLowerInvariant())) +
-                    ". See usage.");
-            }
-
             if (buildContext.Platform == null)
-                throw new InvalidOperationException("No platform specified. See usage.");
+                throw new InvalidOperationException("No platform specified in build file.");
 
-            if (buildContext.SourceFolder == null)
-                throw new InvalidOperationException("No source folder specified. See usage.");
+            if (buildContext.SourceFolders.Length == 0)
+                throw new InvalidOperationException("No source folder specified in build file.");
 
             if (buildContext.OutputFolder == null)
-                throw new InvalidOperationException("No output folder specified. See usage.");
+                throw new InvalidOperationException("No output folder specified in build file.");
 
-            buildContext.SourceFolder = System.IO.Path.Combine(workingDirectory, buildContext.SourceFolder).Replace('/', '\\');
             buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
             if (buildContext.IconFilePath != null)
             {
                 buildContext.IconFilePath = System.IO.Path.Combine(workingDirectory, buildContext.IconFilePath).Replace('/', '\\');
             }
 
-            if (!FileUtil.DirectoryExists(buildContext.SourceFolder))
+            foreach (FilePath sourceFolder in buildContext.SourceFolders)
             {
-                throw new InvalidOperationException("Source folder does not exist.");
+                if (!FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
+                {
+                    throw new InvalidOperationException("Source folder does not exist.");
+                }
             }
 
             buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";

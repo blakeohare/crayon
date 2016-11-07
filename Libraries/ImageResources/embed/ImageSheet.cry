@@ -16,7 +16,7 @@ namespace ImageResources {
 		// sheets more accurately.
 		field _weight;
 		
-		// TODO: Constructor should be private
+		@private
 		constructor(info, isAsync) {
 			this._info = info;
 			this._name = info['name'];

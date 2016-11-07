@@ -24,7 +24,6 @@ namespace Crayon.Translator.Python
             string projectId,
             Dictionary<string, ParseTree.Executable[]> finalCode,
             ICollection<ParseTree.StructDefinition> structDefinitions,
-            string fileCopySourceRoot,
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager)
         {

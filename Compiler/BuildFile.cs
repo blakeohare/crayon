@@ -7,11 +7,13 @@ using System.Xml.Serialization;
 
 namespace Crayon
 {
+    // TODO: split these classes out into their own namespace. It is time.
     public class BuildContext
     {
         public string ProjectID { get; set; }
+        public string ProjectDirectory { get; set; }
         public string OutputFolder { get; set; }
-        public string SourceFolder { get; set; }
+        public FilePath[] SourceFolders { get; set; }
         public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
         public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; private set; }
         public string[] ImageSheetIds { get; set; }
@@ -42,13 +44,24 @@ namespace Crayon
             public double FloatValue { get; set; }
         }
 
+        public class SourceItem
+        {
+            [XmlAttribute("alias")]
+            public string Alias { get; set; }
+
+            [XmlText]
+            public string Value { get; set; }
+        }
+
         public abstract class BuildItem
         {
             [XmlElement("projectname")]
             public string ProjectName { get; set; }
 
             [XmlElement("source")]
-            public string Source { get; set; }
+            public SourceItem[] Sources { get; set; }
+
+            public SourceItem[] SourcesNonNull { get { return this.Sources ?? new SourceItem[0]; } }
 
             [XmlElement("output")]
             public string Output { get; set; }
@@ -139,9 +152,9 @@ namespace Crayon
             public string[] Prefixes { get; set; }
         }
 
-        public static BuildContext Parse(string buildFile, string targetName)
+        public static BuildContext Parse(string projectDir, string buildFile, string targetName)
         {
-            System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Build));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Build));
             Build buildInput;
             try
             {
@@ -188,9 +201,10 @@ namespace Crayon
             }
 
             Dictionary<string, BuildVarCanonicalized> varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
+            Dictionary<string, string> aliases = new Dictionary<string, string>();
 
-            flattened.Output = DoReplacement(targetName, desiredTarget.Output ?? flattened.Output);
-            flattened.Source = DoReplacement(targetName, desiredTarget.Source ?? flattened.Source);
+            flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
+            flattened.Output = FileUtil.GetCanonicalizeUniversalPath(projectDir + "/" + DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
             flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
             flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
             flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
@@ -203,11 +217,12 @@ namespace Crayon
 
             return new BuildContext()
             {
+                ProjectDirectory = projectDir,
                 JsFilePrefix = flattened.JsFilePrefix,
                 OutputFolder = flattened.Output,
                 Platform = desiredTarget.Platform,
                 ProjectID = flattened.ProjectName,
-                SourceFolder = flattened.Source,
+                SourceFolders = ToFilePaths(projectDir, flattened.Sources),
                 ImageSheetPrefixesById = flattened.ImageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = flattened.ImageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 Minified = flattened.Minified,
@@ -218,6 +233,25 @@ namespace Crayon
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
             };
+        }
+
+        private static FilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
+        {
+            Dictionary<string, FilePath> paths = new Dictionary<string, FilePath>();
+
+            foreach (SourceItem sourceDir in sourceDirs)
+            {
+                string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDir.Value);
+                FilePath filePath = new FilePath(relative, projectDir, sourceDir.Alias);
+                paths[filePath.AbsolutePath] = filePath;
+            }
+
+            List<FilePath> output = new List<FilePath>();
+            foreach (string key in paths.Keys.OrderBy<string, string>(k => k))
+            {
+                output.Add(paths[key]);
+            }
+            return output.ToArray();
         }
 
         private static string DoReplacement(string target, string value)

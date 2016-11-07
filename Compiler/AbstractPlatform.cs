@@ -20,14 +20,14 @@ namespace Crayon
         public abstract bool SupportsListClear { get; }
         public abstract bool IsStronglyTyped { get; }
         public abstract bool IsArraySameAsList { get; }
-        public abstract bool IsCharANumber{ get; }
+        public abstract bool IsCharANumber { get; }
         public abstract bool IntIsFloor { get; }
         public abstract bool IsThreadBlockingAllowed { get; }
         public virtual bool IsByteCodeLoadedDirectly { get { return false; } }
         public abstract string PlatformShortId { get; }
 
         public string LibraryBigSwitchStatement { get; set; }
-        
+
         public virtual bool RemoveBreaksFromSwitch { get { return false; } }
 
         public AbstractPlatform(
@@ -38,7 +38,7 @@ namespace Crayon
         {
             this.PlatformId = platform;
             this.LanguageId = language;
-            
+
             this.Translator = translator;
             this.SystemFunctionTranslator = systemFunctionTranslator;
             this.Translator.Platform = this;
@@ -63,11 +63,11 @@ namespace Crayon
             return Constants.DoReplacements(code, replacements);
         }
 
-        private ByteBuffer GenerateByteCode(BuildContext buildContext, string inputFolder)
+        private ByteBuffer GenerateByteCode(BuildContext buildContext)
         {
             Parser userCodeParser = new Parser(null, buildContext, null);
-            ParseTree.Executable[] userCode = userCodeParser.ParseAllTheThings(inputFolder);
-            
+            Executable[] userCode = userCodeParser.ParseAllTheThings();
+
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(userCodeParser, userCode);
             this.LibraryManager = userCodeParser.SystemLibraryManager;
@@ -140,19 +140,13 @@ namespace Crayon
 
         public void Compile(
             BuildContext buildContext,
-            string inputFolder,
             string baseOutputFolder)
         {
             Parser.IsTranslateMode_STATIC_HACK = false;
 
             this.VerifyProjectId(buildContext.ProjectID);
 
-            inputFolder = inputFolder.Replace('/', '\\');
-            if (inputFolder.EndsWith("\\")) inputFolder = inputFolder.Substring(0, inputFolder.Length - 1);
-
-            string[] allFiles = FileUtil.GetAllFilePathsRelativeToRoot(inputFolder);
-
-            ResourceDatabase resourceDatabase = new ResourceDatabase(allFiles, inputFolder);
+            ResourceDatabase resourceDatabase = new ResourceDatabase(buildContext);
 
             ImageSheets.ImageSheetBuilder imageSheetBuilder = new ImageSheets.ImageSheetBuilder();
             if (buildContext.ImageSheetIds != null)
@@ -173,7 +167,7 @@ namespace Crayon
 
             resourceDatabase.GenerateResourceMapping();
 
-            ByteBuffer byteCodeBuffer = GenerateByteCode(buildContext, inputFolder);
+            ByteBuffer byteCodeBuffer = this.GenerateByteCode(buildContext);
 
             resourceDatabase.ByteCodeRawData = byteCodeBuffer;
 
@@ -194,7 +188,6 @@ namespace Crayon
                 buildContext.ProjectID,
                 executablesByFile,
                 structs,
-                inputFolder,
                 resourceDatabase,
                 this.LibraryManager);
 
@@ -216,10 +209,10 @@ namespace Crayon
             // lines and windows open viewing the previous content, which will prevent a full delete from
             // working, but won't stop a simple overwrite of old content.
 
-            this.GenerateFiles(buildContext, files, outputFolder, inputFolder);
+            this.GenerateFiles(buildContext, files, outputFolder);
         }
 
-        private void GenerateFiles(BuildContext buildContext, Dictionary<string, FileOutput> files, string rootDirectory, string inputDirectory)
+        private void GenerateFiles(BuildContext buildContext, Dictionary<string, FileOutput> files, string rootDirectory)
         {
             rootDirectory = rootDirectory.Replace("%PROJECT_ID%", buildContext.ProjectID);
             foreach (string path in files.Keys)
@@ -246,7 +239,8 @@ namespace Crayon
                         break;
 
                     case FileOutputType.Copy:
-                        string absolutePath = file.AbsoluteInputPath ?? FileUtil.JoinPath(inputDirectory, file.RelativeInputPath);
+                        string absolutePath = file.AbsoluteInputPath
+                            ?? FileUtil.JoinPath(buildContext.ProjectDirectory, file.RelativeInputPath);
                         FileUtil.CopyFile(absolutePath, fullOutputPath);
                         break;
 
@@ -265,7 +259,6 @@ namespace Crayon
             string projectId,
             Dictionary<string, Executable[]> finalCode,
             ICollection<StructDefinition> structDefinitions,
-            string fileCopySourceRoot,
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager);
 
