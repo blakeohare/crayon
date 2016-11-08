@@ -135,6 +135,25 @@ namespace Crayon.ParseTree
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }
+
+                    Executable owner = this.FunctionOrClassOwner;
+                    while (owner != null && !(owner is ClassDefinition))
+                    {
+                        owner = owner.FunctionOrClassOwner;
+                    }
+
+                    if (owner != null)
+                    {
+                        ClassDefinition cd = (ClassDefinition)owner;
+                        foreach (FieldDeclaration fd in cd.Fields)
+                        {
+                            if (fd.NameToken.Value == name)
+                            {
+                                throw new ParserException(this.FirstToken, "'" + name + "' is used like a variable but it is a " + (fd.IsStaticField ? "static" : "local") + " field.");
+                            }
+                        }
+                    }
+
                     throw new ParserException(this.FirstToken, "'" + name + "' is used but is never assigned to.");
                 }
             }
