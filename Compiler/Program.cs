@@ -69,6 +69,7 @@ namespace Crayon
                 case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
                 case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform();
                 case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
+				case "game-ruby-gosu": return new Crayon.Translator.Ruby.RubyPlatform();
                 case "server-php": return new Crayon.Translator.Php.PhpPlatform();
                 case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
                 case "ui-javascript": throw new NotImplementedException();

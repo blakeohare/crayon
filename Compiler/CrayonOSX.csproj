@@ -45,6 +45,7 @@
     <Compile Include="Translator\JavaScript\*.cs" />
     <Compile Include="Translator\Php\*.cs" />
     <Compile Include="Translator\Python\*.cs" />
+    <Compile Include="Translator\Ruby\*.cs" />
     <Compile Include="Translator\*.cs" />
     <Compile Include="*.cs" />
   </ItemGroup>
