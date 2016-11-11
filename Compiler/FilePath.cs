@@ -8,7 +8,6 @@
         private string absolutePathString;
         private string canonicalAbsolutePath;
         private string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
-        private string projectRootDirectory;
 
         public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory, string alias)
         {

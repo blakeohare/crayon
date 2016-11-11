@@ -90,6 +90,8 @@ namespace Crayon.ParseTree
         public string LookupTableName { get; private set; }
         public string SwitchKeyName { get; private set; }
 
+        public Dictionary<int, Executable[]> CodeMapping { get { return this.codeMapping; } }
+
         internal override IList<Executable> Resolve(Parser parser)
         {
             bool removeBreaks = parser.RemoveBreaksFromSwitch;

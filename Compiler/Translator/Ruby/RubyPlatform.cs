@@ -17,7 +17,7 @@ namespace Crayon.Translator.Ruby
 		public override bool IntIsFloor { get { return false; } }
 		public override bool IsThreadBlockingAllowed { get { return true; } }
 
-		public override string PlatformShortId { get { return "game-ruby-gosu"; } }
+        public override string PlatformShortId { get { return "game-ruby-gosu"; } }
 	
 		public override Dictionary<string, FileOutput> Package(
 			BuildContext buildContext, 

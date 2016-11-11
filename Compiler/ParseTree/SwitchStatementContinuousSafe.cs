@@ -29,7 +29,7 @@ namespace Crayon.ParseTree
             int[] keys = codeByCondition.Keys.ToArray(); // iterate over a copy of keys so you don't modify the enumerable while iterating.
             foreach (int key in keys)
             {
-                codeByCondition[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, codeByCondition[key]);
+                this.codeByCondition[key] = Executable.RemoveBreaksForElifedSwitch(removeBreaks, codeByCondition[key]);
             }
 
             return Listify(this);
@@ -39,7 +39,7 @@ namespace Crayon.ParseTree
         {
             throw new InvalidOperationException();
         }
-        
+
         public SearchTree GenerateSearchTree()
         {
             int[] keys = this.codeByCondition.Keys.ToArray();
@@ -90,7 +90,7 @@ namespace Crayon.ParseTree
         {
             this.OriginalSwitchStatement.GetAllVariableNames(lookup);
         }
-        
+
         internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             throw new InvalidOperationException(); // translate mode only
@@ -107,5 +107,7 @@ namespace Crayon.ParseTree
                 }
             }
         }
+
+        public Dictionary<int, Executable[]> CaseCode { get { return this.codeByCondition; } }
     }
 }
