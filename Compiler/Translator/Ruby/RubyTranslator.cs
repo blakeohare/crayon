@@ -6,8 +6,6 @@ namespace Crayon.Translator.Ruby
 {
     internal class RubyTranslator : AbstractTranslator
     {
-        public RubyTranslator() : base() { }
-
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
             this.TranslateExpression(output, assignment.Target);

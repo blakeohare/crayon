@@ -16,6 +16,7 @@ namespace Crayon.Translator.Ruby
 		public override bool IsCharANumber { get { return false; } }
 		public override bool IntIsFloor { get { return false; } }
 		public override bool IsThreadBlockingAllowed { get { return true; } }
+		public override bool SupportsIncrement { get { return false; } }
 
         public override string PlatformShortId { get { return "game-ruby-gosu"; } }
 	

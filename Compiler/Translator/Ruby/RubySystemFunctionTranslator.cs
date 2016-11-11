@@ -37,7 +37,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateResourceGetManifest(System.Collections.Generic.List<string> output)
         {
-            throw new NotImplementedException();
+			output.Add("resourceHelper_getManifest()");
         }
 
         protected override void TranslateGetRawByteCodeString(System.Collections.Generic.List<string> output)
@@ -268,7 +268,8 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateDictionaryGetValues(System.Collections.Generic.List<string> output, Expression dictionary)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".values");
         }
 
         protected override void TranslateStringAsChar(System.Collections.Generic.List<string> output, StringConstant stringConstant)
@@ -278,22 +279,30 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringCast(System.Collections.Generic.List<string> output, Expression thing, bool strongCast)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, thing);
+			output.Add(".to_s");
         }
 
         protected override void TranslateArcTan(System.Collections.Generic.List<string> output, Expression dy, Expression dx)
         {
-            throw new NotImplementedException();
+			output.Add("Math::atan2(");
+			this.Translator.TranslateExpression(output, dy);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, dx);
+			output.Add(")");
         }
 
         protected override void TranslateDictionaryGetKeys(System.Collections.Generic.List<string> output, string keyType, Expression dictionary)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".keys");
         }
 
         protected override void TranslateMultiplyList(System.Collections.Generic.List<string> output, Expression list, Expression num)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, list);
+			output.Add(" * ");
+			this.Translator.TranslateExpression(output, num);
         }
 
         protected override void TranslateIncrement(System.Collections.Generic.List<string> output, Expression expression, bool increment, bool prefix)
@@ -337,7 +346,11 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringCompareIsReverse(System.Collections.Generic.List<string> output, Expression a, Expression b)
         {
-            throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, a);
+			output.Add(" > ");
+			this.Translator.TranslateExpression(output, b);
+			output.Add(")");
         }
 
         protected override void TranslateCast(System.Collections.Generic.List<string> output, StringConstant typeValue, Expression expression)
@@ -369,7 +382,10 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringContains(System.Collections.Generic.List<string> output, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, haystack);
+			output.Add(".include?(");
+			this.Translator.TranslateExpression(output, needle);
+			output.Add(")");
         }
 
         protected override void TranslateDictionaryRemove(System.Collections.Generic.List<string> output, Expression dictionary, Expression key)
@@ -390,12 +406,18 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateConvertListToArray(System.Collections.Generic.List<string> output, StringConstant type, Expression list)
         {
-            throw new NotImplementedException();
+			// TODO: determine if this really needs to be a copy. For now just do a clone.
+			// Ideally there should be a naming convention here to indicate whether the side effect is mandatory.
+			output.Add("(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(" + [])");
         }
 
         protected override void TranslateStringAppend(System.Collections.Generic.List<string> output, Expression target, Expression valueToAppend)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, target);
+			output.Add(" + ");
+			this.Translator.TranslateExpression(output, valueToAppend);
         }
 
         protected override void TranslateStringStartsWith(System.Collections.Generic.List<string> output, Expression stringExpr, Expression findMe)
@@ -408,7 +430,10 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringCharCodeAt(System.Collections.Generic.List<string> output, Expression stringValue, Expression index)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("].ord");
         }
 
         protected override void TranslateDictionaryGetGuaranteed(System.Collections.Generic.List<string> output, Expression dictionary, Expression key)
@@ -426,7 +451,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateCastToList(System.Collections.Generic.List<string> output, StringConstant typeValue, Expression enumerableThing)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, enumerableThing);
         }
 
         protected override void TranslateUnsafeFloatDivision(System.Collections.Generic.List<string> output, Expression numerator, Expression denominator)
@@ -459,7 +484,12 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringReplace(System.Collections.Generic.List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
         {
-            throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".split(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(").join(");
+			this.Translator.TranslateExpression(output, replaceWith);
+			output.Add(")");
         }
 
         protected override void TranslateStringIndexOf(System.Collections.Generic.List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)

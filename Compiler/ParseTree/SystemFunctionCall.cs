@@ -41,7 +41,7 @@ namespace Crayon.ParseTree
 
             if (this.Name == "$_has_increment")
             {
-                bool hasIncrement = !parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.Python.PythonPlatform));
+				bool hasIncrement = parser.NullablePlatform.SupportsIncrement;
                 return new BooleanConstant(this.FirstToken, hasIncrement, this.FunctionOrClassOwner);
             }
 
