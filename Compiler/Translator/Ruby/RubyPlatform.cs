@@ -1,4 +1,6 @@
-﻿namespace Crayon.Translator.Ruby
+﻿using System.Collections.Generic;
+
+namespace Crayon.Translator.Ruby
 {
 	internal class RubyPlatform : AbstractPlatform
 	{
@@ -17,9 +19,31 @@
 
 		public override string PlatformShortId { get { return "game-ruby-gosu"; } }
 	
-		public override System.Collections.Generic.Dictionary<string, FileOutput> Package(BuildContext buildContext, string projectId, System.Collections.Generic.Dictionary<string, ParseTree.Executable[]> finalCode, System.Collections.Generic.ICollection<ParseTree.StructDefinition> structDefinitions, ResourceDatabase resourceDatabase, SystemLibraryManager libraryManager)
+		public override Dictionary<string, FileOutput> Package(
+			BuildContext buildContext, 
+			string projectId, 
+			Dictionary<string, ParseTree.Executable[]> finalCode, 
+			ICollection<ParseTree.StructDefinition> structDefinitions, 
+			ResourceDatabase resourceDatabase, 
+			SystemLibraryManager libraryManager)
 		{
-			throw new System.NotImplementedException();
+			Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
+			List<string> concatenatedCode = new List<string>();
+
+            this.Translator.TranslateGlobals(concatenatedCode, finalCode);
+			concatenatedCode.Add(this.Translator.NL);
+			//this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);
+			concatenatedCode.Add(this.Translator.NL);
+			//this.Translator.TranslateFunctions(concatenatedCode, finalCode);
+			concatenatedCode.Add(this.Translator.NL);
+
+			files["run.rb"] = new FileOutput()
+			{
+				Type = FileOutputType.Text,
+				TextContent = string.Join("", concatenatedCode),
+			};
+
+			return files;
 		}
 	}
 }

@@ -7,12 +7,12 @@ namespace Crayon.Translator.Ruby
 	{
 		protected override void TranslateRandomFloat(System.Collections.Generic.List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("rand()");
 		}
 
 		protected override void TranslateGetProgramData(System.Collections.Generic.List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_getProgramData()");
 		}
 
 		protected override void TranslateByteCodeGetOps(System.Collections.Generic.List<string> output)
@@ -22,12 +22,12 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateCommandLineArgs(System.Collections.Generic.List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_getCommandLineArgs()");
 		}
 
 		protected override void TranslateIsWindowsProgram(System.Collections.Generic.List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_isWindowsProgram()");
 		}
 
 		protected override void TranslateByteCodeGetIntArgs(System.Collections.Generic.List<string> output)
@@ -52,147 +52,199 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateSin(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::sin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateTan(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::tan(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateCos(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::cos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateInt(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(".to_i");
 		}
 
 		protected override void TranslateArcCos(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::acos(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateArcSin(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::asin(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateOrd(System.Collections.Generic.List<string> output, Expression character)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, character);
+			output.Add(".ord");
 		}
 
 		protected override void TranslateMathLog(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			output.Add("Math::log(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateChr(System.Collections.Generic.List<string> output, Expression asciiValue)
 		{
-			throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, asciiValue);
+			output.Add(").chr");
 		}
 
 		protected override void TranslateNewList(System.Collections.Generic.List<string> output, StringConstant type)
 		{
-			throw new NotImplementedException();
+			output.Add("Array.new");
 		}
 
 		protected override void TranslateParseInt(System.Collections.Generic.List<string> output, Expression rawString)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_parseInt(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringParseInt(System.Collections.Generic.List<string> output, Expression value)
 		{
-			throw new NotImplementedException();
+			// TODO: why is there TranslateStringParseInt AND TranslateParseInt? They do the same thing in all platforms.
+			output.Add("crayonHelper_parseInt(");
+			this.Translator.TranslateExpression(output, value);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringConcat(System.Collections.Generic.List<string> output, Expression[] values)
 		{
-			throw new NotImplementedException();
+			output.Add("[");
+			for (int i = 0; i < values.Length; ++i)
+			{
+				this.Translator.TranslateExpression(output, values[i]);
+			}
+			output.Add("].join()");
 		}
 
 		protected override void TranslateIsValidInteger(System.Collections.Generic.List<string> output, Expression number)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_isValidInteger(");
+			this.Translator.TranslateExpression(output, number);
+			output.Add(")");
 		}
 
 		protected override void TranslateResourceReadText(System.Collections.Generic.List<string> output, Expression path)
 		{
-			throw new NotImplementedException();
+			output.Add("resourceHelper_readTextResource(");
+			this.Translator.TranslateExpression(output, path);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringTrim(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".strip");
 		}
 
 		protected override void TranslateForceParens(System.Collections.Generic.List<string> output, Expression expression)
 		{
-			throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, expression);
+			output.Add(")");
 		}
 
 		protected override void TranslateCharToString(System.Collections.Generic.List<string> output, Expression charValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, charValue);
 		}
 
 		protected override void TranslateStringUpper(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".upcase");
 		}
 
 		protected override void TranslateStringLower(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".downcase");
 		}
 
 		protected override void TranslateStringLtrim(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".lstrip");
 		}
 
 		protected override void TranslateStringRtrim(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".rstrip");
 		}
 
 		protected override void TranslateComment(System.Collections.Generic.List<string> output, StringConstant commentValue)
 		{
-			throw new NotImplementedException();
+			output.Add("# ");
+			output.Add(commentValue.Value);
 		}
 
 		protected override void TranslateStringReverse(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".reverse");
 		}
 
 		protected override void TranslateDictionarySize(System.Collections.Generic.List<string> output, Expression dictionary)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".length");
 		}
 
 		protected override void TranslateSortedCopyOfIntArray(System.Collections.Generic.List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_sortedCopyOfArray(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslateSetProgramData(System.Collections.Generic.List<string> output, Expression programData)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_setProgramData(");
+			this.Translator.TranslateExpression(output, programData);
+			output.Add(")");
 		}
 
 		protected override void TranslateThreadSleep(System.Collections.Generic.List<string> output, Expression timeDelaySeconds)
 		{
-			throw new NotImplementedException();
+			output.Add("sleep(");
+			this.Translator.TranslateExpression(output, timeDelaySeconds);
+			output.Add(")");
 		}
 
 		protected override void TranslatePrint(System.Collections.Generic.List<string> output, Expression expression, bool isErr)
 		{
-			throw new NotImplementedException();
+			if (isErr)
+			{
+				output.Add("STDERR.");
+			}
+			output.Add("puts ");
+			this.Translator.TranslateExpression(output, expression);
 		}
 
 		protected override void TranslateStringFromCode(System.Collections.Generic.List<string> output, Expression characterCode)
@@ -207,7 +259,9 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateSortedCopyOfStringArray(System.Collections.Generic.List<string> output, Expression list)
 		{
-			throw new NotImplementedException();
+			output.Add("crayonHelper_sortedCopyOfArray(");
+			this.Translator.TranslateExpression(output, list);
+			output.Add(")");
 		}
 
 		protected override void TranslateDictionaryGetValues(System.Collections.Generic.List<string> output, Expression dictionary)
@@ -247,27 +301,36 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateNewArray(System.Collections.Generic.List<string> output, StringConstant type, Expression size)
 		{
-			throw new NotImplementedException();
+			output.Add("Array.new(");
+			this.Translator.TranslateExpression(output, size);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringEquals(System.Collections.Generic.List<string> output, Expression aNonNull, Expression b)
 		{
-			throw new NotImplementedException();
+			output.Add(" = ");
 		}
 
 		protected override void TranslateDotEquals(System.Collections.Generic.List<string> output, Expression root, Expression compareTo)
 		{
-			throw new NotImplementedException();
+			output.Add(" = ");
 		}
 
 		protected override void TranslateExponent(System.Collections.Generic.List<string> output, Expression baseNum, Expression powerNum)
 		{
-			throw new NotImplementedException();
+			output.Add("(");
+			this.Translator.TranslateExpression(output, baseNum);
+			output.Add(") ** (");
+			this.Translator.TranslateExpression(output, powerNum);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringSplit(System.Collections.Generic.List<string> output, Expression stringExpr, Expression sep)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".split(");
+			this.Translator.TranslateExpression(output, sep);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringCompareIsReverse(System.Collections.Generic.List<string> output, Expression a, Expression b)
@@ -277,17 +340,21 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateCast(System.Collections.Generic.List<string> output, StringConstant typeValue, Expression expression)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, expression);
 		}
 
 		protected override void TranslateParseFloat(System.Collections.Generic.List<string> output, Expression outParam, Expression rawString)
 		{
-			throw new NotImplementedException();
+			output.Add("_crayonHelper_parseFloat(");
+			this.Translator.TranslateExpression(output, rawString);
+			output.Add(", ");
+			this.Translator.TranslateExpression(output, outParam);
+			output.Add(")");
 		}
 
 		protected override void TranslateNewListOfSize(System.Collections.Generic.List<string> output, StringConstant type, Expression length)
 		{
-			throw new NotImplementedException();
+			this.TranslateNewArray(output, type, length);
 		}
 
 		protected override void TranslateStringCharAt(System.Collections.Generic.List<string> output, Expression stringValue, Expression index)
@@ -337,7 +404,7 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateNewDictionary(System.Collections.Generic.List<string> output, StringConstant keyType, StringConstant valueType)
 		{
-			throw new NotImplementedException();
+			output.Add("{}");
 		}
 
 		protected override void TranslateCastToList(System.Collections.Generic.List<string> output, StringConstant typeValue, Expression enumerableThing)

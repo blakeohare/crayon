@@ -10,7 +10,12 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateAssignment(List<string> output, Assignment assignment)
 		{
-			throw new NotImplementedException();
+			this.TranslateExpression(output, assignment.Target);
+			output.Add(" ");
+			output.Add(assignment.AssignmentOp);
+			output.Add(" ");
+			this.TranslateExpression(output, assignment.Value);
+			output.Add(this.NL);
 		}
 
 		protected override void TranslateBinaryOpSyntax(List<string> output, string tokenValue)
@@ -30,7 +35,7 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateVariable(List<string> output, Variable expr)
 		{
-			throw new NotImplementedException();
+			output.Add(expr.Name);
 		}
 
 		protected override void TranslateWhileLoop(List<string> output, WhileLoop whileLoop)
@@ -50,12 +55,14 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateNullConstant(List<string> output, NullConstant nullConstant)
 		{
-			throw new NotImplementedException();
+			output.Add("nil");
 		}
 
 		protected override void TranslateNegativeSign(List<string> output, NegativeSign negativeSign)
 		{
-			throw new NotImplementedException();
+			output.Add("-(");
+			this.TranslateExpression(output, negativeSign);
+			output.Add(")");
 		}
 
 		protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
@@ -65,22 +72,25 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateFloatConstant(List<string> output, FloatConstant floatConstant)
 		{
-			throw new NotImplementedException();
+			output.Add(Util.FloatToString(floatConstant.Value));
 		}
 
 		protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
 		{
-			throw new NotImplementedException();
+			output.Add(dotStepStruct.RootVar);
+			output.Add("[");
+			output.Add(dotStepStruct.StructDefinition.IndexByField[dotStepStruct.FieldName].ToString());
+			output.Add("]");
 		}
 
 		protected override void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant)
 		{
-			throw new NotImplementedException();
+			output.Add(intConstant.Value.ToString());
 		}
 
 		protected override void TranslateStringConstant(List<string> output, StringConstant stringConstant)
 		{
-			throw new NotImplementedException();
+			output.Add(Util.ConvertStringValueToCode(stringConstant.Value));
 		}
 
 		protected override void TranslateBreakStatement(List<string> output, BreakStatement breakStatement)
@@ -90,7 +100,14 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
 		{
-			throw new NotImplementedException();
+			output.Add("[");
+			Expression[] args = structInstance.Args;
+			for (int i = 0; i < args.Length; ++i)
+			{
+				if (i > 0) output.Add(", ");
+				this.TranslateExpression(output, args[i]);
+			}
+			output.Add("]");
 		}
 
 		protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
@@ -105,7 +122,7 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant)
 		{
-			throw new NotImplementedException();
+			output.Add(booleanConstant.Value ? "true" : "false");
 		}
 
 		protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
