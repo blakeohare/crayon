@@ -25,7 +25,18 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateForLoop(List<string> output, ForLoop forLoop)
 		{
-			throw new NotImplementedException();
+			this.Translate(output, forLoop.Init);
+			output.Add("while ");
+			this.TranslateExpression(output, forLoop.Condition);
+
+			this.CurrentIndention++;
+			this.Translate(output, forLoop.Code);
+			this.Translate(output, forLoop.Step);
+			this.CurrentIndention--;
+
+			output.Add(this.CurrentTabIndention);
+			output.Add("end");
+			output.Add(this.NL);
 		}
 
 		protected override void TranslateDotStep(List<string> output, DotStep dotStep)
@@ -53,12 +64,32 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateBooleanNot(List<string> output, BooleanNot booleanNot)
 		{
-			throw new NotImplementedException();
+			output.Add("!");
+			this.TranslateExpression(output, booleanNot);
 		}
 
 		protected override void TranslateIfStatement(List<string> output, IfStatement ifStatement)
 		{
-			throw new NotImplementedException();
+			output.Add("if ");
+			this.TranslateExpression(output, ifStatement.Condition);
+			output.Add(this.NL);
+			this.CurrentIndention++;
+			this.Translate(output, ifStatement.TrueCode);
+			this.CurrentIndention--;
+
+			if (ifStatement.FalseCode.Length > 0)
+			{
+				output.Add(this.CurrentTabIndention);
+				output.Add("else");
+				output.Add(this.NL);
+				this.CurrentIndention++;
+				this.Translate(output, ifStatement.FalseCode);
+				this.CurrentIndention--;
+			}
+
+			output.Add(this.CurrentTabIndention);
+			output.Add("end");
+			output.Add(this.NL);
 		}
 
 		protected override void TranslateNullConstant(List<string> output, NullConstant nullConstant)
@@ -75,7 +106,18 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
 		{
-			throw new NotImplementedException();
+			this.TranslateExpression(output, functionCall.Root);
+			Expression[] args = functionCall.Args;
+			if (args.Length > 0)
+			{
+				output.Add("(");
+				for (int i = 0; i < args.Length; ++i)
+				{
+					if (i > 0) output.Add(", ");
+					this.TranslateExpression(output, args[i]);
+				}
+				output.Add(")");
+			}
 		}
 
 		protected override void TranslateFloatConstant(List<string> output, FloatConstant floatConstant)
@@ -174,7 +216,8 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateExpressionAsExecutable(List<string> output, ExpressionAsExecutable exprAsExec)
 		{
-			throw new NotImplementedException();
+			this.TranslateExpression(output, exprAsExec.Expression);
+			output.Add(this.NL);
 		}
 
 		protected override void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement)

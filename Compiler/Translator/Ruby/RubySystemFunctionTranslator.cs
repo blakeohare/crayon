@@ -42,7 +42,7 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateGetRawByteCodeString(System.Collections.Generic.List<string> output)
 		{
-			throw new NotImplementedException();
+			output.Add("resourceHelper_getByteCodeString");
 		}
 
 		protected override void TranslateByteCodeGetStringArgs(System.Collections.Generic.List<string> output)
@@ -249,12 +249,14 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStringFromCode(System.Collections.Generic.List<string> output, Expression characterCode)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, characterCode);
+			output.Add(".chr");
 		}
 
 		protected override void TranslateStringParseFloat(System.Collections.Generic.List<string> output, Expression stringValue)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add(".to_f");
 		}
 
 		protected override void TranslateSortedCopyOfStringArray(System.Collections.Generic.List<string> output, Expression list)
@@ -372,12 +374,18 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateDictionaryRemove(System.Collections.Generic.List<string> output, Expression dictionary, Expression key)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, dictionary);
+			output.Add(".delete(");
+			this.Translator.TranslateExpression(output, key);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringEndsWith(System.Collections.Generic.List<string> output, Expression stringExpr, Expression findMe)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".end_with?(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(")");
 		}
 
 		protected override void TranslateConvertListToArray(System.Collections.Generic.List<string> output, StringConstant type, Expression list)
@@ -392,7 +400,10 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStringStartsWith(System.Collections.Generic.List<string> output, Expression stringExpr, Expression findMe)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringExpr);
+			output.Add(".start_with?(");
+			this.Translator.TranslateExpression(output, findMe);
+			output.Add(")");
 		}
 
 		protected override void TranslateStringCharCodeAt(System.Collections.Generic.List<string> output, Expression stringValue, Expression index)
@@ -442,7 +453,24 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStringIndexOf(System.Collections.Generic.List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
 		{
-			throw new NotImplementedException();
+			if (optionalStartFrom != null)
+			{
+				output.Add("crayonHelper_findStringAfterIndex(");
+				this.Translator.TranslateExpression(output, haystack);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, needle);
+				output.Add(", ");
+				this.Translator.TranslateExpression(output, optionalStartFrom);
+				output.Add(")");
+			}
+			else
+			{
+				output.Add("(");
+				this.Translator.TranslateExpression(output, haystack);
+				output.Add(".index(");
+				this.Translator.TranslateExpression(output, needle);
+				output.Add(") || -1)");
+			}
 		}
 
 		protected override void TranslateStringSubstringExistsAt(System.Collections.Generic.List<string> output, Expression stringExpr, Expression lookFor, Expression index)
