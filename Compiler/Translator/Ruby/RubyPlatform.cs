@@ -34,7 +34,7 @@ namespace Crayon.Translator.Ruby
 			concatenatedCode.Add(this.Translator.NL);
 			//this.Translator.TranslateSwitchLookups(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
-			//this.Translator.TranslateFunctions(concatenatedCode, finalCode);
+			this.Translator.TranslateFunctions(concatenatedCode, finalCode);
 			concatenatedCode.Add(this.Translator.NL);
 
 			files["run.rb"] = new FileOutput()

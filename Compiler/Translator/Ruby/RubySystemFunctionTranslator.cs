@@ -271,7 +271,7 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStringAsChar(System.Collections.Generic.List<string> output, StringConstant stringConstant)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringConstant);
 		}
 
 		protected override void TranslateStringCast(System.Collections.Generic.List<string> output, Expression thing, bool strongCast)
@@ -359,7 +359,10 @@ namespace Crayon.Translator.Ruby
 
 		protected override void TranslateStringCharAt(System.Collections.Generic.List<string> output, Expression stringValue, Expression index)
 		{
-			throw new NotImplementedException();
+			this.Translator.TranslateExpression(output, stringValue);
+			output.Add("[");
+			this.Translator.TranslateExpression(output, index);
+			output.Add("]");
 		}
 
 		protected override void TranslateStringContains(System.Collections.Generic.List<string> output, Expression haystack, Expression needle)
