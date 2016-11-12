@@ -12,7 +12,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateGetProgramData(System.Collections.Generic.List<string> output)
         {
-            output.Add("crayonHelper_getProgramData()");
+            output.Add("$program_data");
         }
 
         protected override void TranslateByteCodeGetOps(System.Collections.Generic.List<string> output)
@@ -22,7 +22,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateCommandLineArgs(System.Collections.Generic.List<string> output)
         {
-            output.Add("crayonHelper_getCommandLineArgs()");
+            output.Add("ARGV");
         }
 
         protected override void TranslateIsWindowsProgram(System.Collections.Generic.List<string> output)
@@ -75,7 +75,7 @@ namespace Crayon.Translator.Ruby
         {
             output.Add("(");
             this.Translator.TranslateExpression(output, value);
-            output.Add(".to_i");
+			output.Add(").to_i");
         }
 
         protected override void TranslateArcCos(System.Collections.Generic.List<string> output, Expression value)
@@ -119,17 +119,15 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateParseInt(System.Collections.Generic.List<string> output, Expression rawString)
         {
-            output.Add("crayonHelper_parseInt(");
             this.Translator.TranslateExpression(output, rawString);
-            output.Add(")");
+            output.Add(".to_i");
         }
 
         protected override void TranslateStringParseInt(System.Collections.Generic.List<string> output, Expression value)
         {
             // TODO: why is there TranslateStringParseInt AND TranslateParseInt? They do the same thing in all platforms.
-            output.Add("crayonHelper_parseInt(");
             this.Translator.TranslateExpression(output, value);
-            output.Add(")");
+			output.Add(".to_i");
         }
 
         protected override void TranslateStringConcat(System.Collections.Generic.List<string> output, Expression[] values)
@@ -137,6 +135,7 @@ namespace Crayon.Translator.Ruby
             output.Add("[");
             for (int i = 0; i < values.Length; ++i)
             {
+				if (i > 0) output.Add(", ");
                 this.Translator.TranslateExpression(output, values[i]);
             }
             output.Add("].join()");
@@ -225,9 +224,8 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateSetProgramData(System.Collections.Generic.List<string> output, Expression programData)
         {
-            output.Add("crayonHelper_setProgramData(");
+            output.Add("$program_data = ");
             this.Translator.TranslateExpression(output, programData);
-            output.Add(")");
         }
 
         protected override void TranslateThreadSleep(System.Collections.Generic.List<string> output, Expression timeDelaySeconds)
@@ -319,7 +317,9 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateStringEquals(System.Collections.Generic.List<string> output, Expression aNonNull, Expression b)
         {
-            output.Add(" = ");
+			this.Translator.TranslateExpression(output, aNonNull);
+            output.Add(" == ");
+			this.Translator.TranslateExpression(output, b);
         }
 
         protected override void TranslateDotEquals(System.Collections.Generic.List<string> output, Expression root, Expression compareTo)
