@@ -25,6 +25,7 @@ namespace Crayon
         public abstract bool IsThreadBlockingAllowed { get; }
         public virtual bool IsByteCodeLoadedDirectly { get { return false; } }
         public abstract string PlatformShortId { get; }
+		public virtual bool SupportsIncrement { get { return true; } }
 
         public string LibraryBigSwitchStatement { get; set; }
 

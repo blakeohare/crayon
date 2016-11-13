@@ -8,5 +8,6 @@
         PYTHON,
         JAVA,
         JAVASCRIPT,
+		RUBY,
     }
 }

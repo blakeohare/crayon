@@ -21,4 +21,8 @@
 	<target name="python">
 		<platform>game-python-pygame</platform>
 	</target>
+	
+	<target name="ruby">
+		<platform>game-ruby-gosu</platform>
+	</target>
 </build>
