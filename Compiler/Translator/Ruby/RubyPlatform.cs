@@ -44,8 +44,11 @@ namespace Crayon.Translator.Ruby
 			};
 
             foreach (string file in new string[] {
+				"header.rb",
 				"crayonHelper.rb",
 				"resourceHelper.rb",
+				"gfxRenderer.rb",
+				"gameWindow.rb",
 				"library.rb",
 				"footer.rb",
 			})

@@ -189,14 +189,10 @@
   <ItemGroup>
     <EmbeddedResource Include="game-ruby-gosu\crayonHelper.rb" />
     <EmbeddedResource Include="game-ruby-gosu\footer.rb" />
+    <EmbeddedResource Include="game-ruby-gosu\gameWindow.rb" />
+    <EmbeddedResource Include="game-ruby-gosu\gfxRenderer.rb" />
+    <EmbeddedResource Include="game-ruby-gosu\header.rb" />
     <EmbeddedResource Include="game-ruby-gosu\resourceHelper.rb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
