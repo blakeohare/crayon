@@ -166,6 +166,16 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 				return 0;
 			}
 
+			if (leftType == Types.CLASS) {
+				@type('ClassValue') c1 = $_cast('ClassValue', Value$a.internalValue);
+				@type('ClassValue') c2 = $_cast('ClassValue', Value$b.internalValue);
+				if (ClassValue$c1.isInterface == ClassValue$c2.isInterface &&
+					ClassValue$c1.classId == ClassValue$c2.classId) {
+					return 1;
+				}
+				return 0;
+			}
+
 			return 2;
 		} else if (leftType == Types.INTEGER || leftType == Types.FLOAT) {
 			if (rightType == Types.FLOAT) {
@@ -198,8 +208,8 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 				return 0;
 			}
 
-			// == is not defined for this type. If a user needs to compare two things of one of the remaining types,
-			// they are probably writing bad code.
+			// == is not defined for this type.
+			// That's bad.
 			return 2;
 		}
 		return 0;

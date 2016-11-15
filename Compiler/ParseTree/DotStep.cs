@@ -272,6 +272,14 @@ namespace Crayon.ParseTree
 
             // This is done here in the resolver instead of the parser because some unallowed 
             // field names (such as .class) are valid.
+            if (this.StepToken.Value == "class")
+            {
+                if (this.Root is Variable)
+                {
+                    throw new ParserException(this.Root.FirstToken, "'" + ((Variable)this.Root).Name + "' is not a class.");
+                }
+                throw new ParserException(this.DotToken, ".class can only be applied to class names.");
+            }
             Parser.VerifyIdentifier(this.StepToken);
 
             return this;

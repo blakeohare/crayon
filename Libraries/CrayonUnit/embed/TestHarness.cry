@@ -35,13 +35,11 @@ namespace CrayonUnit {
 						print("PASS");
 					} catch (CrayonUnit.UnitTestFailedException e)  {
 						print("FAIL -> " + e.message);
+						print(e.getTrace().join('\n'));
 					} catch (Core.Exception e) {
 						print("FAIL - UNHANDLED EXCEPTION of type: " + Core.Reflection.getClassFromInstance(e).getName());
 						print(e.message);
-						trace = e.getTrace();
-						trace.pop();
-						trace.remove(0);
-						print(trace.join('\n'));
+						print(e.getTrace().join('\n'));
 					}
 				}
 				
