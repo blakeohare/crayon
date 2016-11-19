@@ -119,18 +119,15 @@ class ExceptionsTest : Test {
 	function testSimpleExceptionRouting_tryCatchCatchFinally(trace, exceptionType) {
 		trace.add('A');
 		try {
-			// YOU LEFT OFF HERE
-			// you accidentally used .Add instead of .add and this was causing an exception not caught by "catch (Exception)"
-			// see ops/call_function.cry line 327
-			trace.Add('B');
+			trace.add('B');
 			this.doThrow(exceptionType);
-			trace.Add('C');
+			trace.add('C');
 		} catch (NullReferenceException) {
-			trace.Add('D');
+			trace.add('D');
 		} catch (InvalidArgumentException) {
-			trace.Add('E');
+			trace.add('E');
 		} catch (Exception) {
-			trace.Add('F');
+			trace.add('F');
 		} finally {
 			trace.add('G');
 		}
