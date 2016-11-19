@@ -24,7 +24,6 @@ switch (Value$value.type) {
 					functionId));
 			}
 		} else {
-			string1 = "Instance"; // TODO: use class name.
 			output = null;
 		}
 		break;
@@ -34,7 +33,6 @@ switch (Value$value.type) {
 			int2 = $_string_length($_force_parens($_cast('string', Value$value.internalValue)));
 			output = buildInteger(int2);
 		} else {
-			string1 = "string";
 			output = null;
 		}
 		break;
@@ -49,7 +47,6 @@ switch (Value$value.type) {
 			}
 			output = buildInteger(int2);
 		} else {
-			string1 = "list";
 			output = null;
 		}
 		break;
@@ -59,25 +56,25 @@ switch (Value$value.type) {
 			dictImpl = $_cast('DictImpl', Value$value.internalValue);
 			output = buildInteger(DictImpl$dictImpl.size);
 		} else {
-			string1 = "dictionary";
 			output = null;
 		}
 		break;
 
 	default:
-		switch (Value$value.type) {
-			case Types.NULL: string1 = "null"; break;
-			case Types.BOOLEAN: string1 = "a boolean"; break;
-			case Types.INTEGER: string1 = "an integer"; break;
-			case Types.FLOAT: string1 = "a float"; break;
-			default: string1 = "this value"; break;
+		if (Value$value.type == Types.NULL) {
+			return $_exception(CoreExceptionTypes.NULL_REFERENCE, "Derferenced a field from null.");
 		}
-		return $_exception(CoreExceptionTypes.UNKNOWN_FIELD, $_string_concat("Cannot dereference a field from ", string1, "."));
+		output = null;
 		break;
 }
 
 if (output == null) {
-	return $_exception(CoreExceptionTypes.UNKNOWN_FIELD, $_string_concat(string1, " does not have that field."));
+	output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
+	if (output == null) {
+		return $_exception(
+			CoreExceptionTypes.UNKNOWN_FIELD,
+			$_string_concat(getTypeFromId(Value$value.type), " does not have that field."));
+	}
 }
 
 $_array_set(valueStack, valueStackSize - 1, output);

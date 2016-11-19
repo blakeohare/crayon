@@ -21,4 +21,5 @@ $_list_remove_at: [ARG:1].pop([ARG:2])
 $_list_reverse_in_place: [ARG:1].reverse()
 $_list_set: [ARG:1][[ARG:2]] = [ARG:3]
 $_list_shuffle_in_place: random.shuffle([ARG:1])
+$_python_reference_equality: [ARG:1] is [ARG:2]
 $_string_length: len([ARG:1])

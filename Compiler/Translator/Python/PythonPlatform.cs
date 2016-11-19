@@ -16,7 +16,7 @@ namespace Crayon.Translator.Python
         public override bool IsCharANumber { get { return false; } }
         public override bool IntIsFloor { get { return false; } }
         public override bool IsThreadBlockingAllowed { get { return true; } }
-		public virtual bool SupportsIncrement { get { return false; } }
+		public override bool SupportsIncrement { get { return false; } }
 
         public override string PlatformShortId { get { return "game-python-pygame"; } }
 
