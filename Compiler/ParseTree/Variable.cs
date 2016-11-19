@@ -154,6 +154,10 @@ namespace Crayon.ParseTree
                         }
                     }
 
+					// TODO: But if it's being called like a function then...
+					// - give a better error message "function 'foo' is not defined"
+					// - give an even better error message when there's a class or instance function with the same name
+					//   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
                     throw new ParserException(this.FirstToken, "'" + name + "' is used but is never assigned to.");
                 }
             }
