@@ -413,10 +413,12 @@ namespace Crayon.Translator.Ruby
 			output.Add(" + [])");
         }
 
+		// TODO: create two separate system functions: $_string_append_copy and $_string_append_mutate and only implement one per platform
+		// This will ensure the code is very explicit. So far unit tests pass without this distinction, but it is not good for long term stability.
         protected override void TranslateStringAppend(System.Collections.Generic.List<string> output, Expression target, Expression valueToAppend)
         {
 			this.Translator.TranslateExpression(output, target);
-			output.Add(" + ");
+			output.Add(" += ");
 			this.Translator.TranslateExpression(output, valueToAppend);
         }
 

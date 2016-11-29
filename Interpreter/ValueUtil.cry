@@ -186,7 +186,7 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 			case Types.LIST:
 			case Types.DICTIONARY:
 			case Types.INSTANCE:
-				if (%%%IS_PYTHON%%%) {
+				if (%%%IS_PYTHON%%% || %%%IS_RUBY%%%) {
 					if ($_python_reference_equality(Value$a.internalValue, Value$b.internalValue)) {
 						output = 1;
 					}
