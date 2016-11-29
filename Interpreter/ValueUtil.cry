@@ -171,8 +171,14 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 				break;
 
 			case Types.STRING:
-				if ($_cast('string', Value$a.internalValue) == $_cast('string', Value$b.internalValue)) {
-					output = 1;
+				if (%%%IS_JAVA%%%) {
+					if ($_dot_equals(Value$a.internalValue, Value$b.internalValue)) {
+						output = 1;
+					}
+				} else {
+					if ($_cast('string', Value$a.internalValue) == $_cast('string', Value$b.internalValue)) {
+						output = 1;
+					}
 				}
 				break;
 			
