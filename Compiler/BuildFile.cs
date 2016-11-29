@@ -201,7 +201,6 @@ namespace Crayon
 			}
 
 			Dictionary<string, BuildVarCanonicalized> varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
-			Dictionary<string, string> aliases = new Dictionary<string, string>();
 
 			flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
 			flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
