@@ -646,17 +646,141 @@ Or simply use a default value.
 titleToDisplay = title ?? "(untitled)";
 ```
 
+The above code is equivalent to:
+
+```
+if (title == null) {
+  titleToDisplay = "(untitled)";
+} else {
+  titleToDisplay = title;
+}
+```
+
 ## More on functions
 
 ### Return
 
+A `return` statement works in much the same way it does in other languages. It takes a value and causes the expression at the function invocation to have that value.
+
+```
+total = countTheNumbers(listOfNumbers);
+
+...
+
+function countTheNumbers(list) {
+  total = 0;
+  for (num : list) {
+    total += num;
+  }
+  return total;
+}
+```
+
+`return` can also be used to simply halt a function's execution without returning anything.
+
+```
+function printNumbersUntil5IsFound(list) {
+  for (num : list) {
+    print(num);
+    if (num == 5) {
+      return;
+    }
+  }
+}
+```
+
+This is equivalent to returning `null`. 
+
+```
+a = printNumbersUntil5IsFound(numbers);
+print(a); // prints null
+```
+
+Additionally, a function that does not have an explicit `return` statement will implicitly return `null` as well.
+
 ### Optional Parameters
 
-## Enums and Constants
+Functions and methods can consume optional parameters. This allows you to pass a variable number of parameters.
+
+This works by setting a default value for the parameters that are not provided.
+
+```
+function foo(a, b, c = null) {
+  ...
+}
+```
+
+The above function can consume either 2 or 3 arguments. If 2 are provided, then `c` will receive a value of `null`.
+
+Optional parameters must go at the end of a function's argument list. 
+
+## Constants and Enums
+
+### Constants
+
+Constants work like variables that have global scope i.e. they are not part of a function, they are "loose" and can be accessed from anywhere. Constants MUST be a primitive value like a number or string. Mutable values (such as lists, dictionaries, or objects) cannot be used as constants.
+
+One important aspect of constants is that they are resolved at compile-time. This means they do not take up extra space in the compiled byte code if they are not used and are placed inline in the code where they are used. It also means they can be used as cases in a switch statement. 
+
+```
+const PI = 3.14159265358979;
+
+function findArea(radius) {
+  return PI * (radius ** 2);
+}
+```
 
 ### Enums
 
-### Constants
+Enums are also like integer constants except they are grouped together for a purpose. Generally (but not always) the actual value of the integer is irrelevant and are simply used as labels to different cases. Enums are ideal for switch statements.
+
+Enums are defined in groups like so...
+
+```
+enum Phase {
+  WETTEN,
+  LATHER,
+  RINSE,
+  REPEAT
+}
+```
+
+Integers can be explicitly assigned to enums...
+
+```
+enum Phase {
+  WETTEN = 1,
+  LATHER = 2,
+  RINSE = 3,
+  REPEAT = 4
+}
+
+switch (phase) {
+  case Phase.WETTEN:
+    ...
+    break;
+  case Phase.LATHER:
+    ...
+    break;
+  case Phase.RINSE:
+    ...
+    break;
+  case Phase.REPEAT:
+    ....
+    break;
+  default:
+    Core.assert("Unknown phase value.");
+    break;
+}
+```
+
+If no integers are assigned to enum values (as in the first example) they will be incrementally assigned starting from 0. 
+
+One caveat is that the name of an enum is lost after compile time and so they may make debugging more difficult...
+
+```
+print(Phase.LATHER); // prints 2
+```
 
 ## Namespaces
 
