@@ -98,6 +98,7 @@ These are the various elements that can be included as a sub property of a **<bu
 | icon | A path relative to the build file of an image to use as a project icon. Specifically how this is used depends on the target platform. |
 | guidseed | An arbitrary string. This is used as the seed for the randomizer for generating a unique project GUID for C# projects. A recommended value is a comma-delimited list of: a reverse domain name (Java package style), a project version number, and **%TARGET%**. This helps prevent project GUID collisions between projects and versions.<br> `<guidseed>org.crayonlang.demos.asteroids,v0.2.0,%TARGET%</guidseed>` |
 | imagesheets | This is used by the ImageResources library for consolidating image resources embedded in the project into larger image sheets for improving performance or optimizing disk/network reads. TODO: add separate page for Image Sheet documentation. |
+| orientation | Used by mobile game platforms. This will fix the orientation of the screen into landscape or portrait mode. Possible values: **landsacpe**, **portrait**, **auto**. The default value is **auto**. |
 
 ### Compile Time Variables
 
