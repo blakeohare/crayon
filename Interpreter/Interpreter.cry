@@ -308,8 +308,9 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 // returns a status code:
 // 0 - list is empty
 // 1 - list has contents
-// 2 - start index is out of bounds
-// 3 - start index occurs after begin index (relative to direction)
+// 2 - list is a simple clone
+// 3 - start index is out of bounds
+// 4 - start index occurs after begin index (relative to direction)
 function @type('int') canonicalizeListSliceArgs(
 	@type('Array<int>') outParams,
 	@type('Value') beginValue,
@@ -332,16 +333,18 @@ function @type('int') canonicalizeListSliceArgs(
 	if (beginIndex < 0) beginIndex += length;
 	if (endIndex < 0) endIndex += length;
 
+	if (beginIndex == 0 && endIndex == length && stepAmount == 1) return 2;
+
 	if (isForward) {
 		if (beginIndex >= length) return 0;
-		if (beginIndex < 0) return 2;
-		if (endIndex < beginIndex) return 3;
+		if (beginIndex < 0) return 3;
+		if (endIndex < beginIndex) return 4;
 		if (beginIndex == endIndex) return 0;
 		if (endIndex > length) endIndex = length;
 	} else {
 		if (beginIndex < 0) return 0;
-		if (beginIndex >= length) return 2;
-		if (endIndex > beginIndex) return 3;
+		if (beginIndex >= length) return 3;
+		if (endIndex > beginIndex) return 4;
 		if (beginIndex == endIndex) return 0;
 		if (endIndex < -1) endIndex = -1;
 	}

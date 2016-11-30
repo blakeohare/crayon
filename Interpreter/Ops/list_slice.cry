@@ -151,8 +151,8 @@ if (int5 == 1) {
 		} else {
 			$_string_append(string1, " slice begin index must occur after the end index when the step is negative.");
 		}
-		return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, string1);
 	}
+	return $_exception(CoreExceptionTypes.INDEX_OUT_OF_RANGE, string1);
 }
 
 $_array_set(valueStack, valueStackSize - 1, value);
