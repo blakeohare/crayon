@@ -1,0 +1,103 @@
+import CrayonUnit;
+
+class StringTest : Test {
+
+	constructor() : base() { }
+
+	function testStringImmutability() {
+		a = "a";
+		b = a + "b";
+		assertThat(a).isEqualTo("a");
+		assertThat(b).isEqualTo("ab");
+	}
+
+	function testStringMethods() {
+		s = "This is A teSt.";
+		assertThat(s.upper()).isEqualTo("THIS IS A TEST.");
+		assertThat(s.lower()).isEqualTo("this is a test.");
+		assertThat(s.contains(" is A ")).isTrue();
+		assertThat(s.contains(" is a ")).isFalse();
+		assertThat(s.endsWith("St.")).isTrue();
+		assertThat(s.endsWith("st.")).isFalse();
+		assertThat(s.endsWith('x' * 100)).isFalse();
+		assertThat(s.endsWith('')).isTrue();
+		assertThat(s.indexOf("This")).isEqualTo(0);
+		assertThat(s.indexOf("A t")).isEqualTo(8);
+		assertThat(s.indexOf("test")).isEqualTo(-1);
+		assertThat(s.indexOf("i")).isEqualTo(2);
+		assertThat(s.replace(' ', '@')).isEqualTo("This@is@A@teSt.");
+		assertThat(s.replace('s', '$')).isEqualTo("Thi$ i$ A teSt.");
+		assertThat(s.replace('z', 'Z')).isEqualTo("This is A teSt.");
+		assertThat(s.reverse()).isEqualTo(".tSet A si sihT");
+		assertThat(s.split('s')).isEqualTo(["Thi", " i", " A teSt."]);
+		assertThat(s.startsWith("This")).isTrue();
+		assertThat(s.startsWith("this")).isFalse();
+		assertThat(s.startsWith('x' * 100)).isFalse();
+		assertThat(s.startsWith('')).isTrue();
+		assertThat(s.trim()).isEqualTo(s);
+		assertThat(s.ltrim()).isEqualTo(s);
+		assertThat(s.rtrim()).isEqualTo(s);
+
+		t = " \r\n\tfoo bar \r\n\t";
+		assertThat(t.trim()).isEqualTo("foo bar");
+		assertThat(t.ltrim()).isEqualTo("foo bar \r\n\t");
+		assertThat(t.rtrim()).isEqualTo(" \r\n\tfoo bar");
+	}
+
+	function testStringSlicing() {
+		a = "0123456789";
+		assertThat(a[:]).isEqualTo("0123456789");
+		assertThat(a[::]).isEqualTo("0123456789");
+		assertThat(a[1:]).isEqualTo("123456789");
+		assertThat(a[:-1]).isEqualTo("012345678");
+		assertThat(a[1:-1]).isEqualTo("12345678");
+		assertThat(a[::1]).isEqualTo("0123456789");
+		assertThat(a[::2]).isEqualTo("02468");
+		assertThat(a[2:4]).isEqualTo("23");
+		assertThat(a[2:4:2]).isEqualTo("2");
+		assertThat(a[2:4:3]).isEqualTo("2");
+		assertThat(a[2:5]).isEqualTo("234");
+		assertThat(a[2:5:2]).isEqualTo("24");
+		assertThat(a[2:5:3]).isEqualTo("2");
+		assertThat(a[2:-1:3]).isEqualTo("258");
+		assertThat(a[-10:-8]).isEqualTo("01");
+		this.errSplice(a, -11, -8);
+	}
+
+	function errSplice(str, a = null, b = null, c = null) {
+		try {
+			if (a == null) {
+				if (b == null) {
+					if (c == null) {
+						x = str[::];
+					} else {
+						x = str[::c];
+					}
+				} else {
+					if (c == null) {
+						x = str[:b:];
+					} else {
+						x = str[:b:c];
+					}
+				}
+			} else if (b == null) {
+				if (c == null) {
+					x = str[a::];
+				} else {
+					x = str[a::c];
+				}
+			} else if (c == null) {
+				x = str[a:b:];
+			} else {
+				x = str[a:b:c];
+			}
+
+			fail(
+				"Expected failure for invalid slice range: " + 
+				str + "[" + (a ?? '') + ':' + (b ?? '') + ':' + (c ?? '') + ']' + 
+				" but instead got " + x + " as a result.");
+		} catch (Core.IndexOutOfRangeException ioore) {
+			// expected
+		}
+	}
+}
