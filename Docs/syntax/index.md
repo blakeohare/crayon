@@ -525,15 +525,126 @@ Additionally, it is actually okay to modify a collection while it is being used 
 
 ### Do While Loops
 
-### Switch Statements
+The most uncommon type of loop (but still standard enough to include in the language) is the do-while loop. A do-while works much the same way as a while loop, with the exception of the condition going at the end...
 
-### Continue
+```
+// count to 10
+counter = 0
+do {
+  print(counter + " Mississippi");
+} while (counter < 10);
+```
+
+The key difference is that a do-while loop will ALWAYS execute at least once. 
 
 ### Break
 
+A `break` statement will stop a loop and immediately jump to the code afterwards. 
+
+Consider the following example where numbers are being tallied in the list for the purpose of checking if the sum is greater than 10. If the running total exceeds 10 before the list traversal is complete, there is no need to finish iterating through the list. 
+
+```
+sumIsGreaterThan10 = false;
+total = 0;
+for (number : listOfNumbers) {
+  total += number;
+  if (total > 10) {
+    sumIsGreaterThan10 = true;
+    break; // skip the remaining numbers
+  }
+}
+print("The list " + (sumIsGreaterThan10 ? " has more than 10" : " has at most 10") + " items in it.");
+```
+
+This will work for all loop types. For for loops, it is important to note that the step code will not run after a break. 
+
+### Continue
+
+A `continue` statement can be placed in any loop and will jump to the next iteration of the loop. 
+
+```
+// Do something to the numbers that are even.
+
+for (number : listOfNumbers) {
+  if (number % 2 == 1)
+    continue;
+  
+  doSomethingToEvenNumber(number);
+}
+```
+
+It is important to note that the continue statement will perform all end-of-iteration tasks when used. For example, the for loop will run the step code and check the condition, while and do-while lopos will check the condition, and for each loops will move to the next item in the list.
+
+### Switch Statements
+
+A switch statement works like a large chain of `if`/`else` statements that compare an expression against a constant using `==`.
+The key difference between a switch statement and using lots of if/else statements is that the switch statement works instantaneously as opposed to sequentially checking each match.
+
+Consider the following inefficient code:
+
+```
+if (a == 1) {
+  doSomethingA();
+} else if (a == 2) {
+  doSomethingB();
+} else if (a == 3 || a == 4) {
+  doSomethingC();
+} else {
+  doSomethingD();
+}
+```
+
+When this code runs, the value of `a` has to be compared individually to each of these conditions until one of them is found.
+
+This can be made more efficient with a switch statement.
+
+```
+switch (a) {
+  case 1:
+    doSomethingA();
+    break;
+  case 2:
+    doSomethingB();
+    break;
+  case 3:
+  case 4:
+    doSomethingC();
+    break;
+  default:
+    doSomethingD();
+    break;
+}
+```
+
+A switch statement operates on any expression and contains a list of `case`s. Each case must terminate either with a break (which will jump to the end of the switch statement and continue on with the code after it) or a return statement. `case`s can be combined together. For example, case 3 and 4 are paired together and both execute `doSomethingD()`. If none of the cases match the expression, then the `default` condition is executed, if present. If no `default` is present, then no code will run and the switch statement is skipped.
+
+The values for each `case` must be an integer, string, or enum. Switch statements cannot mix types. 
+
+Note that unlike many languages, cases that do not have a break or return at the end are not allowed. These are generally called "fallthrough" cases and are a sign of either poorly structured code but more commonly a typo, which is why they are not allowed.
+
 ### Ternary Expressions
 
+A ternary expression is basically an "inline" if/else statement and can be placed inside an expression.
+
+A ternary expression is a boolean followed by a `?`, followed by the expression to use if the boolean is true, followed by a `:`, followed by the expression if the boolean is false. Ternary expressions have the lowest precedence in order of operations. 
+
+```
+print("number is " + (number % 2 == 0 ? "even" : "odd");
+```
+
 ### Null Coalescer
+
+A null coalescer is similar to the ternary expression and is an inline null check. It is denoted by `??`. The expression to the left of the null coalescer is an expression that may possibly be null. If it is not, then the original expression is used, otherwise, the expression to the right of `??` is used. This is commonly used to convert nullable strings into empty strings.
+
+```
+nonNullString = stringValueOrNull ?? ""
+```
+
+Or simply use a default value.
+
+```
+titleToDisplay = title ?? "(untitled)";
+```
 
 ## More on functions
 
