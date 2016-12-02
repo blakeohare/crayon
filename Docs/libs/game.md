@@ -115,6 +115,8 @@ Field indicating what kind of event this is. The value is from the enum [EventTy
 
 # Class: QuitEvent
 
+Subclass of [Event](#class-event).
+
 This is an event indicating one of various quit events.
 
 ## Fields
@@ -128,6 +130,8 @@ Field indicating what kind of quit event this is. The value is from the enum [Ev
 ---
 
 # Class: KeyEvent
+
+Subclass of [Event](#class-event).
 
 This is an event indicating some sort of keyboard event. The `.type` field will be either KEY_DOWN or KEY_UP.
 
@@ -152,6 +156,8 @@ This is redundant with checking if the .type field is `EventType.KEY_DOWN` and e
 
 # Class: MouseEvent
 
+Subclass of [Event](#class-event).
+
 Abstract base class for other mouse event types. This class only contains cursor location information.
 
 ## Fields
@@ -167,6 +173,8 @@ Note that this uses logical coordinates (the `width` and `height` parameters of 
 as opposed to the actual physical screen size.
 
 # Class: MouseClickEvent
+
+Subclass of [MouseEvent](#class-mouseevent).
 
 ## Fields
 
@@ -190,11 +198,15 @@ Note that this is redundant with checking the event's `.type` value.
 
 # Class: MouseMoveEvent
 
+Subclass of [MouseEvent](#class-mouseevent).
+
 Class for events for when the mouse moves. This class does not contain any fields as its base class ([MouseEvent](#class-mouseevent)) already contains the coordinates.
 
 ---
 
 # Class: MouseScrollEvent
+
+Subclass of [MouseEvent](#class-mouseevent).
 
 Class for events for when the mouse wheel is scrolled.
 
