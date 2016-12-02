@@ -525,27 +525,262 @@ Additionally, it is actually okay to modify a collection while it is being used 
 
 ### Do While Loops
 
-### Switch Statements
+The most uncommon type of loop (but still standard enough to include in the language) is the do-while loop. A do-while works much the same way as a while loop, with the exception of the condition going at the end...
 
-### Continue
+```
+// count to 10
+counter = 0
+do {
+  print(counter + " Mississippi");
+} while (counter < 10);
+```
+
+The key difference is that a do-while loop will ALWAYS execute at least once. 
 
 ### Break
 
+A `break` statement will stop a loop and immediately jump to the code afterwards. 
+
+Consider the following example where numbers are being tallied in the list for the purpose of checking if the sum is greater than 10. If the running total exceeds 10 before the list traversal is complete, there is no need to finish iterating through the list. 
+
+```
+sumIsGreaterThan10 = false;
+total = 0;
+for (number : listOfNumbers) {
+  total += number;
+  if (total > 10) {
+    sumIsGreaterThan10 = true;
+    break; // skip the remaining numbers
+  }
+}
+print("The list " + (sumIsGreaterThan10 ? " has more than 10" : " has at most 10") + " items in it.");
+```
+
+This will work for all loop types. For for loops, it is important to note that the step code will not run after a break. 
+
+### Continue
+
+A `continue` statement can be placed in any loop and will jump to the next iteration of the loop. 
+
+```
+// Do something to the numbers that are even.
+
+for (number : listOfNumbers) {
+  if (number % 2 == 1)
+    continue;
+  
+  doSomethingToEvenNumber(number);
+}
+```
+
+It is important to note that the continue statement will perform all end-of-iteration tasks when used. For example, the for loop will run the step code and check the condition, while and do-while lopos will check the condition, and for each loops will move to the next item in the list.
+
+### Switch Statements
+
+A switch statement works like a large chain of `if`/`else` statements that compare an expression against a constant using `==`.
+The key difference between a switch statement and using lots of if/else statements is that the switch statement works instantaneously as opposed to sequentially checking each match.
+
+Consider the following inefficient code:
+
+```
+if (a == 1) {
+  doSomethingA();
+} else if (a == 2) {
+  doSomethingB();
+} else if (a == 3 || a == 4) {
+  doSomethingC();
+} else {
+  doSomethingD();
+}
+```
+
+When this code runs, the value of `a` has to be compared individually to each of these conditions until one of them is found.
+
+This can be made more efficient with a switch statement.
+
+```
+switch (a) {
+  case 1:
+    doSomethingA();
+    break;
+  case 2:
+    doSomethingB();
+    break;
+  case 3:
+  case 4:
+    doSomethingC();
+    break;
+  default:
+    doSomethingD();
+    break;
+}
+```
+
+A switch statement operates on any expression and contains a list of `case`s. Each case must terminate either with a break (which will jump to the end of the switch statement and continue on with the code after it) or a return statement. `case`s can be combined together. For example, case 3 and 4 are paired together and both execute `doSomethingD()`. If none of the cases match the expression, then the `default` condition is executed, if present. If no `default` is present, then no code will run and the switch statement is skipped.
+
+The values for each `case` must be an integer, string, or enum. Switch statements cannot mix types. 
+
+Note that unlike many languages, cases that do not have a break or return at the end are not allowed. These are generally called "fallthrough" cases and are a sign of either poorly structured code but more commonly a typo, which is why they are not allowed.
+
 ### Ternary Expressions
 
+A ternary expression is basically an "inline" if/else statement and can be placed inside an expression.
+
+A ternary expression is a boolean followed by a `?`, followed by the expression to use if the boolean is true, followed by a `:`, followed by the expression if the boolean is false. Ternary expressions have the lowest precedence in order of operations. 
+
+```
+print("number is " + (number % 2 == 0 ? "even" : "odd");
+```
+
 ### Null Coalescer
+
+A null coalescer is similar to the ternary expression and is an inline null check. It is denoted by `??`. The expression to the left of the null coalescer is an expression that may possibly be null. If it is not, then the original expression is used, otherwise, the expression to the right of `??` is used. This is commonly used to convert nullable strings into empty strings.
+
+```
+nonNullString = stringValueOrNull ?? ""
+```
+
+Or simply use a default value.
+
+```
+titleToDisplay = title ?? "(untitled)";
+```
+
+The above code is equivalent to:
+
+```
+if (title == null) {
+  titleToDisplay = "(untitled)";
+} else {
+  titleToDisplay = title;
+}
+```
 
 ## More on functions
 
 ### Return
 
+A `return` statement works in much the same way it does in other languages. It takes a value and causes the expression at the function invocation to have that value.
+
+```
+total = countTheNumbers(listOfNumbers);
+
+...
+
+function countTheNumbers(list) {
+  total = 0;
+  for (num : list) {
+    total += num;
+  }
+  return total;
+}
+```
+
+`return` can also be used to simply halt a function's execution without returning anything.
+
+```
+function printNumbersUntil5IsFound(list) {
+  for (num : list) {
+    print(num);
+    if (num == 5) {
+      return;
+    }
+  }
+}
+```
+
+This is equivalent to returning `null`. 
+
+```
+a = printNumbersUntil5IsFound(numbers);
+print(a); // prints null
+```
+
+Additionally, a function that does not have an explicit `return` statement will implicitly return `null` as well.
+
 ### Optional Parameters
 
-## Enums and Constants
+Functions and methods can consume optional parameters. This allows you to pass a variable number of parameters.
+
+This works by setting a default value for the parameters that are not provided.
+
+```
+function foo(a, b, c = null) {
+  ...
+}
+```
+
+The above function can consume either 2 or 3 arguments. If 2 are provided, then `c` will receive a value of `null`.
+
+Optional parameters must go at the end of a function's argument list. 
+
+## Constants and Enums
+
+### Constants
+
+Constants work like variables that have global scope i.e. they are not part of a function, they are "loose" and can be accessed from anywhere. Constants MUST be a primitive value like a number or string. Mutable values (such as lists, dictionaries, or objects) cannot be used as constants.
+
+One important aspect of constants is that they are resolved at compile-time. This means they do not take up extra space in the compiled byte code if they are not used and are placed inline in the code where they are used. It also means they can be used as cases in a switch statement. 
+
+```
+const PI = 3.14159265358979;
+
+function findArea(radius) {
+  return PI * (radius ** 2);
+}
+```
 
 ### Enums
 
-### Constants
+Enums are also like integer constants except they are grouped together for a purpose. Generally (but not always) the actual value of the integer is irrelevant and are simply used as labels to different cases. Enums are ideal for switch statements.
+
+Enums are defined in groups like so...
+
+```
+enum Phase {
+  WETTEN,
+  LATHER,
+  RINSE,
+  REPEAT
+}
+```
+
+Integers can be explicitly assigned to enums...
+
+```
+enum Phase {
+  WETTEN = 1,
+  LATHER = 2,
+  RINSE = 3,
+  REPEAT = 4
+}
+
+switch (phase) {
+  case Phase.WETTEN:
+    ...
+    break;
+  case Phase.LATHER:
+    ...
+    break;
+  case Phase.RINSE:
+    ...
+    break;
+  case Phase.REPEAT:
+    ....
+    break;
+  default:
+    Core.assert("Unknown phase value.");
+    break;
+}
+```
+
+If no integers are assigned to enum values (as in the first example) they will be incrementally assigned starting from 0. 
+
+One caveat is that the name of an enum is lost after compile time and so they may make debugging more difficult...
+
+```
+print(Phase.LATHER); // prints 2
+```
 
 ## Namespaces
 
