@@ -159,7 +159,10 @@ namespace Crayon
 
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
-            // TODO: scaling
+			// TODO: scaling
+#if OSX
+			filePath = filePath.Replace('\\', '/');
+#endif
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
             System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(filePath);
             System.Drawing.Icon.FromHandle(bmp.GetHicon()).Save(ms);
