@@ -2,6 +2,43 @@
 
 Basic functionality for opening a game window and dealing with input.
 
+## Classes
+[GameWindow](#class-gamewindow)
+- [constructor](#gamewindow-constructor)
+- [clockTick](#clocktick)
+- [pumpEvents](#pumpevents)
+- [setTitle](#settitle)
+
+[Event](#class-event)
+- [.type](#type)
+
+[QuitEvent](#class-quitevent)
+- [.quitType](#quittype)
+
+[KeyEvent](#class-keyevent)
+- [.key](#key)
+- [.down](#down)
+
+[MouseEvent](#class-mouseevent)
+- [.x](#x--y)
+- [.y](#x--y)
+
+[MouseClickEvent](#class-mouseclickevent)
+- [.button](#button)
+- [.down](#down-1)
+
+[MouseMoveEvent](#class-mousemoveevent)
+
+[MouseScrollEvent](#class-mousescrollevent)
+- [.amount](#amount)
+
+## Enums
+
+- [EventType](#enum-eventtype)
+- [EventQuitType](#enum-eventquittype)
+- [EventButton](#enum-eventbutton)
+- [KeyboardKey](#enum-keyboardkey)
+
 # Class: GameWindow
 
 ### GameWindow Constructor
