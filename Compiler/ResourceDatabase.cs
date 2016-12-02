@@ -164,6 +164,8 @@ namespace Crayon
                             break;
 
                         case FileCategory.IMAGE:
+                            // TODO: you can easily get the width and height from the first several bytes of the file
+                            // Many of these are simply loaded into memory to get the width and height and can be made more efficient.
                             if (extension == "png")
                             {
                                 // Re-encode PNGs into a common format/palette configuration since there are some issues
@@ -178,9 +180,19 @@ namespace Crayon
                                     AbsoluteInputPath = absolutePath,
                                 });
                             }
+                            else if (extension == "jpg" || extension == "jpeg")
+                            {
+                                this.ImageResources.Add(new FileOutput()
+                                {
+                                    Type = FileOutputType.Image,
+                                    Bitmap = new SystemBitmap(absolutePath),
+                                    OriginalPath = aliasedPath,
+                                    AbsoluteInputPath = absolutePath,
+                                    IsLossy = true,
+                                });
+                            }
                             else
                             {
-                                // don't re-encode JPEGs
                                 this.ImageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Copy,
@@ -224,9 +236,22 @@ namespace Crayon
                 List<ImageSheets.Chunk> jpegChunks = new List<ImageSheets.Chunk>();
                 foreach (ImageSheets.Chunk chunk in sheet.Chunks)
                 {
+                    foreach (ImageSheets.Tile tile in chunk.Tiles)
+                    {
+                        tile.GeneratedFilename = "t" + (tileCounter++) + (chunk.IsJPEG ? ".jpg" : ".png");
+                    }
+
                     if (chunk.IsJPEG)
                     {
                         jpegChunks.Add(chunk);
+                        foreach (ImageSheets.Tile tile in chunk.Tiles)
+                        {
+                            this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
+                            {
+                                Type = FileOutputType.Copy,
+                                AbsoluteInputPath = tile.OriginalFile.AbsoluteInputPath,
+                            };
+                        }
                     }
                     else
                     {
@@ -240,7 +265,6 @@ namespace Crayon
                         manifest.Add("C," + width + "," + height);
                         foreach (ImageSheets.Tile tile in chunk.Tiles)
                         {
-                            tile.GeneratedFilename = "t" + (tileCounter++) + ".png";
                             manifest.Add("T," + tile.GeneratedFilename + "," + tile.ChunkX + "," + tile.ChunkY + "," + tile.Width + "," + tile.Height + "," + tile.Bytes);
 
                             if (tile.IsDirectCopy)
@@ -271,7 +295,7 @@ namespace Crayon
                 foreach (ImageSheets.Chunk jpegChunk in jpegChunks)
                 {
                     ImageSheets.Tile jpegTile = jpegChunk.Tiles[0];
-                    manifest.Add("J," + jpegTile.GeneratedFilename + "," + jpegTile.Width + "," + jpegTile.Height + "," + jpegTile.Bytes + "," + jpegTile.OriginalFile.RelativeInputPath);
+                    manifest.Add("J," + jpegTile.GeneratedFilename + "," + jpegTile.Width + "," + jpegTile.Height + "," + jpegTile.Bytes + "," + jpegTile.OriginalFile.OriginalPath);
                 }
             }
 

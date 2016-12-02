@@ -21,6 +21,7 @@
         public string TextContent { get; set; }
         public byte[] BinaryContent { get; set; }
         public SystemBitmap Bitmap { get; set; }
+        public bool IsLossy { get; set; } // e.g. JPEG's will change if re-encoded.
 
         // Re-encode all text files as UTF-8 for consistent readback. If re-encoding fails, then this
         // is likely a binary format that was erroneously included as a text resource and will not be

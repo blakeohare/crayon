@@ -133,6 +133,8 @@ namespace ImageResources {
 								[genFilename, 0, 0, width, height, bytes],
 							],
 						};
+						files.add(filename);
+						resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, 0, 0, width, height];
 						break;
 				}
 			}
