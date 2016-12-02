@@ -4,10 +4,9 @@
     public class FilePath
     {
         private string[] pathRelativeToRoot;
-        private string[] absolutePath;
-        private string absolutePathString;
-        private string canonicalAbsolutePath;
-        private string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
+        private readonly string absolutePathString;
+        private readonly string canonicalAbsolutePath;
+        private readonly string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
 
         public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory, string alias)
         {
@@ -16,7 +15,6 @@
 
             this.canonicalAbsolutePath = FileUtil.GetCanonicalizeUniversalPath(projectRootDirectory + "/" + pathRelativeToProjectRoot);
             this.absolutePathString = this.canonicalAbsolutePath;
-            this.absolutePath = this.canonicalAbsolutePath.Split('/');
             this.pathRelativeToRoot = pathRelativeToProjectRoot.Split('/');
             alias = (alias ?? "").Trim();
             this.nullableAlias = alias.Length == 0 ? null : alias;

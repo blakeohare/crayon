@@ -316,7 +316,6 @@ namespace Crayon
 
         public Dictionary<string, string> GetCodeFiles()
         {
-            HashSet<string> alreadyTouched = new HashSet<string>();
             Dictionary<string, string> output = new Dictionary<string, string>();
 
             foreach (FilePath sourceDir in this.BuildContext.SourceFolders)
