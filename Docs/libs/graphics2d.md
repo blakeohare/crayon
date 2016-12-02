@@ -2,6 +2,28 @@
 
 Library for drawing shapes and images to a GameWindow screen. Works in conjunction with the [Game Library](game.md)
 
+[Draw](#class-draw)
+- [ellipse](#ellipse)
+- [fill](#fill)
+- [line](#line)
+- [quad](#quad)
+- [rectangle](#rectangle)
+- [triangle](#triangle)
+
+[GraphicsTexture](#class-graphicstexture)
+- [load](#load)
+- [draw](#draw)
+- [drawWithAlpha](#drawwithalpha)
+- [drawRegion](#drawregion)
+- [drawStretched](#drawstretched)
+- [drawRegionStretched](#drawregionstretched)
+- [drawRegionStretchedWithAlpha](#drawregionstretchedwithalpha)
+- [drawRotated](#drawrotated)
+- [drawRotatedWithAlpha](#drawrotatedwithalpha)
+- [drawWithOptions](#drawwithoptions)
+- [flip](#flip)
+- [scale](#scale)
+
 # Class: Draw
 
 A class containing static methods for drawing various geometric primitives.
