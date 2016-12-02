@@ -7,9 +7,48 @@ The Gamepad library is currently supported for the following project types:
 - JavaScript
 - Python/PyGame
 
-Projects that use the Gamepad library can still be safely exported to other project types. However, the number of gamepads detected will always be 0. 
+Projects that use the Gamepad library can still be safely exported to other project types. However, the number of gamepads detected will always be 0. Note that JavaScript projects may or may not support the Gamepad library depending on browser.
 
-Note that JavaScript projects may or may not support the Gamepad library depending on browser.
+[GamepadManager](#class-gamepadmanager)
+- [isGamepadSupported](#isgamepadsupported)
+- [platformRequiresRefresh](#platformrequiresrefresh)
+- [refreshDevices](#refreshdevices)
+- [getDeviceCount](#getdevicecount)
+- [getDeviceByIndex](#getdevicebyindex)
+- [getDeviceById](#getdevicebyid)
+- [restoreSettingsFromUserData](#restoresettingsfromuserdata)
+- [saveSettingsToUserData](#savesettingstouserdata)
+- [clearAllIds](#clearallids)
+
+[GamepadDevice](#class-gamepaddevice)
+- [getId](#getid)
+- [setId](#setid)
+- [clearId](#clearid)
+- [pushAutoConfigure](#pushautoconfigure)
+- [pushEmptyConfig](#pushemptyconfig)
+- [popConfig](#popconfig)
+- [flattenConfigs](#flattenconfigs)
+- [clearBinding](#clearbinding)
+- [clearBindings](#clearbindings)
+- [getName](#getname)
+- [getButtonCount](#getbuttoncount)
+- [getAxisCount](#getaxiscount)
+- [getButtonState](#getbuttonstate)
+- [getAxisState](#getaxisstate)
+- [getCurrentState](#getcurrentstate)
+- [manualBindButton](#manualbindbutton)
+- [bindDigitalButton](#binddigitalbutton)
+- [bindAnalogButton](#bindanalogbutton)
+
+[Notes on Configuring Gamepads](#configuring-gamepads)
+- [Gamepad IDs](#gamepad-ids)
+- [Configuration IDs and pushy types](#configuration-ids-and-pushy-types)
+- [Analog vs Digital bindings](#analog-vs-digital-bindings)
+- [Button](#button)
+- [Axis](#axis)
+- [2D Axis](#2d-axis)
+- [Gamepad Configuration Stacks](#gamepad-configuration-stacks)
+- [Auto Configuring](#auto-configuring)
 
 # Class: GamepadManager
 

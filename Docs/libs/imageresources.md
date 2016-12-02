@@ -6,6 +6,24 @@ and asynchronously. It also allows interprets ImageSheet information as defined 
 Ultimately the ImageResources library's various loaders will generate ImageResource instances, which do not do anything directly 
 and only represent an image resource. These resources are generally used by other libraries such as Graphics or ImageEncoder. 
 
+[ImageResources](#class-imageresource)
+- [getWidth](#getwidth)
+- [getHeight](#getheight)
+
+[ImageLoader](#class-imageloader)
+- [loadFromResourcesAsync](#loadfromresourcesasync)
+- [loadFromResources](#loadfromresources)
+- [isDone](#isdone)
+- [getImage](#getimage)
+
+[ImageSheet](#class-imagesheet)
+- [loadFromResourcesAsync](#loadfromresourcesasync-1)
+- [loadFromResources](#loadfromresources-1)
+- [isDone](#isdone-1)
+- [getProgress](#getprogress)
+- [getImage](#getimage-1)
+- [getFiles](#getfiles)
+
 # Class: ImageResource
 
 Represents an image resource in memory. An ImageResource is loaded and ready to use and is generally implemented as an in-memory 
