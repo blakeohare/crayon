@@ -101,6 +101,10 @@ namespace Crayon
 
         public static void CopyFile(string source, string dest)
         {
+#if OSX
+			source = source.Replace('\\', '/');
+#endif
+
             try
             {
                 System.IO.File.Copy(source, dest, true);
@@ -200,6 +204,10 @@ namespace Crayon
         public static string GetCanonicalizeUniversalPath(string path)
         {
             List<string> output = new List<string>();
+			if (path.StartsWith("/"))
+			{
+				output.Add("");
+			}
             foreach (string part in path.Replace('\\', '/').Split('/'))
             {
                 switch (part)
