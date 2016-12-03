@@ -69,7 +69,7 @@ namespace Crayon
                 case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
                 case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform();
                 case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
-				case "game-ruby-gosu": return new Crayon.Translator.Ruby.RubyPlatform();
+                case "game-ruby-gosu": return new Crayon.Translator.Ruby.RubyPlatform();
                 case "server-php": return new Crayon.Translator.Php.PhpPlatform();
                 case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
                 case "ui-javascript": throw new NotImplementedException();
@@ -104,7 +104,17 @@ namespace Crayon
 
             string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
             string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
-            string workingDirectory = ".";
+            if (!buildFile.StartsWith("/") &&
+                !(buildFile.Length > 1 && buildFile[1] == ':'))
+            {
+                // Build file will always be absolute. So make it absolute if it isn't already.
+                buildFile = System.IO.Path.GetFullPath(
+                    System.IO.Path.Combine(
+                        System.IO.Directory.GetCurrentDirectory(), buildFile));
+
+            }
+
+            string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
             BuildContext buildContext = null;
             if (buildFile != null || target != null)
@@ -116,14 +126,14 @@ namespace Crayon
 
                 argLookup.Remove("buildfile");
                 argLookup.Remove("target");
-                workingDirectory = System.IO.Path.GetDirectoryName(buildFile);
+                projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
                 if (!System.IO.File.Exists(buildFile))
                 {
                     throw new InvalidOperationException("Build file does not exist: " + buildFile);
                 }
 
-                buildContext = BuildContext.Parse(workingDirectory, System.IO.File.ReadAllText(buildFile), target);
+                buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
             }
 
             buildContext = buildContext ?? new BuildContext();
@@ -139,10 +149,10 @@ namespace Crayon
             if (buildContext.OutputFolder == null)
                 throw new InvalidOperationException("No output folder specified in build file.");
 
-            buildContext.OutputFolder = System.IO.Path.Combine(workingDirectory, buildContext.OutputFolder).Replace('/', '\\');
+            buildContext.OutputFolder = System.IO.Path.Combine(projectDirectory, buildContext.OutputFolder).Replace('/', '\\');
             if (buildContext.IconFilePath != null)
             {
-                buildContext.IconFilePath = System.IO.Path.Combine(workingDirectory, buildContext.IconFilePath).Replace('/', '\\');
+                buildContext.IconFilePath = System.IO.Path.Combine(projectDirectory, buildContext.IconFilePath).Replace('/', '\\');
             }
 
             foreach (FilePath sourceFolder in buildContext.SourceFolders)
