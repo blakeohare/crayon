@@ -246,7 +246,16 @@ namespace Crayon
                         break;
 
                     case FileOutputType.Image:
-                        FileUtil.WriteFileImage(fullOutputPath, file.Bitmap);
+						if (file.IsLossy)
+						{
+							string jpegPath = file.AbsoluteInputPath
+								?? FileUtil.JoinPath(buildContext.ProjectDirectory, file.RelativeInputPath);
+							FileUtil.CopyFile(jpegPath, fullOutputPath);
+						}
+						else
+						{
+							FileUtil.WriteFileImage(fullOutputPath, file.Bitmap);
+						}
                         break;
 
                     default:
