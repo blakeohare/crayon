@@ -152,8 +152,8 @@ namespace %%%PROJECT_ID%%%
             GL.BindTexture(All.Texture2D, textureId);
 
             // setup texture parameters
-            GL.TexParameterx(All.Texture2D, All.TextureMagFilter, (int)All.Linear);
-            GL.TexParameterx(All.Texture2D, All.TextureMinFilter, (int)All.Linear);
+            GL.TexParameterx(All.Texture2D, All.TextureMagFilter, (int)All.Nearest);
+            GL.TexParameterx(All.Texture2D, All.TextureMinFilter, (int)All.Nearest);
             GL.TexParameterx(All.Texture2D, All.TextureWrapS, (int)All.ClampToEdge);
             GL.TexParameterx(All.Texture2D, All.TextureWrapT, (int)All.ClampToEdge);
 
