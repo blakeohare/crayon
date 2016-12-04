@@ -29,12 +29,27 @@ namespace Crayon.Translator.CSharp
                 };
             }
 
-            foreach (string binary in new string[] { "OpenTK", "SDL", "SDL_mixer", "SdlDotNet", "Tao.Sdl" })
+            foreach (string binaryNameInfo in new string[] {
+                "OpenTK",
+                "SDL",
+                "SDL_mixer",
+                "SdlDotNet",
+                "Tao.Sdl",
+                "libogg:-0",
+                "libvorbis:-0",
+                "libvorbisfile:-3" })
             {
+                string[] parts = binaryNameInfo.Split(':');
+                string binary = parts[0];
+                string resourcePath = binary;
+                if (parts.Length == 2)
+                {
+                    binary += parts[1];
+                }
                 files[projectId + "/" + binary + ".dll"] = new FileOutput()
                 {
                     Type = FileOutputType.Binary,
-                    BinaryContent = Util.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + binary + ".dll")
+                    BinaryContent = Util.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + resourcePath + ".dll")
                 };
             }
 

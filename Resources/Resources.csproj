@@ -145,6 +145,9 @@
     <EmbeddedResource Include="game-csharp-opentk\binaries\SdlDotNet.dll" />
     <EmbeddedResource Include="game-csharp-opentk\binaries\SDL_mixer.dll" />
     <EmbeddedResource Include="game-csharp-opentk\binaries\Tao.Sdl.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\libogg.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\libvorbis.dll" />
+    <EmbeddedResource Include="game-csharp-opentk\binaries\libvorbisfile.dll" />
     <EmbeddedResource Include="game-csharp-opentk\GamepadTranslationHelper.txt" />
     <EmbeddedResource Include="game-csharp-opentk\GameWindow.txt" />
     <EmbeddedResource Include="game-csharp-opentk\GlUtil.txt" />
