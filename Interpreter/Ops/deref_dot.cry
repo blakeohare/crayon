@@ -71,9 +71,22 @@ switch (Value$value.type) {
 if (output == null) {
 	output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
 	if (output == null) {
+		if (Value$value.type == Types.NULL) {
+			return $_exception(
+				CoreExceptionTypes.NULL_REFERENCE,
+				"Tried to dereference a field on null.");
+		}
+		if (Value$value.type == Types.INSTANCE) {
+			objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+			classId = ObjectInstance$objInstance1.classId;
+			classInfo = $_array_get(classTable, classId);
+			string1 = $_string_concat(ClassInfo$classInfo.fullyQualifiedName, " instance");
+		} else {
+			string1 = getTypeFromId(Value$value.type);
+		}
 		return $_exception(
 			CoreExceptionTypes.UNKNOWN_FIELD,
-			$_string_concat(getTypeFromId(Value$value.type), " does not have that field."));
+			$_string_concat(string1, " does not have that field."));
 	}
 }
 
