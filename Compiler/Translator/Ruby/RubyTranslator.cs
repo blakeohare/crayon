@@ -49,9 +49,13 @@ namespace Crayon.Translator.Ruby
         {
 			// TODO: No. Use a common list somewhere else.
 			switch (expr.Name)
-			{
-				case "INTEGERS_CACHE":
-				case "VALUE_NULL":
+            {
+                case "INTEGERS_POSITIVE_CACHE":
+                case "INTEGERS_NEGATIVE_CACHE":
+                case "VALUE_INT_ZERO":
+                case "VALUE_INT_ONE":
+                case "VALUE_INT_NEG_ONE":
+                case "VALUE_NULL":
 				case "VALUE_TRUE":
 				case "VALUE_FALSE":
 				case "VALUE_EMPTY_STRING":

@@ -263,13 +263,24 @@
 		if (Value$arg1.type == Types.FLOAT) {
 			float1 = $_cast('double', Value$arg1.internalValue);
 			if (%%%INT_IS_FLOOR%%%) {
-				output = buildInteger($_int(float1));
+				int1 = $_int(float1);
 			} else {
 				if (float1 < 0 && float1 % 1 != 0) {
-					output = buildInteger($_int(float1) - 1);
+					int1 = $_int(float1) - 1;
 				} else {
-					output = buildInteger($_int(float1));
+					int1 = $_int(float1);
 				}
+			}
+			if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+				if (int1 >= 0) {
+					output = $_array_get(INTEGER_POSITIVE_CACHE, int1);
+				} else if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+					output = $_array_get(INTEGER_NEGATIVE_CACHE, -int1);
+				} else {
+					output = new Value(Types.INTEGER, int1);
+				}
+			} else {
+				output = new Value(Types.INTEGER, int1);
 			}
 		} else if (Value$arg1.type == Types.INTEGER) {
 			output = arg1;
@@ -354,9 +365,9 @@
 		else if (Value$arg1.type == Types.FLOAT) float1 = $_cast('double', Value$arg1.internalValue);
 		else return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
 
-		if (float1 == 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 0);
-		else if (float1 > 0) output = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
-		else output = $_array_get($_array_get(INTEGERS_CACHE, 1), 1);
+		if (float1 == 0) output = VALUE_INT_ZERO;
+		else if (float1 > 0) output = VALUE_INT_ONE;
+		else output = VALUE_INT_NEG_ONE;
 		break;
 
 	case 24: $_comment('sin');

@@ -71,27 +71,29 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 
 function @type('int') initialize_constant_values() {
 	@type('int') i = 0;
-	@type('Array<Value>') positive_integers = $_new_array('Value', INTEGER_POSITIVE_CACHE);
-	@type('Array<Value>') negative_integers = $_new_array('Value', INTEGER_NEGATIVE_CACHE);
-	for (i = 0; i < INTEGER_POSITIVE_CACHE; i += 1) {
-		$_array_set(positive_integers, i, new Value(Types.INTEGER, i));
+	for (i = 2; i < INTEGER_POSITIVE_CACHE_SIZE; i += 1) {
+		$_array_set(INTEGER_POSITIVE_CACHE, i, new Value(Types.INTEGER, i));
 	}
-	for (i = 0; i < INTEGER_NEGATIVE_CACHE; i += 1) {
-		$_array_set(negative_integers, i, new Value(Types.INTEGER, -i));
+	for (i = 2; i < INTEGER_NEGATIVE_CACHE_SIZE; i += 1) {
+		$_array_set(INTEGER_NEGATIVE_CACHE, i, new Value(Types.INTEGER, -i));
 	}
-	$_array_set(INTEGERS_CACHE, 0, positive_integers);
-	$_array_set(INTEGERS_CACHE, 1, negative_integers);
+	
+	$_array_set(INTEGER_POSITIVE_CACHE, 0, VALUE_INT_ZERO);
+	$_array_set(INTEGER_POSITIVE_CACHE, 1, VALUE_INT_ONE);
+	$_array_set(INTEGER_NEGATIVE_CACHE, 0, VALUE_INT_ZERO);
+	$_array_set(INTEGER_NEGATIVE_CACHE, 1, VALUE_INT_NEG_ONE);
+
 	return 0;
 }
 
 function @type('Value') buildInteger(@type('int') num) {
 	if (num < 0) {
-		if (num > -INTEGER_NEGATIVE_CACHE) {
-			return $_array_get($_array_get(INTEGERS_CACHE, 1), -num);
+		if (num > -INTEGER_NEGATIVE_CACHE_SIZE) {
+			return $_array_get(INTEGER_NEGATIVE_CACHE, -num);
 		}
 	} else {
-		if (num < INTEGER_POSITIVE_CACHE) {
-			return $_array_get($_array_get(INTEGERS_CACHE, 0), num);
+		if (num < INTEGER_POSITIVE_CACHE_SIZE) {
+			return $_array_get(INTEGER_POSITIVE_CACHE, num);
 		}
 	}
 	return new Value(Types.INTEGER, num);

@@ -1,8 +1,17 @@
-﻿@uncontained @type('Array<Array<Value>>') INTEGERS_CACHE = $_new_array('Array<Value>', 2);
+﻿@uncontained @type('Array<Value>') INTEGER_POSITIVE_CACHE = $_new_array('Value', INTEGER_POSITIVE_CACHE_SIZE);
+@uncontained @type('Array<Value>') INTEGER_NEGATIVE_CACHE = $_new_array('Value', INTEGER_NEGATIVE_CACHE_SIZE);
+
 @uncontained @type('Value') VALUE_NULL = new Value(Types.NULL, null);
+
 @uncontained @type('Value') VALUE_TRUE = new Value(Types.BOOLEAN, true);
 @uncontained @type('Value') VALUE_FALSE = new Value(Types.BOOLEAN, false);
+
 @uncontained @type('Value') VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+
+@uncontained @type('Value') VALUE_INT_ONE = new Value(Types.INTEGER, 1);
+@uncontained @type('Value') VALUE_INT_ZERO = new Value(Types.INTEGER, 0);
+@uncontained @type('Value') VALUE_INT_NEG_ONE = new Value(Types.INTEGER, -1);
+
 @uncontained @type('Value') VALUE_FLOAT_ZERO = new Value(Types.FLOAT, 0.0);
 @uncontained @type('Value') VALUE_FLOAT_ONE = new Value(Types.FLOAT, 1.0);
 @uncontained @type('Value') VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);

@@ -19,9 +19,9 @@ for (i = localsStackOffset; i < int1; i += 1) {
 				int2 = $_int(float1);
 			}
 		}
-		if (int2 >= 0 && int2 < INTEGER_POSITIVE_CACHE) {
+		if (int2 >= 0 && int2 < INTEGER_POSITIVE_CACHE_SIZE) {
 			// super-common case and faster than calling a function.
-			value = $_array_get($_array_get(INTEGERS_CACHE, 0), int2);
+			value = $_array_get(INTEGER_POSITIVE_CACHE, int2);
 		} else {
 			value = buildInteger(int2);
 		}

@@ -23,7 +23,7 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 		// int ** int
 		case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
 			$_comment('int ** int');
-			if ($_cast('int', right) == 0) value = $_array_get($_array_get(INTEGERS_CACHE, 0), 1);
+			if ($_cast('int', right) == 0) value = VALUE_INT_ONE;
 			else if ($_cast('int', right) > 0)
 				value = buildInteger($_int($_math_pow($_cast('int', left), $_cast('int', right))));
 			else
@@ -99,13 +99,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			$_comment('int + int');
 			int1 = $_cast('int', left) + $_cast('int', right);
 			if (int1 < 0) {
-				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
+				if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+					value = $_array_get(INTEGER_NEGATIVE_CACHE, -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
-			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
+			} else if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+				value = $_array_get(INTEGER_POSITIVE_CACHE, int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -116,13 +116,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			$_comment('int - int');
 			int1 = $_cast('int', left) - $_cast('int', right);
 			if (int1 < 0) {
-				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
+				if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+					value = $_array_get(INTEGER_NEGATIVE_CACHE, -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
-			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
+			} else if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+				value = $_array_get(INTEGER_POSITIVE_CACHE, int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -133,13 +133,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			$_comment('int * int');
 			int1 = $_cast('int', left) * $_cast('int', right);
 			if (int1 < 0) {
-				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
+				if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+					value = $_array_get(INTEGER_NEGATIVE_CACHE, -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
-			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
+			} else if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+				value = $_array_get(INTEGER_POSITIVE_CACHE, int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}
@@ -151,13 +151,13 @@ if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.A
 			if ($_cast('int', right) == 0) return $_exception(CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
 			int1 = $_unsafe_integer_division($_cast('int', left), $_cast('int', right));
 			if (int1 < 0) {
-				if (int1 > -INTEGER_NEGATIVE_CACHE) {
-					value = $_array_get($_array_get(INTEGERS_CACHE, 1), -int1);
+				if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+					value = $_array_get(INTEGER_NEGATIVE_CACHE, -int1);
 				} else {
 					value = new Value(Types.INTEGER, int1);
 				}
-			} else if (int1 < INTEGER_POSITIVE_CACHE) {
-				value = $_array_get($_array_get(INTEGERS_CACHE, 0), int1);
+			} else if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+				value = $_array_get(INTEGER_POSITIVE_CACHE, int1);
 			} else {
 				value = new Value(Types.INTEGER, int1);
 			}

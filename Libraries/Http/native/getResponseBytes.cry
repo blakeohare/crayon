@@ -13,6 +13,6 @@ objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
 
 list1 = $_cast('List<Value>', Value$arg2.internalValue);
-$_lib_http_getResponseBytes($_array_get(objArray1, 0), $_array_get(INTEGERS_CACHE, 0), list1);
+$_lib_http_getResponseBytes($_array_get(objArray1, 0), INTEGER_POSITIVE_CACHE, list1);
 
 output = arg2;

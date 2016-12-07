@@ -22,7 +22,7 @@ int1 = $_lib_fileiocommon_fileRead(
 	$_cast('string', Value$arg2.internalValue),
 	bool1,
 	stringOutParam,
-	$_array_get(INTEGERS_CACHE, 0),
+	INTEGER_POSITIVE_CACHE,
 	list1);
 
 // If successful and this is a text request...
