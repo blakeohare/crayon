@@ -347,7 +347,7 @@ namespace Crayon
 						}
 						break;
 					case VarType.FLOAT:
-						if (!double.TryParse(value, out floatValue))
+						if (!Util.ParseDouble(value, out floatValue))
 						{
 							throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid float value.");
 						}

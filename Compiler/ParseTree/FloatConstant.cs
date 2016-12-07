@@ -19,7 +19,7 @@ namespace Crayon.ParseTree
         public static double ParseValue(Token firstToken, string fullValue)
         {
             double value;
-            if (!double.TryParse(fullValue, out value))
+            if (!Util.ParseDouble(fullValue, out value))
             {
                 throw new ParserException(firstToken, "Invalid float literal.");
             }

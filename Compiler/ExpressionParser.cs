@@ -417,7 +417,7 @@ namespace Crayon
                 numberValue += postDecimal.Value;
 
                 double floatValue;
-                if (double.TryParse(numberValue, out floatValue))
+                if (Util.ParseDouble(numberValue, out floatValue))
                 {
                     return new FloatConstant(dotToken, floatValue, owner);
                 }

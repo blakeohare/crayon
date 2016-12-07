@@ -159,7 +159,7 @@ namespace Crayon
 
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
-			// TODO: scaling
+            // TODO: scaling
 #if OSX
 			filePath = filePath.Replace('\\', '/');
 #endif
@@ -215,6 +215,23 @@ namespace Crayon
                 output[key] = top[key];
             }
             return output;
+        }
+
+        private static readonly System.IFormatProvider EN_US =
+            System.Globalization.CultureInfo.GetCultureInfo("en-us");
+        private static readonly System.Globalization.NumberStyles DOUBLE_FLAG =
+            (System.Globalization.NumberStyles)(
+            (int)System.Globalization.NumberStyles.AllowDecimalPoint |
+            (int)System.Globalization.NumberStyles.AllowLeadingSign |
+            (int)System.Globalization.NumberStyles.AllowLeadingWhite |
+            (int)System.Globalization.NumberStyles.AllowTrailingWhite |
+            (int)System.Globalization.NumberStyles.Float |
+            (int)System.Globalization.NumberStyles.Integer);
+        public static bool ParseDouble(string value, out double output)
+        {
+            // Parsing text data should use local info, but this is for parsing code.
+            // As this is not supposed to be localized yet, only allow US decimals.
+            return double.TryParse(value, DOUBLE_FLAG, EN_US, out output);
         }
     }
 }
