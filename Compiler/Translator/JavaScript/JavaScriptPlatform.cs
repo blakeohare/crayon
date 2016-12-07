@@ -118,6 +118,11 @@ namespace Crayon.Translator.JavaScript
                 output["resources/images/" + filename] = imageSheetFile;
             }
 
+            foreach (FileOutput imageResource in resourceDatabase.ImageResources)
+            {
+                output["resources/images/" + imageResource.CanonicalFileName] = imageResource;
+            }
+
             if (resourceDatabase.ImageSheetManifestFile != null)
             {
                 textResources["imageresmanifest.txt"] = resourceDatabase.ImageSheetManifestFile.TextContent;
