@@ -1,0 +1,30 @@
+/*
+	Converts all args that are floats into ints.
+	Takes no args.
+	Stops when it sees an unset (non-arg) local.
+*/
+int1 = StackFrame$stack.localsStackOffsetEnd;
+for (i = localsStackOffset; i < int1; i += 1) {
+	value = $_array_get(localsStack, i);
+	if ($_array_get(localsStackSet, i) != localsStackSetToken) {
+		i += 999; // silly break
+	} else if (Value$value.type == Types.FLOAT) {
+		float1 = $_cast('double', Value$value.internalValue);
+		if (%%%INT_IS_FLOOR%%%) {
+			int2 = $_int(float1);
+		} else {
+			if (float1 < 0 && float1 % 1 != 0) {
+				int2 = $_int(float1) - 1;
+			} else {
+				int2 = $_int(float1);
+			}
+		}
+		if (int2 >= 0 && int2 < INTEGER_POSITIVE_CACHE) {
+			// super-common case and faster than calling a function.
+			value = $_array_get($_array_get(INTEGERS_CACHE, 0), int2);
+		} else {
+			value = buildInteger(int2);
+		}
+		$_array_set(localsStack, i, value);
+	}
+}

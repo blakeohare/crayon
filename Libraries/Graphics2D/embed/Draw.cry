@@ -61,6 +61,11 @@ namespace Graphics2D {
 		static function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
 			if (strokeWidth < 1) return;
 			
+			// casts all locals that are floats into ints.
+			// This is needed because ints are needed for the next two if statements and
+			// intQueueWrite16 runs too late.
+			$$lib_graphics2d_fastLocalFloat2IntCast();
+			
 			// If the line is horizontal or vertical, use the rectangle drawing code instead.
 			// This guarantees clean crisp 1-pixel lines across platforms which is actually
 			// probably the most common use case.
