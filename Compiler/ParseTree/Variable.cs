@@ -149,7 +149,11 @@ namespace Crayon.ParseTree
                         {
                             if (fd.NameToken.Value == name)
                             {
-                                throw new ParserException(this.FirstToken, "'" + name + "' is used like a variable but it is a " + (fd.IsStaticField ? "static" : "local") + " field.");
+                                string message = "'" + name + "' is used like a local variable but it is " + (fd.IsStaticField ? "a static" : "an instance") + " field.";
+                                message += " Did you mean '" + (fd.IsStaticField ? cd.NameToken.Value : "this") + "." + name + "' instead of '" + name + "'?";
+                                throw new ParserException(
+                                    this.FirstToken, 
+                                    message);
                             }
                         }
                     }
