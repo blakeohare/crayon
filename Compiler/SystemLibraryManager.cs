@@ -76,7 +76,7 @@ namespace Crayon
 
 		private static Dictionary<string, string> systemLibraryPathsByName = null;
 
-		private string GetSystemLibraryPath(string name)
+		private string GetSystemLibraryPath(string name, string buildFileCrayonPath, string projectDirectory)
 		{
 			if (systemLibraryPathsByName == null)
 			{
@@ -99,21 +99,29 @@ namespace Crayon
 					directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
 				}
 
-				string crayonPaths = System.Environment.GetEnvironmentVariable("CRAYON_PATH");
-				if (crayonPaths != null)
-				{
+				string crayonPaths =
+                    (buildFileCrayonPath ?? "") + ";" +
+                    (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
+                
 #if OSX
-					crayonPaths = crayonPaths.Replace(':', ';');
+				crayonPaths = crayonPaths.Replace(':', ';');
 #endif
-					string[] paths = crayonPaths.Split(';');
-					foreach (string path in paths)
-					{
-						if (System.IO.Directory.Exists(path))
-						{
-							directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(path));
-						}
-					}
-				}
+				string[] paths = crayonPaths.Split(';');
+                foreach (string path in paths)
+                {
+
+                    if (path.Length > 0)
+                    {
+                        string absolutePath = FileUtil.IsAbsolutePath(path)
+                            ? path
+                            : System.IO.Path.Combine(projectDirectory, path);
+                        absolutePath = System.IO.Path.GetFullPath(absolutePath);
+                        if (System.IO.Directory.Exists(absolutePath))
+                        {
+                            directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(absolutePath));
+                        }
+                    }
+                }
 
 #if DEBUG
 				// Presumably running from source. Walk up to the root directory and find the Libraries directory.
@@ -157,7 +165,7 @@ namespace Crayon
 			Executable[] embedCode = EMPTY_EXECUTABLE;
 			if (library == null)
 			{
-				string libraryManifestPath = this.GetSystemLibraryPath(name);
+				string libraryManifestPath = this.GetSystemLibraryPath(name, parser.BuildContext.CrayonPath, parser.BuildContext.ProjectDirectory);
 
 				if (libraryManifestPath == null)
 				{

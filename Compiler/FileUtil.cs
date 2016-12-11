@@ -7,6 +7,17 @@ namespace Crayon
     {
         private static string DIR_SEP = "" + System.IO.Path.DirectorySeparatorChar;
 
+        public static bool IsAbsolutePath(string path)
+        {
+#if WINDOWS
+            if (path.Length > 1 && path[1] == ':') return true;
+#elif OSX
+            if (path.StartsWith("/")) return true;
+            if (path.StartsWith("~")) return true;
+#endif
+            return false;
+        }
+
         public static string GetCanonicalExtension(string path)
         {
             string output = System.IO.Path.GetExtension(path);
