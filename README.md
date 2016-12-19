@@ -1,4 +1,4 @@
-﻿# Crayon version 0.2.0 (Alpha)
+# Crayon version 0.2.0 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -17,7 +17,7 @@ Please report any issues you may find to the GitHub issue tracker located at htt
 It may be helpful to check the IRC channel first to make sure any issue you find is actually a bug or for workarounds.
 
 # Community
-The official Crayon IRC channel is #crayon on irc.esper.net. Feel free to ask any questions there. 
+The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any questions there. 
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
