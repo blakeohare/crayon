@@ -116,7 +116,7 @@ namespace Crayon
             }
             else
             {
-                throw new Exception("No main(args) function was defined.");
+                throw new InvalidOperationException("No main(args) function was defined.");
             }
 
             return lookup;
