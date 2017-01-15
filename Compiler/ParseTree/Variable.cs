@@ -151,18 +151,16 @@ namespace Crayon.ParseTree
                             {
                                 string message = "'" + name + "' is used like a local variable but it is " + (fd.IsStaticField ? "a static" : "an instance") + " field.";
                                 message += " Did you mean '" + (fd.IsStaticField ? cd.NameToken.Value : "this") + "." + name + "' instead of '" + name + "'?";
-                                throw new ParserException(
-                                    this.FirstToken, 
-                                    message);
+                                throw new ParserException(this.FirstToken, message);
                             }
                         }
                     }
 
-					// TODO: But if it's being called like a function then...
-					// - give a better error message "function 'foo' is not defined"
-					// - give an even better error message when there's a class or instance function with the same name
-					//   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
-                    throw new ParserException(this.FirstToken, "'" + name + "' is used but is never assigned to.");
+                    // TODO: But if it's being called like a function then...
+                    // - give a better error message "function 'foo' is not defined"
+                    // - give an even better error message when there's a class or instance function with the same name
+                    //   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
+                    throw new ParserException(this.FirstToken, "The variable '" + name + "' is used but is never assigned to.");
                 }
             }
         }
