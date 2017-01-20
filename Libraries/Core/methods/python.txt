@@ -23,3 +23,14 @@ $_list_set: [ARG:1][[ARG:2]] = [ARG:3]
 $_list_shuffle_in_place: random.shuffle([ARG:1])
 $_python_reference_equality: [ARG:1] is [ARG:2]
 $_string_length: len([ARG:1])
+$_string_lower: [ARG:1].lower()
+$_string_trim: [ARG:1].strip()
+$_string_ltrim: [ARG:1].lstrip()
+$_string_rtrim: [ARG:1].rstrip()
+$_string_upper: [ARG:1].upper()
+$_string_contains: ([ARG:2] in [ARG:1])
+$_string_reverse: [ARG:1][::-1]
+$_string_replace: [ARG:1].replace([ARG:2], [ARG:3])
+$_string_split: [ARG:1].split([ARG:2])
+$_string_endswith: [ARG:1].endswith([ARG:2])
+$_string_startswith: [ARG:1].startswith([ARG:2])

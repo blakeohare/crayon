@@ -155,12 +155,6 @@ namespace Crayon.Translator.Ruby
             output.Add(")");
         }
 
-        protected override void TranslateStringTrim(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".strip");
-        }
-
         protected override void TranslateForceParens(System.Collections.Generic.List<string> output, Expression expression)
         {
             output.Add("(");
@@ -173,42 +167,12 @@ namespace Crayon.Translator.Ruby
             this.Translator.TranslateExpression(output, charValue);
         }
 
-        protected override void TranslateStringUpper(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".upcase");
-        }
-
-        protected override void TranslateStringLower(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".downcase");
-        }
-
-        protected override void TranslateStringLtrim(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".lstrip");
-        }
-
-        protected override void TranslateStringRtrim(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".rstrip");
-        }
-
         protected override void TranslateComment(System.Collections.Generic.List<string> output, StringConstant commentValue)
         {
             output.Add("# ");
             output.Add(commentValue.Value);
         }
-
-        protected override void TranslateStringReverse(System.Collections.Generic.List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".reverse");
-        }
-
+        
         protected override void TranslateDictionarySize(System.Collections.Generic.List<string> output, Expression dictionary)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -335,15 +299,7 @@ namespace Crayon.Translator.Ruby
             this.Translator.TranslateExpression(output, powerNum);
             output.Add(")");
         }
-
-        protected override void TranslateStringSplit(System.Collections.Generic.List<string> output, Expression stringExpr, Expression sep)
-        {
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(".split(");
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateStringCompareIsReverse(System.Collections.Generic.List<string> output, Expression a, Expression b)
         {
 			output.Add("(");
@@ -379,15 +335,7 @@ namespace Crayon.Translator.Ruby
             this.Translator.TranslateExpression(output, index);
             output.Add("]");
         }
-
-        protected override void TranslateStringContains(System.Collections.Generic.List<string> output, Expression haystack, Expression needle)
-        {
-			this.Translator.TranslateExpression(output, haystack);
-			output.Add(".include?(");
-			this.Translator.TranslateExpression(output, needle);
-			output.Add(")");
-        }
-
+        
         protected override void TranslateDictionaryRemove(System.Collections.Generic.List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -395,15 +343,7 @@ namespace Crayon.Translator.Ruby
             this.Translator.TranslateExpression(output, key);
             output.Add(")");
         }
-
-        protected override void TranslateStringEndsWith(System.Collections.Generic.List<string> output, Expression stringExpr, Expression findMe)
-        {
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(".end_with?(");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateConvertListToArray(System.Collections.Generic.List<string> output, StringConstant type, Expression list)
         {
 			// TODO: determine if this really needs to be a copy. For now just do a clone.
@@ -420,14 +360,6 @@ namespace Crayon.Translator.Ruby
 			this.Translator.TranslateExpression(output, target);
 			output.Add(" += ");
 			this.Translator.TranslateExpression(output, valueToAppend);
-        }
-
-        protected override void TranslateStringStartsWith(System.Collections.Generic.List<string> output, Expression stringExpr, Expression findMe)
-        {
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(".start_with?(");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(")");
         }
 
         protected override void TranslateStringCharCodeAt(System.Collections.Generic.List<string> output, Expression stringValue, Expression index)
@@ -483,17 +415,7 @@ namespace Crayon.Translator.Ruby
             output.Add("] = ");
             this.Translator.TranslateExpression(output, value);
         }
-
-        protected override void TranslateStringReplace(System.Collections.Generic.List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
-        {
-			this.Translator.TranslateExpression(output, stringValue);
-			output.Add(".split(");
-			this.Translator.TranslateExpression(output, findMe);
-			output.Add(").join(");
-			this.Translator.TranslateExpression(output, replaceWith);
-			output.Add(")");
-        }
-
+        
         protected override void TranslateStringIndexOf(System.Collections.Generic.List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
         {
             if (optionalStartFrom != null)

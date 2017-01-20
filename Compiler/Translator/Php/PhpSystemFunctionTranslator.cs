@@ -372,25 +372,7 @@ namespace Crayon.Translator.Php
                 this.Translator.TranslateExpression(output, values[i]);
             }
         }
-
-        protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
-        {
-            output.Add("pth_string_contains(");
-            this.PhpTranslator.TranslateExpression(output, haystack);
-            output.Add(", ");
-            this.PhpTranslator.TranslateExpression(output, needle);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
-        {
-            output.Add("pth_string_ends_with(");
-            this.PhpTranslator.TranslateExpression(output, stringExpr);
-            output.Add(", ");
-            this.PhpTranslator.TranslateExpression(output, findMe);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
         {
             output.Add("(");
@@ -421,20 +403,6 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
         
-        protected override void TranslateStringLower(List<string> output, Expression stringValue)
-        {
-            output.Add("strtolower(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
-        {
-            output.Add("ltrim(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-        }
-
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("floatval(");
@@ -446,50 +414,6 @@ namespace Crayon.Translator.Php
         {
             output.Add("intval(");
             this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
-        {
-            output.Add("str_replace(");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, replaceWith);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-
-        }
-
-        protected override void TranslateStringReverse(List<string> output, Expression stringValue)
-        {
-            output.Add("str_reverse(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
-        {
-            output.Add("rtrim(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
-        {
-            output.Add("new Rf(explode(");
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add("))");
-        }
-
-        protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
-        {
-            output.Add("pth_string_starts_with(");
-            this.PhpTranslator.TranslateExpression(output, stringExpr);
-            output.Add(", ");
-            this.PhpTranslator.TranslateExpression(output, findMe);
             output.Add(")");
         }
 
@@ -515,19 +439,6 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, lookFor);
             output.Add(", ");
             this.Translator.TranslateExpression(output, index);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringTrim(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".trim()");
-        }
-
-        protected override void TranslateStringUpper(List<string> output, Expression stringValue)
-        {
-            output.Add("strtoupper(");
-            this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
         }
 

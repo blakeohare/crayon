@@ -398,23 +398,7 @@ namespace Crayon.Translator.Java
                 this.Translator.TranslateExpression(output, values[i]);
             }
         }
-
-        protected override void TranslateStringContains(List<string> output, Expression haystack, Expression needle)
-        {
-            this.Translator.TranslateExpression(output, haystack);
-            output.Add(".contains(");
-            this.Translator.TranslateExpression(output, needle);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringEndsWith(List<string> output, Expression stringExpr, Expression findMe)
-        {
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(".endsWith(");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
         {
             this.Translator.TranslateExpression(output, aNonNull);
@@ -443,19 +427,6 @@ namespace Crayon.Translator.Java
             output.Add(")");
         }
         
-        protected override void TranslateStringLower(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".toLowerCase()");
-        }
-
-        protected override void TranslateStringLtrim(List<string> output, Expression stringValue)
-        {
-            output.Add("TranslationHelper.trimSide(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(", true)");
-        }
-
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("Double.parseDouble(");
@@ -469,48 +440,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-
-        protected override void TranslateStringReplace(List<string> output, Expression stringValue, Expression findMe, Expression replaceWith)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".replace((CharSequence)");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(", (CharSequence)");
-            this.Translator.TranslateExpression(output, replaceWith);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringReverse(List<string> output, Expression stringValue)
-        {
-            output.Add("TranslationHelper.reverseString(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringRtrim(List<string> output, Expression stringValue)
-        {
-            output.Add("TranslationHelper.trimSide(");
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(", false)");
-        }
-
-        protected override void TranslateStringSplit(List<string> output, Expression stringExpr, Expression sep)
-        {
-            output.Add("TranslationHelper.literalStringSplit(");
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, sep);
-            output.Add(")");
-        }
-
-        protected override void TranslateStringStartsWith(List<string> output, Expression stringExpr, Expression findMe)
-        {
-            this.Translator.TranslateExpression(output, stringExpr);
-            output.Add(".startsWith(");
-            this.Translator.TranslateExpression(output, findMe);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
         {
             output.Add("TranslationHelper.substring(");
@@ -535,19 +465,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
-
-        protected override void TranslateStringTrim(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".trim()");
-        }
-
-        protected override void TranslateStringUpper(List<string> output, Expression stringValue)
-        {
-            this.Translator.TranslateExpression(output, stringValue);
-            output.Add(".toUpperCase()");
-        }
-
+        
         protected override void TranslateTan(List<string> output, Expression value)
         {
             output.Add("Math.tan(");
