@@ -258,6 +258,9 @@ namespace Crayon
 						}
                         break;
 
+                    case FileOutputType.Ghost:
+                        break;
+
                     default:
                         throw new InvalidOperationException();
                 }
