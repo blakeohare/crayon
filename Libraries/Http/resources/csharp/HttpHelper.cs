@@ -119,13 +119,21 @@ namespace %%%PROJECT_ID%%%.Library.Http
                 {
                     request.ContentType = contentType;
                 }
-                System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(request.GetRequestStream());
+                System.IO.BinaryWriter streamWriter = new System.IO.BinaryWriter(request.GetRequestStream());
                 streamWriter.Write(contentBytes);
                 streamWriter.Flush();
                 streamWriter.Close();
             }
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException we)
+            {
+                response = (HttpWebResponse)we.Response;
+            }
             int statusCode = (int)response.StatusCode;
             string statusMessage = response.StatusDescription;
             byte[] responseBytes = null;
