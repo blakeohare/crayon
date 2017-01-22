@@ -15,9 +15,6 @@ C$game$execId = -1;
 
 C$game$beginFrame = function () {
     C$game$last_frame_began = C$common$now();
-    if (C$game$ctx) {
-        C$drawing$drawRect(0, 0, C$game$width, C$game$height, 0, 0, 0, 255);
-    }
 };
 
 C$game$endFrame = function() {

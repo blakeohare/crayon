@@ -56,6 +56,8 @@ C$drawing$render = function () {
     var text;
     var textIndex = 0;
 
+    C$drawing$drawRect(0, 0, C$game$width, C$game$height, 0, 0, 0, 255);
+
     for (var i = 0; i < C$drawing$eventsLength; i += 16) {
         switch (ev[i]) {
             case 1:
