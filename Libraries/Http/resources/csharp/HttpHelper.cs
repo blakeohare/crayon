@@ -133,7 +133,13 @@ namespace %%%PROJECT_ID%%%.Library.Http
             catch (WebException we)
             {
                 response = (HttpWebResponse)we.Response;
+                if (response == null && we.Status == WebExceptionStatus.Timeout)
+                {
+                    // TODO: timeouts
+                    throw new Exception();
+                }
             }
+
             int statusCode = (int)response.StatusCode;
             string statusMessage = response.StatusDescription;
             byte[] responseBytes = null;
