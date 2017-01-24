@@ -49,62 +49,20 @@ namespace Crayon.Translator.Ruby
         {
             throw new NotImplementedException();
         }
-
-        protected override void TranslateSin(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::sin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateTan(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::tan(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateCos(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::cos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateInt(System.Collections.Generic.List<string> output, Expression value)
         {
             output.Add("(");
             this.Translator.TranslateExpression(output, value);
 			output.Add(").to_i");
         }
-
-        protected override void TranslateArcCos(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::acos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcSin(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::asin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateOrd(System.Collections.Generic.List<string> output, Expression character)
         {
             this.Translator.TranslateExpression(output, character);
             output.Add(".ord");
         }
-
-        protected override void TranslateMathLog(System.Collections.Generic.List<string> output, Expression value)
-        {
-            output.Add("Math::log(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateChr(System.Collections.Generic.List<string> output, Expression asciiValue)
         {
             output.Add("(");
@@ -244,16 +202,7 @@ namespace Crayon.Translator.Ruby
 			this.Translator.TranslateExpression(output, thing);
 			output.Add(".to_s");
         }
-
-        protected override void TranslateArcTan(System.Collections.Generic.List<string> output, Expression dy, Expression dx)
-        {
-			output.Add("Math::atan2(");
-			this.Translator.TranslateExpression(output, dy);
-			output.Add(", ");
-			this.Translator.TranslateExpression(output, dx);
-			output.Add(")");
-        }
-
+        
         protected override void TranslateDictionaryGetKeys(System.Collections.Generic.List<string> output, string keyType, Expression dictionary)
         {
 			this.Translator.TranslateExpression(output, dictionary);
@@ -289,15 +238,6 @@ namespace Crayon.Translator.Ruby
         protected override void TranslateDotEquals(System.Collections.Generic.List<string> output, Expression root, Expression compareTo)
         {
             output.Add(" = ");
-        }
-
-        protected override void TranslateExponent(System.Collections.Generic.List<string> output, Expression baseNum, Expression powerNum)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, baseNum);
-            output.Add(") ** (");
-            this.Translator.TranslateExpression(output, powerNum);
-            output.Add(")");
         }
         
         protected override void TranslateStringCompareIsReverse(System.Collections.Generic.List<string> output, Expression a, Expression b)

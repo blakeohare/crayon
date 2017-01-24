@@ -15,21 +15,6 @@ namespace Crayon.Translator.Php
             output.Add(" . \"\\n\"");
         }
         
-        protected override void TranslateArcCos(List<string> output, Expression value)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateArcSin(List<string> output, Expression value)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
-        {
-            throw new NotImplementedException();
-        }
-        
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             output.Add("bytecode_get_iargs()");
@@ -83,11 +68,6 @@ namespace Crayon.Translator.Php
             output.Add("new Rf(array_merge(array(), ");
             this.Translator.TranslateExpression(output, list);
             output.Add("->r))");
-        }
-
-        protected override void TranslateCos(List<string> output, Expression value)
-        {
-            throw new NotImplementedException();
         }
         
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
@@ -147,15 +127,6 @@ namespace Crayon.Translator.Php
             throw new InvalidOperationException(); // optimized out.
         }
 
-        protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
-        {
-            output.Add("pow(");
-            this.Translator.TranslateExpression(output, baseNum);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, powerNum);
-            output.Add(")");
-        }
-
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -200,13 +171,6 @@ namespace Crayon.Translator.Php
             output.Add("TODO_optimize_out()");
         }
         
-        protected override void TranslateMathLog(List<string> output, Expression value)
-        {
-            output.Add("log(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("pth_multiply_list(");
@@ -284,12 +248,7 @@ namespace Crayon.Translator.Php
             this.PhpTranslator.TranslateExpression(output, programData);
             output.Add(")");
         }
-
-        protected override void TranslateSin(List<string> output, Expression value)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             output.Add("pth_sorted_copy_ints(");
@@ -441,12 +400,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
-
-        protected override void TranslateTan(List<string> output, Expression value)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             // http://php.net/manual/en/function.time-nanosleep.php

@@ -26,30 +26,7 @@ namespace Crayon.Translator.Python
         {
             output.Add("RESOURCES.getManifest()");
         }
-
-        protected override void TranslateArcCos(List<string> output, Expression value)
-        {
-            output.Add("math.acos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcSin(List<string> output, Expression value)
-        {
-            output.Add("math.asin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
-        {
-            output.Add("math.atan2(");
-            this.Translator.TranslateExpression(output, dy);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, dx);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             throw new NotImplementedException();
@@ -102,13 +79,6 @@ namespace Crayon.Translator.Python
         protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
         {
             this.Translator.TranslateExpression(output, list);
-        }
-
-        protected override void TranslateCos(List<string> output, Expression value)
-        {
-            output.Add("math.cos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
         }
 
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
@@ -167,15 +137,6 @@ namespace Crayon.Translator.Python
             throw new InvalidOperationException(); // optimized out.
         }
 
-        protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
-        {
-            output.Add("float(");
-            this.Translator.TranslateExpression(output, baseNum);
-            output.Add(" ** ");
-            this.Translator.TranslateExpression(output, powerNum);
-            output.Add(")");
-        }
-
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -215,13 +176,6 @@ namespace Crayon.Translator.Python
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
             output.Add("(sys.platform == 'win32')");
-        }
-
-        protected override void TranslateMathLog(List<string> output, Expression value)
-        {
-            output.Add("math.log(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
         }
 
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
@@ -318,14 +272,7 @@ namespace Crayon.Translator.Python
             output.Add("program_data[0] = ");
             this.Translator.TranslateExpression(output, programData);
         }
-
-        protected override void TranslateSin(List<string> output, Expression value)
-        {
-            output.Add("math.sin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             output.Add("create_sorted_copy_of_list(");
@@ -457,13 +404,6 @@ namespace Crayon.Translator.Python
             this.Translator.TranslateExpression(output, lookFor);
             output.Add(", ");
             this.Translator.TranslateExpression(output, index);
-            output.Add(")");
-        }
-        
-        protected override void TranslateTan(List<string> output, Expression value)
-        {
-            output.Add("math.tan(");
-            this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
 

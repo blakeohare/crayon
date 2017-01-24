@@ -1,4 +1,3 @@
-
 $_array_get: [ARG:1][[ARG:2]]
 $_array_join: TODO_array_join([ARG:1], [ARG:2])
 $_array_length: [ARG:1].length
@@ -20,16 +19,24 @@ $_list_remove_at: [ARG:1].delete_at([ARG:2])
 $_list_reverse_in_place: [ARG:1].reverse!
 $_list_set: [ARG:1][[ARG:2]] = [ARG:3]
 $_list_shuffle_in_place: [ARG:1].shuffle!
+$_math_arc_cos: Math::acos([ARG:1])
+$_math_arc_sin: Math::asin([ARG:1])
+$_math_arc_tan: Math::atan2([ARG:1], [ARG:2])
+$_math_cos: Math::cos([ARG:1])
+$_math_log: Math::log([ARG:1])
+$_math_pow: ([ARG:1]) ** ([ARG:2])
+$_math_sin: Math::sin([ARG:1])
+$_math_tan: Math::tan([ARG:1])
 $_python_reference_equality: [ARG:1].equal?([ARG:2])
+$_string_contains: [ARG:1].incldue?([ARG:2])
+$_string_endswith: [ARG:1].end_with?([ARG:2])
 $_string_length: [ARG:1].length
 $_string_lower: [ARG:1].downcase
-$_string_trim: [ARG:1].strip
 $_string_ltrim: [ARG:1].lstrip
-$_string_rtrim: [ARG:1].rstrip
-$_string_upper: [ARG:1].upcase
-$_string_contains: [ARG:1].incldue?([ARG:2])
-$_string_reverse: [ARG:1].reverse
 $_string_replace: [ARG:1].split([ARG:2]).join([ARG:3])
+$_string_reverse: [ARG:1].reverse
+$_string_rtrim: [ARG:1].rstrip
 $_string_split: [ARG:1].split([ARG:2])
-$_string_endswith: [ARG:1].end_with?([ARG:2])
 $_string_startswith: [ARG:1].start_with?([ARG:2])
+$_string_trim: [ARG:1].strip
+$_string_upper: [ARG:1].upcase

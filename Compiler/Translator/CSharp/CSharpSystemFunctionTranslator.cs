@@ -6,29 +6,6 @@ namespace Crayon.Translator.CSharp
 {
     internal abstract class CSharpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslateArcCos(List<string> output, Expression value)
-        {
-            output.Add("Math.Acos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcSin(List<string> output, Expression value)
-        {
-            output.Add("Math.Asin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
-        {
-            output.Add("Math.Atan2(");
-            this.Translator.TranslateExpression(output, dy);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, dx);
-            output.Add(")");
-        }
-        
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             throw new NotImplementedException();
@@ -97,14 +74,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, list);
             output.Add(".ToArray()");
         }
-
-        protected override void TranslateCos(List<string> output, Expression value)
-        {
-            output.Add("Math.Cos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -160,16 +130,7 @@ namespace Crayon.Translator.CSharp
         {
             throw new InvalidOperationException(); // optimized out.
         }
-
-        protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
-        {
-            output.Add("System.Math.Pow(");
-            this.Translator.TranslateExpression(output, baseNum);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, powerNum);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -213,14 +174,7 @@ namespace Crayon.Translator.CSharp
         {
             output.Add("TranslationHelper.IsWindows");
         }
-
-        protected override void TranslateMathLog(List<string> output, Expression value)
-        {
-            output.Add("Math.Log(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
         {
             output.Add("TranslationHelper.MultiplyList(");
@@ -323,14 +277,7 @@ namespace Crayon.Translator.CSharp
             output.Add("TranslationHelper.ProgramData = ");
             this.Translator.TranslateExpression(output, programData);
         }
-
-        protected override void TranslateSin(List<string> output, Expression value)
-        {
-            output.Add("Math.Sin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             this.Translator.TranslateExpression(output, list);
@@ -481,13 +428,6 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
         
-        protected override void TranslateTan(List<string> output, Expression value)
-        {
-            output.Add("Math.Tan(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             output.Add("System.Threading.Thread.Sleep((int)(");

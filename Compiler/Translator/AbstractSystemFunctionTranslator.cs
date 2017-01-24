@@ -47,14 +47,6 @@ namespace Crayon.Translator
                 case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
                 case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
                 case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
-                case "_math_arc_cos": VerifyCount(functionCall, 1); TranslateArcCos(output, args[0]); break;
-                case "_math_arc_sin": VerifyCount(functionCall, 1); TranslateArcSin(output, args[0]); break;
-                case "_math_arc_tan": VerifyCount(functionCall, 2); TranslateArcTan(output, args[0], args[1]); break;
-                case "_math_cos": VerifyCount(functionCall, 1); TranslateCos(output, args[0]); break;
-                case "_math_log": VerifyCount(functionCall, 1); TranslateMathLog(output, args[0]); break;
-                case "_math_pow": VerifyCount(functionCall, 2); TranslateExponent(output, args[0], args[1]); break;
-                case "_math_sin": VerifyCount(functionCall, 1); TranslateSin(output, args[0]); break;
-                case "_math_tan": VerifyCount(functionCall, 1); TranslateTan(output, args[0]); break;
                 case "_multiply_list": VerifyCount(functionCall, 2); TranslateMultiplyList(output, args[0], args[1]); break;
                 case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, (StringConstant)args[0], args[1]); break;
                 case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
@@ -101,9 +93,6 @@ namespace Crayon.Translator
             }
         }
         
-        protected abstract void TranslateArcCos(List<string> output, Expression value);
-        protected abstract void TranslateArcSin(List<string> output, Expression value);
-        protected abstract void TranslateArcTan(List<string> output, Expression dy, Expression dx);
         protected abstract void TranslateByteCodeGetIntArgs(List<string> output);
         protected abstract void TranslateByteCodeGetOps(List<string> output);
         protected abstract void TranslateByteCodeGetStringArgs(List<string> output);
@@ -114,7 +103,6 @@ namespace Crayon.Translator
         protected abstract void TranslateCommandLineArgs(List<string> output);
         protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
         protected abstract void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list);
-        protected abstract void TranslateCos(List<string> output, Expression value);
         protected abstract void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key);
         protected abstract void TranslateDictionaryGetKeys(List<string> output, string keyType, Expression dictionary);
         protected abstract void TranslateDictionaryGetValues(List<string> output, Expression dictionary);
@@ -123,14 +111,12 @@ namespace Crayon.Translator
         protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
         protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
         protected abstract void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId);
-        protected abstract void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum);
         protected abstract void TranslateForceParens(List<string> output, Expression expression);
         protected abstract void TranslateGetProgramData(List<string> output);
         protected abstract void TranslateGetRawByteCodeString(List<string> output);
         protected abstract void TranslateInt(List<string> output, Expression value);
         protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
         protected abstract void TranslateIsWindowsProgram(List<string> output);
-        protected abstract void TranslateMathLog(List<string> output, Expression value);
         protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
         protected abstract void TranslateNewArray(List<string> output, StringConstant type, Expression size);
         protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);
@@ -145,7 +131,6 @@ namespace Crayon.Translator
         protected abstract void TranslateResourceGetManifest(List<string> output);
         protected abstract void TranslateResourceReadText(List<string> output, Expression path);
         protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
-        protected abstract void TranslateSin(List<string> output, Expression value);
         protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);
         protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
@@ -163,7 +148,6 @@ namespace Crayon.Translator
         protected abstract void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength);
         protected abstract void TranslateStringSubstringExistsAt(List<string> output, Expression stringExpr, Expression lookFor, Expression index);
         protected abstract void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds);
-        protected abstract void TranslateTan(List<string> output, Expression value);
         protected abstract void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator);
         protected abstract void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator);
 

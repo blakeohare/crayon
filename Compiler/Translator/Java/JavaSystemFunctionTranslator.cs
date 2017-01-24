@@ -8,29 +8,6 @@ namespace Crayon.Translator.Java
     {
         public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
         
-        protected override void TranslateArcCos(List<string> output, Expression value)
-        {
-            output.Add("Math.acos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcSin(List<string> output, Expression value)
-        {
-            output.Add("Math.asin(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateArcTan(List<string> output, Expression dy, Expression dx)
-        {
-            output.Add("Math.atan2(");
-            this.Translator.TranslateExpression(output, dy);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, dx);
-            output.Add(")");
-        }
-        
         protected override void TranslateByteCodeGetIntArgs(List<string> output)
         {
             throw new NotImplementedException();
@@ -111,13 +88,6 @@ namespace Crayon.Translator.Java
             }
         }
 
-        protected override void TranslateCos(List<string> output, Expression value)
-        {
-            output.Add("Math.cos(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -183,15 +153,6 @@ namespace Crayon.Translator.Java
             throw new InvalidOperationException(); // optimized out.
         }
 
-        protected override void TranslateExponent(List<string> output, Expression baseNum, Expression powerNum)
-        {
-            output.Add("Math.pow(");
-            this.Translator.TranslateExpression(output, baseNum);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, powerNum);
-            output.Add(")");
-        }
-
         protected override void TranslateForceParens(List<string> output, Expression expression)
         {
             output.Add("(");
@@ -224,13 +185,6 @@ namespace Crayon.Translator.Java
             output.Add("TranslationHelper.isValidInteger(");
             this.Translator.TranslateExpression(output, number);
             output.Add(")"); // meh
-        }
-        
-        protected override void TranslateMathLog(List<string> output, Expression value)
-        {
-            output.Add("Math.log(");
-            this.Translator.TranslateExpression(output, value);
-            output.Add(")");
         }
 
         protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
@@ -303,13 +257,6 @@ namespace Crayon.Translator.Java
         {
             output.Add("TranslationHelper.setProgramData(");
             this.Translator.TranslateExpression(output, programData);
-            output.Add(")");
-        }
-
-        protected override void TranslateSin(List<string> output, Expression value)
-        {
-            output.Add("Math.sin(");
-            this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
 
@@ -463,13 +410,6 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, lookFor);
             output.Add(", ");
             this.Translator.TranslateExpression(output, index);
-            output.Add(")");
-        }
-        
-        protected override void TranslateTan(List<string> output, Expression value)
-        {
-            output.Add("Math.tan(");
-            this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
 
