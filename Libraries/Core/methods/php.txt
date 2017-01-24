@@ -7,6 +7,7 @@ $_array_set: [ARG:1]->r[[ARG:2]] = [ARG:3]
 $_assert: pth_assert([ARG:1])
 $_current_time_seconds: pth_current_time()
 $_dictionary_contains: isset([ARG:1]->r[[ARG:2]])
+$_force_parens: ([ARG:1])
 $_list_clear: pth_list_clear([ARG:1])
 $_list_concat: new Rf(array_merge([ARG:1]->r, [ARG:2]->r))
 $_list_get: [ARG:1]->r[[ARG:2]]
@@ -29,6 +30,11 @@ $_math_log: log([ARG:1])
 $_math_pow: pow([ARG:1], [ARG:2])
 $_math_sin: sin([ARG:1])
 $_math_tan: tan([ARG:1])
+$_postfix_decrement: [ARG:1]--
+$_postfix_increment: [ARG:1]++
+$_prefix_decrement: --[ARG:1]
+$_prefix_increment: ++[ARG:1]
+$_random_float: pth_random_float()
 $_string_contains: pth_string_contains([ARG:1], [ARG:2])
 $_string_endswith: pth_string_ends_with([ARG:1], [ARG:2])
 $_string_length: strlen([ARG:1])
@@ -41,3 +47,5 @@ $_string_split: new Rf(explode([ARG:2], [ARG:1]))
 $_string_startswith: pth_string_starts_with([ARG:1], [ARG:2])
 $_string_trim: trim([ARG:1])
 $_string_upper: strtoupper([ARG:1])
+$_unsafe_float_division: 1.0 * [ARG:1] / [ARG:2]
+$_unsafe_integer_division: intval([ARG:1] / [ARG:2])

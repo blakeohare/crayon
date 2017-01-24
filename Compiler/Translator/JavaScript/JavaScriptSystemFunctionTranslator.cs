@@ -132,14 +132,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, executionContextId);
             output.Add(")");
         }
-
-        protected override void TranslateForceParens(List<string> output, Expression expression)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, expression);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("C$common$programData");
@@ -149,15 +142,7 @@ namespace Crayon.Translator.JavaScript
         {
             output.Add("C$bytecode");
         }
-
-        protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
-        {
-            string op = increment ? "++" : "--";
-            if (prefix) output.Add(op);
-            this.Translator.TranslateExpression(output, expression);
-            if (!prefix) output.Add(op);
-        }
-
+        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("Math.floor(");
@@ -242,11 +227,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("parseInt(");
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
-        }
-
-        protected override void TranslateRandomFloat(List<string> output)
-        {
-            output.Add("Math.random()");
         }
 
         protected override void TranslateResourceReadText(List<string> output, Expression path)
@@ -409,22 +389,6 @@ namespace Crayon.Translator.JavaScript
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             throw new InvalidOperationException(); // Optimized out.
-        }
-
-        protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
-        {
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
-        }
-
-        protected override void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator)
-        {
-            output.Add("Math.floor(");
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
-            output.Add(")");
         }
     }
 }

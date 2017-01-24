@@ -126,14 +126,7 @@ namespace Crayon.Translator.Php
         {
             throw new InvalidOperationException(); // optimized out.
         }
-
-        protected override void TranslateForceParens(List<string> output, Expression expression)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, expression);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateGetProgramData(List<string> output)
         {
             output.Add("pth_getProgramData()");
@@ -143,15 +136,7 @@ namespace Crayon.Translator.Php
         {
             output.Add("TODO_optimize_this_out()");
         }
-
-        protected override void TranslateIncrement(List<string> output, Expression expression, bool increment, bool prefix)
-        {
-            string token = increment ? "++" : "--";
-            if (prefix) output.Add(token);
-            this.Translator.TranslateExpression(output, expression);
-            if (!prefix) output.Add(token);
-        }
-
+        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("intval(");
@@ -225,11 +210,6 @@ namespace Crayon.Translator.Php
             output.Add("intval(");
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
-        }
-
-        protected override void TranslateRandomFloat(List<string> output)
-        {
-            output.Add("pth_random_float()");
         }
 
         protected override void TranslateResourceGetManifest(List<string> output)
@@ -405,23 +385,6 @@ namespace Crayon.Translator.Php
         {
             // http://php.net/manual/en/function.time-nanosleep.php
             throw new NotImplementedException();
-        }
-
-        protected override void TranslateUnsafeFloatDivision(List<string> output, Expression numerator, Expression denominator)
-        {
-            output.Add("1.0 * ");
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
-        }
-
-        protected override void TranslateUnsafeIntegerDivision(List<string> output, Expression numerator, Expression denominator)
-        {
-            output.Add("intval(");
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
-            output.Add(")");
         }
     }
 }

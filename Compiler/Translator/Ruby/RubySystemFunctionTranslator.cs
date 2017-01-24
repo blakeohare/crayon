@@ -5,11 +5,6 @@ namespace Crayon.Translator.Ruby
 {
     internal class RubySystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslateRandomFloat(System.Collections.Generic.List<string> output)
-        {
-            output.Add("rand()");
-        }
-
         protected override void TranslateGetProgramData(System.Collections.Generic.List<string> output)
         {
             output.Add("$program_data");
@@ -112,14 +107,7 @@ namespace Crayon.Translator.Ruby
             this.Translator.TranslateExpression(output, path);
             output.Add(")");
         }
-
-        protected override void TranslateForceParens(System.Collections.Generic.List<string> output, Expression expression)
-        {
-            output.Add("(");
-            this.Translator.TranslateExpression(output, expression);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateCharToString(System.Collections.Generic.List<string> output, Expression charValue)
         {
             this.Translator.TranslateExpression(output, charValue);
@@ -215,12 +203,7 @@ namespace Crayon.Translator.Ruby
 			output.Add(" * ");
 			this.Translator.TranslateExpression(output, num);
         }
-
-        protected override void TranslateIncrement(System.Collections.Generic.List<string> output, Expression expression, bool increment, bool prefix)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateNewArray(System.Collections.Generic.List<string> output, StringConstant type, Expression size)
         {
             output.Add("Array.new(");
@@ -327,24 +310,10 @@ namespace Crayon.Translator.Ruby
         {
 			this.Translator.TranslateExpression(output, enumerableThing);
         }
-
-        protected override void TranslateUnsafeFloatDivision(System.Collections.Generic.List<string> output, Expression numerator, Expression denominator)
-        {
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
-        }
-
+        
         protected override void TranslateEnqueueVmResume(System.Collections.Generic.List<string> output, Expression seconds, Expression executionContextId)
         {
             throw new NotImplementedException();
-        }
-
-        protected override void TranslateUnsafeIntegerDivision(System.Collections.Generic.List<string> output, Expression numerator, Expression denominator)
-        {
-            this.Translator.TranslateExpression(output, numerator);
-            output.Add(" / ");
-            this.Translator.TranslateExpression(output, denominator);
         }
 
         protected override void TranslateDictionarySet(System.Collections.Generic.List<string> output, Expression dictionary, Expression key, Expression value)
