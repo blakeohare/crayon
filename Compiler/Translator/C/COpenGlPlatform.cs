@@ -29,7 +29,30 @@ namespace Crayon.Translator.C
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager)
         {
-            throw new NotImplementedException();
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            Dictionary<string, string> replacements = new Dictionary<string, string>();
+            List<string> mainDotC = new List<string>();
+            mainDotC.Add(GetCCode("Headers.txt", replacements));
+            mainDotC.Add(GetCCode("String.txt", replacements));
+            mainDotC.Add(GetCCode("List.txt", replacements));
+            mainDotC.Add(GetCCode("DictInt.txt", replacements));
+            mainDotC.Add(GetCCode("DictString.txt", replacements));
+            mainDotC.Add(GetCCode("Main.txt", replacements));
+
+            output["main.c"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\n", mainDotC),
+            };
+
+            return output;
+        }
+
+        private string GetCCode(string file, Dictionary<string, string> replacements)
+        {
+            string cCode = Util.ReadResourceFileInternally("game-c-opengl/" + file);
+            cCode = Constants.DoReplacements(cCode, replacements);
+            return cCode;
         }
     }
 }
