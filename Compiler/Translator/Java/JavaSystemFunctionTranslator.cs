@@ -7,21 +7,6 @@ namespace Crayon.Translator.Java
     internal abstract class JavaSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
         public JavaPlatform JavaPlatform { get { return (JavaPlatform)this.Platform; } }
-        
-        protected override void TranslateByteCodeGetIntArgs(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetOps(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetStringArgs(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
 
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
@@ -39,12 +24,6 @@ namespace Crayon.Translator.Java
             output.Add(">(");
             this.Translator.TranslateExpression(output, enumerableThing);
             output.Add(")");
-        }
-
-        protected override void TranslateCharToString(List<string> output, Expression charValue)
-        {
-            output.Add("\"\" + ");
-            this.Translator.TranslateExpression(output, charValue);
         }
 
         protected override void TranslateChr(List<string> output, Expression asciiValue)
@@ -140,44 +119,15 @@ namespace Crayon.Translator.Java
             output.Add(".size()");
         }
 
-        protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
-        {
-            this.Translator.TranslateExpression(output, root);
-            output.Add(".equals(");
-            this.Translator.TranslateExpression(output, compareTo);
-            output.Add(")");
-        }
-
         protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
         {
             throw new InvalidOperationException(); // optimized out.
         }
-        
-        protected override void TranslateGetProgramData(List<string> output)
-        {
-            output.Add("TranslationHelper.getProgramData()");
-        }
-        
+
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("((int)");
             this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateIsValidInteger(List<string> output, Expression number)
-        {
-            output.Add("TranslationHelper.isValidInteger(");
-            this.Translator.TranslateExpression(output, number);
-            output.Add(")"); // meh
-        }
-
-        protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
-        {
-            output.Add("TranslationHelper.multiplyList(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, num);
             output.Add(")");
         }
 
@@ -230,13 +180,6 @@ namespace Crayon.Translator.Java
         {
             output.Add("Integer.parseInt(");
             this.Translator.TranslateExpression(output, rawString);
-            output.Add(")");
-        }
-        
-        protected override void TranslateSetProgramData(List<string> output, Expression programData)
-        {
-            output.Add("TranslationHelper.setProgramData(");
-            this.Translator.TranslateExpression(output, programData);
             output.Add(")");
         }
 
@@ -325,7 +268,7 @@ namespace Crayon.Translator.Java
                 this.Translator.TranslateExpression(output, values[i]);
             }
         }
-        
+
         protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
         {
             this.Translator.TranslateExpression(output, aNonNull);
@@ -353,7 +296,7 @@ namespace Crayon.Translator.Java
             }
             output.Add(")");
         }
-        
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("Double.parseDouble(");
@@ -367,7 +310,7 @@ namespace Crayon.Translator.Java
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-        
+
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
         {
             output.Add("TranslationHelper.substring(");

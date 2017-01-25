@@ -6,31 +6,9 @@ namespace Crayon.Translator.JavaScript
 {
     internal class JavaScriptSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
-        {
-            output.Add("C$common$print(");
-            this.Translator.TranslateExpression(output, expression);
-            output.Add(")");
-        }
-
         protected override void TranslateResourceGetManifest(List<string> output)
         {
             output.Add("C$resourceManifest");
-        }
-        
-        protected override void TranslateByteCodeGetIntArgs(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetOps(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetStringArgs(List<string> output)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
@@ -41,11 +19,6 @@ namespace Crayon.Translator.JavaScript
         protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
         {
             this.Translator.TranslateExpression(output, enumerableThing);
-        }
-
-        protected override void TranslateCharToString(List<string> output, Expression charValue)
-        {
-            this.Translator.TranslateExpression(output, charValue);
         }
 
         protected override void TranslateChr(List<string> output, Expression asciiValue)
@@ -119,11 +92,6 @@ namespace Crayon.Translator.JavaScript
             output.Add(").length");
         }
 
-        protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
-        {
-            throw new Exception("This should have been optimized out.");
-        }
-
         protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
         {
             output.Add("C$common$enqueueVmResume(");
@@ -132,28 +100,11 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, executionContextId);
             output.Add(")");
         }
-        
-        protected override void TranslateGetProgramData(List<string> output)
-        {
-            output.Add("C$common$programData");
-        }
 
-        protected override void TranslateGetRawByteCodeString(List<string> output)
-        {
-            output.Add("C$bytecode");
-        }
-        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("Math.floor(");
             this.Translator.TranslateExpression(output, value);
-            output.Add(")");
-        }
-
-        protected override void TranslateIsValidInteger(List<string> output, Expression number)
-        {
-            output.Add("C$common$is_valid_integer(");
-            this.Translator.TranslateExpression(output, number);
             output.Add(")");
         }
 
@@ -162,15 +113,6 @@ namespace Crayon.Translator.JavaScript
             // TODO: make platforms that have a constant value for this also have a
             // %%% platform parameter that can be used to short circuit interpreter code.
             output.Add("false");
-        }
-
-        protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
-        {
-            output.Add("C$common$multiplyList(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, num);
-            output.Add(")");
         }
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
@@ -227,19 +169,6 @@ namespace Crayon.Translator.JavaScript
             output.Add("parseInt(");
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
-        }
-
-        protected override void TranslateResourceReadText(List<string> output, Expression path)
-        {
-            output.Add("C$common$getTextRes('text/' + ");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
-
-        protected override void TranslateSetProgramData(List<string> output, Expression programData)
-        {
-            output.Add("C$common$programData = ");
-            this.Translator.TranslateExpression(output, programData);
         }
 
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
@@ -315,7 +244,7 @@ namespace Crayon.Translator.JavaScript
                 this.Translator.TranslateExpression(output, values[i]);
             }
         }
-        
+
         protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
         {
             this.Translator.TranslateExpression(output, aNonNull);
@@ -342,7 +271,7 @@ namespace Crayon.Translator.JavaScript
             }
             output.Add(")");
         }
-        
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("parseFloat(");
@@ -356,7 +285,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-        
+
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
         {
             output.Add("C$common$substring(");
@@ -385,7 +314,7 @@ namespace Crayon.Translator.JavaScript
             this.Translator.TranslateExpression(output, lookFor);
             output.Add(")");
         }
-        
+
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             throw new InvalidOperationException(); // Optimized out.

@@ -1,13 +1,16 @@
-
 $_app_data_root: get_app_data_root()
 $_array_get: [ARG:1][[ARG:2]]
 $_array_join: [ARG:2].join([ARG:1])
 $_array_length: len([ARG:1])
 $_array_set: [ARG:1][[ARG:2]] = [ARG:3]
 $_assert: create_assertion([ARG:1])
+$_byte_code_get_raw_string: RESOURCES.readTextFile('resources/byte_code.txt')
+$_char_to_string: [ARG:1]
 $_current_time_seconds: time.time()
 $_dictionary_contains: ([ARG:1].get([ARG:2], None) != None)
 $_force_parens: ([ARG:1])
+$_get_program_data: program_data[0]
+$_is_valid_integer: _is_valid_integer([ARG:1])
 $_list_clear: _clear_list([ARG:1])
 $_list_concat: ([ARG:1] + [ARG:2])
 $_list_get: [ARG:1][[ARG:2]]
@@ -30,8 +33,13 @@ $_math_log: math.log([ARG:1])
 $_math_pow: float([ARG:1] ** [ARG:2])
 $_math_sin: math.sin([ARG:1])
 $_math_tan: math.tan([ARG:1])
+$_multiply_list: [ARG:1] * [ARG:2]
+$_print_stderr: sys.stderr.write([ARG:1] + "\n")
+$_print_stdout: print([ARG:1])
 $_python_reference_equality: [ARG:1] is [ARG:2]
 $_random_float: random.random()
+$_resource_read_text_file: RESOURCES.readTextFile('resources/text/' + [ARG:1])
+$_set_program_data: program_data[0] = [ARG:1]
 $_string_contains: ([ARG:2] in [ARG:1])
 $_string_endswith: [ARG:1].endswith([ARG:2])
 $_string_length: len([ARG:1])

@@ -1,1 +1,4 @@
 $_app_data_root: OpenTkTranslationHelper.AppDataRoot
+$_print_stderr: System.Console.WriteLine([ARG:1])
+$_print_stdout: System.Console.WriteLine([ARG:1])
+$_resource_read_text_file: ResourceReader.ReadTextResource([ARG:1])

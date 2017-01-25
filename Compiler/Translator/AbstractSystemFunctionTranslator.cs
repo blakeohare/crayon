@@ -9,7 +9,7 @@ namespace Crayon.Translator
 
         public AbstractPlatform Platform { get; set; }
         public AbstractTranslator Translator { get; set; }
-        
+
         public void Translate(string tab, List<string> output, SystemFunctionCall functionCall)
         {
             Expression[] args = functionCall.Args;
@@ -24,13 +24,8 @@ namespace Crayon.Translator
 
             switch (name)
             {
-                case "_byte_code_get_int_args": VerifyCount(functionCall, 0); TranslateByteCodeGetIntArgs(output); break;
-                case "_byte_code_get_ops": VerifyCount(functionCall, 0); TranslateByteCodeGetOps(output); break;
-                case "_byte_code_get_string_args": VerifyCount(functionCall, 0); TranslateByteCodeGetStringArgs(output); break;
-                case "_byte_code_get_raw_string": VerifyCount(functionCall, 0); TranslateGetRawByteCodeString(output); break;
                 case "_cast": VerifyCount(functionCall, 2); TranslateCast(output, (StringConstant)args[0], args[1]); break;
                 case "_cast_to_list": VerifyCount(functionCall, 2); TranslateCastToList(output, (StringConstant)args[0], args[1]); break;
-                case "_char_to_string": VerifyCount(functionCall, 1); TranslateCharToString(output, args[0]); break;
                 case "_chr": VerifyCount(functionCall, 1); TranslateChr(output, args[0]); break;
                 case "_command_line_args": VerifyCount(functionCall, 0); TranslateCommandLineArgs(output); break;
                 case "_comment": VerifyCount(functionCall, 1); TranslateComment(output, (StringConstant)args[0]); break;
@@ -41,12 +36,8 @@ namespace Crayon.Translator
                 case "_dictionary_remove": VerifyCount(functionCall, 2); TranslateDictionaryRemove(output, args[0], args[1]); break;
                 case "_dictionary_set": VerifyCount(functionCall, 3); TranslateDictionarySet(output, args[0], args[1], args[2]); break;
                 case "_dictionary_size": VerifyCount(functionCall, 1); TranslateDictionarySize(output, args[0]); break;
-                case "_dot_equals": VerifyCount(functionCall, 2); TranslateDotEquals(output, args[0], args[1]); break;
                 case "_enqueue_vm_resume": VerifyCount(functionCall, 2); TranslateEnqueueVmResume(output, args[0], args[1]); break;
-                case "_get_program_data": VerifyCount(functionCall, 0); TranslateGetProgramData(output); break;
                 case "_int": VerifyCount(functionCall, 1); TranslateInt(output, args[0]); break;
-                case "_is_valid_integer": VerifyCount(functionCall, 1); TranslateIsValidInteger(output, args[0]); break;
-                case "_multiply_list": VerifyCount(functionCall, 2); TranslateMultiplyList(output, args[0], args[1]); break;
                 case "_new_array": VerifyCount(functionCall, 2); TranslateNewArray(output, (StringConstant)args[0], args[1]); break;
                 case "_new_dictionary": VerifyCount(functionCall, 2); TranslateNewDictionary(output, (StringConstant)args[0], (StringConstant)args[1]); break;
                 case "_new_list": VerifyCount(functionCall, 1); TranslateNewList(output, (StringConstant)args[0]); break;
@@ -54,11 +45,7 @@ namespace Crayon.Translator
                 case "_ord": VerifyCount(functionCall, 1); TranslateOrd(output, args[0]); break;
                 case "_parse_float": VerifyCount(functionCall, 2); TranslateParseFloat(output, args[0], args[1]); break;
                 case "_parse_int": VerifyCount(functionCall, 1); TranslateParseInt(output, args[0]); break;
-                case "_print_stderr": VerifyCount(functionCall, 1); TranslatePrint(output, args[0], true); break;
-                case "_print_stdout": VerifyCount(functionCall, 1); TranslatePrint(output, args[0], false); break;
                 case "_resource_get_manifest": VerifyCount(functionCall, 0); TranslateResourceGetManifest(output); break;
-                case "_resource_read_text_file": VerifyCount(functionCall, 1); TranslateResourceReadText(output, args[0]); break;
-                case "_set_program_data": VerifyCount(functionCall, 1); TranslateSetProgramData(output, args[0]); break;
                 case "_sorted_copy_of_int_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfIntArray(output, args[0]); break;
                 case "_sorted_copy_of_string_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfStringArray(output, args[0]); break;
                 case "_string_append": VerifyCount(functionCall, 2); TranslateStringAppend(output, args[0], args[1]); break;
@@ -81,16 +68,12 @@ namespace Crayon.Translator
                     //throw new ParserException(functionCall.FirstToken, "Unrecognized system method invocation: " + functionCall.Name);
                     // TODO: Eventually this will be removed and AssociatedLibrary will be set to Core and this entire switch statement can go away.
                     output.Add(functionCall.HACK_CoreLibraryReference.TranslateNativeInvocation(functionCall.FirstToken, this.Platform, fullName, args));
-                    break; 
+                    break;
             }
         }
-        
-        protected abstract void TranslateByteCodeGetIntArgs(List<string> output);
-        protected abstract void TranslateByteCodeGetOps(List<string> output);
-        protected abstract void TranslateByteCodeGetStringArgs(List<string> output);
+
         protected abstract void TranslateCast(List<string> output, StringConstant typeValue, Expression expression);
         protected abstract void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing);
-        protected abstract void TranslateCharToString(List<string> output, Expression charValue);
         protected abstract void TranslateChr(List<string> output, Expression asciiValue);
         protected abstract void TranslateCommandLineArgs(List<string> output);
         protected abstract void TranslateComment(List<string> output, StringConstant commentValue);
@@ -101,14 +84,9 @@ namespace Crayon.Translator
         protected abstract void TranslateDictionaryRemove(List<string> output, Expression dictionary, Expression key);
         protected abstract void TranslateDictionarySet(List<string> output, Expression dictionary, Expression key, Expression value);
         protected abstract void TranslateDictionarySize(List<string> output, Expression dictionary);
-        protected abstract void TranslateDotEquals(List<string> output, Expression root, Expression compareTo);
         protected abstract void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId);
-        protected abstract void TranslateGetProgramData(List<string> output);
-        protected abstract void TranslateGetRawByteCodeString(List<string> output);
         protected abstract void TranslateInt(List<string> output, Expression value);
-        protected abstract void TranslateIsValidInteger(List<string> output, Expression number);
         protected abstract void TranslateIsWindowsProgram(List<string> output);
-        protected abstract void TranslateMultiplyList(List<string> output, Expression list, Expression num);
         protected abstract void TranslateNewArray(List<string> output, StringConstant type, Expression size);
         protected abstract void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType);
         protected abstract void TranslateNewList(List<string> output, StringConstant type);
@@ -116,10 +94,7 @@ namespace Crayon.Translator
         protected abstract void TranslateOrd(List<string> output, Expression character);
         protected abstract void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString);
         protected abstract void TranslateParseInt(List<string> output, Expression rawString);
-        protected abstract void TranslatePrint(List<string> output, Expression expression, bool isErr);
         protected abstract void TranslateResourceGetManifest(List<string> output);
-        protected abstract void TranslateResourceReadText(List<string> output, Expression path);
-        protected abstract void TranslateSetProgramData(List<string> output, Expression programData);
         protected abstract void TranslateSortedCopyOfIntArray(List<string> output, Expression list);
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);
         protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);

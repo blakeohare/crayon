@@ -1,13 +1,19 @@
-
 $_app_data_root: die('optimize $_app_data_root out')
 $_array_get: [ARG:1]->r[[ARG:2]]
 $_array_join: implode([ARG:2], [ARG:1])
 $_array_length: count([ARG:1]->r)
 $_array_set: [ARG:1]->r[[ARG:2]] = [ARG:3]
 $_assert: pth_assert([ARG:1])
+$_byte_code_get_int_args: bytecode_get_iargs()
+$_byte_code_get_ops: bytecode_get_ops()
+$_byte_code_get_string_args: bytecode_get_sargs()
+$_byte_code_get_raw_string: TODO_optimize_this_out()
+$_char_to_string: [ARG:1]
 $_current_time_seconds: pth_current_time()
 $_dictionary_contains: isset([ARG:1]->r[[ARG:2]])
 $_force_parens: ([ARG:1])
+$_get_program_data: pth_getProgramData()
+$_is_valid_integer: pth_is_valid_integer([ARG:1])
 $_list_clear: pth_list_clear([ARG:1])
 $_list_concat: new Rf(array_merge([ARG:1]->r, [ARG:2]->r))
 $_list_get: [ARG:1]->r[[ARG:2]]
@@ -30,11 +36,16 @@ $_math_log: log([ARG:1])
 $_math_pow: pow([ARG:1], [ARG:2])
 $_math_sin: sin([ARG:1])
 $_math_tan: tan([ARG:1])
+$_multiply_list: pth_multiply_list([ARG:1], [ARG:2])
 $_postfix_decrement: [ARG:1]--
 $_postfix_increment: [ARG:1]++
 $_prefix_decrement: --[ARG:1]
 $_prefix_increment: ++[ARG:1]
+$_print_stderr: echo [ARG:1] . "\n"
+$_print_stdout: echo [ARG:1] . "\n"
 $_random_float: pth_random_float()
+$_resource_read_text_file: pth_reasource_read_text([ARG:1])
+$_set_program_data: pth_setProgramData([ARG:1])
 $_string_contains: pth_string_contains([ARG:1], [ARG:2])
 $_string_endswith: pth_string_ends_with([ARG:1], [ARG:2])
 $_string_length: strlen([ARG:1])

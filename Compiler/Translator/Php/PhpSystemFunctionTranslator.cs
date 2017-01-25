@@ -8,28 +8,6 @@ namespace Crayon.Translator.Php
     {
         private PhpTranslator PhpTranslator { get { return (PhpTranslator)this.Translator; } }
 
-        protected override void TranslatePrint(List<string> output, Expression expression, bool isErr)
-        {
-            output.Add("echo ");
-            this.Translator.TranslateExpression(output, expression);
-            output.Add(" . \"\\n\"");
-        }
-        
-        protected override void TranslateByteCodeGetIntArgs(List<string> output)
-        {
-            output.Add("bytecode_get_iargs()");
-        }
-
-        protected override void TranslateByteCodeGetOps(List<string> output)
-        {
-            output.Add("bytecode_get_ops()");
-        }
-
-        protected override void TranslateByteCodeGetStringArgs(List<string> output)
-        {
-            output.Add("bytecode_get_sargs()");
-        }
-
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             this.Translator.TranslateExpression(output, expression);
@@ -38,11 +16,6 @@ namespace Crayon.Translator.Php
         protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
         {
             this.Translator.TranslateExpression(output, enumerableThing);
-        }
-
-        protected override void TranslateCharToString(List<string> output, Expression charValue)
-        {
-            this.Translator.TranslateExpression(output, charValue);
         }
 
         protected override void TranslateChr(List<string> output, Expression asciiValue)
@@ -69,7 +42,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, list);
             output.Add("->r))");
         }
-        
+
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -117,26 +90,11 @@ namespace Crayon.Translator.Php
             output.Add("->r)");
         }
 
-        protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
         {
             throw new InvalidOperationException(); // optimized out.
         }
-        
-        protected override void TranslateGetProgramData(List<string> output)
-        {
-            output.Add("pth_getProgramData()");
-        }
 
-        protected override void TranslateGetRawByteCodeString(List<string> output)
-        {
-            output.Add("TODO_optimize_this_out()");
-        }
-        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("intval(");
@@ -144,25 +102,9 @@ namespace Crayon.Translator.Php
             output.Add(")");
         }
 
-        protected override void TranslateIsValidInteger(List<string> output, Expression number)
-        {
-            output.Add("pth_is_valid_integer(");
-            this.PhpTranslator.TranslateExpression(output, number);
-            output.Add(")");
-        }
-
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
             output.Add("TODO_optimize_out()");
-        }
-        
-        protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
-        {
-            output.Add("pth_multiply_list(");
-            this.PhpTranslator.TranslateExpression(output, list);
-            output.Add(", ");
-            this.PhpTranslator.TranslateExpression(output, num);
-            output.Add(")");
         }
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
@@ -217,18 +159,6 @@ namespace Crayon.Translator.Php
             output.Add("''");
         }
 
-        protected override void TranslateResourceReadText(List<string> output, Expression path)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateSetProgramData(List<string> output, Expression programData)
-        {
-            output.Add("pth_setProgramData(");
-            this.PhpTranslator.TranslateExpression(output, programData);
-            output.Add(")");
-        }
-        
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             output.Add("pth_sorted_copy_ints(");
@@ -311,7 +241,7 @@ namespace Crayon.Translator.Php
                 this.Translator.TranslateExpression(output, values[i]);
             }
         }
-        
+
         protected override void TranslateStringEquals(List<string> output, Expression aNonNull, Expression b)
         {
             output.Add("(");
@@ -341,7 +271,7 @@ namespace Crayon.Translator.Php
             }
             output.Add(")");
         }
-        
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("floatval(");
@@ -380,7 +310,7 @@ namespace Crayon.Translator.Php
             this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
-        
+
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             // http://php.net/manual/en/function.time-nanosleep.php

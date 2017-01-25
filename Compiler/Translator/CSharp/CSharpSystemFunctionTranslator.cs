@@ -6,21 +6,6 @@ namespace Crayon.Translator.CSharp
 {
     internal abstract class CSharpSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
-        protected override void TranslateByteCodeGetIntArgs(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetOps(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void TranslateByteCodeGetStringArgs(List<string> output)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             CSharpPlatform platform = (CSharpPlatform)this.Platform;
@@ -42,12 +27,6 @@ namespace Crayon.Translator.CSharp
             output.Add(">(");
             this.Translator.TranslateExpression(output, enumerableThing);
             output.Add(")");
-        }
-
-        protected override void TranslateCharToString(List<string> output, Expression charValue)
-        {
-            output.Add("\"\" + ");
-            this.Translator.TranslateExpression(output, charValue);
         }
 
         protected override void TranslateChr(List<string> output, Expression asciiValue)
@@ -74,7 +53,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, list);
             output.Add(".ToArray()");
         }
-        
+
         protected override void TranslateDictionaryGetGuaranteed(List<string> output, Expression dictionary, Expression key)
         {
             this.Translator.TranslateExpression(output, dictionary);
@@ -118,29 +97,11 @@ namespace Crayon.Translator.CSharp
             output.Add(".Count");
         }
 
-        protected override void TranslateDotEquals(List<string> output, Expression root, Expression compareTo)
-        {
-            this.Translator.TranslateExpression(output, root);
-            output.Add(".Equals(");
-            this.Translator.TranslateExpression(output, compareTo);
-            output.Add(")");
-        }
-
         protected override void TranslateEnqueueVmResume(List<string> output, Expression seconds, Expression executionContextId)
         {
             throw new InvalidOperationException(); // optimized out.
         }
-        
-        protected override void TranslateGetProgramData(List<string> output)
-        {
-            output.Add("TranslationHelper.ProgramData");
-        }
 
-        protected override void TranslateGetRawByteCodeString(List<string> output)
-        {
-            output.Add("ResourceReader.ReadByteCodeFile()");
-        }
-        
         protected override void TranslateInt(List<string> output, Expression value)
         {
             output.Add("((int)");
@@ -148,25 +109,9 @@ namespace Crayon.Translator.CSharp
             output.Add(")");
         }
 
-        protected override void TranslateIsValidInteger(List<string> output, Expression number)
-        {
-            output.Add("int.TryParse(");
-            this.Translator.TranslateExpression(output, number);
-            output.Add(", out v_int1)"); // meh
-        }
-
         protected override void TranslateIsWindowsProgram(List<string> output)
         {
             output.Add("TranslationHelper.IsWindows");
-        }
-        
-        protected override void TranslateMultiplyList(List<string> output, Expression list, Expression num)
-        {
-            output.Add("TranslationHelper.MultiplyList(");
-            this.Translator.TranslateExpression(output, list);
-            output.Add(", ");
-            this.Translator.TranslateExpression(output, num);
-            output.Add(")");
         }
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
@@ -244,20 +189,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, rawString);
             output.Add(")");
         }
-        
-        protected override void TranslateResourceReadText(List<string> output, Expression path)
-        {
-            output.Add("ResourceReader.ReadTextFile(\"Resources/Text/\" + ");
-            this.Translator.TranslateExpression(output, path);
-            output.Add(")");
-        }
 
-        protected override void TranslateSetProgramData(List<string> output, Expression programData)
-        {
-            output.Add("TranslationHelper.ProgramData = ");
-            this.Translator.TranslateExpression(output, programData);
-        }
-        
         protected override void TranslateSortedCopyOfIntArray(List<string> output, Expression list)
         {
             this.Translator.TranslateExpression(output, list);
@@ -368,7 +300,7 @@ namespace Crayon.Translator.CSharp
             }
             output.Add(")");
         }
-        
+
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
         {
             output.Add("double.Parse(");
@@ -382,7 +314,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, value);
             output.Add(")");
         }
-        
+
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)
         {
             output.Add("(");
@@ -407,7 +339,7 @@ namespace Crayon.Translator.CSharp
             this.Translator.TranslateExpression(output, index);
             output.Add(")");
         }
-        
+
         protected override void TranslateThreadSleep(List<string> output, Expression timeDelaySeconds)
         {
             output.Add("System.Threading.Thread.Sleep((int)(");
