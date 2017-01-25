@@ -39,7 +39,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageSheets\*.cs" />
     <Compile Include="ParseTree\*.cs" />
-    <Compile Include="Translator\COpenGl\*.cs" />
+    <Compile Include="Translator\C\*.cs" />
     <Compile Include="Translator\CSharp\*.cs" />
     <Compile Include="Translator\Java\*.cs" />
     <Compile Include="Translator\JavaScript\*.cs" />

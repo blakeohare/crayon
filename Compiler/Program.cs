@@ -62,6 +62,7 @@ namespace Crayon
         {
             switch (buildContext.Platform.ToLowerInvariant())
             {
+                case "game-c-opengl": return new Crayon.Translator.C.COpenGlPlatform();
                 case "game-csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
                 case "game-csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
                 case "game-csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
