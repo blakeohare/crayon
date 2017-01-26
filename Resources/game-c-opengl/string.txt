@@ -1,1 +1,72 @@
-﻿// string
+﻿typedef struct String_t {
+	int hash_code;
+	int length;
+	int* characters; // all internal string representations are UTF-32 based
+} String;
+
+String* String_new(char* null_term_chars)
+{
+	List* string_builder = List_new();
+	int i = 0;
+	char c;
+	for (;;)
+	{
+		c = null_term_chars[i++];
+		if (c == '\0')
+		{
+			break;
+		}
+		else
+		{
+			// for the sake of prototyping, treat all strings as ASCII.
+			// implement unicode later.
+			List_add(string_builder, (int) c);
+		}
+	}
+	String* output = (String*) malloc(sizeof(String));
+	output->hash_code = 0;
+	output->length = i - 1;
+	output->characters = string_builder->items; // TODO: if there's tons of extra capacity padding, re-alloc
+	free(string_builder);
+	return output;
+}
+
+int String_compute_hash_code(String* str)
+{
+	int value = 0;
+	int i = str->length;
+	int* characters = str->characters;
+	while (--i >= 0)
+	{
+		value = value * 37 + characters[i];
+	}
+	if (value == 0)
+	{
+		value = 553105253;
+	}
+	str->hash_code = value;
+	return value;
+}
+
+int String_equals(String* a, String* b)
+{
+	if (a == b) return 1;
+	if (a->length != b->length) return 0;
+
+	int hash_a = a->hash_code;
+	int hash_b = b->hash_code;
+	if (hash_a == 0) hash_a = String_compute_hash_code(a);
+	if (hash_b == 0) hash_b = String_compute_hash_code(b);
+	if (hash_a != hash_b) return 0;
+	int i = a->length;
+	int* chars_a = a->characters;
+	int* chars_b = b->characters;
+	while (--i >= 0)
+	{
+		if (chars_a[i] != chars_b[i])
+		{
+			return 0;
+		}
+	}
+	return 1;
+}

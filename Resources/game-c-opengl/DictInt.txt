@@ -1,1 +1,107 @@
-﻿// Dictionary<int, ?>
+﻿typedef struct DictIntBucket_t {
+	int key;
+	void* value;
+	struct DictIntBucket_t* next;
+} DictIntBucket;
+
+typedef struct DictInt_t {
+	int size;
+	int bucket_count;
+	int hash_mask;
+	DictIntBucket** buckets;
+} DictInt;
+
+DictInt* DictInt_new()
+{
+	DictInt* output = (DictInt*) malloc(sizeof(DictInt));
+	output->size = 0;
+	output->bucket_count = 0;
+	return output;
+}
+
+void* DictInt_get(DictInt* dict, int key)
+{
+	DictIntBucket* bucket = dict->buckets[key & dict->hash_mask];
+	while (bucket != NULL)
+	{
+		if (bucket->key == key)
+		{
+			return bucket->value;
+		}
+	}
+	return NULL;
+}
+
+void DictInt_add(DictInt* dict, int key, void* value)
+{
+	if (dict->size == dict->bucket_count)
+	{
+		if (dict->size == 0)
+		{
+			dict->bucket_count = 8;
+			dict->hash_mask = 3;
+			dict->buckets = (DictIntBucket**) malloc(sizeof(DictIntBucket*) * 8);
+			for (int i = 0; i < 8; ++i)
+			{
+				dict->buckets[i] = NULL;
+			}
+		}
+		else
+		{
+			int old_bucket_count = dict->bucket_count;
+			int new_bucket_count = old_bucket_count * 2;
+			int old_hash_mask = dict->hash_mask;
+			int new_hash_mask = old_hash_mask * 2 + 1;
+			DictIntBucket** new_buckets = (DictIntBucket**) malloc(sizeof(DictIntBucket*) * new_bucket_count);
+			DictIntBucket** old_buckets = dict->buckets;
+			dict->buckets = new_buckets;
+			dict->bucket_count = new_bucket_count;
+			dict->hash_mask = new_hash_mask;
+			dict->size = 0;
+			int i = new_bucket_count;
+			while (--i >= 0)
+			{
+				new_buckets[i] = NULL;
+			}
+			
+			DictIntBucket* bucket;
+			DictIntBucket* next_bucket;
+			int bucket_index;
+			for (int i = 0; i < old_bucket_count; ++i)
+			{
+				bucket = old_buckets[i];
+				while (bucket != NULL)
+				{
+					next_bucket = bucket->next;
+					bucket_index = bucket->key & new_hash_mask;
+					bucket->next = new_buckets[bucket_index];
+					new_buckets[bucket_index] = bucket;
+					bucket = next_bucket;
+				}
+			}
+
+			free(old_buckets);
+		}
+	}
+
+	int bucket_index = key & dict->hash_mask;
+	DictIntBucket* existing_bucket = dict->buckets[bucket_index];
+	while (existing_bucket != NULL)
+	{
+		if (existing_bucket->key == key)
+		{
+			// Overwrite existing value
+			existing_bucket->value = value;
+			return;
+		}
+		existing_bucket = existing_bucket->next;
+	}
+
+	// Existing value not found.
+	DictIntBucket* new_bucket = (DictIntBucket*) malloc(sizeof(DictIntBucket));
+	new_bucket->key = key;
+	new_bucket->value = value;
+	new_bucket->next = dict->buckets[bucket_index];
+	dict->buckets[bucket_index] = new_bucket;
+	dict->size++;
+}

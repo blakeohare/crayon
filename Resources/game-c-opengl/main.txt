@@ -2,5 +2,5 @@
 int main() {
 	// TODO: argc/argv
 	// TODO: invoke v_main()
-	print_f("Hello, World!\n");
+	printf("Hello, World!\n");
 }
