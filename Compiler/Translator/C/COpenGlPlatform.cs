@@ -40,12 +40,37 @@ namespace Crayon.Translator.C
 
             mainDotC.Add(this.SerializeAllStructDefinitions(structDefinitions));
 
+            mainDotC.Add(GetCCode("PostStructHeader.txt", replacements));
+
             mainDotC.Add(GetCCode("ValueConstructors.txt", replacements));
 
+            Dictionary<string, Executable[]> mutableFinalCode = new Dictionary<string, Executable[]>(finalCode);
+
             List<string> globalsCode = new List<string>();
-            mainDotC.Add(this.SerializeAllGlobals(finalCode["Globals"]));
+            mainDotC.Add(this.SerializeAllGlobals(mutableFinalCode["Globals"]));
+            mutableFinalCode.Remove("Globals");
             mainDotC.Add(string.Join("", globalsCode));
 
+            string[] units = new string[]
+            {
+                "TypesUtil",
+            };
+
+            List<string> sb = new List<string>();
+            foreach (string key in units)
+            {
+                foreach (FunctionDefinition function in mutableFinalCode[key].Cast<FunctionDefinition>())
+                {
+                    mainDotC.Add(this.GetFunctionSignature(function) + ";");
+                }
+            }
+            mainDotC.Add("");
+
+            foreach (string key in units)
+            {
+                mainDotC.Add(this.Translator.Translate(mutableFinalCode[key]));
+            }
+            
             mainDotC.Add(GetCCode("Main.txt", replacements));
 
             output["main.c"] = new FileOutput()
@@ -55,6 +80,34 @@ namespace Crayon.Translator.C
             };
 
             return output;
+        }
+
+        public string GetFunctionSignature(FunctionDefinition functionDef)
+        {
+            List<string> output = new List<string>();
+            Annotation returnType = functionDef.GetAnnotation("type");
+            string returnTypeString = this.GetTypeStringFromAnnotation(new AnnotatedType(returnType));
+            output.Add(returnTypeString);
+            output.Add(" v_");
+            output.Add(functionDef.NameToken.Value);
+            output.Add("(");
+            Token[] args = functionDef.ArgNames;
+            Annotation[] argTypes = functionDef.ArgAnnotations;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (i > 0) output.Add(", ");
+                string type = this.GetTypeStringFromAnnotation(new AnnotatedType(argTypes[i]));
+                output.Add(type);
+                output.Add(" v_");
+                output.Add(args[i].Value);
+            }
+            output.Add(")");
+            return string.Join("", output);
+        }
+
+        private string SerializeSwitchLookups(Executable[] switchLookups)
+        {
+            return "";
         }
 
         private string SerializeAllGlobals(Executable[] globalAssignments)

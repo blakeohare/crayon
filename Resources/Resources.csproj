@@ -203,6 +203,7 @@
     <EmbeddedResource Include="game-c-opengl\Headers.txt" />
     <EmbeddedResource Include="game-c-opengl\List.txt" />
     <EmbeddedResource Include="game-c-opengl\Main.txt" />
+    <EmbeddedResource Include="game-c-opengl\PostStructHeader.txt" />
     <EmbeddedResource Include="game-c-opengl\String.txt" />
     <EmbeddedResource Include="game-c-opengl\ValueConstructors.txt" />
   </ItemGroup>

@@ -1,0 +1,17 @@
+$_array_get: [ARG:1][[ARG:2]]
+$_array_length: (int)([ARG:1] - 1)
+$_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_force_parens: ([ARG:1])
+$_get_program_data: program_data
+$_list_get: [ARG:1]->items[[ARG:2]]
+$_list_length: [ARG:1]->length
+$_list_push: List_add([ARG:1], [ARG:2])
+$_list_set: [ARG:1]->items[[ARG:2]] = [ARG:3]
+$_postfix_decrement: [ARG:1]--
+$_postfix_increment: [ARG:1]++
+$_prefix_decrement: --[ARG:1]
+$_prefix_increment: ++[ARG:1]
+$_set_program_data: program_data = [ARG:1]
+$_string_length: [ARG:1]->length
+$_unsafe_float_division: 1.0 * [ARG:1] / [ARG:2]
+$_unsafe_integer_division: [ARG:1] / [ARG:2]

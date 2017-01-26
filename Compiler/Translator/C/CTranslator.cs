@@ -14,9 +14,10 @@ namespace Crayon.Translator.C
 
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
+            output.Add(this.CurrentTabIndention);
             Variable variable = assignment.TargetAsVariable;
             Annotation typeAnnotation;
-            if (variable != null && variable.Annotations.TryGetValue("type", out typeAnnotation))
+            if (variable != null && variable.Annotations != null && variable.Annotations.TryGetValue("type", out typeAnnotation))
             {
                 string variableDeclaration = this.CPlatform.GetTypeStringFromAnnotation(new AnnotatedType(typeAnnotation));
                 output.Add(variableDeclaration);
@@ -65,7 +66,9 @@ namespace Crayon.Translator.C
 
         protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
         {
-            throw new NotImplementedException();
+            output.Add(dotStepStruct.RootVar);
+            output.Add("->");
+            output.Add(dotStepStruct.FieldName);
         }
 
         protected override void TranslateFloatConstant(List<string> output, FloatConstant floatConstant)
@@ -85,12 +88,48 @@ namespace Crayon.Translator.C
 
         protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
         {
-            throw new NotImplementedException();
+            output.Add(this.CPlatform.GetFunctionSignature(functionDef));
+            output.Add("\n");
+            output.Add("{\n");
+            this.CurrentIndention++;
+            this.Translate(output, functionDef.Code);
+            this.CurrentIndention--;
+            output.Add("}\n\n");
         }
 
         protected override void TranslateIfStatement(List<string> output, IfStatement ifStatement)
         {
-            throw new NotImplementedException();
+            output.Add(this.CurrentTabIndention);
+            output.Add("if (");
+            this.TranslateExpression(output, ifStatement.Condition);
+            output.Add(")");
+            output.Add(this.NL);
+            output.Add(this.CurrentTabIndention);
+            output.Add("{");
+            output.Add(this.NL);
+            this.CurrentIndention++;
+            this.Translate(output, ifStatement.TrueCode);
+            this.CurrentIndention--;
+
+            output.Add(this.CurrentTabIndention);
+            output.Add("}");
+            if (ifStatement.FalseCode.Length > 0)
+            {
+                output.Add(this.NL);
+                output.Add(this.CurrentTabIndention);
+                output.Add("else");
+                output.Add(this.NL);
+                output.Add(this.CurrentTabIndention);
+                output.Add("{");
+                output.Add(this.NL);
+
+                this.CurrentIndention++;
+                this.Translate(output, ifStatement.FalseCode);
+                this.CurrentIndention--;
+                output.Add(this.CurrentTabIndention);
+                output.Add("}");
+            }
+            output.Add(this.NL);
         }
 
         protected override void TranslateIntegerConstant(List<string> output, IntegerConstant intConstant)
@@ -110,7 +149,18 @@ namespace Crayon.Translator.C
 
         protected override void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement)
         {
-            throw new NotImplementedException();
+            output.Add(this.CurrentTabIndention);
+            if (returnStatement.Expression == null)
+            {
+                output.Add("return;");
+            }
+            else
+            {
+                output.Add("return ");
+                this.TranslateExpression(output, returnStatement.Expression);
+                output.Add(";");
+            }
+            output.Add(this.NL);
         }
 
         protected override void TranslateStringConstant(List<string> output, StringConstant stringConstant)
@@ -153,19 +203,57 @@ namespace Crayon.Translator.C
             output.Add(")");
         }
 
-        protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement)
         {
-            throw new NotImplementedException();
+            foreach (SwitchStatement.Chunk chunks in switchStatement.OriginalSwitchStatement.Chunks)
+            {
+                if (chunks.Cases.Length > 1) throw new Exception("Not a continuous switch statement.");
+                if (chunks.Cases[0] == null) throw new Exception("Not a safe switch statement.");
+            }
+
+            this.TranslateSwitchStatement(output, switchStatement.OriginalSwitchStatement);
         }
 
         protected override void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement)
         {
-            throw new NotImplementedException();
+            this.TranslateSwitchStatement(output, switchStatement.OriginalSwitchStatement);
+        }
+
+        protected override void TranslateSwitchStatement(List<string> output, SwitchStatement switchStatement)
+        {
+            output.Add(this.CurrentTabIndention);
+            output.Add("switch (");
+            this.TranslateExpression(output, switchStatement.Condition);
+            output.Add(") {" + this.NL);
+            this.CurrentIndention++;
+
+            foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
+            {
+                foreach (Expression caseExpr in chunk.Cases)
+                {
+                    output.Add(this.CurrentTabIndention);
+                    if (caseExpr == null)
+                    {
+                        output.Add("default:" + this.NL);
+                    }
+                    else
+                    {
+                        output.Add("case ");
+                        TranslateExpression(output, caseExpr);
+                        output.Add(":" + this.NL);
+                    }
+
+                    this.CurrentIndention++;
+
+                    Translate(output, chunk.Code);
+
+                    this.CurrentIndention--;
+                }
+            }
+
+            this.CurrentIndention--;
+            output.Add(this.CurrentTabIndention);
+            output.Add("}" + this.NL);
         }
 
         protected override void TranslateVariable(List<string> output, Variable expr)
@@ -176,7 +264,19 @@ namespace Crayon.Translator.C
 
         protected override void TranslateWhileLoop(List<string> output, WhileLoop whileLoop)
         {
-            throw new NotImplementedException();
+            output.Add(this.CurrentTabIndention);
+            output.Add("while (");
+            this.TranslateExpression(output, whileLoop.Condition);
+            output.Add(")");
+            output.Add(this.NL);
+            output.Add(this.CurrentTabIndention);
+            output.Add("{");
+            output.Add(this.NL);
+            this.CurrentIndention++;
+            this.Translate(output, whileLoop.Code);
+            this.CurrentIndention--;
+            output.Add(this.CurrentTabIndention);
+            output.Add("}" + this.NL);
         }
     }
 }

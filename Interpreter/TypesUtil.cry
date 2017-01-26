@@ -10,6 +10,7 @@
 		case Types.INSTANCE: return "instance"; // TODO: make this more specific
 		case Types.FUNCTION: return "function";
 	}
+	return null;
 }
 
 function @type('bool') isClassASubclassOf(@type('int') subClassId, @type('int') parentClassId) {
