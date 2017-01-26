@@ -11,8 +11,10 @@ $_byte_code_get_raw_string: TODO_optimize_this_out()
 $_char_to_string: [ARG:1]
 $_current_time_seconds: pth_current_time()
 $_dictionary_contains: isset([ARG:1]->r[[ARG:2]])
+$_float_to_string: '' . [ARG:1]
 $_force_parens: ([ARG:1])
 $_get_program_data: pth_getProgramData()
+$_int_to_string: '' . [ARG:1]
 $_is_valid_integer: pth_is_valid_integer([ARG:1])
 $_list_clear: pth_list_clear([ARG:1])
 $_list_concat: new Rf(array_merge([ARG:1]->r, [ARG:2]->r))

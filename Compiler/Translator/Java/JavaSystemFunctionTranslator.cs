@@ -220,21 +220,7 @@ namespace Crayon.Translator.Java
             }
             output.Add(value);
         }
-
-        protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
-        {
-            if (strongCast)
-            {
-                output.Add("(\"\" + ");
-                this.Translator.TranslateExpression(output, thing);
-                output.Add(")");
-            }
-            else
-            {
-                this.Translator.TranslateExpression(output, thing);
-            }
-        }
-
+        
         protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
         {
             this.Translator.TranslateExpression(output, stringValue);

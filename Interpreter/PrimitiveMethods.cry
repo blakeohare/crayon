@@ -122,8 +122,8 @@ function @type('string') primitiveMethodWrongArgCountError(@type('string') name,
 	} else if (expected == 1) {
 		output = $_string_concat(name, " accepts exactly 1 argument.");
 	} else {
-		output = $_string_concat(name, " requires ", $_string_cast_weak(expected), " arguments.");
+		output = $_string_concat(name, " requires ", $_int_to_string(expected), " arguments.");
 	}
 
-	return $_string_concat(output, " Found: ", $_string_cast_weak(actual));
+	return $_string_concat(output, " Found: ", $_int_to_string(actual));
 }

@@ -170,12 +170,7 @@ namespace Crayon.Translator.C
             }
             output.Add("" + (int)value[0]);
         }
-
-        protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
         {
             this.Translator.TranslateExpression(output, stringValue);

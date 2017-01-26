@@ -7,8 +7,10 @@ $_char_to_string: "" + [ARG:1]
 $_current_time_seconds: System.currentTimeMillis() / 1000.0
 $_dictionary_contains: [ARG:1].containsKey([ARG:2])
 $_dot_equals: [ARG:1].equals([ARG:2])
+$_float_to_string: Double.toString([ARG:1])
 $_force_parens: ([ARG:1])
 $_get_program_data: TranslationHelper.getProgramData()
+$_int_to_string: Integer.toString([ARG:1])
 $_is_valid_integer: TranslationHelper.isValidInteger([ARG:1])
 $_list_clear: [ARG:1].clear()
 $_list_concat: TranslationHelper.concatLists([ARG:1], [ARG:2])

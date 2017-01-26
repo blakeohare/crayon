@@ -50,8 +50,6 @@ namespace Crayon.Translator
                 case "_sorted_copy_of_string_array": VerifyCount(functionCall, 1); TranslateSortedCopyOfStringArray(output, args[0]); break;
                 case "_string_append": VerifyCount(functionCall, 2); TranslateStringAppend(output, args[0], args[1]); break;
                 case "_string_as_char": VerifyCount(functionCall, 1); TranslateStringAsChar(output, (StringConstant)args[0]); break;
-                case "_string_cast_strong": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], true); break;
-                case "_string_cast_weak": VerifyCount(functionCall, 1); TranslateStringCast(output, args[0], false); break;
                 case "_string_char_at": VerifyCount(functionCall, 2); TranslateStringCharAt(output, args[0], args[1]); break;
                 case "_string_char_code_at": VerifyCount(functionCall, 2); TranslateStringCharCodeAt(output, args[0], args[1]); break;
                 case "_string_compare_is_reverse": VerifyCount(functionCall, 2); TranslateStringCompareIsReverse(output, args[0], args[1]); break;
@@ -99,7 +97,6 @@ namespace Crayon.Translator
         protected abstract void TranslateSortedCopyOfStringArray(List<string> output, Expression list);
         protected abstract void TranslateStringAsChar(List<string> output, StringConstant stringConstant);
         protected abstract void TranslateStringAppend(List<string> output, Expression target, Expression valueToAppend);
-        protected abstract void TranslateStringCast(List<string> output, Expression thing, bool strongCast);
         protected abstract void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index);
         protected abstract void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index);
         protected abstract void TranslateStringCompareIsReverse(List<string> output, Expression a, Expression b);

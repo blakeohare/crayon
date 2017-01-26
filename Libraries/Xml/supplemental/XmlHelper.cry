@@ -70,7 +70,7 @@ function @type('string') lib_xml_error(@type('string') xml, @type('int') index, 
 			}
 			i += 1;
 		}
-		loc = $_string_concat(" on line ", $_string_cast_weak(line), ", col ", $_string_cast_weak(col));
+		loc = $_string_concat(" on line ", $_int_to_string(line), ", col ", $_int_to_string(col));
 	}
 	return $_string_concat("XML parse error", loc, ": ", msg);
 }

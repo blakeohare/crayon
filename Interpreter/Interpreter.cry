@@ -294,7 +294,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.VERIFY_TYPE_IS_ITERABLE: $_comment('VERIFY_TYPE_IS_ITERABLE'); import inline 'Ops/verify_type_is_iterable.cry'; break;
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');
-				return $_exception(CoreExceptionTypes.FATAL, "Bad op code: " + $_string_cast_weak($_array_get(ops, pc)));
+				return $_exception(CoreExceptionTypes.FATAL, "Bad op code: " + $_int_to_string($_array_get(ops, pc)));
 		}
 
 		if ($_has_increment()) {
@@ -417,7 +417,7 @@ function @type('List<string>') tokenHelperConvertPcsToStackTraceStrings(@type('L
 		
 			$_list_push(
 				output,
-				$_string_concat(filename, ", Line: ", $_string_cast_weak(line + 1), ", Col: ", $_string_cast_weak(col + 1)));
+				$_string_concat(filename, ", Line: ", $_int_to_string(line + 1), ", Col: ", $_int_to_string(col + 1)));
 		}
 	}
 

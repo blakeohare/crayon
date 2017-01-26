@@ -203,14 +203,7 @@ namespace Crayon.Translator.Python
         {
             this.Translator.TranslateExpression(output, stringConstant);
         }
-
-        protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
-        {
-            output.Add("str(");
-            this.Translator.TranslateExpression(output, thing);
-            output.Add(")");
-        }
-
+        
         protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
         {
             this.Translator.TranslateExpression(output, stringValue);
