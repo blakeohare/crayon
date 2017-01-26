@@ -12,7 +12,10 @@ namespace Crayon.Translator.C
 
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
-            throw new NotImplementedException();
+            output.Add("(");
+            output.Add(this.CPlatform.GetTypeStringFromAnnotation(typeValue.FirstToken, typeValue.Value));
+            output.Add(")");
+            this.Translator.TranslateExpression(output, expression);
         }
 
         protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
@@ -88,7 +91,7 @@ namespace Crayon.Translator.C
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
             string cType = this.CPlatform.GetTypeStringFromAnnotation(type.FirstToken, type.Value);
-            
+
             output.Add("(");
             output.Add(cType);
             output.Add("*) make_array_with_size(sizeof(");
@@ -115,7 +118,7 @@ namespace Crayon.Translator.C
 
         protected override void TranslateNewList(List<string> output, StringConstant type)
         {
-            throw new NotImplementedException();
+            output.Add("List_new()");
         }
 
         protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
@@ -160,7 +163,12 @@ namespace Crayon.Translator.C
 
         protected override void TranslateStringAsChar(List<string> output, StringConstant stringConstant)
         {
-            throw new NotImplementedException();
+            string value = stringConstant.Value;
+            if (value.Length != 1)
+            {
+                throw new Exception(); // needs to be one character.
+            }
+            output.Add("" + (int)value[0]);
         }
 
         protected override void TranslateStringCast(List<string> output, Expression thing, bool strongCast)
@@ -170,7 +178,10 @@ namespace Crayon.Translator.C
 
         protected override void TranslateStringCharAt(List<string> output, Expression stringValue, Expression index)
         {
-            throw new NotImplementedException();
+            this.Translator.TranslateExpression(output, stringValue);
+            output.Add("->characters[");
+            this.Translator.TranslateExpression(output, index);
+            output.Add("]");
         }
 
         protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
@@ -195,12 +206,27 @@ namespace Crayon.Translator.C
 
         protected override void TranslateStringFromCode(List<string> output, Expression characterCode)
         {
-            throw new NotImplementedException();
+            output.Add("String_from_char_code(");
+            this.Translator.TranslateExpression(output, characterCode);
+            output.Add(")");
         }
 
         protected override void TranslateStringIndexOf(List<string> output, Expression haystack, Expression needle, Expression optionalStartFrom)
         {
-            throw new NotImplementedException();
+            output.Add("String_index_of(");
+            this.Translator.TranslateExpression(output, haystack);
+            output.Add(", ");
+            this.Translator.TranslateExpression(output, needle);
+            if (optionalStartFrom != null)
+            {
+                output.Add(", ");
+                this.Translator.TranslateExpression(output, optionalStartFrom);
+            }
+            else
+            {
+                output.Add(", 0");
+            }
+            output.Add(")");
         }
 
         protected override void TranslateStringParseFloat(List<string> output, Expression stringValue)
@@ -210,7 +236,9 @@ namespace Crayon.Translator.C
 
         protected override void TranslateStringParseInt(List<string> output, Expression value)
         {
-            throw new NotImplementedException();
+            output.Add("cth_string_parse_int(");
+            this.Translator.TranslateExpression(output, value);
+            output.Add(")");
         }
 
         protected override void TranslateStringSubstring(List<string> output, Expression stringExpr, Expression startIndex, Expression optionalLength)

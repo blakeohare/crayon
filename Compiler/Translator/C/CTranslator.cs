@@ -78,12 +78,34 @@ namespace Crayon.Translator.C
 
         protected override void TranslateForLoop(List<string> output, ForLoop forLoop)
         {
-            throw new NotImplementedException();
+            this.Translate(output, forLoop.Init);
+            output.Add(this.CurrentTabIndention);
+            output.Add("while (");
+            this.TranslateExpression(output, forLoop.Condition);
+            output.Add(")");
+            output.Add(this.NL);
+            output.Add(this.CurrentTabIndention);
+            output.Add("{");
+            output.Add(this.NL);
+            this.CurrentIndention++;
+            this.Translate(output, forLoop.Code);
+            this.Translate(output, forLoop.Step);
+            this.CurrentIndention--;
+            output.Add(this.CurrentTabIndention);
+            output.Add("}" + this.NL);
         }
 
         protected override void TranslateFunctionCall(List<string> output, FunctionCall functionCall)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(output, functionCall.Root);
+            output.Add("(");
+            Expression[] args = functionCall.Args;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (i > 0) output.Add(", ");
+                this.TranslateExpression(output, args[i]);
+            }
+            output.Add(")");
         }
 
         protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)

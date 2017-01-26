@@ -198,6 +198,7 @@
     <EmbeddedResource Include="game-ruby-gosu\resourceHelper.rb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="game-c-opengl\CTranslationHelper.txt" />
     <EmbeddedResource Include="game-c-opengl\DictInt.txt" />
     <EmbeddedResource Include="game-c-opengl\DictString.txt" />
     <EmbeddedResource Include="game-c-opengl\Headers.txt" />

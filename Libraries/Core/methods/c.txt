@@ -1,9 +1,13 @@
 $_array_get: [ARG:1][[ARG:2]]
 $_array_length: (int)([ARG:1] - 1)
 $_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_byte_code_get_raw_string: String_new("TODO: byte code")
+$_char_to_string: String_from_char_code([ARG:1])
 $_force_parens: ([ARG:1])
 $_get_program_data: program_data
 $_list_get: [ARG:1]->items[[ARG:2]]
+$_list_join: cth_list_join_with_sep([ARG:1], [ARG:2])
+$_list_join_chars: cth_list_join_chars([ARG:1])
 $_list_length: [ARG:1]->length
 $_list_push: List_add([ARG:1], [ARG:2])
 $_list_set: [ARG:1]->items[[ARG:2]] = [ARG:3]

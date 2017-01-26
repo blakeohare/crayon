@@ -32,17 +32,17 @@ namespace Crayon.Translator.C
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>();
             List<string> mainDotC = new List<string>();
-            mainDotC.Add(GetCCode("Headers.txt", replacements));
-            mainDotC.Add(GetCCode("List.txt", replacements));
-            mainDotC.Add(GetCCode("String.txt", replacements));
-            mainDotC.Add(GetCCode("DictInt.txt", replacements));
-            mainDotC.Add(GetCCode("DictString.txt", replacements));
+            mainDotC.Add(this.GetCCode("Headers.txt", replacements));
+            mainDotC.Add(this.GetCCode("List.txt", replacements));
+            mainDotC.Add(this.GetCCode("String.txt", replacements));
+            mainDotC.Add(this.GetCCode("DictInt.txt", replacements));
+            mainDotC.Add(this.GetCCode("DictString.txt", replacements));
 
             mainDotC.Add(this.SerializeAllStructDefinitions(structDefinitions));
 
-            mainDotC.Add(GetCCode("PostStructHeader.txt", replacements));
+            mainDotC.Add(this.GetCCode("PostStructHeader.txt", replacements));
 
-            mainDotC.Add(GetCCode("ValueConstructors.txt", replacements));
+            mainDotC.Add(this.GetCCode("ValueConstructors.txt", replacements));
 
             Dictionary<string, Executable[]> mutableFinalCode = new Dictionary<string, Executable[]>(finalCode);
 
@@ -53,8 +53,12 @@ namespace Crayon.Translator.C
 
             string[] units = new string[]
             {
+                "ByteCodeLoader",
                 "TypesUtil",
+                //"ValueUtil",
             };
+
+            mainDotC.Add(this.GetCCode("CTranslationHelper.txt", replacements));
 
             List<string> sb = new List<string>();
             foreach (string key in units)
@@ -71,7 +75,7 @@ namespace Crayon.Translator.C
                 mainDotC.Add(this.Translator.Translate(mutableFinalCode[key]));
             }
             
-            mainDotC.Add(GetCCode("Main.txt", replacements));
+            mainDotC.Add(this.GetCCode("Main.txt", replacements));
 
             output["main.c"] = new FileOutput()
             {
@@ -275,6 +279,9 @@ namespace Crayon.Translator.C
                     return "double";
 
                 case "int":
+                    return "int";
+
+                case "char":
                     return "int";
 
                 case "object":

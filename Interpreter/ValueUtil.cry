@@ -16,7 +16,8 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		}
 		return floatStr;
 	}
-	if (type == Types.INTEGER || type == Types.STRING) return $_string_cast_strong(Value$wrappedValue.internalValue);
+	if (type == Types.INTEGER) return $_string_cast_strong(Value$wrappedValue.internalValue);
+	if (type == Types.STRING) return $_cast('string', Value$wrappedValue.internalValue);
 	if (type == Types.LIST) {
 		@type('List<Value>') internalList = $_cast('List<Value>', Value$wrappedValue.internalValue);
 		@type('string') output = "[";

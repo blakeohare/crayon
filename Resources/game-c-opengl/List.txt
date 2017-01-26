@@ -35,3 +35,8 @@ void List_add(List* list, int item)
 	}
 	list->items[list->size++] = item;
 }
+
+void List_add(List* list, void* item)
+{
+	List_add(list, (int)item);
+}

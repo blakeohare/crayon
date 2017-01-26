@@ -31,6 +31,16 @@ String* String_new(char* null_term_chars)
 	return output;
 }
 
+String* String_from_char_code(int code)
+{
+	String* output = (String*) malloc(sizeof(String));
+	output->hash_code = 0;
+	output->length = 1;
+	output->characters = (int*) malloc(sizeof(int));
+	output->characters[0] = code;
+	return output;
+}
+
 int String_compute_hash_code(String* str)
 {
 	int value = 0;
@@ -69,4 +79,40 @@ int String_equals(String* a, String* b)
 		}
 	}
 	return 1;
+}
+
+int String_index_of(String* haystack, String* needle, int start_from) {
+	int needle_first_char = needle->characters[0];
+	int haystack_length = haystack->length;
+	int needle_length = needle->length;
+	int search_through = haystack_length - needle_length;
+	int* haystack_chars = haystack->characters;
+	int* needle_chars = needle->characters;
+	int j;
+	int match;
+	for (int i = start_from; i <= search_through; ++i)
+	{
+		if (haystack_chars[i] == needle_first_char)
+		{
+			if (needle_length == 1) return i;
+			if (haystack_chars[i + needle_length - 1] == needle_chars[needle_length - 1])
+			{
+				match = 1;
+				for (j = 1; j < needle_length - 1; ++j)
+				{
+					if (haystack_chars[i + j] != needle_chars[j])
+					{
+						match = 0;
+						break;
+					}
+				}
+
+				if (match)
+				{
+					return i;
+				}
+			}
+		}
+	}
+	return -1;
 }
