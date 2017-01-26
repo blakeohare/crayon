@@ -9,20 +9,29 @@ namespace Crayon.ParseTree
         public Token Name { get; private set; }
         public Token[] Fields { get; private set; }
         public Annotation[] Types { get; private set; }
+        public Token[] TypeTokens { get; private set; }
+        public string[] TypeStrings { get; private set; }
 
         public StructDefinition(Token structToken, Token nameToken, IList<Token> fields, IList<Annotation> annotations, Executable owner)
             : base(structToken, owner)
         {
             this.Name = nameToken;
             this.Fields = fields.ToArray();
+            this.Types = annotations.ToArray();
+            this.TypeTokens = new Token[this.Fields.Length];
+            this.TypeStrings = new string[this.Fields.Length];
             this.FieldsByIndex = fields.Select<Token, string>(t => t.Value).ToArray();
             this.IndexByField = new Dictionary<string, int>();
             for (int i = 0; i < this.FieldsByIndex.Length; ++i)
             {
                 this.IndexByField[this.FieldsByIndex[i]] = i;
+                Annotation typeAnnotation = this.Types[i];
+                if (typeAnnotation.Type != "type") throw new Exception(); // wrong annotation?
+                StringConstant sc = (StringConstant)typeAnnotation.Args[0];
+                this.TypeTokens[i] = sc.FirstToken;
+                this.TypeStrings[i] = sc.Value;
             }
 
-            this.Types = annotations.ToArray();
         }
 
         public string[] FieldsByIndex { get; private set; }

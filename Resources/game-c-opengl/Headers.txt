@@ -1,2 +1,17 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
+
+#define TRUE 1
+#define FALSE 0
+
+int* make_array_with_size(int sizeOfMember, int size)
+{
+	int* output = malloc(sizeOfMember * (size + 1));
+	output[0] = size;
+	return output + sizeOfMember;
+}
+
+typedef struct ValueDouble_t {
+	int type;
+	double internalValue;
+} ValueDouble;

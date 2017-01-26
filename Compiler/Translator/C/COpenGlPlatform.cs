@@ -38,35 +38,13 @@ namespace Crayon.Translator.C
             mainDotC.Add(GetCCode("DictInt.txt", replacements));
             mainDotC.Add(GetCCode("DictString.txt", replacements));
 
-            List<string> sb = new List<string>();
+            mainDotC.Add(this.SerializeAllStructDefinitions(structDefinitions));
 
-            foreach (StructDefinition sd in structDefinitions)
-            {
-                sb.Add("struct " + sd.Name.Value + "_t;");
-            }
+            mainDotC.Add(GetCCode("ValueConstructors.txt", replacements));
 
-            foreach (StructDefinition sd in structDefinitions)
-            {
-                sb.Add("typedef struct " + sd.Name.Value + "_t {");
-                for (int i = 0; i < sd.FieldsByIndex.Length; ++i)
-                {
-                    string name = sd.FieldsByIndex[i];
-                    StringConstant sc = (StringConstant)sd.Types[i].Args[0];
-                    string type = this.GetTypeStringFromAnnotation(sc.FirstToken, sc.Value);
-                    if (type[0] >= 'A' && type[0] <= 'Z') // This check is a little hacky.
-                    {
-                        int pointerIndex = type.IndexOf('*');
-                        string rootType = type.Substring(0, pointerIndex);
-                        string suffixes = type.Substring(pointerIndex);
-                        type = "struct " + rootType + "_t" + suffixes;
-                    }
-                    sb.Add("\t" + type + " " + name + ";");
-                }
-                sb.Add("} " + sd.Name.Value + ";");
-                sb.Add("");
-                mainDotC.Add(string.Join("\n", sb));
-                sb.Clear();
-            }
+            List<string> globalsCode = new List<string>();
+            mainDotC.Add(this.SerializeAllGlobals(finalCode["Globals"]));
+            mainDotC.Add(string.Join("", globalsCode));
 
             mainDotC.Add(GetCCode("Main.txt", replacements));
 
@@ -79,19 +57,140 @@ namespace Crayon.Translator.C
             return output;
         }
 
+        private string SerializeAllGlobals(Executable[] globalAssignments)
+        {
+            List<string> lines = new List<string>();
+            // First need to declare the globals outside of a function scope.
+            foreach (Assignment assignment in globalAssignments.Cast<Assignment>()) {
+                Variable target = assignment.TargetAsVariable;
+                StringConstant sc = (StringConstant)target.Annotations["type"].Args[0];
+                string type = this.GetTypeStringFromAnnotation(sc.FirstToken, sc.Value);
+                lines.Add(type + " v_" + target.Name + ";");
+            }
+            lines.Add("");
+
+            // And then declare a wrapper function that sets them all.
+            // This function is invoked from main() before v_main()
+
+            lines.Add("void set_globals()");
+            lines.Add("{");
+            List<string> sb = new List<string>();
+            foreach (Assignment assignment in globalAssignments.Cast<Assignment>())
+            {
+                string name = assignment.TargetAsVariable.Name;
+                this.Translator.TranslateExpression(sb, assignment.Value);
+                lines.Add("\tv_" + name + " = " + string.Join("", sb) + ";");
+                sb.Clear();
+            }
+            lines.Add("}");
+            lines.Add("");
+
+            return string.Join("\n", lines);
+        }
+
+        private string SerializeAllStructDefinitions(ICollection<StructDefinition> structDefinitions)
+        {
+            List<string> lines = new List<string>();
+
+            // This occurs in 3 passes:
+            // - pre-define structs
+            // - type def structs
+            // - constructor code for each
+
+            // predefine structs with _t suffix
+            foreach (StructDefinition sd in structDefinitions)
+            {
+                lines.Add("struct " + sd.Name.Value + "_t;");
+            }
+            lines.Add("");
+
+            // typedef structs
+            foreach (StructDefinition sd in structDefinitions)
+            {
+                lines.Add("typedef struct " + sd.Name.Value + "_t {");
+                for (int i = 0; i < sd.FieldsByIndex.Length; ++i)
+                {
+                    string name = sd.FieldsByIndex[i];
+                    string type = this.GetTypeStringFromAnnotation(sd.TypeTokens[i], sd.TypeStrings[i]);
+                    if (type[0] >= 'A' && type[0] <= 'Z') // This check is a little hacky.
+                    {
+                        int pointerIndex = type.IndexOf('*');
+                        string rootType = type.Substring(0, pointerIndex);
+                        string suffixes = type.Substring(pointerIndex);
+                        type = "struct " + rootType + "_t" + suffixes;
+                    }
+                    lines.Add("\t" + type + " " + name + ";");
+                }
+                lines.Add("} " + sd.Name.Value + ";");
+                lines.Add("");
+            }
+
+            // create a constructor for each
+            List<string> sb = new List<string>();
+            foreach (StructDefinition sd in structDefinitions)
+            {
+                string name = sd.Name.Value;
+                sb.Add(name);
+                sb.Add("* ");
+                sb.Add(name);
+                sb.Add("_new(");
+                for (int i = 0; i < sd.Fields.Length; ++i)
+                {
+                    if (i > 0) sb.Add(", ");
+
+                    string type = this.GetTypeStringFromAnnotation(sd.TypeTokens[i], sd.TypeStrings[i]);
+                    sb.Add(type);
+                    sb.Add(" v_");
+                    sb.Add(sd.Fields[i].Value);
+                }
+                sb.Add(")");
+                lines.Add(string.Join("", sb));
+                sb.Clear();
+                lines.Add("{");
+                lines.Add("\t" + name + "* s = (" + name + "*) malloc(sizeof(" + name + "));");
+                for (int i = 0; i < sd.Fields.Length; ++i)
+                {
+                    lines.Add("\ts->" + sd.Fields[i].Value + " = v_" + sd.Fields[i].Value + ";");
+                }
+                lines.Add("\treturn s;");
+                lines.Add("}");
+                lines.Add("");
+            }
+
+            return string.Join("\n", lines);
+        }
+
+        private Dictionary<string, string> typeConversionCache = new Dictionary<string, string>();
+
+        private string GetTypeCached(string value)
+        {
+            string output;
+            if (typeConversionCache.TryGetValue(value, out output))
+            {
+                return output;
+            }
+            return null;
+        }
+
         public string GetTypeStringFromAnnotation(Token stringToken, string value)
         {
+            string output = this.GetTypeCached(value);
+            if (output != null) return output;
             AnnotatedType type = new AnnotatedType(stringToken, new TokenStream(Tokenizer.Tokenize("type proxy", value, -1, false)));
-            return GetTypeStringFromAnnotation(type);
+            output = GetTypeStringFromAnnotation(type);
+            typeConversionCache[value] = output;
+            return output;
         }
+        
         public string GetTypeStringFromAnnotation(AnnotatedType type)
         {
+            // TODO: add cache here too.
             switch (type.Name)
             {
                 case "Dictionary":
                     if (type.Generics[0].Name == "int")
                     {
-                        return "DictInteger*";
+                        return "DictInt*";
                     }
 
                     if (type.Generics[0].Name == "string")

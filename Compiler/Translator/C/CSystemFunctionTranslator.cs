@@ -8,6 +8,8 @@ namespace Crayon.Translator.C
 {
     internal class CSystemFunctionTranslator : AbstractSystemFunctionTranslator
     {
+        private COpenGlPlatform CPlatform { get { return (COpenGlPlatform)this.Platform; } }
+
         protected override void TranslateCast(List<string> output, StringConstant typeValue, Expression expression)
         {
             throw new NotImplementedException();
@@ -85,12 +87,30 @@ namespace Crayon.Translator.C
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
-            throw new NotImplementedException();
+            string cType = this.CPlatform.GetTypeStringFromAnnotation(type.FirstToken, type.Value);
+            
+            output.Add("(");
+            output.Add(cType);
+            output.Add("*) make_array_with_size(sizeof(");
+            output.Add(cType);
+            output.Add("), ");
+            this.Translator.TranslateExpression(output, size);
+            output.Add(")");
         }
 
         protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
         {
-            throw new NotImplementedException();
+            switch (keyType.Value)
+            {
+                case "string":
+                    output.Add("DictString_new()");
+                    break;
+                case "int":
+                    output.Add("DictInt_new()");
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         protected override void TranslateNewList(List<string> output, StringConstant type)

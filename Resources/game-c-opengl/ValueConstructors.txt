@@ -1,0 +1,14 @@
+﻿
+Value* Value_newInt(int type, int value) {
+	Value* output = (Value*) malloc(sizeof(Value));
+	output->type = type;
+	output->internalValue = (void*)value;
+	return output;
+}
+
+Value* Value_newFloat(int type, double value) {
+	ValueDouble* output = (ValueDouble*) malloc(sizeof(ValueDouble));
+	output->type = type;
+	output->internalValue = value;
+	return (Value*) output;
+}

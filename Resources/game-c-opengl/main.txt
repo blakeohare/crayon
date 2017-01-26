@@ -3,4 +3,5 @@ int main() {
 	// TODO: argc/argv
 	// TODO: invoke v_main()
 	printf("Hello, World!\n");
+	set_globals();
 }
