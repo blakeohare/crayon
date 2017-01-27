@@ -160,6 +160,8 @@
     <EmbeddedResource Include="TypesUtil.cry" />
     <EmbeddedResource Include="ValueStackCapacityCheck.cry" />
     <EmbeddedResource Include="ValueUtil.cry" />
+    <EmbeddedResource Include="Structs.pas" />
+    <EmbeddedResource Include="TypesUtil.pas" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PrimitiveMethods\_README.txt" />

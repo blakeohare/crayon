@@ -90,6 +90,7 @@ namespace Crayon.Pastel
             if (
                 (token2 == "<" && IsValidName(token1) && IsValidName(token3)) || // Type<G1, G2> var = ...
                 (token3 == "=" && IsValidName(token1) && IsValidName(token2)) || // Type var = ...
+                (token2 == "[" && token3 == "]" && IsValidName(token1)) || // Type[] ...
                 (token3 == ";" && IsValidName(token1) && IsValidName(token2))) // Type var;
             {
                 PType type = PType.Parse(tokens);
@@ -299,16 +300,34 @@ namespace Crayon.Pastel
 
             if (tokens.IsNext("("))
             {
-                return this.ParseParenthesis(tokens);
+                return this.ParseParenthesisOrCast(tokens);
             }
 
             return this.ParseEntity(tokens);
         }
 
-        private Expression ParseParenthesis(TokenStream tokens)
+        private Expression ParseParenthesisOrCast(TokenStream tokens)
         {
+            Token parenthesis = tokens.Peek();
             if (tokens.PopIfPresent("("))
             {
+                string token1 = tokens.PeekValue();
+                string token2 = tokens.FlatPeekAhead(1);
+                string token3 = tokens.FlatPeekAhead(2);
+                // This is a super-lame way to check for a cast vs parenthesis-wrapped expression, but I can't think of anything better at the moment.
+                bool isCast =
+                    (token2 == "<" && (token1 == "List" || token1 == "Dictionary")) ||
+                    (token2 == "[" && token3 == "]" && IsValidName(token1)) ||
+                    (token2 == ")" && IsValidName(token1) && (token3 == "(" || IsValidName(token3)));
+                if (isCast)
+                {
+                    PType castType = PType.Parse(tokens);
+                    tokens.PopExpected(")");
+                    Expression castedValue = this.ParsePrefixes(tokens);
+
+                    return new CastExpression(parenthesis, castType, castedValue);
+                }
+
                 Expression expression = this.ParseExpression(tokens);
                 tokens.PopExpected(")");
                 return expression;

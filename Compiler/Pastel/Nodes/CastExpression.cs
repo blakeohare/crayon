@@ -3,16 +3,18 @@ using System.Collections.Generic;
 
 namespace Crayon.Pastel.Nodes
 {
-    class ReturnStatement : Executable
+    class CastExpression : Expression
     {
+        public PType Type { get; set; }
         public Expression Expression { get; set; }
 
-        public ReturnStatement(Token returnToken, Expression expression) : base(returnToken)
+        public CastExpression(Token openParenToken, PType type, Expression expression) : base(openParenToken)
         {
+            this.Type = type;
             this.Expression = expression;
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
         {
             throw new NotImplementedException();
         }

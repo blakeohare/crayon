@@ -1,4 +1,7 @@
-﻿namespace Crayon.Pastel.Nodes
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.Pastel.Nodes
 {
     class InlineConstant : Expression
     {
@@ -9,6 +12,16 @@
         {
             this.Type = type;
             this.Value = value;
+        }
+
+        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

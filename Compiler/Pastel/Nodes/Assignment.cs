@@ -1,4 +1,7 @@
-﻿namespace Crayon.Pastel.Nodes
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.Pastel.Nodes
 {
     class Assignment : Executable
     {
@@ -14,6 +17,16 @@
             this.Target = target;
             this.OpToken = opToken;
             this.Value = value;
+        }
+
+        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

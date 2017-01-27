@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.Pastel.Nodes
@@ -15,6 +16,16 @@ namespace Crayon.Pastel.Nodes
         {
             this.Condition = condition;
             this.Code = code.ToArray();
+        }
+
+        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

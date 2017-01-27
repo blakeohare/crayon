@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.Pastel.Nodes
@@ -17,6 +18,16 @@ namespace Crayon.Pastel.Nodes
             this.Root = root;
             this.OpenParenToken = openParen;
             this.Args = args.ToArray();
+        }
+
+        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

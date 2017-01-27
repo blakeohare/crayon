@@ -28,7 +28,18 @@ namespace Crayon.Pastel.Nodes
             this.RootValue = value;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
         }
-        
+
+        private static PType PopArray(PType root, TokenStream tokens)
+        {
+            while (tokens.IsNext("[") && tokens.FlatPeekAhead(1) == "]")
+            {
+                tokens.Pop();
+                tokens.Pop();
+                root = new PType(root.FirstToken, "Array", new List<PType>() { root });
+            }
+            return root;
+        }
+
         public static PType Parse(TokenStream tokens)
         {
             Token token = tokens.Pop();
@@ -40,7 +51,8 @@ namespace Crayon.Pastel.Nodes
                 case "bool":
                 case "void":
                 case "string":
-                    return new PType(token, token.Value);
+                case "object":
+                    return PopArray(new PType(token, token.Value), tokens);
             }
 
             if (tokens.PopIfPresent("<"))
@@ -52,11 +64,11 @@ namespace Crayon.Pastel.Nodes
                     generics.Add(PType.Parse(tokens));
                 }
                 tokens.PopExpectedOrPartial(">");
-                return new PType(token, token.Value, generics);
+                return PopArray(new PType(token, token.Value, generics), tokens);
             }
             else
             {
-                return new PType(token, token.Value);
+                return PopArray(new PType(token, token.Value), tokens);
             }
         }
     }

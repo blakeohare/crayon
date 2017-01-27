@@ -1,4 +1,7 @@
-﻿namespace Crayon.Pastel.Nodes
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.Pastel.Nodes
 {
     class VariableDeclaration : Executable
     {
@@ -17,6 +20,16 @@
             this.VariableName = variableName;
             this.EqualsToken = equalsToken;
             this.Value = assignmentValue;
+        }
+
+        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

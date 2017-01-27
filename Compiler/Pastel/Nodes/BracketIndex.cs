@@ -1,4 +1,7 @@
-﻿namespace Crayon.Pastel.Nodes
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.Pastel.Nodes
 {
     class BracketIndex : Expression
     {
@@ -11,6 +14,18 @@
             this.Root = root;
             this.BracketToken = bracketToken;
             this.Index = index;
+        }
+
+        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ResolveTypes()
+        {
+            this.Root.ResolveTypes();
+            this.Index.ResolveTypes();
+            throw new NotImplementedException();
         }
     }
 }

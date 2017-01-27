@@ -1,6 +1,8 @@
-﻿namespace Crayon.Pastel.Nodes
+﻿using System.Collections.Generic;
+
+namespace Crayon.Pastel.Nodes
 {
-    class Executable
+    abstract class Executable
     {
         public Token FirstToken { get; private set; }
 
@@ -8,5 +10,12 @@
         {
             this.FirstToken = firstToken;
         }
+
+
+        public abstract IList<Executable> NameResolution(
+            Dictionary<string, FunctionDefinition> functionLookup,
+            Dictionary<string, StructDefinition> structLookup);
+
+        public abstract void ResolveTypes();
     }
 }
