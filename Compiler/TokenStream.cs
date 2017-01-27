@@ -11,7 +11,7 @@ namespace Crayon
         private int topIndex;
         private int topLength;
         private bool empty;
-
+        
         public TokenStream(IList<Token> tokens)
         {
             this.topIndex = 0;
@@ -95,6 +95,15 @@ namespace Crayon
             return this.SafeHasMore() ? this.SafePeek() : null;
         }
 
+        public string FlatPeekAhead(int i)
+        {
+            if (this.topIndex + i < this.topLength)
+            {
+                return this.topTokens[this.topIndex + i].Value;
+            }
+            return null;
+        }
+
         public Token Pop()
         {
             return this.SafePop();
@@ -129,6 +138,29 @@ namespace Crayon
                 return true;
             }
             return false;
+        }
+
+        // This is a hack for generic types that may have multiple '>' characters in a row.
+        // e.g. List<List<int>>
+        // The last >> will get counted as a single bit shift token.
+        // Calling this function will pop the >> token off, modify the value to > and add a single-token stream of just > to the token list stack.
+        public Token PopExpectedOrPartial(string value)
+        {
+            if (this.IsNext(">"))
+            {
+                return this.Pop();
+            }
+
+            if (this.IsNext(">>"))
+            {
+                Token token = this.Pop();
+                token = new Token(">", token.FileID, token.FileName, token.Line, token.Col, token.HasWhitespacePrefix);
+                Token otherGt = new Token(">", token.FileID, token.FileName, token.Line, token.Col + 1, false);
+                this.InsertTokens(new Token[] { otherGt });
+                return token;
+            }
+
+            return this.PopExpected(">");
         }
 
         public Token PopExpected(string value)
