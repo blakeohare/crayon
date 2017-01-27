@@ -232,7 +232,230 @@ namespace Crayon.Pastel
 
         public Expression ParseExpression(TokenStream tokens)
         {
-            throw new Exception();
+            return this.ParseBooleanCombination(tokens);
+        }
+
+        private Expression ParseOpChain(TokenStream tokens, HashSet<string> opsToLookFor, Func<TokenStream, Expression> fp)
+        {
+            Expression expression = fp(tokens);
+            if (opsToLookFor.Contains(tokens.PeekValue()))
+            {
+                List<Expression> expressions = new List<Expression>() { expression };
+                List<Token> ops = new List<Token>();
+                while (opsToLookFor.Contains(tokens.PeekValue()))
+                {
+                    ops.Add(tokens.Pop());
+                    expressions.Add(fp(tokens));
+                }
+                return new OpChain(expressions, ops);
+            }
+            return expression;
+        }
+
+        private static readonly HashSet<string> OPS_BOOLEAN_COMBINATION = new HashSet<string>(new string[] { "&&", "||" });
+        private Expression ParseBooleanCombination(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_BOOLEAN_COMBINATION, this.ParseBitwise);
+        }
+
+        private static readonly HashSet<string> OPS_BITWISE = new HashSet<string>(new string[] { "&", "|", "^" });
+        private Expression ParseBitwise(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_BITWISE, this.ParseEquality);
+        }
+
+        private static readonly HashSet<string> OPS_EQUALITY = new HashSet<string>(new string[] { "==", "!=" });
+        private Expression ParseEquality(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_EQUALITY, this.ParseInequality);
+        }
+
+        private static readonly HashSet<string> OPS_INEQUALITY = new HashSet<string>(new string[] { "<", ">", "<=", ">=" });
+        private Expression ParseInequality(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_INEQUALITY, this.ParseAddition);
+        }
+
+        private static readonly HashSet<string> OPS_ADDITION = new HashSet<string>(new string[] { "+", "-" });
+        private Expression ParseAddition(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_ADDITION, this.ParseMultiplication);
+        }
+
+        private static readonly HashSet<string> OPS_MULTIPLICATION = new HashSet<string>(new string[] { "*", "/", "%" });
+        private Expression ParseMultiplication(TokenStream tokens)
+        {
+            return this.ParseOpChain(tokens, OPS_ADDITION, this.ParsePrefixes);
+        }
+
+        private Expression ParsePrefixes(TokenStream tokens)
+        {
+            if (tokens.IsNext("-") || tokens.IsNext("!"))
+            {
+                Token op = tokens.Pop();
+                Expression root = this.ParsePrefixes(tokens);
+                return new UnaryOp(op, root);
+            }
+
+            if (tokens.IsNext("("))
+            {
+                return this.ParseParenthesis(tokens);
+            }
+
+            return this.ParseEntity(tokens);
+        }
+
+        private Expression ParseParenthesis(TokenStream tokens)
+        {
+            if (tokens.PopIfPresent("("))
+            {
+                Expression expression = this.ParseExpression(tokens);
+                tokens.PopExpected(")");
+                return expression;
+            }
+            return this.ParseEntity(tokens);
+        }
+
+        private Expression ParseEntity(TokenStream tokens)
+        {
+            if (tokens.IsNext("new"))
+            {
+                Token newToken = tokens.Pop();
+                string errMsg = "Invalid name for 'new' statement";
+                List<Token> dotChain = new List<Token>() { EnsureTokenIsValidName(tokens.Pop(), errMsg) };
+                while (tokens.PopIfPresent("."))
+                {
+                    dotChain.Add(EnsureTokenIsValidName(tokens.Pop(), errMsg));
+                }
+                if (!tokens.IsNext("(")) tokens.PopExpected("("); // intentional error if not present.
+                Expression constructorReference = new ConstructorReference(newToken, dotChain);
+                return this.ParseEntityChain(constructorReference, tokens);
+            }
+
+            Expression root = this.ParseEntityRoot(tokens);
+
+            while (true)
+            {
+                switch (tokens.PeekValue())
+                {
+                    case ".":
+                    case "[":
+                    case "(":
+                        root = this.ParseEntityChain(root, tokens);
+                        break;
+                    default:
+                        return root;
+                }
+            }
+        }
+
+        private Expression ParseEntityRoot(TokenStream tokens)
+        {
+            string next = tokens.PeekValue();
+            switch (next)
+            {
+                case "true":
+                case "false":
+                    return new InlineConstant(PType.BOOL, tokens.Pop(), next == "true");
+                case "null":
+                    return new InlineConstant(null, tokens.Pop(), null);
+                case ".":
+                    Token dotToken = tokens.Pop();
+                    Token numToken = EnsureInteger(tokens.Pop());
+                    string strValue = "0." + numToken.Value;
+                    double dblValue;
+                    if (!numToken.HasWhitespacePrefix && double.TryParse(strValue, out dblValue))
+                    {
+                        return new InlineConstant(PType.DOUBLE, dotToken, dblValue);
+                    }
+                    throw new ParserException(dotToken, "Unexpected '.'");
+
+                default: break;
+            }
+            char firstChar = next[0];
+            switch (firstChar)
+            {
+                case '\'':
+                    return new InlineConstant(PType.CHAR, tokens.Pop(), Util.ConvertStringTokenToValue(next));
+                case '"':
+                    return new InlineConstant(PType.STRING, tokens.Pop(), Util.ConvertStringTokenToValue(next));
+            }
+
+            if (firstChar >= '0' && firstChar <= '9')
+            {
+                Token numToken = EnsureInteger(tokens.Pop());
+                if (tokens.IsNext("."))
+                {
+                    Token dotToken = tokens.Pop();
+                    if (dotToken.HasWhitespacePrefix) throw new ParserException(dotToken, "Unexpected '.'");
+                    Token decimalToken = EnsureInteger(tokens.Pop());
+                    if (decimalToken.HasWhitespacePrefix) throw new ParserException(decimalToken, "Unexpected '" + decimalToken.Value + "'");
+                    double dblValue;
+                    if (double.TryParse(numToken.Value + "." + decimalToken.Value, out dblValue))
+                    {
+                        return new InlineConstant(PType.DOUBLE, numToken, dblValue);
+                    }
+                    throw new ParserException(decimalToken, "Unexpected token.");
+                }
+                return new InlineConstant(PType.INT, numToken, int.Parse(numToken.Value));
+            }
+
+            if (IsValidName(tokens.PeekValue()))
+            {
+                return new Variable(tokens.Pop());
+            }
+
+            throw new ParserException(tokens.Peek(), "Unrecognized expression.");
+        }
+
+        private Expression ParseEntityChain(Expression root, TokenStream tokens)
+        {
+            switch (tokens.PeekValue())
+            {
+                case ".":
+                    Token dotToken = tokens.Pop();
+                    Token field = Parser.EnsureTokenIsValidName(tokens.Pop(), "Invalid field name");
+                    return new DotField(root, dotToken, field);
+                case "[":
+                    Token openBracket = tokens.Pop();
+                    Expression index = this.ParseExpression(tokens);
+                    tokens.PopExpected("]");
+                    return new BracketIndex(root, openBracket, index);
+                case "(":
+                    Token openParen = tokens.Pop();
+                    List<Expression> args = new List<Expression>();
+                    while (!tokens.PopIfPresent(")"))
+                    {
+                        if (args.Count > 0) tokens.PopExpected(",");
+                        args.Add(this.ParseExpression(tokens));
+                    }
+                    return new FunctionInvocation(root, openParen, args);
+                default:
+                    throw new Exception();
+            }
+        }
+
+        private Token EnsureInteger(Token token)
+        {
+            string value = token.Value;
+            switch (value)
+            {
+                case "0":
+                case "1":
+                case "2":
+                    // this is like 80% of cases.
+                    return token;
+            }
+            char c;
+            for (int i = value.Length - 1; i >= 0; --i)
+            {
+                c = value[i];
+                if (c < '0' || c > '9')
+                {
+                    throw new ParserException(token, "Expected number");
+                }
+            }
+            return token;
         }
 
         public static Token EnsureTokenIsValidName(Token token, string errorMessage)
@@ -243,7 +466,7 @@ namespace Crayon.Pastel
             }
             throw new ParserException(token, errorMessage);
         }
-
+        
         public static bool IsValidName(string value)
         {
             char c;

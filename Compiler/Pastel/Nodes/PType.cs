@@ -7,6 +7,13 @@ namespace Crayon.Pastel.Nodes
 {
     class PType
     {
+        public static readonly PType INT = new PType(null, "int");
+        public static readonly PType CHAR = new PType(null, "char");
+        public static readonly PType BOOL = new PType(null, "bool");
+        public static readonly PType STRING = new PType(null, "string");
+        public static readonly PType DOUBLE = new PType(null, "double");
+        public static readonly PType VOID = new PType(null, "void");
+
         public Token FirstToken { get; set; }
         public string RootValue { get; set; }
         public PType[] Generics { get; set; }
@@ -28,6 +35,7 @@ namespace Crayon.Pastel.Nodes
             switch (token.Value)
             {
                 case "int":
+                case "char":
                 case "double":
                 case "bool":
                 case "void":
