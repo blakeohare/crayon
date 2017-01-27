@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Crayon.Pastel.Nodes
+﻿namespace Crayon.Pastel.Nodes
 {
     class ExpressionAsExecutable : Executable
     {
-        public ExpressionAsExecutable(Expression expression)
-        {
+        public Expression Expression { get; set; }
 
+        public ExpressionAsExecutable(Expression expression) : base(expression.FirstToken)
+        {
+            this.Expression = expression;
         }
     }
 }

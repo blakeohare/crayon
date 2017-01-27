@@ -160,27 +160,74 @@ namespace Crayon.Pastel
 
         public ForLoop ParseForLoop(TokenStream tokens)
         {
-            throw new Exception();
+            Token forToken = tokens.PopExpected("for");
+            List<Executable> initCode = new List<Executable>();
+            Expression condition = null;
+            List<Executable> stepCode = new List<Executable>();
+            tokens.PopExpected("(");
+            if (!tokens.PopIfPresent(";"))
+            {
+                initCode.Add(this.ParseExecutable(tokens, true));
+                while (!tokens.PopIfPresent(","))
+                {
+                    initCode.Add(this.ParseExecutable(tokens, true));
+                }
+                tokens.PopExpected(";");
+            }
+
+            if (!tokens.PopIfPresent(";"))
+            {
+                condition = this.ParseExpression(tokens);
+                tokens.PopExpected(";");
+            }
+
+            if (!tokens.PopIfPresent(")"))
+            {
+                stepCode.Add(this.ParseExecutable(tokens, true));
+                while (!tokens.PopIfPresent(","))
+                {
+                    stepCode.Add(this.ParseExecutable(tokens, true));
+                }
+                tokens.PopExpected(")");
+            }
+
+            List<Executable> code = this.ParseCodeBlock(tokens, false);
+            return new ForLoop(forToken, initCode, condition, stepCode, code);
         }
 
         public WhileLoop ParseWhileLoop(TokenStream tokens)
         {
-            throw new Exception();
+            Token whileToken = tokens.PopExpected("while");
+            tokens.PopExpected("(");
+            Expression condition = this.ParseExpression(tokens);
+            tokens.PopExpected(")");
+            List<Executable> code = this.ParseCodeBlock(tokens, false);
+            return new WhileLoop(whileToken, condition, code);
         }
 
-        public WhileLoop ParseSwitchStatement(TokenStream tokens)
+        public SwitchStatement ParseSwitchStatement(TokenStream tokens)
         {
             throw new Exception();
         }
 
-        public WhileLoop ParseBreak(TokenStream tokens)
+        public BreakStatement ParseBreak(TokenStream tokens)
         {
-            throw new Exception();
+            Token breakToken = tokens.PopExpected("break");
+            tokens.PopExpected(";");
+            return new BreakStatement(breakToken);
         }
 
-        public WhileLoop ParseReturn(TokenStream tokens)
+        public ReturnStatement ParseReturn(TokenStream tokens)
         {
-            throw new Exception();
+            Token returnToken = tokens.PopExpected("return");
+            if (tokens.PopIfPresent(";"))
+            {
+                return new ReturnStatement(returnToken, null);
+            }
+
+            Expression expression = this.ParseExpression(tokens);
+            tokens.PopExpected(";");
+            return new ReturnStatement(returnToken, expression);
         }
 
         public Expression ParseExpression(TokenStream tokens)

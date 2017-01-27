@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Crayon.Pastel.Nodes
 {
     class ReturnStatement : Executable
     {
+        public Expression Expression { get; set; }
+
+        public ReturnStatement(Token returnToken, Expression expression) : base(returnToken)
+        {
+            this.Expression = expression;
+        }
     }
 }
