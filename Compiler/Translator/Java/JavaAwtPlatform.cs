@@ -51,7 +51,7 @@ namespace Crayon.Translator.Java
                 output["src/" + package + "/" + awtFile + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("game-java-awt/" + awtFile + ".txt"),
                         replacements)
                 };
@@ -64,7 +64,7 @@ namespace Crayon.Translator.Java
                 output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
                         replacements)
                 };
@@ -81,7 +81,7 @@ namespace Crayon.Translator.Java
                 output["src/" + package + "/" + basicFile + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("game-java-awt/" + basicFile + ".txt"),
                         replacements)
                 };
@@ -115,7 +115,7 @@ namespace Crayon.Translator.Java
             output["src/" + package + "/CrayonWrapper.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(string.Join("", crayonWrapper), replacements)
+                TextContent = Constants.DoReplacements(false, string.Join("", crayonWrapper), replacements)
             };
 
             string nl = this.Translator.NL;
@@ -212,7 +212,7 @@ namespace Crayon.Translator.Java
                 output[file.Replace("%PROJECT_ID%", projectId.ToLower())] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(content, replacements)
+                    TextContent = Constants.DoReplacements(false, content, replacements)
                 };
             }
             
@@ -226,7 +226,7 @@ namespace Crayon.Translator.Java
             output["build.xml"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false, 
                     Util.ReadResourceFileInternally("game-java-awt/BuildXml.txt"),
                     replacements)
             };

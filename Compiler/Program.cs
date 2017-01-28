@@ -74,6 +74,10 @@ namespace Crayon
                 case "server-php": return new Crayon.Translator.Php.PhpPlatform();
                 case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
                 case "ui-javascript": throw new NotImplementedException();
+
+                // temporary hack to help rewrite the VM into Pastel
+                case "vm-pastel-hack": return new Crayon.Translator.Pastel.PastelPlatform();
+
                 default:
                     throw new InvalidOperationException("Unrecognized platform. See usage.");
             }

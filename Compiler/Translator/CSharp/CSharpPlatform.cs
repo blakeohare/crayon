@@ -168,7 +168,7 @@ namespace Crayon.Translator.CSharp
                 output[projectId + "/Crayon/" + templateFile + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("csharp-common/" + templateFile + ".txt"),
                         replacements)
                 };
@@ -184,7 +184,7 @@ namespace Crayon.Translator.CSharp
                 output[file.Replace("%PROJECT_ID%", projectId)] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(content, replacements)
+                    TextContent = Constants.DoReplacements(false, content, replacements)
                 };
             }
 

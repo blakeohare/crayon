@@ -278,6 +278,8 @@ namespace Crayon
         // This will run for both compiled and translated code.
         private void SimpleFirstPassResolution()
         {
+            if (this.parser.NullablePlatform != null && this.parser.NullablePlatform.PlatformId == PlatformId.PASTEL_VM) return;
+
             List<Executable> output = new List<Executable>();
             foreach (Executable line in this.currentCode)
             {

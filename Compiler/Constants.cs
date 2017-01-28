@@ -37,8 +37,10 @@ namespace Crayon
             CONSTANT_REPLACEMENTS = constants;
         }
         
-        public static string DoReplacements(string text, Dictionary<string, string> replacements)
+        public static string DoReplacements(bool keepPercents, string text, Dictionary<string, string> replacements)
         {
+            if (keepPercents) return text;
+
             if (text.Contains("%%%"))
             {
                 string[] parts = text.Split(new string[] { "%%%" }, StringSplitOptions.None);

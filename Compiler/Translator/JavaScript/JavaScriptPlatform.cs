@@ -91,7 +91,7 @@ namespace Crayon.Translator.JavaScript
                 codeJs.Add(this.Translator.NL);
             }
 
-            string codeJsText = Constants.DoReplacements(string.Join("", codeJs), replacements);
+            string codeJsText = Constants.DoReplacements(false, string.Join("", codeJs), replacements);
 
             output["code.js"] = new FileOutput()
             {
@@ -142,7 +142,7 @@ namespace Crayon.Translator.JavaScript
             output["index.html"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(this.GenerateHtmlFile(), replacements),
+                TextContent = Constants.DoReplacements(false, this.GenerateHtmlFile(), replacements),
             };
 
             return output;

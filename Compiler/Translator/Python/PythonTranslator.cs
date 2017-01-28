@@ -500,5 +500,15 @@ namespace Crayon.Translator.Python
             this.CurrentIndention--;
             output.Add("\r\n");
         }
+
+        protected override void TranslateStructDefinition(List<string> output, StructDefinition structDef)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateEnumDefinition(List<string> output, EnumDefinition enumDef)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

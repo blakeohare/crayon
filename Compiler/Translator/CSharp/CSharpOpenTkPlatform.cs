@@ -130,8 +130,8 @@ namespace Crayon.Translator.CSharp
             {
                 string[] parts = file.Split(',');
                 string source = "game-csharp-opentk/" + parts[0];
-                string destination = Constants.DoReplacements(parts[1], replacements);
-                string content = Constants.DoReplacements(Util.ReadResourceFileInternally(source), replacements);
+                string destination = Constants.DoReplacements(false, parts[1], replacements);
+                string content = Constants.DoReplacements(false, Util.ReadResourceFileInternally(source), replacements);
                 files[destination] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -139,10 +139,10 @@ namespace Crayon.Translator.CSharp
                 };
             }
 
-            files[Constants.DoReplacements("%%%PROJECT_ID%%%/ResourceReader.cs", replacements)] = new FileOutput()
+            files[Constants.DoReplacements(false, "%%%PROJECT_ID%%%/ResourceReader.cs", replacements)] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(Util.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
+                TextContent = Constants.DoReplacements(false, Util.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
             };
         }
     }

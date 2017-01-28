@@ -23,7 +23,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + ".sln"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false,
                     Util.ReadResourceFileInternally("game-csharp-android/SolutionFile.sln.txt"),
                     replacements)
             };
@@ -113,7 +113,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/" + projectId + ".csproj"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false,
                     Util.ReadResourceFileInternally("game-csharp-android/ProjectFile.csproj.txt"),
                     replacements)
             };
@@ -122,7 +122,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/Resources/layout/Main.axml"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false,
                     Util.ReadResourceFileInternally("game-csharp-android/Main.axml.txt"),
                     replacements),
             };
@@ -130,7 +130,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/Resources/values/strings.xml"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false,
                     Util.ReadResourceFileInternally("game-csharp-android/Strings.xml.txt"),
                     replacements),
             };
@@ -138,7 +138,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/Resources/Resource.Designer.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(
+                TextContent = Constants.DoReplacements(false,
                     Util.ReadResourceFileInternally("game-csharp-android/ResourceDesigner.txt"),
                     replacements),
             };
@@ -159,7 +159,7 @@ namespace Crayon.Translator.CSharp
                 files[target] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("game-csharp-android/" + filename + ".txt"),
                         replacements)
                 };

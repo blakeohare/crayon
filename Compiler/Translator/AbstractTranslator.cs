@@ -75,6 +75,9 @@ namespace Crayon.Translator
         protected abstract void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement);
         protected abstract void TranslateWhileLoop(List<string> output, WhileLoop whileLoop);
 
+        protected abstract void TranslateStructDefinition(List<string> output, StructDefinition structDef);
+        protected abstract void TranslateEnumDefinition(List<string> output, EnumDefinition enumDef);
+
         protected abstract void TranslateBooleanCombination(List<string> output, BooleanCombination booleanCombination);
         protected abstract void TranslateBooleanConstant(List<string> output, BooleanConstant booleanConstant);
         protected abstract void TranslateBooleanNot(List<string> output, BooleanNot booleanNot);
@@ -206,6 +209,12 @@ namespace Crayon.Translator
             else if (exec is ReturnStatement) this.TranslateReturnStatement(output, (ReturnStatement)exec);
             else if (exec is SwitchStatementContinuousSafe) this.TranslateSwitchStatementContinuousSafe(output, (SwitchStatementContinuousSafe)exec);
             else if (exec is SwitchStatementUnsafeBlotchy) this.TranslateSwitchStatementUnsafeBlotchy(output, (SwitchStatementUnsafeBlotchy)exec);
+
+            // The following 3 are only encountered in Pastel. Other platforms optimize this out.
+            else if (exec is StructDefinition) this.TranslateStructDefinition(output, (StructDefinition)exec);
+            else if (exec is EnumDefinition) this.TranslateEnumDefinition(output, (EnumDefinition)exec);
+            else if (exec is ConstStatement) this.TranslateConstStatement(output, (ConstStatement)exec);
+
             else throw new Exception("Executable type not handled: " + exec.GetType());
         }
 
@@ -236,7 +245,20 @@ namespace Crayon.Translator
             else if (expr is FloatConstant) this.TranslateFloatConstant(output, (FloatConstant)expr);
             else if (expr is DotStepStruct) this.TranslateDotStepStruct(output, (DotStepStruct)expr);
             else if (expr is ListDefinition) ((Crayon.Translator.Python.PythonTranslator)this).TranslateListDefinition(output, (ListDefinition)expr); // this is used by Python switch code
+
+            else if (expr is TextReplaceConstant) this.TranslateTextReplaceConstant(output, (TextReplaceConstant)expr);
+
             else throw new Exception("Expression type not handled: " + expr.GetType());
+        }
+
+        protected virtual void TranslateConstStatement(List<string> output, ConstStatement constStatement)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -327,6 +327,20 @@ namespace Crayon
             if (next == "true") return new BooleanConstant(tokens.Pop(), true, owner);
             if (next == "false") return new BooleanConstant(tokens.Pop(), false, owner);
 
+            // TODO: remove this after Pastel is fully ported.
+            if (Parser.IsTranslateMode_STATIC_HACK && next == "%")
+            {
+                Token textReplaceFirstToken = tokens.PopExpected("%");
+                tokens.PopExpected("%");
+                tokens.PopExpected("%");
+                Token textReplaceConstant = tokens.Pop();
+                tokens.PopExpected("%");
+                tokens.PopExpected("%");
+                tokens.PopExpected("%");
+
+                return new TextReplaceConstant(textReplaceFirstToken, textReplaceConstant, owner);
+            }
+
             Token peekToken = tokens.Peek();
             if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
             if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);

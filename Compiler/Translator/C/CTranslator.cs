@@ -300,5 +300,15 @@ namespace Crayon.Translator.C
             output.Add(this.CurrentTabIndention);
             output.Add("}" + this.NL);
         }
+
+        protected override void TranslateStructDefinition(List<string> output, StructDefinition structDef)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateEnumDefinition(List<string> output, EnumDefinition enumDef)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

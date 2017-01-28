@@ -2,6 +2,9 @@
 {
     public enum LanguageId
     {
+        // temporary
+        PASTEL,
+
         C,
         CSHARP,
         PHP,

@@ -104,7 +104,7 @@ namespace Crayon.Translator.Java
                     output[target] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
-                        TextContent = Constants.DoReplacements(text, replacements)
+                        TextContent = Constants.DoReplacements(false, text, replacements)
                     };
                 }
             }
@@ -117,7 +117,7 @@ namespace Crayon.Translator.Java
                 output[pathToJavaCode + "/" + basicFile + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = Constants.DoReplacements(
+                    TextContent = Constants.DoReplacements(false,
                         Util.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
                         replacements)
                 };
@@ -151,7 +151,7 @@ namespace Crayon.Translator.Java
             output[pathToJavaCode + "/CrayonWrapper.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(string.Join("", crayonWrapper), replacements)
+                TextContent = Constants.DoReplacements(false, string.Join("", crayonWrapper), replacements)
             };
 
             string nl = this.Translator.NL;

@@ -61,7 +61,7 @@ namespace Crayon
 
             foreach (string fileId in orderedFileIds)
             {
-                string code = Constants.DoReplacements(filesById[fileId], replacements);
+                string code = Constants.DoReplacements(true, filesById[fileId], replacements);
 
                 Executable[] lines = this.interpreterParser.ParseInterpreterCode(fileId, code);
                 if (lines.Length > 0)
@@ -85,6 +85,13 @@ namespace Crayon
         {
             if (replacementsDictionary == null)
             {
+                AbstractPlatform platform = this.interpreterParser.NullablePlatform;
+                if (platform != null && platform.PlatformId == PlatformId.PASTEL_VM)
+                {
+                    replacementsDictionary = new Dictionary<string, string>();
+                    return replacementsDictionary;
+                }
+
                 Dictionary<string, string> replacements = new Dictionary<string, string>();
                 replacements.Add("PLATFORM_SUPPORTS_LIST_CLEAR", this.platform.SupportsListClear ? "true" : "false");
                 replacements.Add("STRONGLY_TYPED", this.platform.IsStronglyTyped ? "true" : "false");

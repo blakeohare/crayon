@@ -86,20 +86,32 @@ namespace Crayon
                         tokens.PopExpected(";");
                         string inlineImportFileName = fileToken.Value.Substring(1, fileToken.Value.Length - 2);
                         string inlineImportFileContents;
+
+                        if (parser.NullablePlatform.PlatformId == PlatformId.PASTEL_VM)
+                        {
+                            if (inlineImportFileName.StartsWith("LIB:"))
+                            {
+                                string[] parts = inlineImportFileName.Split(':');
+                                string libraryName = parts[1];
+                                return new ImportInlineStatement(importToken, owner, libraryName, parts[2]);
+                            }
+                            return new ImportInlineStatement(importToken, owner, null, inlineImportFileName);
+                        }
+
                         if (inlineImportFileName.StartsWith("LIB:"))
                         {
                             string[] parts = inlineImportFileName.Split(':');
                             string libraryName = parts[1];
                             string filename = FileUtil.JoinPath(parts[2].Split('/'));
                             Library library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName.ToLower());
-                            inlineImportFileContents = library.ReadFile(filename, false);
+                            inlineImportFileContents = library.ReadFile(true, filename, false);
                         }
                         else
                         {
                             inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
                         }
                         Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
-                        inlineImportFileContents = Constants.DoReplacements(inlineImportFileContents, replacements);
+                        inlineImportFileContents = Constants.DoReplacements(false, inlineImportFileContents, replacements);
 
                         Token[] inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
 

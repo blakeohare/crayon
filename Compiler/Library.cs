@@ -165,7 +165,7 @@ namespace Crayon
         public Dictionary<string, string> GetEmbeddedCode()
         {
             Dictionary<string, string> output = new Dictionary<string, string>() {
-                { this.Name, this.ReadFile("embed.cry", true) }
+                { this.Name, this.ReadFile(false, "embed.cry", true) }
             };
             string embedDir = FileUtil.JoinPath(this.RootDirectory, "embed");
             if (FileUtil.DirectoryExists(embedDir))
@@ -173,7 +173,7 @@ namespace Crayon
                 string[] additionalFiles = FileUtil.GetAllFilePathsRelativeToRoot(embedDir);
                 foreach (string additionalFile in additionalFiles)
                 {
-                    string embedCode = this.ReadFile("embed/" + additionalFile, false);
+                    string embedCode = this.ReadFile(false, "embed/" + additionalFile, false);
                     output[this.Name + ":" + additionalFile] = embedCode;
                 }
             }
@@ -196,7 +196,7 @@ namespace Crayon
                         if (name.EndsWith(".cry"))
                         {
                             string key = name.Substring(0, name.Length - ".cry".Length);
-                            this.supplementalFiles[key] = this.ReadFile(System.IO.Path.Combine("supplemental", name), false);
+                            this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
                         }
                     }
                 }
@@ -224,7 +224,7 @@ namespace Crayon
 
         private Dictionary<string, string> GetMethodTranslations(string platformName)
         {
-            string methodTranslations = this.ReadFile(System.IO.Path.Combine("methods", platformName + ".txt"), true);
+            string methodTranslations = this.ReadFile(false, System.IO.Path.Combine("methods", platformName + ".txt"), true);
             Dictionary<string, string> translations = new Dictionary<string, string>();
             if (methodTranslations != null)
             {
@@ -275,7 +275,7 @@ namespace Crayon
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
         {
-            string resourceManifest = this.ReadFile("resources/resource-manifest.txt", true).Trim();
+            string resourceManifest = this.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
             if (resourceManifest.Length > 0)
             {
                 string mode = "inactive"; // inactive | pending | active
@@ -338,7 +338,7 @@ namespace Crayon
         {
             foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
             {
-                string content = this.ReadFile("resources/" + sourceDirectory + "/" + file, false);
+                string content = this.ReadFile(false, "resources/" + sourceDirectory + "/" + file, false);
                 string targetPath = targetPathTemplate.Replace("%FILE%", file);
                 copyOutput.Add(targetPath, content);
             }
@@ -348,7 +348,7 @@ namespace Crayon
         {
             foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
             {
-                embedTarget.Add(this.ReadFile("resources/" + sourceDirectory + "/" + file, false));
+                embedTarget.Add(this.ReadFile(false, "resources/" + sourceDirectory + "/" + file, false));
             }
         }
 
@@ -370,14 +370,14 @@ namespace Crayon
             return output.ToArray();
         }
 
-        public string ReadFile(string pathRelativeToLibraryRoot, bool failSilently)
+        public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
             {
                 string text = System.IO.File.ReadAllText(fullPath);
 
-                return Constants.DoReplacements(text, this.replacements);
+                return Constants.DoReplacements(keepPercents, text, this.replacements);
             }
 
             if (failSilently)

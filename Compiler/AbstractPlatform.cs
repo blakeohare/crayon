@@ -59,9 +59,9 @@ namespace Crayon
             return string.Join("", output);
         }
 
-        public string DoReplacements(string code, Dictionary<string, string> replacements)
+        public string DoReplacements(bool keepReplacements, string code, Dictionary<string, string> replacements)
         {
-            return Constants.DoReplacements(code, replacements);
+            return Constants.DoReplacements(keepReplacements, code, replacements);
         }
 
         private ByteBuffer GenerateByteCode(BuildContext buildContext)

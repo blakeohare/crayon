@@ -325,6 +325,16 @@ namespace Crayon.Translator.Ruby
         }
 
         protected override string TabString { get { return "    "; } }
-        public override String NL { get { return "\n"; } }
+        public override string NL { get { return "\n"; } }
+
+        protected override void TranslateStructDefinition(List<string> output, StructDefinition structDef)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void TranslateEnumDefinition(List<string> output, EnumDefinition enumDef)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
