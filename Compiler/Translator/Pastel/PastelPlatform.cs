@@ -45,10 +45,6 @@ namespace Crayon.Translator.Pastel
                     Type = FileOutputType.Text,
                     TextContent = this.Translator.Translate(finalCode[vmFile])
                 };
-                if (vmFile == "ValueUtil")
-                {
-                    break;
-                }
             }
 
             return output;

@@ -19,11 +19,11 @@ namespace Crayon.Translator.Pastel
                 output.Add(((StringConstant)type.Args[0]).Value);
                 output.Add(" ");
             }
-            this.TranslateExpression(output, assignment.Target);
+            this.TranslateExpression(output, assignment.Target, false);
             output.Add(" ");
             output.Add(assignment.AssignmentOp);
             output.Add(" ");
-            this.TranslateExpression(output, assignment.Value);
+            this.TranslateExpression(output, assignment.Value, false);
             output.Add(";");
             output.Add(this.NL);
         }
@@ -54,7 +54,6 @@ namespace Crayon.Translator.Pastel
                 throw new NotImplementedException();
             }
             List<string> outputHack = new List<string>();
-            string hack;
             output.Add(this.CurrentTabIndention);
             output.Add("for (");
             this.Translate(outputHack, forLoop.Init[0]);

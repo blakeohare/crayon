@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
     {
         internal override Expression PastelResolve(Parser parser)
         {
-            this.Root = this.Root.Resolve(parser);
+            this.Root = this.Root.PastelResolve(parser);
             return this;
         }
 

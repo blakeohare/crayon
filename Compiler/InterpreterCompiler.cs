@@ -37,12 +37,20 @@ namespace Crayon
 
         public Dictionary<string, Executable[]> Compile()
         {
+            bool isPastel = this.platform != null && this.platform.PlatformId == PlatformId.PASTEL_VM;
+
             Dictionary<string, Executable[]> output = new Dictionary<string, Executable[]>();
 
             Dictionary<string, string> replacements = this.BuildReplacementsDictionary();
 
             Dictionary<string, string> filesById = new Dictionary<string, string>();
-            Dictionary<string, string> libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles();
+
+            Dictionary<string, string> libraryProducedFiles = new Dictionary<string, string>();
+            if (!isPastel)
+            {
+                libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles();
+            }
+
             List<string> orderedFileIds = new List<string>();
 
             foreach (string file in FILES)
@@ -51,6 +59,30 @@ namespace Crayon
                 string code = Util.ReadInterpreterFileInternally(file);
                 filesById[fileId] = code;
                 orderedFileIds.Add(fileId);
+            }
+
+            if (isPastel)
+            {
+                string[] interpreterFiles = typeof(Interpreter.InterpreterAssembly).Assembly.GetManifestResourceNames();
+                foreach (string interpreterFile in interpreterFiles.Where<string>(s => s.EndsWith(".cry")))
+                {
+                    string path = interpreterFile.Substring("Interpreter.".Length);
+                    path = path.Substring(0, path.Length - 4); // trim off .cry
+                    path = path.Replace('.', '/');
+                    path = path + ".cry"; // put it back
+
+                    if (path.Contains("call_lib_function")) // This is the one with the dynamically generated switch statement using %%% that's syntactically incorrect.
+                    {
+                        continue;
+                    }
+                    string content = Util.ReadInterpreterFileInternally(path);
+                    string key = path.Substring(0, path.Length - 4); // trim .cry
+                    if (!filesById.ContainsKey(key))
+                    {
+                        filesById[key] = content;
+                        orderedFileIds.Add(key);
+                    }
+                }
             }
 
             foreach (string fileId in libraryProducedFiles.Keys)
