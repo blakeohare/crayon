@@ -120,11 +120,11 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateNewArray(List<string> output, StringConstant type, Expression size)
         {
-            output.Add("new ");
+            output.Add("new Array<");
             output.Add(type.Value);
-            output.Add("[");
+            output.Add(">(");
             this.Translator.TranslateExpression(output, size);
-            output.Add("]");
+            output.Add(")");
         }
 
         protected override void TranslateNewDictionary(List<string> output, StringConstant keyType, StringConstant valueType)
