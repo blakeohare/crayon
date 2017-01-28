@@ -1,0 +1,2 @@
+﻿functionInfo = p.functionTable[functionPointer1.functionId];
+output = buildString(functionInfo.name);

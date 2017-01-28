@@ -1,0 +1,12 @@
+﻿if (argCount != 1) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+}
+value2 = funcArgs[0];
+if (value2.type != Types.FUNCTION) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "list map method requires a function pointer as its argument.");
+}
+primitiveMethodToCoreLibraryFallback = true;
+functionId = p.primitiveMethodFunctionIdFallbackLookup[1];
+funcArgs[1] = value;
+argCount = 2;
+output = null;

@@ -1,0 +1,72 @@
+﻿valueStackSize -= 3;
+value = valueStack[(valueStackSize + 2)];
+value2 = valueStack[(valueStackSize + 1)];
+root = valueStack[valueStackSize];
+type = root.type;
+bool1 = row[0] == 1;
+if (type == Types.LIST) {
+	if (value2.type == Types.INTEGER) {
+		i = ((int) value2.internalValue);
+		list1 = ((List<Value>) root.internalValue);
+		if (i < 0) {
+			i += list1.Length;
+			if (i < 0) {
+				return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
+			}
+		}
+		if (i >= list1.Length) {
+			return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
+		}
+		list1[i] = value;
+	} else {
+		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "List index must be an integer.");
+	}
+} else {
+	if (type == Types.DICTIONARY) {
+		keyType = value2.type;
+		if (keyType == Types.INTEGER) {
+			intKey = ((int) value2.internalValue);
+		} else {
+			if (keyType == Types.STRING) {
+				stringKey = ((string) value2.internalValue);
+			} else {
+				if (keyType == Types.INSTANCE) {
+					objInstance1 = ((ObjectInstance) value2.internalValue);
+					intKey = objInstance1.objectId;
+				} else {
+					return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid key for a dictionary.");
+				}
+			}
+		}
+		dictImpl = ((DictImpl) root.internalValue);
+		bool2 = dictImpl.size > 0;
+		if (bool2 && (dictImpl.keyType != keyType)) {
+			return Core.GenerateException(CoreExceptionTypes.INVALID_KEY, "Cannot have multiple keys in one dictionary with different types.");
+		}
+		if (keyType == Types.STRING) {
+			if (!dictImpl.keyStringLookup.Contains(stringKey)) {
+				dictImpl.keyStringLookup[stringKey] = value2;
+				dictImpl.size += 1;
+				if (!bool2) {
+					dictImpl.keyType = keyType;
+				}
+			}
+			dictImpl.valueStringLookup[stringKey] = value;
+		} else {
+			if (!dictImpl.keyIntLookup.Contains(intKey)) {
+				dictImpl.keyIntLookup[intKey] = value2;
+				dictImpl.size += 1;
+				if (!bool2) {
+					dictImpl.keyType = keyType;
+				}
+			}
+			dictImpl.valueIntLookup[intKey] = value;
+		}
+	} else {
+		return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, Core.StringConcatAll(getTypeFromId(type), " type does not support assigning to an index."));
+	}
+}
+if (bool1) {
+	valueStack[valueStackSize] = value;
+	valueStackSize += 1;
+}

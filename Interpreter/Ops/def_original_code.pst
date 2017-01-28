@@ -1,0 +1,7 @@
+﻿int1 = row[0];
+string1 = p.stringArgs[pc];
+List<string> codeLookup = p.sourceCodeBuilder;
+while (codeLookup.Length <= int1) {
+	codeLookup.Add(null);
+}
+codeLookup[int1] = string1;

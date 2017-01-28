@@ -1,0 +1,27 @@
+﻿value3 = valueStack[(valueStackSize - 3)];
+value2 = valueStack[(valueStackSize - 2)];
+value = valueStack[(valueStackSize - 1)];
+int1 = ((int) value3.internalValue);
+int2 = ((int) value2.internalValue);
+if (value.type == Types.LIST) {
+	list1 = ((List<Value>) value.internalValue);
+	len = list1.Length;
+	bool1 = true;
+} else {
+	string2 = ((string) value.internalValue);
+	len = string2.Length;
+	bool1 = false;
+}
+if (int1 < len) {
+	if (bool1) {
+		value = list1[int1];
+	} else {
+		value = buildCommonString(Core.CharToString(string2[int1]));
+	}
+	int3 = localsStackOffset + int2;
+	localsStack[int3] = value;
+	localsStackSet[int3] = localsStackSetToken;
+} else {
+	pc += row[0];
+}
+valueStack[(valueStackSize - 3)] = buildInteger(int1 + 1);

@@ -1,0 +1,9 @@
+﻿value = valueStack[(valueStackSize - 1)];
+output = VALUE_FALSE;
+if (value.type == Types.INSTANCE) {
+	objInstance1 = ((ObjectInstance) value.internalValue);
+	if (isClassASubclassOf(objInstance1.classId, row[0])) {
+		output = VALUE_TRUE;
+	}
+}
+valueStack[(valueStackSize - 1)] = output;

@@ -1,0 +1,25 @@
+﻿valueStackSize -= 2;
+value = valueStack[(valueStackSize + 1)];
+value2 = valueStack[valueStackSize];
+nameId = row[0];
+if (value2.type == Types.INSTANCE) {
+	objInstance1 = ((ObjectInstance) value2.internalValue);
+	classId = objInstance1.classId;
+	classInfo = classTable[classId];
+	intIntDict1 = classInfo.globalIdToMemberId;
+	if (intIntDict1.Contains(nameId)) {
+		int1 = intIntDict1[nameId];
+		int2 = classInfo.functionIds[int1];
+		if (int2 == -1) {
+			objInstance1.members[int1] = value;
+		} else {
+			return Core.GenerateException(CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot override a method with assignment.");
+		}
+	}
+} else {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot assign to a field on this type.");
+}
+if (row[1] == 1) {
+	valueStack[valueStackSize] = value;
+	valueStackSize += 1;
+}

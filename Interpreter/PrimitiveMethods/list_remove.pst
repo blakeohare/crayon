@@ -1,0 +1,19 @@
+﻿if (argCount != 1) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
+}
+value = funcArgs[0];
+if (value.type != Types.INTEGER) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Argument of list.remove must be an integer index.");
+}
+int1 = ((int) value.internalValue);
+len = list1.Length;
+if (int1 < 0) {
+	int1 += len;
+}
+if ((int1 < 0) || (int1 >= len)) {
+	return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index out of range.");
+}
+if (returnValueUsed) {
+	output = list1[int1];
+}
+list1.RemoveAt(int1);

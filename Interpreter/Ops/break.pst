@@ -1,0 +1,8 @@
+﻿if (row[0] == 1) {
+	pc += row[1];
+} else {
+	intArray1 = esfData[pc];
+	pc = intArray1[1] - 1;
+	valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+	stack.postFinallyBehavior = PostFinallyBehavior.BREAK;
+}

@@ -1,0 +1,182 @@
+﻿struct Code {
+	Array<int> ops;
+	Array<Array<int>> args;
+	Array<string> stringArgs;
+}
+
+struct DictImpl {
+	Dictionary<int, Value> keyIntLookup;
+	Dictionary<int, Value> valueIntLookup;
+	Dictionary<string, Value> keyStringLookup;
+	Dictionary<string, Value> valueStringLookup;
+	int size;
+	int keyType;
+}
+
+struct ProgramData {
+	Dictionary<int, ExecutionContext> executionContexts;
+	int lastExecutionContextId;
+	Array<int> ops;
+	Array<Array<int>> args;
+	Array<string> stringArgs;
+	Array<string> identifiers;
+	List<string> identifiersBuilder;
+	Dictionary<string, int> invIdentifiers;
+	Array<Value> literalTable;
+	List<Value> literalTableBuilder;
+	Array<List<Token>> tokenData;
+	int userCodeStart;
+	Array<string> sourceCode;
+	List<string> sourceCodeBuilder;
+	Array<Dictionary<int, int>> integerSwitchLookups;
+	List<Dictionary<int, int>> integerSwitchLookupsBuilder;
+	Array<Dictionary<string, int>> stringSwitchLookups;
+	List<Dictionary<string, int>> stringSwitchLookupsBuilder;
+	int instanceCounter;
+	bool initializationComplete;
+	Array<ClassInfo> classTable;
+	Array<FunctionInfo> functionTable;
+	List<int> classStaticInitializationStack;
+	Array<int> globalNameIdToPrimitiveMethodName;
+	Array<Value> funcArgs;
+	int lengthId;
+	Array<int> primitiveMethodFunctionIdFallbackLookup;
+	ResourceDB resourceDatabase;
+	string projectId;
+	Array<Array<int>> esfData;
+	MagicNumbers magicNumbers;
+	Array<int> valueStackDepthByPc;
+}
+
+struct ExecutionContext {
+	int id;
+	StackFrame stackTop;
+	int currentValueStackSize;
+	int valueStackCapacity;
+	Array<Value> valueStack;
+	Array<Value> localsStack;
+	Array<int> localsStackSet;
+	int localsStackSetToken;
+	int executionCounter;
+	bool activeExceptionHandled;
+	Value activeException;
+}
+
+struct StackFrame {
+	int pc;
+	int localsStackSetToken;
+	int localsStackOffset;
+	int localsStackOffsetEnd;
+	StackFrame previous;
+	bool returnValueUsed;
+	Value objectContext;
+	int valueStackPopSize;
+	int markClassAsInitialized;
+	int depth;
+	int postFinallyBehavior;
+	Value returnValueTempStorage;
+}
+
+struct InterpreterResult {
+	int status;
+	string errorMessage;
+}
+
+struct Token {
+	int lineIndex;
+	int colIndex;
+	int fileId;
+}
+
+struct Value {
+	int type;
+	object internalValue;
+}
+
+struct SystemMethod {
+	Value context;
+	int id;
+}
+
+struct ClassInfo {
+	int id;
+	int nameId;
+	int baseClassId;
+	int staticInitializationState;
+	Array<Value> staticFields;
+	int staticConstructorFunctionId;
+	int constructorFunctionId;
+	int memberCount;
+	Array<int> functionIds;
+	Array<int> fieldInitializationCommand;
+	Array<Value> fieldInitializationLiteral;
+	Dictionary<int, int> globalIdToMemberId;
+	string fullyQualifiedName;
+}
+
+struct FunctionInfo {
+	int id;
+	int nameId;
+	int pc;
+	int minArgs;
+	int maxArgs;
+	int type;
+	int associatedClassId;
+	int localsSize;
+	Array<int> pcOffsetsForOptionalArgs;
+	string name;
+}
+
+struct ClassValue {
+	bool isInterface;
+	int classId;
+}
+
+struct ObjectInstance {
+	int classId;
+	int objectId;
+	Array<Value> members;
+	Array<object> nativeData;
+}
+
+struct FunctionPointer {
+	int type;
+	Value context;
+	int classId;
+	int functionId;
+}
+
+struct PlatformRelayObject {
+	int type;
+	int iarg1;
+	int iarg2;
+	int iarg3;
+	double farg1;
+	string sarg1;
+}
+
+struct HttpRequest {
+	int statusCode;
+	string status;
+	Dictionary<string, Array<string>> headers;
+	string body;
+}
+
+struct ResourceInfo {
+	string userPath;
+	string internalPath;
+	bool isText;
+	string type;
+	string manifestParam;
+}
+
+struct ResourceDB {
+	Dictionary<string, Array<string>> filesPerDirectory;
+	Dictionary<string, ResourceInfo> fileInfo;
+}
+
+struct MagicNumbers {
+	int coreExceptionClassId;
+	int coreGenerateExceptionFunctionId;
+}
+

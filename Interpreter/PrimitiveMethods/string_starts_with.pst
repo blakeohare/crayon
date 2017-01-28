@@ -1,0 +1,12 @@
+﻿if (argCount != 1) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount));
+}
+value2 = funcArgs[0];
+if (value2.type != Types.STRING) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "string startsWith method requires another string as input.");
+}
+if (string1.StartsWith(((string) value2.internalValue))) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

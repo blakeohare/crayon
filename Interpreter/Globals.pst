@@ -1,0 +1,13 @@
+﻿Array<Value> INTEGER_POSITIVE_CACHE = new Array<Value>(INTEGER_POSITIVE_CACHE_SIZE);
+Array<Value> INTEGER_NEGATIVE_CACHE = new Array<Value>(INTEGER_NEGATIVE_CACHE_SIZE);
+Value VALUE_NULL = new Value(Types.NULL, null);
+Value VALUE_TRUE = new Value(Types.BOOLEAN, true);
+Value VALUE_FALSE = new Value(Types.BOOLEAN, false);
+Value VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+Value VALUE_INT_ONE = new Value(Types.INTEGER, 1);
+Value VALUE_INT_ZERO = new Value(Types.INTEGER, 0);
+Value VALUE_INT_NEG_ONE = new Value(Types.INTEGER, -1);
+Value VALUE_FLOAT_ZERO = new Value(Types.FLOAT, 0.0);
+Value VALUE_FLOAT_ONE = new Value(Types.FLOAT, 1.0);
+Value VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);
+Dictionary<string, Value> COMMON_STRINGS = new Dictionary<string, Value>();

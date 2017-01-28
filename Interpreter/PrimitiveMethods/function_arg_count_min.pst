@@ -1,0 +1,6 @@
+﻿if (argCount > 0) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("argCountMin method", 0, argCount));
+}
+functionId = functionPointer1.functionId;
+functionInfo = p.functionTable[functionId];
+output = buildInteger(functionInfo.minArgs);

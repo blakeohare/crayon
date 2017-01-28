@@ -1,0 +1,20 @@
+﻿if (argCount != 1) {
+	if (argCount == 0) {
+		value2 = VALUE_EMPTY_STRING;
+	} else {
+		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list join method", 1, argCount));
+	}
+} else {
+	value2 = funcArgs[0];
+	if (value2.type != Types.STRING) {
+		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Argument of list.join needs to be a string.");
+	}
+}
+stringList1 = new List<string>();
+string1 = ((string) value2.internalValue);
+len = list1.Length;
+for (i = 0; i < len; i += 1) {
+	stringList1.Add(valueToString(list1[i]));
+}
+string1 = stringList1.Join(stringList1);
+output = buildString(string1);

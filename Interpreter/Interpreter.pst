@@ -1,0 +1,643 @@
+﻿InterpreterResult errorResult(string error) {
+	return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error);
+}
+
+InterpreterResult uncaughtExceptionResult(Value exception) {
+	return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(exception));
+}
+
+InterpreterResult suspendInterpreter() {
+	return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null);
+}
+
+InterpreterResult suspendInterpreterWithLock() {
+	return new InterpreterResult(InterpreterResultStatus.SUSPENDED_WITH_LOCK, null);
+}
+
+InterpreterResult interpreterFinished(ExecutionContext ec) {
+	if (ec != null) {
+		int id = ec.id;
+		ProgramData p = Core.ProgramData();
+		if (p.executionContexts.Contains(id)) {
+			p.executionContexts.Remove(id);
+		}
+	}
+	return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
+}
+
+InterpreterResult generateException(StackFrame stack, int pc, int valueStackSize, ExecutionContext ec, int type, string message) {
+	ec.currentValueStackSize = valueStackSize;
+	stack.pc = pc;
+	ec.localsStackSetToken = stack.localsStackSetToken + 1;
+	ProgramData p = Core.ProgramData();
+	MagicNumbers mn = p.magicNumbers;
+	int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
+	FunctionInfo functionInfo = p.functionTable[generateExceptionFunctionId];
+	pc = functionInfo.pc;
+	if (ec.localsStack.Length <= (functionInfo.localsSize + stack.localsStackOffsetEnd)) {
+		increaseLocalsStackCapacity(ec, functionInfo.localsSize);
+	}
+	int localsIndex = stack.localsStackOffsetEnd;
+	ec.localsStack[localsIndex] = buildInteger(type);
+	ec.localsStack[(localsIndex + 1)] = buildString(message);
+	ec.localsStackSet[localsIndex] = ec.localsStackSetToken;
+	ec.localsStackSet[(localsIndex + 1)] = ec.localsStackSetToken;
+	ec.stackTop = new StackFrame((pc + 1), ec.localsStackSetToken, stack.localsStackOffsetEnd, (stack.localsStackOffsetEnd + functionInfo.localsSize), stack, false, null, valueStackSize, 0, (stack.depth + 1), PostFinallyBehavior.NOTHING, null);
+	return new InterpreterResult(InterpreterResultStatus.REINVOKE, null);
+}
+
+InterpreterResult interpret(int executionContextId) {
+	InterpreterResult output = interpretImpl(executionContextId);
+	while (output.status == InterpreterResultStatus.REINVOKE) {
+		output = interpretImpl(executionContextId);
+	}
+	return output;
+}
+
+ExecutionContext interpreterGetExecutionContext(int executionContextId) {
+	ProgramData p = Core.ProgramData();
+	Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
+	if (!executionContexts.Contains(executionContextId)) {
+		return null;
+	}
+	return executionContexts[executionContextId];
+}
+
+InterpreterResult interpretImpl(int executionContextId) {
+	ProgramData p = Core.ProgramData();
+	Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
+	ExecutionContext ec = interpreterGetExecutionContext(executionContextId);
+	if (ec == null) {
+		return interpreterFinished(null);
+	}
+	ec.executionCounter += 1;
+	StackFrame stack = ec.stackTop;
+	Array<int> ops = p.ops;
+	Array<Array<int>> args = p.args;
+	Array<string> stringArgs = p.stringArgs;
+	Array<ClassInfo> classTable = p.classTable;
+	Array<FunctionInfo> functionTable = p.functionTable;
+	Array<Value> literalTable = p.literalTable;
+	Array<string> identifiers = p.identifiers;
+	Array<Value> valueStack = ec.valueStack;
+	int valueStackSize = ec.currentValueStackSize;
+	int valueStackCapacity = valueStack.Length;
+	int type = 0;
+	int nameId = 0;
+	int classId = 0;
+	int functionId = 0;
+	ClassInfo classInfo = null;
+	int len = 0;
+	Value root = null;
+	Array<int> row = null;
+	int argCount = 0;
+	Array<string> stringList = null;
+	bool returnValueUsed = false;
+	Value output = null;
+	FunctionInfo functionInfo = null;
+	Array<List<Token>> tokensByPc = null;
+	List<Token> tokens = null;
+	int keyType = 0;
+	int intKey = 0;
+	string stringKey = null;
+	Dictionary<int, Value> dictIntKeyLookup = null;
+	Dictionary<int, Value> dictIntValueLookup = null;
+	Dictionary<string, Value> dictStringKeyLookup = null;
+	Dictionary<string, Value> dictStringValueLookup = null;
+	bool first = false;
+	bool primitiveMethodToCoreLibraryFallback = false;
+	bool bool1 = false;
+	bool bool2 = false;
+	int int1 = 0;
+	int int2 = 0;
+	int int3 = 0;
+	int int4 = 0;
+	int int5 = 0;
+	int i = 0;
+	int j = 0;
+	double float1 = 0.0;
+	double float2 = 0.0;
+	double float3 = 0.0;
+	Array<double> floatList1 = new Array<double>(2);
+	Value value = null;
+	Value value2 = null;
+	Value value3 = null;
+	string string1 = null;
+	string string2 = null;
+	string string3 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	object object1 = null;
+	object object2 = null;
+	object object3 = null;
+	List<Value> list1 = null;
+	List<Value> list2 = null;
+	DictImpl dictImpl = null;
+	DictImpl dictImpl2 = null;
+	List<string> stringList1 = null;
+	List<int> intList1 = null;
+	Array<Value> valueArray1 = null;
+	Array<int> intArray1 = null;
+	Array<int> intArray2 = null;
+	Array<object> objArray1 = null;
+	Array<object> objArray2 = null;
+	Array<Array<object>> objArrayArray1 = null;
+	Array<Array<object>> objArrayArray2 = null;
+	FunctionPointer functionPointer1 = null;
+	Dictionary<int, int> intIntDict1 = null;
+	StackFrame stackFrame2 = null;
+	Value leftValue = null;
+	Value rightValue = null;
+	ClassValue classValue = null;
+	int op = 0;
+	object left = 0;
+	object right = 0;
+	int leftType = 0;
+	int rightType = 0;
+	Value arg1 = null;
+	Value arg2 = null;
+	Value arg3 = null;
+	Value arg4 = null;
+	Value arg5 = null;
+	Value arg6 = null;
+	Value arg7 = null;
+	Value arg8 = null;
+	Value arg9 = null;
+	Value arg10 = null;
+	Array<int> globalNameIdToPrimitiveMethodName = p.globalNameIdToPrimitiveMethodName;
+	MagicNumbers magicNumbers = p.magicNumbers;
+	Array<Dictionary<int, int>> integerSwitches = p.integerSwitchLookups;
+	Array<Dictionary<string, int>> stringSwitches = p.stringSwitchLookups;
+	Dictionary<int, int> integerSwitch = null;
+	Dictionary<string, int> stringSwitch = null;
+	Array<Array<int>> esfData = p.esfData;
+	Array<int> intOutParam = new Array<int>(16);
+	Array<double> floatOutParam = new Array<double>(16);
+	Array<string> stringOutParam = new Array<string>(16);
+	Array<Value> localsStack = ec.localsStack;
+	Array<int> localsStackSet = ec.localsStackSet;
+	int localsStackSetToken = stack.localsStackSetToken;
+	int localsStackCapacity = localsStack.Length;
+	int localsStackOffset = stack.localsStackOffset;
+	Array<Value> funcArgs = p.funcArgs;
+	int pc = stack.pc;
+	if ((object2 == null) || (intList1 == null) || (objArray1 == null)) {
+	}
+	while (true) {
+		row = args[pc];
+		switch (ops[pc]) {
+			case OpCodes.ADD_LITERAL:
+				Core.EmitComment("ADD_LITERAL");
+				@import("Ops/add_literal.cry");
+				break;
+			case OpCodes.ADD_NAME:
+				Core.EmitComment("ADD_NAME");
+				@import("Ops/add_name.cry");
+				break;
+			case OpCodes.ASSIGN_INDEX:
+				Core.EmitComment("ASSIGN_INDEX");
+				@import("Ops/assign_index.cry");
+				break;
+			case OpCodes.ASSIGN_STATIC_FIELD:
+				Core.EmitComment("ASSIGN_STATIC_FIELD");
+				@import("Ops/assign_static_field.cry");
+				break;
+			case OpCodes.ASSIGN_STEP:
+				Core.EmitComment("ASSIGN_STEP");
+				@import("Ops/assign_step.cry");
+				break;
+			case OpCodes.ASSIGN_THIS_STEP:
+				Core.EmitComment("ASSIGN_THIS_STEP");
+				@import("Ops/assign_this_step.cry");
+				break;
+			case OpCodes.ASSIGN_LOCAL:
+				Core.EmitComment("ASSIGN_LOCAL");
+				@import("Ops/assign_local.cry");
+				break;
+			case OpCodes.BINARY_OP:
+				Core.EmitComment("BINARY_OP");
+				@import("Ops/binary_op.cry");
+				break;
+			case OpCodes.BOOLEAN_NOT:
+				Core.EmitComment("BOOLEAN_NOT");
+				@import("Ops/boolean_not.cry");
+				break;
+			case OpCodes.BREAK:
+				Core.EmitComment("BREAK");
+				@import("Ops/break.cry");
+				break;
+			case OpCodes.BUILD_SWITCH_INT:
+				Core.EmitComment("BUILD_SWITCH_INT");
+				@import("Ops/build_switch_int.cry");
+				break;
+			case OpCodes.BUILD_SWITCH_STRING:
+				Core.EmitComment("BUILD_SWITCH_STRING");
+				@import("Ops/build_switch_string.cry");
+				break;
+			case OpCodes.CALL_FUNCTION:
+				Core.EmitComment("CALL_FUNCTION");
+				@import("Ops/call_function.cry");
+				break;
+			case OpCodes.CALL_LIB_FUNCTION:
+				Core.EmitComment("CALL_LIB_FUNCTION");
+				@import("Ops/call_lib_function.cry");
+				break;
+			case OpCodes.CLASS_DEFINITION:
+				Core.EmitComment("CLASS_DEFINITION");
+				@import("Ops/class_definition.cry");
+				break;
+			case OpCodes.COMMAND_LINE_ARGS:
+				Core.EmitComment("COMMAND_LINE_ARGS");
+				@import("Ops/command_line_args.cry");
+				break;
+			case OpCodes.CONTINUE:
+				Core.EmitComment("CONTINUE");
+				@import("Ops/continue.cry");
+				break;
+			case OpCodes.CORE_FUNCTION:
+				Core.EmitComment("CORE_FUNCTION");
+				@import("Ops/core_function.cry");
+				break;
+			case OpCodes.DEF_DICTIONARY:
+				Core.EmitComment("DEF_DICT");
+				@import("Ops/def_dictionary.cry");
+				break;
+			case OpCodes.DEF_LIST:
+				Core.EmitComment("DEF_LIST");
+				@import("Ops/def_list.cry");
+				break;
+			case OpCodes.DEF_ORIGINAL_CODE:
+				Core.EmitComment("DEF_ORIGINAL_CODE");
+				@import("Ops/def_original_code.cry");
+				break;
+			case OpCodes.DEREF_DOT:
+				Core.EmitComment("DEREF_DOT");
+				@import("Ops/deref_dot.cry");
+				break;
+			case OpCodes.DEREF_INSTANCE_FIELD:
+				Core.EmitComment("DEREF_INSTANCE_FIELD");
+				@import("Ops/deref_instance_field.cry");
+				break;
+			case OpCodes.DEREF_STATIC_FIELD:
+				Core.EmitComment("DEREF_STATIC_FIELD");
+				@import("Ops/deref_static_field.cry");
+				break;
+			case OpCodes.DUPLICATE_STACK_TOP:
+				Core.EmitComment("DUPLICATE_STACK_TOP");
+				@import("Ops/duplicate_stack_top.cry");
+				break;
+			case OpCodes.EQUALS:
+				Core.EmitComment("EQUALS");
+				@import("Ops/equals.cry");
+				break;
+			case OpCodes.ESF_LOOKUP:
+				Core.EmitComment("ESF_LOOKUP");
+				@import("Ops/esf_lookup.cry");
+				break;
+			case OpCodes.EXCEPTION_HANDLED_TOGGLE:
+				Core.EmitComment("EXCEPTION_HANDLED_TOGGLE");
+				@import("Ops/exception_handled_toggle.cry");
+				break;
+			case OpCodes.FINALIZE_INITIALIZATION:
+				Core.EmitComment("FINALIZE_INITIALIZATION");
+				@import("Ops/finalize_initialization.cry");
+				break;
+			case OpCodes.FINALLY_END:
+				Core.EmitComment("FINALLY_END");
+				@import("Ops/finally_end.cry");
+				break;
+			case OpCodes.FUNCTION_DEFINITION:
+				Core.EmitComment("FUNCTION_DEFINITION");
+				@import("Ops/function_definition.cry");
+				break;
+			case OpCodes.INDEX:
+				Core.EmitComment("INDEX");
+				@import("Ops/index.cry");
+				break;
+			case OpCodes.IS_COMPARISON:
+				Core.EmitComment("IS_COMPARISON");
+				@import("Ops/is_comparison.cry");
+				break;
+			case OpCodes.ITERATION_STEP:
+				Core.EmitComment("ITERATION_STEP");
+				@import("Ops/iteration_step.cry");
+				break;
+			case OpCodes.JUMP:
+				Core.EmitComment("JUMP");
+				@import("Ops/jump.cry");
+				break;
+			case OpCodes.JUMP_IF_EXCEPTION_OF_TYPE:
+				Core.EmitComment("JUMP_IF_EXCEPTION_OF_TYPE");
+				@import("Ops/jump_if_exception_of_type.cry");
+				break;
+			case OpCodes.JUMP_IF_FALSE:
+				Core.EmitComment("JUMP_IF_FALSE");
+				@import("Ops/jump_if_false.cry");
+				break;
+			case OpCodes.JUMP_IF_FALSE_NO_POP:
+				Core.EmitComment("JUMP_IF_FALSE_NON_POP");
+				@import("Ops/jump_if_false_no_pop.cry");
+				break;
+			case OpCodes.JUMP_IF_TRUE:
+				Core.EmitComment("JUMP_IF_TRUE");
+				@import("Ops/jump_if_true.cry");
+				break;
+			case OpCodes.JUMP_IF_TRUE_NO_POP:
+				Core.EmitComment("JUMP_IF_TRUE_NO_POP");
+				@import("Ops/jump_if_true_no_pop.cry");
+				break;
+			case OpCodes.LIST_SLICE:
+				Core.EmitComment("LIST_SLICE");
+				@import("Ops/list_slice.cry");
+				break;
+			case OpCodes.LITERAL:
+				Core.EmitComment("LITERAL");
+				@import("Ops/literal.cry");
+				break;
+			case OpCodes.LITERAL_STREAM:
+				Core.EmitComment("LITERAL_STREAM");
+				@import("Ops/literal_stream.cry");
+				break;
+			case OpCodes.LOCAL:
+				Core.EmitComment("LOCAL");
+				@import("Ops/local.cry");
+				break;
+			case OpCodes.NEGATIVE_SIGN:
+				Core.EmitComment("NEGATIVE_SIGN");
+				@import("Ops/negative_sign.cry");
+				break;
+			case OpCodes.POP:
+				Core.EmitComment("POP");
+				@import("Ops/pop.cry");
+				break;
+			case OpCodes.POP_IF_NULL_OR_JUMP:
+				Core.EmitComment("POP_IF_NULL_OR_JUMP");
+				@import("Ops/pop_if_null_or_jump.cry");
+				break;
+			case OpCodes.PUSH_FUNC_REF:
+				Core.EmitComment("PUSH_FUNC_REF");
+				@import("Ops/push_func_ref.cry");
+				break;
+			case OpCodes.RETURN:
+				Core.EmitComment("RETURN");
+				@import("Ops/return.cry");
+				break;
+			case OpCodes.STACK_INSERTION_FOR_INCREMENT:
+				Core.EmitComment("STACK_INSERTION_FOR_INCREMENT");
+				@import("Ops/stack_insertion_for_increment.cry");
+				break;
+			case OpCodes.STACK_SWAP_POP:
+				Core.EmitComment("STACK_SWAP_POP");
+				@import("Ops/stack_swap_pop.cry");
+				break;
+			case OpCodes.SWITCH_INT:
+				Core.EmitComment("SWITCH_INT");
+				@import("Ops/switch_int.cry");
+				break;
+			case OpCodes.SWITCH_STRING:
+				Core.EmitComment("SWITCH_STRING");
+				@import("Ops/switch_string.cry");
+				break;
+			case OpCodes.THIS:
+				Core.EmitComment("THIS");
+				@import("Ops/this.cry");
+				break;
+			case OpCodes.THROW:
+				Core.EmitComment("THROW");
+				@import("Ops/throw.cry");
+				break;
+			case OpCodes.TOKEN_DATA:
+				Core.EmitComment("TOKEN_DATA");
+				@import("Ops/token_data.cry");
+				break;
+			case OpCodes.USER_CODE_START:
+				Core.EmitComment("USER_CODE_START");
+				@import("Ops/user_code_start.cry");
+				break;
+			case OpCodes.VALUE_STACK_DEPTH:
+				Core.EmitComment("VALUE_STACK_DEPTH");
+				@import("Ops/value_stack_depth.cry");
+				break;
+			case OpCodes.VERIFY_TYPE_IS_ITERABLE:
+				Core.EmitComment("VERIFY_TYPE_IS_ITERABLE");
+				@import("Ops/verify_type_is_iterable.cry");
+				break;
+			default:
+				Core.EmitComment("THIS SHOULD NEVER HAPPEN");
+				return Core.GenerateException(CoreExceptionTypes.FATAL, ("Bad op code: " + Core.IntToString(ops[pc])));
+		}
+		if (Core.HasIncrement()) {
+			++pc;
+		} else {
+			pc += 1;
+		}
+	}
+}
+
+int canonicalizeListSliceArgs(Array<int> outParams, Value beginValue, Value endValue, int beginIndex, int endIndex, int stepAmount, int length, bool isForward) {
+	if (beginValue == null) {
+		if (isForward) {
+			beginIndex = 0;
+		} else {
+			beginIndex = length - 1;
+		}
+	}
+	if (endValue == null) {
+		if (isForward) {
+			endIndex = length;
+		} else {
+			endIndex = -1 - length;
+		}
+	}
+	if (beginIndex < 0) {
+		beginIndex += length;
+	}
+	if (endIndex < 0) {
+		endIndex += length;
+	}
+	if ((beginIndex == 0) && (endIndex == length) && (stepAmount == 1)) {
+		return 2;
+	}
+	if (isForward) {
+		if (beginIndex >= length) {
+			return 0;
+		}
+		if (beginIndex < 0) {
+			return 3;
+		}
+		if (endIndex < beginIndex) {
+			return 4;
+		}
+		if (beginIndex == endIndex) {
+			return 0;
+		}
+		if (endIndex > length) {
+			endIndex = length;
+		}
+	} else {
+		if (beginIndex < 0) {
+			return 0;
+		}
+		if (beginIndex >= length) {
+			return 3;
+		}
+		if (endIndex > beginIndex) {
+			return 4;
+		}
+		if (beginIndex == endIndex) {
+			return 0;
+		}
+		if (endIndex < -1) {
+			endIndex = -1;
+		}
+	}
+	outParams[0] = beginIndex;
+	outParams[1] = endIndex;
+	return 1;
+}
+
+List<Token> generateTokenListFromPcs(List<int> pcs) {
+	List<Token> output = new List<Token>();
+	ProgramData p = Core.ProgramData();
+	Array<List<Token>> tokensByPc = p.tokenData;
+	Token token = null;
+	int i = 0;
+	while (i < pcs.Length) {
+		List<Token> localTokens = tokensByPc[pcs[i]];
+		if (localTokens == null) {
+			if (output.Length > 0) {
+				output.Add(null);
+			}
+		} else {
+			token = localTokens[0];
+			if (@ext_constant("IS_RELEASE")) {
+				if ((output.Length > 0) || (token != null) && !tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
+					output.Add(token);
+				}
+			} else {
+				output.Add(token);
+			}
+		}
+		i += 1;
+	}
+	if (@ext_constant("IS_RELEASE")) {
+		int length = output.Length;
+		while (length > 0) {
+			token = output[(length - 1)];
+			if ((token != null) && tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
+				output.Pop();
+				length -= 1;
+			} else {
+				length = -1;
+			}
+		}
+	}
+	return output;
+}
+
+List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
+	ProgramData p = Core.ProgramData();
+	List<Token> tokens = generateTokenListFromPcs(pcs);
+	Array<string> files = p.sourceCode;
+	List<string> output = new List<string>();
+	for (int i = 0; i < tokens.Length; i += 1) {
+		Token token = tokens[i];
+		if (token == null) {
+			output.Add("[No stack information]");
+		} else {
+			int line = token.lineIndex;
+			int col = token.colIndex;
+			string fileData = files[token.fileId];
+			Array<string> lines = fileData.Split("\n");
+			string filename = lines[0];
+			string linevalue = lines[(line + 1)];
+			output.Add(Core.StringConcatAll(filename, ", Line: ", Core.IntToString((line + 1)), ", Col: ", Core.IntToString((col + 1))));
+		}
+	}
+	return output;
+}
+
+string tokenHelperGetFormattedPointerToToken(Token token) {
+	string line = tokenHelperGetFileLine(token.fileId, token.lineIndex + 1);
+	if (line == null) {
+		return null;
+	}
+	int columnIndex = token.colIndex;
+	int lineLength = line.Length;
+	line = line.TrimStart();
+	line = line.Replace("\t", " ");
+	int offset = lineLength - line.Length;
+	columnIndex -= offset;
+	string line2 = "";
+	while (columnIndex > 0) {
+		columnIndex -= 1;
+		line2 = Core.StringConcatAll(line2, " ");
+	}
+	line2 = Core.StringConcatAll(line2, "^");
+	return Core.StringConcatAll(line, "\n", line2);
+}
+
+string tokenHelperGetFileLine(int fileId, int lineNum) {
+	ProgramData p = Core.ProgramData();
+	string sourceCode = p.sourceCode[fileId];
+	if (sourceCode == null) {
+		return null;
+	}
+	return sourceCode.Split("\n")[lineNum];
+}
+
+bool tokenHelplerIsFilePathLibrary(int fileId, Array<string> allFiles) {
+	string filename = tokenHelperGetFileLine(fileId, 0);
+	return !filename.ToLower().EndsWith(".cry");
+}
+
+int prepareToSuspend(ExecutionContext ec, StackFrame stack, int valueStackSize, int currentPc) {
+	ec.stackTop = stack;
+	ec.currentValueStackSize = valueStackSize;
+	stack.pc = currentPc + 1;
+	return 0;
+}
+
+int valueStackIncreaseCapacity(ExecutionContext ec) {
+	Array<Value> stack = ec.valueStack;
+	int oldCapacity = stack.Length;
+	int newCapacity = oldCapacity * 2;
+	Array<Value> newStack = new Array<Value>(newCapacity);
+	for (int i = oldCapacity - 1; i >= 0; i -= 1) {
+		newStack[i] = stack[i];
+	}
+	ec.valueStack = newStack;
+	return 0;
+}
+
+string unrollExceptionOutput(Value exceptionInstance) {
+	ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
+	ProgramData p = Core.ProgramData();
+	ClassInfo classInfo = p.classTable[objInstance.classId];
+	List<int> pcs = ((List<int>) objInstance.nativeData[1]);
+	string codeFormattedPointer = "";
+	string exceptionName = classInfo.fullyQualifiedName;
+	string message = valueToString(objInstance.members[1]);
+	List<string> trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
+	trace.Pop();
+	trace.Add("Stack Trace:");
+	trace.Reverse();
+	List<Token> tokensAtPc = p.tokenData[pcs[0]];
+	if (tokensAtPc != null) {
+		codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(tokensAtPc[0]));
+	}
+	string stackTrace = trace.Join(trace);
+	return Core.StringConcatAll(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
+}
+
+bool isPcFromCore(int pc) {
+	ProgramData p = Core.ProgramData();
+	List<Token> tokens = p.tokenData[pc];
+	if (tokens == null) {
+		return false;
+	}
+	Token token = tokens[0];
+	string filename = tokenHelperGetFileLine(token.fileId, 0);
+	return Core.StringEquals("[Core]", filename);
+}
+

@@ -1,0 +1,7 @@
+﻿@import("ValueStackCapacityCheck.cry");
+if (Core.HasIncrement()) {
+	valueStack[valueStackSize++] = literalTable[row[0]];
+} else {
+	valueStack[valueStackSize] = literalTable[row[0]];
+	valueStackSize += 1;
+}

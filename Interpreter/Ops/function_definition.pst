@@ -1,0 +1,2 @@
+﻿pc += initializeFunction(p, row, pc, stringArgs[pc]);
+functionTable = p.functionTable;

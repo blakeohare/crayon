@@ -1,0 +1,15 @@
+﻿bool1 = true;
+if (classInfo.staticInitializationState < 2) {
+	stack.pc = pc;
+	stackFrame2 = maybeInvokeStaticConstructor(p, ec, stack, classInfo, valueStackSize, intOutParam);
+	if (intOutParam[0] == 1) {
+		return Core.GenerateException(CoreExceptionTypes.FATAL, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+	}
+	if (stackFrame2 != null) {
+		bool1 = false;
+		stack = stackFrame2;
+		pc = stack.pc;
+		localsStackSetToken = stack.localsStackSetToken;
+		localsStackOffset = stack.localsStackOffset;
+	}
+}

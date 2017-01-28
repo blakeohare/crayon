@@ -1,0 +1,13 @@
+﻿len = ops.Length;
+intArray1 = new Array<int>(len);
+int1 = 0;
+int2 = row.Length;
+int3 = 0;
+for (i = 0; i < len; i += 1) {
+	if ((int1 < int2) && (i == row[int1])) {
+		int3 += row[(int1 + 1)];
+		int1 += 2;
+	}
+	intArray1[i] = int3;
+}
+p.valueStackDepthByPc = intArray1;

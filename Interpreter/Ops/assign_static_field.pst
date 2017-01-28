@@ -1,0 +1,6 @@
+﻿classInfo = classTable[row[0]];
+@import("InvokeStaticConstructor.cry");
+if (bool1) {
+	valueStackSize -= 1;
+	classInfo.staticFields[row[1]] = valueStack[valueStackSize];
+}

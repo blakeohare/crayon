@@ -1,0 +1,11 @@
+﻿tokensByPc = p.tokenData;
+i = row[0] + p.userCodeStart;
+int1 = row[1];
+int2 = row[2];
+int3 = row[3];
+tokens = tokensByPc[i];
+if (tokens == null) {
+	tokens = new List<Token>();
+	tokensByPc[i] = tokens;
+}
+tokens.Add(new Token(int1, int2, int3));

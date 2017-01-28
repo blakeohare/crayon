@@ -1,0 +1,4 @@
+﻿if (argCount > 0) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary clone method", 0, argCount));
+}
+output = new Value(Types.DICTIONARY, cloneDictionary(dictImpl, null));

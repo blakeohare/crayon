@@ -1,0 +1,4 @@
+﻿if (argCount > 0) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list reverse method", 0, argCount));
+}
+list1.Reverse();

@@ -1,0 +1,8 @@
+﻿int1 = localsStackOffset + row[0];
+if (localsStackSet[int1] == localsStackSetToken) {
+	@import("ValueStackCapacityCheck.cry");
+	valueStack[valueStackSize] = localsStack[int1];
+	valueStackSize += 1;
+} else {
+	return Core.GenerateException(CoreExceptionTypes.UNASSIGNED_VARIABLE, "Variable used before it was set.");
+}

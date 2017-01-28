@@ -1,0 +1,8 @@
+﻿if (argCount > 0) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
+}
+if (dictImpl.keyType == Types.STRING) {
+	output = new Value(Types.LIST, Core.CastToList<Value>(dictImpl.valueStringLookup.Values()));
+} else {
+	output = new Value(Types.LIST, Core.CastToList<Value>(dictImpl.valueIntLookup.Values()));
+}

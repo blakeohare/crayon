@@ -1,0 +1,6 @@
+﻿if (Core.HasIncrement()) {
+	arg1 = valueStack[--valueStackSize];
+} else {
+	valueStackSize -= 1;
+	arg1 = valueStack[valueStackSize];
+}

@@ -1,0 +1,14 @@
+﻿if (argCount == 1) {
+	funcArgs[1] = funcArgs[0];
+} else {
+	if (argCount == 0) {
+		funcArgs[1] = VALUE_NULL;
+	} else {
+		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
+	}
+}
+funcArgs[0] = value;
+argCount = 2;
+primitiveMethodToCoreLibraryFallback = true;
+functionId = p.primitiveMethodFunctionIdFallbackLookup[3];
+output = null;

@@ -1,0 +1,14 @@
+﻿if (argCount != 1) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string split method", 1, argCount));
+}
+value2 = funcArgs[0];
+if (value2.type != Types.STRING) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "string split method requires another string as input.");
+}
+stringList = string1.Split(((string) value2.internalValue));
+list1 = new List<Value>();
+len = stringList.Length;
+for (i = 0; i < len; i += 1) {
+	list1.Add(buildString(stringList[i]));
+}
+output = new Value(Types.LIST, list1);

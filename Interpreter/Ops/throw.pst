@@ -1,0 +1,20 @@
+﻿valueStackSize -= 1;
+value = valueStack[valueStackSize];
+bool2 = value.type == Types.INSTANCE;
+if (bool2) {
+	objInstance1 = ((ObjectInstance) value.internalValue);
+	if (!isClassASubclassOf(objInstance1.classId, magicNumbers.coreExceptionClassId)) {
+		bool2 = false;
+	}
+}
+if (!bool2) {
+	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Thrown value is not an exception.");
+}
+objArray1 = objInstance1.nativeData;
+intList1 = new List<int>();
+objArray1[1] = intList1;
+if (!isPcFromCore(pc)) {
+	intList1.Add(pc);
+}
+ec.activeException = value;
+@import("BubbleException.cry");

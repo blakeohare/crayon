@@ -1,0 +1,30 @@
+﻿ec.activeExceptionHandled = false;
+stack.pc = pc;
+intArray1 = esfData[pc];
+value = ec.activeException;
+objInstance1 = ((ObjectInstance) value.internalValue);
+objArray1 = objInstance1.nativeData;
+bool1 = ((bool) objArray1[0]);
+intList1 = ((List<int>) objArray1[1]);
+while ((stack != null) && (intArray1 == null) || bool1) {
+	stack = stack.previous;
+	if (stack != null) {
+		pc = stack.pc;
+		intList1.Add(pc);
+		intArray1 = esfData[pc];
+	}
+}
+if (stack == null) {
+	return uncaughtExceptionResult(value);
+}
+int1 = intArray1[0];
+if (int1 < pc) {
+	int1 = intArray1[1];
+}
+pc = int1 - 1;
+stack.pc = pc;
+localsStackOffset = stack.localsStackOffset;
+localsStackSetToken = stack.localsStackSetToken;
+ec.stackTop = stack;
+stack.postFinallyBehavior = PostFinallyBehavior.NOTHING;
+ec.currentValueStackSize = valueStackSize;

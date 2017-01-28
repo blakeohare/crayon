@@ -1,0 +1,3 @@
+﻿@import("ValueStackCapacityCheck.cry");
+valueStack[valueStackSize] = stack.objectContext;
+valueStackSize += 1;

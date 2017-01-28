@@ -1,0 +1,4 @@
+﻿value2 = stack.objectContext;
+objInstance2 = ((ObjectInstance) value2.internalValue);
+valueStackSize -= 1;
+objInstance2.members[row[0]] = valueStack[valueStackSize];
