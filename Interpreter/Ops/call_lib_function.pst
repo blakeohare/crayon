@@ -1,1 +1,7 @@
-﻿TODO: translate Ops/call_lib_function.cry
+﻿output = VALUE_NULL;
+@import("Ops/call_lib_function_impl.cry");
+if (row[2] == 1) {
+	@import("ValueStackCapacityCheck.cry");
+	valueStack[valueStackSize] = output;
+	valueStackSize += 1;
+}

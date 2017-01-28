@@ -71,7 +71,7 @@ namespace Crayon
                     path = path.Replace('.', '/');
                     path = path + ".cry"; // put it back
 
-                    if (path.Contains("call_lib_function")) // This is the one with the dynamically generated switch statement using %%% that's syntactically incorrect.
+                    if (path.Contains("call_lib_function_impl")) // This is the one with the dynamically generated switch statement using %%% that's syntactically incorrect.
                     {
                         continue;
                     }

@@ -204,7 +204,7 @@ namespace Crayon
             return this.supplementalFiles;
         }
 
-        public string GetTranslationCode(string functionName)
+        public string GetTranslationCode(string functionName, bool isPastel)
         {
             string prefix = "lib_" + this.Name.ToLower() + "_";
             if (!functionName.StartsWith(prefix))
@@ -217,7 +217,8 @@ namespace Crayon
                 throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
             }
 
-            return "  import inline 'LIB:" + this.Name + ":native/" + this.filepathsByFunctionName[shortName] + "';\n";
+            string dir = isPastel ? "native" : "native_pastel";
+            return "  import inline 'LIB:" + this.Name + ":" + dir + "/" + this.filepathsByFunctionName[shortName] + "';\n";
         }
 
         Dictionary<string, string> translations = null;

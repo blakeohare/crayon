@@ -34,9 +34,8 @@
 */
 
 output = VALUE_NULL;
-switch ($_array_get(row, 0)) {
-	%%%LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT%%%
-}
+
+import inline 'Ops/call_lib_function_impl.cry';
 
 if ($_array_get(row, 2) == 1) { // output used?
 	import inline "ValueStackCapacityCheck.cry";

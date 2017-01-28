@@ -1,0 +1,4 @@
+﻿
+switch ($_array_get(row, 0)) {
+	%%%LIBRARY_FUNCTION_BIG_SWITCH_STATEMENT%%%
+}

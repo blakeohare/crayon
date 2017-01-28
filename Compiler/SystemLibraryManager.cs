@@ -20,12 +20,20 @@ namespace Crayon
 
 		public string GetLibrarySwitchStatement(AbstractPlatform platform)
 		{
+            bool isPastel = platform.PlatformId == PlatformId.PASTEL_VM;
 			List<string> output = new List<string>();
 			foreach (string name in this.orderedListOfFunctionNames)
 			{
 				output.Add("case " + this.libFunctionIds[name] + ":\n");
-				output.Add("$_comment('" + name + "');");
-				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name));
+                if (isPastel)
+                {
+                    output.Add("Core.EmitComment(\"" + name + "\");");
+                }
+                else
+                {
+                    output.Add("$_comment('" + name + "');");
+                }
+				output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name, isPastel));
 				output.Add("\nbreak;\n");
 			}
 			if (this.orderedListOfFunctionNames.Count == 0)
