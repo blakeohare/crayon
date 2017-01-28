@@ -5,6 +5,12 @@ namespace Crayon.ParseTree
 {
     internal class SystemFunctionCall : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.HACK_CoreLibraryReference = parser.SystemLibraryManager.GetLibraryFromKey("core");
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
         public string Name { get; private set; }
         public Expression[] Args { get; private set; }
@@ -41,7 +47,7 @@ namespace Crayon.ParseTree
 
             if (this.Name == "$_has_increment")
             {
-				bool hasIncrement = parser.NullablePlatform.SupportsIncrement;
+                bool hasIncrement = parser.NullablePlatform.SupportsIncrement;
                 return new BooleanConstant(this.FirstToken, hasIncrement, this.FunctionOrClassOwner);
             }
 

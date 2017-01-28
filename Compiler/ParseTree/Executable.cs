@@ -71,5 +71,24 @@ namespace Crayon.ParseTree
         { }
         
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
+
+        internal virtual IList<Executable> PastelResolveComposite(Parser parser)
+        {
+            return Listify(this.PastelResolve(parser));
+        }
+
+        internal abstract Executable PastelResolve(Parser parser);
+
+        internal static Executable[] PastelResolveExecutables(Parser parser, IList<Executable> code)
+        {
+            if (code == null) return null;
+            List<Executable> output = new List<Executable>();
+            foreach (Executable line in code)
+            {
+                output.AddRange(line.PastelResolveComposite(parser));
+            }
+            return output.ToArray();
+        }
+
     }
 }

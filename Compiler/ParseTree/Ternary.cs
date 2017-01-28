@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class Ternary : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Condition { get; private set; }

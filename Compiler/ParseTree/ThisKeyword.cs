@@ -4,6 +4,11 @@ namespace Crayon.ParseTree
 {
     internal class ThisKeyword : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public ThisKeyword(Token token, Executable owner)

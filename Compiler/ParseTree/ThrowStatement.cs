@@ -36,5 +36,10 @@ namespace Crayon.ParseTree
         {
             this.Expression.PerformLocalIdAllocation(varIds, phase);
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class ClassReferenceLiteral : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public ClassDefinition ClassDefinition { get; set; }
 
         public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, Executable owner)

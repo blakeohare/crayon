@@ -4,6 +4,11 @@ namespace Crayon.ParseTree
 {
     internal class BooleanConstant : Expression, IConstantValue
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public bool Value { get; private set; }

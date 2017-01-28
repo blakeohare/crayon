@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
@@ -23,5 +24,10 @@ namespace Crayon.ParseTree
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
         internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            return this;
+        }
     }
 }

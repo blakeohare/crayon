@@ -4,6 +4,11 @@ namespace Crayon.ParseTree
 {
     internal class NullConstant : Expression, IConstantValue
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public NullConstant(Token token, Executable owner)

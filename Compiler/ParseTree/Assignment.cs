@@ -88,5 +88,12 @@ namespace Crayon.ParseTree
             this.Target.GetAllVariablesReferenced(vars);
             this.Value.GetAllVariablesReferenced(vars);
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            this.Target = this.Target.PastelResolve(parser);
+            this.Value = this.Value.PastelResolve(parser);
+            return this;
+        }
     }
 }

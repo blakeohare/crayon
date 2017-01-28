@@ -4,6 +4,12 @@ namespace Crayon.ParseTree
 {
     internal class ConstStatement : Executable
     {
+        internal override Executable PastelResolve(Parser parser)
+        {
+            this.Expression = this.Expression.PastelResolve(parser);
+            return this;
+        }
+
         public Expression Expression { get; private set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }

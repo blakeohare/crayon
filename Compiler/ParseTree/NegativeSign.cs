@@ -5,6 +5,12 @@ namespace Crayon.ParseTree
 {
     internal class NegativeSign : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.Root = this.Root.Resolve(parser);
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Root { get; private set; }

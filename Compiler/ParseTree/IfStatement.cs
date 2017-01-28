@@ -115,5 +115,13 @@ namespace Crayon.ParseTree
                 }
             }
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            this.Condition = this.Condition.PastelResolve(parser);
+            this.TrueCode = Executable.PastelResolveExecutables(parser, this.TrueCode);
+            this.FalseCode = Executable.PastelResolveExecutables(parser, this.FalseCode);
+            return this;
+        }
     }
 }

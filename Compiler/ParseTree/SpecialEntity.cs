@@ -7,6 +7,11 @@ namespace Crayon.ParseTree
 {
     internal abstract class SpecialEntity : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public SpecialEntity(Token firstToken, Executable owner) : base(firstToken, owner)
         { }
 

@@ -6,6 +6,15 @@ namespace Crayon.ParseTree
 {
     internal class Instantiate : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].PastelResolve(parser);
+            }
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Token NameToken { get; private set; }

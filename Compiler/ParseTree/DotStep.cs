@@ -6,6 +6,35 @@ namespace Crayon.ParseTree
 {
     internal class DotStep : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            Variable root = this.Root as Variable;
+            if (root != null)
+            {
+                string[] name = root.Name.Split('$');
+                if (name.Length == 2)
+                {
+                    root = new Variable(root.FirstToken, name[1], root.FunctionOrClassOwner);
+                    this.Root = root;
+                }
+                else if (name.Length == 1)
+                {
+                    // this is an enum, probably
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            this.Root = this.Root.PastelResolve(parser);
+            return this;
+        }
+
         public override bool CanAssignTo { get { return true; } }
 
         public Expression Root { get; set; }

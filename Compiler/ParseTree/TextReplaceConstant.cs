@@ -12,6 +12,11 @@ namespace Crayon.ParseTree
      */
     class TextReplaceConstant : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            return this;
+        }
+
         public Token NameToken { get; set; }
         public string Name { get { return this.NameToken.Value; } }
 

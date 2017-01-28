@@ -34,5 +34,6 @@ namespace Crayon.ParseTree
         }
 
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
+        internal abstract Expression PastelResolve(Parser parser);
     }
 }

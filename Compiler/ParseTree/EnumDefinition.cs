@@ -111,5 +111,14 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            for (int i = 0; i < this.Values.Length; ++i)
+            {
+                this.Values[i] = this.Values[i] == null ? null : this.Values[i].PastelResolve(parser);
+            }
+            return this;
+        }
     }
 }

@@ -92,7 +92,7 @@ namespace Crayon.Translator
         protected abstract void TranslateStructInstance(List<string> output, StructInstance structInstance);
         protected abstract void TranslateVariable(List<string> output, Variable expr);
 
-        protected void TranslateBinaryOpChain(List<string> output, BinaryOpChain binaryOp)
+        protected void TranslateBinaryOpChain(List<string> output, BinaryOpChain binaryOp, bool wrapInParens)
         {
             // TODO: something about the parenthesis epidemic
             switch (binaryOp.Op.Value)
@@ -112,7 +112,7 @@ namespace Crayon.Translator
                 case "&":
                 case "|":
                 case "^":
-                    this.TranslateDefaultBinaryOp(output, binaryOp);
+                    this.TranslateDefaultBinaryOp(output, binaryOp, wrapInParens);
                     break;
 
                 case "**":
@@ -126,15 +126,15 @@ namespace Crayon.Translator
             }
         }
 
-        private void TranslateDefaultBinaryOp(List<string> output, BinaryOpChain binOp)
+        private void TranslateDefaultBinaryOp(List<string> output, BinaryOpChain binOp, bool wrapInParens)
         {
-            output.Add("(");
+            if (wrapInParens) output.Add("(");
             this.TranslateExpression(output, binOp.Left);
             output.Add(" ");
             this.TranslateBinaryOpSyntax(output, binOp.Op.Value);
             output.Add(" ");
             this.TranslateExpression(output, binOp.Right);
-            output.Add(")");
+            if (wrapInParens) output.Add(")");
         }
 
         protected virtual void TranslateBinaryOpSyntax(List<string> output, string tokenValue)
@@ -210,17 +210,23 @@ namespace Crayon.Translator
             else if (exec is SwitchStatementContinuousSafe) this.TranslateSwitchStatementContinuousSafe(output, (SwitchStatementContinuousSafe)exec);
             else if (exec is SwitchStatementUnsafeBlotchy) this.TranslateSwitchStatementUnsafeBlotchy(output, (SwitchStatementUnsafeBlotchy)exec);
 
-            // The following 3 are only encountered in Pastel. Other platforms optimize this out.
+            // The following 4 are only encountered in Pastel. Other platforms optimize this out.
             else if (exec is StructDefinition) this.TranslateStructDefinition(output, (StructDefinition)exec);
             else if (exec is EnumDefinition) this.TranslateEnumDefinition(output, (EnumDefinition)exec);
             else if (exec is ConstStatement) this.TranslateConstStatement(output, (ConstStatement)exec);
+            else if (exec is ImportInlineStatement) this.TranslateImportInlineStatement(output, (ImportInlineStatement)exec);
 
             else throw new Exception("Executable type not handled: " + exec.GetType());
         }
 
         public void TranslateExpression(List<string> output, Expression expr)
         {
-            if (expr is BinaryOpChain) this.TranslateBinaryOpChain(output, (BinaryOpChain)expr);
+            this.TranslateExpression(output, expr, true);
+        }
+
+        public void TranslateExpression(List<string> output, Expression expr, bool wrapInParens)
+        {
+            if (expr is BinaryOpChain) this.TranslateBinaryOpChain(output, (BinaryOpChain)expr, wrapInParens);
             else if (expr is Variable)
             {
                 if (((Variable)expr).Name.Contains("$"))
@@ -247,11 +253,22 @@ namespace Crayon.Translator
             else if (expr is ListDefinition) ((Crayon.Translator.Python.PythonTranslator)this).TranslateListDefinition(output, (ListDefinition)expr); // this is used by Python switch code
 
             else if (expr is TextReplaceConstant) this.TranslateTextReplaceConstant(output, (TextReplaceConstant)expr);
+            else if (expr is Instantiate) this.TranslateInstantiate(output, (Instantiate)expr);
 
             else throw new Exception("Expression type not handled: " + expr.GetType());
         }
 
+        protected virtual void TranslateImportInlineStatement(List<string> output, ImportInlineStatement importInline)
+        {
+            throw new NotImplementedException();
+        }
+
         protected virtual void TranslateConstStatement(List<string> output, ConstStatement constStatement)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void TranslateInstantiate(List<string> output, Instantiate instantiate)
         {
             throw new NotImplementedException();
         }

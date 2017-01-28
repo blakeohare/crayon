@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class DotStepStruct : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return true; } }
 
         public Token DotToken { get; private set; }

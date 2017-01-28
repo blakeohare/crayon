@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class SystemFunctionReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public SystemFunctionReference(Token token, Executable owner)

@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class FunctionReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public FunctionDefinition FunctionDefinition { get; set; }

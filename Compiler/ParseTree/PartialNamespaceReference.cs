@@ -8,6 +8,11 @@ namespace Crayon.ParseTree
     // Otherwise, throw an error during the Resolve phase.
     internal class PartialNamespaceReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public string Name { get; set; }

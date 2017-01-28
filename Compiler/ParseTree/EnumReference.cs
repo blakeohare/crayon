@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class EnumReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public EnumDefinition EnumDefinition { get; set; }
 
         public EnumReference(Token token, EnumDefinition enumDefinition, Executable owner)

@@ -397,5 +397,10 @@ namespace Crayon.ParseTree
             }
             return false;
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

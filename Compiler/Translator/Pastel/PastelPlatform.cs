@@ -40,11 +40,15 @@ namespace Crayon.Translator.Pastel
             foreach (string vmFile in finalCode.Keys)
             {
                 List<string> text = new List<string>();
-                output[vmFile] = new FileOutput()
+                output[vmFile + ".pst"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = this.Translator.Translate(finalCode[vmFile])
                 };
+                if (vmFile == "ValueUtil")
+                {
+                    break;
+                }
             }
 
             return output;

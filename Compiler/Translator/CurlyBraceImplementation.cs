@@ -50,7 +50,7 @@ namespace Crayon.Translator
                     else
                     {
                         output.Add("case ");
-                        TranslateExpression(output, caseExpr);
+                        TranslateExpression(output, caseExpr, false);
                         output.Add(":" + this.NL);
                     }
 
@@ -74,23 +74,21 @@ namespace Crayon.Translator
 
         protected override void TranslateNegativeSign(List<string> output, NegativeSign negativeSign)
         {
-            output.Add("-(");
-            this.TranslateExpression(output, negativeSign.Root);
-            output.Add(")");
+            output.Add("-");
+            this.TranslateExpression(output, negativeSign.Root, negativeSign.Root is BinaryOpChain);
         }
 
         protected override void TranslateBooleanNot(List<string> output, BooleanNot booleanNot)
         {
-            output.Add("!(");
-            this.TranslateExpression(output, booleanNot.Root);
-            output.Add(")");
+            output.Add("!");
+            Expression root = booleanNot.Root;
+            this.TranslateExpression(output, root, root is BinaryOpChain || root is BooleanCombination);
         }
 
         protected override void TranslateBooleanCombination(List<string> output, BooleanCombination booleanCombination)
         {
-            output.Add("(");
-            this.TranslateExpression(output, booleanCombination.Expressions[0]);
-            output.Add(")");
+            Expression first = booleanCombination.Expressions[0];
+            this.TranslateExpression(output, first, first is BinaryOpChain || first is BooleanCombination);
 
             for (int i = 0; i < booleanCombination.Ops.Length; ++i)
             {
@@ -103,9 +101,8 @@ namespace Crayon.Translator
                     output.Add(" || ");
                 }
 
-                output.Add("(");
-                this.TranslateExpression(output, booleanCombination.Expressions[i + 1]);
-                output.Add(")");
+                Expression next = booleanCombination.Expressions[i + 1];
+                this.TranslateExpression(output, next, next is BinaryOpChain || next is BooleanCombination);
             }
         }
 
@@ -135,7 +132,7 @@ namespace Crayon.Translator
         {
             output.Add(this.CurrentTabIndention);
             output.Add("if (");
-            this.TranslateExpression(output, ifStatement.Condition);
+            this.TranslateExpression(output, ifStatement.Condition, false);
             if (isEgyptian)
             {
                 output.Add(") {" + this.NL);
@@ -196,7 +193,7 @@ namespace Crayon.Translator
             output.Add("return ");
             if (returnStatement.Expression != null)
             {
-                TranslateExpression(output, returnStatement.Expression);
+                TranslateExpression(output, returnStatement.Expression, false);
             }
             else
             {
@@ -228,7 +225,7 @@ namespace Crayon.Translator
             for (int i = 0; i < functionCall.Args.Length; ++i)
             {
                 if (i > 0) output.Add(", ");
-                TranslateExpression(output, functionCall.Args[i]);
+                TranslateExpression(output, functionCall.Args[i], false);
             }
             output.Add(")");
         }
@@ -260,7 +257,7 @@ namespace Crayon.Translator
         {
             output.Add(this.CurrentTabIndention);
             output.Add("while (");
-            this.TranslateExpression(output, whileLoop.Condition);
+            this.TranslateExpression(output, whileLoop.Condition, false);
             if (this.isEgyptian)
             {
                 output.Add(") {" + this.NL);
@@ -290,7 +287,7 @@ namespace Crayon.Translator
             this.Translate(output, forLoop.Init);
             output.Add(this.CurrentTabIndention);
             output.Add("while (");
-            this.TranslateExpression(output, forLoop.Condition);
+            this.TranslateExpression(output, forLoop.Condition, false);
             if (this.isEgyptian)
             {
                 output.Add(") {" + this.NL);

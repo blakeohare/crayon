@@ -6,6 +6,26 @@ namespace Crayon.ParseTree
 {
     internal class FunctionCall : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].PastelResolve(parser);
+            }
+
+            Variable fp = this.Root as Variable;
+            if (fp == null)
+            {
+                throw new NotImplementedException();
+            }
+            string name = fp.Name;
+            if (name.StartsWith("$"))
+            {
+                return new SystemFunctionCall(this.FirstToken, this.Args, this.FunctionOrClassOwner).PastelResolve(parser);
+            }
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Root { get; private set; }

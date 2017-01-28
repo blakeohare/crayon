@@ -72,5 +72,10 @@ namespace Crayon.ParseTree
                 this.Code[i].GetAllVariablesReferenced(vars);
             }
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

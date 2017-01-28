@@ -45,5 +45,14 @@ namespace Crayon.ParseTree
         {
             if (this.Expression != null) this.Expression.GetAllVariablesReferenced(vars);
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            if (this.Expression != null)
+            {
+                this.Expression = this.Expression.PastelResolve(parser);
+            }
+            return this;
+        }
     }
 }

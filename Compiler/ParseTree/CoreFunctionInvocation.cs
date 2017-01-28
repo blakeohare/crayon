@@ -5,6 +5,10 @@ namespace Crayon.ParseTree
 {
     internal class CoreFunctionInvocation : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
 
         public Expression[] Args { get; set; }
         public int FunctionId { get; set; }

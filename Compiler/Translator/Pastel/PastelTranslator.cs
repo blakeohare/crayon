@@ -28,14 +28,99 @@ namespace Crayon.Translator.Pastel
             output.Add(this.NL);
         }
 
+        protected override void TranslateDotStep(List<string> output, DotStep dotStep)
+        {
+            if (dotStep.Root is Variable)
+            {
+                this.TranslateExpression(output, dotStep.Root);
+                output.Add(".");
+                output.Add(dotStep.StepToken.Value);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         protected override void TranslateDotStepStruct(List<string> output, DotStepStruct dotStepStruct)
         {
             throw new NotImplementedException();
         }
 
+        protected override void TranslateForLoop(List<string> output, ForLoop forLoop)
+        {
+            if (forLoop.Init.Length != 1 || forLoop.Step.Length != 1)
+            {
+                throw new NotImplementedException();
+            }
+            List<string> outputHack = new List<string>();
+            string hack;
+            output.Add(this.CurrentTabIndention);
+            output.Add("for (");
+            this.Translate(outputHack, forLoop.Init[0]);
+            output.Add(string.Join("", outputHack).Trim().TrimEnd(';'));
+            outputHack.Clear();
+            output.Add("; ");
+            this.TranslateExpression(output, forLoop.Condition, false);
+            output.Add("; ");
+            this.Translate(outputHack, forLoop.Step[0]);
+            output.Add(string.Join("", outputHack).Trim().TrimEnd(';'));
+            outputHack.Clear();
+            output.Add(") {" + this.NL);
+            this.CurrentIndention++;
+            this.Translate(output, forLoop.Code);
+            this.CurrentIndention--;
+            output.Add(this.CurrentTabIndention);
+            output.Add("}" + this.NL);
+        }
+
         protected override void TranslateFunctionDefinition(List<string> output, FunctionDefinition functionDef)
         {
-            throw new NotImplementedException();
+            output.Add(((StringConstant)functionDef.GetAnnotation("type").Args[0]).Value);
+            output.Add(" ");
+            output.Add(functionDef.NameToken.Value);
+            output.Add("(");
+            for (int i = 0; i < functionDef.ArgNames.Length; ++i)
+            {
+                if (i > 0) output.Add(", ");
+                output.Add(((StringConstant)functionDef.ArgAnnotations[i].Args[0]).Value);
+                output.Add(" ");
+                output.Add(functionDef.ArgNames[i].Value);
+            }
+            output.Add(") {");
+            output.Add(this.NL);
+            this.CurrentIndention++;
+            this.Translate(output, functionDef.Code);
+            this.CurrentIndention--;
+            output.Add("}");
+            output.Add(this.NL);
+            output.Add(this.NL);
+        }
+
+        protected override void TranslateImportInlineStatement(List<string> output, ImportInlineStatement importInline)
+        {
+            output.Add(this.CurrentTabIndention);
+            output.Add("@import");
+            if (importInline.LibraryName != null)
+            {
+                output.Add("_lib");
+            }
+            output.Add("(\"");
+            output.Add(importInline.Path);
+            output.Add("\");\n");
+        }
+
+        protected override void TranslateInstantiate(List<string> output, Instantiate instantiate)
+        {
+            output.Add("new ");
+            output.Add(instantiate.Name);
+            output.Add("(");
+            for (int i = 0; i < instantiate.Args.Length; ++i)
+            {
+                if (i > 0) output.Add(", ");
+                this.TranslateExpression(output, instantiate.Args[i]);
+            }
+            output.Add(")");
         }
 
         protected override void TranslateStructInstance(List<string> output, StructInstance structInstance)
@@ -47,14 +132,14 @@ namespace Crayon.Translator.Pastel
         {
             output.Add("struct ");
             output.Add(structDef.Name.Value);
-            output.Add("{\n");
+            output.Add(" {\n");
             for (int i = 0; i < structDef.Fields.Length; ++i)
             {
                 output.Add("\t");
                 output.Add(structDef.TypeStrings[i]);
                 output.Add(" ");
                 output.Add(structDef.Fields[i].Value);
-                output.Add(";");
+                output.Add(";\n");
             }
             output.Add("}\n\n");
         }
@@ -94,9 +179,14 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)
         {
-            output.Add("%%%");
+            output.Add("@ext_constant(\"");
             output.Add(textReplaceConstnat.Name);
-            output.Add("%%%");
+            output.Add("\")");
+        }
+
+        protected override void TranslateVariable(List<string> output, Variable expr)
+        {
+            output.Add(expr.Name);
         }
     }
 }

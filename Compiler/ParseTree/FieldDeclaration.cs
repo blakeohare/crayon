@@ -42,5 +42,10 @@ namespace Crayon.ParseTree
             // Throws if it finds any variable.
             this.DefaultValue.PerformLocalIdAllocation(varIds, phase);
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

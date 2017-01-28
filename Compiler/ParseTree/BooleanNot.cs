@@ -5,6 +5,12 @@ namespace Crayon.ParseTree
 {
     internal class BooleanNot : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.Root = this.Root.PastelResolve(parser);
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Root { get; private set; }

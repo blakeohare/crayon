@@ -6,6 +6,13 @@ namespace Crayon.ParseTree
 {
     internal class BinaryOpChain : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.Left = this.Left.PastelResolve(parser);
+            this.Right = this.Right.PastelResolve(parser);
+            return this;
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Left { get; private set; }

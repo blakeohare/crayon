@@ -30,5 +30,10 @@ namespace Crayon.ParseTree
         {
             return this;
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            return this;
+        }
     }
 }

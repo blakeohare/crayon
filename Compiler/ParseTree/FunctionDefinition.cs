@@ -154,5 +154,11 @@ namespace Crayon.ParseTree
             // be called directly.
             throw new NotImplementedException();
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            this.Code = Executable.PastelResolveExecutables(parser, this.Code);
+            return this;
+        }
     }
 }

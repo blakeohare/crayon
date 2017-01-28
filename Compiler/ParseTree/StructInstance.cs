@@ -6,6 +6,11 @@ namespace Crayon.ParseTree
 {
     internal class StructInstance : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Token NameToken { get; private set; }

@@ -7,6 +7,11 @@ namespace Crayon.ParseTree
 {
     internal class IsComparison : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public Expression Expression { get; set; }
         public Token IsToken { get; set; }
         public Token ClassToken { get; set; }

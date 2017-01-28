@@ -109,5 +109,10 @@ namespace Crayon.ParseTree
         }
 
         public Dictionary<int, Executable[]> CaseCode { get { return this.codeByCondition; } }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

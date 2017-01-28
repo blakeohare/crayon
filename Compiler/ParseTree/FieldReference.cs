@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class FieldReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return true; } }
 
         public FieldDeclaration Field { get; set; }

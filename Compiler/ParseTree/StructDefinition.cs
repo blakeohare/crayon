@@ -60,5 +60,10 @@ namespace Crayon.ParseTree
         {
             throw new InvalidOperationException(); // translate mode only
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            return this;
+        }
     }
 }

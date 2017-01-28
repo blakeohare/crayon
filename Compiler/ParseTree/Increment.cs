@@ -5,6 +5,11 @@ namespace Crayon.ParseTree
 {
     internal class Increment : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public bool IsIncrement { get; private set; }

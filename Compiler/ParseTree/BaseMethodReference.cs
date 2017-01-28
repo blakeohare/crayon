@@ -4,6 +4,11 @@ namespace Crayon.ParseTree
 {
     internal class BaseMethodReference : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override bool CanAssignTo { get { return false; } }
 
         public Token DotToken { get; set; }

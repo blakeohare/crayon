@@ -5,6 +5,15 @@ namespace Crayon.ParseTree
 {
     internal class Variable : Expression
     {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            if (this.Name.StartsWith("$"))
+            {
+                throw new NotImplementedException(); // this system function should have been caught by the function invocation resolver.
+            }
+            return this;
+        }
+
         public override bool CanAssignTo { get { return true; } }
 
         public string Name { get; private set; }

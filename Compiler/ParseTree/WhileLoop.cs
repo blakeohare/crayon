@@ -71,5 +71,12 @@ namespace Crayon.ParseTree
                 ex.GetAllVariablesReferenced(vars);
             }
         }
+
+        internal override Executable PastelResolve(Parser parser)
+        {
+            this.Condition = this.Condition.PastelResolve(parser);
+            this.Code = Executable.PastelResolveExecutables(parser, this.Code);
+            return this;
+        }
     }
 }
