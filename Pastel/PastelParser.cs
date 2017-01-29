@@ -27,17 +27,61 @@ namespace Pastel
                 switch (tokens.PeekValue())
                 {
                     case "enum":
-                        throw new NotImplementedException();
+                        output.Add(this.ParseEnumDefinition(tokens));
+                        break;
+
                     case "const":
                         throw new NotImplementedException();
+
                     case "global":
                         throw new NotImplementedException();
+
                     default:
                         output.Add(this.ParseFunctionDefinition(tokens));
                         break;
                 }
             }
             return output.ToArray();
+        }
+
+        public EnumDefinition ParseEnumDefinition(TokenStream tokens)
+        {
+            Token enumToken = tokens.PopExpected("enum");
+            Token nameToken = EnsureTokenIsValidName(tokens.Pop(), "Invalid name for an enum.");
+            List<Token> valueTokens = new List<Token>();
+            List<Expression> valueExpressions = new List<Expression>();
+            tokens.PopExpected("{");
+            bool first = true;
+            while (!tokens.PopIfPresent("}"))
+            {
+                if (!first)
+                {
+                    tokens.PopExpected(",");
+                }
+                else
+                {
+                    first = false;
+                }
+
+                if (tokens.PopIfPresent("}"))
+                {
+                    break;
+                }
+
+                Token valueToken = EnsureTokenIsValidName(tokens.Pop(), "Invalid name for a enum value.");
+                valueTokens.Add(valueToken);
+                if (tokens.PopIfPresent("="))
+                {
+                    Expression value = ParseExpression(tokens);
+                    valueExpressions.Add(value);
+                }
+                else
+                {
+                    valueExpressions.Add(null);
+                }
+            }
+
+            return new EnumDefinition(enumToken, nameToken, valueTokens, valueExpressions);
         }
 
         public FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
