@@ -1,4 +1,4 @@
-
+w
 $_app_data_root: Core.AppDataRoot()
 $_array_get: [ARG:1][[ARG:2]]
 $_array_join: string.Join([ARG:2], [ARG:1])
@@ -15,7 +15,7 @@ $_dictionary_contains: [ARG:1].Contains([ARG:2])
 $_dot_equals: [ARG:1].Equals([ARG:2])
 $_exception: Core.GenerateException([ARG:1], [ARG:2])
 $_float_to_string: Core.FloatToString([ARG:1])
-$_force_parens: ([ARG:1])
+$_force_parens: Core.ForceParens([ARG:1])
 $_get_program_data: Core.ProgramData()
 $_has_increment: Core.HasIncrement()
 $_int_to_string: Core.IntToString([ARG:1])
