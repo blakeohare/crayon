@@ -78,7 +78,7 @@ enum BinaryOps {
 	GREATER_THAN_OR_EQUAL = 14,
 }
 
-const MAX_OP = (BinaryOps.GREATER_THAN_OR_EQUAL + 1);
+const int MAX_OP = (BinaryOps.GREATER_THAN_OR_EQUAL + 1);
 
 enum FunctionInvocationType {
 	NORMAL_FUNCTION = 1,
@@ -112,7 +112,7 @@ enum Types {
 	CLASS = @ext_constant("TYPE_ID_CLASS"),
 }
 
-const MAX_TYPE = (Types.CLASS + 1);
+const int MAX_TYPE = (Types.CLASS + 1);
 
 enum InterpreterResultStatus {
 	FINISHED = 1,
@@ -139,9 +139,9 @@ enum CoreExceptionTypes {
 	UNSUPPORTED_OPERATION = 13,
 }
 
-const INTEGER_POSITIVE_CACHE_SIZE = 1025;
+const int INTEGER_POSITIVE_CACHE_SIZE = 1025;
 
-const INTEGER_NEGATIVE_CACHE_SIZE = 129;
+const int INTEGER_NEGATIVE_CACHE_SIZE = 129;
 
 enum PrimitiveMethodName {
 	ADD = 1,

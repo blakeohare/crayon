@@ -46,34 +46,31 @@ namespace Pastel
             return output.ToArray();
         }
 
-        public Assignment ParseConstDefinition(TokenStream tokens)
+        public VariableDeclaration ParseConstDefinition(TokenStream tokens)
         {
             Token constToken = tokens.PopExpected("const");
-            Assignment assignment = this.ParseAssignmentWithNewFirstToken(constToken, tokens);
+            VariableDeclaration assignment = this.ParseAssignmentWithNewFirstToken(constToken, tokens);
             assignment.IsConstant = true;
             return assignment;
         }
 
-        public Assignment ParseGlobalDefinition(TokenStream tokens)
+        public VariableDeclaration ParseGlobalDefinition(TokenStream tokens)
         {
             Token globalToken = tokens.PopExpected("global");
-            Assignment assignment = this.ParseAssignmentWithNewFirstToken(globalToken, tokens);
+            VariableDeclaration assignment = this.ParseAssignmentWithNewFirstToken(globalToken, tokens);
             assignment.IsGlobal = true;
             return assignment;
         }
 
-        private Assignment ParseAssignmentWithNewFirstToken(Token newToken, TokenStream tokens)
+        private VariableDeclaration ParseAssignmentWithNewFirstToken(Token newToken, TokenStream tokens)
         {
-            Assignment assignment = this.ParseExecutable(tokens, false) as Assignment;
+            Executable executable = this.ParseExecutable(tokens, false);
+            VariableDeclaration assignment = executable as VariableDeclaration;
             if (assignment == null)
             {
                 throw new ParserException(newToken, "Expected an assignment here.");
             }
             assignment.FirstToken = newToken;
-            if (!(assignment.Target is Variable))
-            {
-                throw new ParserException(assignment.Target.FirstToken, "Target of assignment must be a variable name.");
-            }
             return assignment;
         }
 

@@ -17,8 +17,8 @@ namespace Pastel
 
         private Dictionary<string, StructDefinition> structDefinitions = new Dictionary<string, StructDefinition>();
         private Dictionary<string, EnumDefinition> enumDefinitions = new Dictionary<string, EnumDefinition>();
-        private Dictionary<string, Assignment> globals = new Dictionary<string, Assignment>();
-        private Dictionary<string, Assignment> constants = new Dictionary<string, Assignment>();
+        private Dictionary<string, VariableDeclaration> globals = new Dictionary<string, VariableDeclaration>();
+        private Dictionary<string, VariableDeclaration> constants = new Dictionary<string, VariableDeclaration>();
         private Dictionary<string, FunctionDefinition> functionDefinitions = new Dictionary<string, FunctionDefinition>();
 
         public void CompileBlobOfCode(string name, string code)
@@ -50,9 +50,9 @@ namespace Pastel
 
                     case CompilationEntityType.CONSTANT:
                     case CompilationEntityType.GLOBAL:
-                        Assignment assignment = (Assignment)entity;
-                        string targetName = assignment.Target.FirstToken.Value;
-                        Dictionary<string, Assignment> lookup = entity.EntityType == CompilationEntityType.CONSTANT
+                        VariableDeclaration assignment = (VariableDeclaration)entity;
+                        string targetName = assignment.VariableName.Value;
+                        Dictionary<string, VariableDeclaration> lookup = entity.EntityType == CompilationEntityType.CONSTANT
                             ? constants
                             : globals;
                         if (lookup.ContainsKey(targetName))
