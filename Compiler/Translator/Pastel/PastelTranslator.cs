@@ -174,7 +174,7 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateConstStatement(List<string> output, ConstStatement constStatement)
         {
-            output.Add("const ");
+            output.Add("const int ");
             output.Add(constStatement.Name);
             output.Add(" = ");
             this.TranslateExpression(output, constStatement.Expression);
