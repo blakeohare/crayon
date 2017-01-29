@@ -2,20 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class WhileLoop : Executable
+    class IfStatement : Executable
     {
         public Expression Condition { get; set; }
-        public Executable[] Code { get; set; }
+        public Executable[] IfCode { get; set; }
+        public Token ElseToken { get; set; }
+        public Executable[] ElseCode { get; set; }
 
-        public WhileLoop(
-            Token whileToken,
+        public IfStatement(
+            Token ifToken,
             Expression condition,
-            IList<Executable> code) : base(whileToken)
+            IList<Executable> ifCode,
+            Token elseToken,
+            IList<Executable> elseCode) : base(ifToken)
         {
             this.Condition = condition;
-            this.Code = code.ToArray();
+            this.IfCode = ifCode.ToArray();
+            this.ElseToken = elseToken;
+            this.ElseCode = elseCode.ToArray();
         }
 
         public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)

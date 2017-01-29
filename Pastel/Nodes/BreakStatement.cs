@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class SwitchStatement : Executable
+    class BreakStatement : Executable
     {
-        public SwitchStatement(Token switchToken) : base(switchToken)
-        {
-            throw new Exception();
-        }
+        public BreakStatement(Token breakToken) : base(breakToken)
+        { }
 
         public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
         {

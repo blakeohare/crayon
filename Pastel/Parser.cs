@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Crayon.Pastel.Nodes;
+using Pastel.Nodes;
 
-namespace Crayon.Pastel
+namespace Pastel
 {
     internal class Parser
     {

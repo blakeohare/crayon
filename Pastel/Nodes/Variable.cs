@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class UnaryOp : Expression
+    class Variable : Expression
     {
-        public Expression Expression { get; set; }
-
-        public UnaryOp(Token op, Expression root) : base(op)
-        {
-            this.Expression = root;
-        }
+        public Variable(Token token) : base(token)
+        { }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
         {
@@ -23,3 +19,4 @@ namespace Crayon.Pastel.Nodes
         }
     }
 }
+

@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class ExpressionAsExecutable : Executable
+    class Assignment : Executable
     {
-        public Expression Expression { get; set; }
+        public Expression Target { get; set; }
+        public Token OpToken { get; set; }
+        public Expression Value { get; set; }
 
-        public ExpressionAsExecutable(Expression expression) : base(expression.FirstToken)
+        public Assignment(
+            Expression target,
+            Token opToken,
+            Expression value) : base(target.FirstToken)
         {
-            this.Expression = expression;
+            this.Target = target;
+            this.OpToken = opToken;
+            this.Value = value;
         }
 
         public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)

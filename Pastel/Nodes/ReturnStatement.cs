@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
     class ReturnStatement : Executable
     {

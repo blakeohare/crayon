@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class CastExpression : Expression
+    class OpChain : Expression
     {
-        public PType Type { get; set; }
-        public Expression Expression { get; set; }
+        public Expression[] Expressions { get; set; }
+        public Token[] Ops { get; set; }
 
-        public CastExpression(Token openParenToken, PType type, Expression expression) : base(openParenToken)
+        public OpChain(
+            IList<Expression> expressions,
+            IList<Token> ops) : base(expressions[0].FirstToken)
         {
-            this.Type = type;
-            this.Expression = expression;
+            this.Expressions = expressions.ToArray();
+            this.Ops = ops.ToArray();
         }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)

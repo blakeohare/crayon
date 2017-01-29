@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class Assignment : Executable
+    class WhileLoop : Executable
     {
-        public Expression Target { get; set; }
-        public Token OpToken { get; set; }
-        public Expression Value { get; set; }
+        public Expression Condition { get; set; }
+        public Executable[] Code { get; set; }
 
-        public Assignment(
-            Expression target,
-            Token opToken,
-            Expression value) : base(target.FirstToken)
+        public WhileLoop(
+            Token whileToken,
+            Expression condition,
+            IList<Executable> code) : base(whileToken)
         {
-            this.Target = target;
-            this.OpToken = opToken;
-            this.Value = value;
+            this.Condition = condition;
+            this.Code = code.ToArray();
         }
 
         public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)

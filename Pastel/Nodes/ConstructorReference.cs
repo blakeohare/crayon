@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class Variable : Expression
+    class ConstructorReference : Expression
     {
-        public Variable(Token token) : base(token)
-        { }
+        public Token[] DotChain { get; set; }
+
+        public ConstructorReference(Token newToken, IList<Token> dotChain) : base(newToken)
+        {
+            this.DotChain = dotChain.ToArray();
+        }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
         {
@@ -19,4 +24,3 @@ namespace Crayon.Pastel.Nodes
         }
     }
 }
-

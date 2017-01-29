@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class InlineConstant : Expression
+    class UnaryOp : Expression
     {
-        public object Value { get; set; }
-        public PType Type { get; set; }
+        public Expression Expression { get; set; }
 
-        public InlineConstant(PType type, Token firstToken, object value) : base(firstToken)
+        public UnaryOp(Token op, Expression root) : base(op)
         {
-            this.Type = type;
-            this.Value = value;
+            this.Expression = root;
         }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)

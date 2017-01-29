@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Crayon.Pastel.Nodes;
 
-namespace Crayon.Pastel
+namespace Pastel
 {
     class PastelCompiler
     {
@@ -32,14 +31,14 @@ namespace Crayon.Pastel
         private Crayon.Pastel.Parser interpreterParser;
         private SwitchStatementTracker switchStatementTracker;
         
-        public PastelCompiler(AbstractPlatform platform, SystemLibraryManager sysLibMan)
+        public PastelCompiler(IPlatform platform, SystemLibraryManager sysLibMan)
         {
             this.platform = platform;
             this.interpreterParser = new Parser(platform, sysLibMan);
             this.switchStatementTracker = new SwitchStatementTracker();
         }
 
-        public Dictionary<string, Crayon.Pastel.Nodes.Executable[]> Compile()
+        public Dictionary<string, Pastel.Nodes.Executable[]> Compile()
         {
             Dictionary<string, Executable[]> output = new Dictionary<string, Executable[]>();
 

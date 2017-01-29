@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.Pastel.Nodes
+namespace Pastel.Nodes
 {
-    class DotField : Expression
+    class InlineConstant : Expression
     {
-        public Expression Root { get; set; }
-        public Token DotToken { get; set; }
-        public Token FieldName { get; set; }
+        public object Value { get; set; }
+        public PType Type { get; set; }
 
-        public DotField(Expression root, Token dotToken, Token fieldName) : base(root.FirstToken)
+        public InlineConstant(PType type, Token firstToken, object value) : base(firstToken)
         {
-            this.Root = root;
-            this.DotToken = dotToken;
-            this.FieldName = fieldName;
+            this.Type = type;
+            this.Value = value;
         }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
