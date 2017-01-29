@@ -1,6 +1,6 @@
-﻿namespace Crayon
+﻿namespace Common
 {
-    enum FileOutputType
+    public enum FileOutputType
     {
         Text,
         Binary,
@@ -12,7 +12,7 @@
         Ghost,
     }
 
-    class FileOutput
+    public class FileOutput
     {
         public FileOutputType Type { get; set; }
 

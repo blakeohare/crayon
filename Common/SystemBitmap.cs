@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Crayon
+namespace Common
 {
     /**
      * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.

@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class Class1
+    public interface IPlatform
     {
+        string Name { get; }
+        string InheritsFrom { get; }
+        Dictionary<string, FileOutput> Export();
     }
 }

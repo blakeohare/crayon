@@ -1,7 +1,8 @@
-﻿using Crayon.ParseTree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crayon.ParseTree;
+using Common;
 
 namespace Crayon.Translator.Java
 {
