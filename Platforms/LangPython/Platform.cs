@@ -4,23 +4,21 @@ using Common;
 
 namespace LangPython
 {
-    public class Platform : IPlatform
+    public class Platform : AbstractPlatform
     {
-        public string Name { get { return "lang-python"; } }
-        public string InheritsFrom {  get { return null; } }
+        public override string Name { get { return "lang-python"; } }
+        public override string InheritsFrom { get { return null; } }
 
-        public Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit,
+        public override Dictionary<string, FileOutput> Export(
+            Dictionary<string, object[]> executablesPerCompilationUnit, 
             object[] structDefinitions)
         {
             throw new NotImplementedException();
         }
 
-        public Dictionary<string, bool> ConstantFlags
+        public override IDictionary<string, bool> GetConstantFlags()
         {
-            get
-            {
-                return new Dictionary<string, bool>()
+            return new Dictionary<string, bool>()
                 {
                     { "PLATFORM_SUPPORTS_LIST_CLEAR", false },
                     { "STRONGLY_TYPED", false },
@@ -30,7 +28,7 @@ namespace LangPython
                     { "INT_IS_FLOOR", false },
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
                 };
-            }
         }
+
     }
 }

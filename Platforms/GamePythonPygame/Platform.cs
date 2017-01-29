@@ -4,24 +4,21 @@ using Common;
 
 namespace GamePythonPygame
 {
-    public class Platform : IPlatform
+    public class Platform : AbstractPlatform
     {
-        public string Name { get { return "game-python-pygame"; } }
-        public string InheritsFrom { get { return "lang-python"; } }
+        public override string Name { get { return "game-python-pygame"; } }
+        public override string InheritsFrom { get { return "lang-python"; } }
 
-        public Dictionary<string, FileOutput> Export(
+        public override Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
             object[] structDefinitions)
         {
             throw new NotImplementedException();
         }
 
-        public Dictionary<string, bool> ConstantFlags
+        public override IDictionary<string, bool> GetConstantFlags()
         {
-            get
-            {
-                return new Dictionary<string, bool>();
-            }
+            return new Dictionary<string, bool>();
         }
     }
 }

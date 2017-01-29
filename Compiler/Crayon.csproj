@@ -66,6 +66,14 @@
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\GamePythonPygame\GamePythonPygame.csproj">
+      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
+      <Name>GamePythonPygame</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
+      <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
+      <Name>LangPython</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Resources\Resources.csproj">
       <Project>{33d98096-1f92-4c28-ba01-95030cd4eaca}</Project>
       <Name>Resources</Name>

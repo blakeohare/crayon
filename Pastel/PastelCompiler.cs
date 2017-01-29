@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Pastel.Nodes;
+using Common;
 
 namespace Pastel
 {
@@ -21,7 +22,7 @@ namespace Pastel
             this.interpreterParser = new PastelParser(boolConstants);
         }
 
-        public Executable[] CompileBlock(string name, string code)
+        public Executable[] CompileBlock(string name, string code, IInlineImportCodeLoader inlineImportCodeLoader)
         {
             throw new NotImplementedException();
         }
