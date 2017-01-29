@@ -19,7 +19,7 @@ switch (value.type) {
 		break;
 	case Types.STRING:
 		if (p.lengthId == nameId) {
-			int2 = (((string) value.internalValue)).Length;
+			int2 = Core.ForceParens(((string) value.internalValue)).Length;
 			output = buildInteger(int2);
 		} else {
 			output = null;
@@ -30,7 +30,7 @@ switch (value.type) {
 			if (@ext_constant("IS_PHP")) {
 				int2 = ((List<Value>) value.internalValue).Length;
 			} else {
-				int2 = (((List<Value>) value.internalValue)).Length;
+				int2 = Core.ForceParens(((List<Value>) value.internalValue)).Length;
 			}
 			output = buildInteger(int2);
 		} else {

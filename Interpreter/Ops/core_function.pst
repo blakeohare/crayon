@@ -4,7 +4,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
-			string1 = (((string) arg1.internalValue)).Trim();
+			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
 			if (Core.IsValidInteger(string1)) {
 				output = buildInteger(Core.ParseInt(string1));
 			}
@@ -17,7 +17,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
-			string1 = (((string) arg1.internalValue)).Trim();
+			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
 			Core.ParseFloat(string1, floatList1);
 			if (floatList1[0] >= 0) {
 				output = buildFloat(floatList1[1]);

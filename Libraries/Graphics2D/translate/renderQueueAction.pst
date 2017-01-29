@@ -30,6 +30,6 @@ if (i == 1) {
 	if (i == 2) {
 		objArray1[1] = 0;
 		objArray1[3] = 0;
-		(intList1).Clear();
+		Core.ForceParens(intList1).Clear();
 	}
 }

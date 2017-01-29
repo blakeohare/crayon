@@ -5,4 +5,4 @@ len = list1.Length;
 if (len == 0) {
 	return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot use list.choice() method on an empty list.");
 }
-output = list1[Core.Int(((Core.RandomFloat() * len)))];
+output = list1[Core.Int(Core.ForceParens((Core.RandomFloat() * len)))];
