@@ -39,6 +39,14 @@ namespace Crayon.Translator.Pastel
 
             foreach (string vmFile in finalCode.Keys)
             {
+                if (vmFile == "Globals")
+                {
+                    foreach (Assignment aGlobal in finalCode[vmFile].OfType<Assignment>())
+                    {
+                        aGlobal.HACK_IsVmGlobal = true;
+                    }
+                }
+
                 List<string> text = new List<string>();
                 output[vmFile + ".pst"] = new FileOutput()
                 {

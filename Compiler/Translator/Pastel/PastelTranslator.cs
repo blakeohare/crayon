@@ -13,6 +13,11 @@ namespace Crayon.Translator.Pastel
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
             output.Add(this.CurrentTabIndention);
+            if (assignment.HACK_IsVmGlobal)
+            {
+                output.Add("global ");
+            }
+
             Annotation type = assignment.Target.GetAnnotation("type");
             if (type != null)
             {
@@ -173,7 +178,7 @@ namespace Crayon.Translator.Pastel
             output.Add(constStatement.Name);
             output.Add(" = ");
             this.TranslateExpression(output, constStatement.Expression);
-            output.Add(";");
+            output.Add(";\n\n");
         }
 
         protected override void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)

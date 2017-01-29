@@ -10,6 +10,8 @@ namespace Crayon.ParseTree
         public Token AssignmentOpToken { get; private set; }
         public string AssignmentOp { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
+        
+        public bool HACK_IsVmGlobal { get; set; }
 
         public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Executable owner)
             : base(target.FirstToken, owner)
@@ -18,6 +20,7 @@ namespace Crayon.ParseTree
             this.AssignmentOpToken = assignmentOpToken;
             this.AssignmentOp = assignmentOp;
             this.Value = assignedValue;
+            this.HACK_IsVmGlobal = false;
         }
 
         internal override IList<Executable> Resolve(Parser parser)
