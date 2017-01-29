@@ -105,6 +105,13 @@ namespace Pastel
             string token1 = tokens.FlatPeekAhead(0);
             string token2 = tokens.FlatPeekAhead(1);
             string token3 = tokens.FlatPeekAhead(2);
+
+            string DEBUG_HELP = (token1 + " " + (token2 ?? "") + " " + (token3 ?? "")).Trim();
+            if (DEBUG_HELP == "set me to stuff")
+            {
+
+            }
+
             if (
                 (token2 == "<" && IsValidName(token1) && IsValidName(token3)) || // Type<G1, G2> var = ...
                 (token3 == "=" && IsValidName(token1) && IsValidName(token2)) || // Type var = ...
@@ -187,7 +194,7 @@ namespace Pastel
             if (!tokens.PopIfPresent(";"))
             {
                 initCode.Add(this.ParseExecutable(tokens, true));
-                while (!tokens.PopIfPresent(","))
+                while (tokens.PopIfPresent(","))
                 {
                     initCode.Add(this.ParseExecutable(tokens, true));
                 }
@@ -203,7 +210,7 @@ namespace Pastel
             if (!tokens.PopIfPresent(")"))
             {
                 stepCode.Add(this.ParseExecutable(tokens, true));
-                while (!tokens.PopIfPresent(","))
+                while (tokens.PopIfPresent(","))
                 {
                     stepCode.Add(this.ParseExecutable(tokens, true));
                 }
@@ -350,7 +357,7 @@ namespace Pastel
         private static readonly HashSet<string> OPS_MULTIPLICATION = new HashSet<string>(new string[] { "*", "/", "%" });
         private Expression ParseMultiplication(TokenStream tokens)
         {
-            return this.ParseOpChain(tokens, OPS_ADDITION, this.ParsePrefixes);
+            return this.ParseOpChain(tokens, OPS_MULTIPLICATION, this.ParsePrefixes);
         }
 
         private Expression ParsePrefixes(TokenStream tokens)
@@ -404,7 +411,6 @@ namespace Pastel
             if (tokens.IsNext("new"))
             {
                 Token newToken = tokens.Pop();
-                string errMsg = "Invalid name for 'new' statement";
                 PType typeToConstruct = PType.Parse(tokens);
                 if (!tokens.IsNext("(")) tokens.PopExpected("("); // intentional error if not present.
                 Expression constructorReference = new ConstructorReference(newToken, typeToConstruct);
@@ -458,6 +464,11 @@ namespace Pastel
                     return new InlineConstant(PType.CHAR, tokens.Pop(), Util.ConvertStringTokenToValue(next));
                 case '"':
                     return new InlineConstant(PType.STRING, tokens.Pop(), Util.ConvertStringTokenToValue(next));
+                case '@':
+                    Token atToken = tokens.PopExpected("@");
+                    Token compileTimeFunction = EnsureTokenIsValidName(tokens.Pop(), "Expected compile time function name.");
+                    if (!tokens.IsNext("(")) tokens.PopExpected("(");
+                    return new CompileTimeFunctionReference(atToken, compileTimeFunction);
             }
 
             if (firstChar >= '0' && firstChar <= '9')
