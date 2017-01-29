@@ -5,13 +5,13 @@ using Common;
 
 namespace Pastel
 {
-    internal class Parser
+    internal class PastelParser
     {
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
         private Dictionary<string, bool> boolConstants;
 
-        public Parser(Dictionary<string, bool> boolConstants)
+        public PastelParser(Dictionary<string, bool> boolConstants)
         {
             this.boolConstants = boolConstants;
         }
@@ -451,7 +451,7 @@ namespace Pastel
             {
                 case ".":
                     Token dotToken = tokens.Pop();
-                    Token field = Parser.EnsureTokenIsValidName(tokens.Pop(), "Invalid field name");
+                    Token field = PastelParser.EnsureTokenIsValidName(tokens.Pop(), "Invalid field name");
                     return new DotField(root, dotToken, field);
                 case "[":
                     Token openBracket = tokens.Pop();

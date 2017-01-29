@@ -113,7 +113,7 @@ namespace Crayon.Translator.Ruby
 
         private string GetRubyGameCode(string file, Dictionary<string, string> replacements)
         {
-            string rubyGosuCode = Util.ReadResourceFileInternally("game-ruby-gosu/" + file);
+            string rubyGosuCode = LegacyUtil.ReadResourceFileInternally("game-ruby-gosu/" + file);
             rubyGosuCode = Constants.DoReplacements(false, rubyGosuCode, replacements);
             return rubyGosuCode;
         }

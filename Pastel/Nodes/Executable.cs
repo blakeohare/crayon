@@ -2,7 +2,7 @@
 
 namespace Pastel.Nodes
 {
-    abstract class Executable
+    public abstract class Executable
     {
         public Token FirstToken { get; private set; }
 

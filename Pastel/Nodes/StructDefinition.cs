@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class StructDefinition
+    public class StructDefinition
     {
         public Token FirstToken { get; set; }
         public Token NameToken { get; set; }

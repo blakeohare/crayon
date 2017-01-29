@@ -23,7 +23,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(false,
-                    Util.ReadResourceFileInternally("game-csharp-ios/SolutionFile.sln.txt"),
+                    LegacyUtil.ReadResourceFileInternally("game-csharp-ios/SolutionFile.sln.txt"),
                     replacements),
             };
 
@@ -41,7 +41,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("game-csharp-ios/" + csFile + ".txt"),
+                        LegacyUtil.ReadResourceFileInternally("game-csharp-ios/" + csFile + ".txt"),
                         replacements),
                 };
             }
@@ -60,7 +60,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("game-csharp-ios/" + parts[0]),
+                        LegacyUtil.ReadResourceFileInternally("game-csharp-ios/" + parts[0]),
                         replacements),
                 };
             }
@@ -94,7 +94,7 @@ namespace Crayon.Translator.CSharp
             {
                 Type = FileOutputType.Text,
                 TextContent = Constants.DoReplacements(false,
-                    Util.ReadResourceFileInternally("game-csharp-ios/ProjectFile.csproj.txt"),
+                    LegacyUtil.ReadResourceFileInternally("game-csharp-ios/ProjectFile.csproj.txt"),
                     replacements),
             };
         }

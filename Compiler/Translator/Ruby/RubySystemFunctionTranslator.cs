@@ -124,7 +124,7 @@ namespace Crayon.Translator.Ruby
         {
             this.Translator.TranslateExpression(output, stringConstant);
         }
-        
+
         protected override void TranslateDictionaryGetKeys(System.Collections.Generic.List<string> output, string keyType, Expression dictionary)
         {
             this.Translator.TranslateExpression(output, dictionary);

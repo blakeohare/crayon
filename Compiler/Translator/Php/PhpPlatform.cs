@@ -57,13 +57,13 @@ namespace Crayon.Translator.Php
             output["cryutil.php"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(false, Util.ReadResourceFileInternally("server-php/cryutil.php"), replacements),
+                TextContent = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally("server-php/cryutil.php"), replacements),
             };
 
             output["index.php"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(false, Util.ReadResourceFileInternally("server-php/index.php"), replacements),
+                TextContent = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally("server-php/index.php"), replacements),
             };
 
             return output;

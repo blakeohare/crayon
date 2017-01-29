@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class FunctionDefinition
+    public class FunctionDefinition
     {
         public Token FirstToken { get; set; }
         public PType ReturnType { get; set; }

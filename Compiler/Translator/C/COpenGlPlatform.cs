@@ -299,7 +299,7 @@ namespace Crayon.Translator.C
 
         private string GetCCode(string file, Dictionary<string, string> replacements)
         {
-            string cCode = Util.ReadResourceFileInternally("game-c-opengl/" + file);
+            string cCode = LegacyUtil.ReadResourceFileInternally("game-c-opengl/" + file);
             cCode = Constants.DoReplacements(false, cCode, replacements);
             return cCode;
         }

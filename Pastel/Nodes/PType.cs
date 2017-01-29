@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class PType
+    public class PType
     {
         public static readonly PType INT = new PType(null, "int");
         public static readonly PType CHAR = new PType(null, "char");

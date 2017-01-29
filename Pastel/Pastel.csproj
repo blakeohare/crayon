@@ -60,7 +60,7 @@
     <Compile Include="Nodes\Variable.cs" />
     <Compile Include="Nodes\VariableDeclaration.cs" />
     <Compile Include="Nodes\WhileLoop.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="PastelParser.cs" />
     <Compile Include="ParserException.cs" />
     <Compile Include="PastelCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

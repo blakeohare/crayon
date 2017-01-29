@@ -69,7 +69,7 @@ namespace Crayon.Translator.JavaScript
                 "common.js",
             })
             {
-                codeJs.Add(Util.ReadResourceFileInternally("javascript-common/" + jsFile));
+                codeJs.Add(LegacyUtil.ReadResourceFileInternally("javascript-common/" + jsFile));
                 codeJs.Add(this.Translator.NL);
             }
 
@@ -82,7 +82,7 @@ namespace Crayon.Translator.JavaScript
                 "gamepad.js",
             })
             {
-                codeJs.Add(Util.ReadResourceFileInternally("game-javascript/" + jsFile));
+                codeJs.Add(LegacyUtil.ReadResourceFileInternally("game-javascript/" + jsFile));
                 codeJs.Add(this.Translator.NL);
             }
 
@@ -205,7 +205,7 @@ namespace Crayon.Translator.JavaScript
 
         public string GenerateHtmlFile()
         {
-            return Util.ReadResourceFileInternally("game-javascript/game_host_html.txt");
+            return LegacyUtil.ReadResourceFileInternally("game-javascript/game_host_html.txt");
         }
     }
 }

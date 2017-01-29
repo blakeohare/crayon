@@ -6,18 +6,22 @@ using Pastel.Nodes;
 
 namespace Pastel
 {
-    class PastelCompiler
+    public class PastelCompiler
     {
-        private Pastel.Parser interpreterParser;
+        private PastelParser interpreterParser;
         private Dictionary<string, bool> boolConstants;
+
+        private Dictionary<string, StructDefinition> structDefinitions = new Dictionary<string, StructDefinition>();
+        private Dictionary<string, Assignment> globals = new Dictionary<string, Assignment>();
+        private Dictionary<string, FunctionDefinition[]> compilationBlocks = new Dictionary<string, FunctionDefinition[]>();
 
         public PastelCompiler(Dictionary<string, bool> boolConstants)
         {
             this.boolConstants = boolConstants;
-            this.interpreterParser = new Parser(boolConstants);
+            this.interpreterParser = new PastelParser(boolConstants);
         }
 
-        public Executable[] Compile(string code)
+        public Executable[] CompileBlock(string name, string code)
         {
             throw new NotImplementedException();
         }
