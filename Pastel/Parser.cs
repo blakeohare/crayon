@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pastel.Nodes;
+using Common;
 
 namespace Pastel
 {
     internal class Parser
     {
-        AbstractPlatform platform;
-        public SystemLibraryManager LibraryManager { get; set; }
-
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
+        private Dictionary<string, bool> boolConstants;
 
-        public Parser(AbstractPlatform platform, SystemLibraryManager libraryManager)
+        public Parser(Dictionary<string, bool> boolConstants)
         {
-            this.platform = platform;
-            this.LibraryManager = libraryManager;
+            this.boolConstants = boolConstants;
         }
 
         public Executable[] ParseText(string filename, string text)

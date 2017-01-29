@@ -10,6 +10,10 @@ namespace Common
     {
         string Name { get; }
         string InheritsFrom { get; }
-        Dictionary<string, FileOutput> Export();
+        Dictionary<string, bool> ConstantFlags { get; }
+        Dictionary<string, FileOutput> Export(
+            Dictionary<string, object[]> executablesPerCompilationUnit,
+            object[] structDefinitions);
+
     }
 }

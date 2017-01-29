@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon
+namespace Common
 {
     public static class Util
     {
@@ -35,7 +35,7 @@ namespace Crayon
             return output;
         }
 
-        internal static string ConvertStringTokenToValue(string tokenValue)
+        public static string ConvertStringTokenToValue(string tokenValue)
         {
             List<string> output = new List<string>();
             for (int i = 1; i < tokenValue.Length - 1; ++i)
@@ -64,7 +64,7 @@ namespace Crayon
             return string.Join("", output);
         }
 
-        internal static string ConvertStringValueToCode(string rawValue)
+        public static string ConvertStringValueToCode(string rawValue)
         {
             return ConvertStringValueToCode(rawValue, false);
         }
@@ -72,7 +72,7 @@ namespace Crayon
         private const char ASCII_MAX = (char)127;
         private static readonly string[] HEX_CHARS = "0 1 2 3 4 5 6 7 8 9 a b c d e f".Split(' ');
 
-        internal static string ConvertStringValueToCode(string rawValue, bool includeUnicodeEscape)
+        public static string ConvertStringValueToCode(string rawValue, bool includeUnicodeEscape)
         {
             int uValue, d1, d2, d3, d4;
             List<string> output = new List<string>() { "\"" };
@@ -121,21 +121,12 @@ namespace Crayon
 
             return contents;
         }
-
-        internal static string ReadResourceFileInternally(string path)
+        
+        public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
-            return ReadFileInternally(typeof(Resources.ResourceAssembly).Assembly, path);
-        }
-
-        internal static string ReadInterpreterFileInternally(string path)
-        {
-            return ReadFileInternally(typeof(Interpreter.InterpreterAssembly).Assembly, path);
-        }
-
-        private static string ReadFileInternally(System.Reflection.Assembly assembly, string path)
-        {
+            // Ick. Drops the encoding. TODO: fix this
             return TrimBomIfPresent(
-                string.Join("", Util.ReadBytesInternally(assembly, path).Select<byte, char>(b => (char)b)));
+                string.Join("", Util.ReadAssemblyFileBytes(assembly, path).Select<byte, char>(b => (char)b)));
         }
 
         private static string TrimBomIfPresent(string text)
@@ -146,17 +137,7 @@ namespace Crayon
         }
 
         private static readonly byte[] BUFFER = new byte[1000];
-
-        internal static byte[] ReadResourceBytesInternally(string path)
-        {
-            return Util.ReadBytesInternally(typeof(Resources.ResourceAssembly).Assembly, path);
-        }
-
-        internal static byte[] ReadInterpreterBytesInternally(string path)
-        {
-            return Util.ReadBytesInternally(typeof(Util).Assembly, path);
-        }
-
+        
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
             // TODO: scaling
@@ -170,7 +151,7 @@ namespace Crayon
             return bytes;
         }
 
-        public static byte[] ReadBytesInternally(System.Reflection.Assembly assembly, string path)
+        public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path)
         {
             string canonicalizedPath = path.Replace('/', '.');
 #if WINDOWS
