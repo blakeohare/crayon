@@ -1,0 +1,9 @@
+﻿@import("FrameworkFunctions/9_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+objArray1 = objInstance1.nativeData;
+object1 = objArray1[0];
+string1 = ((string) arg2.internalValue);
+bool1 = ((bool) arg3.internalValue);
+int1 = ((int) arg4.internalValue);
+prepareToSuspend(ec, stack, valueStackSize, pc);
+Library._lib_nori_windowShow(object1, object1, object1, object1, object1, object1, object1, object1, object1);

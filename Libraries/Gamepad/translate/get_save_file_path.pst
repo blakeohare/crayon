@@ -1,0 +1,7 @@
+﻿output = VALUE_NULL;
+if (@ext_constant("LIB_GAMEPAD_SUPPORTED")) {
+	string1 = Library._lib_gamepad_config_file_path();
+	if (string1 != null) {
+		output = buildString(string1);
+	}
+}

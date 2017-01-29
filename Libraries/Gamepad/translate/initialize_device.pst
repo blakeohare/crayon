@@ -1,0 +1,13 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+if (@ext_constant("LIB_GAMEPAD_SUPPORTED")) {
+	int1 = ((int) arg1.internalValue);
+	objInstance1 = ((ObjectInstance) arg2.internalValue);
+	list1 = ((List<Value>) arg3.internalValue);
+	object1 = Library._lib_gamepad_get_device_reference(int1);
+	objInstance1.nativeData = new Array<object>(1);
+	objInstance1.nativeData[0] = object1;
+	list1[0] = buildString(Library._lib_gamepad_get_name(int1, int1));
+	list1[1] = buildInteger(Library._lib_gamepad_get_button_count(int1, int1));
+	list1[2] = buildInteger(Library._lib_gamepad_get_axis_1d_count(int1, int1));
+	list1[3] = buildInteger(Library._lib_gamepad_get_axis_2d_count(int1, int1));
+}

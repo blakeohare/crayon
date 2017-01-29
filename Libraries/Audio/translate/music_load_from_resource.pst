@@ -1,0 +1,8 @@
+﻿@import("FrameworkFunctions/2_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+string1 = ((string) arg2.internalValue);
+if (lib_audio_music_load_from_resource(objInstance1, string1)) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

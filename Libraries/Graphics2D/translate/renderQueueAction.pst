@@ -1,0 +1,35 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+objArray1 = objInstance1.nativeData;
+if (objArray1 == null) {
+	objArray1 = new Array<object>(5);
+	objInstance1.nativeData = objArray1;
+}
+intArray1 = ((Array<int>) objArray1[0]);
+if (intArray1 == null) {
+	intArray1 = new Array<int>(0);
+	objArray1[0] = intArray1;
+	objArray1[1] = 0;
+	objArray1[2] = new Array<Array<object>>(64);
+	objArray1[3] = 0;
+	objArray1[4] = new List<int>();
+}
+intList1 = ((List<int>) objArray1[4]);
+i = ((int) arg3.internalValue);
+if (i == 1) {
+	if (arg2.type == Types.LIST) {
+		list1 = ((List<Value>) arg2.internalValue);
+		len = list1.Length;
+		for (i = 0; i < len; i += 1) {
+			value = list1[i];
+			intList1.Add(((int) value.internalValue));
+		}
+	}
+	Library._lib_graphics2d_render(intArray1, intArray1, intArray1, intArray1);
+} else {
+	if (i == 2) {
+		objArray1[1] = 0;
+		objArray1[3] = 0;
+		(intList1).Clear();
+	}
+}

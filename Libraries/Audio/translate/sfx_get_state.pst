@@ -1,0 +1,7 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+object1 = objInstance1.nativeData[0];
+objInstance1 = ((ObjectInstance) arg2.internalValue);
+object2 = objInstance1.nativeData[0];
+int1 = ((int) arg3.internalValue);
+output = buildInteger(lib_audio_sfx_get_state(object1, object2, int1));

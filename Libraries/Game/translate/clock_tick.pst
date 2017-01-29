@@ -1,0 +1,3 @@
+﻿prepareToSuspend(ec, stack, valueStackSize, pc);
+Library._lib_game_clockTick();
+return suspendInterpreter();

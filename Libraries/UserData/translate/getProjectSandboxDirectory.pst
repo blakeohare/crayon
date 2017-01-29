@@ -1,0 +1,6 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+if (@ext_constant("IS_ANDROID") || @ext_constant("IS_JAVASCRIPT")) {
+	string1 = ((string) arg1.internalValue);
+	string2 = Library._lib_userdata_getProjectSandboxDirectory(string1);
+	output = buildString(string2);
+}

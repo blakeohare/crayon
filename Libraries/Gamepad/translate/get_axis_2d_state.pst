@@ -1,0 +1,9 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+if (@ext_constant("LIB_GAMEPAD_SUPPORTED")) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	int1 = ((int) arg2.internalValue);
+	list1 = ((List<Value>) arg3.internalValue);
+	Library._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0]);
+	list1[0] = buildInteger(intOutParam[0]);
+	list1[1] = buildInteger(intOutParam[1]);
+}

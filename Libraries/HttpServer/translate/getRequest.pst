@@ -1,0 +1,7 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+Library._lib_httpserver_getRequest(stringOutParam);
+list1 = ((List<Value>) arg1.internalValue);
+list1.Add(buildString(stringOutParam[0]));
+list1.Add(buildString(stringOutParam[1]));
+list1.Add(buildString(stringOutParam[2]));
+list1.Add(buildString(stringOutParam[3]));

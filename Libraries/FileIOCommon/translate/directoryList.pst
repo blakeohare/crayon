@@ -1,0 +1,10 @@
+﻿@import("FrameworkFunctions/4_arg.cry");
+stringList1 = new List<string>();
+int1 = Library._lib_fileiocommon_directoryList(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+if (int1 == 0) {
+	list1 = ((List<Value>) arg4.internalValue);
+	for (i = 0; i < stringList1.Length; i += 1) {
+		list1.Add(buildString(stringList1[i]));
+	}
+}
+output = buildInteger(int1);

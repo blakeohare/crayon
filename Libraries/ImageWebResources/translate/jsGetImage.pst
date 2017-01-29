@@ -1,0 +1,22 @@
+﻿@import("FrameworkFunctions/2_arg.cry");
+if (@ext_constant("IS_JAVASCRIPT")) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = objInstance1.nativeData;
+	list1 = ((List<Value>) arg2.internalValue);
+	output = VALUE_FALSE;
+	if (((bool) objArray1[1])) {
+		output = VALUE_TRUE;
+		object1 = objArray1[2];
+		value = list1[0];
+		objInstance1 = ((ObjectInstance) value.internalValue);
+		objArray2 = new Array<object>(3);
+		objInstance1.nativeData = objArray2;
+		int1 = ((int) objArray1[3]);
+		int2 = ((int) objArray1[4]);
+		objArray2[0] = object1;
+		objArray2[1] = int1;
+		objArray2[2] = int2;
+		list1[1] = buildInteger(int1);
+		list1[2] = buildInteger(int2);
+	}
+}

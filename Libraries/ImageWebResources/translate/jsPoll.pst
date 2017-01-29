@@ -1,0 +1,9 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+if (@ext_constant("IS_JAVASCRIPT")) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	bool1 = ((bool) objInstance1.nativeData[0]);
+	output = VALUE_FALSE;
+	if (bool1) {
+		output = VALUE_TRUE;
+	}
+}

@@ -1,0 +1,5 @@
+﻿if (Core.RandomFloat() < 0.5) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

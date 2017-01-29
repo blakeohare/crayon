@@ -1,0 +1,12 @@
+﻿@import("FrameworkFunctions/5_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+object1 = objInstance1.nativeData[0];
+objInstance1 = ((ObjectInstance) arg2.internalValue);
+object2 = objInstance1.nativeData[0];
+int1 = ((int) arg3.internalValue);
+int2 = ((int) arg4.internalValue);
+bool1 = ((bool) arg5.internalValue);
+bool2 = (int2 == 2) && !bool1;
+if ((int1 != 3) && !bool2) {
+	lib_audio_sfx_stop(object1, object2, int1, int2 == 1, bool1);
+}

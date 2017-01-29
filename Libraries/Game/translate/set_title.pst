@@ -1,0 +1,2 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+Library._lib_game_set_title(((string) arg1.internalValue));

@@ -1,0 +1,33 @@
+﻿@import("FrameworkFunctions/2_arg.cry");
+output = VALUE_FALSE;
+if (arg1.type == Types.LIST) {
+	list1 = ((List<Value>) arg1.internalValue);
+	i = list1.Length;
+	intArray1 = new Array<int>(i);
+	bool1 = true;
+	while (i > 0) {
+		i -= 1;
+		value = list1[i];
+		if (value.type != Types.INTEGER) {
+			bool1 = false;
+			break;
+		}
+		int1 = ((int) value.internalValue);
+		if ((int1 < 256) && (int1 >= -128)) {
+			if (int1 < 0) {
+				int1 += 256;
+			}
+			intArray1[i] = int1;
+		} else {
+			bool1 = false;
+			break;
+		}
+	}
+	if (bool1) {
+		output = VALUE_TRUE;
+		objArray1 = new Array<object>(1);
+		objArray1[0] = intArray1;
+		objInstance1 = ((ObjectInstance) arg2.internalValue);
+		objInstance1.nativeData = objArray1;
+	}
+}

@@ -1,0 +1,4 @@
+﻿output = VALUE_FALSE;
+if (@ext_constant("LIB_GAMEPAD_SUPPORTED") && Library._lib_gamepad_platform_requires_refresh()) {
+	output = VALUE_TRUE;
+}

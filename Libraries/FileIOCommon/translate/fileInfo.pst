@@ -1,0 +1,19 @@
+﻿@import("FrameworkFunctions/4_arg.cry");
+int1 = ((int) arg3.internalValue);
+Library._lib_fileiocommon_getFileInfo(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+list1 = ((List<Value>) arg4.internalValue);
+list1[0] = buildBoolean(intOutParam[0] > 0);
+list1[1] = buildBoolean(intOutParam[1] > 0);
+if ((int1 & 1) != 0) {
+	list1[2] = buildInteger(intOutParam[2]);
+}
+if ((int1 & 2) != 0) {
+	list1[3] = buildBoolean(intOutParam[3] > 0);
+}
+if ((int1 & 4) != 0) {
+	list1[4] = buildFloat(floatOutParam[0]);
+}
+if ((int1 & 8) != 0) {
+	list1[5] = buildFloat(floatOutParam[1]);
+}
+output = arg4;

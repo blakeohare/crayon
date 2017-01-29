@@ -1,0 +1,10 @@
+﻿@import("FrameworkFunctions/5_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+bool1 = ((bool) arg2.internalValue);
+string1 = ((string) arg3.internalValue);
+float1 = ((double) arg4.internalValue);
+bool2 = ((bool) arg5.internalValue);
+output = VALUE_TRUE;
+if (lib_audio_music_play(objInstance1, bool1, string1, float1, bool2) == -1) {
+	output = VALUE_FALSE;
+}

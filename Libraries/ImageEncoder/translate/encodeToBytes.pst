@@ -1,0 +1,6 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+object1 = getNativeDataItem(arg1, 0);
+int1 = ((int) arg2.internalValue);
+list1 = ((List<Value>) arg3.internalValue);
+int2 = Library._lib_imageencoder_encodeImage(object1, object1, object1, object1);
+output = buildInteger(int2);

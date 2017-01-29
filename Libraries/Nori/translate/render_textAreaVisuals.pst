@@ -1,0 +1,3 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+Library._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);

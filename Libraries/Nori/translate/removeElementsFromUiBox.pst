@@ -1,0 +1,12 @@
+﻿@import("FrameworkFunctions/2_arg.cry");
+objInstance1 = ((ObjectInstance) arg1.internalValue);
+object1 = objInstance1.nativeData[0];
+list1 = ((List<Value>) arg2.internalValue);
+len = list1.Length;
+objArray1 = new Array<object>(int1);
+for (i = 0; i < len; i += 1) {
+	value = list1[i];
+	objInstance1 = ((ObjectInstance) value.internalValue);
+	objArray1[i] = objInstance1.nativeData[0];
+}
+Library._lib_nori_removeElementsFromUiBox(object1, object1);

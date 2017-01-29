@@ -1,0 +1,3 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+float1 = ((double) arg1.internalValue);
+Library._lib_audio_musicSetVolume(float1);

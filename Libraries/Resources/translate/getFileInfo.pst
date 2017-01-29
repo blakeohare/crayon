@@ -1,0 +1,2 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+output = resource_manager_getResourceOfType(((string) arg1.internalValue), "TXT");

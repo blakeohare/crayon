@@ -1,0 +1,5 @@
+﻿if (@ext_constant("LIB_GAMEPAD_SUPPORTED")) {
+	output = buildInteger(Library._lib_gamepad_jsIsOsx());
+} else {
+	output = VALUE_NULL;
+}

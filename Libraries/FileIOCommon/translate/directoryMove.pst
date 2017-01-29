@@ -1,0 +1,3 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+int1 = Library._lib_fileiocommon_directoryMove(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+output = buildInteger(int1);

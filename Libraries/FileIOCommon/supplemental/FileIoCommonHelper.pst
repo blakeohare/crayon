@@ -1,0 +1,39 @@
+﻿object lib_fileiocommon_getDiskObject(Value diskObjectArg) {
+	ObjectInstance objInst = ((ObjectInstance) diskObjectArg.internalValue);
+	return objInst.nativeData[0];
+}
+
+object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
+	Array<byte> bytes = new Array<byte>(listOfMaybeInts.Length);
+	Value intValue = null;
+	int byteValue = 0;
+	for (int i = listOfMaybeInts.Length - 1; i >= 0; i -= 1) {
+		intValue = listOfMaybeInts[i];
+		if (intValue.type != Types.INTEGER) {
+			return null;
+		}
+		byteValue = ((int) intValue.internalValue);
+		if (byteValue >= 256) {
+			return null;
+		}
+		if (byteValue < 0) {
+			if (byteValue < -128) {
+				return null;
+			}
+			byteValue += 256;
+		}
+		bytes[i] = ((byte) byteValue);
+	}
+	return bytes;
+}
+
+int lib_fileiocommon_textToLines(string text, List<Value> output) {
+	List<string> stringList = new List<string>();
+	Library._lib_fileiocommon_textToLines(text, text);
+	int len = stringList.Length;
+	for (int i = 0; i < len; i += 1) {
+		output.Add(buildString(stringList[i]));
+	}
+	return 0;
+}
+

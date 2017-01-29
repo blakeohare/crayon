@@ -1,0 +1,8 @@
+﻿@import("FrameworkFunctions/3_arg.cry");
+bool1 = ((bool) arg1.internalValue);
+string1 = ((string) arg2.internalValue);
+int1 = ((int) arg3.internalValue);
+output = VALUE_FALSE;
+if (Library._lib_graphicstext_loadFont(bool1, bool1, bool1)) {
+	output = VALUE_TRUE;
+}

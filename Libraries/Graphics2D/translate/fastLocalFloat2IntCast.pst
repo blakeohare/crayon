@@ -1,0 +1,26 @@
+﻿int1 = stack.localsStackOffsetEnd;
+for (i = localsStackOffset; i < int1; i += 1) {
+	value = localsStack[i];
+	if (localsStackSet[i] != localsStackSetToken) {
+		i += 999;
+	} else {
+		if (value.type == Types.FLOAT) {
+			float1 = ((double) value.internalValue);
+			if (@ext_constant("INT_IS_FLOOR")) {
+				int2 = Core.Int(float1);
+			} else {
+				if ((float1 < 0) && ((float1 % 1) != 0)) {
+					int2 = Core.Int(float1) - 1;
+				} else {
+					int2 = Core.Int(float1);
+				}
+			}
+			if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
+				value = INTEGER_POSITIVE_CACHE[int2];
+			} else {
+				value = buildInteger(int2);
+			}
+			localsStack[i] = value;
+		}
+	}
+}

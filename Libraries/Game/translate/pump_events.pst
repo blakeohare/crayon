@@ -1,0 +1,3 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+libGamePumpEvents(((List<Value>) arg1.internalValue));
+output = arg1;

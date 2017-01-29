@@ -1,0 +1,7 @@
+﻿@import("FrameworkFunctions/1_arg.cry");
+if (arg1.type == Types.INTEGER) {
+	float1 = ((int) arg1.internalValue);
+} else {
+	float1 = ((double) arg1.internalValue);
+}
+Library._lib_game_initialize_game_with_fps(float1);
