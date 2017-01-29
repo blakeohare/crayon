@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel.Nodes
 {
     class SwitchStatement : Executable
     {
-        public SwitchStatement(Token switchToken) : base(switchToken)
+        public Expression Condition { get; set; }
+        public SwitchChunk[] Chunks { get; set; }
+
+        public SwitchStatement(Token switchToken, Expression condition, IList<SwitchChunk> chunks) : base(switchToken)
         {
-            throw new Exception();
+            this.Condition = condition;
+            this.Chunks = chunks.ToArray();
         }
 
         public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
@@ -18,6 +23,31 @@ namespace Pastel.Nodes
         public override void ResolveTypes()
         {
             throw new NotImplementedException();
+        }
+
+        public class SwitchChunk
+        {
+            public Token[] CaseAndDefaultTokens { get; set; }
+            public Expression[] Cases { get; set; }
+            public bool HasDefault { get; set; }
+            public Executable[] Code { get; set; }
+
+            public SwitchChunk(IList<Token> caseAndDefaultTokens, IList<Expression> caseExpressionsOrNullForDefault, IList<Executable> code)
+            {
+                this.CaseAndDefaultTokens = caseAndDefaultTokens.ToArray();
+                this.Cases = caseExpressionsOrNullForDefault.ToArray();
+                this.Code = code.ToArray();
+
+                for (int i = 0; i < this.Cases.Length - 1; ++i)
+                {
+                    if (this.Cases[i] == null)
+                    {
+                        throw new ParserException(caseAndDefaultTokens[i], "default cannot appear before other cases.");
+                    }
+                }
+
+                this.HasDefault = this.Cases[this.Cases.Length - 1] == null;
+            }
         }
     }
 }

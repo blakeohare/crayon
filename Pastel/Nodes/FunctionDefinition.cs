@@ -21,7 +21,7 @@ namespace Pastel.Nodes
             IList<Token> argNames, 
             IList<Executable> code) 
         {
-            this.FirstToken = ReturnType.FirstToken;
+            this.FirstToken = returnType.FirstToken;
             this.NameToken = nameToken;
             this.ReturnType = returnType;
             this.ArgTypes = argTypes.ToArray();

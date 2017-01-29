@@ -39,7 +39,7 @@ namespace Pastel
             }
             return output.ToArray();
         }
-        
+
         public FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
         {
             PType returnType = PType.Parse(tokens);
@@ -83,11 +83,7 @@ namespace Pastel
             {
                 code.Add(ParseExecutable(tokens, false));
             }
-
-            if (hasCurlyBrace)
-            {
-                tokens.PopExpected("}");
-            }
+            
             return code;
         }
 
@@ -230,7 +226,53 @@ namespace Pastel
 
         public SwitchStatement ParseSwitchStatement(TokenStream tokens)
         {
-            throw new Exception();
+            Token switchToken = tokens.PopExpected("switch");
+            tokens.PopExpected("(");
+            Expression condition = this.ParseExpression(tokens);
+            tokens.PopExpected(")");
+            tokens.PopExpected("{");
+
+            List<SwitchStatement.SwitchChunk> chunks = new List<SwitchStatement.SwitchChunk>();
+            while (!tokens.PopIfPresent("}"))
+            {
+                List<Expression> caseExpressions = new List<Expression>();
+                List<Token> caseAndDefaultTokens = new List<Token>();
+                bool thereAreCases = true;
+                while (thereAreCases)
+                {
+                    switch (tokens.PeekValue())
+                    {
+                        case "case":
+                            caseAndDefaultTokens.Add(tokens.Pop());
+                            Expression caseExpression = this.ParseExpression(tokens);
+                            tokens.PopExpected(":");
+                            caseExpressions.Add(caseExpression);
+                            break;
+
+                        case "default":
+                            caseAndDefaultTokens.Add(tokens.Pop());
+                            tokens.PopExpected(":");
+                            caseExpressions.Add(null);
+                            break;
+
+                        default:
+                            thereAreCases = false;
+                            break;
+                    }
+                }
+
+                List<Executable> chunkCode = new List<Executable>();
+                string next = tokens.PeekValue();
+                while (next != "}" && next != "default" && next != "case")
+                {
+                    chunkCode.Add(this.ParseExecutable(tokens, false));
+                    next = tokens.PeekValue();
+                }
+
+                chunks.Add(new SwitchStatement.SwitchChunk(caseAndDefaultTokens, caseExpressions, chunkCode));
+            }
+            
+            return new SwitchStatement(switchToken, condition, chunks);
         }
 
         public BreakStatement ParseBreak(TokenStream tokens)
