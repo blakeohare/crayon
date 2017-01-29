@@ -4,7 +4,7 @@ namespace Pastel.Nodes
 {
     public abstract class Executable
     {
-        public Token FirstToken { get; private set; }
+        public Token FirstToken { get; set; }
 
         public Executable(Token firstToken)
         {

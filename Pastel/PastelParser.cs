@@ -31,10 +31,12 @@ namespace Pastel
                         break;
 
                     case "const":
-                        throw new NotImplementedException();
+                        output.Add(this.ParseConstDefinition(tokens));
+                        break;
 
                     case "global":
-                        throw new NotImplementedException();
+                        output.Add(this.ParseGlobalDefinition(tokens));
+                        break;
 
                     default:
                         output.Add(this.ParseFunctionDefinition(tokens));
@@ -42,6 +44,37 @@ namespace Pastel
                 }
             }
             return output.ToArray();
+        }
+
+        public Assignment ParseConstDefinition(TokenStream tokens)
+        {
+            Token constToken = tokens.PopExpected("const");
+            Assignment assignment = this.ParseAssignmentWithNewFirstToken(constToken, tokens);
+            assignment.IsConstant = true;
+            return assignment;
+        }
+
+        public Assignment ParseGlobalDefinition(TokenStream tokens)
+        {
+            Token globalToken = tokens.PopExpected("global");
+            Assignment assignment = this.ParseAssignmentWithNewFirstToken(globalToken, tokens);
+            assignment.IsGlobal = true;
+            return assignment;
+        }
+
+        private Assignment ParseAssignmentWithNewFirstToken(Token newToken, TokenStream tokens)
+        {
+            Assignment assignment = this.ParseExecutable(tokens, false) as Assignment;
+            if (assignment == null)
+            {
+                throw new ParserException(newToken, "Expected an assignment here.");
+            }
+            assignment.FirstToken = newToken;
+            if (!(assignment.Target is Variable))
+            {
+                throw new ParserException(assignment.Target.FirstToken, "Target of assignment must be a variable name.");
+            }
+            return assignment;
         }
 
         public EnumDefinition ParseEnumDefinition(TokenStream tokens)
@@ -127,7 +160,7 @@ namespace Pastel
             {
                 code.Add(ParseExecutable(tokens, false));
             }
-            
+
             return code;
         }
 
@@ -322,7 +355,7 @@ namespace Pastel
 
                 chunks.Add(new SwitchStatement.SwitchChunk(caseAndDefaultTokens, caseExpressions, chunkCode));
             }
-            
+
             return new SwitchStatement(switchToken, condition, chunks);
         }
 

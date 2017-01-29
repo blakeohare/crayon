@@ -5,11 +5,21 @@ namespace Pastel.Nodes
 {
     class Assignment : Executable, ICompilationEntity
     {
-        public CompilationEntityType EntityType { get { return CompilationEntityType.GLOBAL; } }
+        public CompilationEntityType EntityType
+        {
+            get
+            {
+                if (this.IsConstant) return CompilationEntityType.CONSTANT;
+                if (this.IsGlobal) return CompilationEntityType.GLOBAL;
+                throw new Exception(); // this shouldn't have been a top-level thing.
+            }
+        }
 
         public Expression Target { get; set; }
         public Token OpToken { get; set; }
         public Expression Value { get; set; }
+        public bool IsConstant { get; set; }
+        public bool IsGlobal { get; set; }
 
         public Assignment(
             Expression target,
