@@ -405,13 +405,9 @@ namespace Pastel
             {
                 Token newToken = tokens.Pop();
                 string errMsg = "Invalid name for 'new' statement";
-                List<Token> dotChain = new List<Token>() { EnsureTokenIsValidName(tokens.Pop(), errMsg) };
-                while (tokens.PopIfPresent("."))
-                {
-                    dotChain.Add(EnsureTokenIsValidName(tokens.Pop(), errMsg));
-                }
+                PType typeToConstruct = PType.Parse(tokens);
                 if (!tokens.IsNext("(")) tokens.PopExpected("("); // intentional error if not present.
-                Expression constructorReference = new ConstructorReference(newToken, dotChain);
+                Expression constructorReference = new ConstructorReference(newToken, typeToConstruct);
                 return this.ParseEntityChain(constructorReference, tokens);
             }
 

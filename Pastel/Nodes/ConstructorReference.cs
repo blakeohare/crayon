@@ -6,11 +6,11 @@ namespace Pastel.Nodes
 {
     class ConstructorReference : Expression
     {
-        public Token[] DotChain { get; set; }
+        public PType TypeToConstruct { get; set; }
 
-        public ConstructorReference(Token newToken, IList<Token> dotChain) : base(newToken)
+        public ConstructorReference(Token newToken, PType type) : base(newToken)
         {
-            this.DotChain = dotChain.ToArray();
+            this.TypeToConstruct = type;
         }
 
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
