@@ -54,14 +54,15 @@ namespace Crayon
         private static void Compile(string[] args)
         {
             BuildContext buildContext = Program.GetBuildContext(args);
+            /*
             AbstractPlatform platform = GetPlatformInstance(buildContext);
             if (platform != null)
             {
                 platform.Compile(buildContext, buildContext.OutputFolder);
                 return;
-            }
+            }//*/
 
-            CompilationBundle compilationResult = CompileByteCode(buildContext);
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
 
             Common.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
             if (platform2 != null)
@@ -71,11 +72,6 @@ namespace Crayon
             }
 
             throw new InvalidOperationException("Unrecognized platform. See usage.");
-        }
-
-        private static CompilationBundle CompileByteCode(BuildContext buildContext)
-        {
-            throw new NotImplementedException();
         }
 
         private static Common.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)

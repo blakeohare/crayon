@@ -5,14 +5,12 @@
         public string Value { get; private set; }
         public int Line { get; private set; }
         public int Col { get; private set; }
-        public int FileID { get; private set; }
         public string FileName { get; private set; }
         public bool HasWhitespacePrefix { get; private set; }
 
-        internal Token(string value, int fileID, string filename, int lineIndex, int colIndex, bool hasWhitespacePrefix)
+        internal Token(string value, string filename, int lineIndex, int colIndex, bool hasWhitespacePrefix)
         {
             this.Value = value;
-            this.FileID = fileID;
             this.FileName = filename;
             this.Line = lineIndex;
             this.Col = colIndex;

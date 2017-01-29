@@ -15,7 +15,7 @@ namespace Crayon
                 platforms = new Dictionary<string, Common.AbstractPlatform>();
                 foreach (System.Reflection.Assembly assembly in GetRawAssemblies())
                 {
-                    Common.AbstractPlatform platform = (Common.AbstractPlatform)assembly.CreateInstance("Platform");
+                    Common.AbstractPlatform platform = this.GetPlatformInstance(assembly);
                     platform.PlatformProvider = this;
                     string key = platform.Name;
                     if (platforms.ContainsKey(key))
@@ -32,6 +32,18 @@ namespace Crayon
             }
 
             return null;
+        }
+
+        private Common.AbstractPlatform GetPlatformInstance(System.Reflection.Assembly assembly)
+        {
+            foreach (System.Type type in assembly.GetExportedTypes())
+            {
+                if (type.Name == "Platform")
+                {
+                    return (Common.AbstractPlatform)assembly.CreateInstance(type.FullName);
+                }
+            }
+            throw new InvalidOperationException("This assembly does not define a Platform type: " + assembly.FullName);
         }
 
         private static System.Reflection.Assembly[] GetRawAssemblies()

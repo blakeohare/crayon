@@ -41,6 +41,7 @@
     <Compile Include="Nodes\BracketIndex.cs" />
     <Compile Include="Nodes\BreakStatement.cs" />
     <Compile Include="Nodes\CastExpression.cs" />
+    <Compile Include="Nodes\CompilationEntity.cs" />
     <Compile Include="Nodes\ConstructorReference.cs" />
     <Compile Include="Nodes\DotField.cs" />
     <Compile Include="Nodes\Executable.cs" />

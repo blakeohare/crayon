@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class Assignment : Executable
+    class Assignment : Executable, ICompilationEntity
     {
+        public CompilationEntityType EntityType { get { return CompilationEntityType.GLOBAL; } }
+
         public Expression Target { get; set; }
         public Token OpToken { get; set; }
         public Expression Value { get; set; }

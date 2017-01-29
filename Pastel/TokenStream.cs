@@ -154,8 +154,8 @@ namespace Pastel
             if (this.IsNext(">>"))
             {
                 Token token = this.Pop();
-                token = new Token(">", token.FileID, token.FileName, token.Line, token.Col, token.HasWhitespacePrefix);
-                Token otherGt = new Token(">", token.FileID, token.FileName, token.Line, token.Col + 1, false);
+                token = new Token(">", token.FileName, token.Line, token.Col, token.HasWhitespacePrefix);
+                Token otherGt = new Token(">", token.FileName, token.Line, token.Col + 1, false);
                 this.InsertTokens(new Token[] { otherGt });
                 return token;
             }

@@ -9,43 +9,47 @@ namespace Pastel
     {
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
-        private Dictionary<string, bool> boolConstants;
+        private IDictionary<string, bool> boolConstants;
+        private IInlineImportCodeLoader importCodeLoader;
 
-        public PastelParser(Dictionary<string, bool> boolConstants)
+        public PastelParser(IDictionary<string, bool> boolConstants, IInlineImportCodeLoader importCodeLoader)
         {
             this.boolConstants = boolConstants;
+            this.importCodeLoader = importCodeLoader;
         }
 
-        public Executable[] ParseText(string filename, string text)
+        public ICompilationEntity[] ParseText(string filename, string text)
         {
-            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, text, 0, true));
-            List<Executable> output = new List<Executable>();
+            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, text));
+            List<ICompilationEntity> output = new List<ICompilationEntity>();
             while (tokens.HasMore)
             {
-                output.Add(this.ParseExecutable(tokens, false));
+                switch (tokens.PeekValue())
+                {
+                    case "enum":
+                        throw new NotImplementedException();
+                    case "const":
+                        throw new NotImplementedException();
+                    case "global":
+                        throw new NotImplementedException();
+                    default:
+                        output.Add(this.ParseFunctionDefinition(tokens));
+                        break;
+                }
             }
             return output.ToArray();
         }
-
-        public FunctionDefinition[] Parse(TokenStream tokens)
-        {
-            List<FunctionDefinition> functions = new List<FunctionDefinition>();
-            while (tokens.HasMore)
-            {
-                functions.Add(this.ParseFunctionDefinition(tokens));
-            }
-            return functions.ToArray();
-        }
-
-        private FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
+        
+        public FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
         {
             PType returnType = PType.Parse(tokens);
             Token nameToken = EnsureTokenIsValidName(tokens.Pop(), "Expected function name");
             tokens.PopExpected("(");
             List<PType> argTypes = new List<PType>();
             List<Token> argNames = new List<Token>();
-            while (tokens.PopIfPresent(")"))
+            while (!tokens.PopIfPresent(")"))
             {
+                if (argTypes.Count > 0) tokens.PopExpected(",");
                 argTypes.Add(PType.Parse(tokens));
                 argNames.Add(EnsureTokenIsValidName(tokens.Pop(), "Invalid function arg name"));
             }
@@ -72,12 +76,12 @@ namespace Pastel
             {
                 while (!tokens.PopIfPresent("}"))
                 {
-                    code.Add(ParseExecutable(tokens, true));
+                    code.Add(ParseExecutable(tokens, false));
                 }
             }
             else
             {
-                code.Add(ParseExecutable(tokens, true));
+                code.Add(ParseExecutable(tokens, false));
             }
 
             if (hasCurlyBrace)

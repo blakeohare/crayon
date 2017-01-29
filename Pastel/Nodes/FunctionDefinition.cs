@@ -3,8 +3,10 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class FunctionDefinition
+    public class FunctionDefinition : ICompilationEntity
     {
+        public CompilationEntityType EntityType { get { return CompilationEntityType.FUNCTION; } }
+
         public Token FirstToken { get; set; }
         public PType ReturnType { get; set; }
         public Token NameToken { get; set; }

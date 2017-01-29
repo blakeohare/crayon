@@ -10,7 +10,7 @@ namespace Pastel
         private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".ToCharArray());
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
 
-        public static Token[] Tokenize(string filename, string code, int fileID, bool useMultiCharTokens)
+        public static Token[] Tokenize(string filename, string code)
         {
             code += '\n';
             code += '\0';
@@ -56,7 +56,7 @@ namespace Pastel
                 if (c == '\0' && i == length - 1)
                 {
                     // Indicates the end of the stream. Throw an exception in cases where you left something lingering.
-                    if (commentType == "*") throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), "This file contains an unclosed comment somewhere.");
+                    if (commentType == "*") throw new ParserException(new Token("EOF", filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), "This file contains an unclosed comment somewhere.");
                     if (stringType != null)
                     {
                         Token suspiciousToken = null;
@@ -78,7 +78,7 @@ namespace Pastel
                         {
                             unclosedStringError += " Line " + (suspiciousToken.Line + 1) + " is suspicious.";
                         }
-                        throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), unclosedStringError);
+                        throw new ParserException(new Token("EOF", filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), unclosedStringError);
                     }
                 }
 
@@ -110,7 +110,7 @@ namespace Pastel
                     {
                         stringToken.Append(c);
                         stringType = null;
-                        tokens.Add(new Token(stringToken.ToString(), fileID, filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
+                        tokens.Add(new Token(stringToken.ToString(), filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
                     }
                     else
                     {
@@ -126,15 +126,15 @@ namespace Pastel
                     }
                     else
                     {
-                        tokens.Add(new Token(normalToken, fileID, filename, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
+                        tokens.Add(new Token(normalToken, filename, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
                         --i;
                         normalToken = null;
                     }
                     previousIsWhitespace = false;
                 }
-                else if (useMultiCharTokens && TWO_CHAR_TOKENS.Contains(c2))
+                else if (TWO_CHAR_TOKENS.Contains(c2))
                 {
-                    tokens.Add(new Token(c2, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+                    tokens.Add(new Token(c2, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
                     ++i;
                     previousIsWhitespace = false;
                 }
@@ -177,7 +177,7 @@ namespace Pastel
                 }
                 else
                 {
-                    tokens.Add(new Token("" + c, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+                    tokens.Add(new Token("" + c, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
                     previousIsWhitespace = false;
                 }
             }
