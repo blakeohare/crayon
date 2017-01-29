@@ -18,7 +18,22 @@ namespace Crayon.Translator
 
             if (name.StartsWith("_lib_"))
             {
-                output.Add(functionCall.AssociatedLibrary.TranslateNativeInvocation(functionCall.FirstToken, this.Platform, fullName, args));
+                if (this.Platform != null && this.Platform.PlatformId == PlatformId.PASTEL_VM)
+                {
+                    output.Add("Library.");
+                    output.Add(name);
+                    output.Add("(");
+                    for (int i = 0; i < functionCall.Args.Length; ++i)
+                    {
+                        if (i > 0) output.Add(", ");
+                        this.Translator.TranslateExpression(output, functionCall.Args[0], false);
+                    }
+                    output.Add(")");
+                }
+                else
+                {
+                    output.Add(functionCall.AssociatedLibrary.TranslateNativeInvocation(functionCall.FirstToken, this.Platform, fullName, args));
+                }
                 return;
             }
 

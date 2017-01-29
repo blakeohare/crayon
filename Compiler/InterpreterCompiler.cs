@@ -83,6 +83,45 @@ namespace Crayon
                         orderedFileIds.Add(key);
                     }
                 }
+
+                // Also translate and export all the library native/ directories to translate/
+                // Since pastel export will only be run from the source code, assume you're in the source tree and walk up
+                // to the root directory.
+                string currentDirectory = System.IO.Directory.GetCurrentDirectory();
+                while (!System.IO.Directory.Exists(System.IO.Path.Combine(currentDirectory, "Libraries")))
+                {
+                    currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
+                }
+
+                string libDir = System.IO.Path.Combine(currentDirectory, "Libraries");
+
+                foreach (string libraryDir in System.IO.Directory.GetDirectories(libDir))
+                {
+                    List<string> files = new List<string>();
+                    string nativeDir = System.IO.Path.Combine(libraryDir, "native");
+                    string supplementalDir = System.IO.Path.Combine(libraryDir, "supplemental");
+                    if (System.IO.Directory.Exists(nativeDir))
+                    {
+                        files.AddRange(System.IO.Directory.GetFiles(nativeDir).Where<string>(s => s.EndsWith(".cry")));
+                    }
+                    if (System.IO.Directory.Exists(supplementalDir))
+                    {
+                        files.AddRange(System.IO.Directory.GetFiles(supplementalDir).Where<string>(s => s.EndsWith(".cry")));
+                    }
+
+                    foreach (string file in files)
+                    {
+                        string key = "Libraries/" + file.Substring(libDir.Length + 1).Replace('\\', '/').Replace("/native/", "/translate/");
+                        key = key.Substring(0, key.Length - 4);
+                        string content = System.IO.File.ReadAllText(file);
+
+                        if (!filesById.ContainsKey(key))
+                        {
+                            filesById[key] = content;
+                            orderedFileIds.Add(key);
+                        }
+                    }
+                }
             }
 
             foreach (string fileId in libraryProducedFiles.Keys)
