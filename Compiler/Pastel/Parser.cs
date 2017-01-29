@@ -8,8 +8,28 @@ namespace Crayon.Pastel
 {
     internal class Parser
     {
+        AbstractPlatform platform;
+        public SystemLibraryManager LibraryManager { get; set; }
+
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
+
+        public Parser(AbstractPlatform platform, SystemLibraryManager libraryManager)
+        {
+            this.platform = platform;
+            this.LibraryManager = libraryManager;
+        }
+
+        public Executable[] ParseText(string filename, string text)
+        {
+            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, text, 0, true));
+            List<Executable> output = new List<Executable>();
+            while (tokens.HasMore)
+            {
+                output.Add(this.ParseExecutable(tokens, false));
+            }
+            return output.ToArray();
+        }
 
         public FunctionDefinition[] Parse(TokenStream tokens)
         {
@@ -45,7 +65,8 @@ namespace Crayon.Pastel
             {
                 hasCurlyBrace = true;
                 tokens.PopExpected("{");
-            } else
+            }
+            else
             {
                 hasCurlyBrace = tokens.PopIfPresent("{");
             }
@@ -72,7 +93,8 @@ namespace Crayon.Pastel
 
         public Executable ParseExecutable(TokenStream tokens, bool isForLoop)
         {
-            if (!isForLoop) {
+            if (!isForLoop)
+            {
                 switch (tokens.PeekValue())
                 {
                     case "if": return ParseIfStatement(tokens);
@@ -83,7 +105,7 @@ namespace Crayon.Pastel
                     case "return": return ParseReturn(tokens);
                 }
             }
-            
+
             string token1 = tokens.FlatPeekAhead(0);
             string token2 = tokens.FlatPeekAhead(1);
             string token3 = tokens.FlatPeekAhead(2);
@@ -109,7 +131,7 @@ namespace Crayon.Pastel
                 }
                 return new VariableDeclaration(type, variableName, equalsToken, assignmentValue);
             }
-            
+
             Expression expression = ParseExpression(tokens);
 
             if (!isForLoop && tokens.PopIfPresent(";"))
@@ -485,7 +507,7 @@ namespace Crayon.Pastel
             }
             throw new ParserException(token, errorMessage);
         }
-        
+
         public static bool IsValidName(string value)
         {
             char c;
