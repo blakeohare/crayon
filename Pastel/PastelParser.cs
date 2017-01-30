@@ -516,12 +516,7 @@ namespace Pastel
                 return new UnaryOp(op, root);
             }
 
-            if (next == "++" || next == "--" || next == "(")
-            {
-                return this.ParseIncrementOrCast(tokens);
-            }
-
-            return this.ParseEntity(tokens);
+            return this.ParseIncrementOrCast(tokens);
         }
 
         private Expression ParseIncrementOrCast(TokenStream tokens)
