@@ -20,9 +20,7 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateCastToList(List<string> output, StringConstant typeValue, Expression enumerableThing)
         {
-            output.Add("Core.CastToList<");
-            output.Add(typeValue.Value);
-            output.Add(">(");
+            output.Add("Core.ConvertRawDictionaryValueCollectionToAReusableValueList(");
             this.Translator.TranslateExpression(output, enumerableThing);
             output.Add(")");
         }
@@ -48,9 +46,7 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateConvertListToArray(List<string> output, StringConstant type, Expression list)
         {
-            output.Add("Core.ListToArray<");
-            output.Add(type.Value);
-            output.Add(">(");
+            output.Add("Core.ListToArray(");
             this.Translator.TranslateExpression(output, list);
             output.Add(")");
         }
@@ -146,7 +142,7 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateNewListOfSize(List<string> output, StringConstant type, Expression length)
         {
-            output.Add("Core.NewListOfSize<");
+            output.Add("new List<");
             output.Add(type.Value);
             output.Add(">(");
             this.Translator.TranslateExpression(output, length);
