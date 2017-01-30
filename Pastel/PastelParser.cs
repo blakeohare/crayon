@@ -38,6 +38,10 @@ namespace Pastel
                         output.Add(this.ParseGlobalDefinition(tokens));
                         break;
 
+                    case "struct":
+                        output.Add(this.ParseStructDefinition(tokens));
+                        break;
+
                     default:
                         output.Add(this.ParseFunctionDefinition(tokens));
                         break;
@@ -112,6 +116,24 @@ namespace Pastel
             }
 
             return new EnumDefinition(enumToken, nameToken, valueTokens, valueExpressions);
+        }
+
+        public StructDefinition ParseStructDefinition(TokenStream tokens)
+        {
+            Token structToken = tokens.PopExpected("struct");
+            Token nameToken = EnsureTokenIsValidName(tokens.Pop(), "Invalid struct name");
+            List<PType> structFieldTypes = new List<PType>();
+            List<Token> structFieldNames = new List<Token>();
+            tokens.PopExpected("{");
+            while (!tokens.PopIfPresent("}"))
+            {
+                PType fieldType = PType.Parse(tokens);
+                Token fieldName = EnsureTokenIsValidName(tokens.Pop(), "Invalid struct field name");
+                structFieldTypes.Add(fieldType);
+                structFieldNames.Add(fieldName);
+                tokens.PopExpected(";");
+            }
+            return new StructDefinition(structToken, nameToken, structFieldTypes, structFieldNames);
         }
 
         public FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
@@ -419,7 +441,19 @@ namespace Pastel
         private static readonly HashSet<string> OPS_INEQUALITY = new HashSet<string>(new string[] { "<", ">", "<=", ">=" });
         private Expression ParseInequality(TokenStream tokens)
         {
-            return this.ParseOpChain(tokens, OPS_INEQUALITY, this.ParseAddition);
+            return this.ParseOpChain(tokens, OPS_INEQUALITY, this.ParseBitShift);
+        }
+        
+        private Expression ParseBitShift(TokenStream tokens)
+        {
+            Expression left = this.ParseAddition(tokens);
+            Token bitShift = tokens.PopBitShiftHackIfPresent();
+            if (bitShift != null)
+            {
+                Expression right = this.ParseAddition(tokens);
+                return new OpChain(new Expression[] { left, right }, new Token[] { bitShift });
+            }
+            return left;
         }
 
         private static readonly HashSet<string> OPS_ADDITION = new HashSet<string>(new string[] { "+", "-" });
@@ -436,14 +470,15 @@ namespace Pastel
 
         private Expression ParsePrefixes(TokenStream tokens)
         {
-            if (tokens.IsNext("-") || tokens.IsNext("!"))
+            string next = tokens.PeekValue();
+            if (next == "-" || next == "!")
             {
                 Token op = tokens.Pop();
                 Expression root = this.ParsePrefixes(tokens);
                 return new UnaryOp(op, root);
             }
 
-            if (tokens.IsNext("("))
+            if (next == "++" || next == "--" || next == "(")
             {
                 return this.ParseParenthesisOrCast(tokens);
             }
@@ -453,7 +488,14 @@ namespace Pastel
 
         private Expression ParseParenthesisOrCast(TokenStream tokens)
         {
+            Token prefix = null;
+            if (tokens.IsNext("++") || tokens.IsNext("--"))
+            {
+                prefix = tokens.Pop();
+            }
+
             Token parenthesis = tokens.Peek();
+            Expression expression;
             if (tokens.PopIfPresent("("))
             {
                 string token1 = tokens.PeekValue();
@@ -473,11 +515,26 @@ namespace Pastel
                     return new CastExpression(parenthesis, castType, castedValue);
                 }
 
-                Expression expression = this.ParseExpression(tokens);
+                expression = this.ParseExpression(tokens);
                 tokens.PopExpected(")");
-                return expression;
+
             }
-            return this.ParseEntity(tokens);
+            else
+            {
+                expression = this.ParseEntity(tokens);
+            }
+
+            if (prefix != null)
+            {
+                expression = new InlineIncrement(prefix, prefix, expression, true);
+            }
+
+            if (tokens.IsNext("++") || tokens.IsNext("--"))
+            {
+                expression = new InlineIncrement(expression.FirstToken, tokens.Pop(), expression, false);
+            }
+
+            return expression;
         }
 
         private Expression ParseEntity(TokenStream tokens)

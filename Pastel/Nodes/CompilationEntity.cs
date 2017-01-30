@@ -11,7 +11,7 @@ namespace Pastel.Nodes
         ENUM,
         CONSTANT,
         GLOBAL,
-        OTHER,
+        STRUCT,
     }
 
     public interface ICompilationEntity

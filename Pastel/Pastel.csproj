@@ -54,6 +54,7 @@
     <Compile Include="Nodes\FunctionInvocation.cs" />
     <Compile Include="Nodes\IfStatement.cs" />
     <Compile Include="Nodes\InlineConstant.cs" />
+    <Compile Include="Nodes\InlineIncrement.cs" />
     <Compile Include="Nodes\OpChain.cs" />
     <Compile Include="Nodes\PType.cs" />
     <Compile Include="Nodes\ReturnStatement.cs" />

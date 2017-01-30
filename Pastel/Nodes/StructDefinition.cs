@@ -3,8 +3,10 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class StructDefinition
+    public class StructDefinition : ICompilationEntity
     {
+        public CompilationEntityType EntityType { get { return CompilationEntityType.STRUCT; } }
+
         public Token FirstToken { get; set; }
         public Token NameToken { get; set; }
         public PType[] ArgTypes { get; set; }

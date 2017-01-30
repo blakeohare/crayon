@@ -204,5 +204,25 @@ namespace Pastel
             this.tokenLayers.Add(this.topTokens);
             this.indexes.Add(0);
         }
+
+        public Token PopBitShiftHackIfPresent()
+        {
+            string next = this.PeekValue();
+            if (next == "<" || next == ">")
+            {
+                if (this.topIndex + 1 < this.topLength )
+                {
+                    Token nextToken = this.topTokens[this.topIndex + 1];
+                    if (nextToken.Value == next && !nextToken.HasWhitespacePrefix)
+                    {
+                        Token output = this.Pop();
+                        this.Pop();
+                        return new Token(output.Value + output.Value, output.FileName, output.Line, output.Col, output.HasWhitespacePrefix);
+                    }
+                }
+            }
+            return null;
+                
+        }
     }
 }

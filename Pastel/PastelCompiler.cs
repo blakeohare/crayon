@@ -38,6 +38,16 @@ namespace Pastel
                         functionDefinitions[functionName] = fnDef;
                         break;
 
+                    case CompilationEntityType.STRUCT:
+                        StructDefinition structDef = (StructDefinition)entity;
+                        string structName = structDef.NameToken.Value;
+                        if (structDefinitions.ContainsKey(structName))
+                        {
+                            throw new ParserException(structDef.FirstToken, "Multiple definitions of function: '" + structName + "'");
+                        }
+                        structDefinitions[structName] = structDef;
+                        break;
+
                     case CompilationEntityType.ENUM:
                         EnumDefinition enumDef = (EnumDefinition)entity;
                         string enumName = enumDef.NameToken.Value;
