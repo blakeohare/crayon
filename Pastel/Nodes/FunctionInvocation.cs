@@ -20,6 +20,22 @@ namespace Pastel.Nodes
             this.Args = args.ToArray();
         }
 
+        public Expression MaybeImmediatelyResolve(PastelParser parser)
+        {
+            if (this.Root is CompileTimeFunctionReference)
+            {
+                CompileTimeFunctionReference constFunc = (CompileTimeFunctionReference)this.Root;
+                if (constFunc.NameToken.Value == "ext_constant")
+                {
+                    InlineConstant argName = (InlineConstant)this.Args[0];
+                    bool boolValue = parser.GetParseTimeConstant(argName.Value.ToString());
+                    return new InlineConstant(PType.BOOL, this.FirstToken, boolValue);
+                }
+            }
+            return this;
+        }
+
+
         public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
         {
             throw new NotImplementedException();

@@ -18,6 +18,12 @@ namespace Pastel
             this.importCodeLoader = importCodeLoader;
         }
 
+        internal bool GetParseTimeConstant(string name)
+        {
+            bool output ;
+            return boolConstants.TryGetValue(name, out output) && output;
+        }
+
         public ICompilationEntity[] ParseText(string filename, string text)
         {
             TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, text));
@@ -46,6 +52,19 @@ namespace Pastel
                         output.Add(this.ParseFunctionDefinition(tokens));
                         break;
                 }
+            }
+            return output.ToArray();
+        }
+
+        public Executable[] ParseImportedCode(string path)
+        {
+            path = path.Replace(".cry", ".pst"); // lol TODO: fix this in the .pst code.
+            string code = this.importCodeLoader.LoadCode(path);
+            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(path, code));
+            List<Executable> output = new List<Executable>();
+            while (tokens.HasMore)
+            {
+                this.ParseCodeLine(output, tokens);
             }
             return output.ToArray();
         }
@@ -166,21 +185,40 @@ namespace Pastel
             {
                 hasCurlyBrace = tokens.PopIfPresent("{");
             }
-            List<Executable> code = new List<Executable>();
 
+            List<Executable> code = new List<Executable>();
             if (hasCurlyBrace)
             {
                 while (!tokens.PopIfPresent("}"))
                 {
-                    code.Add(ParseExecutable(tokens, false));
+                    this.ParseCodeLine(code, tokens);
                 }
             }
             else
             {
-                code.Add(ParseExecutable(tokens, false));
+                this.ParseCodeLine(code, tokens);
             }
 
             return code;
+        }
+
+        private void ParseCodeLine(List<Executable> codeOut, TokenStream tokens)
+        {
+            Executable line = ParseExecutable(tokens, false);
+            Executable[] lines = null;
+            if (line is ExpressionAsExecutable)
+            {
+                lines = ((ExpressionAsExecutable)line).ImmediateResolveMaybe(this);
+            }
+
+            if (lines == null)
+            {
+                codeOut.Add(line);
+            }
+            else
+            {
+                codeOut.AddRange(lines);
+            }
         }
 
         public Executable ParseExecutable(TokenStream tokens, bool isForLoop)
@@ -368,7 +406,7 @@ namespace Pastel
                 string next = tokens.PeekValue();
                 while (next != "}" && next != "default" && next != "case")
                 {
-                    chunkCode.Add(this.ParseExecutable(tokens, false));
+                    this.ParseCodeLine(chunkCode, tokens);
                     next = tokens.PeekValue();
                 }
 
@@ -480,13 +518,13 @@ namespace Pastel
 
             if (next == "++" || next == "--" || next == "(")
             {
-                return this.ParseParenthesisOrCast(tokens);
+                return this.ParseIncrementOrCast(tokens);
             }
 
             return this.ParseEntity(tokens);
         }
 
-        private Expression ParseParenthesisOrCast(TokenStream tokens)
+        private Expression ParseIncrementOrCast(TokenStream tokens)
         {
             Token prefix = null;
             if (tokens.IsNext("++") || tokens.IsNext("--"))
@@ -501,7 +539,8 @@ namespace Pastel
                 string token1 = tokens.PeekValue();
                 string token2 = tokens.FlatPeekAhead(1);
                 string token3 = tokens.FlatPeekAhead(2);
-                // This is a super-lame way to check for a cast vs parenthesis-wrapped expression, but I can't think of anything better at the moment.
+                // This is a super-lame way to check for a cast vs parenthesis-wrapped expression, but 
+                // I can't think of anything better at the moment.
                 bool isCast =
                     (token2 == "<" && (token1 == "List" || token1 == "Dictionary")) ||
                     (token2 == "[" && token3 == "]" && IsValidName(token1)) ||
@@ -517,7 +556,7 @@ namespace Pastel
 
                 expression = this.ParseExpression(tokens);
                 tokens.PopExpected(")");
-
+                expression = this.ParseOutEntitySuffixes(tokens, expression);
             }
             else
             {
@@ -549,7 +588,11 @@ namespace Pastel
             }
 
             Expression root = this.ParseEntityRoot(tokens);
+            return this.ParseOutEntitySuffixes(tokens, root);
+        }
 
+        private Expression ParseOutEntitySuffixes(TokenStream tokens, Expression root)
+        {
             while (true)
             {
                 switch (tokens.PeekValue())
@@ -650,7 +693,7 @@ namespace Pastel
                         if (args.Count > 0) tokens.PopExpected(",");
                         args.Add(this.ParseExpression(tokens));
                     }
-                    return new FunctionInvocation(root, openParen, args);
+                    return new FunctionInvocation(root, openParen, args).MaybeImmediatelyResolve(this);
                 default:
                     throw new Exception();
             }
