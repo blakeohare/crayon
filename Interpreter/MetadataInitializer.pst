@@ -131,9 +131,9 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
 			functionIds[memberId] = functionId;
 		}
 	}
-	classInfo.functionIds = Core.ListToArray<int>(functionIds);
-	classInfo.fieldInitializationCommand = Core.ListToArray<int>(fieldInitializationCommand);
-	classInfo.fieldInitializationLiteral = Core.ListToArray<Value>(fieldInitializationLiteral);
+	classInfo.functionIds = Core.ListToArray(functionIds);
+	classInfo.fieldInitializationCommand = Core.ListToArray(fieldInitializationCommand);
+	classInfo.fieldInitializationLiteral = Core.ListToArray(fieldInitializationLiteral);
 	classInfo.memberCount = functionIds.Length;
 	classInfo.globalIdToMemberId = globalNameIdToMemberId;
 	if (Core.StringEquals("Core.Exception", className)) {

@@ -32,7 +32,7 @@
 	for (i = 0; i < dirs.Length; i += 1) {
 		string dir = dirs[i];
 		List<string> unsortedDirs = filesPerDirectoryBuilder[dir];
-		Array<string> dirsSorted = Core.ListToArray<string>(unsortedDirs);
+		Array<string> dirsSorted = Core.ListToArray(unsortedDirs);
 		dirsSorted = Core.SortedCopyOfStringArray(dirsSorted);
 		filesPerDirectorySorted[dir] = dirsSorted;
 	}

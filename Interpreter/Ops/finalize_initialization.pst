@@ -1,8 +1,8 @@
-﻿p.identifiers = Core.ListToArray<string>(p.identifiersBuilder);
-p.literalTable = Core.ListToArray<Value>(p.literalTableBuilder);
-p.integerSwitchLookups = Core.ListToArray<Dictionary<int, int>>(p.integerSwitchLookupsBuilder);
-p.stringSwitchLookups = Core.ListToArray<Dictionary<string, int>>(p.stringSwitchLookupsBuilder);
-p.sourceCode = Core.ListToArray<string>(p.sourceCodeBuilder);
+﻿p.identifiers = Core.ListToArray(p.identifiersBuilder);
+p.literalTable = Core.ListToArray(p.literalTableBuilder);
+p.integerSwitchLookups = Core.ListToArray(p.integerSwitchLookupsBuilder);
+p.stringSwitchLookups = Core.ListToArray(p.stringSwitchLookupsBuilder);
+p.sourceCode = Core.ListToArray(p.sourceCodeBuilder);
 p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(p.invIdentifiers);
 p.funcArgs = new Array<Value>(p.identifiers.Length);
 p.projectId = p.stringArgs[pc];
