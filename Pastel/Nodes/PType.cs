@@ -27,19 +27,30 @@ namespace Pastel.Nodes
             this.RootValue = value;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
         }
-
-        private static PType PopArray(PType root, TokenStream tokens)
+        
+        public static PType Parse(TokenStream tokens)
         {
-            while (tokens.IsNext("[") && tokens.FlatPeekAhead(1) == "]")
+            Token firstToken = tokens.Peek();
+            PType type = ParseImpl(tokens);
+            if (type == null)
             {
-                tokens.Pop();
-                tokens.Pop();
-                root = new PType(root.FirstToken, "Array", new List<PType>() { root });
+                throw new ParserException(firstToken, "Expected a type here.");
             }
-            return root;
+            return type;
         }
 
-        public static PType Parse(TokenStream tokens)
+        public static PType TryParse(TokenStream tokens)
+        {
+            int index = tokens.SnapshotState();
+            PType type = ParseImpl(tokens);
+            if (type == null)
+            {
+                tokens.RevertState(index);
+            }
+            return type;
+        }
+
+        private static PType ParseImpl(TokenStream tokens)
         {
             Token token = tokens.Pop();
             switch (token.Value)
@@ -51,23 +62,48 @@ namespace Pastel.Nodes
                 case "void":
                 case "string":
                 case "object":
-                    return PopArray(new PType(token, token.Value), tokens);
+                    return new PType(token, token.Value);
+                default:
+                    if (!PastelParser.IsValidName(token.Value))
+                    {
+                        return null;
+                    }
+                    break;
             }
-
+            
+            int tokenIndex = tokens.SnapshotState();
+            bool isError = false;
             if (tokens.PopIfPresent("<"))
             {
                 List<PType> generics = new List<PType>();
-                generics.Add(PType.Parse(tokens));
-                while (tokens.PopIfPresent(","))
+                while (!tokens.PopIfPresent(">"))
                 {
-                    generics.Add(PType.Parse(tokens));
+                    if (generics.Count > 0)
+                    {
+                        if (!tokens.PopIfPresent(","))
+                        {
+                            isError = true;
+                            break;
+                        }
+                    }
+
+                    PType generic = ParseImpl(tokens);
+                    if (generic == null) return null;
+
+                    generics.Add(generic);
                 }
-                tokens.PopExpectedOrPartial(">");
-                return PopArray(new PType(token, token.Value, generics), tokens);
+                if (!isError)
+                {
+                    return new PType(token, token.Value, generics);
+                }
+
+                // If there was an error while parsing generics, then this may still be a valid type.
+                tokens.RevertState(tokenIndex);
+                return new PType(token, token.Value);
             }
             else
             {
-                return PopArray(new PType(token, token.Value), tokens);
+                return new PType(token, token.Value);
             }
         }
     }

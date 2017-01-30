@@ -236,9 +236,9 @@ namespace Pastel
                 }
             }
 
-            string token1 = tokens.FlatPeekAhead(0);
-            string token2 = tokens.FlatPeekAhead(1);
-            string token3 = tokens.FlatPeekAhead(2);
+            string token1 = tokens.PeekAhead(0);
+            string token2 = tokens.PeekAhead(1);
+            string token3 = tokens.PeekAhead(2);
 
             string DEBUG_HELP = (token1 + " " + (token2 ?? "") + " " + (token3 ?? "")).Trim();
             if (DEBUG_HELP == "set me to stuff")
@@ -532,36 +532,23 @@ namespace Pastel
                 prefix = tokens.Pop();
             }
 
-            Token parenthesis = tokens.Peek();
             Expression expression;
-            if (tokens.PopIfPresent("("))
+            int tokenIndex = tokens.SnapshotState();
+            if (prefix == null && 
+                tokens.PeekValue() == "(" &&
+                IsValidName(tokens.PeekAhead(1)))
             {
-                string token1 = tokens.PeekValue();
-                string token2 = tokens.FlatPeekAhead(1);
-                string token3 = tokens.FlatPeekAhead(2);
-                // This is a super-lame way to check for a cast vs parenthesis-wrapped expression, but 
-                // I can't think of anything better at the moment.
-                bool isCast =
-                    (token2 == "<" && (token1 == "List" || token1 == "Dictionary")) ||
-                    (token2 == "[" && token3 == "]" && IsValidName(token1)) ||
-                    (token2 == ")" && IsValidName(token1) && (token3 == "(" || IsValidName(token3)));
-                if (isCast)
+                Token parenthesis = tokens.Pop();
+                PType castType = PType.TryParse(tokens);
+                if (castType != null && tokens.PopIfPresent(")"))
                 {
-                    PType castType = PType.Parse(tokens);
-                    tokens.PopExpected(")");
-                    Expression castedValue = this.ParsePrefixes(tokens);
-
-                    return new CastExpression(parenthesis, castType, castedValue);
+                    expression = this.ParseIncrementOrCast(tokens);
+                    return new CastExpression(parenthesis, castType, expression);
                 }
+                tokens.RevertState(tokenIndex);
+            }
 
-                expression = this.ParseExpression(tokens);
-                tokens.PopExpected(")");
-                expression = this.ParseOutEntitySuffixes(tokens, expression);
-            }
-            else
-            {
-                expression = this.ParseEntity(tokens);
-            }
+            expression = this.ParseEntity(tokens);
 
             if (prefix != null)
             {
@@ -585,6 +572,13 @@ namespace Pastel
                 if (!tokens.IsNext("(")) tokens.PopExpected("("); // intentional error if not present.
                 Expression constructorReference = new ConstructorReference(newToken, typeToConstruct);
                 return this.ParseEntityChain(constructorReference, tokens);
+            }
+            
+            if (tokens.PopIfPresent("("))
+            {
+                Expression expression = this.ParseExpression(tokens);
+                tokens.PopExpected(")");
+                return this.ParseOutEntitySuffixes(tokens, expression);
             }
 
             Expression root = this.ParseEntityRoot(tokens);
