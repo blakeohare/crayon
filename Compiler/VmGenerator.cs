@@ -24,16 +24,27 @@ namespace Crayon
             "ValueUtil.pst",
         };
 
-        public void GenerateVmSourceCodeForPlatform(Common.AbstractPlatform platform, SystemLibraryManager libraryManager)
+        public void GenerateVmSourceCodeForPlatform(
+            Common.AbstractPlatform platform,
+            CompilationBundle nullableCompilationBundle,
+            SystemLibraryManager libraryManager)
         {
-            IInlineImportCodeLoader codeLoader = new InlineImportCodeLoader();
-            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(platform.GetFlattenedConstantFlags(), codeLoader);
+            this.GenerateParseTree(platform, nullableCompilationBundle);
+        }
+
+        private void GenerateParseTree(Common.AbstractPlatform platform, CompilationBundle nullableCompilationBundle)
+        {
+            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
+                platform.GetFlattenedConstantFlags(),
+                new InlineImportCodeLoader());
 
             foreach (string file in INTERPRETER_BASE_FILES)
             {
                 string code = LegacyUtil.ReadInterpreterFileInternally(file);
                 compiler.CompileBlobOfCode(file, code);
             }
+
+            compiler.Resolve();
         }
     }
 }

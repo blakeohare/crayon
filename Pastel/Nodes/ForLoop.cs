@@ -12,26 +12,29 @@ namespace Pastel.Nodes
         public Executable[] Code { get; set; }
 
         public ForLoop(
-            Token forToken, 
-            IList<Executable> initCode, 
-            Expression condition, 
-            IList<Executable> stepCode, 
+            Token forToken,
+            IList<Executable> initCode,
+            Expression condition,
+            IList<Executable> stepCode,
             IList<Executable> code) : base(forToken)
         {
-            this.InitCode = initCode.ToArray(); 
+            this.InitCode = initCode.ToArray();
             this.Condition = condition;
             this.StepCode = stepCode.ToArray();
             this.Code = code.ToArray();
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
+            this.InitCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.InitCode, compiler).ToArray();
+            this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
+            this.StepCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.StepCode, compiler).ToArray();
 
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
+            // TODO: check Condition for falseness
+
+            this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
+            
+            return Listify(this);
         }
     }
 }

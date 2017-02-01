@@ -16,14 +16,36 @@ namespace Pastel.Nodes
             this.FieldName = fieldName;
         }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Root = this.Root.ResolveNamesAndCullUnusedCode(compiler);
+
+            Variable varRoot = this.Root as Variable;
+            if (varRoot != null)
+            {
+                string rootName = varRoot.Name;
+                if (compiler.EnumDefinitions.ContainsKey(rootName))
+                {
+                    InlineConstant enumValue = compiler.EnumDefinitions[rootName].GetValue(this.FieldName);
+                    return enumValue.CloneWithNewToken(this.FirstToken);
+                }
+            }
+            
+            return this;
         }
 
-        public override void ResolveTypes()
+        internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            Variable varRoot = this.Root as Variable;
+            if (varRoot == null) throw new ParserException(this.FirstToken, "Not able to resolve this constant.");
+            string enumName = varRoot.Name;
+            EnumDefinition enumDef;
+            if (!compiler.EnumDefinitions.TryGetValue(enumName, out enumDef))
+            {
+                throw new ParserException(this.FirstToken, "Not able to resolve this constant.");
+            }
+
+            return enumDef.GetValue(this.FieldName);
         }
     }
 }

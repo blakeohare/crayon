@@ -18,12 +18,7 @@ namespace Pastel.Nodes
             this.Code = code.ToArray();
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             throw new NotImplementedException();
         }

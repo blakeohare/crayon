@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
@@ -11,11 +12,21 @@ namespace Pastel.Nodes
             this.FirstToken = firstToken;
         }
 
+        public abstract IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler);
 
-        public abstract IList<Executable> NameResolution(
-            Dictionary<string, FunctionDefinition> functionLookup,
-            Dictionary<string, StructDefinition> structLookup);
+        protected IList<Executable> Listify(Executable ex)
+        {
+            return new Executable[] { ex };
+        }
 
-        public abstract void ResolveTypes();
+        internal static IList<Executable> ResolveNamesAndCullUnusedCodeForBlock(IList<Executable> code, PastelCompiler compiler)
+        {
+            List<Executable> output = new List<Executable>();
+            for (int i = 0; i < code.Count; ++i)
+            {
+                output.AddRange(code[i].ResolveNamesAndCullUnusedCode(compiler));
+            }
+            return output;
+        }
     }
 }

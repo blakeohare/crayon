@@ -24,14 +24,25 @@ namespace Pastel.Nodes
             this.ElseCode = elseCode.ToArray();
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
+            this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
 
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
+            if (this.Condition is InlineConstant)
+            {
+                object value = ((InlineConstant)this.Condition).Value;
+                if (value is bool)
+                {
+                    return Executable.ResolveNamesAndCullUnusedCodeForBlock(
+                        ((bool)value) ? this.IfCode : this.ElseCode,
+                        compiler);
+                }
+            }
+
+            this.IfCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.IfCode, compiler).ToArray();
+            this.ElseCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.ElseCode, compiler).ToArray();
+
+            return Listify(this);
         }
     }
 }

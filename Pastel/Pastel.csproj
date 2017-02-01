@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NativeFunction.cs" />
     <Compile Include="EofException.cs" />
     <Compile Include="Nodes\Assignment.cs" />
     <Compile Include="Nodes\BracketIndex.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Nodes\ForLoop.cs" />
     <Compile Include="Nodes\FunctionDefinition.cs" />
     <Compile Include="Nodes\FunctionInvocation.cs" />
+    <Compile Include="Nodes\FunctionReference.cs" />
     <Compile Include="Nodes\IfStatement.cs" />
     <Compile Include="Nodes\InlineConstant.cs" />
     <Compile Include="Nodes\InlineIncrement.cs" />

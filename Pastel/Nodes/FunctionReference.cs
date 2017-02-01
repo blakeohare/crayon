@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Pastel.Nodes
 {
-    class ConstructorReference : Expression
+    class FunctionReference : Expression
     {
-        public PType TypeToConstruct { get; set; }
+        public FunctionDefinition Function { get; set; }
 
-        public ConstructorReference(Token newToken, PType type) : base(newToken)
+        public FunctionReference(Token firstToken, FunctionDefinition functionDefinition) : base(firstToken)
         {
-            this.TypeToConstruct = type;
+            this.Function = functionDefinition;
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)

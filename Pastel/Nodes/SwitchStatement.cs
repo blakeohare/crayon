@@ -14,17 +14,7 @@ namespace Pastel.Nodes
             this.Condition = condition;
             this.Chunks = chunks.ToArray();
         }
-
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public class SwitchChunk
         {
             public Token[] CaseAndDefaultTokens { get; set; }
@@ -48,6 +38,11 @@ namespace Pastel.Nodes
 
                 this.HasDefault = this.Cases[this.Cases.Length - 1] == null;
             }
+        }
+
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        {
+            throw new NotImplementedException();
         }
     }
 }

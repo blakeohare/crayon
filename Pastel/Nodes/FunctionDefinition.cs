@@ -28,5 +28,10 @@ namespace Pastel.Nodes
             this.ArgNames = argNames.ToArray();
             this.Code = code.ToArray();
         }
+
+        public void ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        {
+            this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
+        }
     }
 }

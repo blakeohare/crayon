@@ -14,14 +14,19 @@ namespace Pastel.Nodes
             this.Value = value;
         }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            return this;
         }
 
-        public override void ResolveTypes()
+        public InlineConstant CloneWithNewToken(Token token)
         {
-            throw new NotImplementedException();
+            return new InlineConstant(this.Type, token, this.Value);
+        }
+
+        internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)
+        {
+            return this;
         }
     }
 }

@@ -17,14 +17,33 @@ namespace Pastel.Nodes
             this.Ops = ops.ToArray();
         }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             throw new NotImplementedException();
         }
 
-        public override void ResolveTypes()
+        internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i] = this.Expressions[i].DoConstantResolution(cycleDetection, compiler);
+            }
+
+            InlineConstant current = (InlineConstant)this.Expressions[0];
+            for (int i = 1; i < this.Expressions.Length; ++i)
+            {
+                InlineConstant next = (InlineConstant)this.Expressions[i];
+                string lookup = current.Type.RootValue + this.Ops[i - 1].Value + next.Type.RootValue;
+                switch (lookup)
+                {
+                    case "int+int":
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value + (int)next.Value);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            return current;
         }
     }
 }

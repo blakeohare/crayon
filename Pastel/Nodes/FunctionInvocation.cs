@@ -35,15 +35,13 @@ namespace Pastel.Nodes
             return this;
         }
 
-
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
+            this.Root = this.Root.ResolveNamesAndCullUnusedCode(compiler);
+            Expression.ResolveNamesAndCullUnusedCodeInPlace(this.Args, compiler);
 
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
+            // TODO: check for core function reference
+            return this;
         }
     }
 }

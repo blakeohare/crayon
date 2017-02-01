@@ -8,14 +8,9 @@ namespace Pastel.Nodes
         public BreakStatement(Token breakToken) : base(breakToken)
         { }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
+            return this.Listify(this);
         }
     }
 }

@@ -35,14 +35,16 @@ namespace Pastel.Nodes
             this.Value = assignmentValue;
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Value = this.Value.ResolveNamesAndCullUnusedCode(compiler);
+
+            return Listify(this);
         }
 
-        public override void ResolveTypes()
+        public void DoConstantResolutions(HashSet<string> cycleDetection, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Value = this.Value.DoConstantResolution(cycleDetection, compiler);
         }
     }
 }

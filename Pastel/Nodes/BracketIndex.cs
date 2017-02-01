@@ -16,15 +16,8 @@ namespace Pastel.Nodes
             this.Index = index;
         }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
-        {
-            this.Root.ResolveTypes();
-            this.Index.ResolveTypes();
             throw new NotImplementedException();
         }
     }

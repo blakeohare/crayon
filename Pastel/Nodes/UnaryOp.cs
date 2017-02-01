@@ -12,12 +12,7 @@ namespace Pastel.Nodes
             this.Expression = root;
         }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             throw new NotImplementedException();
         }

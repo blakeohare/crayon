@@ -34,14 +34,10 @@ namespace Pastel.Nodes
             return null;
         }
 
-        public override IList<Executable> NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
+        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void ResolveTypes()
-        {
-            throw new NotImplementedException();
+            this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
+            return Listify(this);
         }
     }
 }

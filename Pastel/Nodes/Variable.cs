@@ -8,15 +8,24 @@ namespace Pastel.Nodes
         public Variable(Token token) : base(token)
         { }
 
-        public override Expression NameResolution(Dictionary<string, FunctionDefinition> functionLookup, Dictionary<string, StructDefinition> structLookup)
-        {
-            throw new NotImplementedException();
-        }
+        public string Name { get { return this.FirstToken.Value; } }
 
-        public override void ResolveTypes()
+        public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            string name = this.Name;
+            if (compiler.ConstantDefinitions.ContainsKey(name))
+            {
+                // resolved by now
+                InlineConstant constantValue = (InlineConstant)compiler.ConstantDefinitions[name].Value;
+                return constantValue.CloneWithNewToken(this.FirstToken);
+            }
+
+            if (compiler.FunctionDefinitions.ContainsKey(name))
+            {
+                return new FunctionReference(this.FirstToken, compiler.FunctionDefinitions[name]);
+            }
+
+            return this;
         }
     }
 }
-

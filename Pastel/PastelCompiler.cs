@@ -10,16 +10,26 @@ namespace Pastel
     {
         public PastelCompiler(IDictionary<string, bool> constants, IInlineImportCodeLoader inlineImportCodeLoader)
         {
+            this.StructDefinitions = new Dictionary<string, StructDefinition>();
+            this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
+            this.Globals = new Dictionary<string, VariableDeclaration>();
+            this.ConstantDefinitions = new Dictionary<string, VariableDeclaration>();
+            this.FunctionDefinitions = new Dictionary<string, FunctionDefinition>();
+
             this.interpreterParser = new PastelParser(constants, inlineImportCodeLoader);
         }
 
         private PastelParser interpreterParser;
 
-        private Dictionary<string, StructDefinition> structDefinitions = new Dictionary<string, StructDefinition>();
-        private Dictionary<string, EnumDefinition> enumDefinitions = new Dictionary<string, EnumDefinition>();
-        private Dictionary<string, VariableDeclaration> globals = new Dictionary<string, VariableDeclaration>();
-        private Dictionary<string, VariableDeclaration> constants = new Dictionary<string, VariableDeclaration>();
-        private Dictionary<string, FunctionDefinition> functionDefinitions = new Dictionary<string, FunctionDefinition>();
+        internal Dictionary<string, StructDefinition> StructDefinitions { get; set; }
+        internal Dictionary<string, EnumDefinition> EnumDefinitions { get; set; }
+        internal Dictionary<string, VariableDeclaration> Globals { get; set; }
+        internal Dictionary<string, VariableDeclaration> ConstantDefinitions { get; set; }
+        internal Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
+
+        internal HashSet<string> ResolvedFunctions { get; set; }
+        internal HashSet<string> UnresolvedFunctions { get; set; }
+        internal Queue<string> ResolutionQueue { get; set; }
 
         public void CompileBlobOfCode(string name, string code)
         {
@@ -31,31 +41,31 @@ namespace Pastel
                     case CompilationEntityType.FUNCTION:
                         FunctionDefinition fnDef = (FunctionDefinition)entity;
                         string functionName = fnDef.NameToken.Value;
-                        if (functionDefinitions.ContainsKey(functionName))
+                        if (this.FunctionDefinitions.ContainsKey(functionName))
                         {
                             throw new ParserException(fnDef.FirstToken, "Multiple definitions of function: '" + functionName + "'");
                         }
-                        functionDefinitions[functionName] = fnDef;
+                        this.FunctionDefinitions[functionName] = fnDef;
                         break;
 
                     case CompilationEntityType.STRUCT:
                         StructDefinition structDef = (StructDefinition)entity;
                         string structName = structDef.NameToken.Value;
-                        if (structDefinitions.ContainsKey(structName))
+                        if (this.StructDefinitions.ContainsKey(structName))
                         {
                             throw new ParserException(structDef.FirstToken, "Multiple definitions of function: '" + structName + "'");
                         }
-                        structDefinitions[structName] = structDef;
+                        this.StructDefinitions[structName] = structDef;
                         break;
 
                     case CompilationEntityType.ENUM:
                         EnumDefinition enumDef = (EnumDefinition)entity;
                         string enumName = enumDef.NameToken.Value;
-                        if (enumDefinitions.ContainsKey(enumName))
+                        if (this.EnumDefinitions.ContainsKey(enumName))
                         {
                             throw new ParserException(enumDef.FirstToken, "Multiple definitions of function: '" + enumName + "'");
                         }
-                        enumDefinitions[enumName] = enumDef;
+                        this.EnumDefinitions[enumName] = enumDef;
                         break;
 
                     case CompilationEntityType.CONSTANT:
@@ -63,8 +73,8 @@ namespace Pastel
                         VariableDeclaration assignment = (VariableDeclaration)entity;
                         string targetName = assignment.VariableName.Value;
                         Dictionary<string, VariableDeclaration> lookup = entity.EntityType == CompilationEntityType.CONSTANT
-                            ? constants
-                            : globals;
+                            ? this.ConstantDefinitions
+                            : this.Globals;
                         if (lookup.ContainsKey(targetName))
                         {
                             throw new ParserException(
@@ -77,6 +87,58 @@ namespace Pastel
                     default:
                         throw new NotImplementedException();
                 }
+            }
+        }
+
+        public void Resolve()
+        {
+            this.ResolveConstants();
+            this.ResolveNamesAndCullUnusedCode();
+        }
+
+        private void ResolveConstants()
+        {
+            HashSet<string> cycleDetection = new HashSet<string>();
+            foreach (EnumDefinition enumDef in this.EnumDefinitions.Values)
+            {
+                if (enumDef.UnresolvedValues.Count > 0)
+                {
+                    enumDef.DoConstantResolutions(cycleDetection, this);
+                }
+            }
+            
+            foreach (VariableDeclaration constDef in this.ConstantDefinitions.Values)
+            {
+                if (!(constDef.Value is InlineConstant))
+                {
+                    string name = constDef.VariableName.Value;
+                    cycleDetection.Add(name);
+                    constDef.DoConstantResolutions(cycleDetection, this);
+                    cycleDetection.Remove(name);
+                }
+            }
+        }
+
+        private void ResolveNamesAndCullUnusedCode()
+        {
+            string[] globalNames = this.Globals.Keys.ToArray();
+            for (int i = 0; i < globalNames.Length; ++i)
+            {
+                string name = globalNames[i];
+                this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this)[0];
+            }
+
+            this.ResolvedFunctions = new HashSet<string>();
+            this.UnresolvedFunctions = new HashSet<string>();
+            this.ResolutionQueue = new Queue<string>();
+            this.ResolutionQueue.Enqueue("main");
+
+            while (this.ResolutionQueue.Count > 0)
+            {
+                string functionName = this.ResolutionQueue.Dequeue();
+                this.UnresolvedFunctions.Remove(functionName);
+                this.ResolvedFunctions.Add(functionName);
+                this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
             }
         }
     }
