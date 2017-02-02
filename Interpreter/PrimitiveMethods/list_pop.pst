@@ -1,7 +1,7 @@
 ﻿if (argCount > 0) {
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
 }
-len = list1.Length;
+len = list1.Size();
 if (len < 1) {
 	return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Cannot pop from an empty list.");
 }

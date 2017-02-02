@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Crayon.ParseTree;
+using Common;
 
 namespace Crayon
 {
@@ -108,7 +109,7 @@ namespace Crayon
                         }
                         else
                         {
-                            inlineImportFileContents = Util.ReadInterpreterFileInternally(inlineImportFileName);
+                            inlineImportFileContents = LegacyUtil.ReadInterpreterFileInternally(inlineImportFileName);
                         }
                         Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
                         inlineImportFileContents = Constants.DoReplacements(false, inlineImportFileContents, replacements);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Crayon.ParseTree;
+using Common;
 
 namespace Crayon.Translator.Java
 {
@@ -52,7 +53,7 @@ namespace Crayon.Translator.Java
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("game-java-awt/" + awtFile + ".txt"),
+                        LegacyUtil.ReadResourceFileInternally("game-java-awt/" + awtFile + ".txt"),
                         replacements)
                 };
             }
@@ -65,7 +66,7 @@ namespace Crayon.Translator.Java
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
+                        LegacyUtil.ReadResourceFileInternally("java-common/" + basicFile + ".txt"),
                         replacements)
                 };
             }
@@ -82,7 +83,7 @@ namespace Crayon.Translator.Java
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("game-java-awt/" + basicFile + ".txt"),
+                        LegacyUtil.ReadResourceFileInternally("game-java-awt/" + basicFile + ".txt"),
                         replacements)
                 };
             }
@@ -226,8 +227,8 @@ namespace Crayon.Translator.Java
             output["build.xml"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(false, 
-                    Util.ReadResourceFileInternally("game-java-awt/BuildXml.txt"),
+                TextContent = Constants.DoReplacements(false,
+                    LegacyUtil.ReadResourceFileInternally("game-java-awt/BuildXml.txt"),
                     replacements)
             };
 

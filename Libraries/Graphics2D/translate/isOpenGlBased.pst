@@ -1,4 +1,4 @@
-﻿if (@ext_constant("IS_OPEN_GL_BASED")) {
+﻿if (@ext_boolean("IS_OPEN_GL_BASED")) {
 	output = VALUE_TRUE;
 } else {
 	output = VALUE_FALSE;

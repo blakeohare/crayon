@@ -25,7 +25,7 @@
 	if (type == Types.LIST) {
 		List<Value> internalList = ((List<Value>) wrappedValue.internalValue);
 		string output = "[";
-		for (int i = 0; i < internalList.Length; i += 1) {
+		for (int i = 0; i < internalList.Size(); i += 1) {
 			if (i > 0) {
 				Core.StringAppend(output, ", ");
 			}
@@ -38,7 +38,7 @@
 		ObjectInstance objInstance = ((ObjectInstance) wrappedValue.internalValue);
 		int classId = objInstance.classId;
 		int ptr = objInstance.objectId;
-		ProgramData pd = Core.ProgramData();
+		ProgramData pd = Core.GetProgramData();
 		ClassInfo classInfo = pd.classTable[classId];
 		int nameId = classInfo.nameId;
 		string className = pd.identifiers[nameId];
@@ -111,7 +111,7 @@ Value buildInteger(int num) {
 }
 
 Value buildString(string s) {
-	if (s.Length == 0) {
+	if (s.Size() == 0) {
 		return VALUE_EMPTY_STRING;
 	}
 	return new Value(Types.STRING, s);
@@ -149,7 +149,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 	int leftType = a.type;
 	int rightType = b.type;
 	if (leftType == rightType) {
-		if (@ext_constant("IS_PYTHON")) {
+		if (@ext_boolean("IS_PYTHON")) {
 			if (leftType < Types.LIST) {
 				if (a.internalValue == b.internalValue) {
 					return 1;
@@ -178,7 +178,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.STRING:
-				if (@ext_constant("IS_JAVA")) {
+				if (@ext_boolean("IS_JAVA")) {
 					if (a.internalValue.Equals(b.internalValue)) {
 						output = 1;
 					}
@@ -189,7 +189,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.LIST:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -200,7 +200,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.DICTIONARY:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -211,7 +211,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.INSTANCE:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -304,7 +304,7 @@ Value buildList(List<Value> valueList) {
 Value buildDictionary(Array<string> keys, Array<Value> values) {
 	Dictionary<string, Value> keyLookup = new Dictionary<string, Value>();
 	Dictionary<string, Value> valueLookup = new Dictionary<string, Value>();
-	int i = keys.Length - 1;
+	int i = keys.Size() - 1;
 	string key = null;
 	Value keyValue = null;
 	while (i >= 0) {
@@ -319,7 +319,7 @@ Value buildDictionary(Array<string> keys, Array<Value> values) {
 
 Array<string> toStringList(Value valueStringOrList, Array<string> maybeReuse) {
 	if (valueStringOrList.type == Types.STRING) {
-		if ((maybeReuse == null) || (maybeReuse.Length != 1)) {
+		if ((maybeReuse == null) || (maybeReuse.Size() != 1)) {
 			maybeReuse = new Array<string>(1);
 		}
 		maybeReuse[0] = ((string) valueStringOrList.internalValue);
@@ -327,8 +327,8 @@ Array<string> toStringList(Value valueStringOrList, Array<string> maybeReuse) {
 	}
 	if (valueStringOrList.type == Types.LIST) {
 		List<Value> list = ((List<Value>) valueStringOrList.internalValue);
-		int length = list.Length;
-		if ((maybeReuse == null) || (maybeReuse.Length != length)) {
+		int length = list.Size();
+		if ((maybeReuse == null) || (maybeReuse.Size() != length)) {
 			maybeReuse = new Array<string>(length);
 		}
 		for (int i = length - 1; i >= 0; i -= 1) {
@@ -471,7 +471,7 @@ Value multiplyString(Value strValue, string str, int n) {
 
 string stringDecode(string encoded) {
 	if (!encoded.Contains("%")) {
-		int length = encoded.Length;
+		int length = encoded.Size();
 		char per = "%"[0];
 		List<string> builder = new List<string>();
 		for (int i = 0; i < length; i += 1) {
@@ -491,7 +491,7 @@ string stringFromHex(string encoded) {
 	encoded = encoded.ToUpper();
 	string hex = "0123456789ABCDEF";
 	List<string> output = new List<string>();
-	int length = encoded.Length;
+	int length = encoded.Size();
 	int a = 0;
 	int b = 0;
 	string c = null;
@@ -542,12 +542,12 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
 	string sKey = null;
 	Array<int> intKeys = original.keyIntLookup.Keys();
 	Array<string> stringKeys = original.keyStringLookup.Keys();
-	for (i = intKeys.Length - 1; i >= 0; i -= 1) {
+	for (i = intKeys.Size() - 1; i >= 0; i -= 1) {
 		iKey = intKeys[i];
 		keyIntLookup_clone[iKey] = original.keyIntLookup[iKey];
 		valueIntLookup_clone[iKey] = original.valueIntLookup[iKey];
 	}
-	for (i = stringKeys.Length - 1; i >= 0; i -= 1) {
+	for (i = stringKeys.Size() - 1; i >= 0; i -= 1) {
 		sKey = stringKeys[i];
 		keyStringLookup_clone[sKey] = original.keyStringLookup[sKey];
 		valueStringLookup_clone[sKey] = original.valueStringLookup[sKey];
@@ -558,7 +558,7 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
 
 int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutParam) {
 	intOutParam[0] = 0;
-	int length = keyList.Length;
+	int length = keyList.Size();
 	if (length < 2) {
 		return 0;
 	}
@@ -572,7 +572,7 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
 	} else {
 		numKeys = new Array<double>(length);
 	}
-	for (i = keyList.Length - 1; i >= 0; i -= 1) {
+	for (i = keyList.Size() - 1; i >= 0; i -= 1) {
 		item = keyList[i];
 		switch (item.type) {
 			case Types.INTEGER:
@@ -678,7 +678,7 @@ double fixFuzzyFloatPrecision(double x) {
 			}
 		}
 		if (roundDown) {
-			if (@ext_constant("INT_IS_FLOOR") || (x > 0)) {
+			if (@ext_boolean("INT_IS_FLOOR") || (x > 0)) {
 				x = Core.Int(x);
 			} else {
 				x = Core.Int(x) - 1;

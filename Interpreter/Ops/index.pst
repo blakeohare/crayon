@@ -8,9 +8,9 @@ if (root.type == Types.LIST) {
 		i = ((int) value.internalValue);
 		list1 = ((List<Value>) root.internalValue);
 		if (i < 0) {
-			i += list1.Length;
+			i += list1.Size();
 		}
-		if ((i < 0) || (i >= list1.Length)) {
+		if ((i < 0) || (i >= list1.Size())) {
 			return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "List index is out of bounds");
 		} else {
 			valueStack[(valueStackSize - 1)] = list1[i];
@@ -71,9 +71,9 @@ if (root.type == Types.LIST) {
 			}
 			int1 = ((int) value.internalValue);
 			if (int1 < 0) {
-				int1 += string1.Length;
+				int1 += string1.Size();
 			}
-			if ((int1 < 0) || (int1 >= string1.Length)) {
+			if ((int1 < 0) || (int1 >= string1.Size())) {
 				return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "String index out of range.");
 			}
 			valueStack[(valueStackSize - 1)] = buildCommonString(Core.CharToString(string1[int1]));

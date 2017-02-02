@@ -1,6 +1,6 @@
 ﻿Array<object> libNoriUnwrapMenus(Value menuBarList) {
 	List<Value> items = ((List<Value>) menuBarList.internalValue);
-	int length = items.Length;
+	int length = items.Size();
 	Array<object> output = new Array<object>(length);
 	for (int i = 0; i < length; i += 1) {
 		Value item = items[i];

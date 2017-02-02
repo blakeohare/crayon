@@ -5,7 +5,7 @@ objInstance1.nativeData = objArray1;
 objInstance1 = ((ObjectInstance) arg3.internalValue);
 objArray2 = objInstance1.nativeData;
 if (((bool) arg2.internalValue)) {
-	objArray1[0] = @ext_constant("IS_OPEN_GL_BASED");
+	objArray1[0] = @ext_boolean("IS_OPEN_GL_BASED");
 	objArray1[1] = false;
 	objArray1[2] = -1;
 	objArray1[3] = objArray2[0];

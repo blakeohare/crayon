@@ -1,3 +1,3 @@
-﻿if (@ext_constant("LIB_GAMEPAD_SUPPORTED")) {
+﻿if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 	Library._lib_gamepad_poll_universe();
 }

@@ -1,5 +1,5 @@
 ﻿string3 = stringArgs[pc];
-int1 = p.identifiersBuilder.Length;
+int1 = p.identifiersBuilder.Size();
 p.invIdentifiers[string3] = int1;
 p.identifiersBuilder.Add(string3);
 if (Core.StringEquals("length", string3)) {

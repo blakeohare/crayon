@@ -7,7 +7,7 @@ if (value.type != Types.INTEGER) {
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "First argument of list.insert must be an integer index.");
 }
 int1 = ((int) value.internalValue);
-len = list1.Length;
+len = list1.Size();
 if (int1 < 0) {
 	int1 += len;
 }

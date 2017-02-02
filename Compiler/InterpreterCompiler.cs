@@ -56,7 +56,7 @@ namespace Crayon
             foreach (string file in FILES)
             {
                 string fileId = file.Split('.')[0];
-                string code = Util.ReadInterpreterFileInternally(file);
+                string code = LegacyUtil.ReadInterpreterFileInternally(file);
                 filesById[fileId] = code;
                 orderedFileIds.Add(fileId);
             }
@@ -75,7 +75,7 @@ namespace Crayon
                     {
                         continue;
                     }
-                    string content = Util.ReadInterpreterFileInternally(path);
+                    string content = LegacyUtil.ReadInterpreterFileInternally(path);
                     string key = path.Substring(0, path.Length - 4); // trim .cry
                     if (!filesById.ContainsKey(key))
                     {

@@ -7,7 +7,7 @@ if (value2.type != Types.STRING) {
 }
 stringList = string1.Split(((string) value2.internalValue));
 list1 = new List<Value>();
-len = stringList.Length;
+len = stringList.Size();
 for (i = 0; i < len; i += 1) {
 	list1.Add(buildString(stringList[i]));
 }

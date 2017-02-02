@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Crayon.ParseTree;
+using Common;
 
 namespace Crayon.Translator.Ruby
 {
@@ -8,7 +9,7 @@ namespace Crayon.Translator.Ruby
     {
         protected override void TranslateAssignment(List<string> output, Assignment assignment)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             this.TranslateExpression(output, assignment.Target);
             output.Add(" ");
             output.Add(assignment.AssignmentOp);
@@ -25,10 +26,10 @@ namespace Crayon.Translator.Ruby
         protected override void TranslateForLoop(List<string> output, ForLoop forLoop)
         {
             this.Translate(output, forLoop.Init);
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("while ");
             this.TranslateExpression(output, forLoop.Condition);
-			output.Add(this.NL);
+            output.Add(this.NL);
 
             this.CurrentIndention++;
             this.Translate(output, forLoop.Code);
@@ -47,8 +48,8 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateVariable(List<string> output, Variable expr)
         {
-			// TODO: No. Use a common list somewhere else.
-			switch (expr.Name)
+            // TODO: No. Use a common list somewhere else.
+            switch (expr.Name)
             {
                 case "INTEGERS_POSITIVE_CACHE":
                 case "INTEGERS_NEGATIVE_CACHE":
@@ -56,23 +57,23 @@ namespace Crayon.Translator.Ruby
                 case "VALUE_INT_ONE":
                 case "VALUE_INT_NEG_ONE":
                 case "VALUE_NULL":
-				case "VALUE_TRUE":
-				case "VALUE_FALSE":
-				case "VALUE_EMPTY_STRING":
-				case "VALUE_FLOAT_ZERO":
-				case "VALUE_FLOAT_ONE":
-				case "VALUE_FLOAT_NEGATIVE_ONE":
-				case "COMMON_STRINGS":
-					output.Add("$");
-					break;
-			}
-			output.Add("v_");
+                case "VALUE_TRUE":
+                case "VALUE_FALSE":
+                case "VALUE_EMPTY_STRING":
+                case "VALUE_FLOAT_ZERO":
+                case "VALUE_FLOAT_ONE":
+                case "VALUE_FLOAT_NEGATIVE_ONE":
+                case "COMMON_STRINGS":
+                    output.Add("$");
+                    break;
+            }
+            output.Add("v_");
             output.Add(expr.Name);
         }
 
         protected override void TranslateWhileLoop(List<string> output, WhileLoop whileLoop)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("while ");
             this.TranslateExpression(output, whileLoop.Condition);
             output.Add(this.NL);
@@ -92,7 +93,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateIfStatement(List<string> output, IfStatement ifStatement)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("if ");
             this.TranslateExpression(output, ifStatement.Condition);
             output.Add(this.NL);
@@ -190,7 +191,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("return ");
             if (returnStatement.Expression == null)
             {
@@ -249,14 +250,14 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateExpressionAsExecutable(List<string> output, ExpressionAsExecutable exprAsExec)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             this.TranslateExpression(output, exprAsExec.Expression);
             output.Add(this.NL);
         }
 
         protected override void TranslateSwitchStatementUnsafeBlotchy(List<string> output, SwitchStatementUnsafeBlotchy switchStatement)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("case ");
             this.TranslateExpression(output, switchStatement.Condition);
             output.Add(this.NL);
@@ -265,7 +266,7 @@ namespace Crayon.Translator.Ruby
             for (int i = 0; i < chunks.Length; ++i)
             {
                 SwitchStatement.Chunk chunk = chunks[i];
-                
+
                 string whenLabel;
                 if (chunk.Cases[0] == null)
                 {
@@ -303,7 +304,7 @@ namespace Crayon.Translator.Ruby
 
         protected override void TranslateSwitchStatementContinuousSafe(List<string> output, SwitchStatementContinuousSafe switchStatement)
         {
-			output.Add(this.CurrentTabIndention);
+            output.Add(this.CurrentTabIndention);
             output.Add("case ");
             this.TranslateExpression(output, switchStatement.Condition);
             output.Add(this.NL);

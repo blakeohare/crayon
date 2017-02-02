@@ -1,4 +1,4 @@
-﻿if (!@ext_constant("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
+﻿if (!@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
 	@import("FrameworkFunctions/3_arg.cry");
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	string1 = ((string) arg2.internalValue);

@@ -2,7 +2,7 @@
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
 }
 if (dictImpl.keyType == Types.STRING) {
-	output = new Value(Types.LIST, Core.CastToList<Value>(dictImpl.keyStringLookup.Values()));
+	output = new Value(Types.LIST, Core.ConvertRawDictionaryValueCollectionToAReusableValueList(dictImpl.keyStringLookup.Values()));
 } else {
-	output = new Value(Types.LIST, Core.CastToList<Value>(dictImpl.keyIntLookup.Values()));
+	output = new Value(Types.LIST, Core.ConvertRawDictionaryValueCollectionToAReusableValueList(dictImpl.keyIntLookup.Values()));
 }

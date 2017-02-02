@@ -19,7 +19,7 @@ i = ((int) arg3.internalValue);
 if (i == 1) {
 	if (arg2.type == Types.LIST) {
 		list1 = ((List<Value>) arg2.internalValue);
-		len = list1.Length;
+		len = list1.Size();
 		for (i = 0; i < len; i += 1) {
 			value = list1[i];
 			intList1.Add(((int) value.internalValue));
@@ -30,6 +30,6 @@ if (i == 1) {
 	if (i == 2) {
 		objArray1[1] = 0;
 		objArray1[3] = 0;
-		(intList1).Clear();
+		Core.ForceParens(intList1).Clear();
 	}
 }

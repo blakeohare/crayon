@@ -6,7 +6,7 @@ for (i = localsStackOffset; i < int1; i += 1) {
 	} else {
 		if (value.type == Types.FLOAT) {
 			float1 = ((double) value.internalValue);
-			if (@ext_constant("INT_IS_FLOOR")) {
+			if (@ext_boolean("INT_IS_FLOOR")) {
 				int2 = Core.Int(float1);
 			} else {
 				if ((float1 < 0) && ((float1 % 1) != 0)) {

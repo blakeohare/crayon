@@ -4,7 +4,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
-			string1 = (((string) arg1.internalValue)).Trim();
+			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
 			if (Core.IsValidInteger(string1)) {
 				output = buildInteger(Core.ParseInt(string1));
 			}
@@ -17,7 +17,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
-			string1 = (((string) arg1.internalValue)).Trim();
+			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
 			Core.ParseFloat(string1, floatList1);
 			if (floatList1[0] >= 0) {
 				output = buildFloat(floatList1[1]);
@@ -97,7 +97,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		if (arg1.type == Types.STRING) {
 			string1 = ((string) arg1.internalValue);
-			if (string1.Length == 1) {
+			if (string1.Size() == 1) {
 				output = buildInteger(string1.CharCodeAt(0));
 			}
 		}
@@ -275,7 +275,7 @@
 		@import("FrameworkFunctions/1_arg.cry");
 		if (arg1.type == Types.FLOAT) {
 			float1 = ((double) arg1.internalValue);
-			if (@ext_constant("INT_IS_FLOOR")) {
+			if (@ext_boolean("INT_IS_FLOOR")) {
 				int1 = Core.Int(float1);
 			} else {
 				if ((float1 < 0) && ((float1 % 1) != 0)) {
@@ -472,7 +472,7 @@
 		objArray1 = objInstance1.nativeData;
 		intArray1 = ((Array<int>) objArray1[0]);
 		len = ((int) objArray1[1]);
-		if (len >= intArray1.Length) {
+		if (len >= intArray1.Size()) {
 			intArray2 = new Array<int>(((len * 2) + 16));
 			for (j = 0; j < len; j += 1) {
 				intArray2[j] = intArray1[j];
@@ -504,7 +504,7 @@
 		Core.EmitComment("sleep");
 		@import("FrameworkFunctions/1_arg.cry");
 		float1 = getFloat(arg1);
-		if (@ext_constant("IS_THREAD_BLOCKING_ALLOWED")) {
+		if (@ext_boolean("IS_THREAD_BLOCKING_ALLOWED")) {
 			Core.ThreadSleep(float1);
 		} else {
 			if (row[1] == 1) {
@@ -523,7 +523,7 @@
 		break;
 	case 32:
 		Core.EmitComment("isJavaScript");
-		if (@ext_constant("IS_JAVASCRIPT")) {
+		if (@ext_boolean("IS_JAVASCRIPT")) {
 			output = VALUE_TRUE;
 		} else {
 			output = VALUE_FALSE;
@@ -531,7 +531,7 @@
 		break;
 	case 33:
 		Core.EmitComment("isAndroid");
-		if (@ext_constant("IS_ANDROID")) {
+		if (@ext_boolean("IS_ANDROID")) {
 			output = VALUE_TRUE;
 		} else {
 			output = VALUE_FALSE;
@@ -559,7 +559,7 @@
 		output = new Value(Types.LIST, list1);
 		if (intList1 != null) {
 			stringList1 = tokenHelperConvertPcsToStackTraceStrings(intList1);
-			for (i = 0; i < stringList1.Length; i += 1) {
+			for (i = 0; i < stringList1.Size(); i += 1) {
 				list1.Add(buildString(stringList1[i]));
 			}
 			list1.Reverse();
@@ -569,10 +569,10 @@
 		Core.EmitComment("reflectAllClasses");
 		list1 = new List<Value>();
 		output = new Value(Types.LIST, list1);
-		for (i = 1; i < p.classTable.Length; i += 1) {
+		for (i = 1; i < p.classTable.Size(); i += 1) {
 			classInfo = p.classTable[i];
 			if (classInfo == null) {
-				i += p.classTable.Length;
+				i += p.classTable.Size();
 			} else {
 				list1.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
 			}
@@ -586,7 +586,7 @@
 		if (arg1.type == Types.INSTANCE) {
 			objInstance1 = ((ObjectInstance) arg1.internalValue);
 			classInfo = p.classTable[objInstance1.classId];
-			for (i = 0; i < classInfo.functionIds.Length; i += 1) {
+			for (i = 0; i < classInfo.functionIds.Size(); i += 1) {
 				functionId = classInfo.functionIds[i];
 				if (functionId != -1) {
 					list1.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, arg1, objInstance1.classId, functionId)));

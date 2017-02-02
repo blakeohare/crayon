@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Common;
 
 namespace Crayon.Translator.CSharp
 {
@@ -67,7 +65,7 @@ namespace Crayon.Translator.CSharp
             files[projectId + "/DefaultIcon.png"] = new FileOutput()
             {
                 Type = FileOutputType.Binary,
-                BinaryContent = Util.ReadResourceBytesInternally("ui-csharp-winforms/DefaultIcon.png"),
+                BinaryContent = LegacyUtil.ReadResourceBytesInternally("ui-csharp-winforms/DefaultIcon.png"),
             };
 
             List<string> embeddedResourceReplacement = new List<string>();
@@ -98,7 +96,7 @@ namespace Crayon.Translator.CSharp
                 string[] parts = file.Split(',');
                 string source = "ui-csharp-winforms/" + parts[0];
                 string destination = Constants.DoReplacements(false, parts[1], replacements);
-                string content = Constants.DoReplacements(false, Util.ReadResourceFileInternally(source), replacements);
+                string content = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally(source), replacements);
                 files[destination] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -109,7 +107,7 @@ namespace Crayon.Translator.CSharp
             files[Constants.DoReplacements(false, "%%%PROJECT_ID%%%/ResourceReader.cs", replacements)] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(false, Util.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
+                TextContent = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
             };
         }
     }

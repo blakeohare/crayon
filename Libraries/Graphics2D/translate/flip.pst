@@ -11,7 +11,7 @@ while (i >= 0) {
 	objArray2[i] = objArray1[i];
 	i -= 1;
 }
-if (@ext_constant("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
 	if (bool1) {
 		object1 = objArray1[1];
 		objArray2[1] = objArray2[3];

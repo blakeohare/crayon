@@ -1,8 +1,8 @@
 ﻿if (argCount > 0) {
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
 }
-if (@ext_constant("PLATFORM_SUPPORTS_LIST_CLEAR")) {
-	(((List<Value>) list1)).Clear();
+if (@ext_boolean("PLATFORM_SUPPORTS_LIST_CLEAR")) {
+	Core.ForceParens(((List<Value>) list1)).Clear();
 } else {
 	value.internalValue = new List<Value>();
 }

@@ -16,7 +16,7 @@ float1 = Core.FloatDivision(int5, 2.0);
 if (float1 < 0.5) {
 	float1 = 1;
 }
-float2 = Core.FloatDivision(float1, (Math.Pow(((float3 * float3) + 1), 0.5)));
+float2 = Core.FloatDivision(float1, Core.ForceParens(Math.Pow(((float3 * float3) + 1), 0.5)));
 float1 = -float2 * float3;
 i = Core.Int(((int1 + float1) + 0.5));
 j = Core.Int(((int1 - float1) + 0.5));

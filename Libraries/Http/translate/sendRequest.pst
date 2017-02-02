@@ -7,7 +7,7 @@ string1 = ((string) arg3.internalValue);
 string2 = ((string) arg4.internalValue);
 stringList1 = new List<string>();
 list1 = ((List<Value>) arg5.internalValue);
-for (i = 0; i < list1.Length; i += 1) {
+for (i = 0; i < list1.Size(); i += 1) {
 	value = list1[i];
 	stringList1.Add(((string) value.internalValue));
 }

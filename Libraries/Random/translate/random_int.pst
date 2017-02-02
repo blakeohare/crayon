@@ -4,7 +4,7 @@ if (arg2.type == Types.NULL) {
 	if (arg1.type == Types.INTEGER) {
 		int1 = ((int) arg1.internalValue);
 		if (int1 > 0) {
-			output = buildInteger(Core.Int(((Core.RandomFloat() * int1))));
+			output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * int1))));
 			bool1 = false;
 		}
 	}
@@ -23,7 +23,7 @@ if (arg2.type == Types.NULL) {
 			if (int2 == (int1 + 1)) {
 				output = buildInteger(int1);
 			} else {
-				output = buildInteger(Core.Int(((Core.RandomFloat() * (int2 - int1)))) + int1);
+				output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * (int2 - int1)))) + int1);
 			}
 		}
 	}
