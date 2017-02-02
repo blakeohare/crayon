@@ -25,8 +25,8 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Root.ResolveType(varScope, compiler);
-            this.Index.ResolveType(varScope, compiler);
+            this.Root = this.Root.ResolveType(varScope, compiler);
+            this.Index = this.Index.ResolveType(varScope, compiler);
 
             PType rootType = this.Root.ResolvedType;
             PType indexType = this.Index.ResolvedType;

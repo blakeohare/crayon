@@ -426,7 +426,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 				Core.EmitComment("THIS SHOULD NEVER HAPPEN");
 				return Core.GenerateException(CoreExceptionTypes.FATAL, ("Bad op code: " + Core.IntToString(ops[pc])));
 		}
-		if (Core.HasIncrement()) {
+		if (@ext_boolean("HAS_INCREMENT")) {
 			++pc;
 		} else {
 			pc += 1;

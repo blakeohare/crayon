@@ -6,7 +6,7 @@ if ((valueStackSize + int1) > valueStackCapacity) {
 		valueStackCapacity = valueStack.Size();
 	}
 }
-if (Core.HasIncrement()) {
+if (@ext_boolean("HAS_INCREMENT")) {
 	i = int1;
 	while (--i >= 0) {
 		valueStack[valueStackSize++] = literalTable[row[i]];

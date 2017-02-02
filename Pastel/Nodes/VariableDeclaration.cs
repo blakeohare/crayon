@@ -49,7 +49,7 @@ namespace Pastel.Nodes
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Value.ResolveType(varScope, compiler);
+            this.Value = this.Value.ResolveType(varScope, compiler);
 
             if (!PType.CheckAssignment(this.Type, this.Value.ResolvedType))
             {

@@ -42,7 +42,7 @@ namespace Pastel.Nodes
             // This gets compiled as a wihle loop with the init added before the loop, so it should go in the same variable scope.
             // The implication is that multiple declarations in the init for successive loops will collide.
             Executable.ResolveTypes(this.InitCode, varScope, compiler);
-            this.Condition.ResolveType(varScope, compiler);
+            this.Condition = this.Condition.ResolveType(varScope, compiler);
             Executable.ResolveTypes(this.StepCode, varScope, compiler);
             VariableScope innerScope = new VariableScope(varScope);
             Executable.ResolveTypes(this.Code, innerScope, compiler);

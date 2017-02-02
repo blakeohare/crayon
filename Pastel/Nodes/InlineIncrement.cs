@@ -26,7 +26,7 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Expression.ResolveType(varScope, compiler);
+            this.Expression = this.Expression.ResolveType(varScope, compiler);
             if (!this.Expression.ResolvedType.IsIdentical(PType.INT))
             {
                 throw new ParserException(this.IncrementToken, "++ and -- can only be applied to integer types.");

@@ -43,7 +43,7 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Expression.ResolveType(varScope, compiler);
+            this.Expression = this.Expression.ResolveType(varScope, compiler);
             this.ResolvedType = this.Expression.ResolvedType;
 
             if (this.OpToken.Value == "-")

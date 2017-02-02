@@ -59,10 +59,10 @@ namespace Pastel.Nodes
         {
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                this.Args[i].ResolveType(varScope, compiler);
+                this.Args[i] = this.Args[i].ResolveType(varScope, compiler);
             }
 
-            this.Root.ResolveType(varScope, compiler);
+            this.Root = this.Root.ResolveType(varScope, compiler);
 
             if (this.Root is FunctionReference)
             {
@@ -86,7 +86,15 @@ namespace Pastel.Nodes
             }
             else if (this.Root is NativeFunctionReference)
             {
-                throw new NotImplementedException();
+                NativeFunctionReference nfi = (NativeFunctionReference)this.Root;
+                if (nfi.Context == null)
+                {
+                    return new NativeFunctionInvocation(this.FirstToken, nfi.NativeFunctionId, this.Args);
+                }
+                else
+                {
+                    return new NativeFunctionInvocation(this.FirstToken, nfi.NativeFunctionId, nfi.Context, this.Args);
+                }
             }
             else if (this.Root is ConstructorReference)
             {

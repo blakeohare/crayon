@@ -46,7 +46,7 @@ namespace Pastel.Nodes
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Condition.ResolveType(varScope, compiler);
+            this.Condition = this.Condition.ResolveType(varScope, compiler);
             if (this.Condition.ResolvedType.RootValue != "bool")
             {
                 throw new ParserException(this.Condition.FirstToken, "Only booleans can be used in if statements.");

@@ -52,7 +52,7 @@ namespace Pastel.Nodes
         {
             for (int i = 0; i < this.Expressions.Length; ++i)
             {
-                this.Expressions[i].ResolveType(varScope, compiler);
+                this.Expressions[i] = this.Expressions[i].ResolveType(varScope, compiler);
             }
 
             this.ResolvedType = this.Expressions[0].ResolvedType;

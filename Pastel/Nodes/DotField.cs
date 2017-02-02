@@ -65,7 +65,7 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Root.ResolveType(varScope, compiler);
+            this.Root = this.Root.ResolveType(varScope, compiler);
 
             string possibleStructName = this.Root.ResolvedType.RootValue;
             StructDefinition structDef;
@@ -94,18 +94,47 @@ namespace Pastel.Nodes
         {
             switch (field)
             {
+                case "CharToString": return NativeFunction.CHAR_TO_STRING;
+                case "Chr": return NativeFunction.CHR;
+                case "CommandLineArgs": return NativeFunction.COMMAND_LINE_ARGS;
+                case "ConvertRawDictionaryValueCollectionToAReusableValueList": return NativeFunction.CONVERT_RAW_DICTIONARY_VALUE_COLLECTION_TO_A_REUSABLE_VALUE_LIST;
+                case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
+                case "EmitComment": return NativeFunction.EMIT_COMMENT;
+                case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
+                case "FloatToString": return NativeFunction.FLOAT_TO_STRING;
+                case "ForceParens": return NativeFunction.FORCE_PARENS;
+                case "GenerateException": return NativeFunction.GENERATE_EXCEPTION;
+                case "GetProgramData": return NativeFunction.GET_PROGRAM_DATA;
                 case "GetResourceManifest": return NativeFunction.GET_RESOURCE_MANIFEST;
+                case "Int": return NativeFunction.INT;
+                case "IntegerDivision": return NativeFunction.INTEGER_DIVISION;
+                case "IntToString": return NativeFunction.INT_TO_STRING;
+                case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
                 case "ListToArray": return NativeFunction.LIST_TO_ARRAY;
-                case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
+                case "MultiplyList": return NativeFunction.MULTIPLY_LIST;
+                case "Ord": return NativeFunction.ORD;
+                case "ParseFloat": return NativeFunction.PARSE_FLOAT;
+                case "ParseFloat_REDUNDANT": return NativeFunction.PARSE_FLOAT_REDUNDANT;
+                case "ParseInt": return NativeFunction.PARSE_INT;
+                case "PrintStdErr": return NativeFunction.PRINT_STDERR;
+                case "PrintStdOut": return NativeFunction.PRINT_STDOUT;
+                case "RandomFloat": return NativeFunction.RANDOM_FLOAT;
                 case "ReadByteCodeFile": return NativeFunction.READ_BYTE_CODE_FILE;
+                case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
+                case "StringAppend": return NativeFunction.STRING_APPEND;
+                case "StringCompareIsReverse": return NativeFunction.STRING_COMPARE_IS_REVERSE;
+                case "StringConcatAll": return NativeFunction.STRING_CONCAT_ALL;
                 case "StringEquals": return NativeFunction.STRING_EQUALS;
+                case "StringFromCharCode": return NativeFunction.STRING_FROM_CHAR_CODE;
+                case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
+                case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
 
                 // TODO: get this information from the parameter rather than having separate Core function
                 case "SortedCopyOfStringArray": return NativeFunction.SORTED_COPY_OF_STRING_ARRAY;
                 case "SortedCopyOfIntArray": return NativeFunction.SORTED_COPY_OF_INT_ARRAY;
 
                 default:
-                    throw new ParserException(this.FirstToken, "Invali Core function.");
+                    throw new ParserException(this.FirstToken, "Invalid Core function.");
             }
         }
 

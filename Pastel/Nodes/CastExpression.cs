@@ -22,7 +22,7 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            this.Expression.ResolveType(varScope, compiler);
+            this.Expression = this.Expression.ResolveType(varScope, compiler);
             // TODO: check for silly casts
             this.ResolvedType = this.Type;
             return this;
