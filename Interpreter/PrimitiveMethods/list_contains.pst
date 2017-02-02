@@ -2,7 +2,7 @@
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 }
 value2 = funcArgs[0];
-len = list1.Length;
+len = list1.Size();
 output = VALUE_FALSE;
 for (i = 0; i < len; i += 1) {
 	if (doEqualityComparisonAndReturnCode(value2, list1[i]) == 1) {

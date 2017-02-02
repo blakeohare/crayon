@@ -8,7 +8,7 @@
 		if ((valueStackSize + 1) > valueStackCapacity) {
 			valueStackIncreaseCapacity(ec);
 			valueStack = ec.valueStack;
-			valueStackCapacity = valueStack.Length;
+			valueStackCapacity = valueStack.Size();
 		}
 		valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
 		valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];

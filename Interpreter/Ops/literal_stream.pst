@@ -1,9 +1,9 @@
-﻿int1 = row.Length;
+﻿int1 = row.Size();
 if ((valueStackSize + int1) > valueStackCapacity) {
 	while ((valueStackSize + int1) > valueStackCapacity) {
 		valueStackIncreaseCapacity(ec);
 		valueStack = ec.valueStack;
-		valueStackCapacity = valueStack.Length;
+		valueStackCapacity = valueStack.Size();
 	}
 }
 if (Core.HasIncrement()) {

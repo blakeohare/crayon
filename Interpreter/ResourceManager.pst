@@ -10,15 +10,15 @@
 	string argument = "";
 	bool isText = false;
 	int i = 0;
-	while (i < items.Length) {
+	while (i < items.Size()) {
 		Array<string> itemData = items[i].Split(",");
-		if (itemData.Length >= 3) {
+		if (itemData.Size() >= 3) {
 			type = itemData[0];
 			isText = Core.StringEquals("TXT", type);
 			userPath = stringDecode(itemData[1]);
 			internalPath = itemData[2];
 			argument = "";
-			if (itemData.Length > 3) {
+			if (itemData.Size() > 3) {
 				argument = stringDecode(itemData[3]);
 			}
 			resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
@@ -29,7 +29,7 @@
 	}
 	Array<string> dirs = filesPerDirectoryBuilder.Keys();
 	Dictionary<string, Array<string>> filesPerDirectorySorted = new Dictionary<string, Array<string>>();
-	for (i = 0; i < dirs.Length; i += 1) {
+	for (i = 0; i < dirs.Size(); i += 1) {
 		string dir = dirs[i];
 		List<string> unsortedDirs = filesPerDirectoryBuilder[dir];
 		Array<string> dirsSorted = Core.ListToArray(unsortedDirs);
@@ -43,7 +43,7 @@ int resource_manager_populate_directory_lookup(Dictionary<string, List<string>> 
 	Array<string> parts = path.Split("/");
 	string pathBuilder = "";
 	string file = "";
-	for (int i = 0; i < parts.Length; i += 1) {
+	for (int i = 0; i < parts.Size(); i += 1) {
 		file = parts[i];
 		List<string> files = null;
 		if (!dirs.Contains(pathBuilder)) {
@@ -63,7 +63,7 @@ int resource_manager_populate_directory_lookup(Dictionary<string, List<string>> 
 }
 
 Value resource_manager_getResourceOfType(string userPath, string type) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	ResourceDB db = p.resourceDatabase;
 	Dictionary<string, ResourceInfo> lookup = db.fileInfo;
 	if (lookup.Contains(userPath)) {

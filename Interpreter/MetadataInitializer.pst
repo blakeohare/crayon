@@ -42,7 +42,7 @@
 
 Array<FunctionInfo> getFunctionTable(ProgramData p, int functionId) {
 	Array<FunctionInfo> oldTable = p.functionTable;
-	int oldLength = oldTable.Length;
+	int oldLength = oldTable.Size();
 	if (functionId < oldLength) {
 		return oldTable;
 	}
@@ -104,15 +104,15 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
 			fieldInitializationLiteral.Add(baseClass.fieldInitializationLiteral[i]);
 		}
 		Array<int> keys = baseClass.globalIdToMemberId.Keys();
-		for (i = 0; i < keys.Length; i += 1) {
+		for (i = 0; i < keys.Size(); i += 1) {
 			t = keys[i];
 			globalNameIdToMemberId[t] = baseClass.globalIdToMemberId[t];
 		}
 	}
-	for (i = 6; i < args.Length; i += 5) {
+	for (i = 6; i < args.Size(); i += 5) {
 		memberId = args[(i + 1)];
 		globalId = args[(i + 2)];
-		while (memberId >= functionIds.Length) {
+		while (memberId >= functionIds.Size()) {
 			functionIds.Add(-1);
 			fieldInitializationCommand.Add(-1);
 			fieldInitializationLiteral.Add(null);
@@ -134,7 +134,7 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
 	classInfo.functionIds = Core.ListToArray(functionIds);
 	classInfo.fieldInitializationCommand = Core.ListToArray(fieldInitializationCommand);
 	classInfo.fieldInitializationLiteral = Core.ListToArray(fieldInitializationLiteral);
-	classInfo.memberCount = functionIds.Length;
+	classInfo.memberCount = functionIds.Size();
 	classInfo.globalIdToMemberId = globalNameIdToMemberId;
 	if (Core.StringEquals("Core.Exception", className)) {
 		MagicNumbers mn = p.magicNumbers;
@@ -145,7 +145,7 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
 
 Array<ClassInfo> getClassTable(ProgramData p, int classId) {
 	Array<ClassInfo> oldTable = p.classTable;
-	int oldLength = oldTable.Length;
+	int oldLength = oldTable.Size();
 	if (classId < oldLength) {
 		return oldTable;
 	}
@@ -165,7 +165,7 @@ int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack) {
 	Array<Value> localsStack = ec.localsStack;
 	Array<int> localsStackSet = ec.localsStackSet;
 	int i = stack.localsStackOffsetEnd;
-	while (i < localsStackSet.Length) {
+	while (i < localsStackSet.Size()) {
 		localsStackSet[i] = 0;
 		localsStack[i] = null;
 		i += 1;
@@ -191,7 +191,7 @@ int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack) {
 int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
 	Array<Value> oldLocals = ec.localsStack;
 	Array<int> oldSetIndicator = ec.localsStackSet;
-	int oldCapacity = oldLocals.Length;
+	int oldCapacity = oldLocals.Size();
 	int newCapacity = (oldCapacity * 2) + newScopeSize;
 	Array<Value> newLocals = new Array<Value>(newCapacity);
 	Array<int> newSetIndicator = new Array<int>(newCapacity);
@@ -209,7 +209,7 @@ StackFrame maybeInvokeStaticConstructor(ProgramData p, ExecutionContext ec, Stac
 	int classId = classInfo.id;
 	if (classInfo.staticInitializationState == 1) {
 		List<int> classIdsBeingInitialized = p.classStaticInitializationStack;
-		if (classIdsBeingInitialized[(classIdsBeingInitialized.Length - 1)] != classId) {
+		if (classIdsBeingInitialized[(classIdsBeingInitialized.Size() - 1)] != classId) {
 			intOutParam[0] = 1;
 		}
 		return null;
@@ -220,7 +220,7 @@ StackFrame maybeInvokeStaticConstructor(ProgramData p, ExecutionContext ec, Stac
 	stack.pc -= 1;
 	int newFrameLocalsSize = functionInfo.localsSize;
 	int currentFrameLocalsEnd = stack.localsStackOffsetEnd;
-	if (ec.localsStack.Length <= (currentFrameLocalsEnd + newFrameLocalsSize)) {
+	if (ec.localsStack.Size() <= (currentFrameLocalsEnd + newFrameLocalsSize)) {
 		increaseLocalsStackCapacity(ec, newFrameLocalsSize);
 	}
 	if (ec.localsStackSetToken > 2000000000) {
@@ -235,7 +235,7 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 	List<Array<int>> esfTokenStack = new List<Array<int>>();
 	Array<int> esfTokenStackTop = null;
 	int esfArgIterator = 0;
-	int esfArgLength = esfArgs.Length;
+	int esfArgLength = esfArgs.Size();
 	int j = 0;
 	for (int pc = 0; pc < byteCodeLength; pc += 1) {
 		if ((esfArgIterator < esfArgLength) && (pc == esfArgs[esfArgIterator])) {
@@ -248,10 +248,10 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 		}
 		while ((esfTokenStackTop != null) && (esfTokenStackTop[1] <= pc)) {
 			esfTokenStack.Pop();
-			if (esfTokenStack.Length == 0) {
+			if (esfTokenStack.Size() == 0) {
 				esfTokenStackTop = null;
 			} else {
-				esfTokenStackTop = esfTokenStack[(esfTokenStack.Length - 1)];
+				esfTokenStackTop = esfTokenStack[(esfTokenStack.Size() - 1)];
 			}
 		}
 		output[pc] = esfTokenStackTop;
@@ -260,7 +260,7 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 }
 
 int markClassAsInitialized(StackFrame stack, int classId) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	ClassInfo classInfo = p.classTable[stack.markClassAsInitialized];
 	classInfo.staticInitializationState = 2;
 	p.classStaticInitializationStack.Pop();

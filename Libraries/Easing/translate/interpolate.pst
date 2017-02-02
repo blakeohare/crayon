@@ -1,7 +1,7 @@
 ﻿@import("FrameworkFunctions/7_arg.cry");
 objInstance1 = ((ObjectInstance) arg1.internalValue);
 objArray1 = objInstance1.nativeData;
-len = objArray1.Length;
+len = objArray1.Size();
 int1 = ((int) arg7.internalValue);
 if (arg4.type == Types.INTEGER) {
 	float1 = ((int) arg4.internalValue);

@@ -2,7 +2,7 @@
 output = VALUE_FALSE;
 if (arg1.type == Types.LIST) {
 	list1 = ((List<Value>) arg1.internalValue);
-	i = list1.Length;
+	i = list1.Size();
 	intArray1 = new Array<int>(i);
 	bool1 = true;
 	while (i > 0) {

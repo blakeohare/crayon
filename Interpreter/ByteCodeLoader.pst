@@ -61,7 +61,7 @@ string read_string(Array<int> pindex, string raw, int length, string alphaNums) 
 			pindex[0] = (pindex[0] + 1);
 			if (c == '@') {
 				int repeat = read_integer(pindex, raw, length, alphaNums);
-				string last = output[(output.Length - 1)];
+				string last = output[(output.Size() - 1)];
 				while (repeat > 0) {
 					output.Add(last);
 					repeat -= 1;
@@ -103,7 +103,7 @@ Code loadByteCode() {
 		string raw = Core.ReadByteCodeFile();
 		Array<int> index = new Array<int>(1);
 		index[0] = 0;
-		int length = raw.Length;
+		int length = raw.Size();
 		string header = read_till(index, raw, length, '@');
 		if (header != "CRAYON") {
 		}

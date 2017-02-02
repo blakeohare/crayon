@@ -14,7 +14,7 @@ if (string1 == null) {
 		objInstance2.nativeData = new Array<object>(1);
 		objInstance2.nativeData[0] = object2;
 		list1[1] = buildInteger(Library._lib_mysql_num_rows(object2));
-		for (int1 = 0; int1 < stringList1.Length; int1 += 1) {
+		for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
 			list2.Add(buildString(stringList1[int1]));
 			list2.Add(buildInteger(intList1[int1]));
 		}

@@ -17,7 +17,7 @@ InterpreterResult suspendInterpreterWithLock() {
 InterpreterResult interpreterFinished(ExecutionContext ec) {
 	if (ec != null) {
 		int id = ec.id;
-		ProgramData p = Core.ProgramData();
+		ProgramData p = Core.GetProgramData();
 		if (p.executionContexts.Contains(id)) {
 			p.executionContexts.Remove(id);
 		}
@@ -29,12 +29,12 @@ InterpreterResult generateException(StackFrame stack, int pc, int valueStackSize
 	ec.currentValueStackSize = valueStackSize;
 	stack.pc = pc;
 	ec.localsStackSetToken = stack.localsStackSetToken + 1;
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	MagicNumbers mn = p.magicNumbers;
 	int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
 	FunctionInfo functionInfo = p.functionTable[generateExceptionFunctionId];
 	pc = functionInfo.pc;
-	if (ec.localsStack.Length <= (functionInfo.localsSize + stack.localsStackOffsetEnd)) {
+	if (ec.localsStack.Size() <= (functionInfo.localsSize + stack.localsStackOffsetEnd)) {
 		increaseLocalsStackCapacity(ec, functionInfo.localsSize);
 	}
 	int localsIndex = stack.localsStackOffsetEnd;
@@ -55,7 +55,7 @@ InterpreterResult interpret(int executionContextId) {
 }
 
 ExecutionContext interpreterGetExecutionContext(int executionContextId) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
 	if (!executionContexts.Contains(executionContextId)) {
 		return null;
@@ -64,7 +64,7 @@ ExecutionContext interpreterGetExecutionContext(int executionContextId) {
 }
 
 InterpreterResult interpretImpl(int executionContextId) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
 	ExecutionContext ec = interpreterGetExecutionContext(executionContextId);
 	if (ec == null) {
@@ -81,7 +81,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 	Array<string> identifiers = p.identifiers;
 	Array<Value> valueStack = ec.valueStack;
 	int valueStackSize = ec.currentValueStackSize;
-	int valueStackCapacity = valueStack.Length;
+	int valueStackCapacity = valueStack.Size();
 	int type = 0;
 	int nameId = 0;
 	int classId = 0;
@@ -177,7 +177,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 	Array<Value> localsStack = ec.localsStack;
 	Array<int> localsStackSet = ec.localsStackSet;
 	int localsStackSetToken = stack.localsStackSetToken;
-	int localsStackCapacity = localsStack.Length;
+	int localsStackCapacity = localsStack.Size();
 	int localsStackOffset = stack.localsStackOffset;
 	Array<Value> funcArgs = p.funcArgs;
 	int pc = stack.pc;
@@ -498,20 +498,20 @@ int canonicalizeListSliceArgs(Array<int> outParams, Value beginValue, Value endV
 
 List<Token> generateTokenListFromPcs(List<int> pcs) {
 	List<Token> output = new List<Token>();
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	Array<List<Token>> tokensByPc = p.tokenData;
 	Token token = null;
 	int i = 0;
-	while (i < pcs.Length) {
+	while (i < pcs.Size()) {
 		List<Token> localTokens = tokensByPc[pcs[i]];
 		if (localTokens == null) {
-			if (output.Length > 0) {
+			if (output.Size() > 0) {
 				output.Add(null);
 			}
 		} else {
 			token = localTokens[0];
 			if (@ext_boolean("IS_RELEASE")) {
-				if ((output.Length > 0) || (token != null) && !tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
+				if ((output.Size() > 0) || (token != null) && !tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
 					output.Add(token);
 				}
 			} else {
@@ -521,7 +521,7 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
 		i += 1;
 	}
 	if (@ext_boolean("IS_RELEASE")) {
-		int length = output.Length;
+		int length = output.Size();
 		while (length > 0) {
 			token = output[(length - 1)];
 			if ((token != null) && tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
@@ -536,11 +536,11 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
 }
 
 List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	List<Token> tokens = generateTokenListFromPcs(pcs);
 	Array<string> files = p.sourceCode;
 	List<string> output = new List<string>();
-	for (int i = 0; i < tokens.Length; i += 1) {
+	for (int i = 0; i < tokens.Size(); i += 1) {
 		Token token = tokens[i];
 		if (token == null) {
 			output.Add("[No stack information]");
@@ -563,10 +563,10 @@ string tokenHelperGetFormattedPointerToToken(Token token) {
 		return null;
 	}
 	int columnIndex = token.colIndex;
-	int lineLength = line.Length;
+	int lineLength = line.Size();
 	line = line.TrimStart();
 	line = line.Replace("\t", " ");
-	int offset = lineLength - line.Length;
+	int offset = lineLength - line.Size();
 	columnIndex -= offset;
 	string line2 = "";
 	while (columnIndex > 0) {
@@ -578,7 +578,7 @@ string tokenHelperGetFormattedPointerToToken(Token token) {
 }
 
 string tokenHelperGetFileLine(int fileId, int lineNum) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	string sourceCode = p.sourceCode[fileId];
 	if (sourceCode == null) {
 		return null;
@@ -600,7 +600,7 @@ int prepareToSuspend(ExecutionContext ec, StackFrame stack, int valueStackSize, 
 
 int valueStackIncreaseCapacity(ExecutionContext ec) {
 	Array<Value> stack = ec.valueStack;
-	int oldCapacity = stack.Length;
+	int oldCapacity = stack.Size();
 	int newCapacity = oldCapacity * 2;
 	Array<Value> newStack = new Array<Value>(newCapacity);
 	for (int i = oldCapacity - 1; i >= 0; i -= 1) {
@@ -612,7 +612,7 @@ int valueStackIncreaseCapacity(ExecutionContext ec) {
 
 string unrollExceptionOutput(Value exceptionInstance) {
 	ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	ClassInfo classInfo = p.classTable[objInstance.classId];
 	List<int> pcs = ((List<int>) objInstance.nativeData[1]);
 	string codeFormattedPointer = "";
@@ -631,7 +631,7 @@ string unrollExceptionOutput(Value exceptionInstance) {
 }
 
 bool isPcFromCore(int pc) {
-	ProgramData p = Core.ProgramData();
+	ProgramData p = Core.GetProgramData();
 	List<Token> tokens = p.tokenData[pc];
 	if (tokens == null) {
 		return false;

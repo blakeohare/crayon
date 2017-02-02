@@ -1,7 +1,7 @@
 ﻿@import("FrameworkFunctions/2_arg.cry");
 objInstance1 = ((ObjectInstance) arg1.internalValue);
 list1 = ((List<Value>) arg2.internalValue);
-len = list1.Length;
+len = list1.Size();
 objArray1 = new Array<object>(len);
 for (i = 0; i < len; i += 1) {
 	value = list1[i];

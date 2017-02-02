@@ -19,7 +19,7 @@ if (bool1) {
 		} else {
 			if (value.type == Types.LIST) {
 				list1 = ((List<Value>) value.internalValue);
-				argCount = list1.Length;
+				argCount = list1.Size();
 				for (i = argCount - 1; i >= 0; i -= 1) {
 					funcArgs[i] = list1[i];
 				}
@@ -363,7 +363,7 @@ if (bool1) {
 				p.instanceCounter += 1;
 				classInfo = classTable[classId];
 				valueArray1 = new Array<Value>(classInfo.memberCount);
-				for (i = valueArray1.Length - 1; i >= 0; i -= 1) {
+				for (i = valueArray1.Size() - 1; i >= 0; i -= 1) {
 					switch (classInfo.fieldInitializationCommand[i]) {
 						case 0:
 							valueArray1[i] = classInfo.fieldInitializationLiteral[i];
@@ -409,7 +409,7 @@ if (bool1) {
 			increaseLocalsStackCapacity(ec, int1);
 			localsStack = ec.localsStack;
 			localsStackSet = ec.localsStackSet;
-			localsStackCapacity = localsStack.Length;
+			localsStackCapacity = localsStack.Size();
 		}
 		localsStackSetToken += 1;
 		if (localsStackSetToken > 2000000000) {

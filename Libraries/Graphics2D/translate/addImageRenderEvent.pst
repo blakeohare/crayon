@@ -4,7 +4,7 @@ objInstance1 = ((ObjectInstance) value.internalValue);
 objArray1 = objInstance1.nativeData;
 intArray1 = ((Array<int>) objArray1[0]);
 len = ((int) objArray1[1]);
-if (len >= intArray1.Length) {
+if (len >= intArray1.Size()) {
 	intArray2 = new Array<int>(((len * 2) + 16));
 	for (i = 0; i < len; i += 1) {
 		intArray2[i] = intArray1[i];
@@ -20,7 +20,7 @@ if (objArrayArray1 == null) {
 } else {
 	int1 = ((int) objArray1[3]);
 }
-if (int1 >= objArrayArray1.Length) {
+if (int1 >= objArrayArray1.Size()) {
 	objArrayArray2 = new Array<Array<object>>(((int1 * 2) + 16));
 	for (i = 0; i < int1; i += 1) {
 		objArrayArray2[i] = objArrayArray1[i];
