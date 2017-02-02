@@ -47,6 +47,7 @@
     <Compile Include="Nodes\ConstructorReference.cs" />
     <Compile Include="Nodes\DotField.cs" />
     <Compile Include="Nodes\EnumDefinition.cs" />
+    <Compile Include="Nodes\EnumReference.cs" />
     <Compile Include="Nodes\Executable.cs" />
     <Compile Include="Nodes\Expression.cs" />
     <Compile Include="Nodes\ExpressionAsExecutable.cs" />

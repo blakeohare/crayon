@@ -26,7 +26,7 @@ namespace Pastel.Nodes
             if (this.Expression != null)
             {
                 this.Expression.ResolveType(varScope, compiler);
-                if (!varScope.RootFunctionDefinition.ReturnType.IsParentOf(this.Expression.ResolvedType))
+                if (!PType.CheckReturnType(varScope.RootFunctionDefinition.ReturnType, this.Expression.ResolvedType))
                 {
                     throw new ParserException(this.Expression.FirstToken, "This expression is not the expected return type of this function.");
                 }

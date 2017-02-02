@@ -48,7 +48,7 @@ namespace Pastel
 
             if (this.parent != null)
             {
-                this.parent.GetTypeOfVariable(name);
+                return this.parent.GetTypeOfVariable(name);
             }
 
             return null;

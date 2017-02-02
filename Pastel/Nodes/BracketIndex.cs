@@ -23,7 +23,7 @@ namespace Pastel.Nodes
             return this;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             this.Root.ResolveType(varScope, compiler);
             this.Index.ResolveType(varScope, compiler);
@@ -41,11 +41,13 @@ namespace Pastel.Nodes
             {
                 badIndex = !indexType.IsIdentical(rootType.Generics[0]);
                 this.ResolvedType = rootType.Generics[1];
-            } else if (rootType.RootValue == "string")
+            }
+            else if (rootType.RootValue == "string")
             {
                 badIndex = indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
-            } else
+            }
+            else
             {
                 badIndex = true;
             }
@@ -54,6 +56,8 @@ namespace Pastel.Nodes
             {
                 throw new ParserException(this.BracketToken, "Cannot index into a " + rootType + " with a " + indexType + ".");
             }
+
+            return this;
         }
     }
 }

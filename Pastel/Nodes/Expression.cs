@@ -30,6 +30,6 @@ namespace Pastel.Nodes
             throw new ParserException(this.FirstToken, "This expression does not resolve into a constant.");
         }
 
-        internal abstract void ResolveType(VariableScope varScope, PastelCompiler compiler);
+        internal abstract Expression ResolveType(VariableScope varScope, PastelCompiler compiler);
     }
 }

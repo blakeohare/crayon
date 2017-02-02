@@ -48,7 +48,7 @@ namespace Pastel.Nodes
             return current;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             for (int i = 0; i < this.Expressions.Length; ++i)
             {
@@ -60,6 +60,18 @@ namespace Pastel.Nodes
             for (int i = 0; i < this.Ops.Length; ++i)
             {
                 PType nextType = this.Expressions[i + 1].ResolvedType;
+                string op = this.Ops[i].Value;
+                if (op == "==" || op == "!=")
+                {
+                    if ((nextType.RootValue == this.ResolvedType.RootValue) ||
+                        (nextType.RootValue == "null" && this.ResolvedType.IsNullable) ||
+                        (nextType.IsNullable && this.ResolvedType.RootValue == "null") ||
+                        (nextType.RootValue == "null" && this.ResolvedType.RootValue == "null"))
+                    {
+                        this.ResolvedType = PType.BOOL;
+                        continue;
+                    }
+                }
                 string lookup = this.ResolvedType.RootValue + this.Ops[i].Value + nextType.RootValue;
                 switch (lookup)
                 {
@@ -67,10 +79,21 @@ namespace Pastel.Nodes
                     case "int-int":
                         this.ResolvedType = PType.INT;
                         break;
+                    case "int>int":
+                    case "int<int":
+                    case "int>=int":
+                    case "int<=int":
+                    case "int==int":
+                    case "double==double":
+                    case "bool&&bool":
+                    case "bool||bool":
+                        this.ResolvedType = PType.BOOL;
+                        break;
                     default:
                         throw new ParserException(this.Ops[i], "The operator '" + this.Ops[i].Value + "' is not defined for types: " + this.ResolvedType + " and " + nextType + ".");
                 }
             }
+            return this;
         }
     }
 }

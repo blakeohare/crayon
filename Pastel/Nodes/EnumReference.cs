@@ -5,22 +5,24 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class CompileTimeFunctionReference : Expression
+    class EnumReference : Expression
     {
-        public Token NameToken { get; set; }
+        public EnumDefinition EnumDef { get; set; }
 
-        public CompileTimeFunctionReference(Token atToken, Token nameToken) : base(atToken)
+        public EnumReference(Token firstToken, EnumDefinition enumDef) : base(firstToken)
         {
-            this.NameToken = nameToken;
+            this.EnumDef = enumDef;
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            // created by this phase
             throw new NotImplementedException();
         }
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
+            // should be resolved out by now
             throw new NotImplementedException();
         }
     }

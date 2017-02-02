@@ -163,6 +163,13 @@ namespace Pastel
                     this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
                 }
             }
+
+            Dictionary<string, FunctionDefinition> finalFunctions = new Dictionary<string, FunctionDefinition>();
+            foreach (string usedFunctionName in this.ResolvedFunctions)
+            {
+                finalFunctions[usedFunctionName] = this.FunctionDefinitions[usedFunctionName];
+            }
+            this.FunctionDefinitions = finalFunctions;
         }
 
         private void ResolveTypes()

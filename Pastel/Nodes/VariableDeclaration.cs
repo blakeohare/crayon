@@ -51,7 +51,7 @@ namespace Pastel.Nodes
         {
             this.Value.ResolveType(varScope, compiler);
 
-            if (!this.Type.IsParentOf(this.Value.ResolvedType))
+            if (!PType.CheckAssignment(this.Type, this.Value.ResolvedType))
             {
                 throw new ParserException(this.Value.FirstToken, "Cannot assign this type to a " + this.Type);
             }

@@ -15,21 +15,47 @@ namespace Pastel.Nodes
         public static readonly PType STRING = new PType(null, "string");
         public static readonly PType DOUBLE = new PType(null, "double");
         public static readonly PType VOID = new PType(null, "void");
+        public static readonly PType NULL = new PType(null, "null");
 
         public Token FirstToken { get; set; }
         public string RootValue { get; set; }
         public PType[] Generics { get; set; }
 
-        public PType(Token firstToken, string value) : this(firstToken, value, null) { }
-
-        public PType(Token firstToken, string value, IList<PType> generics)
+        public bool IsNullable { get; set; }
+        
+        public PType(Token firstToken, string value, params PType[] generics) : this(firstToken, value, new List<PType>(generics)) { }
+        public PType(Token firstToken, string value, List<PType> generics)
         {
             this.FirstToken = firstToken;
             this.RootValue = value;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
+            this.IsNullable = value == "string" || value == "object" || (value[0] >= 'A' && value[0] <= 'Z');
         }
 
-        public bool IsParentOf(PType moreSpecificTypeOrSame)
+        public static bool CheckAssignment(PType targetType, PType value)
+        {
+            if (targetType.RootValue == "void") return false;
+            return CheckReturnType(targetType, value);
+        }
+
+        public static bool CheckReturnType(PType returnType, PType value)
+        {
+            if (returnType.IsIdentical(value)) return true;
+            if (returnType.RootValue == "object") return true;
+            if (returnType.RootValue == "void") return false;
+            if (value.RootValue == "null")
+            {
+                if (returnType.RootValue == "string") return true;
+                if (returnType.Generics.Length > 0) return true;
+
+                // is struct?
+                char c = returnType.RootValue[0];
+                if (c >= 'A' && c <= 'Z') return true;
+            }
+            return false;
+        }
+
+        private bool IsParentOf(PType moreSpecificTypeOrSame)
         {
             if (moreSpecificTypeOrSame == this) return true;
             if (this.RootValue == "object") return true;

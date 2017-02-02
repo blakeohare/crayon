@@ -52,16 +52,17 @@ namespace Pastel.Nodes
             this.Root = this.Root.ResolveNamesAndCullUnusedCode(compiler);
             Expression.ResolveNamesAndCullUnusedCodeInPlace(this.Args, compiler);
 
-            // TODO: check for core function reference
             return this;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             for (int i = 0; i < this.Args.Length; ++i)
             {
                 this.Args[i].ResolveType(varScope, compiler);
             }
+
+            this.Root.ResolveType(varScope, compiler);
 
             if (this.Root is FunctionReference)
             {
@@ -74,28 +75,22 @@ namespace Pastel.Nodes
 
                 for (int i = 0; i < this.Args.Length; ++i)
                 {
-                    if (!expectedTypes[i].IsParentOf(this.Args[i].ResolvedType))
+                    if (!PType.CheckAssignment(expectedTypes[i], this.Args[i].ResolvedType))
                     {
                         throw new ParserException(this.Args[i].FirstToken, "Wrong function arg type. Cannot convert a " + this.Args[i].ResolvedType + " to a " + expectedTypes[i]);
                     }
                 }
 
                 this.ResolvedType = functionDefinition.ReturnType;
+                return this;
             }
-            else if (this.Root is DotField)
+            else if (this.Root is NativeFunctionReference)
             {
-                DotField dotField = (DotField)this.Root;
-                dotField.ResolveType(varScope, compiler);
-                switch (dotField.NativeFunctionId)
-                {
-                    case NativeFunction.NONE: throw new ParserException(this.FirstToken, "Unable to resolve this function.");
-                    case NativeFunction.DICTIONARY_CONTAINS_KEY: this.ResolvedType = PType.BOOL; return;
-                    default: throw new NotImplementedException();
-                }
+                throw new NotImplementedException();
             }
             else if (this.Root is ConstructorReference)
             {
-                this.ResolvedType = ((ConstructorReference)this.Root).TypeToConstruct;
+                throw new NotImplementedException();
             }
             else
             {

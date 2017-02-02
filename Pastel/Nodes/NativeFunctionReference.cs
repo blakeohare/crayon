@@ -8,10 +8,13 @@ namespace Pastel.Nodes
     class NativeFunctionReference : Expression
     {
         public NativeFunction NativeFunctionId { get; set; }
+        public Expression Context { get; set; }
 
-        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId) : base(firstToken)
+        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId) : this(firstToken, nativeFunctionId, null) { }
+        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId, Expression context) : base(firstToken)
         {
             this.NativeFunctionId = nativeFunctionId;
+            this.Context = context;
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
@@ -20,7 +23,7 @@ namespace Pastel.Nodes
             throw new NotImplementedException();
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             // Introduced in this phase
             throw new NotImplementedException();

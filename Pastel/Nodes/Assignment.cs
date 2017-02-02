@@ -30,7 +30,7 @@ namespace Pastel.Nodes
         {
             this.Value.ResolveType(varScope, compiler);
             this.Target.ResolveType(varScope, compiler);
-            if (!this.Target.ResolvedType.IsParentOf(this.Value.ResolvedType))
+            if (!PType.CheckAssignment(this.Target.ResolvedType, this.Value.ResolvedType))
             {
                 throw new ParserException(this.OpToken, "Cannot assign a " + this.Value.ResolvedType + " to a " + this.Target.ResolvedType);
             }

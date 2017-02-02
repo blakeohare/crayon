@@ -16,6 +16,8 @@ namespace Pastel.Nodes
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
+
             if (this.Expression is InlineConstant)
             {
                 InlineConstant ic = (InlineConstant)this.Expression;
@@ -39,7 +41,7 @@ namespace Pastel.Nodes
             return this;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             this.Expression.ResolveType(varScope, compiler);
             this.ResolvedType = this.Expression.ResolvedType;
@@ -58,6 +60,7 @@ namespace Pastel.Nodes
                     throw new ParserException(this.OpToken, "Cannot apply '!' to type: " + this.ResolvedType.ToString());
                 }
             }
+            return this;
         }
     }
 }

@@ -20,9 +20,12 @@ namespace Pastel.Nodes
             return this;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Expression.ResolveType(varScope, compiler);
+            // TODO: check for silly casts
+            this.ResolvedType = this.Type;
+            return this;
         }
     }
 }

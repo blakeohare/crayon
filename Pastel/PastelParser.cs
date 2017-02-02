@@ -617,7 +617,7 @@ namespace Pastel
                 case "false":
                     return new InlineConstant(PType.BOOL, tokens.Pop(), next == "true");
                 case "null":
-                    return new InlineConstant(null, tokens.Pop(), null);
+                    return new InlineConstant(PType.NULL, tokens.Pop(), null);
                 case ".":
                     Token dotToken = tokens.Pop();
                     Token numToken = EnsureInteger(tokens.Pop());

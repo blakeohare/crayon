@@ -52,8 +52,8 @@ namespace Pastel.Nodes
                 throw new ParserException(this.Condition.FirstToken, "Only booleans can be used in if statements.");
             }
 
-            Executable.ResolveTypes(this.IfCode, varScope, compiler);
-            Executable.ResolveTypes(this.ElseCode, varScope, compiler);
+            Executable.ResolveTypes(this.IfCode, new VariableScope(varScope), compiler);
+            Executable.ResolveTypes(this.ElseCode, new VariableScope(varScope), compiler);
         }
     }
 }

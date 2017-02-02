@@ -33,14 +33,15 @@ namespace Pastel.Nodes
             return this;
         }
 
-        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             PType type = varScope.GetTypeOfVariable(this.Name);
             this.ResolvedType = type;
             if (type == null)
             {
-                throw new ParserException(this.FirstToken, "This variable is not defined.");
+                throw new ParserException(this.FirstToken, "The variable '" + this.Name + "'is not defined.");
             }
+            return this;
         }
     }
 }

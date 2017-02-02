@@ -14,7 +14,7 @@ namespace Pastel.Nodes
             this.Condition = condition;
             this.Chunks = chunks.ToArray();
         }
-        
+
         public class SwitchChunk
         {
             public Token[] CaseAndDefaultTokens { get; set; }
@@ -61,7 +61,31 @@ namespace Pastel.Nodes
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Condition.ResolveType(varScope, compiler);
+            if (!this.Condition.ResolvedType.IsIdentical(PType.INT))
+            {
+                throw new ParserException(this.Condition.FirstToken, "Only ints can be used in switch statements.");
+            }
+
+            // consider it all one scope
+            for (int i = 0; i < this.Chunks.Length; ++i)
+            {
+                SwitchChunk chunk = this.Chunks[i];
+                for (int j = 0; j < chunk.Cases.Length; ++j)
+                {
+                    Expression ex = chunk.Cases[j];
+                    if (ex != null)
+                    {
+                        ex.ResolveType(varScope, compiler);
+                        if (ex.ResolvedType.RootValue != "int")
+                        {
+                            throw new ParserException(ex.FirstToken, "Only ints may be used.");
+                        }
+                    }
+                }
+
+                Executable.ResolveTypes(chunk.Code, varScope, compiler);
+            }
         }
     }
 }
