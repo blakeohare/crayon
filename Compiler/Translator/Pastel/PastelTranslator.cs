@@ -183,8 +183,32 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)
         {
-            output.Add("@ext_constant(\"");
-            output.Add(textReplaceConstnat.Name);
+            string name = textReplaceConstnat.Name;
+            bool isInteger;
+            if (name.StartsWith("TYPE_ID_"))
+            {
+                isInteger = true;
+            }
+            else if (name.StartsWith("IS_") || name.Contains("SUPPORTS_") || name.Contains("_SUPPORTED") || name.Contains("_USES_"))
+            {
+                isInteger = false;
+            }
+            else
+            {
+                switch (name)
+                {
+                    case "INT_IS_FLOOR":
+                    case "IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM":
+                        isInteger = false;
+                        break;
+                    default:
+                        throw new Exception("what type is '" + name + "'?");
+                }
+            }
+            output.Add("@");
+            output.Add(isInteger ? "ext_integer" : "ext_boolean");
+            output.Add("(\"");
+            output.Add(name);
             output.Add("\")");
         }
 
