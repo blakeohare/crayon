@@ -149,7 +149,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 	int leftType = a.type;
 	int rightType = b.type;
 	if (leftType == rightType) {
-		if (@ext_constant("IS_PYTHON")) {
+		if (@ext_boolean("IS_PYTHON")) {
 			if (leftType < Types.LIST) {
 				if (a.internalValue == b.internalValue) {
 					return 1;
@@ -178,7 +178,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.STRING:
-				if (@ext_constant("IS_JAVA")) {
+				if (@ext_boolean("IS_JAVA")) {
 					if (a.internalValue.Equals(b.internalValue)) {
 						output = 1;
 					}
@@ -189,7 +189,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.LIST:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -200,7 +200,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.DICTIONARY:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -211,7 +211,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				}
 				break;
 			case Types.INSTANCE:
-				if (@ext_constant("IS_PYTHON") || @ext_constant("IS_RUBY")) {
+				if (@ext_boolean("IS_PYTHON") || @ext_boolean("IS_RUBY")) {
 					if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
@@ -678,7 +678,7 @@ double fixFuzzyFloatPrecision(double x) {
 			}
 		}
 		if (roundDown) {
-			if (@ext_constant("INT_IS_FLOOR") || (x > 0)) {
+			if (@ext_boolean("INT_IS_FLOOR") || (x > 0)) {
 				x = Core.Int(x);
 			} else {
 				x = Core.Int(x) - 1;

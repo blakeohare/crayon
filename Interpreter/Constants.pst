@@ -100,16 +100,16 @@ enum FunctionPointerType {
 }
 
 enum Types {
-	NULL = @ext_constant("TYPE_ID_NULL"),
-	BOOLEAN = @ext_constant("TYPE_ID_BOOLEAN"),
-	INTEGER = @ext_constant("TYPE_ID_INTEGER"),
-	FLOAT = @ext_constant("TYPE_ID_FLOAT"),
-	STRING = @ext_constant("TYPE_ID_STRING"),
-	LIST = @ext_constant("TYPE_ID_LIST"),
-	DICTIONARY = @ext_constant("TYPE_ID_DICTIONARY"),
-	INSTANCE = @ext_constant("TYPE_ID_INSTANCE"),
-	FUNCTION = @ext_constant("TYPE_ID_FUNCTION"),
-	CLASS = @ext_constant("TYPE_ID_CLASS"),
+	NULL = @ext_integer("TYPE_ID_NULL"),
+	BOOLEAN = @ext_integer("TYPE_ID_BOOLEAN"),
+	INTEGER = @ext_integer("TYPE_ID_INTEGER"),
+	FLOAT = @ext_integer("TYPE_ID_FLOAT"),
+	STRING = @ext_integer("TYPE_ID_STRING"),
+	LIST = @ext_integer("TYPE_ID_LIST"),
+	DICTIONARY = @ext_integer("TYPE_ID_DICTIONARY"),
+	INSTANCE = @ext_integer("TYPE_ID_INSTANCE"),
+	FUNCTION = @ext_integer("TYPE_ID_FUNCTION"),
+	CLASS = @ext_integer("TYPE_ID_CLASS"),
 }
 
 const int MAX_TYPE = (Types.CLASS + 1);

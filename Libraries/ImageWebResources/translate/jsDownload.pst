@@ -1,5 +1,5 @@
 ﻿@import("FrameworkFunctions/2_arg.cry");
-if (@ext_constant("IS_JAVASCRIPT")) {
+if (@ext_boolean("IS_JAVASCRIPT")) {
 	string1 = ((string) arg1.internalValue);
 	objInstance1 = ((ObjectInstance) arg2.internalValue);
 	objArray1 = new Array<object>(5);

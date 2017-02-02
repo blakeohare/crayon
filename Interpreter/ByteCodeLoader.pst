@@ -1,6 +1,6 @@
 ﻿string read_till(Array<int> index, string raw, int length, char char) {
 	List<char> output = new List<char>();
-	if (!@ext_constant("IS_BYTECODE_LOADED_DIRECTLY")) {
+	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		bool ctn = true;
 		char c = '\0';
 		while (ctn) {
@@ -17,7 +17,7 @@
 }
 
 int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
-	if (!@ext_constant("IS_BYTECODE_LOADED_DIRECTLY")) {
+	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		int num = 0;
 		char c = raw[pindex[0]];
 		pindex[0] = (pindex[0] + 1);
@@ -53,7 +53,7 @@ int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
 
 string read_string(Array<int> pindex, string raw, int length, string alphaNums) {
 	List<string> output = new List<string>();
-	if (!@ext_constant("IS_BYTECODE_LOADED_DIRECTLY")) {
+	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		bool cont = true;
 		char c = ' ';
 		while (cont) {
@@ -95,7 +95,7 @@ string read_string(Array<int> pindex, string raw, int length, string alphaNums) 
 }
 
 Code loadByteCode() {
-	if (@ext_constant("IS_BYTECODE_LOADED_DIRECTLY")) {
+	if (@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		Array<int> ops = Core.ByteCodeGetOps();
 		Array<int> iargs = Core.ByteCOdeGetIntArgs();
 		Array<string> sargs = Core.ByteCOdeGetStringArgs();

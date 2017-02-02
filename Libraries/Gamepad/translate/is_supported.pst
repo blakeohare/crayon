@@ -1,4 +1,4 @@
 ﻿output = VALUE_FALSE;
-if (@ext_constant("LIB_GAMEPAD_SUPPORTED") && Library._lib_gamepad_is_supported()) {
+if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Library._lib_gamepad_is_supported()) {
 	output = VALUE_TRUE;
 }

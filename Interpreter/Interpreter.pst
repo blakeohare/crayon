@@ -510,7 +510,7 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
 			}
 		} else {
 			token = localTokens[0];
-			if (@ext_constant("IS_RELEASE")) {
+			if (@ext_boolean("IS_RELEASE")) {
 				if ((output.Length > 0) || (token != null) && !tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
 					output.Add(token);
 				}
@@ -520,7 +520,7 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
 		}
 		i += 1;
 	}
-	if (@ext_constant("IS_RELEASE")) {
+	if (@ext_boolean("IS_RELEASE")) {
 		int length = output.Length;
 		while (length > 0) {
 			token = output[(length - 1)];
