@@ -29,5 +29,7 @@ namespace Pastel.Nodes
             // override this for expressions that are expected to return constants.
             throw new ParserException(this.FirstToken, "This expression does not resolve into a constant.");
         }
+
+        internal abstract void ResolveType(VariableScope varScope, PastelCompiler compiler);
     }
 }

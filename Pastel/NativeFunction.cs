@@ -7,6 +7,8 @@ namespace Pastel
 {
     public enum NativeFunction
     {
+        NONE,
+
         ARRAY_GET,
         ARRAY_SET,
         DICTIONARY_CONTAINS_KEY,

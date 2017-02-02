@@ -50,7 +50,6 @@ namespace Pastel
         internal Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
 
         internal HashSet<string> ResolvedFunctions { get; set; }
-        internal HashSet<string> UnresolvedFunctions { get; set; }
         internal Queue<string> ResolutionQueue { get; set; }
 
         public void CompileBlobOfCode(string name, string code)
@@ -116,6 +115,7 @@ namespace Pastel
         {
             this.ResolveConstants();
             this.ResolveNamesAndCullUnusedCode();
+            this.ResolveTypes();
         }
 
         private void ResolveConstants()
@@ -151,16 +151,27 @@ namespace Pastel
             }
 
             this.ResolvedFunctions = new HashSet<string>();
-            this.UnresolvedFunctions = new HashSet<string>();
             this.ResolutionQueue = new Queue<string>();
             this.ResolutionQueue.Enqueue("main");
 
             while (this.ResolutionQueue.Count > 0)
             {
                 string functionName = this.ResolutionQueue.Dequeue();
-                this.UnresolvedFunctions.Remove(functionName);
-                this.ResolvedFunctions.Add(functionName);
-                this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
+                if (!this.ResolvedFunctions.Contains(functionName)) // multiple invocations in a function will put it in the queue multiple times.
+                {
+                    this.ResolvedFunctions.Add(functionName);
+                    this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
+                }
+            }
+        }
+
+        private void ResolveTypes()
+        {
+            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
+            foreach (string functionName in functionNames)
+            {
+                FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
+                functionDefinition.ResolveTypes(this);
             }
         }
     }

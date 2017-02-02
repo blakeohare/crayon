@@ -47,5 +47,30 @@ namespace Pastel.Nodes
             }
             return current;
         }
+
+        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        {
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i].ResolveType(varScope, compiler);
+            }
+
+            this.ResolvedType = this.Expressions[0].ResolvedType;
+
+            for (int i = 0; i < this.Ops.Length; ++i)
+            {
+                PType nextType = this.Expressions[i + 1].ResolvedType;
+                string lookup = this.ResolvedType.RootValue + this.Ops[i].Value + nextType.RootValue;
+                switch (lookup)
+                {
+                    case "int+int":
+                    case "int-int":
+                        this.ResolvedType = PType.INT;
+                        break;
+                    default:
+                        throw new ParserException(this.Ops[i], "The operator '" + this.Ops[i].Value + "' is not defined for types: " + this.ResolvedType + " and " + nextType + ".");
+                }
+            }
+        }
     }
 }

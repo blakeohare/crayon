@@ -46,5 +46,17 @@ namespace Pastel.Nodes
         {
             this.Value = this.Value.DoConstantResolution(cycleDetection, compiler);
         }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            this.Value.ResolveType(varScope, compiler);
+
+            if (!this.Type.IsParentOf(this.Value.ResolvedType))
+            {
+                throw new ParserException(this.Value.FirstToken, "Cannot assign this type to a " + this.Type);
+            }
+
+            varScope.DeclareVariables(this.VariableName, this.Type);
+        }
     }
 }

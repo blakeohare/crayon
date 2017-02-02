@@ -17,9 +17,9 @@ namespace Pastel.Nodes
         public FunctionDefinition(
             Token nameToken,
             PType returnType,
-            IList<PType> argTypes, 
-            IList<Token> argNames, 
-            IList<Executable> code) 
+            IList<PType> argTypes,
+            IList<Token> argNames,
+            IList<Executable> code)
         {
             this.FirstToken = returnType.FirstToken;
             this.NameToken = nameToken;
@@ -32,6 +32,20 @@ namespace Pastel.Nodes
         public void ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
+        }
+
+        public void ResolveTypes(PastelCompiler compiler)
+        {
+            VariableScope varScope = new VariableScope(this, compiler.Globals);
+            for (int i = 0; i < this.ArgTypes.Length; ++i)
+            {
+                varScope.DeclareVariables(this.ArgNames[i], this.ArgTypes[i]);
+            }
+
+            for (int i = 0; i < this.Code.Length; ++i)
+            {
+                this.Code[i].ResolveTypes(varScope, compiler);
+            }
         }
     }
 }

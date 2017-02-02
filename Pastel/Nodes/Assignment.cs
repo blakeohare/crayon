@@ -25,5 +25,15 @@ namespace Pastel.Nodes
             this.Value = this.Value.ResolveNamesAndCullUnusedCode(compiler);
             return Listify(this);
         }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            this.Value.ResolveType(varScope, compiler);
+            this.Target.ResolveType(varScope, compiler);
+            if (!this.Target.ResolvedType.IsParentOf(this.Value.ResolvedType))
+            {
+                throw new ParserException(this.OpToken, "Cannot assign a " + this.Value.ResolvedType + " to a " + this.Target.ResolvedType);
+            }
+        }
     }
 }

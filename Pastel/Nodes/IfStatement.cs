@@ -38,11 +38,22 @@ namespace Pastel.Nodes
                         compiler);
                 }
             }
-
             this.IfCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.IfCode, compiler).ToArray();
             this.ElseCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.ElseCode, compiler).ToArray();
 
             return Listify(this);
+        }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            this.Condition.ResolveType(varScope, compiler);
+            if (this.Condition.ResolvedType.RootValue != "bool")
+            {
+                throw new ParserException(this.Condition.FirstToken, "Only booleans can be used in if statements.");
+            }
+
+            Executable.ResolveTypes(this.IfCode, varScope, compiler);
+            Executable.ResolveTypes(this.ElseCode, varScope, compiler);
         }
     }
 }

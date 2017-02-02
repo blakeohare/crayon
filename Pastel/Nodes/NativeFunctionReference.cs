@@ -5,22 +5,24 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class CompileTimeFunctionReference : Expression
+    class NativeFunctionReference : Expression
     {
-        public Token NameToken { get; set; }
+        public NativeFunction NativeFunctionId { get; set; }
 
-        public CompileTimeFunctionReference(Token atToken, Token nameToken) : base(atToken)
+        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId) : base(firstToken)
         {
-            this.NameToken = nameToken;
+            this.NativeFunctionId = nativeFunctionId;
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            // Introduced in ResolveTypes phase
             throw new NotImplementedException();
         }
 
         internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
+            // Introduced in this phase
             throw new NotImplementedException();
         }
     }

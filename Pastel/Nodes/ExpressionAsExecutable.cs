@@ -39,5 +39,10 @@ namespace Pastel.Nodes
             this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
             return Listify(this);
         }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

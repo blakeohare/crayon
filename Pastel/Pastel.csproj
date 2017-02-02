@@ -57,6 +57,7 @@
     <Compile Include="Nodes\IfStatement.cs" />
     <Compile Include="Nodes\InlineConstant.cs" />
     <Compile Include="Nodes\InlineIncrement.cs" />
+    <Compile Include="Nodes\NativeFunctionReference.cs" />
     <Compile Include="Nodes\OpChain.cs" />
     <Compile Include="Nodes\PType.cs" />
     <Compile Include="Nodes\ReturnStatement.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Token.cs" />
     <Compile Include="Tokenizer.cs" />
     <Compile Include="TokenStream.cs" />
+    <Compile Include="VariableScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

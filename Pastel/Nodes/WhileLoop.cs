@@ -20,6 +20,13 @@ namespace Pastel.Nodes
 
         public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
+            this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
+            return Listify(this);
+        }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
             throw new NotImplementedException();
         }
     }

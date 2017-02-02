@@ -20,5 +20,24 @@ namespace Pastel.Nodes
             }
             return Listify(this);
         }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            if (this.Expression != null)
+            {
+                this.Expression.ResolveType(varScope, compiler);
+                if (!varScope.RootFunctionDefinition.ReturnType.IsParentOf(this.Expression.ResolvedType))
+                {
+                    throw new ParserException(this.Expression.FirstToken, "This expression is not the expected return type of this function.");
+                }
+            }
+            else
+            {
+                if (!this.Expression.ResolvedType.IsIdentical(PType.VOID))
+                {
+                    throw new ParserException(this.FirstToken, "Must return a value in this function.");
+                }
+            }
+        }
     }
 }

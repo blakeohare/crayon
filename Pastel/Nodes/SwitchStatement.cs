@@ -42,6 +42,25 @@ namespace Pastel.Nodes
 
         public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
+            for (int i = 0; i < this.Chunks.Length; ++i)
+            {
+                SwitchChunk chunk = this.Chunks[i];
+                for (int j = 0; j < chunk.Cases.Length; ++j)
+                {
+                    if (chunk.Cases[j] != null)
+                    {
+                        chunk.Cases[j] = chunk.Cases[j].ResolveNamesAndCullUnusedCode(compiler);
+                    }
+                }
+
+                chunk.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(chunk.Code, compiler).ToArray();
+            }
+            return Listify(this);
+        }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
             throw new NotImplementedException();
         }
     }

@@ -12,5 +12,10 @@ namespace Pastel.Nodes
         {
             return this.Listify(this);
         }
+
+        internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
+        {
+            // nothing to do
+        }
     }
 }

@@ -38,5 +38,26 @@ namespace Pastel.Nodes
             }
             return this;
         }
+
+        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        {
+            this.Expression.ResolveType(varScope, compiler);
+            this.ResolvedType = this.Expression.ResolvedType;
+
+            if (this.OpToken.Value == "-")
+            {
+                if (!(this.ResolvedType.IsIdentical(PType.INT) || this.ResolvedType.IsIdentical(PType.DOUBLE)))
+                {
+                    throw new ParserException(this.OpToken, "Cannot apply '-' to type: " + this.ResolvedType.ToString());
+                }
+            }
+            else // '!'
+            {
+                if (!this.ResolvedType.IsIdentical(PType.BOOL))
+                {
+                    throw new ParserException(this.OpToken, "Cannot apply '!' to type: " + this.ResolvedType.ToString());
+                }
+            }
+        }
     }
 }

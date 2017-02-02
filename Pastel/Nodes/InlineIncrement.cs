@@ -20,6 +20,12 @@ namespace Pastel.Nodes
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
+            return this;
+        }
+
+        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        {
             throw new NotImplementedException();
         }
     }

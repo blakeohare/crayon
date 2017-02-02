@@ -13,6 +13,8 @@ namespace Pastel.Nodes
         public Token[] ArgNames { get; set; }
         public Dictionary<string, int> ArgIndexByName { get; set; }
 
+        private PType Type { get; set; }
+
         public StructDefinition(Token structToken, Token name, IList<PType> argTypes, IList<Token> argNames)
         {
             this.FirstToken = structToken;
@@ -25,6 +27,7 @@ namespace Pastel.Nodes
                 string argName = this.ArgNames[i].Value;
                 this.ArgIndexByName[argName] = i;
             }
+            this.Type = new PType(this.FirstToken, name.Value);
         }
     }
 }

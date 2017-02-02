@@ -22,10 +22,25 @@ namespace Pastel.Nodes
 
             if (compiler.FunctionDefinitions.ContainsKey(name))
             {
+                if (!compiler.ResolvedFunctions.Contains(name))
+                {
+                    compiler.ResolutionQueue.Enqueue(name);
+                }
+
                 return new FunctionReference(this.FirstToken, compiler.FunctionDefinitions[name]);
             }
 
             return this;
+        }
+
+        internal override void ResolveType(VariableScope varScope, PastelCompiler compiler)
+        {
+            PType type = varScope.GetTypeOfVariable(this.Name);
+            this.ResolvedType = type;
+            if (type == null)
+            {
+                throw new ParserException(this.FirstToken, "This variable is not defined.");
+            }
         }
     }
 }
