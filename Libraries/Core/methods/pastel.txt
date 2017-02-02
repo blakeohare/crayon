@@ -2,7 +2,7 @@ w
 $_app_data_root: Core.AppDataRoot()
 $_array_get: [ARG:1][[ARG:2]]
 $_array_join: string.Join([ARG:2], [ARG:1])
-$_array_length: [ARG:1].Length
+$_array_length: [ARG:1].Size()
 $_array_set: [ARG:1][[ARG:2]] = [ARG:3]
 $_assert: TranslationHelper.Assertion([ARG:1])
 $_byte_code_get_raw_string: Core.ReadByteCodeFile()
@@ -16,8 +16,8 @@ $_dot_equals: [ARG:1].Equals([ARG:2])
 $_exception: Core.GenerateException([ARG:1], [ARG:2])
 $_float_to_string: Core.FloatToString([ARG:1])
 $_force_parens: Core.ForceParens([ARG:1])
-$_get_program_data: Core.ProgramData()
-$_has_increment: Core.HasIncrement()
+$_get_program_data: Core.GetProgramData()
+$_has_increment: @ext_boolean("HAS_INCREMENT")
 $_int_to_string: Core.IntToString([ARG:1])
 $_is_valid_integer: Core.IsValidInteger([ARG:1])
 $_list_clear: [ARG:1].Clear()
@@ -27,7 +27,7 @@ $_list_insert: [ARG:1].Insert([ARG:2], [ARG:3])
 $_list_join: [ARG:1].Join([ARG:1])
 $_list_join_chars: [ARG:1].Join()
 $_list_last_index: [ARG:1].LastIndex
-$_list_length: [ARG:1].Length
+$_list_length: [ARG:1].Size()
 $_list_pop: [ARG:1].Pop()
 $_list_push: [ARG:1].Add([ARG:2])
 $_list_remove_at: [ARG:1].RemoveAt([ARG:2])
@@ -55,7 +55,7 @@ $_resource_read_text_file: Core.ReadResourceTextFile([ARG:1])
 $_set_program_data: Core.SetProgramData([ARG:1])
 $_string_contains: [ARG:1].Contains([ARG:2])
 $_string_endswith: [ARG:1].EndsWith([ARG:2])
-$_string_length: [ARG:1].Length
+$_string_length: [ARG:1].Size()
 $_string_lower: [ARG:1].ToLower()
 $_string_ltrim: [ARG:1].TrimStart()
 $_string_replace: [ARG:1].Replace([ARG:2], [ARG:3])
