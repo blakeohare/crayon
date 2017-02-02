@@ -19,7 +19,9 @@ namespace Pastel.Nodes
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            Expression.ResolveNamesAndCullUnusedCodeInPlace(this.Expressions, compiler);
+            // Don't do short-circuiting yet for && and ||
+            return this;
         }
 
         internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)

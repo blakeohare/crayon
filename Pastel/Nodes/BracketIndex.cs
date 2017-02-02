@@ -18,7 +18,9 @@ namespace Pastel.Nodes
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Root = this.Root.ResolveNamesAndCullUnusedCode(compiler);
+            this.Index = this.Root.ResolveNamesAndCullUnusedCode(compiler);
+            return this;
         }
     }
 }

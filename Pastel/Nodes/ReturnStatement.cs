@@ -14,7 +14,11 @@ namespace Pastel.Nodes
 
         public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            if (this.Expression != null)
+            {
+                this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
+            }
+            return Listify(this);
         }
     }
 }
