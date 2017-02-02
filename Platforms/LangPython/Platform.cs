@@ -10,15 +10,15 @@ namespace LangPython
         public override string InheritsFrom { get { return null; } }
 
         public override Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit, 
+            Dictionary<string, object[]> executablesPerCompilationUnit,
             object[] structDefinitions)
         {
             throw new NotImplementedException();
         }
 
-        public override IDictionary<string, bool> GetConstantFlags()
+        public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, bool>()
+            return new Dictionary<string, object>()
                 {
                     { "PLATFORM_SUPPORTS_LIST_CLEAR", false },
                     { "STRONGLY_TYPED", false },

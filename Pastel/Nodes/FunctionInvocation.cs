@@ -25,11 +25,23 @@ namespace Pastel.Nodes
             if (this.Root is CompileTimeFunctionReference)
             {
                 CompileTimeFunctionReference constFunc = (CompileTimeFunctionReference)this.Root;
-                if (constFunc.NameToken.Value == "ext_constant")
+                InlineConstant argName = (InlineConstant)this.Args[0];
+                switch (constFunc.NameToken.Value)
                 {
-                    InlineConstant argName = (InlineConstant)this.Args[0];
-                    bool boolValue = parser.GetParseTimeConstant(argName.Value.ToString());
-                    return new InlineConstant(PType.BOOL, this.FirstToken, boolValue);
+                    case "ext_boolean":
+                        return new InlineConstant(
+                            PType.BOOL,
+                            this.FirstToken,
+                            parser.GetParseTimeBooleanConstant(argName.Value.ToString()));
+
+                    case "ext_integer":
+                        return new InlineConstant(
+                            PType.INT,
+                            this.FirstToken,
+                            parser.GetParseTimeIntegerConstant(argName.Value.ToString()));
+
+                    default:
+                        return this;
                 }
             }
             return this;

@@ -10,18 +10,29 @@ namespace Pastel
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
         private IDictionary<string, bool> boolConstants;
+        private IDictionary<string, int> intConstants;
         private IInlineImportCodeLoader importCodeLoader;
 
-        public PastelParser(IDictionary<string, bool> boolConstants, IInlineImportCodeLoader importCodeLoader)
+        public PastelParser(
+            IDictionary<string, bool> boolConstants, 
+            IDictionary<string, int> intConstants,
+            IInlineImportCodeLoader importCodeLoader)
         {
             this.boolConstants = boolConstants;
+            this.intConstants = intConstants;
             this.importCodeLoader = importCodeLoader;
         }
 
-        internal bool GetParseTimeConstant(string name)
+        internal bool GetParseTimeBooleanConstant(string name)
         {
             bool output ;
             return boolConstants.TryGetValue(name, out output) && output;
+        }
+
+        internal int GetParseTimeIntegerConstant(string name)
+        {
+            int output;
+            return intConstants.TryGetValue(name, out output) ? output : 0;
         }
 
         public ICompilationEntity[] ParseText(string filename, string text)

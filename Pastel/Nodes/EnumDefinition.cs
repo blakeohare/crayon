@@ -28,10 +28,6 @@ namespace Pastel.Nodes
             for (int i = 0; i < length; ++i)
             {
                 string name = this.ValueTokens[i].Value;
-                if (name == "NULL")
-                {
-
-                }
                 if (this.ValuesByName.ContainsKey(name))
                 {
                     throw new ParserException(this.FirstToken, "The enum '" + this.NameToken.Value + "' has multiple definitions of '" + name + "'");

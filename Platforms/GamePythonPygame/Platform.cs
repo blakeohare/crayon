@@ -16,9 +16,9 @@ namespace GamePythonPygame
             throw new NotImplementedException();
         }
 
-        public override IDictionary<string, bool> GetConstantFlags()
+        public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, bool>();
+            return new Dictionary<string, object>();
         }
     }
 }
