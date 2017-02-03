@@ -86,19 +86,23 @@ namespace Pastel.Nodes
             }
             else if (this.Root is NativeFunctionReference)
             {
-                NativeFunctionReference nfi = (NativeFunctionReference)this.Root;
-                if (nfi.Context == null)
+                NativeFunctionReference nfr = (NativeFunctionReference)this.Root;
+                NativeFunctionInvocation nfi;
+                if (nfr.Context == null)
                 {
-                    return new NativeFunctionInvocation(this.FirstToken, nfi.NativeFunctionId, this.Args);
+                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, this.Args);
                 }
                 else
                 {
-                    return new NativeFunctionInvocation(this.FirstToken, nfi.NativeFunctionId, nfi.Context, this.Args);
+                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args);
                 }
+
+                nfi.ResolveType(varScope, compiler);
+                return nfi;
             }
             else if (this.Root is ConstructorReference)
             {
-                throw new NotImplementedException();
+                return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args);
             }
             else
             {

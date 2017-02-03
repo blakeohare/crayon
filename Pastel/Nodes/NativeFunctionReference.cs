@@ -9,12 +9,19 @@ namespace Pastel.Nodes
     {
         public NativeFunction NativeFunctionId { get; set; }
         public Expression Context { get; set; }
+        public PType ReturnType { get; set; }
+        public PType[] ArgTypes { get; set; }
+        public bool[] ArgTypesIsRepeated { get; set; }
 
         public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId) : this(firstToken, nativeFunctionId, null) { }
         public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId, Expression context) : base(firstToken)
         {
             this.NativeFunctionId = nativeFunctionId;
             this.Context = context;
+            
+            this.ReturnType = NativeFunctionUtil.GetNativeFunctionReturnType(this.NativeFunctionId);
+            this.ArgTypes = NativeFunctionUtil.GetNativeFunctionArgTypes(this.NativeFunctionId);
+            this.ArgTypesIsRepeated = NativeFunctionUtil.GetNativeFunctionIsArgTypeRepeated(this.NativeFunctionId);
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
@@ -25,8 +32,12 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            // Introduced in this phase
-            throw new NotImplementedException();
+            if (this.Context != null)
+            {
+                // NativeFunctionReferences only get introduced before the ResolveType phase for Core.* functions, in which case they have no Context and nothing to resolve.
+                throw new Exception();
+            }
+            return this;
         }
     }
 }

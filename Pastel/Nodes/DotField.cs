@@ -145,16 +145,24 @@ namespace Pastel.Nodes
                 case "string":
                     switch (field)
                     {
-                        case "Length": return NativeFunction.STRING_LENGTH;
-                        default: throw new ParserException(this.FieldName, "Unresolved field.");
+                        case "Size": return NativeFunction.STRING_LENGTH;
+                        default: throw new ParserException(this.FieldName, "Unresolved string field: " + field);
                     }
+
+                case "Array":
+                    switch (field)
+                    {
+                        case "Size": return NativeFunction.ARRAY_LENGTH;
+                        default: throw new ParserException(this.FieldName, "Unresolved Array field: " + field);
+                    }
+
                 case "Dictionary":
                     switch (field)
                     {
                         case "Contains": return NativeFunction.DICTIONARY_CONTAINS_KEY;
                         case "Keys": return NativeFunction.DICTIONARY_KEYS;
                         case "Size": return NativeFunction.DICTIONARY_SIZE;
-                        default: throw new ParserException(this.FieldName, "Unresolved field.");
+                        default: throw new ParserException(this.FieldName, "Unresolved Dictionary field: " + field);
                     }
 
                 default:
