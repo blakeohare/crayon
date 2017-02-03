@@ -97,8 +97,7 @@ namespace Pastel.Nodes
                     nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args);
                 }
 
-                nfi.ResolveType(varScope, compiler);
-                return nfi;
+                return nfi.ResolveType(varScope, compiler);
             }
             else if (this.Root is ConstructorReference)
             {

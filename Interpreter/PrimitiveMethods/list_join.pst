@@ -16,5 +16,5 @@ len = list1.Size();
 for (i = 0; i < len; i += 1) {
 	stringList1.Add(valueToString(list1[i]));
 }
-string1 = stringList1.Join(stringList1);
+string1 = stringList1.Join(string1);
 output = buildString(string1);

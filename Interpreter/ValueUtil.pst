@@ -465,7 +465,7 @@ Value multiplyString(Value strValue, string str, int n) {
 		n -= 1;
 		builder.Add(str);
 	}
-	str = builder.Join(builder);
+	str = builder.Join("");
 	return buildString(str);
 }
 
@@ -482,7 +482,7 @@ string stringDecode(string encoded) {
 				builder.Add(("" + c));
 			}
 		}
-		return builder.Join(builder);
+		return builder.Join("");
 	}
 	return encoded;
 }
@@ -509,7 +509,7 @@ string stringFromHex(string encoded) {
 		a = (a * 16) + b;
 		output.Add(Core.Chr(a));
 	}
-	return output.Join(output);
+	return output.Join("");
 }
 
 int parsePosDecInt(string original) {

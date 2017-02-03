@@ -78,6 +78,12 @@ namespace Pastel.Nodes
                     case "int+int":
                     case "int-int":
                     case "int*int":
+                    case "int%int":
+                    case "int&int":
+                    case "int|int":
+                    case "int^int":
+                    case "int<<int":
+                    case "int>>int":
                         this.ResolvedType = PType.INT;
                         break;
 

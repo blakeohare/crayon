@@ -626,7 +626,7 @@ string unrollExceptionOutput(Value exceptionInstance) {
 	if (tokensAtPc != null) {
 		codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(tokensAtPc[0]));
 	}
-	string stackTrace = trace.Join(trace);
+	string stackTrace = trace.Join("\n");
 	return Core.StringConcatAll(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
 }
 

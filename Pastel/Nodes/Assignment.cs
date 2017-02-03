@@ -32,7 +32,17 @@ namespace Pastel.Nodes
             this.Target = this.Target.ResolveType(varScope, compiler);
             if (!PType.CheckAssignment(this.Target.ResolvedType, this.Value.ResolvedType))
             {
-                throw new ParserException(this.OpToken, "Cannot assign a " + this.Value.ResolvedType + " to a " + this.Target.ResolvedType);
+
+                if (this.OpToken.Value != "=" &&
+                    this.Target.ResolvedType.IsIdentical(PType.DOUBLE) &&
+                    this.Value.ResolvedType.IsIdentical(PType.INT))
+                {
+                    // You can apply incremental ops such as += with an int to a float and that is fine without explicit conversion in any platform.
+                }
+                else
+                {
+                    throw new ParserException(this.OpToken, "Cannot assign a " + this.Value.ResolvedType + " to a " + this.Target.ResolvedType);
+                }
             }
         }
     }

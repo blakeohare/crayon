@@ -90,7 +90,7 @@ if (int5 == 1) {
 				int1 += int3;
 			}
 		}
-		value = buildString(stringList1.Join(stringList1));
+		value = buildString(stringList1.Join(""));
 	} else {
 		list2 = new List<Value>();
 		if (bool1) {

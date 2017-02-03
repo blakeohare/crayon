@@ -153,7 +153,19 @@ namespace Pastel.Nodes
                 case "string":
                     switch (field)
                     {
+                        case "Contains": return NativeFunction.STRING_CONTAINS;
+                        case "EndsWith": return NativeFunction.STRING_ENDS_WITH;
+                        case "IndexOf": return NativeFunction.STRING_INDEX_OF;
+                        case "Replace": return NativeFunction.STRING_REPLACE;
+                        case "Reverse": return NativeFunction.STRING_REVERSE;
                         case "Size": return NativeFunction.STRING_LENGTH;
+                        case "Split": return NativeFunction.STRING_SPLIT;
+                        case "StartsWith": return NativeFunction.STRING_STARTS_WITH;
+                        case "ToLower": return NativeFunction.STRING_TO_LOWER;
+                        case "ToUpper": return NativeFunction.STRING_TO_UPPER;
+                        case "Trim": return NativeFunction.STRING_TRIM;
+                        case "TrimEnd": return NativeFunction.STRING_TRIM_END;
+                        case "TrimStart": return NativeFunction.STRING_TRIM_START;
                         default: throw new ParserException(this.FieldName, "Unresolved string method: " + field);
                     }
 
@@ -168,7 +180,13 @@ namespace Pastel.Nodes
                     switch (field)
                     {
                         case "Add": return NativeFunction.LIST_ADD;
+                        case "AddAll": return NativeFunction.LIST_ADD_ALL;
+                        case "Insert": return NativeFunction.LIST_INSERT;
+                        case "Join": return NativeFunction.LIST_JOIN;
                         case "Pop": return NativeFunction.LIST_POP;
+                        case "RemoveAt": return NativeFunction.LIST_REMOVE_AT;
+                        case "Reverse": return NativeFunction.LIST_REVERSE;
+                        case "Shuffle": return NativeFunction.LIST_SHUFFLE;
                         case "Size": return NativeFunction.LIST_SIZE;
                         default: throw new ParserException(this.FieldName, "Unresolved List method: " + field);
                     }
@@ -180,6 +198,7 @@ namespace Pastel.Nodes
                         case "Keys": return NativeFunction.DICTIONARY_KEYS;
                         case "Remove": return NativeFunction.DICTIONARY_REMOVE;
                         case "Size": return NativeFunction.DICTIONARY_SIZE;
+                        case "Values": return NativeFunction.DICTIONARY_VALUES;
                         default: throw new ParserException(this.FieldName, "Unresolved Dictionary method: " + field);
                     }
 

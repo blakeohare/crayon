@@ -82,6 +82,8 @@ namespace Pastel.Nodes
         // when a templated type coincides with an actual value, add that template key to the lookup output param.
         public static bool CheckAssignmentWithTemplateOutput(PType templatedType, PType actualValue, Dictionary<string, PType> output)
         {
+            if (templatedType.RootValue == "object") return true;
+
             // Most cases, nothing to do
             if (templatedType.IsIdentical(actualValue))
             {
@@ -198,7 +200,14 @@ namespace Pastel.Nodes
         public bool IsIdentical(PType other)
         {
             if (this.Generics.Length != other.Generics.Length) return false;
-            if (this.RootValue != other.RootValue) return false;
+            if (this.RootValue != other.RootValue)
+            {
+                string thisRoot = this.RootValue;
+                string thatRoot = other.RootValue;
+                if (thisRoot == "number" && (thatRoot == "double" || thatRoot == "int")) return true;
+                if (thatRoot == "number" && (thisRoot == "double" || thisRoot == "int")) return true;
+                return false;
+            }
             for (int i = this.Generics.Length - 1; i >= 0; --i)
             {
                 if (!this.Generics[i].IsIdentical(other.Generics[i]))
