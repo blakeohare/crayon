@@ -40,7 +40,8 @@ int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
 					if (c == '^') {
 						num = -1 * read_integer(pindex, raw, length, alphaNums);
 					} else {
-						num = alphaNums.IndexOf(c);
+						Core.EmitComment("TODO: string.IndexOfChar(c)");
+						num = alphaNums.IndexOf(Core.CharToString(c));
 						if (num == -1) {
 						}
 					}

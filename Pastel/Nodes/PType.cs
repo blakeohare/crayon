@@ -62,21 +62,22 @@ namespace Pastel.Nodes
                 return this;
             }
 
-            List<PType> generics = new List<PType>();
-            for (int i = 0; i < this.Generics.Length; ++i)
-            {
-                generics.Add(this.Generics[i].ResolveTemplates(templateLookup));
-            }
-            string rootValue = this.RootValue;
             if (this.RootValue.Length == 1)
             {
                 PType newType;
                 if (templateLookup.TryGetValue(this.RootValue, out newType))
                 {
-                    rootValue = newType.RootValue;
+                    return newType;
                 }
+                return this;
             }
-            return new PType(this.FirstToken, rootValue, generics.ToArray());
+
+            List<PType> generics = new List<PType>();
+            for (int i = 0; i < this.Generics.Length; ++i)
+            {
+                generics.Add(this.Generics[i].ResolveTemplates(templateLookup));
+            }
+            return new PType(this.FirstToken, this.RootValue, generics.ToArray());
         }
 
         // when a templated type coincides with an actual value, add that template key to the lookup output param.

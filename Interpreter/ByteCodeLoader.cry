@@ -41,7 +41,8 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 		} else if (c == $_string_as_char('^')) {
 			num = -1 * read_integer(pindex, raw, length, alphaNums);
 		} else {
-			num = $_string_index_of(alphaNums, c);
+			$_comment('TODO: string.IndexOfChar(c)');
+			num = $_string_index_of(alphaNums, $_dummy_char_to_string_conversion(c));
 			if (num == -1) {
 				// TODO: assert
 			}

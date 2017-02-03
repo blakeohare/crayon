@@ -78,7 +78,7 @@ if (root.type == Types.LIST) {
 			}
 			valueStack[(valueStackSize - 1)] = buildCommonString(Core.CharToString(string1[int1]));
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, ("Cannot index into this type: " + getTypeFromId(root.type)));
+			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot index into this type: ", getTypeFromId(root.type)));
 		}
 	}
 }

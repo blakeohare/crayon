@@ -44,7 +44,7 @@ namespace Pastel.Nodes
             }
             else if (rootType.RootValue == "string")
             {
-                badIndex = indexType.IsIdentical(PType.INT);
+                badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
             }
             else

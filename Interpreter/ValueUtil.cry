@@ -10,13 +10,13 @@ function @type('string') valueToString(@type('Value') wrappedValue) {
 		return "false";
 	}
 	if (type == Types.FLOAT) {
-		@type('string') floatStr = $_float_to_string(Value$wrappedValue.internalValue);
+		@type('string') floatStr = $_float_to_string($_cast('double', Value$wrappedValue.internalValue));
 		if (!$_string_contains(floatStr, '.')) {
 			$_string_append(floatStr, '.0');
 		}
 		return floatStr;
 	}
-	if (type == Types.INTEGER) return $_int_to_string(Value$wrappedValue.internalValue);
+	if (type == Types.INTEGER) return $_int_to_string($_cast('int', Value$wrappedValue.internalValue));
 	if (type == Types.STRING) return $_cast('string', Value$wrappedValue.internalValue);
 	if (type == Types.LIST) {
 		@type('List<Value>') internalList = $_cast('List<Value>', Value$wrappedValue.internalValue);
@@ -460,7 +460,7 @@ function @type('Value') buildCommonString(@type('string') s) {
 function @type('Value') multiplyString(@type('Value') strValue, @type('string') str, @type('int') n) {
 	if (n <= 2) {
 		if (n == 1) return strValue;
-		if (n == 2) return buildString(str + str);
+		if (n == 2) return buildString($_string_concat(str, str));
 		return VALUE_EMPTY_STRING;
 	}
 
@@ -482,9 +482,12 @@ function @type('string') stringDecode(@type('string') encoded) {
 		for (@type('int') i = 0; i < length; i += 1) {
 			@type('char') c = $_string_char_at(encoded, i);
 			if (c == per && i + 2 < length) {
-				$_list_push(builder, stringFromHex("" + $_string_char_at(encoded, i + 1) + $_string_char_at(encoded, i + 2)));
+				$_list_push(builder, stringFromHex($_string_concat(
+					"", 
+					$_dummy_char_to_string_conversion($_string_char_at(encoded, i + 1)),
+					$_dummy_char_to_string_conversion($_string_char_at(encoded, i + 2)))));
 			} else {
-				$_list_push(builder, "" + c);
+				$_list_push(builder, $_string_concat("", $_dummy_char_to_string_conversion(c)));
 			}
 		}
 
@@ -502,14 +505,14 @@ function @type('string') stringFromHex(@type('string') encoded) {
 	@type('int') b = 0;
 	@type('string') c = null;
 	for (@type('int') i = 0; i + 1 < length; i += 2) {
-		c = "" + $_string_char_at(encoded, i);
+		c = $_string_concat("", $_dummy_char_to_string_conversion($_string_char_at(encoded, i)));
 		a = $_string_index_of(hex, c);
 		if (a == -1) return null;
-		c = "" + $_string_char_at(encoded, i + 1);
+		c = $_string_concat("", $_dummy_char_to_string_conversion($_string_char_at(encoded, i + 1)));
 		b = $_string_index_of(hex, c);
 		if (b == -1) return null;
 		a = a * 16 + b;
-		$_list_push(output, $_chr(a));
+		$_list_push(output, $_dummy_char_to_string_conversion($_chr(a)));
 	}
 	return $_list_join(output, "");
 }

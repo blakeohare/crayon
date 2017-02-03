@@ -183,7 +183,15 @@ namespace Pastel.Nodes
                         case "Add": return NativeFunction.LIST_ADD;
                         case "AddAll": return NativeFunction.LIST_ADD_ALL;
                         case "Insert": return NativeFunction.LIST_INSERT;
-                        case "Join": return NativeFunction.LIST_JOIN;
+                        case "Join":
+                            string memberType = rootType.Generics[0].RootValue;
+                            switch (memberType)
+                            {
+                                case "string": return NativeFunction.LIST_JOIN_STRINGS;
+                                case "char": return NativeFunction.LIST_JOIN_CHARS;
+                                default: throw new ParserException(this.FieldName, "Unresolved List<" + memberType + "> method: " + field);
+                            }
+                            
                         case "Pop": return NativeFunction.LIST_POP;
                         case "RemoveAt": return NativeFunction.LIST_REMOVE_AT;
                         case "Reverse": return NativeFunction.LIST_REVERSE;
