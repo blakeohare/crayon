@@ -8,6 +8,7 @@ $_byte_code_get_raw_string: C$bytecode
 $_char_to_string: [ARG:1]
 $_current_time_seconds: C$common$now()
 $_dictionary_contains: ([ARG:1][[ARG:2]] !== undefined)
+$_dummy_char_to_string_conversion: [ARG:1]
 $_float_to_string: "" + [ARG:1]
 $_force_parens: ([ARG:1])
 $_get_program_data: C$common$programData

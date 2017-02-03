@@ -84,7 +84,7 @@
 		if (arg1.type == Types.INTEGER) {
 			int1 = ((int) arg1.internalValue);
 			if ((int1 >= 0) && (int1 < 256)) {
-				output = buildCommonString(Core.Chr(int1));
+				output = buildCommonString(Core.CharToString(Core.Chr(int1)));
 			}
 		}
 		if (output == null) {
@@ -149,7 +149,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
 			}
@@ -166,7 +166,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
 			}
@@ -184,7 +184,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -193,7 +193,7 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -226,7 +226,7 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -235,7 +235,7 @@
 			float3 = ((double) arg3.internalValue);
 		} else {
 			if (arg3.type == Types.INTEGER) {
-				float3 = ((int) arg3.internalValue);
+				float3 = ((int) arg3.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -252,7 +252,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -313,7 +313,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -322,7 +322,7 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -344,7 +344,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -353,7 +353,7 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -415,7 +415,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
 			}
@@ -429,7 +429,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
 			}
@@ -443,7 +443,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
 			}

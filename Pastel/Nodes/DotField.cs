@@ -153,6 +153,7 @@ namespace Pastel.Nodes
                 case "string":
                     switch (field)
                     {
+                        case "CharCodeAt": return NativeFunction.STRING_CHAR_CODE_AT;
                         case "Contains": return NativeFunction.STRING_CONTAINS;
                         case "EndsWith": return NativeFunction.STRING_ENDS_WITH;
                         case "IndexOf": return NativeFunction.STRING_INDEX_OF;
