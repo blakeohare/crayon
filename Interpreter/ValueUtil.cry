@@ -731,9 +731,9 @@ function @type('double') fixFuzzyFloatPrecision(@type('double') x) {
 
 		if (roundDown) {
 			if (%%%INT_IS_FLOOR%%% || x > 0) {
-				x = $_int(x);
+				x = $_int(x) + 0.0;
 			} else {
-				x = $_int(x) - 1;
+				x = $_int(x) - 1.0;
 			}
 		}
 	}
