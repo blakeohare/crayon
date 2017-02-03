@@ -42,7 +42,7 @@ namespace Pastel.Nodes
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            this.Expression = this.Expression.ResolveType(varScope, compiler);
         }
     }
 }

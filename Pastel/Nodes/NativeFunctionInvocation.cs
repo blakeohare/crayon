@@ -49,7 +49,13 @@ namespace Pastel.Nodes
 
             Dictionary<string, PType> templateLookup = new Dictionary<string, PType>();
 
-            for (int i = 0; i < expectedTypes.Length; ++i)
+            int verificationLength = expectedTypes.Length;
+            if (isArgRepeated[isArgRepeated.Length - 1])
+            {
+                verificationLength--;
+            }
+
+            for (int i = 0; i < verificationLength; ++i)
             {
                 if (!PType.CheckAssignmentWithTemplateOutput(expectedTypes[i], this.Args[i].ResolvedType, templateLookup))
                 {

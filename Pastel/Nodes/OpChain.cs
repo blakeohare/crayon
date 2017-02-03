@@ -77,11 +77,25 @@ namespace Pastel.Nodes
                 {
                     case "int+int":
                     case "int-int":
+                    case "int*int":
                         this.ResolvedType = PType.INT;
                         break;
+
+                    case "int+double":
+                    case "double+int":
+                    case "double+double":
+                    case "int-double":
+                    case "double-int":
+                    case "double-double":
+                    case "int*double":
+                    case "double*int":
+                    case "double*double":
                     case "double%int":
+                    case "int%double":
+                    case "double%double":
                         this.ResolvedType = PType.DOUBLE;
                         break;
+
                     case "int>int":
                     case "int<int":
                     case "int>=int":
@@ -110,6 +124,7 @@ namespace Pastel.Nodes
                     case "bool||bool":
                         this.ResolvedType = PType.BOOL;
                         break;
+
                     default:
                         throw new ParserException(this.Ops[i], "The operator '" + this.Ops[i].Value + "' is not defined for types: " + this.ResolvedType + " and " + nextType + ".");
                 }

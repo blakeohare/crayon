@@ -88,6 +88,29 @@ namespace Pastel.Nodes
                 return true;
             }
 
+            if (templatedType.RootValue.Length == 1)
+            {
+                if (output.ContainsKey(templatedType.RootValue))
+                {
+                    PType requiredType = output[templatedType.RootValue];
+                    // if it's already encountered it better match the existing value
+                    if (actualValue.IsIdentical(requiredType))
+                    {
+                        return true;
+                    }
+
+                    // It's also possible that this is null, in which case the type must be nullable.
+                    if (actualValue.RootValue == "null" && requiredType.IsNullable)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+                output[templatedType.RootValue] = actualValue;
+                return true;
+            }
+
             if (templatedType.Generics.Length != actualValue.Generics.Length)
             {
                 // completely different. don't even try to match templates
