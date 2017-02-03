@@ -157,7 +157,7 @@
 		if ((float1 < -1) || (float1 > 1)) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Math.Acos(float1));
+		output = buildFloat(Core.Acos(float1));
 		break;
 	case 14:
 		Core.EmitComment("arcSin");
@@ -174,7 +174,7 @@
 		if ((float1 < -1) || (float1 > 1)) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Math.Asin(float1));
+		output = buildFloat(Core.Asin(float1));
 		break;
 	case 15:
 		Core.EmitComment("arcTan");
@@ -201,18 +201,18 @@
 		if (bool1) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
 		}
-		output = buildFloat(Math.Atan(float1, float2));
+		output = buildFloat(Core.Atan(float1, float2));
 		break;
 	case 16:
 		Core.EmitComment("cos");
 		@import("FrameworkFunctions/1_arg.cry");
 		if (arg1.type == Types.FLOAT) {
 			float1 = ((double) arg1.internalValue);
-			output = buildFloat(Math.Cos(float1));
+			output = buildFloat(Core.Cos(float1));
 		} else {
 			if (arg1.type == Types.INTEGER) {
 				int1 = ((int) arg1.internalValue);
-				output = buildFloat(Math.Cos(int1));
+				output = buildFloat(Core.Cos(int1));
 			} else {
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
 			}
@@ -420,7 +420,7 @@
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
 			}
 		}
-		output = buildFloat(Math.Sin(float1));
+		output = buildFloat(Core.Sin(float1));
 		break;
 	case 25:
 		Core.EmitComment("tan");
@@ -434,7 +434,7 @@
 				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
 			}
 		}
-		output = buildFloat(Math.Tan(float1));
+		output = buildFloat(Core.Tan(float1));
 		break;
 	case 26:
 		Core.EmitComment("log");
@@ -451,7 +451,7 @@
 		if (float1 <= 0) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
 		}
-		output = buildFloat(fixFuzzyFloatPrecision(Math.Log(float1) * ((double) arg2.internalValue)));
+		output = buildFloat(fixFuzzyFloatPrecision(Core.Log(float1) * ((double) arg2.internalValue)));
 		break;
 	case 27:
 		Core.EmitComment("intQueueClear");

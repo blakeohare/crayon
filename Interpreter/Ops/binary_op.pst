@@ -17,23 +17,23 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 				value = VALUE_INT_ONE;
 			} else {
 				if (((int) right) > 0) {
-					value = buildInteger(Core.Int(Math.Pow(((int) left), ((int) right))));
+					value = buildInteger(Core.Int(Core.Pow(((int) left), ((int) right))));
 				} else {
-					value = buildFloat(Math.Pow(((int) left), ((int) right)));
+					value = buildFloat(Core.Pow(((int) left), ((int) right)));
 				}
 			}
 			break;
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("int ** float");
-			value = buildFloat(0.0 + Math.Pow(((int) left), ((double) right)));
+			value = buildFloat(0.0 + Core.Pow(((int) left), ((double) right)));
 			break;
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("float ** int");
-			value = buildFloat(0.0 + Math.Pow(((double) left), ((int) right)));
+			value = buildFloat(0.0 + Core.Pow(((double) left), ((int) right)));
 			break;
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("float ** float");
-			value = buildFloat(0.0 + Math.Pow(((double) left), ((double) right)));
+			value = buildFloat(0.0 + Core.Pow(((double) left), ((double) right)));
 			break;
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("float % float");
