@@ -46,6 +46,8 @@ namespace Pastel
         MATH_ARCSIN,
         MATH_ARCTAN,
         MATH_COS,
+        MATH_LOG,
+        MATH_POW,
         MATH_SIN,
         MATH_TAN,
         MULTIPLY_LIST,

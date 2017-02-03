@@ -50,7 +50,7 @@ namespace Pastel.Nodes
             Dictionary<string, PType> templateLookup = new Dictionary<string, PType>();
 
             int verificationLength = expectedTypes.Length;
-            if (isArgRepeated[isArgRepeated.Length - 1])
+            if (verificationLength > 0 && isArgRepeated[isArgRepeated.Length - 1])
             {
                 verificationLength--;
             }

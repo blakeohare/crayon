@@ -157,7 +157,7 @@
 		if ((float1 < -1) || (float1 > 1)) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Core.Acos(float1));
+		output = buildFloat(Core.ArcCos(float1));
 		break;
 	case 14:
 		Core.EmitComment("arcSin");
@@ -174,7 +174,7 @@
 		if ((float1 < -1) || (float1 > 1)) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Core.Asin(float1));
+		output = buildFloat(Core.ArcSin(float1));
 		break;
 	case 15:
 		Core.EmitComment("arcTan");
@@ -201,7 +201,7 @@
 		if (bool1) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
 		}
-		output = buildFloat(Core.Atan(float1, float2));
+		output = buildFloat(Core.ArcTan(float1, float2));
 		break;
 	case 16:
 		Core.EmitComment("cos");

@@ -94,10 +94,14 @@ namespace Pastel.Nodes
         {
             switch (field)
             {
+                case "ArcCos": return NativeFunction.MATH_ARCCOS;
+                case "ArcSin": return NativeFunction.MATH_ARCSIN;
+                case "ArcTan": return NativeFunction.MATH_ARCTAN;
                 case "CharToString": return NativeFunction.CHAR_TO_STRING;
                 case "Chr": return NativeFunction.CHR;
                 case "CommandLineArgs": return NativeFunction.COMMAND_LINE_ARGS;
                 case "ConvertRawDictionaryValueCollectionToAReusableValueList": return NativeFunction.CONVERT_RAW_DICTIONARY_VALUE_COLLECTION_TO_A_REUSABLE_VALUE_LIST;
+                case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
                 case "EmitComment": return NativeFunction.EMIT_COMMENT;
                 case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
@@ -111,22 +115,26 @@ namespace Pastel.Nodes
                 case "IntToString": return NativeFunction.INT_TO_STRING;
                 case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
                 case "ListToArray": return NativeFunction.LIST_TO_ARRAY;
+                case "Log": return NativeFunction.MATH_LOG;
                 case "MultiplyList": return NativeFunction.MULTIPLY_LIST;
                 case "Ord": return NativeFunction.ORD;
                 case "ParseFloat": return NativeFunction.PARSE_FLOAT;
                 case "ParseFloat_REDUNDANT": return NativeFunction.PARSE_FLOAT_REDUNDANT;
                 case "ParseInt": return NativeFunction.PARSE_INT;
+                case "Pow": return NativeFunction.MATH_POW;
                 case "PrintStdErr": return NativeFunction.PRINT_STDERR;
                 case "PrintStdOut": return NativeFunction.PRINT_STDOUT;
                 case "RandomFloat": return NativeFunction.RANDOM_FLOAT;
                 case "ReadByteCodeFile": return NativeFunction.READ_BYTE_CODE_FILE;
                 case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
+                case "Sin": return NativeFunction.MATH_SIN;
                 case "StringAppend": return NativeFunction.STRING_APPEND;
                 case "StringCompareIsReverse": return NativeFunction.STRING_COMPARE_IS_REVERSE;
                 case "StringConcatAll": return NativeFunction.STRING_CONCAT_ALL;
                 case "StringEquals": return NativeFunction.STRING_EQUALS;
                 case "StringFromCharCode": return NativeFunction.STRING_FROM_CHAR_CODE;
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
+                case "Tan": return NativeFunction.MATH_TAN;
                 case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
 
                 // TODO: get this information from the parameter rather than having separate Core function
