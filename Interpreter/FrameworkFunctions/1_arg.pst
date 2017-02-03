@@ -1,4 +1,4 @@
-﻿if (Core.HasIncrement()) {
+﻿if (@ext_boolean("HAS_INCREMENT")) {
 	arg1 = valueStack[--valueStackSize];
 } else {
 	valueStackSize -= 1;

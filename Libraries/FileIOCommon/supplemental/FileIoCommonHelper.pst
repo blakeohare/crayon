@@ -4,10 +4,10 @@
 }
 
 object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
-	Array<byte> bytes = new Array<byte>(listOfMaybeInts.Length);
+	Array<byte> bytes = new Array<byte>(listOfMaybeInts.Size());
 	Value intValue = null;
 	int byteValue = 0;
-	for (int i = listOfMaybeInts.Length - 1; i >= 0; i -= 1) {
+	for (int i = listOfMaybeInts.Size() - 1; i >= 0; i -= 1) {
 		intValue = listOfMaybeInts[i];
 		if (intValue.type != Types.INTEGER) {
 			return null;
@@ -30,7 +30,7 @@ object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
 int lib_fileiocommon_textToLines(string text, List<Value> output) {
 	List<string> stringList = new List<string>();
 	Library._lib_fileiocommon_textToLines(text, text);
-	int len = stringList.Length;
+	int len = stringList.Size();
 	for (int i = 0; i < len; i += 1) {
 		output.Add(buildString(stringList[i]));
 	}

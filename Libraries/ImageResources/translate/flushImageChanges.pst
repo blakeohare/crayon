@@ -1,5 +1,5 @@
 ﻿@import("FrameworkFunctions/1_arg.cry");
-if (@ext_constant("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
+if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	if (objArray1 != null) {

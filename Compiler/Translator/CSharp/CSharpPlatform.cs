@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Crayon.ParseTree;
+using Common;
 
 namespace Crayon.Translator.CSharp
 {
@@ -169,7 +170,7 @@ namespace Crayon.Translator.CSharp
                 {
                     Type = FileOutputType.Text,
                     TextContent = Constants.DoReplacements(false,
-                        Util.ReadResourceFileInternally("csharp-common/" + templateFile + ".txt"),
+                        LegacyUtil.ReadResourceFileInternally("csharp-common/" + templateFile + ".txt"),
                         replacements)
                 };
             }

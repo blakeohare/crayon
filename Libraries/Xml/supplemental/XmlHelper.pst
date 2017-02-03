@@ -35,7 +35,7 @@
 		return error;
 	}
 	lib_xml_skipStuff(input, indexPtr);
-	if (indexPtr[0] != input.Length) {
+	if (indexPtr[0] != input.Size()) {
 		return lib_xml_error(input, indexPtr[0], "Unexpected text.");
 	}
 	return null;
@@ -43,7 +43,7 @@
 
 string lib_xml_error(string xml, int index, string msg) {
 	string loc = "";
-	if (index < xml.Length) {
+	if (index < xml.Size()) {
 		int line = 1;
 		int col = 0;
 		int i = 0;
@@ -75,7 +75,7 @@ string lib_xml_skipStuff(string xml, Array<int> indexPtr) {
 }
 
 int lib_xml_skipWhitespace(string xml, Array<int> indexPtr) {
-	int length = xml.Length;
+	int length = xml.Size();
 	for (int i = indexPtr[0]; i < length; i += 1) {
 		int c = xml.CharCodeAt(i);
 		if ((c != Core.Ord(" ")) && (c != Core.Ord("\t")) && (c != Core.Ord("\n")) && (c != Core.Ord("\r"))) {
@@ -104,14 +104,14 @@ bool lib_xml_isNext(string xml, Array<int> indexPtr, string value) {
 
 bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
 	if (xml.SubStringIsEqualTo(indexPtr[0], s)) {
-		indexPtr[0] = (indexPtr[0] + s.Length);
+		indexPtr[0] = (indexPtr[0] + s.Size());
 		return true;
 	}
 	return false;
 }
 
 string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<int, int> stringEnders) {
-	int length = xml.Length;
+	int length = xml.Size();
 	List<Value> attributeKeys = new List<Value>();
 	List<Value> attributeValues = new List<Value>();
 	List<Value> children = new List<Value>();
@@ -135,7 +135,7 @@ string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output,
 			break;
 		}
 		string key = lib_xml_popName(xml, indexPtr);
-		if (key.Length == 0) {
+		if (key.Size() == 0) {
 			return lib_xml_error(xml, indexPtr[0], "Expected attribute name.");
 		}
 		attributeKeys.Add(buildString(key));
@@ -184,7 +184,7 @@ string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output,
 }
 
 string lib_xml_parseText(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup) {
-	int length = xml.Length;
+	int length = xml.Size();
 	int start = indexPtr[0];
 	int i = start;
 	bool ampFound = false;
@@ -215,7 +215,7 @@ string lib_xml_parseText(string xml, Array<int> indexPtr, List<Value> output, Di
 }
 
 string lib_xml_popName(string xml, Array<int> indexPtr) {
-	int length = xml.Length;
+	int length = xml.Size();
 	int i = indexPtr[0];
 	int start = i;
 	int c = 0;
@@ -233,7 +233,7 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 }
 
 string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeValueOut, Dictionary<string, string> entityLookup, Dictionary<int, int> stringEnders) {
-	int length = xml.Length;
+	int length = xml.Size();
 	int start = indexPtr[0];
 	int end = length;
 	int i = start;
@@ -283,7 +283,7 @@ string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeV
 
 string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup) {
 	Array<string> ampParts = value.Split("&");
-	for (int i = 1; i < ampParts.Length; i += 1) {
+	for (int i = 1; i < ampParts.Size(); i += 1) {
 		string component = ampParts[i];
 		int semicolon = component.IndexOf(";");
 		if (semicolon != -1) {
@@ -292,7 +292,7 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
 			if (entityValue == null) {
 				entityValue = "&";
 			} else {
-				component = component.SubString((semicolon + 1), (component.Length - semicolon));
+				component = component.SubString((semicolon + 1), (component.Size() - semicolon));
 			}
 			ampParts[i] = Core.StringConcatAll(entityValue, component);
 		}

@@ -5,11 +5,11 @@ int1 = ((int) value3.internalValue);
 int2 = ((int) value2.internalValue);
 if (value.type == Types.LIST) {
 	list1 = ((List<Value>) value.internalValue);
-	len = list1.Length;
+	len = list1.Size();
 	bool1 = true;
 } else {
 	string2 = ((string) value.internalValue);
-	len = string2.Length;
+	len = string2.Size();
 	bool1 = false;
 }
 if (int1 < len) {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 
 namespace Crayon.Translator.CSharp
 {
@@ -49,14 +50,14 @@ namespace Crayon.Translator.CSharp
                 files[projectId + "/" + binary + ".dll"] = new FileOutput()
                 {
                     Type = FileOutputType.Binary,
-                    BinaryContent = Util.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + resourcePath + ".dll")
+                    BinaryContent = LegacyUtil.ReadResourceBytesInternally("game-csharp-opentk/binaries/" + resourcePath + ".dll")
                 };
             }
 
             files[projectId + "/DependencyLicenses.txt"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Util.ReadResourceFileInternally("game-csharp-opentk/License.txt")
+                TextContent = LegacyUtil.ReadResourceFileInternally("game-csharp-opentk/License.txt")
             };
 
             List<string> embeddedResources = new List<string>();
@@ -131,7 +132,7 @@ namespace Crayon.Translator.CSharp
                 string[] parts = file.Split(',');
                 string source = "game-csharp-opentk/" + parts[0];
                 string destination = Constants.DoReplacements(false, parts[1], replacements);
-                string content = Constants.DoReplacements(false, Util.ReadResourceFileInternally(source), replacements);
+                string content = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally(source), replacements);
                 files[destination] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -142,7 +143,7 @@ namespace Crayon.Translator.CSharp
             files[Constants.DoReplacements(false, "%%%PROJECT_ID%%%/ResourceReader.cs", replacements)] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = Constants.DoReplacements(false, Util.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
+                TextContent = Constants.DoReplacements(false, LegacyUtil.ReadResourceFileInternally("csharp-common/ResourceReader.txt"), replacements),
             };
         }
     }

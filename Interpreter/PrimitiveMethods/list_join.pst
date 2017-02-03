@@ -12,7 +12,7 @@
 }
 stringList1 = new List<string>();
 string1 = ((string) value2.internalValue);
-len = list1.Length;
+len = list1.Size();
 for (i = 0; i < len; i += 1) {
 	stringList1.Add(valueToString(list1[i]));
 }

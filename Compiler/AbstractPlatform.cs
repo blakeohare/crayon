@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common;
 using Crayon.ParseTree;
 using Crayon.Translator;
 
@@ -25,7 +26,7 @@ namespace Crayon
         public abstract bool IsThreadBlockingAllowed { get; }
         public virtual bool IsByteCodeLoadedDirectly { get { return false; } }
         public abstract string PlatformShortId { get; }
-		public virtual bool SupportsIncrement { get { return true; } }
+        public virtual bool SupportsIncrement { get { return true; } }
 
         public string LibraryBigSwitchStatement { get; set; }
 
@@ -246,16 +247,16 @@ namespace Crayon
                         break;
 
                     case FileOutputType.Image:
-						if (file.IsLossy)
-						{
-							string jpegPath = file.AbsoluteInputPath
-								?? FileUtil.JoinPath(buildContext.ProjectDirectory, file.RelativeInputPath);
-							FileUtil.CopyFile(jpegPath, fullOutputPath);
-						}
-						else
-						{
-							FileUtil.WriteFileImage(fullOutputPath, file.Bitmap);
-						}
+                        if (file.IsLossy)
+                        {
+                            string jpegPath = file.AbsoluteInputPath
+                                ?? FileUtil.JoinPath(buildContext.ProjectDirectory, file.RelativeInputPath);
+                            FileUtil.CopyFile(jpegPath, fullOutputPath);
+                        }
+                        else
+                        {
+                            FileUtil.WriteFileImage(fullOutputPath, file.Bitmap);
+                        }
                         break;
 
                     case FileOutputType.Ghost:

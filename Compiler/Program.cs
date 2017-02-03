@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Common;
 
 namespace Crayon
 {
@@ -54,9 +54,33 @@ namespace Crayon
         private static void Compile(string[] args)
         {
             BuildContext buildContext = Program.GetBuildContext(args);
+            /*
             AbstractPlatform platform = GetPlatformInstance(buildContext);
-            platform.Compile(buildContext, buildContext.OutputFolder);
+            if (platform != null)
+            {
+                platform.Compile(buildContext, buildContext.OutputFolder);
+                return;
+            }//*/
+
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+
+            Common.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
+            if (platform2 != null)
+            {
+                VmGenerator vmGenerator = new VmGenerator();
+                vmGenerator.GenerateVmSourceCodeForPlatform(platform2, null, null);
+            }
+            
+            throw new InvalidOperationException("Unrecognized platform. See usage.");
         }
+
+        private static Common.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
+        {
+            string platformId = buildContext.Platform.ToLowerInvariant();
+            return platformProvider.GetPlatform(platformId);
+        }
+
+        private static PlatformProvider platformProvider = new PlatformProvider();
 
         private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)
         {
@@ -78,8 +102,7 @@ namespace Crayon
                 // temporary hack to help rewrite the VM into Pastel
                 case "vm-pastel-hack": return new Crayon.Translator.Pastel.PastelPlatform();
 
-                default:
-                    throw new InvalidOperationException("Unrecognized platform. See usage.");
+                default: return null;
             }
         }
 

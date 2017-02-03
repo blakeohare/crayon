@@ -18,6 +18,6 @@ if (intOutParam[1] == 0) {
 list1.Add(value);
 list1.Add(value2);
 list1 = ((List<Value>) arg4.internalValue);
-for (i = 0; i < stringList1.Length; i += 1) {
+for (i = 0; i < stringList1.Size(); i += 1) {
 	list1.Add(buildString(stringList1[i]));
 }

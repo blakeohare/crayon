@@ -9,12 +9,12 @@ if (type == Types.LIST) {
 		i = ((int) value2.internalValue);
 		list1 = ((List<Value>) root.internalValue);
 		if (i < 0) {
-			i += list1.Length;
+			i += list1.Size();
 			if (i < 0) {
 				return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
 			}
 		}
-		if (i >= list1.Length) {
+		if (i >= list1.Size()) {
 			return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");
 		}
 		list1[i] = value;

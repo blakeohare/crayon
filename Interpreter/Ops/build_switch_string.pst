@@ -1,6 +1,6 @@
 ﻿List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
 int1 = row[0];
-while (allStringSwitchLookups.Length <= int1) {
+while (allStringSwitchLookups.Size() <= int1) {
 	allStringSwitchLookups.Add(new Dictionary<string, int>());
 }
 Dictionary<string, int> stringSwitchLookup = allStringSwitchLookups[int1];

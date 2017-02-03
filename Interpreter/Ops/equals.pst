@@ -12,7 +12,7 @@ if (int1 == 0) {
 	}
 }
 @import("ValueStackCapacityCheck.cry");
-if (bool1 != ((row[0] == 1))) {
+if (bool1 != Core.ForceParens((row[0] == 1))) {
 	valueStack[valueStackSize] = VALUE_TRUE;
 } else {
 	valueStack[valueStackSize] = VALUE_FALSE;

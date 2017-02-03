@@ -1,4 +1,6 @@
-﻿namespace Crayon.ImageSheets
+﻿using Common;
+
+namespace Crayon.ImageSheets
 {
     internal class Tile
     {

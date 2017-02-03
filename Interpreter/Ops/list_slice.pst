@@ -41,12 +41,12 @@ value = valueStack[(valueStackSize - 1)];
 if (value.type == Types.STRING) {
 	bool2 = true;
 	string1 = ((string) value.internalValue);
-	int4 = string1.Length;
+	int4 = string1.Size();
 } else {
 	if (value.type == Types.LIST) {
 		bool2 = false;
 		list1 = ((List<Value>) value.internalValue);
-		int4 = list1.Length;
+		int4 = list1.Size();
 	} else {
 		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
 	}

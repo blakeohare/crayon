@@ -1,7 +1,7 @@
 ﻿@import("FrameworkFunctions/6_arg.cry");
 int1 = ((int) arg3.internalValue);
 int2 = ((int) arg4.internalValue);
-if (!@ext_constant("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
 	objInstance1 = ((ObjectInstance) arg5.internalValue);
 	object1 = objInstance1.nativeData[3];
 	objInstance1 = ((ObjectInstance) arg6.internalValue);

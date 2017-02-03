@@ -2,7 +2,7 @@
 	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
 }
 list2 = new List<Value>();
-len = list1.Length;
+len = list1.Size();
 for (i = 0; i < len; i += 1) {
 	list2.Add(list1[i]);
 }
