@@ -164,6 +164,15 @@ namespace Pastel
                 }
             }
 
+            List<string> unusedFunctions = new List<string>();
+            foreach (string functionName in this.FunctionDefinitions.Keys)
+            {
+                if (!this.ResolvedFunctions.Contains(functionName))
+                {
+                    unusedFunctions.Add(functionName);
+                }
+            }
+            
             Dictionary<string, FunctionDefinition> finalFunctions = new Dictionary<string, FunctionDefinition>();
             foreach (string usedFunctionName in this.ResolvedFunctions)
             {
