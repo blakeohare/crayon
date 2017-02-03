@@ -10,6 +10,7 @@ namespace Pastel
         NONE,
 
         ARRAY_GET,
+        ARRAY_LENGTH,
         ARRAY_SET,
         CHAR_TO_STRING,
         CHR,

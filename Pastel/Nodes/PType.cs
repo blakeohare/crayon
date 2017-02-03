@@ -21,8 +21,10 @@ namespace Pastel.Nodes
         public string RootValue { get; set; }
         public PType[] Generics { get; set; }
 
+        public bool HasTemplates { get; set; }
+
         public bool IsNullable { get; set; }
-        
+
         public PType(Token firstToken, string value, params PType[] generics) : this(firstToken, value, new List<PType>(generics)) { }
         public PType(Token firstToken, string value, List<PType> generics)
         {
@@ -30,6 +32,106 @@ namespace Pastel.Nodes
             this.RootValue = value;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
             this.IsNullable = value == "string" || value == "object" || (value[0] >= 'A' && value[0] <= 'Z');
+
+            if (value.Length == 1)
+            {
+                this.HasTemplates = true;
+            }
+            else if (this.Generics.Length > 0)
+            {
+                for (int i = 0; i < this.Generics.Length; ++i)
+                {
+                    if (this.Generics[i].HasTemplates)
+                    {
+                        this.HasTemplates = true;
+                        break;
+                    }
+                }
+            }
+
+            if (this.Generics.Length > 0 && this.RootValue.Length == 1)
+            {
+                throw new ParserException(this.FirstToken, "Cannot have a templated root type with generics.");
+            }
+        }
+
+        public PType ResolveTemplates(Dictionary<string, PType> templateLookup)
+        {
+            if (!this.HasTemplates)
+            {
+                return this;
+            }
+
+            List<PType> generics = new List<PType>();
+            for (int i = 0; i < this.Generics.Length; ++i)
+            {
+                generics.Add(this.Generics[i].ResolveTemplates(templateLookup));
+            }
+            string rootValue = this.RootValue;
+            if (this.RootValue.Length == 1)
+            {
+                PType newType;
+                if (templateLookup.TryGetValue(this.RootValue, out newType))
+                {
+                    rootValue = newType.RootValue;
+                }
+            }
+            return new PType(this.FirstToken, rootValue, generics.ToArray());
+        }
+
+        // when a templated type coincides with an actual value, add that template key to the lookup output param.
+        public static bool CheckAssignmentWithTemplateOutput(PType templatedType, PType actualValue, Dictionary<string, PType> output)
+        {
+            // Most cases, nothing to do
+            if (templatedType.IsIdentical(actualValue))
+            {
+                return true;
+            }
+
+            if (templatedType.Generics.Length != actualValue.Generics.Length)
+            {
+                // completely different. don't even try to match templates
+                return false;
+            }
+
+            if (templatedType.RootValue != actualValue.RootValue)
+            {
+                if (templatedType.RootValue.Length == 1)
+                {
+                    if (output.ContainsKey(templatedType.RootValue))
+                    {
+                        // if it's already encountered it better match the existing value
+                        if (actualValue.IsIdentical(output[templatedType.RootValue]))
+                        {
+                            // yup, that's okay
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // first time this type was encountered.
+                        output[templatedType.RootValue] = actualValue;
+                    }
+                }
+                else
+                {
+                    // different type
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < templatedType.Generics.Length; ++i)
+            {
+                if (!CheckAssignmentWithTemplateOutput(templatedType.Generics[i], actualValue.Generics[i], output))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool CheckAssignment(PType targetType, PType value)

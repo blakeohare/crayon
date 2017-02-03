@@ -38,12 +38,14 @@
   <ItemGroup>
     <Compile Include="NativeFunction.cs" />
     <Compile Include="EofException.cs" />
+    <Compile Include="NativeFunctionUtil.cs" />
     <Compile Include="Nodes\Assignment.cs" />
     <Compile Include="Nodes\BracketIndex.cs" />
     <Compile Include="Nodes\BreakStatement.cs" />
     <Compile Include="Nodes\CastExpression.cs" />
     <Compile Include="Nodes\CompilationEntity.cs" />
     <Compile Include="Nodes\CompileTimeFunctionReference.cs" />
+    <Compile Include="Nodes\ConstructorInvocation.cs" />
     <Compile Include="Nodes\ConstructorReference.cs" />
     <Compile Include="Nodes\DotField.cs" />
     <Compile Include="Nodes\EnumDefinition.cs" />
@@ -51,6 +53,7 @@
     <Compile Include="Nodes\Executable.cs" />
     <Compile Include="Nodes\Expression.cs" />
     <Compile Include="Nodes\ExpressionAsExecutable.cs" />
+    <Compile Include="Nodes\ForcedParenthesis.cs" />
     <Compile Include="Nodes\ForLoop.cs" />
     <Compile Include="Nodes\FunctionDefinition.cs" />
     <Compile Include="Nodes\FunctionInvocation.cs" />
@@ -84,6 +87,9 @@
       <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NativeFunctionSignatures.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

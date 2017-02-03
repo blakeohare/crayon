@@ -79,12 +79,33 @@ namespace Pastel.Nodes
                     case "int-int":
                         this.ResolvedType = PType.INT;
                         break;
+                    case "double%int":
+                        this.ResolvedType = PType.DOUBLE;
+                        break;
                     case "int>int":
                     case "int<int":
                     case "int>=int":
                     case "int<=int":
+                    case "double<int":
+                    case "double>int":
+                    case "double<=int":
+                    case "double>=int":
+                    case "int<double":
+                    case "int>double":
+                    case "int<=double":
+                    case "int>=double":
+                    case "double<double":
+                    case "double>double":
+                    case "double<=double":
+                    case "double>=double":
                     case "int==int":
                     case "double==double":
+                    case "int==double":
+                    case "double==int":
+                    case "int!=int":
+                    case "double!=double":
+                    case "int!=double":
+                    case "double!=int":
                     case "bool&&bool":
                     case "bool||bool":
                         this.ResolvedType = PType.BOOL;
