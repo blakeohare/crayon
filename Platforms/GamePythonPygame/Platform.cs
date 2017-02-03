@@ -6,7 +6,7 @@ namespace GamePythonPygame
 {
     public class Platform : AbstractPlatform
     {
-        public override string Name { get { return "game-python-pygame"; } }
+        public override string Name { get { return "game-python-pygame-cbx"; } }
         public override string InheritsFrom { get { return "lang-python"; } }
 
         public override Dictionary<string, FileOutput> Export(

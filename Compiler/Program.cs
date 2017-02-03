@@ -54,13 +54,13 @@ namespace Crayon
         private static void Compile(string[] args)
         {
             BuildContext buildContext = Program.GetBuildContext(args);
-            /*
+
             AbstractPlatform platform = GetPlatformInstance(buildContext);
             if (platform != null)
             {
                 platform.Compile(buildContext, buildContext.OutputFolder);
                 return;
-            }//*/
+            }
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
 
@@ -70,7 +70,7 @@ namespace Crayon
                 VmGenerator vmGenerator = new VmGenerator();
                 vmGenerator.GenerateVmSourceCodeForPlatform(platform2, null, null);
             }
-            
+
             throw new InvalidOperationException("Unrecognized platform. See usage.");
         }
 
