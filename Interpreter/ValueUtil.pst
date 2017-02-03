@@ -679,9 +679,9 @@ double fixFuzzyFloatPrecision(double x) {
 		}
 		if (roundDown) {
 			if (@ext_boolean("INT_IS_FLOOR") || (x > 0)) {
-				x = Core.Int(x);
+				x = Core.Int(x) + 0.0;
 			} else {
-				x = Core.Int(x) - 1;
+				x = Core.Int(x) - 1.0;
 			}
 		}
 	}
