@@ -1,25 +1,27 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-string1 = null;
-object1 = null;
-if (arg4.type != Types.INTEGER) {
-	int1 = 3;
-} else {
-	int1 = 0;
-	int2 = ((int) arg4.internalValue);
-	if (int2 == 0) {
-		object1 = lib_fileiocommon_listToBytes(((List<Value>) arg3.internalValue));
-		if (object1 == null) {
-			int1 = 6;
-		}
+﻿Value lib_fileiocommon_function_fileWrite(Array<Value> args) {
+	string1 = null;
+	object1 = null;
+	if (arg4.type != Types.INTEGER) {
+		int1 = 3;
 	} else {
-		if (arg3.type != Types.STRING) {
-			int1 = 6;
+		int1 = 0;
+		int2 = ((int) arg4.internalValue);
+		if (int2 == 0) {
+			object1 = lib_fileiocommon_listToBytes(((List<Value>) arg3.internalValue));
+			if (object1 == null) {
+				int1 = 6;
+			}
 		} else {
-			string1 = ((string) arg3.internalValue);
+			if (arg3.type != Types.STRING) {
+				int1 = 6;
+			} else {
+				string1 = ((string) arg3.internalValue);
+			}
+		}
+		if (int1 == 0) {
+			int1 = Library._lib_fileiocommon_fileWrite(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 		}
 	}
-	if (int1 == 0) {
-		int1 = Library._lib_fileiocommon_fileWrite(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
-	}
+	output = buildInteger(int1);
 }
-output = buildInteger(int1);
+

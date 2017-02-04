@@ -1,15 +1,17 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-list1 = ((List<Value>) arg2.internalValue);
-value = list1[0];
-objArray1 = new Array<object>(3);
-objInstance1 = ((ObjectInstance) value.internalValue);
-objInstance1.nativeData = objArray1;
-if (Library._lib_imagewebresources_bytesToImage(object1, object1)) {
-	list1[1] = buildInteger(((int) objArray1[1]));
-	list1[2] = buildInteger(((int) objArray1[2]));
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
+﻿Value lib_imagewebresources_function_bytesToImage(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	list1 = ((List<Value>) arg2.internalValue);
+	value = list1[0];
+	objArray1 = new Array<object>(3);
+	objInstance1 = ((ObjectInstance) value.internalValue);
+	objInstance1.nativeData = objArray1;
+	if (Library._lib_imagewebresources_bytesToImage(object1, object1)) {
+		list1[1] = buildInteger(((int) objArray1[1]));
+		list1[2] = buildInteger(((int) objArray1[2]));
+		output = VALUE_TRUE;
+	} else {
+		output = VALUE_FALSE;
+	}
 }
+

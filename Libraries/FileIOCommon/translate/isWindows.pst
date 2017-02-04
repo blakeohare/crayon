@@ -1,4 +1,7 @@
-﻿output = VALUE_FALSE;
-if (Library._lib_fileiocommon_isWindows()) {
-	output = VALUE_TRUE;
+﻿Value lib_fileiocommon_function_isWindows(Array<Value> args) {
+	output = VALUE_FALSE;
+	if (Library._lib_fileiocommon_isWindows()) {
+		output = VALUE_TRUE;
+	}
 }
+

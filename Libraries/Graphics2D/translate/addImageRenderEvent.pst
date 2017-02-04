@@ -1,142 +1,145 @@
-﻿valueStackSize -= 13;
-value = valueStack[valueStackSize];
-objInstance1 = ((ObjectInstance) value.internalValue);
-objArray1 = objInstance1.nativeData;
-intArray1 = ((Array<int>) objArray1[0]);
-len = ((int) objArray1[1]);
-if (len >= intArray1.Size()) {
-	intArray2 = new Array<int>(((len * 2) + 16));
-	for (i = 0; i < len; i += 1) {
-		intArray2[i] = intArray1[i];
+﻿Value lib_graphics2d_function_addImageRenderEvent(Array<Value> args) {
+	valueStackSize -= 13;
+	value = valueStack[valueStackSize];
+	objInstance1 = ((ObjectInstance) value.internalValue);
+	objArray1 = objInstance1.nativeData;
+	intArray1 = ((Array<int>) objArray1[0]);
+	len = ((int) objArray1[1]);
+	if (len >= intArray1.Size()) {
+		intArray2 = new Array<int>(((len * 2) + 16));
+		for (i = 0; i < len; i += 1) {
+			intArray2[i] = intArray1[i];
+		}
+		intArray1 = intArray2;
+		objArray1[0] = intArray1;
 	}
-	intArray1 = intArray2;
-	objArray1[0] = intArray1;
-}
-objArray1[1] = (len + 16);
-objArrayArray1 = ((Array<Array<object>>) objArray1[2]);
-if (objArrayArray1 == null) {
-	int1 = 0;
-	objArrayArray1 = new Array<Array<object>>(0);
-} else {
-	int1 = ((int) objArray1[3]);
-}
-if (int1 >= objArrayArray1.Size()) {
-	objArrayArray2 = new Array<Array<object>>(((int1 * 2) + 16));
-	for (i = 0; i < int1; i += 1) {
-		objArrayArray2[i] = objArrayArray1[i];
-	}
-	objArrayArray1 = objArrayArray2;
-	objArray1[2] = objArrayArray1;
-}
-objArray1[3] = (int1 + 1);
-value = valueStack[(valueStackSize + 1)];
-objInstance2 = ((ObjectInstance) value.internalValue);
-objArray1 = objInstance2.nativeData;
-objArrayArray1[int1] = objArray1;
-bool1 = true;
-bool2 = false;
-value = valueStack[(valueStackSize + 2)];
-int1 = ((int) value.internalValue);
-intArray1[len] = 6;
-intArray1[(len + 1)] = int1;
-if ((int1 & 4) != 0) {
-	value = valueStack[(valueStackSize + 11)];
-	if (value.type == Types.FLOAT) {
-		float1 = ((double) value.internalValue);
+	objArray1[1] = (len + 16);
+	objArrayArray1 = ((Array<Array<object>>) objArray1[2]);
+	if (objArrayArray1 == null) {
+		int1 = 0;
+		objArrayArray1 = new Array<Array<object>>(0);
 	} else {
+		int1 = ((int) objArray1[3]);
+	}
+	if (int1 >= objArrayArray1.Size()) {
+		objArrayArray2 = new Array<Array<object>>(((int1 * 2) + 16));
+		for (i = 0; i < int1; i += 1) {
+			objArrayArray2[i] = objArrayArray1[i];
+		}
+		objArrayArray1 = objArrayArray2;
+		objArray1[2] = objArrayArray1;
+	}
+	objArray1[3] = (int1 + 1);
+	value = valueStack[(valueStackSize + 1)];
+	objInstance2 = ((ObjectInstance) value.internalValue);
+	objArray1 = objInstance2.nativeData;
+	objArrayArray1[int1] = objArray1;
+	bool1 = true;
+	bool2 = false;
+	value = valueStack[(valueStackSize + 2)];
+	int1 = ((int) value.internalValue);
+	intArray1[len] = 6;
+	intArray1[(len + 1)] = int1;
+	if ((int1 & 4) != 0) {
+		value = valueStack[(valueStackSize + 11)];
+		if (value.type == Types.FLOAT) {
+			float1 = ((double) value.internalValue);
+		} else {
+			if (value.type == Types.INTEGER) {
+				float1 = ((int) value.internalValue);
+			} else {
+				bool1 = false;
+			}
+		}
+		int2 = Core.Int((canonicalizeAngle(float1) * 1048576));
+		intArray1[(len | 10)] = int2;
+	}
+	if (bool1 && ((int1 & 8) != 0)) {
+		value = valueStack[(valueStackSize + 12)];
 		if (value.type == Types.INTEGER) {
-			float1 = ((int) value.internalValue);
+			int2 = ((int) value.internalValue);
 		} else {
-			bool1 = false;
+			if (value.type == Types.FLOAT) {
+				float1 = ((double) value.internalValue);
+				int2 = Core.Int((float1 + 0.5));
+			} else {
+				bool1 = false;
+			}
+		}
+		if (int2 > 254) {
+			intArray1[(len | 1)] = (int1 - 8);
+		} else {
+			if (int2 < 0) {
+				bool2 = true;
+			} else {
+				intArray1[(len | 11)] = int2;
+			}
 		}
 	}
-	int2 = Core.Int((canonicalizeAngle(float1) * 1048576));
-	intArray1[(len | 10)] = int2;
-}
-if (bool1 && ((int1 & 8) != 0)) {
-	value = valueStack[(valueStackSize + 12)];
-	if (value.type == Types.INTEGER) {
-		int2 = ((int) value.internalValue);
-	} else {
-		if (value.type == Types.FLOAT) {
-			float1 = ((double) value.internalValue);
-			int2 = Core.Int((float1 + 0.5));
+	for (i = 0; i < 8; i += 1) {
+		value = valueStack[((valueStackSize + 3) + i)];
+		if (value.type == Types.INTEGER) {
+			int2 = ((int) value.internalValue);
 		} else {
-			bool1 = false;
+			if (value.type == Types.FLOAT) {
+				float1 = ((double) value.internalValue);
+				int2 = Core.Int((float1 + 0.5));
+			} else {
+				bool1 = false;
+				i = 9;
+			}
 		}
+		intArray1[((len + 2) + i)] = int2;
 	}
-	if (int2 > 254) {
-		intArray1[(len | 1)] = (int1 - 8);
-	} else {
+	if ((int1 & 2) != 0) {
+		int2 = intArray1[(len + 6)];
 		if (int2 < 0) {
-			bool2 = true;
-		} else {
-			intArray1[(len | 11)] = int2;
-		}
-	}
-}
-for (i = 0; i < 8; i += 1) {
-	value = valueStack[((valueStackSize + 3) + i)];
-	if (value.type == Types.INTEGER) {
-		int2 = ((int) value.internalValue);
-	} else {
-		if (value.type == Types.FLOAT) {
-			float1 = ((double) value.internalValue);
-			int2 = Core.Int((float1 + 0.5));
-		} else {
 			bool1 = false;
-			i = 9;
+		} else {
+			if (int2 == 0) {
+				bool2 = true;
+			}
+		}
+		int2 = intArray1[(len + 7)];
+		if (int2 < 0) {
+			bool1 = false;
+		} else {
+			if (int2 == 0) {
+				bool2 = true;
+			}
 		}
 	}
-	intArray1[((len + 2) + i)] = int2;
-}
-if ((int1 & 2) != 0) {
-	int2 = intArray1[(len + 6)];
-	if (int2 < 0) {
-		bool1 = false;
-	} else {
-		if (int2 == 0) {
-			bool2 = true;
-		}
-	}
-	int2 = intArray1[(len + 7)];
-	if (int2 < 0) {
-		bool1 = false;
-	} else {
-		if (int2 == 0) {
-			bool2 = true;
-		}
-	}
-}
-if ((int1 & 1) != 0) {
-	int1 = ((int) objArray1[5]);
-	int2 = intArray1[(len + 2)];
-	int3 = intArray1[(len + 4)];
-	if ((int2 < 0) || ((int2 + int3) > int1) || (int3 < 0)) {
-		bool1 = false;
-	}
-	if (int3 == 0) {
-		bool2 = true;
-	}
-	if (bool1) {
-		int1 = ((int) objArray1[6]);
-		int2 = intArray1[(len + 3)];
-		int3 = intArray1[(len + 5)];
+	if ((int1 & 1) != 0) {
+		int1 = ((int) objArray1[5]);
+		int2 = intArray1[(len + 2)];
+		int3 = intArray1[(len + 4)];
 		if ((int2 < 0) || ((int2 + int3) > int1) || (int3 < 0)) {
 			bool1 = false;
 		}
 		if (int3 == 0) {
 			bool2 = true;
 		}
+		if (bool1) {
+			int1 = ((int) objArray1[6]);
+			int2 = intArray1[(len + 3)];
+			int3 = intArray1[(len + 5)];
+			if ((int2 < 0) || ((int2 + int3) > int1) || (int3 < 0)) {
+				bool1 = false;
+			}
+			if (int3 == 0) {
+				bool2 = true;
+			}
+		}
+	}
+	if (bool1) {
+		if (bool2) {
+			objArray1 = objInstance1.nativeData;
+			objArray1[1] = (((int) objArray1[1]) - 16);
+			objArray1[3] = (((int) objArray1[3]) - 1);
+		}
+		output = VALUE_TRUE;
+	} else {
+		output = VALUE_FALSE;
 	}
 }
-if (bool1) {
-	if (bool2) {
-		objArray1 = objInstance1.nativeData;
-		objArray1[1] = (((int) objArray1[1]) - 16);
-		objArray1[3] = (((int) objArray1[3]) - 1);
-	}
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
-}
+

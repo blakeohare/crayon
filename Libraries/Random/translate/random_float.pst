@@ -1,1 +1,4 @@
-﻿output = buildFloat(Core.RandomFloat());
+﻿Value lib_random_function_random_float(Array<Value> args) {
+	output = buildFloat(Core.RandomFloat());
+}
+

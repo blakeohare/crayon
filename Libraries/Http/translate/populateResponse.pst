@@ -1,23 +1,25 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-objArray1 = new Array<object>(1);
-stringList1 = new List<string>();
-Library._lib_http_readResponseData(object1, object1, object1, object1, object1);
-objInstance1 = ((ObjectInstance) arg2.internalValue);
-objInstance1.nativeData = objArray1;
-list1 = ((List<Value>) arg3.internalValue);
-list1.Add(buildInteger(intOutParam[0]));
-list1.Add(buildString(stringOutParam[0]));
-value = VALUE_NULL;
-value2 = VALUE_TRUE;
-if (intOutParam[1] == 0) {
-	value = buildString(stringOutParam[1]);
-	value2 = VALUE_FALSE;
+﻿Value lib_http_function_populateResponse(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	objArray1 = new Array<object>(1);
+	stringList1 = new List<string>();
+	Library._lib_http_readResponseData(object1, object1, object1, object1, object1);
+	objInstance1 = ((ObjectInstance) arg2.internalValue);
+	objInstance1.nativeData = objArray1;
+	list1 = ((List<Value>) arg3.internalValue);
+	list1.Add(buildInteger(intOutParam[0]));
+	list1.Add(buildString(stringOutParam[0]));
+	value = VALUE_NULL;
+	value2 = VALUE_TRUE;
+	if (intOutParam[1] == 0) {
+		value = buildString(stringOutParam[1]);
+		value2 = VALUE_FALSE;
+	}
+	list1.Add(value);
+	list1.Add(value2);
+	list1 = ((List<Value>) arg4.internalValue);
+	for (i = 0; i < stringList1.Size(); i += 1) {
+		list1.Add(buildString(stringList1[i]));
+	}
 }
-list1.Add(value);
-list1.Add(value2);
-list1 = ((List<Value>) arg4.internalValue);
-for (i = 0; i < stringList1.Size(); i += 1) {
-	list1.Add(buildString(stringList1[i]));
-}
+

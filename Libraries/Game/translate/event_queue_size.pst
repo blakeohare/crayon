@@ -1,1 +1,4 @@
-﻿output = buildInteger(Library._lib_game_event_queue_size());
+﻿Value lib_game_function_event_queue_size(Array<Value> args) {
+	output = buildInteger(Library._lib_game_event_queue_size());
+}
+

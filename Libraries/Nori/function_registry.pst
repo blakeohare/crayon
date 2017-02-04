@@ -1,0 +1,11 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "removeElementsFromUiBox", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "render_rectangleLayout", 6);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "render_rectangleVisuals", 5);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "render_textAreaLayout", 6);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "render_textAreaVisuals", 1);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "render_uiBoxLayout", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "windowInstantiate", 3);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "windowShow", 9);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "windowUpdateMenu", 2);
+}

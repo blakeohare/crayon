@@ -1,11 +1,13 @@
-﻿@import("FrameworkFunctions/5_arg.cry");
-object1 = Library._lib_mysql_connect(stringOut, stringOut, stringOut, stringOut, stringOut);
-string1 = stringOut[0];
-if (string1 == null) {
-	output = VALUE_NULL;
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objInstance1.nativeData = new Array<object>(1);
-	objInstance1.nativeData[0] = object1;
-} else {
-	output = buildString(string1);
+﻿Value lib_mysql_function_connect(Array<Value> args) {
+	object1 = Library._lib_mysql_connect(stringOut, stringOut, stringOut, stringOut, stringOut);
+	string1 = stringOut[0];
+	if (string1 == null) {
+		output = VALUE_NULL;
+		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		objInstance1.nativeData = new Array<object>(1);
+		objInstance1.nativeData[0] = object1;
+	} else {
+		output = buildString(string1);
+	}
 }
+

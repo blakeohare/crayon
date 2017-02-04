@@ -1,6 +1,8 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = objInstance1.nativeData;
-intList1 = ((List<int>) objArray1[4]);
-int1 = Library._lib_graphicstext_pushCodePoints(intList1, intList1);
-output = buildInteger(int1);
+﻿Value lib_graphicstext_function_pushStringCodePoints(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = objInstance1.nativeData;
+	intList1 = ((List<int>) objArray1[4]);
+	int1 = Library._lib_graphicstext_pushCodePoints(intList1, intList1);
+	output = buildInteger(int1);
+}
+

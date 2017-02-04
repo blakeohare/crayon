@@ -1,0 +1,6 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "connect", 5);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "resultGetNext", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "runQuery", 5);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "sanitize", 2);
+}

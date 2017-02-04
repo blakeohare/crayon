@@ -1,4 +1,6 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-string1 = ((string) arg1.internalValue);
-objInstance1 = ((ObjectInstance) arg2.internalValue);
-output = buildString(Library._lib_mysql_sanitize(string1, string1));
+﻿Value lib_mysql_function_sanitize(Array<Value> args) {
+	string1 = ((string) arg1.internalValue);
+	objInstance1 = ((ObjectInstance) arg2.internalValue);
+	output = buildString(Library._lib_mysql_sanitize(string1, string1));
+}
+

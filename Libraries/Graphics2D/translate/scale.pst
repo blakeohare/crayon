@@ -1,29 +1,31 @@
-﻿@import("FrameworkFunctions/6_arg.cry");
-int1 = ((int) arg3.internalValue);
-int2 = ((int) arg4.internalValue);
-if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
-	objInstance1 = ((ObjectInstance) arg5.internalValue);
-	object1 = objInstance1.nativeData[3];
+﻿Value lib_graphics2d_function_scale(Array<Value> args) {
+	int1 = ((int) arg3.internalValue);
+	int2 = ((int) arg4.internalValue);
+	if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+		objInstance1 = ((ObjectInstance) arg5.internalValue);
+		object1 = objInstance1.nativeData[3];
+		objInstance1 = ((ObjectInstance) arg6.internalValue);
+		objArray1 = new Array<object>(6);
+		objInstance1.nativeData = objArray1;
+		objArray1[0] = false;
+		objArray1[1] = true;
+		objArray1[2] = 0;
+		objArray1[3] = Library._lib_graphics2d_scale(object1, object1, object1);
+		objArray1[4] = int1;
+		objArray1[5] = int2;
+	}
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	objArray1 = new Array<object>(7);
+	objInstance2.nativeData = objArray1;
+	objInstance2 = ((ObjectInstance) arg1.internalValue);
+	objArray2 = objInstance2.nativeData;
+	for (i = 4; i >= 1; i -= 1) {
+		objArray1[i] = objArray2[i];
+	}
+	objArray1[5] = int1;
+	objArray1[6] = int2;
 	objInstance1 = ((ObjectInstance) arg6.internalValue);
-	objArray1 = new Array<object>(6);
-	objInstance1.nativeData = objArray1;
-	objArray1[0] = false;
-	objArray1[1] = true;
-	objArray1[2] = 0;
-	objArray1[3] = Library._lib_graphics2d_scale(object1, object1, object1);
-	objArray1[4] = int1;
-	objArray1[5] = int2;
+	objArray1[0] = objInstance1.nativeData;
+	output = arg1;
 }
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-objArray1 = new Array<object>(7);
-objInstance2.nativeData = objArray1;
-objInstance2 = ((ObjectInstance) arg1.internalValue);
-objArray2 = objInstance2.nativeData;
-for (i = 4; i >= 1; i -= 1) {
-	objArray1[i] = objArray2[i];
-}
-objArray1[5] = int1;
-objArray1[6] = int2;
-objInstance1 = ((ObjectInstance) arg6.internalValue);
-objArray1[0] = objInstance1.nativeData;
-output = arg1;
+

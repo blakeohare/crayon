@@ -1,10 +1,12 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-string1 = ((string) arg2.internalValue);
-objInstance2 = ((ObjectInstance) arg3.internalValue);
-objArray1 = new Array<object>(3);
-objInstance1.nativeData = objArray1;
-objArray2 = new Array<object>(4);
-objArray2[2] = 0;
-objInstance2.nativeData = objArray2;
-Library._lib_imageresources_loadAsync(string1, string1, string1);
+﻿Value lib_imageresources_function_loadAsynchronous(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	string1 = ((string) arg2.internalValue);
+	objInstance2 = ((ObjectInstance) arg3.internalValue);
+	objArray1 = new Array<object>(3);
+	objInstance1.nativeData = objArray1;
+	objArray2 = new Array<object>(4);
+	objArray2[2] = 0;
+	objInstance2.nativeData = objArray2;
+	Library._lib_imageresources_loadAsync(string1, string1, string1);
+}
+

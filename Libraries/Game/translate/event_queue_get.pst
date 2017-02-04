@@ -1,4 +1,6 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-i = ((int) arg2.internalValue);
-libGamePopulateEventNativeData(objInstance1.nativeData, i);
+﻿Value lib_game_function_event_queue_get(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	i = ((int) arg2.internalValue);
+	libGamePopulateEventNativeData(objInstance1.nativeData, i);
+}
+

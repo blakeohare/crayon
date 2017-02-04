@@ -1,9 +1,11 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-if (@ext_boolean("IS_JAVASCRIPT")) {
-	string1 = ((string) arg1.internalValue);
-	objInstance1 = ((ObjectInstance) arg2.internalValue);
-	objArray1 = new Array<object>(5);
-	objInstance1.nativeData = objArray1;
-	objArray1[0] = false;
-	Library._lib_imagewebresources_jsDownload(string1, string1);
+﻿Value lib_imagewebresources_function_jsDownload(Array<Value> args) {
+	if (@ext_boolean("IS_JAVASCRIPT")) {
+		string1 = ((string) arg1.internalValue);
+		objInstance1 = ((ObjectInstance) arg2.internalValue);
+		objArray1 = new Array<object>(5);
+		objInstance1.nativeData = objArray1;
+		objArray1[0] = false;
+		Library._lib_imagewebresources_jsDownload(string1, string1);
+	}
 }
+

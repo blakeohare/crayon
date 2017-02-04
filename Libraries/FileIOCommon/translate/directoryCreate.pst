@@ -1,32 +1,34 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-string1 = ((string) arg2.internalValue);
-if (((bool) arg3.internalValue)) {
-	int1 = 0;
-	if (!Library._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
-		int1 = 4;
-	} else {
-		stringList1 = new List<string>();
-		bool1 = true;
-		while (!Library._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
-			stringList1.Add(string1);
-			int1 = Library._lib_fileiocommon_getDirParent(string1, string1);
-			string1 = stringOutParam[0];
-			if (int1 != 0) {
-				bool1 = false;
-				break;
-			}
-		}
-		if (bool1) {
-			for (i = stringList1.Size() - 1; i >= 0; i -= 1) {
-				string1 = stringList1[i];
-				int1 = Library._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+﻿Value lib_fileiocommon_function_directoryCreate(Array<Value> args) {
+	string1 = ((string) arg2.internalValue);
+	if (((bool) arg3.internalValue)) {
+		int1 = 0;
+		if (!Library._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
+			int1 = 4;
+		} else {
+			stringList1 = new List<string>();
+			bool1 = true;
+			while (!Library._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
+				stringList1.Add(string1);
+				int1 = Library._lib_fileiocommon_getDirParent(string1, string1);
+				string1 = stringOutParam[0];
 				if (int1 != 0) {
-					i = -1;
+					bool1 = false;
+					break;
+				}
+			}
+			if (bool1) {
+				for (i = stringList1.Size() - 1; i >= 0; i -= 1) {
+					string1 = stringList1[i];
+					int1 = Library._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+					if (int1 != 0) {
+						i = -1;
+					}
 				}
 			}
 		}
+	} else {
+		int1 = Library._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	}
-} else {
-	int1 = Library._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+	output = buildInteger(int1);
 }
-output = buildInteger(int1);
+

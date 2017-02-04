@@ -1,19 +1,21 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-list1 = ((List<Value>) arg2.internalValue);
-len = list1.Size();
-stringList1 = new List<string>();
-for (i = 0; i < len; i += 1) {
-	value = list1[i];
-	stringList1.Add(((string) value.internalValue));
+﻿Value lib_mysql_function_resultGetNext(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	list1 = ((List<Value>) arg2.internalValue);
+	len = list1.Size();
+	stringList1 = new List<string>();
+	for (i = 0; i < len; i += 1) {
+		value = list1[i];
+		stringList1.Add(((string) value.internalValue));
+	}
+	list1 = ((List<Value>) arg3.internalValue);
+	intList1 = new List<int>();
+	for (i = 0; i < len; i += 1) {
+		value = list1[i];
+		intList1.Add(((int) value.internalValue));
+	}
+	list1 = ((List<Value>) arg4.internalValue);
+	Library._lib_mysql_getNext(object1, object1, object1, object1);
+	output = VALUE_NULL;
 }
-list1 = ((List<Value>) arg3.internalValue);
-intList1 = new List<int>();
-for (i = 0; i < len; i += 1) {
-	value = list1[i];
-	intList1.Add(((int) value.internalValue));
-}
-list1 = ((List<Value>) arg4.internalValue);
-Library._lib_mysql_getNext(object1, object1, object1, object1);
-output = VALUE_NULL;
+

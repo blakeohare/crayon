@@ -1,5 +1,8 @@
-﻿if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
+﻿Value lib_graphics2d_function_isPlatformUsingTextureAtlas(Array<Value> args) {
+	if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+		output = VALUE_TRUE;
+	} else {
+		output = VALUE_FALSE;
+	}
 }
+

@@ -1,5 +1,7 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-objArray1 = libNoriUnwrapMenus(arg2);
-Library._lib_nori_windowUpdateMenu(object1, object1);
+﻿Value lib_nori_function_windowUpdateMenu(Array<Value> args) {
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	objArray1 = libNoriUnwrapMenus(arg2);
+	Library._lib_nori_windowUpdateMenu(object1, object1);
+}
+

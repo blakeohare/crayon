@@ -1,8 +1,10 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-bool1 = ((bool) arg3.internalValue);
-list1 = ((List<Value>) arg4.internalValue);
-int1 = Library._lib_fileiocommon_fileRead(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
-if ((int1 == 0) && !bool1) {
-	list1.Add(buildString(stringOutParam[0]));
+﻿Value lib_fileiocommon_function_fileRead(Array<Value> args) {
+	bool1 = ((bool) arg3.internalValue);
+	list1 = ((List<Value>) arg4.internalValue);
+	int1 = Library._lib_fileiocommon_fileRead(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+	if ((int1 == 0) && !bool1) {
+		list1.Add(buildString(stringOutParam[0]));
+	}
+	output = buildInteger(int1);
 }
-output = buildInteger(int1);
+

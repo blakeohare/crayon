@@ -1,0 +1,6 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "bytesToImage", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "jsDownload", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "jsGetImage", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "jsPoll", 1);
+}

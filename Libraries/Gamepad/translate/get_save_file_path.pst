@@ -1,7 +1,10 @@
-﻿output = VALUE_NULL;
-if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-	string1 = Library._lib_gamepad_config_file_path();
-	if (string1 != null) {
-		output = buildString(string1);
+﻿Value lib_gamepad_function_get_save_file_path(Array<Value> args) {
+	output = VALUE_NULL;
+	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+		string1 = Library._lib_gamepad_config_file_path();
+		if (string1 != null) {
+			output = buildString(string1);
+		}
 	}
 }
+

@@ -1,5 +1,8 @@
-﻿if (Library._lib_audio_isAudioSupported()) {
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
+﻿Value lib_audio_function_is_supported(Array<Value> args) {
+	if (Library._lib_audio_isAudioSupported()) {
+		output = VALUE_TRUE;
+	} else {
+		output = VALUE_FALSE;
+	}
 }
+

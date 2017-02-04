@@ -1,1 +1,4 @@
-﻿output = lib_audio_is_music_playing();
+﻿Value lib_audio_function_music_is_playing(Array<Value> args) {
+	output = lib_audio_is_music_playing();
+}
+

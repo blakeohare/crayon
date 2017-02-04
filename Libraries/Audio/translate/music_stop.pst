@@ -1,1 +1,4 @@
-﻿int1 = 0;
+﻿Value lib_audio_function_music_stop(Array<Value> args) {
+	int1 = 0;
+}
+

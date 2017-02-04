@@ -1,5 +1,8 @@
-﻿if (@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
+﻿Value lib_imageresources_function_yieldRequiredByPlatform(Array<Value> args) {
+	if (@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
+		output = VALUE_TRUE;
+	} else {
+		output = VALUE_FALSE;
+	}
 }
+

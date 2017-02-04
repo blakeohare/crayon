@@ -1,11 +1,13 @@
-﻿if (!@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
-	@import("FrameworkFunctions/3_arg.cry");
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	string1 = ((string) arg2.internalValue);
-	list1 = ((List<Value>) arg3.internalValue);
-	objArray1 = new Array<object>(3);
-	objInstance1.nativeData = objArray1;
-	Library._lib_imageresources_loadSync(string1, string1, string1);
-} else {
-	output = VALUE_NULL;
+﻿Value lib_imageresources_function_loadSynchronous(Array<Value> args) {
+	if (!@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
+		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		string1 = ((string) arg2.internalValue);
+		list1 = ((List<Value>) arg3.internalValue);
+		objArray1 = new Array<object>(3);
+		objInstance1.nativeData = objArray1;
+		Library._lib_imageresources_loadSync(string1, string1, string1);
+	} else {
+		output = VALUE_NULL;
+	}
 }
+

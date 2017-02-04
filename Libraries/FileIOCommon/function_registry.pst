@@ -1,0 +1,16 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "directoryCreate", 3);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "directoryDelete", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "directoryList", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "directoryMove", 3);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "fileDelete", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "fileInfo", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "fileMove", 5);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "fileRead", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "fileWrite", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "getCurrentDirectory", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "getUserDirectory", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "initializeDisk", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "isWindows", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "textToLines", 2);
+}

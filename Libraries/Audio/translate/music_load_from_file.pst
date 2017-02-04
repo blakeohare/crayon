@@ -1,1 +1,3 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
+﻿Value lib_audio_function_music_load_from_file(Array<Value> args) {
+}
+

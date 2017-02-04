@@ -1,2 +1,4 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-output = resource_manager_getResourceOfType(((string) arg1.internalValue), "TXT");
+﻿Value lib_resources_function_getFileInfo(Array<Value> args) {
+	output = resource_manager_getResourceOfType(((string) arg1.internalValue), "TXT");
+}
+

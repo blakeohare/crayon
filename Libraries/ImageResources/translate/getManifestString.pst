@@ -1,1 +1,4 @@
-﻿output = buildString(Library._lib_imageresources_getManifestString());
+﻿Value lib_imageresources_function_getManifestString(Array<Value> args) {
+	output = buildString(Library._lib_imageresources_getManifestString());
+}
+

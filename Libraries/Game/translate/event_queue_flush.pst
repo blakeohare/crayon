@@ -1,1 +1,4 @@
-﻿Library._lib_game_event_queue_flush();
+﻿Value lib_game_function_event_queue_flush(Array<Value> args) {
+	Library._lib_game_event_queue_flush();
+}
+

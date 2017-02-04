@@ -1,3 +1,5 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-lib_fileiocommon_textToLines(((string) arg1.internalValue), ((List<Value>) arg2.internalValue));
-output = arg2;
+﻿Value lib_fileiocommon_function_textToLines(Array<Value> args) {
+	lib_fileiocommon_textToLines(((string) arg1.internalValue), ((List<Value>) arg2.internalValue));
+	output = arg2;
+}
+

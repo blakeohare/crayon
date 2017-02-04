@@ -1,30 +1,32 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-if (arg2.type == Types.NULL) {
-	bool1 = true;
-	if (arg1.type == Types.INTEGER) {
-		int1 = ((int) arg1.internalValue);
-		if (int1 > 0) {
-			output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * int1))));
-			bool1 = false;
+﻿Value lib_random_function_random_int(Array<Value> args) {
+	if (arg2.type == Types.NULL) {
+		bool1 = true;
+		if (arg1.type == Types.INTEGER) {
+			int1 = ((int) arg1.internalValue);
+			if (int1 > 0) {
+				output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * int1))));
+				bool1 = false;
+			}
 		}
-	}
-	if (bool1) {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(max) requires a positive integer argument.");
-	}
-} else {
-	if ((arg1.type != Types.INTEGER) || (arg2.type != Types.INTEGER)) {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(start, end) requires integer arguments.");
+		if (bool1) {
+			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(max) requires a positive integer argument.");
+		}
 	} else {
-		int1 = ((int) arg1.internalValue);
-		int2 = ((int) arg2.internalValue);
-		if (int2 <= int1) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt: first argument must be less than the second.");
+		if ((arg1.type != Types.INTEGER) || (arg2.type != Types.INTEGER)) {
+			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt(start, end) requires integer arguments.");
 		} else {
-			if (int2 == (int1 + 1)) {
-				output = buildInteger(int1);
+			int1 = ((int) arg1.internalValue);
+			int2 = ((int) arg2.internalValue);
+			if (int2 <= int1) {
+				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "randomInt: first argument must be less than the second.");
 			} else {
-				output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * (int2 - int1)))) + int1);
+				if (int2 == (int1 + 1)) {
+					output = buildInteger(int1);
+				} else {
+					output = buildInteger(Core.Int(Core.ForceParens((Core.RandomFloat() * (int2 - int1)))) + int1);
+				}
 			}
 		}
 	}
 }
+

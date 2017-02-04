@@ -1,0 +1,10 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "clock_tick", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "event_queue_flush", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "event_queue_get", 2);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "event_queue_size", 0);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "initialize", 1);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "initialize_screen", 4);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "pump_events", 1);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "set_title", 1);
+}

@@ -1,0 +1,4 @@
+﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "getFileInfo", 1);
+	Core.RegisterLibraryFunction(functionPointers, argCounts, "readText", 1);
+}
