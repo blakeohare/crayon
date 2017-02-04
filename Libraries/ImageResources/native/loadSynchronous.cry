@@ -11,8 +11,8 @@
 	arg 3: Status out. Reverse this list upon success.
 */
 
+import inline "FrameworkFunctions/3_arg.cry";
 if (!%%%IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM%%%) {
-	import inline "FrameworkFunctions/3_arg.cry";
 
 	objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 	string1 = $_cast('string', Value$arg2.internalValue);
