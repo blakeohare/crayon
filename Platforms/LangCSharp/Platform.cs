@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Common;
 
-namespace LangPython
+namespace LangCSharp
 {
     public class Platform : AbstractPlatform
     {
-        public override string Name { get { return "lang-python"; } }
+        public override string Name { get { return "lang-csharp"; } }
         public override string InheritsFrom { get { return null; } }
 
         public override Dictionary<string, FileOutput> Export(
@@ -20,11 +20,12 @@ namespace LangPython
         {
             return new Dictionary<string, object>()
                 {
-                    { "PLATFORM_SUPPORTS_LIST_CLEAR", false },
-                    { "STRONGLY_TYPED", false },
-                    { "IS_ARRAY_SAME_AS_LIST", true },
-                    { "IS_PYTHON", true },
-                    { "IS_CHAR_A_NUMBER", false },
+                    { "IS_ASYNC", true },
+                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
+                    { "STRONGLY_TYPED", true },
+                    { "IS_ARRAY_SAME_AS_LIST", false },
+                    { "IS_PYTHON", false },
+                    { "IS_CHAR_A_NUMBER", true },
                     { "INT_IS_FLOOR", false },
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
                 };
