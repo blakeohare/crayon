@@ -1,0 +1,21 @@
+﻿int1 = row[0];
+argCount = row[1];
+for (i = argCount - 1; i >= 0; i -= 1) {
+	valueStackSize -= 1;
+	funcArgs[i] = valueStack[valueStackSize];
+}
+prepareToSuspend(ec, stack, valueStackSize, pc);
+if (true) {
+	value = Core.InvokeDynamicLibraryFunction(int1, funcArgs);
+	if (ec.executionStateChange) {
+		ec.executionStateChange = false;
+		if (ec.executionStateChangeCommand == 1) {
+			Core.VmSuspend();
+		}
+	}
+}
+if (row[2] == 1) {
+	@import("ValueStackCapacityCheck.cry");
+	valueStack[valueStackSize] = value;
+	valueStackSize += 1;
+}

@@ -60,6 +60,8 @@ struct ExecutionContext {
 	int executionCounter;
 	bool activeExceptionHandled;
 	Value activeException;
+	bool executionStateChange;
+	int executionStateChangeCommand;
 }
 
 struct StackFrame {

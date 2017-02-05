@@ -196,6 +196,15 @@ namespace Crayon.Translator.Pastel
         protected override void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)
         {
             string name = textReplaceConstnat.Name;
+
+            // This is used to gate off new functionality required by the Pastel implementation, but doesn't need to be implemented
+            // in the Crayon version.
+            if (name == "IS_FOR_PASTEL_TRANSLATION")
+            {
+                output.Add("true");
+                return;
+            }
+
             bool isInteger;
             if (name.StartsWith("TYPE_ID_"))
             {
@@ -217,6 +226,7 @@ namespace Crayon.Translator.Pastel
                         throw new Exception("what type is '" + name + "'?");
                 }
             }
+            
             output.Add("@");
             output.Add(isInteger ? "ext_integer" : "ext_boolean");
             output.Add("(\"");
@@ -256,7 +266,7 @@ namespace Crayon.Translator.Pastel
                 if (fp != null && fp.Name == "suspendInterpreter")
                 {
                     output.Add(this.CurrentTabIndention);
-                    output.Add("Core.VmSuspend()");
+                    output.Add("Core.VmSuspend();");
                     output.Add(this.NL);
                     return;
                 }

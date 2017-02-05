@@ -60,7 +60,10 @@ function @type('int') main() {
 		0, // executionCounter
 
 		false, // exception handled
-		null // active exception
+		null, // active exception
+
+		false, // execution state changed
+		0 // execution state change command 
 		);
 
 	@type('Dictionary<int, ExecutionContext>') executionContexts = $_new_dictionary('int', 'ExecutionContext');
@@ -179,9 +182,16 @@ function @type('int') runInterpreterWithFunctionPointer(@type('Value') fpValue, 
 		0, // executionContext
 		
 		false, // exception handled
-		null // active exception
+		null, // active exception
+
+		false, // execution state changed
+		0 // execution state change command 
 		);
 
 	$_dictionary_set(ProgramData$p.executionContexts, newId, executionContext);
 	return runInterpreter(newId);
+}
+
+function @type('int') noop() {
+	return 0;
 }

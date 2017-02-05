@@ -65,6 +65,8 @@ struct ExecutionContext {
 	@type('int') executionCounter,
 	@type('bool') activeExceptionHandled,
 	@type('Value') activeException,
+	@type('bool') executionStateChange,
+	@type('int') executionStateChangeCommand,
 }
 
 struct StackFrame {

@@ -247,6 +247,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'Ops/build_switch_string.cry'; break;
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'Ops/call_function.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'Ops/call_lib_function.cry'; break;
+			case OpCodes.CALL_LIB_FUNCTION_DYNAMIC: $_comment('CALL_LIB_FUNCTION_DYNAMIC'); import inline 'Ops/call_lib_function_dynamic.cry'; break;
 			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'Ops/class_definition.cry'; break;
 			case OpCodes.COMMAND_LINE_ARGS: $_comment('COMMAND_LINE_ARGS'); import inline 'Ops/command_line_args.cry'; break;
 			case OpCodes.CONTINUE: $_comment('CONTINUE'); import inline 'Ops/continue.cry'; break;

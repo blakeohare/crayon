@@ -35,6 +35,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Ops\call_lib_function_dynamic.cry" />
+    <EmbeddedResource Include="Ops\call_lib_function_dynamic.pst" />
     <None Include="PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@
 	int2 = ((int) arg2.internalValue);
 	int3 = ((int) arg3.internalValue);
 	int4 = ((int) arg4.internalValue);
-	prepareToSuspend(ec, stack, valueStackSize, pc);
+	noop();
 	Native._lib_game_initialize_screen(int1, int2, int3, int4, ec.id);
 	Core.VmSuspend();
 	return output;

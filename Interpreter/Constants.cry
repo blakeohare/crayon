@@ -14,7 +14,8 @@
     BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
     CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
     CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
-    CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
+    CALL_LIB_FUNCTION_DYNAMIC,
+	CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
     COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
     CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
     CORE_FUNCTION, // 1: function ID

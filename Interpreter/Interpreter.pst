@@ -239,6 +239,10 @@ InterpreterResult interpretImpl(int executionContextId) {
 				Core.EmitComment("CALL_LIB_FUNCTION");
 				@import("Ops/call_lib_function.cry");
 				break;
+			case OpCodes.CALL_LIB_FUNCTION_DYNAMIC:
+				Core.EmitComment("CALL_LIB_FUNCTION_DYNAMIC");
+				@import("Ops/call_lib_function_dynamic.cry");
+				break;
 			case OpCodes.CLASS_DEFINITION:
 				Core.EmitComment("CLASS_DEFINITION");
 				@import("Ops/class_definition.cry");

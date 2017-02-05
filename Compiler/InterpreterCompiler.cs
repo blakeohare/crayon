@@ -180,6 +180,7 @@ namespace Crayon
                 replacements.Add("IS_ANDROID", this.platform.PlatformShortId == "game-csharp-android" ? "true" : "false");
 				replacements.Add("IS_JAVA", this.platform.LanguageId == LanguageId.JAVA ? "true" : "false");
 				replacements.Add("IS_RUBY", this.platform.LanguageId == LanguageId.RUBY ? "true" : "false");
+                replacements.Add("IS_FOR_PASTEL_TRANSLATION", "false"); // overridden in pastel translation, so always return false
                 this.replacementsDictionary = replacements;
             }
             return this.replacementsDictionary;
