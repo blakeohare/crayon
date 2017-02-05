@@ -587,6 +587,37 @@
 		objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 		output = new Value(Types.CLASS, new ClassValue(false, ObjectInstance$objInstance1.classId));
 		break;
+
+	case 40: $_comment('convertFloatArgsToInts');
+		// Quickly converts all floats in the current stack frame into ints until it encounters an unset local
+		// The purpose of this is to efficiently write library functions that can take floats but require integers.
+		// This is primarily used by the graphics drawing functions which use integers but having the user convert
+		// everythiing to a float shouldn't be necessary.
+		int1 = StackFrame$stack.localsStackOffsetEnd;
+		for (i = localsStackOffset; i < int1; i += 1) {
+			value = $_array_get(localsStack, i);
+			if ($_array_get(localsStackSet, i) != localsStackSetToken) {
+				i += int1; // break
+			} else if (Value$value.type == Types.FLOAT) {
+				float1 = $_cast('double', Value$value.internalValue);
+				if (%%%INT_IS_FLOOR%%%) {
+					int2 = $_int(float1);
+				} else {
+					if (float1 < 0 && float1 % 1 != 0) {
+						int2 = $_int(float1) - 1;
+					} else {
+						int2 = $_int(float1);
+					}
+				}
+				if (int2 >= 0 && int2 < INTEGER_POSITIVE_CACHE_SIZE) {
+					// super-common case and faster than calling a function.
+					$_array_set(localsStack, i, $_array_get(INTEGER_POSITIVE_CACHE, int2));
+				} else {
+					$_array_set(localsStack, i, buildInteger(int2));
+				}
+			}
+		}
+		break;
 }
 
 if ($_array_get(row, 1) == 1) { // output used?

@@ -64,7 +64,7 @@ namespace Graphics2D {
 			// casts all locals that are floats into ints.
 			// This is needed because ints are needed for the next two if statements and
 			// intQueueWrite16 runs too late.
-			$$lib_graphics2d_fastLocalFloat2IntCast();
+			$$$('convertFloatArgsToInts');
 			
 			// If the line is horizontal or vertical, use the rectangle drawing code instead.
 			// This guarantees clean crisp 1-pixel lines across platforms which is actually

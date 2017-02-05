@@ -1,6 +1,5 @@
 ﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
 	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "addImageRenderEvent", 0);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "fastLocalFloat2IntCast", 0);
 	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "flip", 6);
 	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "initializeTexture", 5);
 	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "initializeTextureResource", 3);

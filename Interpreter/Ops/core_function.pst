@@ -607,6 +607,34 @@
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
 		break;
+	case 40:
+		Core.EmitComment("convertFloatArgsToInts");
+		int1 = stack.localsStackOffsetEnd;
+		for (i = localsStackOffset; i < int1; i += 1) {
+			value = localsStack[i];
+			if (localsStackSet[i] != localsStackSetToken) {
+				i += int1;
+			} else {
+				if (value.type == Types.FLOAT) {
+					float1 = ((double) value.internalValue);
+					if (@ext_boolean("INT_IS_FLOOR")) {
+						int2 = Core.Int(float1);
+					} else {
+						if ((float1 < 0) && ((float1 % 1) != 0)) {
+							int2 = Core.Int(float1) - 1;
+						} else {
+							int2 = Core.Int(float1);
+						}
+					}
+					if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
+						localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+					} else {
+						localsStack[i] = buildInteger(int2);
+					}
+				}
+			}
+		}
+		break;
 }
 if (row[1] == 1) {
 	@import("ValueStackCapacityCheck.cry");
