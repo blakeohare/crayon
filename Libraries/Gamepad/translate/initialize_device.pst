@@ -1,4 +1,8 @@
 ﻿Value lib_gamepad_function_initialize_device(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		int1 = ((int) arg1.internalValue);
 		objInstance1 = ((ObjectInstance) arg2.internalValue);
@@ -11,5 +15,6 @@
 		list1[2] = buildInteger(Library._lib_gamepad_get_axis_1d_count(int1, int1));
 		list1[3] = buildInteger(Library._lib_gamepad_get_axis_2d_count(int1, int1));
 	}
+	return output;
 }
 

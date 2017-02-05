@@ -1,9 +1,14 @@
 ﻿Value lib_audio_function_sfx_get_state(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	object1 = objInstance1.nativeData[0];
 	objInstance1 = ((ObjectInstance) arg2.internalValue);
 	object2 = objInstance1.nativeData[0];
 	int1 = ((int) arg3.internalValue);
 	output = buildInteger(lib_audio_sfx_get_state(object1, object2, int1));
+	return output;
 }
 

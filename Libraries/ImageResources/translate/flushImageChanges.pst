@@ -1,4 +1,6 @@
 ﻿Value lib_imageresources_function_flushImageChanges(Array<Value> args) {
+	Value arg1 = args[0];
+	Value output = VALUE_NULL;
 	if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		objArray1 = objInstance1.nativeData;
@@ -10,5 +12,6 @@
 			}
 		}
 	}
+	return output;
 }
 

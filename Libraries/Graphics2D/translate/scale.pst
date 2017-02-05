@@ -1,4 +1,11 @@
 ﻿Value lib_graphics2d_function_scale(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value output = VALUE_NULL;
 	int1 = ((int) arg3.internalValue);
 	int2 = ((int) arg4.internalValue);
 	if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
@@ -27,5 +34,6 @@
 	objInstance1 = ((ObjectInstance) arg6.internalValue);
 	objArray1[0] = objInstance1.nativeData;
 	output = arg1;
+	return output;
 }
 

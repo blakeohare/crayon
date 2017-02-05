@@ -1,4 +1,8 @@
 ﻿Value lib_gamepad_function_get_axis_2d_state(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		int1 = ((int) arg2.internalValue);
@@ -7,5 +11,6 @@
 		list1[0] = buildInteger(intOutParam[0]);
 		list1[1] = buildInteger(intOutParam[1]);
 	}
+	return output;
 }
 

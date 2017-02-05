@@ -1,4 +1,9 @@
 ﻿Value lib_fileiocommon_function_fileWrite(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value output = VALUE_NULL;
 	string1 = null;
 	object1 = null;
 	if (arg4.type != Types.INTEGER) {
@@ -23,5 +28,6 @@
 		}
 	}
 	output = buildInteger(int1);
+	return output;
 }
 

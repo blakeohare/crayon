@@ -1,3 +1,7 @@
 ﻿Value lib_audio_function_music_load_from_file(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value output = VALUE_NULL;
+	return output;
 }
 

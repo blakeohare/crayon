@@ -47,6 +47,7 @@ namespace Crayon.Translator.Pastel
             ResourceDatabase resourceDatabase,
             SystemLibraryManager libraryManager)
         {
+            Library coreLibrary = libraryManager.GetLibraryFromKey("core");
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
             Dictionary<string, Dictionary<string, int>> argCountByFunctionNameByLibraryName = new Dictionary<string, Dictionary<string, int>>();
@@ -76,6 +77,46 @@ namespace Crayon.Translator.Pastel
                         string path = argsImport.Path;
                         argCount = int.Parse(path.Split('/')[1].Split('_')[0]);
                         functionBody.RemoveAt(0);
+                        List<Executable> argAssignmentPrefixes = new List<Executable>();
+                        for (int i = 1; i <= argCount; ++i)
+                        {
+                            string name = "arg" + i;
+                            Variable targetVariable = new Variable(MakeAToken(name), name, null)
+                            {
+                                Annotations = new Dictionary<string, Annotation>() {
+                                    { "type", MakeATypeAnnotation("Value") }
+                                },
+                            };
+                            SystemFunctionCall valueExpression = new SystemFunctionCall(
+                                MakeAToken("$_array_get"),
+                                new Expression[] {
+                                    new Variable(MakeAToken("args"), "args", null),
+                                    new IntegerConstant(MakeAToken("" + (i - 1)), i - 1, null)
+                                },
+                                null);
+                            valueExpression.HACK_CoreLibraryReference = coreLibrary;
+                            Assignment argAssign = new Assignment(
+                                targetVariable,
+                                MakeAToken("="), "=",
+                                valueExpression,
+                                null);
+                            argAssignmentPrefixes.Add(argAssign);
+                        }
+                        Assignment outputAssignment = new Assignment(
+                            new Variable(MakeAToken("output"), "output", null)
+                            {
+                                Annotations = new Dictionary<string, Annotation>() { { "type", MakeATypeAnnotation("Value") } },
+                            },
+                            MakeAToken("="), "=",
+                            new Variable(MakeAToken("VALUE_NULL"), "VALUE_NULL", null),
+                            null);
+                        argAssignmentPrefixes.Add(outputAssignment);
+                        argAssignmentPrefixes.AddRange(functionBody);
+                        functionBody = argAssignmentPrefixes;
+                        functionBody.Add(new ReturnStatement(
+                            MakeAToken("return"),
+                            new Variable(MakeAToken("output"), "output", null),
+                            null));
                     }
 
                     Dictionary<string, int> argCountLookup;

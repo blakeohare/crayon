@@ -13,21 +13,17 @@ namespace Pastel.Nodes
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             string name = this.Name;
-            if (compiler.ConstantDefinitions.ContainsKey(name))
+
+            InlineConstant constantValue = compiler.GetConstantDefinition(name);
+            if (constantValue != null)
             {
-                // resolved by now
-                InlineConstant constantValue = (InlineConstant)compiler.ConstantDefinitions[name].Value;
                 return constantValue.CloneWithNewToken(this.FirstToken);
             }
 
-            if (compiler.FunctionDefinitions.ContainsKey(name))
+            FunctionDefinition functionDefinition = compiler.GetFunctionDefinitionAndMaybeQueueForResolution(name);
+            if (functionDefinition != null)
             {
-                if (!compiler.ResolvedFunctions.Contains(name))
-                {
-                    compiler.ResolutionQueue.Enqueue(name);
-                }
-
-                return new FunctionReference(this.FirstToken, compiler.FunctionDefinitions[name]);
+                return new FunctionReference(this.FirstToken, functionDefinition);
             }
 
             return this;

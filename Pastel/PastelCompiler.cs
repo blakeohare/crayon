@@ -9,13 +9,16 @@ namespace Pastel
     public class PastelCompiler
     {
         private bool isLibrary;
+        internal PastelCompiler SharedScope { get; private set; }
 
         public PastelCompiler(
             bool isLibrary,
+            PastelCompiler sharedScope,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader inlineImportCodeLoader)
         {
             this.isLibrary = isLibrary;
+            this.SharedScope = sharedScope;
             Dictionary<string, int> intConstants = new Dictionary<string, int>();
             Dictionary<string, bool> boolConstants = new Dictionary<string, bool>();
 
@@ -55,6 +58,51 @@ namespace Pastel
 
         internal HashSet<string> ResolvedFunctions { get; set; }
         internal Queue<string> ResolutionQueue { get; set; }
+
+        internal InlineConstant GetConstantDefinition(string name)
+        {
+            if (this.ConstantDefinitions.ContainsKey(name))
+            {
+                return (InlineConstant)this.ConstantDefinitions[name].Value;
+            }
+
+            if (this.SharedScope != null && this.SharedScope.ConstantDefinitions.ContainsKey(name))
+            {
+                return (InlineConstant)this.SharedScope.ConstantDefinitions[name].Value;
+            }
+
+            return null;
+        }
+
+        internal StructDefinition GetStructDefinition(string name)
+        {
+            if (this.StructDefinitions.ContainsKey(name))
+            {
+                return this.StructDefinitions[name];
+            }
+
+            if (this.SharedScope != null && this.SharedScope.StructDefinitions.ContainsKey(name))
+            {
+                return this.SharedScope.StructDefinitions[name];
+            }
+
+            return null;
+        }
+
+        internal FunctionDefinition GetFunctionDefinitionAndMaybeQueueForResolution(string name)
+        {
+            if (this.FunctionDefinitions.ContainsKey(name))
+            {
+                return this.FunctionDefinitions[name];
+            }
+
+            if (this.SharedScope != null && this.SharedScope.FunctionDefinitions.ContainsKey(name))
+            {
+                return this.SharedScope.FunctionDefinitions[name];
+            }
+
+            return null;
+        }
 
         public void CompileBlobOfCode(string name, string code)
         {
@@ -157,16 +205,9 @@ namespace Pastel
             this.ResolvedFunctions = new HashSet<string>();
             this.ResolutionQueue = new Queue<string>();
 
-            if (!this.isLibrary)
+            foreach (string functionName in this.FunctionDefinitions.Keys)
             {
-                this.ResolutionQueue.Enqueue("main");
-            }
-            else
-            {
-                foreach (string functionName in this.FunctionDefinitions.Keys)
-                {
-                    this.ResolutionQueue.Enqueue(functionName);
-                }
+                this.ResolutionQueue.Enqueue(functionName);
             }
 
             while (this.ResolutionQueue.Count > 0)

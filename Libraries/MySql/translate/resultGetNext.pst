@@ -1,4 +1,9 @@
 ﻿Value lib_mysql_function_resultGetNext(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	object1 = objInstance1.nativeData[0];
 	list1 = ((List<Value>) arg2.internalValue);
@@ -17,5 +22,6 @@
 	list1 = ((List<Value>) arg4.internalValue);
 	Library._lib_mysql_getNext(object1, object1, object1, object1);
 	output = VALUE_NULL;
+	return output;
 }
 

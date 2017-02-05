@@ -1,8 +1,13 @@
 ﻿Value lib_imageencoder_function_encodeToBytes(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	object1 = getNativeDataItem(arg1, 0);
 	int1 = ((int) arg2.internalValue);
 	list1 = ((List<Value>) arg3.internalValue);
 	int2 = Library._lib_imageencoder_encodeImage(object1, object1, object1, object1);
 	output = buildInteger(int2);
+	return output;
 }
 

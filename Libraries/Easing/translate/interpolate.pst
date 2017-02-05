@@ -1,4 +1,12 @@
 ﻿Value lib_easing_function_interpolate(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value arg7 = args[6];
+	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	len = objArray1.Size();
@@ -99,5 +107,6 @@
 	} else {
 		output = buildFloat(float1);
 	}
+	return output;
 }
 

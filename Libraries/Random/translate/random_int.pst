@@ -1,4 +1,7 @@
 ﻿Value lib_random_function_random_int(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value output = VALUE_NULL;
 	if (arg2.type == Types.NULL) {
 		bool1 = true;
 		if (arg1.type == Types.INTEGER) {
@@ -28,5 +31,6 @@
 			}
 		}
 	}
+	return output;
 }
 

@@ -1,9 +1,12 @@
 ﻿Value lib_httpserver_function_getRequest(Array<Value> args) {
+	Value arg1 = args[0];
+	Value output = VALUE_NULL;
 	Library._lib_httpserver_getRequest(stringOutParam);
 	list1 = ((List<Value>) arg1.internalValue);
 	list1.Add(buildString(stringOutParam[0]));
 	list1.Add(buildString(stringOutParam[1]));
 	list1.Add(buildString(stringOutParam[2]));
 	list1.Add(buildString(stringOutParam[3]));
+	return output;
 }
 

@@ -1,9 +1,14 @@
 ﻿Value lib_audio_function_sfx_set_pan(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	object1 = objInstance1.nativeData[0];
 	objInstance1 = ((ObjectInstance) arg2.internalValue);
 	object2 = objInstance1.nativeData[0];
 	float1 = ((double) arg3.internalValue);
 	lib_audio_sfx_set_pan(object1, object2, float1);
+	return output;
 }
 

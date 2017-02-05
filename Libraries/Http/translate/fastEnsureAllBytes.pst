@@ -1,4 +1,7 @@
 ﻿Value lib_http_function_fastEnsureAllBytes(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value output = VALUE_NULL;
 	output = VALUE_FALSE;
 	if (arg1.type == Types.LIST) {
 		list1 = ((List<Value>) arg1.internalValue);
@@ -31,5 +34,6 @@
 			objInstance1.nativeData = objArray1;
 		}
 	}
+	return output;
 }
 

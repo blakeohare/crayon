@@ -1,4 +1,8 @@
 ﻿Value lib_graphics2d_function_initializeTextureResource(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = new Array<object>(6);
 	objInstance1.nativeData = objArray1;
@@ -19,5 +23,6 @@
 		objArray1[4] = objArray2[4];
 		objArray1[5] = objArray2[5];
 	}
+	return output;
 }
 

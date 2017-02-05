@@ -47,7 +47,8 @@ namespace Crayon
                 platform,
                 constantFlags,
                 codeLoader,
-                relevantLibraries);
+                relevantLibraries,
+                vm);
         }
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
@@ -55,7 +56,7 @@ namespace Crayon
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader)
         {
-            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, constantFlags, codeLoader);
+            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, null, constantFlags, codeLoader);
 
             foreach (string file in INTERPRETER_BASE_FILES)
             {
@@ -71,14 +72,15 @@ namespace Crayon
             Common.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader,
-            ICollection<Library> relevantLibraries)
+            ICollection<Library> relevantLibraries,
+            Pastel.PastelCompiler sharedScope)
         {
             Dictionary<string, Pastel.PastelCompiler> libraries = new Dictionary<string, Pastel.PastelCompiler>();
 
             foreach (Library library in relevantLibraries)
             {
                 string libName = library.Name;
-                Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(true, constantFlags, codeLoader);
+                Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(true, sharedScope, constantFlags, codeLoader);
                 libraries[libName] = compiler;
 
                 Dictionary<string, string> supplementalCode = library.GetSupplementalTranslatedCode();

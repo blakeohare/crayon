@@ -68,8 +68,8 @@ namespace Pastel.Nodes
             this.Root = this.Root.ResolveType(varScope, compiler);
 
             string possibleStructName = this.Root.ResolvedType.RootValue;
-            StructDefinition structDef;
-            if (compiler.StructDefinitions.TryGetValue(possibleStructName, out structDef))
+            StructDefinition structDef = compiler.GetStructDefinition(possibleStructName);
+            if (structDef != null)
             {
                 this.StructType = structDef;
                 int fieldIndex;

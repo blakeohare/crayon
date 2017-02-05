@@ -1,4 +1,7 @@
 ﻿Value lib_gamepad_function_get_button_state(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		int1 = ((int) arg2.internalValue);
@@ -10,5 +13,6 @@
 	} else {
 		output = VALUE_FALSE;
 	}
+	return output;
 }
 

@@ -1,9 +1,12 @@
 ﻿Value lib_game_function_initialize(Array<Value> args) {
+	Value arg1 = args[0];
+	Value output = VALUE_NULL;
 	if (arg1.type == Types.INTEGER) {
 		float1 = ((int) arg1.internalValue);
 	} else {
 		float1 = ((double) arg1.internalValue);
 	}
 	Library._lib_game_initialize_game_with_fps(float1);
+	return output;
 }
 

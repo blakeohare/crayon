@@ -1,4 +1,6 @@
 ﻿Value lib_json_function_parse(Array<Value> args) {
+	Value arg1 = args[0];
+	Value output = VALUE_NULL;
 	string1 = ((string) arg1.internalValue);
 	if (string1.Size() > 0) {
 		output = Library._lib_json_parse(string1);
@@ -8,5 +10,6 @@
 			output = VALUE_NULL;
 		}
 	}
+	return output;
 }
 

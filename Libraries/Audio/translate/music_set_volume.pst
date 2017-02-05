@@ -1,5 +1,8 @@
 ﻿Value lib_audio_function_music_set_volume(Array<Value> args) {
+	Value arg1 = args[0];
+	Value output = VALUE_NULL;
 	float1 = ((double) arg1.internalValue);
 	Library._lib_audio_musicSetVolume(float1);
+	return output;
 }
 

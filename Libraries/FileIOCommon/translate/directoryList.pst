@@ -1,4 +1,9 @@
 ﻿Value lib_fileiocommon_function_directoryList(Array<Value> args) {
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value output = VALUE_NULL;
 	stringList1 = new List<string>();
 	int1 = Library._lib_fileiocommon_directoryList(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	if (int1 == 0) {
@@ -8,5 +13,6 @@
 		}
 	}
 	output = buildInteger(int1);
+	return output;
 }
 

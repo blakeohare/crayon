@@ -10,7 +10,6 @@ namespace Pastel
         private static Dictionary<NativeFunction, PType> returnTypes;
         private static Dictionary<NativeFunction, PType[]> argTypes;
         private static Dictionary<NativeFunction, bool[]> argTypesRepeated;
-        private static Dictionary<NativeFunction, bool> usesTemplates;
 
         public static PType[] GetNativeFunctionArgTypes(NativeFunction functionId)
         {
