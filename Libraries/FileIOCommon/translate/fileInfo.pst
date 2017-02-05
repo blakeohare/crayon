@@ -5,7 +5,7 @@
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	int1 = ((int) arg3.internalValue);
-	Library._lib_fileiocommon_getFileInfo(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+	Native._lib_fileiocommon_getFileInfo(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	list1 = ((List<Value>) arg4.internalValue);
 	list1[0] = buildBoolean(intOutParam[0] > 0);
 	list1[1] = buildBoolean(intOutParam[1] > 0);

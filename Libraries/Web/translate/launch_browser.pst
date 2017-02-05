@@ -1,7 +1,7 @@
 ﻿Value lib_web_function_launch_browser(Array<Value> args) {
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
-	Library._lib_web_launchBrowser(((string) arg1.internalValue));
+	Native._lib_web_launchBrowser(((string) arg1.internalValue));
 	return output;
 }
 

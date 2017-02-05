@@ -1,6 +1,6 @@
 ﻿Value lib_game_function_event_queue_flush(Array<Value> args) {
 	Value output = VALUE_NULL;
-	Library._lib_game_event_queue_flush();
+	Native._lib_game_event_queue_flush();
 	return output;
 }
 

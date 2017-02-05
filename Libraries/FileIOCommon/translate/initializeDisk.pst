@@ -5,7 +5,7 @@
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = new Array<object>(1);
 	objInstance1.nativeData = objArray1;
-	object1 = Library._lib_fileiocommon_initializeDisk(((bool) arg2.internalValue));
+	object1 = Native._lib_fileiocommon_initializeDisk(((bool) arg2.internalValue));
 	objArray1[0] = object1;
 	return output;
 }

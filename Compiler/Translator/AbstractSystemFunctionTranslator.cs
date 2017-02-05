@@ -20,7 +20,7 @@ namespace Crayon.Translator
             {
                 if (this.Platform != null && this.Platform.PlatformId == PlatformId.PASTEL_VM)
                 {
-                    output.Add("Library.");
+                    output.Add("Native.");
                     output.Add(name);
                     output.Add("(");
                     for (int i = 0; i < functionCall.Args.Length; ++i)

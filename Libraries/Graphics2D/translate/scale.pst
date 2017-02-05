@@ -17,7 +17,7 @@
 		objArray1[0] = false;
 		objArray1[1] = true;
 		objArray1[2] = 0;
-		objArray1[3] = Library._lib_graphics2d_scale(object1, object1, object1);
+		objArray1[3] = Native._lib_graphics2d_scale(object1, object1, object1);
 		objArray1[4] = int1;
 		objArray1[5] = int2;
 	}

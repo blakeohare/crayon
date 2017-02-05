@@ -68,12 +68,12 @@ namespace Crayon
 			return this.importedLibraries[libraryName].GetEmbeddedCode();
 		}
 
-		public Dictionary<string, string> GetSupplementalTranslationFiles()
+		public Dictionary<string, string> GetSupplementalTranslationFiles(bool isPastel)
 		{
 			Dictionary<string, string> output = new Dictionary<string, string>();
 			foreach (Library library in this.importedLibraries.Values)
 			{
-				Dictionary<string, string> files = library.GetSupplementalTranslatedCode();
+				Dictionary<string, string> files = library.GetSupplementalTranslatedCode(isPastel);
 				foreach (string key in files.Keys)
 				{
 					output[key] = files[key];

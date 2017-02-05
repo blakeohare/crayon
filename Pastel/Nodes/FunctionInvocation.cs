@@ -99,6 +99,10 @@ namespace Pastel.Nodes
 
                 return nfi.ResolveType(varScope, compiler);
             }
+            else if (this.Root is LibraryNativeFunctionReference)
+            {
+                return new LibraryNativeFunctionInvocation(this.FirstToken, (LibraryNativeFunctionReference)this.Root, this.Args).ResolveType(varScope, compiler);
+            }
             else if (this.Root is ConstructorReference)
             {
                 return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args);

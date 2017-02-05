@@ -194,7 +194,7 @@ namespace Crayon
 
         private Dictionary<string, string> supplementalFiles = null;
 
-        public Dictionary<string, string> GetSupplementalTranslatedCode()
+        public Dictionary<string, string> GetSupplementalTranslatedCode(bool isPastel)
         {
             if (this.supplementalFiles == null)
             {
@@ -205,7 +205,7 @@ namespace Crayon
                     foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
                     {
                         string name = System.IO.Path.GetFileName(filepath);
-                        if (name.EndsWith(".cry"))
+                        if ((isPastel && name.EndsWith(".cry")) || (!isPastel && name.EndsWith(".pst")))
                         {
                             string key = name.Substring(0, name.Length - ".cry".Length);
                             this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
@@ -411,6 +411,91 @@ namespace Crayon
             }
 
             throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
+        }
+
+        private Dictionary<string, Pastel.Nodes.PType> returnTypeInfoForNativeMethods = null;
+        private Dictionary<string, Pastel.Nodes.PType[]> argumentTypeInfoForNativeMethods = null;
+
+        private void InitTypeInfo()
+        {
+            this.returnTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType>();
+            this.argumentTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType[]>();
+
+            string typeInfoFile = System.IO.Path.Combine(this.RootDirectory, "native_method_type_info.txt");
+            if (System.IO.File.Exists(typeInfoFile))
+            {
+                string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
+                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Name + "/native_method_type_info.txt", typeInfo));
+                
+                while (tokens.HasMore)
+                {
+                    Pastel.Nodes.PType returnType = Pastel.Nodes.PType.Parse(tokens);
+                    string functionName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
+                    tokens.PopExpected("(");
+                    List<Pastel.Nodes.PType> argTypes = new List<Pastel.Nodes.PType>();
+                    while (!tokens.PopIfPresent(")"))
+                    {
+                        if (argTypes.Count > 0) tokens.PopExpected(",");
+                        argTypes.Add(Pastel.Nodes.PType.Parse(tokens));
+                        
+                        // This is unused but could be later used as part of an auto-generated documentation for third-party platform implements of existing libraries.
+                        string argumentName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
+                    }
+                    tokens.PopExpected(";");
+
+                    this.returnTypeInfoForNativeMethods[functionName] = returnType;
+                    this.argumentTypeInfoForNativeMethods[functionName] = argTypes.ToArray();
+                }
+            }
+        }
+
+        private string GetValidNativeLibraryFunctionNameFromPastelToken(Pastel.Token token)
+        {
+            string name = token.Value;
+            char c;
+            bool okay = true;
+            for (int i = name.Length - 1; i >= 0; --i)
+            {
+                c = name[i];
+                if ((c >= 'a' && c <= 'z') ||
+                    (c >= 'A' && c <= 'Z') ||
+                    c == '_')
+                {
+                    // this is fine
+                }
+                else if (c >= '0' && c <= '9')
+                {
+                    if (i == 0)
+                    {
+                        okay = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    okay = false;
+                    break;
+                }
+            }
+            if (!okay)
+            {
+                throw new Pastel.ParserException(token, "Invalid name for a native function or argument.");
+            }
+            return name;
+        }
+
+        public Dictionary<string, Pastel.Nodes.PType> GetReturnTypesForNativeMethods()
+        {
+            if (this.returnTypeInfoForNativeMethods == null) this.InitTypeInfo();
+
+            return this.returnTypeInfoForNativeMethods;
+        }
+
+        public Dictionary<string, Pastel.Nodes.PType[]> GetArgumentTypesForNativeMethods()
+        {
+            if (this.argumentTypeInfoForNativeMethods == null) this.InitTypeInfo();
+
+            return this.argumentTypeInfoForNativeMethods;
         }
     }
 }

@@ -3,7 +3,7 @@
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
-	int1 = Library._lib_fileiocommon_directoryMove(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+	int1 = Native._lib_fileiocommon_directoryMove(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	output = buildInteger(int1);
 	return output;
 }

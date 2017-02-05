@@ -65,6 +65,12 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
+            if (this.Root is Variable && ((Variable)this.Root).Name == "Native")
+            {
+                string name = this.FieldName.Value;
+                return new LibraryNativeFunctionReference(this.FirstToken, name);
+            }
+
             this.Root = this.Root.ResolveType(varScope, compiler);
 
             string possibleStructName = this.Root.ResolvedType.RootValue;

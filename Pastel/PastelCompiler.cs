@@ -11,14 +11,21 @@ namespace Pastel
         private bool isLibrary;
         internal PastelCompiler SharedScope { get; private set; }
 
+        internal IDictionary<string, PType> LibraryNativeFunctionReferenceReturnTypes { get; private set; }
+        internal IDictionary<string, PType[]> LibraryNativeFunctionReferenceArgumentTypes { get; private set; }
+
         public PastelCompiler(
             bool isLibrary,
             PastelCompiler sharedScope,
             IDictionary<string, object> constants,
-            IInlineImportCodeLoader inlineImportCodeLoader)
+            IInlineImportCodeLoader inlineImportCodeLoader,
+            IDictionary<string, PType> returnTypesForNativeMethods,
+            IDictionary<string, PType[]> argumentTypesForNativeMethods)
         {
             this.isLibrary = isLibrary;
             this.SharedScope = sharedScope;
+            this.LibraryNativeFunctionReferenceArgumentTypes = argumentTypesForNativeMethods;
+            this.LibraryNativeFunctionReferenceReturnTypes = returnTypesForNativeMethods;
             Dictionary<string, int> intConstants = new Dictionary<string, int>();
             Dictionary<string, bool> boolConstants = new Dictionary<string, bool>();
 

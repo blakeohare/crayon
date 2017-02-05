@@ -1,7 +1,7 @@
 ﻿Value lib_gamepad_function_getPlatform(Array<Value> args) {
 	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-		output = buildInteger(Library._lib_gamepad_getPlatform());
+		output = buildInteger(Native._lib_gamepad_getPlatform());
 	} else {
 		output = VALUE_NULL;
 	}

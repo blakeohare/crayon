@@ -5,7 +5,7 @@
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	intList1 = ((List<int>) objArray1[4]);
-	int1 = Library._lib_graphicstext_pushCodePoints(intList1, intList1);
+	int1 = Native._lib_graphicstext_pushCodePoints(intList1, intList1);
 	output = buildInteger(int1);
 	return output;
 }

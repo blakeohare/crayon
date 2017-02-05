@@ -5,7 +5,7 @@
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	list1 = ((List<Value>) arg2.internalValue);
-	Library._lib_http_getResponseBytes(objArray1[0], objArray1[0], objArray1[0]);
+	Native._lib_http_getResponseBytes(objArray1[0], objArray1[0], objArray1[0]);
 	output = arg2;
 	return output;
 }

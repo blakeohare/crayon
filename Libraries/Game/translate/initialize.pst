@@ -6,7 +6,7 @@
 	} else {
 		float1 = ((double) arg1.internalValue);
 	}
-	Library._lib_game_initialize_game_with_fps(float1);
+	Native._lib_game_initialize_game_with_fps(float1);
 	return output;
 }
 

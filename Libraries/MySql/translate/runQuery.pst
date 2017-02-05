@@ -9,7 +9,7 @@
 	object1 = objInstance1.nativeData[0];
 	intList1 = new List<int>();
 	stringList1 = new List<string>();
-	object2 = Library._lib_mysql_query(object1, object1, object1, object1, object1, object1);
+	object2 = Native._lib_mysql_query(object1, object1, object1, object1, object1, object1);
 	string1 = stringOutParam[0];
 	if (string1 == null) {
 		list1 = ((List<Value>) arg4.internalValue);
@@ -19,7 +19,7 @@
 			objInstance2 = ((ObjectInstance) arg2.internalValue);
 			objInstance2.nativeData = new Array<object>(1);
 			objInstance2.nativeData[0] = object2;
-			list1[1] = buildInteger(Library._lib_mysql_num_rows(object2));
+			list1[1] = buildInteger(Native._lib_mysql_num_rows(object2));
 			for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
 				list2.Add(buildString(stringList1[int1]));
 				list2.Add(buildInteger(intList1[int1]));

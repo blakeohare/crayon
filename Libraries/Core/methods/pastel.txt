@@ -1,4 +1,3 @@
-w
 $_app_data_root: Core.AppDataRoot()
 $_array_get: [ARG:1][[ARG:2]]
 $_array_join: string.Join([ARG:2], [ARG:1])

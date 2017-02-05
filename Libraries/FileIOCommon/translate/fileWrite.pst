@@ -24,7 +24,7 @@
 			}
 		}
 		if (int1 == 0) {
-			int1 = Library._lib_fileiocommon_fileWrite(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+			int1 = Native._lib_fileiocommon_fileWrite(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 		}
 	}
 	output = buildInteger(int1);

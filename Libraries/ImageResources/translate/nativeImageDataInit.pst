@@ -7,7 +7,7 @@
 	objArray1 = new Array<object>(4);
 	int1 = ((int) arg2.internalValue);
 	int2 = ((int) arg3.internalValue);
-	objArray1[0] = Library._lib_imageresources_generateNativeBitmapOfSize(int1, int1);
+	objArray1[0] = Native._lib_imageresources_generateNativeBitmapOfSize(int1, int1);
 	objArray1[1] = int1;
 	objArray1[2] = int2;
 	objArray1[3] = null;

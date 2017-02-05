@@ -8,10 +8,12 @@ namespace Pastel.Nodes
     class FunctionReference : Expression
     {
         public FunctionDefinition Function { get; set; }
+        public bool IsLibraryScopedFunction { get; set; }
 
         public FunctionReference(Token firstToken, FunctionDefinition functionDefinition) : base(firstToken)
         {
             this.Function = functionDefinition;
+            this.IsLibraryScopedFunction = false;
         }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)

@@ -12,7 +12,7 @@
 		objInstance1 = ((ObjectInstance) value.internalValue);
 		objArray1[i] = objInstance1.nativeData[0];
 	}
-	Library._lib_nori_removeElementsFromUiBox(object1, object1);
+	Native._lib_nori_removeElementsFromUiBox(object1, object1);
 	return output;
 }
 

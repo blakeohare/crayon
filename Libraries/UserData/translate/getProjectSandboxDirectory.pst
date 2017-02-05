@@ -5,7 +5,7 @@
 	Value arg1 = args[0];
 	if (@ext_boolean("IS_ANDROID") || @ext_boolean("IS_JAVASCRIPT")) {
 		string1 = ((string) arg1.internalValue);
-		string2 = Library._lib_userdata_getProjectSandboxDirectory(string1);
+		string2 = Native._lib_userdata_getProjectSandboxDirectory(string1);
 		output = buildString(string2);
 	}
 	return output;

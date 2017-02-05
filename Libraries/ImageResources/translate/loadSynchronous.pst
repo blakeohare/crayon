@@ -9,7 +9,7 @@
 		list1 = ((List<Value>) arg3.internalValue);
 		objArray1 = new Array<object>(3);
 		objInstance1.nativeData = objArray1;
-		Library._lib_imageresources_loadSync(string1, string1, string1);
+		Native._lib_imageresources_loadSync(string1, string1, string1);
 	} else {
 		output = VALUE_NULL;
 	}

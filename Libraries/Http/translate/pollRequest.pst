@@ -4,7 +4,7 @@
 	output = VALUE_FALSE;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
-	if (Library._lib_http_pollRequest(objArray1)) {
+	if (Native._lib_http_pollRequest(objArray1)) {
 		output = VALUE_TRUE;
 	}
 	return output;

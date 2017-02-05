@@ -7,7 +7,7 @@
 		if (objArray1 != null) {
 			object1 = objArray1[3];
 			if (object1 != null) {
-				Library._lib_imageresources_flushPixelEditSession(object1);
+				Native._lib_imageresources_flushPixelEditSession(object1);
 				objArray1[3] = null;
 			}
 		}

@@ -4,7 +4,7 @@
 	Value arg2 = args[1];
 	string1 = ((string) arg1.internalValue);
 	objInstance1 = ((ObjectInstance) arg2.internalValue);
-	output = buildString(Library._lib_mysql_sanitize(string1, string1));
+	output = buildString(Native._lib_mysql_sanitize(string1, string1));
 	return output;
 }
 

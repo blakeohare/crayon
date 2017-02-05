@@ -11,7 +11,7 @@
 	objArray2 = new Array<object>(4);
 	objArray2[2] = 0;
 	objInstance2.nativeData = objArray2;
-	Library._lib_imageresources_loadAsync(string1, string1, string1);
+	Native._lib_imageresources_loadAsync(string1, string1, string1);
 	return output;
 }
 

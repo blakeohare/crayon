@@ -2,7 +2,7 @@
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	Library._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);
+	Native._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);
 	return output;
 }
 

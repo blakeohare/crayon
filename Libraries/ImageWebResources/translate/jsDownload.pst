@@ -8,7 +8,7 @@
 		objArray1 = new Array<object>(5);
 		objInstance1.nativeData = objArray1;
 		objArray1[0] = false;
-		Library._lib_imagewebresources_jsDownload(string1, string1);
+		Native._lib_imagewebresources_jsDownload(string1, string1);
 	}
 	return output;
 }

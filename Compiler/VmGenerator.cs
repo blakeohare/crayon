@@ -56,7 +56,7 @@ namespace Crayon
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader)
         {
-            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, null, constantFlags, codeLoader);
+            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, null, constantFlags, codeLoader, null, null);
 
             foreach (string file in INTERPRETER_BASE_FILES)
             {
@@ -80,10 +80,17 @@ namespace Crayon
             foreach (Library library in relevantLibraries)
             {
                 string libName = library.Name;
-                Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(true, sharedScope, constantFlags, codeLoader);
+                Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
+                    true, 
+                    sharedScope, 
+                    constantFlags, 
+                    codeLoader,
+                    library.GetReturnTypesForNativeMethods(),
+                    library.GetArgumentTypesForNativeMethods());
                 libraries[libName] = compiler;
 
-                Dictionary<string, string> supplementalCode = library.GetSupplementalTranslatedCode();
+                Dictionary<string, string> supplementalCode = library.GetSupplementalTranslatedCode(false);
+                Dictionary<string, string> pastelSupplementalCode = library.GetSupplementalTranslatedCode(true);
                 Dictionary<string, string> translatedCode = library.GetNativeCode();
                 // need to load from the actual Library instance, which could have come from either CRAYON_HOME or source
 

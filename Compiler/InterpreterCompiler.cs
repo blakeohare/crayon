@@ -48,7 +48,8 @@ namespace Crayon
             Dictionary<string, string> libraryProducedFiles = new Dictionary<string, string>();
             if (!isPastel)
             {
-                libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles();
+                // the false parameter refers to actually compiling the library as pastel as opposed to compiling the translatable Crayon library into pastel.
+                libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles(false);
             }
 
             List<string> orderedFileIds = new List<string>();

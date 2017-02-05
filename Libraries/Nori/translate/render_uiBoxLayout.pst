@@ -6,7 +6,7 @@
 	Value arg4 = args[3];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	object1 = objInstance1.nativeData[0];
-	Library._lib_nori_render_uiBoxLayout(object1, object1, object1, object1);
+	Native._lib_nori_render_uiBoxLayout(object1, object1, object1, object1);
 	return output;
 }
 

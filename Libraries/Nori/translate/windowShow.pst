@@ -16,7 +16,7 @@
 	bool1 = ((bool) arg3.internalValue);
 	int1 = ((int) arg4.internalValue);
 	prepareToSuspend(ec, stack, valueStackSize, pc);
-	Library._lib_nori_windowShow(object1, object1, object1, object1, object1, object1, object1, object1, object1);
+	Native._lib_nori_windowShow(object1, object1, object1, object1, object1, object1, object1, object1, object1);
 	return output;
 }
 
