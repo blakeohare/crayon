@@ -222,6 +222,13 @@ namespace Crayon.Translator.Pastel
                 case "Audio.sfx_set_volume": return "objInstance1 object1 object2 float1";
                 case "Audio.sfx_stop": return "objInstance1 object1 object2 int1 int2 bool1 bool2";
 
+                case "FileIOCommon.directoryCreate": return "string1 int1 bool1 stringList1 i";
+                case "FileIOCommon.directoryDelete": return "int1";
+                case "FileIOCommon.directoryList": return "stringList1 int1 list1 i";
+                case "FileIOCommon.directoryMove": return "int1";
+                case "FileIOCommon.fileDelete": return "int1";
+                case "FileIOCommon.fileInfo": return "int1 list1";
+
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 
                 default: return null;
@@ -296,6 +303,22 @@ namespace Crayon.Translator.Pastel
                             null));
                         break;
 
+                    case "stringList1":
+                    case "stringList2":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "List<string>"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken(null), null),
+                            null));
+                        break;
+
+                    case "list1":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "List<Value>"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken(null), null),
+                            null));
+                        break;
 
                     case "objInstance1":
                     case "objInstance2":
