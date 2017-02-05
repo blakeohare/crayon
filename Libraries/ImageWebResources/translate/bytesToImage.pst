@@ -9,7 +9,7 @@
 	objArray1 = new Array<object>(3);
 	objInstance1 = ((ObjectInstance) value.internalValue);
 	objInstance1.nativeData = objArray1;
-	if (Native._lib_imagewebresources_bytesToImage(object1, object1)) {
+	if (Native._lib_imagewebresources_bytesToImage(object1, objArray1)) {
 		list1[1] = buildInteger(((int) objArray1[1]));
 		list1[2] = buildInteger(((int) objArray1[2]));
 		output = VALUE_TRUE;

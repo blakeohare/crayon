@@ -14,7 +14,7 @@
 		objArray1[1] = new Dictionary<int, int>();
 	}
 	output = VALUE_NULL;
-	string2 = lib_xml_parse(string1, intOutParam, list1, ((Dictionary<string, string>) objArray1[0]), ((Dictionary<int, int>) objArray1[1]));
+	string2 = lib_xml_parse(string1, Core.IntBuffer16, list1, ((Dictionary<string, string>) objArray1[0]), ((Dictionary<int, int>) objArray1[1]));
 	if (string2 != null) {
 		output = buildString(string2);
 	}

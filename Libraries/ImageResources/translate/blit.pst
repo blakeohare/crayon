@@ -18,7 +18,7 @@
 			objArray1[3] = object1;
 		}
 	}
-	Native._lib_imageresources_blit(objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0]);
+	Native._lib_imageresources_blit(objInstance1.nativeData[0], objInstance2.nativeData[0], ((int) arg3.internalValue), ((int) arg4.internalValue), ((int) arg5.internalValue), ((int) arg6.internalValue), ((int) arg7.internalValue), ((int) arg8.internalValue), object1);
 	return output;
 }
 

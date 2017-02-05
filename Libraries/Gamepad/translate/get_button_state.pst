@@ -5,7 +5,7 @@
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		int1 = ((int) arg2.internalValue);
-		if (Native._lib_gamepad_get_button_state(objInstance1.nativeData[0], objInstance1.nativeData[0])) {
+		if (Native._lib_gamepad_get_button_state(objInstance1.nativeData[0], int1)) {
 			output = VALUE_TRUE;
 		} else {
 			output = VALUE_FALSE;

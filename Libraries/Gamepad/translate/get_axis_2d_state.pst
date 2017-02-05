@@ -7,9 +7,9 @@
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		int1 = ((int) arg2.internalValue);
 		list1 = ((List<Value>) arg3.internalValue);
-		Native._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0]);
-		list1[0] = buildInteger(intOutParam[0]);
-		list1[1] = buildInteger(intOutParam[1]);
+		Native._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], int1, Core.IntBuffer16);
+		list1[0] = buildInteger(Core.IntBuffer16[0]);
+		list1[1] = buildInteger(Core.IntBuffer16[1]);
 	}
 	return output;
 }

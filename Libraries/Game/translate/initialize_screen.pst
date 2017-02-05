@@ -9,7 +9,7 @@
 	int3 = ((int) arg3.internalValue);
 	int4 = ((int) arg4.internalValue);
 	prepareToSuspend(ec, stack, valueStackSize, pc);
-	Native._lib_game_initialize_screen(int1, int1, int1, int1, int1);
+	Native._lib_game_initialize_screen(int1, int2, int3, int4, ec.id);
 	return suspendInterpreter();
 }
 

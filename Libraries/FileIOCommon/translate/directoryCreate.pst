@@ -11,15 +11,15 @@
 	string1 = ((string) arg2.internalValue);
 	if (((bool) arg3.internalValue)) {
 		int1 = 0;
-		if (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
+		if (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), Native._lib_fileiocommon_getDirRoot(string1))) {
 			int1 = 4;
 		} else {
 			stringList1 = new List<string>();
 			bool1 = true;
-			while (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1))) {
+			while (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), string1)) {
 				stringList1.Add(string1);
-				int1 = Native._lib_fileiocommon_getDirParent(string1, string1);
-				string1 = stringOutParam[0];
+				int1 = Native._lib_fileiocommon_getDirParent(string1, Core.StringBuffer16);
+				string1 = Core.StringBuffer16[0];
 				if (int1 != 0) {
 					bool1 = false;
 					break;
@@ -28,7 +28,7 @@
 			if (bool1) {
 				for (i = stringList1.Size() - 1; i >= 0; i -= 1) {
 					string1 = stringList1[i];
-					int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+					int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), string1);
 					if (int1 != 0) {
 						i = -1;
 					}
@@ -36,7 +36,7 @@
 			}
 		}
 	} else {
-		int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+		int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(arg1), string1);
 	}
 	output = buildInteger(int1);
 	return output;

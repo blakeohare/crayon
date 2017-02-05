@@ -9,8 +9,8 @@
 	object1 = objInstance1.nativeData[0];
 	intList1 = new List<int>();
 	stringList1 = new List<string>();
-	object2 = Native._lib_mysql_query(object1, object1, object1, object1, object1, object1);
-	string1 = stringOutParam[0];
+	object2 = Native._lib_mysql_query(object1, ((string) arg3.internalValue), Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
+	string1 = Core.StringBuffer16[0];
 	if (string1 == null) {
 		list1 = ((List<Value>) arg4.internalValue);
 		list2 = ((List<Value>) arg5.internalValue);
@@ -27,7 +27,7 @@
 		} else {
 			list1[1] = VALUE_NULL;
 		}
-		int1 = intOutParam[0];
+		int1 = Core.IntBuffer16[0];
 		if (int1 == -1) {
 			value = VALUE_NULL;
 		} else {

@@ -5,7 +5,7 @@
 	Value arg3 = args[2];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
-	Native._lib_nori_windowInstantiate(objInstance1.nativeData, objInstance1.nativeData, objInstance1.nativeData);
+	Native._lib_nori_windowInstantiate(objInstance1.nativeData, objInstance2.nativeData, ((List<Value>) arg3.internalValue));
 	return output;
 }
 

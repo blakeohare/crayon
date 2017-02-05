@@ -9,7 +9,7 @@
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	stringList1 = new List<string>();
-	int1 = Native._lib_fileiocommon_directoryList(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
+	int1 = Native._lib_fileiocommon_directoryList(lib_fileiocommon_getDiskObject(arg1), ((string) arg2.internalValue), ((bool) arg3.internalValue), stringList1);
 	if (int1 == 0) {
 		list1 = ((List<Value>) arg4.internalValue);
 		for (i = 0; i < stringList1.Size(); i += 1) {

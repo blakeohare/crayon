@@ -20,7 +20,7 @@
 		intList1.Add(((int) value.internalValue));
 	}
 	list1 = ((List<Value>) arg4.internalValue);
-	Native._lib_mysql_getNext(object1, object1, object1, object1);
+	Native._lib_mysql_getNext(object1, list1, stringList1, intList1);
 	output = VALUE_NULL;
 	return output;
 }

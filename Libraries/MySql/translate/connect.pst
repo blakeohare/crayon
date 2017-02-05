@@ -5,7 +5,7 @@
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
-	object1 = Native._lib_mysql_connect(stringOut, stringOut, stringOut, stringOut, stringOut);
+	object1 = Native._lib_mysql_connect(stringOut, ((string) arg2.internalValue), ((string) arg3.internalValue), ((string) arg4.internalValue), ((string) arg5.internalValue));
 	string1 = stringOut[0];
 	if (string1 == null) {
 		output = VALUE_NULL;

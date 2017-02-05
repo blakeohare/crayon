@@ -8,16 +8,16 @@
 	object1 = objInstance1.nativeData[0];
 	objArray1 = new Array<object>(1);
 	stringList1 = new List<string>();
-	Native._lib_http_readResponseData(object1, object1, object1, object1, object1);
+	Native._lib_http_readResponseData(object1, Core.IntBuffer16, Core.StringBuffer16, objArray1, stringList1);
 	objInstance1 = ((ObjectInstance) arg2.internalValue);
 	objInstance1.nativeData = objArray1;
 	list1 = ((List<Value>) arg3.internalValue);
-	list1.Add(buildInteger(intOutParam[0]));
-	list1.Add(buildString(stringOutParam[0]));
+	list1.Add(buildInteger(Core.IntBuffer16[0]));
+	list1.Add(buildString(Core.StringBuffer16[0]));
 	value = VALUE_NULL;
 	value2 = VALUE_TRUE;
-	if (intOutParam[1] == 0) {
-		value = buildString(stringOutParam[1]);
+	if (Core.IntBuffer16[1] == 0) {
+		value = buildString(Core.StringBuffer16[1]);
 		value2 = VALUE_FALSE;
 	}
 	list1.Add(value);

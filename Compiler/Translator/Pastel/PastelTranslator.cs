@@ -17,10 +17,22 @@ namespace Crayon.Translator.Pastel
             {
                 output.Add("global ");
             }
-
+            
             Annotation type = assignment.Target.GetAnnotation("type");
             if (type != null)
             {
+                string name = ((Variable)assignment.Target).Name;
+                switch (name)
+                {
+                    // This is now a Core translated reference
+                    case "intOutParam":
+                    case "floatOutParam":
+                    case "stringOutParam":
+                        return;
+                    default:
+                        break;
+                }
+
                 output.Add(((StringConstant)type.Args[0]).Value);
                 output.Add(" ");
             }
@@ -214,7 +226,25 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateVariable(List<string> output, Variable expr)
         {
-            output.Add(expr.Name);
+            string name = expr.Name;
+            switch (name)
+            {
+                case "intOutParam":
+                    name = "Core.IntBuffer16";
+                    break;
+
+                case "floatOutParam":
+                    name = "Core.FloatBuffer16";
+                    break;
+
+                case "stringOutParam":
+                    name = "Core.StringBuffer16";
+                    break;
+
+                default: break;
+            }
+
+            output.Add(name);
         }
     }
 }

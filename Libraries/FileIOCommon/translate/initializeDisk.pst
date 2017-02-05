@@ -1,4 +1,7 @@
 ﻿Value lib_fileiocommon_function_initializeDisk(Array<Value> args) {
+	ObjectInstance objInstance1 = null;
+	Array<object> objArray1 = null;
+	object object1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

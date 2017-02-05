@@ -171,10 +171,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 	Dictionary<int, int> integerSwitch = null;
 	Dictionary<string, int> stringSwitch = null;
 	Array<Array<int>> esfData = p.esfData;
-	Array<int> intOutParam = new Array<int>(16);
-	Array<double> floatOutParam = new Array<double>(16);
-	Array<string> stringOutParam = new Array<string>(16);
-	Array<Value> localsStack = ec.localsStack;
+				Array<Value> localsStack = ec.localsStack;
 	Array<int> localsStackSet = ec.localsStackSet;
 	int localsStackSetToken = stack.localsStackSetToken;
 	int localsStackCapacity = localsStack.Size();

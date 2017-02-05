@@ -12,7 +12,7 @@
 	objArray2 = objInstance2.nativeData;
 	object1 = objArray1[0];
 	object2 = objArray2[0];
-	object3 = Native._lib_nori_render_rectangleLayout(object1, object1, object1, object1, object1, object1);
+	object3 = Native._lib_nori_render_rectangleLayout(object1, object2, ((int) arg3.internalValue), ((int) arg4.internalValue), ((int) arg5.internalValue), ((int) arg6.internalValue));
 	if (object1 == null) {
 		objArray1[0] = object3;
 	}

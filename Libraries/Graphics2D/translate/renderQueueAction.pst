@@ -29,7 +29,7 @@
 				intList1.Add(((int) value.internalValue));
 			}
 		}
-		Native._lib_graphics2d_render(intArray1, intArray1, intArray1, intArray1);
+		Native._lib_graphics2d_render(intArray1, ((int) objArray1[1]), ((Array<Array<object>>) objArray1[2]), intList1);
 	} else {
 		if (i == 2) {
 			objArray1[1] = 0;

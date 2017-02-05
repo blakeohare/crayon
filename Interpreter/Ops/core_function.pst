@@ -115,8 +115,8 @@
 		@import("FrameworkFunctions/2_arg.cry");
 		list1 = ((List<Value>) arg1.internalValue);
 		list2 = ((List<Value>) arg2.internalValue);
-		sortLists(list2, list1, intOutParam);
-		if (intOutParam[0] > 0) {
+		sortLists(list2, list1, Core.IntBuffer16);
+		if (Core.IntBuffer16[0] > 0) {
 			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 		}
 		break;

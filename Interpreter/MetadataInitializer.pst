@@ -205,12 +205,12 @@ int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
 }
 
 StackFrame maybeInvokeStaticConstructor(ProgramData p, ExecutionContext ec, StackFrame stack, ClassInfo classInfo, int valueStackSize, Array<int> intOutParam) {
-	intOutParam[0] = 0;
+	Core.IntBuffer16[0] = 0;
 	int classId = classInfo.id;
 	if (classInfo.staticInitializationState == 1) {
 		List<int> classIdsBeingInitialized = p.classStaticInitializationStack;
 		if (classIdsBeingInitialized[(classIdsBeingInitialized.Size() - 1)] != classId) {
-			intOutParam[0] = 1;
+			Core.IntBuffer16[0] = 1;
 		}
 		return null;
 	}

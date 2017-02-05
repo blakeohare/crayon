@@ -5,7 +5,7 @@
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	object1 = objInstance1.nativeData[0];
 	objArray1 = libNoriUnwrapMenus(arg2);
-	Native._lib_nori_windowUpdateMenu(object1, object1);
+	Native._lib_nori_windowUpdateMenu(object1, objArray1);
 	return output;
 }
 

@@ -10,10 +10,10 @@
 		object1 = Native._lib_gamepad_get_device_reference(int1);
 		objInstance1.nativeData = new Array<object>(1);
 		objInstance1.nativeData[0] = object1;
-		list1[0] = buildString(Native._lib_gamepad_get_name(int1, int1));
-		list1[1] = buildInteger(Native._lib_gamepad_get_button_count(int1, int1));
-		list1[2] = buildInteger(Native._lib_gamepad_get_axis_1d_count(int1, int1));
-		list1[3] = buildInteger(Native._lib_gamepad_get_axis_2d_count(int1, int1));
+		list1[0] = buildString(Native._lib_gamepad_get_name(int1, object1));
+		list1[1] = buildInteger(Native._lib_gamepad_get_button_count(int1, object1));
+		list1[2] = buildInteger(Native._lib_gamepad_get_axis_1d_count(int1, object1));
+		list1[3] = buildInteger(Native._lib_gamepad_get_axis_2d_count(int1, object1));
 	}
 	return output;
 }

@@ -81,6 +81,21 @@ namespace Pastel
             return null;
         }
 
+        internal EnumDefinition GetEnumDefinition(string name)
+        {
+            if (this.EnumDefinitions.ContainsKey(name))
+            {
+                return this.EnumDefinitions[name];
+            }
+
+            if (this.SharedScope != null && this.SharedScope.EnumDefinitions.ContainsKey(name))
+            {
+                return this.SharedScope.EnumDefinitions[name];
+            }
+
+            return null;
+        }
+
         internal StructDefinition GetStructDefinition(string name)
         {
             if (this.StructDefinitions.ContainsKey(name))

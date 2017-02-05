@@ -26,7 +26,7 @@ namespace Crayon.Translator
                     for (int i = 0; i < functionCall.Args.Length; ++i)
                     {
                         if (i > 0) output.Add(", ");
-                        this.Translator.TranslateExpression(output, functionCall.Args[0], false);
+                        this.Translator.TranslateExpression(output, functionCall.Args[i], false);
                     }
                     output.Add(")");
                 }

@@ -34,9 +34,9 @@
 	}
 	bool1 = ((int) arg7.internalValue) == 1;
 	if (((bool) arg2.internalValue)) {
-		Native._lib_http_sendRequestAsynchronous(objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1);
+		Native._lib_http_sendRequestAsynchronous(objArray1, string1, string2, stringList1, int1, object1, bool1);
 	} else {
-		if (Native._lib_http_sendRequestSynchronous(objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1)) {
+		if (Native._lib_http_sendRequestSynchronous(objArray1, string1, string2, stringList1, int1, object1, bool1, ec.id)) {
 			prepareToSuspend(ec, stack, valueStackSize, pc);
 			return suspendInterpreter();
 		}

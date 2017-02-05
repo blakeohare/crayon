@@ -6,7 +6,7 @@
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
 	list1 = ((List<Value>) arg3.internalValue);
-	Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance1.nativeData, objInstance1.nativeData);
+	Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData, list1);
 	return output;
 }
 

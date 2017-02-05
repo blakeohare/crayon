@@ -31,11 +31,21 @@ namespace Pastel.Nodes
                 if (rootName == "Core")
                 {
                     NativeFunction nativeFunction = this.GetNativeCoreFunction(this.FieldName.Value);
-                    return new NativeFunctionReference(this.FirstToken, nativeFunction);
+                    switch (nativeFunction)
+                    {
+                        case NativeFunction.FLOAT_BUFFER_16:
+                        case NativeFunction.INT_BUFFER_16:
+                        case NativeFunction.STRING_BUFFER_16:
+                            return new NativeFunctionInvocation(this.FirstToken, nativeFunction, new Expression[0]);
+
+                        default:
+                            return new NativeFunctionReference(this.FirstToken, nativeFunction);
+                    }
                 }
-                else if (compiler.EnumDefinitions.ContainsKey(rootName))
+                EnumDefinition enumDef = compiler.GetEnumDefinition(rootName);
+                if (enumDef != null)
                 {
-                    InlineConstant enumValue = compiler.EnumDefinitions[rootName].GetValue(this.FieldName);
+                    InlineConstant enumValue = enumDef.GetValue(this.FieldName);
                     return enumValue.CloneWithNewToken(this.FirstToken);
                 }
             }
@@ -110,6 +120,7 @@ namespace Pastel.Nodes
                 case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
                 case "EmitComment": return NativeFunction.EMIT_COMMENT;
+                case "FloatBuffer16": return NativeFunction.FLOAT_BUFFER_16;
                 case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
                 case "FloatToString": return NativeFunction.FLOAT_TO_STRING;
                 case "ForceParens": return NativeFunction.FORCE_PARENS;
@@ -117,6 +128,7 @@ namespace Pastel.Nodes
                 case "GetProgramData": return NativeFunction.GET_PROGRAM_DATA;
                 case "GetResourceManifest": return NativeFunction.GET_RESOURCE_MANIFEST;
                 case "Int": return NativeFunction.INT;
+                case "IntBuffer16": return NativeFunction.INT_BUFFER_16;
                 case "IntegerDivision": return NativeFunction.INTEGER_DIVISION;
                 case "IntToString": return NativeFunction.INT_TO_STRING;
                 case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
@@ -136,6 +148,7 @@ namespace Pastel.Nodes
                 case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
                 case "Sin": return NativeFunction.MATH_SIN;
                 case "StringAppend": return NativeFunction.STRING_APPEND;
+                case "StringBuffer16": return NativeFunction.STRING_BUFFER_16;
                 case "StringCompareIsReverse": return NativeFunction.STRING_COMPARE_IS_REVERSE;
                 case "StringConcatAll": return NativeFunction.STRING_CONCAT_ALL;
                 case "StringEquals": return NativeFunction.STRING_EQUALS;

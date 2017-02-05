@@ -380,7 +380,7 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
 }
 
 int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutParam) {
-	intOutParam[0] = 0;
+	Core.IntBuffer16[0] = 0;
 	int length = keyList.Size();
 	if (length < 2) {
 		return 0;
@@ -400,27 +400,27 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
 		switch (item.type) {
 			case Types.INTEGER:
 				if (isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				numKeys[i] = ((double) ((int) item.internalValue));
 				break;
 			case Types.FLOAT:
 				if (isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				numKeys[i] = ((double) item.internalValue);
 				break;
 			case Types.STRING:
 				if (!isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				stringKeys[i] = ((string) item.internalValue);
 				break;
 			default:
-				intOutParam[0] = 1;
+				Core.IntBuffer16[0] = 1;
 				return 0;
 		}
 	}

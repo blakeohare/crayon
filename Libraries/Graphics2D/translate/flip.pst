@@ -35,7 +35,7 @@
 		objInstance2 = ((ObjectInstance) arg2.internalValue);
 		objInstance2.nativeData[0] = objArray1;
 		object1 = objArray1[3];
-		object1 = Native._lib_graphics2d_flipTexture(object1, object1, object1);
+		object1 = Native._lib_graphics2d_flipTexture(object1, bool1, bool2);
 		objArray1[3] = object1;
 	}
 	output = arg2;

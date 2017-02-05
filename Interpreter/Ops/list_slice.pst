@@ -73,10 +73,10 @@ if (int5 >= 2) {
 		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, " slice step cannot be 0."));
 	}
 }
-int5 = canonicalizeListSliceArgs(intOutParam, arg1, arg2, int1, int2, int3, int4, bool1);
+int5 = canonicalizeListSliceArgs(Core.IntBuffer16, arg1, arg2, int1, int2, int3, int4, bool1);
 if (int5 == 1) {
-	int1 = intOutParam[0];
-	int2 = intOutParam[1];
+	int1 = Core.IntBuffer16[0];
+	int2 = Core.IntBuffer16[1];
 	if (bool2) {
 		stringList1 = new List<string>();
 		if (bool1) {

@@ -228,6 +228,10 @@ namespace Crayon.Translator.Pastel
                 case "FileIOCommon.directoryMove": return "int1";
                 case "FileIOCommon.fileDelete": return "int1";
                 case "FileIOCommon.fileInfo": return "int1 list1";
+                case "FileIOCommon.fileMove": return "int1";
+                case "FileIOCommon.fileRead": return "int1 bool1 list1";
+                case "FileIOCommon.fileWrite": return "string1 object1 int1 int2";
+                case "FileIOCommon.initializeDisk": return "objInstance1 objArray1 object1";
 
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 
@@ -325,6 +329,15 @@ namespace Crayon.Translator.Pastel
                     case "objInstance3":
                         addTheseToTheTop.Add(new Assignment(
                             MakeAVariableWithType(varToDeclare, "ObjectInstance"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken("null"), null),
+                            null));
+                        break;
+
+                    case "objArray1":
+                    case "objArray2":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "Array<object>"),
                             MakeAToken("="), "=",
                             new NullConstant(MakeAToken("null"), null),
                             null));

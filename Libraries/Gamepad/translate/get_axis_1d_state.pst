@@ -5,7 +5,7 @@
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		int1 = ((int) arg2.internalValue);
-		output = buildFloat(Native._lib_gamepad_get_axis_1d_state(objInstance1.nativeData[0], objInstance1.nativeData[0]));
+		output = buildFloat(Native._lib_gamepad_get_axis_1d_state(objInstance1.nativeData[0], int1));
 	} else {
 		output = buildFloat(0.0);
 	}
