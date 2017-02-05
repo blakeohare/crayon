@@ -38,7 +38,7 @@
 	} else {
 		if (Native._lib_http_sendRequestSynchronous(objArray1, string1, string2, stringList1, int1, object1, bool1, ec.id)) {
 			prepareToSuspend(ec, stack, valueStackSize, pc);
-			return suspendInterpreter();
+			Core.VmSuspend()
 		}
 	}
 	return output;

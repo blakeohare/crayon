@@ -96,6 +96,7 @@ namespace Pastel
         STRING_TRIM_START,
         STRONG_REFERENCE_EQUALITY,
         THREAD_SLEEP,
+        VM_SUSPEND,
 
         LIBRARY_FUNCTION,
     }

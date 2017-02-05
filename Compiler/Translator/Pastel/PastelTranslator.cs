@@ -17,7 +17,7 @@ namespace Crayon.Translator.Pastel
             {
                 output.Add("global ");
             }
-            
+
             Annotation type = assignment.Target.GetAnnotation("type");
             if (type != null)
             {
@@ -245,6 +245,24 @@ namespace Crayon.Translator.Pastel
             }
 
             output.Add(name);
+        }
+
+        protected override void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement)
+        {
+            FunctionCall fc = returnStatement.Expression as FunctionCall;
+            if (fc != null)
+            {
+                Variable fp = fc.Root as Variable;
+                if (fp != null && fp.Name == "suspendInterpreter")
+                {
+                    output.Add(this.CurrentTabIndention);
+                    output.Add("Core.VmSuspend()");
+                    output.Add(this.NL);
+                    return;
+                }
+            }
+
+            base.TranslateReturnStatement(output, returnStatement);
         }
     }
 }

@@ -10,6 +10,7 @@
 	int4 = ((int) arg4.internalValue);
 	prepareToSuspend(ec, stack, valueStackSize, pc);
 	Native._lib_game_initialize_screen(int1, int2, int3, int4, ec.id);
-	return suspendInterpreter();
+	Core.VmSuspend();
+	return output;
 }
 

@@ -2,6 +2,7 @@
 	Value output = VALUE_NULL;
 	prepareToSuspend(ec, stack, valueStackSize, pc);
 	Native._lib_game_clockTick();
-	return suspendInterpreter();
+	Core.VmSuspend();
+	return output;
 }
 

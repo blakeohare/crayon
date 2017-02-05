@@ -2,11 +2,11 @@
 	int i = 0;
 	Array<int> intArray1 = null;
 	List<int> intList1 = null;
-	Value value = null;
 	int len = 0;
 	List<Value> list1 = null;
 	Array<object> objArray1 = null;
 	ObjectInstance objInstance1 = null;
+	Value value = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

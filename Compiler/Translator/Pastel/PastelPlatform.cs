@@ -167,6 +167,21 @@ namespace Crayon.Translator.Pastel
 
                     this.InjectVariableDeclarations(functionBody, libraryName, functionName);
 
+                    ReturnStatement last = functionBody[functionBody.Count - 1] as ReturnStatement;
+                    if (last != null && last.Expression is FunctionCall)
+                    {
+                        Variable fp = ((FunctionCall)last.Expression).Root as Variable;
+                        if (fp != null && fp.Name == "suspendInterpreter")
+                        {
+                            Expression expr = new FunctionCall(
+                                   new Variable(MakeAToken("Core.VmSuspend"), "Core.VmSuspend", null), // yeah I'm lazy
+                                   MakeAToken("("),
+                                   new Expression[0],
+                                   null);
+                            functionBody[functionBody.Count - 1] = new ExpressionAsExecutable(expr, null);
+                        }
+                    }
+
                     functionBody.Add(new ReturnStatement(
                         MakeAToken("return"),
                         new Variable(MakeAToken("output"), "output", null),
