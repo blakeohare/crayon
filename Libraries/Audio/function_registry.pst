@@ -1,18 +1,18 @@
 ﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "getAudioResourcePath", 1);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "is_supported", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_is_playing", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_load_from_file", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_load_from_resource", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_play", 5);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_set_volume", 1);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "music_stop", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_get_state", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_load_from_file", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_load_from_resource", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_play", 4);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_resume", 4);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_set_pan", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_set_volume", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sfx_stop", 5);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "getAudioResourcePath", 1);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "is_supported", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_is_playing", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_load_from_file", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_load_from_resource", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_play", 5);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_set_volume", 1);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "music_stop", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_get_state", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_load_from_file", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_load_from_resource", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_play", 4);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_resume", 4);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_set_pan", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_set_volume", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sfx_stop", 5);
 }

@@ -148,7 +148,7 @@ namespace Crayon.Translator.Pastel
                 foreach (string functionName in functionNames)
                 {
                     int argCount = argCountByFunctionName[functionName];
-                    manifestCode.Add("\tCore.RegisterLibraryFunction(functionPointers, argCounts, \"" + functionName + "\", " + argCount + ");\n");
+                    manifestCode.Add("\tCore.RegisterLibraryFunction(functionPointers, functionNames, argCounts, \"" + functionName + "\", " + argCount + ");\n");
                 }
                 manifestCode.Add("}\n");
 

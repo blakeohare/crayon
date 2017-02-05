@@ -8,6 +8,7 @@ namespace Crayon
     internal class CompilationBundle
     {
         public ByteBuffer ByteCode { get; set; }
+        public ICollection<Library> LibrariesUsed { get; set; }
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {
@@ -16,10 +17,11 @@ namespace Crayon
 
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
-
+            
             return new CompilationBundle()
             {
                 ByteCode = buffer,
+                LibrariesUsed = parser.LibrariesUsed,
             };
         }
     }

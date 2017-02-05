@@ -31,6 +31,14 @@ namespace Crayon
             return ++this.functionIdCounter;
         }
 
+        public List<Library> LibrariesUsed
+        {
+            get
+            {
+                return new List<Library>(this.SystemLibraryManager.LibrariesImportedByName.Values);
+            }
+        }
+
         // These did not resolve into libraries. Which might be okay as long as there's a namespace that matches
         // in the project.
         private List<ImportStatement> unresolvedImports = new List<ImportStatement>();

@@ -1,7 +1,7 @@
 ﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "fastEnsureAllBytes", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "getResponseBytes", 2);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "pollRequest", 1);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "populateResponse", 4);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "sendRequest", 7);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "fastEnsureAllBytes", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "getResponseBytes", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "pollRequest", 1);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "populateResponse", 4);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "sendRequest", 7);
 }

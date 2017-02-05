@@ -1,12 +1,12 @@
 ﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "addImageRenderEvent", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "fastLocalFloat2IntCast", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "flip", 6);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "initializeTexture", 5);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "initializeTextureResource", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "isOpenGlBased", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "isPlatformUsingTextureAtlas", 0);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "lineToQuad", 1);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "renderQueueAction", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "scale", 6);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "addImageRenderEvent", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "fastLocalFloat2IntCast", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "flip", 6);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "initializeTexture", 5);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "initializeTextureResource", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "isOpenGlBased", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "isPlatformUsingTextureAtlas", 0);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "lineToQuad", 1);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "renderQueueAction", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "scale", 6);
 }

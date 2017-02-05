@@ -166,6 +166,8 @@ namespace Crayon
 		private readonly Dictionary<string, Library> alreadyImported = new Dictionary<string, Library>();
 		private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
 
+        public Dictionary<string, Library> LibrariesImportedByName { get { return this.alreadyImported; } }
+
 		public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
 		{
 			name = name.Split('.')[0];

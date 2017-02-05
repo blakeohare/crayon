@@ -1,4 +1,4 @@
 ﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "loadFont", 3);
-	Core.RegisterLibraryFunction(functionPointers, argCounts, "pushStringCodePoints", 2);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "loadFont", 3);
+	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "pushStringCodePoints", 2);
 }

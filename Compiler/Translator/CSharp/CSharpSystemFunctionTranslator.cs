@@ -225,7 +225,7 @@ namespace Crayon.Translator.CSharp
             }
             output.Add(value);
         }
-        
+
         protected override void TranslateStringCharCodeAt(List<string> output, Expression stringValue, Expression index)
         {
             this.Translator.TranslateExpression(output, stringValue);

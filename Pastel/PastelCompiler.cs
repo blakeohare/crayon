@@ -8,10 +8,14 @@ namespace Pastel
 {
     public class PastelCompiler
     {
+        private bool isLibrary;
+
         public PastelCompiler(
+            bool isLibrary,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader inlineImportCodeLoader)
         {
+            this.isLibrary = isLibrary;
             Dictionary<string, int> intConstants = new Dictionary<string, int>();
             Dictionary<string, bool> boolConstants = new Dictionary<string, bool>();
 
@@ -43,11 +47,11 @@ namespace Pastel
 
         private PastelParser interpreterParser;
 
-        internal Dictionary<string, StructDefinition> StructDefinitions { get; set; }
+        public Dictionary<string, StructDefinition> StructDefinitions { get; set; }
         internal Dictionary<string, EnumDefinition> EnumDefinitions { get; set; }
-        internal Dictionary<string, VariableDeclaration> Globals { get; set; }
+        public Dictionary<string, VariableDeclaration> Globals { get; set; }
         internal Dictionary<string, VariableDeclaration> ConstantDefinitions { get; set; }
-        internal Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
+        public Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
 
         internal HashSet<string> ResolvedFunctions { get; set; }
         internal Queue<string> ResolutionQueue { get; set; }
@@ -128,7 +132,7 @@ namespace Pastel
                     enumDef.DoConstantResolutions(cycleDetection, this);
                 }
             }
-            
+
             foreach (VariableDeclaration constDef in this.ConstantDefinitions.Values)
             {
                 if (!(constDef.Value is InlineConstant))
@@ -152,7 +156,18 @@ namespace Pastel
 
             this.ResolvedFunctions = new HashSet<string>();
             this.ResolutionQueue = new Queue<string>();
-            this.ResolutionQueue.Enqueue("main");
+
+            if (!this.isLibrary)
+            {
+                this.ResolutionQueue.Enqueue("main");
+            }
+            else
+            {
+                foreach (string functionName in this.FunctionDefinitions.Keys)
+                {
+                    this.ResolutionQueue.Enqueue(functionName);
+                }
+            }
 
             while (this.ResolutionQueue.Count > 0)
             {
@@ -172,7 +187,7 @@ namespace Pastel
                     unusedFunctions.Add(functionName);
                 }
             }
-            
+
             Dictionary<string, FunctionDefinition> finalFunctions = new Dictionary<string, FunctionDefinition>();
             foreach (string usedFunctionName in this.ResolvedFunctions)
             {

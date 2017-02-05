@@ -2,7 +2,7 @@
 
 namespace Pastel.Nodes
 {
-    abstract class Expression
+    public abstract class Expression
     {
         public Token FirstToken { get; private set; }
 

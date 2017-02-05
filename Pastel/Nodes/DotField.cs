@@ -126,6 +126,7 @@ namespace Pastel.Nodes
                 case "PrintStdOut": return NativeFunction.PRINT_STDOUT;
                 case "RandomFloat": return NativeFunction.RANDOM_FLOAT;
                 case "ReadByteCodeFile": return NativeFunction.READ_BYTE_CODE_FILE;
+                case "RegisterLibraryFunction": return NativeFunction.REGISTER_LIBRARY_FUNCTION;
                 case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
                 case "Sin": return NativeFunction.MATH_SIN;
                 case "StringAppend": return NativeFunction.STRING_APPEND;
@@ -182,6 +183,7 @@ namespace Pastel.Nodes
                     {
                         case "Add": return NativeFunction.LIST_ADD;
                         case "AddAll": return NativeFunction.LIST_ADD_ALL;
+                        case "Clear": return NativeFunction.LIST_CLEAR;
                         case "Insert": return NativeFunction.LIST_INSERT;
                         case "Join":
                             string memberType = rootType.Generics[0].RootValue;

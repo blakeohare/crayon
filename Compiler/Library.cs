@@ -181,6 +181,17 @@ namespace Crayon
             return output;
         }
 
+        public string GetRegistryCode()
+        {
+            string path = System.IO.Path.Combine(this.RootDirectory, "function_registry.pst");
+            if (!System.IO.File.Exists(path))
+            {
+                return null;
+            }
+
+            return System.IO.File.ReadAllText(path);
+        }
+
         private Dictionary<string, string> supplementalFiles = null;
 
         public Dictionary<string, string> GetSupplementalTranslatedCode()
@@ -203,6 +214,18 @@ namespace Crayon
                 }
             }
             return this.supplementalFiles;
+        }
+
+        public Dictionary<string, string> GetNativeCode()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (string key in this.filepathsByFunctionName.Keys)
+            {
+                string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
+                output[key] = this.ReadFile(false, filename, false);
+            }
+
+            return output;
         }
 
         public string GetTranslationCode(string functionName, bool isPastel)

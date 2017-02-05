@@ -68,7 +68,11 @@ namespace Crayon
             if (platform2 != null)
             {
                 VmGenerator vmGenerator = new VmGenerator();
-                vmGenerator.GenerateVmSourceCodeForPlatform(platform2, null, null);
+                vmGenerator.GenerateVmSourceCodeForPlatform(
+                    platform2, 
+                    null,
+                    compilationResult.LibrariesUsed, 
+                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
             }
 
             throw new InvalidOperationException("Unrecognized platform. See usage.");
