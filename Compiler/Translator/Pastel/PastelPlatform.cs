@@ -52,8 +52,10 @@ namespace Crayon.Translator.Pastel
 
             Dictionary<string, Dictionary<string, int>> argCountByFunctionNameByLibraryName = new Dictionary<string, Dictionary<string, int>>();
 
-            foreach (string vmFile in finalCode.Keys)
+            foreach (string vmFileImmutable in finalCode.Keys)
             {
+                string vmFile = vmFileImmutable; // need to change this variable, potentially
+
                 if (vmFile == "Globals")
                 {
                     foreach (Assignment aGlobal in finalCode[vmFile].OfType<Assignment>())
@@ -68,6 +70,19 @@ namespace Crayon.Translator.Pastel
                     string[] parts = vmFile.Split('/');
                     string libraryName = parts[1];
                     string functionName = parts[3];
+
+                    if (functionName.StartsWith("addImageRenderEvent"))
+                    {
+                        if (functionName.EndsWith("ForPastel"))
+                        {
+                            functionName = "addImageRenderEvent";
+                            vmFile = vmFile.Replace("ForPastel", "");
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
 
                     List<Executable> functionBody = new List<Executable>(parseTree);
                     int argCount = 0;
@@ -233,6 +248,14 @@ namespace Crayon.Translator.Pastel
                 case "FileIOCommon.fileWrite": return "string1 object1 int1 int2";
                 case "FileIOCommon.initializeDisk": return "objInstance1 objArray1 object1";
 
+                case "Graphics2D.addImageRenderEvent": return "objInstance1 objArray1 len intArray1 int1 intArray2 i objArrayArray1 objArrayArray2 value objInstance2 bool1 bool2 float1 bool1 int2 int3";
+                case "Graphics2D.flip": return "objInstance1 objInstance2 objArray1 objArray2 bool1 bool2 i object1";
+                case "Graphics2D.initializeTexture": return "objInstance1 objArray1 list1 value float1 float2";
+                case "Graphics2D.initializeTextureResource": return "objInstance1 objArray1 objArray2";
+                case "Graphics2D.lineToQuad": return "value objInstance1 objArray1 intArray1 len int1 int2 int3 int4 int5 float1 float2 float3 i j";
+                case "Graphics2D.renderQueueAction": return "len objInstance1 objArray1 intArray1 intList1 i list1 value";
+                case "Graphics2D.scale": return "int1 int2 objInstance1 object1 objArray1 objInstance2 objArray2 i";
+
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 
                 default: return null;
@@ -248,10 +271,10 @@ namespace Crayon.Translator.Pastel
             string varsToDeclare = GetDeclarationsToInsert(key);
 
             if (varsToDeclare == null) return;
-
+            string[] varsArray = new HashSet<string>(varsToDeclare.Trim().Split(' ')).OrderBy<string, string>(s => s).ToArray();
             List<Executable> addTheseToTheTop = new List<Executable>();
 
-            foreach (string varToDeclare in varsToDeclare.Split(' '))
+            foreach (string varToDeclare in varsArray)
             {
                 switch (varToDeclare)
                 {
@@ -266,10 +289,13 @@ namespace Crayon.Translator.Pastel
                         break;
 
                     case "i":
+                    case "j":
                     case "len":
                     case "int1":
                     case "int2":
                     case "int3":
+                    case "int4":
+                    case "int5":
                         addTheseToTheTop.Add(new Assignment(
                             MakeAVariableWithType(varToDeclare, "int"),
                             MakeAToken("="), "=",
@@ -316,9 +342,27 @@ namespace Crayon.Translator.Pastel
                             null));
                         break;
 
+                    case "value":
+                    case "value2":
+                    case "value3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "Value"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken(null), null),
+                            null));
+                        break;
+
                     case "list1":
                         addTheseToTheTop.Add(new Assignment(
                             MakeAVariableWithType(varToDeclare, "List<Value>"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken(null), null),
+                            null));
+                        break;
+
+                    case "intList1":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "List<int>"),
                             MakeAToken("="), "=",
                             new NullConstant(MakeAToken(null), null),
                             null));
@@ -334,6 +378,15 @@ namespace Crayon.Translator.Pastel
                             null));
                         break;
 
+                    case "intArray1":
+                    case "intArray2":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "Array<int>"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken("null"), null),
+                            null));
+                        break;
+
                     case "objArray1":
                     case "objArray2":
                         addTheseToTheTop.Add(new Assignment(
@@ -343,8 +396,17 @@ namespace Crayon.Translator.Pastel
                             null));
                         break;
 
+                    case "objArrayArray1":
+                    case "objArrayArray2":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "Array<Array<object>>"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken("null"), null),
+                            null));
+                        break;
+
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException("Not defined: " + varToDeclare);
                 }
             }
 

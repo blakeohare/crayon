@@ -31,7 +31,6 @@
 */
 import inline "FrameworkFunctions/1_arg.cry";
 
-value = $_array_get(valueStack, valueStackSize);
 objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
 objArray1 = ObjectInstance$objInstance1.nativeData;
 intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0)); // event queue
@@ -47,7 +46,7 @@ float2 = 0.0 + int3 - int1; // run
 float3 = $_unsafe_float_division(float1, float2); // slope
 
 float1 = $_unsafe_float_division(int5, 2.0); // half of the width
-if (float1 < .5) float1 = 1; // just above sqrt(2) / 2
+if (float1 < .5) float1 = 1.0; // just above sqrt(2) / 2
 
 // yOffset = (stroke radius) / sqrt(slope ** 2 + 1)
 float2 = $_unsafe_float_division(

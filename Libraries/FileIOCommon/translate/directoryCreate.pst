@@ -1,9 +1,9 @@
 ﻿Value lib_fileiocommon_function_directoryCreate(Array<Value> args) {
-	string string1 = "";
-	int int1 = 0;
 	bool bool1 = false;
-	List<string> stringList1 = null;
 	int i = 0;
+	int int1 = 0;
+	string string1 = "";
+	List<string> stringList1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

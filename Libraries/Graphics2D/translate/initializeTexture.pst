@@ -1,4 +1,10 @@
 ﻿Value lib_graphics2d_function_initializeTexture(Array<Value> args) {
+	double float1 = 0.0;
+	double float2 = 0.0;
+	List<Value> list1 = null;
+	Array<object> objArray1 = null;
+	ObjectInstance objInstance1 = null;
+	Value value = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

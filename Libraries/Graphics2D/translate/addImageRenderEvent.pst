@@ -1,8 +1,35 @@
 ﻿Value lib_graphics2d_function_addImageRenderEvent(Array<Value> args) {
+	bool bool1 = false;
+	bool bool2 = false;
+	double float1 = 0.0;
+	int i = 0;
+	int int1 = 0;
+	int int2 = 0;
+	int int3 = 0;
+	Array<int> intArray1 = null;
+	Array<int> intArray2 = null;
+	int len = 0;
+	Array<object> objArray1 = null;
+	Array<Array<object>> objArrayArray1 = null;
+	Array<Array<object>> objArrayArray2 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	Value value = null;
 	Value output = VALUE_NULL;
-	valueStackSize -= 13;
-	value = valueStack[valueStackSize];
-	objInstance1 = ((ObjectInstance) value.internalValue);
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value arg7 = args[6];
+	Value arg8 = args[7];
+	Value arg9 = args[8];
+	Value arg10 = args[9];
+	Value arg11 = args[10];
+	Value arg12 = args[11];
+	Value arg13 = args[12];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	intArray1 = ((Array<int>) objArray1[0]);
 	len = ((int) objArray1[1]);
@@ -31,23 +58,23 @@
 		objArray1[2] = objArrayArray1;
 	}
 	objArray1[3] = (int1 + 1);
-	value = valueStack[(valueStackSize + 1)];
+	value = arg2;
 	objInstance2 = ((ObjectInstance) value.internalValue);
 	objArray1 = objInstance2.nativeData;
 	objArrayArray1[int1] = objArray1;
 	bool1 = true;
 	bool2 = false;
-	value = valueStack[(valueStackSize + 2)];
+	value = arg3;
 	int1 = ((int) value.internalValue);
 	intArray1[len] = 6;
 	intArray1[(len + 1)] = int1;
 	if ((int1 & 4) != 0) {
-		value = valueStack[(valueStackSize + 11)];
+		value = arg12;
 		if (value.type == Types.FLOAT) {
 			float1 = ((double) value.internalValue);
 		} else {
 			if (value.type == Types.INTEGER) {
-				float1 = ((int) value.internalValue);
+				float1 = ((int) value.internalValue) + 0.0;
 			} else {
 				bool1 = false;
 			}
@@ -56,7 +83,7 @@
 		intArray1[(len | 10)] = int2;
 	}
 	if (bool1 && ((int1 & 8) != 0)) {
-		value = valueStack[(valueStackSize + 12)];
+		value = arg13;
 		if (value.type == Types.INTEGER) {
 			int2 = ((int) value.internalValue);
 		} else {
@@ -78,7 +105,7 @@
 		}
 	}
 	for (i = 0; i < 8; i += 1) {
-		value = valueStack[((valueStackSize + 3) + i)];
+		value = args[(3 + i)];
 		if (value.type == Types.INTEGER) {
 			int2 = ((int) value.internalValue);
 		} else {

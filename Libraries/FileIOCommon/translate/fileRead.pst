@@ -1,6 +1,6 @@
 ﻿Value lib_fileiocommon_function_fileRead(Array<Value> args) {
-	int int1 = 0;
 	bool bool1 = false;
+	int int1 = 0;
 	List<Value> list1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];

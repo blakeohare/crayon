@@ -1,8 +1,8 @@
 ﻿Value lib_fileiocommon_function_directoryList(Array<Value> args) {
-	List<string> stringList1 = null;
+	int i = 0;
 	int int1 = 0;
 	List<Value> list1 = null;
-	int i = 0;
+	List<string> stringList1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

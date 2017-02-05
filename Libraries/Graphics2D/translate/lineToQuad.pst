@@ -1,7 +1,21 @@
 ﻿Value lib_graphics2d_function_lineToQuad(Array<Value> args) {
+	double float1 = 0.0;
+	double float2 = 0.0;
+	double float3 = 0.0;
+	int i = 0;
+	int int1 = 0;
+	int int2 = 0;
+	int int3 = 0;
+	int int4 = 0;
+	int int5 = 0;
+	Array<int> intArray1 = null;
+	int j = 0;
+	int len = 0;
+	Array<object> objArray1 = null;
+	ObjectInstance objInstance1 = null;
+	Value value = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
-	value = valueStack[valueStackSize];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;
 	intArray1 = ((Array<int>) objArray1[0]);
@@ -16,7 +30,7 @@
 	float3 = Core.FloatDivision(float1, float2);
 	float1 = Core.FloatDivision(int5, 2.0);
 	if (float1 < 0.5) {
-		float1 = 1;
+		float1 = 1.0;
 	}
 	float2 = Core.FloatDivision(float1, Core.ForceParens(Core.Pow(((float3 * float3) + 1), 0.5)));
 	float1 = -float2 * float3;

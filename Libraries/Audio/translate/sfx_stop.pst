@@ -1,11 +1,11 @@
 ﻿Value lib_audio_function_sfx_stop(Array<Value> args) {
-	ObjectInstance objInstance1 = null;
-	object object1 = null;
-	object object2 = null;
-	int int1 = 0;
-	int int2 = 0;
 	bool bool1 = false;
 	bool bool2 = false;
+	int int1 = 0;
+	int int2 = 0;
+	object object1 = null;
+	object object2 = null;
+	ObjectInstance objInstance1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

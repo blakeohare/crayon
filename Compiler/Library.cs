@@ -221,6 +221,10 @@ namespace Crayon
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (string key in this.filepathsByFunctionName.Keys)
             {
+                if (key == "addImageRenderEventForPastel")
+                {
+                    continue;
+                }
                 string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
                 output[key] = this.ReadFile(false, filename, false);
             }
