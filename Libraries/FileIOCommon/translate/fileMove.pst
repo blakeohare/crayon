@@ -1,10 +1,10 @@
 ﻿Value lib_fileiocommon_function_fileMove(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
-	Value output = VALUE_NULL;
 	int1 = Library._lib_fileiocommon_fileMove(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	output = buildInteger(int1);
 	return output;

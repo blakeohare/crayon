@@ -1,9 +1,15 @@
 ﻿Value lib_audio_function_sfx_play(Array<Value> args) {
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	double float1 = 0.0;
+	double float2 = 0.0;
+	object object1 = null;
+	int int1 = 0;
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
-	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
 	float1 = ((double) arg3.internalValue);

@@ -1,6 +1,8 @@
 ﻿Value lib_gamepad_function_poll_universe(Array<Value> args) {
+	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		Library._lib_gamepad_poll_universe();
 	}
+	return output;
 }
 

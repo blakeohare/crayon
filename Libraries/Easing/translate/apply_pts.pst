@@ -1,7 +1,7 @@
 ﻿Value lib_easing_function_apply_pts(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
-	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	list1 = ((List<Value>) arg2.internalValue);
 	len = list1.Size();

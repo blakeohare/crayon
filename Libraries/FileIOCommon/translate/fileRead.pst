@@ -1,9 +1,9 @@
 ﻿Value lib_fileiocommon_function_fileRead(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
-	Value output = VALUE_NULL;
 	bool1 = ((bool) arg3.internalValue);
 	list1 = ((List<Value>) arg4.internalValue);
 	int1 = Library._lib_fileiocommon_fileRead(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));

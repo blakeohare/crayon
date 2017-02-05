@@ -1,6 +1,6 @@
 ﻿Value lib_graphics2d_function_lineToQuad(Array<Value> args) {
-	Value arg1 = args[0];
 	Value output = VALUE_NULL;
+	Value arg1 = args[0];
 	value = valueStack[valueStackSize];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objArray1 = objInstance1.nativeData;

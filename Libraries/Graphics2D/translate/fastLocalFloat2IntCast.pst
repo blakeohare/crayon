@@ -1,4 +1,5 @@
 ﻿Value lib_graphics2d_function_fastLocalFloat2IntCast(Array<Value> args) {
+	Value output = VALUE_NULL;
 	int1 = stack.localsStackOffsetEnd;
 	for (i = localsStackOffset; i < int1; i += 1) {
 		value = localsStack[i];
@@ -25,5 +26,6 @@
 			}
 		}
 	}
+	return output;
 }
 

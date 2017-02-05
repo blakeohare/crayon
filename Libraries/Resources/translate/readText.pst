@@ -1,6 +1,6 @@
 ﻿Value lib_resources_function_readText(Array<Value> args) {
-	Value arg1 = args[0];
 	Value output = VALUE_NULL;
+	Value arg1 = args[0];
 	string1 = Core.ReadResourceTextFile(((string) arg1.internalValue));
 	output = new Value(Types.STRING, string1);
 	return output;

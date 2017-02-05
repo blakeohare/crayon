@@ -1,4 +1,7 @@
 ﻿Value lib_audio_function_music_stop(Array<Value> args) {
+	int int1 = 0;
+	Value output = VALUE_NULL;
 	int1 = 0;
+	return output;
 }
 

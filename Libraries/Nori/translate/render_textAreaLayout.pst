@@ -1,11 +1,11 @@
 ﻿Value lib_nori_function_render_textAreaLayout(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
 	Value arg6 = args[5];
-	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
 	objArray1 = objInstance1.nativeData;

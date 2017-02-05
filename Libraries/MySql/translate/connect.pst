@@ -1,10 +1,10 @@
 ﻿Value lib_mysql_function_connect(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
-	Value output = VALUE_NULL;
 	object1 = Library._lib_mysql_connect(stringOut, stringOut, stringOut, stringOut, stringOut);
 	string1 = stringOut[0];
 	if (string1 == null) {

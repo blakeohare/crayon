@@ -1,6 +1,8 @@
 ﻿Value lib_userdata_function_getProjectSandboxDirectory(Array<Value> args) {
-	Value arg1 = args[0];
+	string string1 = "";
+	string string2 = "";
 	Value output = VALUE_NULL;
+	Value arg1 = args[0];
 	if (@ext_boolean("IS_ANDROID") || @ext_boolean("IS_JAVASCRIPT")) {
 		string1 = ((string) arg1.internalValue);
 		string2 = Library._lib_userdata_getProjectSandboxDirectory(string1);

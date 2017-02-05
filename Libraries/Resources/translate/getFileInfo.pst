@@ -1,6 +1,6 @@
 ﻿Value lib_resources_function_getFileInfo(Array<Value> args) {
-	Value arg1 = args[0];
 	Value output = VALUE_NULL;
+	Value arg1 = args[0];
 	output = resource_manager_getResourceOfType(((string) arg1.internalValue), "TXT");
 	return output;
 }

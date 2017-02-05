@@ -1,4 +1,5 @@
 ﻿Value lib_imageresources_function_blit(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
@@ -7,7 +8,6 @@
 	Value arg6 = args[5];
 	Value arg7 = args[6];
 	Value arg8 = args[7];
-	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
 	if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {

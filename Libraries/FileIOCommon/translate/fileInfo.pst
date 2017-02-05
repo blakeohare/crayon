@@ -1,9 +1,9 @@
 ﻿Value lib_fileiocommon_function_fileInfo(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
-	Value output = VALUE_NULL;
 	int1 = ((int) arg3.internalValue);
 	Library._lib_fileiocommon_getFileInfo(lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1), lib_fileiocommon_getDiskObject(arg1));
 	list1 = ((List<Value>) arg4.internalValue);

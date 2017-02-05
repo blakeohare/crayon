@@ -1,8 +1,10 @@
 ﻿Value lib_gamepad_function_current_device_count(Array<Value> args) {
+	Value output = VALUE_NULL;
 	int1 = 0;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Library._lib_gamepad_is_supported()) {
 		int1 = Library._lib_gamepad_get_current_device_count();
 	}
 	output = buildInteger(int1);
+	return output;
 }
 

@@ -102,22 +102,19 @@ namespace Crayon.Translator.Pastel
                                 null);
                             argAssignmentPrefixes.Add(argAssign);
                         }
-                        Assignment outputAssignment = new Assignment(
-                            new Variable(MakeAToken("output"), "output", null)
-                            {
-                                Annotations = new Dictionary<string, Annotation>() { { "type", MakeATypeAnnotation("Value") } },
-                            },
-                            MakeAToken("="), "=",
-                            new Variable(MakeAToken("VALUE_NULL"), "VALUE_NULL", null),
-                            null);
-                        argAssignmentPrefixes.Add(outputAssignment);
                         argAssignmentPrefixes.AddRange(functionBody);
                         functionBody = argAssignmentPrefixes;
-                        functionBody.Add(new ReturnStatement(
-                            MakeAToken("return"),
-                            new Variable(MakeAToken("output"), "output", null),
-                            null));
                     }
+
+                    Assignment outputAssignment = new Assignment(
+                        new Variable(MakeAToken("output"), "output", null)
+                        {
+                            Annotations = new Dictionary<string, Annotation>() { { "type", MakeATypeAnnotation("Value") } },
+                        },
+                        MakeAToken("="), "=",
+                        new Variable(MakeAToken("VALUE_NULL"), "VALUE_NULL", null),
+                        null);
+                    functionBody.Insert(0, outputAssignment);
 
                     Dictionary<string, int> argCountLookup;
                     if (!argCountByFunctionNameByLibraryName.TryGetValue(libraryName, out argCountLookup))
@@ -152,6 +149,13 @@ namespace Crayon.Translator.Pastel
                             }
                         }
                     }
+
+                    this.InjectVariableDeclarations(functionBody, libraryName, functionName);
+
+                    functionBody.Add(new ReturnStatement(
+                        MakeAToken("return"),
+                        new Variable(MakeAToken("output"), "output", null),
+                        null));
 
                     FunctionDefinition newFunction = new FunctionDefinition(
                         MakeAToken("yep"),
@@ -201,6 +205,125 @@ namespace Crayon.Translator.Pastel
             }
 
             return output;
+        }
+
+        private string GetDeclarationsToInsert(string key)
+        {
+            switch (key)
+            {
+                case "Audio.music_load_from_resource": return "string1 objInstance1";
+                case "Audio.music_play": return "objInstance1 bool1 string1 float1 bool2";
+                case "Audio.music_set_volume": return "float1";
+                case "Audio.music_stop": return "int1";
+                case "Audio.sfx_get_state": return "objInstance1 object1 object2 int1";
+                case "Audio.sfx_play": return "objInstance1 objInstance2 float1 float2 object1 int1";
+                case "Audio.sfx_resume": return "objInstance1 object1 object2 float1 float2";
+                case "Audio.sfx_set_pan": return "objInstance1 object1 object2 float1";
+                case "Audio.sfx_set_volume": return "objInstance1 object1 object2 float1";
+                case "Audio.sfx_stop": return "objInstance1 object1 object2 int1 int2 bool1 bool2";
+
+                case "UserData.getProjectSandboxDirectory": return "string1 string2";
+
+                default: return null;
+            }
+        }
+
+        // Things I keep telling myself:
+        // - "This is temporary"
+        // - "This is all going into a branch"
+        private void InjectVariableDeclarations(List<Executable> someCodeToAppendTo, string libraryName, string functionName)
+        {
+            string key = libraryName + "." + functionName;
+            string varsToDeclare = GetDeclarationsToInsert(key);
+
+            if (varsToDeclare == null) return;
+
+            List<Executable> addTheseToTheTop = new List<Executable>();
+
+            foreach (string varToDeclare in varsToDeclare.Split(' '))
+            {
+                switch (varToDeclare)
+                {
+                    case "bool1":
+                    case "bool2":
+                    case "bool3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "bool"),
+                            MakeAToken("="), "=",
+                            new BooleanConstant(MakeAToken("false"), false, null),
+                            null));
+                        break;
+
+                    case "i":
+                    case "len":
+                    case "int1":
+                    case "int2":
+                    case "int3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "int"),
+                            MakeAToken("="), "=",
+                            new IntegerConstant(MakeAToken("0"), 0, null),
+                            null));
+                        break;
+
+                    case "float1":
+                    case "float2":
+                    case "float3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "double"),
+                            MakeAToken("="), "=",
+                            new FloatConstant(MakeAToken("0.0"), 0.0, null),
+                            null));
+                        break;
+
+                    case "string1":
+                    case "string2":
+                    case "string3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "string"),
+                            MakeAToken("="), "=",
+                            new StringConstant(MakeAToken("\"\""), "", null),
+                            null));
+                        break;
+
+                    case "object1":
+                    case "object2":
+                    case "object3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "object"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken(null), null),
+                            null));
+                        break;
+
+
+                    case "objInstance1":
+                    case "objInstance2":
+                    case "objInstance3":
+                        addTheseToTheTop.Add(new Assignment(
+                            MakeAVariableWithType(varToDeclare, "ObjectInstance"),
+                            MakeAToken("="), "=",
+                            new NullConstant(MakeAToken("null"), null),
+                            null));
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            someCodeToAppendTo.InsertRange(0, addTheseToTheTop);
+        }
+
+        private Variable MakeAVariableWithType(string name, string type)
+        {
+            return new Variable(MakeAToken(name), name, null)
+            {
+                Annotations = new Dictionary<string, Annotation>()
+                {
+                    { "type", MakeATypeAnnotation(type) },
+                },
+            };
         }
     }
 }

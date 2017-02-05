@@ -1,8 +1,10 @@
 ﻿Value lib_random_function_random_bool(Array<Value> args) {
+	Value output = VALUE_NULL;
 	if (Core.RandomFloat() < 0.5) {
 		output = VALUE_TRUE;
 	} else {
 		output = VALUE_FALSE;
 	}
+	return output;
 }
 

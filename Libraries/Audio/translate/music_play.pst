@@ -1,10 +1,15 @@
 ﻿Value lib_audio_function_music_play(Array<Value> args) {
+	ObjectInstance objInstance1 = null;
+	bool bool1 = false;
+	string string1 = "";
+	double float1 = 0.0;
+	bool bool2 = false;
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
-	Value output = VALUE_NULL;
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	bool1 = ((bool) arg2.internalValue);
 	string1 = ((string) arg3.internalValue);

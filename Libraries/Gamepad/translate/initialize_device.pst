@@ -1,8 +1,8 @@
 ﻿Value lib_gamepad_function_initialize_device(Array<Value> args) {
+	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
-	Value output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 		int1 = ((int) arg1.internalValue);
 		objInstance1 = ((ObjectInstance) arg2.internalValue);
