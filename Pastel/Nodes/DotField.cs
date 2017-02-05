@@ -156,6 +156,7 @@ namespace Pastel.Nodes
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
                 case "Tan": return NativeFunction.MATH_TAN;
                 case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
+                case "VmSuspend": return NativeFunction.VM_SUSPEND;
 
                 // TODO: get this information from the parameter rather than having separate Core function
                 case "SortedCopyOfStringArray": return NativeFunction.SORTED_COPY_OF_STRING_ARRAY;
