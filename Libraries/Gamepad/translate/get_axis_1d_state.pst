@@ -1,4 +1,6 @@
 ﻿Value lib_gamepad_function_get_axis_1d_state(Array<Value> args) {
+	int int1 = 0;
+	ObjectInstance objInstance1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

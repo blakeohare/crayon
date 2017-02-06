@@ -1,4 +1,7 @@
 ﻿Value lib_random_function_random_int(Array<Value> args) {
+	bool bool1 = false;
+	int int1 = 0;
+	int int2 = 0;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

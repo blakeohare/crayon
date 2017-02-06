@@ -1,0 +1,4 @@
+bool _lib_gamepad_is_supported();
+int _lib_gamepad_get_current_device_count();
+bool _lib_gamepad_platform_requires_refresh();
+double _lib_gamepad_get_axis_1d_state(object device, int index);

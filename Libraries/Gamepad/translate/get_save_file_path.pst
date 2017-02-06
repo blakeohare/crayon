@@ -1,4 +1,5 @@
 ﻿Value lib_gamepad_function_get_save_file_path(Array<Value> args) {
+	string string1 = "";
 	Value output = VALUE_NULL;
 	output = VALUE_NULL;
 	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {

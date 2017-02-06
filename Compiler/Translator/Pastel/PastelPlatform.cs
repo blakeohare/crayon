@@ -267,6 +267,13 @@ namespace Crayon.Translator.Pastel
                 case "Game.initialize": return "float1";
                 case "Game.initialize_screen": return "int1 int2 int3 int4";
 
+                case "Gamepad.current_device_count": return "int1";
+                case "Gamepad.get_axis_1d_state": return "objInstance1 int1";
+                case "Gamepad.get_axis_2d_state": return "objInstance1 int1 list1";
+                case "Gamepad.get_button_state": return "objInstance1 int1";
+                case "Gamepad.get_save_file_path": return "string1";
+                case "Gamepad.initialize_device": return "int1 objInstance1 list1 object1";
+
                 case "Graphics2D.addImageRenderEvent": return "objInstance1 objArray1 len intArray1 int1 intArray2 i objArrayArray1 objArrayArray2 value objInstance2 bool1 bool2 float1 bool1 int2 int3";
                 case "Graphics2D.flip": return "objInstance1 objInstance2 objArray1 objArray2 bool1 bool2 i object1";
                 case "Graphics2D.initializeTexture": return "objInstance1 objArray1 list1 value float1 float2";
@@ -281,6 +288,8 @@ namespace Crayon.Translator.Pastel
                 case "ImageResources.loadAsynchronous": return "objInstance1 objInstance2 string1 objArray1 objArray2";
                 case "ImageResources.loadSynchronous": return "objInstance1 string1 list1 objArray1";
                 case "ImageResources.nativeImageDataInit": return "objInstance1 objArray1 int1 int2";
+
+                case "Random.random_int": return "bool1 int1 int2";
 
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 
