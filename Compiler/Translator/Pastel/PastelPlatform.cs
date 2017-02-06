@@ -263,6 +263,10 @@ namespace Crayon.Translator.Pastel
                 case "FileIOCommon.fileWrite": return "string1 object1 int1 int2";
                 case "FileIOCommon.initializeDisk": return "objInstance1 objArray1 object1";
 
+                case "Game.event_queue_get": return "objInstance1 i";
+                case "Game.initialize": return "float1";
+                case "Game.initialize_screen": return "int1 int2 int3 int4";
+
                 case "Graphics2D.addImageRenderEvent": return "objInstance1 objArray1 len intArray1 int1 intArray2 i objArrayArray1 objArrayArray2 value objInstance2 bool1 bool2 float1 bool1 int2 int3";
                 case "Graphics2D.flip": return "objInstance1 objInstance2 objArray1 objArray2 bool1 bool2 i object1";
                 case "Graphics2D.initializeTexture": return "objInstance1 objArray1 list1 value float1 float2";

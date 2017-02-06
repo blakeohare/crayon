@@ -1,6 +1,0 @@
-﻿Value lib_game_function_event_queue_size(Array<Value> args) {
-	Value output = VALUE_NULL;
-	output = buildInteger(Native._lib_game_event_queue_size());
-	return output;
-}
-

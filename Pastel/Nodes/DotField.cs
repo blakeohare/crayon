@@ -157,6 +157,7 @@ namespace Pastel.Nodes
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
                 case "Tan": return NativeFunction.MATH_TAN;
                 case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
+                case "VmGetCurrentExecutionContextId": return NativeFunction.VM_GET_CURRENT_EXECUTION_CONTEXT_ID;
                 case "VmSuspend": return NativeFunction.VM_SUSPEND;
 
                 // TODO: get this information from the parameter rather than having separate Core function

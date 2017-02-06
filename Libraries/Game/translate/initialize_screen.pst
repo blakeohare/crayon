@@ -1,4 +1,8 @@
 ﻿Value lib_game_function_initialize_screen(Array<Value> args) {
+	int int1 = 0;
+	int int2 = 0;
+	int int3 = 0;
+	int int4 = 0;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
@@ -9,7 +13,7 @@
 	int3 = ((int) arg3.internalValue);
 	int4 = ((int) arg4.internalValue);
 	noop();
-	Native._lib_game_initialize_screen(int1, int2, int3, int4, ec.id);
+	Native._lib_game_initialize_screen(int1, int2, int3, int4, Core.VmGetCurrentExecutionContextId());
 	Core.VmSuspend();
 	return output;
 }
