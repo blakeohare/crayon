@@ -1,4 +1,8 @@
 ﻿Value lib_imageresources_function_blit(Array<Value> args) {
+	Array<object> objArray1 = null;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

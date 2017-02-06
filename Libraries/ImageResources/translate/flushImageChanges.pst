@@ -1,4 +1,7 @@
 ﻿Value lib_imageresources_function_flushImageChanges(Array<Value> args) {
+	Array<object> objArray1 = null;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {

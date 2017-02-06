@@ -275,6 +275,13 @@ namespace Crayon.Translator.Pastel
                 case "Graphics2D.renderQueueAction": return "len objInstance1 objArray1 intArray1 intList1 i list1 value";
                 case "Graphics2D.scale": return "int1 int2 objInstance1 object1 objArray1 objInstance2 objArray2 i";
 
+                case "ImageResources.blit": return "objInstance1 objInstance2 objArray1 object1";
+                case "ImageResources.checkLoaderIsDone": return "objInstance1 objInstance2 list1";
+                case "ImageResources.flushImageChanges": return "objInstance1 objArray1 object1";
+                case "ImageResources.loadAsynchronous": return "objInstance1 objInstance2 string1 objArray1 objArray2";
+                case "ImageResources.loadSynchronous": return "objInstance1 string1 list1 objArray1";
+                case "ImageResources.nativeImageDataInit": return "objInstance1 objArray1 int1 int2";
+
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 
                 default: return null;

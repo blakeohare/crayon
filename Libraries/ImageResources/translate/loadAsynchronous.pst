@@ -1,4 +1,9 @@
 ﻿Value lib_imageresources_function_loadAsynchronous(Array<Value> args) {
+	Array<object> objArray1 = null;
+	Array<object> objArray2 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	string string1 = "";
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];

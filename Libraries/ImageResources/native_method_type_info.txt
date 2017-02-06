@@ -1,0 +1,34 @@
+void _lib_imageresources_blit(
+	object targetBitmap,
+	object sourceBitmap,
+	int targetLeft,
+	int targetTop,
+	int sourceLeft,
+	int sourceTop,
+	int width,
+	int height,
+	object pixelEditSession); // not used if not needed by the platform
+
+// TODO: document this
+object _lib_imageresources_getPixelEditSession(object obj);
+
+void _lib_imageresources_checkLoaderIsDone(
+	Array<object> loaderObjectNativeData,
+	Array<object> nativeImageNativeData,
+	List<Value> singleItemListForOutput);
+
+string _lib_imageresources_getManifestString();
+
+void _lib_imageresources_loadAsync(
+	string filename,
+	Array<object> nativeImageNativeData,
+	Array<object> imageLoaderNativeData);
+
+void _lib_imageresources_loadSync(
+	string filename,
+	Array<object> nativeImageDataNativeData,
+	List<Value> statusOut);
+
+object _lib_imageresources_generateNativeBitmapOfSize(
+	int width,
+	int height);
