@@ -289,7 +289,9 @@ namespace Crayon.Translator.Pastel
                 case "ImageResources.loadSynchronous": return "objInstance1 string1 list1 objArray1";
                 case "ImageResources.nativeImageDataInit": return "objInstance1 objArray1 int1 int2";
 
-                case "Random.random_int": return "bool1 int1 int2";
+                case "Random.random_int": return "int1 int2";
+
+                case "Resources.readText": return "string1";
 
                 case "UserData.getProjectSandboxDirectory": return "string1 string2";
 

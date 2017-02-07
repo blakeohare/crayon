@@ -73,6 +73,8 @@ namespace Crayon
                     null,
                     compilationResult.LibrariesUsed, 
                     VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
+
+                throw new NotImplementedException();
             }
 
             throw new InvalidOperationException("Unrecognized platform. See usage.");

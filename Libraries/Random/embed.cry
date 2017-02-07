@@ -1,11 +1,21 @@
-﻿namespace Random {
+﻿import Math;
+
+namespace Random {
 	function randomFloat() {
 		return $$lib_random_random_float();
 	}
 
 	// When one argument is provided, it is the max exclusive upper bound and the min is 0. 
 	function randomInt(minIncl, maxExcl = null) {
-		return $$lib_random_random_int(minIncl, maxExcl);
+		return (maxExcl == null)
+			? ($$lib_random_random_int(0, minIncl)
+				?? Random._randomIntErrorHelper("First argument must be a positive integer."))
+			: ($$lib_random_random_int(minIncl, maxExcl)
+				?? Random._randomIntErrorHelper("randomInt requires two integers, where the latter is larger."));
+	}
+	
+	function _randomIntErrorHelper(msg) {
+		throw new Core.InvalidArgumentException(msg);
 	}
 
 	function randomBool() {

@@ -49,6 +49,15 @@ namespace Crayon
                 codeLoader,
                 relevantLibraries,
                 vm);
+
+            if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
+            {
+                
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
