@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
+using Pastel.Nodes;
+using Platform;
 
 namespace LangPython
 {
-    public class Platform : AbstractPlatform
+    public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "lang-python"; } }
         public override string InheritsFrom { get { return null; } }
@@ -28,6 +30,20 @@ namespace LangPython
                     { "INT_IS_FLOOR", false },
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
                 };
+        }
+
+        public override string TranslateType(PType type)
+        {
+            throw new InvalidOperationException("Python does not support types.");
+        }
+
+        public override Dictionary<string, FileOutput> ExportProject(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            Dictionary<ExportOptionKey, object> options)
+        {
+            throw new InvalidOperationException("This platform does not support direct export.");
         }
     }
 }

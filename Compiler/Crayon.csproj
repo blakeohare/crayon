@@ -82,6 +82,10 @@
       <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
       <Name>LangPython</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platform\Platform.csproj">
+      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
+      <Name>Platform</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Resources\Resources.csproj">
       <Project>{33d98096-1f92-4c28-ba01-95030cd4eaca}</Project>
       <Name>Resources</Name>

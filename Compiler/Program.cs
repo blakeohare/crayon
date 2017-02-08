@@ -64,7 +64,7 @@ namespace Crayon
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
 
-            Common.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
+            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
             if (platform2 != null)
             {
                 VmGenerator vmGenerator = new VmGenerator();
@@ -80,7 +80,7 @@ namespace Crayon
             throw new InvalidOperationException("Unrecognized platform. See usage.");
         }
 
-        private static Common.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
+        private static Platform.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
         {
             string platformId = buildContext.Platform.ToLowerInvariant();
             return platformProvider.GetPlatform(platformId);

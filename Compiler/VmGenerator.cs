@@ -33,7 +33,7 @@ namespace Crayon
         private VmGenerationMode mode;
 
         public void GenerateVmSourceCodeForPlatform(
-            Common.AbstractPlatform platform,
+            Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
             ICollection<Library> relevantLibraries,
             VmGenerationMode mode)
@@ -61,7 +61,7 @@ namespace Crayon
         }
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
-            Common.AbstractPlatform platform,
+            Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader)
         {
@@ -78,7 +78,7 @@ namespace Crayon
         }
 
         private Dictionary<string, Pastel.PastelCompiler> GenerateLibraryParseTree(
-            Common.AbstractPlatform platform,
+            Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader,
             ICollection<Library> relevantLibraries,

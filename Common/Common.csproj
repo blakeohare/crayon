@@ -37,10 +37,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportOptionKey.cs" />
     <Compile Include="FileOutput.cs" />
-    <Compile Include="AbstractPlatform.cs" />
     <Compile Include="IInlineImportCodeLoader.cs" />
-    <Compile Include="IPlatformProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemBitmap.cs" />
     <Compile Include="Util.cs" />

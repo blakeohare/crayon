@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}</ProjectGuid>
+    <ProjectGuid>{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GamePythonPygame</RootNamespace>
-    <AssemblyName>GamePythonPygame</AssemblyName>
+    <RootNamespace>Platform</RootNamespace>
+    <AssemblyName>Platform</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -36,21 +36,18 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlatformImpl.cs" />
+    <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="IPlatformProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Pastel\Pastel.csproj">
+    <ProjectReference Include="..\Pastel\Pastel.csproj">
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Platform\Platform.csproj">
-      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
-      <Name>Platform</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

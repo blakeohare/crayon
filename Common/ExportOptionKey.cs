@@ -5,8 +5,9 @@ using System.Text;
 
 namespace Common
 {
-    public interface IPlatformProvider
+    public enum ExportOptionKey
     {
-        AbstractPlatform GetPlatform(string name);
+        EMBED_BYTE_CODE,
+        PROJECT_ID,
     }
 }

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCSharp", "..\Platforms\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCSharpOpenTk", "..\Platforms\GameCSharpOpenTk\GameCSharpOpenTk.csproj", "{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platform", "..\Platform\Platform.csproj", "{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}.Release|x86.ActiveCfg = Release|Any CPU
 		{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}.Release|x86.Build.0 = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
