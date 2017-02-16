@@ -37,9 +37,52 @@ namespace Platform
             return new Dictionary<string, object>(this.flattenedCached);
         }
 
+        public void CopyResourceAsBinary(Dictionary<string, FileOutput> output, string outputPath, string resourcePath)
+        {
+            output[outputPath] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = this.LoadBinaryResource(resourcePath),
+            };
+        }
+
+        public byte[] LoadBinaryResource(string resourcePath)
+        {
+            byte[] bytes = Util.ReadAssemblyFileBytes(this.GetType().Assembly, resourcePath);
+            if (bytes == null)
+            {
+                AbstractPlatform parent = this.ParentPlatform;
+                if (parent == null)
+                {
+                    return null;
+                }
+                return parent.LoadBinaryResource(resourcePath);
+            }
+            return bytes;
+        }
+
+        public void CopyResourceAsText(Dictionary<string, FileOutput> output, string outputPath, string resourcePath, Dictionary<string, string> replacements)
+        {
+            output[outputPath] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.LoadTextResource(resourcePath, replacements),
+            };
+        }
+
         public string LoadTextResource(string resourcePath, Dictionary<string, string> replacements)
         {
-            string content = Util.ReadAssemblyFileText(this.GetType().Assembly, resourcePath);
+            string content = Util.ReadAssemblyFileText(this.GetType().Assembly, resourcePath, true);
+            if (content == null)
+            {
+                AbstractPlatform parent = this.ParentPlatform;
+                if (parent == null)
+                {
+                    return null;
+                }
+                return parent.LoadTextResource(resourcePath, replacements);
+            }
+
             if (content.Contains("%%%"))
             {
                 foreach (string key in replacements.Keys)

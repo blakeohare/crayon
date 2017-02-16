@@ -45,17 +45,36 @@ namespace GameCSharpOpenTk
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
-            output[projectId + ".sln"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = this.LoadTextResource("Resources/SolutionFile.txt", replacements),
-            };
+            // From LangCSharp
+            this.CopyResourceAsText(output, baseDir + "TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
 
-            output[baseDir + "Interpreter.csproj"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = this.LoadTextResource("Resources/ProjectFile.txt", replacements),
-            };
+            // Project files from CSharpOpenTK
+            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
+
+            // TODO: a lot of this needs to go into supplemental files for the related library.
+            // Code from CSharpOpenTK
+            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "GamepadTranslationHelper.cs", "Resources/GamepadTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "GameWindow.cs", "Resources/GameWindow.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "GlUtil.cs", "Resources/GlUtil.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OpenTkRenderer.cs", "Resources/OpenTkRenderer.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OpenTkTranslationHelper.cs", "Resources/OpenTkTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Program.cs", "Resources/Program.txt", replacements);
+
+            // Text from CSharpOpenTK
+            this.CopyResourceAsText(output, baseDir + "License.txt", "Resources/License.txt", replacements);
+
+            // DLL's from CSharpOpenTK
+            this.CopyResourceAsBinary(output, baseDir + "OpenTK.dll", "Resources/DllOpenTk.binary");
+            this.CopyResourceAsBinary(output, baseDir + "SDL.dll", "Resources/DllSdl.binary");
+            this.CopyResourceAsBinary(output, baseDir + "SDL_mixer.dll", "Resources/DllSdlMixer.binary");
+            this.CopyResourceAsBinary(output, baseDir + "SdlDotNet.dll", "Resources/DllSdlDotNet.binary");
+            this.CopyResourceAsBinary(output, baseDir + "Tao.Sdl.dll", "Resources/DllTaoSdl.binary");
+            this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
+            this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
+            this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
 
             foreach (StructDefinition structDefinition in structDefinitions)
             {
@@ -70,7 +89,8 @@ namespace GameCSharpOpenTk
                         "{",
                         this.IndentCodeWithTabs(this.GenerateCodeForStruct(structDefinition).Trim(), 1),
                         "}",
-                        "" }),
+                        ""
+                    }),
                 };
             }
 

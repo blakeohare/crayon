@@ -1,0 +1,161 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace %%%PROJECT_ID%%%
+{
+	internal static class TranslationHelper
+	{
+		private static readonly Random random = new Random();
+
+		public static ProgramData ProgramData { get; set; }
+
+		public static readonly bool IsWindows =
+			Environment.OSVersion.Platform == PlatformID.Win32NT ||
+			Environment.OSVersion.Platform == PlatformID.Win32S ||
+			Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+			Environment.OSVersion.Platform == PlatformID.WinCE;
+
+        public static void RunInterpreter(int executionContextId)
+        {
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreter(executionContextId));
+        }
+
+        public static void RunInterpreter(Value functionPointer, params Value[] args)
+        {
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreterWithFunctionPointer(functionPointer, args));
+        }
+
+        private static void CrashIfStatusIsBad(int status)
+        {
+            if (status == 3)
+            {
+                System.Environment.Exit(1);
+            }
+        }
+
+        private static string[] cmdLineArgs = null;
+        public static void SetCmdLineArgs(string[] args) { cmdLineArgs = args.ToArray(); }
+        public static string[] GetCmdLineArgs() { return cmdLineArgs; }
+
+		public static void ShuffleInPlace(List<Value> list)
+		{
+			if (list.Count < 2) return;
+
+			int length = list.Count;
+			int tIndex;
+			Value tValue;
+			for (int i = length - 1; i >= 0; --i)
+			{
+				tIndex = random.Next(length);
+				tValue = list[tIndex];
+				list[tIndex] = list[i];
+				list[i] = tValue;
+			}
+		}
+
+		public static double GetRandomNumber()
+		{
+			return random.NextDouble();
+		}
+
+		public static List<Value> ValueListConcat(List<Value> a, List<Value> b)
+		{
+			List<Value> output = new List<Value>(a.Count + b.Count);
+			output.AddRange(a);
+			output.AddRange(b);
+			return output;
+		}
+
+		public static List<Value> MultiplyList(List<Value> items, int times)
+		{
+			List<Value> output = new List<Value>(items.Count * times);
+			while (times-- > 0)
+			{
+				output.AddRange(items);
+			}
+			return output;
+		}
+
+		public static List<T> NewListOfSize<T>(int size)
+		{
+			List<T> output = new List<T>(size);
+			while (size-- > 0)
+			{
+				output.Add(default(T));
+			}
+			return output;
+		}
+
+		private static readonly string[] SPLIT_SEP = new string[1];
+
+		public static string[] StringSplit(string value, string sep)
+		{
+			if (sep.Length == 1)
+			{
+				return value.Split(sep[0]);
+			}
+
+			if (sep.Length == 0)
+			{
+				return value.ToCharArray().Select<char, string>(c => "" + c).ToArray();
+			}
+
+			SPLIT_SEP[0] = sep;
+			return value.Split(SPLIT_SEP, StringSplitOptions.None);
+		}
+
+		public static string StringReverse(string value)
+		{
+			if (value.Length < 2) return value;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			for (int i = value.Length - 1; i >= 0; --i)
+			{
+				sb.Append(value[i]);
+			}
+			return sb.ToString();
+		}
+
+        public static bool CheckStringSlice(string haystack, int index, string value)
+        {
+            if (index + value.Length > haystack.Length) return false;
+            for (int i = value.Length - 1; i >= 0; --i)
+            {
+                if (haystack[index + i] != value[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+		public static void Assertion(string message)
+		{
+			throw new Exception(message);
+		}
+		
+		public static void ParseFloatOrReturnNull(double[] outParam, string rawValue)
+		{
+			double output;
+			if (double.TryParse(rawValue, out output))
+			{
+				outParam[0] = 1;
+				outParam[1] = output;
+			}
+			else
+			{
+				outParam[0] = -1;
+			}
+		}
+
+		public static bool AlwaysTrue()
+		{
+			return true;
+		}
+
+		public static bool AlwaysFalse()
+		{
+			return false;
+		}
+	}
+}

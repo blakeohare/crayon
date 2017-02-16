@@ -124,9 +124,18 @@ namespace Common
 
         public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
+            return ReadAssemblyFileText(assembly, path, false);
+        }
+
+        public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path, bool failSilently)
+        {
+            byte[] bytes = Util.ReadAssemblyFileBytes(assembly, path, failSilently);
+            if (bytes == null)
+            {
+                return null;
+            }
             // Ick. Drops the encoding. TODO: fix this
-            return TrimBomIfPresent(
-                string.Join("", Util.ReadAssemblyFileBytes(assembly, path).Select<byte, char>(b => (char)b)));
+            return TrimBomIfPresent(string.Join("", bytes.Select<byte, char>(b => (char)b)));
         }
 
         private static string TrimBomIfPresent(string text)
@@ -153,6 +162,11 @@ namespace Common
 
         public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path)
         {
+            return ReadAssemblyFileBytes(assembly, path, false);
+        }
+
+        public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path, bool failSilently)
+        {
             string canonicalizedPath = path.Replace('/', '.');
 #if WINDOWS
             // a rather odd difference...
@@ -162,6 +176,11 @@ namespace Common
             System.IO.Stream stream = assembly.GetManifestResourceStream(fullPath);
             if (stream == null)
             {
+                if (failSilently)
+                {
+                    return null;
+                }
+
                 throw new System.Exception(path + " not marked as an embedded resource.");
             }
             List<byte> output = new List<byte>();
