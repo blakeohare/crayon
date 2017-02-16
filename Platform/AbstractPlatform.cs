@@ -15,6 +15,8 @@ namespace Platform
         public abstract Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
             object[] structDefinitions);
+        public abstract string NL { get; }
+        protected int TranslationIndentionCount { get; set; }
 
         private Dictionary<string, object> flattenedCached = null;
         public Dictionary<string, object> GetFlattenedConstantFlags()
@@ -33,6 +35,19 @@ namespace Platform
             }
 
             return new Dictionary<string, object>(this.flattenedCached);
+        }
+
+        public string LoadTextResource(string resourcePath, Dictionary<string, string> replacements)
+        {
+            string content = Util.ReadAssemblyFileText(this.GetType().Assembly, resourcePath);
+            if (content.Contains("%%%"))
+            {
+                foreach (string key in replacements.Keys)
+                {
+                    content = content.Replace("%%%" + key + "%%%", replacements[key]);
+                }
+            }
+            return content;
         }
 
         private bool parentPlatformSet = false;
@@ -63,6 +78,42 @@ namespace Platform
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,
             IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
-            Dictionary<ExportOptionKey, object> options);
+            Options options);
+
+        public string IndentCodeWithTabs(string code, int tabCount)
+        {
+            return IndentCodeImpl(code, Util.MultiplyString("\t", tabCount));
+        }
+
+        public string IndentCodeWithSpaces(string code, int spaceCount)
+        {
+            return IndentCodeImpl(code, Util.MultiplyString(" ", spaceCount));
+        }
+
+        private static string IndentCodeImpl(string code, string tabSequence)
+        {
+            string newline = code.Contains("\r\n") ? "\r\n" : "\n";
+            string[] lines = code.Split('\n');
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                lines[i] = tabSequence + lines[i].TrimEnd();
+            }
+            return string.Join(newline, lines);
+        }
+
+        public abstract string GenerateCodeForStruct(Pastel.Nodes.StructDefinition structDef);
+        public abstract string GenerateCodeForFunction(Pastel.Nodes.FunctionDefinition funcDef);
+
+        public abstract void TranslateExecutables(System.Text.StringBuilder output, Pastel.Nodes.Executable[] executables);
+
+        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options);
+
+        protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
+        {
+            return new Dictionary<string, string>()
+            {
+                { "PROJECT_ID", options.GetString(ExportOptionKey.PROJECT_ID) },
+            };
+        }
     }
 }

@@ -85,6 +85,16 @@ namespace Crayon
             return ListDirImpl(dir, false, true);
         }
 
+        public static void EnsureFolderExists(string path)
+        {
+            path = path.Trim();
+            if (!DirectoryExists(path))
+            {
+                EnsureParentFolderExists(path);
+                CreateDirectory(path);
+            }
+        }
+
         public static void EnsureParentFolderExists(string path)
         {
             path = path.Trim();
@@ -216,10 +226,10 @@ namespace Crayon
         public static string GetCanonicalizeUniversalPath(string path)
         {
             List<string> output = new List<string>();
-			if (path.StartsWith("/"))
-			{
-				output.Add("");
-			}
+            if (path.StartsWith("/"))
+            {
+                output.Add("");
+            }
             foreach (string part in path.Replace('\\', '/').Split('/'))
             {
                 switch (part)

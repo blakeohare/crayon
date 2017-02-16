@@ -11,6 +11,7 @@ namespace LangCSharp
     {
         public override string Name { get { return "lang-csharp"; } }
         public override string InheritsFrom { get { return null; } }
+        public override string NL { get { return "\r\n"; } }
 
         public override Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
@@ -67,30 +68,94 @@ namespace LangCSharp
         }
 
         public override Dictionary<string, FileOutput> ExportProject(
-            IList<VariableDeclaration> globals, 
-            IList<StructDefinition> structDefinitions, 
-            IList<FunctionDefinition> functionDefinitions, 
-            Dictionary<ExportOptionKey, object> options)
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public string GenerateCodeForStruct(string structName, List<Pastel.Nodes.PType> types, List<string> fieldNames)
+        public override string GenerateCodeForStruct(StructDefinition structDef)
         {
+            Pastel.Nodes.PType[] types = structDef.ArgTypes;
+            Pastel.Token[] fieldNames = structDef.ArgNames;
+
             List<string> lines = new List<string>();
 
-            lines.Add("using System;");
-            lines.Add("");
-            lines.Add("public class " + structName);
+            lines.Add("public class " + structDef.NameToken.Value);
             lines.Add("{");
-            for (int i = 0; i < types.Count; ++i)
+            for (int i = 0; i < types.Length; ++i)
             {
-                lines.Add("\tpublic " + this.TranslateType(types[i]) + " " + fieldNames[i] + ";");
+                lines.Add("\tpublic " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
             lines.Add("}");
             lines.Add("");
 
-            return string.Join("\n", lines);
+            return string.Join("\r\n", lines);
+        }
+
+        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        {
+            StringBuilder output = new StringBuilder();
+            PType returnType = funcDef.ReturnType;
+            string funcName = funcDef.NameToken.Value;
+            PType[] argTypes = funcDef.ArgTypes;
+            Pastel.Token[] argNames = funcDef.ArgNames;
+
+            output.Append("public static ");
+            output.Append(this.TranslateType(returnType));
+            output.Append("v_");
+            output.Append(funcName);
+            output.Append("(");
+            for (int i = 0; i < argTypes.Length; ++i)
+            {
+                if (i > 0) output.Append(",");
+                output.Append(this.TranslateType(argTypes[i]));
+                output.Append(" ");
+                output.Append(argNames[i].Value);
+            }
+            output.Append(")");
+            output.Append(this.NL);
+            output.Append("{");
+            output.Append(this.NL);
+            this.TranslationIndentionCount = 1;
+            this.TranslateExecutables(output, funcDef.Code);
+            this.TranslationIndentionCount = 0;
+            output.Append("}");
+
+            return string.Join("", output);
+        }
+
+        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
+        {
+            this.TranslateExecutablesImpl(output, executables, "\t");
+        }
+
+        private void TranslateExecutablesImpl(StringBuilder output, Executable[] executables, string indention)
+        {
+            for (int i = 0; i < executables.Length; ++i)
+            {
+                Executable executable = executables[i];
+                this.TranslateExecutable(output, executable);
+            }
+        }
+
+        private void TranslateExecutable(StringBuilder output, Executable executable)
+        {
+            switch (executable.GetType().Name)
+            {
+                case "WAT":
+                    break;
+                default: throw new NotImplementedException();
+            }
+        }
+
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        {
+            Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
+            replacements["PROJECT_GUID"] = "project guid goes here.";
+            return replacements;
         }
     }
 }

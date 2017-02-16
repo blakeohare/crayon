@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Common;
 using Pastel.Nodes;
 using Platform;
@@ -10,6 +11,7 @@ namespace LangPython
     {
         public override string Name { get { return "lang-python"; } }
         public override string InheritsFrom { get { return null; } }
+        public override string NL { get { return "\n"; } }
 
         public override Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
@@ -41,9 +43,29 @@ namespace LangPython
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
-            Dictionary<ExportOptionKey, object> options)
+            Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
+        }
+
+        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GenerateCodeForStruct(StructDefinition structDef)
+        {
+            throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
+        }
+
+        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        {
+            return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }
     }
 }

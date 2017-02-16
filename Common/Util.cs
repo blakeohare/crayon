@@ -121,7 +121,7 @@ namespace Common
 
             return contents;
         }
-        
+
         public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
             // Ick. Drops the encoding. TODO: fix this
@@ -137,7 +137,7 @@ namespace Common
         }
 
         private static readonly byte[] BUFFER = new byte[1000];
-        
+
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
             // TODO: scaling
@@ -213,6 +213,23 @@ namespace Common
             // Parsing text data should use local info, but this is for parsing code.
             // As this is not supposed to be localized yet, only allow US decimals.
             return double.TryParse(value, DOUBLE_FLAG, EN_US, out output);
+        }
+
+        public static string MultiplyString(string str, int count)
+        {
+            switch (count)
+            {
+                case 0: return "";
+                case 1: return str;
+                case 2: return str + str;
+                default:
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    while (count-- > 0)
+                    {
+                        sb.Append(str);
+                    }
+                    return sb.ToString();
+            }
         }
     }
 }

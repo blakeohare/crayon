@@ -63,21 +63,32 @@ namespace Crayon
             }
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            Dictionary<string, FileOutput> result;
 
             Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
             if (platform2 != null)
             {
                 VmGenerator vmGenerator = new VmGenerator();
-                vmGenerator.GenerateVmSourceCodeForPlatform(
-                    platform2, 
-                    null,
-                    compilationResult.LibrariesUsed, 
+                result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                    platform2,
+                    compilationResult,
+                    compilationResult.LibrariesUsed,
                     VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
-
-                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new InvalidOperationException("Unrecognized platform. See usage.");
             }
 
-            throw new InvalidOperationException("Unrecognized platform. See usage.");
+            string outputDirectory = buildContext.OutputFolder;
+            if (!FileUtil.IsAbsolutePath(outputDirectory))
+            {
+                outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
+            }
+            outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
+            FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
+
+            exporter.ExportFiles(result);
         }
 
         private static Platform.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)

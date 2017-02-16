@@ -32,12 +32,13 @@ namespace Crayon
 
         private VmGenerationMode mode;
 
-        public void GenerateVmSourceCodeForPlatform(
+        public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
             ICollection<Library> relevantLibraries,
             VmGenerationMode mode)
         {
+            Options options = new Options();
             Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
             InlineImportCodeLoader codeLoader = new InlineImportCodeLoader();
             this.mode = mode;
@@ -52,7 +53,16 @@ namespace Crayon
 
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
             {
-                
+                options
+                    .SetOption(ExportOptionKey.PROJECT_ID, nullableCompilationBundle.ProjectID)
+                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableCompilationBundle.GuidSeed)
+                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true);
+
+                return platform.ExportProject(
+                    vm.Globals.Values.OrderBy(v => v.VariableName.Value).ToArray(),
+                    vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
+                    vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                    options);
             }
             else
             {
@@ -90,9 +100,9 @@ namespace Crayon
             {
                 string libName = library.Name;
                 Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                    true, 
-                    sharedScope, 
-                    constantFlags, 
+                    true,
+                    sharedScope,
+                    constantFlags,
                     codeLoader,
                     library.GetReturnTypesForNativeMethods(),
                     library.GetArgumentTypesForNativeMethods());

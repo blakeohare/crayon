@@ -37,9 +37,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpHelper.cs" />
     <Compile Include="ExportOptionKey.cs" />
     <Compile Include="FileOutput.cs" />
     <Compile Include="IInlineImportCodeLoader.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemBitmap.cs" />
     <Compile Include="Util.cs" />

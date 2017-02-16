@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Common
+﻿namespace Common
 {
     public enum ExportOptionKey
     {
         EMBED_BYTE_CODE,
+        GUID_SEED,
         PROJECT_ID,
     }
 }

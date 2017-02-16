@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Crayon
 {
     internal class CompilationBundle
     {
         public ByteBuffer ByteCode { get; set; }
+        public string ProjectID { get; set; }
+        public string GuidSeed { get; set; }
         public ICollection<Library> LibrariesUsed { get; set; }
 
         public static CompilationBundle Compile(BuildContext buildContext)
@@ -17,11 +16,13 @@ namespace Crayon
 
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
-            
+
             return new CompilationBundle()
             {
                 ByteCode = buffer,
                 LibrariesUsed = parser.LibrariesUsed,
+                ProjectID = buildContext.ProjectID,
+                GuidSeed = buildContext.GuidSeed,
             };
         }
     }
