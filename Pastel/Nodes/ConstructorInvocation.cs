@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class ConstructorInvocation : Expression
+    public class ConstructorInvocation : Expression
     {
         public PType Type { get; set; }
         public Expression[] Args { get; set; }

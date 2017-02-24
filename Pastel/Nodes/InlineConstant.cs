@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class InlineConstant : Expression
+    public class InlineConstant : Expression
     {
         public object Value { get; set; }
         public PType Type { get; set; }

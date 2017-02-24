@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class WhileLoop : Executable
+    public class WhileLoop : Executable
     {
         public Expression Condition { get; set; }
         public Executable[] Code { get; set; }

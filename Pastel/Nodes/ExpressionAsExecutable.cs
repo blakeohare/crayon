@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class ExpressionAsExecutable : Executable
+    public class ExpressionAsExecutable : Executable
     {
         public Expression Expression { get; set; }
 
@@ -12,7 +12,7 @@ namespace Pastel.Nodes
             this.Expression = expression;
         }
 
-        public Executable[] ImmediateResolveMaybe(PastelParser parser)
+        internal Executable[] ImmediateResolveMaybe(PastelParser parser)
         {
             if (this.Expression is FunctionInvocation)
             {

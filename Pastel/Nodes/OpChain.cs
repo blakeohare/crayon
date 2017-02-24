@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class OpChain : Expression
+    public class OpChain : Expression
     {
         public Expression[] Expressions { get; set; }
         public Token[] Ops { get; set; }

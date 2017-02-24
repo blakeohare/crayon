@@ -25,10 +25,28 @@ namespace Platform
             sb.Append(';');
         }
 
+        public override void TranslateBooleanConstant(StringBuilder sb, bool value)
+        {
+            sb.Append(value ? "true" : "false");
+        }
+
         public override void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp)
         {
             sb.Append('!');
             this.TranslateExpression(sb, unaryOp.Expression);
+        }
+
+        public override void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression)
+        {
+            sb.Append(this.CurrentTab);
+            this.TranslateExpression(sb, expression);
+            sb.Append(';');
+            sb.Append(this.NewLine);
+        }
+
+        public override void TranslateFloatConstant(StringBuilder sb, double value)
+        {
+            sb.Append(Common.Util.FloatToString(value));
         }
 
         public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
@@ -109,10 +127,29 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
+        public override void TranslateIntegerConstant(StringBuilder sb, int value)
+        {
+            sb.Append(value.ToString());
+        }
+
         public override void TranslateNegative(StringBuilder sb, UnaryOp unaryOp)
         {
             sb.Append('-');
             this.TranslateExpression(sb, unaryOp.Expression);
+        }
+
+        public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
+        {
+            for (int i = 0; i < opChain.Expressions.Length; ++i)
+            {
+                if (i > 0)
+                {
+                    sb.Append(' ');
+                    sb.Append(opChain.Ops[i - 1]);
+                    sb.Append(' ');
+                }
+                this.TranslateExpression(sb, opChain.Expressions[i]);
+            }
         }
 
         public override void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement)
@@ -131,10 +168,41 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
+        public override void TranslateStringConstant(StringBuilder sb, string value)
+        {
+            sb.Append(Common.Util.ConvertStringValueToCode(value));
+        }
+
         public override void TranslateVariable(StringBuilder sb, Variable variable)
         {
             sb.Append("v_");
             sb.Append(variable.Name);
+        }
+
+        public override void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop)
+        {
+            sb.Append(this.CurrentTab);
+            sb.Append("while (");
+            this.TranslateExpression(sb, whileLoop.Condition);
+            sb.Append("(");
+            if (this.isEgyptian)
+            {
+                sb.Append(" {");
+                sb.Append(this.NewLine);
+            }
+            else
+            {
+                sb.Append(this.NewLine);
+                sb.Append(this.CurrentTab);
+                sb.Append("{");
+                sb.Append(this.NewLine);
+            }
+            this.TabDepth++;
+            this.TranslateExecutables(sb, whileLoop.Code);
+            this.TabDepth--;
+            sb.Append(this.CurrentTab);
+            sb.Append("}");
+            sb.Append(this.NewLine);
         }
     }
 }

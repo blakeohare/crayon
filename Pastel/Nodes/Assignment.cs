@@ -48,9 +48,7 @@ namespace Pastel.Nodes
 
         internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
         {
-            this.Target = this.Target.ResolveWithTypeContext(compiler);
-            this.Value = this.Value.ResolveWithTypeContext(compiler);
-
+            
             if (this.Target is BracketIndex)
             {
                 if (this.OpToken.Value != "=")
@@ -82,8 +80,11 @@ namespace Pastel.Nodes
                 return new ExpressionAsExecutable(new NativeFunctionInvocation(
                     this.FirstToken,
                     nf,
-                    args));
+                    args)).ResolveWithTypeContext(compiler);
             }
+
+            this.Target = this.Target.ResolveWithTypeContext(compiler);
+            this.Value = this.Value.ResolveWithTypeContext(compiler);
 
             return this;
         }
