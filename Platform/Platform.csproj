@@ -37,6 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="AbstractTranslator.cs" />
+    <Compile Include="CurlyBraceTranslator.cs" />
     <Compile Include="IPlatformProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

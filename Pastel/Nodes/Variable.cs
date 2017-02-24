@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class Variable : Expression
+    public class Variable : Expression
     {
         public Variable(Token token) : base(token)
         { }

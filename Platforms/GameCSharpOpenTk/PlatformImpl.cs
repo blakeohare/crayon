@@ -13,6 +13,11 @@ namespace GameCSharpOpenTk
         public override string InheritsFrom { get { return "lang-csharp"; } }
         public override string NL { get { return "\r\n"; } }
 
+        public PlatformImpl()
+        {
+            this.Translator = new CSharpOpenTkTranslator(this);
+        }
+
         public override Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
             object[] structDefinitions)
@@ -94,22 +99,44 @@ namespace GameCSharpOpenTk
                 };
             }
 
+            List<string> coreVmFunctions = new List<string>();
+            foreach (FunctionDefinition funcDef in functionDefinitions)
+            {
+                coreVmFunctions.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+            }
+
+            string functionCode = string.Join("\r\n\r\n", coreVmFunctions);
+
+            output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\r\n", new string[] {
+                    "using System;",
+                    "using System.Collections.Generic;",
+                    "using Interpreter.Structs;",
+                    "",
+                    "namespace Interpreter.Vm",
+                    "{",
+                    "\tpublic class CrayonWrapper",
+                    "\t{",
+                    this.IndentCodeWithTabs(functionCode, 2),
+                    "\t}",
+                    "}",
+                    ""
+                }),
+            };
+
             return output;
         }
 
-        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(funcDef);
+            return this.ParentPlatform.GenerateCodeForFunction(this.Translator, funcDef);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
             return this.ParentPlatform.GenerateCodeForStruct(structDef);
-        }
-
-        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
-        {
-            this.ParentPlatform.TranslateExecutables(output, executables);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class BracketIndex : Expression
+    public class BracketIndex : Expression
     {
         public Expression Root { get; set; }
         public Token BracketToken { get; set; }
@@ -31,21 +31,26 @@ namespace Pastel.Nodes
             PType rootType = this.Root.ResolvedType;
             PType indexType = this.Index.ResolvedType;
 
+            NativeFunctionInvocation newNode = null;
+            Expression[] args = new Expression[] { this.Root, this.Index };
             bool badIndex = false;
             if (rootType.RootValue == "List" || rootType.RootValue == "Array")
             {
                 badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = rootType.Generics[0];
+                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.ARRAY_GET, new Expression[] { this.Root, this.Index });
             }
             else if (rootType.RootValue == "Dictionary")
             {
                 badIndex = !indexType.IsIdentical(rootType.Generics[0]);
                 this.ResolvedType = rootType.Generics[1];
+                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.DICTIONARY_GET, new Expression[] { this.Root, this.Index });
             }
             else if (rootType.RootValue == "string")
             {
                 badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
+                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.STRING_CHAR_AT, new Expression[] { this.Root, this.Index });
             }
             else
             {
@@ -57,7 +62,9 @@ namespace Pastel.Nodes
                 throw new ParserException(this.BracketToken, "Cannot index into a " + rootType + " with a " + indexType + ".");
             }
 
-            return this;
+            newNode.ResolveType(varScope, compiler);
+
+            return newNode;
         }
     }
 }

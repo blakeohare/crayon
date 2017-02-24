@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class Assignment : Executable
+    public class Assignment : Executable
     {
         public Expression Target { get; set; }
         public Token OpToken { get; set; }
@@ -30,6 +30,7 @@ namespace Pastel.Nodes
         {
             this.Value = this.Value.ResolveType(varScope, compiler);
             this.Target = this.Target.ResolveType(varScope, compiler);
+
             if (!PType.CheckAssignment(this.Target.ResolvedType, this.Value.ResolvedType))
             {
 

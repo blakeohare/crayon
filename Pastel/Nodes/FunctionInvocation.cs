@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class FunctionInvocation : Expression
+    public class FunctionInvocation : Expression
     {
         public Expression Root { get; set; }
         public Token OpenParenToken { get; set; }
@@ -20,7 +20,7 @@ namespace Pastel.Nodes
             this.Args = args.ToArray();
         }
 
-        public Expression MaybeImmediatelyResolve(PastelParser parser)
+        internal Expression MaybeImmediatelyResolve(PastelParser parser)
         {
             if (this.Root is CompileTimeFunctionReference)
             {

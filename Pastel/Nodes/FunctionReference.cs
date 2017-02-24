@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class FunctionReference : Expression
+    public class FunctionReference : Expression
     {
         public FunctionDefinition Function { get; set; }
         public bool IsLibraryScopedFunction { get; set; }

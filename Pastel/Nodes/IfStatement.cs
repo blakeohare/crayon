@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class IfStatement : Executable
+    public class IfStatement : Executable
     {
         public Expression Condition { get; set; }
         public Executable[] IfCode { get; set; }

@@ -35,7 +35,6 @@ namespace LangCSharp
                 };
         }
 
-
         public override string TranslateType(Pastel.Nodes.PType type)
         {
             switch (type.RootValue)
@@ -95,7 +94,7 @@ namespace LangCSharp
             return string.Join("\r\n", lines);
         }
 
-        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             StringBuilder output = new StringBuilder();
             PType returnType = funcDef.ReturnType;
@@ -120,35 +119,11 @@ namespace LangCSharp
             output.Append("{");
             output.Append(this.NL);
             this.TranslationIndentionCount = 1;
-            this.TranslateExecutables(output, funcDef.Code);
+            translator.TranslateExecutables(output, funcDef.Code);
             this.TranslationIndentionCount = 0;
             output.Append("}");
 
             return string.Join("", output);
-        }
-
-        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
-        {
-            this.TranslateExecutablesImpl(output, executables, "\t");
-        }
-
-        private void TranslateExecutablesImpl(StringBuilder output, Executable[] executables, string indention)
-        {
-            for (int i = 0; i < executables.Length; ++i)
-            {
-                Executable executable = executables[i];
-                this.TranslateExecutable(output, executable);
-            }
-        }
-
-        private void TranslateExecutable(StringBuilder output, Executable executable)
-        {
-            switch (executable.GetType().Name)
-            {
-                case "WAT":
-                    break;
-                default: throw new NotImplementedException();
-            }
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options)

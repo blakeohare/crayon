@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpOpenTkTranslator.cs" />
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -51,6 +52,10 @@
     <ProjectReference Include="..\..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LangCSharp\LangCSharp.csproj">
+      <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
+      <Name>LangCSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

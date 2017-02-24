@@ -11,6 +11,8 @@ namespace Platform
 
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
+        public AbstractTranslator Translator { get; protected set; }
+
         public abstract IDictionary<string, object> GetConstantFlags();
         public abstract Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
@@ -145,10 +147,8 @@ namespace Platform
         }
 
         public abstract string GenerateCodeForStruct(Pastel.Nodes.StructDefinition structDef);
-        public abstract string GenerateCodeForFunction(Pastel.Nodes.FunctionDefinition funcDef);
-
-        public abstract void TranslateExecutables(System.Text.StringBuilder output, Pastel.Nodes.Executable[] executables);
-
+        public abstract string GenerateCodeForFunction(AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
+        
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)

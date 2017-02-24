@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class UnaryOp : Expression
+    public class UnaryOp : Expression
     {
         public Expression Expression { get; set; }
         public Token OpToken { get; set; }

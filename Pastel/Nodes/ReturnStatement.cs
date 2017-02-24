@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class ReturnStatement : Executable
+    public class ReturnStatement : Executable
     {
         public Expression Expression { get; set; }
 

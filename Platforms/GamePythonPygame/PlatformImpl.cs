@@ -34,19 +34,14 @@ namespace GamePythonPygame
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(funcDef);
+            return this.ParentPlatform.GenerateCodeForFunction(this.Translator, funcDef);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
             return this.ParentPlatform.GenerateCodeForStruct(structDef);
-        }
-
-        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
-        {
-            this.ParentPlatform.TranslateExecutables(output, executables);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options)

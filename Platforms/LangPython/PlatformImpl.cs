@@ -48,7 +48,7 @@ namespace LangPython
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public override string GenerateCodeForFunction(FunctionDefinition funcDef)
+        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             throw new NotImplementedException();
         }
@@ -56,11 +56,6 @@ namespace LangPython
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
-        }
-
-        public override void TranslateExecutables(StringBuilder output, Executable[] executables)
-        {
-            throw new NotImplementedException();
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
