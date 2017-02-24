@@ -17,5 +17,10 @@ namespace Pastel.Nodes
         {
             // nothing to do
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            return this;
+        }
     }
 }

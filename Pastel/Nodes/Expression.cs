@@ -31,5 +31,6 @@ namespace Pastel.Nodes
         }
 
         internal abstract Expression ResolveType(VariableScope varScope, PastelCompiler compiler);
+        internal abstract Expression ResolveWithTypeContext(PastelCompiler compiler);
     }
 }

@@ -26,5 +26,14 @@ namespace Pastel.Nodes
         {
             throw new NotImplementedException();
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveWithTypeContext(compiler);
+            }
+            return this;
+        }
     }
 }

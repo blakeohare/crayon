@@ -137,5 +137,14 @@ namespace Pastel.Nodes
             }
             return this;
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i] = this.Expressions[i].ResolveWithTypeContext(compiler);
+            }
+            return this;
+        }
     }
 }

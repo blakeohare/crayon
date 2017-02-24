@@ -39,5 +39,14 @@ namespace Pastel.Nodes
                 }
             }
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            if (this.Expression != null)
+            {
+                this.Expression = this.Expression.ResolveWithTypeContext(compiler);
+            }
+            return this;
+        }
     }
 }

@@ -58,5 +58,14 @@ namespace Pastel.Nodes
 
             varScope.DeclareVariables(this.VariableName, this.Type);
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            if (this.Value != null)
+            {
+                this.Value = this.Value.ResolveWithTypeContext(compiler);
+            }
+            return this;
+        }
     }
 }

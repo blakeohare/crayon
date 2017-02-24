@@ -22,5 +22,11 @@ namespace Pastel.Nodes
         {
             throw new NotImplementedException();
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Expression = this.Expression.ResolveWithTypeContext(compiler);
+            return new NativeFunctionInvocation(this.FirstToken, NativeFunction.FORCE_PARENS, new Expression[] { this.Expression });
+        }
     }
 }

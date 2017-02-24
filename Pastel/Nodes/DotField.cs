@@ -216,7 +216,7 @@ namespace Pastel.Nodes
                                 case "char": return NativeFunction.LIST_JOIN_CHARS;
                                 default: throw new ParserException(this.FieldName, "Unresolved List<" + memberType + "> method: " + field);
                             }
-                            
+
                         case "Pop": return NativeFunction.LIST_POP;
                         case "RemoveAt": return NativeFunction.LIST_REMOVE_AT;
                         case "Reverse": return NativeFunction.LIST_REVERSE;
@@ -239,6 +239,12 @@ namespace Pastel.Nodes
                 default:
                     throw new ParserException(this.FieldName, "Unresolved field.");
             }
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Root = this.Root.ResolveWithTypeContext(compiler);
+            return this;
         }
     }
 }

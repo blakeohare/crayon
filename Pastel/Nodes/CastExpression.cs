@@ -27,5 +27,11 @@ namespace Pastel.Nodes
             this.ResolvedType = this.Type;
             return this;
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Expression = this.Expression.ResolveWithTypeContext(compiler);
+            return this;
+        }
     }
 }

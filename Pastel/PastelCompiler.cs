@@ -190,6 +190,7 @@ namespace Pastel
             this.ResolveConstants();
             this.ResolveNamesAndCullUnusedCode();
             this.ResolveTypes();
+            this.ResolveWithTypeContext();
         }
 
         private void ResolveConstants()
@@ -266,6 +267,16 @@ namespace Pastel
             {
                 FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
                 functionDefinition.ResolveTypes(this);
+            }
+        }
+
+        private void ResolveWithTypeContext()
+        {
+            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
+            foreach (string functionName in functionNames)
+            {
+                FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
+                functionDefinition.ResolveWithTypeContext(this);
             }
         }
     }

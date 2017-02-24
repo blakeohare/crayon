@@ -88,5 +88,23 @@ namespace Pastel.Nodes
                 Executable.ResolveTypes(chunk.Code, varScope, compiler);
             }
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            for (int i = 0; i < this.Chunks.Length; ++i)
+            {
+                SwitchChunk chunk = this.Chunks[i];
+                for (int j = 0; j < chunk.Cases.Length; ++j)
+                {
+                    if (chunk.Cases[j] != null)
+                    {
+                        chunk.Cases[j] = chunk.Cases[j].ResolveWithTypeContext(compiler);
+                    }
+                }
+                Executable.ResolveWithTypeContext(compiler, chunk.Code);
+            }
+            return this;
+        }
     }
 }

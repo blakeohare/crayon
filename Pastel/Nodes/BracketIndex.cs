@@ -31,26 +31,21 @@ namespace Pastel.Nodes
             PType rootType = this.Root.ResolvedType;
             PType indexType = this.Index.ResolvedType;
 
-            NativeFunctionInvocation newNode = null;
-            Expression[] args = new Expression[] { this.Root, this.Index };
             bool badIndex = false;
             if (rootType.RootValue == "List" || rootType.RootValue == "Array")
             {
                 badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = rootType.Generics[0];
-                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.ARRAY_GET, new Expression[] { this.Root, this.Index });
             }
             else if (rootType.RootValue == "Dictionary")
             {
                 badIndex = !indexType.IsIdentical(rootType.Generics[0]);
                 this.ResolvedType = rootType.Generics[1];
-                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.DICTIONARY_GET, new Expression[] { this.Root, this.Index });
             }
             else if (rootType.RootValue == "string")
             {
                 badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
-                newNode = new NativeFunctionInvocation(this.FirstToken, NativeFunction.STRING_CHAR_AT, new Expression[] { this.Root, this.Index });
             }
             else
             {
@@ -62,9 +57,14 @@ namespace Pastel.Nodes
                 throw new ParserException(this.BracketToken, "Cannot index into a " + rootType + " with a " + indexType + ".");
             }
 
-            newNode.ResolveType(varScope, compiler);
+            return this;
+        }
 
-            return newNode;
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Root = this.Root.ResolveWithTypeContext(compiler);
+            this.Index = this.Index.ResolveWithTypeContext(compiler);
+            return this;
         }
     }
 }

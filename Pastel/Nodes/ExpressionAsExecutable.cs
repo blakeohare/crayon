@@ -44,5 +44,11 @@ namespace Pastel.Nodes
         {
             this.Expression = this.Expression.ResolveType(varScope, compiler);
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Expression = this.Expression.ResolveWithTypeContext(compiler);
+            return this;
+        }
     }
 }

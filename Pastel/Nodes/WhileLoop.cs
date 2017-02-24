@@ -35,5 +35,12 @@ namespace Pastel.Nodes
 
             Executable.ResolveTypes(this.Code, varScope, compiler);
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            Executable.ResolveWithTypeContext(compiler, this.Code);
+            return this;
+        }
     }
 }

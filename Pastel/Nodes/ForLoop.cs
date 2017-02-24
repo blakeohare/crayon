@@ -47,5 +47,14 @@ namespace Pastel.Nodes
             VariableScope innerScope = new VariableScope(varScope);
             Executable.ResolveTypes(this.Code, innerScope, compiler);
         }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            Executable.ResolveWithTypeContext(compiler, this.InitCode);
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            Executable.ResolveWithTypeContext(compiler, this.StepCode);
+            Executable.ResolveWithTypeContext(compiler, this.Code);
+            return this;
+        }
     }
 }

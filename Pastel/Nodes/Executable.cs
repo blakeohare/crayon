@@ -55,6 +55,16 @@ namespace Pastel.Nodes
             }
         }
 
+        internal static void ResolveWithTypeContext(PastelCompiler compiler, Executable[] executables)
+        {
+            for (int i = 0; i < executables.Length; ++i)
+            {
+                executables[i] = executables[i].ResolveWithTypeContext(compiler);
+            }
+        }
+
         internal abstract void ResolveTypes(VariableScope varScope, PastelCompiler compiler);
+
+        internal abstract Executable ResolveWithTypeContext(PastelCompiler compiler);
     }
 }

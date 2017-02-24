@@ -49,5 +49,10 @@ namespace Pastel.Nodes
                 this.Code[i].ResolveTypes(varScope, compiler);
             }
         }
+
+        public void ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            Executable.ResolveWithTypeContext(compiler, this.Code);
+        }
     }
 }

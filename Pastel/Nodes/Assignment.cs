@@ -33,7 +33,6 @@ namespace Pastel.Nodes
 
             if (!PType.CheckAssignment(this.Target.ResolvedType, this.Value.ResolvedType))
             {
-
                 if (this.OpToken.Value != "=" &&
                     this.Target.ResolvedType.IsIdentical(PType.DOUBLE) &&
                     this.Value.ResolvedType.IsIdentical(PType.INT))
@@ -45,6 +44,48 @@ namespace Pastel.Nodes
                     throw new ParserException(this.OpToken, "Cannot assign a " + this.Value.ResolvedType + " to a " + this.Target.ResolvedType);
                 }
             }
+        }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Target = this.Target.ResolveWithTypeContext(compiler);
+            this.Value = this.Value.ResolveWithTypeContext(compiler);
+
+            if (this.Target is BracketIndex)
+            {
+                if (this.OpToken.Value != "=")
+                {
+                    // Java will need to be special as it will require things to be broken down into a get-then-set.
+                    throw new ParserException(this.OpToken, "Incremental assignment on a key/index is not currently supported (although it really ought to be).");
+                }
+
+                BracketIndex bi = (BracketIndex)this.Target;
+                string rootType = bi.Root.ResolvedType.RootValue;
+                Expression[] args = new Expression[] { bi.Root, bi.Index, this.Value };
+                NativeFunction nf;
+                if (rootType == "Array")
+                {
+                    nf = NativeFunction.ARRAY_SET;
+                }
+                else if (rootType == "List")
+                {
+                    nf = NativeFunction.LIST_SET;
+                }
+                else if (rootType == "Dictionary")
+                {
+                    nf = NativeFunction.DICTIONARY_SET;
+                }
+                else
+                {
+                    throw new ParserException(bi.BracketToken, "Can't use brackets here.");
+                }
+                return new ExpressionAsExecutable(new NativeFunctionInvocation(
+                    this.FirstToken,
+                    nf,
+                    args));
+            }
+
+            return this;
         }
     }
 }
