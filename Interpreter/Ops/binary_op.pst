@@ -38,7 +38,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("float % float");
 			if (((double) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
 			}
 			float3 = ((double) left) % ((double) right);
 			if (float3 < 0) {
@@ -49,7 +49,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("float % int");
 			if (((int) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
 			}
 			float1 = ((double) left) % ((int) right);
 			if (float1 < 0) {
@@ -60,7 +60,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("int % float");
 			if (((double) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
 			}
 			float1 = ((int) left) % ((double) right);
 			if (float1 < 0) {
@@ -71,7 +71,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("int % int");
 			if (((int) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
 			}
 			int1 = ((int) left) % ((int) right);
 			if (int1 < 0) {
@@ -137,7 +137,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("int / int");
 			if (((int) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
 			}
 			int1 = Core.IntegerDivision(((int) left), ((int) right));
 			if (int1 < 0) {
@@ -193,21 +193,21 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("int / float");
 			if (((double) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
 			}
 			value = buildFloat(Core.FloatDivision(((int) left), ((double) right)));
 			break;
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("float / int");
 			if (((int) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
 			}
 			value = buildFloat(Core.FloatDivision(((double) left), ((int) right)));
 			break;
 		case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
 			Core.EmitComment("float / float");
 			if (((double) right) == 0) {
-				return Core.GenerateException(CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
 			}
 			value = buildFloat(Core.FloatDivision(((double) left), ((double) right)));
 			break;
@@ -227,7 +227,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 			Core.EmitComment("int << int");
 			int1 = ((int) right);
 			if (int1 < 0) {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
 			}
 			value = buildInteger(((int) left) << int1);
 			break;
@@ -235,7 +235,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 			Core.EmitComment("int >> int");
 			int1 = ((int) right);
 			if (int1 < 0) {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
 			}
 			value = buildInteger(((int) left) >> int1);
 			break;
@@ -379,7 +379,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 			Core.EmitComment("list * int");
 			int1 = ((int) right);
 			if (int1 < 0) {
-				return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
 			}
 			value = new Value(Types.LIST, Core.MultiplyList(((List<Value>) left), int1));
 			break;
@@ -387,13 +387,13 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 			Core.EmitComment("int * list");
 			int1 = ((int) left);
 			if (int1 < 0) {
-				return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
 			}
 			value = new Value(Types.LIST, Core.MultiplyList(((List<Value>) right), int1));
 			break;
 		default:
 			Core.EmitComment("unrecognized op");
-			return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, Core.StringConcatAll("The '", getBinaryOpFromId(row[0]), "' operator is not supported for these types: ", getTypeFromId(leftValue.type), " and ", getTypeFromId(rightValue.type)));
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, Core.StringConcatAll("The '", getBinaryOpFromId(row[0]), "' operator is not supported for these types: ", getTypeFromId(leftValue.type), " and ", getTypeFromId(rightValue.type)));
 	}
 }
 @import("ValueStackCapacityCheck.cry");

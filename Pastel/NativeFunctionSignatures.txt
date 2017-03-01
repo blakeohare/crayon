@@ -20,7 +20,6 @@ Array<double> FLOAT_BUFFER_16()
 double FLOAT_DIVISION(number, number)
 string FLOAT_TO_STRING(double)
 object FORCE_PARENS(object) // optimized out
-InterpreterResult GENERATE_EXCEPTION(int, string)
 ProgramData GET_PROGRAM_DATA()
 string GET_RESOURCE_MANIFEST()
 int INT(double)

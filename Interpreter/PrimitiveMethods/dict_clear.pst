@@ -1,5 +1,5 @@
 ﻿if (argCount > 0) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
 }
 if (dictImpl.size > 0) {
 	dictImpl.keyIntLookup = new Dictionary<int, Value>();

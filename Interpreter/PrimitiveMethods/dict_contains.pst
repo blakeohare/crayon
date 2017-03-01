@@ -1,5 +1,5 @@
 ﻿if (argCount != 1) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
 }
 value = funcArgs[0];
 output = VALUE_FALSE;

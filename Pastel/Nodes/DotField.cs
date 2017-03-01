@@ -124,7 +124,6 @@ namespace Pastel.Nodes
                 case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
                 case "FloatToString": return NativeFunction.FLOAT_TO_STRING;
                 case "ForceParens": return NativeFunction.FORCE_PARENS;
-                case "GenerateException": return NativeFunction.GENERATE_EXCEPTION;
                 case "GetProgramData": return NativeFunction.GET_PROGRAM_DATA;
                 case "GetResourceManifest": return NativeFunction.GET_RESOURCE_MANIFEST;
                 case "Int": return NativeFunction.INT;

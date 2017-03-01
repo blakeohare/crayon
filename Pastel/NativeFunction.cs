@@ -32,7 +32,6 @@ namespace Pastel
         FLOAT_DIVISION,
         FLOAT_TO_STRING,
         FORCE_PARENS,
-        GENERATE_EXCEPTION,
         GET_PROGRAM_DATA,
         GET_RESOURCE_MANIFEST,
         INT,

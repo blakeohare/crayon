@@ -48,7 +48,7 @@ if (value.type == Types.STRING) {
 		list1 = ((List<Value>) value.internalValue);
 		int4 = list1.Size();
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
 	}
 }
 if (int5 >= 2) {
@@ -60,17 +60,17 @@ if (int5 >= 2) {
 	if (int5 == 3) {
 		Core.StringAppend(string1, "slice indexes must be integers. Found ");
 		if ((arg1 != null) && (arg1.type != Types.INTEGER)) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg1.type), " for begin index."));
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg1.type), " for begin index."));
 		}
 		if ((arg2 != null) && (arg2.type != Types.INTEGER)) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg2.type), " for end index."));
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg2.type), " for end index."));
 		}
 		if ((arg3 != null) && (arg3.type != Types.INTEGER)) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg3.type), " for step amount."));
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, getTypeFromId(arg3.type), " for step amount."));
 		}
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid slice arguments.");
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid slice arguments.");
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, " slice step cannot be 0."));
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll(string1, " slice step cannot be 0."));
 	}
 }
 int5 = canonicalizeListSliceArgs(Core.IntBuffer16, arg1, arg2, int1, int2, int3, int4, bool1);
@@ -137,7 +137,7 @@ if (int5 == 1) {
 					Core.StringAppend(string1, " slice begin index must occur after the end index when the step is negative.");
 				}
 			}
-			return Core.GenerateException(CoreExceptionTypes.INDEX_OUT_OF_RANGE, string1);
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, string1);
 		}
 	}
 }

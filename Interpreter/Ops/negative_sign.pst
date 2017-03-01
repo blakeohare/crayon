@@ -6,6 +6,6 @@ if (type == Types.INTEGER) {
 	if (type == Types.FLOAT) {
 		valueStack[(valueStackSize - 1)] = buildFloat(-((double) value.internalValue));
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."));
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."));
 	}
 }

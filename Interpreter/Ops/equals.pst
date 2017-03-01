@@ -8,7 +8,7 @@ if (int1 == 0) {
 	if (int1 == 1) {
 		bool1 = true;
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
 	}
 }
 @import("ValueStackCapacityCheck.cry");

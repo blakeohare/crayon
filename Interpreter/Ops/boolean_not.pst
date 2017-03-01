@@ -1,6 +1,6 @@
 ﻿value = valueStack[(valueStackSize - 1)];
 if (value.type != Types.BOOLEAN) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Boolean expected.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Boolean expected.");
 }
 if (((bool) value.internalValue)) {
 	valueStack[(valueStackSize - 1)] = VALUE_FALSE;

@@ -9,5 +9,5 @@ if (value.type == Types.INTEGER) {
 		pc += row[1];
 	}
 } else {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects an integer.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects an integer.");
 }

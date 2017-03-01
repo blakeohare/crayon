@@ -1,9 +1,9 @@
 ﻿if (argCount != 1) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string contains method", 1, argCount));
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string contains method", 1, argCount));
 }
 value2 = funcArgs[0];
 if (value2.type != Types.STRING) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "string contains method requires another string as input.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "string contains method requires another string as input.");
 }
 if (string1.Contains(((string) value2.internalValue))) {
 	output = VALUE_TRUE;

@@ -14,7 +14,7 @@ if ((value == null) || ec.activeExceptionHandled) {
 					intArray1 = esfData[pc];
 					pc = intArray1[1];
 				} else {
-					return Core.GenerateException(CoreExceptionTypes.FATAL, "break exists without a loop");
+					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "break exists without a loop");
 				}
 			}
 			break;
@@ -28,7 +28,7 @@ if ((value == null) || ec.activeExceptionHandled) {
 					intArray1 = esfData[pc];
 					pc = intArray1[1];
 				} else {
-					return Core.GenerateException(CoreExceptionTypes.FATAL, "continue exists without a loop");
+					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "continue exists without a loop");
 				}
 			}
 			break;

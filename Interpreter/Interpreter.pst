@@ -425,7 +425,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 				break;
 			default:
 				Core.EmitComment("THIS SHOULD NEVER HAPPEN");
-				return Core.GenerateException(CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
 		}
 		if (@ext_boolean("HAS_INCREMENT")) {
 			++pc;

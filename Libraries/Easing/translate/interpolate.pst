@@ -17,7 +17,7 @@
 		if (arg4.type == Types.FLOAT) {
 			float1 = ((double) arg4.internalValue);
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
 		}
 	}
 	if (arg5.type == Types.INTEGER) {
@@ -26,7 +26,7 @@
 		if (arg5.type == Types.FLOAT) {
 			float2 = ((double) arg5.internalValue);
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
 		}
 	}
 	bool1 = false;
@@ -80,7 +80,7 @@
 		if (arg2.type == Types.FLOAT) {
 			float2 = ((double) arg2.internalValue);
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
 		}
 	}
 	if (arg3.type == Types.INTEGER) {
@@ -89,7 +89,7 @@
 		if (arg3.type == Types.FLOAT) {
 			float3 = ((double) arg3.internalValue);
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
 		}
 	}
 	if (bool1) {
