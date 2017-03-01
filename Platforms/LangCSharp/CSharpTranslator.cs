@@ -42,19 +42,37 @@ namespace LangCSharp
             this.TranslateExpression(sb, expression);
         }
 
+        public override void TranslateCharConstant(StringBuilder sb, char value)
+        {
+            sb.Append('\'');
+            switch (value)
+            {
+                case '\n':
+                case '\r':
+                case '\t':
+                case '\0':
+                case '\\':
+                case '\'':
+                    sb.Append('\\');
+                    break;
+
+                default: break;
+            }
+            sb.Append(value);
+            sb.Append('\'');
+        }
+
         public override void TranslateCharToString(StringBuilder sb, Expression charValue)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, charValue);
+            sb.Append(".ToString()");
         }
 
         public override void TranslateChr(StringBuilder sb, Expression charCode)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void TranslateCommandLineArgs(StringBuilder sb)
-        {
-            throw new NotImplementedException();
+            sb.Append("((char) ");
+            this.TranslateExpression(sb, charCode);
+            sb.Append(")");
         }
 
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
@@ -66,7 +84,7 @@ namespace LangCSharp
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("(System.DateTime.Now.Ticks / 10000000.0)");
         }
 
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
@@ -183,6 +201,20 @@ namespace LangCSharp
             sb.Append(')');
         }
 
+        public override void TranslateIntToString(StringBuilder sb, Expression integer)
+        {
+            sb.Append("(");
+            this.TranslateExpression(sb, integer);
+            sb.Append(").ToString()");
+        }
+
+        public override void TranslateIsValidInteger(StringBuilder sb, Expression stringValue)
+        {
+            sb.Append("TranslationHelper.IsValidInteger(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
+        }
+
         public override void TranslateListAdd(StringBuilder sb, Expression list, Expression item)
         {
             this.TranslateExpression(sb, list);
@@ -228,7 +260,9 @@ namespace LangCSharp
 
         public override void TranslateListJoinChars(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("new String(");
+            this.TranslateExpression(sb, list);
+            sb.Append(".ToArray())");
         }
 
         public override void TranslateListJoinStrings(StringBuilder sb, Expression list, Expression sep)
@@ -296,6 +330,43 @@ namespace LangCSharp
             sb.Append(".ToArray()");
         }
 
+        public override void TranslateMathArcCos(StringBuilder sb, Expression ratio)
+        {
+            sb.Append("Math.Acos(");
+            this.TranslateExpression(sb, ratio);
+            sb.Append(')');
+        }
+
+        public override void TranslateMathArcSin(StringBuilder sb, Expression ratio)
+        {
+            sb.Append("Math.Asin(");
+            this.TranslateExpression(sb, ratio);
+            sb.Append(')');
+        }
+
+        public override void TranslateMathArcTan(StringBuilder sb, Expression yComponent, Expression xComponent)
+        {
+            sb.Append("Math.Atan2(");
+            this.TranslateExpression(sb, yComponent);
+            sb.Append(", ");
+            this.TranslateExpression(sb, xComponent);
+            sb.Append(')');
+        }
+
+        public override void TranslateMathCos(StringBuilder sb, Expression thetaRadians)
+        {
+            sb.Append("Math.Cos(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
+        }
+
+        public override void TranslateMathLog(StringBuilder sb, Expression value)
+        {
+            sb.Append("Math.Log(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
+        }
+
         public override void TranslateMathPow(StringBuilder sb, Expression expBase, Expression exponent)
         {
             sb.Append("Math.Pow(");
@@ -303,6 +374,20 @@ namespace LangCSharp
             sb.Append(", ");
             this.TranslateExpression(sb, exponent);
             sb.Append(")");
+        }
+
+        public override void TranslateMathSin(StringBuilder sb, Expression thetaRadians)
+        {
+            sb.Append("Math.Sin(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
+        }
+
+        public override void TranslateMathTan(StringBuilder sb, Expression thetaRadians)
+        {
+            sb.Append("Math.Tan(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
         }
 
         public override void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n)
@@ -319,10 +404,26 @@ namespace LangCSharp
             sb.Append("null");
         }
 
+        public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
+        {
+            sb.Append("TranslationHelper.ParseFloat(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(", ");
+            this.TranslateExpression(sb, floatOutList);
+            sb.Append(')');
+        }
+
         public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
         {
             sb.Append("double.Parse(");
             this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
+        }
+
+        public override void TranslateParseInt(StringBuilder sb, Expression safeStringValue)
+        {
+            sb.Append("int.Parse(");
+            this.TranslateExpression(sb, safeStringValue);
             sb.Append(')');
         }
 
@@ -331,9 +432,29 @@ namespace LangCSharp
             sb.Append("TranslationHelper.Random.NextDouble()");
         }
 
+        public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
+        {
+            sb.Append("TranslationHelper.ProgramData = ");
+            this.TranslateExpression(sb, programData);
+        }
+
+        public override void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray)
+        {
+            this.TranslateExpression(sb, intArray);
+            sb.Append(".OrderBy<int, int>(i => i).ToArray()");
+        }
+
+        public override void TranslateSortedCopyOfStringArray(StringBuilder sb, Expression stringArray)
+        {
+            this.TranslateExpression(sb, stringArray);
+            sb.Append(".OrderBy<string, string>(s => s).ToArray()");
+        }
+
         public override void TranslateStringAppend(StringBuilder sb, Expression str1, Expression str2)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, str1);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, str2);
         }
 
         public override void TranslateStringBuffer16(StringBuilder sb)
@@ -343,12 +464,19 @@ namespace LangCSharp
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, str);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateStringCharCodeAt(StringBuilder sb, Expression str, Expression index)
         {
-            throw new NotImplementedException();
+            sb.Append("((int) ");
+            this.TranslateExpression(sb, str);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append("])");
         }
 
         public override void TranslateStringConcatAll(StringBuilder sb, Expression[] strings)
@@ -387,7 +515,9 @@ namespace LangCSharp
 
         public override void TranslateStringFromCharCode(StringBuilder sb, Expression charCode)
         {
-            throw new NotImplementedException();
+            sb.Append("((char) ");
+            this.TranslateExpression(sb, charCode);
+            sb.Append(").ToString()");
         }
 
         public override void TranslateStringIndexOf(StringBuilder sb, Expression haystack, Expression needle)
@@ -493,6 +623,16 @@ namespace LangCSharp
                 this.TranslateExpression(sb, varDecl.Value);
             }
             sb.Append(';');
+        }
+
+        public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.TODO(\"VM_GET_CURRENT_EXECUTION_CONTEXT_ID\")");
+        }
+
+        public override void TranslateVmSuspend(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.TODO(\"VM_SUSPEND\")");
         }
     }
 }

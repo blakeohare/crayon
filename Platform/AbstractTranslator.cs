@@ -109,6 +109,7 @@ namespace Platform
                     switch (ic.ResolvedType.RootValue)
                     {
                         case "bool": this.TranslateBooleanConstant(sb, (bool)ic.Value); break;
+                        case "char": this.TranslateCharConstant(sb, ((string)ic.Value)[0]); break;
                         case "double": this.TranslateFloatConstant(sb, (double)ic.Value); break;
                         case "int": this.TranslateIntegerConstant(sb, (int)ic.Value); break;
                         case "null": this.TranslateNullConstant(sb); break;
@@ -154,10 +155,13 @@ namespace Platform
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FORCE_PARENS: this.TranslateForceParens(sb, args[0]); break;
                 case Pastel.NativeFunction.GET_PROGRAM_DATA: this.TranslateGetProgramData(sb); break;
+                case Pastel.NativeFunction.GET_RESOURCE_MANIFEST: this.TranslateGetResourceManifest(sb); break;
                 case Pastel.NativeFunction.INT: this.TranslateFloatToInt(sb, args[0]); break;
                 case Pastel.NativeFunction.INT_BUFFER_16: this.TranslateIntBuffer16(sb); break;
+                case Pastel.NativeFunction.INT_TO_STRING: this.TranslateIntToString(sb, args[0]); break;
                 case Pastel.NativeFunction.INTEGER_DIVISION: this.TranslateIntegerDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.INVOKE_DYNAMIC_LIBRARY_FUNCTION: this.TranslateInvokeDynamicLibraryFunction(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.IS_VALID_INTEGER: this.TranslateIsValidInteger(sb, args[0]); break;
                 case Pastel.NativeFunction.LIST_ADD: this.TranslateListAdd(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_ADD_ALL: this.TranslateListAddAll(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_CLEAR: this.TranslateListClear(sb, args[0]); break;
@@ -173,10 +177,25 @@ namespace Platform
                 case Pastel.NativeFunction.LIST_SHUFFLE: this.TranslateListShuffle(sb, args[0]); break;
                 case Pastel.NativeFunction.LIST_SIZE: this.TranslateListSize(sb, args[0]); break;
                 case Pastel.NativeFunction.LIST_TO_ARRAY: this.TranslateListToArray(sb, args[0]); break;
+                case Pastel.NativeFunction.MATH_ARCCOS: this.TranslateMathArcCos(sb, args[0]); break;
+                case Pastel.NativeFunction.MATH_ARCSIN: this.TranslateMathArcSin(sb, args[0]); break;
+                case Pastel.NativeFunction.MATH_ARCTAN: this.TranslateMathArcTan(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.MATH_COS: this.TranslateMathCos(sb, args[0]); break;
+                case Pastel.NativeFunction.MATH_LOG: this.TranslateMathLog(sb, args[0]); break;
                 case Pastel.NativeFunction.MATH_POW: this.TranslateMathPow(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.MATH_SIN: this.TranslateMathSin(sb, args[0]); break;
+                case Pastel.NativeFunction.MATH_TAN: this.TranslateMathTan(sb, args[0]); break;
                 case Pastel.NativeFunction.MULTIPLY_LIST: this.TranslateMultiplyList(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.PARSE_FLOAT: this.TranslateParseFloat(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.PARSE_FLOAT_REDUNDANT: this.TranslateParseFloatREDUNDANT(sb, args[0]); break;
+                case Pastel.NativeFunction.PARSE_INT: this.TranslateParseInt(sb, args[0]); break;
+                case Pastel.NativeFunction.PRINT_STDERR: this.TranslatePrintStdErr(sb, args[0]); break;
+                case Pastel.NativeFunction.PRINT_STDOUT: this.TranslatePrintStdOut(sb, args[0]); break;
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
+                case Pastel.NativeFunction.READ_BYTE_CODE_FILE: this.TranslateReadByteCodeFile(sb); break;
+                case Pastel.NativeFunction.SET_PROGRAM_DATA: this.TranslateSetProgramData(sb, args[0]); break;
+                case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
+                case Pastel.NativeFunction.SORTED_COPY_OF_STRING_ARRAY: this.TranslateSortedCopyOfStringArray(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_APPEND: this.TranslateStringAppend(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_BUFFER_16: this.TranslateStringBuffer16(sb); break;
                 case Pastel.NativeFunction.STRING_CHAR_AT: this.TranslateStringCharAt(sb, args[0], args[1]); break;
@@ -199,6 +218,10 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_TRIM_END: this.TranslateStringTrimEnd(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_TRIM_START: this.TranslateStringTrimStart(sb, args[0]); break;
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
+                case Pastel.NativeFunction.VM_GET_CURRENT_EXECUTION_CONTEXT_ID: this.TranslateVmGetCurrentExecutionContextId(sb); break;
+                case Pastel.NativeFunction.VM_SUSPEND: this.TranslateVmSuspend(sb); break;
+                
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
         }
@@ -211,6 +234,7 @@ namespace Platform
         public abstract void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateBreak(StringBuilder sb);
         public abstract void TranslateCast(StringBuilder sb, PType type, Expression expression);
+        public abstract void TranslateCharConstant(StringBuilder sb, char value);
         public abstract void TranslateCharToString(StringBuilder sb, Expression charValue);
         public abstract void TranslateChr(StringBuilder sb, Expression charCode);
         public abstract void TranslateCommandLineArgs(StringBuilder sb);
@@ -236,11 +260,14 @@ namespace Platform
         public abstract void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation);
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
         public abstract void TranslateGetProgramData(StringBuilder sb);
+        public abstract void TranslateGetResourceManifest(StringBuilder sb);
         public abstract void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement);
         public abstract void TranslateIntBuffer16(StringBuilder sb);
         public abstract void TranslateIntegerConstant(StringBuilder sb, int value);
         public abstract void TranslateIntegerDivision(StringBuilder sb, Expression integerNumerator, Expression integerDenominator);
+        public abstract void TranslateIntToString(StringBuilder sb, Expression integer);
         public abstract void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray);
+        public abstract void TranslateIsValidInteger(StringBuilder sb, Expression stringValue);
         public abstract void TranslateListAdd(StringBuilder sb, Expression list, Expression item);
         public abstract void TranslateListAddAll(StringBuilder sb, Expression list, Expression items);
         public abstract void TranslateListClear(StringBuilder sb, Expression list);
@@ -256,14 +283,29 @@ namespace Platform
         public abstract void TranslateListShuffle(StringBuilder sb, Expression list);
         public abstract void TranslateListSize(StringBuilder sb, Expression list);
         public abstract void TranslateListToArray(StringBuilder sb, Expression list);
+        public abstract void TranslateMathArcCos(StringBuilder sb, Expression ratio);
+        public abstract void TranslateMathArcSin(StringBuilder sb, Expression ratio);
+        public abstract void TranslateMathArcTan(StringBuilder sb, Expression yComponent, Expression xComponent);
+        public abstract void TranslateMathCos(StringBuilder sb, Expression thetaRadians);
+        public abstract void TranslateMathLog(StringBuilder sb, Expression value);
         public abstract void TranslateMathPow(StringBuilder sb, Expression expBase, Expression exponent);
+        public abstract void TranslateMathSin(StringBuilder sb, Expression thetaRadians);
+        public abstract void TranslateMathTan(StringBuilder sb, Expression thetaRadians);
         public abstract void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n);
         public abstract void TranslateNegative(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateNullConstant(StringBuilder sb);
         public abstract void TranslateOpChain(StringBuilder sb, OpChain opChain);
+        public abstract void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList);
         public abstract void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue);
+        public abstract void TranslateParseInt(StringBuilder sb, Expression safeStringValue);
+        public abstract void TranslatePrintStdErr(StringBuilder sb, Expression value);
+        public abstract void TranslatePrintStdOut(StringBuilder sb, Expression value);
         public abstract void TranslateRandomFloat(StringBuilder sb);
+        public abstract void TranslateReadByteCodeFile(StringBuilder sb);
         public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
+        public abstract void TranslateSetProgramData(StringBuilder sb, Expression programData);
+        public abstract void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray);
+        public abstract void TranslateSortedCopyOfStringArray(StringBuilder sb, Expression stringArray);
         public abstract void TranslateStringAppend(StringBuilder sb, Expression str1, Expression str2);
         public abstract void TranslateStringBuffer16(StringBuilder sb);
         public abstract void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index);
@@ -286,10 +328,13 @@ namespace Platform
         public abstract void TranslateStringTrimEnd(StringBuilder sb, Expression str);
         public abstract void TranslateStringTrimStart(StringBuilder sb, Expression str);
         public abstract void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right);
+        public abstract void TranslateThreadSleep(StringBuilder sb, Expression seconds);
         public abstract void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
         public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
+        public abstract void TranslateVmGetCurrentExecutionContextId(StringBuilder sb);
+        public abstract void TranslateVmSuspend(StringBuilder sb);
         public abstract void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop);
     }
 }
