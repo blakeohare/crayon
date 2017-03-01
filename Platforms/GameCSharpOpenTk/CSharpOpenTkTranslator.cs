@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Pastel.Nodes;
 
 namespace GameCSharpOpenTk
 {
@@ -11,6 +12,11 @@ namespace GameCSharpOpenTk
             : base(platform)
         {
 
+        }
+
+        public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -62,6 +62,13 @@ namespace Platform
             sb.Append(Common.Util.FloatToString(value));
         }
 
+        public override void TranslateForceParens(StringBuilder sb, Expression expression)
+        {
+            sb.Append('(');
+            this.TranslateExpression(sb, expression);
+            sb.Append(')');
+        }
+
         public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
         {
             this.TranslateExpression(sb, funcInvocation.Root);
