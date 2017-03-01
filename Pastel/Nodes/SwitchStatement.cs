@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class SwitchStatement : Executable
+    public class SwitchStatement : Executable
     {
         public Expression Condition { get; set; }
         public SwitchChunk[] Chunks { get; set; }

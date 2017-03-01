@@ -33,7 +33,7 @@ namespace Pastel.Nodes
             // TODO: check Condition for falseness
 
             this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
-            
+
             return Listify(this);
         }
 
@@ -54,7 +54,14 @@ namespace Pastel.Nodes
             this.Condition = this.Condition.ResolveWithTypeContext(compiler);
             Executable.ResolveWithTypeContext(compiler, this.StepCode);
             Executable.ResolveWithTypeContext(compiler, this.Code);
-            return this;
+
+            // Canonialize the for loop into a while loop.
+            List<Executable> loopCode = new List<Executable>(this.Code);
+            loopCode.AddRange(this.StepCode);
+            WhileLoop whileLoop = new WhileLoop(this.FirstToken, this.Condition, loopCode);
+            loopCode = new List<Executable>(this.InitCode);
+            loopCode.Add(whileLoop);
+            return new ExecutableBatch(this.FirstToken, loopCode);
         }
     }
 }

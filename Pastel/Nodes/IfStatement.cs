@@ -58,6 +58,7 @@ namespace Pastel.Nodes
 
         internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
         {
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
             Executable.ResolveWithTypeContext(compiler, this.IfCode);
             if (this.ElseCode.Length > 0) Executable.ResolveWithTypeContext(compiler, this.ElseCode);
             return this;

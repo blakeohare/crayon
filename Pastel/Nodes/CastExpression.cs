@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class CastExpression : Expression
+    public class CastExpression : Expression
     {
         public PType Type { get; set; }
         public Expression Expression { get; set; }

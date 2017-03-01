@@ -61,11 +61,22 @@ namespace Platform
             switch (typeName)
             {
                 case "Assignment": this.TranslateAssignment(sb, (Assignment)executable); break;
+                case "BreakStatement": this.TranslateBreak(sb); break;
                 case "ExpressionAsExecutable": this.TranslateExpressionAsExecutable(sb, ((ExpressionAsExecutable)executable).Expression); break;
                 case "IfStatement": this.TranslateIfStatement(sb, (IfStatement)executable); break;
                 case "ReturnStatement": this.TranslateReturnStatemnt(sb, (ReturnStatement)executable); break;
+                case "SwitchStatement": this.TranslateSwitchStatement(sb, (SwitchStatement)executable); break;
                 case "VariableDeclaration": this.TranslateVariableDeclaration(sb, (VariableDeclaration)executable); break;
                 case "WhileLoop": this.TranslateWhileLoop(sb, (WhileLoop)executable); break;
+
+                case "ExecutableBatch":
+                    Executable[] execs = ((ExecutableBatch)executable).Executables;
+                    for (int i = 0; i < execs.Length; ++i)
+                    {
+                        this.TranslateExecutable(sb, execs[i]);
+                    }
+                    break;
+
                 default:
                     throw new NotImplementedException(typeName);
             }
@@ -76,6 +87,7 @@ namespace Platform
             string typeName = expression.GetType().Name;
             switch (typeName)
             {
+                case "CastExpression": this.TranslateCast(sb, ((CastExpression)expression).Type, ((CastExpression)expression).Expression); break;
                 case "ConstructorInvocation": this.TranslateConstructorInvocation(sb, (ConstructorInvocation)expression); break;
                 case "FunctionInvocation": this.TranslateFunctionInvocation(sb, (FunctionInvocation)expression); break;
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
@@ -110,7 +122,7 @@ namespace Platform
                     if (uo.OpToken.Value == "-") this.TranslateNegative(sb, uo);
                     else this.TranslateBooleanNot(sb, uo);
                     break;
-                
+
                 default: throw new NotImplementedException(typeName);
             }
         }
@@ -125,9 +137,23 @@ namespace Platform
                 case Pastel.NativeFunction.ARRAY_SET: this.TranslateArraySet(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.DICTIONARY_CONTAINS_KEY: this.TranslateDictionaryContainsKey(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.DICTIONARY_GET: this.TranslateDictionaryGet(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.DICTIONARY_KEYS: this.TranslateDictionaryKeys(sb, args[0]); break;
+                case Pastel.NativeFunction.DICTIONARY_REMOVE: this.TranslateDictionaryRemove(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.DICTIONARY_SET: this.TranslateDictionarySet(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.DICTIONARY_SIZE: this.TranslateDictionarySize(sb, args[0]); break;
+                case Pastel.NativeFunction.EMIT_COMMENT: this.TranslateEmitComment(sb, ((InlineConstant)args[0]).Value.ToString()); break;
+                case Pastel.NativeFunction.GET_PROGRAM_DATA: this.TranslateGetProgramData(sb); break;
+                case Pastel.NativeFunction.INT: this.TranslateFloatToInt(sb, args[0]); break;
+                case Pastel.NativeFunction.LIST_ADD: this.TranslateListAdd(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.LIST_GET: this.TranslateListGet(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.LIST_POP: this.TranslateListPop(sb, args[0]); break;
+                case Pastel.NativeFunction.LIST_SET: this.TranslateListSet(sb, args[0], args[1], args[2]); break;
+                case Pastel.NativeFunction.LIST_SIZE: this.TranslateListSize(sb, args[0]); break;
+                case Pastel.NativeFunction.LIST_TO_ARRAY: this.TranslateListToArray(sb, args[0]); break;
+                case Pastel.NativeFunction.PARSE_FLOAT_REDUNDANT: this.TranslateParseFloatREDUNDANT(sb, args[0]); break;
+                case Pastel.NativeFunction.STRING_EQUALS: this.TranslateStringEquals(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_LENGTH: this.TranslateStringLength(sb, args[0]); break;
+                case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
         }
@@ -138,24 +164,41 @@ namespace Platform
         public abstract void TranslateAssignment(StringBuilder sb, Assignment assignment);
         public abstract void TranslateBooleanConstant(StringBuilder sb, bool value);
         public abstract void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp);
+        public abstract void TranslateBreak(StringBuilder sb);
+        public abstract void TranslateCast(StringBuilder sb, PType type, Expression expression);
         public abstract void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation);
         public abstract void TranslateDictionaryContainsKey(StringBuilder sb, Expression dictionary, Expression key);
         public abstract void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key);
+        public abstract void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary);
+        public abstract void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key);
         public abstract void TranslateDictionarySet(StringBuilder sb, Expression dictionary, Expression key, Expression value);
         public abstract void TranslateDictionarySize(StringBuilder sb, Expression dictionary);
+        public abstract void TranslateEmitComment(StringBuilder sb, string value);
         public abstract void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression);
         public abstract void TranslateFloatConstant(StringBuilder sb, double value);
+        public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);
         public abstract void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation);
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
+        public abstract void TranslateGetProgramData(StringBuilder sb);
         public abstract void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement);
         public abstract void TranslateIntegerConstant(StringBuilder sb, int value);
+        public abstract void TranslateListAdd(StringBuilder sb, Expression list, Expression item);
+        public abstract void TranslateListGet(StringBuilder sb, Expression list, Expression index);
+        public abstract void TranslateListPop(StringBuilder sb, Expression list);
+        public abstract void TranslateListSet(StringBuilder sb, Expression list, Expression index, Expression value);
+        public abstract void TranslateListSize(StringBuilder sb, Expression list);
+        public abstract void TranslateListToArray(StringBuilder sb, Expression list);
         public abstract void TranslateNegative(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateNullConstant(StringBuilder sb);
         public abstract void TranslateOpChain(StringBuilder sb, OpChain opChain);
+        public abstract void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue);
         public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
         public abstract void TranslateStringConstant(StringBuilder sb, string value);
+        public abstract void TranslateStringEquals(StringBuilder sb, Expression left, Expression right);
         public abstract void TranslateStringLength(StringBuilder sb, Expression str);
+        public abstract void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right);
         public abstract void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
+        public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
         public abstract void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop);

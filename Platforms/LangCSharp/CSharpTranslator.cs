@@ -34,6 +34,14 @@ namespace LangCSharp
             this.TranslateExpression(sb, value);
         }
 
+        public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
+        {
+            sb.Append('(');
+            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(')');
+            this.TranslateExpression(sb, expression);
+        }
+
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
         {
             sb.Append("new ");
@@ -64,6 +72,20 @@ namespace LangCSharp
             sb.Append(']');
         }
 
+        public override void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary)
+        {
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(".Keys.ToArray()");
+        }
+
+        public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)
+        {
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(".Remove(");
+            this.TranslateExpression(sb, key);
+            sb.Append(')');
+        }
+
         public override void TranslateDictionarySet(StringBuilder sb, Expression dictionary, Expression key, Expression value)
         {
             this.TranslateExpression(sb, dictionary);
@@ -79,15 +101,93 @@ namespace LangCSharp
             sb.Append(".Count");
         }
 
+        public override void TranslateFloatToInt(StringBuilder sb, Expression floatExpr)
+        {
+            sb.Append("(int)");
+            this.TranslateExpression(sb, floatExpr);
+        }
+
+        public override void TranslateGetProgramData(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.GetProgramData()");
+        }
+
+        public override void TranslateListAdd(StringBuilder sb, Expression list, Expression item)
+        {
+            this.TranslateExpression(sb, list);
+            sb.Append(".Add(");
+            this.TranslateExpression(sb, item);
+            sb.Append(')');
+        }
+
+        public override void TranslateListGet(StringBuilder sb, Expression list, Expression index)
+        {
+            this.TranslateExpression(sb, list);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
+        }
+
+        public override void TranslateListPop(StringBuilder sb, Expression list)
+        {
+            // No megusta
+            this.TranslateExpression(sb, list);
+            sb.Append(".RemoveAt(");
+            this.TranslateExpression(sb, list);
+            sb.Append(".Count - 1)");
+        }
+
+        public override void TranslateListSet(StringBuilder sb, Expression list, Expression index, Expression value)
+        {
+            this.TranslateExpression(sb, list);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append("] = ");
+            this.TranslateExpression(sb, value);
+        }
+
+        public override void TranslateListSize(StringBuilder sb, Expression list)
+        {
+            this.TranslateExpression(sb, list);
+            sb.Append(".Count");
+        }
+
+        public override void TranslateListToArray(StringBuilder sb, Expression list)
+        {
+            this.TranslateExpression(sb, list);
+            sb.Append(".ToArray()");
+        }
+
         public override void TranslateNullConstant(StringBuilder sb)
         {
             sb.Append("null");
+        }
+
+        public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
+        {
+            sb.Append("double.Parse(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
+        }
+
+        public override void TranslateStringEquals(StringBuilder sb, Expression left, Expression right)
+        {
+            this.TranslateExpression(sb, left);
+            sb.Append(" == ");
+            this.TranslateExpression(sb, right);
         }
 
         public override void TranslateStringLength(StringBuilder sb, Expression str)
         {
             this.TranslateExpression(sb, str);
             sb.Append(".Length");
+        }
+
+        public override void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right)
+        {
+            this.TranslateExpression(sb, left);
+            sb.Append(" == ");
+            this.TranslateExpression(sb, right);
         }
 
         public override void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)

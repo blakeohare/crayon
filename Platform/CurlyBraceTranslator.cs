@@ -36,6 +36,19 @@ namespace Platform
             this.TranslateExpression(sb, unaryOp.Expression);
         }
 
+        public override void TranslateBreak(StringBuilder sb)
+        {
+            sb.Append(this.CurrentTab);
+            sb.Append("break;");
+            sb.Append(this.NewLine);
+        }
+
+        public override void TranslateEmitComment(StringBuilder sb, string value)
+        {
+            sb.Append("// ");
+            sb.Append(value.Replace("\n", "\\n"));
+        }
+
         public override void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression)
         {
             sb.Append(this.CurrentTab);
@@ -171,6 +184,53 @@ namespace Platform
         public override void TranslateStringConstant(StringBuilder sb, string value)
         {
             sb.Append(Common.Util.ConvertStringValueToCode(value));
+        }
+
+        public override void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement)
+        {
+            sb.Append(this.CurrentTab);
+            sb.Append("switch (");
+            this.TranslateExpression(sb, switchStatement.Condition);
+            sb.Append(")");
+            if (this.isEgyptian)
+            {
+                sb.Append(" {");
+            }
+            else
+            {
+                sb.Append(this.NewLine);
+                sb.Append(this.CurrentTab);
+                sb.Append('{');
+                sb.Append(this.CurrentTab);
+            }
+            this.TabDepth++;
+
+            foreach (SwitchStatement.SwitchChunk chunk in switchStatement.Chunks)
+            {
+                for (int i = 0; i < chunk.Cases.Length; ++i)
+                {
+                    sb.Append(this.CurrentTab);
+                    Expression c = chunk.Cases[i];
+                    if (c == null)
+                    {
+                        sb.Append("default:");
+                    }
+                    else
+                    {
+                        sb.Append("case ");
+                        this.TranslateExpression(sb, c);
+                        sb.Append(':');
+                    }
+                    this.TabDepth++;
+                    this.TranslateExecutables(sb, chunk.Code);
+                    this.TabDepth--;
+                }
+            }
+
+            this.TabDepth--;
+            sb.Append(this.CurrentTab);
+            sb.Append('}');
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateVariable(StringBuilder sb, Variable variable)
