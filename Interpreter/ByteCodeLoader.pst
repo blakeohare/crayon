@@ -2,7 +2,7 @@
 	List<char> output = new List<char>();
 	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		bool ctn = true;
-		char c = '\0';
+		char c = ' ';
 		while (ctn) {
 			c = raw[index[0]];
 			if (c == char) {

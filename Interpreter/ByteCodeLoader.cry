@@ -6,7 +6,7 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 	@type('List<char>') output = $_new_list('char');
 	if (!%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {
 		@type('bool') ctn = true;
-		@type('char') c = $_string_as_char('\0');
+		@type('char') c = $_string_as_char(' ');
 		while (ctn) {
 			c = $_string_char_at(raw, $_array_get(index, 0));
 			if (c == char) {
