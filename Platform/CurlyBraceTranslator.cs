@@ -20,7 +20,9 @@ namespace Platform
         {
             sb.Append(this.CurrentTab);
             this.TranslateExpression(sb, assignment.Target);
-            sb.Append(" = ");
+            sb.Append(' ');
+            sb.Append(assignment.OpToken.Value);
+            sb.Append(' ');
             this.TranslateExpression(sb, assignment.Value);
             sb.Append(';');
             sb.Append(this.NewLine);
@@ -209,8 +211,9 @@ namespace Platform
                 sb.Append(this.NewLine);
                 sb.Append(this.CurrentTab);
                 sb.Append('{');
-                sb.Append(this.CurrentTab);
             }
+            sb.Append(this.NewLine);
+            
             this.TabDepth++;
 
             foreach (SwitchStatement.SwitchChunk chunk in switchStatement.Chunks)
@@ -253,7 +256,7 @@ namespace Platform
             sb.Append(this.CurrentTab);
             sb.Append("while (");
             this.TranslateExpression(sb, whileLoop.Condition);
-            sb.Append("(");
+            sb.Append(')');
             if (this.isEgyptian)
             {
                 sb.Append(" {");
