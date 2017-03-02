@@ -32,6 +32,14 @@ namespace Crayon
 
         private VmGenerationMode mode;
 
+        private void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
+        {
+            foreach (Types type in Enum.GetValues(typeof(Types)))
+            {
+                constantFlags["TYPE_ID_" + type.ToString()] = (int)type;
+            }
+        }
+
         public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
@@ -42,6 +50,8 @@ namespace Crayon
             Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
             InlineImportCodeLoader codeLoader = new InlineImportCodeLoader();
             this.mode = mode;
+
+            this.AddTypeEnumsToConstants(constantFlags);
 
             Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags, codeLoader);
             Dictionary<string, Pastel.PastelCompiler> libraries = this.GenerateLibraryParseTree(

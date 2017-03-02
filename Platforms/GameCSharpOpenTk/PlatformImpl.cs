@@ -117,6 +117,7 @@ namespace GameCSharpOpenTk
                 TextContent = string.Join("\r\n", new string[] {
                     "using System;",
                     "using System.Collections.Generic;",
+                    "using System.Linq;",
                     "using Interpreter.Structs;",
                     "",
                     "namespace Interpreter.Vm",
