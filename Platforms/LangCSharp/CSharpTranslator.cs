@@ -182,6 +182,13 @@ namespace LangCSharp
             this.TranslateExpression(sb, floatExpr);
         }
 
+        public override void TranslateFloatToString(StringBuilder sb, Expression floatExpr)
+        {
+            sb.Append("TranslationHelper.FloatToString(");
+            this.TranslateExpression(sb, floatExpr);
+            sb.Append(')');
+        }
+
         public override void TranslateGetProgramData(StringBuilder sb)
         {
             sb.Append("TranslationHelper.GetProgramData()");
@@ -477,6 +484,15 @@ namespace LangCSharp
             sb.Append('[');
             this.TranslateExpression(sb, index);
             sb.Append("])");
+        }
+
+        public override void TranslateStringCompareIsReverse(StringBuilder sb, Expression str1, Expression str2)
+        {
+            sb.Append('(');
+            this.TranslateExpression(sb, str1);
+            sb.Append(".CompareTo(");
+            this.TranslateExpression(sb, str2);
+            sb.Append(") == 1)");
         }
 
         public override void TranslateStringConcatAll(StringBuilder sb, Expression[] strings)

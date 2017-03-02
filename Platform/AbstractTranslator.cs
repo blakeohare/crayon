@@ -153,6 +153,7 @@ namespace Platform
                 case Pastel.NativeFunction.DICTIONARY_VALUES_TO_VALUE_LIST: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.EMIT_COMMENT: this.TranslateEmitComment(sb, ((InlineConstant)args[0]).Value.ToString()); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
                 case Pastel.NativeFunction.FORCE_PARENS: this.TranslateForceParens(sb, args[0]); break;
                 case Pastel.NativeFunction.GET_PROGRAM_DATA: this.TranslateGetProgramData(sb); break;
                 case Pastel.NativeFunction.GET_RESOURCE_MANIFEST: this.TranslateGetResourceManifest(sb); break;
@@ -200,7 +201,7 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_BUFFER_16: this.TranslateStringBuffer16(sb); break;
                 case Pastel.NativeFunction.STRING_CHAR_AT: this.TranslateStringCharAt(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_CHAR_CODE_AT: this.TranslateStringCharCodeAt(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.STRING_COMPARE_IS_REVERSE: throw new NotImplementedException(); // compile-time optimize.
+                case Pastel.NativeFunction.STRING_COMPARE_IS_REVERSE: this.TranslateStringCompareIsReverse(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_CONCAT_ALL: this.TranslateStringConcatAll(sb, args); break;
                 case Pastel.NativeFunction.STRING_CONTAINS: this.TranslateStringContains(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_ENDS_WITH: this.TranslateStringEndsWith(sb, args[0], args[1]); break;
@@ -256,6 +257,7 @@ namespace Platform
         public abstract void TranslateFloatConstant(StringBuilder sb, double value);
         public abstract void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator);
         public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);
+        public abstract void TranslateFloatToString(StringBuilder sb, Expression floatExpr);
         public abstract void TranslateForceParens(StringBuilder sb, Expression expression);
         public abstract void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation);
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
@@ -310,6 +312,7 @@ namespace Platform
         public abstract void TranslateStringBuffer16(StringBuilder sb);
         public abstract void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index);
         public abstract void TranslateStringCharCodeAt(StringBuilder sb, Expression str, Expression index);
+        public abstract void TranslateStringCompareIsReverse(StringBuilder sb, Expression str1, Expression str2);
         public abstract void TranslateStringConcatAll(StringBuilder sb, Expression[] strings);
         public abstract void TranslateStringConstant(StringBuilder sb, string value);
         public abstract void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle);
