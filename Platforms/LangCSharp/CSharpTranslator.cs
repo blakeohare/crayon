@@ -25,6 +25,25 @@ namespace LangCSharp
             sb.Append(".Length");
         }
 
+        public override void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression)
+        {
+            int nestingLevel = 0;
+            while (arrayType.RootValue == "Array")
+            {
+                nestingLevel++;
+                arrayType = arrayType.Generics[0];
+            }
+            sb.Append("new ");
+            sb.Append(this.Platform.TranslateType(arrayType));
+            sb.Append('[');
+            this.TranslateExpression(sb, lengthExpression);
+            sb.Append(']');
+            while (nestingLevel-- > 0)
+            {
+                sb.Append("[]");
+            }
+        }
+
         public override void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value)
         {
             this.TranslateExpression(sb, array);
@@ -130,7 +149,11 @@ namespace LangCSharp
 
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
-            throw new NotImplementedException();
+            sb.Append("new Dictionary<");
+            sb.Append(this.Platform.TranslateType(keyType));
+            sb.Append(", ");
+            sb.Append(this.Platform.TranslateType(valueType));
+            sb.Append(">()");
         }
 
         public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)
@@ -283,7 +306,9 @@ namespace LangCSharp
 
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
-            throw new NotImplementedException();
+            sb.Append("new List<");
+            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(">()");
         }
 
         public override void TranslateListPop(StringBuilder sb, Expression list)
@@ -630,15 +655,17 @@ namespace LangCSharp
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
+            sb.Append(this.CurrentTab);
             sb.Append(this.Platform.TranslateType(varDecl.Type));
             sb.Append(" v_");
-            sb.Append(varDecl.VariableName);
+            sb.Append(varDecl.VariableName.Value);
             if (varDecl.Value != null)
             {
                 sb.Append(" = ");
                 this.TranslateExpression(sb, varDecl.Value);
             }
             sb.Append(';');
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)

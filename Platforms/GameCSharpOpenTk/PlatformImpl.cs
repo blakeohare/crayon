@@ -92,7 +92,7 @@ namespace GameCSharpOpenTk
                         "",
                         "namespace Interpreter.Structs",
                         "{",
-                        this.IndentCodeWithTabs(this.GenerateCodeForStruct(structDefinition).Trim(), 1),
+                        this.IndentCodeWithSpaces(this.GenerateCodeForStruct(structDefinition).Trim(), 4),
                         "}",
                         ""
                     }),
@@ -117,10 +117,10 @@ namespace GameCSharpOpenTk
                     "",
                     "namespace Interpreter.Vm",
                     "{",
-                    "\tpublic class CrayonWrapper",
-                    "\t{",
-                    this.IndentCodeWithTabs(functionCode, 2),
-                    "\t}",
+                    "    public class CrayonWrapper",
+                    "    {",
+                    this.IndentCodeWithSpaces(functionCode, 8),
+                    "    }",
                     "}",
                     ""
                 }),

@@ -9,30 +9,21 @@ namespace Platform
     public abstract class AbstractTranslator
     {
         private int currentTab = 0;
+        private string currentTabValue = "";
         private string tabChar;
         private string[] tabs;
         public string NewLine { get; private set; }
-        public int TabDepth { get; set; }
-        public Platform.AbstractPlatform Platform { get; private set; }
-
-        public AbstractTranslator(Platform.AbstractPlatform platform, string tab, string newLine)
-        {
-            this.Platform = platform;
-            this.TabDepth = 0;
-            this.NewLine = newLine;
-            this.tabChar = tab;
-            this.tabs = new string[20];
-            this.tabs[0] = "";
-            for (int i = 1; i < 20; ++i)
-            {
-                this.tabs[i] = this.tabs[i - 1] + this.tabChar;
-            }
-        }
-
-        public string CurrentTab
+        public string CurrentTab { get; private set; }
+        public int TabDepth
         {
             get
             {
+                return this.currentTab;
+            }
+            set
+            {
+                this.currentTab = value;
+
                 while (this.currentTab >= this.tabs.Length)
                 {
                     // Conciseness, not efficiency. Deeply nested stuff is rare.
@@ -43,8 +34,24 @@ namespace Platform
                     }
                     this.tabs = tabs.ToArray();
                 }
-                return this.tabs[this.currentTab];
+                this.CurrentTab = this.tabs[this.currentTab];
             }
+
+        }
+        public Platform.AbstractPlatform Platform { get; private set; }
+
+        public AbstractTranslator(Platform.AbstractPlatform platform, string tab, string newLine)
+        {
+            this.Platform = platform;
+            this.NewLine = newLine;
+            this.tabChar = tab;
+            this.tabs = new string[20];
+            this.tabs[0] = "";
+            for (int i = 1; i < 20; ++i)
+            {
+                this.tabs[i] = this.tabs[i - 1] + this.tabChar;
+            }
+            this.TabDepth = 0;
         }
 
         public void TranslateExecutables(StringBuilder sb, Executable[] executables)
@@ -88,12 +95,37 @@ namespace Platform
             switch (typeName)
             {
                 case "CastExpression": this.TranslateCast(sb, ((CastExpression)expression).Type, ((CastExpression)expression).Expression); break;
-                case "ConstructorInvocation": this.TranslateConstructorInvocation(sb, (ConstructorInvocation)expression); break;
                 case "FunctionInvocation": this.TranslateFunctionInvocation(sb, (FunctionInvocation)expression); break;
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
                 case "Variable": this.TranslateVariable(sb, (Variable)expression); break;
+
+                case "ConstructorInvocation":
+                    ConstructorInvocation constructor = (ConstructorInvocation)expression;
+                    string rootType = constructor.Type.RootValue;
+                    switch (rootType)
+                    {
+                        case "Array":
+                            this.TranslateArrayNew(sb, constructor.Type.Generics[0], constructor.Args[0]);
+                            break;
+
+                        case "List":
+                            this.TranslateListNew(sb, constructor.Type.Generics[0]);
+                            break;
+
+                        case "Dictionary":
+                            PType dictionaryKeyType = constructor.Type.Generics[0];
+                            PType dictionaryValueType = constructor.Type.Generics[1];
+                            this.TranslateDictionaryNew(sb, dictionaryKeyType, dictionaryValueType);
+                            break;
+
+                        default:
+                            // TODO: throw an exception (in the parser) if generics exist.
+                            this.TranslateConstructorInvocation(sb, constructor);
+                            break;
+                    }
+                    break;
 
                 case "DotField":
                     DotField df = (DotField)expression;
@@ -222,13 +254,14 @@ namespace Platform
                 case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
                 case Pastel.NativeFunction.VM_GET_CURRENT_EXECUTION_CONTEXT_ID: this.TranslateVmGetCurrentExecutionContextId(sb); break;
                 case Pastel.NativeFunction.VM_SUSPEND: this.TranslateVmSuspend(sb); break;
-                
+
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
         }
 
         public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
         public abstract void TranslateArrayLength(StringBuilder sb, Expression array);
+        public abstract void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression);
         public abstract void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value);
         public abstract void TranslateAssignment(StringBuilder sb, Assignment assignment);
         public abstract void TranslateBooleanConstant(StringBuilder sb, bool value);

@@ -86,7 +86,7 @@ namespace LangCSharp
             lines.Add("{");
             for (int i = 0; i < types.Length; ++i)
             {
-                lines.Add("\tpublic " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
+                lines.Add("    public " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
             lines.Add("}");
             lines.Add("");
@@ -104,7 +104,7 @@ namespace LangCSharp
 
             output.Append("public static ");
             output.Append(this.TranslateType(returnType));
-            output.Append("v_");
+            output.Append(" v_");
             output.Append(funcName);
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
@@ -118,9 +118,9 @@ namespace LangCSharp
             output.Append(this.NL);
             output.Append("{");
             output.Append(this.NL);
-            this.TranslationIndentionCount = 1;
+            translator.TabDepth = 1;
             translator.TranslateExecutables(output, funcDef.Code);
-            this.TranslationIndentionCount = 0;
+            translator.TabDepth = 0;
             output.Append("}");
 
             return string.Join("", output);

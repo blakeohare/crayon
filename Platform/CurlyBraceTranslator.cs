@@ -23,6 +23,7 @@ namespace Platform
             sb.Append(" = ");
             this.TranslateExpression(sb, assignment.Value);
             sb.Append(';');
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateBooleanConstant(StringBuilder sb, bool value)
@@ -165,7 +166,7 @@ namespace Platform
                 if (i > 0)
                 {
                     sb.Append(' ');
-                    sb.Append(opChain.Ops[i - 1]);
+                    sb.Append(opChain.Ops[i - 1].Value);
                     sb.Append(' ');
                 }
                 this.TranslateExpression(sb, opChain.Expressions[i]);
@@ -228,6 +229,7 @@ namespace Platform
                         this.TranslateExpression(sb, c);
                         sb.Append(':');
                     }
+                    sb.Append(this.NewLine);
                     this.TabDepth++;
                     this.TranslateExecutables(sb, chunk.Code);
                     this.TabDepth--;
