@@ -259,13 +259,11 @@ namespace LangCSharp
             sb.Append(')');
         }
 
-        public override void TranslateListAddAll(StringBuilder sb, Expression list, Expression items)
+        public override void TranslateListConcat(StringBuilder sb, Expression list, Expression items)
         {
-            bool addParens = list is CastExpression;
-            if (addParens) sb.Append('(');
+            sb.Append("TranslationHelper.ListConcat(");
             this.TranslateExpression(sb, list);
-            if (addParens) sb.Append(')');
-            sb.Append(".AddAll(");
+            sb.Append(", ");
             this.TranslateExpression(sb, items);
             sb.Append(")");
         }
@@ -351,7 +349,7 @@ namespace LangCSharp
 
         public override void TranslateListShuffle(StringBuilder sb, Expression list)
         {
-            sb.Append("TranslationHelper.ListShuffle(");
+            sb.Append("TranslationHelper.ShuffleInPlace(");
             this.TranslateExpression(sb, list);
             sb.Append(')');
         }
@@ -593,14 +591,14 @@ namespace LangCSharp
 
         public override void TranslateStringReverse(StringBuilder sb, Expression str)
         {
-            sb.Append("TranslationHelper.ReverseString(");
+            sb.Append("TranslationHelper.StringReverse(");
             this.TranslateExpression(sb, str);
             sb.Append(')');
         }
 
         public override void TranslateStringSplit(StringBuilder sb, Expression haystack, Expression needle)
         {
-            sb.Append("TranslationHelper.SplitString(");
+            sb.Append("TranslationHelper.StringSplit(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, needle);

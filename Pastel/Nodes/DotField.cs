@@ -132,6 +132,7 @@ namespace Pastel.Nodes
                 case "IntToString": return NativeFunction.INT_TO_STRING;
                 case "InvokeDynamicLibraryFunction": return NativeFunction.INVOKE_DYNAMIC_LIBRARY_FUNCTION;
                 case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
+                case "ListConcat": return NativeFunction.LIST_CONCAT;
                 case "ListToArray": return NativeFunction.LIST_TO_ARRAY;
                 case "Log": return NativeFunction.MATH_LOG;
                 case "MultiplyList": return NativeFunction.MULTIPLY_LIST;
@@ -204,7 +205,6 @@ namespace Pastel.Nodes
                     switch (field)
                     {
                         case "Add": return NativeFunction.LIST_ADD;
-                        case "AddAll": return NativeFunction.LIST_ADD_ALL;
                         case "Clear": return NativeFunction.LIST_CLEAR;
                         case "Insert": return NativeFunction.LIST_INSERT;
                         case "Join":

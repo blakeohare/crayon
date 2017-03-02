@@ -209,8 +209,8 @@ namespace Platform
                 case Pastel.NativeFunction.INVOKE_DYNAMIC_LIBRARY_FUNCTION: this.TranslateInvokeDynamicLibraryFunction(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.IS_VALID_INTEGER: this.TranslateIsValidInteger(sb, args[0]); break;
                 case Pastel.NativeFunction.LIST_ADD: this.TranslateListAdd(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.LIST_ADD_ALL: this.TranslateListAddAll(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_CLEAR: this.TranslateListClear(sb, args[0]); break;
+                case Pastel.NativeFunction.LIST_CONCAT: this.TranslateListConcat(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_GET: this.TranslateListGet(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_INSERT: this.TranslateListInsert(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.LIST_JOIN_CHARS: this.TranslateListJoinChars(sb, args[0]); break;
@@ -318,8 +318,8 @@ namespace Platform
         public abstract void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray);
         public abstract void TranslateIsValidInteger(StringBuilder sb, Expression stringValue);
         public abstract void TranslateListAdd(StringBuilder sb, Expression list, Expression item);
-        public abstract void TranslateListAddAll(StringBuilder sb, Expression list, Expression items);
         public abstract void TranslateListClear(StringBuilder sb, Expression list);
+        public abstract void TranslateListConcat(StringBuilder sb, Expression list, Expression items);
         public abstract void TranslateListGet(StringBuilder sb, Expression list, Expression index);
         public abstract void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item);
         public abstract void TranslateListJoinChars(StringBuilder sb, Expression list);

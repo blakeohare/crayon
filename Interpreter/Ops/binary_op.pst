@@ -81,7 +81,7 @@ if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOp
 			break;
 		case (((Types.LIST * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.LIST:
 			Core.EmitComment("list + list");
-			value = new Value(Types.LIST, ((List<Value>) left).AddAll(((List<Value>) right)));
+			value = new Value(Types.LIST, Core.ListConcat(((List<Value>) left), ((List<Value>) right)));
 			break;
 		case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
 			Core.EmitComment("int + int");

@@ -37,6 +37,7 @@ namespace GameCSharpOpenTk
                 this.ParentPlatform.GenerateReplacementDictionary(options),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
+                    { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", new string[] {/* TODO: embedded resources */ }) },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                     { "CSHARP_CONTENT_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<EmbeddedResource Include=\"icon.ico\" />" : "" }

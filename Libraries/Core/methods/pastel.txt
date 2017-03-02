@@ -22,7 +22,7 @@ $_int_to_string: Core.IntToString([ARG:1])
 $_invoke_dynamic_library_function: Core.InvokeDynamicLibraryFunction([ARG:1], [ARG:2])
 $_is_valid_integer: Core.IsValidInteger([ARG:1])
 $_list_clear: [ARG:1].Clear()
-$_list_concat: [ARG:1].AddAll([ARG:2])
+$_list_concat: Core.ListConcat([ARG:1], [ARG:2])
 $_list_get: [ARG:1][[ARG:2]]
 $_list_insert: [ARG:1].Insert([ARG:2], [ARG:3])
 $_list_join: [ARG:1].Join([ARG:2])
