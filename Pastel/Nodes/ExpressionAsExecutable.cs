@@ -34,10 +34,10 @@ namespace Pastel.Nodes
             return null;
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

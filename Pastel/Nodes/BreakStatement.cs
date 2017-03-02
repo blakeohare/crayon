@@ -8,9 +8,9 @@ namespace Pastel.Nodes
         public BreakStatement(Token breakToken) : base(breakToken)
         { }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            return this.Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

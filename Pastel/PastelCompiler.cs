@@ -222,7 +222,7 @@ namespace Pastel
             for (int i = 0; i < globalNames.Length; ++i)
             {
                 string name = globalNames[i];
-                this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this)[0];
+                this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this);
             }
 
             this.ResolvedFunctions = new HashSet<string>();

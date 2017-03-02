@@ -10,12 +10,33 @@ namespace Pastel.Nodes
         public Executable[] Executables { get; set; }
         public ExecutableBatch(Token firstToken, IList<Executable> executables) : base(firstToken)
         {
-            this.Executables = executables.ToArray();
+            List<Executable> items = new List<Executable>();
+            this.AddAllItems(items, executables);
+            this.Executables = items.ToArray();
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        private void AddAllItems(List<Executable> items, IList<Executable> executables)
         {
-            return this.Executables;
+            Executable item;
+            int length = executables.Count;
+            for (int i = 0; i < length; ++i)
+            {
+                item = executables[i];
+                if (item is ExecutableBatch)
+                {
+                    this.AddAllItems(items, ((ExecutableBatch)item).Executables);
+                }
+                else
+                {
+                    items.Add(item);
+                }
+            }
+        }
+
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        {
+            // Should not be encountered
+            throw new NotImplementedException();
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

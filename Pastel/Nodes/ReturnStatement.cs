@@ -12,13 +12,13 @@ namespace Pastel.Nodes
             this.Expression = expression;
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             if (this.Expression != null)
             {
                 this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
             }
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

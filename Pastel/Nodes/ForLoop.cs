@@ -24,7 +24,7 @@ namespace Pastel.Nodes
             this.Code = code.ToArray();
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.InitCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.InitCode, compiler).ToArray();
             this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
@@ -34,7 +34,7 @@ namespace Pastel.Nodes
 
             this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
 
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

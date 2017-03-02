@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace %%%PROJECT_ID%%%
+namespace Interpreter.Vm
 {
 	internal static class TranslationHelper
 	{

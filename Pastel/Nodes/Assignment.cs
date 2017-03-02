@@ -19,11 +19,11 @@ namespace Pastel.Nodes
             this.Value = value;
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Target = this.Target.ResolveNamesAndCullUnusedCode(compiler);
             this.Value = this.Value.ResolveNamesAndCullUnusedCode(compiler);
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

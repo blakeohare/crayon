@@ -55,7 +55,7 @@ namespace GameCSharpOpenTk
             string baseDir = projectId + "/";
 
             // From LangCSharp
-            this.CopyResourceAsText(output, baseDir + "TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
 
             // Project files from CSharpOpenTK

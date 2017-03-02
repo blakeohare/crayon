@@ -35,11 +35,11 @@ namespace Pastel.Nodes
             this.Value = assignmentValue;
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Value = this.Value.ResolveNamesAndCullUnusedCode(compiler);
 
-            return Listify(this);
+            return this;
         }
 
         public void DoConstantResolutions(HashSet<string> cycleDetection, PastelCompiler compiler)

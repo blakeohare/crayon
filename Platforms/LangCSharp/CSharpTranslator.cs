@@ -214,7 +214,7 @@ namespace LangCSharp
 
         public override void TranslateGetProgramData(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.GetProgramData()");
+            sb.Append("TranslationHelper.ProgramData");
         }
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
