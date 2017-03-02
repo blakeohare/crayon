@@ -102,7 +102,9 @@ namespace Platform
 
                 case "Variable":
                     Variable v = (Variable)expression;
-                    if (v.IsGlobal)
+                    string name = v.Name;
+                    char firstChar = name[0];
+                    if (firstChar >= 'A' && firstChar <= 'Z' && name.Contains('_') && name.ToUpper() == name)
                     {
                         this.TranslateGlobalVariable(sb, v);
                     }

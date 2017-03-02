@@ -42,7 +42,7 @@ namespace Pastel
 
             this.type[name] = type;
         }
-        
+
         public PType GetTypeOfVariable(string name)
         {
             PType output;
@@ -57,11 +57,6 @@ namespace Pastel
             }
 
             return null;
-        }
-
-        public bool IsGlobal(string name)
-        {
-            return this.parent != null && this.parent.GetTypeOfVariable(name) != null;
         }
     }
 }

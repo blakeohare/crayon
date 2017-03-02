@@ -9,7 +9,6 @@ namespace Pastel.Nodes
         { }
 
         public string Name { get { return this.FirstToken.Value; } }
-        public bool IsGlobal { get; private set; }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
@@ -38,12 +37,7 @@ namespace Pastel.Nodes
             {
                 throw new ParserException(this.FirstToken, "The variable '" + this.Name + "'is not defined.");
             }
-
-            if (varScope.IsGlobal(this.Name))
-            {
-                this.IsGlobal = true;
-            }
-
+            
             return this;
         }
 
