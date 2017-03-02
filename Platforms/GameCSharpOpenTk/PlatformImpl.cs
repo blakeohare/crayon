@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 using Platform;
 using Pastel.Nodes;
@@ -36,6 +37,9 @@ namespace GameCSharpOpenTk
                 this.ParentPlatform.GenerateReplacementDictionary(options),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
+                    { "EMBEDDED_RESOURCES", string.Join("\r\n", new string[] {/* TODO: embedded resources */ }) },
+                    { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
+                    { "CSHARP_CONTENT_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<EmbeddedResource Include=\"icon.ico\" />" : "" }
                 });
         }
 
@@ -120,6 +124,29 @@ namespace GameCSharpOpenTk
                     "    public class CrayonWrapper",
                     "    {",
                     this.IndentCodeWithSpaces(functionCode, 8),
+                    "    }",
+                    "}",
+                    ""
+                }),
+            };
+
+            StringBuilder globalsCode = new StringBuilder();
+            this.Translator.TranslateExecutables(globalsCode, globals.Cast<Executable>().ToArray());
+
+            output[baseDir + "Vm/Globals.cs"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\r\n", new string[]
+                {
+                    "using System;",
+                    "using System.Collections.Generic;",
+                    "using Interpreter.Structs;",
+                    "",
+                    "namespace Interpreter.Vm",
+                    "{",
+                    "    public class Globals",
+                    "    {",
+                    this.IndentCodeWithSpaces(globalsCode.ToString(), 8),
                     "    }",
                     "}",
                     ""

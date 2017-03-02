@@ -79,15 +79,38 @@ namespace LangCSharp
         {
             Pastel.Nodes.PType[] types = structDef.ArgTypes;
             Pastel.Token[] fieldNames = structDef.ArgNames;
-
+            string name = structDef.NameToken.Value;
             List<string> lines = new List<string>();
 
-            lines.Add("public class " + structDef.NameToken.Value);
+            lines.Add("public class " + name);
             lines.Add("{");
             for (int i = 0; i < types.Length; ++i)
             {
                 lines.Add("    public " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
+            lines.Add("");
+
+            StringBuilder constructorDeclaration = new StringBuilder();
+            constructorDeclaration.Append("    public ");
+            constructorDeclaration.Append(name);
+            constructorDeclaration.Append('(');
+            for (int i = 0; i < types.Length; ++i)
+            {
+                if (i > 0) constructorDeclaration.Append(", ");
+                constructorDeclaration.Append(this.TranslateType(types[i]));
+                constructorDeclaration.Append(' ');
+                constructorDeclaration.Append(fieldNames[i].Value);
+            }
+            constructorDeclaration.Append(')');
+            lines.Add(constructorDeclaration.ToString());
+            lines.Add("    {");
+            for (int i = 0; i < types.Length; ++i)
+            {
+                string fieldName = fieldNames[i].Value;
+                lines.Add("        this." + fieldName + " = " + fieldName + ";");
+            }
+            lines.Add("    }");
+
             lines.Add("}");
             lines.Add("");
 
@@ -109,7 +132,7 @@ namespace LangCSharp
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
             {
-                if (i > 0) output.Append(",");
+                if (i > 0) output.Append(", ");
                 output.Append(this.TranslateType(argTypes[i]));
                 output.Append(" ");
                 output.Append(argNames[i].Value);

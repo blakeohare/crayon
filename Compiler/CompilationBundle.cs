@@ -8,6 +8,7 @@ namespace Crayon
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
         public ICollection<Library> LibrariesUsed { get; set; }
+        public string IconPath { get; set; }
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {

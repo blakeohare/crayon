@@ -56,7 +56,8 @@ namespace Crayon
                 options
                     .SetOption(ExportOptionKey.PROJECT_ID, nullableCompilationBundle.ProjectID)
                     .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableCompilationBundle.GuidSeed)
-                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true);
+                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
+                    .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null);
 
                 return platform.ExportProject(
                     vm.Globals.Values.OrderBy(v => v.VariableName.Value).ToArray(),

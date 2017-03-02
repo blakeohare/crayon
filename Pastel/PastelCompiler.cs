@@ -262,7 +262,13 @@ namespace Pastel
 
         private void ResolveTypes()
         {
-            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
+            foreach (VariableDeclaration global in this.Globals.Values)
+            {
+                VariableScope vs = new VariableScope();
+                global.ResolveTypes(vs, this);
+            }
+
+            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy(s => s).ToArray();
             foreach (string functionName in functionNames)
             {
                 FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
@@ -272,6 +278,12 @@ namespace Pastel
 
         private void ResolveWithTypeContext()
         {
+            string[] globalNames = this.Globals.Keys.OrderBy(s => s).ToArray();
+            foreach (string globalName in globalNames)
+            {
+                this.Globals[globalName] = (VariableDeclaration)this.Globals[globalName].ResolveWithTypeContext(this);
+            }
+
             string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
             foreach (string functionName in functionNames)
             {

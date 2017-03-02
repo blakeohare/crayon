@@ -17,6 +17,12 @@ namespace Common
             return this;
         }
 
+        public bool GetBool(ExportOptionKey key)
+        {
+            object output;
+            return this.options.TryGetValue(key, out output) && (bool)output;
+        }
+
         public string GetStringOrNull(ExportOptionKey key)
         {
             object output;

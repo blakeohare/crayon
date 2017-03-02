@@ -12,6 +12,11 @@ namespace Pastel
         private VariableScope parent = null;
         private Dictionary<string, PType> type = new Dictionary<string, PType>();
 
+        public VariableScope()
+        {
+
+        }
+
         public VariableScope(FunctionDefinition functionDef, Dictionary<string, VariableDeclaration> globals)
         {
             this.RootFunctionDefinition = functionDef;
