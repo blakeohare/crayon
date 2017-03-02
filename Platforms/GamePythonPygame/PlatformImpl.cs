@@ -48,5 +48,10 @@ namespace GamePythonPygame
         {
             return this.ParentPlatform.GenerateReplacementDictionary(options);
         }
+
+        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+        }
     }
 }

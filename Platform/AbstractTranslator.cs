@@ -99,7 +99,18 @@ namespace Platform
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
-                case "Variable": this.TranslateVariable(sb, (Variable)expression); break;
+
+                case "Variable":
+                    Variable v = (Variable)expression;
+                    if (v.IsGlobal)
+                    {
+                        this.TranslateGlobalVariable(sb, v);
+                    }
+                    else
+                    {
+                        this.TranslateVariable(sb, v);
+                    }
+                    break;
 
                 case "ConstructorInvocation":
                     ConstructorInvocation constructor = (ConstructorInvocation)expression;
@@ -296,6 +307,7 @@ namespace Platform
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
         public abstract void TranslateGetProgramData(StringBuilder sb);
         public abstract void TranslateGetResourceManifest(StringBuilder sb);
+        public abstract void TranslateGlobalVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement);
         public abstract void TranslateIntBuffer16(StringBuilder sb);
         public abstract void TranslateIntegerConstant(StringBuilder sb, int value);

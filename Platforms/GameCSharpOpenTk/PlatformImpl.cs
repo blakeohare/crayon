@@ -144,16 +144,18 @@ namespace GameCSharpOpenTk
                     "",
                     "namespace Interpreter.Vm",
                     "{",
-                    "    public class Globals",
-                    "    {",
-                    this.IndentCodeWithSpaces(globalsCode.ToString(), 8),
-                    "    }",
+                    this.GenerateCodeForGlobalsDefinitions(this.Translator, globals),
                     "}",
                     ""
                 }),
             };
 
             return output;
+        }
+
+        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(this.Translator, globals);
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)

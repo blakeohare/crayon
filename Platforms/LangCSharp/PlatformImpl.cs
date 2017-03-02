@@ -134,7 +134,7 @@ namespace LangCSharp
             {
                 if (i > 0) output.Append(", ");
                 output.Append(this.TranslateType(argTypes[i]));
-                output.Append(" ");
+                output.Append(" v_");
                 output.Append(argNames[i].Value);
             }
             output.Append(")");
@@ -154,6 +154,23 @@ namespace LangCSharp
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";
             return replacements;
+        }
+
+        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            StringBuilder output = new StringBuilder();
+            output.Append("    public static class Globals");
+            output.Append(this.NL);
+            output.Append("    {");
+            output.Append(this.NL);
+            translator.TabDepth = 0;
+            foreach (VariableDeclaration vd in globals)
+            {
+                output.Append("        public static ");
+                translator.TranslateVariableDeclaration(output, vd);
+            }
+            output.Append("    }");
+            return output.ToString();
         }
     }
 }

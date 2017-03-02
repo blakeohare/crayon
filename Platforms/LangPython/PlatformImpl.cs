@@ -62,5 +62,10 @@ namespace LangPython
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }
+
+        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

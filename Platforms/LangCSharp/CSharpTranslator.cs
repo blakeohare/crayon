@@ -217,6 +217,12 @@ namespace LangCSharp
             sb.Append("TranslationHelper.GetProgramData()");
         }
 
+        public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
+        {
+            sb.Append("Globals.v_");
+            sb.Append(variable.Name);
+        }
+
         public override void TranslateIntBuffer16(StringBuilder sb)
         {
             sb.Append("TranslationHelper.IntBuffer16");
