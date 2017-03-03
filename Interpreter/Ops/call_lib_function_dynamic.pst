@@ -10,7 +10,7 @@ if (true) {
 	if (ec.executionStateChange) {
 		ec.executionStateChange = false;
 		if (ec.executionStateChangeCommand == 1) {
-			Core.VmSuspend();
+			return suspendInterpreter();
 		}
 	}
 }

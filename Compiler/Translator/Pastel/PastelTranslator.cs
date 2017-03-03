@@ -269,15 +269,14 @@ namespace Crayon.Translator.Pastel
             FunctionCall fc = returnStatement.Expression as FunctionCall;
             if (fc != null)
             {
-                /*
                 Variable fp = fc.Root as Variable;
-                if (fp != null && fp.Name == "suspendInterpreter")
+                if (fp != null && fp.Name == "suspendInterpreter" && !returnStatement.FirstToken.FileName.Contains("Ops/call_lib_function_dynamic"))
                 {
                     output.Add(this.CurrentTabIndention);
                     output.Add("Core.VmSuspend();");
                     output.Add(this.NL);
                     return;
-                }//*/
+                }
             }
 
             base.TranslateReturnStatement(output, returnStatement);
