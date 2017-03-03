@@ -172,19 +172,23 @@ namespace Crayon.Translator.Pastel
             output.Add("enum ");
             output.Add(enumDef.Name);
             output.Add(" {\n");
+            bool includeValue = enumDef.Name != "OpCodes";
             for (int i = 0; i < enumDef.Items.Length; ++i)
             {
                 output.Add("\t");
                 output.Add(enumDef.Items[i].Value);
-                output.Add(" = ");
-                Expression value = enumDef.Values[i];
-                if (value == null)
+                if (includeValue)
                 {
-                    output.Add("" + (i + 1));
-                }
-                else
-                {
-                    this.TranslateExpression(output, value);
+                    output.Add(" = ");
+                    Expression value = enumDef.Values[i];
+                    if (value == null)
+                    {
+                        output.Add("" + (i + 1));
+                    }
+                    else
+                    {
+                        this.TranslateExpression(output, value);
+                    }
                 }
                 output.Add(",\n");
             }

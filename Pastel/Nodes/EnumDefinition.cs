@@ -67,7 +67,7 @@ namespace Pastel.Nodes
             // anything that doesn't have a value assigned to it, auto-assign incrementally from the highest value provided.
             foreach (string name in autoAssignMe)
             {
-                this.ValuesByName[name] = new InlineConstant(PType.INT, this.FirstToken, ++highestValue);
+                this.ValuesByName[name] = new InlineConstant(PType.INT, this.FirstToken, highestValue++);
             }
         }
 
