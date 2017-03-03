@@ -77,10 +77,13 @@
     <EmbeddedResource Include="Resources\GamepadTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\GameWindow.txt" />
     <EmbeddedResource Include="Resources\GlUtil.txt" />
-    <EmbeddedResource Include="Resources\License.txt" />
+    <EmbeddedResource Include="Resources\DependencyLicenses.txt" />
     <EmbeddedResource Include="Resources\OpenTkRenderer.txt" />
     <EmbeddedResource Include="Resources\OpenTkTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\Program.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ResourceReader.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

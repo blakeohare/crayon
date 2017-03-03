@@ -1,13 +1,17 @@
 ﻿using System;
+using Interpreter.OtkGame;
+using Interpreter.Vm;
 
 namespace %%%PROJECT_ID%%%
 {
-	internal class Program
-	{
-		public static void Main(string[] args)
-		{
-			TranslationHelper.SetCmdLineArgs(args);
-			CrayonWrapper.v_main();
-		}
-	}
+    internal class Program
+    {
+        public static void Main(string[] args)
+        {
+            TranslationHelper.CommandLineArgs = args;
+            TranslationHelper.ByteCode = ResourceReader.ReadTextFile("ByteCode.txt");
+            TranslationHelper.ResourceManifest = ResourceReader.ReadTextFile("ResourceManifest.txt");
+            CrayonWrapper.v_main();
+        }
+    }
 }

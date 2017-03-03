@@ -7,10 +7,13 @@ namespace Interpreter.Vm
 {
     internal static class TranslationHelper
     {
-        private static readonly Random random = new Random();
+        public static readonly Random Random = new Random();
 
         public static ProgramData ProgramData { get; set; }
         public static int[] IntBuffer16 { get; private set; }
+        public static string[] CommandLineArgs { get; set; }
+		public static string ResourceManifest { get; set; }
+		public static string ByteCode { get; set; }
 
         public static readonly bool IsWindows =
             Environment.OSVersion.Platform == PlatformID.Win32NT ||
@@ -21,6 +24,7 @@ namespace Interpreter.Vm
         static TranslationHelper()
         {
             IntBuffer16 = new int[16];
+            CommandLineArgs = new string[0];
         }
 
         public static void RunInterpreter(int executionContextId)
@@ -54,16 +58,11 @@ namespace Interpreter.Vm
             T tValue;
             for (int i = length - 1; i >= 0; --i)
             {
-                tIndex = random.Next(length);
+                tIndex = Random.Next(length);
                 tValue = list[tIndex];
                 list[tIndex] = list[i];
                 list[i] = tValue;
             }
-        }
-
-        public static double GetRandomNumber()
-        {
-            return random.NextDouble();
         }
 
         public static List<T> ListConcat<T>(List<T> a, List<T> b)
@@ -163,6 +162,49 @@ namespace Interpreter.Vm
         public static bool AlwaysFalse()
         {
             return false;
+        }
+
+        public static bool IsValidInteger(string value)
+        {
+            char c;
+            for (int i = value.Length - 1; i >= 0; --i)
+            {
+                c = value[i];
+                if (c < '0' && c > '9')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static void ParseFloat(string strValue, double[] output)
+        {
+            double fValue;
+            if (double.TryParse(strValue, out fValue))
+            {
+                output[0] = 1;
+                output[1] = fValue;
+            }
+            else
+            {
+                output[0] = -1;
+
+            }
+        }
+
+        public static string FloatToString(double value)
+        {
+            string output = value.ToString();
+            if (output[0] == '.')
+            {
+                output = "0" + output;
+            }
+            if (!output.Contains('.'))
+            {
+                output += ".0";
+            }
+            return output;
         }
     }
 }

@@ -57,24 +57,25 @@ namespace GameCSharpOpenTk
 
             // From LangCSharp
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
 
             // Project files from CSharpOpenTK
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
 
-            // TODO: a lot of this needs to go into supplemental files for the related library.
-            // Code from CSharpOpenTK
+            // Required project files
             this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "GamepadTranslationHelper.cs", "Resources/GamepadTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "GameWindow.cs", "Resources/GameWindow.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "GlUtil.cs", "Resources/GlUtil.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OpenTkRenderer.cs", "Resources/OpenTkRenderer.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OpenTkTranslationHelper.cs", "Resources/OpenTkTranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Program.cs", "Resources/Program.txt", replacements);
 
+            // CSharpOpenTK specific stuff
+            this.CopyResourceAsText(output, baseDir + "OtkGame/GamepadTranslationHelper.cs", "Resources/GamepadTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OtkGame/GameWindow.cs", "Resources/GameWindow.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OtkGame/GlUtil.cs", "Resources/GlUtil.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkRenderer.cs", "Resources/OpenTkRenderer.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkTranslationHelper.cs", "Resources/OpenTkTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "OtkGame/ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
+
             // Text from CSharpOpenTK
-            this.CopyResourceAsText(output, baseDir + "License.txt", "Resources/License.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "DependencyLicenses.txt", "Resources/DependencyLicenses.txt", replacements);
 
             // DLL's from CSharpOpenTK
             this.CopyResourceAsBinary(output, baseDir + "OpenTK.dll", "Resources/DllOpenTk.binary");

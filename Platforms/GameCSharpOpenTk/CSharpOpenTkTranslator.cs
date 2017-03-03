@@ -10,19 +10,7 @@ namespace GameCSharpOpenTk
     {
         public CSharpOpenTkTranslator(Platform.AbstractPlatform platform)
             : base(platform)
-        {
-
-        }
-
-        public override void TranslateCommandLineArgs(StringBuilder sb)
-        {
-            sb.Append("CSharpOpenTkTranslationHelper.GetCommandLineArgs()");
-        }
-
-        public override void TranslateGetResourceManifest(StringBuilder sb)
-        {
-            sb.Append("TranslationHelper.TODO(\"GET_RESOURCE_MANIFEST\")");
-        }
+        { }
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
@@ -45,11 +33,6 @@ namespace GameCSharpOpenTk
             sb.Append("System.Console.WriteLine(");
             this.TranslateExpression(sb, value);
             sb.Append(')');
-        }
-
-        public override void TranslateReadByteCodeFile(StringBuilder sb)
-        {
-            sb.Append("TranslationHelper.TODO(\"READ_BYTE_CODE_FILE\")");
         }
 
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)

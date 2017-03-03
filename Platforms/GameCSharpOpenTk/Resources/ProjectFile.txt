@@ -62,7 +62,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="*.cs" />
-    <Compile Include="Libraries\*\*.cs" />
+    <Compile Include="Libraries\*\*.cs"/>
+	<Compile Include="OtkGame\*.cs"/>
     <Compile Include="Structs\*.cs"/>
     <Compile Include="Vm\*.cs"/>  
   </ItemGroup>

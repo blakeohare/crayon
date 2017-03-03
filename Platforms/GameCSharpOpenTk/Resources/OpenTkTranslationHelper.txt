@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Interpreter.Structs;
 using Interpreter.Vm;
 
-namespace %%%PROJECT_ID%%%
+namespace Interpreter.OtkGame
 {
     internal static class OpenTkTranslationHelper
     {

@@ -532,3 +532,13 @@ object getNativeDataItem(Value objValue, int index) {
 	return obj.nativeData[index];
 }
 
+int nextPowerOf2(int value) {
+	if (((value - 1) & value) == 0) {
+		return value;
+	}
+	int output = 1;
+	while (output < value) {
+		output *= 2;
+	}
+	return output;
+}

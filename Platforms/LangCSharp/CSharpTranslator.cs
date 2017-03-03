@@ -98,7 +98,7 @@ namespace LangCSharp
         {
             sb.Append("new List<Value>(");
             this.TranslateExpression(sb, dictionary);
-            sb.Append(".Values)");
+            sb.Append(')');
         }
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
@@ -212,9 +212,19 @@ namespace LangCSharp
             sb.Append(')');
         }
 
+        public override void TranslateCommandLineArgs(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.CommandLineArgs");
+        }
+
         public override void TranslateGetProgramData(StringBuilder sb)
         {
             sb.Append("TranslationHelper.ProgramData");
+        }
+
+        public override void TranslateGetResourceManifest(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.ResourceManifest");
         }
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
@@ -468,6 +478,11 @@ namespace LangCSharp
             sb.Append("TranslationHelper.Random.NextDouble()");
         }
 
+        public override void TranslateReadByteCodeFile(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.ByteCode");
+        }
+
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
         {
             sb.Append("TranslationHelper.ProgramData = ");
@@ -489,7 +504,7 @@ namespace LangCSharp
         public override void TranslateStringAppend(StringBuilder sb, Expression str1, Expression str2)
         {
             this.TranslateExpression(sb, str1);
-            sb.Append(" + ");
+            sb.Append(" += ");
             this.TranslateExpression(sb, str2);
         }
 

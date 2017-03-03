@@ -269,6 +269,7 @@ namespace Crayon.Translator.Pastel
             FunctionCall fc = returnStatement.Expression as FunctionCall;
             if (fc != null)
             {
+                /*
                 Variable fp = fc.Root as Variable;
                 if (fp != null && fp.Name == "suspendInterpreter")
                 {
@@ -276,7 +277,7 @@ namespace Crayon.Translator.Pastel
                     output.Add("Core.VmSuspend();");
                     output.Add(this.NL);
                     return;
-                }
+                }//*/
             }
 
             base.TranslateReturnStatement(output, returnStatement);

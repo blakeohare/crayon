@@ -163,6 +163,8 @@ namespace Platform
 
         public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
         {
+            // Need to do something about these parenthesis.
+            sb.Append('(');
             for (int i = 0; i < opChain.Expressions.Length; ++i)
             {
                 if (i > 0)
@@ -173,6 +175,7 @@ namespace Platform
                 }
                 this.TranslateExpression(sb, opChain.Expressions[i]);
             }
+            sb.Append(')');
         }
 
         public override void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement)

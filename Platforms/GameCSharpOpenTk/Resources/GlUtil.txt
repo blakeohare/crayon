@@ -2,8 +2,9 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
+using Interpreter.Vm;
 
-namespace %%%PROJECT_ID%%%
+namespace Interpreter.OtkGame
 {
 	public static class GlUtil
 	{

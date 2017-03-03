@@ -570,3 +570,15 @@ function @type('object') getNativeDataItem(@type('Value') objValue, @type('int')
 	@type('ObjectInstance') obj = $_cast('ObjectInstance', Value$objValue.internalValue);
 	return $_array_get(ObjectInstance$obj.nativeData, index);
 }
+
+function @type('int') nextPowerOf2(@type('int') value) {
+
+	if (((value - 1) & value) == 0) return value;
+
+	@type('int') output = 1;
+	while (output < value)
+	{
+		output *= 2;
+	}
+	return output;
+}
