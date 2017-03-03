@@ -254,6 +254,15 @@ namespace LangCSharp
             sb.Append(").ToString()");
         }
 
+        public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
+        {
+            sb.Append("TranslationHelper.InvokeDynamicLibraryFunction(");
+            this.TranslateExpression(sb, functionId);
+            sb.Append(", ");
+            this.TranslateExpression(sb, argsArray);
+            sb.Append(")");
+        }
+
         public override void TranslateIsValidInteger(StringBuilder sb, Expression stringValue)
         {
             sb.Append("TranslationHelper.IsValidInteger(");
@@ -689,12 +698,12 @@ namespace LangCSharp
 
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.TODO(\"VM_GET_CURRENT_EXECUTION_CONTEXT_ID\")");
+            sb.Append("TranslationHelper.VmCurrentExecutionContext()");
         }
 
         public override void TranslateVmSuspend(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.TODO(\"VM_SUSPEND\")");
+            sb.Append("TranslationHelper.VmSuspend()");
         }
     }
 }

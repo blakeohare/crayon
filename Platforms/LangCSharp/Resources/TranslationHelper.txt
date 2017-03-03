@@ -206,5 +206,10 @@ namespace Interpreter.Vm
             }
             return output;
         }
+
+		public static Value InvokeDynamicLibraryFunction(int functionId, Value[] args)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

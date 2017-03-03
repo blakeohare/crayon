@@ -12,15 +12,6 @@ namespace GameCSharpOpenTk
             : base(platform)
         { }
 
-        public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
-        {
-            sb.Append("TranslationHelper.TODO(\"INVOKE_DYNAMIC_LIBRARY_FUNCTION\", ");
-            this.TranslateExpression(sb, functionId);
-            sb.Append(", ");
-            this.TranslateExpression(sb, argsArray);
-            sb.Append(")");
-        }
-
         public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
         {
             sb.Append("System.Console.Error.WriteLine(");
