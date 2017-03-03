@@ -70,6 +70,7 @@ namespace LangCSharp
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
+            ResourceDatabase resourceDatabase,
             Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");

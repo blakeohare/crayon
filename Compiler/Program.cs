@@ -68,10 +68,39 @@ namespace Crayon
             Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
             if (platform2 != null)
             {
+                // This really needs to go in a separate helper file.
+                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
+                resourceDatabase.ByteCodeFile = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = ByteCodeEncoder.Encode(compilationResult.ByteCode),
+                };
+                
+                Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+                if (buildContext.ImageSheetIds != null)
+                {
+                    foreach (string imageSheetId in buildContext.ImageSheetIds)
+                    {
+                        imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+
+                        foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                        {
+                            imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                        }
+                    }
+                }
+                Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+                resourceDatabase.AddImageSheets(imageSheets);
+
+                resourceDatabase.GenerateResourceMapping();
+
+
                 VmGenerator vmGenerator = new VmGenerator();
                 result = vmGenerator.GenerateVmSourceCodeForPlatform(
                     platform2,
                     compilationResult,
+                    resourceDatabase,
                     compilationResult.LibrariesUsed,
                     VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
             }

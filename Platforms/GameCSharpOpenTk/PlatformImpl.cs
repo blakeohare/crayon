@@ -48,6 +48,7 @@ namespace GameCSharpOpenTk
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
+            ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options);
@@ -152,6 +153,9 @@ namespace GameCSharpOpenTk
                     ""
                 }),
             };
+
+            output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             return output;
         }

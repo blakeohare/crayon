@@ -68,6 +68,8 @@
     <Compile Include="Vm\*.cs"/>  
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ByteCode.txt"/>
+    <EmbeddedResource Include="ResourceManifest.txt"/>
 %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
   <ItemGroup>

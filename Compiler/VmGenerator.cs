@@ -43,6 +43,7 @@ namespace Crayon
         public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
+            ResourceDatabase resourceDatabase,
             ICollection<Library> relevantLibraries,
             VmGenerationMode mode)
         {
@@ -73,6 +74,7 @@ namespace Crayon
                     vm.Globals.Values.OrderBy(v => v.VariableName.Value).ToArray(),
                     vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
                     vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                    resourceDatabase,
                     options);
             }
             else

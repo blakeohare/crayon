@@ -123,6 +123,7 @@ namespace Platform
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,
             IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
+            ResourceDatabase resourceDatabase,
             Options options);
 
         public string IndentCodeWithTabs(string code, int tabCount)
