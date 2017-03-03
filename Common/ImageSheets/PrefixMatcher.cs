@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Common;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    class PrefixMatcher
+    public class PrefixMatcher
     {
         private List<string> ids = new List<string>();
         private Dictionary<string, List<string>> prefixesById = new Dictionary<string, List<string>>();

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common;
 
-namespace Crayon
+namespace Common
 {
     /*
      * Database of non-code files to be copied.
      */
-    class ResourceDatabase
+    public class ResourceDatabase
     {
-        private static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
+        public static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
 
             { "cry", FileCategory.IGNORE_SILENT }, // Not interested in source code.
 
@@ -47,13 +46,7 @@ namespace Crayon
             { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
         };
 
-        private static HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] {
-            ".ds_store",
-            "thumbs.db",
-        });
-
         public FileOutput ByteCodeFile { get; set; }
-        public ByteBuffer ByteCodeRawData { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
         public FileOutput ImageSheetManifestFile { get; set; }
 
@@ -66,7 +59,7 @@ namespace Crayon
         public List<FileOutput> BinaryResources { get; set; }
         public List<FileOutput> FontResources { get; set; }
 
-        private enum FileCategory
+        public enum FileCategory
         {
             TEXT,
             BINARY, // Not used yet.
@@ -80,7 +73,7 @@ namespace Crayon
             IGNORE_IMAGE_ASSET,
         }
 
-        public ResourceDatabase(BuildContext buildContext)
+        public ResourceDatabase()
         {
             this.AudioResources = new List<FileOutput>();
             this.BinaryResources = new List<FileOutput>();
@@ -89,139 +82,6 @@ namespace Crayon
             this.FontResources = new List<FileOutput>();
             this.ImageSheetFiles = new Dictionary<string, FileOutput>();
             this.FontSheetFiles = new List<FileOutput>();
-
-            foreach (FilePath sourceRoot in buildContext.SourceFolders)
-            {
-                string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
-
-                // Everything is just a basic copy resource at first.
-                foreach (string relativeFilePath in relativePaths)
-                {
-                    string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
-                    string aliasedPath = sourceRoot.GetAliasedOrRelativePathh(absolutePath);
-                    string fileName = System.IO.Path.GetFileName(absolutePath);
-                    string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
-
-                    FileCategory category;
-                    if (IGNORABLE_FILES.Contains(fileName.ToLowerInvariant()))
-                    {
-                        // Common system generated files that no one would ever want.
-                        category = FileCategory.IGNORE_SILENT;
-                    }
-                    else if (KNOWN_FILE_EXTENSIONS.ContainsKey(extension))
-                    {
-                        category = KNOWN_FILE_EXTENSIONS[extension];
-                    }
-                    else
-                    {
-                        // TODO: build file should define which files are binary resources and which are text.
-                        category = FileCategory.TEXT;
-                    }
-
-                    switch (category)
-                    {
-                        case FileCategory.IGNORE_SILENT:
-                            break;
-
-                        case FileCategory.IGNORE_IMAGE:
-                            System.Console.WriteLine(aliasedPath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
-                            break;
-                        case FileCategory.IGNORE_AUDIO:
-                            System.Console.WriteLine(aliasedPath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
-                            break;
-                        case FileCategory.IGNORE_IMAGE_ASSET:
-                            System.Console.WriteLine(aliasedPath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
-                            break;
-
-                        case FileCategory.AUDIO:
-                            this.AudioResources.Add(new FileOutput()
-                            {
-                                Type = FileOutputType.Copy,
-                                RelativeInputPath = aliasedPath,
-                                OriginalPath = aliasedPath,
-                                AbsoluteInputPath = absolutePath,
-                            });
-                            break;
-
-                        case FileCategory.BINARY:
-                            this.AudioResources.Add(new FileOutput()
-                            {
-                                Type = FileOutputType.Copy,
-                                RelativeInputPath = aliasedPath,
-                                OriginalPath = aliasedPath,
-                                AbsoluteInputPath = absolutePath,
-                            });
-                            break;
-
-                        case FileCategory.TEXT:
-                            string content = FileUtil.ReadFileText(absolutePath);
-                            this.TextResources.Add(new FileOutput()
-                            {
-                                Type = FileOutputType.Text,
-                                TextContent = content,
-                                OriginalPath = aliasedPath,
-                                AbsoluteInputPath = absolutePath,
-                            });
-                            break;
-
-                        case FileCategory.IMAGE:
-                            // TODO: you can easily get the width and height from the first several bytes of the file
-                            // Many of these are simply loaded into memory to get the width and height and can be made more efficient.
-                            if (extension == "png")
-                            {
-                                // Re-encode PNGs into a common format/palette configuration since there are some issues
-                                // with obscure format PNGs on some platforms. Luckily the compiler is pretty good with
-                                // reading these. Besides, you're going to be opening most of these files anyway since
-                                // the user should be using image sheets.
-                                this.ImageResources.Add(new FileOutput()
-                                {
-                                    Type = FileOutputType.Image,
-                                    Bitmap = new SystemBitmap(absolutePath),
-                                    OriginalPath = aliasedPath,
-                                    AbsoluteInputPath = absolutePath,
-                                });
-                            }
-                            else if (extension == "jpg" || extension == "jpeg")
-                            {
-                                this.ImageResources.Add(new FileOutput()
-                                {
-                                    Type = FileOutputType.Image,
-                                    Bitmap = new SystemBitmap(absolutePath),
-                                    OriginalPath = aliasedPath,
-                                    AbsoluteInputPath = absolutePath,
-                                    IsLossy = true,
-                                });
-                            }
-                            else
-                            {
-                                this.ImageResources.Add(new FileOutput()
-                                {
-                                    Type = FileOutputType.Copy,
-                                    // still load into a bitmap as the width and height are needed.
-                                    // TODO: eventually clean this up so I don't need to do this or put width and 
-                                    // height into the FileOutput so that I don't have to keep this resource in memory.
-                                    Bitmap = new SystemBitmap(absolutePath),
-                                    RelativeInputPath = aliasedPath,
-                                    OriginalPath = aliasedPath,
-                                    AbsoluteInputPath = absolutePath,
-                                });
-                            }
-                            break;
-
-                        case FileCategory.FONT:
-                            this.FontResources.Add(new FileOutput()
-                            {
-                                Type = FileOutputType.Binary,
-                                OriginalPath = aliasedPath,
-                                AbsoluteInputPath = absolutePath,
-                            });
-                            break;
-
-                        default:
-                            throw new InvalidOperationException();
-                    }
-                }
-            }
         }
 
         // TODO: move into its own helper class in the ImageSheets namespace.

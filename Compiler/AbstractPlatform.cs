@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
+using Common.ImageSheets;
 using Crayon.ParseTree;
 using Crayon.Translator;
 
@@ -148,9 +149,9 @@ namespace Crayon
 
             this.VerifyProjectId(buildContext.ProjectID);
 
-            ResourceDatabase resourceDatabase = new ResourceDatabase(buildContext);
+            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
 
-            ImageSheets.ImageSheetBuilder imageSheetBuilder = new ImageSheets.ImageSheetBuilder();
+            ImageSheetBuilder imageSheetBuilder = new ImageSheetBuilder();
             if (buildContext.ImageSheetIds != null)
             {
                 foreach (string imageSheetId in buildContext.ImageSheetIds)
@@ -163,16 +164,14 @@ namespace Crayon
                     }
                 }
             }
-            ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+            Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
 
             resourceDatabase.AddImageSheets(imageSheets);
 
             resourceDatabase.GenerateResourceMapping();
 
             ByteBuffer byteCodeBuffer = this.GenerateByteCode(buildContext);
-
-            resourceDatabase.ByteCodeRawData = byteCodeBuffer;
-
+            
             resourceDatabase.ByteCodeFile = new FileOutput()
             {
                 Type = FileOutputType.Text,

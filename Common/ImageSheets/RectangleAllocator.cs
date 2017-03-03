@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    internal static class RectangleAllocator
+    public static class RectangleAllocator
     {
         public static Chunk[] Allocate(IEnumerable<Image> images)
         {

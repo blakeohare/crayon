@@ -33,7 +33,7 @@ namespace Crayon.Translator.Php
             SystemLibraryManager libraryManager)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-            FileOutput byteCodeFile = this.GenerateByteCodeFile(resourceDatabase.ByteCodeRawData);
+            FileOutput byteCodeFile = this.GenerateByteCodeFile(null); //resourceDatabase.ByteCodeRawData);
             output["bytecode.php"] = byteCodeFile;
 
             Dictionary<string, string> replacements = new Dictionary<string, string>();
@@ -71,6 +71,12 @@ namespace Crayon.Translator.Php
 
         private FileOutput GenerateByteCodeFile(ByteBuffer byteCodeBuffer)
         {
+            // This all has to change.
+            // The PHP projects will be .cbx files that can be directly accessed via a .htaccess rule that will route them through the 
+            // interpreter. The same .cbx files that are used for client-side projects.
+            throw new System.NotImplementedException(); 
+
+            /*
             List<string> output = new List<string>();
             output.Add("<?php");
 
@@ -159,6 +165,7 @@ namespace Crayon.Translator.Php
                 Type = FileOutputType.Text,
                 TextContent = string.Join("\n", output),
             };
+            //*/
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common;
 
-namespace Crayon
+namespace Common
 {
     public static class FileUtil
     {

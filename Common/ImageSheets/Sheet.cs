@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    internal class Sheet
+    public class Sheet
     {
         public Sheet()
         {

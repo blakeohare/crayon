@@ -2,9 +2,9 @@
 using System.Linq;
 using Common;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    class Chunk
+    public class Chunk
     {
         public Chunk()
         {

@@ -1,4 +1,4 @@
-﻿namespace Crayon
+﻿namespace Common
 {
     // Represents a source path root in the build file that may have an alias.
     public class FilePath

@@ -2,9 +2,9 @@
 using System.Linq;
 using Common;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    internal class ImageSheetBuilder
+    public class ImageSheetBuilder
     {
         public PrefixMatcher PrefixMatcher { get; set; }
 

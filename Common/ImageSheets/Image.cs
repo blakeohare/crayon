@@ -1,8 +1,8 @@
 ﻿using Common;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    internal class Image
+    public class Image
     {
         public Image(FileOutput file)
         {

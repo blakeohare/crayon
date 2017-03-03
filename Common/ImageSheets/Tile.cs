@@ -1,8 +1,8 @@
 ﻿using Common;
 
-namespace Crayon.ImageSheets
+namespace Common.ImageSheets
 {
-    internal class Tile
+    public class Tile
     {
         public string GeneratedFilename { get; set; }
         public SystemBitmap Bitmap { get; set; }
