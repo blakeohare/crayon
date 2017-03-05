@@ -17,7 +17,7 @@
 	ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Array<Value>(100), localsStack, localsStackSet, 1, 0, false, null, false, 0);
 	Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
 	executionContexts[0] = executionContext;
-	Core.SetProgramData(new ProgramData(executionContexts, executionContext.id, ops, opArgs, stringArgs, null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), new Array<List<Token>>(ops.Size()), 0, null, new List<string>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), 0, false, new Array<ClassInfo>(100), new Array<FunctionInfo>(100), new List<int>(), null, null, -1, new Array<int>(10), resources, null, null, new MagicNumbers(0, 0), null));
+	Core.SetProgramData(new ProgramData(executionContexts, executionContext.id, ops, opArgs, stringArgs, null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), new Array<List<Token>>(ops.Size()), 0, null, new List<string>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), 0, false, new Array<ClassInfo>(100), new Array<FunctionInfo>(100), new List<int>(), null, null, -1, new Array<int>(10), resources, null, null, new MagicNumbers(0, 0), null, new Dictionary<int, int>(), new List<object>(), new List<string>(), new List<int>(), new Dictionary<string, int>(), -1, null));
 	runInterpreter(executionContext.id);
 	return 0;
 }

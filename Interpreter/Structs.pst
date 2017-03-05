@@ -46,6 +46,13 @@ struct ProgramData {
 	Array<Array<int>> esfData;
 	MagicNumbers magicNumbers;
 	Array<int> valueStackDepthByPc;
+	Dictionary<int, int> libraryFunctionIdByLookupId;
+	List<object> libraryFunctionPointers;
+	List<string> libraryFunctionNames;
+	List<int> libraryFunctionArgCounts;
+	Dictionary<string, int> invFunctionNameLiterals;
+	int activeLibraryReferenceId;
+	Array<object> libraryFunctionByPc;
 }
 
 struct ExecutionContext {

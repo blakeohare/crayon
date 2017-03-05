@@ -58,6 +58,9 @@ namespace GameCSharpOpenTk
 
             // From LangCSharp
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
 
             // Project files from CSharpOpenTK
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);

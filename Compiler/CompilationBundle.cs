@@ -21,7 +21,7 @@ namespace Crayon
             return new CompilationBundle()
             {
                 ByteCode = buffer,
-                LibrariesUsed = parser.LibrariesUsed,
+                LibrariesUsed = parser.SystemLibraryManager.LibrariesUsed,
                 ProjectID = buildContext.ProjectID,
                 GuidSeed = buildContext.GuidSeed,
             };

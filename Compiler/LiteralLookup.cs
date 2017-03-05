@@ -63,6 +63,11 @@ namespace Crayon
             return this.GetIdForValue("c" + value.ClassID, Types.CLASS, value.ClassID);
         }
 
+        public int GetLibFuncRefId(string funcName)
+        {
+            return this.GetIdForValue("l" + funcName, Types.FUNCTION, funcName);
+        }
+
         public int GetNameId(string value)
         {
             int id;
@@ -102,6 +107,9 @@ namespace Crayon
                         break;
                     case Types.CLASS:
                         output.Add(null, OpCode.ADD_LITERAL, (int)Types.CLASS, (int)value);
+                        break;
+                    case Types.FUNCTION:
+                        output.Add(null, OpCode.ADD_LITERAL, value.ToString(), (int)Types.FUNCTION);
                         break;
                     default:
                         // unknown literal type.

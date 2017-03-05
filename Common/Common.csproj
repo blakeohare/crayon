@@ -37,6 +37,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompatibilityHack.cs" />
     <Compile Include="CSharpHelper.cs" />
     <Compile Include="ExportOptionKey.cs" />
     <Compile Include="FileOutput.cs" />

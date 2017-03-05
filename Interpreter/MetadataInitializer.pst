@@ -267,3 +267,51 @@ int markClassAsInitialized(StackFrame stack, int classId) {
 	return 0;
 }
 
+int declareLibrary(int refId, string descriptor) {
+	if (true) {
+		ProgramData p = Core.GetProgramData();
+		Array<string> descriptorParts = descriptor.Split(",");
+		string name = descriptorParts[0];
+		string ver = descriptorParts[1];
+		int status = Core.VmDetermineLibraryAvailability(name, ver);
+		if (status == 0) {
+			p.activeLibraryReferenceId = refId;
+			status = Core.VmRunLibraryManifest(name, p.libraryFunctionPointers, p.libraryFunctionNames, p.libraryFunctionArgCounts);
+		}
+		return status;
+	} else {
+		return 0;
+	}
+}
+
+int registerLibraryFunction(object functionPointer, List<object> functionPointersById, List<string> functionNamesById, List<int> functionArgCountsById, string functionName, int argCount) {
+	if (true) {
+		int index = functionPointersById.Size();
+		functionPointersById.Add(functionPointer);
+		functionNamesById.Add(functionName);
+		functionArgCountsById.Add(argCount);
+		ProgramData p = Core.GetProgramData();
+		if (p.invFunctionNameLiterals.Contains(functionName)) {
+			int functionNameReferenceId = p.invFunctionNameLiterals[functionName];
+			int lookupId = p.activeLibraryReferenceId + (4096 * functionNameReferenceId);
+			p.libraryFunctionIdByLookupId[lookupId] = index;
+		}
+	}
+	return 0;
+}
+
+Array<object> createLibraryFunctionLookup() {
+	ProgramData p = Core.GetProgramData();
+	int length = p.ops.Size();
+	Array<int> row = null;
+	Array<object> functionPointersByPc = new Array<object>(length);
+	for (int pc = 0; pc < length; pc += 1) {
+		if (p.ops[pc] == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
+			row = p.args[pc];
+			object fp = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
+			functionPointersByPc[pc] = fp;
+		}
+	}
+	return functionPointersByPc;
+}
+

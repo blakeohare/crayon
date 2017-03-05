@@ -36,11 +36,14 @@ namespace Crayon
 
             ByteBuffer switchStatements = this.BuildSwitchStatementTables(parser);
 
+            ByteBuffer buildLibraryDeclarations = this.BuildLibraryDeclarations(parser);
+
             ByteBuffer header = new Crayon.ByteBuffer();
             header.Concat(literalsTable);
             header.Concat(tokenData);
             header.Concat(fileContent);
             header.Concat(switchStatements);
+            header.Concat(buildLibraryDeclarations);
 
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
@@ -77,6 +80,31 @@ namespace Crayon
             int esfPc = output.GetEsfPc();
             output.SetArgs(esfPc, esfOps);
             output.SetArgs(esfPc + 1, valueStackDepthOps);
+
+            return output;
+        }
+
+        private ByteBuffer BuildLibraryDeclarations(Parser parser)
+        {
+            ByteBuffer output = new ByteBuffer();
+            if (Common.CompatibilityHack.IS_LEGACY_MODE)
+            {
+                return output;
+            }
+
+            int id = 1;
+            foreach (Library library in parser.SystemLibraryManager.LibrariesUsed)
+            {
+                Common.CompatibilityHack.CriticalTODO("Include the version in the descriptor as well.");
+                List<string> descriptorComponents = new List<string>()
+                {
+                    library.Name,
+                    "v1" // dummy version
+                };
+                string libraryDescriptor = string.Join(",", descriptorComponents);
+
+                output.Add(null, OpCode.LIB_DECLARATION, library.Name, id++);
+            }
 
             return output;
         }
@@ -1357,7 +1385,24 @@ namespace Crayon
             this.CompileExpressionList(parser, buffer, args, true);
             int argCount = libFunc.Args.Length;
             int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
-            buffer.Add(parenTokenOverride ?? libFunc.FirstToken, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
+            Token token = parenTokenOverride ?? libFunc.FirstToken;
+            if (Common.CompatibilityHack.IS_CBX_MODE)
+            {
+                string libraryName = libFunc.LibraryName;
+                int libraryRefId = parser.SystemLibraryManager.GetLibraryReferenceId(libraryName);
+                int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
+
+                buffer.Add(token,
+                    OpCode.CALL_LIB_FUNCTION_DYNAMIC,
+                    functionNameReferenceId,
+                    libraryRefId,
+                    argCount,
+                    outputUsed ? 1 : 0);
+            }
+            else
+            {
+                buffer.Add(token, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
+            }
         }
 
         private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

@@ -347,6 +347,10 @@ InterpreterResult interpretImpl(int executionContextId) {
 				Core.EmitComment("JUMP_IF_TRUE_NO_POP");
 				@import("Ops/jump_if_true_no_pop.cry");
 				break;
+			case OpCodes.LIB_DECLARATION:
+				Core.EmitComment("LIB_DECLARATION");
+				i = 0;
+				break;
 			case OpCodes.LIST_SLICE:
 				Core.EmitComment("LIST_SLICE");
 				@import("Ops/list_slice.cry");

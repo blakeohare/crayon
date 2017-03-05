@@ -12,6 +12,7 @@ ProgramData$p.literalTableBuilder = null;
 ProgramData$p.integerSwitchLookupsBuilder = null;
 ProgramData$p.stringSwitchLookupsBuilder = null;
 ProgramData$p.sourceCodeBuilder = null;
+ProgramData$p.libraryFunctionByPc = createLibraryFunctionLookup();
 
 identifiers = ProgramData$p.identifiers;
 literalTable = ProgramData$p.literalTable;
@@ -19,5 +20,7 @@ integerSwitches = ProgramData$p.integerSwitchLookups;
 stringSwitches = ProgramData$p.stringSwitchLookups;
 globalNameIdToPrimitiveMethodName = ProgramData$p.globalNameIdToPrimitiveMethodName;
 funcArgs = ProgramData$p.funcArgs;
+
+
 
 ProgramData$p.initializationComplete = true;

@@ -12,8 +12,8 @@ namespace Interpreter.Vm
         public static ProgramData ProgramData { get; set; }
         public static int[] IntBuffer16 { get; private set; }
         public static string[] CommandLineArgs { get; set; }
-		public static string ResourceManifest { get; set; }
-		public static string ByteCode { get; set; }
+        public static string ResourceManifest { get; set; }
+        public static string ByteCode { get; set; }
 
         public static readonly bool IsWindows =
             Environment.OSVersion.Platform == PlatformID.Win32NT ||
@@ -207,9 +207,34 @@ namespace Interpreter.Vm
             return output;
         }
 
-		public static Value InvokeDynamicLibraryFunction(int functionId, Value[] args)
-		{
-			throw new NotImplementedException();
-		}
+        public static Value InvokeDynamicLibraryFunction(object functionPointer, Value[] args)
+        {
+			return ((LibraryFunctionPointer)functionPointer).Run(args);
+        }
+
+        public static int VmDetermineLibraryAvailability(string name, string version)
+        {
+            return TranslationHelper.LibraryRegistry.LoadLibrary(name, version);
+        }
+
+        public static int VmRunLibraryManifest(
+			string name, 
+			List<object> functionPointers, 
+			List<string> libraryNames, 
+			List<int> libraryArgCounts)
+        {
+            try
+            {
+                Library library = TranslationHelper.LibraryRegistry.GetLibrary(name);
+                library.RunManifest(functionPointers, libraryNames, libraryArgCounts);
+                return 0;
+            }
+            catch (Exception)
+            {
+                return 3;
+            }
+        }
+
+        public static LibraryRegistry LibraryRegistry { get; set; }
     }
 }

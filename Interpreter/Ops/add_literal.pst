@@ -18,9 +18,16 @@ if (type == Types.NULL) {
 				if (type == Types.STRING) {
 					p.literalTableBuilder.Add(buildCommonString(stringArgs[pc]));
 				} else {
-					if (type == Types.CLASS) {
-						classValue = new ClassValue(false, row[1]);
-						p.literalTableBuilder.Add(new Value(Types.CLASS, classValue));
+					if (type == Types.FUNCTION) {
+						string1 = stringArgs[pc];
+						int1 = p.literalTableBuilder.Size();
+						p.literalTableBuilder.Add(buildCommonString(string1));
+						p.invFunctionNameLiterals[string1] = int1;
+					} else {
+						if (type == Types.CLASS) {
+							classValue = new ClassValue(false, row[1]);
+							p.literalTableBuilder.Add(new Value(Types.CLASS, classValue));
+						}
 					}
 				}
 			}

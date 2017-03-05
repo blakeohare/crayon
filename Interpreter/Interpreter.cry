@@ -274,6 +274,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.JUMP_IF_FALSE_NO_POP: $_comment('JUMP_IF_FALSE_NON_POP'); import inline 'Ops/jump_if_false_no_pop.cry'; break;
 			case OpCodes.JUMP_IF_TRUE: $_comment('JUMP_IF_TRUE'); import inline 'Ops/jump_if_true.cry'; break;
 			case OpCodes.JUMP_IF_TRUE_NO_POP: $_comment('JUMP_IF_TRUE_NO_POP'); import inline 'Ops/jump_if_true_no_pop.cry'; break;
+			case OpCodes.LIB_DECLARATION: $_comment('LIB_DECLARATION'); i = 0; break;
 			case OpCodes.LIST_SLICE: $_comment('LIST_SLICE'); import inline 'Ops/list_slice.cry'; break;
 			case OpCodes.LITERAL: $_comment('LITERAL'); import inline 'Ops/literal.cry'; break;
 			case OpCodes.LITERAL_STREAM: $_comment('LITERAL_STREAM'); import inline 'Ops/literal_stream.cry'; break;

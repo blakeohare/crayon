@@ -265,7 +265,9 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_TRIM_START: this.TranslateStringTrimStart(sb, args[0]); break;
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
+                case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_GET_CURRENT_EXECUTION_CONTEXT_ID: this.TranslateVmGetCurrentExecutionContextId(sb); break;
+                case Pastel.NativeFunction.VM_RUN_LIBRARY_MANIFEST: this.TranslateVmRunLibraryManifest(sb, args[0], args[1], args[2], args[3]); break;
                 case Pastel.NativeFunction.VM_SUSPEND: this.TranslateVmSuspend(sb); break;
 
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
@@ -383,7 +385,9 @@ namespace Platform
         public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
+        public abstract void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion);
         public abstract void TranslateVmGetCurrentExecutionContextId(StringBuilder sb);
+        public abstract void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList);
         public abstract void TranslateVmSuspend(StringBuilder sb);
         public abstract void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop);
     }

@@ -62,10 +62,13 @@ namespace Crayon
                 return;
             }
 
+            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
+
+            CompatibilityHack.IS_CBX_MODE = platform2 != null;
+
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
             Dictionary<string, FileOutput> result;
-
-            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
+            
             if (platform2 != null)
             {
                 // This really needs to go in a separate helper file.

@@ -9,6 +9,7 @@ namespace %%%PROJECT_ID%%%
         public static void Main(string[] args)
         {
             TranslationHelper.CommandLineArgs = args;
+			TranslationHelper.LibraryRegistry = new LibraryRegistry();
             TranslationHelper.ByteCode = ResourceReader.ReadTextFile("ByteCode.txt");
             TranslationHelper.ResourceManifest = ResourceReader.ReadTextFile("ResourceManifest.txt");
             CrayonWrapper.v_main();

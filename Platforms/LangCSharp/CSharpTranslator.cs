@@ -696,9 +696,31 @@ namespace LangCSharp
             sb.Append(this.NewLine);
         }
 
+        public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)
+        {
+            sb.Append("TranslationHelper.VmDetermineLibraryAvailability(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libraryVersion);
+            sb.Append(')');
+        }
+
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
         {
             sb.Append("TranslationHelper.VmCurrentExecutionContext()");
+        }
+
+        public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList)
+        {
+            sb.Append("TranslationHelper.VmRunLibraryManifest(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionPointerList);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionNameList);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCountList);
+            sb.Append(')');
         }
 
         public override void TranslateVmSuspend(StringBuilder sb)

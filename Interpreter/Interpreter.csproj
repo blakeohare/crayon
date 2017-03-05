@@ -37,6 +37,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Ops\call_lib_function_dynamic.cry" />
     <EmbeddedResource Include="Ops\call_lib_function_dynamic.pst" />
+    <EmbeddedResource Include="Ops\lib_declaration.pst" />
     <None Include="PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <ItemGroup>

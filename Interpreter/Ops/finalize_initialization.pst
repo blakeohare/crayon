@@ -11,6 +11,7 @@ p.literalTableBuilder = null;
 p.integerSwitchLookupsBuilder = null;
 p.stringSwitchLookupsBuilder = null;
 p.sourceCodeBuilder = null;
+p.libraryFunctionByPc = createLibraryFunctionLookup();
 identifiers = p.identifiers;
 literalTable = p.literalTable;
 integerSwitches = p.integerSwitchLookups;

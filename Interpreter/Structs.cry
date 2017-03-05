@@ -51,6 +51,13 @@ struct ProgramData {
 	@type('Array<Array<int>>') esfData,
 	@type('MagicNumbers') magicNumbers,
 	@type('Array<int>') valueStackDepthByPc,
+	@type('Dictionary<int, int>') libraryFunctionIdByLookupId, // lookup ID is library-scoped-function-ID * 4096 + library-reference-ID
+	@type('List<object>') libraryFunctionPointers,
+	@type('List<string>') libraryFunctionNames,
+	@type('List<int>') libraryFunctionArgCounts,
+	@type('Dictionary<string, int>') invFunctionNameLiterals,
+	@type('int') activeLibraryReferenceId,
+	@type('Array<object>') libraryFunctionByPc,
 }
 
 struct ExecutionContext {

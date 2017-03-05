@@ -501,5 +501,10 @@ namespace Crayon
 
             return this.argumentTypeInfoForNativeMethods;
         }
+
+        public int GetFunctionId(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

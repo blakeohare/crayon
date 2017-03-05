@@ -164,15 +164,24 @@ namespace Crayon
                 : null;
         }
 
-        private readonly Dictionary<string, Library> alreadyImported = new Dictionary<string, Library>();
+        private readonly List<Library> librariesAlreadyImported = new List<Library>();
+        // The index + 1 is the reference ID
+        private readonly Dictionary<string, int> librariesAlreadyImportedIndexByName = new Dictionary<string, int>();
         private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
+        
+        public int GetLibraryReferenceId(string name)
+        {
+            return this.librariesAlreadyImportedIndexByName[name] + 1;
+        }
 
-        public Dictionary<string, Library> LibrariesImportedByName { get { return this.alreadyImported; } }
+        public Library[] LibrariesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
 
         public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
-            Library library = alreadyImported.ContainsKey(name) ? alreadyImported[name] : null;
+            Library library = librariesAlreadyImportedIndexByName.ContainsKey(name) 
+                ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]] 
+                : null;
             Executable[] embedCode = EMPTY_EXECUTABLE;
             if (library == null)
             {
@@ -190,7 +199,8 @@ namespace Crayon
 
                 library = new Library(name, libraryManifestPath, platform, language);
 
-                alreadyImported.Add(name, library);
+                this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
+                this.librariesAlreadyImported.Add(library);
 
                 library.ExtractResources(platform, this.filesToCopy, this.contentToEmbed);
 
