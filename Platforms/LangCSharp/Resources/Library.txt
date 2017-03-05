@@ -1,0 +1,23 @@
+﻿using System.Collections.Generic;
+
+namespace Interpreter.Vm
+{
+    public class Library
+    {
+        public string Name { get; set; }
+        public string Verison { get; set; }
+
+        private System.Reflection.MethodInfo manifestMethod;
+
+        public Library(System.Reflection.MethodInfo manifestMethod)
+        {
+            this.manifestMethod = manifestMethod;
+        }
+
+        public int RunManifest(List<object> functionPointersOut, List<string> functionNamesOut, List<int> argCountsOut)
+        {
+            this.manifestMethod.Invoke(null, new object[] { functionPointersOut, functionNamesOut, argCountsOut });
+            return 0;
+        }
+    }
+}

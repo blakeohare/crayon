@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class LibraryNativeFunctionInvocation : Expression
+    public class LibraryNativeFunctionInvocation : Expression
     {
         public Expression[] Args { get; set; }
         public LibraryNativeFunctionReference LibraryNativeFunction { get; set; }

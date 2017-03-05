@@ -48,6 +48,7 @@ namespace GameCSharpOpenTk
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
@@ -90,6 +91,40 @@ namespace GameCSharpOpenTk
             this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
+
+            foreach (LibraryForExport library in libraries)
+            {
+                string libraryName = library.Name;
+                List<string> libraryLines = new List<string>();
+                if (library.ManifestFunction != null)
+                {
+                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    foreach (FunctionDefinition funcDef in library.Functions)
+                    {
+                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                    }
+
+
+                    output[baseDir + "Libraries/" + libraryName + "/LibraryWrapper.cs"] = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = string.Join(this.NL,
+                            "using System;",
+                            "using System.Collections.Generic;",
+                            "using System.Linq;",
+                            "using Interpreter.Structs;",
+                            "",
+                            "namespace Interpreter.Libraries." + libraryName,
+                            "{",
+                            "    public static class LibraryWrapper",
+                            "    {",
+                            string.Join(this.NL, libraryLines),
+                            "    }",
+                            "}",
+                            ""),
+                    };
+                }
+            }
 
             foreach (StructDefinition structDefinition in structDefinitions)
             {

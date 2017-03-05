@@ -99,6 +99,7 @@ namespace Platform
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
+                case "LibraryNativeFunctionInvocation": this.TranslateLibraryNativeFunctionInvocation(sb, (LibraryNativeFunctionInvocation)expression); break;
 
                 case "Variable":
                     Variable v = (Variable)expression;
@@ -239,6 +240,7 @@ namespace Platform
                 case Pastel.NativeFunction.PRINT_STDOUT: this.TranslatePrintStdOut(sb, args[0]); break;
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
                 case Pastel.NativeFunction.READ_BYTE_CODE_FILE: this.TranslateReadByteCodeFile(sb); break;
+                case Pastel.NativeFunction.REGISTER_LIBRARY_FUNCTION: this.TranslateRegisterLibraryFunction(sb, args[0], args[1], args[2], args[3], args[4]); break;
                 case Pastel.NativeFunction.SET_PROGRAM_DATA: this.TranslateSetProgramData(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_STRING_ARRAY: this.TranslateSortedCopyOfStringArray(sb, args[0]); break;
@@ -272,6 +274,13 @@ namespace Platform
 
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
+        }
+        public void TranslateLibraryNativeFunctionInvocation(StringBuilder sb, LibraryNativeFunctionInvocation funcInvocation)
+        {
+            Expression[] args = funcInvocation.Args;
+            string functionName = funcInvocation.LibraryNativeFunction.Name;
+            // Oh no. I need a reference to the library.
+            throw new NotImplementedException();
         }
 
         public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
@@ -353,6 +362,7 @@ namespace Platform
         public abstract void TranslatePrintStdOut(StringBuilder sb, Expression value);
         public abstract void TranslateRandomFloat(StringBuilder sb);
         public abstract void TranslateReadByteCodeFile(StringBuilder sb);
+        public abstract void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount);
         public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
         public abstract void TranslateSetProgramData(StringBuilder sb, Expression programData);
         public abstract void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray);

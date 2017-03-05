@@ -55,12 +55,19 @@ namespace Crayon
             this.AddTypeEnumsToConstants(constantFlags);
 
             Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags, codeLoader);
-            Dictionary<string, Pastel.PastelCompiler> libraries = this.GenerateLibraryParseTree(
+            Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
                 platform,
                 constantFlags,
                 codeLoader,
                 relevantLibraries,
                 vm);
+
+            List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
+            foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
+            {
+                string version = "v1"; // TODO: the actual version
+                libraries.Add(this.CreateLibraryForExport(libraryName, version, libraryCompilation[libraryName]));
+            }
 
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
             {
@@ -74,6 +81,7 @@ namespace Crayon
                     vm.Globals.Values.OrderBy(v => v.VariableName.Value).ToArray(),
                     vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
                     vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                    libraries,
                     resourceDatabase,
                     options);
             }
@@ -81,6 +89,36 @@ namespace Crayon
             {
                 throw new NotImplementedException();
             }
+        }
+
+        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation)
+        {
+            FunctionDefinition manifestFunction = null;
+            Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
+            foreach (FunctionDefinition functionDefinition in compilation.FunctionDefinitions.Values)
+            {
+                string functionName = functionDefinition.NameToken.Value;
+                if (functionName == "lib_manifest_RegisterFunctions")
+                {
+                    manifestFunction = functionDefinition;
+                }
+                else
+                {
+                    otherFunctions[functionName] = functionDefinition;
+                }
+            }
+
+            string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
+            FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
+
+            return new Platform.LibraryForExport()
+            {
+                Name = libraryName,
+                Version = version,
+                FunctionRegisteredNamesOrNulls = names,
+                Functions = functions,
+                ManifestFunction = manifestFunction,
+            };
         }
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(

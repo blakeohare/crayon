@@ -29,6 +29,7 @@ namespace GamePythonPygame
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {

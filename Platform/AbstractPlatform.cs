@@ -123,6 +123,7 @@ namespace Platform
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,
             IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options);
 

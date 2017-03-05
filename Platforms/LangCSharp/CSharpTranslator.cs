@@ -492,6 +492,22 @@ namespace LangCSharp
             sb.Append("TranslationHelper.ByteCode");
         }
 
+        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount)
+        {
+            sb.Append("TranslationHelper.RegisterLibraryFunction(typeof(LibraryWrapper), ");
+            this.TranslateExpression(sb, functionPointers);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionNames);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCounts);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCount);
+            sb.Append(')');
+
+        }
+
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
         {
             sb.Append("TranslationHelper.ProgramData = ");

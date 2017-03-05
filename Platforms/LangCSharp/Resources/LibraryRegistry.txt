@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Interpreter.Vm
+{
+    public class LibraryRegistry
+    {
+        private Dictionary<string, System.Reflection.MethodInfo> manifestMethodsByLibraryName = new Dictionary<string, System.Reflection.MethodInfo>();
+        private Dictionary<string, Library> librariesByName = new Dictionary<string, Library>();
+
+        public LibraryRegistry()
+        {
+            foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
+            {
+                string[] namespaceComponents = type.Namespace.Split('.');
+                if (namespaceComponents.Length > 1 && namespaceComponents[0] == "Libraries")
+                {
+                    string name = namespaceComponents[1];
+                    System.Reflection.MethodInfo manifestMethod = type.GetMethod("v_lib_manifest_RegisterFunctions");
+                    manifestMethodsByLibraryName[name] = manifestMethod;
+                }
+            }
+        }
+
+        public Library GetLibrary(string name)
+        {
+            return this.librariesByName[name];
+        }
+
+        public int LoadLibrary(string name, string version)
+        {
+            // Because this is bundled, the version is always correct.
+            // Also the name can be trusted as well, otherwise there would have been a compile time error.
+            librariesByName[name] = new Library(this.manifestMethodsByLibraryName[name]);
+            return 0;
+        }
+	}
+}
