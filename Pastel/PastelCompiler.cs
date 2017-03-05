@@ -26,33 +26,12 @@ namespace Pastel
             this.SharedScope = sharedScope;
             this.LibraryNativeFunctionReferenceArgumentTypes = argumentTypesForNativeMethods;
             this.LibraryNativeFunctionReferenceReturnTypes = returnTypesForNativeMethods;
-            Dictionary<string, int> intConstants = new Dictionary<string, int>();
-            Dictionary<string, bool> boolConstants = new Dictionary<string, bool>();
-
-            foreach (string key in constants.Keys)
-            {
-                object value = constants[key];
-                if (value is int)
-                {
-                    intConstants[key] = (int)value;
-                }
-                else if (value is bool)
-                {
-                    boolConstants[key] = (bool)value;
-                }
-                else
-                {
-                    throw new Exception(); // only ints and bools allowed.
-                }
-            }
-
             this.StructDefinitions = new Dictionary<string, StructDefinition>();
             this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
             this.Globals = new Dictionary<string, VariableDeclaration>();
             this.ConstantDefinitions = new Dictionary<string, VariableDeclaration>();
             this.FunctionDefinitions = new Dictionary<string, FunctionDefinition>();
-
-            this.interpreterParser = new PastelParser(boolConstants, intConstants, inlineImportCodeLoader);
+            this.interpreterParser = new PastelParser(constants, inlineImportCodeLoader);
         }
 
         private PastelParser interpreterParser;

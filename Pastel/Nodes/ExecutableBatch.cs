@@ -35,8 +35,27 @@ namespace Pastel.Nodes
 
         public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            // Should not be encountered
-            throw new NotImplementedException();
+            List<Executable> executables = new List<Executable>();
+            for (int i = 0; i < this.Executables.Length; ++i)
+            {
+                Executable exec = this.Executables[i].ResolveNamesAndCullUnusedCode(compiler);
+                if (exec is ExecutableBatch)
+                {
+                    executables.AddRange(((ExecutableBatch)exec).Executables);
+                }
+                else
+                {
+                    executables.Add(exec);
+                }
+            }
+
+            if (executables.Count == 1)
+            {
+                return executables[0];
+            }
+
+            this.Executables = executables.ToArray();
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)

@@ -14,6 +14,7 @@ namespace Crayon
         public string Name { get; set; }
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
+        public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
 
@@ -92,7 +93,18 @@ namespace Crayon
 
             foreach (string key in flagValues.Keys)
             {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // down with text-replacements! long live compiler-time constants!
                 this.replacements[key] = flagValues[key] ? "true" : "false";
+            }
+
+            this.CompileTimeConstants = new Dictionary<string, object>();
+            foreach (string key in flagValues.Keys)
+            {
+                this.CompileTimeConstants[key] = flagValues[key];
+            }
+            foreach (string key in values.Keys)
+            {
+                this.CompileTimeConstants[key] = values[key];
             }
 
             this.filepathsByFunctionName = new Dictionary<string, string>();

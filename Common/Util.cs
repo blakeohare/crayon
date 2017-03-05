@@ -205,6 +205,7 @@ namespace Common
             return output.ToArray();
         }
 
+        // TODO: use <K, V>
         public static Dictionary<string, string> FlattenDictionary(Dictionary<string, string> bottom, Dictionary<string, string> top)
         {
             if (bottom.Count == 0) return new Dictionary<string, string>(top);
@@ -213,6 +214,19 @@ namespace Common
             foreach (string key in top.Keys)
             {
                 output[key] = top[key];
+            }
+            return output;
+        }
+        
+        public static Dictionary<K, V> MergeDictionaries<K, V>(params Dictionary<K, V>[] dictionaries)
+        {
+            Dictionary<K, V> output = new Dictionary<K, V>();
+            foreach (Dictionary<K, V> dict in dictionaries)
+            {
+                foreach (K k in dict.Keys)
+                {
+                    output[k] = dict[k];
+                }
             }
             return output;
         }

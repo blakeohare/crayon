@@ -156,10 +156,13 @@ namespace Crayon
             foreach (Library library in relevantLibraries)
             {
                 string libName = library.Name;
+
+                Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
+
                 Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
                     true,
                     sharedScope,
-                    constantFlags,
+                    constantsLookup,
                     codeLoader,
                     library.GetReturnTypesForNativeMethods(),
                     library.GetArgumentTypesForNativeMethods());
