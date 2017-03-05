@@ -349,7 +349,11 @@ InterpreterResult interpretImpl(int executionContextId) {
 				break;
 			case OpCodes.LIB_DECLARATION:
 				Core.EmitComment("LIB_DECLARATION");
-				i = 0;
+				if (true) {
+					@import("Ops/lib_declaration.cry");
+				} else {
+					i = 0;
+				}
 				break;
 			case OpCodes.LIST_SLICE:
 				Core.EmitComment("LIST_SLICE");

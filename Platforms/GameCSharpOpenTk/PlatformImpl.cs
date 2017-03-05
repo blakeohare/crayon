@@ -50,7 +50,8 @@ namespace GameCSharpOpenTk
             IList<FunctionDefinition> functionDefinitions,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options)
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options);
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -91,9 +92,10 @@ namespace GameCSharpOpenTk
             this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
-
+            
             foreach (LibraryForExport library in libraries)
             {
+                this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
                 if (library.ManifestFunction != null)
@@ -103,8 +105,7 @@ namespace GameCSharpOpenTk
                     {
                         libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
                     }
-
-
+                    
                     output[baseDir + "Libraries/" + libraryName + "/LibraryWrapper.cs"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,

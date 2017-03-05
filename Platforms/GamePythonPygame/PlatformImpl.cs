@@ -31,7 +31,8 @@ namespace GamePythonPygame
             IList<FunctionDefinition> functionDefinitions,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options)
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

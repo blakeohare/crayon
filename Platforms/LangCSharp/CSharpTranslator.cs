@@ -190,6 +190,11 @@ namespace LangCSharp
             throw new NotImplementedException();
         }
 
+        public override void TranslateFloatBuffer16(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.FloatBuffer16");
+        }
+
         public override void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator)
         {
             sb.Append("(");
@@ -535,7 +540,7 @@ namespace LangCSharp
 
         public override void TranslateStringBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.StringBuffer16");
         }
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)

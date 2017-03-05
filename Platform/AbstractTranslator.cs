@@ -39,6 +39,7 @@ namespace Platform
 
         }
         public Platform.AbstractPlatform Platform { get; private set; }
+        public Platform.ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
 
         public AbstractTranslator(Platform.AbstractPlatform platform, string tab, string newLine)
         {
@@ -198,6 +199,7 @@ namespace Platform
                 case Pastel.NativeFunction.DICTIONARY_VALUES: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.DICTIONARY_VALUES_TO_VALUE_LIST: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.EMIT_COMMENT: this.TranslateEmitComment(sb, ((InlineConstant)args[0]).Value.ToString()); break;
+                case Pastel.NativeFunction.FLOAT_BUFFER_16: this.TranslateFloatBuffer16(sb); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
                 case Pastel.NativeFunction.FORCE_PARENS: this.TranslateForceParens(sb, args[0]); break;
@@ -275,12 +277,12 @@ namespace Platform
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
         }
+
         public void TranslateLibraryNativeFunctionInvocation(StringBuilder sb, LibraryNativeFunctionInvocation funcInvocation)
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.LibraryNativeFunction.Name;
-            // Oh no. I need a reference to the library.
-            throw new NotImplementedException();
+            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
         }
 
         public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
@@ -311,6 +313,7 @@ namespace Platform
         public abstract void TranslateDictionaryValuesToValueList(StringBuilder sb, Expression dictionary);
         public abstract void TranslateEmitComment(StringBuilder sb, string value);
         public abstract void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression);
+        public abstract void TranslateFloatBuffer16(StringBuilder sb);
         public abstract void TranslateFloatConstant(StringBuilder sb, double value);
         public abstract void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator);
         public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);

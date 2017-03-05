@@ -20,6 +20,26 @@ namespace Platform
         public abstract string NL { get; }
         protected int TranslationIndentionCount { get; set; }
 
+        private string[] inheritanceChain = null;
+        public IList<string> InheritanceChain
+        {
+            get
+            {
+                if (this.inheritanceChain == null)
+                {
+                    List<string> chainBuilder = new List<string>();
+                    AbstractPlatform walker = this;
+                    while (walker != null)
+                    {
+                        chainBuilder.Add(walker.Name);
+                        walker = walker.ParentPlatform;
+                    }
+                    this.inheritanceChain = chainBuilder.ToArray();
+                }
+                return this.inheritanceChain;
+            }
+        }
+
         private Dictionary<string, object> flattenedCached = null;
         public Dictionary<string, object> GetFlattenedConstantFlags()
         {
@@ -125,7 +145,8 @@ namespace Platform
             IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options);
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
 
         public string IndentCodeWithTabs(string code, int tabCount)
         {

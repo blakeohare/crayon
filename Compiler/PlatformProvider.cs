@@ -27,7 +27,7 @@ namespace Crayon
                 }
             }
 
-            if (platforms.ContainsKey(name))
+            if (name != null && platforms.ContainsKey(name))
             {
                 return platforms[name];
             }

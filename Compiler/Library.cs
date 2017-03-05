@@ -275,21 +275,75 @@ namespace Crayon
             return translations;
         }
 
-        public string TranslateNativeInvocation(Token throwToken, AbstractPlatform translator, string functionName, object[] args)
+        public string TranslateNativeInvocation(object throwToken, object legacyAbstractPlatformOrCbxTranslator, string functionName, object[] args)
         {
             if (this.translations == null)
             {
-                Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
-                Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
-                this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
+                if (throwToken is Pastel.Token)
+                {
+                    Platform.AbstractTranslator translator = (Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator;
+                    Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
+                    foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
+                    {
+                        string legacyPlatformName = platformName;
+                        switch (platformName)
+                        {
+                            case "game-csharp-opentk-cbx": legacyPlatformName = "game-csharp-opentk"; break;
+                            default: break;
+                        }
+                        Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);
+                        translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
+                    }
+                    this.translations = translationsBuilder;
+                }
+                else
+                {
+                    CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
+                    Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
+                    Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
+                    this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
+                }
             }
 
-            if (this.translations.ContainsKey(functionName))
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            string output = null;
+            if (throwToken is Pastel.Token)
             {
-                string output = this.translations[functionName];
+                string lookup = "$" + functionName;
+                if (this.translations.ContainsKey(lookup))
+                {
+                    output = this.translations[lookup];
+                }
+            }
+            else
+            {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
+                if (this.translations.ContainsKey(functionName))
+                {
+                    output = this.translations[functionName];
+                }
+            }
+
+            if (output != null)
+            {
                 for (int i = 0; i < args.Length; ++i)
                 {
-                    string argAsString = translator.Translate(args[i]);
+                    string argAsString;
+                    if (legacyAbstractPlatformOrCbxTranslator is Crayon.AbstractPlatform)
+                    {
+                        CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // and remember to change the types of the arguments to this function as well.
+                        argAsString = ((Crayon.AbstractPlatform)legacyAbstractPlatformOrCbxTranslator).Translate(args[i]);
+                    }
+                    else if (legacyAbstractPlatformOrCbxTranslator is Platform.AbstractTranslator)
+                    {
+                        ((Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator).TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
+                        argAsString = sb.ToString();
+                        sb.Clear();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
                     output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
                 }
                 return output;
@@ -299,7 +353,15 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            throw new ParserException(throwToken, "The " + this.Name + " library does not support " + this.platformName + " projects.");
+            string msg = "The " + this.Name + " library does not support " + this.platformName + " projects.";
+            if (throwToken is Token)
+            {
+                throw new ParserException((Token)throwToken, msg);
+            }
+            else
+            {
+                throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
+            }
         }
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
@@ -430,7 +492,7 @@ namespace Crayon
             {
                 string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
                 Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Name + "/native_method_type_info.txt", typeInfo));
-                
+
                 while (tokens.HasMore)
                 {
                     Pastel.Nodes.PType returnType = Pastel.Nodes.PType.Parse(tokens);
@@ -441,7 +503,7 @@ namespace Crayon
                     {
                         if (argTypes.Count > 0) tokens.PopExpected(",");
                         argTypes.Add(Pastel.Nodes.PType.Parse(tokens));
-                        
+
                         // This is unused but could be later used as part of an auto-generated documentation for third-party platform implements of existing libraries.
                         string argumentName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
                     }

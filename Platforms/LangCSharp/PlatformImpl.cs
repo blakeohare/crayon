@@ -72,7 +72,8 @@ namespace LangCSharp
             IList<FunctionDefinition> functionDefinitions,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options)
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
         }

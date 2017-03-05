@@ -68,6 +68,11 @@ namespace Crayon
                 string version = "v1"; // TODO: the actual version
                 libraries.Add(this.CreateLibraryForExport(libraryName, version, libraryCompilation[libraryName]));
             }
+            
+            LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
+                new LibraryNativeInvocationTranslatorProvider(
+                    relevantLibraries.ToDictionary(lib => lib.Name), 
+                    platform);
 
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
             {
@@ -83,7 +88,8 @@ namespace Crayon
                     vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
                     libraries,
                     resourceDatabase,
-                    options);
+                    options,
+                    libTranslationProvider);
             }
             else
             {
