@@ -5,10 +5,12 @@ using Common;
 
 namespace Crayon
 {
+    // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
     internal class Library
     {
         private string platformName;
         private string languageName;
+
         public string Name { get; set; }
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
@@ -17,6 +19,8 @@ namespace Crayon
 
         public Library(string name, string libraryManifestPath, string platformName, string languageName)
         {
+            CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // Remove the languageName field and argument here.
+
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
             string[] manifest = System.IO.File.ReadAllText(libraryManifestPath).Split('\n');
@@ -25,7 +29,12 @@ namespace Crayon
 
             this.platformName = platformName;
             this.languageName = languageName;
-            string platformPrefix = "[" + platformName + "]";
+            string canonicalPlatformName = this.platformName;
+            if (canonicalPlatformName.EndsWith("-cbx"))
+            {
+                canonicalPlatformName = canonicalPlatformName.Substring(0, canonicalPlatformName.Length - 4);
+            }
+            string platformPrefix = "[" + canonicalPlatformName + "]";
 
             foreach (string line in manifest)
             {
@@ -286,6 +295,7 @@ namespace Crayon
                     foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                     {
                         string legacyPlatformName = platformName;
+                        CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // This can go away when the -cbx disambiguation suffix stuff goes away.
                         switch (platformName)
                         {
                             case "game-csharp-opentk-cbx": legacyPlatformName = "game-csharp-opentk"; break;
