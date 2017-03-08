@@ -590,5 +590,46 @@ namespace Crayon
         {
             throw new NotImplementedException();
         }
+
+        public Dictionary<string, FileOutput> GetSupplementalFileOutput()
+        {
+            Dictionary<string, string> textFiles = new Dictionary<string, string>();
+            List<string> embeddedContent = new List<string>();
+            string platformId = this.platformName;
+            if (platformId.EndsWith("-cbx"))
+            {
+                platformId = platformId.Substring(0, platformId.Length - 4);
+            }
+            this.ExtractResources(platformId, textFiles, embeddedContent);
+            HashSet<string> notCode = new HashSet<string>(embeddedContent);
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            foreach (string key in textFiles.Keys)
+            {
+                string content = textFiles[key];
+                content = this.NormalizeNamespacesForCbx(content);
+                string filepath = key.Split('/').Last();
+                // TODO: distinguish between code and content
+                output[filepath] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = content,
+                };
+            }
+            return output;
+        }
+
+        private string NormalizeNamespacesForCbx(string content)
+        {
+            CompatibilityHack.CriticalTODO("Go update the supplemental files so this function isn't necessary.");
+
+            content = "using Interpreter.Structs;\n" + content;
+            string magicString = "namespace %%%PROJECT_ID%%%.Library.";
+            string fixedString = "namespace Interpreter.Libraries." + this.Name;
+            bool useCarriageReturn = content.Contains("\r\n");
+            return string.Join(useCarriageReturn ? "\r\n" : "\n", content
+                .Split('\n')
+                .Select(line => line.StartsWith(magicString) ? fixedString : line.TrimEnd())
+                .ToArray());
+        }
     }
 }

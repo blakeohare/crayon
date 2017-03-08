@@ -12,6 +12,6 @@ namespace Platform
         public Pastel.Nodes.FunctionDefinition ManifestFunction { get; set; }
         public Pastel.Nodes.FunctionDefinition[] Functions { get; set; }
         public string[] FunctionRegisteredNamesOrNulls { get; set; }
-
+        public Dictionary<string, Common.FileOutput> SupplementalFiles { get; set; }
     }
 }

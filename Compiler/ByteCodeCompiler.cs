@@ -102,8 +102,7 @@ namespace Crayon
                     "v1" // dummy version
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
-
-                output.Add(null, OpCode.LIB_DECLARATION, library.Name, id++);
+                output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);
             }
 
             return output;

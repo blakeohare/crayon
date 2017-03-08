@@ -11,6 +11,8 @@ namespace Interpreter.Vm
 
         public static ProgramData ProgramData { get; set; }
         public static int[] IntBuffer16 { get; private set; }
+        public static double[] FloatBuffer16 { get; private set; }
+        public static string[] StringBuffer16 { get; private set; }
         public static string[] CommandLineArgs { get; set; }
         public static string ResourceManifest { get; set; }
         public static string ByteCode { get; set; }
@@ -24,6 +26,8 @@ namespace Interpreter.Vm
         static TranslationHelper()
         {
             IntBuffer16 = new int[16];
+            FloatBuffer16 = new double[16];
+            StringBuffer16 = new string[16];
             CommandLineArgs = new string[0];
         }
 
@@ -209,7 +213,7 @@ namespace Interpreter.Vm
 
         public static Value InvokeDynamicLibraryFunction(object functionPointer, Value[] args)
         {
-			return ((LibraryFunctionPointer)functionPointer).Run(args);
+            return ((LibraryFunctionPointer)functionPointer).Run(args);
         }
 
         public static int VmDetermineLibraryAvailability(string name, string version)
@@ -218,14 +222,19 @@ namespace Interpreter.Vm
         }
 
         public static int VmRunLibraryManifest(
-			string name, 
-			List<object> functionPointers, 
-			List<string> libraryNames, 
-			List<int> libraryArgCounts)
+            string name,
+            List<object> functionPointers,
+            List<string> libraryNames,
+            List<int> libraryArgCounts)
         {
+            Library library = TranslationHelper.LibraryRegistry.GetLibrary(name);
+            if (library == null)
+            {
+                return 0;
+            }
+
             try
             {
-                Library library = TranslationHelper.LibraryRegistry.GetLibrary(name);
                 library.RunManifest(functionPointers, libraryNames, libraryArgCounts);
                 return 0;
             }
@@ -236,5 +245,16 @@ namespace Interpreter.Vm
         }
 
         public static LibraryRegistry LibraryRegistry { get; set; }
+
+        public static void RegisterLibraryFunction(
+            Type libraryWrapperClass,
+            List<object> functionPointers,
+            List<string> functionNames,
+            List<int> functionArgCounts,
+            string functionName,
+            int argCount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -259,6 +259,21 @@ namespace LangCSharp
             sb.Append(").ToString()");
         }
 
+        public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
+        {
+            string prefix = "";
+            if (funcInvocation.FirstToken.FileName.StartsWith("LIB:") &&
+                funcInvocation.Root is FunctionReference)
+            {
+                FunctionDefinition funcDef = ((FunctionReference)funcInvocation.Root).Function;
+                if (!funcDef.NameToken.FileName.StartsWith("LIB:"))
+                {
+                    prefix = "CrayonWrapper.";
+                }
+            }
+            this.TranslateFunctionInvocationImpl(sb, funcInvocation, prefix);
+        }
+
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
             sb.Append("TranslationHelper.InvokeDynamicLibraryFunction(");
@@ -510,7 +525,13 @@ namespace LangCSharp
             sb.Append(", ");
             this.TranslateExpression(sb, functionArgCount);
             sb.Append(')');
+        }
 
+        public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
+        {
+            sb.Append("ResourceReader.ReadTextFile(");
+            this.TranslateExpression(sb, path);
+            sb.Append(")");
         }
 
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
@@ -728,7 +749,7 @@ namespace LangCSharp
 
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.VmCurrentExecutionContext()");
+            sb.Append("CrayonWrapper.v_vm_getCurrentExecutionContextId()");
         }
 
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList)
@@ -746,7 +767,7 @@ namespace LangCSharp
 
         public override void TranslateVmSuspend(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.VmSuspend()");
+            sb.Append("CrayonWrapper.v_vm_suspend()");
         }
     }
 }

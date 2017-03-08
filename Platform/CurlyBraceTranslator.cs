@@ -74,6 +74,12 @@ namespace Platform
 
         public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
         {
+            this.TranslateFunctionInvocationImpl(sb, funcInvocation, "");
+        }
+
+        protected void TranslateFunctionInvocationImpl(StringBuilder sb, FunctionInvocation funcInvocation, string prefix)
+        {
+            sb.Append(prefix);
             this.TranslateExpression(sb, funcInvocation.Root);
             sb.Append('(');
             Expression[] args = funcInvocation.Args;
@@ -216,7 +222,7 @@ namespace Platform
                 sb.Append('{');
             }
             sb.Append(this.NewLine);
-            
+
             this.TabDepth++;
 
             foreach (SwitchStatement.SwitchChunk chunk in switchStatement.Chunks)

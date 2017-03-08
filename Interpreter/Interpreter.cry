@@ -524,3 +524,26 @@ function @type('bool') isPcFromCore(@type('int') pc) {
 	@type('string') filename = tokenHelperGetFileLine(Token$token.fileId, 0);
 	return $_string_equals("[Core]", filename);
 }
+
+function @type('int') vm_getCurrentExecutionContextId() {
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.lastExecutionContextId;
+}
+
+function @type('ExecutionContext') getExecutionContext(@type('int') id) {
+	@type('ProgramData') p = $_get_program_data();
+	if (id == -1) {
+		id = ProgramData$p.lastExecutionContextId;
+	}
+	if ($_dictionary_contains(ProgramData$p.executionContexts, id)) {
+		return $_dictionary_get_guaranteed(ProgramData$p.executionContexts, id);
+	}
+	return null;
+}
+
+function @type('int') vm_suspend() {
+	@type('ExecutionContext') ec = getExecutionContext(-1);
+	ExecutionContext$ec.executionStateChange = true;
+	ExecutionContext$ec.executionStateChangeCommand = 1;
+	return 0;
+}

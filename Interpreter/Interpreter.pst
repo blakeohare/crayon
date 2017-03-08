@@ -650,3 +650,26 @@ bool isPcFromCore(int pc) {
 	return Core.StringEquals("[Core]", filename);
 }
 
+int vm_getCurrentExecutionContextId() {
+	ProgramData p = Core.GetProgramData();
+	return p.lastExecutionContextId;
+}
+
+ExecutionContext getExecutionContext(int id) {
+	ProgramData p = Core.GetProgramData();
+	if (id == -1) {
+		id = p.lastExecutionContextId;
+	}
+	if (p.executionContexts.Contains(id)) {
+		return p.executionContexts[id];
+	}
+	return null;
+}
+
+int vm_suspend() {
+	ExecutionContext ec = getExecutionContext(-1);
+	ec.executionStateChange = true;
+	ec.executionStateChangeCommand = 1;
+	return 0;
+}
+

@@ -243,6 +243,7 @@ namespace Platform
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
                 case Pastel.NativeFunction.READ_BYTE_CODE_FILE: this.TranslateReadByteCodeFile(sb); break;
                 case Pastel.NativeFunction.REGISTER_LIBRARY_FUNCTION: this.TranslateRegisterLibraryFunction(sb, args[0], args[1], args[2], args[3], args[4]); break;
+                case Pastel.NativeFunction.RESOURCE_READ_TEXT_FILE: this.TranslateResourceReadTextFile(sb, args[0]); break;
                 case Pastel.NativeFunction.SET_PROGRAM_DATA: this.TranslateSetProgramData(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_STRING_ARRAY: this.TranslateSortedCopyOfStringArray(sb, args[0]); break;
@@ -366,6 +367,7 @@ namespace Platform
         public abstract void TranslateRandomFloat(StringBuilder sb);
         public abstract void TranslateReadByteCodeFile(StringBuilder sb);
         public abstract void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount);
+        public abstract void TranslateResourceReadTextFile(StringBuilder sb, Expression path);
         public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
         public abstract void TranslateSetProgramData(StringBuilder sb, Expression programData);
         public abstract void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray);

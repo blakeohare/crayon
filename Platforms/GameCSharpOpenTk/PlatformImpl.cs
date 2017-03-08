@@ -92,7 +92,7 @@ namespace GameCSharpOpenTk
             this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
             this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
-            
+
             foreach (LibraryForExport library in libraries)
             {
                 this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
@@ -105,7 +105,7 @@ namespace GameCSharpOpenTk
                     {
                         libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
                     }
-                    
+
                     output[baseDir + "Libraries/" + libraryName + "/LibraryWrapper.cs"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
@@ -113,17 +113,24 @@ namespace GameCSharpOpenTk
                             "using System;",
                             "using System.Collections.Generic;",
                             "using System.Linq;",
+                            "using Interpreter.OtkGame;",
                             "using Interpreter.Structs;",
+                            "using Interpreter.Vm;",
                             "",
                             "namespace Interpreter.Libraries." + libraryName,
                             "{",
                             "    public static class LibraryWrapper",
                             "    {",
-                            string.Join(this.NL, libraryLines),
+                            this.TEMPORARY_HACK_replacements(libraryName, this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8)),
                             "    }",
                             "}",
                             ""),
                     };
+
+                    foreach (string filename in library.SupplementalFiles.Keys)
+                    {
+                        output[baseDir + "Libraries/" + libraryName + "/" + filename] = library.SupplementalFiles[filename];
+                    }
                 }
             }
 
@@ -197,6 +204,17 @@ namespace GameCSharpOpenTk
             output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
 
             return output;
+        }
+
+        private string TEMPORARY_HACK_replacements(string libraryName, string content)
+        {
+            CompatibilityHack.CriticalTODO("Update the translations to do the right thing.");
+
+            if (content.Contains("Library." + libraryName + "."))
+            {
+                return content.Replace("Library." + libraryName + ".", "");
+            }
+            return content;
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

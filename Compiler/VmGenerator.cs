@@ -54,6 +54,8 @@ namespace Crayon
 
             this.AddTypeEnumsToConstants(constantFlags);
 
+            Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
+
             Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags, codeLoader);
             Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
                 platform,
@@ -66,7 +68,8 @@ namespace Crayon
             foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
             {
                 string version = "v1"; // TODO: the actual version
-                libraries.Add(this.CreateLibraryForExport(libraryName, version, libraryCompilation[libraryName]));
+                Library library = librariesByName[libraryName];
+                libraries.Add(this.CreateLibraryForExport(libraryName, version, libraryCompilation[libraryName], library.GetSupplementalFileOutput()));
             }
             
             LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
@@ -97,8 +100,8 @@ namespace Crayon
             }
         }
 
-        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation)
-        {
+        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation, Dictionary<string, FileOutput> supplementalFiles)
+        { 
             FunctionDefinition manifestFunction = null;
             Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
             foreach (FunctionDefinition functionDefinition in compilation.FunctionDefinitions.Values)
@@ -116,7 +119,7 @@ namespace Crayon
 
             string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
             FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
-
+            
             return new Platform.LibraryForExport()
             {
                 Name = libraryName,
@@ -124,6 +127,7 @@ namespace Crayon
                 FunctionRegisteredNamesOrNulls = names,
                 Functions = functions,
                 ManifestFunction = manifestFunction,
+                SupplementalFiles = supplementalFiles,
             };
         }
 

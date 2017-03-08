@@ -13,26 +13,33 @@ namespace Interpreter.Vm
         {
             foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
             {
-                string[] namespaceComponents = type.Namespace.Split('.');
-                if (namespaceComponents.Length > 1 && namespaceComponents[0] == "Libraries")
+                string[] namespaceComponents = type.FullName.Split('.');
+                if (namespaceComponents.Length > 1 && namespaceComponents[1] == "Libraries")
                 {
                     string name = namespaceComponents[1];
                     System.Reflection.MethodInfo manifestMethod = type.GetMethod("v_lib_manifest_RegisterFunctions");
                     manifestMethodsByLibraryName[name] = manifestMethod;
+                    librariesByName[name] = new Library(manifestMethod);
                 }
             }
         }
 
         public Library GetLibrary(string name)
         {
-            return this.librariesByName[name];
+            if (this.librariesByName.ContainsKey(name))
+            {
+                return this.librariesByName[name];
+            }
+            return null;
         }
 
         public int LoadLibrary(string name, string version)
         {
             // Because this is bundled, the version is always correct.
-            // Also the name can be trusted as well, otherwise there would have been a compile time error.
-            librariesByName[name] = new Library(this.manifestMethodsByLibraryName[name]);
+            if (this.manifestMethodsByLibraryName.ContainsKey(name)) // Embed-code-only libraries don't have a notion of being "loaded"
+            {
+                librariesByName[name] = new Library(this.manifestMethodsByLibraryName[name]);
+            }
             return 0;
         }
 	}

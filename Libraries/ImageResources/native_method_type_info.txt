@@ -32,3 +32,6 @@ void _lib_imageresources_loadSync(
 object _lib_imageresources_generateNativeBitmapOfSize(
 	int width,
 	int height);
+
+// TODO: figure out what this parameter is.
+void _lib_imageresources_flushPixelEditSession(object obj);
