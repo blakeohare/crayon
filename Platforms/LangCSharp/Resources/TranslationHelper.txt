@@ -254,7 +254,15 @@ namespace Interpreter.Vm
             string functionName,
             int argCount)
         {
-            throw new NotImplementedException();
+            string libraryName = libraryWrapperClass.Namespace.Split('.')[2];
+            string fullyQualifiedFunctionName = "lib_" + libraryName.ToLower() + "_" + functionName;
+            CrayonWrapper.v_registerLibraryFunction(
+                libraryWrapperClass.GetMethod(functionName), 
+                functionPointers, 
+                functionNames, 
+                functionArgCounts,
+                fullyQualifiedFunctionName, 
+                argCount);
         }
     }
 }

@@ -14,9 +14,9 @@ namespace Interpreter.Vm
             foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
             {
                 string[] namespaceComponents = type.FullName.Split('.');
-                if (namespaceComponents.Length > 1 && namespaceComponents[1] == "Libraries")
+                if (namespaceComponents.Length > 2 && namespaceComponents[1] == "Libraries")
                 {
-                    string name = namespaceComponents[1];
+                    string name = namespaceComponents[2];
                     System.Reflection.MethodInfo manifestMethod = type.GetMethod("v_lib_manifest_RegisterFunctions");
                     manifestMethodsByLibraryName[name] = manifestMethod;
                     librariesByName[name] = new Library(manifestMethod);
