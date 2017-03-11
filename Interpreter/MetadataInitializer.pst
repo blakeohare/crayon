@@ -308,10 +308,12 @@ Array<object> createLibraryFunctionLookup() {
 	for (int pc = 0; pc < length; pc += 1) {
 		if (p.ops[pc] == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
 			row = p.args[pc];
-			object fp = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
+			int functionId = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
+			object fp = p.libraryFunctionPointers[functionId];
 			functionPointersByPc[pc] = fp;
 		}
 	}
+	p.libraryFunctionByPc = functionPointersByPc;
 	return functionPointersByPc;
 }
 

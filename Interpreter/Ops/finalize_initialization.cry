@@ -12,7 +12,9 @@ ProgramData$p.literalTableBuilder = null;
 ProgramData$p.integerSwitchLookupsBuilder = null;
 ProgramData$p.stringSwitchLookupsBuilder = null;
 ProgramData$p.sourceCodeBuilder = null;
-ProgramData$p.libraryFunctionByPc = createLibraryFunctionLookup();
+libFunctionPointers = createLibraryFunctionLookup();
+ProgramData$p.libraryFunctionByPc = libFunctionPointers;
+
 
 identifiers = ProgramData$p.identifiers;
 literalTable = ProgramData$p.literalTable;

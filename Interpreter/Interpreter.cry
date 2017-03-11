@@ -103,6 +103,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 	@type('Array<int>') ops = ProgramData$p.ops;
 	@type('Array<Array<int>>') args = ProgramData$p.args;
 	@type('Array<string>') stringArgs = ProgramData$p.stringArgs;
+	@type('Array<object>') libFunctionPointers = ProgramData$p.libraryFunctionByPc;
 
 	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
 	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;

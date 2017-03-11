@@ -458,13 +458,15 @@ function @type('Array<object>') createLibraryFunctionLookup() {
 	for (@type('int') pc = 0; pc < length; pc += 1) {
 		if ($_array_get(ProgramData$p.ops, pc) == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
 			row = $_array_get(ProgramData$p.args, pc);
-			@type('object') fp = $_dictionary_get_guaranteed(
+			@type('int') functionId = $_dictionary_get_guaranteed(
 				ProgramData$p.libraryFunctionIdByLookupId, 
 				$_array_get(row, 0) * 4096 + $_array_get(row, 1));
+			@type('object') fp = $_array_get(ProgramData$p.libraryFunctionPointers, functionId);
 
 			$_array_set(functionPointersByPc, pc, fp);
 		}
 	}
 
+	ProgramData$p.libraryFunctionByPc = functionPointersByPc;
 	return functionPointersByPc;
 }
