@@ -24,7 +24,7 @@ if (%%%IS_FOR_PASTEL_TRANSLATION%%%) {
 	}
 }
 
-if ($_array_get(row, 2) == 1) { // output used?
+if ($_array_get(row, 3) == 1) { // output used?
 	import inline "ValueStackCapacityCheck.cry";
 	$_array_set(valueStack, valueStackSize, value);
 	valueStackSize += 1;
