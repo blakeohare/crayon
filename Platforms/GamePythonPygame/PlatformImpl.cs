@@ -13,6 +13,11 @@ namespace GamePythonPygame
         public override string InheritsFrom { get { return "lang-python"; } }
         public override string NL { get { return "\n"; } }
 
+        public PlatformImpl()
+        {
+            this.Translator = new PythonPygameTranslator(this);
+        }
+
         public override Dictionary<string, FileOutput> Export(
             Dictionary<string, object[]> executablesPerCompilationUnit,
             object[] structDefinitions)
@@ -34,7 +39,22 @@ namespace GamePythonPygame
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+
+            List<string> runPy = new List<string>();
+
+            runPy.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
+
+            runPy.Add("");
+            runPy.Add("v_main()");
+            runPy.Add("");
+
+            output["run.py"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\n", runPy),
+            };
+            return output;
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)

@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PythonPygameTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
@@ -51,6 +52,10 @@
     <ProjectReference Include="..\..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LangPython\LangPython.csproj">
+      <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
+      <Name>LangPython</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -68,7 +68,12 @@ namespace LangPython
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            foreach (VariableDeclaration global in globals)
+            {
+                translator.TranslateVariableDeclaration(sb, global);
+            }
+            return sb.ToString();
         }
     }
 }

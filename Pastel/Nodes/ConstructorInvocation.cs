@@ -9,6 +9,7 @@ namespace Pastel.Nodes
     {
         public PType Type { get; set; }
         public Expression[] Args { get; set; }
+        public StructDefinition StructType { get; set; }
 
         public ConstructorInvocation(Token firstToken, PType type, IList<Expression> args) : base(firstToken)
         {
@@ -33,6 +34,23 @@ namespace Pastel.Nodes
             {
                 this.Args[i] = this.Args[i].ResolveWithTypeContext(compiler);
             }
+
+            string type = this.Type.RootValue;
+            switch (type)
+            {
+                case "Array":
+                case "List":
+                case "Dictionary":
+                    break;
+                default:
+                    StructDefinition sd = compiler.GetStructDefinition(this.Type.RootValue);
+                    if (sd != null)
+                    {
+                        this.StructType = sd;
+                    }
+                    break;
+            }
+
             return this;
         }
     }
