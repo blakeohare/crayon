@@ -12,12 +12,17 @@ namespace LangPython
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, array);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
-            throw new NotImplementedException();
+            sb.Append("len(");
+            this.TranslateExpression(sb, array);
+            sb.Append(')');
         }
 
         public override void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression)
@@ -42,12 +47,24 @@ namespace LangPython
 
         public override void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            this.TranslateExpression(sb, array);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append("] = ");
+            this.TranslateExpression(sb, value);
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateAssignment(StringBuilder sb, Assignment assignment)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            this.TranslateExpression(sb, assignment.Target);
+            sb.Append(' ');
+            sb.Append(assignment.OpToken.Value);
+            sb.Append(' ');
+            this.TranslateExpression(sb, assignment.Value);
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateBooleanConstant(StringBuilder sb, bool value)
@@ -57,7 +74,9 @@ namespace LangPython
 
         public override void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp)
         {
-            throw new NotImplementedException();
+            sb.Append("not (");
+            this.TranslateExpression(sb, unaryOp.Expression);
+            sb.Append(')');
         }
 
         public override void TranslateBreak(StringBuilder sb)
@@ -119,17 +138,26 @@ namespace LangPython
 
         public override void TranslateDictionaryContainsKey(StringBuilder sb, Expression dictionary, Expression key)
         {
-            throw new NotImplementedException();
+            sb.Append('(');
+            this.TranslateExpression(sb, key);
+            sb.Append(" in ");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, dictionary);
+            sb.Append('[');
+            this.TranslateExpression(sb, key);
+            sb.Append(']');
         }
 
         public override void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("list(");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(".keys())");
         }
 
         public override void TranslateDictionaryKeysToValueList(StringBuilder sb, Expression dictionary)
@@ -149,12 +177,20 @@ namespace LangPython
 
         public override void TranslateDictionarySet(StringBuilder sb, Expression dictionary, Expression key, Expression value)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            this.TranslateExpression(sb, dictionary);
+            sb.Append('[');
+            this.TranslateExpression(sb, key);
+            sb.Append("] = ");
+            this.TranslateExpression(sb, value);
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateDictionarySize(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("len(");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryValues(StringBuilder sb, Expression dictionary)
@@ -174,7 +210,9 @@ namespace LangPython
 
         public override void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            this.TranslateExpression(sb, expression);
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateFloatBuffer16(StringBuilder sb)
@@ -209,17 +247,26 @@ namespace LangPython
 
         public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, funcInvocation.Root);
+            sb.Append('(');
+            Expression[] args = funcInvocation.Args;
+            int argCount = args.Length;
+            for (int i = 0; i < argCount; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, args[i]);
+            }
         }
 
         public override void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef)
         {
-            throw new NotImplementedException();
+            sb.Append("v_");
+            sb.Append(funcRef.Function.NameToken.Value);
         }
 
         public override void TranslateGetProgramData(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_getProgramData()");
         }
 
         public override void TranslateGetResourceManifest(StringBuilder sb)
@@ -229,12 +276,55 @@ namespace LangPython
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
         {
-            throw new NotImplementedException();
+            // no special syntax
+            this.TranslateVariable(sb, variable);
         }
 
         public override void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            this.TranslateIfStatementNoIndent(sb, ifStatement);
+        }
+
+        private void TranslateIfStatementNoIndent(StringBuilder sb, IfStatement ifStatement)
+        {
+            sb.Append("if ");
+            this.TranslateExpression(sb, ifStatement.Condition);
+            sb.Append(':');
+            sb.Append(this.NewLine);
+            this.TabDepth++;
+            if (ifStatement.IfCode.Length == 0)
+            {
+                // ideally this should be optimized out at compile-time. TODO: throw instead and do that
+                sb.Append(this.CurrentTab);
+                sb.Append("pass");
+                sb.Append(this.NewLine);
+            }
+            else
+            {
+                this.TranslateExecutables(sb, ifStatement.IfCode);
+            }
+            this.TabDepth--;
+
+            Executable[] elseCode = ifStatement.ElseCode;
+
+            if (elseCode.Length == 0) return;
+
+            if (elseCode.Length == 1 && elseCode[0] is IfStatement)
+            {
+                sb.Append(this.CurrentTab);
+                sb.Append("el");
+                this.TranslateIfStatementNoIndent(sb, (IfStatement)elseCode[0]);
+            }
+            else
+            {
+                sb.Append(this.CurrentTab);
+                sb.Append("else:");
+                sb.Append(this.NewLine);
+                this.TabDepth++;
+                this.TranslateExecutables(sb, ifStatement.IfCode);
+                this.TabDepth--;
+            }
         }
 
         public override void TranslateIntBuffer16(StringBuilder sb)
@@ -284,7 +374,10 @@ namespace LangPython
 
         public override void TranslateListGet(StringBuilder sb, Expression list, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, list);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item)
@@ -389,7 +482,18 @@ namespace LangPython
 
         public override void TranslateNegative(StringBuilder sb, UnaryOp unaryOp)
         {
-            throw new NotImplementedException();
+            Expression expr = unaryOp.Expression;
+            if (expr is InlineConstant || expr is Variable)
+            {
+                sb.Append('-');
+                this.TranslateExpression(sb, expr);
+            }
+            else
+            {
+                sb.Append("-(");
+                this.TranslateExpression(sb, expr);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateNullConstant(StringBuilder sb)
@@ -399,7 +503,21 @@ namespace LangPython
 
         public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
         {
-            throw new NotImplementedException();
+            sb.Append('(');
+            Expression[] expressions = opChain.Expressions;
+            Pastel.Token[] ops = opChain.Ops;
+            for (int i = 0; i < expressions.Length; ++i)
+            {
+                if (i > 0)
+                {
+                    // TODO: platform should have an op translator, which would just be a pass-through function for most ops.
+                    sb.Append(' ');
+                    sb.Append(ops[i - 1].Value);
+                    sb.Append(' ');
+                }
+                this.TranslateExpression(sb, expressions[i]);
+            }
+            sb.Append(')');
         }
 
         public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
@@ -449,7 +567,10 @@ namespace LangPython
 
         public override void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            sb.Append("return ");
+            this.TranslateExpression(sb, returnStatement.Expression);
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
@@ -529,7 +650,9 @@ namespace LangPython
 
         public override void TranslateStringLength(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("len(");
+            this.TranslateExpression(sb, str);
+            sb.Append(')');
         }
 
         public override void TranslateStringReplace(StringBuilder sb, Expression haystack, Expression needle, Expression newNeedle)
@@ -544,7 +667,10 @@ namespace LangPython
 
         public override void TranslateStringSplit(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, haystack);
+            sb.Append(".split(");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringStartsWith(StringBuilder sb, Expression haystack, Expression needle)
@@ -582,9 +708,13 @@ namespace LangPython
             throw new NotImplementedException();
         }
 
+        // TODO: fix typo: missing an e at the end of the name
         public override void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, root);
+            sb.Append('[');
+            sb.Append(fieldIndex);
+            sb.Append(']');
         }
 
         public override void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement)
@@ -599,7 +729,8 @@ namespace LangPython
 
         public override void TranslateVariable(StringBuilder sb, Variable variable)
         {
-            throw new NotImplementedException();
+            sb.Append("v_");
+            sb.Append(variable.Name);
         }
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
@@ -614,7 +745,11 @@ namespace LangPython
 
         public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_determinLibraryAvailability(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libraryVersion);
+            sb.Append(')');
         }
 
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
@@ -622,9 +757,22 @@ namespace LangPython
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList)
+        public override void TranslateVmRunLibraryManifest(
+            StringBuilder sb, 
+            Expression libraryName, 
+            Expression functionPointerList, 
+            Expression functionNameList, 
+            Expression functionArgCountList)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_runLibraryManifest(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionPointerList);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionNameList);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCountList);
+            sb.Append(')');
         }
 
         public override void TranslateVmSuspend(StringBuilder sb)
@@ -634,7 +782,14 @@ namespace LangPython
 
         public override void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop)
         {
-            throw new NotImplementedException();
+            sb.Append(this.CurrentTab);
+            sb.Append("while ");
+            this.TranslateExpression(sb, whileLoop.Condition);
+            sb.Append(':');
+            sb.Append(this.NewLine);
+            this.TabDepth++;
+            this.TranslateExecutables(sb, whileLoop.Code);
+            this.TabDepth--;
         }
     }
 }

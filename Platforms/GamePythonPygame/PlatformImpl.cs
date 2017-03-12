@@ -49,6 +49,11 @@ namespace GamePythonPygame
             runPy.Add("v_main()");
             runPy.Add("");
 
+            foreach (FunctionDefinition funcDef in functionDefinitions)
+            {
+                runPy.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+            }
+
             output["run.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

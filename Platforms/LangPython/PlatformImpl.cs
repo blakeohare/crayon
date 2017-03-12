@@ -53,7 +53,26 @@ namespace LangPython
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(translator.CurrentTab);
+            sb.Append("def v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            int argCount = funcDef.ArgNames.Length;
+            for (int i = 0; i < argCount; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append("):");
+            sb.Append(this.NL);
+            translator.TabDepth++;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth--;
+            sb.Append(this.NL);
+
+            return sb.ToString();
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
