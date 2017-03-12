@@ -1,0 +1,7 @@
+﻿
+def ResourceReader_readTextFile(path):
+  path = path.replace('/', os.sep)
+  c = open(path, 'rt')
+  text = c.read()
+  c.close()
+  return text

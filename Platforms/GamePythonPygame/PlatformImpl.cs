@@ -41,18 +41,28 @@ namespace GamePythonPygame
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+
             List<string> runPy = new List<string>();
 
+            runPy.Add(this.LoadTextResource("Resources/header.txt", replacements));
+            runPy.Add("");
             runPy.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
+            runPy.Add("");
+            runPy.Add(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
+            runPy.Add("");
+            runPy.Add(this.LoadTextResource("Resources/ResourceReader.txt", replacements));
+            runPy.Add("");
 
-            runPy.Add("");
-            runPy.Add("v_main()");
-            runPy.Add("");
 
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
                 runPy.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
             }
+
+            runPy.Add("");
+            runPy.Add(this.LoadTextResource("Resources/main.txt", replacements));
+            runPy.Add("");
 
             output["run.py"] = new FileOutput()
             {

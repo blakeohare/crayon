@@ -1,0 +1,19 @@
+﻿TranslationHelper_globals = {}
+
+def TranslationHelper_setByteCode(value):
+  TranslationHelper_globals['bytecode'] = value
+
+def TranslationHelper_getByteCode():
+  return TranslationHelper_globals['bytecode']
+
+def TranslationHelper_setResourceManifest(value):
+  TranslationHelper_globals['res'] = value
+  
+def TranslationHelper_getResourceManifest():
+  return TranslationHelper_globals['res']
+
+def TranslationHelper_setCommandLineArgs(value):
+  TranslationHelper_globals['args'] = value[:]
+
+def TranslationHelper_getCommandLineArgs():
+  return TranslationHelper_globals['args']

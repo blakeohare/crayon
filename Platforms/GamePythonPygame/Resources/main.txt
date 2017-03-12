@@ -1,0 +1,10 @@
+﻿def main(args):
+
+  TranslationHelper_setByteCode(ResourceReader_readTextFile('res/bytecode.txt'))
+  TranslationHelper_setResourceManifest(ResourceReader_readTextFile('res/resource_manifest.txt'))
+  TranslationHelper_setCommandLineArgs(args)
+
+  v_main()
+
+if __name__ == '__main__':
+  main(sys.argv[1:])

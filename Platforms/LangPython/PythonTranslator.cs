@@ -8,6 +8,17 @@ namespace LangPython
 {
     public abstract class PythonTranslator : Platform.AbstractTranslator
     {
+        private string TranslateOp(string originalOp)
+        {
+            switch (originalOp)
+            {
+                case "&&": return "and";
+                case "||": return "or";
+                default: return originalOp;
+            }
+        }
+
+
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
         private FunctionDefinition currentFunctionDefinition = null;
@@ -296,6 +307,7 @@ namespace LangPython
                 if (i > 0) sb.Append(", ");
                 this.TranslateExpression(sb, args[i]);
             }
+            sb.Append(')');
         }
 
         public override void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef)
@@ -585,7 +597,7 @@ namespace LangPython
                 {
                     // TODO: platform should have an op translator, which would just be a pass-through function for most ops.
                     sb.Append(' ');
-                    sb.Append(ops[i - 1].Value);
+                    sb.Append(this.TranslateOp(ops[i - 1].Value));
                     sb.Append(' ');
                 }
                 this.TranslateExpression(sb, expressions[i]);
@@ -789,6 +801,7 @@ namespace LangPython
             this.TranslateExpression(sb, needle);
             sb.Append(", ");
             this.TranslateExpression(sb, newNeedle);
+            sb.Append(')');
         }
 
         public override void TranslateStringReverse(StringBuilder sb, Expression str)
