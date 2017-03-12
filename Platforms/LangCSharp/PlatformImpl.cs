@@ -152,7 +152,7 @@ namespace LangCSharp
             return string.Join("", output);
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";

@@ -8,11 +8,6 @@ namespace Interpreter.OtkGame
 {
 	internal static class ResourceReader
 	{
-        public static string GetResourceManifest()
-        {
-            return ReadTextFile("Resources/ResourceMapping.txt") ?? "";
-        }
-
 		public static string ReadTextFile(string path)
 		{
 			IList<byte> bytes = ReadBytes(path);

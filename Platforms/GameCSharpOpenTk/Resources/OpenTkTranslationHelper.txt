@@ -197,7 +197,7 @@ namespace Interpreter.OtkGame
 
         public static string GetImageResourceManifestString()
         {
-            return ResourceReader.ReadTextFile("Resources/ImageSheetManifest.txt") ?? "";
+            return ResourceReader.ReadTextFile("ImageSheetManifest.txt") ?? "";
         }
 
         public static object GenerateNativeBitmapOfSize(int width, int height)

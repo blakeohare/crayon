@@ -173,7 +173,7 @@ namespace Platform
         public abstract string GenerateCodeForFunction(AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
         public abstract string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<Pastel.Nodes.VariableDeclaration> globals);
 
-        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options);
+        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
         {

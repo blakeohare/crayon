@@ -61,7 +61,7 @@ namespace LangPython
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

@@ -47,9 +47,9 @@ namespace GamePythonPygame
             return this.ParentPlatform.GenerateCodeForStruct(structDef);
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            return this.ParentPlatform.GenerateReplacementDictionary(options);
+            return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

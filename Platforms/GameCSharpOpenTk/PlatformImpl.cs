@@ -31,14 +31,35 @@ namespace GameCSharpOpenTk
             return new Dictionary<string, object>();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
+            List<string> embeddedResources = new List<string>();
+            foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
+            }
+
+            foreach (string imageSheetFileName in resDb.ImageSheetFiles.Keys)
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageSheetFileName + "\"/>");
+            }
+
+            foreach (FileOutput textFile in resDb.TextResources.Where(img => img.CanonicalFileName != null))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + textFile.CanonicalFileName + "\"/>");
+            }
+
+            foreach (FileOutput audioFile in resDb.AudioResources.Where(file => file.CanonicalFileName != null))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
+            }
+
             return Util.FlattenDictionary(
-                this.ParentPlatform.GenerateReplacementDictionary(options),
+                this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
                     { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
-                    { "EMBEDDED_RESOURCES", string.Join("\r\n", new string[] {/* TODO: embedded resources */ }) },
+                    { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources) },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                     { "CSHARP_CONTENT_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<EmbeddedResource Include=\"icon.ico\" />" : "" }
                 });
@@ -53,7 +74,7 @@ namespace GameCSharpOpenTk
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
@@ -202,7 +223,28 @@ namespace GameCSharpOpenTk
 
             output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output[baseDir + "ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
 
+            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
+            }
+
+            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
+            }
+
+            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
+            }
+
+            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
+            }
+            
             return output;
         }
 
