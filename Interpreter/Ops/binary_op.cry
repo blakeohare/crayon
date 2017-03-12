@@ -9,7 +9,7 @@ rightType = Value$rightValue.type;
 op = $_array_get(row, 0);
 value = null;
 
-if ((leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
+if ($_force_parens(leftType == Types.STRING || rightType == Types.STRING) && op == BinaryOps.ADDITION && leftType != Types.NULL && rightType != Types.NULL) {
 	value = new Value(Types.STRING, $_string_concat(valueToString(leftValue), valueToString(rightValue)));
 } else {
 	// At this point the remaining ops will be primitive types or if they are reference types, won't

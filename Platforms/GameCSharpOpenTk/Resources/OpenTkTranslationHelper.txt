@@ -183,7 +183,7 @@ namespace Interpreter.OtkGame
 
         public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
         {
-            System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("Resources/Images/" + filename);
+            System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("Resources/" + filename);
             if (bmp != null)
             {
                 if (statusOutCheesy != null) statusOutCheesy.Reverse();

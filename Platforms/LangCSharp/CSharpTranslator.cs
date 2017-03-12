@@ -529,7 +529,7 @@ namespace LangCSharp
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            sb.Append("ResourceReader.ReadTextFile(");
+            sb.Append("ResourceReader.ReadResourceTextFile(");
             this.TranslateExpression(sb, path);
             sb.Append(")");
         }

@@ -5,7 +5,7 @@ leftType = leftValue.type;
 rightType = rightValue.type;
 op = row[0];
 value = null;
-if ((leftType == Types.STRING) || (rightType == Types.STRING) && (op == BinaryOps.ADDITION) && (leftType != Types.NULL) && (rightType != Types.NULL)) {
+if (Core.ForceParens((leftType == Types.STRING) || (rightType == Types.STRING)) && (op == BinaryOps.ADDITION) && (leftType != Types.NULL) && (rightType != Types.NULL)) {
 	value = new Value(Types.STRING, Core.StringConcatAll(valueToString(leftValue), valueToString(rightValue)));
 } else {
 	left = leftValue.internalValue;
