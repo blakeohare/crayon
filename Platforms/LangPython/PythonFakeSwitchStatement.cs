@@ -133,12 +133,12 @@ namespace LangPython
             {
                 if (first)
                 {
-                    dictionaryBuilder.Append(", ");
                     isInteger = ic.ResolvedType.RootValue == "int";
+                    first = false;
                 }
                 else
                 {
-                    first = false;
+                    dictionaryBuilder.Append(", ");
                 }
 
                 int id = this.expressionsToChunkIds[ic];
@@ -226,6 +226,7 @@ namespace LangPython
         {
             // TODO: compile time enforcement of not allowing a break somewhere in a case's code other than the end.
             int length = executables.Length;
+            if (length == 0) return executables;
             Executable last = executables[length - 1];
             if (last is BreakStatement)
             {
