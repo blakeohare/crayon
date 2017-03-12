@@ -8,6 +8,17 @@ namespace Pastel.Nodes
         public object Value { get; set; }
         public PType Type { get; set; }
 
+        public static InlineConstant Of(object value)
+        {
+            Token dummyToken = Token.CreateDummyToken(value.ToString());
+            if (value is int)
+            {
+                return (InlineConstant)new InlineConstant(PType.INT, dummyToken, value).ResolveType(null, null);
+            }
+
+            throw new NotImplementedException();
+        }
+
         public InlineConstant(PType type, Token firstToken, object value) : base(firstToken)
         {
             this.Type = type;

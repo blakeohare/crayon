@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class BreakStatement : Executable
+    public class BreakStatement : Executable
     {
         public BreakStatement(Token breakToken) : base(breakToken)
         { }

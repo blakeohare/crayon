@@ -55,7 +55,7 @@ namespace Platform
             this.TabDepth = 0;
         }
 
-        public void TranslateExecutables(StringBuilder sb, Executable[] executables)
+        public virtual void TranslateExecutables(StringBuilder sb, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {

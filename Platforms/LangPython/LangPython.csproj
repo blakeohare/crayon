@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PythonFakeSwitchStatement.cs" />
     <Compile Include="PythonTranslator.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -53,6 +53,8 @@ namespace LangPython
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
+            PythonTranslator pyTranslator = (PythonTranslator)translator;
+            pyTranslator.CurrentFunctionDefinition = funcDef;
             StringBuilder sb = new StringBuilder();
 
             sb.Append(translator.CurrentTab);
@@ -71,6 +73,15 @@ namespace LangPython
             translator.TranslateExecutables(sb, funcDef.Code);
             translator.TabDepth--;
             sb.Append(this.NL);
+
+            foreach (PythonFakeSwitchStatement switchStatement in pyTranslator.SwitchStatements)
+            {
+                sb.Append(translator.CurrentTab);
+                sb.Append(switchStatement.GenerateGlobalDictionaryLookup());
+                sb.Append(this.NL);
+            }
+            pyTranslator.SwitchStatements.Clear();
+            pyTranslator.CurrentFunctionDefinition = null;
 
             return sb.ToString();
         }

@@ -8,8 +8,26 @@ namespace LangPython
 {
     public abstract class PythonTranslator : Platform.AbstractTranslator
     {
-        public PythonTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n") { }
+        // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
+        // This reference is updated in TranslateFunctionDefinition.
+        private FunctionDefinition currentFunctionDefinition = null;
+        private int switchCounter = 0;
+        internal FunctionDefinition CurrentFunctionDefinition
+        {
+            get { return this.currentFunctionDefinition; }
+            set
+            {
+                this.currentFunctionDefinition = value;
+                this.switchCounter = 0;
+            }
+        }
+        public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
 
+        public PythonTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n")
+        {
+            this.SwitchStatements = new List<PythonFakeSwitchStatement>();
+        }
+        
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);
@@ -206,6 +224,20 @@ namespace LangPython
         public override void TranslateEmitComment(StringBuilder sb, string value)
         {
             throw new NotImplementedException();
+        }
+
+        public override void TranslateExecutables(StringBuilder sb, Executable[] executables)
+        {
+            if (executables.Length == 0)
+            {
+                sb.Append(this.CurrentTab);
+                sb.Append("pass");
+                sb.Append(this.NewLine);
+            }
+            else
+            {
+                base.TranslateExecutables(sb, executables);
+            }
         }
 
         public override void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression)
@@ -719,7 +751,24 @@ namespace LangPython
 
         public override void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement)
         {
-            throw new NotImplementedException();
+            string functionName = this.CurrentFunctionDefinition.NameToken.Value;
+            int switchId = this.switchCounter++;
+            PythonFakeSwitchStatement fakeSwitchStatement = PythonFakeSwitchStatement.Build(switchStatement, switchId, functionName);
+
+            sb.Append(this.CurrentTab);
+            sb.Append(fakeSwitchStatement.ConditionVariableName);
+            sb.Append(" = ");
+            sb.Append(fakeSwitchStatement.DictionaryGlobalName);
+            sb.Append(".get(");
+            this.TranslateExpression(sb, switchStatement.Condition);
+            sb.Append(", ");
+            sb.Append(fakeSwitchStatement.DefaultId);
+            sb.Append(')');
+            sb.Append(this.NewLine);
+            this.TranslateIfStatement(sb, fakeSwitchStatement.GenerateIfStatementBinarySearchTree());
+
+            // This list of switch statements will be serialized at the end of the function definition as globals.
+            this.SwitchStatements.Add(fakeSwitchStatement);
         }
 
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)
