@@ -6,7 +6,14 @@ namespace Pastel.Nodes
     public class Variable : Expression
     {
         public Variable(Token token) : base(token)
-        { }
+        {
+            this.ApplyPrefix = true;
+        }
+
+        // All variables have a v_ prefix when translated to prevent collisions with language constructs.
+        // However, some generated code needs to namespace itself different to prevent collision with translated variables.
+        // For example, some of the Python switch statement stuff uses temporary variables that are not in the original code.
+        public bool ApplyPrefix { get; set; }
 
         public string Name { get { return this.FirstToken.Value; } }
 

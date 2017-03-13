@@ -212,6 +212,7 @@ namespace LangPython
         {
             Pastel.Token equalsToken = Pastel.Token.CreateDummyToken(op);
             Variable variable = new Variable(Pastel.Token.CreateDummyToken(this.ConditionVariableName));
+            variable.ApplyPrefix = false;
             Expression condition = new OpChain(new Expression[] { variable, InlineConstant.Of(id) }, new Pastel.Token[] { equalsToken });
 
             return new IfStatement(

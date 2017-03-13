@@ -952,7 +952,10 @@ namespace LangPython
 
         public override void TranslateVariable(StringBuilder sb, Variable variable)
         {
-            sb.Append("v_");
+            if (variable.ApplyPrefix)
+            {
+                sb.Append("v_");
+            }
             sb.Append(variable.Name);
         }
 
