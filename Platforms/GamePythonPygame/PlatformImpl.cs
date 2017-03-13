@@ -69,6 +69,10 @@ namespace GamePythonPygame
                 Type = FileOutputType.Text,
                 TextContent = string.Join("\n", runPy),
             };
+
+            output["res/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+            output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
+
             return output;
         }
 

@@ -65,6 +65,7 @@ namespace LangPython
             for (int i = 0; i < argCount; ++i)
             {
                 if (i > 0) sb.Append(", ");
+                sb.Append("v_");
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append("):");
