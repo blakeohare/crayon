@@ -292,7 +292,7 @@ namespace LangPython
 
         public override void TranslateFloatToString(StringBuilder sb, Expression floatExpr)
         {
-            sb.Append("float(");
+            sb.Append("str(");
             this.TranslateExpression(sb, floatExpr);
             sb.Append(')');
         }
