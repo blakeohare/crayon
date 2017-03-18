@@ -716,7 +716,7 @@ namespace LangCSharp
             this.TranslateExpression(sb, right);
         }
 
-        public override void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
+        public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
             this.TranslateExpression(sb, root);
             sb.Append('.');

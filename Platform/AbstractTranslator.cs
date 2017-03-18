@@ -148,7 +148,7 @@ namespace Platform
                     if (structDef == null) throw new InvalidOperationException(); // should have been thrown by the compiler
                     string fieldName = df.FieldName.Value;
                     int fieldIndex = structDef.ArgIndexByName[fieldName];
-                    this.TranslateStructFieldDereferenc(sb, df.Root, structDef, fieldName, fieldIndex);
+                    this.TranslateStructFieldDereference(sb, df.Root, structDef, fieldName, fieldIndex);
                     break;
 
                 case "InlineConstant":
@@ -396,7 +396,7 @@ namespace Platform
         public abstract void TranslateStringTrimStart(StringBuilder sb, Expression str);
         public abstract void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right);
         public abstract void TranslateThreadSleep(StringBuilder sb, Expression seconds);
-        public abstract void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
+        public abstract void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
         public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);

@@ -134,6 +134,11 @@ namespace GamePythonPygame
             output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
             output["res/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
 
+            foreach (string imageSheetFile in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                output["res/images/" + imageSheetFile] = resourceDatabase.ImageSheetFiles[imageSheetFile];
+            }
+
             return output;
         }
 

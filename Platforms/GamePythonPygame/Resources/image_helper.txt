@@ -1,6 +1,7 @@
 ﻿
 def libhelper_imageresources_getImageResourceManifestString():
-  return ResourceReader_readTextFile('res/image_sheet_manifest.txt')
+  manifest = ResourceReader_readTextFile('res/image_sheet_manifest.txt')
+  return manifest
 
 def libhelper_imageresources_imageLoadAsync(filename, nativeImageDataNativeData, imageLoaderNativeData):
   # TODO: do this for real instead of faking it. Also see TODO in _checkLoaderIsDone.
@@ -9,7 +10,7 @@ def libhelper_imageresources_imageLoadAsync(filename, nativeImageDataNativeData,
   imageLoaderNativeData[2] = 1 if loaded else 2
 
 def libhelper_imageresources_imageLoadSync(filename, nativeImageDataNativeData, statusOutCheesy):
-  img = RESOURCES.readImageFile('resources/images/' + filename)
+  img = ResourceReader_readImageFile('res/images/' + filename)
   if img != None:
     if statusOutCheesy != None:
       statusOutCheesy[0] = statusOutCheesy[-1]

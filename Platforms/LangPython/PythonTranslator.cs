@@ -159,7 +159,7 @@ namespace LangPython
         {
             sb.Append("list(");
             this.TranslateExpression(sb, dictionary);
-            sb.Append(".values())");
+            sb.Append(")");
         }
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
@@ -924,7 +924,7 @@ namespace LangPython
         }
 
         // TODO: fix typo: missing an e at the end of the name
-        public override void TranslateStructFieldDereferenc(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
+        public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
             this.TranslateExpression(sb, root);
             sb.Append('[');
