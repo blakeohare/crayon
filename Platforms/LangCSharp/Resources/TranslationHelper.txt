@@ -193,7 +193,6 @@ namespace Interpreter.Vm
             else
             {
                 output[0] = -1;
-
             }
         }
 

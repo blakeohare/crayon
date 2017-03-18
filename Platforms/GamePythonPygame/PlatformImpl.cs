@@ -139,6 +139,11 @@ namespace GamePythonPygame
                 output["res/images/" + imageSheetFile] = resourceDatabase.ImageSheetFiles[imageSheetFile];
             }
 
+            foreach (FileOutput textResource in resourceDatabase.TextResources)
+            {
+                output["res/text/" + textResource.CanonicalFileName] = textResource;
+            }
+
             return output;
         }
 

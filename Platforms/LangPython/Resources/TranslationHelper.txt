@@ -65,3 +65,10 @@ def TranslationHelper_isValidInteger(value):
   if len(value) == 0: return False
   if value[0] == '-': value = value[1:]
   return value.isdigit()
+
+def TranslationHelper_tryParseFloat(value, floatOut):
+  try:
+    floatOut[1] = float(value)
+    floatOut[0] = 1.0
+  except:
+    floatOut[0] = -1.0

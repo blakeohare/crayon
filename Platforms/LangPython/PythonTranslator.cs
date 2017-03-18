@@ -711,7 +711,7 @@ namespace LangPython
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            sb.Append("ResourceReader_readTextFile(");
+            sb.Append("ResourceReader_readTextFile('res/text/' + ");
             this.TranslateExpression(sb, path);
             sb.Append(')');
         }
