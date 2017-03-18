@@ -19,12 +19,21 @@ namespace GameJavaScript
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> Export(Dictionary<string, object[]> executablesPerCompilationUnit, object[] structDefinitions)
+        public override Dictionary<string, FileOutput> Export(
+            Dictionary<string, object[]> executablesPerCompilationUnit,
+            object[] structDefinitions)
         {
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override Dictionary<string, FileOutput> ExportProject(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

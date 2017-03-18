@@ -60,6 +60,14 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\GameHostHtml.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Drawing.txt" />
+    <EmbeddedResource Include="Resources\Game.txt" />
+    <EmbeddedResource Include="Resources\Gamepad.txt" />
+    <EmbeddedResource Include="Resources\ImageResource.txt" />
+    <EmbeddedResource Include="Resources\Input.txt" />
+    <EmbeddedResource Include="Resources\Sound.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
