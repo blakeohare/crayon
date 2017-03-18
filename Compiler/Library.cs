@@ -311,6 +311,7 @@ namespace Crayon
                         switch (platformName)
                         {
                             case "game-csharp-opentk-cbx": legacyPlatformName = "game-csharp-opentk"; break;
+                            case "game-python-pygame-cbx": legacyPlatformName = "game-python-pygame"; break;
                             default: break;
                         }
                         Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);

@@ -767,6 +767,7 @@ namespace LangCSharp
 
         public override void TranslateVmSuspend(StringBuilder sb)
         {
+            // TODO: why is this a native function if it's just calling a translated function?
             sb.Append("CrayonWrapper.v_vm_suspend()");
         }
     }

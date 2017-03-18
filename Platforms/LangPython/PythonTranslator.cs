@@ -266,7 +266,7 @@ namespace LangPython
 
         public override void TranslateFloatBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_FloatBuffer16");
         }
 
         public override void TranslateFloatConstant(StringBuilder sb, double value)
@@ -415,9 +415,8 @@ namespace LangPython
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
-            sb.Append("TranslationHelper_invokeDynamicLibraryFunction(");
             this.TranslateExpression(sb, functionId);
-            sb.Append(", ");
+            sb.Append('(');
             this.TranslateExpression(sb, argsArray);
             sb.Append(')');
         }
@@ -439,7 +438,9 @@ namespace LangPython
 
         public override void TranslateListClear(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("del ");
+            this.TranslateExpression(sb, list);
+            sb.Append("[:]");
         }
 
         public override void TranslateListConcat(StringBuilder sb, Expression list, Expression items)
@@ -695,12 +696,24 @@ namespace LangPython
 
         public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_registerLibraryFunction(_moduleInfo, ");
+            this.TranslateExpression(sb, functionPointers);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionNames);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCounts);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCount);
+            sb.Append(')');
         }
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            throw new NotImplementedException();
+            sb.Append("ResourceReader_readTextFile(");
+            this.TranslateExpression(sb, path);
+            sb.Append(')');
         }
 
         public override void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement)
@@ -741,7 +754,7 @@ namespace LangPython
 
         public override void TranslateStringBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_StringBuffer16");
         }
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)
@@ -971,7 +984,7 @@ namespace LangPython
 
         public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)
         {
-            sb.Append("TranslationHelper_determinLibraryAvailability(");
+            sb.Append("TranslationHelper_determineLibraryAvailability(");
             this.TranslateExpression(sb, libraryName);
             sb.Append(", ");
             this.TranslateExpression(sb, libraryVersion);
@@ -980,7 +993,7 @@ namespace LangPython
 
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("v_vm_getCurrentExecutionContextId()");
         }
 
         public override void TranslateVmRunLibraryManifest(
@@ -1003,7 +1016,7 @@ namespace LangPython
 
         public override void TranslateVmSuspend(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("v_vm_suspend()");
         }
 
         public override void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop)

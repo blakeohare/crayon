@@ -42,5 +42,5 @@ namespace Interpreter.Vm
             }
             return 0;
         }
-	}
+    }
 }

@@ -49,25 +49,75 @@ namespace GamePythonPygame
             runPy.Add("");
             runPy.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
             runPy.Add("");
+            runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
+            runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
             runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/ResourceReader.txt", replacements));
             runPy.Add("");
-
 
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
                 runPy.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
             }
 
-            runPy.Add("");
-            runPy.Add(this.LoadTextResource("Resources/main.txt", replacements));
-            runPy.Add("");
-
-            output["run.py"] = new FileOutput()
+            output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TextContent = string.Join("\n", runPy),
+            };
+
+            foreach (LibraryForExport library in libraries)
+            {
+                this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+                string libraryName = library.Name;
+                List<string> libraryLines = new List<string>();
+                if (library.ManifestFunction != null)
+                {
+                    libraryLines.Add("import math");
+                    libraryLines.Add("import os");
+                    libraryLines.Add("import random");
+                    libraryLines.Add("import sys");
+                    libraryLines.Add("import time");
+                    libraryLines.Add("import inspect");
+                    libraryLines.Add("");
+                    libraryLines.Add("from code.vm import *");
+                    libraryLines.Add("");
+
+                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    foreach (FunctionDefinition funcDef in library.Functions)
+                    {
+                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                    }
+
+                    libraryLines.Add("");
+                    libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
+                    libraryLines.Add("");
+
+                    output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = string.Join(this.NL, libraryLines),
+                    };
+
+                    foreach (string filename in library.SupplementalFiles.Keys)
+                    {
+                        // TODO: append all this to the main file.
+                        output["code/" + libraryName + "/" + filename] = library.SupplementalFiles[filename];
+                    }
+                }
+            }
+
+            output["main.py"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.LoadTextResource("Resources/main.txt", replacements),
+            };
+
+            output["code/__init__.py"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = "",
             };
 
             output["res/bytecode.txt"] = resourceDatabase.ByteCodeFile;

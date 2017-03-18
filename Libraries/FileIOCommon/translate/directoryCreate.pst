@@ -16,13 +16,12 @@
 		} else {
 			stringList1 = new List<string>();
 			bool1 = true;
-			while (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), string1)) {
+			while (bool1 && !Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(arg1), string1)) {
 				stringList1.Add(string1);
 				int1 = Native._lib_fileiocommon_getDirParent(string1, Core.StringBuffer16);
 				string1 = Core.StringBuffer16[0];
 				if (int1 != 0) {
 					bool1 = false;
-					break;
 				}
 			}
 			if (bool1) {

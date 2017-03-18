@@ -58,11 +58,9 @@
       <Name>LangPython</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Resources\main.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
-    <EmbeddedResource Include="Resources\TranslationHelper.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\header.txt" />
