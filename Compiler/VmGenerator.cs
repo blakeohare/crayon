@@ -69,7 +69,16 @@ namespace Crayon
             {
                 string version = "v1"; // TODO: the actual version
                 Library library = librariesByName[libraryName];
-                libraries.Add(this.CreateLibraryForExport(libraryName, version, libraryCompilation[libraryName], library.GetSupplementalFileOutput()));
+                Dictionary<string, FileOutput> filesToCopy = new Dictionary<string, FileOutput>();
+                List<string> codeToEmbed = new List<string>();
+                library.GetSupplementalFileOutput(filesToCopy, codeToEmbed);
+                Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
+                    libraryName, 
+                    version, 
+                    libraryCompilation[libraryName], 
+                    filesToCopy,
+                    codeToEmbed);
+                libraries.Add(libraryForExport);
             }
             
             LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
@@ -100,7 +109,7 @@ namespace Crayon
             }
         }
 
-        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation, Dictionary<string, FileOutput> supplementalFiles)
+        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation, Dictionary<string, FileOutput> supplementalFiles, List<string> codeToEmbed)
         { 
             FunctionDefinition manifestFunction = null;
             Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
@@ -119,7 +128,7 @@ namespace Crayon
 
             string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
             FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
-            
+
             return new Platform.LibraryForExport()
             {
                 Name = libraryName,
@@ -128,6 +137,7 @@ namespace Crayon
                 Functions = functions,
                 ManifestFunction = manifestFunction,
                 SupplementalFiles = supplementalFiles,
+                CodeToEmbed = codeToEmbed.ToArray(),
             };
         }
 

@@ -389,6 +389,7 @@ namespace Crayon
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
         {
+            // TODO: need to separate the parser for this file and the interpretations of the actions
             string resourceManifest = this.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
             if (resourceManifest.Length > 0)
             {
@@ -592,31 +593,29 @@ namespace Crayon
             throw new NotImplementedException();
         }
 
-        public Dictionary<string, FileOutput> GetSupplementalFileOutput()
+        public void GetSupplementalFileOutput(Dictionary<string, FileOutput> fileCopies, List<string> codeToEmbed)
         {
             Dictionary<string, string> textFiles = new Dictionary<string, string>();
-            List<string> embeddedContent = new List<string>();
+            
             string platformId = this.platformName;
             if (platformId.EndsWith("-cbx"))
             {
                 platformId = platformId.Substring(0, platformId.Length - 4);
             }
-            this.ExtractResources(platformId, textFiles, embeddedContent);
-            HashSet<string> notCode = new HashSet<string>(embeddedContent);
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            this.ExtractResources(platformId, textFiles, codeToEmbed);
+            
             foreach (string key in textFiles.Keys)
             {
                 string content = textFiles[key];
                 content = this.NormalizeNamespacesForCbx(content);
                 string filepath = key.Split('/').Last();
                 // TODO: distinguish between code and content
-                output[filepath] = new FileOutput()
+                fileCopies[filepath] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = content,
                 };
             }
-            return output;
         }
 
         private string NormalizeNamespacesForCbx(string content)

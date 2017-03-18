@@ -1,4 +1,10 @@
-﻿
+﻿try:
+  import pygame
+except:
+  print("PyGame is required to run game-based Crayon projects that have been exported")
+  print("to Python. Visit: http://pygame.org or run 'pip install pygame'")
+  exit()
+
 _global_vars = {
   'width': 400,
   'height': 300,
@@ -218,8 +224,5 @@ def string_check_slice(haystack, i, needle):
 def string_substring(s, start, length = None):
   if length == None: return s[start:]
   return s[start:start + length]
-
-def always_true(): return True
-def always_false(): return False
 
 program_data = [None]

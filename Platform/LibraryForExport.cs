@@ -13,5 +13,6 @@ namespace Platform
         public Pastel.Nodes.FunctionDefinition[] Functions { get; set; }
         public string[] FunctionRegisteredNamesOrNulls { get; set; }
         public Dictionary<string, Common.FileOutput> SupplementalFiles { get; set; }
+        public string[] CodeToEmbed { get; set; }
     }
 }

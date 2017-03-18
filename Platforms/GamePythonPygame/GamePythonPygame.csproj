@@ -65,6 +65,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\header.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\game.txt" />
+    <EmbeddedResource Include="Resources\gamepad_helper.txt" />
+    <EmbeddedResource Include="Resources\gfx_renderer.txt" />
+    <EmbeddedResource Include="Resources\image_helper.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

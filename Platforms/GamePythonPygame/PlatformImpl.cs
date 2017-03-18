@@ -45,8 +45,19 @@ namespace GamePythonPygame
 
             List<string> runPy = new List<string>();
 
-            runPy.Add(this.LoadTextResource("Resources/header.txt", replacements));
-            runPy.Add("");
+            foreach (string simpleCodeConcat in new string[] {
+                "header.txt",
+                // TODO: these need to go in their respective libraries.
+                "image_helper.txt",
+                "game.txt",
+                "gfx_renderer.txt",
+                "gamepad_helper.txt",
+            })
+            {
+                runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
+                runPy.Add("");
+            }
+
             runPy.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
             runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
@@ -94,17 +105,16 @@ namespace GamePythonPygame
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
 
+                    foreach (string codeToAppendToLibrary in library.CodeToEmbed)
+                    {
+                        libraryLines.Add(codeToAppendToLibrary);
+                    }
+
                     output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
                         TextContent = string.Join(this.NL, libraryLines),
                     };
-
-                    foreach (string filename in library.SupplementalFiles.Keys)
-                    {
-                        // TODO: append all this to the main file.
-                        output["code/" + libraryName + "/" + filename] = library.SupplementalFiles[filename];
-                    }
                 }
             }
 
