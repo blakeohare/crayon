@@ -6,13 +6,18 @@ using Common;
 using Pastel.Nodes;
 using Platform;
 
-namespace GameJavaScript
+namespace GameJavaScriptHtml5
 {
     public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "game-javascript-html5-cbx"; } }
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
+        
+        public PlatformImpl()
+        {
+            this.Translator = new JavaScriptGameHtml5Translator(this);
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -35,7 +40,9 @@ namespace GameJavaScript
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+
+            return output;
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)

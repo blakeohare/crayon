@@ -10,6 +10,9 @@ namespace LangJavaScript
 {
     public class JavaScriptTranslator : CurlyBraceTranslator
     {
+        public JavaScriptTranslator(AbstractPlatform platform) : base(platform, "\t", "\n", true)
+        { }
+
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             throw new NotImplementedException();
