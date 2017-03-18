@@ -189,3 +189,9 @@ struct MagicNumbers {
 	int coreGenerateExceptionFunctionId;
 }
 
+struct LibRegObj {
+	List<object> functionPointers;
+	List<string> functionNames;
+	List<int> argCounts;
+}
+

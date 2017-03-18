@@ -216,14 +216,14 @@ namespace Crayon.Translator.Pastel
                 // just generate the output directly instead of using the translator. It's simpler.
                 List<string> manifestCode = new List<string>()
                 {
-                    "void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {\n"
+                    "void lib_manifest_RegisterFunctions(object libRegData) {\n"
                 };
                 Dictionary<string, int> argCountByFunctionName = argCountByFunctionNameByLibraryName[libraryName];
                 string[] functionNames = argCountByFunctionName.Keys.OrderBy<string, string>(s => s).ToArray();
                 foreach (string functionName in functionNames)
                 {
                     int argCount = argCountByFunctionName[functionName];
-                    manifestCode.Add("\tCore.RegisterLibraryFunction(functionPointers, functionNames, argCounts, \"" + functionName + "\", " + argCount + ");\n");
+                    manifestCode.Add("\tCore.RegisterLibraryFunction(libRegData, \"" + functionName + "\", " + argCount + ");\n");
                 }
                 manifestCode.Add("}\n");
 

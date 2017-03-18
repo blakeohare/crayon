@@ -242,7 +242,7 @@ namespace Platform
                 case Pastel.NativeFunction.PRINT_STDOUT: this.TranslatePrintStdOut(sb, args[0]); break;
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
                 case Pastel.NativeFunction.READ_BYTE_CODE_FILE: this.TranslateReadByteCodeFile(sb); break;
-                case Pastel.NativeFunction.REGISTER_LIBRARY_FUNCTION: this.TranslateRegisterLibraryFunction(sb, args[0], args[1], args[2], args[3], args[4]); break;
+                case Pastel.NativeFunction.REGISTER_LIBRARY_FUNCTION: this.TranslateRegisterLibraryFunction(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.RESOURCE_READ_TEXT_FILE: this.TranslateResourceReadTextFile(sb, args[0]); break;
                 case Pastel.NativeFunction.SET_PROGRAM_DATA: this.TranslateSetProgramData(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
@@ -272,7 +272,7 @@ namespace Platform
                 case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
                 case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_GET_CURRENT_EXECUTION_CONTEXT_ID: this.TranslateVmGetCurrentExecutionContextId(sb); break;
-                case Pastel.NativeFunction.VM_RUN_LIBRARY_MANIFEST: this.TranslateVmRunLibraryManifest(sb, args[0], args[1], args[2], args[3]); break;
+                case Pastel.NativeFunction.VM_RUN_LIBRARY_MANIFEST: this.TranslateVmRunLibraryManifest(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_SUSPEND: this.TranslateVmSuspend(sb); break;
 
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
@@ -366,7 +366,7 @@ namespace Platform
         public abstract void TranslatePrintStdOut(StringBuilder sb, Expression value);
         public abstract void TranslateRandomFloat(StringBuilder sb);
         public abstract void TranslateReadByteCodeFile(StringBuilder sb);
-        public abstract void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount);
+        public abstract void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount);
         public abstract void TranslateResourceReadTextFile(StringBuilder sb, Expression path);
         public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
         public abstract void TranslateSetProgramData(StringBuilder sb, Expression programData);
@@ -402,7 +402,7 @@ namespace Platform
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
         public abstract void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion);
         public abstract void TranslateVmGetCurrentExecutionContextId(StringBuilder sb);
-        public abstract void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList);
+        public abstract void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj);
         public abstract void TranslateVmSuspend(StringBuilder sb);
         public abstract void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop);
     }

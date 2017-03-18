@@ -224,3 +224,9 @@ struct MagicNumbers {
 	@type('int') coreExceptionClassId,
 	@type('int') coreGenerateExceptionFunctionId,
 }
+
+struct LibRegObj {
+	@type('List<object>') functionPointers,
+	@type('List<string>') functionNames,
+	@type('List<int>') argCounts,
+}

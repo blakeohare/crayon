@@ -224,9 +224,7 @@ namespace Interpreter.Vm
 
         public static int VmRunLibraryManifest(
             string name,
-            List<object> functionPointers,
-            List<string> libraryNames,
-            List<int> libraryArgCounts)
+            object libRegObj)
         {
             Library library = TranslationHelper.LibraryRegistry.GetLibrary(name);
             if (library == null)
@@ -236,7 +234,7 @@ namespace Interpreter.Vm
 
             try
             {
-                library.RunManifest(functionPointers, libraryNames, libraryArgCounts);
+                library.RunManifest(libRegObj);
                 return 0;
             }
             catch (Exception)
@@ -249,9 +247,7 @@ namespace Interpreter.Vm
 
         public static void RegisterLibraryFunction(
             Type libraryWrapperClass,
-            List<object> functionPointers,
-            List<string> functionNames,
-            List<int> functionArgCounts,
+			object libRegObj,
             string functionName,
             int argCount)
         {
@@ -262,9 +258,7 @@ namespace Interpreter.Vm
 
             CrayonWrapper.v_registerLibraryFunction(
                 fp,
-                functionPointers,
-                functionNames,
-                functionArgCounts,
+                libRegObj,
                 fullyQualifiedFunctionName,
                 argCount);
         }

@@ -512,14 +512,10 @@ namespace LangCSharp
             sb.Append("TranslationHelper.ByteCode");
         }
 
-        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount)
+        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
             sb.Append("TranslationHelper.RegisterLibraryFunction(typeof(LibraryWrapper), ");
-            this.TranslateExpression(sb, functionPointers);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionNames);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCounts);
+            this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");
             this.TranslateExpression(sb, functionName);
             sb.Append(", ");
@@ -752,16 +748,12 @@ namespace LangCSharp
             sb.Append("CrayonWrapper.v_vm_getCurrentExecutionContextId()");
         }
 
-        public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression functionPointerList, Expression functionNameList, Expression functionArgCountList)
+        public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("TranslationHelper.VmRunLibraryManifest(");
             this.TranslateExpression(sb, libraryName);
             sb.Append(", ");
-            this.TranslateExpression(sb, functionPointerList);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionNameList);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCountList);
+            this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
         }
 

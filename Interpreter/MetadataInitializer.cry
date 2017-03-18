@@ -408,14 +408,14 @@ function @type('int') declareLibrary(@type('int') refId, @type('string') descrip
 		@type('string') name = $_array_get(descriptorParts, 0);
 		@type('string') ver = $_array_get(descriptorParts, 1);
 		@type('int') status = $_determine_library_availability(name, ver);
+
 		if (status == 0) {
-			//$_dictionary_set(ProgramData$p.libraryDeclarations, refId, descriptor);
-			ProgramData$p.activeLibraryReferenceId = refId;
-			status = $_run_library_manifest(
-				name,
+			@type('LibRegObj') lro = new LibRegObj(
 				ProgramData$p.libraryFunctionPointers,
 				ProgramData$p.libraryFunctionNames,
 				ProgramData$p.libraryFunctionArgCounts);
+			ProgramData$p.activeLibraryReferenceId = refId;
+			status = $_run_library_manifest(name, lro);
 		}
 		return status;
 	} else {
@@ -425,12 +425,14 @@ function @type('int') declareLibrary(@type('int') refId, @type('string') descrip
 
 function @type('int') registerLibraryFunction(
 	@type('object') functionPointer,
-	@type('List<object>') functionPointersById,
-	@type('List<string>') functionNamesById,
-	@type('List<int>') functionArgCountsById,
+	@type('object') libRegObjRaw,
 	@type('string') functionName,
 	@type('int') argCount) {
 	if (%%%IS_FOR_PASTEL_TRANSLATION%%%) {
+		@type('LibRegObj') libRegObj = $_cast('LibRegObj', libRegObjRaw);
+		@type('List<object>') functionPointersById = LibRegObj$libRegObj.functionPointers;
+		@type('List<string>') functionNamesById = LibRegObj$libRegObj.functionNames;
+		@type('List<int>') functionArgCountsById = LibRegObj$libRegObj.argCounts;
 		@type('int') index = $_list_length(functionPointersById);
 
 		$_list_push(functionPointersById, functionPointer);

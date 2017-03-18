@@ -1,6 +1,4 @@
-﻿TranslationHelper_globals = {
-  
-}
+﻿TranslationHelper_globals = {}
 
 TranslationHelper_StringBuffer16 = [None] * 16
 TranslationHelper_IntBuffer16 = [0] * 16
@@ -44,19 +42,19 @@ def TranslationHelper_determineLibraryAvailability(name, ver):
 def TranslationHelper_setLibraries(libraries):
   TranslationHelper_globals['libreg'] = LibraryRegistry(libraries)
 
-def TranslationHelper_registerLibraryFunction(moduleInfo, fnPointers, fnNames, fnArgCounts, fnName, fnArgCount):
+def TranslationHelper_registerLibraryFunction(moduleInfo, libRegObj, fnName, fnArgCount):
   libName, libFunctionLookup = moduleInfo
   canonicalName = libName.lower()
   fn = libFunctionLookup['v_lib_' + canonicalName + '_function_' + fnName]
   lookupName = 'lib_' + canonicalName + '_' + fnName
-  v_registerLibraryFunction(fn, fnPointers, fnNames, fnArgCounts, lookupName, fnArgCount)
+  v_registerLibraryFunction(fn, libRegObj, lookupName, fnArgCount)
 
-def TranslationHelper_runLibraryManifest(name, fPointerList, fNameList, fArgCountList):
+def TranslationHelper_runLibraryManifest(name, libRegObj):
   library = TranslationHelper_globals['libreg'].getLibrary(name.lower())
   if library == None:
     return 0
   try:
-    library.manifestFunction(fPointerList, fNameList, fArgCountList)
+    library.manifestFunction(libRegObj)
     return 0
   except:
     return 3

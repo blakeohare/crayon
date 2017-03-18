@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Interpreter.Structs;
 
 namespace Interpreter.Vm
 {
@@ -14,9 +15,9 @@ namespace Interpreter.Vm
             this.manifestMethod = manifestMethod;
         }
 
-        public int RunManifest(List<object> functionPointersOut, List<string> functionNamesOut, List<int> argCountsOut)
+        public int RunManifest(object libRegObj)
         {
-            this.manifestMethod.Invoke(null, new object[] { functionPointersOut, functionNamesOut, argCountsOut });
+            this.manifestMethod.Invoke(null, new object[] { libRegObj });
             return 0;
         }
     }

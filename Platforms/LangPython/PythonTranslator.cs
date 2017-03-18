@@ -694,14 +694,10 @@ namespace LangPython
             sb.Append("TranslationHelper_getByteCode()");
         }
 
-        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression functionPointers, Expression functionNames, Expression functionArgCounts, Expression functionName, Expression functionArgCount)
+        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
             sb.Append("TranslationHelper_registerLibraryFunction(_moduleInfo, ");
-            this.TranslateExpression(sb, functionPointers);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionNames);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCounts);
+            this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");
             this.TranslateExpression(sb, functionName);
             sb.Append(", ");
@@ -997,18 +993,12 @@ namespace LangPython
         public override void TranslateVmRunLibraryManifest(
             StringBuilder sb,
             Expression libraryName,
-            Expression functionPointerList,
-            Expression functionNameList,
-            Expression functionArgCountList)
+            Expression libRegObj)
         {
             sb.Append("TranslationHelper_runLibraryManifest(");
             this.TranslateExpression(sb, libraryName);
             sb.Append(", ");
-            this.TranslateExpression(sb, functionPointerList);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionNameList);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCountList);
+            this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
         }
 

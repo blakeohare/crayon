@@ -1,5 +1,5 @@
-﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "random_bool", 0);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "random_float", 0);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "random_int", 2);
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+	Core.RegisterLibraryFunction(libRegData, "random_bool", 0);
+	Core.RegisterLibraryFunction(libRegData, "random_float", 0);
+	Core.RegisterLibraryFunction(libRegData, "random_int", 2);
 }

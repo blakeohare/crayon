@@ -275,8 +275,9 @@ int declareLibrary(int refId, string descriptor) {
 		string ver = descriptorParts[1];
 		int status = Core.VmDetermineLibraryAvailability(name, ver);
 		if (status == 0) {
+			LibRegObj lro = new LibRegObj(p.libraryFunctionPointers, p.libraryFunctionNames, p.libraryFunctionArgCounts);
 			p.activeLibraryReferenceId = refId;
-			status = Core.VmRunLibraryManifest(name, p.libraryFunctionPointers, p.libraryFunctionNames, p.libraryFunctionArgCounts);
+			status = Core.VmRunLibraryManifest(name, lro);
 		}
 		return status;
 	} else {
@@ -284,8 +285,12 @@ int declareLibrary(int refId, string descriptor) {
 	}
 }
 
-int registerLibraryFunction(object functionPointer, List<object> functionPointersById, List<string> functionNamesById, List<int> functionArgCountsById, string functionName, int argCount) {
+int registerLibraryFunction(object functionPointer, object libRegObjRaw, string functionName, int argCount) {
 	if (true) {
+		LibRegObj libRegObj = ((LibRegObj) libRegObjRaw);
+		List<object> functionPointersById = libRegObj.functionPointers;
+		List<string> functionNamesById = libRegObj.functionNames;
+		List<int> functionArgCountsById = libRegObj.argCounts;
 		int index = functionPointersById.Size();
 		functionPointersById.Add(functionPointer);
 		functionNamesById.Add(functionName);

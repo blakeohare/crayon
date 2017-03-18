@@ -1,10 +1,10 @@
-﻿void lib_manifest_RegisterFunctions(List<object> functionPointers, List<string> functionNames, List<int> argCounts) {
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "blit", 8);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "checkLoaderIsDone", 3);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "flushImageChanges", 1);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "getManifestString", 0);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "loadAsynchronous", 3);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "loadSynchronous", 3);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "nativeImageDataInit", 3);
-	Core.RegisterLibraryFunction(functionPointers, functionNames, argCounts, "yieldRequiredByPlatform", 0);
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+	Core.RegisterLibraryFunction(libRegData, "blit", 8);
+	Core.RegisterLibraryFunction(libRegData, "checkLoaderIsDone", 3);
+	Core.RegisterLibraryFunction(libRegData, "flushImageChanges", 1);
+	Core.RegisterLibraryFunction(libRegData, "getManifestString", 0);
+	Core.RegisterLibraryFunction(libRegData, "loadAsynchronous", 3);
+	Core.RegisterLibraryFunction(libRegData, "loadSynchronous", 3);
+	Core.RegisterLibraryFunction(libRegData, "nativeImageDataInit", 3);
+	Core.RegisterLibraryFunction(libRegData, "yieldRequiredByPlatform", 0);
 }
