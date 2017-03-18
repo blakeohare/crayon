@@ -273,6 +273,10 @@ Value buildDictionary(Array<string> keys, Array<Value> values) {
 	return new Value(Types.DICTIONARY, new DictImpl(new Dictionary<int, Value>(), new Dictionary<int, Value>(), keyLookup, valueLookup, keyLookup.Size(), Types.STRING));
 }
 
+PlatformRelayObject buildRelayObj(int type, int iarg1, int iarg2, int iarg3, double farg1, string sarg1) {
+	return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
+}
+
 Value buildCommonString(string s) {
 	if (!COMMON_STRINGS.Contains(s)) {
 		Value value = buildString(s);

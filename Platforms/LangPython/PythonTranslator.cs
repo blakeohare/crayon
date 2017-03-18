@@ -906,16 +906,14 @@ namespace LangPython
 
         public override void TranslateStringTrimEnd(StringBuilder sb, Expression str)
         {
-            sb.Append("TranslationHelper_trimEnd(");
             this.TranslateExpression(sb, str);
-            sb.Append(')');
+            sb.Append(".rstrip()");
         }
 
         public override void TranslateStringTrimStart(StringBuilder sb, Expression str)
         {
-            sb.Append("TranslationHelper_trimStart(");
             this.TranslateExpression(sb, str);
-            sb.Append(')');
+            sb.Append(".lstrip()");
         }
 
         public override void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right)

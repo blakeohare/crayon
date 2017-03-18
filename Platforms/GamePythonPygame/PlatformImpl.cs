@@ -132,6 +132,7 @@ namespace GamePythonPygame
 
             output["res/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output["res/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
 
             return output;
         }

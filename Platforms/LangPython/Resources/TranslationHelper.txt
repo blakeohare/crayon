@@ -60,3 +60,8 @@ def TranslationHelper_runLibraryManifest(name, fPointerList, fNameList, fArgCoun
     return 0
   except:
     return 3
+
+def TranslationHelper_isValidInteger(value):
+  if len(value) == 0: return False
+  if value[0] == '-': value = value[1:]
+  return value.isdigit()
