@@ -21,7 +21,7 @@ namespace GameJavaScriptHtml5
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, object>();
         }
 
         public override Dictionary<string, FileOutput> Export(
@@ -42,6 +42,20 @@ namespace GameJavaScriptHtml5
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
+            List<string> coreVmFunctions = new List<string>();
+            foreach (FunctionDefinition funcDef in functionDefinitions)
+            {
+                coreVmFunctions.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+            }
+
+            string functionCode = string.Join("\r\n\r\n", coreVmFunctions);
+
+            output["vm.js"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = functionCode,
+            };
+
             return output;
         }
 
@@ -52,7 +66,7 @@ namespace GameJavaScriptHtml5
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

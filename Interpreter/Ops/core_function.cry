@@ -486,8 +486,11 @@
 			prepareToSuspend(ec, stack, valueStackSize, pc);
 
 			$_enqueue_vm_resume(float1, ExecutionContext$ec.id);
-
-			return suspendInterpreterWithLock();
+			
+			if (ExecutionContext$ec.id > -1) {
+				Core.EmitComment("If statement to circumvent unreachable code error in translator.");
+				return suspendInterpreterWithLock();
+			}
 		}
 		break;
 

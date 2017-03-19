@@ -28,6 +28,7 @@ namespace Pastel
         DICTIONARY_VALUES_TO_VALUE_LIST,
         DICTIONARY_NEW,
         EMIT_COMMENT,
+        ENQUEUE_VM_RESUME,
         FLOAT_BUFFER_16,
         FLOAT_DIVISION,
         FLOAT_TO_STRING,

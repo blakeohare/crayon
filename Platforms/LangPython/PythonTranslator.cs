@@ -985,6 +985,11 @@ namespace LangPython
             sb.Append(')');
         }
 
+        public override void TranslateVmEnqueueResume(StringBuilder sb, Expression seconds, Expression executionContextId)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
         {
             sb.Append("v_vm_getCurrentExecutionContextId()");

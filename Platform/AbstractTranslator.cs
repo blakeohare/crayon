@@ -199,6 +199,7 @@ namespace Platform
                 case Pastel.NativeFunction.DICTIONARY_VALUES: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.DICTIONARY_VALUES_TO_VALUE_LIST: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.EMIT_COMMENT: this.TranslateEmitComment(sb, ((InlineConstant)args[0]).Value.ToString()); break;
+                case Pastel.NativeFunction.ENQUEUE_VM_RESUME: this.TranslateVmEnqueueResume(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_BUFFER_16: this.TranslateFloatBuffer16(sb); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
@@ -401,6 +402,7 @@ namespace Platform
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
         public abstract void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion);
+        public abstract void TranslateVmEnqueueResume(StringBuilder sb, Expression seconds, Expression executionContextId);
         public abstract void TranslateVmGetCurrentExecutionContextId(StringBuilder sb);
         public abstract void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj);
         public abstract void TranslateVmSuspend(StringBuilder sb);

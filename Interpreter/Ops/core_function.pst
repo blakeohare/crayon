@@ -514,7 +514,10 @@
 			}
 			prepareToSuspend(ec, stack, valueStackSize, pc);
 			Core.EnqueueVmResume(float1, ec.id);
-			return suspendInterpreterWithLock();
+			if (ec.id > -1) {
+				Core.EmitComment("If statement to circumvent unreachable code error.");
+				return suspendInterpreterWithLock();
+			}
 		}
 		break;
 	case 31:

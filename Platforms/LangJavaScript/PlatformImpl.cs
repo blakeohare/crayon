@@ -5,6 +5,7 @@ using System.Text;
 using Common;
 using Pastel.Nodes;
 using Platform;
+using Pastel;
 
 namespace LangJavaScript
 {
@@ -26,7 +27,29 @@ namespace LangJavaScript
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("var v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append(" = function(");
+            Token[] args = funcDef.ArgNames;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append("v_");
+                sb.Append(args[i].Value);
+            }
+            sb.Append(") {");
+            sb.Append(this.NL);
+
+            translator.TabDepth = 1;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth = 0;
+
+            sb.Append("};");
+            sb.Append(this.NL);
+            sb.Append(this.NL);
+
+            return sb.ToString();
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
@@ -46,7 +69,17 @@ namespace LangJavaScript
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, object>()
+                {
+                    { "IS_ASYNC", true },
+                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
+                    { "STRONGLY_TYPED", false },
+                    { "IS_ARRAY_SAME_AS_LIST", true},
+                    { "IS_PYTHON", false },
+                    { "IS_CHAR_A_NUMBER", false },
+                    { "INT_IS_FLOOR", true },
+                    { "IS_THREAD_BLOCKING_ALLOWED", false },
+                };
         }
     }
 }

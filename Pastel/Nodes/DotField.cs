@@ -120,6 +120,7 @@ namespace Pastel.Nodes
                 case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
                 case "EmitComment": return NativeFunction.EMIT_COMMENT;
+                case "EnqueueVmResume": return NativeFunction.ENQUEUE_VM_RESUME;
                 case "FloatBuffer16": return NativeFunction.FLOAT_BUFFER_16;
                 case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
                 case "FloatToString": return NativeFunction.FLOAT_TO_STRING;
