@@ -9,6 +9,7 @@ namespace Crayon
         public string GuidSeed { get; set; }
         public ICollection<Library> LibrariesUsed { get; set; }
         public string IconPath { get; set; }
+        public string DefaultTitle { get; set; }
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {
@@ -24,6 +25,7 @@ namespace Crayon
                 LibrariesUsed = parser.SystemLibraryManager.LibrariesUsed,
                 ProjectID = buildContext.ProjectID,
                 GuidSeed = buildContext.GuidSeed,
+                DefaultTitle = buildContext.DefaultTitle,
             };
         }
     }

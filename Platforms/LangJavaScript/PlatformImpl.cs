@@ -64,7 +64,7 @@ namespace LangJavaScript
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            throw new NotImplementedException();
+            return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }
 
         public override IDictionary<string, object> GetConstantFlags()

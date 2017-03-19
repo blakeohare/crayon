@@ -33,7 +33,12 @@ namespace Crayon
             string canonicalPlatformName = this.platformName;
             if (canonicalPlatformName.EndsWith("-cbx"))
             {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
                 canonicalPlatformName = canonicalPlatformName.Substring(0, canonicalPlatformName.Length - 4);
+                if (canonicalPlatformName == "game-javascript-html5")
+                {
+                    canonicalPlatformName = "game-javascript";
+                }
             }
             string platformPrefix = "[" + canonicalPlatformName + "]";
 
@@ -312,6 +317,7 @@ namespace Crayon
                         {
                             case "game-csharp-opentk-cbx": legacyPlatformName = "game-csharp-opentk"; break;
                             case "game-python-pygame-cbx": legacyPlatformName = "game-python-pygame"; break;
+                            case "game-javascript-html5-cbx": legacyPlatformName = "game-javascript"; break;
                             default: break;
                         }
                         Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);
@@ -600,7 +606,12 @@ namespace Crayon
             string platformId = this.platformName;
             if (platformId.EndsWith("-cbx"))
             {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
                 platformId = platformId.Substring(0, platformId.Length - 4);
+                if (platformId == "game-javascript-html5")
+                {
+                    platformId = "game-javascript";
+                }
             }
             this.ExtractResources(platformId, textFiles, codeToEmbed);
             

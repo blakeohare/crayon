@@ -28,14 +28,35 @@ namespace Common
             object output;
             if (this.options.TryGetValue(key, out output))
             {
+                if (output == null) return null;
                 return output.ToString();
             }
             return null;
         }
 
+        public string GetStringOrEmpty(ExportOptionKey key)
+        {
+            return GetString(key, "");
+        }
+
         public string GetString(ExportOptionKey key)
         {
             return this.options[key].ToString();
+        }
+
+        public string GetString(ExportOptionKey key, string defaultValue)
+        {
+            return GetStringOrNull(key) ?? defaultValue;
+        }
+
+        public object[] GetArray(ExportOptionKey key)
+        {
+            object output;
+            if (this.options.TryGetValue(key, out output))
+            {
+                return (object[])output;
+            }
+            return null;
         }
     }
 }

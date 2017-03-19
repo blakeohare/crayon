@@ -7,10 +7,11 @@
 		%%%FAVICON%%%
 		<style type="text/css"> body { background-color:#000; text-align:center; }</style>
 		
-		<script type="text/javascript" src="code.js"></script>
-		<script type="text/javascript" src="libraries.js"></script>
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="vm.js"></script>
 		<script type="text/javascript" src="bytecode.js"></script>
 		<script type="text/javascript" src="resources.js"></script>
+%%%JS_LIB_INCLUSIONS%%%
 	</head>
 	<body onload="v_main()">
 		<div id="crayon_host" oncontextmenu="return false;"></div>
