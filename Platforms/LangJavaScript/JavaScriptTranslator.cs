@@ -31,7 +31,7 @@ namespace LangJavaScript
         {
             sb.Append("C$common$createNewArray(");
             this.TranslateExpression(sb, lengthExpression);
-            sb.Append(']');
+            sb.Append(')');
         }
 
         public override void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value)
@@ -353,21 +353,21 @@ namespace LangJavaScript
 
         public override void TranslateMathArcCos(StringBuilder sb, Expression ratio)
         {
-            sb.Append("Math.acos");
+            sb.Append("Math.acos(");
             this.TranslateExpression(sb, ratio);
             sb.Append(')');
         }
 
         public override void TranslateMathArcSin(StringBuilder sb, Expression ratio)
         {
-            sb.Append("Math.asin");
+            sb.Append("Math.asin(");
             this.TranslateExpression(sb, ratio);
             sb.Append(')');
         }
 
         public override void TranslateMathArcTan(StringBuilder sb, Expression yComponent, Expression xComponent)
         {
-            sb.Append("Math.atan2");
+            sb.Append("Math.atan2(");
             this.TranslateExpression(sb, yComponent);
             sb.Append(", ");
             this.TranslateExpression(sb, xComponent);
@@ -376,14 +376,14 @@ namespace LangJavaScript
 
         public override void TranslateMathCos(StringBuilder sb, Expression thetaRadians)
         {
-            sb.Append("Math.cos");
+            sb.Append("Math.cos(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }
 
         public override void TranslateMathLog(StringBuilder sb, Expression value)
         {
-            sb.Append("Math.log");
+            sb.Append("Math.log(");
             this.TranslateExpression(sb, value);
             sb.Append(')');
         }
@@ -399,14 +399,14 @@ namespace LangJavaScript
 
         public override void TranslateMathSin(StringBuilder sb, Expression thetaRadians)
         {
-            sb.Append("Math.sin");
+            sb.Append("Math.sin(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }
 
         public override void TranslateMathTan(StringBuilder sb, Expression thetaRadians)
         {
-            sb.Append("Math.tan");
+            sb.Append("Math.tan(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }

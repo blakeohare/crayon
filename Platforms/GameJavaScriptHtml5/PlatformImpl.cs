@@ -43,49 +43,41 @@ namespace GameJavaScriptHtml5
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            List<string> coreVmFunctions = new List<string>();
+            List<string> coreVmCode = new List<string>();
+
+            coreVmCode.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
+
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                coreVmFunctions.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                coreVmCode.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
             }
 
-            string functionCode = string.Join("\r\n\r\n", coreVmFunctions);
+            string coreVm = string.Join("\r\n", coreVmCode);
 
             output["vm.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = functionCode,
+                TextContent = coreVm,
             };
 
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
             foreach (LibraryForExport library in libraries)
             {
-                List<string> libraryLines = new List<string>();
+                if (library.ManifestFunction != null)
+                {
+                    List<string> libraryLines = new List<string>();
 
-                this.Translator.CurrentLibraryFunctionTranslator = 
-                    libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
-                foreach (FunctionDefinition fnDef in library.Functions)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("var v_");
-                    sb.Append(fnDef.NameToken.Value);
-                    sb.Append(" = function(");
-                    for (int i = 0; i < fnDef.ArgNames.Length; ++i)
+                    this.Translator.CurrentLibraryFunctionTranslator =
+                        libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+
+                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    foreach (FunctionDefinition fnDef in library.Functions)
                     {
-                        if (i > 0) sb.Append(", ");
-                        sb.Append("v_");
-                        sb.Append(fnDef.ArgNames[i].Value);
+                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, fnDef));
                     }
-                    sb.Append(") {\n");
-                    this.Translator.TabDepth = 1;
-                    this.Translator.TranslateExecutables(sb, fnDef.Code);
-                    this.Translator.TabDepth = 0;
-                    sb.Append("};\n");
-                    libraryLines.Add(sb.ToString());
-                }
-                
-                if (libraryLines.Count > 0)
-                {
+                    libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
+                    libraryLines.Add("");
+
                     output["libs/lib_" + library.Name.ToLower() + ".js"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
@@ -114,7 +106,34 @@ namespace GameJavaScriptHtml5
                     this.LoadTextResource("Resources/Sound.txt", replacements),
                 }),
             };
-            
+
+            StringBuilder resourcesJs = new StringBuilder();
+
+            foreach (FileOutput textResource in resourceDatabase.TextResources)
+            {
+                resourcesJs.Append("C$common$addTextRes(");
+                resourcesJs.Append(Util.ConvertStringValueToCode(textResource.CanonicalFileName));
+                resourcesJs.Append(", ");
+                resourcesJs.Append(Util.ConvertStringValueToCode(textResource.TextContent));
+                resourcesJs.Append(");\n");
+            }
+
+            resourcesJs.Append("C$common$resourceManifest = ");
+            resourcesJs.Append(Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent));
+            resourcesJs.Append(";\n");
+
+            output["resources.js"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = resourcesJs.ToString(),
+            };
+
+            output["bytecode.js"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = "C$bytecode = " + Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent) + ";",
+            };
+
             // TODO: minify JavaScript across all of output dictionary
 
             return output;
@@ -132,7 +151,7 @@ namespace GameJavaScriptHtml5
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
         private string GenerateJsLibInclusionHtml(List<LibraryForExport> librariesWithCode)

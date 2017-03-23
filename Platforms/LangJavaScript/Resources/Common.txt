@@ -3,6 +3,7 @@ C$common$textResources = {};
 C$common$jsFilePrefix = ''; // overridden by resources.js if present.
 C$common$programData = null;
 C$common$resources = {};
+C$common$libraryFunctionLookups = {};
 
 C$common$readResourceText = function (path) {
     var output = C$common$resources[path];
@@ -167,4 +168,15 @@ C$common$stringTrimOneSide = function (value, isLeft) {
     }
 
     return isLeft ? value.substring(i) : value.substring(0, i + 1);
+};
+
+C$common$scrapeLibFuncNames = function(libname) {
+	let prefix = 'v_lib_' + libname + '_function_';
+	let functions = {};
+	for (let key in window) {
+		if (key.indexOf(prefix) === 0) {
+			functions[C$common$substring(key, prefix.length, key.length)] = window[key];
+		}
+	}
+	C$common$libraryFunctionLookups[libname] = functions;
 };
