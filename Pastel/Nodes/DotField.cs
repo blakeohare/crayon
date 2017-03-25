@@ -138,8 +138,7 @@ namespace Pastel.Nodes
                 case "Log": return NativeFunction.MATH_LOG;
                 case "MultiplyList": return NativeFunction.MULTIPLY_LIST;
                 case "Ord": return NativeFunction.ORD;
-                case "ParseFloat": return NativeFunction.PARSE_FLOAT;
-                case "ParseFloat_REDUNDANT": return NativeFunction.PARSE_FLOAT_REDUNDANT;
+                case "ParseFloatUnsafe": return NativeFunction.PARSE_FLOAT_UNSAFE;
                 case "ParseInt": return NativeFunction.PARSE_INT;
                 case "Pow": return NativeFunction.MATH_POW;
                 case "PrintStdErr": return NativeFunction.PRINT_STDERR;
@@ -159,6 +158,7 @@ namespace Pastel.Nodes
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
                 case "Tan": return NativeFunction.MATH_TAN;
                 case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
+                case "TryParseFloat": return NativeFunction.TRY_PARSE_FLOAT;
                 case "VmDetermineLibraryAvailability": return NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY;
                 case "VmRunLibraryManifest": return NativeFunction.VM_RUN_LIBRARY_MANIFEST;
 

@@ -66,8 +66,7 @@ namespace Pastel
         MATH_TAN,
         MULTIPLY_LIST,
         ORD,
-        PARSE_FLOAT,
-        PARSE_FLOAT_REDUNDANT,
+        PARSE_FLOAT_UNSAFE,
         PARSE_INT,
         PRINT_STDERR,
         PRINT_STDOUT,
@@ -101,6 +100,7 @@ namespace Pastel
         STRING_TRIM_START,
         STRONG_REFERENCE_EQUALITY,
         THREAD_SLEEP,
+        TRY_PARSE_FLOAT,
         VM_DETERMINE_LIBRARY_AVAILABILITY,
         VM_RUN_LIBRARY_MANIFEST,
 

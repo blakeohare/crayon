@@ -647,16 +647,7 @@ namespace LangPython
             sb.Append(')');
         }
 
-        public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
-        {
-            sb.Append("TranslationHelper_tryParseFloat(");
-            this.TranslateExpression(sb, stringValue);
-            sb.Append(", ");
-            this.TranslateExpression(sb, floatOutList);
-            sb.Append(')');
-        }
-
-        public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
+        public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("float(");
             this.TranslateExpression(sb, stringValue);
@@ -954,6 +945,15 @@ namespace LangPython
         {
             sb.Append("time.sleep(");
             this.TranslateExpression(sb, seconds);
+            sb.Append(')');
+        }
+
+        public override void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
+        {
+            sb.Append("TranslationHelper_tryParseFloat(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(", ");
+            this.TranslateExpression(sb, floatOutList);
             sb.Append(')');
         }
 

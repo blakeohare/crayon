@@ -427,16 +427,7 @@ namespace LangJavaScript
             sb.Append("null");
         }
 
-        public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
-        {
-            sb.Append("C$common$floatParseHelper(");
-            this.TranslateExpression(sb, floatOutList);
-            sb.Append(", ");
-            this.TranslateExpression(sb, stringValue);
-            sb.Append(')');
-        }
-
-        public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
+        public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("parseFloat(");
             this.TranslateExpression(sb, stringValue);
@@ -698,6 +689,15 @@ namespace LangJavaScript
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)
         {
             throw new NotImplementedException();
+        }
+
+        public override void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
+        {
+            sb.Append("C$common$floatParseHelper(");
+            this.TranslateExpression(sb, floatOutList);
+            sb.Append(", ");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
         }
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)

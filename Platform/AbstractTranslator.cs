@@ -236,8 +236,7 @@ namespace Platform
                 case Pastel.NativeFunction.MATH_SIN: this.TranslateMathSin(sb, args[0]); break;
                 case Pastel.NativeFunction.MATH_TAN: this.TranslateMathTan(sb, args[0]); break;
                 case Pastel.NativeFunction.MULTIPLY_LIST: this.TranslateMultiplyList(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.PARSE_FLOAT: this.TranslateParseFloat(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.PARSE_FLOAT_REDUNDANT: this.TranslateParseFloatREDUNDANT(sb, args[0]); break;
+                case Pastel.NativeFunction.PARSE_FLOAT_UNSAFE: this.TranslateParseFloatUnsafe(sb, args[0]); break;
                 case Pastel.NativeFunction.PARSE_INT: this.TranslateParseInt(sb, args[0]); break;
                 case Pastel.NativeFunction.PRINT_STDERR: this.TranslatePrintStdErr(sb, args[0]); break;
                 case Pastel.NativeFunction.PRINT_STDOUT: this.TranslatePrintStdOut(sb, args[0]); break;
@@ -271,6 +270,7 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_TRIM_START: this.TranslateStringTrimStart(sb, args[0]); break;
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
+                case Pastel.NativeFunction.TRY_PARSE_FLOAT: this.TranslateTryParseFloat(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_RUN_LIBRARY_MANIFEST: this.TranslateVmRunLibraryManifest(sb, args[0], args[1]); break;
 
@@ -358,8 +358,7 @@ namespace Platform
         public abstract void TranslateNegative(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateNullConstant(StringBuilder sb);
         public abstract void TranslateOpChain(StringBuilder sb, OpChain opChain);
-        public abstract void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList);
-        public abstract void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue);
+        public abstract void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue);
         public abstract void TranslateParseInt(StringBuilder sb, Expression safeStringValue);
         public abstract void TranslatePrintStdErr(StringBuilder sb, Expression value);
         public abstract void TranslatePrintStdOut(StringBuilder sb, Expression value);
@@ -395,6 +394,7 @@ namespace Platform
         public abstract void TranslateStringTrimStart(StringBuilder sb, Expression str);
         public abstract void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right);
         public abstract void TranslateThreadSleep(StringBuilder sb, Expression seconds);
+        public abstract void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList);
         public abstract void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
         public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
         public abstract void TranslateVariable(StringBuilder sb, Variable variable);

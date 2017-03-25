@@ -158,7 +158,7 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateParseFloat(List<string> output, Expression outParam, Expression rawString)
         {
-            output.Add("Core.ParseFloat(");
+            output.Add("Core.TryParseFloat(");
             this.Translator.TranslateExpression(output, rawString);
             output.Add(", ");
             this.Translator.TranslateExpression(output, outParam);
@@ -277,7 +277,7 @@ namespace Crayon.Translator.Pastel
         {
             // TODO: remove this.
             // there's already one of these, although the signature is slightly different.
-            output.Add("Core.ParseFloat_REDUNDANT(");
+            output.Add("Core.ParseFloatUnsafe(");
             this.Translator.TranslateExpression(output, stringValue);
             output.Add(")");
         }

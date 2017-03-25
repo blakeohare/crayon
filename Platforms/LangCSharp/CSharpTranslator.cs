@@ -479,16 +479,7 @@ namespace LangCSharp
             sb.Append("null");
         }
 
-        public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
-        {
-            sb.Append("TranslationHelper.ParseFloat(");
-            this.TranslateExpression(sb, stringValue);
-            sb.Append(", ");
-            this.TranslateExpression(sb, floatOutList);
-            sb.Append(')');
-        }
-
-        public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
+        public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("double.Parse(");
             this.TranslateExpression(sb, stringValue);
@@ -717,6 +708,15 @@ namespace LangCSharp
             this.TranslateExpression(sb, root);
             sb.Append('.');
             sb.Append(fieldName);
+        }
+
+        public override void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
+        {
+            sb.Append("TranslationHelper.ParseFloat(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(", ");
+            this.TranslateExpression(sb, floatOutList);
+            sb.Append(')');
         }
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)

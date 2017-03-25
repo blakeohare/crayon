@@ -18,7 +18,7 @@
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
 			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
-			Core.ParseFloat(string1, floatList1);
+			Core.TryParseFloat(string1, floatList1);
 			if (floatList1[0] >= 0) {
 				output = buildFloat(floatList1[1]);
 			}

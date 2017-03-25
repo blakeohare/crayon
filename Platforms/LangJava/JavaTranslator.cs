@@ -306,12 +306,7 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
-        public override void TranslateParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void TranslateParseFloatREDUNDANT(StringBuilder sb, Expression stringValue)
+        public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             throw new NotImplementedException();
         }
@@ -482,6 +477,11 @@ namespace LangJava
         }
 
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
         {
             throw new NotImplementedException();
         }
