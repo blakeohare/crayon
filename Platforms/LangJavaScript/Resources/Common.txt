@@ -6,9 +6,8 @@ C$common$resources = {};
 C$common$libraryFunctionLookups = {};
 
 C$common$readResourceText = function (path) {
-    var output = C$common$resources[path];
-    if (output === undefined) return null;
-    return output;
+  var v = C$common$getTextRes(path);
+  return !v ? null : v;
 };
 
 C$common$alwaysTrue = function () { return true; };

@@ -126,6 +126,11 @@ namespace GameJavaScriptHtml5
                 resourcesJs.Append(");\n");
             }
 
+            FileOutput imageSheetManifest = resourceDatabase.ImageSheetManifestFile;
+            resourcesJs.Append("C$common$addTextRes('image_sheets.txt', ");
+            resourcesJs.Append(Util.ConvertStringValueToCode(imageSheetManifest.TextContent));
+            resourcesJs.Append(");\n");
+
             resourcesJs.Append("C$common$resourceManifest = ");
             resourcesJs.Append(Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
@@ -135,12 +140,18 @@ namespace GameJavaScriptHtml5
                 Type = FileOutputType.Text,
                 TextContent = resourcesJs.ToString(),
             };
-
+            
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TextContent = "C$bytecode = " + Util.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent) + ";",
             };
+
+            foreach (string imageResourceFile in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                FileOutput file = resourceDatabase.ImageSheetFiles[imageResourceFile];
+                output["resources/images/" + imageResourceFile] = file;
+            }
 
             // TODO: minify JavaScript across all of output dictionary
 

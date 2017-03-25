@@ -215,7 +215,7 @@ namespace LangJavaScript
         {
             sb.Append("Math.floor(");
             this.TranslateExpression(sb, integerNumerator);
-            sb.Append(", ");
+            sb.Append(" / ");
             this.TranslateExpression(sb, integerDenominator);
             sb.Append(')');
         }

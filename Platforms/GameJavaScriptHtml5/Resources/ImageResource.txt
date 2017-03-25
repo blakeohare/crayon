@@ -30,9 +30,8 @@ C$imageresources$imageLoad = function (filename, nativeData, imageLoaderNativeDa
 };
 
 C$imageresources$getImageResourceManifest = function () {
-    var output = C$common$getTextRes('imageresmanifest.txt');
-    if (!output) return '';
-    return output;
+    var v = C$common$getTextRes('image_sheets.txt');
+    return !v ? '' : v;
 };
 
 C$imageresources$generateNativeBitmapOfSize = function (width, height) {
