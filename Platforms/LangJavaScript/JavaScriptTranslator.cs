@@ -736,11 +736,6 @@ namespace LangJavaScript
             sb.Append(')');
         }
 
-        public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
-        {
-            sb.Append("C$common$currentExecId()");
-        }
-
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("C$common$runLibraryManifest(");
@@ -748,11 +743,6 @@ namespace LangJavaScript
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
-        }
-
-        public override void TranslateVmSuspend(StringBuilder sb)
-        {
-            sb.Append("C$common$vmSuspend()");
         }
     }
 }

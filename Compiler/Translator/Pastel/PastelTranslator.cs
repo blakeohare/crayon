@@ -53,7 +53,7 @@ namespace Crayon.Translator.Pastel
                 Variable rootVar = root as Variable;
                 if (rootVar != null && rootVar.Name == "ec" && dotStep.StepToken.Value == "id" && root.FirstToken.FileName.Contains("initialize_screen"))
                 {
-                    output.Add("Core.VmGetCurrentExecutionContextId()");
+                    output.Add("vm_getCurrentExecutionContextId()");
                     return;
                 }
                 this.TranslateExpression(output, dotStep.Root);

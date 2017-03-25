@@ -58,7 +58,7 @@ namespace Crayon
                 typeof(GameJavaScriptHtml5.PlatformImpl).Assembly,
                 typeof(GamePythonPygame.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
-                typeof(LangJavaScript.PlatformImpl).Assembly,
+                typeof(LangJava.PlatformImpl).Assembly,
                 typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangPython.PlatformImpl).Assembly,
             };

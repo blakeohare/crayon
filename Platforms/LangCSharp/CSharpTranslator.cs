@@ -748,11 +748,6 @@ namespace LangCSharp
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
-        {
-            sb.Append("CrayonWrapper.v_vm_getCurrentExecutionContextId()");
-        }
-
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("TranslationHelper.VmRunLibraryManifest(");
@@ -760,12 +755,6 @@ namespace LangCSharp
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
-        }
-
-        public override void TranslateVmSuspend(StringBuilder sb)
-        {
-            // TODO: why is this a native function if it's just calling a translated function?
-            sb.Append("CrayonWrapper.v_vm_suspend()");
         }
     }
 }

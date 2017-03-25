@@ -201,11 +201,3 @@ C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
 C$common$intBuffer16 = C$common$multiplyList([0], 16);
 C$common$floatBuffer16 = C$common$multiplyList([0.0], 16);
 C$common$stringBuffer16 = C$common$multiplyList([''], 16);
-
-C$common$currentExecId = function() {
-	return v_vm_getCurrentExecutionContextId();
-};
-
-C$common$vmSuspend = function() {
-	return v_vm_suspend();
-};

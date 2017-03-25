@@ -174,7 +174,7 @@ namespace Crayon.Translator.Pastel
                         if (fp != null && fp.Name == "suspendInterpreter")
                         {
                             Expression expr = new FunctionCall(
-                                   new Variable(MakeAToken("Core.VmSuspend"), "Core.VmSuspend", null), // yeah I'm lazy
+                                   new Variable(MakeAToken("vm_suspend"), "vm_suspend", null), // yeah I'm lazy
                                    MakeAToken("("),
                                    new Expression[0],
                                    null);

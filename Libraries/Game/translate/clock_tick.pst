@@ -2,7 +2,7 @@
 	Value output = VALUE_NULL;
 	noop();
 	Native._lib_game_clockTick();
-	Core.VmSuspend();
+	vm_suspend();
 	return output;
 }
 

@@ -13,8 +13,8 @@
 	int3 = ((int) arg3.internalValue);
 	int4 = ((int) arg4.internalValue);
 	noop();
-	Native._lib_game_initialize_screen(int1, int2, int3, int4, Core.VmGetCurrentExecutionContextId());
-	Core.VmSuspend();
+	Native._lib_game_initialize_screen(int1, int2, int3, int4, vm_getCurrentExecutionContextId());
+	vm_suspend();
 	return output;
 }
 

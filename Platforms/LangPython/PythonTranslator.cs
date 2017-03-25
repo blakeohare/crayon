@@ -990,11 +990,6 @@ namespace LangPython
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
-        {
-            sb.Append("v_vm_getCurrentExecutionContextId()");
-        }
-
         public override void TranslateVmRunLibraryManifest(
             StringBuilder sb,
             Expression libraryName,
@@ -1005,11 +1000,6 @@ namespace LangPython
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
-        }
-
-        public override void TranslateVmSuspend(StringBuilder sb)
-        {
-            sb.Append("v_vm_suspend()");
         }
 
         public override void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop)

@@ -488,7 +488,7 @@
 			$_enqueue_vm_resume(float1, ExecutionContext$ec.id);
 			
 			if (ExecutionContext$ec.id > -1) {
-				Core.EmitComment("If statement to circumvent unreachable code error in translator.");
+				$_comment("If statement to circumvent unreachable code error in translator.");
 				return suspendInterpreterWithLock();
 			}
 		}

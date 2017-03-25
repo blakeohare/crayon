@@ -501,17 +501,7 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmGetCurrentExecutionContextId(StringBuilder sb)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void TranslateVmSuspend(StringBuilder sb)
         {
             throw new NotImplementedException();
         }
