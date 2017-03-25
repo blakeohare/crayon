@@ -180,3 +180,33 @@ C$common$scrapeLibFuncNames = function(libname) {
 	}
 	C$common$libraryFunctionLookups[libname] = functions;
 };
+
+C$common$determineLibraryAvailability = function(name, version) {
+	if (C$common$libraryFunctionLookups[name.toLowerCase()] !== undefined) {
+		return 0;
+	}
+	return 2;
+};
+
+C$common$runLibraryManifest = function(name, lro) {
+	let manifestFn = window['v_lib_' + name.toLowerCase() + '_manifest'];
+	manifestFn(lro);
+};
+
+C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
+	let fn = C$common$libraryFunctionLookups[libName][fnName];
+	let lookupName = 'lib_' + libName + '_' + fnName;
+	v_registerLibraryFunction(fn, lro, lookupName, argc);
+};
+
+C$common$intBuffer16 = C$common$multiplyList([0], 16);
+C$common$floatBuffer16 = C$common$multiplyList([0.0], 16);
+C$common$stringBuffer16 = C$common$multiplyList([''], 16);
+
+C$common$currentExecId = function() {
+	return v_vm_getCurrentExecutionContextId();
+};
+
+C$common$vmSuspend = function() {
+	return v_vm_suspend();
+};

@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="vm.js"></script>
 		<script type="text/javascript" src="bytecode.js"></script>
 		<script type="text/javascript" src="resources.js"></script>
+		<script type="text/javascript" src="lib_supplemental.js"></script>
 %%%JS_LIB_INCLUSIONS%%%
 	</head>
 	<body onload="v_main()">

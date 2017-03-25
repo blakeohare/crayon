@@ -70,6 +70,7 @@ namespace GameJavaScriptHtml5
                     this.Translator.CurrentLibraryFunctionTranslator =
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
+                    library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
                     libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
@@ -77,6 +78,13 @@ namespace GameJavaScriptHtml5
                     }
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");
+
+                    // add helper functions after the scrape.
+
+                    foreach (string supplementalFileContent in library.CodeToEmbed)
+                    {
+                        libraryLines.Add(supplementalFileContent);
+                    }
 
                     output["libs/lib_" + library.Name.ToLower() + ".js"] = new FileOutput()
                     {

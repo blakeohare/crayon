@@ -346,9 +346,11 @@ namespace LangJavaScript
 
         public override void TranslateListToArray(StringBuilder sb, Expression list)
         {
-            sb.Append("TranslationHelper$listToArrayRememberToGoThroughAndAuditWhetherTheseAreNecessaryInPlatformsWhereListsAreArraysAndThenUseExplicitlyNamedFunctions(");
+            // TODO: go through and figure out which list to array conversions are necessary to copy and which ones are just ensuring that the type is compatible
+            // For example, JS and Python can just no-op in situations where a throwaway list builder is being made.
+            sb.Append("C$common$multiplyList(");
             this.TranslateExpression(sb, list);
-            sb.Append(')');
+            sb.Append(", 1)");
         }
 
         public override void TranslateMathArcCos(StringBuilder sb, Expression ratio)
@@ -469,12 +471,14 @@ namespace LangJavaScript
 
         public override void TranslateReadByteCodeFile(StringBuilder sb)
         {
-            sb.Append("C$common$byteCodeFile");
+            sb.Append("C$bytecode");
         }
 
         public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
-            sb.Append("C$common$registerLibraryFunction(");
+            sb.Append("C$common$registerLibraryFunction('");
+            sb.Append(this.CurrentLibraryFunctionTranslator.LibraryName.ToLower());
+            sb.Append("', ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");
             this.TranslateExpression(sb, functionName);
