@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common;
 using Platform;
 
 namespace Crayon
@@ -55,9 +54,11 @@ namespace Crayon
             // and a release csproj that does not and then ifdef out the implementation of this function.
             return new System.Reflection.Assembly[] {
                 typeof(GameCSharpOpenTk.PlatformImpl).Assembly,
+                typeof(GameJavaAwt.PlatformImpl).Assembly,
                 typeof(GameJavaScriptHtml5.PlatformImpl).Assembly,
                 typeof(GamePythonPygame.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
+                typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangPython.PlatformImpl).Assembly,
             };

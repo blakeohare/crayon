@@ -69,6 +69,10 @@
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>GameCSharpOpenTk</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\GameJavaAwt\GameJavaAwt.csproj">
+      <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
+      <Name>GameJavaAwt</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\GameJavaScriptHtml5\GameJavaScriptHtml5.csproj">
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
       <Name>GameJavaScriptHtml5</Name>
@@ -84,6 +88,10 @@
     <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj">
+      <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
+      <Name>LangJava</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
       <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
