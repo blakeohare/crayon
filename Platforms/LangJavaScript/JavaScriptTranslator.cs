@@ -544,22 +544,20 @@ namespace LangJavaScript
 
         public override void TranslateStringConcatAll(StringBuilder sb, Expression[] strings)
         {
-            if (strings.Length == 2)
+            sb.Append("[");
+            for (int i = 0; i < strings.Length; ++i)
             {
-                this.TranslateExpression(sb, strings[0]);
-                sb.Append(" + ");
-                this.TranslateExpression(sb, strings[1]);
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, strings[i]);
             }
-            else
-            {
-                sb.Append("[");
-                for (int i = 0; i < strings.Length; ++i)
-                {
-                    if (i > 0) sb.Append(", ");
-                    this.TranslateExpression(sb, strings[i]);
-                }
-                sb.Append("].join('')");
-            }
+            sb.Append("].join('')");
+        }
+
+        public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
+        {
+            this.TranslateExpression(sb, strLeft);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, strRight);
         }
 
         public override void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle)

@@ -252,7 +252,7 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_CHAR_AT: this.TranslateStringCharAt(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_CHAR_CODE_AT: this.TranslateStringCharCodeAt(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_COMPARE_IS_REVERSE: this.TranslateStringCompareIsReverse(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.STRING_CONCAT_ALL: this.TranslateStringConcatAll(sb, args); break;
+                case Pastel.NativeFunction.STRING_CONCAT_ALL: if (args.Length == 2) this.TranslateStringConcatPair(sb, args[0], args[1]); else this.TranslateStringConcatAll(sb, args); break;
                 case Pastel.NativeFunction.STRING_CONTAINS: this.TranslateStringContains(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_ENDS_WITH: this.TranslateStringEndsWith(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_EQUALS: this.TranslateStringEquals(sb, args[0], args[1]); break;
@@ -376,6 +376,7 @@ namespace Platform
         public abstract void TranslateStringCharCodeAt(StringBuilder sb, Expression str, Expression index);
         public abstract void TranslateStringCompareIsReverse(StringBuilder sb, Expression str1, Expression str2);
         public abstract void TranslateStringConcatAll(StringBuilder sb, Expression[] strings);
+        public abstract void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight);
         public abstract void TranslateStringConstant(StringBuilder sb, string value);
         public abstract void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle);
         public abstract void TranslateStringEndsWith(StringBuilder sb, Expression haystack, Expression needle);

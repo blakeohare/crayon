@@ -391,6 +391,11 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
+        public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle)
         {
             throw new NotImplementedException();

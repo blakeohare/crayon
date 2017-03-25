@@ -772,22 +772,20 @@ namespace LangPython
 
         public override void TranslateStringConcatAll(StringBuilder sb, Expression[] strings)
         {
-            if (strings.Length == 2)
+            sb.Append("''.join([");
+            for (int i = 0; i < strings.Length; ++i)
             {
-                this.TranslateExpression(sb, strings[0]);
-                sb.Append(" + ");
-                this.TranslateExpression(sb, strings[1]);
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, strings[i]);
             }
-            else
-            {
-                sb.Append("''.join([");
-                for (int i = 0; i < strings.Length; ++i)
-                {
-                    if (i > 0) sb.Append(", ");
-                    this.TranslateExpression(sb, strings[i]);
-                }
-                sb.Append("])");
-            }
+            sb.Append("])");
+        }
+
+        public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
+        {
+            this.TranslateExpression(sb, strLeft);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, strRight);
         }
 
         public override void TranslateStringConstant(StringBuilder sb, string value)

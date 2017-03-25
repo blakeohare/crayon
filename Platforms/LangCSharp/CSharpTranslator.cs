@@ -588,6 +588,13 @@ namespace LangCSharp
             sb.Append(" })");
         }
 
+        public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
+        {
+            this.TranslateExpression(sb, strLeft);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, strRight);
+        }
+
         public override void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle)
         {
             this.TranslateExpression(sb, haystack);
