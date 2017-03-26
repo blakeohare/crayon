@@ -10,13 +10,13 @@ namespace GameCSharpOpenTk
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string Name { get { return "game-csharp-opentk-cbx"; } }
+        public override string Name { get { return "csharp-app"; } }
         public override string InheritsFrom { get { return "lang-csharp"; } }
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
         {
-            this.Translator = new CSharpOpenTkTranslator(this);
+            this.Translator = new CSharpAppTranslator(this);
         }
 
         public override Dictionary<string, FileOutput> Export(

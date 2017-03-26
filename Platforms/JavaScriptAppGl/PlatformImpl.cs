@@ -10,13 +10,13 @@ namespace GameJavaScriptHtml5
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string Name { get { return "game-javascript-html5-cbx"; } }
+        public override string Name { get { return "javascript-app-gl"; } }
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
         
         public PlatformImpl()
         {
-            this.Translator = new JavaScriptGameHtml5Translator(this);
+            this.Translator = new JavaScriptAppTranslator(this);
         }
 
         public override IDictionary<string, object> GetConstantFlags()

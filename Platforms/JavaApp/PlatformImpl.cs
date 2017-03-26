@@ -10,13 +10,13 @@ namespace GameJavaAwt
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string Name { get { return "game-java-awt-cbx"; } }
+        public override string Name { get { return "java-app"; } }
         public override string InheritsFrom { get { return "lang-java"; } }
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
         {
-            this.Translator = new JavaAwtTranslator(this);
+            this.Translator = new JavaAppTranslator(this);
         }
 
         public override Dictionary<string, FileOutput> Export(Dictionary<string, object[]> executablesPerCompilationUnit, object[] structDefinitions)

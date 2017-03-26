@@ -6,9 +6,9 @@ using Pastel.Nodes;
 
 namespace GameCSharpOpenTk
 {
-    public class CSharpOpenTkTranslator : LangCSharp.CSharpTranslator
+    public class CSharpAppTranslator : LangCSharp.CSharpTranslator
     {
-        public CSharpOpenTkTranslator(Platform.AbstractPlatform platform)
+        public CSharpAppTranslator(Platform.AbstractPlatform platform)
             : base(platform)
         { }
 

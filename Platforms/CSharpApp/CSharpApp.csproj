@@ -36,7 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharpOpenTkTranslator.cs" />
+    <Compile Include="CSharpAppTranslator.cs" />
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

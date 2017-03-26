@@ -65,21 +65,21 @@
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\GameCSharpOpenTk\GameCSharpOpenTk.csproj">
+    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj">
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
-      <Name>GameCSharpOpenTk</Name>
+      <Name>CSharpApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\GameJavaAwt\GameJavaAwt.csproj">
+    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
-      <Name>GameJavaAwt</Name>
+      <Name>JavaApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\GameJavaScriptHtml5\GameJavaScriptHtml5.csproj">
+    <ProjectReference Include="..\Platforms\JavaScriptAppGl\JavaScriptAppGl.csproj">
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
-      <Name>GameJavaScriptHtml5</Name>
+      <Name>JavaScriptAppGl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\GamePythonPygame\GamePythonPygame.csproj">
+    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
       <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
-      <Name>GamePythonPygame</Name>
+      <Name>PythonApp</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>

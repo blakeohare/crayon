@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GameJavaScriptHtml5")]
+[assembly: AssemblyTitle("PythonApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GameJavaScriptHtml5")]
+[assembly: AssemblyProduct("PythonApp")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e2558b29-a032-40d0-90b0-1a9de368ec16")]
+[assembly: Guid("4e41e38d-3ff9-4c91-9446-5f51024d8bd9")]
 
 // Version information for an assembly consists of the following four values:
 //

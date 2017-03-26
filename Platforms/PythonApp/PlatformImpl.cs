@@ -9,13 +9,13 @@ namespace GamePythonPygame
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string Name { get { return "game-python-pygame-cbx"; } }
+        public override string Name { get { return "python-app"; } }
         public override string InheritsFrom { get { return "lang-python"; } }
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
         {
-            this.Translator = new PythonPygameTranslator(this);
+            this.Translator = new PythonAppTranslator(this);
         }
 
         public override Dictionary<string, FileOutput> Export(

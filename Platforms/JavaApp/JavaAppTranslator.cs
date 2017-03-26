@@ -6,9 +6,9 @@ using Platform;
 
 namespace GameJavaAwt
 {
-    public class JavaAwtTranslator : LangJava.JavaTranslator
+    public class JavaAppTranslator : LangJava.JavaTranslator
     {
-        public JavaAwtTranslator(AbstractPlatform platform)
+        public JavaAppTranslator(AbstractPlatform platform)
             : base(platform)
         { }
 

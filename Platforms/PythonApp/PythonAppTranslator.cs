@@ -5,9 +5,9 @@ using System.Text;
 
 namespace GamePythonPygame
 {
-    public class PythonPygameTranslator : LangPython.PythonTranslator
+    public class PythonAppTranslator : LangPython.PythonTranslator
     {
-        public PythonPygameTranslator(Platform.AbstractPlatform platform)
+        public PythonAppTranslator(Platform.AbstractPlatform platform)
             : base(platform)
         { }
     }

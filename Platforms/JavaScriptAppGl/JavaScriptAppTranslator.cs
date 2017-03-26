@@ -7,9 +7,9 @@ using Platform;
 
 namespace GameJavaScriptHtml5
 {
-    public class JavaScriptGameHtml5Translator : LangJavaScript.JavaScriptTranslator
+    public class JavaScriptAppTranslator : LangJavaScript.JavaScriptTranslator
     {
-        public JavaScriptGameHtml5Translator(AbstractPlatform platform) : base(platform)
+        public JavaScriptAppTranslator(AbstractPlatform platform) : base(platform)
         { }
     }
 }

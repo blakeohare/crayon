@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D8C38E5-6B24-489E-9C0F-D8101086BC32}</ProjectGuid>
+    <ProjectGuid>{E2558B29-A032-40D0-90B0-1A9DE368EC16}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameJavaAwt</RootNamespace>
-    <AssemblyName>GameJavaAwt</AssemblyName>
+    <RootNamespace>GameJavaScriptHtml5</RootNamespace>
+    <AssemblyName>GameJavaScriptHtml5</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -36,7 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JavaAwtTranslator.cs" />
+    <Compile Include="JavaScriptAppTranslator.cs" />
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -49,14 +49,25 @@
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Platforms\LangJavaScript\LangJavaScript.csproj">
+      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
+      <Name>LangJavaScript</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LangJava\LangJava.csproj">
-      <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
-      <Name>LangJava</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\GameHostHtml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Drawing.txt" />
+    <EmbeddedResource Include="Resources\Game.txt" />
+    <EmbeddedResource Include="Resources\Gamepad.txt" />
+    <EmbeddedResource Include="Resources\ImageResource.txt" />
+    <EmbeddedResource Include="Resources\Input.txt" />
+    <EmbeddedResource Include="Resources\Sound.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

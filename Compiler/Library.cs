@@ -30,16 +30,8 @@ namespace Crayon
 
             this.platformName = platformName;
             this.languageName = languageName;
-            string canonicalPlatformName = this.platformName;
-            if (canonicalPlatformName.EndsWith("-cbx"))
-            {
-                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
-                canonicalPlatformName = canonicalPlatformName.Substring(0, canonicalPlatformName.Length - 4);
-                if (canonicalPlatformName == "game-javascript-html5")
-                {
-                    canonicalPlatformName = "game-javascript";
-                }
-            }
+            string canonicalPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
+
             string platformPrefix = "[" + canonicalPlatformName + "]";
 
             foreach (string line in manifest)
@@ -311,15 +303,7 @@ namespace Crayon
                     Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
                     foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                     {
-                        string legacyPlatformName = platformName;
-                        CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // This can go away when the -cbx disambiguation suffix stuff goes away.
-                        switch (platformName)
-                        {
-                            case "game-csharp-opentk-cbx": legacyPlatformName = "game-csharp-opentk"; break;
-                            case "game-python-pygame-cbx": legacyPlatformName = "game-python-pygame"; break;
-                            case "game-javascript-html5-cbx": legacyPlatformName = "game-javascript"; break;
-                            default: break;
-                        }
+                        string legacyPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(platformName);
                         Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);
                         translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
                     }
@@ -603,16 +587,7 @@ namespace Crayon
         {
             Dictionary<string, string> textFiles = new Dictionary<string, string>();
             
-            string platformId = this.platformName;
-            if (platformId.EndsWith("-cbx"))
-            {
-                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
-                platformId = platformId.Substring(0, platformId.Length - 4);
-                if (platformId == "game-javascript-html5")
-                {
-                    platformId = "game-javascript";
-                }
-            }
+            string platformId = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
             this.ExtractResources(platformId, textFiles, codeToEmbed);
             
             foreach (string key in textFiles.Keys)
