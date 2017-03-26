@@ -281,6 +281,14 @@ final class TranslationHelper {
 	return true;
   }
 
+  public static void registerLibraryFunction(Class<?> containerLibraryClass, Object libRegObj, String fnName, int argc) {
+    String[] parts = containerLibraryClass.getPackage().split(".");
+	String libraryName = parts[parts.length - 1];
+	LibraryInstance library = libraryByName.get(libraryName);
+	Method method = library.getMethod(fnName);
+    Interpreter.v_registerLibraryFunction(method, libRegObj, fnName, argc);
+  }
+
   public static Value invokeLibraryFunction(Method fn, Value[] args) {
     try {
 	  fn.invoke(null, args);

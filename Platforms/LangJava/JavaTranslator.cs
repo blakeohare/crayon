@@ -9,7 +9,7 @@ namespace LangJava
 {
     public abstract class JavaTranslator : Platform.CurlyBraceTranslator
     {
-        public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\n", false)
+        public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n", false)
         { }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
@@ -518,12 +518,20 @@ namespace LangJava
 
         public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.registerLibraryFunction(LibraryWrapper.class, ");
+            this.TranslateExpression(sb, libRegObj);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCount);
+            sb.Append(')');
         }
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            throw new NotImplementedException();
+            sb.Append("ResourceReader.readTextFile(");
+            this.TranslateExpression(sb, path);
+            sb.Append(')');
         }
 
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
@@ -756,7 +764,7 @@ namespace LangJava
             sb.Append(this.CurrentTab);
             sb.Append(this.Platform.TranslateType(varDecl.Type));
             sb.Append(" ");
-            sb.Append(varDecl.VariableName);
+            sb.Append(varDecl.VariableName.Value);
             if (varDecl.Value != null)
             {
                 sb.Append(" = ");

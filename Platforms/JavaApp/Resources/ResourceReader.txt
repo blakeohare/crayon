@@ -1,0 +1,9 @@
+﻿package org.crayonlang.interpreter;
+
+public final class ResourceReader {
+  private ResourceReader() {}
+
+  public static String readTextFile(String path) {
+    throw new RuntimeException("Not implemented.");
+  }
+}

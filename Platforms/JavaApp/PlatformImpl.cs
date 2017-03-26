@@ -34,6 +34,46 @@ namespace GameJavaAwt
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string sourcePath = "src/" + package + "/";
 
+            foreach (LibraryForExport library in libraries)
+            {
+                if (library.ManifestFunction != null)
+                {
+                    this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+
+                    List<string> libraryCode = new List<string>()
+                    {
+                        "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
+                        "",
+                        "import java.util.ArrayList;",
+                        "import java.util.HashMap;",
+                        "import org.crayonlang.interpreter.Interpreter;",
+                        "import org.crayonlang.interpreter.structs.*;",
+                        "",
+                        "public final class LibraryWrapper {",
+                        "  private LibraryWrapper() {}",
+                        "",
+                    };
+                    this.Translator.TabDepth = 1;
+                    libraryCode.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    foreach (FunctionDefinition fnDef in library.Functions)
+                    {
+                        libraryCode.Add(this.GenerateCodeForFunction(this.Translator, fnDef));
+                    }
+                    this.Translator.TabDepth = 0;
+                    libraryCode.Add("}");
+                    libraryCode.Add("");
+
+                    output["src/org/crayonlang/libraries/" + library.Name.ToLower() + "/LibraryWrapper.java"] = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = string.Join(this.NL, libraryCode),
+                    };
+
+                    // TODO: supplemental files.
+                    // This is extra complicated as some will require special package locations such as org.json. 
+                }
+            }
+
             foreach (StructDefinition structDef in structDefinitions)
             {
                 output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
@@ -44,8 +84,7 @@ namespace GameJavaAwt
             }
 
             StringBuilder sb = new StringBuilder();
-
-
+            
             sb.Append(string.Join(this.NL, new string[] {
                 "package org.crayonlang.interpreter;",
                 "",
@@ -83,6 +122,7 @@ namespace GameJavaAwt
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
+            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/ResourceReader.java", "Resources/ResourceReader.txt", replacements);
 
             this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);

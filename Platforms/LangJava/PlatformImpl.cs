@@ -34,7 +34,7 @@ namespace LangJava
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                this.TranslateType(argTypes[i]);
+                sb.Append(this.TranslateType(argTypes[i]));
                 sb.Append(" v_");
                 sb.Append(argNames[i].Value);
             }
@@ -162,6 +162,8 @@ namespace LangJava
         {
             switch (type.RootValue)
             {
+                case "void": return "void";
+                case "byte": return "byte";
                 case "int": return "int";
                 case "char": return "char";
                 case "double": return "double";
@@ -193,10 +195,11 @@ namespace LangJava
         {
             switch (type.RootValue)
             {
-                case "int": return "Integer";
+                case "bool": return "Boolean";
+                case "byte": return "Byte"; 
                 case "char": return "Character";
                 case "double": return "Double";
-                case "bool": return "Boolean";
+                case "int": return "Integer";
                 default:
                     return this.TranslateType(type);
             }
