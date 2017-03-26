@@ -34,28 +34,50 @@ namespace GameJavaAwt
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string sourcePath = "src/" + package + "/";
 
-            foreach (StructDefinition structDefinition in structDefinitions)
+            foreach (StructDefinition structDef in structDefinitions)
             {
-                string structCode = this.GenerateCodeForStruct(structDefinition).Trim();
-                List<string> structFileLines = new List<string>();
-                structFileLines.Add("package org.crayon.interpreter.structs;");
-                structFileLines.Add("");
-                bool hasLists = structCode.Contains("public ArrayList<");
-                bool hasDictionaries = structCode.Contains("public HashMap<");
-                if (hasLists) structFileLines.Add("import java.util.ArrayList;");
-                if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
-                if (hasLists || hasDictionaries) structFileLines.Add("");
-                structFileLines.Add(structCode);
-                structFileLines.Add("");
-
-                output["src/org/crayon/interpreter/structs/" + structDefinition.NameToken.Value + ".java"] = new FileOutput()
+                output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = string.Join(this.NL, structFileLines),
+                    TextContent = this.GenerateCodeForStruct(structDef),
                 };
             }
 
-            this.CopyResourceAsText(output, sourcePath + "TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            StringBuilder sb = new StringBuilder();
+
+
+            sb.Append(string.Join(this.NL, new string[] {
+                "package org.crayonlang.interpreter;",
+                "",
+                "import java.util.ArrayList;",
+                "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.structs.*;",
+                "",
+                "public final class Interpreter {",
+                "  private Interpreter() {}",
+                "",
+            }));
+
+            foreach (FunctionDefinition fnDef in functionDefinitions)
+            {
+                this.Translator.TabDepth = 1;
+                sb.Append(this.GenerateCodeForFunction(this.Translator, fnDef));
+                sb.Append(this.NL);
+            }
+            this.Translator.TabDepth = 0;
+            sb.Append("}");
+            sb.Append(this.NL);
+
+            output["src/org/crayonlang/interpreter/Interpreter.java"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = sb.ToString(),
+            };
+
+            this.CopyResourceAsText(output, "src/org/crayon/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+
+            this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
+            this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);
 
             return output;
         }
@@ -78,6 +100,7 @@ namespace GameJavaAwt
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            replacements["PROJECT_ID"] = options.GetString(ExportOptionKey.PROJECT_ID);
             replacements["PACKAGE"] = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             return replacements;
         }

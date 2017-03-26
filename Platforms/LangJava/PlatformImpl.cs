@@ -21,7 +21,33 @@ namespace LangJava
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(translator.CurrentTab);
+            sb.Append("public static ");
+            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            Pastel.Token[] argNames = funcDef.ArgNames;
+            PType[] argTypes = funcDef.ArgTypes;
+            for (int i = 0; i < argTypes.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                this.TranslateType(argTypes[i]);
+                sb.Append(" v_");
+                sb.Append(argNames[i].Value);
+            }
+            sb.Append(") {");
+            sb.Append(this.NL);
+            translator.TabDepth++;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth--;
+            sb.Append(translator.CurrentTab);
+            sb.Append('}');
+            sb.Append(this.NL);
+
+            return sb.ToString();
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
@@ -73,7 +99,20 @@ namespace LangJava
             sb.Append("  }");
             sb.Append(this.NL);
             sb.Append("}");
-            return sb.ToString();
+            string structCode = sb.ToString();
+            
+                List<string> structFileLines = new List<string>();
+                structFileLines.Add("package org.crayonlang.interpreter.structs;");
+                structFileLines.Add("");
+                bool hasLists = structCode.Contains("public ArrayList<");
+                bool hasDictionaries = structCode.Contains("public HashMap<");
+                if (hasLists) structFileLines.Add("import java.util.ArrayList;");
+                if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
+                if (hasLists || hasDictionaries) structFileLines.Add("");
+                structFileLines.Add(structCode);
+                structFileLines.Add("");
+
+            return string.Join(this.NL, structFileLines);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
