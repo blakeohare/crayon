@@ -978,7 +978,7 @@ namespace LangPython
         {
             sb.Append(this.CurrentTab);
             sb.Append("v_");
-            sb.Append(varDecl.VariableName.Value);
+            sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
             this.TranslateExpression(sb, varDecl.Value);
             sb.Append(this.NewLine);

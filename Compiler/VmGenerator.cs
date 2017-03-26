@@ -97,7 +97,7 @@ namespace Crayon
                     .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null);
 
                 return platform.ExportProject(
-                    vm.Globals.Values.OrderBy(v => v.VariableName.Value).ToArray(),
+                    vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
                     vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
                     vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
                     libraries,

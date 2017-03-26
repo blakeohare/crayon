@@ -16,7 +16,7 @@ namespace Pastel.Nodes
         }
 
         public PType Type { get; set; }
-        public Token VariableName { get; set; }
+        public Token VariableNameToken { get; set; }
         public Token EqualsToken { get; set; }
         public Expression Value { get; set; }
 
@@ -25,12 +25,12 @@ namespace Pastel.Nodes
 
         public VariableDeclaration(
             PType type,
-            Token variableName,
+            Token variableNameToken,
             Token equalsToken,
             Expression assignmentValue) : base(type.FirstToken)
         {
             this.Type = type;
-            this.VariableName = variableName;
+            this.VariableNameToken = variableNameToken;
             this.EqualsToken = equalsToken;
             this.Value = assignmentValue;
         }
@@ -56,7 +56,7 @@ namespace Pastel.Nodes
                 throw new ParserException(this.Value.FirstToken, "Cannot assign this type to a " + this.Type);
             }
 
-            varScope.DeclareVariables(this.VariableName, this.Type);
+            varScope.DeclareVariables(this.VariableNameToken, this.Type);
         }
 
         internal override Executable ResolveWithTypeContext(PastelCompiler compiler)

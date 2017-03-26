@@ -764,7 +764,7 @@ namespace LangJava
             sb.Append(this.CurrentTab);
             sb.Append(this.Platform.TranslateType(varDecl.Type));
             sb.Append(" ");
-            sb.Append(varDecl.VariableName.Value);
+            sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)
             {
                 sb.Append(" = ");

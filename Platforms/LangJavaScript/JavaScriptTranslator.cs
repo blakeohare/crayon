@@ -712,7 +712,7 @@ namespace LangJavaScript
         {
             sb.Append(this.CurrentTab);
             sb.Append("let v_");
-            sb.Append(varDecl.VariableName.Value);
+            sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
             if (varDecl.Value == null)
             {

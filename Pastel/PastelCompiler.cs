@@ -145,7 +145,7 @@ namespace Pastel
                     case CompilationEntityType.CONSTANT:
                     case CompilationEntityType.GLOBAL:
                         VariableDeclaration assignment = (VariableDeclaration)entity;
-                        string targetName = assignment.VariableName.Value;
+                        string targetName = assignment.VariableNameToken.Value;
                         Dictionary<string, VariableDeclaration> lookup = entity.EntityType == CompilationEntityType.CONSTANT
                             ? this.ConstantDefinitions
                             : this.Globals;
@@ -187,7 +187,7 @@ namespace Pastel
             {
                 if (!(constDef.Value is InlineConstant))
                 {
-                    string name = constDef.VariableName.Value;
+                    string name = constDef.VariableNameToken.Value;
                     cycleDetection.Add(name);
                     constDef.DoConstantResolutions(cycleDetection, this);
                     cycleDetection.Remove(name);

@@ -67,7 +67,7 @@ namespace LangJava
                 sb.Append("  public static final ");
                 sb.Append(this.TranslateType(varDecl.Type));
                 sb.Append(' ');
-                sb.Append(varDecl.VariableName.Value);
+                sb.Append(varDecl.VariableNameToken.Value);
                 sb.Append(" = ");
                 translator.TranslateExpression(sb, varDecl.Value);
                 sb.Append(';');
