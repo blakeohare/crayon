@@ -97,7 +97,7 @@ namespace Platform
                 AbstractPlatform parent = this.ParentPlatform;
                 if (parent == null)
                 {
-                    return null;
+                    throw new Exception("Resource not found: '" + resourcePath + "'");
                 }
                 return parent.LoadTextResource(resourcePath, replacements);
             }

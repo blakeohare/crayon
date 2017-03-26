@@ -36,12 +36,12 @@ namespace LangJava
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, string>();
         }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, object>();
         }
     }
 }

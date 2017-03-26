@@ -18,10 +18,25 @@ namespace GameJavaAwt
         {
             this.Translator = new JavaAppTranslator(this);
         }
-        
-        public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+
+        public override Dictionary<string, FileOutput> ExportProject(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
+            CompatibilityHack.CriticalTODO("override the package from the build file to create a proper DNS-style package name."); // okay, not critical for CBX, but embarassing that you can't currently.
+            string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
+            string sourcePath = "src/" + package + "/";
+
+            this.CopyResourceAsText(files, sourcePath + "TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            
+            return files;
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
@@ -41,12 +56,14 @@ namespace GameJavaAwt
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            replacements["PACKAGE"] = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
+            return replacements;
         }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+            return new Dictionary<string, object>();
         }
     }
 }
