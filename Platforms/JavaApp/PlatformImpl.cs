@@ -29,14 +29,35 @@ namespace GameJavaAwt
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             CompatibilityHack.CriticalTODO("override the package from the build file to create a proper DNS-style package name."); // okay, not critical for CBX, but embarassing that you can't currently.
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string sourcePath = "src/" + package + "/";
 
-            this.CopyResourceAsText(files, sourcePath + "TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
-            
-            return files;
+            foreach (StructDefinition structDefinition in structDefinitions)
+            {
+                string structCode = this.GenerateCodeForStruct(structDefinition).Trim();
+                List<string> structFileLines = new List<string>();
+                structFileLines.Add("package org.crayon.interpreter.structs;");
+                structFileLines.Add("");
+                bool hasLists = structCode.Contains("public ArrayList<");
+                bool hasDictionaries = structCode.Contains("public HashMap<");
+                if (hasLists) structFileLines.Add("import java.util.ArrayList;");
+                if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
+                if (hasLists || hasDictionaries) structFileLines.Add("");
+                structFileLines.Add(structCode);
+                structFileLines.Add("");
+
+                output["src/org/crayon/interpreter/structs/" + structDefinition.NameToken.Value + ".java"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join(this.NL, structFileLines),
+                };
+            }
+
+            this.CopyResourceAsText(output, sourcePath + "TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+
+            return output;
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
