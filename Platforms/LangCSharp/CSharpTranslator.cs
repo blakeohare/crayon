@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Pastel.Nodes;
+using Common;
 
 namespace LangCSharp
 {
@@ -63,22 +64,7 @@ namespace LangCSharp
 
         public override void TranslateCharConstant(StringBuilder sb, char value)
         {
-            sb.Append('\'');
-            switch (value)
-            {
-                case '\n':
-                case '\r':
-                case '\t':
-                case '\0':
-                case '\\':
-                case '\'':
-                    sb.Append('\\');
-                    break;
-
-                default: break;
-            }
-            sb.Append(value);
-            sb.Append('\'');
+            sb.Append(Util.ConvertCharToCharConstantCode(value));
         }
 
         public override void TranslateCharToString(StringBuilder sb, Expression charValue)
