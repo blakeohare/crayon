@@ -206,6 +206,12 @@ namespace LangJava
             sb.Append(')');
         }
 
+        public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
+        {
+            sb.Append("Interpreter.");
+            base.TranslateFunctionInvocationInterpreterScoped(sb, funcRef, args);
+        }
+
         public override void TranslateGetProgramData(StringBuilder sb)
         {
             sb.Append("TranslationHelper.getProgramData()");

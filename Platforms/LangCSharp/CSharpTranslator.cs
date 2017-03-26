@@ -245,19 +245,10 @@ namespace LangCSharp
             sb.Append(").ToString()");
         }
 
-        public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
+        public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
         {
-            string prefix = "";
-            if (funcInvocation.FirstToken.FileName.StartsWith("LIB:") &&
-                funcInvocation.Root is FunctionReference)
-            {
-                FunctionDefinition funcDef = ((FunctionReference)funcInvocation.Root).Function;
-                if (!funcDef.NameToken.FileName.StartsWith("LIB:"))
-                {
-                    prefix = "CrayonWrapper.";
-                }
-            }
-            this.TranslateFunctionInvocationImpl(sb, funcInvocation, prefix);
+            sb.Append("CrayonWrapper.");
+            base.TranslateFunctionInvocationInterpreterScoped(sb, funcRef, args);
         }
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)

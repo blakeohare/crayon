@@ -72,25 +72,19 @@ namespace Platform
             sb.Append(')');
         }
 
-        public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
+        public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
         {
-            this.TranslateFunctionInvocationImpl(sb, funcInvocation, "");
+            this.TranslateFunctionReference(sb, funcRef);
+            sb.Append('(');
+            this.TranslateCommaDelimitedExpressions(sb, args);
+            sb.Append(')');
         }
 
-        protected void TranslateFunctionInvocationImpl(StringBuilder sb, FunctionInvocation funcInvocation, string prefix)
+        public override void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
         {
-            sb.Append(prefix);
-            this.TranslateExpression(sb, funcInvocation.Root);
+            this.TranslateFunctionReference(sb, funcRef);
             sb.Append('(');
-            Expression[] args = funcInvocation.Args;
-            for (int i = 0; i < args.Length; ++i)
-            {
-                if (i > 0)
-                {
-                    sb.Append(", ");
-                }
-                this.TranslateExpression(sb, args[i]);
-            }
+            this.TranslateCommaDelimitedExpressions(sb, args);
             sb.Append(')');
         }
 

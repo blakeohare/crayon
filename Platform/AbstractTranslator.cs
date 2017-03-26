@@ -96,11 +96,32 @@ namespace Platform
             switch (typeName)
             {
                 case "CastExpression": this.TranslateCast(sb, ((CastExpression)expression).Type, ((CastExpression)expression).Expression); break;
-                case "FunctionInvocation": this.TranslateFunctionInvocation(sb, (FunctionInvocation)expression); break;
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
                 case "LibraryNativeFunctionInvocation": this.TranslateLibraryNativeFunctionInvocation(sb, (LibraryNativeFunctionInvocation)expression); break;
+
+                case "FunctionInvocation":
+                    FunctionInvocation funcInvocation = (FunctionInvocation)expression;
+                    bool specifyInterpreterScope = false;
+                    if (funcInvocation.FirstToken.FileName.StartsWith("LIB:") &&
+                        funcInvocation.Root is FunctionReference)
+                    {
+                        FunctionDefinition funcDef = ((FunctionReference)funcInvocation.Root).Function;
+                        if (!funcDef.NameToken.FileName.StartsWith("LIB:"))
+                        {
+                            specifyInterpreterScope = true;
+                        }
+                    }
+                    
+                    if (specifyInterpreterScope)
+                    {
+                        this.TranslateFunctionInvocationInterpreterScoped(sb, (FunctionReference)funcInvocation.Root, funcInvocation.Args);
+                    } else
+                    {
+                        this.TranslateFunctionInvocationLocallyScoped(sb, (FunctionReference)funcInvocation.Root, funcInvocation.Args);
+                    }
+                    break;
 
                 case "Variable":
                     Variable v = (Variable)expression;
@@ -285,6 +306,15 @@ namespace Platform
             this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
         }
 
+        public void TranslateCommaDelimitedExpressions(StringBuilder sb, IList<Expression> expressions)
+        {
+            for (int i = 0; i < expressions.Count; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, expressions[i]);
+            }
+        }
+
         public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
         public abstract void TranslateArrayLength(StringBuilder sb, Expression array);
         public abstract void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression);
@@ -319,7 +349,8 @@ namespace Platform
         public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);
         public abstract void TranslateFloatToString(StringBuilder sb, Expression floatExpr);
         public abstract void TranslateForceParens(StringBuilder sb, Expression expression);
-        public abstract void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation);
+        public abstract void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
+        public abstract void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
         public abstract void TranslateGetProgramData(StringBuilder sb);
         public abstract void TranslateGetResourceManifest(StringBuilder sb);

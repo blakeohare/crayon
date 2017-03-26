@@ -304,17 +304,19 @@ namespace LangPython
             sb.Append(')');
         }
 
-        public override void TranslateFunctionInvocation(StringBuilder sb, FunctionInvocation funcInvocation)
+        public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
         {
-            this.TranslateExpression(sb, funcInvocation.Root);
+            this.TranslateFunctionReference(sb, funcRef);
             sb.Append('(');
-            Expression[] args = funcInvocation.Args;
-            int argCount = args.Length;
-            for (int i = 0; i < argCount; ++i)
-            {
-                if (i > 0) sb.Append(", ");
-                this.TranslateExpression(sb, args[i]);
-            }
+            this.TranslateCommaDelimitedExpressions(sb, args);
+            sb.Append(')');
+        }
+
+        public override void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
+        {
+            this.TranslateFunctionReference(sb, funcRef);
+            sb.Append('(');
+            this.TranslateCommaDelimitedExpressions(sb, args);
             sb.Append(')');
         }
 
