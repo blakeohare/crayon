@@ -12,14 +12,7 @@ namespace LangPython
         public override string Name { get { return "lang-python"; } }
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
-
-        public override Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit,
-            object[] structDefinitions)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>()

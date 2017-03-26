@@ -14,9 +14,6 @@ namespace Platform
         public AbstractTranslator Translator { get; protected set; }
 
         public abstract IDictionary<string, object> GetConstantFlags();
-        public abstract Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit,
-            object[] structDefinitions);
         public abstract string NL { get; }
         protected int TranslationIndentionCount { get; set; }
 

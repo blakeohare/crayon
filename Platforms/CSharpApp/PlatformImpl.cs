@@ -18,14 +18,7 @@ namespace GameCSharpOpenTk
         {
             this.Translator = new CSharpAppTranslator(this);
         }
-
-        public override Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit,
-            object[] structDefinitions)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();

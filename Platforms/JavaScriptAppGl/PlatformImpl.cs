@@ -23,14 +23,7 @@ namespace GameJavaScriptHtml5
         {
             return new Dictionary<string, object>();
         }
-
-        public override Dictionary<string, FileOutput> Export(
-            Dictionary<string, object[]> executablesPerCompilationUnit,
-            object[] structDefinitions)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override Dictionary<string, FileOutput> ExportProject(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
