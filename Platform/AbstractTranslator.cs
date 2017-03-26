@@ -257,7 +257,7 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_ENDS_WITH: this.TranslateStringEndsWith(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_EQUALS: this.TranslateStringEquals(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_FROM_CHAR_CODE: this.TranslateStringFromCharCode(sb, args[0]); break;
-                case Pastel.NativeFunction.STRING_INDEX_OF: this.TranslateStringIndexOf(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.STRING_INDEX_OF: if (args.Length == 2) this.TranslateStringIndexOf(sb, args[0], args[1]); else this.TranslateStringIndexOfWithStart(sb, args[0], args[1], args[2]);  break;
                 case Pastel.NativeFunction.STRING_LENGTH: this.TranslateStringLength(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_REPLACE: this.TranslateStringReplace(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.STRING_REVERSE: this.TranslateStringReverse(sb, args[0]); break;
@@ -383,6 +383,7 @@ namespace Platform
         public abstract void TranslateStringEquals(StringBuilder sb, Expression left, Expression right);
         public abstract void TranslateStringFromCharCode(StringBuilder sb, Expression charCode);
         public abstract void TranslateStringIndexOf(StringBuilder sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringIndexOfWithStart(StringBuilder sb, Expression haystack, Expression needle, Expression startIndex);
         public abstract void TranslateStringLength(StringBuilder sb, Expression str);
         public abstract void TranslateStringReplace(StringBuilder sb, Expression haystack, Expression needle, Expression newNeedle);
         public abstract void TranslateStringReverse(StringBuilder sb, Expression str);

@@ -619,6 +619,16 @@ namespace LangCSharp
             sb.Append(')');
         }
 
+        public override void TranslateStringIndexOfWithStart(StringBuilder sb, Expression haystack, Expression needle, Expression startIndex)
+        {
+            this.TranslateExpression(sb, haystack);
+            sb.Append(".IndexOf(");
+            this.TranslateExpression(sb, needle);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(')');
+        }
+
         public override void TranslateStringLength(StringBuilder sb, Expression str)
         {
             this.TranslateExpression(sb, str);
