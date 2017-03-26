@@ -74,7 +74,15 @@ namespace GameJavaAwt
                 TextContent = sb.ToString(),
             };
 
-            this.CopyResourceAsText(output, "src/org/crayon/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.GenerateCodeForGlobalsDefinitions(this.Translator, globals),
+            };
+
+            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.txt", replacements);
+            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
 
             this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);

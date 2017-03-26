@@ -1,5 +1,6 @@
 ﻿package org.crayonlang.interpreter;
 
+import java.reflection.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -271,4 +272,29 @@ final class TranslationHelper {
 
 		return isLeft ? value.substring(i) : value.substring(0, i + 1);
 	}
+	
+  private static final HashMap<String, LibraryInstance> libraryByName = new HashMap<>();
+
+  public static boolean checkLibraryAvaialability(String name, String version) {
+    Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
+    libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
+	return true;
+  }
+
+  public static Value invokeLibraryFunction(Method fn, Value[] args) {
+    try {
+	  fn.invoke(null, args);
+	} catch (Exception e) {
+	  throw new RuntimeException();
+	}
+  }
+
+  private static String[] commandLineArgs;
+  public static void setCommandLineArgs(String[] args) {
+    commandLineArgs = args;
+  }
+  public static String[] getCommandLineArgs() {
+    if (commandLineArgs == null) throw new RuntimeException(); // must be set from Main
+    return commandLineArgs;
+  }
 }

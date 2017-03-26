@@ -15,7 +15,7 @@ namespace GameJavaAwt
 
         public override void TranslateCommandLineArgs(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.getCommandLineArgs()");
         }
 
         public override void TranslatePrintStdErr(StringBuilder sb, Expression value)

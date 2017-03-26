@@ -1,0 +1,37 @@
+﻿package org.crayonlang.interpreter;
+
+import java.reflection.Method;
+import java.util.HashMap;
+import org.crayonlang.interpreter.structs.Value;
+
+public final class LibraryInstance {
+
+  private String name;
+  private Method manifestRunner;
+  private HashMap<String, Method> methods = new HashMap<>();
+
+  public LibraryInstance(String name, Class<?> libClass) {
+	this.name = name;
+	String canonicalName = name.toLowerCase();
+	String manifestRunnerName = "v_lib_" + canonicalName + "_manifest";
+	String invokablePrefix = "v_lib_" + canonicalName + "_function_";
+	for (Method method : libClass.getMethods()) {
+	  String methodName = method.getName();
+	  if (methodName.startsWith(invokablePrefix)) {
+	     methods.put(methodName.substring(invokablePrefix.length()), method);
+	  } else if (methodName.equals(manifestRunnerName)) {
+	    manifestRunner = method;
+	  }
+	}
+  }
+
+  public void runManifestMethod(Object lro) {
+    manifest.invoke(null, new Object[] { lro });
+  }
+
+  public Method getMethod(String name) {
+    Method method = methods.get(name);
+	if (method == null) throw new RuntimeException("Method not found: '" + name + "'");
+	return method;
+  }
+}

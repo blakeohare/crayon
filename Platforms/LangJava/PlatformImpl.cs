@@ -52,7 +52,30 @@ namespace LangJava
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            throw new NotImplementedException();
+            List<string> lines = new List<string>()
+            {
+                "package org.crayonlang.interpreter;",
+                "",
+                "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.structs.Value;",
+                "",
+                "public final class VmGlobal {",
+            };
+            foreach (VariableDeclaration varDecl in globals)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("  public static final ");
+                sb.Append(this.TranslateType(varDecl.Type));
+                sb.Append(' ');
+                sb.Append(varDecl.VariableName.Value);
+                sb.Append(" = ");
+                translator.TranslateExpression(sb, varDecl.Value);
+                sb.Append(';');
+                lines.Add(sb.ToString());
+            }
+            lines.Add("}");
+            lines.Add("");
+            return string.Join(this.NL, lines);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
@@ -100,17 +123,17 @@ namespace LangJava
             sb.Append(this.NL);
             sb.Append("}");
             string structCode = sb.ToString();
-            
-                List<string> structFileLines = new List<string>();
-                structFileLines.Add("package org.crayonlang.interpreter.structs;");
-                structFileLines.Add("");
-                bool hasLists = structCode.Contains("public ArrayList<");
-                bool hasDictionaries = structCode.Contains("public HashMap<");
-                if (hasLists) structFileLines.Add("import java.util.ArrayList;");
-                if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
-                if (hasLists || hasDictionaries) structFileLines.Add("");
-                structFileLines.Add(structCode);
-                structFileLines.Add("");
+
+            List<string> structFileLines = new List<string>();
+            structFileLines.Add("package org.crayonlang.interpreter.structs;");
+            structFileLines.Add("");
+            bool hasLists = structCode.Contains("public ArrayList<");
+            bool hasDictionaries = structCode.Contains("public HashMap<");
+            if (hasLists) structFileLines.Add("import java.util.ArrayList;");
+            if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
+            if (hasLists || hasDictionaries) structFileLines.Add("");
+            structFileLines.Add(structCode);
+            structFileLines.Add("");
 
             return string.Join(this.NL, structFileLines);
         }
@@ -122,7 +145,17 @@ namespace LangJava
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>();
+            return new Dictionary<string, object>()
+                {
+                    { "IS_ASYNC", true },
+                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
+                    { "STRONGLY_TYPED", true },
+                    { "IS_ARRAY_SAME_AS_LIST", false },
+                    { "IS_PYTHON", false },
+                    { "IS_CHAR_A_NUMBER", true },
+                    { "INT_IS_FLOOR", false },
+                    { "IS_THREAD_BLOCKING_ALLOWED", true },
+                };
         }
 
         public override string TranslateType(PType type)
@@ -130,6 +163,7 @@ namespace LangJava
             switch (type.RootValue)
             {
                 case "int": return "int";
+                case "char": return "char";
                 case "double": return "double";
                 case "bool": return "boolean";
                 case "object": return "Object";
@@ -160,6 +194,7 @@ namespace LangJava
             switch (type.RootValue)
             {
                 case "int": return "Integer";
+                case "char": return "Character";
                 case "double": return "Double";
                 case "bool": return "Boolean";
                 default:

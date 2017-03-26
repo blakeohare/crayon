@@ -1,7 +1,11 @@
 ﻿package %%%PACKAGE%%%;
 
+import org.crayonlang.interpreter.Interpreter;
+import org.crayonlang.interpreter.TranslationHelper;
+
 public final class Main {
   public static void main(String[] args) {
-    System.out.println("Hello, World!");
+    TranslationHelper.setCommaneLineArgs(args);
+    Interpreter.v_main();
   }
 }

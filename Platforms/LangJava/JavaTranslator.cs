@@ -243,7 +243,11 @@ namespace LangJava
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.invokeLibraryFunction(");
+            this.TranslateExpression(sb, functionId);
+            sb.Append(", ");
+            this.TranslateExpression(sb, argsArray);
+            sb.Append(')');
         }
 
         public override void TranslateIsValidInteger(StringBuilder sb, Expression stringValue)
@@ -402,7 +406,14 @@ namespace LangJava
                 sb.Append(".size()])");
 
                 // I'm just curious what sort of other common expressions are used
-                throw new NotImplementedException();
+                string name = list.GetType().Name;
+                switch (name)
+                {
+                    case "DotField":
+                        break;
+                    default:
+                        throw new NotImplementedException(name);
+                }
             }
             else
             {
@@ -757,7 +768,11 @@ namespace LangJava
 
         public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.checkLibraryAvaialability(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libraryVersion);
+            sb.Append(')');
         }
 
         public override void TranslateVmEnqueueResume(StringBuilder sb, Expression seconds, Expression executionContextId)
@@ -767,7 +782,11 @@ namespace LangJava
 
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.runLibraryManifest(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libRegObj);
+            sb.Append(')');
         }
     }
 }
