@@ -47,6 +47,10 @@ namespace GameJavaAwt
                         "import java.util.ArrayList;",
                         "import java.util.HashMap;",
                         "import org.crayonlang.interpreter.Interpreter;",
+                        "import org.crayonlang.interpreter.ResourceReader;",
+                        "import org.crayonlang.interpreter.TranslationHelper;",
+                        "import org.crayonlang.interpreter.AwtTranslationHelper;",
+                        "import org.crayonlang.interpreter.VmGlobal;",
                         "import org.crayonlang.interpreter.structs.*;",
                         "",
                         "public final class LibraryWrapper {",
@@ -69,8 +73,11 @@ namespace GameJavaAwt
                         TextContent = string.Join(this.NL, libraryCode),
                     };
 
-                    // TODO: supplemental files.
-                    // This is extra complicated as some will require special package locations such as org.json. 
+                    foreach (string supFilePath in library.SupplementalFiles.Keys)
+                    {
+                        FileOutput supFile = library.SupplementalFiles[supFilePath];
+                        output[supFilePath] = supFile;
+                    }
                 }
             }
 
@@ -84,7 +91,7 @@ namespace GameJavaAwt
             }
 
             StringBuilder sb = new StringBuilder();
-            
+
             sb.Append(string.Join(this.NL, new string[] {
                 "package org.crayonlang.interpreter;",
                 "",
@@ -123,13 +130,22 @@ namespace GameJavaAwt
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/ResourceReader.java", "Resources/ResourceReader.txt", replacements);
+            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/AwtTranslationHelper.java", "Resources/AwtTranslationHelper.txt", replacements);
 
             this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);
 
+            IEnumerable<FileOutput> javaFiles = output.Keys
+                .Where(filename => filename.ToLower().EndsWith(".java"))
+                .Select(filename => output[filename]);
+            foreach (FileOutput file in javaFiles)
+            {
+                file.TrimBomIfPresent = true;
+            }
+
             return output;
         }
-
+        
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);

@@ -9,7 +9,7 @@ namespace LangJava
 {
     public abstract class JavaTranslator : Platform.CurlyBraceTranslator
     {
-        public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n", false)
+        public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n", true)
         { }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
@@ -28,11 +28,25 @@ namespace LangJava
 
         public override void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression)
         {
+            // In the event of multi-dimensional jagged arrays, the outermost array length goes in the innermost bracket.
+            // Unwrap nested arrays in the type and run the code as normal, and then add that many []'s to the end.
+            int bracketSuffixCount = 0;
+            while (arrayType.RootValue == "Array")
+            {
+                arrayType = arrayType.Generics[0];
+                bracketSuffixCount++;
+            }
+
             sb.Append("new ");
             sb.Append(this.Platform.TranslateType(arrayType));
             sb.Append('[');
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(']');
+
+            while (bracketSuffixCount-- > 0)
+            {
+                sb.Append("[]");
+            }
         }
 
         public override void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value)
@@ -323,7 +337,7 @@ namespace LangJava
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
             sb.Append("new ArrayList<");
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
             sb.Append(">()");
         }
 
@@ -418,12 +432,12 @@ namespace LangJava
                     case "DotField":
                         break;
                     default:
+                        CompatibilityHack.CriticalTODO("get rid of this");
                         throw new NotImplementedException(name);
                 }
             }
             else
             {
-                sb.Append(".toArray(");
                 sb.Append("TranslationHelper.EMPTY_ARRAY_" + typeString.ToUpper());
                 sb.Append(')');
             }
@@ -468,7 +482,7 @@ namespace LangJava
 
         public override void TranslateMathPow(StringBuilder sb, Expression expBase, Expression exponent)
         {
-            sb.Append("Math.cos(");
+            sb.Append("Math.pow(");
             this.TranslateExpression(sb, expBase);
             sb.Append(", ");
             this.TranslateExpression(sb, exponent);
@@ -769,7 +783,7 @@ namespace LangJava
         {
             sb.Append(this.CurrentTab);
             sb.Append(this.Platform.TranslateType(varDecl.Type));
-            sb.Append(" ");
+            sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)
             {

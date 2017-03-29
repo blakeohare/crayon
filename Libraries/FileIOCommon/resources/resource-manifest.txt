@@ -11,7 +11,7 @@ END
 
 BEGIN
 APPLICABLE-TO: game-java-awt
-COPYFILES: java: src/crayonlib/fileiocommon/%FILE%
+COPYFILES: java: src/org/crayonlang/libraries/fileiocommon/%FILE%
 END
 
 BEGIN

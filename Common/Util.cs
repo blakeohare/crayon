@@ -152,7 +152,7 @@ namespace Common
             return TrimBomIfPresent(string.Join("", bytes.Select<byte, char>(b => (char)b)));
         }
 
-        private static string TrimBomIfPresent(string text)
+        public static string TrimBomIfPresent(string text)
         {
             return (text.Length >= 3 && text[0] == 239 && text[1] == 187 && text[2] == 191)
                 ? text.Substring(3)

@@ -9,6 +9,8 @@ namespace Crayon
     {
         private string targetDirectory;
 
+        private static readonly HashSet<string> BOMLESS_TEXT_TYPES = new HashSet<string>() { "java" };
+
         public FileOutputExporter(string targetDirectory)
         {
             this.targetDirectory = targetDirectory;
@@ -46,7 +48,7 @@ namespace Crayon
                     break;
 
                 case FileOutputType.Text:
-                    this.ExportTextFile(absolutePath, file.TextContent);
+                    this.ExportTextFile(absolutePath, file.TextContent, file.TrimBomIfPresent);
                     break;
 
                 case FileOutputType.Ghost:
@@ -73,9 +75,19 @@ namespace Crayon
             image.Save(path);
         }
 
-        private void ExportTextFile(string path, string content)
+        private void ExportTextFile(string path, string content, bool trimBom)
         {
-            FileUtil.WriteFileText(path, content);
+            string fileExtension = FileUtil.GetCanonicalExtension(path);
+            if (trimBom ||
+                (fileExtension != null && BOMLESS_TEXT_TYPES.Contains(fileExtension)))
+            {
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(content);
+                this.ExportBinaryFile(path, bytes);
+            }
+            else
+            {
+                FileUtil.WriteFileText(path, content);
+            }
         }
     }
 }

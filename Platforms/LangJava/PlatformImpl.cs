@@ -60,6 +60,9 @@ namespace LangJava
                 "import org.crayonlang.interpreter.structs.Value;",
                 "",
                 "public final class VmGlobal {",
+                "",
+                "  private VmGlobal() {}",
+                "",
             };
             foreach (VariableDeclaration varDecl in globals)
             {
@@ -160,6 +163,11 @@ namespace LangJava
 
         public override string TranslateType(PType type)
         {
+            return TranslateJavaType(type);
+        }
+
+        public static string TranslateJavaType(PType type)
+        {
             switch (type.RootValue)
             {
                 case "void": return "void";
@@ -172,14 +180,18 @@ namespace LangJava
                 case "string": return "String";
 
                 case "Array":
-                    string innerType = this.TranslateType(type.Generics[0]);
+                    string innerType = TranslateJavaType(type.Generics[0]);
                     return innerType + "[]";
 
                 case "List":
-                    return "ArrayList<" + this.TranslateInnerType(type.Generics[0]) + ">";
+                    return "ArrayList<" + TranslateJavaNestedType(type.Generics[0]) + ">";
 
                 case "Dictionary":
-                    return "HashMap<" + this.TranslateInnerType(type.Generics[0]) + ", " + this.TranslateInnerType(type.Generics[1]) + ">";
+                    return "HashMap<" + TranslateJavaNestedType(type.Generics[0]) + ", " + TranslateJavaNestedType(type.Generics[1]) + ">";
+
+                case "ClassValue":
+                    // java.lang.ClassValue collision
+                    return "org.crayonlang.interpreter.structs.ClassValue";
 
                 default:
                     char firstChar = type.RootValue[0];
@@ -191,17 +203,17 @@ namespace LangJava
             }
         }
 
-        private string TranslateInnerType(PType type)
+        public static string TranslateJavaNestedType(PType type)
         {
             switch (type.RootValue)
             {
                 case "bool": return "Boolean";
-                case "byte": return "Byte"; 
+                case "byte": return "Byte";
                 case "char": return "Character";
                 case "double": return "Double";
                 case "int": return "Integer";
                 default:
-                    return this.TranslateType(type);
+                    return TranslateJavaType(type);
             }
         }
     }

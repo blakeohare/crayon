@@ -1,6 +1,6 @@
 ﻿package org.crayonlang.interpreter;
 
-import java.reflection.Method;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import org.crayonlang.interpreter.structs.Value;
 

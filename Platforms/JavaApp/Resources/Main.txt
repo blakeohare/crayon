@@ -4,8 +4,10 @@ import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.TranslationHelper;
 
 public final class Main {
+
   public static void main(String[] args) {
-    TranslationHelper.setCommaneLineArgs(args);
+    TranslationHelper.setCommandLineArgs(args);
     Interpreter.v_main();
   }
+
 }

@@ -590,11 +590,10 @@ namespace Crayon
             string platformId = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
             this.ExtractResources(platformId, textFiles, codeToEmbed);
             
-            foreach (string key in textFiles.Keys)
+            foreach (string filepath in textFiles.Keys)
             {
-                string content = textFiles[key];
+                string content = textFiles[filepath];
                 content = this.NormalizeNamespacesForCbx(content);
-                string filepath = key.Split('/').Last();
                 // TODO: distinguish between code and content
                 fileCopies[filepath] = new FileOutput()
                 {
@@ -607,8 +606,7 @@ namespace Crayon
         private string NormalizeNamespacesForCbx(string content)
         {
             CompatibilityHack.CriticalTODO("Go update the supplemental files so this function isn't necessary.");
-
-            content = "using Interpreter.Structs;\n" + content;
+            
             string magicString = "namespace %%%PROJECT_ID%%%.Library.";
             string fixedString = "namespace Interpreter.Libraries." + this.Name;
             bool useCarriageReturn = content.Contains("\r\n");

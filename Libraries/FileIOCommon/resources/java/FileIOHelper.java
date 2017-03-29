@@ -1,6 +1,4 @@
-package crayonlib.fileiocommon;
-
-import %%%PACKAGE%%%.Value;
+package org.crayonlang.libraries.fileiocommon;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import org.crayonlang.interpreter.structs.Value;
 
 public class FileIOHelper {
 	private static int _isWindows = -1;
