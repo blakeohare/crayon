@@ -353,7 +353,7 @@ namespace LangJava
             }
             else
             {
-                sb.Append("TranslationHelper.ListPop(");
+                sb.Append("TranslationHelper.listPop(");
                 this.TranslateExpression(sb, list);
                 sb.Append(')');
             }
@@ -584,7 +584,7 @@ namespace LangJava
 
         public override void TranslateStringBuffer16(StringBuilder sb)
         {
-            sb.Append("TranslationHelper.INT_BUFFER_16");
+            sb.Append("TranslationHelper.STRING_BUFFER_16");
         }
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)
