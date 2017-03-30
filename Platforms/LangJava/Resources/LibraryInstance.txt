@@ -26,7 +26,11 @@ public final class LibraryInstance {
   }
 
   public void runManifestMethod(Object lro) {
-    manifest.invoke(null, new Object[] { lro });
+    try {
+      manifestRunner.invoke(null, new Object[] { lro });
+    } catch (Exception e) {
+	  throw new RuntimeException(e);
+	}
   }
 
   public Method getMethod(String name) {

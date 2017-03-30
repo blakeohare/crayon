@@ -278,7 +278,7 @@ public final class AwtTranslationHelper {
 		int status = (int)imageLoaderNativeData[2];
 		// TODO: release mutex
 
-		output.set(0, CrayonWrapper.v_buildInteger(status));
+		output.set(0, Interpreter.v_buildInteger(status));
 	}
 
 	private static HashMap<String, java.awt.Font> systemFonts = null;

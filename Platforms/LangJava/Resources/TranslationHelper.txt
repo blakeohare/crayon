@@ -13,9 +13,16 @@ import org.crayonlang.interpreter.structs.Value;
 
 public final class TranslationHelper {
 
+	public static final Object[] EMPTY_ARRAY_OBJECT = new Object[0];
+	public static final boolean[] EMPTY_ARRAY_BOOLEAN = new boolean[0];
 	public static final int[] EMPTY_ARRAY_INT = new int[0];
+	public static final double[] EMPTY_ARRAY_DOUBLE = new double[0];
+	public static final char[] EMPTY_ARRAY_CHAR = new char[0];
 	public static final String[] EMPTY_ARRAY_STRING = new String[0];
 	public static final Value[] EMPTY_ARRAY_VALUE = new Value[0];
+    public static final ArrayList[] EMPTY_ARRAY_LIST = new ArrayList[0];
+    public static final HashMap[] EMPTY_ARRAY_MAP = new HashMap[0];
+
 	public static final int[] INT_BUFFER_16 = new int[16];
 	public static final double[] FLOAT_BUFFER_16 = new double[16];
 	public static final String[] STRING_BUFFER_16 = new String[16];
@@ -294,18 +301,20 @@ public final class TranslationHelper {
   }
 
   public static void registerLibraryFunction(Class<?> containerLibraryClass, Object libRegObj, String fnName, int argc) {
-    String[] parts = containerLibraryClass.getPackage().split(".");
+    String[] parts = containerLibraryClass.getPackage().getName().split(".");
 	String libraryName = parts[parts.length - 1];
 	LibraryInstance library = libraryByName.get(libraryName);
 	Method method = library.getMethod(fnName);
     Interpreter.v_registerLibraryFunction(method, libRegObj, fnName, argc);
   }
 
-  public static Value invokeLibraryFunction(Method fn, Value[] args) {
+  private static final Object[] ARGS_REUSABLE = new Object[1];
+  public static Value invokeLibraryFunction(Object fn, Value[] args) {
     try {
-	  fn.invoke(null, args);
+	  ARGS_REUSABLE[0] = args;
+	  return (Value) ((Method) fn).invoke(null, ARGS_REUSABLE);
 	} catch (Exception e) {
-	  throw new RuntimeException();
+	  throw new RuntimeException("Error while running library function.", e);
 	}
   }
 
@@ -320,6 +329,19 @@ public final class TranslationHelper {
 
   public static int runLibraryManifest(String name, Object lro) {
     LibraryInstance lib = libraryByName.get(name.toLowerCase());
-	lib.runManifestMethod(lro);
+	try {
+	  lib.runManifestMethod(lro);
+	} catch (Exception e) {
+	  throw new RuntimeException("Error while running library manifest.", e);
+	}
+	return 0;
+  }
+
+  public static int[] listToArrayInt(ArrayList<Integer> list) {
+    int length = list.size();
+	int[] output = new int[length];
+	int i = -1;
+	while (++i < length) output[i] = list.get(i);
+	return output;
   }
 }

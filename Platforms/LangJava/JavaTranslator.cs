@@ -38,7 +38,18 @@ namespace LangJava
             }
 
             sb.Append("new ");
-            sb.Append(this.Platform.TranslateType(arrayType));
+            if (arrayType.RootValue == "Dictionary")
+            {
+                sb.Append("HashMap");
+            }
+            else if (arrayType.RootValue == "List")
+            {
+                sb.Append("ArrayList");
+            }
+            else
+            {
+                sb.Append(this.Platform.TranslateType(arrayType));
+            }
             sb.Append('[');
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(']');
@@ -89,7 +100,12 @@ namespace LangJava
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
         {
             sb.Append("new ");
-            sb.Append(constructorInvocation.StructType.NameToken.Value);
+            string structType = constructorInvocation.StructType.NameToken.Value;
+            if (structType == "ClassValue")
+            {
+                structType = "org.crayonlang.interpreter.structs.ClassValue";
+            }
+            sb.Append(structType);
             sb.Append('(');
             Expression[] args = constructorInvocation.Args;
             for (int i = 0; i < args.Length; ++i)
@@ -311,7 +327,7 @@ namespace LangJava
         public override void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item)
         {
             this.TranslateExpression(sb, list);
-            sb.Append(".insert(");
+            sb.Append(".add(");
             this.TranslateExpression(sb, index);
             sb.Append(", ");
             this.TranslateExpression(sb, item);
@@ -399,47 +415,57 @@ namespace LangJava
 
         public override void TranslateListToArray(StringBuilder sb, Expression list)
         {
-            string typeString = this.Platform.TranslateType(list.ResolvedType.Generics[0]);
-            bool doubleEval = true;
-            switch (typeString)
+            PType itemType = list.ResolvedType.Generics[0];
+            if (itemType.RootValue == "Object")
             {
-                case "boolean":
-                case "int":
-                case "double":
-                case "String":
-                case "Value":
-                    doubleEval = false;
-                    break;
-            }
-            this.TranslateExpression(sb, list);
-            sb.Append(".toArray(");
-            if (typeString == "Object")
-            {
-                sb.Append(')');
-            }
-            else if (doubleEval)
-            {
-                sb.Append("new ");
-                sb.Append(typeString);
-                sb.Append('[');
                 this.TranslateExpression(sb, list);
-                sb.Append(".size()])");
-
-                // I'm just curious what sort of other common expressions are used
-                string name = list.GetType().Name;
-                switch (name)
-                {
-                    case "DotField":
-                        break;
-                    default:
-                        CompatibilityHack.CriticalTODO("get rid of this");
-                        throw new NotImplementedException(name);
-                }
+                sb.Append(".toArray()");
+                return;
             }
-            else
+
+            switch (itemType.RootValue)
             {
-                sb.Append("TranslationHelper.EMPTY_ARRAY_" + typeString.ToUpper());
-                sb.Append(')');
+                case "int":
+                    sb.Append("TranslationHelper.listToArrayInt(");
+                    this.TranslateExpression(sb, list);
+                    sb.Append(')');
+                    break;
+
+                case "string":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_STRING)");
+                    break;
+                case "Value":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_VALUE)");
+                    break;
+                case "List":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_LIST)");
+                    break;
+                case "Dictionary":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_MAP)");
+                    break;
+                case "Array":
+                    CompatibilityHack.CriticalTODO("you should fill this in."); // It might be nice just to have a TranslateTypeWithoutGenerics for these finiky array types.
+                    throw new NotImplementedException();
+                default:
+                    string javaType = this.Platform.TranslateType(itemType);
+                    char firstChar = javaType[0];
+                    if (firstChar >= 'A' & firstChar <= 'Z')
+                    {
+                        this.TranslateExpression(sb, list);
+                        sb.Append(".toArray((");
+                        sb.Append(javaType);
+                        sb.Append("[]) TranslationHelper.EMPTY_ARRAY_OBJECT)");
+                    }
+                    else
+                    {
+                        CompatibilityHack.CriticalTODO("you should fill this in, too.");
+                        throw new NotImplementedException();
+                    }
+                    break;
             }
         }
 
@@ -519,14 +545,14 @@ namespace LangJava
 
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
-            sb.Append("Double.toString(");
+            sb.Append("Double.parseDouble(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(')');
         }
 
         public override void TranslateParseInt(StringBuilder sb, Expression safeStringValue)
         {
-            sb.Append("Integer.toString(");
+            sb.Append("Integer.parseInt(");
             this.TranslateExpression(sb, safeStringValue);
             sb.Append(')');
         }
