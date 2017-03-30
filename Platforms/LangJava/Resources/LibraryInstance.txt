@@ -13,7 +13,7 @@ public final class LibraryInstance {
   public LibraryInstance(String name, Class<?> libClass) {
 	this.name = name;
 	String canonicalName = name.toLowerCase();
-	String manifestRunnerName = "v_lib_" + canonicalName + "_manifest";
+	String manifestRunnerName = "v_lib_manifest_RegisterFunctions";
 	String invokablePrefix = "v_lib_" + canonicalName + "_function_";
 	for (Method method : libClass.getMethods()) {
 	  String methodName = method.getName();
@@ -23,11 +23,16 @@ public final class LibraryInstance {
 	    manifestRunner = method;
 	  }
 	}
+	if (manifestRunner == null) {
+	  throw new RuntimeException(this.name + " has no manifest runner.");
+	}
   }
 
   public void runManifestMethod(Object lro) {
     try {
       manifestRunner.invoke(null, new Object[] { lro });
+	} catch (RuntimeException re) {
+	  throw re;
     } catch (Exception e) {
 	  throw new RuntimeException(e);
 	}

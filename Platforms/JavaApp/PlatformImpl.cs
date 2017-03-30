@@ -139,6 +139,9 @@ namespace GameJavaAwt
             this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);
 
+            output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+
             IEnumerable<FileOutput> javaFiles = output.Keys
                 .Where(filename => filename.ToLower().EndsWith(".java"))
                 .Select(filename => output[filename]);

@@ -296,7 +296,9 @@ public final class TranslationHelper {
 
   public static int checkLibraryAvaialability(String name, String version) {
     Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
-    libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
+	if (c != null) {
+      libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
+	}
 	return 0;
   }
 
@@ -329,10 +331,12 @@ public final class TranslationHelper {
 
   public static int runLibraryManifest(String name, Object lro) {
     LibraryInstance lib = libraryByName.get(name.toLowerCase());
-	try {
-	  lib.runManifestMethod(lro);
-	} catch (Exception e) {
-	  throw new RuntimeException("Error while running library manifest.", e);
+    if (lib != null) {
+      try {
+        lib.runManifestMethod(lro);
+	  } catch (Exception e) {
+	    throw new RuntimeException("Error while running library manifest.", e);
+	  }
 	}
 	return 0;
   }

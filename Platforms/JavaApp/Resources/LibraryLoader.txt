@@ -7,10 +7,13 @@ import java.util.List;
 
 public final class LibraryLoader {
   public static Class<?> getLibClass(String name, String version) {
-    try {
-      return Class.forName("org.crayonlang.libraries." + name.toLowerCase() + ".LibraryWrapper");
+    String libraryWrapperFullyQualifiedName = "org.crayonlang.libraries." + name.toLowerCase() + ".LibraryWrapper";
+	System.out.println(libraryWrapperFullyQualifiedName);
+	try {
+      return Class.forName(libraryWrapperFullyQualifiedName);
     } catch (Exception e) {
-      throw new RuntimeException("Library could not be found.", e);
+	  // TODO: is there a way to do this without using exceptions?
+      return null;
 	}
   }
 }
