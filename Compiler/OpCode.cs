@@ -16,6 +16,7 @@
         BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
         CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
         CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
+        CALL_LIB_FUNCTION_DYNAMIC,
         CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
         COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
         CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
@@ -42,6 +43,7 @@
         JUMP_IF_FALSE_NO_POP,
         JUMP_IF_TRUE,
         JUMP_IF_TRUE_NO_POP,
+        LIB_DECLARATION, // 1: library reference ID#, string: name of the library
         LIST_SLICE, // 1: begin slice index is present, 2: end slice index is present, 3: step is present
         LITERAL, // 1: literal ID in the literal table
         LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.

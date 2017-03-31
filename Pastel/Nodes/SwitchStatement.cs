@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class SwitchStatement : Executable
+    public class SwitchStatement : Executable
     {
         public Expression Condition { get; set; }
         public SwitchChunk[] Chunks { get; set; }
@@ -40,7 +40,7 @@ namespace Pastel.Nodes
             }
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
             for (int i = 0; i < this.Chunks.Length; ++i)
@@ -56,7 +56,7 @@ namespace Pastel.Nodes
 
                 chunk.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(chunk.Code, compiler).ToArray();
             }
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
@@ -87,6 +87,24 @@ namespace Pastel.Nodes
 
                 Executable.ResolveTypes(chunk.Code, varScope, compiler);
             }
+        }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            for (int i = 0; i < this.Chunks.Length; ++i)
+            {
+                SwitchChunk chunk = this.Chunks[i];
+                for (int j = 0; j < chunk.Cases.Length; ++j)
+                {
+                    if (chunk.Cases[j] != null)
+                    {
+                        chunk.Cases[j] = chunk.Cases[j].ResolveWithTypeContext(compiler);
+                    }
+                }
+                Executable.ResolveWithTypeContext(compiler, chunk.Code);
+            }
+            return this;
         }
     }
 }

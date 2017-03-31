@@ -1,4 +1,12 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-Library._lib_nori_render_uiBoxLayout(object1, object1, object1, object1);
+﻿Value lib_nori_function_render_uiBoxLayout(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	Native._lib_nori_render_uiBoxLayout(object1, ((int) arg2.internalValue), ((int) arg3.internalValue), ((bool) arg4.internalValue));
+	return output;
+}
+

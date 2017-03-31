@@ -73,5 +73,5 @@ if (Value$root.type == Types.LIST) {
 	// Single char strings are common.
 	$_array_set(valueStack, valueStackSize - 1, buildCommonString($_char_to_string($_string_char_at(string1, int1))));
 } else {
-	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot index into this type: " + getTypeFromId(Value$root.type));
+	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, $_string_concat("Cannot index into this type: ", getTypeFromId(Value$root.type)));
 }

@@ -1,35 +1,46 @@
-﻿@import("FrameworkFunctions/7_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = new Array<object>(3);
-objInstance1.nativeData = objArray1;
-objArray1[2] = false;
-string1 = ((string) arg3.internalValue);
-string2 = ((string) arg4.internalValue);
-stringList1 = new List<string>();
-list1 = ((List<Value>) arg5.internalValue);
-for (i = 0; i < list1.Size(); i += 1) {
-	value = list1[i];
-	stringList1.Add(((string) value.internalValue));
-}
-object1 = arg6.internalValue;
-int1 = 0;
-if (arg6.type == Types.STRING) {
-	int1 = 1;
-} else {
-	if (arg6.type == Types.INSTANCE) {
-		objInstance1 = ((ObjectInstance) object1);
-		object1 = objInstance1.nativeData[0];
-		int1 = 2;
+﻿Value lib_http_function_sendRequest(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value arg7 = args[6];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = new Array<object>(3);
+	objInstance1.nativeData = objArray1;
+	objArray1[2] = false;
+	string1 = ((string) arg3.internalValue);
+	string2 = ((string) arg4.internalValue);
+	stringList1 = new List<string>();
+	list1 = ((List<Value>) arg5.internalValue);
+	for (i = 0; i < list1.Size(); i += 1) {
+		value = list1[i];
+		stringList1.Add(((string) value.internalValue));
+	}
+	object1 = arg6.internalValue;
+	int1 = 0;
+	if (arg6.type == Types.STRING) {
+		int1 = 1;
 	} else {
-		object1 = null;
+		if (arg6.type == Types.INSTANCE) {
+			objInstance1 = ((ObjectInstance) object1);
+			object1 = objInstance1.nativeData[0];
+			int1 = 2;
+		} else {
+			object1 = null;
+		}
 	}
-}
-bool1 = ((int) arg7.internalValue) == 1;
-if (((bool) arg2.internalValue)) {
-	Library._lib_http_sendRequestAsynchronous(objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1);
-} else {
-	if (Library._lib_http_sendRequestSynchronous(objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1, objArray1)) {
-		prepareToSuspend(ec, stack, valueStackSize, pc);
-		return suspendInterpreter();
+	bool1 = ((int) arg7.internalValue) == 1;
+	if (((bool) arg2.internalValue)) {
+		Native._lib_http_sendRequestAsynchronous(objArray1, string1, string2, stringList1, int1, object1, bool1);
+	} else {
+		if (Native._lib_http_sendRequestSynchronous(objArray1, string1, string2, stringList1, int1, object1, bool1, ec.id)) {
+			noop();
+			Core.VmSuspend();
+		}
 	}
+	return output;
 }
+

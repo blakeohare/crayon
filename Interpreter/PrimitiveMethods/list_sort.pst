@@ -1,7 +1,7 @@
 ﻿if (argCount == 0) {
-	sortLists(list1, list1, intOutParam);
-	if (intOutParam[0] > 0) {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
+	sortLists(list1, list1, Core.IntBuffer16);
+	if (Core.IntBuffer16[0] > 0) {
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 	}
 } else {
 	if (argCount == 1) {
@@ -12,7 +12,7 @@
 			funcArgs[1] = value;
 			argCount = 2;
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "list.sort(get_key_function) requires a function pointer as its argument.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list.sort(get_key_function) requires a function pointer as its argument.");
 		}
 		output = null;
 	}

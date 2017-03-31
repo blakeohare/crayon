@@ -1,16 +1,23 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-string1 = ((string) arg1.internalValue);
-list1 = ((List<Value>) arg2.internalValue);
-objInstance1 = ((ObjectInstance) arg3.internalValue);
-objArray1 = objInstance1.nativeData;
-if (objArray1 == null) {
-	objArray1 = new Array<object>(2);
-	objInstance1.nativeData = objArray1;
-	objArray1[0] = new Dictionary<string, string>();
-	objArray1[1] = new Dictionary<int, int>();
+﻿Value lib_xml_function_parse(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	string1 = ((string) arg1.internalValue);
+	list1 = ((List<Value>) arg2.internalValue);
+	objInstance1 = ((ObjectInstance) arg3.internalValue);
+	objArray1 = objInstance1.nativeData;
+	if (objArray1 == null) {
+		objArray1 = new Array<object>(2);
+		objInstance1.nativeData = objArray1;
+		objArray1[0] = new Dictionary<string, string>();
+		objArray1[1] = new Dictionary<int, int>();
+	}
+	output = VALUE_NULL;
+	string2 = lib_xml_parse(string1, Core.IntBuffer16, list1, ((Dictionary<string, string>) objArray1[0]), ((Dictionary<int, int>) objArray1[1]));
+	if (string2 != null) {
+		output = buildString(string2);
+	}
+	return output;
 }
-output = VALUE_NULL;
-string2 = lib_xml_parse(string1, intOutParam, list1, ((Dictionary<string, string>) objArray1[0]), ((Dictionary<int, int>) objArray1[1]));
-if (string2 != null) {
-	output = buildString(string2);
-}
+

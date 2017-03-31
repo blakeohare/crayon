@@ -1,0 +1,248 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Interpreter.Structs;
+using Interpreter.Vm;
+
+namespace Interpreter.OtkGame
+{
+    internal static class OpenTkTranslationHelper
+    {
+        private static string appDataRoot = null;
+        public static string AppDataRoot
+        {
+            get
+            {
+                if (appDataRoot == null)
+                {
+                    // TODO: test with Mono
+                    appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "Polarity");
+                    appDataRoot = appDataRoot.Replace('\\', '/');
+                }
+                return appDataRoot;
+            }
+        }
+
+        public static List<PlatformRelayObject> GetEvents()
+        {
+            return GameWindow.Instance.GetEvents();
+        }
+
+        public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
+        {
+            IList<byte> soundBytesList = ResourceReader.ReadBytes(path);
+            if (soundBytesList == null) return null;
+            byte[] soundBytes = soundBytesList.ToArray();
+            return SdlDotNet.Audio.Mixer.Sound(soundBytes);
+        }
+
+        /*
+		public static void AudioPlay(object nativeSound)
+		{
+			SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
+			try
+			{
+				sdlSound.Play();
+			}
+			catch (SdlDotNet.Core.SdlException)
+			{
+				// No free channels or other hardware exceptions should just fail silently (no pun intended).
+			}
+		}//*/
+
+        public static void AudioStop(object nativeSound)
+        {
+            SdlDotNet.Audio.Sound sdlSound = (SdlDotNet.Audio.Sound)nativeSound;
+            try
+            {
+                sdlSound.Stop();
+            }
+            catch (SdlDotNet.Core.SdlException) { }
+        }
+
+        public static void AudioSoundStop(object rawChannel, object rawResource, int resourceId, bool isActivelyPlaying, bool isHardStop)
+        {
+            SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+            SdlDotNet.Audio.Sound resource = (SdlDotNet.Audio.Sound)rawResource;
+
+            if (isHardStop)
+            {
+                channel.Stop();
+            }
+            else if (isActivelyPlaying)
+            {
+                channel.Pause();
+            }
+        }
+
+        public static int AudioSoundGetState(object rawChannel, object rawResource, int resourceId)
+        {
+            SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+            if (channel.IsPlaying())
+            {
+                if (channel.IsPaused())
+                {
+                    return 2;
+                }
+                return 1;
+            }
+            return 3;
+        }
+
+        public static void AudioSoundResume(object rawChannel, object rawResource, double volume, double pan)
+        {
+            SdlDotNet.Audio.Channel channel = (SdlDotNet.Audio.Channel)rawChannel;
+            if (channel.IsPaused())
+            {
+                channel.Resume();
+                OpenTkTranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+            }
+        }
+
+        public static object AudioSoundPlay(object rawRes, double volume, double pan)
+        {
+            SdlDotNet.Audio.Sound sfx = (SdlDotNet.Audio.Sound)rawRes;
+            try
+            {
+                SdlDotNet.Audio.Channel channel = sfx.Play();
+                OpenTkTranslationHelper.AudioApplyVolumeAndPan(channel, volume, pan);
+                return channel;
+            }
+            catch (SdlDotNet.Core.SdlException)
+            {
+                return null;
+            }
+        }
+
+        private static void AudioApplyVolumeAndPan(SdlDotNet.Audio.Channel channel, double volume, double pan)
+        {
+            channel.Volume = (int)(255 * volume);
+            // TODO: apply pan using channel.SetPanning(left, right);
+        }
+
+        public static bool MusicSetVolume(double ratio)
+        {
+            SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
+            return true;
+        }
+
+        public static void AudioMusicPlay(object nativeMusicObject, bool loop)
+        {
+            SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
+            if (loop)
+            {
+                music.Play(loop);
+            }
+            else
+            {
+                music.Play(1);
+            }
+        }
+
+        public static object MusicLoadResource(string path)
+        {
+            IList<byte> musicData = ResourceReader.ReadBytes(path);
+            return new SdlDotNet.Audio.Music(musicData.ToArray());
+        }
+
+        public static bool AudioMusicIsPlaying()
+        {
+            return SdlDotNet.Audio.MusicPlayer.IsPlaying;
+        }
+
+        public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
+        {
+            int status = 0;
+            lock (imageLoaderNativeData[3])
+            {
+                status = (int)imageLoaderNativeData[2];
+            }
+
+            output[0] = CrayonWrapper.v_buildInteger(status);
+        }
+
+        public static void ImageLoadAsync(
+            string filename,
+            object[] nativeImageDataNativeData,
+            object[] imageLoaderNativeData)
+        {
+            imageLoaderNativeData[3] = new object();
+            System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
+            bgw.DoWork += (sender, args) =>
+            {
+                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+
+                lock (imageLoaderNativeData[3])
+                {
+                    imageLoaderNativeData[2] = loaded ? 1 : 2;
+                }
+            };
+
+            bgw.RunWorkerAsync();
+        }
+
+        public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
+        {
+            System.Drawing.Bitmap bmp = ResourceReader.ReadImageFile("Resources/" + filename);
+            if (bmp != null)
+            {
+                if (statusOutCheesy != null) statusOutCheesy.Reverse();
+                nativeImageDataNativeData[0] = bmp;
+                nativeImageDataNativeData[1] = bmp.Width;
+                nativeImageDataNativeData[2] = bmp.Height;
+                return true;
+            }
+            return false;
+        }
+
+        public static string GetImageResourceManifestString()
+        {
+            return ResourceReader.ReadTextFile("ImageSheetManifest.txt") ?? "";
+        }
+
+        public static object GenerateNativeBitmapOfSize(int width, int height)
+        {
+            return new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        }
+
+        public static void BlitImage(
+            object targetBmp, object sourceBmp,
+            int targetX, int targetY,
+            int sourceX, int sourceY,
+            int width, int height,
+            object graphicsSession)
+        {
+            System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
+            System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
+            ((System.Drawing.Graphics)graphicsSession).DrawImage(
+                source,
+                new System.Drawing.Rectangle(targetX, targetY, width, height),
+                new System.Drawing.Rectangle(sourceX, sourceY, width, height),
+                System.Drawing.GraphicsUnit.Pixel);
+        }
+
+        public static object GetPixelEditSession(object nativeImageResource)
+        {
+            return System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)nativeImageResource);
+        }
+
+        public static void FlushPixelEditSession(object graphicsObj)
+        {
+            System.Drawing.Graphics g = (System.Drawing.Graphics)graphicsObj;
+            g.Flush();
+            g.Dispose();
+        }
+
+        public static bool LoadFont(bool isSystem, string name, int fontId)
+        {
+            // No-op for now.
+            return true;
+        }
+
+        public static int PushCodePoints(List<int> codePoints, string value)
+        {
+            // No-op for now.
+            return 0;
+        }
+    }
+}

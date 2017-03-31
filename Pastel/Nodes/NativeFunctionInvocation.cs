@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    class NativeFunctionInvocation : Expression
+    public class NativeFunctionInvocation : Expression
     {
         public NativeFunction Function { get; set; }
         public Expression[] Args { get; set; }
@@ -50,7 +50,7 @@ namespace Pastel.Nodes
             Dictionary<string, PType> templateLookup = new Dictionary<string, PType>();
 
             int verificationLength = expectedTypes.Length;
-            if (isArgRepeated[isArgRepeated.Length - 1])
+            if (verificationLength > 0 && isArgRepeated[isArgRepeated.Length - 1])
             {
                 verificationLength--;
             }
@@ -91,6 +91,15 @@ namespace Pastel.Nodes
 
             this.ResolvedType = returnType;
 
+            return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveWithTypeContext(compiler);
+            }
             return this;
         }
     }

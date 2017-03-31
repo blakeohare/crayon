@@ -1,17 +1,23 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-list1 = ((List<Value>) arg2.internalValue);
-len = list1.Size();
-objArray1 = new Array<object>(len);
-for (i = 0; i < len; i += 1) {
-	value = list1[i];
-	if (value.type == Types.INTEGER) {
-		float1 = ((int) value.internalValue);
-	} else {
-		float1 = ((double) value.internalValue);
+﻿Value lib_easing_function_apply_pts(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	list1 = ((List<Value>) arg2.internalValue);
+	len = list1.Size();
+	objArray1 = new Array<object>(len);
+	for (i = 0; i < len; i += 1) {
+		value = list1[i];
+		if (value.type == Types.INTEGER) {
+			float1 = ((int) value.internalValue);
+		} else {
+			float1 = ((double) value.internalValue);
+		}
+		objArray1[i] = float1;
 	}
-	objArray1[i] = float1;
+	objArray1[0] = 0.0;
+	objArray1[(len - 1)] = 1.0;
+	objInstance1.nativeData = objArray1;
+	return output;
 }
-objArray1[0] = 0.0;
-objArray1[(len - 1)] = 1.0;
-objInstance1.nativeData = objArray1;
+

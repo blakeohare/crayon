@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class OpChain : Expression
+    public class OpChain : Expression
     {
         public Expression[] Expressions { get; set; }
         public Token[] Ops { get; set; }
@@ -40,6 +40,12 @@ namespace Pastel.Nodes
                 {
                     case "int+int":
                         current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value + (int)next.Value);
+                        break;
+                    case "int-int":
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value - (int)next.Value);
+                        break;
+                    case "int*int":
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value * (int)next.Value);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -78,6 +84,12 @@ namespace Pastel.Nodes
                     case "int+int":
                     case "int-int":
                     case "int*int":
+                    case "int%int":
+                    case "int&int":
+                    case "int|int":
+                    case "int^int":
+                    case "int<<int":
+                    case "int>>int":
                         this.ResolvedType = PType.INT;
                         break;
 
@@ -130,6 +142,85 @@ namespace Pastel.Nodes
                 }
             }
             return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i] = this.Expressions[i].ResolveWithTypeContext(compiler);
+            }
+
+            InlineConstant left = this.Expressions[0] as InlineConstant;
+            InlineConstant right = this.Expressions[1] as InlineConstant;
+            while (left != null && right != null)
+            {
+                object leftValue = left.Value;
+                object rightValue = right.Value;
+                string lookup = left.ResolvedType.RootValue + this.Ops[0].Value + right.ResolvedType.RootValue;
+                switch (lookup)
+                {
+                    case "int+int": this.Expressions[0] = CreateInteger(left.FirstToken, (int)leftValue + (int)rightValue); break;
+                    case "int-int": this.Expressions[0] = CreateInteger(left.FirstToken, (int)leftValue - (int)rightValue); break;
+                    case "int*int": this.Expressions[0] = CreateInteger(left.FirstToken, (int)leftValue * (int)rightValue); break;
+                    case "int/int": this.Expressions[0] = CreateInteger(left.FirstToken, (int)leftValue / (int)rightValue); break;
+                    case "int+double": this.Expressions[0] = CreateFloat(left.FirstToken, (int)leftValue + (double)rightValue); break;
+                    case "int-double": this.Expressions[0] = CreateFloat(left.FirstToken, (int)leftValue - (double)rightValue); break;
+                    case "int*double": this.Expressions[0] = CreateFloat(left.FirstToken, (int)leftValue * (double)rightValue); break;
+                    case "int/double": this.Expressions[0] = CreateFloat(left.FirstToken, (int)leftValue / (double)rightValue); break;
+                    case "double+int": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue + (int)rightValue); break;
+                    case "double-int": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue - (int)rightValue); break;
+                    case "double*int": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue * (int)rightValue); break;
+                    case "double/int": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue / (int)rightValue); break;
+                    case "double+double": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue + (double)rightValue); break;
+                    case "double-double": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue - (double)rightValue); break;
+                    case "double*double": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue * (double)rightValue); break;
+                    case "double/double": this.Expressions[0] = CreateFloat(left.FirstToken, (double)leftValue / (double)rightValue); break;
+                    case "bool&&bool": this.Expressions[0] = CreateBoolean(left.FirstToken, (bool)leftValue && (bool)rightValue); break;
+                    case "bool||bool": this.Expressions[0] = CreateBoolean(left.FirstToken, (bool)leftValue || (bool)rightValue); break;
+                    default:
+                        if (this.Ops[0].Value == "%")
+                        {
+                            throw new NotImplementedException("Remember when you implement this to prevent negatives.");
+                        }
+                        throw new ParserException(this.Ops[0], "The operator is not defined for these two constants.");
+
+                }
+                List<Expression> expressions = new List<Expression>(this.Expressions);
+                expressions.RemoveAt(1); // I know, I know...
+                this.Expressions = expressions.ToArray();
+
+                if (this.Expressions.Length == 1)
+                {
+                    return this.Expressions[0];
+                }
+                List<Token> ops = new List<Token>(this.Ops);
+                ops.RemoveAt(0);
+                this.Ops = ops.ToArray();
+                left = this.Expressions[0] as InlineConstant;
+                right = this.Expressions[1] as InlineConstant;
+            }
+            return this;
+        }
+
+        private InlineConstant CreateBoolean(Token originalFirstToken, bool value)
+        {
+            return new InlineConstant(PType.BOOL, originalFirstToken, value) { ResolvedType = PType.BOOL };
+        }
+
+        private InlineConstant CreateInteger(Token originalFirstToken, int value)
+        {
+            return new InlineConstant(PType.INT, originalFirstToken, value) { ResolvedType = PType.INT };
+        }
+
+        private InlineConstant CreateFloat(Token originalFirstToken, double value)
+        {
+            return new InlineConstant(PType.DOUBLE, originalFirstToken, value) { ResolvedType = PType.DOUBLE };
+        }
+
+        private InlineConstant CreateString(Token originalFirstToken, string value)
+        {
+            return new InlineConstant(PType.STRING, originalFirstToken, value) { ResolvedType = PType.STRING };
         }
     }
 }

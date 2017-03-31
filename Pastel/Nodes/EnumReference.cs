@@ -25,5 +25,10 @@ namespace Pastel.Nodes
             // should be resolved out by now
             throw new NotImplementedException();
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

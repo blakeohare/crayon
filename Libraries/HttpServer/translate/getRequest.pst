@@ -1,7 +1,12 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-Library._lib_httpserver_getRequest(stringOutParam);
-list1 = ((List<Value>) arg1.internalValue);
-list1.Add(buildString(stringOutParam[0]));
-list1.Add(buildString(stringOutParam[1]));
-list1.Add(buildString(stringOutParam[2]));
-list1.Add(buildString(stringOutParam[3]));
+﻿Value lib_httpserver_function_getRequest(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Native._lib_httpserver_getRequest(Core.StringBuffer16);
+	list1 = ((List<Value>) arg1.internalValue);
+	list1.Add(buildString(Core.StringBuffer16[0]));
+	list1.Add(buildString(Core.StringBuffer16[1]));
+	list1.Add(buildString(Core.StringBuffer16[2]));
+	list1.Add(buildString(Core.StringBuffer16[3]));
+	return output;
+}
+

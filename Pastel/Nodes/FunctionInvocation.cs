@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class FunctionInvocation : Expression
+    public class FunctionInvocation : Expression
     {
         public Expression Root { get; set; }
         public Token OpenParenToken { get; set; }
@@ -20,7 +20,7 @@ namespace Pastel.Nodes
             this.Args = args.ToArray();
         }
 
-        public Expression MaybeImmediatelyResolve(PastelParser parser)
+        internal Expression MaybeImmediatelyResolve(PastelParser parser)
         {
             if (this.Root is CompileTimeFunctionReference)
             {
@@ -97,8 +97,11 @@ namespace Pastel.Nodes
                     nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args);
                 }
 
-                nfi.ResolveType(varScope, compiler);
-                return nfi;
+                return nfi.ResolveType(varScope, compiler);
+            }
+            else if (this.Root is LibraryNativeFunctionReference)
+            {
+                return new LibraryNativeFunctionInvocation(this.FirstToken, (LibraryNativeFunctionReference)this.Root, this.Args).ResolveType(varScope, compiler);
             }
             else if (this.Root is ConstructorReference)
             {
@@ -108,6 +111,26 @@ namespace Pastel.Nodes
             {
                 throw new NotImplementedException();
             }
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Root = this.Root.ResolveWithTypeContext(compiler);
+
+            if (this.Root is FunctionReference)
+            {
+                // this is okay.
+            }
+            else
+            {
+                throw new ParserException(this.OpenParenToken, "Cannot invoke this like a function.");
+            }
+
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveWithTypeContext(compiler);
+            }
+            return this;
         }
     }
 }

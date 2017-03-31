@@ -72,6 +72,20 @@ namespace Common
         private const char ASCII_MAX = (char)127;
         private static readonly string[] HEX_CHARS = "0 1 2 3 4 5 6 7 8 9 a b c d e f".Split(' ');
 
+        public static string ConvertCharToCharConstantCode(char value)
+        {
+            switch (value)
+            {
+                case '\n': return "'\\n'";
+                case '\r': return "'\\r'";
+                case '\0': return "'\\0'";
+                case '\t': return "'\\t'";
+                case '\\': return "'\\\\'";
+                case '\'': return "'\\''";
+                default: return "'" + value + "'";
+            }
+        }
+
         public static string ConvertStringValueToCode(string rawValue, bool includeUnicodeEscape)
         {
             int uValue, d1, d2, d3, d4;
@@ -121,15 +135,24 @@ namespace Common
 
             return contents;
         }
-        
+
         public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
-            // Ick. Drops the encoding. TODO: fix this
-            return TrimBomIfPresent(
-                string.Join("", Util.ReadAssemblyFileBytes(assembly, path).Select<byte, char>(b => (char)b)));
+            return ReadAssemblyFileText(assembly, path, false);
         }
 
-        private static string TrimBomIfPresent(string text)
+        public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path, bool failSilently)
+        {
+            byte[] bytes = Util.ReadAssemblyFileBytes(assembly, path, failSilently);
+            if (bytes == null)
+            {
+                return null;
+            }
+            // Ick. Drops the encoding. TODO: fix this
+            return TrimBomIfPresent(string.Join("", bytes.Select<byte, char>(b => (char)b)));
+        }
+
+        public static string TrimBomIfPresent(string text)
         {
             return (text.Length >= 3 && text[0] == 239 && text[1] == 187 && text[2] == 191)
                 ? text.Substring(3)
@@ -137,7 +160,7 @@ namespace Common
         }
 
         private static readonly byte[] BUFFER = new byte[1000];
-        
+
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
             // TODO: scaling
@@ -153,6 +176,11 @@ namespace Common
 
         public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path)
         {
+            return ReadAssemblyFileBytes(assembly, path, false);
+        }
+
+        public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path, bool failSilently)
+        {
             string canonicalizedPath = path.Replace('/', '.');
 #if WINDOWS
             // a rather odd difference...
@@ -162,6 +190,11 @@ namespace Common
             System.IO.Stream stream = assembly.GetManifestResourceStream(fullPath);
             if (stream == null)
             {
+                if (failSilently)
+                {
+                    return null;
+                }
+
                 throw new System.Exception(path + " not marked as an embedded resource.");
             }
             List<byte> output = new List<byte>();
@@ -186,6 +219,7 @@ namespace Common
             return output.ToArray();
         }
 
+        // TODO: use <K, V>
         public static Dictionary<string, string> FlattenDictionary(Dictionary<string, string> bottom, Dictionary<string, string> top)
         {
             if (bottom.Count == 0) return new Dictionary<string, string>(top);
@@ -194,6 +228,19 @@ namespace Common
             foreach (string key in top.Keys)
             {
                 output[key] = top[key];
+            }
+            return output;
+        }
+        
+        public static Dictionary<K, V> MergeDictionaries<K, V>(params Dictionary<K, V>[] dictionaries)
+        {
+            Dictionary<K, V> output = new Dictionary<K, V>();
+            foreach (Dictionary<K, V> dict in dictionaries)
+            {
+                foreach (K k in dict.Keys)
+                {
+                    output[k] = dict[k];
+                }
             }
             return output;
         }
@@ -213,6 +260,23 @@ namespace Common
             // Parsing text data should use local info, but this is for parsing code.
             // As this is not supposed to be localized yet, only allow US decimals.
             return double.TryParse(value, DOUBLE_FLAG, EN_US, out output);
+        }
+
+        public static string MultiplyString(string str, int count)
+        {
+            switch (count)
+            {
+                case 0: return "";
+                case 1: return str;
+                case 2: return str + str;
+                default:
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    while (count-- > 0)
+                    {
+                        sb.Append(str);
+                    }
+                    return sb.ToString();
+            }
         }
     }
 }

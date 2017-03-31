@@ -46,6 +46,13 @@ struct ProgramData {
 	Array<Array<int>> esfData;
 	MagicNumbers magicNumbers;
 	Array<int> valueStackDepthByPc;
+	Dictionary<int, int> libraryFunctionIdByLookupId;
+	List<object> libraryFunctionPointers;
+	List<string> libraryFunctionNames;
+	List<int> libraryFunctionArgCounts;
+	Dictionary<string, int> invFunctionNameLiterals;
+	int activeLibraryReferenceId;
+	Array<object> libraryFunctionByPc;
 }
 
 struct ExecutionContext {
@@ -60,6 +67,8 @@ struct ExecutionContext {
 	int executionCounter;
 	bool activeExceptionHandled;
 	Value activeException;
+	bool executionStateChange;
+	int executionStateChangeCommand;
 }
 
 struct StackFrame {
@@ -178,5 +187,11 @@ struct ResourceDB {
 struct MagicNumbers {
 	int coreExceptionClassId;
 	int coreGenerateExceptionFunctionId;
+}
+
+struct LibRegObj {
+	List<object> functionPointers;
+	List<string> functionNames;
+	List<int> argCounts;
 }
 

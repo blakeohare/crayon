@@ -65,7 +65,7 @@ function @type('int') resource_manager_populate_directory_lookup(
 		$_list_push(files, file);
 
 		if (i > 0) {
-			pathBuilder += '/' + file;
+			pathBuilder = $_string_concat(pathBuilder, '/', file);
 		} else {
 			pathBuilder = file;
 		}

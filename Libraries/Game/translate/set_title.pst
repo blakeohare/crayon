@@ -1,2 +1,7 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-Library._lib_game_set_title(((string) arg1.internalValue));
+﻿Value lib_game_function_set_title(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Native._lib_game_set_title(((string) arg1.internalValue));
+	return output;
+}
+

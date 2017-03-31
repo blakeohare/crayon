@@ -1,9 +1,19 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	int1 = ((int) arg2.internalValue);
-	list1 = ((List<Value>) arg3.internalValue);
-	Library._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0]);
-	list1[0] = buildInteger(intOutParam[0]);
-	list1[1] = buildInteger(intOutParam[1]);
+﻿Value lib_gamepad_function_get_axis_2d_state(Array<Value> args) {
+	int int1 = 0;
+	List<Value> list1 = null;
+	ObjectInstance objInstance1 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		int1 = ((int) arg2.internalValue);
+		list1 = ((List<Value>) arg3.internalValue);
+		Native._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], int1, Core.IntBuffer16);
+		list1[0] = buildInteger(Core.IntBuffer16[0]);
+		list1[1] = buildInteger(Core.IntBuffer16[1]);
+	}
+	return output;
 }
+

@@ -6,7 +6,7 @@ function @type('string') read_till(@type('Array<int>') index, @type('string') ra
 	@type('List<char>') output = $_new_list('char');
 	if (!%%%IS_BYTECODE_LOADED_DIRECTLY%%%) {
 		@type('bool') ctn = true;
-		@type('char') c = $_string_as_char('\0');
+		@type('char') c = $_string_as_char(' ');
 		while (ctn) {
 			c = $_string_char_at(raw, $_array_get(index, 0));
 			if (c == char) {
@@ -41,7 +41,8 @@ function @type('int') read_integer(@type('Array<int>') pindex, @type('string') r
 		} else if (c == $_string_as_char('^')) {
 			num = -1 * read_integer(pindex, raw, length, alphaNums);
 		} else {
-			num = $_string_index_of(alphaNums, c);
+			$_comment('TODO: string.IndexOfChar(c)');
+			num = $_string_index_of(alphaNums, $_dummy_char_to_string_conversion(c));
 			if (num == -1) {
 				// TODO: assert
 			}

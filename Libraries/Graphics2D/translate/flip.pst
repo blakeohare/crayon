@@ -1,34 +1,52 @@
-﻿@import("FrameworkFunctions/6_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-objArray1 = objInstance1.nativeData;
-objArray2 = new Array<object>(7);
-objInstance2.nativeData = objArray2;
-bool1 = ((bool) arg3.internalValue);
-bool2 = ((bool) arg4.internalValue);
-i = 6;
-while (i >= 0) {
-	objArray2[i] = objArray1[i];
-	i -= 1;
-}
-if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
-	if (bool1) {
-		object1 = objArray1[1];
-		objArray2[1] = objArray2[3];
-		objArray2[3] = object1;
-	}
-	if (bool2) {
-		object1 = objArray1[2];
-		objArray2[2] = objArray2[4];
-		objArray2[4] = object1;
-	}
-} else {
-	objInstance1 = ((ObjectInstance) arg6.internalValue);
-	objArray1 = objInstance1.nativeData;
+﻿Value lib_graphics2d_function_flip(Array<Value> args) {
+	bool bool1 = false;
+	bool bool2 = false;
+	int i = 0;
+	Array<object> objArray1 = null;
+	Array<object> objArray2 = null;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
 	objInstance2 = ((ObjectInstance) arg2.internalValue);
-	objInstance2.nativeData[0] = objArray1;
-	object1 = objArray1[3];
-	object1 = Library._lib_graphics2d_flipTexture(object1, object1, object1);
-	objArray1[3] = object1;
+	objArray1 = objInstance1.nativeData;
+	objArray2 = new Array<object>(7);
+	objInstance2.nativeData = objArray2;
+	bool1 = ((bool) arg3.internalValue);
+	bool2 = ((bool) arg4.internalValue);
+	i = 6;
+	while (i >= 0) {
+		objArray2[i] = objArray1[i];
+		i -= 1;
+	}
+	if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+		if (bool1) {
+			object1 = objArray1[1];
+			objArray2[1] = objArray2[3];
+			objArray2[3] = object1;
+		}
+		if (bool2) {
+			object1 = objArray1[2];
+			objArray2[2] = objArray2[4];
+			objArray2[4] = object1;
+		}
+	} else {
+		objInstance1 = ((ObjectInstance) arg6.internalValue);
+		objArray1 = objInstance1.nativeData;
+		objInstance2 = ((ObjectInstance) arg2.internalValue);
+		objInstance2.nativeData[0] = objArray1;
+		object1 = objArray1[3];
+		object1 = Native._lib_graphics2d_flipTexture(object1, bool1, bool2);
+		objArray1[3] = object1;
+	}
+	output = arg2;
+	return output;
 }
-output = arg2;
+

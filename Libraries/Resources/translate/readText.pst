@@ -1,3 +1,9 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-string1 = Core.ReadResourceTextFile(((string) arg1.internalValue));
-output = new Value(Types.STRING, string1);
+﻿Value lib_resources_function_readText(Array<Value> args) {
+	string string1 = "";
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	string1 = Core.ReadResourceTextFile(((string) arg1.internalValue));
+	output = new Value(Types.STRING, string1);
+	return output;
+}
+

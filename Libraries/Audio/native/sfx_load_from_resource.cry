@@ -5,5 +5,5 @@
 import inline "FrameworkFunctions/2_arg.cry";
 
 lib_audio_load_sfx_from_resource(
-	$_cast('ObjectInstance', Value$arg1.internalValue), 
+	$_cast('ObjectInstance', Value$arg1.internalValue),
 	$_cast('string', Value$arg2.internalValue));

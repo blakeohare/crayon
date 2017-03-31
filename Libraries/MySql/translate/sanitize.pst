@@ -1,4 +1,10 @@
-﻿@import("FrameworkFunctions/2_arg.cry");
-string1 = ((string) arg1.internalValue);
-objInstance1 = ((ObjectInstance) arg2.internalValue);
-output = buildString(Library._lib_mysql_sanitize(string1, string1));
+﻿Value lib_mysql_function_sanitize(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	string1 = ((string) arg1.internalValue);
+	objInstance1 = ((ObjectInstance) arg2.internalValue);
+	output = buildString(Native._lib_mysql_sanitize(string1, objInstance1.nativeData[0]));
+	return output;
+}
+

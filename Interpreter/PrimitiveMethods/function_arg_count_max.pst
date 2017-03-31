@@ -1,5 +1,5 @@
 ﻿if (argCount > 0) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount));
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount));
 }
 functionId = functionPointer1.functionId;
 functionInfo = p.functionTable[functionId];

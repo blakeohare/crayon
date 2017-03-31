@@ -1,0 +1,16 @@
+﻿$_lib_gamepad_is_supported: TranslationHelper.alwaysFalse()
+$_lib_gamepad_platform_requires_refresh: TranslationHelper.alwaysFalse()
+$_lib_gamepad_get_current_device_count: 0
+$_lib_gamepad_get_device_reference: null
+$_lib_gamepad_get_name: ""
+$_lib_gamepad_get_button_count: 0
+$_lib_gamepad_get_axis_1d_count: 0
+$_lib_gamepad_get_axis_2d_count: 0
+$_lib_gamepad_get_button_state: false
+$_lib_gamepad_get_axis_1d_state: 0
+$_lib_gamepad_get_axis_2d_state: null
+$_lib_gamepad_poll_universe: TranslationHelper.alwaysTrue()
+$_lib_gamepad_refresh_devices: TranslationHelper.alwaysTrue()
+$_lib_gamepad_config_file_path: ".crayon-java.gamepad.config"
+$_lib_gamepad_getPlatform: 2
+$_lib_gamepad_jsIsOsx: 0

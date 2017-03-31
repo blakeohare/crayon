@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class BracketIndex : Expression
+    public class BracketIndex : Expression
     {
         public Expression Root { get; set; }
         public Token BracketToken { get; set; }
@@ -44,7 +44,7 @@ namespace Pastel.Nodes
             }
             else if (rootType.RootValue == "string")
             {
-                badIndex = indexType.IsIdentical(PType.INT);
+                badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
             }
             else
@@ -58,6 +58,24 @@ namespace Pastel.Nodes
             }
 
             return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Root = this.Root.ResolveWithTypeContext(compiler);
+            this.Index = this.Index.ResolveWithTypeContext(compiler);
+
+            Expression[] args = new Expression[] { this.Root, this.Index };
+            NativeFunction nf;
+            switch (this.Root.ResolvedType.RootValue)
+            {
+                case "string": nf = NativeFunction.STRING_CHAR_AT; break;
+                case "List": nf = NativeFunction.LIST_GET; break;
+                case "Dictionary": nf = NativeFunction.DICTIONARY_GET; break;
+                case "Array": nf = NativeFunction.ARRAY_GET; break;
+                default: throw new InvalidOperationException(); // this should have been caught earlier in ResolveType()
+            }
+            return new NativeFunctionInvocation(this.FirstToken, nf, args) { ResolvedType = this.ResolvedType };
         }
     }
 }

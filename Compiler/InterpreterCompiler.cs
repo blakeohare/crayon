@@ -48,7 +48,8 @@ namespace Crayon
             Dictionary<string, string> libraryProducedFiles = new Dictionary<string, string>();
             if (!isPastel)
             {
-                libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles();
+                // the false parameter refers to actually compiling the library as pastel as opposed to compiling the translatable Crayon library into pastel.
+                libraryProducedFiles = this.interpreterParser.SystemLibraryManager.GetSupplementalTranslationFiles(false);
             }
 
             List<string> orderedFileIds = new List<string>();
@@ -179,6 +180,7 @@ namespace Crayon
                 replacements.Add("IS_ANDROID", this.platform.PlatformShortId == "game-csharp-android" ? "true" : "false");
 				replacements.Add("IS_JAVA", this.platform.LanguageId == LanguageId.JAVA ? "true" : "false");
 				replacements.Add("IS_RUBY", this.platform.LanguageId == LanguageId.RUBY ? "true" : "false");
+                replacements.Add("IS_FOR_PASTEL_TRANSLATION", "false"); // overridden in pastel translation, so always return false
                 this.replacementsDictionary = replacements;
             }
             return this.replacementsDictionary;

@@ -1,35 +1,50 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = objInstance1.nativeData;
-if (objArray1 == null) {
-	objArray1 = new Array<object>(5);
-	objInstance1.nativeData = objArray1;
-}
-intArray1 = ((Array<int>) objArray1[0]);
-if (intArray1 == null) {
-	intArray1 = new Array<int>(0);
-	objArray1[0] = intArray1;
-	objArray1[1] = 0;
-	objArray1[2] = new Array<Array<object>>(64);
-	objArray1[3] = 0;
-	objArray1[4] = new List<int>();
-}
-intList1 = ((List<int>) objArray1[4]);
-i = ((int) arg3.internalValue);
-if (i == 1) {
-	if (arg2.type == Types.LIST) {
-		list1 = ((List<Value>) arg2.internalValue);
-		len = list1.Size();
-		for (i = 0; i < len; i += 1) {
-			value = list1[i];
-			intList1.Add(((int) value.internalValue));
+﻿Value lib_graphics2d_function_renderQueueAction(Array<Value> args) {
+	int i = 0;
+	Array<int> intArray1 = null;
+	List<int> intList1 = null;
+	int len = 0;
+	List<Value> list1 = null;
+	Array<object> objArray1 = null;
+	ObjectInstance objInstance1 = null;
+	Value value = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = objInstance1.nativeData;
+	if (objArray1 == null) {
+		objArray1 = new Array<object>(5);
+		objInstance1.nativeData = objArray1;
+	}
+	intArray1 = ((Array<int>) objArray1[0]);
+	if (intArray1 == null) {
+		intArray1 = new Array<int>(0);
+		objArray1[0] = intArray1;
+		objArray1[1] = 0;
+		objArray1[2] = new Array<Array<object>>(64);
+		objArray1[3] = 0;
+		objArray1[4] = new List<int>();
+	}
+	intList1 = ((List<int>) objArray1[4]);
+	i = ((int) arg3.internalValue);
+	if (i == 1) {
+		if (arg2.type == Types.LIST) {
+			list1 = ((List<Value>) arg2.internalValue);
+			len = list1.Size();
+			for (i = 0; i < len; i += 1) {
+				value = list1[i];
+				intList1.Add(((int) value.internalValue));
+			}
+		}
+		Native._lib_graphics2d_render(intArray1, ((int) objArray1[1]), ((Array<Array<object>>) objArray1[2]), intList1);
+	} else {
+		if (i == 2) {
+			objArray1[1] = 0;
+			objArray1[3] = 0;
+			Core.ForceParens(intList1).Clear();
 		}
 	}
-	Library._lib_graphics2d_render(intArray1, intArray1, intArray1, intArray1);
-} else {
-	if (i == 2) {
-		objArray1[1] = 0;
-		objArray1[3] = 0;
-		Core.ForceParens(intList1).Clear();
-	}
+	return output;
 }
+

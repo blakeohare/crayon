@@ -1,4 +1,11 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-Library._lib_nori_windowInstantiate(objInstance1.nativeData, objInstance1.nativeData, objInstance1.nativeData);
+﻿Value lib_nori_function_windowInstantiate(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	Native._lib_nori_windowInstantiate(objInstance1.nativeData, objInstance2.nativeData, ((List<Value>) arg3.internalValue));
+	return output;
+}
+

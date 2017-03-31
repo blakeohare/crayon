@@ -8,13 +8,18 @@
         public string FileName { get; private set; }
         public bool HasWhitespacePrefix { get; private set; }
 
-        internal Token(string value, string filename, int lineIndex, int colIndex, bool hasWhitespacePrefix)
+        public Token(string value, string filename, int lineIndex, int colIndex, bool hasWhitespacePrefix)
         {
             this.Value = value;
             this.FileName = filename;
             this.Line = lineIndex;
             this.Col = colIndex;
             this.HasWhitespacePrefix = hasWhitespacePrefix;
+        }
+
+        public static Token CreateDummyToken(string value)
+        {
+            return new Token(value, "", 0, 0, false);
         }
 
         public override string ToString()

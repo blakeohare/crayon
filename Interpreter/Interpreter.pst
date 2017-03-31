@@ -75,6 +75,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 	Array<int> ops = p.ops;
 	Array<Array<int>> args = p.args;
 	Array<string> stringArgs = p.stringArgs;
+	Array<object> libFunctionPointers = p.libraryFunctionByPc;
 	Array<ClassInfo> classTable = p.classTable;
 	Array<FunctionInfo> functionTable = p.functionTable;
 	Array<Value> literalTable = p.literalTable;
@@ -171,10 +172,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 	Dictionary<int, int> integerSwitch = null;
 	Dictionary<string, int> stringSwitch = null;
 	Array<Array<int>> esfData = p.esfData;
-	Array<int> intOutParam = new Array<int>(16);
-	Array<double> floatOutParam = new Array<double>(16);
-	Array<string> stringOutParam = new Array<string>(16);
-	Array<Value> localsStack = ec.localsStack;
+				Array<Value> localsStack = ec.localsStack;
 	Array<int> localsStackSet = ec.localsStackSet;
 	int localsStackSetToken = stack.localsStackSetToken;
 	int localsStackCapacity = localsStack.Size();
@@ -241,6 +239,10 @@ InterpreterResult interpretImpl(int executionContextId) {
 			case OpCodes.CALL_LIB_FUNCTION:
 				Core.EmitComment("CALL_LIB_FUNCTION");
 				@import("Ops/call_lib_function.cry");
+				break;
+			case OpCodes.CALL_LIB_FUNCTION_DYNAMIC:
+				Core.EmitComment("CALL_LIB_FUNCTION_DYNAMIC");
+				@import("Ops/call_lib_function_dynamic.cry");
 				break;
 			case OpCodes.CLASS_DEFINITION:
 				Core.EmitComment("CLASS_DEFINITION");
@@ -346,6 +348,14 @@ InterpreterResult interpretImpl(int executionContextId) {
 				Core.EmitComment("JUMP_IF_TRUE_NO_POP");
 				@import("Ops/jump_if_true_no_pop.cry");
 				break;
+			case OpCodes.LIB_DECLARATION:
+				Core.EmitComment("LIB_DECLARATION");
+				if (true) {
+					@import("Ops/lib_declaration.cry");
+				} else {
+					i = 0;
+				}
+				break;
 			case OpCodes.LIST_SLICE:
 				Core.EmitComment("LIST_SLICE");
 				@import("Ops/list_slice.cry");
@@ -424,7 +434,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 				break;
 			default:
 				Core.EmitComment("THIS SHOULD NEVER HAPPEN");
-				return Core.GenerateException(CoreExceptionTypes.FATAL, ("Bad op code: " + Core.IntToString(ops[pc])));
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
 		}
 		if (@ext_boolean("HAS_INCREMENT")) {
 			++pc;
@@ -626,7 +636,7 @@ string unrollExceptionOutput(Value exceptionInstance) {
 	if (tokensAtPc != null) {
 		codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(tokensAtPc[0]));
 	}
-	string stackTrace = trace.Join(trace);
+	string stackTrace = trace.Join("\n");
 	return Core.StringConcatAll(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
 }
 
@@ -639,5 +649,28 @@ bool isPcFromCore(int pc) {
 	Token token = tokens[0];
 	string filename = tokenHelperGetFileLine(token.fileId, 0);
 	return Core.StringEquals("[Core]", filename);
+}
+
+int vm_getCurrentExecutionContextId() {
+	ProgramData p = Core.GetProgramData();
+	return p.lastExecutionContextId;
+}
+
+ExecutionContext getExecutionContext(int id) {
+	ProgramData p = Core.GetProgramData();
+	if (id == -1) {
+		id = p.lastExecutionContextId;
+	}
+	if (p.executionContexts.Contains(id)) {
+		return p.executionContexts[id];
+	}
+	return null;
+}
+
+int vm_suspend() {
+	ExecutionContext ec = getExecutionContext(-1);
+	ec.executionStateChange = true;
+	ec.executionStateChangeCommand = 1;
+	return 0;
 }
 

@@ -1,0 +1,72 @@
+﻿TranslationHelper_globals = {}
+
+TranslationHelper_StringBuffer16 = [None] * 16
+TranslationHelper_IntBuffer16 = [0] * 16
+TranslationHelper_FloatBuffer16 = [0.0] * 16
+
+def always_true(): return True
+def always_false(): return False
+
+def TranslationHelper_setByteCode(value):
+  TranslationHelper_globals['bytecode'] = value
+
+def TranslationHelper_getByteCode():
+  return TranslationHelper_globals['bytecode']
+
+def TranslationHelper_setResourceManifest(value):
+  TranslationHelper_globals['res'] = value
+
+def TranslationHelper_getResourceManifest():
+  return TranslationHelper_globals['res']
+
+def TranslationHelper_setCommandLineArgs(value):
+  TranslationHelper_globals['args'] = value[:]
+
+def TranslationHelper_getCommandLineArgs():
+  return TranslationHelper_globals['args']
+
+def TranslationHelper_setProgramData(value):
+  TranslationHelper_globals['pd'] = value
+
+def TranslationHelper_getProgramData():
+  return TranslationHelper_globals['pd']
+
+def TranslationHelper_sortedCopyOfList(list):
+  list = list[:]
+  list.sort()
+  return list
+
+def TranslationHelper_determineLibraryAvailability(name, ver):
+  return TranslationHelper_globals['libreg'].loadLibrary(name, ver)
+
+def TranslationHelper_setLibraries(libraries):
+  TranslationHelper_globals['libreg'] = LibraryRegistry(libraries)
+
+def TranslationHelper_registerLibraryFunction(moduleInfo, libRegObj, fnName, fnArgCount):
+  libName, libFunctionLookup = moduleInfo
+  canonicalName = libName.lower()
+  fn = libFunctionLookup['v_lib_' + canonicalName + '_function_' + fnName]
+  lookupName = 'lib_' + canonicalName + '_' + fnName
+  v_registerLibraryFunction(fn, libRegObj, lookupName, fnArgCount)
+
+def TranslationHelper_runLibraryManifest(name, libRegObj):
+  library = TranslationHelper_globals['libreg'].getLibrary(name.lower())
+  if library == None:
+    return 0
+  try:
+    library.manifestFunction(libRegObj)
+    return 0
+  except:
+    return 3
+
+def TranslationHelper_isValidInteger(value):
+  if len(value) == 0: return False
+  if value[0] == '-': value = value[1:]
+  return value.isdigit()
+
+def TranslationHelper_tryParseFloat(value, floatOut):
+  try:
+    floatOut[1] = float(value)
+    floatOut[0] = 1.0
+  except:
+    floatOut[0] = -1.0

@@ -1,12 +1,20 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objArray1 = objInstance1.nativeData;
-	if (objArray1 != null) {
-		object1 = objArray1[3];
-		if (object1 != null) {
-			Library._lib_imageresources_flushPixelEditSession(object1);
-			objArray1[3] = null;
+﻿Value lib_imageresources_function_flushImageChanges(Array<Value> args) {
+	Array<object> objArray1 = null;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
+		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		objArray1 = objInstance1.nativeData;
+		if (objArray1 != null) {
+			object1 = objArray1[3];
+			if (object1 != null) {
+				Native._lib_imageresources_flushPixelEditSession(object1);
+				objArray1[3] = null;
+			}
 		}
 	}
+	return output;
 }
+

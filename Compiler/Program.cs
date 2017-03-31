@@ -62,19 +62,68 @@ namespace Crayon
                 return;
             }
 
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
 
-            Common.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
+            CompatibilityHack.IS_CBX_MODE = platform2 != null;
+
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            Dictionary<string, FileOutput> result;
+            
             if (platform2 != null)
             {
+                // This really needs to go in a separate helper file.
+                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
+                resourceDatabase.ByteCodeFile = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = ByteCodeEncoder.Encode(compilationResult.ByteCode),
+                };
+                
+                Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+                if (buildContext.ImageSheetIds != null)
+                {
+                    foreach (string imageSheetId in buildContext.ImageSheetIds)
+                    {
+                        imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+
+                        foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                        {
+                            imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                        }
+                    }
+                }
+                Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+                resourceDatabase.AddImageSheets(imageSheets);
+
+                resourceDatabase.GenerateResourceMapping();
+
+
                 VmGenerator vmGenerator = new VmGenerator();
-                vmGenerator.GenerateVmSourceCodeForPlatform(platform2, null, null);
+                result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                    platform2,
+                    compilationResult,
+                    resourceDatabase,
+                    compilationResult.LibrariesUsed,
+                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
+            }
+            else
+            {
+                throw new InvalidOperationException("Unrecognized platform. See usage.");
             }
 
-            throw new InvalidOperationException("Unrecognized platform. See usage.");
+            string outputDirectory = buildContext.OutputFolder;
+            if (!FileUtil.IsAbsolutePath(outputDirectory))
+            {
+                outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
+            }
+            outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
+            FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
+
+            exporter.ExportFiles(result);
         }
 
-        private static Common.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
+        private static Platform.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
         {
             string platformId = buildContext.Platform.ToLowerInvariant();
             return platformProvider.GetPlatform(platformId);

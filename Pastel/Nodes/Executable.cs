@@ -12,19 +12,23 @@ namespace Pastel.Nodes
             this.FirstToken = firstToken;
         }
 
-        public abstract IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler);
-
-        protected IList<Executable> Listify(Executable ex)
-        {
-            return new Executable[] { ex };
-        }
-
+        public abstract Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler);
+        
         internal static IList<Executable> ResolveNamesAndCullUnusedCodeForBlock(IList<Executable> code, PastelCompiler compiler)
         {
             List<Executable> output = new List<Executable>();
             for (int i = 0; i < code.Count; ++i)
             {
-                output.AddRange(code[i].ResolveNamesAndCullUnusedCode(compiler));
+                Executable line = code[i].ResolveNamesAndCullUnusedCode(compiler);
+                if (line is ExecutableBatch)
+                {
+                    // ExecutableBatch is always flattened
+                    output.AddRange(((ExecutableBatch)line).Executables);
+                }
+                else
+                {
+                    output.Add(line);
+                }
             }
 
             for (int i = 0; i < output.Count - 1; i++)
@@ -55,6 +59,16 @@ namespace Pastel.Nodes
             }
         }
 
+        internal static void ResolveWithTypeContext(PastelCompiler compiler, Executable[] executables)
+        {
+            for (int i = 0; i < executables.Length; ++i)
+            {
+                executables[i] = executables[i].ResolveWithTypeContext(compiler);
+            }
+        }
+
         internal abstract void ResolveTypes(VariableScope varScope, PastelCompiler compiler);
+
+        internal abstract Executable ResolveWithTypeContext(PastelCompiler compiler);
     }
 }

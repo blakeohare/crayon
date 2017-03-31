@@ -36,7 +36,9 @@ namespace Pastel.Nodes
 
         public void ResolveTypes(PastelCompiler compiler)
         {
-            VariableScope varScope = new VariableScope(this, compiler.Globals);
+            Dictionary<string, VariableDeclaration> globals = compiler.SharedScope == null ? compiler.Globals : compiler.SharedScope.Globals;
+
+            VariableScope varScope = new VariableScope(this, globals);
             for (int i = 0; i < this.ArgTypes.Length; ++i)
             {
                 varScope.DeclareVariables(this.ArgNames[i], this.ArgTypes[i]);
@@ -46,6 +48,11 @@ namespace Pastel.Nodes
             {
                 this.Code[i].ResolveTypes(varScope, compiler);
             }
+        }
+
+        public void ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            Executable.ResolveWithTypeContext(compiler, this.Code);
         }
     }
 }

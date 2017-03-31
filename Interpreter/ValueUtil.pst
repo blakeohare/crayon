@@ -10,14 +10,14 @@
 		return "false";
 	}
 	if (type == Types.FLOAT) {
-		string floatStr = Core.FloatToString(wrappedValue.internalValue);
+		string floatStr = Core.FloatToString(((double) wrappedValue.internalValue));
 		if (!floatStr.Contains(".")) {
 			Core.StringAppend(floatStr, ".0");
 		}
 		return floatStr;
 	}
 	if (type == Types.INTEGER) {
-		return Core.IntToString(wrappedValue.internalValue);
+		return Core.IntToString(((int) wrappedValue.internalValue));
 	}
 	if (type == Types.STRING) {
 		return ((string) wrappedValue.internalValue);
@@ -117,17 +117,6 @@ Value buildString(string s) {
 	return new Value(Types.STRING, s);
 }
 
-Value buildListByWrappingInput(List<Value> list) {
-	return new Value(Types.LIST, list);
-}
-
-Value buildList2(Value value1, Value value2) {
-	List<Value> list = new List<Value>();
-	list.Add(value1);
-	list.Add(value2);
-	return new Value(Types.LIST, list);
-}
-
 Value buildBoolean(bool value) {
 	if (value) {
 		return VALUE_TRUE;
@@ -179,7 +168,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				break;
 			case Types.STRING:
 				if (@ext_boolean("IS_JAVA")) {
-					if (a.internalValue.Equals(b.internalValue)) {
+					if (Core.StringEquals(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
 				} else {
@@ -264,39 +253,6 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 	return 0;
 }
 
-Value buildLiteral(int type, int value, Array<Value> floatTable, Array<Value> stringTable) {
-	if (type == Types.NULL) {
-		return VALUE_NULL;
-	}
-	if (type == Types.INTEGER) {
-		return buildInteger(value);
-	}
-	if (type == Types.FLOAT) {
-		return floatTable[value];
-	}
-	if (type == Types.STRING) {
-		return stringTable[value];
-	}
-	if ((type == Types.BOOLEAN) && (value == 1)) {
-		return VALUE_TRUE;
-	}
-	if ((type == Types.BOOLEAN) && (value == 0)) {
-		return VALUE_FALSE;
-	}
-	return null;
-}
-
-DictImpl createEmptyDictionary(int type) {
-	return new DictImpl(new Dictionary<int, Value>(), new Dictionary<int, Value>(), new Dictionary<string, Value>(), new Dictionary<string, Value>(), 0, type);
-}
-
-int setStringKvpToDict(DictImpl d, string k, Value v) {
-	d.keyStringLookup[k] = buildString(k);
-	d.valueStringLookup[k] = v;
-	d.size = d.keyStringLookup.Size();
-	return 0;
-}
-
 Value buildList(List<Value> valueList) {
 	return new Value(Types.LIST, valueList);
 }
@@ -317,127 +273,6 @@ Value buildDictionary(Array<string> keys, Array<Value> values) {
 	return new Value(Types.DICTIONARY, new DictImpl(new Dictionary<int, Value>(), new Dictionary<int, Value>(), keyLookup, valueLookup, keyLookup.Size(), Types.STRING));
 }
 
-Array<string> toStringList(Value valueStringOrList, Array<string> maybeReuse) {
-	if (valueStringOrList.type == Types.STRING) {
-		if ((maybeReuse == null) || (maybeReuse.Size() != 1)) {
-			maybeReuse = new Array<string>(1);
-		}
-		maybeReuse[0] = ((string) valueStringOrList.internalValue);
-		return maybeReuse;
-	}
-	if (valueStringOrList.type == Types.LIST) {
-		List<Value> list = ((List<Value>) valueStringOrList.internalValue);
-		int length = list.Size();
-		if ((maybeReuse == null) || (maybeReuse.Size() != length)) {
-			maybeReuse = new Array<string>(length);
-		}
-		for (int i = length - 1; i >= 0; i -= 1) {
-			Value value = list[i];
-			if (value.type != Types.STRING) {
-				return null;
-			}
-			maybeReuse[i] = ((string) value.internalValue);
-		}
-		return maybeReuse;
-	}
-	return null;
-}
-
-bool sortValues(Array<Value> input, Array<Value> output, int startIndex, int length, bool isString) {
-	if (length < 3) {
-		if (length == 2) {
-			bool doSwap = false;
-			if (isString) {
-				doSwap = stringCompare(input[startIndex], input[(startIndex + 1)]);
-			} else {
-				doSwap = numberCompare(input[startIndex], input[(startIndex + 1)]);
-			}
-			if (doSwap) {
-				output[startIndex] = input[(startIndex + 1)];
-				output[(startIndex + 1)] = input[startIndex];
-			} else {
-				output[startIndex] = input[startIndex];
-				output[(startIndex + 1)] = input[(startIndex + 1)];
-			}
-		} else {
-			if (length == 1) {
-				output[startIndex] = input[startIndex];
-			}
-		}
-		return true;
-	}
-	Value pivot = input[(startIndex + Core.IntegerDivision(length, 2))];
-	int endIndex = startIndex + length;
-	int startPointer = startIndex;
-	int endPointer = endIndex - 1;
-	Value item = null;
-	if (isString) {
-		for (int i = startIndex; i < endIndex; i += 1) {
-			item = input[i];
-			if (stringCompare(pivot, item)) {
-				output[endPointer] = item;
-				endPointer -= 1;
-			} else {
-				output[startPointer] = item;
-				startPointer += 1;
-			}
-		}
-	} else {
-		for (int i = startIndex; i < endIndex; i += 1) {
-			item = input[i];
-			if (numberCompare(pivot, item)) {
-				output[endPointer] = item;
-				endPointer -= 1;
-			} else {
-				output[startPointer] = item;
-				startPointer += 1;
-			}
-		}
-	}
-	int firstLength = startPointer - startIndex;
-	int secondLength = length - firstLength;
-	if (firstLength > 0) {
-		sortValues(output, input, startIndex, firstLength, isString);
-	}
-	if (secondLength > 0) {
-		sortValues(output, input, startIndex + firstLength, length - firstLength, isString);
-	}
-	return true;
-}
-
-bool stringCompare(Value a, Value b) {
-	string aString = ((string) a.internalValue);
-	string bString = ((string) b.internalValue);
-	return Core.StringCompareIsReverse(aString, bString);
-}
-
-bool numberCompare(Value a, Value b) {
-	float aNumber = 0;
-	float bNumber = 0;
-	if (a.type == Types.INTEGER) {
-		aNumber = ((int) a.internalValue);
-	} else {
-		aNumber = ((float) a.internalValue);
-	}
-	if (b.type == Types.INTEGER) {
-		bNumber = ((int) b.internalValue);
-	} else {
-		bNumber = ((float) b.internalValue);
-	}
-	return aNumber > bNumber;
-}
-
-int nextPowerOf2(int value) {
-	if (((value - 1) & value) == 0) {
-		return value;
-	}
-	int output = 1;
-	while (output < value) {
-		output *= 2;
-	}
-	return output;
-}
-
 PlatformRelayObject buildRelayObj(int type, int iarg1, int iarg2, int iarg3, double farg1, string sarg1) {
 	return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
 }
@@ -456,7 +291,7 @@ Value multiplyString(Value strValue, string str, int n) {
 			return strValue;
 		}
 		if (n == 2) {
-			return buildString(str + str);
+			return buildString(Core.StringConcatAll(str, str));
 		}
 		return VALUE_EMPTY_STRING;
 	}
@@ -465,7 +300,7 @@ Value multiplyString(Value strValue, string str, int n) {
 		n -= 1;
 		builder.Add(str);
 	}
-	str = builder.Join(builder);
+	str = builder.Join("");
 	return buildString(str);
 }
 
@@ -477,12 +312,12 @@ string stringDecode(string encoded) {
 		for (int i = 0; i < length; i += 1) {
 			char c = encoded[i];
 			if ((c == per) && ((i + 2) < length)) {
-				builder.Add(stringFromHex(("" + encoded[(i + 1)]) + encoded[(i + 2)]));
+				builder.Add(stringFromHex(Core.StringConcatAll("", Core.CharToString(encoded[(i + 1)]), Core.CharToString(encoded[(i + 2)]))));
 			} else {
-				builder.Add(("" + c));
+				builder.Add(Core.StringConcatAll("", Core.CharToString(c)));
 			}
 		}
-		return builder.Join(builder);
+		return builder.Join("");
 	}
 	return encoded;
 }
@@ -496,28 +331,20 @@ string stringFromHex(string encoded) {
 	int b = 0;
 	string c = null;
 	for (int i = 0; (i + 1) < length; i += 2) {
-		c = "" + encoded[i];
+		c = Core.StringConcatAll("", Core.CharToString(encoded[i]));
 		a = hex.IndexOf(c);
 		if (a == -1) {
 			return null;
 		}
-		c = "" + encoded[(i + 1)];
+		c = Core.StringConcatAll("", Core.CharToString(encoded[(i + 1)]));
 		b = hex.IndexOf(c);
 		if (b == -1) {
 			return null;
 		}
 		a = (a * 16) + b;
-		output.Add(Core.Chr(a));
+		output.Add(Core.CharToString(Core.Chr(a)));
 	}
-	return output.Join(output);
-}
-
-int parsePosDecInt(string original) {
-	int int1 = 0;
-	if (Core.IsValidInteger(original)) {
-		return Core.ParseInt(original);
-	}
-	return -1;
+	return output.Join("");
 }
 
 DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
@@ -557,7 +384,7 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
 }
 
 int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutParam) {
-	intOutParam[0] = 0;
+	Core.IntBuffer16[0] = 0;
 	int length = keyList.Size();
 	if (length < 2) {
 		return 0;
@@ -577,27 +404,27 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
 		switch (item.type) {
 			case Types.INTEGER:
 				if (isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				numKeys[i] = ((double) ((int) item.internalValue));
 				break;
 			case Types.FLOAT:
 				if (isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				numKeys[i] = ((double) item.internalValue);
 				break;
 			case Types.STRING:
 				if (!isString) {
-					intOutParam[0] = 1;
+					Core.IntBuffer16[0] = 1;
 					return 0;
 				}
 				stringKeys[i] = ((string) item.internalValue);
 				break;
 			default:
-				intOutParam[0] = 1;
+				Core.IntBuffer16[0] = 1;
 				return 0;
 		}
 	}
@@ -704,13 +531,19 @@ double getFloat(Value num) {
 	return ((int) num.internalValue) + 0.0;
 }
 
-Array<object> getNativeData(Value objValue) {
-	ObjectInstance obj = ((ObjectInstance) objValue.internalValue);
-	return obj.nativeData;
-}
-
 object getNativeDataItem(Value objValue, int index) {
 	ObjectInstance obj = ((ObjectInstance) objValue.internalValue);
 	return obj.nativeData[index];
+}
+
+int nextPowerOf2(int value) {
+	if (((value - 1) & value) == 0) {
+		return value;
+	}
+	int output = 1;
+	while (output < value) {
+		output *= 2;
+	}
+	return output;
 }
 

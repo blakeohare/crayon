@@ -15,7 +15,7 @@ while (i > 0) {
 		first = false;
 	} else {
 		if (type != value2.type) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_KEY, "Cannot have multiple key types in one dictionary.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Cannot have multiple key types in one dictionary.");
 		}
 	}
 	if (type == Types.INTEGER) {
@@ -28,7 +28,7 @@ while (i > 0) {
 				objInstance1 = ((ObjectInstance) value2.internalValue);
 				intKey = objInstance1.objectId;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_KEY, "Only integers, strings, and objects can be used as dictionary keys.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Only integers, strings, and objects can be used as dictionary keys.");
 			}
 		}
 	}
@@ -43,11 +43,11 @@ while (i > 0) {
 }
 if (type == Types.STRING) {
 	if (dictStringKeyLookup.Size() != len) {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_KEY, "Key collision");
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision");
 	}
 } else {
 	if (dictIntKeyLookup.Size() != len) {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_KEY, "Key collision");
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision");
 	}
 }
 value = new Value(Types.DICTIONARY, new DictImpl(dictIntKeyLookup, dictIntValueLookup, dictStringKeyLookup, dictStringValueLookup, len, type));

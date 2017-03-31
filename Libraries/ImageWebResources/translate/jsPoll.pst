@@ -1,9 +1,14 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-if (@ext_boolean("IS_JAVASCRIPT")) {
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	bool1 = ((bool) objInstance1.nativeData[0]);
-	output = VALUE_FALSE;
-	if (bool1) {
-		output = VALUE_TRUE;
+﻿Value lib_imagewebresources_function_jsPoll(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	if (@ext_boolean("IS_JAVASCRIPT")) {
+		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		bool1 = ((bool) objInstance1.nativeData[0]);
+		output = VALUE_FALSE;
+		if (bool1) {
+			output = VALUE_TRUE;
+		}
 	}
+	return output;
 }
+

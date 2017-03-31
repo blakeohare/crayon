@@ -1,11 +1,21 @@
-﻿@import("FrameworkFunctions/6_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-objArray1 = objInstance1.nativeData;
-objArray2 = objInstance2.nativeData;
-object1 = objArray1[0];
-object2 = objArray2[0];
-object3 = Library._lib_nori_render_textAreaLayout(object1, object1, object1, object1, object1, object1);
-if (object1 == null) {
-	objArray1[0] = object3;
+﻿Value lib_nori_function_render_textAreaLayout(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	objArray1 = objInstance1.nativeData;
+	objArray2 = objInstance2.nativeData;
+	object1 = objArray1[0];
+	object2 = objArray2[0];
+	object3 = Native._lib_nori_render_textAreaLayout(object1, object2, ((int) arg3.internalValue), ((int) arg4.internalValue), ((int) arg5.internalValue), ((int) arg6.internalValue));
+	if (object1 == null) {
+		objArray1[0] = object3;
+	}
+	return output;
 }
+

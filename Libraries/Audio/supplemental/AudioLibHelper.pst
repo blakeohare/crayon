@@ -1,15 +1,15 @@
 ﻿int lib_audio_stop(object sound, bool reset) {
-	Library._lib_audio_audioStop(sound);
+	Native._lib_audio_audioStop(sound);
 	return 0;
 }
 
 int lib_audio_sfx_stop(object channel, object resource, int resourceId, bool isActivelyPlaying, bool hardStop) {
-	Library._lib_audio_sfxStop(channel, channel, channel, channel, channel);
+	Native._lib_audio_sfxStop(channel, resource, resourceId, isActivelyPlaying, hardStop);
 	return 0;
 }
 
 int lib_audio_sfx_get_state(object channel, object sfxResource, int resourceId) {
-	return Library._lib_audio_sfxGetState(channel, channel, channel);
+	return Native._lib_audio_sfxGetState(channel, sfxResource, resourceId);
 }
 
 int lib_audio_sfx_set_pan(object channel, object sfxResource, double pan) {
@@ -21,12 +21,12 @@ int lib_audio_sfx_set_volume(object channel, object sfxResource, double volume) 
 }
 
 int lib_audio_sfx_unpause(object channel, object sfxResource, double volume, double pan) {
-	Library._lib_audio_sfxResume(channel, channel, channel, channel);
+	Native._lib_audio_sfxResume(channel, sfxResource, volume, pan);
 	return 0;
 }
 
 int lib_audio_sfx_launch(object sfxResource, Array<object> channelNativeDataOut, double volume, double pan) {
-	object channel = Library._lib_audio_sfxPlay(sfxResource, sfxResource, sfxResource);
+	object channel = Native._lib_audio_sfxPlay(sfxResource, volume, pan);
 	if (channel == null) {
 		return 0;
 	}
@@ -35,38 +35,38 @@ int lib_audio_sfx_launch(object sfxResource, Array<object> channelNativeDataOut,
 }
 
 int lib_audio_load_sfx_from_resource(ObjectInstance obj, string path) {
-	object sfx = Library._lib_audio_readLocalSoundResource(path);
+	object sfx = Native._lib_audio_readLocalSoundResource(path);
 	obj.nativeData = new Array<object>(1);
 	obj.nativeData[0] = sfx;
 	return 1;
 }
 
 Value lib_audio_is_music_playing() {
-	if (Library._lib_audio_musicIsPlaying()) {
+	if (Native._lib_audio_musicIsPlaying()) {
 		return VALUE_TRUE;
 	}
 	return VALUE_FALSE;
 }
 
 int lib_audio_music_play(ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop) {
-	Library._lib_audio_musicSetVolume(startingVolume);
+	Native._lib_audio_musicSetVolume(startingVolume);
 	object nativeObject = null;
 	if (musicObject.nativeData != null) {
 		nativeObject = musicObject.nativeData[0];
 	}
 	if (isResource) {
-		Library._lib_audio_musicPlayResource(nativeObject, nativeObject, nativeObject);
+		Native._lib_audio_musicPlayResource(nativeObject, path, isLoop);
 	} else {
-		if (!Library._lib_audio_musicVerifyFileExists(path)) {
+		if (!Native._lib_audio_musicVerifyFileExists(path)) {
 			return -1;
 		}
-		Library._lib_audio_musicPlayFile(nativeObject, nativeObject, nativeObject);
+		Native._lib_audio_musicPlayFile(nativeObject, path, isLoop);
 	}
 	return 0;
 }
 
 bool lib_audio_music_load_from_resource(ObjectInstance musicObj, string path) {
-	object nativeMusicObject = Library._lib_audio_musicLoadFromResource(path);
+	object nativeMusicObject = Native._lib_audio_musicLoadFromResource(path);
 	if (nativeMusicObject != null) {
 		musicObj.nativeData = new Array<object>(1);
 		musicObj.nativeData[0] = nativeMusicObject;

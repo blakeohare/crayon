@@ -1,12 +1,28 @@
-﻿@import("FrameworkFunctions/5_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-objInstance1 = ((ObjectInstance) arg2.internalValue);
-object2 = objInstance1.nativeData[0];
-int1 = ((int) arg3.internalValue);
-int2 = ((int) arg4.internalValue);
-bool1 = ((bool) arg5.internalValue);
-bool2 = (int2 == 2) && !bool1;
-if ((int1 != 3) && !bool2) {
-	lib_audio_sfx_stop(object1, object2, int1, int2 == 1, bool1);
+﻿Value lib_audio_function_sfx_stop(Array<Value> args) {
+	bool bool1 = false;
+	bool bool2 = false;
+	int int1 = 0;
+	int int2 = 0;
+	object object1 = null;
+	object object2 = null;
+	ObjectInstance objInstance1 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	objInstance1 = ((ObjectInstance) arg2.internalValue);
+	object2 = objInstance1.nativeData[0];
+	int1 = ((int) arg3.internalValue);
+	int2 = ((int) arg4.internalValue);
+	bool1 = ((bool) arg5.internalValue);
+	bool2 = (int2 == 2) && !bool1;
+	if ((int1 != 3) && !bool2) {
+		lib_audio_sfx_stop(object1, object2, int1, int2 == 1, bool1);
+	}
+	return output;
 }
+

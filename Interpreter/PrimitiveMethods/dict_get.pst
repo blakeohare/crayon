@@ -1,5 +1,5 @@
 ﻿if ((argCount < 1) || (argCount > 2)) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Dictionary get method requires 1 or 2 arguments.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Dictionary get method requires 1 or 2 arguments.");
 }
 if (argCount == 2) {
 	output = funcArgs[1];

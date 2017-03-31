@@ -1,0 +1,6 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+	Core.RegisterLibraryFunction(libRegData, "connect", 5);
+	Core.RegisterLibraryFunction(libRegData, "resultGetNext", 4);
+	Core.RegisterLibraryFunction(libRegData, "runQuery", 5);
+	Core.RegisterLibraryFunction(libRegData, "sanitize", 2);
+}

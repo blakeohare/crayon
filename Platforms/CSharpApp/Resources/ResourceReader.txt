@@ -1,0 +1,82 @@
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Interpreter.OtkGame
+{
+    internal static class ResourceReader
+    {
+        public static string ReadResourceTextFile(string path)
+        {
+            return ReadTextFile("Resources/" + path);
+        }
+
+        public static string ReadTextFile(string path)
+        {
+            IList<byte> bytes = ReadBytes(path);
+            if (bytes == null) return null;
+            bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
+            StringBuilder output = new StringBuilder(bytes.Count);
+            output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
+            return output.ToString();
+        }
+
+        public static System.Drawing.Bitmap ReadImageFile(string path)
+        {
+            IList<byte> data = ReadBytes(path);
+            if (data == null)
+            {
+                return null;
+            }
+            return (Bitmap)Bitmap.FromStream(new MemoryStream(data.ToArray()));
+        }
+
+        // C# does not like it when you access resources from different threads.
+        private static object resMutex = new object();
+
+        public static System.IO.Stream GetResourceStream(string path)
+        {
+            System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
+            path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
+            return assembly.GetManifestResourceStream(path);
+        }
+
+        private const int BUFFER_LENGTH = 1000;
+        private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
+
+        public static List<byte> ReadBytes(string path)
+        {
+            lock (resMutex)
+            {
+                System.IO.Stream stream = GetResourceStream(path);
+                if (stream == null)
+                {
+                    return null;
+                }
+                StringBuilder sb = new StringBuilder();
+                List<byte> output = new List<byte>();
+
+                int bytesRead = 1;
+                while (bytesRead > 0)
+                {
+                    bytesRead = stream.Read(BUFFER, 0, BUFFER_LENGTH);
+                    if (bytesRead == BUFFER_LENGTH)
+                    {
+                        output.AddRange(BUFFER);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < bytesRead; ++i)
+                        {
+                            output.Add(BUFFER[i]);
+                        }
+                        bytesRead = 0;
+                    }
+                }
+                return output;
+            }
+        }
+    }
+}

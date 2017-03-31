@@ -1,21 +1,31 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = new Array<object>(6);
-objInstance1.nativeData = objArray1;
-objInstance1 = ((ObjectInstance) arg3.internalValue);
-objArray2 = objInstance1.nativeData;
-if (((bool) arg2.internalValue)) {
-	objArray1[0] = @ext_boolean("IS_OPEN_GL_BASED");
-	objArray1[1] = false;
-	objArray1[2] = -1;
-	objArray1[3] = objArray2[0];
-	objArray1[4] = objArray2[1];
-	objArray1[5] = objArray2[2];
-} else {
-	objArray1[0] = false;
-	objArray1[1] = true;
-	objArray1[2] = -1;
-	objArray1[3] = objArray2[3];
-	objArray1[4] = objArray2[4];
-	objArray1[5] = objArray2[5];
+﻿Value lib_graphics2d_function_initializeTextureResource(Array<Value> args) {
+	Array<object> objArray1 = null;
+	Array<object> objArray2 = null;
+	ObjectInstance objInstance1 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = new Array<object>(6);
+	objInstance1.nativeData = objArray1;
+	objInstance1 = ((ObjectInstance) arg3.internalValue);
+	objArray2 = objInstance1.nativeData;
+	if (((bool) arg2.internalValue)) {
+		objArray1[0] = @ext_boolean("IS_OPEN_GL_BASED");
+		objArray1[1] = false;
+		objArray1[2] = -1;
+		objArray1[3] = objArray2[0];
+		objArray1[4] = objArray2[1];
+		objArray1[5] = objArray2[2];
+	} else {
+		objArray1[0] = false;
+		objArray1[1] = true;
+		objArray1[2] = -1;
+		objArray1[3] = objArray2[3];
+		objArray1[4] = objArray2[4];
+		objArray1[5] = objArray2[5];
+	}
+	return output;
 }
+

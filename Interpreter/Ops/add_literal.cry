@@ -14,6 +14,11 @@ if (type == Types.NULL) {
 	$_list_push(ProgramData$p.literalTableBuilder, buildFloat($_string_parse_float($_array_get(stringArgs, pc))));
 } else if (type == Types.STRING) {
 	$_list_push(ProgramData$p.literalTableBuilder, buildCommonString($_array_get(stringArgs, pc)));
+} else if (type == Types.FUNCTION) {
+	string1 = $_array_get(stringArgs, pc);
+	int1 = $_list_length(ProgramData$p.literalTableBuilder);
+	$_list_push(ProgramData$p.literalTableBuilder, buildCommonString(string1));
+	$_dictionary_set(ProgramData$p.invFunctionNameLiterals, string1, int1);
 } else if (type == Types.CLASS) {
 	
 	classValue = new ClassValue(

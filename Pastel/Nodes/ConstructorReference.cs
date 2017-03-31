@@ -23,5 +23,10 @@ namespace Pastel.Nodes
             // no function pointer type
             return this;
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

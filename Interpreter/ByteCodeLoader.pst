@@ -2,7 +2,7 @@
 	List<char> output = new List<char>();
 	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
 		bool ctn = true;
-		char c = '\0';
+		char c = ' ';
 		while (ctn) {
 			c = raw[index[0]];
 			if (c == char) {
@@ -40,7 +40,8 @@ int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
 					if (c == '^') {
 						num = -1 * read_integer(pindex, raw, length, alphaNums);
 					} else {
-						num = alphaNums.IndexOf(c);
+						Core.EmitComment("TODO: string.IndexOfChar(c)");
+						num = alphaNums.IndexOf(Core.CharToString(c));
 						if (num == -1) {
 						}
 					}
@@ -91,7 +92,7 @@ string read_string(Array<int> pindex, string raw, int length, string alphaNums) 
 			}
 		}
 	}
-	return output.Join(output);
+	return output.Join("");
 }
 
 Code loadByteCode() {

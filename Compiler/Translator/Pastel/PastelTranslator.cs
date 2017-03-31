@@ -21,6 +21,18 @@ namespace Crayon.Translator.Pastel
             Annotation type = assignment.Target.GetAnnotation("type");
             if (type != null)
             {
+                string name = ((Variable)assignment.Target).Name;
+                switch (name)
+                {
+                    // This is now a Core translated reference
+                    case "intOutParam":
+                    case "floatOutParam":
+                    case "stringOutParam":
+                        return;
+                    default:
+                        break;
+                }
+
                 output.Add(((StringConstant)type.Args[0]).Value);
                 output.Add(" ");
             }
@@ -37,6 +49,13 @@ namespace Crayon.Translator.Pastel
         {
             if (dotStep.Root is Variable)
             {
+                Expression root = dotStep.Root;
+                Variable rootVar = root as Variable;
+                if (rootVar != null && rootVar.Name == "ec" && dotStep.StepToken.Value == "id" && root.FirstToken.FileName.Contains("initialize_screen"))
+                {
+                    output.Add("vm_getCurrentExecutionContextId()");
+                    return;
+                }
                 this.TranslateExpression(output, dotStep.Root);
                 output.Add(".");
                 output.Add(dotStep.StepToken.Value);
@@ -153,19 +172,23 @@ namespace Crayon.Translator.Pastel
             output.Add("enum ");
             output.Add(enumDef.Name);
             output.Add(" {\n");
+            bool includeValue = enumDef.Name != "OpCodes";
             for (int i = 0; i < enumDef.Items.Length; ++i)
             {
                 output.Add("\t");
                 output.Add(enumDef.Items[i].Value);
-                output.Add(" = ");
-                Expression value = enumDef.Values[i];
-                if (value == null)
+                if (includeValue)
                 {
-                    output.Add("" + (i + 1));
-                }
-                else
-                {
-                    this.TranslateExpression(output, value);
+                    output.Add(" = ");
+                    Expression value = enumDef.Values[i];
+                    if (value == null)
+                    {
+                        output.Add("" + (i + 1));
+                    }
+                    else
+                    {
+                        this.TranslateExpression(output, value);
+                    }
                 }
                 output.Add(",\n");
             }
@@ -184,6 +207,15 @@ namespace Crayon.Translator.Pastel
         protected override void TranslateTextReplaceConstant(List<string> output, TextReplaceConstant textReplaceConstnat)
         {
             string name = textReplaceConstnat.Name;
+
+            // This is used to gate off new functionality required by the Pastel implementation, but doesn't need to be implemented
+            // in the Crayon version.
+            if (name == "IS_FOR_PASTEL_TRANSLATION")
+            {
+                output.Add("true");
+                return;
+            }
+
             bool isInteger;
             if (name.StartsWith("TYPE_ID_"))
             {
@@ -205,6 +237,7 @@ namespace Crayon.Translator.Pastel
                         throw new Exception("what type is '" + name + "'?");
                 }
             }
+            
             output.Add("@");
             output.Add(isInteger ? "ext_integer" : "ext_boolean");
             output.Add("(\"");
@@ -214,7 +247,43 @@ namespace Crayon.Translator.Pastel
 
         protected override void TranslateVariable(List<string> output, Variable expr)
         {
-            output.Add(expr.Name);
+            string name = expr.Name;
+            switch (name)
+            {
+                case "intOutParam":
+                    name = "Core.IntBuffer16";
+                    break;
+
+                case "floatOutParam":
+                    name = "Core.FloatBuffer16";
+                    break;
+
+                case "stringOutParam":
+                    name = "Core.StringBuffer16";
+                    break;
+
+                default: break;
+            }
+
+            output.Add(name);
+        }
+
+        protected override void TranslateReturnStatement(List<string> output, ReturnStatement returnStatement)
+        {
+            FunctionCall fc = returnStatement.Expression as FunctionCall;
+            if (fc != null)
+            {
+                Variable fp = fc.Root as Variable;
+                if (fp != null && fp.Name == "suspendInterpreter" && !returnStatement.FirstToken.FileName.Contains("Ops/call_lib_function_dynamic"))
+                {
+                    output.Add(this.CurrentTabIndention);
+                    output.Add("Core.VmSuspend();");
+                    output.Add(this.NL);
+                    return;
+                }
+            }
+
+            base.TranslateReturnStatement(output, returnStatement);
         }
     }
 }

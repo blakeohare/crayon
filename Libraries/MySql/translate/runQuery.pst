@@ -1,33 +1,42 @@
-﻿@import("FrameworkFunctions/5_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-object1 = objInstance1.nativeData[0];
-intList1 = new List<int>();
-stringList1 = new List<string>();
-object2 = Library._lib_mysql_query(object1, object1, object1, object1, object1, object1);
-string1 = stringOutParam[0];
-if (string1 == null) {
-	list1 = ((List<Value>) arg4.internalValue);
-	list2 = ((List<Value>) arg5.internalValue);
-	output = VALUE_NULL;
-	if (object2 != null) {
-		objInstance2 = ((ObjectInstance) arg2.internalValue);
-		objInstance2.nativeData = new Array<object>(1);
-		objInstance2.nativeData[0] = object2;
-		list1[1] = buildInteger(Library._lib_mysql_num_rows(object2));
-		for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
-			list2.Add(buildString(stringList1[int1]));
-			list2.Add(buildInteger(intList1[int1]));
+﻿Value lib_mysql_function_runQuery(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object1 = objInstance1.nativeData[0];
+	intList1 = new List<int>();
+	stringList1 = new List<string>();
+	object2 = Native._lib_mysql_query(object1, ((string) arg3.internalValue), Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
+	string1 = Core.StringBuffer16[0];
+	if (string1 == null) {
+		list1 = ((List<Value>) arg4.internalValue);
+		list2 = ((List<Value>) arg5.internalValue);
+		output = VALUE_NULL;
+		if (object2 != null) {
+			objInstance2 = ((ObjectInstance) arg2.internalValue);
+			objInstance2.nativeData = new Array<object>(1);
+			objInstance2.nativeData[0] = object2;
+			list1[1] = buildInteger(Native._lib_mysql_num_rows(object2));
+			for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
+				list2.Add(buildString(stringList1[int1]));
+				list2.Add(buildInteger(intList1[int1]));
+			}
+		} else {
+			list1[1] = VALUE_NULL;
 		}
+		int1 = Core.IntBuffer16[0];
+		if (int1 == -1) {
+			value = VALUE_NULL;
+		} else {
+			value = buildInteger(int1);
+		}
+		list1[0] = value;
 	} else {
-		list1[1] = VALUE_NULL;
+		output = buildString(string1);
 	}
-	int1 = intOutParam[0];
-	if (int1 == -1) {
-		value = VALUE_NULL;
-	} else {
-		value = buildInteger(int1);
-	}
-	list1[0] = value;
-} else {
-	output = buildString(string1);
+	return output;
 }
+

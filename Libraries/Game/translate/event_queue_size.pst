@@ -1,1 +1,0 @@
-﻿output = buildInteger(Library._lib_game_event_queue_size());

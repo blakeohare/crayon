@@ -1,5 +1,5 @@
 ﻿if (argCount != 1) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
 }
 value2 = funcArgs[0];
 bool2 = true;
@@ -39,5 +39,5 @@ if ((dictImpl.size > 0) && (dictImpl.keyType == value2.type)) {
 	}
 }
 if (bool2) {
-	return Core.GenerateException(CoreExceptionTypes.KEY_NOT_FOUND, "dictionary does not contain the given key.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "dictionary does not contain the given key.");
 }

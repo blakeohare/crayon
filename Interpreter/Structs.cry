@@ -51,6 +51,13 @@ struct ProgramData {
 	@type('Array<Array<int>>') esfData,
 	@type('MagicNumbers') magicNumbers,
 	@type('Array<int>') valueStackDepthByPc,
+	@type('Dictionary<int, int>') libraryFunctionIdByLookupId, // lookup ID is library-scoped-function-ID * 4096 + library-reference-ID
+	@type('List<object>') libraryFunctionPointers,
+	@type('List<string>') libraryFunctionNames,
+	@type('List<int>') libraryFunctionArgCounts,
+	@type('Dictionary<string, int>') invFunctionNameLiterals,
+	@type('int') activeLibraryReferenceId,
+	@type('Array<object>') libraryFunctionByPc,
 }
 
 struct ExecutionContext {
@@ -65,6 +72,8 @@ struct ExecutionContext {
 	@type('int') executionCounter,
 	@type('bool') activeExceptionHandled,
 	@type('Value') activeException,
+	@type('bool') executionStateChange,
+	@type('int') executionStateChangeCommand,
 }
 
 struct StackFrame {
@@ -214,4 +223,10 @@ struct ResourceDB {
 struct MagicNumbers {
 	@type('int') coreExceptionClassId,
 	@type('int') coreGenerateExceptionFunctionId,
+}
+
+struct LibRegObj {
+	@type('List<object>') functionPointers,
+	@type('List<string>') functionNames,
+	@type('List<int>') argCounts,
 }

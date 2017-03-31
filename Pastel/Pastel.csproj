@@ -51,6 +51,7 @@
     <Compile Include="Nodes\EnumDefinition.cs" />
     <Compile Include="Nodes\EnumReference.cs" />
     <Compile Include="Nodes\Executable.cs" />
+    <Compile Include="Nodes\ExecutableBatch.cs" />
     <Compile Include="Nodes\Expression.cs" />
     <Compile Include="Nodes\ExpressionAsExecutable.cs" />
     <Compile Include="Nodes\ForcedParenthesis.cs" />
@@ -61,6 +62,8 @@
     <Compile Include="Nodes\IfStatement.cs" />
     <Compile Include="Nodes\InlineConstant.cs" />
     <Compile Include="Nodes\InlineIncrement.cs" />
+    <Compile Include="Nodes\LibraryNativeFunctionInvocation.cs" />
+    <Compile Include="Nodes\LibraryNativeFunctionReference.cs" />
     <Compile Include="Nodes\NativeFunctionInvocation.cs" />
     <Compile Include="Nodes\NativeFunctionReference.cs" />
     <Compile Include="Nodes\OpChain.cs" />

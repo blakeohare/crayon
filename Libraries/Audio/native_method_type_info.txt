@@ -1,0 +1,27 @@
+bool _lib_audio_isAudioSupported();
+
+void _lib_audio_musicSetVolume(double ratio);
+
+bool _lib_audio_musicIsPlaying();
+
+object _lib_audio_readLocalSoundResource(
+	string resourcePath);
+
+object _lib_audio_musicLoadFromResource(
+	string resourcePath);
+
+void _lib_audio_musicPlayResource(object musicObj, string path, bool isLoop);
+
+bool _lib_audio_musicVerifyFileExists(string path);
+
+void _lib_audio_musicPlayFile(object musicObj, string path, bool isLoop);
+
+int _lib_audio_sfxGetState(object channel, object sfxResource, int resourceId);
+
+object _lib_audio_sfxPlay(object sfxResource, double volumeRatio, double panRatio);
+
+void _lib_audio_sfxStop(object channel, object sfxResource, int resourceId, bool isActivelyPlaying, bool hardStop);
+
+void _lib_audio_sfxResume(object channel, object sfxResource, double volumeRatio, double panRatio);
+
+void _lib_audio_audioStop(object sfxResource);

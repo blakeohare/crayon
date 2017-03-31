@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class UnaryOp : Expression
+    public class UnaryOp : Expression
     {
         public Expression Expression { get; set; }
         public Token OpToken { get; set; }
@@ -60,6 +60,12 @@ namespace Pastel.Nodes
                     throw new ParserException(this.OpToken, "Cannot apply '!' to type: " + this.ResolvedType.ToString());
                 }
             }
+            return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Expression = this.Expression.ResolveWithTypeContext(compiler);
             return this;
         }
     }

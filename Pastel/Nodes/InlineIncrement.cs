@@ -34,5 +34,10 @@ namespace Pastel.Nodes
             this.ResolvedType = PType.INT;
             return this;
         }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

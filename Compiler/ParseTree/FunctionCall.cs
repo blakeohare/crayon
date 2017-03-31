@@ -23,6 +23,12 @@ namespace Crayon.ParseTree
             {
                 return new SystemFunctionCall(this.FirstToken, this.Args, this.FunctionOrClassOwner).PastelResolve(parser);
             }
+
+            if (name == "prepareToSuspend" && this.FirstToken.FileName.Contains("Libraries/"))
+            {
+                this.Args = new Expression[0];
+                this.Root = new Variable(this.FirstToken, "noop", this.FunctionOrClassOwner);
+            }
             return this;
         }
 

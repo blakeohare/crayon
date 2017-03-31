@@ -1,101 +1,112 @@
-﻿@import("FrameworkFunctions/7_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = objInstance1.nativeData;
-len = objArray1.Size();
-int1 = ((int) arg7.internalValue);
-if (arg4.type == Types.INTEGER) {
-	float1 = ((int) arg4.internalValue);
-} else {
-	if (arg4.type == Types.FLOAT) {
-		float1 = ((double) arg4.internalValue);
+﻿Value lib_easing_function_interpolate(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value arg7 = args[6];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = objInstance1.nativeData;
+	len = objArray1.Size();
+	int1 = ((int) arg7.internalValue);
+	if (arg4.type == Types.INTEGER) {
+		float1 = ((int) arg4.internalValue);
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
-	}
-}
-if (arg5.type == Types.INTEGER) {
-	float2 = ((int) arg5.internalValue);
-} else {
-	if (arg5.type == Types.FLOAT) {
-		float2 = ((double) arg5.internalValue);
-	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
-	}
-}
-bool1 = false;
-bool2 = false;
-first = false;
-if (int1 == 2) {
-	first = true;
-	if ((float1 * 2.0) > float2) {
-		float1 = (float2 - float1) * 2;
-		bool1 = true;
-		bool2 = true;
-	} else {
-		float1 *= 2.0;
-	}
-} else {
-	if (int1 == 1) {
-		float1 = float2 - float1;
-		bool1 = true;
-	}
-}
-if (float2 == 0) {
-	float1 = ((double) objArray1[0]);
-} else {
-	if (float2 < 0) {
-		float2 = -float2;
-		float1 = -float1;
-	}
-	if (float1 >= float2) {
-		float1 = ((double) objArray1[(len - 1)]);
-	} else {
-		if (float1 < 0) {
-			float1 = ((double) objArray1[0]);
+		if (arg4.type == Types.FLOAT) {
+			float1 = ((double) arg4.internalValue);
 		} else {
-			float1 = Core.FloatDivision(float1, float2);
-			if (len > 2) {
-				float2 = float1 * len;
-				i = Core.Int(float2);
-				float2 -= i;
-				float1 = ((double) objArray1[i]);
-				if ((i < (len - 1)) && (float2 > 0)) {
-					float3 = ((double) objArray1[(i + 1)]);
-					float1 = (float1 * (1 - float2)) + (float3 * float2);
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
+		}
+	}
+	if (arg5.type == Types.INTEGER) {
+		float2 = ((int) arg5.internalValue);
+	} else {
+		if (arg5.type == Types.FLOAT) {
+			float2 = ((double) arg5.internalValue);
+		} else {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
+		}
+	}
+	bool1 = false;
+	bool2 = false;
+	first = false;
+	if (int1 == 2) {
+		first = true;
+		if ((float1 * 2.0) > float2) {
+			float1 = (float2 - float1) * 2;
+			bool1 = true;
+			bool2 = true;
+		} else {
+			float1 *= 2.0;
+		}
+	} else {
+		if (int1 == 1) {
+			float1 = float2 - float1;
+			bool1 = true;
+		}
+	}
+	if (float2 == 0) {
+		float1 = ((double) objArray1[0]);
+	} else {
+		if (float2 < 0) {
+			float2 = -float2;
+			float1 = -float1;
+		}
+		if (float1 >= float2) {
+			float1 = ((double) objArray1[(len - 1)]);
+		} else {
+			if (float1 < 0) {
+				float1 = ((double) objArray1[0]);
+			} else {
+				float1 = Core.FloatDivision(float1, float2);
+				if (len > 2) {
+					float2 = float1 * len;
+					i = Core.Int(float2);
+					float2 -= i;
+					float1 = ((double) objArray1[i]);
+					if ((i < (len - 1)) && (float2 > 0)) {
+						float3 = ((double) objArray1[(i + 1)]);
+						float1 = (float1 * (1 - float2)) + (float3 * float2);
+					}
 				}
 			}
 		}
 	}
-}
-if (arg2.type == Types.INTEGER) {
-	float2 = ((int) arg2.internalValue);
-} else {
-	if (arg2.type == Types.FLOAT) {
-		float2 = ((double) arg2.internalValue);
+	if (arg2.type == Types.INTEGER) {
+		float2 = ((int) arg2.internalValue);
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
+		if (arg2.type == Types.FLOAT) {
+			float2 = ((double) arg2.internalValue);
+		} else {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
+		}
 	}
-}
-if (arg3.type == Types.INTEGER) {
-	float3 = ((int) arg3.internalValue);
-} else {
-	if (arg3.type == Types.FLOAT) {
-		float3 = ((double) arg3.internalValue);
+	if (arg3.type == Types.INTEGER) {
+		float3 = ((int) arg3.internalValue);
 	} else {
-		return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
+		if (arg3.type == Types.FLOAT) {
+			float3 = ((double) arg3.internalValue);
+		} else {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
+		}
 	}
+	if (bool1) {
+		float1 = 1.0 - float1;
+	}
+	if (first) {
+		float1 *= 0.5;
+	}
+	if (bool2) {
+		float1 += 0.5;
+	}
+	float1 = (float1 * float3) + ((1 - float1) * float2);
+	if ((arg6.type == Types.BOOLEAN) && ((bool) arg6.internalValue)) {
+		output = buildInteger(Core.Int((float1 + 0.5)));
+	} else {
+		output = buildFloat(float1);
+	}
+	return output;
 }
-if (bool1) {
-	float1 = 1.0 - float1;
-}
-if (first) {
-	float1 *= 0.5;
-}
-if (bool2) {
-	float1 += 0.5;
-}
-float1 = (float1 * float3) + ((1 - float1) * float2);
-if ((arg6.type == Types.BOOLEAN) && ((bool) arg6.internalValue)) {
-	output = buildInteger(Core.Int((float1 + 0.5)));
-} else {
-	output = buildFloat(float1);
-}
+

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class CastExpression : Expression
+    public class CastExpression : Expression
     {
         public PType Type { get; set; }
         public Expression Expression { get; set; }
@@ -25,6 +25,12 @@ namespace Pastel.Nodes
             this.Expression = this.Expression.ResolveType(varScope, compiler);
             // TODO: check for silly casts
             this.ResolvedType = this.Type;
+            return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Expression = this.Expression.ResolveWithTypeContext(compiler);
             return this;
         }
     }

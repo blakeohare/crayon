@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class IfStatement : Executable
+    public class IfStatement : Executable
     {
         public Expression Condition { get; set; }
         public Executable[] IfCode { get; set; }
@@ -24,7 +24,7 @@ namespace Pastel.Nodes
             this.ElseCode = elseCode.ToArray();
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
 
@@ -33,15 +33,15 @@ namespace Pastel.Nodes
                 object value = ((InlineConstant)this.Condition).Value;
                 if (value is bool)
                 {
-                    return Executable.ResolveNamesAndCullUnusedCodeForBlock(
+                    return new ExecutableBatch(this.FirstToken, Executable.ResolveNamesAndCullUnusedCodeForBlock(
                         ((bool)value) ? this.IfCode : this.ElseCode,
-                        compiler);
+                        compiler));
                 }
             }
             this.IfCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.IfCode, compiler).ToArray();
             this.ElseCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.ElseCode, compiler).ToArray();
 
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
@@ -54,6 +54,21 @@ namespace Pastel.Nodes
 
             Executable.ResolveTypes(this.IfCode, new VariableScope(varScope), compiler);
             Executable.ResolveTypes(this.ElseCode, new VariableScope(varScope), compiler);
+        }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            Executable.ResolveWithTypeContext(compiler, this.IfCode);
+            if (this.ElseCode.Length > 0) Executable.ResolveWithTypeContext(compiler, this.ElseCode);
+
+            if (this.Condition is InlineConstant)
+            {
+                bool condition = (bool)((InlineConstant)this.Condition).Value;
+                return new ExecutableBatch(this.FirstToken, condition ? this.IfCode : this.ElseCode);
+            }
+
+            return this;
         }
     }
 }

@@ -1,9 +1,23 @@
-﻿@import("FrameworkFunctions/4_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-float1 = ((double) arg3.internalValue);
-float2 = ((double) arg4.internalValue);
-objInstance1.nativeData = new Array<object>(1);
-object1 = objInstance2.nativeData[0];
-int1 = lib_audio_sfx_launch(object1, objInstance1.nativeData, float1, float2);
-output = buildInteger(int1);
+﻿Value lib_audio_function_sfx_play(Array<Value> args) {
+	double float1 = 0.0;
+	double float2 = 0.0;
+	int int1 = 0;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	float1 = ((double) arg3.internalValue);
+	float2 = ((double) arg4.internalValue);
+	objInstance1.nativeData = new Array<object>(1);
+	object1 = objInstance2.nativeData[0];
+	int1 = lib_audio_sfx_launch(object1, objInstance1.nativeData, float1, float2);
+	output = buildInteger(int1);
+	return output;
+}
+

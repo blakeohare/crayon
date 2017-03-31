@@ -1,1 +1,6 @@
-﻿output = buildString(Library._lib_fileiocommon_getCurrentDirectory());
+﻿Value lib_fileiocommon_function_getCurrentDirectory(Array<Value> args) {
+	Value output = VALUE_NULL;
+	output = buildString(Native._lib_fileiocommon_getCurrentDirectory());
+	return output;
+}
+

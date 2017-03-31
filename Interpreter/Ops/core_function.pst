@@ -9,7 +9,7 @@
 				output = buildInteger(Core.ParseInt(string1));
 			}
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "parseInt requires a string argument.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseInt requires a string argument.");
 		}
 		break;
 	case 2:
@@ -18,12 +18,12 @@
 		output = VALUE_NULL;
 		if (arg1.type == Types.STRING) {
 			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
-			Core.ParseFloat(string1, floatList1);
+			Core.TryParseFloat(string1, floatList1);
 			if (floatList1[0] >= 0) {
 				output = buildFloat(floatList1[1]);
 			}
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "parseFloat requires a string argument.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseFloat requires a string argument.");
 		}
 		break;
 	case 3:
@@ -65,7 +65,7 @@
 		Core.EmitComment("assert");
 		@import("FrameworkFunctions/3_arg.cry");
 		if (arg1.type != Types.BOOLEAN) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
 		}
 		if (((bool) arg1.internalValue)) {
 			output = VALUE_NULL;
@@ -74,7 +74,7 @@
 			if (((bool) arg3.internalValue)) {
 				string1 = Core.StringConcatAll("Assertion failed: ", string1);
 			}
-			return Core.GenerateException(CoreExceptionTypes.ASSERTION_FAILED, string1);
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.ASSERTION_FAILED, string1);
 		}
 		break;
 	case 8:
@@ -84,11 +84,11 @@
 		if (arg1.type == Types.INTEGER) {
 			int1 = ((int) arg1.internalValue);
 			if ((int1 >= 0) && (int1 < 256)) {
-				output = buildCommonString(Core.Chr(int1));
+				output = buildCommonString(Core.CharToString(Core.Chr(int1)));
 			}
 		}
 		if (output == null) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "chr requires an integer between 0 and 255");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "chr requires an integer between 0 and 255");
 		}
 		break;
 	case 9:
@@ -102,7 +102,7 @@
 			}
 		}
 		if (output == null) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "ord requires a 1 character string.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ord requires a 1 character string.");
 		}
 		break;
 	case 10:
@@ -115,9 +115,9 @@
 		@import("FrameworkFunctions/2_arg.cry");
 		list1 = ((List<Value>) arg1.internalValue);
 		list2 = ((List<Value>) arg2.internalValue);
-		sortLists(list2, list1, intOutParam);
-		if (intOutParam[0] > 0) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+		sortLists(list2, list1, Core.IntBuffer16);
+		if (Core.IntBuffer16[0] > 0) {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 		}
 		break;
 	case 12:
@@ -138,7 +138,7 @@
 					output = arg1;
 				}
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");
 			}
 		}
 		break;
@@ -149,15 +149,15 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
 			}
 		}
 		if ((float1 < -1) || (float1 > 1)) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Math.Acos(float1));
+		output = buildFloat(Core.ArcCos(float1));
 		break;
 	case 14:
 		Core.EmitComment("arcSin");
@@ -166,15 +166,15 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
 			}
 		}
 		if ((float1 < -1) || (float1 > 1)) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
 		}
-		output = buildFloat(Math.Asin(float1));
+		output = buildFloat(Core.ArcSin(float1));
 		break;
 	case 15:
 		Core.EmitComment("arcTan");
@@ -184,7 +184,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -193,28 +193,28 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
 		}
 		if (bool1) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
 		}
-		output = buildFloat(Math.Atan(float1, float2));
+		output = buildFloat(Core.ArcTan(float1, float2));
 		break;
 	case 16:
 		Core.EmitComment("cos");
 		@import("FrameworkFunctions/1_arg.cry");
 		if (arg1.type == Types.FLOAT) {
 			float1 = ((double) arg1.internalValue);
-			output = buildFloat(Math.Cos(float1));
+			output = buildFloat(Core.Cos(float1));
 		} else {
 			if (arg1.type == Types.INTEGER) {
 				int1 = ((int) arg1.internalValue);
-				output = buildFloat(Math.Cos(int1));
+				output = buildFloat(Core.Cos(int1));
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
 			}
 		}
 		break;
@@ -226,7 +226,7 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -235,7 +235,7 @@
 			float3 = ((double) arg3.internalValue);
 		} else {
 			if (arg3.type == Types.INTEGER) {
-				float3 = ((int) arg3.internalValue);
+				float3 = ((int) arg3.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -252,13 +252,13 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
 		}
 		if (bool1) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "ensureRange requires numeric arguments.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ensureRange requires numeric arguments.");
 		}
 		if (float1 < float2) {
 			output = arg2;
@@ -301,7 +301,7 @@
 			if (arg1.type == Types.INTEGER) {
 				output = arg1;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "floor expects a numeric argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "floor expects a numeric argument.");
 			}
 		}
 		break;
@@ -313,7 +313,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -322,13 +322,13 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
 		}
 		if (bool1) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
 		}
 		if (float1 >= float2) {
 			output = arg1;
@@ -344,7 +344,7 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
@@ -353,13 +353,13 @@
 			float2 = ((double) arg2.internalValue);
 		} else {
 			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue);
+				float2 = ((int) arg2.internalValue) + 0.0;
 			} else {
 				bool1 = true;
 			}
 		}
 		if (bool1) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
 		}
 		if (float1 <= float2) {
 			output = arg1;
@@ -395,7 +395,7 @@
 			if (arg1.type == Types.FLOAT) {
 				float1 = ((double) arg1.internalValue);
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
 			}
 		}
 		if (float1 == 0) {
@@ -415,12 +415,12 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
 			}
 		}
-		output = buildFloat(Math.Sin(float1));
+		output = buildFloat(Core.Sin(float1));
 		break;
 	case 25:
 		Core.EmitComment("tan");
@@ -429,12 +429,12 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
 			}
 		}
-		output = buildFloat(Math.Tan(float1));
+		output = buildFloat(Core.Tan(float1));
 		break;
 	case 26:
 		Core.EmitComment("log");
@@ -443,15 +443,15 @@
 			float1 = ((double) arg1.internalValue);
 		} else {
 			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue);
+				float1 = ((int) arg1.internalValue) + 0.0;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
 			}
 		}
 		if (float1 <= 0) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
 		}
-		output = buildFloat(fixFuzzyFloatPrecision(Math.Log(float1) * ((double) arg2.internalValue)));
+		output = buildFloat(fixFuzzyFloatPrecision(Core.Log(float1) * ((double) arg2.internalValue)));
 		break;
 	case 27:
 		Core.EmitComment("intQueueClear");
@@ -490,7 +490,7 @@
 					float1 = ((double) value.internalValue) + 0.5;
 					int2 = Core.Int(float1);
 				} else {
-					return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Input must be integers.");
+					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Input must be integers.");
 				}
 			}
 			intArray1[(len + i)] = int2;
@@ -514,7 +514,10 @@
 			}
 			prepareToSuspend(ec, stack, valueStackSize, pc);
 			Core.EnqueueVmResume(float1, ec.id);
-			return suspendInterpreterWithLock();
+			if (ec.id > -1) {
+				Core.EmitComment("If statement to circumvent unreachable code error in translator.");
+				return suspendInterpreterWithLock();
+			}
 		}
 		break;
 	case 31:
@@ -595,17 +598,45 @@
 		} else {
 			classValue = ((ClassValue) arg1.internalValue);
 			classInfo = p.classTable[classValue.classId];
-			return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
 		}
 		break;
 	case 39:
 		Core.EmitComment("reflectGetClass");
 		@import("FrameworkFunctions/1_arg.cry");
 		if (arg1.type != Types.INSTANCE) {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
 		}
 		objInstance1 = ((ObjectInstance) arg1.internalValue);
 		output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
+		break;
+	case 40:
+		Core.EmitComment("convertFloatArgsToInts");
+		int1 = stack.localsStackOffsetEnd;
+		for (i = localsStackOffset; i < int1; i += 1) {
+			value = localsStack[i];
+			if (localsStackSet[i] != localsStackSetToken) {
+				i += int1;
+			} else {
+				if (value.type == Types.FLOAT) {
+					float1 = ((double) value.internalValue);
+					if (@ext_boolean("INT_IS_FLOOR")) {
+						int2 = Core.Int(float1);
+					} else {
+						if ((float1 < 0) && ((float1 % 1) != 0)) {
+							int2 = Core.Int(float1) - 1;
+						} else {
+							int2 = Core.Int(float1);
+						}
+					}
+					if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
+						localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+					} else {
+						localsStack[i] = buildInteger(int2);
+					}
+				}
+			}
+		}
 		break;
 }
 if (row[1] == 1) {

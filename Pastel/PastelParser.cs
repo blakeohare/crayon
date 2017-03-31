@@ -9,30 +9,42 @@ namespace Pastel
     {
         private static readonly HashSet<string> OP_TOKENS = new HashSet<string>(new string[] { "=", "+=", "*=", "-=", "&=", "|=", "^=" });
         private static readonly Executable[] EMPTY_CODE_BLOCK = new Executable[0];
-        private IDictionary<string, bool> boolConstants;
-        private IDictionary<string, int> intConstants;
+
+        private IDictionary<string, object> constants;
+
         private IInlineImportCodeLoader importCodeLoader;
 
         public PastelParser(
-            IDictionary<string, bool> boolConstants, 
-            IDictionary<string, int> intConstants,
+            IDictionary<string, object> constants,
             IInlineImportCodeLoader importCodeLoader)
         {
-            this.boolConstants = boolConstants;
-            this.intConstants = intConstants;
+            this.constants = constants;
             this.importCodeLoader = importCodeLoader;
+        }
+
+        private object GetConstant(string name, object defaultValue)
+        {
+            object output;
+            if (this.constants.TryGetValue(name, out output))
+            {
+                return output;
+            }
+            return defaultValue;
         }
 
         internal bool GetParseTimeBooleanConstant(string name)
         {
-            bool output ;
-            return boolConstants.TryGetValue(name, out output) && output;
+            return (bool)this.GetConstant(name, false);
         }
 
         internal int GetParseTimeIntegerConstant(string name)
         {
-            int output;
-            return intConstants.TryGetValue(name, out output) ? output : 0;
+            return (int)this.GetConstant(name, 0);
+        }
+
+        internal string GetParseTimeStringConstant(string name)
+        {
+            return (string)this.GetConstant(name, "");
         }
 
         public ICompilationEntity[] ParseText(string filename, string text)
@@ -312,7 +324,7 @@ namespace Pastel
             return null; // unreachable code
         }
 
-        public IfStatement ParseIfStatement(TokenStream tokens)
+        public Executable ParseIfStatement(TokenStream tokens)
         {
             Token ifToken = tokens.PopExpected("if");
             tokens.PopExpected("(");
@@ -326,6 +338,16 @@ namespace Pastel
                 elseToken = tokens.Pop();
                 elseCode = this.ParseCodeBlock(tokens, false);
             }
+
+            if (condition is InlineConstant)
+            {
+                InlineConstant ic = (InlineConstant)condition;
+                if (ic.Value is bool)
+                {
+                    return new ExecutableBatch(ifToken, (bool)ic.Value ? ifCode : elseCode);
+                }
+            }
+
             return new IfStatement(ifToken, condition, ifCode, elseToken, elseCode);
         }
 
@@ -492,7 +514,7 @@ namespace Pastel
         {
             return this.ParseOpChain(tokens, OPS_INEQUALITY, this.ParseBitShift);
         }
-        
+
         private Expression ParseBitShift(TokenStream tokens)
         {
             Expression left = this.ParseAddition(tokens);
@@ -540,7 +562,7 @@ namespace Pastel
 
             Expression expression;
             int tokenIndex = tokens.SnapshotState();
-            if (prefix == null && 
+            if (prefix == null &&
                 tokens.PeekValue() == "(" &&
                 IsValidName(tokens.PeekAhead(1)))
             {
@@ -579,7 +601,7 @@ namespace Pastel
                 Expression constructorReference = new ConstructorReference(newToken, typeToConstruct);
                 return this.ParseEntityChain(constructorReference, tokens);
             }
-            
+
             if (tokens.PopIfPresent("("))
             {
                 Expression expression = this.ParseExpression(tokens);

@@ -1,2 +1,7 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-output = resource_manager_getResourceOfType(((string) arg1.internalValue), "SND");
+﻿Value lib_audio_function_getAudioResourcePath(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	output = resource_manager_getResourceOfType(((string) arg1.internalValue), "SND");
+	return output;
+}
+

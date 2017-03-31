@@ -39,5 +39,10 @@
 
         // An auto-assigned filename that doesn't have special characters.
         public string CanonicalFileName { get; set; }
+
+        // For text file types, ensure that there is no BOM in the output.
+        // BOM's are automatically removed from .java files
+        // TODO: change this to an enum: { DEFAULT, PRESENT, ABSENT }
+        public bool TrimBomIfPresent { get; set; }
     }
 }

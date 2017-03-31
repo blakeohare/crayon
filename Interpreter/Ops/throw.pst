@@ -8,7 +8,7 @@ if (bool2) {
 	}
 }
 if (!bool2) {
-	return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Thrown value is not an exception.");
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Thrown value is not an exception.");
 }
 objArray1 = objInstance1.nativeData;
 intList1 = new List<int>();

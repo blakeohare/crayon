@@ -1,0 +1,20 @@
+﻿<!doctype html>
+<html lang="en-US" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+
+		<title>%%%DEFAULT_TITLE%%%</title>
+		%%%FAVICON%%%
+		<style type="text/css"> body { background-color:#000; text-align:center; }</style>
+		
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="vm.js"></script>
+		<script type="text/javascript" src="bytecode.js"></script>
+		<script type="text/javascript" src="resources.js"></script>
+		<script type="text/javascript" src="lib_supplemental.js"></script>
+%%%JS_LIB_INCLUSIONS%%%
+	</head>
+	<body onload="v_main()">
+		<div id="crayon_host" oncontextmenu="return false;"></div>
+	</body>
+</html>

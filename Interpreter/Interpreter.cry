@@ -103,6 +103,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 	@type('Array<int>') ops = ProgramData$p.ops;
 	@type('Array<Array<int>>') args = ProgramData$p.args;
 	@type('Array<string>') stringArgs = ProgramData$p.stringArgs;
+	@type('Array<object>') libFunctionPointers = ProgramData$p.libraryFunctionByPc;
 
 	@type('Array<ClassInfo>') classTable = ProgramData$p.classTable;
 	@type('Array<FunctionInfo>') functionTable = ProgramData$p.functionTable;
@@ -247,6 +248,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.BUILD_SWITCH_STRING: $_comment('BUILD_SWITCH_STRING'); import inline 'Ops/build_switch_string.cry'; break;
 			case OpCodes.CALL_FUNCTION: $_comment('CALL_FUNCTION'); import inline 'Ops/call_function.cry'; break;
 			case OpCodes.CALL_LIB_FUNCTION: $_comment('CALL_LIB_FUNCTION'); import inline 'Ops/call_lib_function.cry'; break;
+			case OpCodes.CALL_LIB_FUNCTION_DYNAMIC: $_comment('CALL_LIB_FUNCTION_DYNAMIC'); import inline 'Ops/call_lib_function_dynamic.cry'; break;
 			case OpCodes.CLASS_DEFINITION: $_comment('CLASS_DEFINITION'); import inline 'Ops/class_definition.cry'; break;
 			case OpCodes.COMMAND_LINE_ARGS: $_comment('COMMAND_LINE_ARGS'); import inline 'Ops/command_line_args.cry'; break;
 			case OpCodes.CONTINUE: $_comment('CONTINUE'); import inline 'Ops/continue.cry'; break;
@@ -273,6 +275,16 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.JUMP_IF_FALSE_NO_POP: $_comment('JUMP_IF_FALSE_NON_POP'); import inline 'Ops/jump_if_false_no_pop.cry'; break;
 			case OpCodes.JUMP_IF_TRUE: $_comment('JUMP_IF_TRUE'); import inline 'Ops/jump_if_true.cry'; break;
 			case OpCodes.JUMP_IF_TRUE_NO_POP: $_comment('JUMP_IF_TRUE_NO_POP'); import inline 'Ops/jump_if_true_no_pop.cry'; break;
+			case OpCodes.LIB_DECLARATION:
+				$_comment('LIB_DECLARATION');
+				// This is only used in the new CBX stuff. By not having an actual .cry file for this I can just write it in Pastel directly.
+				if (%%%IS_FOR_PASTEL_TRANSLATION%%%) {
+					import inline 'Ops/lib_declaration.cry';
+				} else {
+					// dummy operation here because lolpythonswitchstatementhack.
+					i = 0;
+				}
+				break;
 			case OpCodes.LIST_SLICE: $_comment('LIST_SLICE'); import inline 'Ops/list_slice.cry'; break;
 			case OpCodes.LITERAL: $_comment('LITERAL'); import inline 'Ops/literal.cry'; break;
 			case OpCodes.LITERAL_STREAM: $_comment('LITERAL_STREAM'); import inline 'Ops/literal_stream.cry'; break;
@@ -294,7 +306,7 @@ function @omitReturn @type('InterpreterResult') interpretImpl(@type('int') execu
 			case OpCodes.VERIFY_TYPE_IS_ITERABLE: $_comment('VERIFY_TYPE_IS_ITERABLE'); import inline 'Ops/verify_type_is_iterable.cry'; break;
 			default:
 				$_comment('THIS SHOULD NEVER HAPPEN');
-				return $_exception(CoreExceptionTypes.FATAL, "Bad op code: " + $_int_to_string($_array_get(ops, pc)));
+				return $_exception(CoreExceptionTypes.FATAL, $_string_concat("Bad op code: ", $_int_to_string($_array_get(ops, pc))));
 		}
 
 		if ($_has_increment()) {
@@ -512,4 +524,27 @@ function @type('bool') isPcFromCore(@type('int') pc) {
 	@type('Token') token = $_list_get(tokens, 0);
 	@type('string') filename = tokenHelperGetFileLine(Token$token.fileId, 0);
 	return $_string_equals("[Core]", filename);
+}
+
+function @type('int') vm_getCurrentExecutionContextId() {
+	@type('ProgramData') p = $_get_program_data();
+	return ProgramData$p.lastExecutionContextId;
+}
+
+function @type('ExecutionContext') getExecutionContext(@type('int') id) {
+	@type('ProgramData') p = $_get_program_data();
+	if (id == -1) {
+		id = ProgramData$p.lastExecutionContextId;
+	}
+	if ($_dictionary_contains(ProgramData$p.executionContexts, id)) {
+		return $_dictionary_get_guaranteed(ProgramData$p.executionContexts, id);
+	}
+	return null;
+}
+
+function @type('int') vm_suspend() {
+	@type('ExecutionContext') ec = getExecutionContext(-1);
+	ExecutionContext$ec.executionStateChange = true;
+	ExecutionContext$ec.executionStateChangeCommand = 1;
+	return 0;
 }

@@ -54,7 +54,7 @@ int resource_manager_populate_directory_lookup(Dictionary<string, List<string>> 
 		}
 		files.Add(file);
 		if (i > 0) {
-			pathBuilder += "/" + file;
+			pathBuilder = Core.StringConcatAll(pathBuilder, "/", file);
 		} else {
 			pathBuilder = file;
 		}

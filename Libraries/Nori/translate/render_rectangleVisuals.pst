@@ -1,5 +1,14 @@
-﻿@import("FrameworkFunctions/5_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objArray1 = objInstance1.nativeData;
-object1 = objArray1[0];
-Library._lib_nori_render_rectangleVisuals(object1, object1, object1, object1, object1);
+﻿Value lib_nori_function_render_rectangleVisuals(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objArray1 = objInstance1.nativeData;
+	object1 = objArray1[0];
+	Native._lib_nori_render_rectangleVisuals(object1, ((int) arg2.internalValue), ((int) arg3.internalValue), ((int) arg4.internalValue), ((int) arg5.internalValue));
+	return output;
+}
+

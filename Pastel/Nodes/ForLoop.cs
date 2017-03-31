@@ -24,7 +24,7 @@ namespace Pastel.Nodes
             this.Code = code.ToArray();
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             this.InitCode = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.InitCode, compiler).ToArray();
             this.Condition = this.Condition.ResolveNamesAndCullUnusedCode(compiler);
@@ -33,8 +33,8 @@ namespace Pastel.Nodes
             // TODO: check Condition for falseness
 
             this.Code = Executable.ResolveNamesAndCullUnusedCodeForBlock(this.Code, compiler).ToArray();
-            
-            return Listify(this);
+
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
@@ -46,6 +46,22 @@ namespace Pastel.Nodes
             Executable.ResolveTypes(this.StepCode, varScope, compiler);
             VariableScope innerScope = new VariableScope(varScope);
             Executable.ResolveTypes(this.Code, innerScope, compiler);
+        }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            Executable.ResolveWithTypeContext(compiler, this.InitCode);
+            this.Condition = this.Condition.ResolveWithTypeContext(compiler);
+            Executable.ResolveWithTypeContext(compiler, this.StepCode);
+            Executable.ResolveWithTypeContext(compiler, this.Code);
+
+            // Canonialize the for loop into a while loop.
+            List<Executable> loopCode = new List<Executable>(this.Code);
+            loopCode.AddRange(this.StepCode);
+            WhileLoop whileLoop = new WhileLoop(this.FirstToken, this.Condition, loopCode);
+            loopCode = new List<Executable>(this.InitCode);
+            loopCode.Add(whileLoop);
+            return new ExecutableBatch(this.FirstToken, loopCode);
         }
     }
 }

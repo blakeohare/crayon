@@ -3,31 +3,34 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class Variable : Expression
+    public class Variable : Expression
     {
         public Variable(Token token) : base(token)
-        { }
+        {
+            this.ApplyPrefix = true;
+        }
+
+        // All variables have a v_ prefix when translated to prevent collisions with language constructs.
+        // However, some generated code needs to namespace itself different to prevent collision with translated variables.
+        // For example, some of the Python switch statement stuff uses temporary variables that are not in the original code.
+        public bool ApplyPrefix { get; set; }
 
         public string Name { get { return this.FirstToken.Value; } }
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             string name = this.Name;
-            if (compiler.ConstantDefinitions.ContainsKey(name))
+
+            InlineConstant constantValue = compiler.GetConstantDefinition(name);
+            if (constantValue != null)
             {
-                // resolved by now
-                InlineConstant constantValue = (InlineConstant)compiler.ConstantDefinitions[name].Value;
                 return constantValue.CloneWithNewToken(this.FirstToken);
             }
 
-            if (compiler.FunctionDefinitions.ContainsKey(name))
+            FunctionDefinition functionDefinition = compiler.GetFunctionDefinitionAndMaybeQueueForResolution(name);
+            if (functionDefinition != null)
             {
-                if (!compiler.ResolvedFunctions.Contains(name))
-                {
-                    compiler.ResolutionQueue.Enqueue(name);
-                }
-
-                return new FunctionReference(this.FirstToken, compiler.FunctionDefinitions[name]);
+                return new FunctionReference(this.FirstToken, functionDefinition);
             }
 
             return this;
@@ -41,6 +44,12 @@ namespace Pastel.Nodes
             {
                 throw new ParserException(this.FirstToken, "The variable '" + this.Name + "'is not defined.");
             }
+            
+            return this;
+        }
+
+        internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
+        {
             return this;
         }
     }

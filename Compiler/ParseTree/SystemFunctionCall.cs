@@ -15,7 +15,7 @@ namespace Crayon.ParseTree
         public string Name { get; private set; }
         public Expression[] Args { get; private set; }
         public Library AssociatedLibrary { get; private set; }
-        public Library HACK_CoreLibraryReference { get; private set; }
+        public Library HACK_CoreLibraryReference { get; set; }
 
         public SystemFunctionCall(Token token, Expression[] args, Executable owner)
             : base(token, owner)

@@ -393,3 +393,82 @@ function @type('int') markClassAsInitialized(@type('StackFrame') stack, @type('i
 	$_list_pop(ProgramData$p.classStaticInitializationStack);
 	return 0;
 }
+
+/*
+	Status codes:
+	0 -> This is fine.
+	1 -> Unknown error occurred
+	2 -> Library not found
+	3 -> Library found, but incompatible version
+*/
+function @type('int') declareLibrary(@type('int') refId, @type('string') descriptor) {
+	if (%%%IS_FOR_PASTEL_TRANSLATION%%%) {
+		@type('ProgramData') p = $_get_program_data();
+		@type('Array<string>') descriptorParts = $_string_split(descriptor, ',');
+		@type('string') name = $_array_get(descriptorParts, 0);
+		@type('string') ver = $_array_get(descriptorParts, 1);
+		@type('int') status = $_determine_library_availability(name, ver);
+
+		if (status == 0) {
+			@type('LibRegObj') lro = new LibRegObj(
+				ProgramData$p.libraryFunctionPointers,
+				ProgramData$p.libraryFunctionNames,
+				ProgramData$p.libraryFunctionArgCounts);
+			ProgramData$p.activeLibraryReferenceId = refId;
+			status = $_run_library_manifest(name, lro);
+		}
+		return status;
+	} else {
+		return 0;
+	}
+}
+
+function @type('int') registerLibraryFunction(
+	@type('object') functionPointer,
+	@type('object') libRegObjRaw,
+	@type('string') functionName,
+	@type('int') argCount) {
+	if (%%%IS_FOR_PASTEL_TRANSLATION%%%) {
+		@type('LibRegObj') libRegObj = $_cast('LibRegObj', libRegObjRaw);
+		@type('List<object>') functionPointersById = LibRegObj$libRegObj.functionPointers;
+		@type('List<string>') functionNamesById = LibRegObj$libRegObj.functionNames;
+		@type('List<int>') functionArgCountsById = LibRegObj$libRegObj.argCounts;
+		@type('int') index = $_list_length(functionPointersById);
+
+		$_list_push(functionPointersById, functionPointer);
+		$_list_push(functionNamesById, functionName);
+		$_list_push(functionArgCountsById, argCount);
+		
+		@type('ProgramData') p = $_get_program_data();
+		if ($_dictionary_contains(ProgramData$p.invFunctionNameLiterals, functionName)) {
+			@type('int') functionNameReferenceId = $_dictionary_get_guaranteed(ProgramData$p.invFunctionNameLiterals, functionName);
+			@type('int') lookupId = ProgramData$p.activeLibraryReferenceId + 4096 * functionNameReferenceId;
+			$_dictionary_set(ProgramData$p.libraryFunctionIdByLookupId, lookupId, index);
+		}
+	}
+	return 0;
+}
+
+// runs during FINALIZE_INITIALIZATION
+// allocates a library function pointer lookup by PC based on the args of CALL_LIB_FUNCTION_DYNAMIC
+function @type('Array<object>') createLibraryFunctionLookup() {
+	@type('ProgramData') p = $_get_program_data();
+	
+	@type('int') length = $_array_length(ProgramData$p.ops);
+	@type('Array<int>') row = null;
+	@type('Array<object>') functionPointersByPc = $_new_array('object', length);
+	for (@type('int') pc = 0; pc < length; pc += 1) {
+		if ($_array_get(ProgramData$p.ops, pc) == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
+			row = $_array_get(ProgramData$p.args, pc);
+			@type('int') functionId = $_dictionary_get_guaranteed(
+				ProgramData$p.libraryFunctionIdByLookupId, 
+				$_array_get(row, 0) * 4096 + $_array_get(row, 1));
+			@type('object') fp = $_array_get(ProgramData$p.libraryFunctionPointers, functionId);
+
+			$_array_set(functionPointersByPc, pc, fp);
+		}
+	}
+
+	ProgramData$p.libraryFunctionByPc = functionPointersByPc;
+	return functionPointersByPc;
+}

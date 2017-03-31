@@ -56,7 +56,7 @@ for i in range(10):
 for i in range(12):
   KEY_LOOKUP[pygame.K_F1 + i] = 112 + i
 
-def _pygame_pump_events():
+def pygame_pump_events():
   evs = pygame.event.get()
   if len(_global_vars['old_events']) > 0:
     evs += _global_vars['old_events']
@@ -100,7 +100,7 @@ def platform_begin(fps):
   pygame.init()
   _global_vars['fps'] = fps
 
-def _pygame_initialize_screen(width, height, pixel_dimensions, execId):
+def pygame_initialize_screen(width, height, pixel_dimensions, execId):
   _global_vars['width'] = width
   _global_vars['height'] = height
   scaled_mode = pixel_dimensions != None and (width != pixel_dimensions[0] or height != pixel_dimensions[1])
@@ -219,7 +219,7 @@ def string_substring(s, start, length = None):
   if length == None: return s[start:]
   return s[start:start + length]
 
-def _always_true(): return True
-def _always_false(): return False
+def always_true(): return True
+def always_false(): return False
 
 program_data = [None]

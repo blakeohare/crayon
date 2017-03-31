@@ -1,1 +1,6 @@
-﻿output = buildString(Library._lib_fileiocommon_getUserDirectory());
+﻿Value lib_fileiocommon_function_getUserDirectory(Array<Value> args) {
+	Value output = VALUE_NULL;
+	output = buildString(Native._lib_fileiocommon_getUserDirectory());
+	return output;
+}
+

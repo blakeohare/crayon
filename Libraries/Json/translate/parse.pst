@@ -1,10 +1,15 @@
-﻿@import("FrameworkFunctions/1_arg.cry");
-string1 = ((string) arg1.internalValue);
-if (string1.Size() > 0) {
-	output = Library._lib_json_parse(string1);
-	if (output != null) {
-		bool1 = false;
-	} else {
-		output = VALUE_NULL;
+﻿Value lib_json_function_parse(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	string1 = ((string) arg1.internalValue);
+	if (string1.Size() > 0) {
+		output = Native._lib_json_parse(string1);
+		if (output != null) {
+			bool1 = false;
+		} else {
+			output = VALUE_NULL;
+		}
 	}
+	return output;
 }
+

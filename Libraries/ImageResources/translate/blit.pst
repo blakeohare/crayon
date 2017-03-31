@@ -1,12 +1,28 @@
-﻿@import("FrameworkFunctions/8_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
-	objArray1 = objInstance1.nativeData;
-	object1 = objArray1[3];
-	if (object1 == null) {
-		object1 = Library._lib_imageresources_getPixelEditSession(objArray1[0]);
-		objArray1[3] = object1;
+﻿Value lib_imageresources_function_blit(Array<Value> args) {
+	Array<object> objArray1 = null;
+	object object1 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	Value arg4 = args[3];
+	Value arg5 = args[4];
+	Value arg6 = args[5];
+	Value arg7 = args[6];
+	Value arg8 = args[7];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
+		objArray1 = objInstance1.nativeData;
+		object1 = objArray1[3];
+		if (object1 == null) {
+			object1 = Native._lib_imageresources_getPixelEditSession(objArray1[0]);
+			objArray1[3] = object1;
+		}
 	}
+	Native._lib_imageresources_blit(objInstance1.nativeData[0], objInstance2.nativeData[0], ((int) arg3.internalValue), ((int) arg4.internalValue), ((int) arg5.internalValue), ((int) arg6.internalValue), ((int) arg7.internalValue), ((int) arg8.internalValue), object1);
+	return output;
 }
-Library._lib_imageresources_blit(objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0], objInstance1.nativeData[0]);
+

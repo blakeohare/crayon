@@ -1,8 +1,15 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-bool1 = ((bool) arg1.internalValue);
-string1 = ((string) arg2.internalValue);
-int1 = ((int) arg3.internalValue);
-output = VALUE_FALSE;
-if (Library._lib_graphicstext_loadFont(bool1, bool1, bool1)) {
-	output = VALUE_TRUE;
+﻿Value lib_graphicstext_function_loadFont(Array<Value> args) {
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	bool1 = ((bool) arg1.internalValue);
+	string1 = ((string) arg2.internalValue);
+	int1 = ((int) arg3.internalValue);
+	output = VALUE_FALSE;
+	if (Native._lib_graphicstext_loadFont(bool1, string1, int1)) {
+		output = VALUE_TRUE;
+	}
+	return output;
 }
+

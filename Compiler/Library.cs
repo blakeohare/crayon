@@ -5,18 +5,23 @@ using Common;
 
 namespace Crayon
 {
+    // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
     internal class Library
     {
         private string platformName;
         private string languageName;
+
         public string Name { get; set; }
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
+        public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
 
         public Library(string name, string libraryManifestPath, string platformName, string languageName)
         {
+            CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // Remove the languageName field and argument here.
+
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
             string[] manifest = System.IO.File.ReadAllText(libraryManifestPath).Split('\n');
@@ -25,7 +30,9 @@ namespace Crayon
 
             this.platformName = platformName;
             this.languageName = languageName;
-            string platformPrefix = "[" + platformName + "]";
+            string canonicalPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
+
+            string platformPrefix = "[" + canonicalPlatformName + "]";
 
             foreach (string line in manifest)
             {
@@ -83,7 +90,18 @@ namespace Crayon
 
             foreach (string key in flagValues.Keys)
             {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // down with text-replacements! long live compiler-time constants!
                 this.replacements[key] = flagValues[key] ? "true" : "false";
+            }
+
+            this.CompileTimeConstants = new Dictionary<string, object>();
+            foreach (string key in flagValues.Keys)
+            {
+                this.CompileTimeConstants[key] = flagValues[key];
+            }
+            foreach (string key in values.Keys)
+            {
+                this.CompileTimeConstants[key] = values[key];
             }
 
             this.filepathsByFunctionName = new Dictionary<string, string>();
@@ -181,9 +199,20 @@ namespace Crayon
             return output;
         }
 
+        public string GetRegistryCode()
+        {
+            string path = System.IO.Path.Combine(this.RootDirectory, "function_registry.pst");
+            if (!System.IO.File.Exists(path))
+            {
+                return null;
+            }
+
+            return System.IO.File.ReadAllText(path);
+        }
+
         private Dictionary<string, string> supplementalFiles = null;
 
-        public Dictionary<string, string> GetSupplementalTranslatedCode()
+        public Dictionary<string, string> GetSupplementalTranslatedCode(bool isPastel)
         {
             if (this.supplementalFiles == null)
             {
@@ -194,7 +223,7 @@ namespace Crayon
                     foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
                     {
                         string name = System.IO.Path.GetFileName(filepath);
-                        if (name.EndsWith(".cry"))
+                        if ((isPastel && name.EndsWith(".cry")) || (!isPastel && name.EndsWith(".pst")))
                         {
                             string key = name.Substring(0, name.Length - ".cry".Length);
                             this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
@@ -203,6 +232,22 @@ namespace Crayon
                 }
             }
             return this.supplementalFiles;
+        }
+
+        public Dictionary<string, string> GetNativeCode()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (string key in this.filepathsByFunctionName.Keys)
+            {
+                if (key == "addImageRenderEventForPastel")
+                {
+                    continue;
+                }
+                string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
+                output[key] = this.ReadFile(false, filename, false);
+            }
+
+            return output;
         }
 
         public string GetTranslationCode(string functionName, bool isPastel)
@@ -248,21 +293,70 @@ namespace Crayon
             return translations;
         }
 
-        public string TranslateNativeInvocation(Token throwToken, AbstractPlatform translator, string functionName, object[] args)
+        public string TranslateNativeInvocation(object throwToken, object legacyAbstractPlatformOrCbxTranslator, string functionName, object[] args)
         {
             if (this.translations == null)
             {
-                Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
-                Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
-                this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
+                if (throwToken is Pastel.Token)
+                {
+                    Platform.AbstractTranslator translator = (Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator;
+                    Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
+                    foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
+                    {
+                        string legacyPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(platformName);
+                        Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);
+                        translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
+                    }
+                    this.translations = translationsBuilder;
+                }
+                else
+                {
+                    CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
+                    Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
+                    Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
+                    this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
+                }
             }
 
-            if (this.translations.ContainsKey(functionName))
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            string output = null;
+            if (throwToken is Pastel.Token)
             {
-                string output = this.translations[functionName];
+                string lookup = "$" + functionName;
+                if (this.translations.ContainsKey(lookup))
+                {
+                    output = this.translations[lookup];
+                }
+            }
+            else
+            {
+                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
+                if (this.translations.ContainsKey(functionName))
+                {
+                    output = this.translations[functionName];
+                }
+            }
+
+            if (output != null)
+            {
                 for (int i = 0; i < args.Length; ++i)
                 {
-                    string argAsString = translator.Translate(args[i]);
+                    string argAsString;
+                    if (legacyAbstractPlatformOrCbxTranslator is Crayon.AbstractPlatform)
+                    {
+                        CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // and remember to change the types of the arguments to this function as well.
+                        argAsString = ((Crayon.AbstractPlatform)legacyAbstractPlatformOrCbxTranslator).Translate(args[i]);
+                    }
+                    else if (legacyAbstractPlatformOrCbxTranslator is Platform.AbstractTranslator)
+                    {
+                        ((Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator).TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
+                        argAsString = sb.ToString();
+                        sb.Clear();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
                     output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
                 }
                 return output;
@@ -272,11 +366,20 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            throw new ParserException(throwToken, "The " + this.Name + " library does not support " + this.platformName + " projects.");
+            string msg = "The " + this.Name + " library does not support " + this.platformName + " projects.";
+            if (throwToken is Token)
+            {
+                throw new ParserException((Token)throwToken, msg);
+            }
+            else
+            {
+                throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
+            }
         }
 
         public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
         {
+            // TODO: need to separate the parser for this file and the interpretations of the actions
             string resourceManifest = this.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
             if (resourceManifest.Length > 0)
             {
@@ -388,6 +491,129 @@ namespace Crayon
             }
 
             throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
+        }
+
+        private Dictionary<string, Pastel.Nodes.PType> returnTypeInfoForNativeMethods = null;
+        private Dictionary<string, Pastel.Nodes.PType[]> argumentTypeInfoForNativeMethods = null;
+
+        private void InitTypeInfo()
+        {
+            this.returnTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType>();
+            this.argumentTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType[]>();
+
+            string typeInfoFile = System.IO.Path.Combine(this.RootDirectory, "native_method_type_info.txt");
+            if (System.IO.File.Exists(typeInfoFile))
+            {
+                string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
+                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Name + "/native_method_type_info.txt", typeInfo));
+
+                while (tokens.HasMore)
+                {
+                    Pastel.Nodes.PType returnType = Pastel.Nodes.PType.Parse(tokens);
+                    string functionName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
+                    tokens.PopExpected("(");
+                    List<Pastel.Nodes.PType> argTypes = new List<Pastel.Nodes.PType>();
+                    while (!tokens.PopIfPresent(")"))
+                    {
+                        if (argTypes.Count > 0) tokens.PopExpected(",");
+                        argTypes.Add(Pastel.Nodes.PType.Parse(tokens));
+
+                        // This is unused but could be later used as part of an auto-generated documentation for third-party platform implements of existing libraries.
+                        string argumentName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
+                    }
+                    tokens.PopExpected(";");
+
+                    this.returnTypeInfoForNativeMethods[functionName] = returnType;
+                    this.argumentTypeInfoForNativeMethods[functionName] = argTypes.ToArray();
+                }
+            }
+        }
+
+        private string GetValidNativeLibraryFunctionNameFromPastelToken(Pastel.Token token)
+        {
+            string name = token.Value;
+            char c;
+            bool okay = true;
+            for (int i = name.Length - 1; i >= 0; --i)
+            {
+                c = name[i];
+                if ((c >= 'a' && c <= 'z') ||
+                    (c >= 'A' && c <= 'Z') ||
+                    c == '_')
+                {
+                    // this is fine
+                }
+                else if (c >= '0' && c <= '9')
+                {
+                    if (i == 0)
+                    {
+                        okay = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    okay = false;
+                    break;
+                }
+            }
+            if (!okay)
+            {
+                throw new Pastel.ParserException(token, "Invalid name for a native function or argument.");
+            }
+            return name;
+        }
+
+        public Dictionary<string, Pastel.Nodes.PType> GetReturnTypesForNativeMethods()
+        {
+            if (this.returnTypeInfoForNativeMethods == null) this.InitTypeInfo();
+
+            return this.returnTypeInfoForNativeMethods;
+        }
+
+        public Dictionary<string, Pastel.Nodes.PType[]> GetArgumentTypesForNativeMethods()
+        {
+            if (this.argumentTypeInfoForNativeMethods == null) this.InitTypeInfo();
+
+            return this.argumentTypeInfoForNativeMethods;
+        }
+
+        public int GetFunctionId(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetSupplementalFileOutput(Dictionary<string, FileOutput> fileCopies, List<string> codeToEmbed)
+        {
+            Dictionary<string, string> textFiles = new Dictionary<string, string>();
+            
+            string platformId = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
+            this.ExtractResources(platformId, textFiles, codeToEmbed);
+            
+            foreach (string filepath in textFiles.Keys)
+            {
+                string content = textFiles[filepath];
+                content = this.NormalizeNamespacesForCbx(content);
+                // TODO: distinguish between code and content
+                fileCopies[filepath] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = content,
+                };
+            }
+        }
+
+        private string NormalizeNamespacesForCbx(string content)
+        {
+            CompatibilityHack.CriticalTODO("Go update the supplemental files so this function isn't necessary.");
+            
+            string magicString = "namespace %%%PROJECT_ID%%%.Library.";
+            string fixedString = "namespace Interpreter.Libraries." + this.Name;
+            bool useCarriageReturn = content.Contains("\r\n");
+            return string.Join(useCarriageReturn ? "\r\n" : "\n", content
+                .Split('\n')
+                .Select(line => line.StartsWith(magicString) ? fixedString : line.TrimEnd())
+                .ToArray());
         }
     }
 }

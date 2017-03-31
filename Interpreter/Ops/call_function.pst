@@ -24,7 +24,7 @@ if (bool1) {
 					funcArgs[i] = list1[i];
 				}
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
 			}
 		}
 	} else {
@@ -50,7 +50,7 @@ if (bool1) {
 			value = valueStack[valueStackSize];
 			switch (value.type) {
 				case Types.NULL:
-					return Core.GenerateException(CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
+					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
 				case Types.INSTANCE:
 					Core.EmitComment("field invoked on an object instance.");
 					objInstance1 = ((ObjectInstance) value.internalValue);
@@ -68,28 +68,28 @@ if (bool1) {
 							valueStackSize += 1;
 						}
 					} else {
-						return Core.GenerateException(CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field.");
+						return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field.");
 					}
 					break;
 				case Types.CLASS:
 					Core.EmitComment("field invocation on a class object instance.");
 					functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
 					if (functionId < 0) {
-						return Core.GenerateException(CoreExceptionTypes.INVALID_INVOCATION, "Class definitions do not have that method.");
+						return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "Class definitions do not have that method.");
 					}
 					functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
 					if (functionId < 0) {
-						return Core.GenerateException(CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+						return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
 					}
 					if (globalNameIdToPrimitiveMethodName[classId] == PrimitiveMethodName.CREATE_INSTANCE) {
 						type = FunctionInvocationType.CONSTRUCTOR;
 						classValue = ((ClassValue) value.internalValue);
 						if (classValue.isInterface) {
-							return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
+							return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
 						}
 						classId = classValue.classId;
 						if (!returnValueUsed) {
-							return Core.GenerateException(CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
+							return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
 						}
 						classInfo = p.classTable[classId];
 						functionId = classInfo.constructorFunctionId;
@@ -101,7 +101,7 @@ if (bool1) {
 					Core.EmitComment("primitive method suspected.");
 					functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
 					if (functionId < 0) {
-						return Core.GenerateException(CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+						return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
 					}
 					type = FunctionInvocationType.PRIMITIVE_METHOD;
 					break;
@@ -140,7 +140,7 @@ if (bool1) {
 					break;
 			}
 		} else {
-			return Core.GenerateException(CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
 		}
 	}
 	if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
@@ -322,7 +322,7 @@ if (bool1) {
 				type = FunctionInvocationType.NORMAL_FUNCTION;
 				bool1 = true;
 			} else {
-				return Core.GenerateException(CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
 			}
 		} else {
 			if (returnValueUsed) {
@@ -401,7 +401,7 @@ if (bool1) {
 		}
 		if ((argCount < functionInfo.minArgs) || (argCount > functionInfo.maxArgs)) {
 			pc = stack.pc;
-			return Core.GenerateException(CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
 		}
 		int1 = functionInfo.localsSize;
 		int2 = stack.localsStackOffsetEnd;
@@ -432,7 +432,7 @@ if (bool1) {
 			}
 		}
 		if (stack.depth > 1000) {
-			return Core.GenerateException(CoreExceptionTypes.FATAL, "Stack overflow.");
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "Stack overflow.");
 		}
 	}
 }

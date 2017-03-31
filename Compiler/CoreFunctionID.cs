@@ -41,6 +41,7 @@
         REFLECT_ALL_CLASSES = 37,
         REFLECT_GET_METHODS = 38,
         REFLECT_GET_CLASS = 39,
+        CONVERT_LOCAL_FLOATS_TO_INTS = 40,
     }
 
     public static class CoreFunctionIDHelper
@@ -88,6 +89,7 @@
                 case "reflectAllClasses": return (int)CoreFunctionID.REFLECT_ALL_CLASSES;
                 case "reflectGetMethods": return (int)CoreFunctionID.REFLECT_GET_METHODS;
                 case "reflectGetClass": return (int)CoreFunctionID.REFLECT_GET_CLASS;
+                case "convertFloatArgsToInts": return (int)CoreFunctionID.CONVERT_LOCAL_FLOATS_TO_INTS;
                 default: return -1;
             }
         }

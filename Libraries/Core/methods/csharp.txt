@@ -7,6 +7,7 @@ $_byte_code_get_raw_string: ResourceReader.ReadByteCodeFile()
 $_char_to_string: "" + [ARG:1]
 $_current_time_seconds: (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
 $_dictionary_contains: [ARG:1].ContainsKey([ARG:2])
+$_dummy_char_to_string_conversion: [ARG:1]
 $_dot_equals: [ARG:1].Equals([ARG:2])
 $_float_to_string: [ARG:1].ToString()
 $_force_parens: ([ARG:1])

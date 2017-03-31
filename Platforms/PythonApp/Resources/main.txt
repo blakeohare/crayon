@@ -1,0 +1,26 @@
+﻿import sys
+import os
+
+def getLibImportList():
+  execs = []
+  for file in os.listdir('code'):
+    if file.startswith('lib_') and file.endswith('.py'):
+      execs.append('code.' + file[:-3])
+  return execs
+
+libs = {}
+for libExec in getLibImportList():
+  exec('import ' + libExec + ' as lib')
+  libs[lib._moduleInfo[0]] = lib
+
+import code.vm as vm
+
+def main(args, libs):
+  vm.TranslationHelper_setByteCode(vm.ResourceReader_readTextFile('res/bytecode.txt'))
+  vm.TranslationHelper_setResourceManifest(vm.ResourceReader_readTextFile('res/resource_manifest.txt'))
+  vm.TranslationHelper_setCommandLineArgs(args)
+  vm.TranslationHelper_setLibraries(libs)
+  vm.v_main()
+
+if __name__ == '__main__':
+  main(sys.argv[1:], libs)

@@ -36,8 +36,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Platform.cs" />
+    <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PythonFakeSwitchStatement.cs" />
+    <Compile Include="PythonTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
@@ -48,6 +50,16 @@
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Platform\Platform.csproj">
+      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
+      <Name>Platform</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\TranslationHelper.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\LibraryRegistry.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

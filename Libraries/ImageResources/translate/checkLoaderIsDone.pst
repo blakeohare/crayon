@@ -1,5 +1,15 @@
-﻿@import("FrameworkFunctions/3_arg.cry");
-objInstance1 = ((ObjectInstance) arg1.internalValue);
-objInstance2 = ((ObjectInstance) arg2.internalValue);
-list1 = ((List<Value>) arg3.internalValue);
-Library._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance1.nativeData, objInstance1.nativeData);
+﻿Value lib_imageresources_function_checkLoaderIsDone(Array<Value> args) {
+	List<Value> list1 = null;
+	ObjectInstance objInstance1 = null;
+	ObjectInstance objInstance2 = null;
+	Value output = VALUE_NULL;
+	Value arg1 = args[0];
+	Value arg2 = args[1];
+	Value arg3 = args[2];
+	objInstance1 = ((ObjectInstance) arg1.internalValue);
+	objInstance2 = ((ObjectInstance) arg2.internalValue);
+	list1 = ((List<Value>) arg3.internalValue);
+	Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData, list1);
+	return output;
+}
+

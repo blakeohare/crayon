@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    class ReturnStatement : Executable
+    public class ReturnStatement : Executable
     {
         public Expression Expression { get; set; }
 
@@ -12,13 +12,13 @@ namespace Pastel.Nodes
             this.Expression = expression;
         }
 
-        public override IList<Executable> ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
+        public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
             if (this.Expression != null)
             {
                 this.Expression = this.Expression.ResolveNamesAndCullUnusedCode(compiler);
             }
-            return Listify(this);
+            return this;
         }
 
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
@@ -38,6 +38,15 @@ namespace Pastel.Nodes
                     throw new ParserException(this.FirstToken, "Must return a value in this function.");
                 }
             }
+        }
+
+        internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
+        {
+            if (this.Expression != null)
+            {
+                this.Expression = this.Expression.ResolveWithTypeContext(compiler);
+            }
+            return this;
         }
     }
 }
