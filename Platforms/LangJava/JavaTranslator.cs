@@ -575,7 +575,7 @@ namespace LangJava
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            sb.Append("ResourceReader.readTextFile(");
+            sb.Append("ResourceReader.readFileText(\"resources/text/\" + ");
             this.TranslateExpression(sb, path);
             sb.Append(')');
         }

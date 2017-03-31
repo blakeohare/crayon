@@ -8,11 +8,10 @@ import java.util.List;
 public final class LibraryLoader {
   public static Class<?> getLibClass(String name, String version) {
     String libraryWrapperFullyQualifiedName = "org.crayonlang.libraries." + name.toLowerCase() + ".LibraryWrapper";
-	System.out.println(libraryWrapperFullyQualifiedName);
 	try {
       return Class.forName(libraryWrapperFullyQualifiedName);
     } catch (Exception e) {
-	  // TODO: is there a way to do this without using exceptions?
+	  // TODO: is there a way to check for a class' existence without using exceptions?
       return null;
 	}
   }

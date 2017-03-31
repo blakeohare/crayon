@@ -37,47 +37,15 @@ public final class AwtTranslationHelper {
     private AwtTranslationHelper() {}
 
     public static String getRawByteCodeString() {
-        return readFileText("resources/bytecode.txt");
+        return ResourceReader.readFileText("resources/bytecode.txt");
     }
 	
 	public static String getResourceManifest() {
-		return readFileText("resources/manifest.txt");
+		return ResourceReader.readFileText("resources/manifest.txt");
 	}
 
     public static String getTextResource(String path) {
-        return readFileText("resources/" + path);
-    }
-
-    private static final char[] BUFFER = new char[500]; 
-    public static String readFileText(String path) {
-        FileReader fileReader;
-        try {
-            fileReader = new FileReader(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found: " + path);
-        }
-
-        BufferedReader br = new BufferedReader(fileReader);
-        StringBuilder sb = new StringBuilder();
-        int bytesRead = 0;
-        while (bytesRead != -1) {
-            try {
-                bytesRead = br.read(BUFFER);
-            } catch (IOException e) {
-                bytesRead = -1;
-            }
-
-            if (bytesRead != -1) {
-                sb.append(BUFFER, 0, bytesRead);
-            }
-        }
-
-        try {
-            br.close();
-        } catch (IOException e) {
-        }
-
-        return sb.toString();
+        return ResourceReader.readFileText("resources/" + path);
     }
 
     public static BufferedImage flipImage(Object original, boolean flipX, boolean flipY) {
@@ -100,44 +68,6 @@ public final class AwtTranslationHelper {
         g.drawImage(originalImage, x, y, width, height, null);
         g.dispose();
         return flippedImage;
-    }
-
-    public static BufferedImage loadImageFromLocalFile(String path) {
-        try {
-            return ImageIO.read(new File("resources/" + path));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private static byte[] readLocalResource(String path) {
-        try {
-            return readLocalResourceImpl(path);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private static byte[] readLocalResourceImpl(String path) throws IOException {
-        File resource = new File("resources/" + path);
-        if (!resource.exists()) {
-            return null;
-        }
-        byte[] output = new byte[(int)resource.length()];
-
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(resource);
-            int offset = 0;
-            do {
-                offset += fis.read(output, offset, output.length - offset);
-            } while (offset < output.length);
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
-        }
-        return output;
     }
 
     public static String[] directoryListing(String path) {
@@ -231,7 +161,7 @@ public final class AwtTranslationHelper {
 	}
 
 	public static String getImageResourceManifestString() {
-		return readFileText("resources/imagesheetmanifest.txt");
+		return ResourceReader.readFileText("resources/imagesheetmanifest.txt");
 	}
 
 	public static void imageResourceBlitImage(
@@ -258,7 +188,7 @@ public final class AwtTranslationHelper {
 	}
 
 	public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, ArrayList<Value> outStatusCheesy) {
-		BufferedImage image = loadImageFromLocalFile("images/" + genFileName);
+		BufferedImage image = ResourceReader.loadImageFromLocalFile("images/" + genFileName);
 		if (image != null) {
 			if (outStatusCheesy != null) java.util.Collections.reverse(outStatusCheesy);
 			nativeImageDataNativeData[0] = image;

@@ -303,11 +303,13 @@ public final class TranslationHelper {
   }
 
   public static void registerLibraryFunction(Class<?> containerLibraryClass, Object libRegObj, String fnName, int argc) {
-    String[] parts = containerLibraryClass.getPackage().getName().split(".");
-	String libraryName = parts[parts.length - 1];
-	LibraryInstance library = libraryByName.get(libraryName);
-	Method method = library.getMethod(fnName);
-    Interpreter.v_registerLibraryFunction(method, libRegObj, fnName, argc);
+    String packageName = containerLibraryClass.getPackage().getName();
+    String[] parts = TranslationHelper.literalStringSplit(packageName, ".");
+    String libraryName = parts[parts.length - 1];
+	String fullyQualifiedFunctionName = "lib_" + libraryName + "_" + fnName;
+    LibraryInstance library = libraryByName.get(libraryName);
+    Method method = library.getMethod(fnName);
+    Interpreter.v_registerLibraryFunction(method, libRegObj, fullyQualifiedFunctionName, argc);
   }
 
   private static final Object[] ARGS_REUSABLE = new Object[1];

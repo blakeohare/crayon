@@ -141,6 +141,18 @@ namespace GameJavaAwt
 
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
             output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+            output["resources/imagesheetmanifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+
+            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                FileOutput imageSheetFile = resourceDatabase.ImageSheetFiles[imageSheetFileName];
+                output["resources/images/" + imageSheetFileName] = imageSheetFile;
+            }
+
+            foreach (FileOutput textResource in resourceDatabase.TextResources)
+            {
+                output["resources/text/" + textResource.CanonicalFileName] = textResource;
+            }
 
             IEnumerable<FileOutput> javaFiles = output.Keys
                 .Where(filename => filename.ToLower().EndsWith(".java"))

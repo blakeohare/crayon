@@ -1,9 +1,98 @@
 ﻿package org.crayonlang.interpreter;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import javax.imageio.ImageIO;
+
 public final class ResourceReader {
   private ResourceReader() {}
+  
+    private static final char[] BUFFER = new char[500]; 
+    public static String readFileText(String path) {
+        FileReader fileReader;
+        try {
+            fileReader = new FileReader(path);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File not found: " + path);
+        }
 
-  public static String readTextFile(String path) {
-    throw new RuntimeException("Not implemented.");
-  }
+        BufferedReader br = new BufferedReader(fileReader);
+        StringBuilder sb = new StringBuilder();
+        int bytesRead = 0;
+        while (bytesRead != -1) {
+            try {
+                bytesRead = br.read(BUFFER);
+            } catch (IOException e) {
+                bytesRead = -1;
+            }
+
+            if (bytesRead != -1) {
+                sb.append(BUFFER, 0, bytesRead);
+            }
+        }
+
+        try {
+            br.close();
+        } catch (IOException e) {
+        }
+
+        String output = sb.toString();
+		if (output.length() >= 3) {
+          if (output.charAt(0) == 239 && output.charAt(1) == 187 && output.charAt(2) == 191) {
+		    output = output.substring(3);
+		  }
+		}
+		return output;
+    }
+
+    public static BufferedImage loadImageFromLocalFile(String path) {
+		String resPath = "resources/" + path;
+        try {
+            return ImageIO.read(new File(resPath));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static byte[] readLocalResource(String path) {
+        try {
+            return readLocalResourceImpl(path);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static byte[] readLocalResourceImpl(String path) throws IOException {
+        File resource = new File("resources/" + path);
+        if (!resource.exists()) {
+            return null;
+        }
+        byte[] output = new byte[(int)resource.length()];
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(resource);
+            int offset = 0;
+            do {
+                offset += fis.read(output, offset, output.length - offset);
+            } while (offset < output.length);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
+        return output;
+    }
+
 }
