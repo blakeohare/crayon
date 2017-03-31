@@ -1,25 +1,25 @@
 
 BEGIN
-APPLICABLE-TO: game-csharp-opentk
+APPLICABLE-TO: csharp-app
 COPYFILES: csharp: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-csharp-android
+APPLICABLE-TO: chspar-app-android
 COPYFILES: csharp-android: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-java-awt
+APPLICABLE-TO: java-app
 COPYFILES: java: src/org/crayonlang/libraries/fileiocommon/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-python-pygame
+APPLICABLE-TO: python-app
 EMBED: python
 END
 
 BEGIN
-APPLICABLE-TO: game-javascript
+APPLICABLE-TO: javascript-app-gl
 EMBED: javascript
 END

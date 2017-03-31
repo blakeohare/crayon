@@ -1,20 +1,20 @@
 
 BEGIN
-APPLICABLE-TO: game-csharp-opentk
+APPLICABLE-TO: csharp-app
 COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageWebResources/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-java-awt
+APPLICABLE-TO: java-app
 COPYFILES: java: src/crayonlib/imagewebresources/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-javascript
+APPLICABLE-TO: javascript-app-gl
 EMBED: javascript
 END
 
 BEGIN
-APPLICABLE-TO: game-python-pygame
+APPLICABLE-TO: python-app
 EMBED: python
 END

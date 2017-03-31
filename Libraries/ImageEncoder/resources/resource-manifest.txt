@@ -1,16 +1,15 @@
 
 BEGIN
-APPLICABLE-TO: game-csharp-opentk
-APPLICABLE-TO: ui-csharp-winforms
+APPLICABLE-TO: csharp-app
 COPYFILES: desktopcsharp: %PROJECT_ID%/Libraries/ImageEncoder/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-java-awt
+APPLICABLE-TO: java-app
 COPYFILES: desktopjava: src/crayonlib/imageencoder/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-python-pygame
+APPLICABLE-TO: python-app
 EMBED: python
 END

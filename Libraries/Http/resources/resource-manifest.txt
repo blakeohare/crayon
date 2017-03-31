@@ -1,22 +1,22 @@
 
 BEGIN
-APPLICABLE-TO: game-csharp-android
-APPLICABLE-TO: game-csharp-ios
-APPLICABLE-TO: game-csharp-opentk
+APPLICABLE-TO: csharp-app-android
+APPLICABLE-TO: csharp-app-ios
+APPLICABLE-TO: csharp-app
 COPYFILES: csharp: %PROJECT_ID%/Libraries/Http/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-java-awt
+APPLICABLE-TO: java-app
 COPYFILES: java: src/crayonlib/http/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-python-pygame
+APPLICABLE-TO: python-app
 EMBED: python
 END
 
 BEGIN
-APPLICABLE-TO: game-javascript
+APPLICABLE-TO: javascript-app-gl
 EMBED: javascript
 END
