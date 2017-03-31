@@ -236,10 +236,6 @@ InterpreterResult interpretImpl(int executionContextId) {
 				Core.EmitComment("CALL_FUNCTION");
 				@import("Ops/call_function.cry");
 				break;
-			case OpCodes.CALL_LIB_FUNCTION:
-				Core.EmitComment("CALL_LIB_FUNCTION");
-				@import("Ops/call_lib_function.cry");
-				break;
 			case OpCodes.CALL_LIB_FUNCTION_DYNAMIC:
 				Core.EmitComment("CALL_LIB_FUNCTION_DYNAMIC");
 				@import("Ops/call_lib_function_dynamic.cry");
@@ -350,11 +346,7 @@ InterpreterResult interpretImpl(int executionContextId) {
 				break;
 			case OpCodes.LIB_DECLARATION:
 				Core.EmitComment("LIB_DECLARATION");
-				if (true) {
-					@import("Ops/lib_declaration.cry");
-				} else {
-					i = 0;
-				}
+				@import("Ops/lib_declaration.cry");
 				break;
 			case OpCodes.LIST_SLICE:
 				Core.EmitComment("LIST_SLICE");

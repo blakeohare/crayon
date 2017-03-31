@@ -1,2 +1,0 @@
-﻿
-ExecutionContext$ec.activeExceptionHandled = $_array_get(row, 0) == 1;

@@ -1,7 +1,8 @@
-﻿string3 = stringArgs[pc];
-int1 = p.identifiersBuilder.Size();
+﻿string3 = stringArgs[pc];  // actual name vaule
+int1 = p.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
 p.invIdentifiers[string3] = int1;
 p.identifiersBuilder.Add(string3);
+
 if (Core.StringEquals("length", string3)) {
 	p.lengthId = int1;
 }

@@ -1,6 +1,9 @@
-﻿valueStackSize -= 1;
+﻿
+// all codepaths push a value, so only subtract 1
+valueStackSize -= 1;
 value = valueStack[valueStackSize];
 root = valueStack[(valueStackSize - 1)];
+
 if (root.type == Types.LIST) {
 	if (value.type != Types.INTEGER) {
 		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "List index must be an integer.");
@@ -16,69 +19,62 @@ if (root.type == Types.LIST) {
 			valueStack[(valueStackSize - 1)] = list1[i];
 		}
 	}
-} else {
-	if (root.type == Types.DICTIONARY) {
-		dictImpl = ((DictImpl) root.internalValue);
-		keyType = value.type;
-		if (keyType != dictImpl.keyType) {
+} else if (root.type == Types.DICTIONARY) {
+	dictImpl = ((DictImpl) root.internalValue);
+	keyType = value.type;
+	if (keyType != dictImpl.keyType) {
+		if (dictImpl.size == 0) {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found. Dictionary is empty.");
+		}
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, Core.StringConcatAll("Incorrect key type. This dictionary contains ", getTypeFromId(dictImpl.keyType), " keys. Provided key is a ", getTypeFromId(keyType), "."));
+	} else {
+		if (keyType == Types.INTEGER) {
+			intKey = ((int) value.internalValue);
+		} else if (keyType == Types.STRING) {
+			stringKey = ((string) value.internalValue);
+		} else if (keyType == Types.INSTANCE) {
+			objInstance1 = ((ObjectInstance) value.internalValue);
+			intKey = objInstance1.objectId;
+		} else {
 			if (dictImpl.size == 0) {
 				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found. Dictionary is empty.");
 			}
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, Core.StringConcatAll("Incorrect key type. This dictionary contains ", getTypeFromId(dictImpl.keyType), " keys. Provided key is a ", getTypeFromId(keyType), "."));
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
+		}
+		if (keyType == Types.STRING) {
+			dictStringValueLookup = ((Dictionary<string, Value>) dictImpl.valueStringLookup);
+			if (dictStringValueLookup.Contains(stringKey)) {
+				output = dictStringValueLookup[stringKey];
+			} else {
+				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, Core.StringConcatAll("Key not found: '", stringKey, "'"));
+			}
 		} else {
-			if (keyType == Types.INTEGER) {
-				intKey = ((int) value.internalValue);
+			dictIntValueLookup = ((Dictionary<int, Value>) dictImpl.valueIntLookup);
+			if (dictIntValueLookup.Contains(intKey)) {
+				output = dictIntValueLookup[intKey];
 			} else {
-				if (keyType == Types.STRING) {
-					stringKey = ((string) value.internalValue);
-				} else {
-					if (keyType == Types.INSTANCE) {
-						objInstance1 = ((ObjectInstance) value.internalValue);
-						intKey = objInstance1.objectId;
-					} else {
-						if (dictImpl.size == 0) {
-							return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found. Dictionary is empty.");
-						}
-						return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
-					}
-				}
-			}
-			if (keyType == Types.STRING) {
-				dictStringValueLookup = ((Dictionary<string, Value>) dictImpl.valueStringLookup);
-				if (dictStringValueLookup.Contains(stringKey)) {
-					output = dictStringValueLookup[stringKey];
-				} else {
-					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, Core.StringConcatAll("Key not found: '", stringKey, "'"));
-				}
-			} else {
-				dictIntValueLookup = ((Dictionary<int, Value>) dictImpl.valueIntLookup);
-				if (dictIntValueLookup.Contains(intKey)) {
-					output = dictIntValueLookup[intKey];
-				} else {
-					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
-				}
-			}
-			if (output == null) {
 				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
 			}
-			valueStack[(valueStackSize - 1)] = output;
 		}
-	} else {
-		if (root.type == Types.STRING) {
-			string1 = ((string) root.internalValue);
-			if (value.type != Types.INTEGER) {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "String indices must be integers.");
-			}
-			int1 = ((int) value.internalValue);
-			if (int1 < 0) {
-				int1 += string1.Size();
-			}
-			if ((int1 < 0) || (int1 >= string1.Size())) {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "String index out of range.");
-			}
-			valueStack[(valueStackSize - 1)] = buildCommonString(Core.CharToString(string1[int1]));
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot index into this type: ", getTypeFromId(root.type)));
+		if (output == null) {
+			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "Key not found.");
 		}
+		valueStack[(valueStackSize - 1)] = output;
 	}
+} else if (root.type == Types.STRING) {
+	string1 = ((string) root.internalValue);
+	if (value.type != Types.INTEGER) {
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "String indices must be integers.");
+	}
+	int1 = ((int) value.internalValue);
+	if (int1 < 0) {
+		int1 += string1.Size();
+	}
+	if ((int1 < 0) || (int1 >= string1.Size())) {
+		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "String index out of range.");
+	}
+	// Single char strings are common.
+	valueStack[(valueStackSize - 1)] = buildCommonString(Core.CharToString(string1[int1]));
+} else {
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Cannot index into this type: ", getTypeFromId(root.type)));
 }
