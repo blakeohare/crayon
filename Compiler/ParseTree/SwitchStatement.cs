@@ -80,7 +80,7 @@ namespace Crayon.ParseTree
 
         internal override IList<Executable> Resolve(Parser parser)
         {
-            if (parser.IsByteCodeMode && this.explicitMax != null)
+            if (this.explicitMax != null)
             {
                 throw new ParserException(this.explicitMaxToken, "Unexpected token: '{'");
             }
@@ -173,20 +173,7 @@ namespace Crayon.ParseTree
             this.IsSafe = !this.ContainsDefault;
             this.IsContinuous = integers != 0 && largestSpan == 1 && this.IsSafe && this.DetermineContinuousness();
 
-            if (parser.IsTranslateMode)
-            {
-
-                if (this.IsSafe & this.IsContinuous)
-                {
-                    return new SwitchStatementContinuousSafe(this, this.FunctionOrClassOwner).Resolve(parser);
-                }
-
-                return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax, this.FunctionOrClassOwner).Resolve(parser);
-            }
-            else
-            {
-                return this.CompilationResolution(parser);
-            }
+            return this.CompilationResolution(parser);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

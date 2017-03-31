@@ -26,16 +26,13 @@ namespace Crayon.ParseTree
 
         internal override IList<Executable> Resolve(Parser parser)
         {
-            if (!parser.IsTranslateMode)
+            ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
+            if (resolutionState == ConstantResolutionState.RESOLVED) return new Executable[0];
+            if (resolutionState == ConstantResolutionState.RESOLVING)
             {
-                ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
-                if (resolutionState == ConstantResolutionState.RESOLVED) return new Executable[0];
-                if (resolutionState == ConstantResolutionState.RESOLVING)
-                {
-                    throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
-                }
-                parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVING;
+                throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
             }
+            parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVING;
 
             this.Expression = this.Expression.Resolve(parser);
 

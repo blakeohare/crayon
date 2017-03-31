@@ -341,22 +341,10 @@ namespace Crayon
             {
                 for (int i = 0; i < args.Length; ++i)
                 {
-                    string argAsString;
-                    if (legacyAbstractPlatformOrCbxTranslator is Crayon.AbstractPlatform)
-                    {
-                        CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // and remember to change the types of the arguments to this function as well.
-                        argAsString = ((Crayon.AbstractPlatform)legacyAbstractPlatformOrCbxTranslator).Translate(args[i]);
-                    }
-                    else if (legacyAbstractPlatformOrCbxTranslator is Platform.AbstractTranslator)
-                    {
-                        ((Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator).TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
-                        argAsString = sb.ToString();
-                        sb.Clear();
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
+
+                    ((Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator).TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
+                    string argAsString = sb.ToString();
+                    sb.Clear();
                     output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
                 }
                 return output;
@@ -586,10 +574,10 @@ namespace Crayon
         public void GetSupplementalFileOutput(Dictionary<string, FileOutput> fileCopies, List<string> codeToEmbed)
         {
             Dictionary<string, string> textFiles = new Dictionary<string, string>();
-            
+
             string platformId = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
             this.ExtractResources(platformId, textFiles, codeToEmbed);
-            
+
             foreach (string filepath in textFiles.Keys)
             {
                 string content = textFiles[filepath];
@@ -606,7 +594,7 @@ namespace Crayon
         private string NormalizeNamespacesForCbx(string content)
         {
             CompatibilityHack.CriticalTODO("Go update the supplemental files so this function isn't necessary.");
-            
+
             string magicString = "namespace %%%PROJECT_ID%%%.Library.";
             string fixedString = "namespace Interpreter.Libraries." + this.Name;
             bool useCarriageReturn = content.Contains("\r\n");

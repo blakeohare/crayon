@@ -55,21 +55,14 @@ namespace Crayon
         {
             BuildContext buildContext = Program.GetBuildContext(args);
 
-            AbstractPlatform platform = GetPlatformInstance(buildContext);
-            if (platform != null)
-            {
-                platform.Compile(buildContext, buildContext.OutputFolder);
-                return;
-            }
+            Platform.AbstractPlatform platform = GetPlatform2Instance(buildContext);
 
-            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
-
-            CompatibilityHack.IS_CBX_MODE = platform2 != null;
+            CompatibilityHack.IS_CBX_MODE = platform != null;
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
             Dictionary<string, FileOutput> result;
-            
-            if (platform2 != null)
+
+            if (platform != null)
             {
                 // This really needs to go in a separate helper file.
                 ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
@@ -78,7 +71,7 @@ namespace Crayon
                     Type = FileOutputType.Text,
                     TextContent = ByteCodeEncoder.Encode(compilationResult.ByteCode),
                 };
-                
+
                 Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
                 if (buildContext.ImageSheetIds != null)
                 {
@@ -101,7 +94,7 @@ namespace Crayon
 
                 VmGenerator vmGenerator = new VmGenerator();
                 result = vmGenerator.GenerateVmSourceCodeForPlatform(
-                    platform2,
+                    platform,
                     compilationResult,
                     resourceDatabase,
                     compilationResult.LibrariesUsed,
@@ -130,30 +123,6 @@ namespace Crayon
         }
 
         private static PlatformProvider platformProvider = new PlatformProvider();
-
-        private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)
-        {
-            switch (buildContext.Platform.ToLowerInvariant())
-            {
-                case "game-c-opengl": return new Crayon.Translator.C.COpenGlPlatform();
-                case "game-csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
-                case "game-csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
-                case "game-csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
-                case "game-java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
-                case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
-                case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform();
-                case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
-                case "game-ruby-gosu": return new Crayon.Translator.Ruby.RubyPlatform();
-                case "server-php": return new Crayon.Translator.Php.PhpPlatform();
-                case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
-                case "ui-javascript": throw new NotImplementedException();
-
-                // temporary hack to help rewrite the VM into Pastel
-                case "vm-pastel-hack": return new Crayon.Translator.Pastel.PastelPlatform();
-
-                default: return null;
-            }
-        }
 
         private static BuildContext GetBuildContext(string[] args)
         {

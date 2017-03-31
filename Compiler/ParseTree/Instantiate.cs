@@ -32,25 +32,6 @@ namespace Crayon.ParseTree
 
         internal override Expression Resolve(Parser parser)
         {
-            string className = this.NameToken.Value;
-
-            if (parser.IsTranslateMode)
-            {
-                StructDefinition structDefinition = parser.GetStructDefinition(className);
-
-                if (structDefinition != null)
-                {
-                    if (this.Args.Length != structDefinition.Fields.Length)
-                    {
-                        throw new ParserException(this.FirstToken, "Args length did not match struct field count for '" + structDefinition.Name.Value + "'.");
-                    }
-
-                    StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args, this.FunctionOrClassOwner);
-                    si = (StructInstance)si.Resolve(parser);
-                    return si;
-                }
-            }
-
             for (int i = 0; i < this.Args.Length; ++i)
             {
                 this.Args[i] = this.Args[i].Resolve(parser);

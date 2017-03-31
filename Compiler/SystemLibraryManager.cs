@@ -19,31 +19,6 @@ namespace Crayon
             return systemLibraryPathsByName.ContainsKey(name);
         }
 
-        public string GetLibrarySwitchStatement(AbstractPlatform platform)
-        {
-            bool isPastel = platform.PlatformId == PlatformId.PASTEL_VM;
-            List<string> output = new List<string>();
-            foreach (string name in this.orderedListOfFunctionNames)
-            {
-                output.Add("case " + this.libFunctionIds[name] + ":\n");
-                if (isPastel)
-                {
-                    output.Add("Core.EmitComment(\"" + name + "\");");
-                }
-                else
-                {
-                    output.Add("$_comment('" + name + "');");
-                }
-                output.Add(this.importedLibraries[this.functionNameToLibraryName[name]].GetTranslationCode(name, isPastel));
-                output.Add("\nbreak;\n");
-            }
-            if (this.orderedListOfFunctionNames.Count == 0)
-            {
-                output.Add("case 0: break;");
-            }
-            return string.Join("\n", output);
-        }
-
         public Library GetLibraryFromKey(string key)
         {
             Library output;
@@ -168,7 +143,7 @@ namespace Crayon
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> librariesAlreadyImportedIndexByName = new Dictionary<string, int>();
         private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
-        
+
         public int GetLibraryReferenceId(string name)
         {
             return this.librariesAlreadyImportedIndexByName[name] + 1;
@@ -179,8 +154,8 @@ namespace Crayon
         public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
-            Library library = librariesAlreadyImportedIndexByName.ContainsKey(name) 
-                ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]] 
+            Library library = librariesAlreadyImportedIndexByName.ContainsKey(name)
+                ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]]
                 : null;
             Executable[] embedCode = EMPTY_EXECUTABLE;
             if (library == null)

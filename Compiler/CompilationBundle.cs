@@ -13,7 +13,7 @@ namespace Crayon
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {
-            Parser parser = new Parser(null, buildContext, null);
+            Parser parser = new Parser(buildContext, null);
             Crayon.ParseTree.Executable[] resolvedParseTree = parser.ParseAllTheThings();
 
             ByteCodeCompiler bcc = new ByteCodeCompiler();

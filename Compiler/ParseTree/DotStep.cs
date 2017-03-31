@@ -84,33 +84,7 @@ namespace Crayon.ParseTree
                     throw new ParserException(this.StepToken, "The enum '" + enumDef.Name + "' does not contain a definition for '" + step + "'");
                 }
             }
-
-            Variable variable = this.Root as Variable;
-            if (variable != null)
-            {
-                string varName = variable.Name;
-
-                if (parser.IsTranslateMode && varName.Contains('$'))
-                {
-                    string[] parts = varName.Split('$');
-                    if (parts.Length == 2 && parts[0].Length > 0 && parts[1].Length > 0)
-                    {
-                        // struct casting
-                        string structName = parts[0];
-                        StructDefinition structDef = parser.GetStructDefinition(structName);
-                        if (structDef == null)
-                        {
-                            throw new ParserException(this.Root.FirstToken, "The struct '" + structName + "' does not exist.");
-                        }
-                        if (!structDef.IndexByField.ContainsKey(step))
-                        {
-                            throw new ParserException(this.StepToken, "The struct '" + structDef.Name.Value + "' does not contain a field called '" + step + "'");
-                        }
-                        return new DotStepStruct(this.FirstToken, structDef, this, this.FunctionOrClassOwner);
-                    }
-                }
-            }
-
+            
             if (this.Root is BaseKeyword)
             {
                 return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.FunctionOrClassOwner).Resolve(parser);

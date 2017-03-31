@@ -44,28 +44,7 @@ namespace Crayon.ParseTree
             // TODO: Eventaully remove this and have Core as a default when $_lib_ is not present.
             // This is part of an effort to move ALL system function calls to the Core library.
             this.HACK_CoreLibraryReference = parser.SystemLibraryManager.GetLibraryFromKey("core");
-
-            if (this.Name == "$_has_increment")
-            {
-                bool hasIncrement = parser.NullablePlatform.SupportsIncrement;
-                return new BooleanConstant(this.FirstToken, hasIncrement, this.FunctionOrClassOwner);
-            }
-
-            if (this.Name == "$_is_javascript")
-            {
-                bool isJavaScript = parser.NullablePlatform.GetType().IsAssignableFrom(typeof(Crayon.Translator.JavaScript.JavaScriptPlatform));
-                return new BooleanConstant(this.FirstToken, isJavaScript, this.FunctionOrClassOwner);
-            }
-
-            if (this.Name == "$_ord")
-            {
-                if (this.Args[0] is StringConstant)
-                {
-                    string strValue = ((StringConstant)this.Args[0]).Value;
-                    if (strValue.Length != 1) throw new ParserException(this.FirstToken, "$_ord must take in a string of length 1");
-                    return new IntegerConstant(this.FirstToken, strValue[0], this.FunctionOrClassOwner);
-                }
-            }
+            
             // args have already been resolved.
             return this;
         }

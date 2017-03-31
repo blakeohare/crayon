@@ -8,10 +8,8 @@ namespace Crayon
 {
     internal class Parser
     {
-        public Parser(AbstractPlatform platform, BuildContext buildContext, SystemLibraryManager sysLibMan)
+        public Parser(BuildContext buildContext, SystemLibraryManager sysLibMan)
         {
-            this.NullablePlatform = platform;
-            this.IsTranslateMode = platform != null;
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
@@ -80,11 +78,6 @@ namespace Crayon
         public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
         public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
-
-        public bool RemoveBreaksFromSwitch
-        {
-            get { return this.NullablePlatform != null && this.NullablePlatform.RemoveBreaksFromSwitch; }
-        }
 
         public LiteralLookup LiteralLookup { get { return this.literalLookup; } }
         private LiteralLookup literalLookup = new LiteralLookup();
@@ -196,11 +189,7 @@ namespace Crayon
             return id;
         }
 
-        public bool IsTranslateMode { get; private set; }
-        public bool IsByteCodeMode { get { return !this.IsTranslateMode; } }
-
         private Dictionary<string, EnumDefinition> enumDefinitions = new Dictionary<string, EnumDefinition>();
-        private Dictionary<string, StructDefinition> structDefinitions = new Dictionary<string, StructDefinition>();
         private Dictionary<string, Expression> constLookup = new Dictionary<string, Expression>();
         private HashSet<string> things = new HashSet<string>();
 
@@ -239,8 +228,6 @@ namespace Crayon
             return null;
         }
 
-        public AbstractPlatform NullablePlatform { get; private set; }
-
         public void AddEnumDefinition(EnumDefinition enumDefinition)
         {
             if (this.enumDefinitions.ContainsKey(enumDefinition.Name))
@@ -251,29 +238,6 @@ namespace Crayon
             this.VerifyNameFree(enumDefinition.NameToken);
 
             this.enumDefinitions.Add(enumDefinition.Name, enumDefinition);
-        }
-
-        public void AddStructDefinition(StructDefinition structDefinition)
-        {
-            if (this.structDefinitions.ContainsKey(structDefinition.Name.Value))
-            {
-                throw new ParserException(structDefinition.FirstToken, "A struct with this name has already been defined.");
-            }
-
-            this.VerifyNameFree(structDefinition.Name);
-
-            this.structDefinitions.Add(structDefinition.Name.Value, structDefinition);
-        }
-
-        public StructDefinition[] GetStructDefinitions()
-        {
-            return this.structDefinitions.Values.ToArray();
-        }
-
-        public StructDefinition GetStructDefinition(string name)
-        {
-            StructDefinition output = null;
-            return this.structDefinitions.TryGetValue(name, out output) ? output : null;
         }
 
         public EnumDefinition GetEnumDefinition(string name)

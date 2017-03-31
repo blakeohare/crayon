@@ -71,8 +71,10 @@ namespace Crayon.ParseTree
                     this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
                 }
 
+                Common.CompatibilityHack.CriticalTODO("annotations need to be removed from the parser."); 
+
                 // Annotations not allowed in byte code mode
-                if (parser.NullablePlatform == null && this.ArgAnnotations[i] != null)
+                if (this.ArgAnnotations[i] != null)
                 {
                     throw new ParserException(this.ArgAnnotations[i].FirstToken, "Unexpected token: '@'");
                 }

@@ -56,12 +56,7 @@ namespace Crayon.ParseTree
             if (this.Root is Variable)
             {
                 string varName = ((Variable)this.Root).Name;
-
-                if (parser.IsTranslateMode && varName.StartsWith("$"))
-                {
-                    return new SystemFunctionCall(this.Root.FirstToken, this.Args, this.FunctionOrClassOwner).Resolve(parser);
-                }
-
+                
                 if (parser.GetClass(varName) != null)
                 {
                     throw new ParserException(this.ParenToken, "Cannot invoke a class like a function. To construct a new class, the \"new\" keyword must be used.");
