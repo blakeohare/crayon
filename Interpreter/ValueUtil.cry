@@ -164,7 +164,7 @@ function @type('int') doEqualityComparisonAndReturnCode(@type('Value') a, @type(
 
 			case Types.STRING:
 				if (%%%IS_JAVA%%%) {
-					if ($_dot_equals(Value$a.internalValue, Value$b.internalValue)) {
+					if ($_string_equals(Value$a.internalValue, Value$b.internalValue)) {
 						output = 1;
 					}
 				} else {

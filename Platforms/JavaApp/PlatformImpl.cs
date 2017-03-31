@@ -164,7 +164,7 @@ namespace GameJavaAwt
 
             return output;
         }
-        
+
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
@@ -190,7 +190,10 @@ namespace GameJavaAwt
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>();
+            return new Dictionary<string, object>()
+            {
+                {  "IS_JAVA", true },
+            };
         }
     }
 }

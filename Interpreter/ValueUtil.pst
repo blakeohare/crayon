@@ -168,7 +168,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
 				break;
 			case Types.STRING:
 				if (@ext_boolean("IS_JAVA")) {
-					if (a.internalValue.Equals(b.internalValue)) {
+					if (Core.StringEquals(a.internalValue, b.internalValue)) {
 						output = 1;
 					}
 				} else {
