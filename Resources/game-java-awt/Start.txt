@@ -1,8 +1,0 @@
-﻿package %%%PACKAGE%%%;
-
-class Start {
-	public static void main(String[] args) {
-		TranslationHelper.setCmdLineArgs(args);
-		CrayonWrapper.v_main();
-	}
-}

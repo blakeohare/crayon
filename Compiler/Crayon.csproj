@@ -100,10 +100,6 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Resources\Resources.csproj">
-      <Project>{33d98096-1f92-4c28-ba01-95030cd4eaca}</Project>
-      <Name>Resources</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
