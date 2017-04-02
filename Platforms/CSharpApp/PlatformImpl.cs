@@ -47,7 +47,7 @@ namespace GameCSharpOpenTk
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
             }
 
-            return Util.FlattenDictionary(
+            return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },

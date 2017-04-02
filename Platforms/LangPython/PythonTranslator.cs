@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Pastel.Nodes;
+using Common;
 
 namespace LangPython
 {
@@ -68,7 +68,7 @@ namespace LangPython
                     default: break;
                 }
             }
-            // TODO: use a global constant that's just a list of [None] to re-use here rather than allocating a dummy list each time.
+            TODO.UseGlobalListOfOneNoneToPreventFrequentReallocation();
             sb.Append("([None] * ");
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(")");
@@ -920,7 +920,6 @@ namespace LangPython
             this.TranslateExpression(sb, right);
         }
 
-        // TODO: fix typo: missing an e at the end of the name
         public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
             this.TranslateExpression(sb, root);

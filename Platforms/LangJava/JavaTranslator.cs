@@ -115,10 +115,11 @@ namespace LangJava
             }
             sb.Append(')');
         }
-
-        // TODO: you really should rename this
+        
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
         {
+            TODO.PleaseRenameThisFunction();
+
             sb.Append("new ArrayList<>(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
@@ -152,9 +153,10 @@ namespace LangJava
             {
                 case "int": sb.Append("Integer"); break;
                 case "string": sb.Append("String"); break;
-
-                // TODO: explicitly disallow this at compile-time
-                default: throw new NotImplementedException();
+                    
+                default:
+                    TODO.ExplicitlyDisallowThisAtCompileTime();
+                    throw new NotImplementedException();
             }
             sb.Append("SetToArray(");
             this.TranslateExpression(sb, dictionary);
@@ -359,8 +361,11 @@ namespace LangJava
 
         public override void TranslateListPop(StringBuilder sb, Expression list)
         {
-            // TODO: make this check a little more lenient with other simple patterns, such as struct fields on variables, etc
-            if (list is Variable)
+            bool useInlineListPop =
+                (list is Variable) ||
+                (list is DotField && ((DotField)list).Root is Variable);
+
+            if (useInlineListPop)
             {
                 this.TranslateExpression(sb, list);
                 sb.Append(".remove(");

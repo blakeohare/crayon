@@ -8,12 +8,12 @@ namespace Crayon
 {
     internal class Parser
     {
-        public Parser(BuildContext buildContext, SystemLibraryManager sysLibMan)
+        public Parser(BuildContext buildContext, LibraryManager sysLibMan)
         {
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
-            this.SystemLibraryManager = sysLibMan ?? new SystemLibraryManager();
+            this.LibraryManager = sysLibMan ?? new Crayon.LibraryManager();
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();
@@ -65,7 +65,7 @@ namespace Crayon
         public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
         public string CurrentSystemLibrary { get; set; }
 
-        public SystemLibraryManager SystemLibraryManager { get; private set; }
+        public LibraryManager LibraryManager { get; private set; }
 
         public ClassDefinition CurrentClass { get; set; }
 
@@ -340,7 +340,7 @@ namespace Crayon
                 ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                Executable[] libraryEmbeddedCode = this.SystemLibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+                Executable[] libraryEmbeddedCode = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
                 if (libraryEmbeddedCode == null)
                 {
                     this.unresolvedImports.Add(importStatement);

@@ -75,11 +75,10 @@ namespace Crayon.ParseTree
                 throw new ParserException(switchToken, "Switches need at least 1 case to indicate type.");
             }
         }
-
-        // TODO: in the resolve be sure to make fallthroughs an error.
-
+        
         internal override IList<Executable> Resolve(Parser parser)
         {
+            TODO.MakeSwitchStatementFallthroughsErrors();
             if (this.explicitMax != null)
             {
                 throw new ParserException(this.explicitMaxToken, "Unexpected token: '{'");

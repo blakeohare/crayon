@@ -13,7 +13,7 @@ namespace GameJavaScriptHtml5
         public override string Name { get { return "javascript-app-gl"; } }
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
-        
+
         public PlatformImpl()
         {
             this.Translator = new JavaScriptAppTranslator(this);
@@ -23,7 +23,7 @@ namespace GameJavaScriptHtml5
         {
             return new Dictionary<string, object>();
         }
-        
+
         public override Dictionary<string, FileOutput> ExportProject(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
@@ -94,7 +94,7 @@ namespace GameJavaScriptHtml5
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
 
-            // TODO: this needs to be included as part of libraries
+            TODO.JavaScriptDeGamification();
             output["lib_supplemental.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -133,7 +133,7 @@ namespace GameJavaScriptHtml5
                 Type = FileOutputType.Text,
                 TextContent = resourcesJs.ToString(),
             };
-            
+
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -185,16 +185,15 @@ namespace GameJavaScriptHtml5
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-
-            return Util.FlattenDictionary(
+            return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>()
                 {
                     { "DEFAULT_TITLE", options.GetString(ExportOptionKey.DEFAULT_TITLE, "Untitled") },
                     {
                         "FAVICON",
-                        options.GetBool(ExportOptionKey.HAS_ICON) 
-                            ? "<link rel=\"shortcut icon\" href=\"" + options.GetStringOrEmpty(ExportOptionKey.JS_FILE_PREFIX) + "favicon.ico\">" 
+                        options.GetBool(ExportOptionKey.HAS_ICON)
+                            ? "<link rel=\"shortcut icon\" href=\"" + options.GetStringOrEmpty(ExportOptionKey.JS_FILE_PREFIX) + "favicon.ico\">"
                             : ""
                     },
                 });

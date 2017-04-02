@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Crayon.ParseTree;
+using Common;
 
 namespace Crayon
 {
@@ -89,7 +90,7 @@ namespace Crayon
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (Library library in parser.SystemLibraryManager.LibrariesUsed)
+            foreach (Library library in parser.LibraryManager.LibrariesUsed)
             {
                 List<string> descriptorComponents = new List<string>()
                 {
@@ -548,9 +549,8 @@ namespace Crayon
 
         private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
-            // TODO: throw parser exception in the resolver if a return appears with any value
-            // TODO: throw parse exception if 'this' is used in the base args or default args anywhere. 
-            // TODO: some sort of mechanism (preferably earlier in the pipeline) that prevents the above.
+            TODO.ThrowErrorIfReturnAppearsWithValueInConstructors();
+            TODO.ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor();
 
             ByteBuffer tBuffer = new ByteBuffer();
 
@@ -1378,10 +1378,10 @@ namespace Crayon
             List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
             this.CompileExpressionList(parser, buffer, args, true);
             int argCount = libFunc.Args.Length;
-            int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
+            int id = parser.LibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
-            int libraryRefId = parser.SystemLibraryManager.GetLibraryReferenceId(libraryName);
+            int libraryRefId = parser.LibraryManager.GetLibraryReferenceId(libraryName);
             int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
 
             buffer.Add(token,

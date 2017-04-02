@@ -4,7 +4,7 @@ using Common;
 
 namespace Crayon
 {
-    internal class SystemLibraryManager
+    internal class LibraryManager
     {
         private Dictionary<string, Library> importedLibraries = new Dictionary<string, Library>();
         private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();

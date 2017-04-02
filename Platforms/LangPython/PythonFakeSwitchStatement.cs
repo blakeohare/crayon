@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Pastel.Nodes;
+using Common;
 
 // I'm so sorry.
 
@@ -225,7 +225,7 @@ namespace LangPython
 
         private Executable[] TrimBreak(Executable[] executables)
         {
-            // TODO: compile time enforcement of not allowing a break somewhere in a case's code other than the end.
+            TODO.PastelCompileTimeCheckForAbsenceOfBreakInSwitchStatementCodeOtherThanTheEndForTheSakeOfPythonCompilation();
             int length = executables.Length;
             if (length == 0) return executables;
             Executable last = executables[length - 1];

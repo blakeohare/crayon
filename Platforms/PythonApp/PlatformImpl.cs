@@ -17,7 +17,7 @@ namespace GamePythonPygame
         {
             this.Translator = new PythonAppTranslator(this);
         }
-        
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();
@@ -38,9 +38,10 @@ namespace GamePythonPygame
 
             List<string> runPy = new List<string>();
 
+            TODO.PythonAppDeGamification();
+
             foreach (string simpleCodeConcat in new string[] {
                 "header.txt",
-                // TODO: these need to go in their respective libraries.
                 "image_helper.txt",
                 "game.txt",
                 "gfx_renderer.txt",

@@ -7,7 +7,7 @@ namespace Crayon
     public class Constants
     {
         private static readonly Dictionary<string, string> CONSTANT_REPLACEMENTS;
-        
+
         static Constants()
         {
             Dictionary<string, string> constants = new Dictionary<string, string>()
@@ -33,10 +33,10 @@ namespace Crayon
                     constants.Add(key + "_" + enumValue.ToString(), ((int)enumValue).ToString());
                 }
             }
-            
+
             CONSTANT_REPLACEMENTS = constants;
         }
-        
+
         public static string DoReplacements(bool keepPercents, string text, Dictionary<string, string> replacements)
         {
             if (keepPercents) return text;
@@ -80,12 +80,7 @@ namespace Crayon
                 text = string.Join("", replaced);
             }
 
-            // Hackity hack hack hack. Oh well.
-            // TODO: in the resolver, add variable references to these arguments and then return a normal function invocations.
-            // That would be the mildly cleaner way of doing this.
-            return text.Replace(
-                "$_exception(",
-                "generateException(stack, pc, valueStackSize, ec, ");
+            return text;
         }
     }
 }

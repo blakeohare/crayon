@@ -296,7 +296,7 @@ namespace Crayon
                 foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                 {
                     Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(platformName);
-                    translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
+                    translationsBuilder = Util.MergeDictionaries(translationsBuilder, translationsForPlatform);
                 }
                 this.translations = translationsBuilder;
             }
@@ -464,11 +464,6 @@ namespace Crayon
             if (this.argumentTypeInfoForNativeMethods == null) this.InitTypeInfo();
 
             return this.argumentTypeInfoForNativeMethods;
-        }
-
-        public int GetFunctionId(string name)
-        {
-            throw new NotImplementedException();
         }
     }
 }
