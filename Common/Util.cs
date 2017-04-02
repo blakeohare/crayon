@@ -278,5 +278,10 @@ namespace Common
                     return sb.ToString();
             }
         }
+
+        public static string JoinLines(params string[] lines)
+        {
+            return string.Join("\n", lines);
+        }
     }
 }

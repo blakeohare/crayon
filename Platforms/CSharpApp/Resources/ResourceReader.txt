@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Interpreter.OtkGame
+namespace Interpreter
 {
     internal static class ResourceReader
     {

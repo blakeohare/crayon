@@ -1,20 +1,20 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app
-COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageWebResources/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPYFILES: java: src/crayonlib/imagewebresources/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: javascript-app-gl
-EMBED: javascript
+EMBED_FILES: from=javascript
 END
 
 BEGIN
 APPLICABLE-TO: python-app
-EMBED: python
+EMBED_FILES: from=python
 END

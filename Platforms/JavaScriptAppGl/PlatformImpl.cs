@@ -74,9 +74,9 @@ namespace GameJavaScriptHtml5
 
                     // add helper functions after the scrape.
 
-                    foreach (string supplementalFileContent in library.CodeToEmbed)
+                    foreach (ExportEntity embedCode in library.ExportEntities["EMBED_CODE"])
                     {
-                        libraryLines.Add(supplementalFileContent);
+                        libraryLines.Add(embedCode.StringValue);
                     }
 
                     output["libs/lib_" + library.Name.ToLower() + ".js"] = new FileOutput()

@@ -1,25 +1,25 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app
-COPYFILES: csharp: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: chspar-app-android
-COPYFILES: csharp-android: %PROJECT_ID%/Libraries/FileIOCommon/%FILE%
+COPY_FILES: from=csharp-android, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPYFILES: java: src/org/crayonlang/libraries/fileiocommon/%FILE%
+COPY_FILES: from=java, to=src/org/crayonlang/libraries/fileiocommon/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: python-app
-EMBED: python
+EMBED_FILES: from=python
 END
 
 BEGIN
 APPLICABLE-TO: javascript-app-gl
-EMBED: javascript
+EMBED_FILES: from=javascript
 END

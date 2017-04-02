@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace %%%PROJECT_ID%%%.Library.Nori
+namespace Interpreter.Libraries.Nori
 {
     internal static class LayoutRenderer
     {

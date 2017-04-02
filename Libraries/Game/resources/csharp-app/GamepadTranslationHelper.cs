@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Interpreter.OtkGame
+namespace Interpreter.Libraries.Game
 {
 	internal static class GamepadTranslationHelper
 	{

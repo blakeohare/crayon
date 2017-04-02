@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 using Interpreter.Vm;
 
-namespace Interpreter.OtkGame
+namespace Interpreter.Libraries.Game
 {
 	public static class GlUtil
 	{

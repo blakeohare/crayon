@@ -98,9 +98,9 @@ namespace GamePythonPygame
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
 
-                    foreach (string codeToAppendToLibrary in library.CodeToEmbed)
+                    foreach (ExportEntity codeToAppendToLibrary in library.ExportEntities["EMBED_CODE"])
                     {
-                        libraryLines.Add(codeToAppendToLibrary);
+                        libraryLines.Add(codeToAppendToLibrary.StringValue);
                     }
 
                     output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()

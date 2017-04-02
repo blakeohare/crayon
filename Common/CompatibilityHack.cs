@@ -15,17 +15,5 @@ namespace Common
         public static void RemoveCallingCodeWhenCbxIsFinished() { }
 
         public static void CriticalTODO(string comment) { }
-
-        public static string GetLegacyPlatformFromNewPlatform(string newPlatform)
-        {
-            switch (newPlatform)
-            {
-                case "csharp-app": return "game-csharp-opentk";
-                case "python-app": return "game-python-pygame";
-                case "javascript-app-gl": return "game-javascript";
-                case "java-app": return "game-java-awt";
-                default: return newPlatform;
-            }
-        }
     }
 }

@@ -1,15 +1,15 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app
-COPYFILES: desktopcsharp: %PROJECT_ID%/Libraries/ImageEncoder/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPYFILES: desktopjava: src/crayonlib/imageencoder/%FILE%
+COPYFILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: python-app
-EMBED: python
+EMBED_FILES: from=python
 END

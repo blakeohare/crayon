@@ -12,14 +12,22 @@ namespace Crayon
         private string languageName;
 
         public string Name { get; set; }
+        public string Version { get { return "v1"; } } // TODO: versions
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
 
+        public LibraryResourceDatabase Resources { get; private set; }
+
         public Library(string name, string libraryManifestPath, string platformName, string languageName)
         {
+            this.platformName = platformName;
+            this.languageName = languageName;
+
+            this.Resources = new LibraryResourceDatabase(this, platformName);
+
             CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // Remove the languageName field and argument here.
 
             this.Name = name;
@@ -28,11 +36,7 @@ namespace Crayon
             Dictionary<string, string> values = new Dictionary<string, string>();
             Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
 
-            this.platformName = platformName;
-            this.languageName = languageName;
-            string canonicalPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
-
-            string platformPrefix = "[" + canonicalPlatformName + "]";
+            string platformPrefix = "[" + this.platformName + "]";
 
             foreach (string line in manifest)
             {
@@ -303,8 +307,7 @@ namespace Crayon
                     Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
                     foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                     {
-                        string legacyPlatformName = CompatibilityHack.GetLegacyPlatformFromNewPlatform(platformName);
-                        Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(legacyPlatformName);
+                        Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(platformName);
                         translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
                     }
                     this.translations = translationsBuilder;
@@ -365,88 +368,8 @@ namespace Crayon
             }
         }
 
-        public void ExtractResources(string platformId, Dictionary<string, string> filesToCopy, List<string> contentToEmbed)
-        {
-            // TODO: need to separate the parser for this file and the interpretations of the actions
-            string resourceManifest = this.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
-            if (resourceManifest.Length > 0)
-            {
-                string mode = "inactive"; // inactive | pending | active
-
-                foreach (string lineRaw in resourceManifest.Split('\n'))
-                {
-                    string[] parts = lineRaw.Trim().Split(':');
-                    if (parts[0].StartsWith("#")) continue; // comment 
-
-                    string command = parts[0].ToUpper().Trim();
-                    if (command.Length > 0)
-                    {
-                        switch (mode)
-                        {
-                            case "active":
-                                switch (command)
-                                {
-                                    case "COPYFILES":
-                                        this.LibraryResourceCopyFiles(parts[1].Trim(), parts[2].Trim(), filesToCopy);
-                                        break;
-
-                                    case "EMBED":
-                                        this.LibraryResourceEmbedFiles(parts[1].Trim(), contentToEmbed);
-                                        break;
-
-                                    case "END":
-                                        mode = "inactive";
-                                        break;
-                                }
-                                break;
-
-                            case "inactive":
-                                if (command == "BEGIN")
-                                {
-                                    mode = "pending";
-                                }
-                                break;
-
-                            case "pending":
-                                switch (command)
-                                {
-                                    case "APPLICABLE-TO":
-                                        if (platformId == parts[1].Trim())
-                                        {
-                                            mode = "active";
-                                        }
-                                        break;
-                                    case "END":
-                                        mode = "inactive";
-                                        break;
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void LibraryResourceCopyFiles(string sourceDirectory, string targetPathTemplate, Dictionary<string, string> copyOutput)
-        {
-            foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
-            {
-                string content = this.ReadFile(false, "resources/" + sourceDirectory + "/" + file, false);
-                string targetPath = targetPathTemplate.Replace("%FILE%", file);
-                copyOutput.Add(targetPath, content);
-            }
-        }
-
-        private void LibraryResourceEmbedFiles(string sourceDirectory, List<string> embedTarget)
-        {
-            foreach (string file in this.ListDirectory("resources/" + sourceDirectory))
-            {
-                embedTarget.Add(this.ReadFile(false, "resources/" + sourceDirectory + "/" + file, false));
-            }
-        }
-
         private HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] { ".ds_store", "thumbs.db" });
-        private string[] ListDirectory(string pathRelativeToLibraryRoot)
+        internal string[] ListDirectory(string pathRelativeToLibraryRoot)
         {
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             List<string> output = new List<string>();
@@ -463,13 +386,22 @@ namespace Crayon
             return output.ToArray();
         }
 
+        public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
+        {
+            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
+            if (System.IO.File.Exists(fullPath))
+            {
+                return FileUtil.ReadFileBytes(fullPath);
+            }
+            throw new ParserException(null, "The '" + this.Name + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
+        }
+
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
             {
-                string text = System.IO.File.ReadAllText(fullPath);
-
+                string text = FileUtil.ReadFileText(fullPath);
                 return Constants.DoReplacements(keepPercents, text, this.replacements);
             }
 
@@ -569,39 +501,6 @@ namespace Crayon
         public int GetFunctionId(string name)
         {
             throw new NotImplementedException();
-        }
-
-        public void GetSupplementalFileOutput(Dictionary<string, FileOutput> fileCopies, List<string> codeToEmbed)
-        {
-            Dictionary<string, string> textFiles = new Dictionary<string, string>();
-
-            string platformId = CompatibilityHack.GetLegacyPlatformFromNewPlatform(this.platformName);
-            this.ExtractResources(platformId, textFiles, codeToEmbed);
-
-            foreach (string filepath in textFiles.Keys)
-            {
-                string content = textFiles[filepath];
-                content = this.NormalizeNamespacesForCbx(content);
-                // TODO: distinguish between code and content
-                fileCopies[filepath] = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = content,
-                };
-            }
-        }
-
-        private string NormalizeNamespacesForCbx(string content)
-        {
-            CompatibilityHack.CriticalTODO("Go update the supplemental files so this function isn't necessary.");
-
-            string magicString = "namespace %%%PROJECT_ID%%%.Library.";
-            string fixedString = "namespace Interpreter.Libraries." + this.Name;
-            bool useCarriageReturn = content.Contains("\r\n");
-            return string.Join(useCarriageReturn ? "\r\n" : "\n", content
-                .Split('\n')
-                .Select(line => line.StartsWith(magicString) ? fixedString : line.TrimEnd())
-                .ToArray());
         }
     }
 }

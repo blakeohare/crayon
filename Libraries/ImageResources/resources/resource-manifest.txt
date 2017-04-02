@@ -1,5 +1,5 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app-android
-COPYFILES: csharp: %PROJECT_ID%/Libraries/ImageResources/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END

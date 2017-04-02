@@ -18,7 +18,7 @@ namespace GameCSharpOpenTk
         {
             this.Translator = new CSharpAppTranslator(this);
         }
-        
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();
@@ -78,34 +78,15 @@ namespace GameCSharpOpenTk
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
 
-            // Project files from CSharpOpenTK
-            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
-
             // Required project files
             this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Program.cs", "Resources/Program.txt", replacements);
 
             // CSharpOpenTK specific stuff
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GamepadTranslationHelper.cs", "Resources/GamepadTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GameWindow.cs", "Resources/GameWindow.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GlUtil.cs", "Resources/GlUtil.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkRenderer.cs", "Resources/OpenTkRenderer.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkTranslationHelper.cs", "Resources/OpenTkTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
 
-            // Text from CSharpOpenTK
-            this.CopyResourceAsText(output, baseDir + "DependencyLicenses.txt", "Resources/DependencyLicenses.txt", replacements);
-
-            // DLL's from CSharpOpenTK
-            this.CopyResourceAsBinary(output, baseDir + "OpenTK.dll", "Resources/DllOpenTk.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SDL.dll", "Resources/DllSdl.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SDL_mixer.dll", "Resources/DllSdlMixer.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SdlDotNet.dll", "Resources/DllSdlDotNet.binary");
-            this.CopyResourceAsBinary(output, baseDir + "Tao.Sdl.dll", "Resources/DllTaoSdl.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
+            List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
 
             foreach (LibraryForExport library in libraries)
             {
@@ -114,20 +95,21 @@ namespace GameCSharpOpenTk
                 List<string> libraryLines = new List<string>();
                 if (library.ManifestFunction != null)
                 {
+                    string libraryDir = baseDir + "Libraries/" + libraryName;
                     libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
                     foreach (FunctionDefinition funcDef in library.Functions)
                     {
                         libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
                     }
 
-                    output[baseDir + "Libraries/" + libraryName + "/LibraryWrapper.cs"] = new FileOutput()
+                    output[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
                         TextContent = string.Join(this.NL,
                             "using System;",
                             "using System.Collections.Generic;",
                             "using System.Linq;",
-                            "using Interpreter.OtkGame;",
+                            "using Interpreter;",
                             "using Interpreter.Structs;",
                             "using Interpreter.Vm;",
                             "",
@@ -141,12 +123,20 @@ namespace GameCSharpOpenTk
                             ""),
                     };
 
-                    foreach (string filename in library.SupplementalFiles.Keys)
+                    foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
                     {
-                        output[baseDir + "Libraries/" + libraryName + "/" + filename] = library.SupplementalFiles[filename];
+                        string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
+                        output[targetPath] = codeFile.FileOutput;
+                    }
+
+                    foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
+                    {
+                        dlls.Add(new LangCSharp.DllFile(dllFile));
                     }
                 }
             }
+
+            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
             foreach (StructDefinition structDefinition in structDefinitions)
             {
@@ -237,7 +227,16 @@ namespace GameCSharpOpenTk
             {
                 output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
             }
-            
+
+            foreach (LangCSharp.DllFile dll in dlls)
+            {
+                output[baseDir + dll.HintPath] = dll.FileOutput;
+            }
+
+            // Project files from CSharpOpenTK
+            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
+
             return output;
         }
 

@@ -1,5 +1,5 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app
-COPYFILES: csharp-winforms: %PROJECT_ID%/Libraries/Nori/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END

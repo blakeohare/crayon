@@ -73,10 +73,9 @@ namespace GameJavaAwt
                         TextContent = string.Join(this.NL, libraryCode),
                     };
 
-                    foreach (string supFilePath in library.SupplementalFiles.Keys)
+                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
                     {
-                        FileOutput supFile = library.SupplementalFiles[supFilePath];
-                        output[supFilePath] = supFile;
+                        output[supFile.Values["target"]] = supFile.FileOutput;
                     }
                 }
             }

@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using Interpreter.Structs;
 using Interpreter.Vm;
 
-namespace Interpreter.OtkGame
+namespace Interpreter.Libraries.Game
 {
     internal class GameWindow : OpenTK.GameWindow
     {

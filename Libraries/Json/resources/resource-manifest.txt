@@ -1,26 +1,26 @@
 BEGIN
 APPLICABLE-TO: java-app
-COPYFILES: java-org-json: src/org/json/%FILE%
-COPYFILES: java: src/%PROJECT_ID%/%FILE%
+COPY_FILES: from=java-org-json, to=src/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: java-app-android
-COPYFILES: java-org-json: app/src/main/java/org/json/%FILE%
-COPYFILES: java: app/src/main/java/%PROJECT_ID%/%FILE%
+COPY_FILES: from=java-org-json, to=app/src/main/java/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: lang-csharp
-COPYFILES: csharp: %PROJECT_ID%/Libraries/Json/%FILE%
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: lang-python
-EMBED: python
+EMBED_FILES: from=python
 END
 
 BEGIN
 APPLICABLE-TO: lang-javascript
-EMBED: javascript
+EMBED_FILES: from=javascript
 END

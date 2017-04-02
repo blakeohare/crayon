@@ -177,8 +177,6 @@ namespace Crayon
                 this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);
 
-                library.ExtractResources(platform, this.filesToCopy, this.contentToEmbed);
-
                 this.importedLibraries[name] = library;
                 this.librariesByKey[name.ToLowerInvariant()] = library;
 
@@ -205,26 +203,6 @@ namespace Crayon
             }
 
             return embedCode;
-        }
-
-        private Dictionary<string, string> filesToCopy = new Dictionary<string, string>();
-        private List<string> contentToEmbed = new List<string>();
-
-        public Dictionary<string, string> CopiedFiles
-        {
-            get
-            {
-                return new Dictionary<string, string>(this.filesToCopy);
-            }
-        }
-
-        public string EmbeddedContent
-        {
-            get
-            {
-                // TODO: check the content itself to see if there's a \r\n or \n and then use the correct one.
-                return string.Join("\n", contentToEmbed);
-            }
         }
     }
 }

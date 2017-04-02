@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace %%%PROJECT_ID%%%.Library.Json
+namespace Interpreter.Libraries.Json
 {
 	internal static class JsonParser
 	{

@@ -4,11 +4,11 @@ DOCUMENTATION: http://crayonlang.org/docs/0.2.0/graphics2d
 DESCRIPTION: Graphics and 2D drawing built-in library.
 
 BOOL_FLAG: IS_OPEN_GL_BASED: false
-[game-csharp-android] BOOL_FLAG: IS_OPEN_GL_BASED: true
-[game-csharp-ios] BOOL_FLAG: IS_OPEN_GL_BASED: true
-[game-csharp-opentk] BOOL_FLAG: IS_OPEN_GL_BASED: true
+[csharp-app-android] BOOL_FLAG: IS_OPEN_GL_BASED: true
+[csharp-app-ios] BOOL_FLAG: IS_OPEN_GL_BASED: true
+[csharp-app] BOOL_FLAG: IS_OPEN_GL_BASED: true
 
 BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: false
-[game-csharp-android] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
-[game-csharp-ios] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
-[game-csharp-opentk] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
+[csharp-app-android] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
+[csharp-app-ios] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
+[csharp-app] BOOL_FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace %%%PROJECT_ID%%%.Library.ImageEncoder
+namespace Interpreter.Libraries.ImageEncoder
 {
     internal static class ImageEncoderUtil
     {

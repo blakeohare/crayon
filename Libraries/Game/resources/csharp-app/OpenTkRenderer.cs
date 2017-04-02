@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 // TODO: remove some of the generated code-isms such as excessive parenthesis.
 
-namespace Interpreter.OtkGame
+namespace Interpreter.Libraries.Game
 {
     public static class OpenTkRenderer
     {

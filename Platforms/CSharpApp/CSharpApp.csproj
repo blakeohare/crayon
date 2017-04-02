@@ -63,23 +63,8 @@
     <EmbeddedResource Include="Resources\SolutionFile.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\DllLibOgg0.binary" />
-    <EmbeddedResource Include="Resources\DllLibVorbis0.binary" />
-    <EmbeddedResource Include="Resources\DllLibVorbisFile3.binary" />
-    <EmbeddedResource Include="Resources\DllOpenTk.binary" />
-    <EmbeddedResource Include="Resources\DllSdl.binary" />
-    <EmbeddedResource Include="Resources\DllSdlDotNet.binary" />
-    <EmbeddedResource Include="Resources\DllSdlMixer.binary" />
-    <EmbeddedResource Include="Resources\DllTaoSdl.binary" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Resources\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\GameWindow.txt" />
-    <EmbeddedResource Include="Resources\GlUtil.txt" />
-    <EmbeddedResource Include="Resources\DependencyLicenses.txt" />
-    <EmbeddedResource Include="Resources\OpenTkRenderer.txt" />
-    <EmbeddedResource Include="Resources\OpenTkTranslationHelper.txt" />
+    <EmbeddedResource Include="Resources\CSharpAppTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\Program.txt" />
   </ItemGroup>
   <ItemGroup>

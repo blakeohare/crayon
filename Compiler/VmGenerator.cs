@@ -67,17 +67,12 @@ namespace Crayon
             List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
             foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
             {
-                string version = "v1"; // TODO: the actual version
                 Library library = librariesByName[libraryName];
-                Dictionary<string, FileOutput> filesToCopy = new Dictionary<string, FileOutput>();
-                List<string> codeToEmbed = new List<string>();
-                library.GetSupplementalFileOutput(filesToCopy, codeToEmbed);
                 Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                    libraryName, 
-                    version, 
-                    libraryCompilation[libraryName], 
-                    filesToCopy,
-                    codeToEmbed);
+                    library.Name,
+                    library.Version,
+                    library.Resources.ExportEntities,
+                    libraryCompilation[library.Name]);
                 libraries.Add(libraryForExport);
             }
             
@@ -111,7 +106,11 @@ namespace Crayon
             }
         }
 
-        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation, Dictionary<string, FileOutput> supplementalFiles, List<string> codeToEmbed)
+        private Platform.LibraryForExport CreateLibraryForExport(
+            string libraryName,
+            string libraryVersion,
+            Multimap<string, Platform.ExportEntity> exportEntities,
+            Pastel.PastelCompiler compilation)
         { 
             FunctionDefinition manifestFunction = null;
             Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
@@ -134,12 +133,11 @@ namespace Crayon
             return new Platform.LibraryForExport()
             {
                 Name = libraryName,
-                Version = version,
+                Version = libraryVersion,
                 FunctionRegisteredNamesOrNulls = names,
                 Functions = functions,
                 ManifestFunction = manifestFunction,
-                SupplementalFiles = supplementalFiles,
-                CodeToEmbed = codeToEmbed.ToArray(),
+                ExportEntities = exportEntities,
             };
         }
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using Interpreter.OtkGame;
+using Interpreter;
 using Interpreter.Vm;
 
 namespace %%%PROJECT_ID%%%

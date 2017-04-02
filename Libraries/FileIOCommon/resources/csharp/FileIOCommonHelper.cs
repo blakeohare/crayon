@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Interpreter.Structs;
 
-namespace %%%PROJECT_ID%%%.Library.FileIOCommon
+namespace Interpreter.Libraries.FileIOCommon
 {
     internal static class FileIOCommonHelper
     {
