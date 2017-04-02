@@ -117,7 +117,7 @@ namespace GameCSharpOpenTk
                             "{",
                             "    public static class LibraryWrapper",
                             "    {",
-                            this.TEMPORARY_HACK_replacements(libraryName, this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8)),
+                            this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
                             "    }",
                             "}",
                             ""),
@@ -238,17 +238,6 @@ namespace GameCSharpOpenTk
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
 
             return output;
-        }
-
-        private string TEMPORARY_HACK_replacements(string libraryName, string content)
-        {
-            CompatibilityHack.CriticalTODO("Update the translations to do the right thing.");
-
-            if (content.Contains("Library." + libraryName + "."))
-            {
-                return content.Replace("Library." + libraryName + ".", "");
-            }
-            return content;
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
