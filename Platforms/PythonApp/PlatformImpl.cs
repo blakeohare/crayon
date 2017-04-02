@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Common;
 using Pastel.Nodes;
 using Platform;
-using System.Text;
 
 namespace GamePythonPygame
 {
@@ -21,6 +20,11 @@ namespace GamePythonPygame
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();
+        }
+
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions)
+        {
+            throw new NotImplementedException();
         }
 
         public override Dictionary<string, FileOutput> ExportProject(

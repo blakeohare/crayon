@@ -24,6 +24,11 @@ namespace GameCSharpOpenTk
             return new Dictionary<string, object>();
         }
 
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             List<string> embeddedResources = new List<string>();

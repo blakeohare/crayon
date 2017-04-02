@@ -136,6 +136,11 @@ namespace Platform
             throw new InvalidOperationException("This platform does not support types.");
         }
 
+        public abstract Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<Pastel.Nodes.VariableDeclaration> globals,
+            IList<Pastel.Nodes.StructDefinition> structDefinitions,
+            IList<Pastel.Nodes.FunctionDefinition> functionDefinitions);
+
         public abstract Dictionary<string, FileOutput> ExportProject(
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,

@@ -19,6 +19,11 @@ namespace GameJavaAwt
             this.Translator = new JavaAppTranslator(this);
         }
 
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Dictionary<string, FileOutput> ExportProject(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
