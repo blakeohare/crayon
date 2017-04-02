@@ -9,27 +9,23 @@ namespace Crayon
     internal class Library
     {
         private string platformName;
-        private string languageName;
 
         public string Name { get; set; }
         public string Version { get { return "v1"; } } // TODO: versions
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
-
-        private readonly Dictionary<string, string> replacements = new Dictionary<string, string>();
-
+        
         public LibraryResourceDatabase Resources { get; private set; }
 
-        public Library(string name, string libraryManifestPath, string platformName, string languageName)
+        public Library(string name, string libraryManifestPath, string platformName)
         {
+            TODO.LibrariesNeedVersionNumber();
+
             this.platformName = platformName;
-            this.languageName = languageName;
 
             this.Resources = new LibraryResourceDatabase(this, platformName);
-
-            CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // Remove the languageName field and argument here.
-
+            
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
             string[] manifest = System.IO.File.ReadAllText(libraryManifestPath).Split('\n');
@@ -91,13 +87,7 @@ namespace Crayon
                     }
                 }
             }
-
-            foreach (string key in flagValues.Keys)
-            {
-                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished(); // down with text-replacements! long live compiler-time constants!
-                this.replacements[key] = flagValues[key] ? "true" : "false";
-            }
-
+            
             this.CompileTimeConstants = new Dictionary<string, object>();
             foreach (string key in flagValues.Keys)
             {
@@ -301,43 +291,22 @@ namespace Crayon
         {
             if (this.translations == null)
             {
-                if (throwToken is Pastel.Token)
+                Platform.AbstractTranslator translator = (Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator;
+                Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
+                foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                 {
-                    Platform.AbstractTranslator translator = (Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator;
-                    Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
-                    foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
-                    {
-                        Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(platformName);
-                        translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
-                    }
-                    this.translations = translationsBuilder;
+                    Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(platformName);
+                    translationsBuilder = Util.FlattenDictionary(translationsBuilder, translationsForPlatform);
                 }
-                else
-                {
-                    CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
-                    Dictionary<string, string> languageTranslations = this.GetMethodTranslations(this.languageName);
-                    Dictionary<string, string> platformTranslations = this.GetMethodTranslations(this.platformName);
-                    this.translations = Util.FlattenDictionary(languageTranslations, platformTranslations);
-                }
+                this.translations = translationsBuilder;
             }
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             string output = null;
-            if (throwToken is Pastel.Token)
+            string lookup = "$" + functionName;
+            if (this.translations.ContainsKey(lookup))
             {
-                string lookup = "$" + functionName;
-                if (this.translations.ContainsKey(lookup))
-                {
-                    output = this.translations[lookup];
-                }
-            }
-            else
-            {
-                CompatibilityHack.RemoveCallingCodeWhenCbxIsFinished();
-                if (this.translations.ContainsKey(functionName))
-                {
-                    output = this.translations[functionName];
-                }
+                output = this.translations[lookup];
             }
 
             if (output != null)
@@ -401,8 +370,7 @@ namespace Crayon
             string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
             if (System.IO.File.Exists(fullPath))
             {
-                string text = FileUtil.ReadFileText(fullPath);
-                return Constants.DoReplacements(keepPercents, text, this.replacements);
+                return FileUtil.ReadFileText(fullPath);
             }
 
             if (failSilently)

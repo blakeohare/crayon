@@ -87,19 +87,14 @@ namespace Crayon
         private ByteBuffer BuildLibraryDeclarations(Parser parser)
         {
             ByteBuffer output = new ByteBuffer();
-            if (Common.CompatibilityHack.IS_LEGACY_MODE)
-            {
-                return output;
-            }
 
             int id = 1;
             foreach (Library library in parser.SystemLibraryManager.LibrariesUsed)
             {
-                Common.CompatibilityHack.CriticalTODO("Include the version in the descriptor as well.");
                 List<string> descriptorComponents = new List<string>()
                 {
                     library.Name,
-                    "v1" // dummy version
+                    library.Version,
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
                 output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);
@@ -1385,23 +1380,16 @@ namespace Crayon
             int argCount = libFunc.Args.Length;
             int id = parser.SystemLibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
-            if (Common.CompatibilityHack.IS_CBX_MODE)
-            {
-                string libraryName = libFunc.LibraryName;
-                int libraryRefId = parser.SystemLibraryManager.GetLibraryReferenceId(libraryName);
-                int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
+            string libraryName = libFunc.LibraryName;
+            int libraryRefId = parser.SystemLibraryManager.GetLibraryReferenceId(libraryName);
+            int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
 
-                buffer.Add(token,
-                    OpCode.CALL_LIB_FUNCTION_DYNAMIC,
-                    functionNameReferenceId,
-                    libraryRefId,
-                    argCount,
-                    outputUsed ? 1 : 0);
-            }
-            else
-            {
-                buffer.Add(token, OpCode.CALL_LIB_FUNCTION, id, argCount, outputUsed ? 1 : 0);
-            }
+            buffer.Add(token,
+                OpCode.CALL_LIB_FUNCTION_DYNAMIC,
+                functionNameReferenceId,
+                libraryRefId,
+                argCount,
+                outputUsed ? 1 : 0);
         }
 
         private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)

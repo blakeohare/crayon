@@ -55,9 +55,7 @@ namespace Crayon
         {
             BuildContext buildContext = Program.GetBuildContext(args);
 
-            Platform.AbstractPlatform platform = GetPlatform2Instance(buildContext);
-
-            CompatibilityHack.IS_CBX_MODE = platform != null;
+            Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
             Dictionary<string, FileOutput> result;
@@ -116,7 +114,7 @@ namespace Crayon
             exporter.ExportFiles(result);
         }
 
-        private static Platform.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
+        private static Platform.AbstractPlatform GetPlatformInstance(BuildContext buildContext)
         {
             string platformId = buildContext.Platform.ToLowerInvariant();
             return platformProvider.GetPlatform(platformId);

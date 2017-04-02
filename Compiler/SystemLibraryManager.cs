@@ -170,9 +170,8 @@ namespace Crayon
                 }
 
                 string platform = parser.BuildContext.Platform;
-                string language = platform.Split('-')[1];
 
-                library = new Library(name, libraryManifestPath, platform, language);
+                library = new Library(name, libraryManifestPath, platform);
 
                 this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);

@@ -416,17 +416,25 @@ namespace LangJava
         public override void TranslateListToArray(StringBuilder sb, Expression list)
         {
             PType itemType = list.ResolvedType.Generics[0];
-            if (itemType.RootValue == "Object")
+            if (itemType.RootValue == "object")
             {
                 this.TranslateExpression(sb, list);
                 sb.Append(".toArray()");
                 return;
             }
 
+            string rootType = itemType.RootValue;
             switch (itemType.RootValue)
             {
+                case "bool":
+                case "byte":
                 case "int":
-                    sb.Append("TranslationHelper.listToArrayInt(");
+                case "double":
+                case "char":
+                    sb.Append("TranslationHelper.listToArray");
+                    sb.Append((char)(rootType[0] + 'A' - 'a'));
+                    sb.Append(rootType.Substring(1));
+                    sb.Append('(');
                     this.TranslateExpression(sb, list);
                     sb.Append(')');
                     break;
@@ -448,12 +456,11 @@ namespace LangJava
                     sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_MAP)");
                     break;
                 case "Array":
-                    CompatibilityHack.CriticalTODO("you should fill this in."); // It might be nice just to have a TranslateTypeWithoutGenerics for these finiky array types.
-                    throw new NotImplementedException();
+                    throw NYI.JavaListOfArraysConvertToArray();
                 default:
                     string javaType = this.Platform.TranslateType(itemType);
                     char firstChar = javaType[0];
-                    if (firstChar >= 'A' & firstChar <= 'Z')
+                    if (firstChar >= 'A' && firstChar <= 'Z')
                     {
                         this.TranslateExpression(sb, list);
                         sb.Append(".toArray((");
@@ -462,7 +469,7 @@ namespace LangJava
                     }
                     else
                     {
-                        CompatibilityHack.CriticalTODO("you should fill this in, too.");
+                        // I think I covered all the primitive types that are supported.
                         throw new NotImplementedException();
                     }
                     break;

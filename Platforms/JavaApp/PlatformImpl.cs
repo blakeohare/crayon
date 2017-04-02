@@ -30,7 +30,9 @@ namespace GameJavaAwt
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-            CompatibilityHack.CriticalTODO("override the package from the build file to create a proper DNS-style package name."); // okay, not critical for CBX, but embarassing that you can't currently.
+
+            TODO.OverrideJavaPackagesFromBuildFile();
+
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string sourcePath = "src/" + package + "/";
 

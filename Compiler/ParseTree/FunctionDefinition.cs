@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
 
 namespace Crayon.ParseTree
 {
@@ -71,7 +72,7 @@ namespace Crayon.ParseTree
                     this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
                 }
 
-                Common.CompatibilityHack.CriticalTODO("annotations need to be removed from the parser."); 
+                TODO.RemoveAnnotationsFromParser();
 
                 // Annotations not allowed in byte code mode
                 if (this.ArgAnnotations[i] != null)
