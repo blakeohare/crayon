@@ -22,5 +22,6 @@
         public static void JavaScriptDeGamification() { }
         public static void PleaseRenameThisFunction() { }
         public static void ExplicitlyDisallowThisAtCompileTime() { }
+        public static void MoveCbxParserIntoTranslatedPastelCode() { }
     }
 }

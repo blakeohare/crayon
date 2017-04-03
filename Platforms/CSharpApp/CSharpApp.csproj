@@ -70,6 +70,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\Program.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\ResourceReader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\CbxDecoder.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

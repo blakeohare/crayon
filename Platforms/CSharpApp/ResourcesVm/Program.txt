@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using Interpreter.Vm;
+
+namespace CrayonRuntime
+{
+    internal class Program
+    {
+        private static readonly int COMPATIBLE_MAJOR_VERSION = 0;
+        private static readonly int COMPATIBLE_MINOR_VERSION = 2;
+
+        public static void Main(string[] args)
+        {
+            try
+            {
+                Run(args);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void Run(string[] args)
+        {
+            if (args.Length == 0) throw new Exception("Incorrect number of args. Requires path to a cbx file.");
+
+            List<string> argsList = new List<string>(args);
+            string cbxPath = argsList[0];
+            argsList.RemoveAt(0);
+            args = argsList.ToArray();
+
+            if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
+            if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
+
+            byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
+
+            CbxDecoder cbxDecoder = new CbxDecoder(cbxData);
+            if (cbxDecoder.VMajor != COMPATIBLE_MAJOR_VERSION || cbxDecoder.VMinor != COMPATIBLE_MINOR_VERSION)
+                throw new Exception("CBX file was compiled with an incompatible version of Crayon than the current runtime.");
+
+            string byteCode = cbxDecoder.ByteCode;
+            if (byteCode == null) throw new Exception("CBX file did not contain byte code.");
+
+            TranslationHelper.CommandLineArgs = args;
+            TranslationHelper.LibraryRegistry = new LibraryRegistry();
+            TranslationHelper.ByteCode = byteCode;
+            TranslationHelper.ResourceManifest = cbxDecoder.ResourceManifest;
+
+            CrayonWrapper.v_main();
+        }
+    }
+}

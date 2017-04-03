@@ -24,14 +24,20 @@ namespace GameCSharpOpenTk
             return new Dictionary<string, object>();
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            List<string> embeddedResources = new List<string>();
+            List<string> embeddedResources = new List<string>()
+            {
+                "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
+                "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
+                "<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>",
+            };
+
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"icon.ico\" />");
+            }
+
             foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
@@ -57,10 +63,42 @@ namespace GameCSharpOpenTk
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
                     { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
-                    { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources) },
+                    { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
-                    { "CSHARP_CONTENT_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<EmbeddedResource Include=\"icon.ico\" />" : "" }
                 });
+        }
+
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions)
+        {
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            Dictionary<string, string> replacements = new Dictionary<string, string>()
+            {
+                { "PROJECT_ID", "CrayonRuntime" },
+                { "PROJECT_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-project") },
+                { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-assembly") },
+                { "PROJECT_TITLE", "Crayon Runtime" },
+                { "COPYRIGHT", "©" },
+                { "CURRENT_YEAR", DateTime.Now.Year.ToString() },
+                { "DLL_REFERENCES", "" },
+                { "CSHARP_APP_ICON", "<ApplicationIcon>icon.ico</ApplicationIcon>" },
+                { "EMBEDDED_RESOURCES", "<EmbeddedResource Include=\"icon.ico\" />" },
+                { "CSHARP_CONTENT_ICON", "" },
+                { "DLLS_COPIED", "" },
+            };
+            string baseDir = "CrayonRuntime/";
+
+            this.CopyTemplatedFiles(baseDir, output, replacements, true);
+            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+            this.ExportProjectFiles(baseDir, output, replacements);
+            this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
+
+            TODO.MoveCbxParserIntoTranslatedPastelCode();
+            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
+
+            return output;
         }
 
         public override Dictionary<string, FileOutput> ExportProject(
@@ -77,19 +115,7 @@ namespace GameCSharpOpenTk
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
-            // From LangCSharp
-            this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
-
-            // Required project files
-            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Program.cs", "Resources/Program.txt", replacements);
-
-            // CSharpOpenTK specific stuff
-            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
+            this.CopyTemplatedFiles(baseDir, output, replacements, false);
 
             List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
 
@@ -143,6 +169,68 @@ namespace GameCSharpOpenTk
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
+            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+
+            output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output[baseDir + "ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+
+            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
+            }
+
+            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
+            }
+
+            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
+            }
+
+            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
+            }
+
+            foreach (LangCSharp.DllFile dll in dlls)
+            {
+                output[baseDir + dll.HintPath] = dll.FileOutput;
+            }
+
+            this.ExportProjectFiles(baseDir, output, replacements);
+
+            return output;
+        }
+
+        private void CopyTemplatedFiles(string baseDir, Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, bool isStandaloneVm)
+        {
+            string resourceDir = isStandaloneVm ? "ResourcesVm" : "Resources";
+
+            // From LangCSharp
+            this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
+
+            // Required project files
+            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.txt", replacements);
+
+            // CSharpOpenTK specific stuff
+            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
+        }
+
+        private void ExportInterpreter(
+            string baseDir,
+            Dictionary<string, FileOutput> output,
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions)
+        {
             foreach (StructDefinition structDefinition in structDefinitions)
             {
                 output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = new FileOutput()
@@ -208,41 +296,16 @@ namespace GameCSharpOpenTk
                     ""
                 }),
             };
+        }
 
-            output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
-            output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output[baseDir + "ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
-
-            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
-            }
-
-            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
-            {
-                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
-            }
-
-            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
-            }
-
-            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
-            }
-
-            foreach (LangCSharp.DllFile dll in dlls)
-            {
-                output[baseDir + dll.HintPath] = dll.FileOutput;
-            }
-
-            // Project files from CSharpOpenTK
+        private void ExportProjectFiles(
+            string baseDir,
+            Dictionary<string, FileOutput> output,
+            Dictionary<string, string> replacements)
+        {
+            string projectId = replacements["PROJECT_ID"];
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
-
-            return output;
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

@@ -56,13 +56,7 @@
     <Compile Include="Vm\*.cs"/>  
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ByteCode.txt"/>
-    <EmbeddedResource Include="ResourceManifest.txt"/>
-	<EmbeddedResource Include="ImageSheetManifest.txt"/>
-%%%EMBEDDED_RESOURCES%%%
-  </ItemGroup>
-  <ItemGroup>
-    %%%CSHARP_CONTENT_ICON%%%
+    %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
   <ItemGroup>
 	%%%DLLS_COPIED%%%
