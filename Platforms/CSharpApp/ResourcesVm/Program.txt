@@ -6,11 +6,13 @@ namespace CrayonRuntime
 {
     internal class Program
     {
-        private static readonly int COMPATIBLE_MAJOR_VERSION = 0;
-        private static readonly int COMPATIBLE_MINOR_VERSION = 2;
+        private static readonly HashSet<string> COMPATIBLE_VERSIONS = new HashSet<string>() {
+            "0.2.0",
+        };
 
         public static void Main(string[] args)
         {
+#if RELEASE
             try
             {
                 Run(args);
@@ -19,6 +21,9 @@ namespace CrayonRuntime
             {
                 Console.WriteLine(e.Message);
             }
+#elif DEBUG
+            Run(args);
+#endif
         }
 
         private static void Run(string[] args)
@@ -36,7 +41,7 @@ namespace CrayonRuntime
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
 
             CbxDecoder cbxDecoder = new CbxDecoder(cbxData);
-            if (cbxDecoder.VMajor != COMPATIBLE_MAJOR_VERSION || cbxDecoder.VMinor != COMPATIBLE_MINOR_VERSION)
+            if (!COMPATIBLE_VERSIONS.Contains(cbxDecoder.CbxVersion))
                 throw new Exception("CBX file was compiled with an incompatible version of Crayon than the current runtime.");
 
             string byteCode = cbxDecoder.ByteCode;

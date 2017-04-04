@@ -7,13 +7,14 @@ namespace CrayonRuntime
     internal class CbxDecoder
     {
         private Dictionary<string, string> chunks = new Dictionary<string, string>();
-        public int VMajor { get; private set; }
-        public int VMinor { get; private set; }
-        public int VRelease { get; private set; }
+        private int vMajor;
+        private int vMinor;
+        private int vRelease;
 
         public string ByteCode { get { return this.GetChunk("CODE"); } }
         public string ResourceManifest { get { return this.GetChunk("RSRC") ?? ""; } }
         public string ImageSheetManifest { get { return this.GetChunk("IMSH") ?? ""; } }
+        public string CbxVersion { get { return this.vMajor + "." + this.vMinor + "." + this.vRelease; } }
 
         public CbxDecoder(byte[] data)
         {
@@ -24,18 +25,18 @@ namespace CrayonRuntime
                 throw InvalidFile();
             }
 
-            this.VMajor = this.GetFourByteBigEndianNumber(data, 4);
-            this.VMinor = this.GetFourByteBigEndianNumber(data, 8);
-            this.VRelease = this.GetFourByteBigEndianNumber(data, 12);
+            this.vMajor = this.GetFourByteBigEndianNumber(data, 4);
+            this.vMinor = this.GetFourByteBigEndianNumber(data, 8);
+            this.vRelease = this.GetFourByteBigEndianNumber(data, 12);
 
             int i = 16;
             while (i < data.Length)
             {
-                if (i + 8 >= data.Length) throw InvalidFile();
+                if (i + 8 > data.Length) throw InvalidFile();
                 string chunkId = this.GetString(data, i, 4);
                 int chunkLength = this.GetFourByteBigEndianNumber(data, i + 4);
                 i += 8;
-                if (i + chunkLength >= data.Length)
+                if (i + chunkLength > data.Length)
                 {
                     throw InvalidFile();
                 }
@@ -49,7 +50,7 @@ namespace CrayonRuntime
 
         private int GetFourByteBigEndianNumber(byte[] data, int index)
         {
-            if (index + 4 < data.Length) throw InvalidFile();
+            if (index + 4 > data.Length) throw InvalidFile();
             int output = 0;
             for (int i = 0; i < 4; ++i)
             {
@@ -60,7 +61,7 @@ namespace CrayonRuntime
 
         private string GetString(byte[] data, int index, int length)
         {
-            if (index + length < data.Length) throw InvalidFile();
+            if (index + length > data.Length) throw InvalidFile();
             try
             {
                 return UTF8Encoding.UTF8.GetString(data, index, length);
