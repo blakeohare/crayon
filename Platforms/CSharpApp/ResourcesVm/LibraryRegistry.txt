@@ -9,8 +9,15 @@ namespace Interpreter.Vm
         private Dictionary<string, System.Reflection.MethodInfo> manifestMethodsByLibraryName = new Dictionary<string, System.Reflection.MethodInfo>();
         private Dictionary<string, Library> librariesByName = new Dictionary<string, Library>();
 
-        public LibraryRegistry()
+        public LibraryRegistry(Dictionary<string, string> libraryVersions)
         {
+            foreach (string libraryName in libraryVersions.Keys.OrderBy(n => n))
+            {
+                string libraryVersion = libraryVersions[libraryName];
+                // TODO: load this from disk
+            }
+
+            /*
             foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
             {
                 string[] namespaceComponents = type.FullName.Split('.');
@@ -22,6 +29,7 @@ namespace Interpreter.Vm
                     librariesByName[name] = new Library(manifestMethod);
                 }
             }
+            //*/
         }
 
         public Library GetLibrary(string name)

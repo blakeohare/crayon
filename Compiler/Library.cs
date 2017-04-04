@@ -155,6 +155,11 @@ namespace Crayon
             }
         }
 
+        public bool IsMoreThanJustEmbedCode
+        {
+            get { return this.filepathsByFunctionName.Count > 0; }
+        }
+
         public bool IsAllowedImport(string currentLibrary)
         {
             // Empty list means it's open to everyone.

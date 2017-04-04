@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 
 namespace Crayon
@@ -153,15 +154,28 @@ namespace Crayon
             BuildContext buildContext = GetBuildContextCbx(buildFilePath);
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
             string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
-            List<byte> cbxOutput = new List<byte>() { 0, (byte)'C', (byte)'B', (byte)'X' };
+            List<byte> cbxOutput = new List<byte>() { 0 };
+            cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(0));
             cbxOutput.AddRange(GetBigEndian4Byte(2));
             cbxOutput.AddRange(GetBigEndian4Byte(0));
-
-            cbxOutput.AddRange(new byte[] { (byte)'C', (byte)'O', (byte)'D', (byte)'E' });
+            
             byte[] code = StringToBytes(byteCode);
+            cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
             cbxOutput.AddRange(code);
+
+            List<string> libraries = new List<string>();
+            foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
+            {
+                libraries.Add(library.Name);
+                libraries.Add(library.Version);
+            }
+            string libsData = string.Join(",", libraries);
+            byte[] libsDataBytes = StringToBytes(libsData);
+            cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
+            cbxOutput.AddRange(libsDataBytes);
 
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             string cbxPath = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder, buildContext.ProjectID + ".cbx");

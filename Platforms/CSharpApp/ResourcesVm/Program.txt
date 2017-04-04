@@ -48,7 +48,7 @@ namespace CrayonRuntime
             if (byteCode == null) throw new Exception("CBX file did not contain byte code.");
 
             TranslationHelper.CommandLineArgs = args;
-            TranslationHelper.LibraryRegistry = new LibraryRegistry();
+            TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ByteCode = byteCode;
             TranslationHelper.ResourceManifest = cbxDecoder.ResourceManifest;
 
