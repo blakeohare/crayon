@@ -187,6 +187,8 @@ namespace Pastel.Nodes
                         case "Size": return NativeFunction.STRING_LENGTH;
                         case "Split": return NativeFunction.STRING_SPLIT;
                         case "StartsWith": return NativeFunction.STRING_STARTS_WITH;
+                        case "SubString": return NativeFunction.STRING_SUBSTRING;
+                        case "SubStringIsEqualTo": return NativeFunction.STRING_SUBSTRING_IS_EQUAL_TO;
                         case "ToLower": return NativeFunction.STRING_TO_LOWER;
                         case "ToUpper": return NativeFunction.STRING_TO_UPPER;
                         case "Trim": return NativeFunction.STRING_TRIM;
@@ -198,6 +200,7 @@ namespace Pastel.Nodes
                 case "Array":
                     switch (field)
                     {
+                        case "Join": return NativeFunction.ARRAY_JOIN;
                         case "Size": return NativeFunction.ARRAY_LENGTH;
                         default: throw new ParserException(this.FieldName, "Unresolved Array method: " + field);
                     }

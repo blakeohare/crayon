@@ -37,6 +37,10 @@ namespace Pastel.Nodes
 
         public override Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
+            if (this.Value == null)
+            {
+                throw new ParserException(this.FirstToken, "Cannot have variable declaration without a value.");
+            }
             this.Value = this.Value.ResolveNamesAndCullUnusedCode(compiler);
 
             return this;

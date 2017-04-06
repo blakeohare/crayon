@@ -10,6 +10,7 @@ namespace Pastel
         NONE,
 
         ARRAY_GET,
+        ARRAY_JOIN,
         ARRAY_LENGTH,
         ARRAY_SET,
         CHAR_TO_STRING,
@@ -93,6 +94,8 @@ namespace Pastel
         STRING_REVERSE,
         STRING_SPLIT,
         STRING_STARTS_WITH,
+        STRING_SUBSTRING,
+        STRING_SUBSTRING_IS_EQUAL_TO,
         STRING_TO_LOWER,
         STRING_TO_UPPER,
         STRING_TRIM,

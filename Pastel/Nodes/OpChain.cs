@@ -134,6 +134,10 @@ namespace Pastel.Nodes
                     case "double!=int":
                     case "bool&&bool":
                     case "bool||bool":
+                    case "char>char":
+                    case "char<char":
+                    case "char>=char":
+                    case "char<=char":
                         this.ResolvedType = PType.BOOL;
                         break;
 
