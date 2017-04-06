@@ -18,7 +18,7 @@ namespace Crayon
         {
             return systemLibraryPathsByName.ContainsKey(name);
         }
-
+        
         public Library GetLibraryFromKey(string key)
         {
             Library output;
@@ -59,14 +59,27 @@ namespace Crayon
         }
 
         private static Dictionary<string, string> systemLibraryPathsByName = null;
-
-        private string GetSystemLibraryPath(string name, string buildFileCrayonPath, string projectDirectory)
+        
+        public List<Library> GetAllAvailableLibraries(Platform.AbstractPlatform platform)
         {
-            if (systemLibraryPathsByName == null)
+            Dictionary<string, string> allLibraries = GetAvailableLibraryPathsByLibraryName(null, null);
+            List<Library> output = new List<Library>();
+            foreach (string name in allLibraries.Keys)
             {
-                systemLibraryPathsByName = new Dictionary<string, string>();
+                string manifestPath = allLibraries[name];
+                Library library = new Library(name, manifestPath, platform.Name);
+                output.Add(library);
+            }
+            return output;
+        }
 
-                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+        private static Dictionary<string, string> GetAvailableLibraryPathsByLibraryName(
+            string nullableBuildFileCrayonPath,
+            string nullableProjectDirectory)
+        {
+            systemLibraryPathsByName = new Dictionary<string, string>();
+
+            string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
 #if RELEASE
                 if (crayonHome == null)
@@ -75,62 +88,69 @@ namespace Crayon
                 }
 #endif
 
-                List<string> directoriesToCheck = new List<string>();
+            List<string> directoriesToCheck = new List<string>();
 
-                if (crayonHome != null)
-                {
-                    string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
-                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
-                }
-
-                string crayonPaths =
-                    (buildFileCrayonPath ?? "") + ";" +
-                    (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
+            if (crayonHome != null)
+            {
+                string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
+                directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+            }
+            string crayonPaths =
+                (nullableBuildFileCrayonPath ?? "") + ";" +
+                (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
 
 #if OSX
 				crayonPaths = crayonPaths.Replace(':', ';');
 #endif
-                string[] paths = crayonPaths.Split(';');
-                foreach (string path in paths)
+            string[] paths = crayonPaths.Split(';');
+            foreach (string path in paths)
+            {
+                if (path.Length > 0)
                 {
-
-                    if (path.Length > 0)
+                    string absolutePath = FileUtil.IsAbsolutePath(path)
+                        ? path
+                        : System.IO.Path.Combine(nullableProjectDirectory, path);
+                    absolutePath = System.IO.Path.GetFullPath(absolutePath);
+                    if (System.IO.Directory.Exists(absolutePath))
                     {
-                        string absolutePath = FileUtil.IsAbsolutePath(path)
-                            ? path
-                            : System.IO.Path.Combine(projectDirectory, path);
-                        absolutePath = System.IO.Path.GetFullPath(absolutePath);
-                        if (System.IO.Directory.Exists(absolutePath))
-                        {
-                            directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(absolutePath));
-                        }
+                        directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(absolutePath));
                     }
                 }
+            }
 
 #if DEBUG
-                // Presumably running from source. Walk up to the root directory and find the Libraries directory.
-                // From there use the list of folders.
-                string currentDirectory = System.IO.Path.GetFullPath(".");
-                while (!string.IsNullOrEmpty(currentDirectory))
+            // Presumably running from source. Walk up to the root directory and find the Libraries directory.
+            // From there use the list of folders.
+            string currentDirectory = System.IO.Path.GetFullPath(".");
+            while (!string.IsNullOrEmpty(currentDirectory))
+            {
+                string path = System.IO.Path.Combine(currentDirectory, "Libraries");
+                if (System.IO.Directory.Exists(path))
                 {
-                    string path = System.IO.Path.Combine(currentDirectory, "Libraries");
-                    if (System.IO.Directory.Exists(path))
-                    {
-                        directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(path));
-                        break;
-                    }
-                    currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
+                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(path));
+                    break;
                 }
+                currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
+            }
 #endif
-                foreach (string dir in directoriesToCheck)
+            foreach (string dir in directoriesToCheck)
+            {
+                string libraryName = System.IO.Path.GetFileName(dir);
+                string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
+                if (System.IO.File.Exists(manifestPath))
                 {
-                    string libraryName = System.IO.Path.GetFileName(dir);
-                    string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
-                    if (System.IO.File.Exists(manifestPath))
-                    {
-                        systemLibraryPathsByName[libraryName] = manifestPath;
-                    }
+                    systemLibraryPathsByName[libraryName] = manifestPath;
                 }
+            }
+
+            return systemLibraryPathsByName;
+        }
+
+        private string GetSystemLibraryPath(string name, string buildFileCrayonPath, string projectDirectory)
+        {
+            if (systemLibraryPathsByName == null)
+            {
+                systemLibraryPathsByName = GetAvailableLibraryPathsByLibraryName(buildFileCrayonPath, projectDirectory);
             }
 
             string fullpath;

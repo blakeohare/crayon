@@ -40,28 +40,17 @@ namespace Crayon
             }
         }
 
-        public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
+        private List<Platform.LibraryForExport> GetLibrariesForExport(
             Platform.AbstractPlatform platform,
-            CompilationBundle nullableCompilationBundle,
-            ResourceDatabase resourceDatabase,
-            ICollection<Library> relevantLibraries,
-            VmGenerationMode mode)
+            Dictionary<string, Library> librariesByName,
+            Dictionary<string, object> constantFlags,
+            Pastel.PastelCompiler vm)
         {
-            Options options = new Options();
-            Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
-            InlineImportCodeLoader codeLoader = new InlineImportCodeLoader();
-            this.mode = mode;
-
-            this.AddTypeEnumsToConstants(constantFlags);
-
-            Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
-
-            Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags, codeLoader);
             Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
                 platform,
                 constantFlags,
-                codeLoader,
-                relevantLibraries,
+                new InlineImportCodeLoader(),
+                librariesByName.Values,
                 vm);
 
             List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
@@ -75,7 +64,26 @@ namespace Crayon
                     libraryCompilation[library.Name]);
                 libraries.Add(libraryForExport);
             }
-            
+            return libraries;
+        }
+
+        public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
+            Platform.AbstractPlatform platform,
+            CompilationBundle nullableCompilationBundle,
+            ResourceDatabase resourceDatabase,
+            ICollection<Library> relevantLibraries,
+            VmGenerationMode mode)
+        {
+            Options options = new Options();
+            Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
+            this.mode = mode;
+
+            this.AddTypeEnumsToConstants(constantFlags);
+            Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
+
+            Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
+            List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByName, constantFlags, vm);
+
             LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
                 new LibraryNativeInvocationTranslatorProvider(
                     relevantLibraries.ToDictionary(lib => lib.Name), 
@@ -105,7 +113,8 @@ namespace Crayon
                 return platform.ExportStandaloneVm(
                     vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
                     vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
-                    vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray());
+                    vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                    libraries);
             }
         }
 
@@ -146,10 +155,15 @@ namespace Crayon
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
             Platform.AbstractPlatform platform,
-            Dictionary<string, object> constantFlags,
-            InlineImportCodeLoader codeLoader)
+            Dictionary<string, object> constantFlags)
         {
-            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, null, constantFlags, codeLoader, null, null);
+            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
+                false, 
+                null, 
+                constantFlags, 
+                new InlineImportCodeLoader(), 
+                null, 
+                null);
 
             foreach (string file in INTERPRETER_BASE_FILES)
             {

@@ -71,7 +71,8 @@ namespace GameCSharpOpenTk
         public override Dictionary<string, FileOutput> ExportStandaloneVm(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions)
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
@@ -97,7 +98,7 @@ namespace GameCSharpOpenTk
 
             TODO.MoveCbxParserIntoTranslatedPastelCode();
             this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
-
+            
             return output;
         }
 

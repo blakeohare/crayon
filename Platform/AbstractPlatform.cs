@@ -139,7 +139,8 @@ namespace Platform
         public abstract Dictionary<string, FileOutput> ExportStandaloneVm(
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,
-            IList<Pastel.Nodes.FunctionDefinition> functionDefinitions);
+            IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary);
 
         public abstract Dictionary<string, FileOutput> ExportProject(
             IList<Pastel.Nodes.VariableDeclaration> globals,
