@@ -1,3 +1,0 @@
-﻿// $launch_browser(url)
-import inline "FrameworkFunctions/1_arg.cry";
-$_lib_web_launchBrowser($_cast('string', Value$arg1.internalValue));

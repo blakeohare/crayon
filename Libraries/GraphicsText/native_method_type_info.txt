@@ -1,0 +1,3 @@
+bool _lib_graphicstext_loadFont(bool isSystemFont, string fontNameOrPath, int id);
+
+int _lib_graphicstext_pushCodePoints(List<int> intList, string codePointsId);

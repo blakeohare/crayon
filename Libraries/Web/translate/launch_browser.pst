@@ -1,7 +1,8 @@
-﻿Value lib_web_function_launch_browser(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Native._lib_web_launchBrowser(((string) arg1.internalValue));
+﻿/*
+	Launches a local browser tab pointed at the given URL.
+*/
+Value lib_web_function_launch_browser(Array<Value> args) {
+	string url = (string) args[0].internalValue;
+	Native._lib_web_launchBrowser(url);
 	return output;
 }
-

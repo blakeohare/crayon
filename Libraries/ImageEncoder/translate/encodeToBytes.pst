@@ -1,13 +1,18 @@
-﻿Value lib_imageencoder_function_encodeToBytes(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	object1 = getNativeDataItem(arg1, 0);
-	int1 = ((int) arg2.internalValue);
-	list1 = ((List<Value>) arg3.internalValue);
-	int2 = Native._lib_imageencoder_encodeImage(object1, int1, list1, INTEGER_POSITIVE_CACHE);
-	output = buildInteger(int2);
-	return output;
+﻿/*
+	arg 1: ImageResources.NativeImageData instance
+	arg 2: image format enum
+		PNG - 1
+		JPEG - 2
+	arg 3: Empty list. Use for outputting byte values.
+*/
+Value lib_imageencoder_function_encodeToBytes(Array<Value> args) {
+	object platformBitmap = getNativeDataItem(args[0], 0); // the platform bitmap instance
+	int imageFormat = ((int) args[1].internalValue); // 1: PNG, 2: JPEG
+	List<Value> byteOutputList = (List<Value>) args[2].internalValue;
+	
+	// TODO: return a Value since it's taking in the INTEGER_POSITIVE_CACHE anyway
+	int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, INTEGER_POSITIVE_CACHE);
+	
+	return buildInteger(statusCode);
 }
 

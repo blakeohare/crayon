@@ -1,12 +1,13 @@
-﻿Value lib_graphicstext_function_pushStringCodePoints(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objArray1 = objInstance1.nativeData;
-	intList1 = ((List<int>) objArray1[4]);
-	int1 = Native._lib_graphicstext_pushCodePoints(intList1, ((string) arg2.internalValue));
-	output = buildInteger(int1);
-	return output;
+﻿/*
+	arg 1: queue object with native data
+	arg 2: string to convert into code points. Push these onto the back of arg1.nativeData[4]
+	
+	output: number of code points pushed.
+*/
+Value lib_graphicstext_function_pushStringCodePoints(Array<Value> args) {
+	ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+	Array<object> objArray1 = objInstance1.nativeData;
+	List<int> intList1 = ((List<int>) objArray1[4]);
+	int int1 = Native._lib_graphicstext_pushCodePoints(intList1, ((string) args[1].internalValue));
+	return buildInteger(int1);
 }
-

@@ -1,8 +1,13 @@
-﻿Value lib_nori_function_render_textAreaVisuals(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
+﻿/*
+	arg 1: textarea instance
+	
+	There isn't really much here yet.
+*/
+Value lib_nori_function_render_textAreaVisuals(Array<Value> args) {
+	
+	ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+	
 	Native._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);
-	return output;
+	
+	return VALUE_NULL;
 }
-

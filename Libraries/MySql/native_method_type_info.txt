@@ -1,0 +1,5 @@
+object _lib_mysql_connect(Array<string> stringOut, string s1, string s2, string s3, string s4);
+void _lib_mysql_getNext(object o, List<Value> list1, List<string> strings1, List<int> ints);
+object _lib_mysql_query(object o, string s1, Array<string> stringOut, Array<int> intOut, List<string> stringList, List<int> intList);
+int _lib_mysql_num_rows(object o);
+string _lib_mysql_sanitize(string s1, object o);

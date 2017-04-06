@@ -1,23 +1,50 @@
-﻿Value lib_xml_function_parse(Array<Value> args) {
+﻿/*
+	arg 1: string to parse
+	arg 2: output list
+	arg 3: dummy object instance with nativeData, (although if it doesn't, this function must initialize it)
+		nativeData[0] -> Dictionary<string, string> maps XML entity codes to their string instances.
+		nativeData[1] -> Dictionary<int, int> keys are a set of character codes that end unquoted attribute values. Value is ignored.
+	
+	output is the error encountered or null.
+	
+	The output list is an empty list that data is added to in a simple format...
+	
+	element: [
+		(bool) true,
+		(string) name,
+		(string list) attribute names,
+		(string list) attribute values,
+		(list of lists) children in order. can be other elements or text elements
+	]
+	
+	text element: [
+		(bool) false,
+		(string) value
+	]
+*/
+Value lib_xml_function_parse(Array<Value> args) {
 	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	string1 = ((string) arg1.internalValue);
-	list1 = ((List<Value>) arg2.internalValue);
-	objInstance1 = ((ObjectInstance) arg3.internalValue);
-	objArray1 = objInstance1.nativeData;
+	string xml = ((string) args[0].internalValue);
+	List<Value> list1 = (List<Value>) args[1].internalValue;
+	ObjectInstance objInstance1 = (ObjectInstance) args[2].internalValue;
+	Array<object> objArray1 = objInstance1.nativeData;
 	if (objArray1 == null) {
 		objArray1 = new Array<object>(2);
 		objInstance1.nativeData = objArray1;
 		objArray1[0] = new Dictionary<string, string>();
 		objArray1[1] = new Dictionary<int, int>();
 	}
-	output = VALUE_NULL;
-	string2 = lib_xml_parse(string1, Core.IntBuffer16, list1, ((Dictionary<string, string>) objArray1[0]), ((Dictionary<int, int>) objArray1[1]));
-	if (string2 != null) {
-		output = buildString(string2);
-	}
-	return output;
-}
+	
+	string errMsg = lib_xml_parse(
+		xml,
+		Core.IntBuffer16,
+		list1,
+		(Dictionary<string, string>) objArray1[0],
+		(Dictionary<char, int>) objArray1[1]);
 
+	if (errMsg != null) {
+		return buildString(errMsg);
+	}
+	
+	return VALUE_NULL;
+}

@@ -1,12 +1,17 @@
-﻿Value lib_http_function_pollRequest(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	output = VALUE_FALSE;
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objArray1 = objInstance1.nativeData;
-	if (Native._lib_http_pollRequest(objArray1)) {
-		output = VALUE_TRUE;
-	}
-	return output;
-}
+﻿/*
+	arg1: HttpRequest instance
+		nativeData[0] -> response output or platform request object
+		nativeData[1] -> mutex
+		nativeData[2] -> boolean isDone
+	
+	output boolean isDone
+*/
+Value lib_http_function_pollRequest(Array<Value> args) {
 
+	ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+	Array<object> objArray1 = objInstance1.nativeData;
+	if (Native._lib_http_pollRequest(objArray1)) {
+		return VALUE_TRUE;
+	}
+	return VALUE_FALSE;
+}

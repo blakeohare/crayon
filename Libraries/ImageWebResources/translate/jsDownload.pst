@@ -1,15 +1,29 @@
-﻿Value lib_imagewebresources_function_jsDownload(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
+﻿/*
+	Only invoked by JavaScript
+	
+	arg 1: (string) URL
+	arg 2: (Instance) create nativeData and apply results to it
+		nativeData[0] -> (boolean) is done?
+		nativeData[1] -> (boolean) error occurred?
+		nativeData[2] -> Canvas of final image (if no error occurred)
+		nativeData[3] -> (int) width
+		nativeData[4] -> (int) height
+	arg 3: (int) execution context ID if synchronous OR null if asynchronous
+	
+	output is not used.
+*/
+
+Value lib_imagewebresources_function_jsDownload(Array<Value> args) {
+	
 	if (@ext_boolean("IS_JAVASCRIPT")) {
-		string1 = ((string) arg1.internalValue);
-		objInstance1 = ((ObjectInstance) arg2.internalValue);
-		objArray1 = new Array<object>(5);
+		string url = (string) args[0].internalValue;
+		ObjectInstance objInstance1 = (ObjectInstance) args[1].internalValue; // nativeData host
+		Array<object> objArray1 = new Array<object>(5);
 		objInstance1.nativeData = objArray1;
 		objArray1[0] = false;
-		Native._lib_imagewebresources_jsDownload(string1, objArray1);
+		Native._lib_imagewebresources_jsDownload(url, objArray1);
 	}
-	return output;
+	
+	return VALUE_NULL;
 }
 
