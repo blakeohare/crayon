@@ -201,9 +201,9 @@ namespace GameCSharpOpenTk
 
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
 
-            output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
-            output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output[baseDir + "ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
 
             foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
             {
