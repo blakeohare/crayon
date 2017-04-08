@@ -47,6 +47,11 @@ namespace LangPython
             sb.Append(']');
         }
 
+        public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
             sb.Append("len(");
@@ -881,6 +886,23 @@ namespace LangPython
             sb.Append(".startswith(");
             this.TranslateExpression(sb, needle);
             sb.Append(')');
+        }
+
+        public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
+        {
+            this.TranslateExpression(sb, str);
+            sb.Append('[');
+            this.TranslateExpression(sb, start);
+            sb.Append(':');
+            this.TranslateExpression(sb, start);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, length);
+            sb.Append(']');
+        }
+
+        public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateStringToLower(StringBuilder sb, Expression str)

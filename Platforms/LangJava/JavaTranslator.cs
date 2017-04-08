@@ -20,6 +20,11 @@ namespace LangJava
             sb.Append(']');
         }
 
+        public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
             this.TranslateExpression(sb, array);
@@ -115,7 +120,7 @@ namespace LangJava
             }
             sb.Append(')');
         }
-        
+
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
         {
             TODO.PleaseRenameThisFunction();
@@ -153,7 +158,7 @@ namespace LangJava
             {
                 case "int": sb.Append("Integer"); break;
                 case "string": sb.Append("String"); break;
-                    
+
                 default:
                     TODO.ExplicitlyDisallowThisAtCompileTime();
                     throw new NotImplementedException();
@@ -755,6 +760,23 @@ namespace LangJava
             sb.Append(".startsWith(");
             this.TranslateExpression(sb, needle);
             sb.Append(')');
+        }
+
+        public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
+        {
+            this.TranslateExpression(sb, str);
+            sb.Append(".substring(");
+            this.TranslateExpression(sb, start);
+            sb.Append(", ");
+            this.TranslateExpression(sb, start);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, length);
+            sb.Append(')');
+        }
+
+        public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateStringToLower(StringBuilder sb, Expression str)

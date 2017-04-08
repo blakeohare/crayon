@@ -140,7 +140,8 @@ namespace Platform
             IList<Pastel.Nodes.VariableDeclaration> globals,
             IList<Pastel.Nodes.StructDefinition> structDefinitions,
             IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
-            IList<LibraryForExport> everyLibrary);
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
 
         public abstract Dictionary<string, FileOutput> ExportProject(
             IList<Pastel.Nodes.VariableDeclaration> globals,

@@ -72,7 +72,8 @@ namespace GameCSharpOpenTk
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
-            IList<LibraryForExport> everyLibrary)
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
@@ -99,7 +100,78 @@ namespace GameCSharpOpenTk
             TODO.MoveCbxParserIntoTranslatedPastelCode();
             this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
             
+            foreach (LibraryForExport library in everyLibrary)
+            {
+                string libBaseDir = "Libs/" + library.Name + "/";
+                List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
+                if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
+                {
+                    replacements["PROJECT_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-project");
+                    replacements["ASSEMBLY_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-assembly");
+                    replacements["PROJECT_TITLE"] = library.Name;
+                    replacements["LIBRARY_NAME"] = library.Name;
+
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.txt", replacements);
+                }
+            }
+
             return output;
+        }
+
+        // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
+        private bool GetLibraryCode(string baseDir, LibraryForExport library, List<LangCSharp.DllFile> dllsOut, Dictionary<string, FileOutput> filesOut,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            string libraryName = library.Name;
+            this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
+            List<string> libraryLines = new List<string>();
+            if (library.ManifestFunction != null)
+            {
+                string libraryDir = baseDir + "Libraries/" + libraryName;
+                libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                foreach (FunctionDefinition funcDef in library.Functions)
+                {
+                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                }
+
+                filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join(this.NL,
+                        "using System;",
+                        "using System.Collections.Generic;",
+                        "using System.Linq;",
+                        "using Interpreter;",
+                        "using Interpreter.Structs;",
+                        "using Interpreter.Vm;",
+                        "",
+                        "namespace Interpreter.Libraries." + libraryName,
+                        "{",
+                        "    public static class LibraryWrapper",
+                        "    {",
+                        this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
+                        "    }",
+                        "}",
+                        ""),
+                };
+
+                foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
+                {
+                    string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
+                    filesOut[targetPath] = codeFile.FileOutput;
+                }
+
+                foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
+                {
+                    dllsOut.Add(new LangCSharp.DllFile(dllFile));
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public override Dictionary<string, FileOutput> ExportProject(
@@ -119,53 +191,10 @@ namespace GameCSharpOpenTk
             this.CopyTemplatedFiles(baseDir, output, replacements, false);
 
             List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-
+            
             foreach (LibraryForExport library in libraries)
             {
-                this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
-                string libraryName = library.Name;
-                List<string> libraryLines = new List<string>();
-                if (library.ManifestFunction != null)
-                {
-                    string libraryDir = baseDir + "Libraries/" + libraryName;
-                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
-                    foreach (FunctionDefinition funcDef in library.Functions)
-                    {
-                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
-                    }
-
-                    output[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join(this.NL,
-                            "using System;",
-                            "using System.Collections.Generic;",
-                            "using System.Linq;",
-                            "using Interpreter;",
-                            "using Interpreter.Structs;",
-                            "using Interpreter.Vm;",
-                            "",
-                            "namespace Interpreter.Libraries." + libraryName,
-                            "{",
-                            "    public static class LibraryWrapper",
-                            "    {",
-                            this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
-                            "    }",
-                            "}",
-                            ""),
-                    };
-
-                    foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
-                    {
-                        string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
-                        output[targetPath] = codeFile.FileOutput;
-                    }
-
-                    foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
-                    {
-                        dlls.Add(new LangCSharp.DllFile(dllFile));
-                    }
-                }
+                this.GetLibraryCode(baseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
