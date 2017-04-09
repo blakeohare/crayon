@@ -1,6 +1,8 @@
 ﻿ResourceDB resource_manager_initialize() {
+
 	Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
 	Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
+
 	string manifest = Core.GetResourceManifest();
 	Array<string> items = manifest.Split("\n");
 	ResourceInfo resourceInfo = null;
@@ -21,12 +23,15 @@
 			if (itemData.Size() > 3) {
 				argument = stringDecode(itemData[3]);
 			}
+
 			resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
 			fileInfo[userPath] = resourceInfo;
+			
 			resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
 		}
 		i += 1;
 	}
+
 	Array<string> dirs = filesPerDirectoryBuilder.Keys();
 	Dictionary<string, Array<string>> filesPerDirectorySorted = new Dictionary<string, Array<string>>();
 	for (i = 0; i < dirs.Size(); i += 1) {
@@ -36,10 +41,14 @@
 		dirsSorted = Core.SortedCopyOfStringArray(dirsSorted);
 		filesPerDirectorySorted[dir] = dirsSorted;
 	}
+
 	return new ResourceDB(filesPerDirectorySorted, fileInfo);
 }
 
-int resource_manager_populate_directory_lookup(Dictionary<string, List<string>> dirs, string path) {
+int resource_manager_populate_directory_lookup(
+		Dictionary<string, List<string>> dirs, 
+		string path) {
+
 	Array<string> parts = path.Split("/");
 	string pathBuilder = "";
 	string file = "";
@@ -52,16 +61,26 @@ int resource_manager_populate_directory_lookup(Dictionary<string, List<string>> 
 		} else {
 			files = dirs[pathBuilder];
 		}
+
 		files.Add(file);
+		
 		if (i > 0) {
 			pathBuilder = Core.StringConcatAll(pathBuilder, "/", file);
 		} else {
 			pathBuilder = file;
 		}
 	}
+
 	return 0;
 }
 
+/*
+	Takes in a path and a type.
+	Returns null if it is not a user resource.
+	Returns a Crayon Value list if it is...
+	output[0] -> boolean if it's the correct type.
+	output[1] -> actual resource path relative to the root of where these sorts of files are stored. (value ommitted if previous boolean is false)
+*/
 Value resource_manager_getResourceOfType(string userPath, string type) {
 	ProgramData p = Core.GetProgramData();
 	ResourceDB db = p.resourceDatabase;
