@@ -217,6 +217,9 @@ struct ResourceInfo {
 struct ResourceDB {
 	Dictionary<string, Array<string>> filesPerDirectory;
 	Dictionary<string, ResourceInfo> fileInfo;
+
+	// The list that is outputed by $$lib_resources_getResourceData()
+	List<Value> dataList;
 }
 
 struct MagicNumbers {

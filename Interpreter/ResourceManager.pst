@@ -3,6 +3,8 @@
 	Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
 	Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
 
+	List<Value> dataList = new List<Value>();
+
 	string manifest = Core.GetResourceManifest();
 	Array<string> items = manifest.Split("\n");
 	ResourceInfo resourceInfo = null;
@@ -11,12 +13,25 @@
 	string internalPath = "";
 	string argument = "";
 	bool isText = false;
+	int intType = 0;
 	int i = 0;
 	while (i < items.Size()) {
 		Array<string> itemData = items[i].Split(",");
 		if (itemData.Size() >= 3) {
 			type = itemData[0];
 			isText = Core.StringEquals("TXT", type);
+			if (isText) {
+				intType = 1;
+			} else if (Core.StringEquals("IMGSH", type) || Core.StringEquals("IMG", type)) {
+				intType = 2;
+			} else if (Core.StringEquals("SND", type)) {
+				intType = 3;
+			} else {
+				// binary resource
+				intType = 4;
+			}
+			
+			// TODO: binary resources
 			userPath = stringDecode(itemData[1]);
 			internalPath = itemData[2];
 			argument = "";
@@ -28,6 +43,14 @@
 			fileInfo[userPath] = resourceInfo;
 			
 			resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
+
+			dataList.Add(buildString(userPath)); // file path
+			dataList.Add(buildInteger(intType)); // file type
+			if (internalPath != null) {
+				dataList.Add(buildString(internalPath));
+			} else {
+				dataList.Add(VALUE_NULL);
+			}
 		}
 		i += 1;
 	}
@@ -42,7 +65,7 @@
 		filesPerDirectorySorted[dir] = dirsSorted;
 	}
 
-	return new ResourceDB(filesPerDirectorySorted, fileInfo);
+	return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList);
 }
 
 int resource_manager_populate_directory_lookup(

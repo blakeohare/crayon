@@ -247,7 +247,7 @@ namespace Interpreter.Vm
 
         public static void RegisterLibraryFunction(
             Type libraryWrapperClass,
-			object libRegObj,
+            object libRegObj,
             string functionName,
             int argCount)
         {
@@ -255,7 +255,7 @@ namespace Interpreter.Vm
             string fullyQualifiedFunctionName = "lib_" + libraryName.ToLower() + "_" + functionName;
             string compiledName = "v_lib_" + libraryName.ToLower() + "_function_" + functionName;
             System.Reflection.MethodInfo fp = libraryWrapperClass.GetMethod(compiledName);
-
+            if (fp == null) throw new Exception("Library function not found: '" + fullyQualifiedFunctionName + "'");
             CrayonWrapper.v_registerLibraryFunction(
                 fp,
                 libRegObj,

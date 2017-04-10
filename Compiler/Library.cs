@@ -107,17 +107,17 @@ namespace Crayon
             // on Python, myFunction will be included for lib_foo_myFunction(), but on Android, android.myFunction.cry will be included instead.
 
             string[] files = new string[0];
-            if (FileUtil.DirectoryExists(this.RootDirectory + "/native"))
+            if (FileUtil.DirectoryExists(this.RootDirectory + "/translate"))
             {
-                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.RootDirectory, "native"));
+                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.RootDirectory, "translate"));
             }
             Dictionary<string, string> moreSpecificFiles = new Dictionary<string, string>();
             foreach (string fileWithDirectory in files)
             {
                 string file = System.IO.Path.GetFileName(fileWithDirectory);
-                if (file.EndsWith(".cry"))
+                if (file.EndsWith(".pst"))
                 {
-                    string functionName = file.Substring(0, file.Length - ".cry".Length);
+                    string functionName = file.Substring(0, file.Length - ".pst".Length);
                     if (functionName.Contains('.'))
                     {
                         // Add this file to the more specific lookup, but only if it contains the current platform.
