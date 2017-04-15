@@ -83,29 +83,27 @@
 			pathBuilder = [];
 			previousDir = null;
 			for (j = 0; j <= pathParts.length; ++j) {
+				isLast = j == pathParts.length;
 				dirPath = pathBuilder.join('/');
 				node = allNodesByPath.get(dirPath);
 				if (node == null) {
 					node = new LibResourcesNode();
-					node.type = ResourceNodeType.DIRECTORY;
+					node.type = isLast ? type : ResourceNodeType.DIRECTORY;
 					node.name = pathParts[j - 1];
 					node.fullpath = dirPath;
-					node.children = [];
+					node.children = isLast ? null : [];
 					node.parent = previousDir;
 					allNodesByPath[dirPath] = node;
+					
+					if (isLast) {
+						node.realPath = resPath;
+					}
 				}
 				previousDir = node;
-				if (j < pathParts.length) {
+				if (!isLast) {
 					pathBuilder.add(pathParts[j]);
 				}
 			}
-			node = new LibResourcesNode();
-			node.type = type;
-			node.name = pathParts[-1];
-			node.fullpath = path;
-			node.parent = previousDir;
-			node.realPath = resPath;
-			allNodesByPath[path] = node;
 		}
 		
 		allNodes = allNodesByPath.values();
