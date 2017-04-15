@@ -47,11 +47,7 @@
 	
 	function _getNode(path) {
 		if (LibResourcesNode.rootNode == null) _initializeLibResNode();
-		output =  LibResourcesNode.allNodesByPath.get(path);
-		if (output == null) {
-			print(LibResourcesNode.allNodesByPath.keys());
-		}
-		return output;
+		return LibResourcesNode.allNodesByPath.get(path);
 	}
 	
 	function _nodeSortKey(node) {
@@ -68,6 +64,7 @@
 		LibResourcesNode.rootNode.name = '';
 		LibResourcesNode.rootNode.fullpath = '';
 		LibResourcesNode.rootNode.children = [];
+		allNodesByPath[''] = LibResourcesNode.rootNode;
 		
 		/*
 			data is a flat list with in the following format:
@@ -75,9 +72,7 @@
 				[3n + 1] -> type (int) value in ResourceNodeType enum
 				[3n + 2] -> internal reference path
 		*/
-		print("A");
 		data = $$lib_resources_getResourceData();
-		print("B");
 		i = 0;
 		while (i < data.length) {
 			path = data[i++];
@@ -87,21 +82,22 @@
 			pathParts = path.split('/');
 			pathBuilder = [];
 			previousDir = null;
-			for (j = 0; j < pathParts.length; ++j) {
+			for (j = 0; j <= pathParts.length; ++j) {
 				dirPath = pathBuilder.join('/');
 				node = allNodesByPath.get(dirPath);
 				if (node == null) {
 					node = new LibResourcesNode();
 					node.type = ResourceNodeType.DIRECTORY;
-					node.name = pathParts[j];
+					node.name = pathParts[j - 1];
 					node.fullpath = dirPath;
 					node.children = [];
 					node.parent = previousDir;
 					allNodesByPath[dirPath] = node;
-					
 				}
 				previousDir = node;
-				pathBuilder.add(pathParts[j]);
+				if (j < pathParts.length) {
+					pathBuilder.add(pathParts[j]);
+				}
 			}
 			node = new LibResourcesNode();
 			node.type = type;
