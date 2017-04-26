@@ -29,6 +29,11 @@
 		return $$lib_resources_readText(node.realPath);
 	}
 	
+	function fileExists(filepath) {
+		node = _getNode(filepath);
+		return node != null && node.type != ResourceNodeType.DIRECTORY;
+	}
+	
 	function directoryList(path, includeFullPath = false) {
 		dir = _getNode(path);
 		if (dir == null) throw new Core.Exception("Directory '" + path + "' does not exist.");
