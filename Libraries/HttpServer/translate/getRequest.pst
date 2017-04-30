@@ -11,7 +11,7 @@ Value lib_httpserver_function_getRequest(Array<Value> args) {
 
 	Native._lib_httpserver_getRequest(Core.StringBuffer16);
 
-	list1 = (List<Value>) args[0].internalValue;
+	List<Value> list1 = (List<Value>) args[0].internalValue;
 
 	list1.Add(buildString(Core.StringBuffer16[0]));
 	list1.Add(buildString(Core.StringBuffer16[1]));

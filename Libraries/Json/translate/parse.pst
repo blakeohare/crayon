@@ -2,10 +2,9 @@
 	arg 1: the string to parse.
 */
 Value lib_json_function_parse(Array<Value> args) {
-
-	string string1 = (string) args[0].internalValue;
-	if (string1.Size() > 0) {
-		Value output = Native._lib_json_parse(string1);
+	string raw = (string) args[0].internalValue;
+	if (raw.Size() > 0) {
+		Value output = Native._lib_json_parse(raw);
 		if (output != null) {
 			return output;
 		}

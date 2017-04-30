@@ -1,0 +1,5 @@
+$_lib_mysql_connect: throw new System.NotImplementedException();
+$_lib_mysql_query: throw new System.NotImplementedException();
+$_lib_mysql_sanitize: throw new System.NotImplementedException();
+$_lib_mysql_num_rows: throw new System.NotImplementedException();
+$_lib_mysql_getNext: throw new System.NotImplementedException();

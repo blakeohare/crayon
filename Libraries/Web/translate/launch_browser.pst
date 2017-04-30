@@ -4,5 +4,5 @@
 Value lib_web_function_launch_browser(Array<Value> args) {
 	string url = (string) args[0].internalValue;
 	Native._lib_web_launchBrowser(url);
-	return output;
+	return VALUE_NULL;
 }
