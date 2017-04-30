@@ -67,6 +67,8 @@ namespace GameCSharpOpenTk
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
         }
+        
+        private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(
             IList<VariableDeclaration> globals,
@@ -75,6 +77,8 @@ namespace GameCSharpOpenTk
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
+            Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
+
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
@@ -92,30 +96,34 @@ namespace GameCSharpOpenTk
             };
             string baseDir = "CrayonRuntime/";
 
-            this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
-            this.ExportProjectFiles(baseDir, output, replacements);
-            this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
-
-            TODO.MoveCbxParserIntoTranslatedPastelCode();
-            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
-            
             foreach (LibraryForExport library in everyLibrary)
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
                 List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
                 if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
                 {
-                    replacements["PROJECT_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-project");
+                    string name = library.Name;
+                    string projectGuid = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-project");
+                    replacements["PROJECT_GUID"] = projectGuid;
                     replacements["ASSEMBLY_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-assembly");
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
+
+                    libraryProjectNameToGuid[name] = projectGuid;
 
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
                     this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.txt", replacements);
                 }
             }
+
+            this.CopyTemplatedFiles(baseDir, output, replacements, true);
+            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid);
+            this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
+
+            TODO.MoveCbxParserIntoTranslatedPastelCode();
+            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
 
             return output;
         }
@@ -230,7 +238,7 @@ namespace GameCSharpOpenTk
                 output[baseDir + dll.HintPath] = dll.FileOutput;
             }
 
-            this.ExportProjectFiles(baseDir, output, replacements);
+            this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>());
 
             return output;
         }
@@ -331,9 +339,40 @@ namespace GameCSharpOpenTk
         private void ExportProjectFiles(
             string baseDir,
             Dictionary<string, FileOutput> output,
-            Dictionary<string, string> replacements)
+            Dictionary<string, string> replacements,
+            Dictionary<string, string> libraryProjectNameToGuid)
         {
             string projectId = replacements["PROJECT_ID"];
+            replacements["LIBRARY_PROJECT_INCLUSIONS"] = "";
+            replacements["LIBRARY_PROJECT_CONFIG"] = "";
+            if (libraryProjectNameToGuid.Count > 0)
+            {
+                string[] projects = libraryProjectNameToGuid.Keys.OrderBy(s => s.ToLower()).ToArray();
+                List<string> inclusions = new List<string>();
+                List<string> configs = new List<string>();
+                foreach (string projectName in projects)
+                {
+                    string guid = libraryProjectNameToGuid[projectName].ToUpper();
+                    inclusions.Add(
+                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"" +
+                        projectName +
+                        "\", \"Libs\\" + projectName + "\\" + projectName + ".csproj\", \"{" +
+                        guid +
+                        "}\"");
+                    inclusions.Add("EndProject");
+                    configs.Add("\t{" + guid + "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|x86.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|x86.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.Build.0 = Debug|Any CPU");
+                }
+                replacements["LIBRARY_PROJECT_INCLUSIONS"] = string.Join("\r\n", inclusions);
+                replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);
+            }
+            
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
         }

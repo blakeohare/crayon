@@ -5,7 +5,7 @@ using Interpreter.Structs;
 
 namespace Interpreter.Vm
 {
-    internal static class TranslationHelper
+    public static class TranslationHelper
     {
         public static readonly Random Random = new Random();
 
