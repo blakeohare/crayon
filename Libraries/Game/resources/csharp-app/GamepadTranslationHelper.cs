@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Interpreter.Libraries.Game
 {
-	internal static class GamepadTranslationHelper
+	public static class GamepadTranslationHelper
 	{
 		private static bool isInitialized = false;
 		private static JoystickDevice[] joysticks = null;

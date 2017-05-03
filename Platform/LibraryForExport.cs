@@ -11,5 +11,7 @@ namespace Platform
         public Pastel.Nodes.FunctionDefinition[] Functions { get; set; }
         public string[] FunctionRegisteredNamesOrNulls { get; set; }
         public Multimap<string, ExportEntity> ExportEntities { get; set; }
+        public string[] DotNetLibs { get; set; }
+        public Dictionary<string, string> LibProjectNamesAndGuids { get; set; }
     }
 }

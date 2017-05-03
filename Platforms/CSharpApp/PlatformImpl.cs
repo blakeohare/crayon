@@ -96,6 +96,10 @@ namespace GameCSharpOpenTk
             };
             string baseDir = "CrayonRuntime/";
 
+            string dllReferencesOriginal = replacements["DLL_REFERENCES"];
+            string dllsCopiedOriginal = replacements["DLLS_COPIED"];
+            string embeddedResources = replacements["EMBEDDED_RESOURCES"];
+            replacements["EMBEDDED_RESOURCES"] = "";
             foreach (LibraryForExport library in everyLibrary)
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
@@ -108,14 +112,31 @@ namespace GameCSharpOpenTk
                     replacements["ASSEMBLY_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-assembly");
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
+                    LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);
+                    
 
                     libraryProjectNameToGuid[name] = projectGuid;
+
+                    List<string> dotNetLibraries = new List<string>();
+                    foreach (string dotNetLib in library.DotNetLibs)
+                    {
+                        dotNetLibraries.Add("    <Reference Include=\"" + dotNetLib + "\" />");
+                    }
+                    replacements["DOT_NET_LIBS"] = Util.JoinLines(dotNetLibraries.ToArray());
 
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
                     this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.txt", replacements);
+
+                    foreach (LangCSharp.DllFile dll in dlls)
+                    {
+                        output[libBaseDir + dll.HintPath] = dll.FileOutput;
+                    }
                 }
             }
+            replacements["DLL_REFERENCES"] = dllReferencesOriginal;
+            replacements["DLLS_COPIED"] = dllsCopiedOriginal;
+            replacements["EMBEDDED_RESOURCES"] = embeddedResources;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
@@ -199,13 +220,13 @@ namespace GameCSharpOpenTk
             this.CopyTemplatedFiles(baseDir, output, replacements, false);
 
             List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-            
+
             foreach (LibraryForExport library in libraries)
             {
                 this.GetLibraryCode(baseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform);
             }
 
-            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
+            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
 
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
 

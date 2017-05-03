@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Interpreter.Structs;
 
 namespace Interpreter.Libraries.ImageEncoder
 {

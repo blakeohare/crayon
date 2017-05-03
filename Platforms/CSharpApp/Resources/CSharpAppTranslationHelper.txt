@@ -6,7 +6,7 @@ using Interpreter.Vm;
 
 namespace Interpreter
 {
-    internal static class CSharpAppTranslationHelper
+    public static class CSharpAppTranslationHelper
     {
         private static string appDataRoot = null;
         public static string AppDataRoot

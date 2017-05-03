@@ -262,5 +262,19 @@ namespace Interpreter.Vm
                 fullyQualifiedFunctionName,
                 argCount);
         }
+
+        public static bool SubstringIsEqualTo(string haystack, int index, string needle)
+        {
+            int needleLength = needle.Length;
+            if (index + needleLength > haystack.Length) return false;
+            if (needleLength == 0) return true;
+            if (haystack[index] != needle[0]) return false;
+            if (needleLength == 1) return true;
+            for (int i = 1; i < needleLength; ++i)
+            {
+                if (needle[i] != haystack[index + i]) return false;
+            }
+            return true;
+        }
     }
 }

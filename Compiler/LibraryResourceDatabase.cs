@@ -20,12 +20,25 @@ namespace Crayon
         private Library library;
         private string platformName;
         private Multimap<string, ExportEntity> exportEntities;
+        private List<string> dotNetLibs;
 
         public LibraryResourceDatabase(Library library, string platformName)
         {
             this.library = library;
             this.platformName = platformName;
             this.exportEntities = null;
+        }
+
+        public List<string> DotNetLibs
+        {
+            get
+            {
+                if (this.dotNetLibs == null)
+                {
+                    this.Init();
+                }
+                return this.dotNetLibs;
+            }
         }
 
         public Multimap<string, ExportEntity> ExportEntities
@@ -206,9 +219,25 @@ namespace Crayon
             }
         }
 
+        private Dictionary<string, string> projectReferenceToGuid = null;
+        public Dictionary<string, string> ProjectReferenceToGuid
+        {
+            get
+            {
+                if (this.projectReferenceToGuid == null)
+                {
+                    this.Init();
+                }
+                return this.projectReferenceToGuid;
+            }
+        }
+        
         private void Init()
         {
             this.exportEntities = new Multimap<string, ExportEntity>();
+            this.dotNetLibs = new List<string>();
+            this.projectReferenceToGuid = new Dictionary<string, string>();
+
             ExportEntity entity;
             foreach (Dictionary<string, string> instruction in this.GetResourceCopyInstructions())
             {
@@ -240,19 +269,47 @@ namespace Crayon
                         this.exportEntities.Add("EMBED_CODE", entity);
                         break;
 
+                    case "DOTNET_LIB":
+                        this.EnsureInstructionContainsAttribute(command, instruction, "name");
+                        string dotNetLib = instruction["name"];
+                        this.DotNetLibs.Add(dotNetLib);
+                        break;
+
                     case "DOTNET_DLL":
                         this.EnsureInstructionContainsAttribute(command, instruction, "from");
-                        this.EnsureInstructionContainsAttribute(command, instruction, "to");
                         this.EnsureInstructionContainsAttribute(command, instruction, "hintpath");
 
-                        entity = new ExportEntity()
+                        if (instruction.ContainsKey("to"))
                         {
-                            FileOutput = new FileOutput()
+                            throw new InvalidOperationException(
+                                "DOTNET_DLL resource types should not use the 'to' field. " +
+                                "The destination is automatically determined by the hintpath.");
+                        }
+
+                        string from = instruction["from"];
+                        bool isExternalDllSource = from.StartsWith("LIB:");
+
+                        entity = new ExportEntity();
+
+                        if (isExternalDllSource)
+                        {
+                            string[] parts = from.Split(':');
+                            if (parts.Length != 3) throw new InvalidOperationException("DOTNET_DLL from=LIB: references must contain a library name followed by a ':' followed by the resource path in that library.");
+                            string extLibName = parts[1].Trim();
+                            from = parts[2];
+
+                            entity.DeferredFileOutputBytesLibraryName = parts[1].Trim();
+                            entity.DeferredFileOutputBytesLibraryPath = parts[2].Trim();
+                        }
+                        else
+                        {
+                            entity.FileOutput = new FileOutput()
                             {
                                 Type = FileOutputType.Binary,
-                                BinaryContent = this.library.ReadFileBytes("resources/" + instruction["from"])
-                            }
-                        };
+                                BinaryContent = this.library.ReadFileBytes("resources/" + from)
+                            };
+                        }
+                        
                         entity.Values["hintpath"] = instruction["hintpath"];
                         foreach (string dllAttr in new string[] {
                             "name", "version", "culture", "token", "architecture", "specificversion" })
@@ -263,6 +320,14 @@ namespace Crayon
                             }
                         }
                         this.exportEntities.Add("DOTNET_DLL", entity);
+                        break;
+
+                    case "LIB_DLL_REF":
+                        this.EnsureInstructionContainsAttribute(command, instruction, "name");
+                        this.EnsureInstructionContainsAttribute(command, instruction, "version");
+                        string name = instruction["name"];
+                        string version = instruction["version"];
+                        projectReferenceToGuid[name] = CSharpHelper.GenerateGuid(name + "|" + version, "library-project");
                         break;
 
                     default:

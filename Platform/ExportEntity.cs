@@ -12,5 +12,7 @@ namespace Platform
         public string StringValue { get { return this.Value == null ? null : this.Value.ToString(); } }
         public Dictionary<string, string> Values { get { return this.values; } }
         public FileOutput FileOutput { get; set; }
+        public string DeferredFileOutputBytesLibraryName { get; set; }
+        public string DeferredFileOutputBytesLibraryPath { get; set; }
     }
 }

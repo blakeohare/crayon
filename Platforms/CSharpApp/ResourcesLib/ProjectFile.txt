@@ -44,6 +44,14 @@
       <Project>{3bddab06-4e41-8ce7-fdaa-b54540742e13}</Project>
       <Name>Interpreter</Name>
     </ProjectReference>
+    %%%DLL_REFERENCES%%%
+%%%DOT_NET_LIBS%%%
+  </ItemGroup>
+  <ItemGroup>
+    %%%EMBEDDED_RESOURCES%%%
+  </ItemGroup>
+  <ItemGroup>
+	%%%DLLS_COPIED%%%
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
  </Project>

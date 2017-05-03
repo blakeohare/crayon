@@ -54,16 +54,47 @@ namespace Crayon
                 vm);
 
             List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
+            Dictionary<string, Library> libraryByName = new Dictionary<string, Library>();
             foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
             {
                 Library library = librariesByName[libraryName];
+                libraryByName[library.Name] = library;
                 Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
                     library.Name,
                     library.Version,
-                    library.Resources.ExportEntities,
-                    libraryCompilation[library.Name]);
+                    libraryCompilation[library.Name],
+                    library.Resources);
                 libraries.Add(libraryForExport);
             }
+
+            // Now that all libraries are read and initialized, go through and resolve all deferred DLL's that required all libraries to be loaded.
+            foreach (Platform.LibraryForExport lfe in libraries)
+            {
+                foreach (Platform.ExportEntity ee in lfe.ExportEntities.GetValueEnumerator())
+                {
+                    if (ee.DeferredFileOutputBytesLibraryName != null)
+                    {
+                        Library sourceLibrary;
+                        if (!libraryByName.TryGetValue(ee.DeferredFileOutputBytesLibraryName, out sourceLibrary))
+                        {
+                            throw new InvalidOperationException("The library '" + lfe.Name + "' makes reference to another library '" + ee.DeferredFileOutputBytesLibraryName + "' which could not be found.");
+                        }
+
+                        string resourcePath = "resources/" + ee.DeferredFileOutputBytesLibraryPath;
+                        byte[] dllFile = sourceLibrary.ReadFileBytes(resourcePath);
+                        if (dllFile == null)
+                        {
+                            throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Name + "'");
+                        }
+                        ee.FileOutput = new FileOutput()
+                        {
+                            Type = FileOutputType.Binary,
+                            BinaryContent = dllFile
+                        };
+                    }
+                }
+            }
+
             return libraries;
         }
 
@@ -122,9 +153,10 @@ namespace Crayon
         private Platform.LibraryForExport CreateLibraryForExport(
             string libraryName,
             string libraryVersion,
-            Multimap<string, Platform.ExportEntity> exportEntities,
-            Pastel.PastelCompiler compilation)
-        { 
+            Pastel.PastelCompiler compilation,
+            LibraryResourceDatabase libResDb)
+        {
+            Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
             FunctionDefinition manifestFunction = null;
             Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
             foreach (FunctionDefinition functionDefinition in compilation.FunctionDefinitions.Values)
@@ -142,6 +174,7 @@ namespace Crayon
 
             string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
             FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
+            string[] dotNetLibs = libResDb.DotNetLibs.OrderBy(s => s.ToLower()).ToArray();
 
             return new Platform.LibraryForExport()
             {
@@ -151,6 +184,8 @@ namespace Crayon
                 Functions = functions,
                 ManifestFunction = manifestFunction,
                 ExportEntities = exportEntities,
+                DotNetLibs = dotNetLibs,
+                LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
             };
         }
 
