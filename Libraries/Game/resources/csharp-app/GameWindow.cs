@@ -5,7 +5,7 @@ using Interpreter.Vm;
 
 namespace Interpreter.Libraries.Game
 {
-    internal class GameWindow : OpenTK.GameWindow
+    public class GameWindow : OpenTK.GameWindow
     {
         private const int MOUSE_EVENT = 0;
         private const int KEY_EVENT = 1;

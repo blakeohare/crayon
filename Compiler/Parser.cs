@@ -13,7 +13,7 @@ namespace Crayon
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
-            this.LibraryManager = sysLibMan ?? new Crayon.LibraryManager();
+            this.LibraryManager = sysLibMan ?? new Crayon.LibraryManager(sysLibMan.PlatformProvider);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();

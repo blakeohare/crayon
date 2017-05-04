@@ -206,7 +206,7 @@ namespace Crayon
             string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
             if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
             VmGenerator vmGenerator = new VmGenerator();
-            List<Library> allLibraries = new LibraryManager().GetAllAvailableLibraries(standaloneVmPlatform);
+            List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
             Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
                 standaloneVmPlatform,
                 null,

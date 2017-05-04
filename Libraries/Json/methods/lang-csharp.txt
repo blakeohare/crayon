@@ -1,1 +1,1 @@
-$_lib_json_parse: Library.Json.JsonParser.ParseJsonIntoValue([ARG:1])
+$_lib_json_parse: JsonParser.ParseJsonIntoValue([ARG:1])

@@ -21,13 +21,22 @@ namespace Crayon
         private string platformName;
         private Multimap<string, ExportEntity> exportEntities;
         private List<string> dotNetLibs;
-
-        public LibraryResourceDatabase(Library library, string platformName)
+        
+        public LibraryResourceDatabase(Library library, string platformName, IPlatformProvider platformProvider)
         {
             this.library = library;
             this.platformName = platformName;
             this.exportEntities = null;
+            this.ApplicablePlatformNames = new HashSet<string>();
+            AbstractPlatform platform = platformProvider.GetPlatform(platformName);
+            while (platform != null)
+            {
+                this.ApplicablePlatformNames.Add(platform.Name);
+                platform = platform.ParentPlatform;
+            }
         }
+
+        public HashSet<string> ApplicablePlatformNames { get; private set; }
 
         public List<string> DotNetLibs
         {
@@ -104,11 +113,12 @@ namespace Crayon
                                 switch (command)
                                 {
                                     case "APPLICABLE-TO":
-                                        if (this.platformName == parts[1].Trim())
+                                        if (this.ApplicablePlatformNames.Contains(parts[1].Trim()))
                                         {
                                             mode = "active";
                                         }
                                         break;
+
                                     case "END":
                                         mode = "inactive";
                                         break;

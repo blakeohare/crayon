@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Interpreter.Structs;
+using Interpreter.Vm;
 
 namespace Interpreter.Libraries.Nori
 {
@@ -46,7 +48,7 @@ namespace Interpreter.Libraries.Nori
                 this.FormClosed += (sender, e) => { this.PostCloseHandler(); };
                 this.ClientSizeChanged += (sender, e) => { this.SizeChangedHandler(this.ClientSize.Width, this.ClientSize.Height); };
 
-                this.Icon = WinFormsTranslationHelper.GetDefaultIcon();
+                this.Icon = IconHelper.GetDefaultIcon();
             }
 
             public void InvokeHandler(string token)

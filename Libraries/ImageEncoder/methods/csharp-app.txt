@@ -1,1 +1,1 @@
-$_lib_imageencoder_encodeImage: Library.ImageEncoder.ImageEncoderUtil.Encode([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_imageencoder_encodeImage: ImageEncoderUtil.Encode([ARG:1], [ARG:2], [ARG:3], [ARG:4])

@@ -14,6 +14,13 @@ namespace Crayon
         private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
         private List<string> orderedListOfFunctionNames = new List<string>();
 
+        public Platform.IPlatformProvider PlatformProvider { get; private set; }
+
+        public LibraryManager(Platform.IPlatformProvider platformProvider)
+        {
+            this.PlatformProvider = platformProvider;
+        }
+
         public static bool IsValidLibrary(string name)
         {
             return systemLibraryPathsByName.ContainsKey(name);
@@ -67,7 +74,7 @@ namespace Crayon
             foreach (string name in allLibraries.Keys)
             {
                 string manifestPath = allLibraries[name];
-                Library library = new Library(name, manifestPath, platform.Name);
+                Library library = new Library(name, manifestPath, platform.Name, this.PlatformProvider);
                 output.Add(library);
             }
             return output;
@@ -191,7 +198,7 @@ namespace Crayon
 
                 string platform = parser.BuildContext.Platform;
 
-                library = new Library(name, libraryManifestPath, platform);
+                library = new Library(name, libraryManifestPath, platform, this.PlatformProvider);
 
                 this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);

@@ -276,5 +276,10 @@ namespace Interpreter.Vm
             }
             return true;
         }
+
+        public static object ThrowNotImplemented(string msg)
+        {
+            throw new NotImplementedException(msg);
+        }
     }
 }
