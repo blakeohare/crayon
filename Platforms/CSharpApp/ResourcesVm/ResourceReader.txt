@@ -1,87 +1,55 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace Interpreter
 {
-	public static class ResourceReader
-	{
-        public static string GetResourceManifest()
-        {
-            return ReadTextFile("Resources/ResourceMapping.txt") ?? "";
-        }
+    public static class ResourceReader
+    {
+        public static string CbxDirectory { get; set; }
 
-		public static string ReadTextFile(string path)
-		{
-			IList<byte> bytes = ReadBytes(path);
+        public static string ReadTextFile(string path)
+        {
+            if (path == "Resources/ImageSheetManifest.txt")
+            {
+                path = "res/image_sheet_manifest.txt";
+            }
+            else
+            {
+                path = "res/txt/" + path;
+            }
+            IList<byte> bytes = ReadBytes(path);
             if (bytes == null) return null;
             bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
-			StringBuilder output = new StringBuilder(bytes.Count); 
-			output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
-			return output.ToString();
-		}
+            StringBuilder output = new StringBuilder(bytes.Count);
+            output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
+            return output.ToString();
+        }
 
-		public static string ReadByteCodeFile()
-		{
-			return ReadTextFile("Resources/ByteCode.txt");
-		}
-		
-        public static System.Drawing.Bitmap ReadImageFile(string path)
+        public static Bitmap ReadImageFile(string path)
         {
+            if (path.StartsWith("Resources/"))
+            {
+                // TODO: remove this and instead unify CsharpApp and Vm resource layouts.
+                path = path.Replace("Resources/", "res/img/");
+            }
             IList<byte> data = ReadBytes(path);
             if (data == null)
             {
                 return null;
             }
-            return (Bitmap)Bitmap.FromStream(new MemoryStream(data.ToArray()));
+            return (Bitmap)Bitmap.FromStream(new System.IO.MemoryStream(data.ToArray()));
         }
 
-		// C# does not like it when you access resources from different threads.
-        private static object resMutex = new object();
-
-        public static System.IO.Stream GetResourceStream(string path)
+        public static List<byte> ReadBytes(string path)
         {
-            System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
-            path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
-            return assembly.GetManifestResourceStream(path);
-        }
-
-		private const int BUFFER_LENGTH = 1000;
-		private static readonly byte[] BUFFER = new byte[BUFFER_LENGTH];
-
-		public static List<byte> ReadBytes(string path)
-		{
-            lock (resMutex)
+            string fullPath = System.IO.Path.Combine(ResourceReader.CbxDirectory, path);
+            if (System.IO.File.Exists(fullPath))
             {
-				System.IO.Stream stream = GetResourceStream(path);
-				if (stream == null)
-				{
-					return null;
-				}
-				StringBuilder sb = new StringBuilder();
-				List<byte> output = new List<byte>();
-
-				int bytesRead = 1;
-				while (bytesRead > 0)
-				{
-					bytesRead = stream.Read(BUFFER, 0, BUFFER_LENGTH);
-					if (bytesRead == BUFFER_LENGTH)
-					{
-						output.AddRange(BUFFER);
-					}
-					else
-					{
-						for (int i = 0; i < bytesRead; ++i)
-						{
-							output.Add(BUFFER[i]);
-						}
-						bytesRead = 0;
-					}
-				}
-				return output;
-			}
-		}
-	}
+                return new List<byte>(System.IO.File.ReadAllBytes(fullPath));
+            }
+            return null;
+        }
+    }
 }

@@ -148,11 +148,13 @@ namespace Crayon
             }
         }
 
+        // TODO: HELPER CLASS
         private static void ExportCbx(string[] args)
         {
             string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
             BuildContext buildContext = GetBuildContextCbx(buildFilePath);
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            ResourceDatabase resDb = PrepareResources(buildContext, null);
             string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
@@ -177,11 +179,48 @@ namespace Crayon
             cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
             cbxOutput.AddRange(libsDataBytes);
 
+            byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
+            cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
+            cbxOutput.AddRange(resourceManifest);
+
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
-            string cbxPath = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder, buildContext.ProjectID + ".cbx");
+            string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
+            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
             cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
-            FileUtil.EnsureParentFolderExists(cbxPath);
-            FileUtil.WriteFileBytes(cbxPath, cbxOutput.ToArray());
+            FileUtil.EnsureParentFolderExists(fullyQualifiedOutputFolder);
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            output[buildContext.ProjectID + ".cbx"] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = cbxOutput.ToArray(),
+            };
+            
+            // Resource manifest is embedded into the CBX file
+
+            output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
+            
+            foreach (FileOutput txtResource in resDb.TextResources)
+            {
+                output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+            }
+            foreach (FileOutput sndResource in resDb.AudioResources)
+            {
+                output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+            }
+            foreach (FileOutput binResource in resDb.BinaryResources)
+            {
+                output["res/bin/" + binResource.CanonicalFileName] = binResource;
+            }
+            foreach (FileOutput imgResource in resDb.ImageResources)
+            {
+                output["res/img/" + imgResource.CanonicalFileName] = imgResource;
+            }
+            foreach (string key in resDb.ImageSheetFiles.Keys)
+            {
+                output["res/img/" + key] = resDb.ImageSheetFiles[key];
+            }
+            new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
         }
 
         private static byte[] StringToBytes(string value)
@@ -217,21 +256,21 @@ namespace Crayon
             exporter.ExportFiles(result);
         }
 
-        private static void ExportVmBundle(string[] args)
+        private static ResourceDatabase PrepareResources(
+            BuildContext buildContext, 
+            ByteBuffer nullableByteCode) // CBX files will not have this in the resources
         {
-            BuildContext buildContext = GetBuildContext(args);
-            Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
-            if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
-
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             // This really needs to go in a separate helper file.
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
-            resourceDatabase.ByteCodeFile = new FileOutput()
+            if (nullableByteCode != null)
             {
-                Type = FileOutputType.Text,
-                TextContent = ByteCodeEncoder.Encode(compilationResult.ByteCode),
-            };
+                resourceDatabase.ByteCodeFile = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = ByteCodeEncoder.Encode(nullableByteCode),
+                };
+            }
 
             Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
             if (buildContext.ImageSheetIds != null)
@@ -251,6 +290,19 @@ namespace Crayon
             resourceDatabase.AddImageSheets(imageSheets);
 
             resourceDatabase.GenerateResourceMapping();
+
+            return resourceDatabase;
+        }
+
+        private static void ExportVmBundle(string[] args)
+        {
+            BuildContext buildContext = GetBuildContext(args);
+            Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
+            if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
+
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+
+            ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
 
             VmGenerator vmGenerator = new VmGenerator();
             Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(

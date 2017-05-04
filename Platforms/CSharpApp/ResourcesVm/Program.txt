@@ -51,6 +51,7 @@ namespace CrayonRuntime
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ByteCode = byteCode;
             TranslationHelper.ResourceManifest = cbxDecoder.ResourceManifest;
+            Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
 
             CrayonWrapper.v_main();
         }
