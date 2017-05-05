@@ -6,7 +6,7 @@ using Common;
 using Pastel.Nodes;
 using Platform;
 
-namespace GameJavaScriptHtml5
+namespace JavaScriptAppGl
 {
     public class PlatformImpl : AbstractPlatform
     {

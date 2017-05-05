@@ -5,7 +5,7 @@ using System.Text;
 using Platform;
 using Pastel.Nodes;
 
-namespace GameJavaAwt
+namespace JavaApp
 {
     public class JavaAppTranslator : LangJava.JavaTranslator
     {

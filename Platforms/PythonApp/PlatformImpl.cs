@@ -4,7 +4,7 @@ using Common;
 using Pastel.Nodes;
 using Platform;
 
-namespace GamePythonPygame
+namespace PythonApp
 {
     public class PlatformImpl : AbstractPlatform
     {

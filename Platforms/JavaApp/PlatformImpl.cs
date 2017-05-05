@@ -6,7 +6,7 @@ using Common;
 using Pastel.Nodes;
 using Platform;
 
-namespace GameJavaAwt
+namespace JavaApp
 {
     public class PlatformImpl : AbstractPlatform
     {

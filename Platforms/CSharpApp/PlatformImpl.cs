@@ -6,7 +6,7 @@ using Platform;
 using Pastel.Nodes;
 using System.Text;
 
-namespace GameCSharpOpenTk
+namespace CSharpApp
 {
     public class PlatformImpl : AbstractPlatform
     {

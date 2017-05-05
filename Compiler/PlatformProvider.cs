@@ -53,14 +53,16 @@ namespace Crayon
             // TODO: create a dev Crayon csproj that has a strong project reference to the platforms
             // and a release csproj that does not and then ifdef out the implementation of this function.
             return new System.Reflection.Assembly[] {
-                typeof(GameCSharpOpenTk.PlatformImpl).Assembly,
-                typeof(GameJavaAwt.PlatformImpl).Assembly,
-                typeof(GameJavaScriptHtml5.PlatformImpl).Assembly,
-                typeof(GamePythonPygame.PlatformImpl).Assembly,
+                typeof(CApp.PlatformImpl).Assembly,
+                typeof(CSharpApp.PlatformImpl).Assembly,
+                typeof(JavaApp.PlatformImpl).Assembly,
+                typeof(JavaScriptAppGl.PlatformImpl).Assembly,
+                typeof(LangC.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
                 typeof(LangJava.PlatformImpl).Assembly,
                 typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangPython.PlatformImpl).Assembly,
+                typeof(PythonApp.PlatformImpl).Assembly,
             };
         }
     }

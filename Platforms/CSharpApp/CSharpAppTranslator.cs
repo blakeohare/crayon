@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Pastel.Nodes;
 
-namespace GameCSharpOpenTk
+namespace CSharpApp
 {
     public class CSharpAppTranslator : LangCSharp.CSharpTranslator
     {
