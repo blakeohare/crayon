@@ -36,54 +36,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NativeFunction.cs" />
-    <Compile Include="EofException.cs" />
-    <Compile Include="NativeFunctionUtil.cs" />
-    <Compile Include="Nodes\Assignment.cs" />
-    <Compile Include="Nodes\BracketIndex.cs" />
-    <Compile Include="Nodes\BreakStatement.cs" />
-    <Compile Include="Nodes\CastExpression.cs" />
-    <Compile Include="Nodes\CompilationEntity.cs" />
-    <Compile Include="Nodes\CompileTimeFunctionReference.cs" />
-    <Compile Include="Nodes\ConstructorInvocation.cs" />
-    <Compile Include="Nodes\ConstructorReference.cs" />
-    <Compile Include="Nodes\DotField.cs" />
-    <Compile Include="Nodes\EnumDefinition.cs" />
-    <Compile Include="Nodes\EnumReference.cs" />
-    <Compile Include="Nodes\Executable.cs" />
-    <Compile Include="Nodes\ExecutableBatch.cs" />
-    <Compile Include="Nodes\Expression.cs" />
-    <Compile Include="Nodes\ExpressionAsExecutable.cs" />
-    <Compile Include="Nodes\ForcedParenthesis.cs" />
-    <Compile Include="Nodes\ForLoop.cs" />
-    <Compile Include="Nodes\FunctionDefinition.cs" />
-    <Compile Include="Nodes\FunctionInvocation.cs" />
-    <Compile Include="Nodes\FunctionReference.cs" />
-    <Compile Include="Nodes\IfStatement.cs" />
-    <Compile Include="Nodes\InlineConstant.cs" />
-    <Compile Include="Nodes\InlineIncrement.cs" />
-    <Compile Include="Nodes\LibraryNativeFunctionInvocation.cs" />
-    <Compile Include="Nodes\LibraryNativeFunctionReference.cs" />
-    <Compile Include="Nodes\NativeFunctionInvocation.cs" />
-    <Compile Include="Nodes\NativeFunctionReference.cs" />
-    <Compile Include="Nodes\OpChain.cs" />
-    <Compile Include="Nodes\PType.cs" />
-    <Compile Include="Nodes\ReturnStatement.cs" />
-    <Compile Include="Nodes\StructDefinition.cs" />
-    <Compile Include="Nodes\SwitchStatement.cs" />
-    <Compile Include="Nodes\UnaryOp.cs" />
-    <Compile Include="Nodes\Variable.cs" />
-    <Compile Include="Nodes\VariableDeclaration.cs" />
-    <Compile Include="Nodes\WhileLoop.cs" />
-    <Compile Include="PastelParser.cs" />
-    <Compile Include="ParserException.cs" />
-    <Compile Include="PastelCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SwitchStatementTracker.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="Tokenizer.cs" />
-    <Compile Include="TokenStream.cs" />
-    <Compile Include="VariableScope.cs" />
+    <Compile Include="Nodes\*.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

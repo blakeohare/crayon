@@ -37,28 +37,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NYI.cs" />
-    <Compile Include="TODO.cs" />
-    <Compile Include="CSharpHelper.cs" />
-    <Compile Include="ExportOptionKey.cs" />
-    <Compile Include="FileOutput.cs" />
-    <Compile Include="FilePath.cs" />
-    <Compile Include="FileUtil.cs" />
-    <Compile Include="IInlineImportCodeLoader.cs" />
-    <Compile Include="ImageSheets\Chunk.cs" />
-    <Compile Include="ImageSheets\Image.cs" />
-    <Compile Include="ImageSheets\ImageSheetBuilder.cs" />
-    <Compile Include="ImageSheets\PrefixMatcher.cs" />
-    <Compile Include="ImageSheets\RectangleAllocator.cs" />
-    <Compile Include="ImageSheets\Sheet.cs" />
-    <Compile Include="ImageSheets\Tile.cs" />
-    <Compile Include="KeyValuePairParser.cs" />
-    <Compile Include="Multimap.cs" />
-    <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceDatabase.cs" />
-    <Compile Include="SystemBitmap.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="ImageSheets\*.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

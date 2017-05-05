@@ -36,15 +36,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractPlatform.cs" />
-    <Compile Include="AbstractTranslator.cs" />
-    <Compile Include="CurlyBraceTranslator.cs" />
-    <Compile Include="ExportEntity.cs" />
-    <Compile Include="ILibraryNativeInvocationTranslatorProvider.cs" />
-    <Compile Include="IPlatformProvider.cs" />
-    <Compile Include="LibraryForExport.cs" />
-    <Compile Include="ILibraryNativeInvocationTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
