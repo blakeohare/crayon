@@ -138,10 +138,19 @@ namespace Crayon
                     string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "Vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
-
-                    // TODO: set appProcess.StandardOutput to a Console.WriteLine in this process
-                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile);
+                    
+                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile)
+                    {
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                    };
+                    appProcess.OutputDataReceived += (sender, e) =>
+                    {
+                        System.Console.WriteLine(e.Data);
+                    };
                     appProcess.Start();
+                    appProcess.BeginOutputReadLine();
                     appProcess.WaitForExit();
                     return;
 
