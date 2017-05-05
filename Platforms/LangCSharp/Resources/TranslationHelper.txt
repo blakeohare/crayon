@@ -5,7 +5,7 @@ using Interpreter.Structs;
 
 namespace Interpreter.Vm
 {
-    internal static class TranslationHelper
+    public static class TranslationHelper
     {
         public static readonly Random Random = new Random();
 
@@ -247,7 +247,7 @@ namespace Interpreter.Vm
 
         public static void RegisterLibraryFunction(
             Type libraryWrapperClass,
-			object libRegObj,
+            object libRegObj,
             string functionName,
             int argCount)
         {
@@ -255,12 +255,31 @@ namespace Interpreter.Vm
             string fullyQualifiedFunctionName = "lib_" + libraryName.ToLower() + "_" + functionName;
             string compiledName = "v_lib_" + libraryName.ToLower() + "_function_" + functionName;
             System.Reflection.MethodInfo fp = libraryWrapperClass.GetMethod(compiledName);
-
+            if (fp == null) throw new Exception("Library function not found: '" + fullyQualifiedFunctionName + "'");
             CrayonWrapper.v_registerLibraryFunction(
                 fp,
                 libRegObj,
                 fullyQualifiedFunctionName,
                 argCount);
+        }
+
+        public static bool SubstringIsEqualTo(string haystack, int index, string needle)
+        {
+            int needleLength = needle.Length;
+            if (index + needleLength > haystack.Length) return false;
+            if (needleLength == 0) return true;
+            if (haystack[index] != needle[0]) return false;
+            if (needleLength == 1) return true;
+            for (int i = 1; i < needleLength; ++i)
+            {
+                if (needle[i] != haystack[index + i]) return false;
+            }
+            return true;
+        }
+
+        public static object ThrowNotImplemented(string msg)
+        {
+            throw new NotImplementedException(msg);
         }
     }
 }

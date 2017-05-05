@@ -2,10 +2,8 @@
 type = value.type;
 if (type == Types.INTEGER) {
 	valueStack[(valueStackSize - 1)] = buildInteger(-((int) value.internalValue));
+} else if (type == Types.FLOAT) {
+	valueStack[(valueStackSize - 1)] = buildFloat(-((double) value.internalValue));
 } else {
-	if (type == Types.FLOAT) {
-		valueStack[(valueStackSize - 1)] = buildFloat(-((double) value.internalValue));
-	} else {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."));
-	}
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, Core.StringConcatAll("Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."));
 }

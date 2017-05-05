@@ -63,27 +63,32 @@
     <EmbeddedResource Include="Resources\SolutionFile.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\DllLibOgg0.binary" />
-    <EmbeddedResource Include="Resources\DllLibVorbis0.binary" />
-    <EmbeddedResource Include="Resources\DllLibVorbisFile3.binary" />
-    <EmbeddedResource Include="Resources\DllOpenTk.binary" />
-    <EmbeddedResource Include="Resources\DllSdl.binary" />
-    <EmbeddedResource Include="Resources\DllSdlDotNet.binary" />
-    <EmbeddedResource Include="Resources\DllSdlMixer.binary" />
-    <EmbeddedResource Include="Resources\DllTaoSdl.binary" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Resources\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\GameWindow.txt" />
-    <EmbeddedResource Include="Resources\GlUtil.txt" />
-    <EmbeddedResource Include="Resources\DependencyLicenses.txt" />
-    <EmbeddedResource Include="Resources\OpenTkRenderer.txt" />
-    <EmbeddedResource Include="Resources\OpenTkTranslationHelper.txt" />
+    <EmbeddedResource Include="Resources\CSharpAppTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\Program.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\Program.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\ResourceReader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\CbxDecoder.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\LibraryRegistry.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ResourcesLib\AssemblyInfo.txt" />
+    <EmbeddedResource Include="ResourcesLib\ProjectFile.txt" />
+    <EmbeddedResource Include="ResourcesLib\Solution.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

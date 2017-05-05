@@ -63,63 +63,10 @@ namespace Crayon
                     throw new ParserException(tokens.Peek(), (value == "function" ? "Function" : "Class") + " definition cannot be nested in another construct.");
                 }
 
-                if (parser.IsTranslateMode && value == "struct")
-                {
-                    if (!isRoot)
-                    {
-                        throw new ParserException(tokens.Peek(), "structs cannot be nested into any other construct.");
-                    }
-
-                    return ParseStruct(tokens, owner);
-                }
 
                 if (value == "import")
                 {
                     Token importToken = tokens.PopExpected("import");
-
-                    bool inline = parser.IsTranslateMode && tokens.PopIfPresent("inline");
-
-                    if (inline)
-                    {
-                        Token fileToken = tokens.Pop();
-                        char c = fileToken.Value[0];
-                        if (c != '\'' && c != '"') throw new ParserException(fileToken, "Inline imports are supposed to be strings.");
-                        tokens.PopExpected(";");
-                        string inlineImportFileName = fileToken.Value.Substring(1, fileToken.Value.Length - 2);
-                        string inlineImportFileContents;
-
-                        if (parser.NullablePlatform.PlatformId == PlatformId.PASTEL_VM)
-                        {
-                            if (inlineImportFileName.StartsWith("LIB:"))
-                            {
-                                string[] parts = inlineImportFileName.Split(':');
-                                string libraryName = parts[1];
-                                return new ImportInlineStatement(importToken, owner, libraryName, parts[2]);
-                            }
-                            return new ImportInlineStatement(importToken, owner, null, inlineImportFileName);
-                        }
-
-                        if (inlineImportFileName.StartsWith("LIB:"))
-                        {
-                            string[] parts = inlineImportFileName.Split(':');
-                            string libraryName = parts[1];
-                            string filename = FileUtil.JoinPath(parts[2].Split('/'));
-                            Library library = parser.SystemLibraryManager.GetLibraryFromKey(libraryName.ToLower());
-                            inlineImportFileContents = library.ReadFile(true, filename, false);
-                        }
-                        else
-                        {
-                            inlineImportFileContents = LegacyUtil.ReadInterpreterFileInternally(inlineImportFileName);
-                        }
-                        Dictionary<string, string> replacements = parser.NullablePlatform.InterpreterCompiler.BuildReplacementsDictionary();
-                        inlineImportFileContents = Constants.DoReplacements(false, inlineImportFileContents, replacements);
-
-                        Token[] inlineTokens = Tokenizer.Tokenize(inlineImportFileName, inlineImportFileContents, 0, true);
-
-                        tokens.InsertTokens(inlineTokens);
-
-                        return ExecutableParser.Parse(parser, tokens, simpleOnly, semicolonPresent, isRoot, owner); // start exectuable parser anew.
-                    }
 
                     if (!isRoot)
                     {
@@ -437,33 +384,6 @@ namespace Crayon
             }
             tokens.PopExpected(";");
             return fd;
-        }
-
-        private static Executable ParseStruct(TokenStream tokens, Executable owner)
-        {
-            Token structToken = tokens.PopExpected("struct");
-            Token structNameToken = tokens.Pop();
-            Parser.VerifyIdentifier(structNameToken);
-
-            tokens.PopExpected("{");
-
-            List<Token> fieldTokens = new List<Token>();
-            List<Annotation> typeAnnotations = new List<Annotation>();
-            bool nextForbidden = false;
-            while (!tokens.PopIfPresent("}"))
-            {
-                if (nextForbidden) tokens.PopExpected("}"); // crash
-
-                Annotation annotation = tokens.IsNext("@") ? AnnotationParser.ParseAnnotation(tokens) : null;
-
-                Token fieldToken = tokens.Pop();
-                Parser.VerifyIdentifier(fieldToken);
-                nextForbidden = !tokens.PopIfPresent(",");
-                fieldTokens.Add(fieldToken);
-                typeAnnotations.Add(annotation);
-            }
-
-            return new StructDefinition(structToken, structNameToken, fieldTokens, typeAnnotations, owner);
         }
 
         private static Executable ParseNamespace(Parser parser, TokenStream tokens, Executable owner)

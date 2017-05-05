@@ -28,11 +28,6 @@ namespace Crayon.ParseTree
 
         internal override Expression Resolve(Parser parser)
         {
-            if (parser.IsTranslateMode)
-            {
-                throw new ParserException(this.IncrementToken, "++ and -- aren't supported in translate mode.");
-            }
-
             this.Root = this.Root.Resolve(parser);
 
             if (!(this.Root is Variable) &&

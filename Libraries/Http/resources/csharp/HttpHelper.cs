@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Interpreter.Structs;
 
-namespace %%%PROJECT_ID%%%.Library.Http
+namespace Interpreter.Libraries.Http
 {
     internal static class HttpHelper
     {

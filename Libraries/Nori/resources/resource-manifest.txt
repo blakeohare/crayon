@@ -1,5 +1,9 @@
 
 BEGIN
-APPLICABLE-TO: ui-csharp-winforms
-COPYFILES: csharp-winforms: %PROJECT_ID%/Libraries/Nori/%FILE%
+APPLICABLE-TO: csharp-app
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
+DOTNET_LIB: name=System.Drawing
+DOTNET_LIB: name=System.Windows.Forms
 END
+
+

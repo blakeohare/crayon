@@ -20,6 +20,11 @@ namespace LangJava
             sb.Append(']');
         }
 
+        public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
             this.TranslateExpression(sb, array);
@@ -116,9 +121,10 @@ namespace LangJava
             sb.Append(')');
         }
 
-        // TODO: you really should rename this
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
         {
+            TODO.PleaseRenameThisFunction();
+
             sb.Append("new ArrayList<>(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
@@ -153,8 +159,9 @@ namespace LangJava
                 case "int": sb.Append("Integer"); break;
                 case "string": sb.Append("String"); break;
 
-                // TODO: explicitly disallow this at compile-time
-                default: throw new NotImplementedException();
+                default:
+                    TODO.ExplicitlyDisallowThisAtCompileTime();
+                    throw new NotImplementedException();
             }
             sb.Append("SetToArray(");
             this.TranslateExpression(sb, dictionary);
@@ -359,8 +366,11 @@ namespace LangJava
 
         public override void TranslateListPop(StringBuilder sb, Expression list)
         {
-            // TODO: make this check a little more lenient with other simple patterns, such as struct fields on variables, etc
-            if (list is Variable)
+            bool useInlineListPop =
+                (list is Variable) ||
+                (list is DotField && ((DotField)list).Root is Variable);
+
+            if (useInlineListPop)
             {
                 this.TranslateExpression(sb, list);
                 sb.Append(".remove(");
@@ -416,17 +426,25 @@ namespace LangJava
         public override void TranslateListToArray(StringBuilder sb, Expression list)
         {
             PType itemType = list.ResolvedType.Generics[0];
-            if (itemType.RootValue == "Object")
+            if (itemType.RootValue == "object")
             {
                 this.TranslateExpression(sb, list);
                 sb.Append(".toArray()");
                 return;
             }
 
+            string rootType = itemType.RootValue;
             switch (itemType.RootValue)
             {
+                case "bool":
+                case "byte":
                 case "int":
-                    sb.Append("TranslationHelper.listToArrayInt(");
+                case "double":
+                case "char":
+                    sb.Append("TranslationHelper.listToArray");
+                    sb.Append((char)(rootType[0] + 'A' - 'a'));
+                    sb.Append(rootType.Substring(1));
+                    sb.Append('(');
                     this.TranslateExpression(sb, list);
                     sb.Append(')');
                     break;
@@ -448,12 +466,11 @@ namespace LangJava
                     sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_MAP)");
                     break;
                 case "Array":
-                    CompatibilityHack.CriticalTODO("you should fill this in."); // It might be nice just to have a TranslateTypeWithoutGenerics for these finiky array types.
-                    throw new NotImplementedException();
+                    throw NYI.JavaListOfArraysConvertToArray();
                 default:
                     string javaType = this.Platform.TranslateType(itemType);
                     char firstChar = javaType[0];
-                    if (firstChar >= 'A' & firstChar <= 'Z')
+                    if (firstChar >= 'A' && firstChar <= 'Z')
                     {
                         this.TranslateExpression(sb, list);
                         sb.Append(".toArray((");
@@ -462,7 +479,7 @@ namespace LangJava
                     }
                     else
                     {
-                        CompatibilityHack.CriticalTODO("you should fill this in, too.");
+                        // I think I covered all the primitive types that are supported.
                         throw new NotImplementedException();
                     }
                     break;
@@ -743,6 +760,23 @@ namespace LangJava
             sb.Append(".startsWith(");
             this.TranslateExpression(sb, needle);
             sb.Append(')');
+        }
+
+        public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
+        {
+            this.TranslateExpression(sb, str);
+            sb.Append(".substring(");
+            this.TranslateExpression(sb, start);
+            sb.Append(", ");
+            this.TranslateExpression(sb, start);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, length);
+            sb.Append(')');
+        }
+
+        public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateStringToLower(StringBuilder sb, Expression str)

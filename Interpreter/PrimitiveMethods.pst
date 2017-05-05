@@ -1,114 +1,47 @@
 ﻿Array<int> primitiveMethodsInitializeLookup(Dictionary<string, int> nameLookups) {
 	int length = nameLookups.Size();
 	Array<int> lookup = new Array<int>(length);
+	
 	for (int i = 0; i < length; i += 1) {
 		lookup[i] = -1;
 	}
-	if (nameLookups.Contains("add")) {
-		lookup[nameLookups["add"]] = PrimitiveMethodName.ADD;
-	}
-	if (nameLookups.Contains("argCountMax")) {
-		lookup[nameLookups["argCountMax"]] = PrimitiveMethodName.ARG_COUNT_MAX;
-	}
-	if (nameLookups.Contains("argCountMin")) {
-		lookup[nameLookups["argCountMin"]] = PrimitiveMethodName.ARG_COUNT_MIN;
-	}
-	if (nameLookups.Contains("choice")) {
-		lookup[nameLookups["choice"]] = PrimitiveMethodName.CHOICE;
-	}
-	if (nameLookups.Contains("clear")) {
-		lookup[nameLookups["clear"]] = PrimitiveMethodName.CLEAR;
-	}
-	if (nameLookups.Contains("clone")) {
-		lookup[nameLookups["clone"]] = PrimitiveMethodName.CLONE;
-	}
-	if (nameLookups.Contains("concat")) {
-		lookup[nameLookups["concat"]] = PrimitiveMethodName.CONCAT;
-	}
-	if (nameLookups.Contains("contains")) {
-		lookup[nameLookups["contains"]] = PrimitiveMethodName.CONTAINS;
-	}
-	if (nameLookups.Contains("createInstance")) {
-		lookup[nameLookups["createInstance"]] = PrimitiveMethodName.CREATE_INSTANCE;
-	}
-	if (nameLookups.Contains("endsWith")) {
-		lookup[nameLookups["endsWith"]] = PrimitiveMethodName.ENDS_WITH;
-	}
-	if (nameLookups.Contains("filter")) {
-		lookup[nameLookups["filter"]] = PrimitiveMethodName.FILTER;
-	}
-	if (nameLookups.Contains("get")) {
-		lookup[nameLookups["get"]] = PrimitiveMethodName.GET;
-	}
-	if (nameLookups.Contains("getName")) {
-		lookup[nameLookups["getName"]] = PrimitiveMethodName.GET_NAME;
-	}
-	if (nameLookups.Contains("indexOf")) {
-		lookup[nameLookups["indexOf"]] = PrimitiveMethodName.INDEX_OF;
-	}
-	if (nameLookups.Contains("insert")) {
-		lookup[nameLookups["insert"]] = PrimitiveMethodName.INSERT;
-	}
-	if (nameLookups.Contains("invoke")) {
-		lookup[nameLookups["invoke"]] = PrimitiveMethodName.INVOKE;
-	}
-	if (nameLookups.Contains("isA")) {
-		lookup[nameLookups["isA"]] = PrimitiveMethodName.IS_A;
-	}
-	if (nameLookups.Contains("join")) {
-		lookup[nameLookups["join"]] = PrimitiveMethodName.JOIN;
-	}
-	if (nameLookups.Contains("keys")) {
-		lookup[nameLookups["keys"]] = PrimitiveMethodName.KEYS;
-	}
-	if (nameLookups.Contains("lower")) {
-		lookup[nameLookups["lower"]] = PrimitiveMethodName.LOWER;
-	}
-	if (nameLookups.Contains("ltrim")) {
-		lookup[nameLookups["ltrim"]] = PrimitiveMethodName.LTRIM;
-	}
-	if (nameLookups.Contains("map")) {
-		lookup[nameLookups["map"]] = PrimitiveMethodName.MAP;
-	}
-	if (nameLookups.Contains("merge")) {
-		lookup[nameLookups["merge"]] = PrimitiveMethodName.MERGE;
-	}
-	if (nameLookups.Contains("pop")) {
-		lookup[nameLookups["pop"]] = PrimitiveMethodName.POP;
-	}
-	if (nameLookups.Contains("remove")) {
-		lookup[nameLookups["remove"]] = PrimitiveMethodName.REMOVE;
-	}
-	if (nameLookups.Contains("replace")) {
-		lookup[nameLookups["replace"]] = PrimitiveMethodName.REPLACE;
-	}
-	if (nameLookups.Contains("reverse")) {
-		lookup[nameLookups["reverse"]] = PrimitiveMethodName.REVERSE;
-	}
-	if (nameLookups.Contains("rtrim")) {
-		lookup[nameLookups["rtrim"]] = PrimitiveMethodName.RTRIM;
-	}
-	if (nameLookups.Contains("shuffle")) {
-		lookup[nameLookups["shuffle"]] = PrimitiveMethodName.SHUFFLE;
-	}
-	if (nameLookups.Contains("sort")) {
-		lookup[nameLookups["sort"]] = PrimitiveMethodName.SORT;
-	}
-	if (nameLookups.Contains("split")) {
-		lookup[nameLookups["split"]] = PrimitiveMethodName.SPLIT;
-	}
-	if (nameLookups.Contains("startsWith")) {
-		lookup[nameLookups["startsWith"]] = PrimitiveMethodName.STARTS_WITH;
-	}
-	if (nameLookups.Contains("trim")) {
-		lookup[nameLookups["trim"]] = PrimitiveMethodName.TRIM;
-	}
-	if (nameLookups.Contains("upper")) {
-		lookup[nameLookups["upper"]] = PrimitiveMethodName.UPPER;
-	}
-	if (nameLookups.Contains("values")) {
-		lookup[nameLookups["values"]] = PrimitiveMethodName.VALUES;
-	}
+	
+	if (nameLookups.Contains("add")) lookup[nameLookups["add"]] = PrimitiveMethodName.ADD;
+	if (nameLookups.Contains("argCountMax")) lookup[nameLookups["argCountMax"]] = PrimitiveMethodName.ARG_COUNT_MAX;
+	if (nameLookups.Contains("argCountMin")) lookup[nameLookups["argCountMin"]] = PrimitiveMethodName.ARG_COUNT_MIN;
+	if (nameLookups.Contains("choice")) lookup[nameLookups["choice"]] = PrimitiveMethodName.CHOICE;
+	if (nameLookups.Contains("clear")) lookup[nameLookups["clear"]] = PrimitiveMethodName.CLEAR;
+	if (nameLookups.Contains("clone")) lookup[nameLookups["clone"]] = PrimitiveMethodName.CLONE;
+	if (nameLookups.Contains("concat")) lookup[nameLookups["concat"]] = PrimitiveMethodName.CONCAT;
+	if (nameLookups.Contains("contains")) lookup[nameLookups["contains"]] = PrimitiveMethodName.CONTAINS;
+	if (nameLookups.Contains("createInstance")) lookup[nameLookups["createInstance"]] = PrimitiveMethodName.CREATE_INSTANCE;
+	if (nameLookups.Contains("endsWith")) lookup[nameLookups["endsWith"]] = PrimitiveMethodName.ENDS_WITH;
+	if (nameLookups.Contains("filter")) lookup[nameLookups["filter"]] = PrimitiveMethodName.FILTER;
+	if (nameLookups.Contains("get")) lookup[nameLookups["get"]] = PrimitiveMethodName.GET;
+	if (nameLookups.Contains("getName")) lookup[nameLookups["getName"]] = PrimitiveMethodName.GET_NAME;
+	if (nameLookups.Contains("indexOf")) lookup[nameLookups["indexOf"]] = PrimitiveMethodName.INDEX_OF;
+	if (nameLookups.Contains("insert")) lookup[nameLookups["insert"]] = PrimitiveMethodName.INSERT;
+	if (nameLookups.Contains("invoke")) lookup[nameLookups["invoke"]] = PrimitiveMethodName.INVOKE;
+	if (nameLookups.Contains("isA")) lookup[nameLookups["isA"]] = PrimitiveMethodName.IS_A;
+	if (nameLookups.Contains("join")) lookup[nameLookups["join"]] = PrimitiveMethodName.JOIN;
+	if (nameLookups.Contains("keys")) lookup[nameLookups["keys"]] = PrimitiveMethodName.KEYS;
+	if (nameLookups.Contains("lower")) lookup[nameLookups["lower"]] = PrimitiveMethodName.LOWER;
+	if (nameLookups.Contains("ltrim")) lookup[nameLookups["ltrim"]] = PrimitiveMethodName.LTRIM;
+	if (nameLookups.Contains("map")) lookup[nameLookups["map"]] = PrimitiveMethodName.MAP;
+	if (nameLookups.Contains("merge")) lookup[nameLookups["merge"]] = PrimitiveMethodName.MERGE;
+	if (nameLookups.Contains("pop")) lookup[nameLookups["pop"]] = PrimitiveMethodName.POP;
+	if (nameLookups.Contains("remove")) lookup[nameLookups["remove"]] = PrimitiveMethodName.REMOVE;
+	if (nameLookups.Contains("replace")) lookup[nameLookups["replace"]] = PrimitiveMethodName.REPLACE;
+	if (nameLookups.Contains("reverse")) lookup[nameLookups["reverse"]] = PrimitiveMethodName.REVERSE;
+	if (nameLookups.Contains("rtrim")) lookup[nameLookups["rtrim"]] = PrimitiveMethodName.RTRIM;
+	if (nameLookups.Contains("shuffle")) lookup[nameLookups["shuffle"]] = PrimitiveMethodName.SHUFFLE;
+	if (nameLookups.Contains("sort")) lookup[nameLookups["sort"]] = PrimitiveMethodName.SORT;
+	if (nameLookups.Contains("split")) lookup[nameLookups["split"]] = PrimitiveMethodName.SPLIT;
+	if (nameLookups.Contains("startsWith")) lookup[nameLookups["startsWith"]] = PrimitiveMethodName.STARTS_WITH;
+	if (nameLookups.Contains("trim")) lookup[nameLookups["trim"]] = PrimitiveMethodName.TRIM;
+	if (nameLookups.Contains("upper")) lookup[nameLookups["upper"]] = PrimitiveMethodName.UPPER;
+	if (nameLookups.Contains("values")) lookup[nameLookups["values"]] = PrimitiveMethodName.VALUES;
+	
 	return lookup;
 }
 
@@ -117,95 +50,60 @@ Value generatePrimitiveMethodReference(Array<int> lookup, int globalNameId, Valu
 	if (functionId < 0) {
 		return null;
 	}
-	return new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.PRIMITIVE_METHOD, context, 0, functionId));
+	return new Value(Types.FUNCTION, 
+		new FunctionPointer(
+			FunctionPointerType.PRIMITIVE_METHOD,
+			context,
+			0, // class ID is N/A
+			functionId));
 }
 
+// returns an integer value in the enum PrimitiveMethodName
 int resolvePrimitiveMethodName2(Array<int> lookup, int type, int globalNameId) {
 	int output = lookup[globalNameId];
 	if (output != -1) {
 		switch ((type + (MAX_TYPE * output))) {
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.CONTAINS):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.ENDS_WITH):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.INDEX_OF):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.LOWER):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.LTRIM):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.REPLACE):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.REVERSE):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.RTRIM):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.SPLIT):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.STARTS_WITH):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.TRIM):
-				return output;
 			case Types.STRING + (MAX_TYPE * PrimitiveMethodName.UPPER):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.ADD):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.CHOICE):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.CLEAR):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.CLONE):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.CONCAT):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.CONTAINS):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.FILTER):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.INSERT):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.JOIN):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.MAP):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.POP):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.REMOVE):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.REVERSE):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.SHUFFLE):
-				return output;
 			case Types.LIST + (MAX_TYPE * PrimitiveMethodName.SORT):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.CLEAR):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.CLONE):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.CONTAINS):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.GET):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.KEYS):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.MERGE):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.REMOVE):
-				return output;
 			case Types.DICTIONARY + (MAX_TYPE * PrimitiveMethodName.VALUES):
-				return output;
 			case Types.FUNCTION + (MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MAX):
-				return output;
 			case Types.FUNCTION + (MAX_TYPE * PrimitiveMethodName.ARG_COUNT_MIN):
-				return output;
 			case Types.FUNCTION + (MAX_TYPE * PrimitiveMethodName.GET_NAME):
-				return output;
 			case Types.FUNCTION + (MAX_TYPE * PrimitiveMethodName.INVOKE):
-				return output;
 			case Types.CLASS + (MAX_TYPE * PrimitiveMethodName.CREATE_INSTANCE):
-				return output;
 			case Types.CLASS + (MAX_TYPE * PrimitiveMethodName.GET_NAME):
-				return output;
 			case Types.CLASS + (MAX_TYPE * PrimitiveMethodName.IS_A):
 				return output;
 			default:
@@ -216,16 +114,11 @@ int resolvePrimitiveMethodName2(Array<int> lookup, int type, int globalNameId) {
 }
 
 string primitiveMethodWrongArgCountError(string name, int expected, int actual) {
+	
 	string output = "";
-	if (expected == 0) {
-		output = Core.StringConcatAll(name, " does not accept any arguments.");
-	} else {
-		if (expected == 1) {
-			output = Core.StringConcatAll(name, " accepts exactly 1 argument.");
-		} else {
-			output = Core.StringConcatAll(name, " requires ", Core.IntToString(expected), " arguments.");
-		}
-	}
+	if (expected == 0) output = Core.StringConcatAll(name, " does not accept any arguments.");
+	else if (expected == 1) output = Core.StringConcatAll(name, " accepts exactly 1 argument.");
+	else output = Core.StringConcatAll(name, " requires ", Core.IntToString(expected), " arguments.");
+	
 	return Core.StringConcatAll(output, " Found: ", Core.IntToString(actual));
 }
-

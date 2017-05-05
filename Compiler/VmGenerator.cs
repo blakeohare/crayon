@@ -40,6 +40,64 @@ namespace Crayon
             }
         }
 
+        private List<Platform.LibraryForExport> GetLibrariesForExport(
+            Platform.AbstractPlatform platform,
+            Dictionary<string, Library> librariesByName,
+            Dictionary<string, object> constantFlags,
+            Pastel.PastelCompiler vm)
+        {
+            Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
+                platform,
+                constantFlags,
+                new InlineImportCodeLoader(),
+                librariesByName.Values,
+                vm);
+
+            List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
+            Dictionary<string, Library> libraryByName = new Dictionary<string, Library>();
+            foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
+            {
+                Library library = librariesByName[libraryName];
+                libraryByName[library.Name] = library;
+                Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
+                    library.Name,
+                    library.Version,
+                    libraryCompilation[library.Name],
+                    library.Resources);
+                libraries.Add(libraryForExport);
+            }
+
+            // Now that all libraries are read and initialized, go through and resolve all deferred DLL's that required all libraries to be loaded.
+            foreach (Platform.LibraryForExport lfe in libraries)
+            {
+                foreach (Platform.ExportEntity ee in lfe.ExportEntities.GetValueEnumerator())
+                {
+                    if (ee.DeferredFileOutputBytesLibraryName != null)
+                    {
+                        Library sourceLibrary;
+                        if (!libraryByName.TryGetValue(ee.DeferredFileOutputBytesLibraryName, out sourceLibrary))
+                        {
+                            throw new InvalidOperationException("The library '" + lfe.Name + "' makes reference to another library '" + ee.DeferredFileOutputBytesLibraryName + "' which could not be found.");
+                        }
+
+                        string resourcePath = "resources/" + ee.DeferredFileOutputBytesLibraryPath;
+                        byte[] dllFile = sourceLibrary.ReadFileBytes(resourcePath);
+                        if (dllFile == null)
+                        {
+                            throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Name + "'");
+                        }
+                        ee.FileOutput = new FileOutput()
+                        {
+                            Type = FileOutputType.Binary,
+                            BinaryContent = dllFile
+                        };
+                    }
+                }
+            }
+
+            return libraries;
+        }
+
         public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
@@ -49,38 +107,14 @@ namespace Crayon
         {
             Options options = new Options();
             Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
-            InlineImportCodeLoader codeLoader = new InlineImportCodeLoader();
             this.mode = mode;
 
             this.AddTypeEnumsToConstants(constantFlags);
+            Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
 
             Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
+            List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByName, constantFlags, vm);
 
-            Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags, codeLoader);
-            Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
-                platform,
-                constantFlags,
-                codeLoader,
-                relevantLibraries,
-                vm);
-
-            List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
-            foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
-            {
-                string version = "v1"; // TODO: the actual version
-                Library library = librariesByName[libraryName];
-                Dictionary<string, FileOutput> filesToCopy = new Dictionary<string, FileOutput>();
-                List<string> codeToEmbed = new List<string>();
-                library.GetSupplementalFileOutput(filesToCopy, codeToEmbed);
-                Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                    libraryName, 
-                    version, 
-                    libraryCompilation[libraryName], 
-                    filesToCopy,
-                    codeToEmbed);
-                libraries.Add(libraryForExport);
-            }
-            
             LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
                 new LibraryNativeInvocationTranslatorProvider(
                     relevantLibraries.ToDictionary(lib => lib.Name), 
@@ -107,12 +141,22 @@ namespace Crayon
             }
             else
             {
-                throw new NotImplementedException();
+                return platform.ExportStandaloneVm(
+                    vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
+                    vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
+                    vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                    libraries,
+                    libTranslationProvider);
             }
         }
 
-        private Platform.LibraryForExport CreateLibraryForExport(string libraryName, string version, Pastel.PastelCompiler compilation, Dictionary<string, FileOutput> supplementalFiles, List<string> codeToEmbed)
-        { 
+        private Platform.LibraryForExport CreateLibraryForExport(
+            string libraryName,
+            string libraryVersion,
+            Pastel.PastelCompiler compilation,
+            LibraryResourceDatabase libResDb)
+        {
+            Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
             FunctionDefinition manifestFunction = null;
             Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
             foreach (FunctionDefinition functionDefinition in compilation.FunctionDefinitions.Values)
@@ -130,25 +174,32 @@ namespace Crayon
 
             string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
             FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
+            string[] dotNetLibs = libResDb.DotNetLibs.OrderBy(s => s.ToLower()).ToArray();
 
             return new Platform.LibraryForExport()
             {
                 Name = libraryName,
-                Version = version,
+                Version = libraryVersion,
                 FunctionRegisteredNamesOrNulls = names,
                 Functions = functions,
                 ManifestFunction = manifestFunction,
-                SupplementalFiles = supplementalFiles,
-                CodeToEmbed = codeToEmbed.ToArray(),
+                ExportEntities = exportEntities,
+                DotNetLibs = dotNetLibs,
+                LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
             };
         }
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
             Platform.AbstractPlatform platform,
-            Dictionary<string, object> constantFlags,
-            InlineImportCodeLoader codeLoader)
+            Dictionary<string, object> constantFlags)
         {
-            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(false, null, constantFlags, codeLoader, null, null);
+            Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
+                false, 
+                null, 
+                constantFlags, 
+                new InlineImportCodeLoader(), 
+                null, 
+                null);
 
             foreach (string file in INTERPRETER_BASE_FILES)
             {

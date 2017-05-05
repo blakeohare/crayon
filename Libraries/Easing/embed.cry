@@ -43,15 +43,19 @@ namespace Easing {
 		}
 
 		function easeIn(start, end, current, duration, integers = false) {
-			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 0);
+			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
 		}
 
 		function easeOut(start, end, current, duration, integers = false) {
-			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 1);
+			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
 		}
 		
 		function ease(start, end, current, duration, integers = false) {
-			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 2);
+			return $$lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
+		}
+		
+		static function _throw() {
+			throw new Core.InvalidArgumentException("Inputs must be numbers.");
 		}
 	}
 }

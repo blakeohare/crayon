@@ -1,7 +1,0 @@
-﻿
-if ($_has_increment()) {
-	arg1 = $_array_get(valueStack, $_prefix_decrement(valueStackSize));
-} else {
-	valueStackSize -= 1;
-	arg1 = $_array_get(valueStack, valueStackSize);
-}

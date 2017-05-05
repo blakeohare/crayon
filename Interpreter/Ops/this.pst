@@ -1,3 +1,8 @@
-﻿@import("ValueStackCapacityCheck.cry");
+﻿
+// Will never be called outside of a method.
+// Also, this is frequently optimized out with the more direct operation DEREF_INSTANCE_FIELD
+
+@import("ValueStackCapacityCheck.cry");
+
 valueStack[valueStackSize] = stack.objectContext;
 valueStackSize += 1;

@@ -1,6 +1,6 @@
 using System;
 
-namespace %%%PROJECT_ID%%%.Library.ImageWebResources
+namespace Interpreter.Libraries.ImageWebResources
 {
     internal static class ImageDownloader
     {

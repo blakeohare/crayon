@@ -1,31 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 
 namespace Crayon
 {
     internal class Program
     {
-#if RELEASE
-        private static readonly string USAGE = string.Join("\n", new string[] {
+        // TODO: resource file
+        private static readonly string USAGE = Util.JoinLines(
             "Usage:",
             "  crayon BUILD-FILE -target BUILD-TARGET-NAME [OPTIONS...]",
             "",
             "Flags:",
             "",
-            "  -target            (REQUIRED) When a build file is specified, selects the",
+            "  -target            When a build file is specified, selects the",
             "                     target within that build file to build.",
             "",
-            "  -readablebytecode  (OPTIONAL) Output a file of the final byte code in a",
-            "                     semi-readable fashion for debugging purposes.",
-        });
-#endif
+            "  -vm                Output a standalone VM for a platform.",
+            "",
+            "  -vmdir             Directory to output the VM to (when -vm is",
+            "                     specified).",
+            "");
 
         static void Main(string[] args)
         {
 #if DEBUG
+            args = GetEffectiveArgs(args);
+
             // First chance exceptions should crash in debug builds.
             Program.Compile(args);
+
+            // Crash if there were any graphics contexts that weren't cleaned up.
+            // This is okay on Windows, but on OSX this is a problem, so ensure that a 
+            // regressions are quickly noticed.
             SystemBitmap.Graphics.EnsureCleanedUp();
 #else
 
@@ -51,66 +59,277 @@ namespace Crayon
 #endif
         }
 
-        private static void Compile(string[] args)
+        private static string GetCommandLineFlagValue(string previousFlag, string[] args)
         {
-            BuildContext buildContext = Program.GetBuildContext(args);
-
-            AbstractPlatform platform = GetPlatformInstance(buildContext);
-            if (platform != null)
+            for (int i = 0; i < args.Length; ++i)
             {
-                platform.Compile(buildContext, buildContext.OutputFolder);
-                return;
+                if (args[i] == previousFlag && i + 1 < args.Length)
+                {
+                    return args[i + 1];
+                }
             }
+            return null;
+        }
 
-            Platform.AbstractPlatform platform2 = GetPlatform2Instance(buildContext);
-
-            CompatibilityHack.IS_CBX_MODE = platform2 != null;
-
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-            Dictionary<string, FileOutput> result;
-            
-            if (platform2 != null)
+        private static string[] GetEffectiveArgs(string[] actualArgs)
+        {
+#if DEBUG
+            if (actualArgs.Length == 0)
             {
-                // This really needs to go in a separate helper file.
-                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
-                resourceDatabase.ByteCodeFile = new FileOutput()
+                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+                if (crayonHome != null)
                 {
-                    Type = FileOutputType.Text,
-                    TextContent = ByteCodeEncoder.Encode(compilationResult.ByteCode),
-                };
-                
-                Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
-                if (buildContext.ImageSheetIds != null)
-                {
-                    foreach (string imageSheetId in buildContext.ImageSheetIds)
+                    string debugArgsFile = System.IO.Path.Combine(crayonHome, "DEBUG_ARGS.txt");
+                    if (System.IO.File.Exists(debugArgsFile))
                     {
-                        imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
-
-                        foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                        string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
+                        string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
+                        if (lastArgSet.Length > 0)
                         {
-                            imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                            return lastArgSet.Split(' ');
                         }
                     }
                 }
-                Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
-
-                resourceDatabase.AddImageSheets(imageSheets);
-
-                resourceDatabase.GenerateResourceMapping();
-
-
-                VmGenerator vmGenerator = new VmGenerator();
-                result = vmGenerator.GenerateVmSourceCodeForPlatform(
-                    platform2,
-                    compilationResult,
-                    resourceDatabase,
-                    compilationResult.LibrariesUsed,
-                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
             }
-            else
+#endif
+            return actualArgs;
+        }
+
+        private enum ExecutionType
+        {
+            EXPORT_VM_BUNDLE,
+            EXPORT_VM_STANDALONE,
+            EXPORT_CBX,
+            RUN_CBX,
+            SHOW_USAGE,
+        }
+
+        private static ExecutionType IdentifyUseCase(string[] args)
+        {
+            if (args.Length == 0) return ExecutionType.SHOW_USAGE;
+
+            foreach (string arg in args)
             {
-                throw new InvalidOperationException("Unrecognized platform. See usage.");
+                if (arg == "-vm" || arg == "-vmdir") return ExecutionType.EXPORT_VM_STANDALONE;
+                if (arg == "-target") return ExecutionType.EXPORT_VM_BUNDLE;
+                if (arg == "-cbx") return ExecutionType.EXPORT_CBX;
             }
+            return ExecutionType.RUN_CBX;
+        }
+
+        private static void Compile(string[] args)
+        {
+            switch (IdentifyUseCase(args))
+            {
+                case ExecutionType.EXPORT_CBX:
+                    Program.ExportCbx(args);
+                    return;
+
+                case ExecutionType.EXPORT_VM_BUNDLE:
+                    Program.ExportVmBundle(args);
+                    return;
+
+                case ExecutionType.EXPORT_VM_STANDALONE:
+                    Program.ExportStandaloneVm(args);
+                    return;
+
+                case ExecutionType.RUN_CBX:
+                    string cbxFile = Program.ExportCbx(args);
+                    string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "Vm", "CrayonRuntime.exe");
+                    cbxFile = FileUtil.GetPlatformPath(cbxFile);
+                    System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
+                    
+                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile)
+                    {
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                    };
+                    appProcess.OutputDataReceived += (sender, e) =>
+                    {
+                        System.Console.WriteLine(e.Data);
+                    };
+                    appProcess.Start();
+                    appProcess.BeginOutputReadLine();
+                    appProcess.WaitForExit();
+                    return;
+
+                case ExecutionType.SHOW_USAGE:
+#if RELEASE
+                    Console.WriteLine(USAGE);
+#endif
+                    return;
+
+                default:
+                    throw new Exception(); // unknown use case.
+            }
+        }
+
+        // TODO: HELPER CLASS
+        private static string ExportCbx(string[] args)
+        {
+            string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
+            BuildContext buildContext = GetBuildContextCbx(buildFilePath);
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            ResourceDatabase resDb = PrepareResources(buildContext, null);
+            string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
+            List<byte> cbxOutput = new List<byte>() { 0 };
+            cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(0));
+            cbxOutput.AddRange(GetBigEndian4Byte(2));
+            cbxOutput.AddRange(GetBigEndian4Byte(0));
+            
+            byte[] code = StringToBytes(byteCode);
+            cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
+            cbxOutput.AddRange(code);
+
+            List<string> libraries = new List<string>();
+            foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
+            {
+                libraries.Add(library.Name);
+                libraries.Add(library.Version);
+            }
+            string libsData = string.Join(",", libraries);
+            byte[] libsDataBytes = StringToBytes(libsData);
+            cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
+            cbxOutput.AddRange(libsDataBytes);
+
+            byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
+            cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
+            cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
+            cbxOutput.AddRange(resourceManifest);
+
+            string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
+            string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
+            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
+            cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
+            FileUtil.EnsureParentFolderExists(fullyQualifiedOutputFolder);
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            output[buildContext.ProjectID + ".cbx"] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = cbxOutput.ToArray(),
+            };
+            
+            // Resource manifest is embedded into the CBX file
+
+            output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
+            
+            foreach (FileOutput txtResource in resDb.TextResources)
+            {
+                output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+            }
+            foreach (FileOutput sndResource in resDb.AudioResources)
+            {
+                output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+            }
+            foreach (FileOutput binResource in resDb.BinaryResources)
+            {
+                output["res/bin/" + binResource.CanonicalFileName] = binResource;
+            }
+            foreach (FileOutput imgResource in resDb.ImageResources)
+            {
+                output["res/img/" + imgResource.CanonicalFileName] = imgResource;
+            }
+            foreach (string key in resDb.ImageSheetFiles.Keys)
+            {
+                output["res/img/" + key] = resDb.ImageSheetFiles[key];
+            }
+            new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
+
+            return cbxPath;
+        }
+
+        private static byte[] StringToBytes(string value)
+        {
+            return System.Text.Encoding.UTF8.GetBytes(value);
+        }
+
+        private static byte[] GetBigEndian4Byte(int value)
+        {
+            return new byte[]
+            {
+                (byte) ((value >> 24) & 255),
+                (byte) ((value >> 16) & 255),
+                (byte) ((value >> 8) & 255),
+                (byte) (value & 255)
+            };
+        }
+
+        private static void ExportStandaloneVm(string[] args)
+        {
+            Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(GetCommandLineFlagValue("-vm", args));
+            string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
+            if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
+            VmGenerator vmGenerator = new VmGenerator();
+            List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
+            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                standaloneVmPlatform,
+                null,
+                null,
+                allLibraries,
+                VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
+            FileOutputExporter exporter = new FileOutputExporter(targetDirectory);
+            exporter.ExportFiles(result);
+        }
+
+        private static ResourceDatabase PrepareResources(
+            BuildContext buildContext, 
+            ByteBuffer nullableByteCode) // CBX files will not have this in the resources
+        {
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            // This really needs to go in a separate helper file.
+            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
+            if (nullableByteCode != null)
+            {
+                resourceDatabase.ByteCodeFile = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = ByteCodeEncoder.Encode(nullableByteCode),
+                };
+            }
+
+            Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+            if (buildContext.ImageSheetIds != null)
+            {
+                foreach (string imageSheetId in buildContext.ImageSheetIds)
+                {
+                    imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+
+                    foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                    {
+                        imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                    }
+                }
+            }
+            Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+            resourceDatabase.AddImageSheets(imageSheets);
+
+            resourceDatabase.GenerateResourceMapping();
+
+            return resourceDatabase;
+        }
+
+        private static void ExportVmBundle(string[] args)
+        {
+            BuildContext buildContext = GetBuildContext(args);
+            Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
+            if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
+
+            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+
+            ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
+
+            VmGenerator vmGenerator = new VmGenerator();
+            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                platform,
+                compilationResult,
+                resourceDatabase,
+                compilationResult.LibrariesUsed,
+                VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
             string outputDirectory = buildContext.OutputFolder;
             if (!FileUtil.IsAbsolutePath(outputDirectory))
@@ -123,7 +342,7 @@ namespace Crayon
             exporter.ExportFiles(result);
         }
 
-        private static Platform.AbstractPlatform GetPlatform2Instance(BuildContext buildContext)
+        private static Platform.AbstractPlatform GetPlatformInstance(BuildContext buildContext)
         {
             string platformId = buildContext.Platform.ToLowerInvariant();
             return platformProvider.GetPlatform(platformId);
@@ -131,87 +350,59 @@ namespace Crayon
 
         private static PlatformProvider platformProvider = new PlatformProvider();
 
-        private static AbstractPlatform GetPlatformInstance(BuildContext buildContext)
+        private static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
         {
-            switch (buildContext.Platform.ToLowerInvariant())
+            string buildFilePath = originalBuildFilePath;
+            if (!buildFilePath.StartsWith("/") &&
+                !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
             {
-                case "game-c-opengl": return new Crayon.Translator.C.COpenGlPlatform();
-                case "game-csharp-android": return new Crayon.Translator.CSharp.CSharpXamarinAndroidPlatform();
-                case "game-csharp-ios": return new Crayon.Translator.CSharp.CSharpXamarinIosPlatform();
-                case "game-csharp-opentk": return new Crayon.Translator.CSharp.CSharpOpenTkPlatform();
-                case "game-java-android": return new Crayon.Translator.Java.JavaAndroidPlatform();
-                case "game-java-awt": return new Crayon.Translator.Java.JavaAwtPlatform();
-                case "game-javascript": return new Crayon.Translator.JavaScript.JavaScriptPlatform();
-                case "game-python-pygame": return new Crayon.Translator.Python.PythonPlatform();
-                case "game-ruby-gosu": return new Crayon.Translator.Ruby.RubyPlatform();
-                case "server-php": return new Crayon.Translator.Php.PhpPlatform();
-                case "ui-csharp-winforms": return new Crayon.Translator.CSharp.CSharpWinFormsPlatform();
-                case "ui-javascript": throw new NotImplementedException();
+                // Build file will always be absolute. So make it absolute if it isn't already.
+                buildFilePath = System.IO.Path.GetFullPath(
+                    System.IO.Path.Combine(
+                        System.IO.Directory.GetCurrentDirectory(), buildFilePath));
 
-                // temporary hack to help rewrite the VM into Pastel
-                case "vm-pastel-hack": return new Crayon.Translator.Pastel.PastelPlatform();
-
-                default: return null;
             }
+
+            if (!System.IO.File.Exists(buildFilePath))
+            {
+                throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
+            }
+
+            return buildFilePath;
+        }
+
+        private static BuildContext GetBuildContextCbx(string rawBuildFilePath)
+        {
+            string buildFile = GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
+            string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+            string buildFileContent = System.IO.File.ReadAllText(buildFile);
+            return BuildContext.Parse(projectDirectory, buildFileContent, null);
         }
 
         private static BuildContext GetBuildContext(string[] args)
         {
-#if DEBUG
-            if (args.Length == 0)
-            {
-                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
-                if (crayonHome != null)
-                {
-                    string debugArgsFile = System.IO.Path.Combine(crayonHome, "DEBUG_ARGS.txt");
-                    if (System.IO.File.Exists(debugArgsFile))
-                    {
-                        string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
-                        string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
-                        if (lastArgSet.Length > 0)
-                        {
-                            args = lastArgSet.Split(' ');
-                        }
-                    }
-                }
-            }
-#endif
-
             Dictionary<string, string> argLookup = Program.ParseArgs(args);
 
             string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
             string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
-            if (!buildFile.StartsWith("/") &&
-                !(buildFile.Length > 1 && buildFile[1] == ':'))
-            {
-                // Build file will always be absolute. So make it absolute if it isn't already.
-                buildFile = System.IO.Path.GetFullPath(
-                    System.IO.Path.Combine(
-                        System.IO.Directory.GetCurrentDirectory(), buildFile));
 
+            if (buildFile == null || target == null)
+            {
+                throw new InvalidOperationException("Build file and target must be specified together.");
             }
+
+            buildFile = GetValidatedCanonicalBuildFilePath(buildFile);
 
             string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
             BuildContext buildContext = null;
-            if (buildFile != null || target != null)
-            {
-                if (buildFile == null || target == null)
-                {
-                    throw new InvalidOperationException("Build file and target must be specified together.");
-                }
+            
+            argLookup.Remove("buildfile");
+            argLookup.Remove("target");
+            projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
-                argLookup.Remove("buildfile");
-                argLookup.Remove("target");
-                projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-
-                if (!System.IO.File.Exists(buildFile))
-                {
-                    throw new InvalidOperationException("Build file does not exist: " + buildFile);
-                }
-
-                buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
-            }
+            buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
+            
 
             buildContext = buildContext ?? new BuildContext();
 
@@ -245,6 +436,7 @@ namespace Crayon
             return buildContext;
         }
 
+        // TODO: remove this and just use the simple extractor O(n^2) is worth getting rid of extra code when there's only a handful of args.
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>("min readablebytecode".Split(' '));
         private static Dictionary<string, string> ParseArgs(string[] args)
         {

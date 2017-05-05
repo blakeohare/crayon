@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Common;
 using Pastel.Nodes;
 using Platform;
-using System.Text;
 
 namespace GamePythonPygame
 {
@@ -17,10 +16,20 @@ namespace GamePythonPygame
         {
             this.Translator = new PythonAppTranslator(this);
         }
-        
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();
+        }
+
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            throw new NotImplementedException();
         }
 
         public override Dictionary<string, FileOutput> ExportProject(
@@ -38,9 +47,10 @@ namespace GamePythonPygame
 
             List<string> runPy = new List<string>();
 
+            TODO.PythonAppDeGamification();
+
             foreach (string simpleCodeConcat in new string[] {
                 "header.txt",
-                // TODO: these need to go in their respective libraries.
                 "image_helper.txt",
                 "game.txt",
                 "gfx_renderer.txt",
@@ -98,9 +108,9 @@ namespace GamePythonPygame
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
 
-                    foreach (string codeToAppendToLibrary in library.CodeToEmbed)
+                    foreach (ExportEntity codeToAppendToLibrary in library.ExportEntities["EMBED_CODE"])
                     {
-                        libraryLines.Add(codeToAppendToLibrary);
+                        libraryLines.Add(codeToAppendToLibrary.StringValue);
                     }
 
                     output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace %%%PROJECT_ID%%%.Library.ImageResources
+namespace Interpreter.Libraries.ImageResources
 {
     public class AndroidBitmap
     {

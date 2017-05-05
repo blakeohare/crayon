@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
 
 namespace Crayon.ParseTree
 {
@@ -71,8 +72,10 @@ namespace Crayon.ParseTree
                     this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
                 }
 
+                TODO.RemoveAnnotationsFromParser();
+
                 // Annotations not allowed in byte code mode
-                if (parser.NullablePlatform == null && this.ArgAnnotations[i] != null)
+                if (this.ArgAnnotations[i] != null)
                 {
                     throw new ParserException(this.ArgAnnotations[i].FirstToken, "Unexpected token: '@'");
                 }

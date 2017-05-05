@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
 
 namespace Crayon.ParseTree
 {
@@ -40,7 +41,8 @@ namespace Crayon.ParseTree
             this.Code = code.ToArray();
             this.BaseToken = baseToken;
 
-            // TODO: verify default args are at the end.
+            TODO.VerifyDefaultArgumentsAreAtTheEnd();
+
             this.MaxArgCount = this.ArgNames.Length;
             int minArgCount = 0;
             for (int i = 0; i < this.ArgNames.Length; ++i)

@@ -37,6 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharpTranslator.cs" />
+    <Compile Include="DllFile.cs" />
+    <Compile Include="DllReferenceHelper.cs" />
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

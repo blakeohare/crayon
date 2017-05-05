@@ -1,5 +1,5 @@
 ﻿using System;
-using Interpreter.OtkGame;
+using Interpreter;
 using Interpreter.Vm;
 
 namespace %%%PROJECT_ID%%%
@@ -10,8 +10,8 @@ namespace %%%PROJECT_ID%%%
         {
             TranslationHelper.CommandLineArgs = args;
 			TranslationHelper.LibraryRegistry = new LibraryRegistry();
-            TranslationHelper.ByteCode = ResourceReader.ReadTextFile("ByteCode.txt");
-            TranslationHelper.ResourceManifest = ResourceReader.ReadTextFile("ResourceManifest.txt");
+            TranslationHelper.ByteCode = ResourceReader.ReadTextFile("Resources/ByteCode.txt");
+            TranslationHelper.ResourceManifest = ResourceReader.ReadTextFile("Resources/ResourceManifest.txt");
             CrayonWrapper.v_main();
         }
     }

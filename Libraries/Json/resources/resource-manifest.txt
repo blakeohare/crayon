@@ -1,28 +1,26 @@
 BEGIN
-APPLICABLE-TO: game-java-awt
-COPYFILES: java-org-json: src/org/json/%FILE%
-COPYFILES: java: src/%PROJECT_ID%/%FILE%
+APPLICABLE-TO: java-app
+COPY_FILES: from=java-org-json, to=src/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-java-android
-COPYFILES: java-org-json: app/src/main/java/org/json/%FILE%
-COPYFILES: java: app/src/main/java/%PROJECT_ID%/%FILE%
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-org-json, to=app/src/main/java/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-csharp-android
-APPLICABLE-TO: game-csharp-ios
-APPLICABLE-TO: game-csharp-opentk
-COPYFILES: csharp: %PROJECT_ID%/Libraries/Json/%FILE%
+APPLICABLE-TO: lang-csharp
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: game-python-pygame
-EMBED: python
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
 END
 
 BEGIN
-APPLICABLE-TO: game-javascript
-EMBED: javascript
+APPLICABLE-TO: lang-javascript
+EMBED_FILES: from=javascript
 END

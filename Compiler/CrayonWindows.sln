@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crayon", "Crayon.csproj", "{6A25BB31-4280-470F-959E-25D6D5A173AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "..\Resources\Resources.csproj", "{33D98096-1F92-4C28-BA01-95030CD4EACA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "..\Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{E0B05933-80B8-443B-BB91-E378C4F79C37}"
@@ -53,18 +51,6 @@ Global
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Mixed Platforms.Build.0 = Release|x86
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.ActiveCfg = Release|x86
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.Build.0 = Release|x86
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Debug|x86.Build.0 = Debug|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|x86.ActiveCfg = Release|Any CPU
-		{33D98096-1F92-4C28-BA01-95030CD4EACA}.Release|x86.Build.0 = Release|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

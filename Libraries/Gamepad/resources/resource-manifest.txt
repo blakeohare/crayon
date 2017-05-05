@@ -1,0 +1,4 @@
+BEGIN
+APPLICABLE-TO: csharp-app
+LIB_DLL_REF: name=Game, version=v1
+END

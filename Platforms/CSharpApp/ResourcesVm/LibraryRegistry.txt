@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Interpreter.Vm
+{
+    public class LibraryRegistry
+    {
+        private Dictionary<string, System.Reflection.MethodInfo> manifestMethodsByLibraryName = new Dictionary<string, System.Reflection.MethodInfo>();
+        private Dictionary<string, Library> librariesByName = new Dictionary<string, Library>();
+
+        public LibraryRegistry(Dictionary<string, string> libraryVersions)
+        {
+            foreach (string libraryName in libraryVersions.Keys.OrderBy(n => n))
+            {
+                string libraryVersion = libraryVersions[libraryName];
+                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+#if DEBUG
+                string config = "Debug";
+#else
+                string config = "Release";
+#endif
+                string dllFile = System.IO.Path.Combine(crayonHome, "Vm", "Libs", config, libraryName + ".dll");
+                System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFrom(dllFile);
+
+                // TODO: compare assembly reported version against required version.
+                
+                foreach (Type type in asm.GetTypes().Where(t => t.Name == "LibraryWrapper"))
+                {
+                    string[] namespaceComponents = type.FullName.Split('.');
+                    if (namespaceComponents.Length > 2 && namespaceComponents[1] == "Libraries")
+                    {
+                        string name = namespaceComponents[2];
+                        System.Reflection.MethodInfo manifestMethod = type.GetMethod("v_lib_manifest_RegisterFunctions");
+                        manifestMethodsByLibraryName[name] = manifestMethod;
+                        librariesByName[name] = new Library(manifestMethod);
+                    }
+                }
+            }
+        }
+
+        public Library GetLibrary(string name)
+        {
+            if (this.librariesByName.ContainsKey(name))
+            {
+                return this.librariesByName[name];
+            }
+            return null;
+        }
+
+        public int LoadLibrary(string name, string version)
+        {
+            // Because this is bundled, the version is always correct.
+            if (this.manifestMethodsByLibraryName.ContainsKey(name)) // Embed-code-only libraries don't have a notion of being "loaded"
+            {
+                librariesByName[name] = new Library(this.manifestMethodsByLibraryName[name]);
+            }
+            return 0;
+        }
+    }
+}

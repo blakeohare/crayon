@@ -1,6 +1,7 @@
 ﻿if (argCount > 0) {
 	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
 }
+
 if (dictImpl.keyType == Types.STRING) {
 	output = new Value(Types.LIST, Core.ConvertRawDictionaryValueCollectionToAReusableValueList(dictImpl.keyStringLookup.Values()));
 } else {

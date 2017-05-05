@@ -1,0 +1,121 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Interpreter.Structs;
+using Interpreter.Vm;
+
+namespace Interpreter
+{
+    public static class CSharpAppTranslationHelper
+    {
+        private static string appDataRoot = null;
+        public static string AppDataRoot
+        {
+            get
+            {
+                if (appDataRoot == null)
+                {
+                    // TODO: test with Mono
+                    appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "Polarity");
+                    appDataRoot = appDataRoot.Replace('\\', '/');
+                }
+                return appDataRoot;
+            }
+        }
+
+        public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
+        {
+            int status = 0;
+            lock (imageLoaderNativeData[3])
+            {
+                status = (int)imageLoaderNativeData[2];
+            }
+
+            output[0] = CrayonWrapper.v_buildInteger(status);
+        }
+
+        public static void ImageLoadAsync(
+            string filename,
+            object[] nativeImageDataNativeData,
+            object[] imageLoaderNativeData)
+        {
+            imageLoaderNativeData[3] = new object();
+            System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
+            bgw.DoWork += (sender, args) =>
+            {
+                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+
+                lock (imageLoaderNativeData[3])
+                {
+                    imageLoaderNativeData[2] = loaded ? 1 : 2;
+                }
+            };
+
+            bgw.RunWorkerAsync();
+        }
+
+        public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
+        {
+            System.Drawing.Bitmap bmp = ResourceReader.ReadImageResource(filename);
+            if (bmp != null)
+            {
+                if (statusOutCheesy != null) statusOutCheesy.Reverse();
+                nativeImageDataNativeData[0] = bmp;
+                nativeImageDataNativeData[1] = bmp.Width;
+                nativeImageDataNativeData[2] = bmp.Height;
+                return true;
+            }
+            return false;
+        }
+
+        public static string GetImageResourceManifestString()
+        {
+            return ResourceReader.ReadMetadata("image_sheet_manifest.txt", true);
+        }
+
+        public static object GenerateNativeBitmapOfSize(int width, int height)
+        {
+            return new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        }
+
+        public static void BlitImage(
+            object targetBmp, object sourceBmp,
+            int targetX, int targetY,
+            int sourceX, int sourceY,
+            int width, int height,
+            object graphicsSession)
+        {
+            System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
+            System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
+            ((System.Drawing.Graphics)graphicsSession).DrawImage(
+                source,
+                new System.Drawing.Rectangle(targetX, targetY, width, height),
+                new System.Drawing.Rectangle(sourceX, sourceY, width, height),
+                System.Drawing.GraphicsUnit.Pixel);
+        }
+
+        public static object GetPixelEditSession(object nativeImageResource)
+        {
+            return System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)nativeImageResource);
+        }
+
+        public static void FlushPixelEditSession(object graphicsObj)
+        {
+            System.Drawing.Graphics g = (System.Drawing.Graphics)graphicsObj;
+            g.Flush();
+            g.Dispose();
+        }
+
+        public static bool LoadFont(bool isSystem, string name, int fontId)
+        {
+            // No-op for now.
+            return true;
+        }
+
+        public static int PushCodePoints(List<int> codePoints, string value)
+        {
+            // No-op for now.
+            return 0;
+        }
+    }
+}

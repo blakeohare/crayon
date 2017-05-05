@@ -1,4 +1,5 @@
-﻿string lib_xml_parse(string input, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<int, int> stringEnders) {
+﻿string lib_xml_parse(string input, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
+	
 	if (entityLookup.Size() == 0) {
 		entityLookup["amp"] = "&";
 		entityLookup["lt"] = "<";
@@ -6,17 +7,19 @@
 		entityLookup["quot"] = "\"";
 		entityLookup["apos"] = "'";
 	}
+	
 	if (stringEnders.Size() == 0) {
-		stringEnders[Core.Ord(" ")] = 1;
-		stringEnders[Core.Ord("\"")] = 1;
-		stringEnders[Core.Ord("'")] = 1;
-		stringEnders[Core.Ord("<")] = 1;
-		stringEnders[Core.Ord(">")] = 1;
-		stringEnders[Core.Ord("\t")] = 1;
-		stringEnders[Core.Ord("\r")] = 1;
-		stringEnders[Core.Ord("\n")] = 1;
-		stringEnders[Core.Ord("/")] = 1;
+		stringEnders[' '] = 1;
+		stringEnders['"'] = 1;
+		stringEnders['\''] = 1;
+		stringEnders['<'] = 1;
+		stringEnders['>'] = 1;
+		stringEnders['\t'] = 1;
+		stringEnders['\r'] = 1;
+		stringEnders['\n'] = 1;
+		stringEnders['/'] = 1;
 	}
+	
 	indexPtr[0] = 0;
 	lib_xml_skipWhitespace(input, indexPtr);
 	if (lib_xml_popIfPresent(input, indexPtr, "<?xml")) {
@@ -48,7 +51,7 @@ string lib_xml_error(string xml, int index, string msg) {
 		int col = 0;
 		int i = 0;
 		while (i <= index) {
-			if (xml.CharCodeAt(i) == Core.Ord("\n")) {
+			if (xml[i] == '\n') {
 				line += 1;
 				col = 0;
 			} else {
@@ -77,8 +80,8 @@ string lib_xml_skipStuff(string xml, Array<int> indexPtr) {
 int lib_xml_skipWhitespace(string xml, Array<int> indexPtr) {
 	int length = xml.Size();
 	for (int i = indexPtr[0]; i < length; i += 1) {
-		int c = xml.CharCodeAt(i);
-		if ((c != Core.Ord(" ")) && (c != Core.Ord("\t")) && (c != Core.Ord("\n")) && (c != Core.Ord("\r"))) {
+		char c = xml[i];
+		if (c != ' ' && c != '\t' && c != '\n' && c != '\r') {
 			indexPtr[0] = i;
 			return 0;
 		}
@@ -110,7 +113,7 @@ bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
 	return false;
 }
 
-string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<int, int> stringEnders) {
+string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
 	int length = xml.Size();
 	List<Value> attributeKeys = new List<Value>();
 	List<Value> attributeValues = new List<Value>();
@@ -188,15 +191,13 @@ string lib_xml_parseText(string xml, Array<int> indexPtr, List<Value> output, Di
 	int start = indexPtr[0];
 	int i = start;
 	bool ampFound = false;
-	int c = 0;
+	char c = ' ';
 	while (i < length) {
-		c = xml.CharCodeAt(i);
-		if (c == Core.Ord("<")) {
+		c = xml[i];
+		if (c == '<') {
 			break;
-		} else {
-			if (c == Core.Ord("&")) {
-				ampFound = true;
-			}
+		} else if (c == '&') {
+			ampFound = true;
 		}
 		i += 1;
 	}
@@ -218,40 +219,44 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 	int length = xml.Size();
 	int i = indexPtr[0];
 	int start = i;
-	int c = 0;
+	char c = ' ';
 	while (i < length) {
-		c = xml.CharCodeAt(i);
-		if ((c >= Core.Ord("a")) && (c <= Core.Ord("z")) || (c >= Core.Ord("A")) && (c <= Core.Ord("Z")) || (c >= Core.Ord("0")) && (c <= Core.Ord("9")) || (c == Core.Ord("_")) || (c == Core.Ord(".")) || (c == Core.Ord(":")) || (c == Core.Ord("-"))) {
+		c = xml[i];
+		if ((c >= 'a' && c <= 'z') || 
+			(c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') || 
+			c == '_' || 
+			c == '.' ||
+			c == ':' ||
+			c == '-') {
 		} else {
 			break;
 		}
 		i += 1;
 	}
-	string output = xml.SubString(start, (i - start));
+	string output = xml.SubString(start, i - start);
 	indexPtr[0] = i;
 	return output;
 }
 
-string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeValueOut, Dictionary<string, string> entityLookup, Dictionary<int, int> stringEnders) {
+string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeValueOut, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
 	int length = xml.Size();
 	int start = indexPtr[0];
 	int end = length;
 	int i = start;
-	int stringType = xml.CharCodeAt(i);
-	bool unwrapped = (stringType != Core.Ord("\"")) && (stringType != Core.Ord("'"));
+	char stringType = xml[i];
+	bool unwrapped = stringType != '"' && stringType != '\'';
 	bool ampFound = false;
-	int c = Core.Ord(" ");
+	char c = ' ';
 	if (unwrapped) {
 		bool stahp = false;
 		while (i < length) {
-			c = xml.CharCodeAt(i);
+			c = xml[i];
 			if (stringEnders.Contains(c)) {
 				end = i;
 				break;
-			} else {
-				if (c == Core.Ord("&")) {
-					ampFound = true;
-				}
+			} else if (c == '&') {
+				ampFound = true;
 			}
 			i += 1;
 		}
@@ -259,15 +264,13 @@ string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeV
 		i += 1;
 		start = i;
 		while (i < length) {
-			c = xml.CharCodeAt(i);
+			c = xml[i];
 			if (c == stringType) {
 				end = i;
 				i += 1;
 				break;
-			} else {
-				if (c == '&') {
-					ampFound = true;
-				}
+			} else if (c == '&') {
+				ampFound = true;
 			}
 			i += 1;
 		}
@@ -283,6 +286,7 @@ string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeV
 
 string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup) {
 	Array<string> ampParts = value.Split("&");
+	
 	for (int i = 1; i < ampParts.Size(); i += 1) {
 		string component = ampParts[i];
 		int semicolon = component.IndexOf(";");
@@ -297,7 +301,8 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
 			ampParts[i] = Core.StringConcatAll(entityValue, component);
 		}
 	}
-	return string.Join("", ampParts);
+	
+	return ampParts.Join("");
 }
 
 string lib_xml_getEntity(string code, Dictionary<string, string> entityLookup) {
@@ -306,4 +311,3 @@ string lib_xml_getEntity(string code, Dictionary<string, string> entityLookup) {
 	}
 	return null;
 }
-

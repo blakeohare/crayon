@@ -157,7 +157,7 @@ namespace Crayon
             public string[] Prefixes { get; set; }
         }
 
-        public static BuildContext Parse(string projectDir, string buildFile, string targetName)
+        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(Build));
             Build buildInput;
@@ -189,43 +189,55 @@ namespace Crayon
                 throw new InvalidOperationException("An error occurred while parsing the build file.");
             }
             Build flattened = buildInput;
-            Target desiredTarget = null;
-            foreach (Target target in buildInput.Targets)
+            string platform = null;
+            Dictionary<string, BuildVarCanonicalized> varLookup;
+            if (nullableTargetName != null)
             {
-                if (target.Name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
-                if (target.Platform == null) throw new InvalidOperationException("A target in the build file is missing a platform.");
-                if (target.Name == targetName)
+                string targetName = nullableTargetName;
+                Target desiredTarget = null;
+                foreach (Target target in buildInput.Targets)
                 {
-                    desiredTarget = target;
+                    if (target.Name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
+                    if (target.Platform == null) throw new InvalidOperationException("A target in the build file is missing a platform.");
+                    if (target.Name == nullableTargetName)
+                    {
+                        desiredTarget = target;
+                    }
                 }
-            }
 
-            if (desiredTarget == null)
+                if (desiredTarget == null)
+                {
+                    throw new InvalidOperationException("Build target does not exist in build file: '" + targetName + "'.");
+                }
+
+                varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
+
+                flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
+                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
+                flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
+                flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
+                flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
+                flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
+                flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
+                flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
+                flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
+                flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
+                flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
+                flattened.CrayonPath = DoReplacement(targetName, desiredTarget.CrayonPath ?? flattened.CrayonPath);
+
+                platform = desiredTarget.Platform;
+            }
+            else
             {
-                throw new InvalidOperationException("Build target does not exist in build file: '" + targetName + "'.");
+                varLookup = GenerateBuildVars(buildInput, new Target(), null);
             }
-
-            Dictionary<string, BuildVarCanonicalized> varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
-
-            flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
-            flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
-            flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
-            flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
-            flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
-            flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
-            flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
-            flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
-            flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
-            flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
-            flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
-            flattened.CrayonPath = DoReplacement(targetName, desiredTarget.CrayonPath ?? flattened.CrayonPath);
 
             return new BuildContext()
             {
                 ProjectDirectory = projectDir,
                 JsFilePrefix = flattened.JsFilePrefix,
                 OutputFolder = flattened.Output,
-                Platform = desiredTarget.Platform,
+                Platform = platform,
                 ProjectID = flattened.ProjectName,
                 SourceFolders = ToFilePaths(projectDir, flattened.Sources),
                 ImageSheetPrefixesById = flattened.ImageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),

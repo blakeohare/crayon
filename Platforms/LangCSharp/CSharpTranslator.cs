@@ -20,6 +20,15 @@ namespace LangCSharp
             sb.Append(']');
         }
 
+        public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
+        {
+            sb.Append("string.Join(");
+            this.TranslateExpression(sb, sep);
+            sb.Append(", ");
+            this.TranslateExpression(sb, array);
+            sb.Append(')');
+        }
+
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
             this.TranslateExpression(sb, array);
@@ -493,7 +502,7 @@ namespace LangCSharp
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            sb.Append("ResourceReader.ReadResourceTextFile(");
+            sb.Append("ResourceReader.ReadTextResource(");
             this.TranslateExpression(sb, path);
             sb.Append(")");
         }
@@ -656,6 +665,27 @@ namespace LangCSharp
         {
             this.TranslateExpression(sb, haystack);
             sb.Append(".StartsWith(");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
+        }
+
+        public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
+        {
+            this.TranslateExpression(sb, str);
+            sb.Append(".Substring(");
+            this.TranslateExpression(sb, start);
+            sb.Append(", ");
+            this.TranslateExpression(sb, length);
+            sb.Append(')');
+        }
+
+        public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
+        {
+            sb.Append("TranslationHelper.SubstringIsEqualTo(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(", ");
             this.TranslateExpression(sb, needle);
             sb.Append(')');
         }

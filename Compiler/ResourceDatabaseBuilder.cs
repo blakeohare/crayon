@@ -41,7 +41,7 @@ namespace Crayon
                     }
                     else
                     {
-                        // TODO: build file should define which files are binary resources and which are text.
+                        TODO.BuildFileShouldIndicateWhichResourcesAreTextVsBinary();
                         category = ResourceDatabase.FileCategory.TEXT;
                     }
 
@@ -92,8 +92,8 @@ namespace Crayon
                             break;
 
                         case ResourceDatabase.FileCategory.IMAGE:
-                            // TODO: you can easily get the width and height from the first several bytes of the file
-                            // Many of these are simply loaded into memory to get the width and height and can be made more efficient.
+                            TODO.GetImageDimensionsFromFirstFewBytesInsteadOfLoadingIntoMemory();
+
                             if (extension == "png")
                             {
                                 // Re-encode PNGs into a common format/palette configuration since there are some issues
@@ -121,12 +121,11 @@ namespace Crayon
                             }
                             else
                             {
+                                TODO.PutImageWidthAndHeightIntoFileOutputPropertiesSoThatBitmapDoesntNeedToBePersistedInMemory();
+
                                 resDb.ImageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Copy,
-                                    // still load into a bitmap as the width and height are needed.
-                                    // TODO: eventually clean this up so I don't need to do this or put width and 
-                                    // height into the FileOutput so that I don't have to keep this resource in memory.
                                     Bitmap = new SystemBitmap(absolutePath),
                                     RelativeInputPath = aliasedPath,
                                     OriginalPath = aliasedPath,

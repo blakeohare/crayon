@@ -1,44 +1,62 @@
-﻿Value lib_easing_function_interpolate(Array<Value> args) {
+﻿// $$lib_easing_interpolate(this, start, end, current, duration, integers, easingType)
+
+/*
+	Easing types:
+	0 --> ease in (do not modify progress)
+	1 --> ease out (reverse progress)
+	2 --> ease in then out
+*/
+
+Value lib_easing_function_interpolate(Array<Value> args) {
 	Value output = VALUE_NULL;
-	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
 	Value arg5 = args[4];
 	Value arg6 = args[5];
-	Value arg7 = args[6];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objArray1 = objInstance1.nativeData;
-	len = objArray1.Size();
-	int1 = ((int) arg7.internalValue);
+	ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+	Array<object> objArray1 = objInstance1.nativeData;
+	int len = objArray1.Size();
+	int int1 = ((int) args[6].internalValue);
+	double float1 = 0.0;
+	double float2 = 0.0;
+	double float3 = 0.0;
+	
+	// current
 	if (arg4.type == Types.INTEGER) {
-		float1 = ((int) arg4.internalValue);
+		float1 = 0.0 + ((int) arg4.internalValue);
 	} else {
 		if (arg4.type == Types.FLOAT) {
 			float1 = ((double) arg4.internalValue);
 		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
+			return VALUE_NULL;
 		}
 	}
+
+	// duration
 	if (arg5.type == Types.INTEGER) {
-		float2 = ((int) arg5.internalValue);
+		float2 = 0.0 + ((int) arg5.internalValue);
+	} else if (arg5.type == Types.FLOAT) {
+		float2 = ((double) arg5.internalValue);
 	} else {
-		if (arg5.type == Types.FLOAT) {
-			float2 = ((double) arg5.internalValue);
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
-		}
+		return VALUE_NULL;
 	}
-	bool1 = false;
-	bool2 = false;
-	first = false;
+	
+	bool bool1 = false; // should invert ratio value
+	bool bool2 = false; // add a half
+	bool first = false; // multiply by a half (reuse abuse)
+	
+	// Manipulate the current and duration values to achieve ease in/out/in-out
 	if (int1 == 2) {
 		first = true;
+		// do normal ease in progression for the first half, then do the ease out progress for the second half, except inverted.
 		if ((float1 * 2.0) > float2) {
+			// do ease-out progression (normalize current 2nd-half value as though it was a full range value)
 			float1 = (float2 - float1) * 2;
 			bool1 = true;
 			bool2 = true;
 		} else {
+			// do normal ease-in progression twice as fast.
 			float1 *= 2.0;
 		}
 	} else {
@@ -47,7 +65,9 @@
 			bool1 = true;
 		}
 	}
+	
 	if (float2 == 0) {
+		// Not sure whether throwing an error is better here or just fail silently to 0%.
 		float1 = ((double) objArray1[0]);
 	} else {
 		if (float2 < 0) {
@@ -56,57 +76,49 @@
 		}
 		if (float1 >= float2) {
 			float1 = ((double) objArray1[(len - 1)]);
+		} else if (float1 < 0) {
+			float1 = ((double) objArray1[0]);
 		} else {
-			if (float1 < 0) {
-				float1 = ((double) objArray1[0]);
-			} else {
-				float1 = Core.FloatDivision(float1, float2);
-				if (len > 2) {
-					float2 = float1 * len;
-					i = Core.Int(float2);
-					float2 -= i;
-					float1 = ((double) objArray1[i]);
-					if ((i < (len - 1)) && (float2 > 0)) {
-						float3 = ((double) objArray1[(i + 1)]);
-						float1 = (float1 * (1 - float2)) + (float3 * float2);
-					}
+			float1 = Core.FloatDivision(float1, float2);
+			
+			if (len > 2) { // if there's only 2 points, then the result can only be linear
+				float2 = float1 * len; // which index to use?
+				int index = Core.Int(float2); // round down
+				float2 -= index; // this is the ratio between this index and the next
+				
+				float1 = ((double) objArray1[index]); // get the left value
+				if ((index < (len - 1)) && (float2 > 0)) { // not at the end of the list? ratio of right value more than 0?
+					float3 = ((double) objArray1[(index + 1)]); // get the right value
+					float1 = (float1 * (1 - float2)) + (float3 * float2); // linearly interpolate between left and right values.
 				}
 			}
 		}
 	}
 	if (arg2.type == Types.INTEGER) {
-		float2 = ((int) arg2.internalValue);
+		float2 = 0.0 + ((int) arg2.internalValue);
+	} else if (arg2.type == Types.FLOAT) {
+		float2 = ((double) arg2.internalValue);
 	} else {
-		if (arg2.type == Types.FLOAT) {
-			float2 = ((double) arg2.internalValue);
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
-		}
+		return VALUE_NULL;
 	}
 	if (arg3.type == Types.INTEGER) {
-		float3 = ((int) arg3.internalValue);
+		float3 = 0.0 + ((int) arg3.internalValue);
+	} else if (arg3.type == Types.FLOAT) {
+		float3 = ((double) arg3.internalValue);
 	} else {
-		if (arg3.type == Types.FLOAT) {
-			float3 = ((double) arg3.internalValue);
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
-		}
+		return VALUE_NULL;
 	}
-	if (bool1) {
-		float1 = 1.0 - float1;
-	}
-	if (first) {
-		float1 *= 0.5;
-	}
-	if (bool2) {
-		float1 += 0.5;
-	}
+	if (bool1) float1 = 1.0 - float1;
+	if (first) float1 *= 0.5;
+	if (bool2) float1 += 0.5;
+	
+	// interpolate
 	float1 = (float1 * float3) + ((1 - float1) * float2);
+	
+	// integer output desired?
 	if ((arg6.type == Types.BOOLEAN) && ((bool) arg6.internalValue)) {
-		output = buildInteger(Core.Int((float1 + 0.5)));
-	} else {
-		output = buildFloat(float1);
+		return buildInteger(Core.Int((float1 + 0.5)));
 	}
-	return output;
+	
+	return buildFloat(float1);
 }
-

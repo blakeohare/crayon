@@ -1,0 +1,2 @@
+$_lib_imagewebresources_isJavascript: TranslationHelper.AlwaysFalse()
+$_lib_imagewebresources_bytesToImage: ImageDownloader.BytesToImage([ARG:1], [ARG:2])

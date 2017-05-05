@@ -12,7 +12,7 @@ namespace LangPython
         public override string Name { get { return "lang-python"; } }
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
-        
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>()
@@ -30,6 +30,16 @@ namespace LangPython
         public override string TranslateType(PType type)
         {
             throw new InvalidOperationException("Python does not support types.");
+        }
+
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            throw new NotImplementedException();
         }
 
         public override Dictionary<string, FileOutput> ExportProject(

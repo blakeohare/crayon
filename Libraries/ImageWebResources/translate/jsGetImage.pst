@@ -1,28 +1,49 @@
-﻿Value lib_imagewebresources_function_jsGetImage(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
+﻿/*
+	Only invoked by JavaScript
+	
+	arg 1: (Instnace) response info
+		nativeData[0] -> (bool) is done? (this is already verified true)
+		nativeData[1] -> (bool) is successful?
+		nativeData[2] -> canvas object
+		nativeData[3] -> width
+		nativeData[4] -> height
+	arg 2: List for output values (already size 3)
+		list[0] -> ImageNativeData instance.
+		list[1] -> width
+		list[2] -> height
+	
+	output is boolean: true on success
+*/
+
+Value lib_imagewebresources_function_jsGetImage(Array<Value> args) {
+
 	if (@ext_boolean("IS_JAVASCRIPT")) {
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
+		// get the native data from the response
+		objInstance1 = ((ObjectInstance) args[0].internalValue);
 		objArray1 = objInstance1.nativeData;
-		list1 = ((List<Value>) arg2.internalValue);
-		output = VALUE_FALSE;
+		
+		// get the output vector
+		list1 = ((List<Value>) args[1].internalValue);
+		
 		if (((bool) objArray1[1])) {
 			output = VALUE_TRUE;
-			object1 = objArray1[2];
-			value = list1[0];
-			objInstance1 = ((ObjectInstance) value.internalValue);
-			objArray2 = new Array<object>(3);
+			object object1 = objArray1[2];
+			Value value = list1[0];  // imageNativeData
+			objInstance1 = (ObjectInstance) value.internalValue;
+			Array<object> objArray2 = new Array<object>(3);  // imageNativeData's nativeData
 			objInstance1.nativeData = objArray2;
-			int1 = ((int) objArray1[3]);
-			int2 = ((int) objArray1[4]);
+			int width = ((int) objArray1[3]);
+			int height = ((int) objArray1[4]);
 			objArray2[0] = object1;
-			objArray2[1] = int1;
-			objArray2[2] = int2;
-			list1[1] = buildInteger(int1);
-			list1[2] = buildInteger(int2);
+			objArray2[1] = width;
+			objArray2[2] = height;
+			
+			list1[1] = buildInteger(width);
+			list1[2] = buildInteger(height);
+			
+			return VALUE_TRUE;
 		}
 	}
-	return output;
+	return VALUE_FALSE;
 }
 

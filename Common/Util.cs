@@ -219,24 +219,21 @@ namespace Common
             return output.ToArray();
         }
 
-        // TODO: use <K, V>
-        public static Dictionary<string, string> FlattenDictionary(Dictionary<string, string> bottom, Dictionary<string, string> top)
-        {
-            if (bottom.Count == 0) return new Dictionary<string, string>(top);
-
-            Dictionary<string, string> output = new Dictionary<string, string>(bottom);
-            foreach (string key in top.Keys)
-            {
-                output[key] = top[key];
-            }
-            return output;
-        }
-        
         public static Dictionary<K, V> MergeDictionaries<K, V>(params Dictionary<K, V>[] dictionaries)
         {
-            Dictionary<K, V> output = new Dictionary<K, V>();
-            foreach (Dictionary<K, V> dict in dictionaries)
+            if (dictionaries.Length == 0) return new Dictionary<K, V>();
+            if (dictionaries.Length == 1) return new Dictionary<K, V>(dictionaries[0]);
+            if (dictionaries.Length == 2)
             {
+                // Super common.
+                if (dictionaries[0].Count == 0) return new Dictionary<K, V>(dictionaries[1]);
+                if (dictionaries[1].Count == 0) return new Dictionary<K, V>(dictionaries[0]);
+            }
+
+            Dictionary<K, V> output = new Dictionary<K, V>(dictionaries[0]);
+            for (int i = 0; i < dictionaries.Length; ++i)
+            {
+                Dictionary<K, V> dict = dictionaries[i];
                 foreach (K k in dict.Keys)
                 {
                     output[k] = dict[k];
@@ -277,6 +274,11 @@ namespace Common
                     }
                     return sb.ToString();
             }
+        }
+
+        public static string JoinLines(params string[] lines)
+        {
+            return string.Join("\n", lines);
         }
     }
 }

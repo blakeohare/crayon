@@ -19,6 +19,16 @@ namespace GameJavaAwt
             this.Translator = new JavaAppTranslator(this);
         }
 
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Dictionary<string, FileOutput> ExportProject(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
@@ -30,7 +40,9 @@ namespace GameJavaAwt
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-            CompatibilityHack.CriticalTODO("override the package from the build file to create a proper DNS-style package name."); // okay, not critical for CBX, but embarassing that you can't currently.
+
+            TODO.OverrideJavaPackagesFromBuildFile();
+
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string sourcePath = "src/" + package + "/";
 
@@ -73,10 +85,9 @@ namespace GameJavaAwt
                         TextContent = string.Join(this.NL, libraryCode),
                     };
 
-                    foreach (string supFilePath in library.SupplementalFiles.Keys)
+                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
                     {
-                        FileOutput supFile = library.SupplementalFiles[supFilePath];
-                        output[supFilePath] = supFile;
+                        output[supFile.Values["target"]] = supFile.FileOutput;
                     }
                 }
             }

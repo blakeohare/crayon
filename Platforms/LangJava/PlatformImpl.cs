@@ -14,6 +14,16 @@ namespace LangJava
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();

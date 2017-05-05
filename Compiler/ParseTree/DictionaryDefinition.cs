@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
 
 namespace Crayon.ParseTree
 {
@@ -27,8 +28,9 @@ namespace Crayon.ParseTree
         {
             // Iterate through KVP in parallel so that errors will get reported in the preferred order.
 
-            // TODO: verify no duplicate keys and keys are all of correct type (amongst the 
-            // keys that can be resolved into constants, at least).
+            TODO.VerifyNoDuplicateKeysInDictionaryDefinition();
+            TODO.VerifyAllDictionaryKeysAreCorrectType(); // amongst the keys that can be resolved into constants, at least.
+
             for (int i = 0; i < this.Keys.Length; ++i)
             {
                 this.Keys[i] = this.Keys[i].Resolve(parser);

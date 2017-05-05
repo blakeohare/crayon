@@ -1,9 +1,0 @@
-﻿
-string3 = $_array_get(stringArgs, pc); // actual name vaule
-int1 = $_list_length(ProgramData$p.identifiersBuilder); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
-$_dictionary_set(ProgramData$p.invIdentifiers, string3, int1);
-$_list_push(ProgramData$p.identifiersBuilder, string3);
-
-if ($_string_equals("length", string3)) {
-	ProgramData$p.lengthId = int1;
-}

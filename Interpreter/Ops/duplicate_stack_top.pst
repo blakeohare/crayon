@@ -1,19 +1,20 @@
-﻿if (row[0] == 1) {
+﻿
+if (row[0] == 1) {
 	value = valueStack[(valueStackSize - 1)];
 	@import("ValueStackCapacityCheck.cry");
 	valueStack[valueStackSize] = value;
 	valueStackSize += 1;
-} else {
-	if (row[0] == 2) {
-		if ((valueStackSize + 1) > valueStackCapacity) {
-			valueStackIncreaseCapacity(ec);
-			valueStack = ec.valueStack;
-			valueStackCapacity = valueStack.Size();
-		}
-		valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
-		valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
-		valueStackSize += 2;
-	} else {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "?");
+} else if (row[0] == 2) {
+	if ((valueStackSize + 1) > valueStackCapacity) {
+		valueStackIncreaseCapacity(ec);
+		valueStack = ec.valueStack;
+		valueStackCapacity = valueStack.Size();
 	}
+
+	valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
+	valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
+	valueStackSize += 2;
+} else {
+	// This should not happen. All occurrences of duplicate stack top are either for size 1 or 2.
+	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "?");
 }

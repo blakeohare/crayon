@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Pastel.Nodes;
+using Common;
 
 namespace LangPython
 {
@@ -47,6 +47,11 @@ namespace LangPython
             sb.Append(']');
         }
 
+        public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
             sb.Append("len(");
@@ -68,7 +73,7 @@ namespace LangPython
                     default: break;
                 }
             }
-            // TODO: use a global constant that's just a list of [None] to re-use here rather than allocating a dummy list each time.
+            TODO.UseGlobalListOfOneNoneToPreventFrequentReallocation();
             sb.Append("([None] * ");
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(")");
@@ -883,6 +888,23 @@ namespace LangPython
             sb.Append(')');
         }
 
+        public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
+        {
+            this.TranslateExpression(sb, str);
+            sb.Append('[');
+            this.TranslateExpression(sb, start);
+            sb.Append(':');
+            this.TranslateExpression(sb, start);
+            sb.Append(" + ");
+            this.TranslateExpression(sb, length);
+            sb.Append(']');
+        }
+
+        public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateStringToLower(StringBuilder sb, Expression str)
         {
             this.TranslateExpression(sb, str);
@@ -920,7 +942,6 @@ namespace LangPython
             this.TranslateExpression(sb, right);
         }
 
-        // TODO: fix typo: missing an e at the end of the name
         public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
             this.TranslateExpression(sb, root);

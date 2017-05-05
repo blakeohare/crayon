@@ -30,7 +30,7 @@
 		Core.EmitComment("print");
 		@import("FrameworkFunctions/1_arg.cry");
 		output = VALUE_NULL;
-		Core.PrintStdErr(valueToString(arg1));
+		Core.PrintStdOut(valueToString(arg1));
 		break;
 	case 4:
 		Core.EmitComment("typeof");

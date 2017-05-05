@@ -1,27 +1,35 @@
-﻿Value lib_mysql_function_resultGetNext(Array<Value> args) {
-	Value output = VALUE_NULL;
+﻿/*
+	arg 1 -> Result object. Result resource is in native_data[0].
+	arg 2 -> Value string list of column names
+	arg 3 -> Value int list of column types (0: bool, 1: int, 2: float, 3: string)
+	arg 4 -> Empty value list. Put column values in order here with correct value type.
+	
+	No output.
+*/
+Value lib_mysql_function_resultGetNext(Array<Value> args) {
 	Value arg1 = args[0];
 	Value arg2 = args[1];
 	Value arg3 = args[2];
 	Value arg4 = args[3];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	object1 = objInstance1.nativeData[0];
-	list1 = ((List<Value>) arg2.internalValue);
-	len = list1.Size();
-	stringList1 = new List<string>();
+	ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object object1 = objInstance1.nativeData[0];
+	List<Value> list1 = (List<Value>) arg2.internalValue;
+	int len = list1.Size();
+	List<string> stringList1 = new List<string>();
+	Value value = null;
+	int i = 0;
 	for (i = 0; i < len; i += 1) {
 		value = list1[i];
 		stringList1.Add(((string) value.internalValue));
 	}
 	list1 = ((List<Value>) arg3.internalValue);
-	intList1 = new List<int>();
+	List<int> intList1 = new List<int>();
 	for (i = 0; i < len; i += 1) {
 		value = list1[i];
 		intList1.Add(((int) value.internalValue));
 	}
 	list1 = ((List<Value>) arg4.internalValue);
 	Native._lib_mysql_getNext(object1, list1, stringList1, intList1);
-	output = VALUE_NULL;
-	return output;
+	
+	return VALUE_NULL;
 }
-

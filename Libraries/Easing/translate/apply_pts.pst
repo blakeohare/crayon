@@ -1,23 +1,23 @@
 ﻿Value lib_easing_function_apply_pts(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	list1 = ((List<Value>) arg2.internalValue);
-	len = list1.Size();
-	objArray1 = new Array<object>(len);
-	for (i = 0; i < len; i += 1) {
+	ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+	List<Value> list1 = ((List<Value>) args[1].internalValue); // guaranteed to be ints or floats
+	
+	int len = list1.Size();
+	Array<object> objArray1 = new Array<object>(len);
+	
+	Value value = null;
+	for (int i = 0; i < len; i += 1) {
 		value = list1[i];
 		if (value.type == Types.INTEGER) {
-			float1 = ((int) value.internalValue);
+			objArray1[i] = ((int) value.internalValue);
 		} else {
-			float1 = ((double) value.internalValue);
+			objArray1[i] = ((double) value.internalValue);
 		}
-		objArray1[i] = float1;
 	}
+	
+	// Override just in case the user defined function begins or ends in a weird state.
 	objArray1[0] = 0.0;
 	objArray1[(len - 1)] = 1.0;
 	objInstance1.nativeData = objArray1;
-	return output;
+	return VALUE_NULL;
 }
-

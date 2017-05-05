@@ -1,18 +1,27 @@
-﻿Value lib_nori_function_removeElementsFromUiBox(Array<Value> args) {
+﻿/*
+	arg 1: UI Box instance
+	arg 2: Value List of Element instances.
+*/
+Value lib_nori_function_removeElementsFromUiBox(Array<Value> args) {
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	Value arg2 = args[1];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	object1 = objInstance1.nativeData[0];
-	list1 = ((List<Value>) arg2.internalValue);
-	len = list1.Size();
-	objArray1 = new Array<object>(int1);
+	ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+	object object1 = objInstance1.nativeData[0];
+	List<Value> list1 = ((List<Value>) arg2.internalValue);
+	int len = list1.Size();
+	Array<object> objArray1 = new Array<object>(len);
+	int i = 0;
+	Value value = null;
 	for (i = 0; i < len; i += 1) {
 		value = list1[i];
 		objInstance1 = ((ObjectInstance) value.internalValue);
 		objArray1[i] = objInstance1.nativeData[0];
 	}
-	Native._lib_nori_removeElementsFromUiBox(object1, objArray1);
+	
+	Native._lib_nori_removeElementsFromUiBox(
+		object1,
+		objArray1);
+	
 	return output;
 }
-

@@ -1,0 +1,16 @@
+﻿$_lib_gamepad_is_supported: TranslationHelper.AlwaysTrue()
+$_lib_gamepad_platform_requires_refresh: TranslationHelper.AlwaysFalse()
+$_lib_gamepad_get_current_device_count: Libraries.Game.GamepadTranslationHelper.GetCurrentDeviceCount()
+$_lib_gamepad_get_device_reference: Libraries.Game.GamepadTranslationHelper.GetDeviceReference([ARG:1])
+$_lib_gamepad_get_name: GamepadTranslationHelper.GetDeviceName([ARG:2])
+$_lib_gamepad_get_button_count: Libraries.Game.GamepadTranslationHelper.GetDeviceButtonCount([ARG:2])
+$_lib_gamepad_get_axis_1d_count: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis1dCount([ARG:2])
+$_lib_gamepad_get_axis_2d_count: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis2dCount([ARG:2])
+$_lib_gamepad_get_button_state: Libraries.Game.GamepadTranslationHelper.GetDeviceButtonState([ARG:1], [ARG:2])
+$_lib_gamepad_get_axis_1d_state: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis1dState([ARG:1], [ARG:2])
+$_lib_gamepad_get_axis_2d_state: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis2dState([ARG:1], [ARG:2], [ARG:3])
+$_lib_gamepad_poll_universe: Libraries.Game.GamepadTranslationHelper.Poll()
+$_lib_gamepad_refresh_devices: TranslationHelper.AlwaysTrue()
+$_lib_gamepad_config_file_path: ".crayon-csotk.gamepad.config"
+$_lib_gamepad_getPlatform: 1
+$_lib_gamepad_jsIsOsx: 0

@@ -18,7 +18,7 @@ namespace GameCSharpOpenTk
         {
             this.Translator = new CSharpAppTranslator(this);
         }
-        
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();
@@ -26,7 +26,18 @@ namespace GameCSharpOpenTk
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            List<string> embeddedResources = new List<string>();
+            List<string> embeddedResources = new List<string>()
+            {
+                "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
+                "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
+                "<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>",
+            };
+
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"icon.ico\" />");
+            }
+
             foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
@@ -47,15 +58,149 @@ namespace GameCSharpOpenTk
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
             }
 
-            return Util.FlattenDictionary(
+            return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
                     { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
-                    { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources) },
+                    { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
-                    { "CSHARP_CONTENT_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<EmbeddedResource Include=\"icon.ico\" />" : "" }
                 });
+        }
+        
+        private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
+
+        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
+
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            Dictionary<string, string> replacements = new Dictionary<string, string>()
+            {
+                { "PROJECT_ID", "CrayonRuntime" },
+                { "PROJECT_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-project") },
+                { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-assembly") },
+                { "PROJECT_TITLE", "Crayon Runtime" },
+                { "COPYRIGHT", "©" },
+                { "CURRENT_YEAR", DateTime.Now.Year.ToString() },
+                { "DLL_REFERENCES", "" },
+                { "CSHARP_APP_ICON", "<ApplicationIcon>icon.ico</ApplicationIcon>" },
+                { "EMBEDDED_RESOURCES", "<EmbeddedResource Include=\"icon.ico\" />" },
+                { "CSHARP_CONTENT_ICON", "" },
+                { "DLLS_COPIED", "" },
+            };
+            string baseDir = "CrayonRuntime/";
+
+            string dllReferencesOriginal = replacements["DLL_REFERENCES"];
+            string dllsCopiedOriginal = replacements["DLLS_COPIED"];
+            string embeddedResources = replacements["EMBEDDED_RESOURCES"];
+            replacements["EMBEDDED_RESOURCES"] = "";
+            foreach (LibraryForExport library in everyLibrary)
+            {
+                string libBaseDir = "Libs/" + library.Name + "/";
+                List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
+                if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
+                {
+                    string name = library.Name;
+                    string projectGuid = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-project");
+                    replacements["PROJECT_GUID"] = projectGuid;
+                    replacements["ASSEMBLY_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-assembly");
+                    replacements["PROJECT_TITLE"] = library.Name;
+                    replacements["LIBRARY_NAME"] = library.Name;
+                    LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);
+                    
+
+                    libraryProjectNameToGuid[name] = projectGuid;
+
+                    List<string> dotNetLibraries = new List<string>();
+                    foreach (string dotNetLib in library.DotNetLibs)
+                    {
+                        dotNetLibraries.Add("    <Reference Include=\"" + dotNetLib + "\" />");
+                    }
+                    replacements["DOT_NET_LIBS"] = Util.JoinLines(dotNetLibraries.ToArray());
+
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.txt", replacements);
+
+                    foreach (LangCSharp.DllFile dll in dlls)
+                    {
+                        output[libBaseDir + dll.HintPath] = dll.FileOutput;
+                    }
+                }
+            }
+            replacements["DLL_REFERENCES"] = dllReferencesOriginal;
+            replacements["DLLS_COPIED"] = dllsCopiedOriginal;
+            replacements["EMBEDDED_RESOURCES"] = embeddedResources;
+
+            this.CopyTemplatedFiles(baseDir, output, replacements, true);
+            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid);
+            this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
+
+            TODO.MoveCbxParserIntoTranslatedPastelCode();
+            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
+
+            return output;
+        }
+
+        // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
+        private bool GetLibraryCode(string baseDir, LibraryForExport library, List<LangCSharp.DllFile> dllsOut, Dictionary<string, FileOutput> filesOut,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            string libraryName = library.Name;
+            this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
+            List<string> libraryLines = new List<string>();
+            if (library.ManifestFunction != null)
+            {
+                string libraryDir = baseDir + "Libraries/" + libraryName;
+                libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                foreach (FunctionDefinition funcDef in library.Functions)
+                {
+                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                }
+
+                filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join(this.NL,
+                        "using System;",
+                        "using System.Collections.Generic;",
+                        "using System.Linq;",
+                        "using Interpreter;",
+                        "using Interpreter.Structs;",
+                        "using Interpreter.Vm;",
+                        "",
+                        "namespace Interpreter.Libraries." + libraryName,
+                        "{",
+                        "    public static class LibraryWrapper",
+                        "    {",
+                        this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
+                        "    }",
+                        "}",
+                        ""),
+                };
+
+                foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
+                {
+                    string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
+                    filesOut[targetPath] = codeFile.FileOutput;
+                }
+
+                foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
+                {
+                    dllsOut.Add(new LangCSharp.DllFile(dllFile));
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public override Dictionary<string, FileOutput> ExportProject(
@@ -72,82 +217,79 @@ namespace GameCSharpOpenTk
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
+            this.CopyTemplatedFiles(baseDir, output, replacements, false);
+
+            List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
+
+            foreach (LibraryForExport library in libraries)
+            {
+                this.GetLibraryCode(baseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform);
+            }
+
+            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
+
+            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+
+            output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+
+            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
+            }
+
+            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
+            }
+
+            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
+            }
+
+            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
+            }
+
+            foreach (LangCSharp.DllFile dll in dlls)
+            {
+                output[baseDir + dll.HintPath] = dll.FileOutput;
+            }
+
+            this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>());
+
+            return output;
+        }
+
+        private void CopyTemplatedFiles(string baseDir, Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, bool isStandaloneVm)
+        {
+            string resourceDir = isStandaloneVm ? "ResourcesVm" : "Resources";
+
             // From LangCSharp
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
-
-            // Project files from CSharpOpenTK
-            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", resourceDir + "/LibraryRegistry.txt", replacements);
 
             // Required project files
             this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Program.cs", "Resources/Program.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.txt", replacements);
 
             // CSharpOpenTK specific stuff
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GamepadTranslationHelper.cs", "Resources/GamepadTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GameWindow.cs", "Resources/GameWindow.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/GlUtil.cs", "Resources/GlUtil.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkRenderer.cs", "Resources/OpenTkRenderer.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/OpenTkTranslationHelper.cs", "Resources/OpenTkTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "OtkGame/ResourceReader.cs", "Resources/ResourceReader.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
+        }
 
-            // Text from CSharpOpenTK
-            this.CopyResourceAsText(output, baseDir + "DependencyLicenses.txt", "Resources/DependencyLicenses.txt", replacements);
-
-            // DLL's from CSharpOpenTK
-            this.CopyResourceAsBinary(output, baseDir + "OpenTK.dll", "Resources/DllOpenTk.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SDL.dll", "Resources/DllSdl.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SDL_mixer.dll", "Resources/DllSdlMixer.binary");
-            this.CopyResourceAsBinary(output, baseDir + "SdlDotNet.dll", "Resources/DllSdlDotNet.binary");
-            this.CopyResourceAsBinary(output, baseDir + "Tao.Sdl.dll", "Resources/DllTaoSdl.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libogg-0.dll", "Resources/DllLibOgg0.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libvorbis-0.dll", "Resources/DllLibVorbis0.binary");
-            this.CopyResourceAsBinary(output, baseDir + "libvorbisfile-3.dll", "Resources/DllLibVorbisFile3.binary");
-
-            foreach (LibraryForExport library in libraries)
-            {
-                this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
-                string libraryName = library.Name;
-                List<string> libraryLines = new List<string>();
-                if (library.ManifestFunction != null)
-                {
-                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
-                    foreach (FunctionDefinition funcDef in library.Functions)
-                    {
-                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
-                    }
-
-                    output[baseDir + "Libraries/" + libraryName + "/LibraryWrapper.cs"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join(this.NL,
-                            "using System;",
-                            "using System.Collections.Generic;",
-                            "using System.Linq;",
-                            "using Interpreter.OtkGame;",
-                            "using Interpreter.Structs;",
-                            "using Interpreter.Vm;",
-                            "",
-                            "namespace Interpreter.Libraries." + libraryName,
-                            "{",
-                            "    public static class LibraryWrapper",
-                            "    {",
-                            this.TEMPORARY_HACK_replacements(libraryName, this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8)),
-                            "    }",
-                            "}",
-                            ""),
-                    };
-
-                    foreach (string filename in library.SupplementalFiles.Keys)
-                    {
-                        output[baseDir + "Libraries/" + libraryName + "/" + filename] = library.SupplementalFiles[filename];
-                    }
-                }
-            }
-
+        private void ExportInterpreter(
+            string baseDir,
+            Dictionary<string, FileOutput> output,
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions)
+        {
             foreach (StructDefinition structDefinition in structDefinitions)
             {
                 output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = new FileOutput()
@@ -213,43 +355,47 @@ namespace GameCSharpOpenTk
                     ""
                 }),
             };
-
-            output[baseDir + "ByteCode.txt"] = resourceDatabase.ByteCodeFile;
-            output[baseDir + "ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output[baseDir + "ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
-
-            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
-            }
-
-            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
-            {
-                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
-            }
-
-            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
-            }
-
-            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
-            }
-            
-            return output;
         }
 
-        private string TEMPORARY_HACK_replacements(string libraryName, string content)
+        private void ExportProjectFiles(
+            string baseDir,
+            Dictionary<string, FileOutput> output,
+            Dictionary<string, string> replacements,
+            Dictionary<string, string> libraryProjectNameToGuid)
         {
-            CompatibilityHack.CriticalTODO("Update the translations to do the right thing.");
-
-            if (content.Contains("Library." + libraryName + "."))
+            string projectId = replacements["PROJECT_ID"];
+            replacements["LIBRARY_PROJECT_INCLUSIONS"] = "";
+            replacements["LIBRARY_PROJECT_CONFIG"] = "";
+            if (libraryProjectNameToGuid.Count > 0)
             {
-                return content.Replace("Library." + libraryName + ".", "");
+                string[] projects = libraryProjectNameToGuid.Keys.OrderBy(s => s.ToLower()).ToArray();
+                List<string> inclusions = new List<string>();
+                List<string> configs = new List<string>();
+                foreach (string projectName in projects)
+                {
+                    string guid = libraryProjectNameToGuid[projectName].ToUpper();
+                    inclusions.Add(
+                        "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"" +
+                        projectName +
+                        "\", \"Libs\\" + projectName + "\\" + projectName + ".csproj\", \"{" +
+                        guid +
+                        "}\"");
+                    inclusions.Add("EndProject");
+                    configs.Add("\t{" + guid + "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|x86.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Debug|x86.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.ActiveCfg = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.Build.0 = Debug|Any CPU");
+                }
+                replacements["LIBRARY_PROJECT_INCLUSIONS"] = string.Join("\r\n", inclusions);
+                replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);
             }
-            return content;
+            
+            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

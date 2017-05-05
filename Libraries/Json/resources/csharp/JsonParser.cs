@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Interpreter.Structs;
+using Interpreter.Vm;
 
-namespace %%%PROJECT_ID%%%.Library.Json
+namespace Interpreter.Libraries.Json
 {
 	internal static class JsonParser
 	{
@@ -57,15 +59,15 @@ namespace %%%PROJECT_ID%%%.Library.Json
 			}
 			else if (PopIfPresent(rawValue, length, i, "true"))
 			{
-				value = WrapBoolean(true);
+                value = Globals.v_VALUE_TRUE;
 			}
 			else if (PopIfPresent(rawValue, length, i, "false"))
 			{
-				value = WrapBoolean(false);
+                value = Globals.v_VALUE_FALSE;
 			}
 			else if (PopIfPresent(rawValue, length, i, "null"))
 			{
-				value = WrapNull();
+                value = Globals.v_VALUE_NULL;
 			}
 			else
 			{
@@ -105,7 +107,7 @@ namespace %%%PROJECT_ID%%%.Library.Json
 				double value;
 				if (double.TryParse(stringValue, out value))
 				{
-					return WrapFloat(value * sign);
+					return CrayonWrapper.v_buildFloat(value * sign);
 				}
 			}
 			else
@@ -113,7 +115,7 @@ namespace %%%PROJECT_ID%%%.Library.Json
 				int value;
 				if (int.TryParse(stringValue, out value))
 				{
-					return WrapInteger(value * sign);
+					return CrayonWrapper.v_buildInteger(value * sign);
 				}
 			}
 
@@ -146,7 +148,7 @@ namespace %%%PROJECT_ID%%%.Library.Json
 
 			if (i.Value >= length) throw new JsonParserException();
 			i.Value++; // closing quote
-			return WrapString(sb.ToString());
+			return CrayonWrapper.v_buildString(sb.ToString());
 		}
 
 		private static Value ParseJsonList(char[] rawValue, int length, Index i)
@@ -169,14 +171,16 @@ namespace %%%PROJECT_ID%%%.Library.Json
 
 			if (i.Value < length) PopExpected(rawValue, length, i, "]");
 
-			return WrapList(items);
+			return CrayonWrapper.v_buildList(items);
 		}
 
 		private static Value ParseJsonDictionary(char[] rawValue, int length, Index i)
 		{
+            int stringTypeId = Globals.v_VALUE_EMPTY_STRING.type;
+
 			i.Value++; // '{'
 			SkipWhitespace(rawValue, length, i);
-			List<Value> keys = new List<Value>();
+			List<string> keys = new List<string>();
 			List<Value> values = new List<Value>();
 			while (i.Value < length && rawValue[i.Value] != '}')
 			{
@@ -187,13 +191,13 @@ namespace %%%PROJECT_ID%%%.Library.Json
 				}
 
 				Value key = ParseJsonThing(rawValue, length, i);
-				if (key.type != %%%TYPE_ID_STRING%%%) throw new JsonParserException();
+				if (key.type != stringTypeId) throw new JsonParserException();
 				SkipWhitespace(rawValue, length, i);
 				PopExpected(rawValue, length, i, ":");
 				SkipWhitespace(rawValue, length, i);
 				Value value = ParseJsonThing(rawValue, length, i);
 				SkipWhitespace(rawValue, length, i);
-				keys.Add(key);
+                keys.Add((string)key.internalValue);
 				values.Add(value);
 			}
 
@@ -206,19 +210,9 @@ namespace %%%PROJECT_ID%%%.Library.Json
 				throw new JsonParserException(); // EOF
 			}
 
-			return WrapDictionary(keys, values);
+			return CrayonWrapper.v_buildDictionary(keys.ToArray(), values.ToArray());
 		}
-
-		private static Value WrapInteger(int value)
-		{
-			return CrayonWrapper.v_buildInteger(value);
-		}
-
-		private static Value WrapFloat(double value)
-		{
-			return new Value(%%%TYPE_ID_FLOAT%%%, value);
-		}
-
+        
 		private static void PopExpected(char[] rawValue, int length, Index index, string value)
 		{
 			if (!PopIfPresent(rawValue, length, index, value))
@@ -252,47 +246,6 @@ namespace %%%PROJECT_ID%%%.Library.Json
 			{
 				i.Value++;
 			}
-		}
-
-		private static Value WrapNull()
-		{
-			return CrayonWrapper.v_VALUE_NULL;
-		}
-
-		private static Value WrapBoolean(bool value)
-		{
-			return value ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
-		}
-
-		private static Value WrapString(string value)
-		{
-			return value.Length == 0 ? CrayonWrapper.v_VALUE_EMPTY_STRING : new Value(%%%TYPE_ID_STRING%%%, value);
-		}
-
-		private static Value WrapList(List<Value> items)
-		{
-			return new Value(%%%TYPE_ID_LIST%%%, new List<Value>(items));
-		}
-
-		private static Value WrapDictionary(List<Value> keys, List<Value> values)
-		{
-			Dictionary<string, Value> dictKeyLookup = new Dictionary<string, Value>();
-			Dictionary<string, Value> dictValueLookup = new Dictionary<string, Value>();
-
-			for (int i = 0; i < keys.Count; ++i)
-			{
-				string key = keys[i].internalValue.ToString();
-				dictKeyLookup[key] = keys[i];
-				dictValueLookup[key] = values[i];
-			}
-
-			DictImpl dictionary = new DictImpl(
-				new Dictionary<int, Value>(),
-				new Dictionary<int, Value>(),
-				dictKeyLookup,
-				dictValueLookup,
-				dictKeyLookup.Count, %%%TYPE_ID_STRING%%%);
-			return new Value(%%%TYPE_ID_DICTIONARY%%%, dictionary);
 		}
 	}
 }

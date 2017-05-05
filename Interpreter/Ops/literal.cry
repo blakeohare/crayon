@@ -1,9 +1,0 @@
-﻿
-import inline "ValueStackCapacityCheck.cry";
-
-if ($_has_increment()) {
-	$_array_set(valueStack, $_postfix_increment(valueStackSize), $_array_get(literalTable, $_array_get(row, 0)));
-} else {
-	$_array_set(valueStack, valueStackSize, $_array_get(literalTable, $_array_get(row, 0)));
-	valueStackSize += 1;
-}

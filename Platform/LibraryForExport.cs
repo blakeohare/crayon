@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Common;
 
 namespace Platform
 {
@@ -12,7 +10,8 @@ namespace Platform
         public Pastel.Nodes.FunctionDefinition ManifestFunction { get; set; }
         public Pastel.Nodes.FunctionDefinition[] Functions { get; set; }
         public string[] FunctionRegisteredNamesOrNulls { get; set; }
-        public Dictionary<string, Common.FileOutput> SupplementalFiles { get; set; }
-        public string[] CodeToEmbed { get; set; }
+        public Multimap<string, ExportEntity> ExportEntities { get; set; }
+        public string[] DotNetLibs { get; set; }
+        public Dictionary<string, string> LibProjectNamesAndGuids { get; set; }
     }
 }

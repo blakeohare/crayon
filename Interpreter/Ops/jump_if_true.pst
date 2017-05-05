@@ -2,8 +2,6 @@
 value = valueStack[valueStackSize];
 if (value.type != Types.BOOLEAN) {
 	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Boolean expected.");
-} else {
-	if (((bool) value.internalValue)) {
-		pc += row[0];
-	}
+} else if (((bool) value.internalValue)) {
+	pc += row[0];
 }

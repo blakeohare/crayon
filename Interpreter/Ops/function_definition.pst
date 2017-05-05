@@ -1,2 +1,2 @@
-﻿pc += initializeFunction(p, row, pc, stringArgs[pc]);
+﻿pc += initializeFunction(p, row, pc, stringArgs[pc]); // returns a PC offset to skip over the actual code body of the function.
 functionTable = p.functionTable;

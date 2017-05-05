@@ -274,16 +274,10 @@ namespace Crayon
                 idsAlreadyIncluded.Add(def.ClassID);
             }
         }
-        
+
         // This will run for both compiled and translated code.
         private void SimpleFirstPassResolution()
         {
-            if (this.parser.NullablePlatform != null && this.parser.NullablePlatform.PlatformId == PlatformId.PASTEL_VM)
-            {
-                this.TEMP_PastelOnlyFirstPass();
-                return;
-            }
-
             List<Executable> output = new List<Executable>();
             foreach (Executable line in this.currentCode)
             {

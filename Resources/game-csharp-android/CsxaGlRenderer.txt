@@ -1,9 +1,0 @@
-﻿using System;
-
-namespace %%%PROJECT_ID%%%
-{
-	public static class CsxaGlRenderer
-	{
-		
-	}
-}

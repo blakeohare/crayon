@@ -1,0 +1,14 @@
+
+BEGIN
+APPLICABLE-TO: csharp-app
+COPY_FILES: from=csharp-app, to=%LIBRARY_PATH%/%FILE%
+DOTNET_DLL: from=csharp-app/OpenTK.dll, hintpath=OpenTK.dll, name=OpenTK, version=1.0.0.0, culture=neutral, token=bad199fe84eb3df4, architecture=MSIL, specificversion=false
+DOTNET_DLL: from=csharp-app/SdlDotNet.dll, hintpath=SdlDotNet.dll, name=SdlDotNet, version=6.1.0.0, culture=neutral, token=26ad4f7e10c61408, architecture=MSIL, specificversion=false
+DOTNET_DLL: from=csharp-app/Tao.Sdl.dll, hintpath=Tao.Sdl.dll, name=Tao.Sdl, version=1.2.13.0, culture=neutral, token=9c7a200e36c0094e, architecture=MSIL, specificversion=false
+DOTNET_DLL: from=csharp-app/SDL.dll, hintpath=SDL.dll
+DOTNET_DLL: from=csharp-app/SDL_mixer.dll, hintpath=SDL_mixer.dll
+DOTNET_DLL: from=csharp-app/libogg-0.dll, hintpath=libogg-0.dll
+DOTNET_DLL: from=csharp-app/libvorbis-0.dll, hintpath=libvorbis-0.dll
+DOTNET_DLL: from=csharp-app/libvorbisfile-3.dll, hintpath=libvorbisfile-3.dll
+DOTNET_LIB: name=System.Drawing
+END

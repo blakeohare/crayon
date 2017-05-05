@@ -75,12 +75,11 @@ namespace Crayon.ParseTree
                 throw new ParserException(switchToken, "Switches need at least 1 case to indicate type.");
             }
         }
-
-        // TODO: in the resolve be sure to make fallthroughs an error.
-
+        
         internal override IList<Executable> Resolve(Parser parser)
         {
-            if (parser.IsByteCodeMode && this.explicitMax != null)
+            TODO.MakeSwitchStatementFallthroughsErrors();
+            if (this.explicitMax != null)
             {
                 throw new ParserException(this.explicitMaxToken, "Unexpected token: '{'");
             }
@@ -173,20 +172,7 @@ namespace Crayon.ParseTree
             this.IsSafe = !this.ContainsDefault;
             this.IsContinuous = integers != 0 && largestSpan == 1 && this.IsSafe && this.DetermineContinuousness();
 
-            if (parser.IsTranslateMode)
-            {
-
-                if (this.IsSafe & this.IsContinuous)
-                {
-                    return new SwitchStatementContinuousSafe(this, this.FunctionOrClassOwner).Resolve(parser);
-                }
-
-                return new SwitchStatementUnsafeBlotchy(this, useExplicitMax, explicitMax, this.FunctionOrClassOwner).Resolve(parser);
-            }
-            else
-            {
-                return this.CompilationResolution(parser);
-            }
+            return this.CompilationResolution(parser);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

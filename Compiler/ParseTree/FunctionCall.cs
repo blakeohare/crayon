@@ -18,13 +18,8 @@ namespace Crayon.ParseTree
             {
                 throw new NotImplementedException();
             }
-            string name = fp.Name;
-            if (name.StartsWith("$"))
-            {
-                return new SystemFunctionCall(this.FirstToken, this.Args, this.FunctionOrClassOwner).PastelResolve(parser);
-            }
 
-            if (name == "prepareToSuspend" && this.FirstToken.FileName.Contains("Libraries/"))
+            if (fp.Name == "prepareToSuspend" && this.FirstToken.FileName.Contains("Libraries/"))
             {
                 this.Args = new Expression[0];
                 this.Root = new Variable(this.FirstToken, "noop", this.FunctionOrClassOwner);
@@ -56,11 +51,6 @@ namespace Crayon.ParseTree
             if (this.Root is Variable)
             {
                 string varName = ((Variable)this.Root).Name;
-
-                if (parser.IsTranslateMode && varName.StartsWith("$"))
-                {
-                    return new SystemFunctionCall(this.Root.FirstToken, this.Args, this.FunctionOrClassOwner).Resolve(parser);
-                }
 
                 if (parser.GetClass(varName) != null)
                 {
@@ -148,11 +138,6 @@ namespace Crayon.ParseTree
                     ((LibraryFunctionReference)this.Root).Name,
                     this.Args,
                     this.FunctionOrClassOwner);
-            }
-
-            if (this.Root is SystemFunctionReference)
-            {
-                return new SystemFunctionCall(this.FirstToken, this.Args, this.FunctionOrClassOwner);
             }
 
             if (this.Root is DotStep ||

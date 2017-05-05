@@ -202,6 +202,7 @@ namespace Platform
             switch (nativeFuncInvocation.Function)
             {
                 case Pastel.NativeFunction.ARRAY_GET: this.TranslateArrayGet(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.ARRAY_JOIN: this.TranslateArrayJoin(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.ARRAY_LENGTH: this.TranslateArrayLength(sb, args[0]); break;
                 case Pastel.NativeFunction.ARRAY_SET: this.TranslateArraySet(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.CHAR_TO_STRING: this.TranslateCharToString(sb, args[0]); break;
@@ -284,6 +285,8 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_REVERSE: this.TranslateStringReverse(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_SPLIT: this.TranslateStringSplit(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_STARTS_WITH: this.TranslateStringStartsWith(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.STRING_SUBSTRING: this.TranslateStringSubstring(sb, args[0], args[1], args[2]); break;
+                case Pastel.NativeFunction.STRING_SUBSTRING_IS_EQUAL_TO: this.TranslateStringSubstringIsEqualTo(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.STRING_TO_LOWER: this.TranslateStringToLower(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_TO_UPPER: this.TranslateStringToUpper(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_TRIM: this.TranslateStringTrim(sb, args[0]); break;
@@ -316,6 +319,7 @@ namespace Platform
         }
 
         public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
+        public abstract void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep);
         public abstract void TranslateArrayLength(StringBuilder sb, Expression array);
         public abstract void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression);
         public abstract void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value);
@@ -420,6 +424,8 @@ namespace Platform
         public abstract void TranslateStringReverse(StringBuilder sb, Expression str);
         public abstract void TranslateStringSplit(StringBuilder sb, Expression haystack, Expression needle);
         public abstract void TranslateStringStartsWith(StringBuilder sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length);
+        public abstract void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle);
         public abstract void TranslateStringToLower(StringBuilder sb, Expression str);
         public abstract void TranslateStringToUpper(StringBuilder sb, Expression str);
         public abstract void TranslateStringTrim(StringBuilder sb, Expression str);
