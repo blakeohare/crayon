@@ -73,7 +73,6 @@ namespace Crayon
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
         {
-
 #if DEBUG
             if (actualArgs.Length == 0)
             {
@@ -135,7 +134,16 @@ namespace Crayon
                     return;
 
                 case ExecutionType.RUN_CBX:
-                    throw new NotImplementedException();
+                    string cbxFile = Program.ExportCbx(args);
+                    string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "Vm", "CrayonRuntime.exe");
+                    cbxFile = FileUtil.GetPlatformPath(cbxFile);
+                    System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
+
+                    // TODO: set appProcess.StandardOutput to a Console.WriteLine in this process
+                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile);
+                    appProcess.Start();
+                    appProcess.WaitForExit();
+                    return;
 
                 case ExecutionType.SHOW_USAGE:
 #if RELEASE
@@ -149,7 +157,7 @@ namespace Crayon
         }
 
         // TODO: HELPER CLASS
-        private static void ExportCbx(string[] args)
+        private static string ExportCbx(string[] args)
         {
             string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
             BuildContext buildContext = GetBuildContextCbx(buildFilePath);
@@ -221,6 +229,8 @@ namespace Crayon
                 output["res/img/" + key] = resDb.ImageSheetFiles[key];
             }
             new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
+
+            return cbxPath;
         }
 
         private static byte[] StringToBytes(string value)

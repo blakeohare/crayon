@@ -12,7 +12,7 @@ namespace Interpreter.Libraries.Nori
         {
             if (defaultIconCache == null)
             {
-                System.Drawing.Bitmap icon = ResourceReader.ReadImageFile("DefaultIcon.png");
+                System.Drawing.Bitmap icon = ResourceReader.ReadIconResource("DefaultIcon.png");
                 defaultIconCache = System.Drawing.Icon.FromHandle(icon.GetHicon());
             }
             return defaultIconCache;

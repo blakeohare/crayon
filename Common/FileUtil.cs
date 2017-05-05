@@ -310,5 +310,15 @@ namespace Common
             }
             return string.Join("/", output);
         }
+
+        public static string GetPlatformPath(string path)
+        {
+#if OSX
+            path = path.Replace('\\', '/');
+#else
+            path = path.Replace('/', '\\');
+#endif
+            return path;
+        }
     }
 }

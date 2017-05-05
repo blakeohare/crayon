@@ -11,7 +11,7 @@ namespace Interpreter.Libraries.Game
     
         public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
         {
-            IList<byte> soundBytesList = ResourceReader.ReadBytes(path);
+            IList<byte> soundBytesList = ResourceReader.ReadSoundResource(path);
             if (soundBytesList == null) return null;
             byte[] soundBytes = soundBytesList.ToArray();
             return SdlDotNet.Audio.Mixer.Sound(soundBytes);
@@ -122,8 +122,8 @@ namespace Interpreter.Libraries.Game
 
         public static object MusicLoadResource(string path)
         {
-            IList<byte> musicData = ResourceReader.ReadBytes(path);
-            return new SdlDotNet.Audio.Music(musicData.ToArray());
+            byte[] musicData = ResourceReader.ReadSoundResource(path);
+            return new SdlDotNet.Audio.Music(musicData);
         }
 
         public static bool AudioMusicIsPlaying()

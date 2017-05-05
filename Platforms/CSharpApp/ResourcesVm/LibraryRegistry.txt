@@ -15,7 +15,12 @@ namespace Interpreter.Vm
             {
                 string libraryVersion = libraryVersions[libraryName];
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
-                string dllFile = System.IO.Path.Combine(crayonHome, "Vm", "Output", "Debug", libraryName + ".dll");
+#if DEBUG
+                string config = "Debug";
+#else
+                string config = "Release";
+#endif
+                string dllFile = System.IO.Path.Combine(crayonHome, "Vm", "Libs", config, libraryName + ".dll");
                 System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFrom(dllFile);
 
                 // TODO: compare assembly reported version against required version.
