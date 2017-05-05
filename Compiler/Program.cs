@@ -353,6 +353,7 @@ namespace Crayon
         private static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
         {
             string buildFilePath = originalBuildFilePath;
+			buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
             if (!buildFilePath.StartsWith("/") &&
                 !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
             {

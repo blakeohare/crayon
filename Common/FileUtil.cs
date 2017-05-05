@@ -7,16 +7,21 @@ namespace Common
     {
         private static string DIR_SEP = "" + System.IO.Path.DirectorySeparatorChar;
 
-        public static bool IsAbsolutePath(string path)
-        {
-#if WINDOWS
-            if (path.Length > 1 && path[1] == ':') return true;
-#elif OSX
-            if (path.StartsWith("/")) return true;
-            if (path.StartsWith("~")) return true;
-#endif
-            return false;
-        }
+		private static bool IS_WINDOWS = System.IO.Path.DirectorySeparatorChar == '\\';
+
+		public static bool IsAbsolutePath(string path)
+		{
+			if (IS_WINDOWS)
+			{
+				if (path.Length > 1 && path[1] == ':') return true;
+			}
+			else
+			{
+				if (path.StartsWith("/")) return true;
+				if (path.StartsWith("~")) return true;
+			}
+			return false;
+		}
 
         public static string GetCanonicalExtension(string path)
         {
@@ -122,9 +127,10 @@ namespace Common
 
         public static void CopyFile(string source, string dest)
         {
-#if OSX
-			source = source.Replace('\\', '/');
-#endif
+			if (!IS_WINDOWS)
+			{
+				source = source.Replace('\\', '/');
+			}
 
             try
             {
@@ -313,12 +319,27 @@ namespace Common
 
         public static string GetPlatformPath(string path)
         {
-#if OSX
-            path = path.Replace('\\', '/');
-#else
-            path = path.Replace('/', '\\');
-#endif
+			if (IS_WINDOWS)
+			{
+				path = path.Replace('/', '\\');
+			}
+			else
+			{
+				path = path.Replace('\\', '/');
+			}
             return path;
         }
+
+		public static string FinalizeTilde(string path)
+		{
+			if (IS_WINDOWS || !path.StartsWith("~"))
+			{
+				return path;
+			}
+
+			string homedir = "/Users/" + System.Environment.UserName;
+
+			return homedir + path.Substring(1);
+		}
     }
 }
