@@ -21,7 +21,9 @@ namespace CApp
 
         public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+
+			return output;
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -51,7 +53,7 @@ namespace CApp
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+			return new Dictionary<string, object>();
         }
     }
 }
