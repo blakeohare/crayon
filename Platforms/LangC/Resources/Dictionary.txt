@@ -1,0 +1,28 @@
+﻿
+typedef struct IntDictNode IntDictNode;
+typedef struct StringDictNode StringDictNode;
+typedef struct IntDictionary IntDictionary;
+typedef struct StringDictionary StringDictionary;
+
+struct IntDictNode {
+  int key;
+  void* value;
+};
+
+struct StringDictNode {
+  int* key;
+  int hash_code;
+  void* value;
+};
+
+struct IntDictionary {
+  int size;
+  int bucket_count;
+  IntDictNode* buckets;
+};
+
+struct StringDictionary {
+  int size;
+  int bucket_count;
+  StringDictNode* buckets;
+};

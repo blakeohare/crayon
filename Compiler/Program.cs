@@ -417,11 +417,11 @@ namespace Crayon
 
             if (buildContext.OutputFolder == null)
                 throw new InvalidOperationException("No output folder specified in build file.");
-
-            buildContext.OutputFolder = System.IO.Path.Combine(projectDirectory, buildContext.OutputFolder).Replace('/', '\\');
+			
+			buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
             if (buildContext.IconFilePath != null)
             {
-                buildContext.IconFilePath = System.IO.Path.Combine(projectDirectory, buildContext.IconFilePath).Replace('/', '\\');
+				buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
             }
 
             foreach (FilePath sourceFolder in buildContext.SourceFolders)

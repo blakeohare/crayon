@@ -69,6 +69,14 @@ namespace Common
             return output;
         }
 
+		public static string JoinAndCanonicalizePath(params string[] parts)
+		{
+			string path = JoinPath(parts);
+			path = GetCanonicalizeUniversalPath(path);
+			path = GetPlatformPath(path);
+			return path;
+		}
+
         public static string[] DirectoryListFileNames(string dir)
         {
             return ListDirImpl(dir, true, false);

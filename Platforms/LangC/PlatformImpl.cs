@@ -39,10 +39,28 @@ namespace LangC
 			throw new NotImplementedException();
 		}
 
-		public override string GenerateCodeForStruct(StructDefinition structDef)
-		{
-			throw new NotImplementedException();
-		}
+        public override string GenerateCodeForStruct(StructDefinition structDef)
+        {
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append("struct ");
+			sb.Append(structDef.NameToken.Value);
+			sb.Append(" {\n");
+			for (int i = 0; i < structDef.ArgNames.Length; ++i)
+			{
+				string fieldName = structDef.ArgNames[i].Value;
+				PType fieldType = structDef.ArgTypes[i];
+				sb.Append('\t');
+				sb.Append(this.TranslateType(fieldType));
+				sb.Append(' ');
+				sb.Append(fieldName);
+				sb.Append(";\n");
+			}
+				
+			sb.Append("};\n\n");
+
+			return sb.ToString();
+        }
 
 		public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
 		{
@@ -56,6 +74,35 @@ namespace LangC
 
 		public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
 		{
+			throw new NotImplementedException();
+		}
+
+		public override string TranslateType(Pastel.Nodes.PType type)
+		{
+			switch (type.RootValue)
+			{
+				case "int": return "int";
+				case "string": return "int*";
+				case "bool": return "int";
+				case "double": return "double";
+				case "object": return "void*";
+				case "char": return "int";
+				case "List": return "List*";
+				case "Array": return this.TranslateType(type.Generics[0]) + "*";
+				case "Dictionary":
+					string keyType = type.Generics[0].RootValue;
+					switch (keyType)
+					{
+						case "int": return "IntDictionary*";
+						case "string": return "StringDictionary*";
+						default: throw new NotImplementedException();
+					}
+				default: break;
+			}
+
+			char firstChar = type.RootValue[0];
+			if (firstChar >= 'A' && firstChar <= 'Z') return type.RootValue + "*";
+
 			throw new NotImplementedException();
 		}
 	}
