@@ -1,0 +1,248 @@
+﻿
+typedef struct DictionaryNode DictionaryNode;
+typedef struct Dictionary Dictionary;
+
+struct Dictionary {
+	int size;
+	int bucket_count;
+	int size_of_value;
+	int size_of_key;
+	int last_hash_check_index;
+	DictionaryNode** buckets;
+	union {
+		char* char_keys;
+		int* int_keys;
+		int** str_keys;
+	};
+	union {
+		char* char_values;
+		int* int_values;
+		void** ptr_values;
+		double* double_values;
+	};
+};
+
+struct DictionaryNode {
+	DictionaryNode* next;
+	int hash;
+	int index;
+};
+
+Dictionary* Dictionary_new(int size_of_key, int size_of_value)
+{
+	Dictionary* dict = (Dictionary*) malloc(sizeof(Dictionary));
+	dict->size = 0;
+	dict->bucket_count = 0;
+	dict->size_of_key = size_of_key;
+	dict->size_of_value = size_of_value;
+	return dict;
+}
+
+void Dictionary_increase_capacity(Dictionary* dict)
+{
+	if (dict->size == 0)
+	{
+		dict->bucket_count = 8;
+		dict->char_keys = (char*) malloc(8 * dict->size_of_key);
+		dict->char_values = (char*) malloc(8 * dict->size_of_value);
+		dict->buckets = (DictionaryNode**) malloc(sizeof(DictionaryNode*) * 8);
+		for (int i = 0; i < 8; ++i)
+		{
+			dict->buckets[i] = NULL;
+		}
+	}
+	else
+	{
+		int old_count = dict->bucket_count;
+		int new_count = old_count << 1;
+		int new_mask = new_count - 1;
+		dict->char_keys = (char*) realloc(dict->char_keys, new_count * dict->size_of_key);
+		dict->char_values = (char*) realloc(dict->char_values, new_count * dict->size_of_value);
+		DictionaryNode** old_buckets = dict->buckets;
+		DictionaryNode** new_buckets = (DictionaryNode**) malloc(sizeof(DictionaryNode*) * new_count);
+		for (int i = 0; i < new_count; ++i)
+		{
+			new_buckets[i] = NULL;
+		}
+		DictionaryNode* node;
+		DictionaryNode* next;
+		int index;
+		for (int i = 0; i < old_count; ++i)
+		{
+			node = old_buckets[i];
+			while (node != NULL)
+			{
+				next = node->next;
+				index = node->hash & new_mask;
+				node->next = new_buckets[index];
+				new_buckets[index] = node;
+				node = next;
+			}
+		}
+		free(old_buckets);
+		dict->buckets = new_buckets;
+		dict->bucket_count = new_count;
+	}
+}
+
+DictionaryNode* Dictionary_get_node_int(Dictionary* dict, int int_key, int create_if_absent)
+{
+	if (dict->size > 0)
+	{
+		DictionaryNode* node = dict->buckets[int_key & (dict->bucket_count - 1)];
+		while (node != NULL)
+		{
+			if (node->hash == int_key)
+			{
+				return node;
+			}
+			node = node->next;
+		}
+	}
+
+	if (create_if_absent)
+	{
+		if (dict->size == dict->bucket_count)
+		{
+			Dictionary_increase_capacity(dict);
+		}
+
+		DictionaryNode* node = (DictionaryNode*) malloc(sizeof(DictionaryNode));
+		node->index = dict->size++;
+		node->hash = int_key;
+		dict->int_keys[node->index] = int_key;
+		int bucket_index = int_key & (dict->bucket_count - 1);
+		node->next = dict->buckets[bucket_index];
+		dict->buckets[bucket_index] = node;
+		return node;
+	}
+
+	return NULL;
+}
+
+DictionaryNode* Dictionary_get_node_str(Dictionary* dict, int* str_key, int create_if_absent)
+{
+	if (dict->size > 0)
+	{
+		int hash = str_key[-2];
+		if (hash == 0) hash = String_hash(str_key);
+		DictionaryNode* node = dict->buckets[hash & (dict->bucket_count - 1)];
+		while (node != NULL)
+		{
+			if (node->hash == hash && String_equals(dict->str_keys[node->index], str_key))
+			{
+				return node;
+			}
+			node = node->next;
+		}
+	}
+
+	if (create_if_absent)
+	{
+		if (dict->size == dict->bucket_count)
+		{
+			Dictionary_increase_capacity(dict);
+		}
+
+		DictionaryNode* node = (DictionaryNode*) malloc(sizeof(DictionaryNode));
+		node->index = dict->size++;
+		int hash = str_key[-2];
+		if (hash == 0) hash = String_hash(str_key);
+		node->hash = hash;
+		dict->str_keys[node->index] = str_key;
+		int bucket_index = hash & (dict->bucket_count - 1);
+		node->next = dict->buckets[bucket_index];
+		dict->buckets[bucket_index] = node;
+		return node;
+	}
+
+	return NULL;
+}
+
+char Dictionary_get_int_to_char(Dictionary* dict, int int_key)
+{
+	DictionaryNode* node = Dictionary_get_node_int(dict, int_key, 0);
+	return dict->char_values[node->index];
+}
+
+int Dictionary_get_int_to_int(Dictionary* dict, int int_key)
+{
+	DictionaryNode* node = Dictionary_get_node_int(dict, int_key, 0);
+	return dict->int_values[node->index];
+}
+
+double Dictionary_get_int_to_double(Dictionary* dict, int int_key)
+{
+	DictionaryNode* node = Dictionary_get_node_int(dict, int_key, 0);
+	return dict->double_values[node->index];
+}
+
+void* Dictionary_get_int_to_ptr(Dictionary* dict, int int_key)
+{
+	DictionaryNode* node = Dictionary_get_node_int(dict, int_key, 0);
+	return dict->ptr_values[node->index];
+}
+
+char Dictionary_get_str_to_char(Dictionary* dict, int* str_key)
+{
+	DictionaryNode* node = Dictionary_get_node_str(dict, str_key, 0);
+	return dict->char_values[node->index];
+}
+
+int Dictionary_get_str_to_int(Dictionary* dict, int* str_key)
+{
+	DictionaryNode* node = Dictionary_get_node_str(dict, str_key, 0);
+	return dict->int_values[node->index];
+}
+
+double Dictionary_get_str_to_double(Dictionary* dict, int* str_key)
+{
+	DictionaryNode* node = Dictionary_get_node_str(dict, str_key, 0);
+	return dict->double_values[node->index];
+}
+
+void* Dictionary_get_str_to_ptr(Dictionary* dict, int* str_key)
+{
+	DictionaryNode* node = Dictionary_get_node_str(dict, str_key, 0);
+	return dict->ptr_values[node->index];
+}
+
+void Dictionary_set_int_to_char(Dictionary* dict, int int_key, char char_value)
+{
+	dict->char_values[Dictionary_get_node_int(dict, int_key, 1)->index] = char_value;
+}
+
+void Dictionary_set_int_to_int(Dictionary* dict, int int_key, int int_value)
+{
+	dict->int_values[Dictionary_get_node_int(dict, int_key, 1)->index] = int_value;
+}
+
+void Dictionary_set_int_to_double(Dictionary* dict, int int_key, double double_value)
+{
+	dict->double_values[Dictionary_get_node_int(dict, int_key, 1)->index] = double_value;
+}
+
+void Dictionary_set_int_to_ptr(Dictionary* dict, int int_key, void* ptr_value)
+{
+	dict->ptr_values[Dictionary_get_node_int(dict, int_key, 1)->index] = ptr_value;
+}
+
+void Dictionary_set_str_to_char(Dictionary* dict, int* str_key, char char_value)
+{
+	dict->char_values[Dictionary_get_node_str(dict, str_key, 1)->index] = char_value;
+}
+
+void Dictionary_set_str_to_int(Dictionary* dict, int* str_key, int int_value)
+{
+	dict->int_values[Dictionary_get_node_str(dict, str_key, 1)->index] = int_value;
+}
+
+void Dictionary_set_str_to_double(Dictionary* dict, int* str_key, double double_value)
+{
+	dict->double_values[Dictionary_get_node_str(dict, str_key, 1)->index] = double_value;
+}
+
+void Dictionary_set_str_to_ptr(Dictionary* dict, int* str_key, void* ptr_value)
+{
+	dict->ptr_values[Dictionary_get_node_str(dict, str_key, 1)->index] = ptr_value;
+}
