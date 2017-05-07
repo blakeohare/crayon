@@ -2,5 +2,6 @@
 int main(int argc, char** argv)
 {
 	printf("Hello, World!\n");
+	printf("%lu %lu\n", sizeof(int), sizeof(int*));
 	return 0;
 }

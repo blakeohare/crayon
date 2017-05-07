@@ -8,8 +8,8 @@ using Platform;
 
 namespace LangC
 {
-    public class PlatformImpl : AbstractPlatform
-    {
+	public class PlatformImpl : AbstractPlatform
+	{
 		public override string Name { get { return "lang-c"; } }
 		public override string InheritsFrom { get { return null; } }
 		public override string NL { get { return "\n"; } }
@@ -39,8 +39,8 @@ namespace LangC
 			throw new NotImplementedException();
 		}
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
-        {
+		public override string GenerateCodeForStruct(StructDefinition structDef)
+		{
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append("struct ");
@@ -56,11 +56,11 @@ namespace LangC
 				sb.Append(fieldName);
 				sb.Append(";\n");
 			}
-				
+
 			sb.Append("};\n\n");
 
 			return sb.ToString();
-        }
+		}
 
 		public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
 		{
@@ -93,9 +93,11 @@ namespace LangC
 					string keyType = type.Generics[0].RootValue;
 					switch (keyType)
 					{
-						case "int": return "IntDictionary*";
-						case "string": return "StringDictionary*";
-						default: throw new NotImplementedException();
+						case "int":
+						case "string":
+							return "Dictionary*";
+						default:
+							throw new NotImplementedException();
 					}
 				default: break;
 			}

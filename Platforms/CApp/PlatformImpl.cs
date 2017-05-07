@@ -34,9 +34,11 @@ namespace CApp
 
 			cCode.Append("#include <stdio.h>\n");
 			cCode.Append("#include <stdlib.h>\n");
+			cCode.Append("#include <string.h>\n");
 			cCode.Append('\n');
 
 			cCode.Append(this.LoadTextResource("Resources/List.txt", replacements));
+			cCode.Append(this.LoadTextResource("Resources/String.txt", replacements));
 			cCode.Append(this.LoadTextResource("Resources/Dictionary.txt", replacements));
 
 			// This needs to be done in LangC
