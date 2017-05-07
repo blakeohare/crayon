@@ -147,6 +147,7 @@ DictionaryNode* Dictionary_get_node_str(Dictionary* dict, int* str_key, int crea
 		DictionaryNode* node = (DictionaryNode*) malloc(sizeof(DictionaryNode));
 		node->index = dict->size++;
 		int hash = str_key[-2];
+		if (hash == 0) hash = String_hash(str_key);
 		node->hash = hash;
 		dict->str_keys[node->index] = str_key;
 		int bucket_index = hash & (dict->bucket_count - 1);

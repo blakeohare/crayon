@@ -15,7 +15,7 @@ List* List_new(int item_size)
 	List* list = (List*) malloc(sizeof(List));
 	list->size = 0;
 	list->capacity = 0;
-	list->items = NULL;
+	list->char_items = NULL;
 	return list;
 }
 
