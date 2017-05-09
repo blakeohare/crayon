@@ -34,7 +34,6 @@ public final class RenderEngine {
         }
 
         int x, y, sx, sy, width, height, sw, sh, tw, th, red, green, blue, alpha, j;
-        int ax, ay, bx, by, cx, cy;
 		int mask, fontId;
         int[] xs = new int[4];
         int[] ys = new int[4];

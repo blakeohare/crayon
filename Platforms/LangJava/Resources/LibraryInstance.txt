@@ -2,7 +2,6 @@
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import org.crayonlang.interpreter.structs.Value;
 
 public final class LibraryInstance {
 
