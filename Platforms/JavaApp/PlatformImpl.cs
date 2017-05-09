@@ -79,7 +79,9 @@ namespace JavaApp
                     libraryCode.Add("}");
                     libraryCode.Add("");
 
-                    output["src/org/crayonlang/libraries/" + library.Name.ToLower() + "/LibraryWrapper.java"] = new FileOutput()
+					string libraryPath = "src/org/crayonlang/libraries/" + library.Name.ToLower();
+
+                    output[libraryPath + "/LibraryWrapper.java"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
                         TextContent = string.Join(this.NL, libraryCode),
@@ -87,7 +89,8 @@ namespace JavaApp
 
                     foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
                     {
-                        output[supFile.Values["target"]] = supFile.FileOutput;
+						string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);
+                        output[path] = supFile.FileOutput;
                     }
                 }
             }

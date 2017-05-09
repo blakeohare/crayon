@@ -11,7 +11,7 @@ END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPY_FILES: from=java, to=src/org/crayonlang/libraries/fileiocommon/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN

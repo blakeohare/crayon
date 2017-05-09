@@ -22,20 +22,16 @@ namespace Crayon
         private Multimap<string, ExportEntity> exportEntities;
         private List<string> dotNetLibs;
 
-        public LibraryResourceDatabase(Library library, string platformName, IPlatformProvider platformProvider)
+		public LibraryResourceDatabase(Library library, AbstractPlatform platform)
         {
             this.library = library;
-            this.platformName = platformName;
+            this.platformName = platform == null ? null : platform.Name;
             this.exportEntities = null;
             this.ApplicablePlatformNames = new HashSet<string>();
-            if (platformProvider != null)
+			while (platform != null)
             {
-                AbstractPlatform platform = platformProvider.GetPlatform(platformName);
-                while (platform != null)
-                {
-                    this.ApplicablePlatformNames.Add(platform.Name);
-                    platform = platform.ParentPlatform;
-                }
+                this.ApplicablePlatformNames.Add(platform.Name);
+                platform = platform.ParentPlatform;
             }
         }
 

@@ -343,7 +343,7 @@ public final class TranslationHelper {
 	return 0;
   }
   
-  public static int[] listToArrayBool(ArrayList<Boolean> list) {
+  public static boolean[] listToArrayBool(ArrayList<Boolean> list) {
     int length = list.size();
 	boolean[] output = new boolean[length];
 	int i = -1;
@@ -351,7 +351,7 @@ public final class TranslationHelper {
 	return output;
   }
   
-  public static int[] listToArrayByte(ArrayList<Byte> list) {
+  public static byte[] listToArrayByte(ArrayList<Byte> list) {
     int length = list.size();
 	byte[] output = new byte[length];
 	int i = -1;
@@ -367,7 +367,7 @@ public final class TranslationHelper {
 	return output;
   }
 
-  public static int[] listToArrayDouble(ArrayList<Double> list) {
+  public static double[] listToArrayDouble(ArrayList<Double> list) {
     int length = list.size();
 	double[] output = new double[length];
 	int i = -1;

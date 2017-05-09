@@ -18,13 +18,21 @@ namespace Crayon
         
         public LibraryResourceDatabase Resources { get; private set; }
 
-        public Library(string name, string libraryManifestPath, string platformName, Platform.IPlatformProvider platformProvider)
+		public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
+		{
+			return new Library(
+				this.Name, 
+				System.IO.Path.Combine(this.RootDirectory, "manifest.txt"), 
+				platform);
+		}
+ 
+        public Library(string name, string libraryManifestPath, Platform.AbstractPlatform nullablePlatform)
         {
             TODO.LibrariesNeedVersionNumber();
 
-            this.platformName = platformName;
+			this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
 
-            this.Resources = new LibraryResourceDatabase(this, platformName, platformProvider);
+            this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
             
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);

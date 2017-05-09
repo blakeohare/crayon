@@ -321,6 +321,13 @@ namespace Crayon
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
 
+			// Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
+			// for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
+
+			Library[] libraries = compilationResult.LibrariesUsed
+                .Select(lib => lib.CloneWithNewPlatform(platform))
+				.ToArray();
+
             ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
 
             VmGenerator vmGenerator = new VmGenerator();
@@ -328,7 +335,7 @@ namespace Crayon
                 platform,
                 compilationResult,
                 resourceDatabase,
-                compilationResult.LibrariesUsed,
+                libraries,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
             string outputDirectory = buildContext.OutputFolder;

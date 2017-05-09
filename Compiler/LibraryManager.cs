@@ -74,7 +74,7 @@ namespace Crayon
             foreach (string name in allLibraries.Keys)
             {
                 string manifestPath = allLibraries[name];
-                Library library = new Library(name, manifestPath, platform.Name, this.PlatformProvider);
+                Library library = new Library(name, manifestPath, platform);
                 output.Add(library);
             }
             return output;
@@ -196,9 +196,9 @@ namespace Crayon
                     return null;
                 }
 
-                string platform = parser.BuildContext.Platform;
-
-                library = new Library(name, libraryManifestPath, platform, this.PlatformProvider);
+                string platformName = parser.BuildContext.Platform;
+				Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
+                library = new Library(name, libraryManifestPath, platform);
 
                 this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);
