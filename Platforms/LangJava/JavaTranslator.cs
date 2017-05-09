@@ -177,7 +177,11 @@ namespace LangJava
 
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
-            sb.Append("new HashMap<>()");
+			sb.Append("new HashMap<");
+			sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(keyType));
+			sb.Append(", ");
+			sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(valueType)); 
+			sb.Append(">()");
         }
 
         public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)

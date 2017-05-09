@@ -375,7 +375,7 @@ public final class TranslationHelper {
 	return output;
   }
 
-  public static char[] listToArrayBool(ArrayList<Character> list) {
+  public static char[] listToArrayChar(ArrayList<Character> list) {
     int length = list.size();
 	char[] output = new char[length];
 	int i = -1;
