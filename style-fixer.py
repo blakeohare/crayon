@@ -1,104 +1,82 @@
-# A script that can be run before committing to normalize all whitespace
-# Editors are all different. This will reduce a lot of diff noise or confusion,
-# particularly because most editors render tabs as 4 spaces by default and github
-# renders it as 8.
-
 import os
 
-def loadFile(path):
-	c = open(path, 'rt')
-	text = c.read()
-	c.close()
-	return text
+class FormatStyle:
+	def __init__(self):
+		self.newline_char = '\n'
+		self.tab_char = '    '
+		self.should_rtrim = True
+		self.should_trim = True
+		self.should_end_with_newline = True
 
-def writeFile(path, content):
-	c = open(path, 'wt')
-	c.write(content)
-	c.close()
+	def tabs(self, tab_char):
+		self.tab_char = tab_char
+		return self
 
-def rtrim(string):
-	while len(string) > 0 and string[-1] in ' \r\n\t':
-		string = string[:-1]
-	return string
+	def newline(self, newline_char):
+		self.newline_char = newline_char
+		return self
 
-def normalizeTab(string, tab):
-	if len(string) == 0: return ''
-	count = 0
-	tablen = len(tab)
-	isSpaces = tab[0] == ' '
-	space4 = ' ' * 4
-	prevlen = -1
-	while len(string) > 0 and string[0] in ' \t':
-		c = string[0]
-		if c == '\t':
-			string = string[1:]
-			count += 1
-		elif isSpaces:
-			if string[:tablen] == tab:
-				string = string[tablen:]
-				count += 1
-		else:
-			if string[:4] == space4:
-				string = string[4:]
-				count += 1
-		newlen = len(string)
-		if newlen == prevlen:
-			break
-		prevlen = newlen
-	return (tab * count) + string
+	def rtrim(self, should_rtrim):
+		self.should_rtrim = should_rtrim
+		return self
 
-def normalize(filepath, lineEnding, tab, includeNewlineAtEnd):
-	originaltext = loadFile(filepath)
-	text = originaltext.replace('\r\n', '\n').replace('\r', '\n')
-	text = rtrim(text)
-	
+	def apply(self, text):
+		if self.should_trim:
+			text = text.strip()
+
+		lines = text.replace('\r\n', '\n').split('\n')
+
+		if self.should_rtrim:
+			lines = map(lambda x:x.rstrip(), lines)
+
+		new_lines = []
+		for line in lines:
+			tabs = 0
+			trimming = True
+			while trimming:
+				if len(line) > 0:
+					if line[0] == '\t':
+						line = line[1:]
+						tabs += 1
+					elif line.startswith(self.tab_char):
+						line = line[len(self.tab_char):]
+						tabs += 1
+					else:
+						trimming = False
+				else:
+					trimming = False
+			if tabs > 0:
+				new_lines.append((self.tab_char * tabs) + line)
+			else:
+				new_lines.append(line)
+		
+		if self.should_end_with_newline:
+			new_lines.append('')
+		text = self.newline_char.join(new_lines)
+
+
+MATCHERS = [
+	('Compiler/*.cs', FormatStyle().tabs('    ').newline('\r\n'))
+]
+
+def get_all_files():
 	output = []
-	for line in text.split('\n'):
-		
-		line = rtrim(line)
-		line = normalizeTab(line, tab)
-		
-		output.append(line)
-	
-	if includeNewlineAtEnd:
-		output.append('')
-	
-	text = lineEnding.join(output)
-	
-	while '\n\n\n' in text:
-		text = text.replace('\n\n\n', '\n\n')
-		
-	writeFile(filepath, text)
-	return originaltext != text
-
-def getFiles(dir, ending):
-	output = []
-	getFilesImpl(dir, ending, output)
+	get_all_files_impl('.', output)
 	return output
 
-def getFilesImpl(dir, ending, output):
-	for file in os.listdir(dir):
-		filepath = dir + os.sep + file
-		if os.path.isdir(filepath):
-			getFilesImpl(filepath, ending, output)
+def get_all_files_impl(path, output):
+	for file in os.listdir(path):
+		full_path = path + os.sep + file
+		if os.path.isdir(full_path):
+			get_all_files_impl(full_path, output)
 		else:
-			if file.endswith(ending):
-				output.append(filepath)
+			output.append(full_path[2:])
 
-def normalizeBatch(dir, ending, lineEnding, tab, includeNewlineAtEnd):
-	files = getFiles(dir, ending)
-	for file in files:
-		changes = normalize(file, lineEnding, tab, includeNewlineAtEnd)
-		if changes:
-			print('FIXED: ' + file)
-		
+all_files = get_all_files()
+for pattern, matcher in MATCHERS:
+    prefix, ext = pattern.split('*')
+    for file in all_files:
+        if file.startswith(prefix) and file.endswith(ext):
+            print "This file matches: ", file
 
-def main():
-	normalizeBatch('Compiler', '.cs', '\r\n', ' ' * 4, True)
-	normalizeBatch('Compiler', '.csproj', '\n', ' ' * 2, False)
-	normalizeBatch('Interpreter', '.cry', '\n', '\t', True)
-	normalizeBatch('Resources/game-python-pygame', '.py', '\n', ' ' * 2, True)
-	normalizeBatch('Resources/game-javascript', '.js', '\n', ' ' * 2, True)
-	normalizeBatch('Demos', '.cry', '\n', ' ' * 4, True)
 
-main()
