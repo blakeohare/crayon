@@ -3,8 +3,8 @@
     /*
         This doc comment explains the exceptions system as a whole since ESF Tokens are a critical piece of that and cannot be
         explained without this context.
-        
-        An ESF token is a token that goes in the ByteBuffer at the PC where the try block begins. It indicates how far the 
+
+        An ESF token is a token that goes in the ByteBuffer at the PC where the try block begins. It indicates how far the
         catch and the finally blocks are from the beginning of the try block.
 
         Technically the offset to the "catch" is ambiguous because there can be multiple catch blocks per try block. In the byte
@@ -37,7 +37,7 @@
         N();
         O();
 
-        This creates some byte code. This byte code has EsfTokens which indicate how far the exception sort block and 
+        This creates some byte code. This byte code has EsfTokens which indicate how far the exception sort block and
         finally are from the beginning of the try block...
 
         Also note that JUMPs use offsets that assume +1 will be added on the next VM cycle, whereas the EsfTokens are based
@@ -79,7 +79,7 @@
         An EsfInfo array is generated when the ESF_INIT op runs. This array's indices are PC's and include information
         for where the catch and finally blocks are. These tokens are applied in a stack where the topmost token in the
         stack is applied. The tokens are pushed in order and popped when they are no longer applicable.
-        
+
         ...
         0x120:   A   Catch: NONE, Finally: NONE
         0x121:   B   Catch: NONE, Finally: NONE
@@ -110,17 +110,17 @@
         When an exception is thrown, the VM will jump to the catch if one is present, otherwise it'll go to the final offset
         if one is present. If neither are present, then it will pop the stack until it finds one of those offsets declared
         on its current PC. If it gets to the root stack frame, then that's an uncaught exception. Uncaught exceptions
-        will still get caught in Exception sort blocks even if there is no type that applies and go on to finally blocks 
+        will still get caught in Exception sort blocks even if there is no type that applies and go on to finally blocks
         when present, but the FINAL_END op will ensure that it continues to bubble after the final block code runs.
-        
+
         Returning from a function will also check to see if there is a final block. If there is, it will set the stack frame's
         return value, but not return and instead jump to the final block. FINAL_END will act like a return if there is a
         return value set. Alternatively, if the final block contains a return itself, it will overwrite the previously set return
         value.
-        
+
         // This code returns false.
         try {
-            return true; // true is set as the return value and then 
+            return true; // true is set as the return value and then
         } catch (Exception e) {
             return 42; // not run
         } finally {

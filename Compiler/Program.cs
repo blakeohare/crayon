@@ -32,7 +32,7 @@ namespace Crayon
             Program.Compile(args);
 
             // Crash if there were any graphics contexts that weren't cleaned up.
-            // This is okay on Windows, but on OSX this is a problem, so ensure that a 
+            // This is okay on Windows, but on OSX this is a problem, so ensure that a
             // regressions are quickly noticed.
             SystemBitmap.Graphics.EnsureCleanedUp();
 #else
@@ -138,7 +138,7 @@ namespace Crayon
                     string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "Vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
-                    
+
                     appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile)
                     {
                         UseShellExecute = false,
@@ -178,7 +178,7 @@ namespace Crayon
             cbxOutput.AddRange(GetBigEndian4Byte(0));
             cbxOutput.AddRange(GetBigEndian4Byte(2));
             cbxOutput.AddRange(GetBigEndian4Byte(0));
-            
+
             byte[] code = StringToBytes(byteCode);
             cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
@@ -212,11 +212,11 @@ namespace Crayon
                 Type = FileOutputType.Binary,
                 BinaryContent = cbxOutput.ToArray(),
             };
-            
+
             // Resource manifest is embedded into the CBX file
 
             output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
-            
+
             foreach (FileOutput txtResource in resDb.TextResources)
             {
                 output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
@@ -276,7 +276,7 @@ namespace Crayon
         }
 
         private static ResourceDatabase PrepareResources(
-            BuildContext buildContext, 
+            BuildContext buildContext,
             ByteBuffer nullableByteCode) // CBX files will not have this in the resources
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -321,12 +321,12 @@ namespace Crayon
 
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
 
-			// Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
-			// for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
+            // Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
+            // for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
 
-			Library[] libraries = compilationResult.LibrariesUsed
+            Library[] libraries = compilationResult.LibrariesUsed
                 .Select(lib => lib.CloneWithNewPlatform(platform))
-				.ToArray();
+                .ToArray();
 
             ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
 
@@ -360,7 +360,7 @@ namespace Crayon
         private static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
         {
             string buildFilePath = originalBuildFilePath;
-			buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
+            buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
             if (!buildFilePath.StartsWith("/") &&
                 !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
             {
@@ -404,13 +404,13 @@ namespace Crayon
             string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
             BuildContext buildContext = null;
-            
+
             argLookup.Remove("buildfile");
             argLookup.Remove("target");
             projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
             buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
-            
+
 
             buildContext = buildContext ?? new BuildContext();
 
@@ -424,11 +424,11 @@ namespace Crayon
 
             if (buildContext.OutputFolder == null)
                 throw new InvalidOperationException("No output folder specified in build file.");
-			
-			buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
+
+            buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
             if (buildContext.IconFilePath != null)
             {
-				buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
+                buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
             }
 
             foreach (FilePath sourceFolder in buildContext.SourceFolders)

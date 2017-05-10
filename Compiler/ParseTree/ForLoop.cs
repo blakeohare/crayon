@@ -76,7 +76,7 @@ namespace Crayon.ParseTree
             {
                 ex.PerformLocalIdAllocation(varIds, phase);
             }
-            
+
             this.Condition.PerformLocalIdAllocation(varIds, phase);
 
             if (both)

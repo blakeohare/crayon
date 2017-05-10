@@ -115,9 +115,9 @@ namespace Crayon
             Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
             List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByName, constantFlags, vm);
 
-            LibraryNativeInvocationTranslatorProvider libTranslationProvider = 
+            LibraryNativeInvocationTranslatorProvider libTranslationProvider =
                 new LibraryNativeInvocationTranslatorProvider(
-                    relevantLibraries.ToDictionary(lib => lib.Name), 
+                    relevantLibraries.ToDictionary(lib => lib.Name),
                     platform);
 
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
@@ -194,11 +194,11 @@ namespace Crayon
             Dictionary<string, object> constantFlags)
         {
             Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                false, 
-                null, 
-                constantFlags, 
-                new InlineImportCodeLoader(), 
-                null, 
+                false,
+                null,
+                constantFlags,
+                new InlineImportCodeLoader(),
+                null,
                 null);
 
             foreach (string file in INTERPRETER_BASE_FILES)

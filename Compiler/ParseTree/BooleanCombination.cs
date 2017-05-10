@@ -76,7 +76,7 @@ namespace Crayon.ParseTree
 
             return this;
         }
-        
+
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);

@@ -10,7 +10,7 @@ namespace Crayon.ParseTree
         public Token AssignmentOpToken { get; private set; }
         public string AssignmentOp { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
-        
+
         public bool HACK_IsVmGlobal { get; set; }
 
         public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Executable owner)
@@ -59,9 +59,9 @@ namespace Crayon.ParseTree
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
-                bool isVariableDeclared = 
+                bool isVariableDeclared =
                     // A variable is considered declared if the target is a variable and = is used instead of something like +=
-                    this.Target is Variable && 
+                    this.Target is Variable &&
                     this.AssignmentOpToken.Value == "=";
 
                 if (isVariableDeclared)
@@ -72,7 +72,7 @@ namespace Crayon.ParseTree
 
             this.Target.PerformLocalIdAllocation(varIds, phase);
         }
-        
+
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Target = this.Target.ResolveNames(parser, lookup, imports);

@@ -231,7 +231,7 @@ namespace Crayon
             ByteBuffer finallyCode = new ByteBuffer();
             this.Compile(parser, finallyCode, tryStatement.FinallyBlock);
             finallyCode.ResolveBreaksAndContinuesForFinally(false);
-            finallyCode.Add(null, OpCode.FINALLY_END, 
+            finallyCode.Add(null, OpCode.FINALLY_END,
                 new int[] {
                     // First 2 args are the same as a BREAK op code
                     // Last 2 args are the same as a CONTINUE op code
@@ -240,7 +240,7 @@ namespace Crayon
                     0, // break offset
                     0, // continue flag 0|1|2
                     0 // continue offset
-                }); 
+                });
 
 
             // All user code is now compiled and offsets are sort of known.
@@ -265,7 +265,7 @@ namespace Crayon
                     24  catch block 2...
                         ...
                     72  last line in catch block 2
-                    
+
                     73  finally code begins...
                 */
 
@@ -610,7 +610,7 @@ namespace Crayon
             };
 
             args.AddRange(offsetsForOptionalArgs);
-            
+
             buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION, "<constructor>", args.ToArray());
             buffer.Concat(tBuffer);
         }

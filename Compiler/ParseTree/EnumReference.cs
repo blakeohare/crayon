@@ -29,7 +29,7 @@ namespace Crayon.ParseTree
         {
             throw new NotImplementedException();
         }
-        
+
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
         internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }

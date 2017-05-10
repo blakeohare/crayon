@@ -22,13 +22,13 @@ namespace Crayon
         private Multimap<string, ExportEntity> exportEntities;
         private List<string> dotNetLibs;
 
-		public LibraryResourceDatabase(Library library, AbstractPlatform platform)
+        public LibraryResourceDatabase(Library library, AbstractPlatform platform)
         {
             this.library = library;
             this.platformName = platform == null ? null : platform.Name;
             this.exportEntities = null;
             this.ApplicablePlatformNames = new HashSet<string>();
-			while (platform != null)
+            while (platform != null)
             {
                 this.ApplicablePlatformNames.Add(platform.Name);
                 platform = platform.ParentPlatform;
@@ -129,7 +129,7 @@ namespace Crayon
             }
             return instructions;
         }
-        
+
         /*
          * Does a first pass on instructions and simplifies them to a smaller set of instructions.
          * In particular it expands out any multi-file operation into a series of single-file operations.
@@ -240,7 +240,7 @@ namespace Crayon
                 return this.projectReferenceToGuid;
             }
         }
-        
+
         private void Init()
         {
             this.exportEntities = new Multimap<string, ExportEntity>();
@@ -318,7 +318,7 @@ namespace Crayon
                                 BinaryContent = this.library.ReadFileBytes("resources/" + from)
                             };
                         }
-                        
+
                         entity.Values["hintpath"] = instruction["hintpath"];
                         foreach (string dllAttr in new string[] {
                             "name", "version", "culture", "token", "architecture", "specificversion" })

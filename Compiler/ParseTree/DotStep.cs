@@ -84,7 +84,7 @@ namespace Crayon.ParseTree
                     throw new ParserException(this.StepToken, "The enum '" + enumDef.Name + "' does not contain a definition for '" + step + "'");
                 }
             }
-            
+
             if (this.Root is BaseKeyword)
             {
                 return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.FunctionOrClassOwner).Resolve(parser);
@@ -273,7 +273,7 @@ namespace Crayon.ParseTree
                 throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
             }
 
-            // This is done here in the resolver instead of the parser because some unallowed 
+            // This is done here in the resolver instead of the parser because some unallowed
             // field names (such as .class) are valid.
             if (this.StepToken.Value == "class")
             {

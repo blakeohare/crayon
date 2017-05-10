@@ -15,7 +15,7 @@ namespace Crayon
                 { "OPEN_GL_ELLIPSE_POINT_COUNT", "60" },
 #if DEBUG
                 { "IS_RELEASE", "false" },
-#else  
+#else
                 { "IS_RELEASE", "true" },
 #endif
             };

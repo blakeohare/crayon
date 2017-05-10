@@ -1,4 +1,5 @@
 import os
+import array
 
 class FormatStyle:
 	def __init__(self):
@@ -52,7 +53,9 @@ class FormatStyle:
 		
 		if self.should_end_with_newline:
 			new_lines.append('')
-		text = self.newline_char.join(new_lines)
+		text = '\n'.join(new_lines)
+		
+		return text
 
 
 MATCHERS = [
@@ -72,11 +75,58 @@ def get_all_files_impl(path, output):
 		else:
 			output.append(full_path[2:])
 
-all_files = get_all_files()
-for pattern, matcher in MATCHERS:
-    prefix, ext = pattern.split('*')
-    for file in all_files:
-        if file.startswith(prefix) and file.endswith(ext):
-            print "This file matches: ", file
+def main():
+	all_files = get_all_files()
+	for pattern, matcher in MATCHERS:
+		prefix, ext = pattern.split('*')
+		for file in all_files:
+			canonical_file = file.replace('\\', '/')
+			if canonical_file .startswith(prefix) and canonical_file .endswith(ext):
+				text = read_text(file)
+				text = matcher.apply(text)
+				write_text(file, text, matcher.newline_char)
 
+def read_text(path):
+	c = open(path, 'rt')
+	text = c.read()
+	c.close()
+	return text
 
+def write_text(path, text, newline_char):
+	
+	bytes = array.array('B', text)
+	if newline_char == '\n':
+		new_bytes = bytes
+	else:
+		new_bytes = []
+		for byte in bytes:
+			if byte == 10:
+				new_bytes.append(13)
+				new_bytes.append(10)
+			else:
+				new_bytes.append(byte)
+	
+	c = open(path, 'rb')
+	original = c.read()
+	c.close()
+	
+	old_bytes = array.array('B', original)
+	update = False
+	if len(old_bytes) != len(new_bytes):
+		update = True
+	elif len(old_bytes) > 0:
+		if old_bytes[-1] != new_bytes[-1]:
+			update = True
+		else:
+			for old, new in zip(old_bytes, new_bytes):
+				if old != new:
+					update = True
+					break
+	
+	if update:
+		print("Updating: " + path)
+		c = open(path, 'wb')
+		c.write(bytearray(new_bytes))
+		c.close()
+		
+main()

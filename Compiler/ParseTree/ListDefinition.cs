@@ -35,7 +35,7 @@ namespace Crayon.ParseTree
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Items);
             return this;
         }
-        
+
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
             throw new NotImplementedException();

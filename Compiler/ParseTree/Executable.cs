@@ -65,11 +65,11 @@ namespace Crayon.ParseTree
         {
             return new Executable[] { ex };
         }
-        
+
         // To be overridden if necessary.
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         { }
-        
+
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
 
         internal virtual IList<Executable> PastelResolveComposite(Parser parser)
