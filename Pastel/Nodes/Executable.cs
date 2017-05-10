@@ -13,7 +13,7 @@ namespace Pastel.Nodes
         }
 
         public abstract Executable ResolveNamesAndCullUnusedCode(PastelCompiler compiler);
-        
+
         internal static IList<Executable> ResolveNamesAndCullUnusedCodeForBlock(IList<Executable> code, PastelCompiler compiler)
         {
             List<Executable> output = new List<Executable>();
