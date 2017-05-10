@@ -4,19 +4,19 @@ rightValue = valueStack[(valueStackSize + 1)];
 leftValue = valueStack[valueStackSize];
 int1 = doEqualityComparisonAndReturnCode(leftValue, rightValue);
 if (int1 == 0) {
-	bool1 = false;
+    bool1 = false;
 } else if (int1 == 1) {
-	bool1 = true;
+    bool1 = true;
 } else {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
 }
 
 @import("ValueStackCapacityCheck.cry");
 
 if (bool1 != Core.ForceParens((row[0] == 1))) {
-	valueStack[valueStackSize] = VALUE_TRUE;
+    valueStack[valueStackSize] = VALUE_TRUE;
 } else {
-	valueStack[valueStackSize] = VALUE_FALSE;
+    valueStack[valueStackSize] = VALUE_FALSE;
 }
 
 valueStackSize += 1;

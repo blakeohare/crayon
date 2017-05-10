@@ -2,9 +2,9 @@
 int1 = row[0];
 list1 = new List<Value>();
 while (int1 > 0) {
-	valueStackSize -= 1;
-	list1.Add(valueStack[valueStackSize]);
-	int1 -= 1;
+    valueStackSize -= 1;
+    list1.Add(valueStack[valueStackSize]);
+    int1 -= 1;
 }
 list1.Reverse();
 value = new Value(Types.LIST, list1);

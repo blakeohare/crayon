@@ -1,7 +1,7 @@
 ﻿List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
 int1 = row[0];
 while (allStringSwitchLookups.Size() <= int1) {
-	allStringSwitchLookups.Add(new Dictionary<string, int>());
+    allStringSwitchLookups.Add(new Dictionary<string, int>());
 }
 Dictionary<string, int> stringSwitchLookup = allStringSwitchLookups[int1];
 string1 = stringArgs[pc];

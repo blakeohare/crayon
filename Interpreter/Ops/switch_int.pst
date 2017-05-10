@@ -1,13 +1,13 @@
 ﻿valueStackSize -= 1;
 value = valueStack[valueStackSize];
 if (value.type == Types.INTEGER) {
-	int1 = ((int) value.internalValue);
-	integerSwitch = integerSwitches[row[0]];
-	if (integerSwitch.Contains(int1)) {
-		pc += integerSwitch[int1];
-	} else {
-		pc += row[1];
-	}
+    int1 = ((int) value.internalValue);
+    integerSwitch = integerSwitches[row[0]];
+    if (integerSwitch.Contains(int1)) {
+        pc += integerSwitch[int1];
+    } else {
+        pc += row[1];
+    }
 } else {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects an integer.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects an integer.");
 }

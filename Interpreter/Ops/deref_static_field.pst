@@ -5,7 +5,7 @@ classInfo = classTable[row[0]];
 @import("InvokeStaticConstructor.cry");
 
 if (bool1) {
-	@import("ValueStackCapacityCheck.cry");
-	valueStack[valueStackSize] = classInfo.staticFields[row[1]];
-	valueStackSize += 1;
+    @import("ValueStackCapacityCheck.cry");
+    valueStack[valueStackSize] = classInfo.staticFields[row[1]];
+    valueStackSize += 1;
 }

@@ -1,43 +1,43 @@
 ﻿if (argCount != 1) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
 }
 value2 = funcArgs[0];
 bool2 = true;
 if ((dictImpl.size > 0) && (dictImpl.keyType == value2.type)) {
-	switch (value2.type) {
-		case Types.INTEGER:
-			int1 = ((int) value2.internalValue);
-			if (dictImpl.keyIntLookup.Contains(int1)) {
-				bool2 = false;
-				dictImpl.keyIntLookup.Remove(int1);
-				dictImpl.valueIntLookup.Remove(int1);
-				dictImpl.size -= 1;
-			}
-			break;
-		case Types.INSTANCE:
-			objInstance1 = ((ObjectInstance) value2.internalValue);
-			int1 = ((int) objInstance1.objectId);
-			if (dictImpl.keyIntLookup.Contains(int1)) {
-				bool2 = false;
-				dictImpl.keyIntLookup.Remove(int1);
-				dictImpl.valueIntLookup.Remove(int1);
-				dictImpl.size -= 1;
-			}
-			break;
-		case Types.STRING:
-			string1 = ((string) value2.internalValue);
-			if (dictImpl.keyStringLookup.Contains(string1)) {
-				bool2 = false;
-				dictImpl.keyStringLookup.Remove(string1);
-				dictImpl.valueStringLookup.Remove(string1);
-				dictImpl.size -= 1;
-			}
-			break;
-		default:
-			int1 = 0;
-			break;
-	}
+    switch (value2.type) {
+        case Types.INTEGER:
+            int1 = ((int) value2.internalValue);
+            if (dictImpl.keyIntLookup.Contains(int1)) {
+                bool2 = false;
+                dictImpl.keyIntLookup.Remove(int1);
+                dictImpl.valueIntLookup.Remove(int1);
+                dictImpl.size -= 1;
+            }
+            break;
+        case Types.INSTANCE:
+            objInstance1 = ((ObjectInstance) value2.internalValue);
+            int1 = ((int) objInstance1.objectId);
+            if (dictImpl.keyIntLookup.Contains(int1)) {
+                bool2 = false;
+                dictImpl.keyIntLookup.Remove(int1);
+                dictImpl.valueIntLookup.Remove(int1);
+                dictImpl.size -= 1;
+            }
+            break;
+        case Types.STRING:
+            string1 = ((string) value2.internalValue);
+            if (dictImpl.keyStringLookup.Contains(string1)) {
+                bool2 = false;
+                dictImpl.keyStringLookup.Remove(string1);
+                dictImpl.valueStringLookup.Remove(string1);
+                dictImpl.size -= 1;
+            }
+            break;
+        default:
+            int1 = 0;
+            break;
+    }
 }
 if (bool2) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "dictionary does not contain the given key.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.KEY_NOT_FOUND, "dictionary does not contain the given key.");
 }

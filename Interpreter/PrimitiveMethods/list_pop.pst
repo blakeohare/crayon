@@ -1,11 +1,11 @@
 ﻿if (argCount > 0) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
 }
 len = list1.Size();
 if (len < 1) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Cannot pop from an empty list.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Cannot pop from an empty list.");
 }
 if (returnValueUsed) {
-	output = list1[(len - 1)];
+    output = list1[(len - 1)];
 }
 list1.Pop();

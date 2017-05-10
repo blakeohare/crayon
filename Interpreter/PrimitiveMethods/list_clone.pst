@@ -1,9 +1,9 @@
 ﻿if (argCount > 0) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
 }
 list2 = new List<Value>();
 len = list1.Size();
 for (i = 0; i < len; i += 1) {
-	list2.Add(list1[i]);
+    list2.Add(list1[i]);
 }
 output = new Value(Types.LIST, list2);

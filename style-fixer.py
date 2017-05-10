@@ -59,7 +59,8 @@ class FormatStyle:
 
 
 MATCHERS = [
-	('Compiler/*.cs', FormatStyle().tabs('    ').newline('\r\n'))
+	('Compiler/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
+	('Interpreter/*.pst', FormatStyle().tabs(' ' * 4).newline('\n')),
 ]
 
 def get_all_files():

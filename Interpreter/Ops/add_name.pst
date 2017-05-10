@@ -4,5 +4,5 @@ p.invIdentifiers[string3] = int1;
 p.identifiersBuilder.Add(string3);
 
 if (Core.StringEquals("length", string3)) {
-	p.lengthId = int1;
+    p.lengthId = int1;
 }

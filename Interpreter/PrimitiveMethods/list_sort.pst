@@ -1,19 +1,19 @@
 ﻿if (argCount == 0) {
-	sortLists(list1, list1, Core.IntBuffer16);
-	if (Core.IntBuffer16[0] > 0) {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
-	}
+    sortLists(list1, list1, Core.IntBuffer16);
+    if (Core.IntBuffer16[0] > 0) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
+    }
 } else {
-	if (argCount == 1) {
-		value2 = funcArgs[0];
-		if (value2.type == Types.FUNCTION) {
-			primitiveMethodToCoreLibraryFallback = true;
-			functionId = p.primitiveMethodFunctionIdFallbackLookup[2];
-			funcArgs[1] = value;
-			argCount = 2;
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list.sort(get_key_function) requires a function pointer as its argument.");
-		}
-		output = null;
-	}
+    if (argCount == 1) {
+        value2 = funcArgs[0];
+        if (value2.type == Types.FUNCTION) {
+            primitiveMethodToCoreLibraryFallback = true;
+            functionId = p.primitiveMethodFunctionIdFallbackLookup[2];
+            funcArgs[1] = value;
+            argCount = 2;
+        } else {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list.sort(get_key_function) requires a function pointer as its argument.");
+        }
+        output = null;
+    }
 }

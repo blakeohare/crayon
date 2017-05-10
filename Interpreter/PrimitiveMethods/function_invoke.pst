@@ -1,11 +1,11 @@
 ﻿if (argCount == 1) {
-	funcArgs[1] = funcArgs[0];
+    funcArgs[1] = funcArgs[0];
 } else {
-	if (argCount == 0) {
-		funcArgs[1] = VALUE_NULL;
-	} else {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
-	}
+    if (argCount == 0) {
+        funcArgs[1] = VALUE_NULL;
+    } else {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
+    }
 }
 funcArgs[0] = value;
 argCount = 2;

@@ -1,21 +1,21 @@
 ﻿if (argCount != 2) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
 }
 value = funcArgs[0];
 value2 = funcArgs[1];
 if (value.type != Types.INTEGER) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "First argument of list.insert must be an integer index.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "First argument of list.insert must be an integer index.");
 }
 int1 = ((int) value.internalValue);
 len = list1.Size();
 if (int1 < 0) {
-	int1 += len;
+    int1 += len;
 }
 if (int1 == len) {
-	list1.Add(value2);
+    list1.Add(value2);
 } else {
-	if ((int1 < 0) || (int1 >= len)) {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index out of range.");
-	}
-	list1.Insert(int1, value2);
+    if ((int1 < 0) || (int1 >= len)) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index out of range.");
+    }
+    list1.Insert(int1, value2);
 }
