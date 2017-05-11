@@ -1,12 +1,16 @@
 ﻿
-_UNICODE_BOM = '\xef\xbb\xbf'
 def ResourceReader_readTextFile(path):
   path = path.replace('/', os.sep)
   c = open(path, 'rt')
   text = c.read()
   c.close()
-  if text[:3] == _UNICODE_BOM:
+
+  # Trim the unicode BOM
+  if text[:3] == '\xef\xbb\xbf':
     text = text[3:]
+  elif text[:1] == '\ufeff':
+    text = text[1:]
+
   return text
 
 def ResourceReader_readImageFile(path):
