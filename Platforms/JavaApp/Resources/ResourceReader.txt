@@ -43,10 +43,15 @@ public final class ResourceReader {
 
         String output = sb.toString();
 		if (output.length() >= 3) {
-          if (output.charAt(0) == 239 && output.charAt(1) == 187 && output.charAt(2) == 191) {
-		    output = output.substring(3);
-		  }
+        	if (output.charAt(0) == 239 && output.charAt(1) == 187 && output.charAt(2) == 191) {
+				output = output.substring(3);
+			}
 		}
+
+		if (output.length() > 0 && output.charAt(0) == 65279) {
+			output = output.substring(1);
+		}
+		
 		return output;
     }
 
