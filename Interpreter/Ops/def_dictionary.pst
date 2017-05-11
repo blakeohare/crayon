@@ -9,54 +9,54 @@ type = Types.INTEGER;  // always ignored when size is 0
 first = true;
 i = len; // size
 while (i > 0) {
-	valueStackSize -= 2;
-	value = valueStack[(valueStackSize + 1)]; // value
-	value2 = valueStack[valueStackSize]; // key
-	if (first) {
-		type = value2.type;
-		first = false;
-	} else if (type != value2.type) {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Cannot have multiple key types in one dictionary.");
-	}
+    valueStackSize -= 2;
+    value = valueStack[(valueStackSize + 1)]; // value
+    value2 = valueStack[valueStackSize]; // key
+    if (first) {
+        type = value2.type;
+        first = false;
+    } else if (type != value2.type) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Cannot have multiple key types in one dictionary.");
+    }
 
-	if (type == Types.INTEGER) {
-		intKey = ((int) value2.internalValue);
-	} else if (type == Types.STRING) {
-		stringKey = ((string) value2.internalValue);
-	} else if (type == Types.INSTANCE) {
-		objInstance1 = ((ObjectInstance) value2.internalValue);
-		intKey = objInstance1.objectId;
-	} else {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Only integers, strings, and objects can be used as dictionary keys.");
-	}
+    if (type == Types.INTEGER) {
+        intKey = ((int) value2.internalValue);
+    } else if (type == Types.STRING) {
+        stringKey = ((string) value2.internalValue);
+    } else if (type == Types.INSTANCE) {
+        objInstance1 = ((ObjectInstance) value2.internalValue);
+        intKey = objInstance1.objectId;
+    } else {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Only integers, strings, and objects can be used as dictionary keys.");
+    }
 
-	if (type == Types.STRING) {
-		dictStringKeyLookup[stringKey] = value2;
-		dictStringValueLookup[stringKey] = value;
-	} else {
-		dictIntKeyLookup[intKey] = value2;
-		dictIntValueLookup[intKey] = value;
-	}
-	i -= 1;
+    if (type == Types.STRING) {
+        dictStringKeyLookup[stringKey] = value2;
+        dictStringValueLookup[stringKey] = value;
+    } else {
+        dictIntKeyLookup[intKey] = value2;
+        dictIntValueLookup[intKey] = value;
+    }
+    i -= 1;
 }
 
 if (type == Types.STRING) {
-	if (dictStringKeyLookup.Size() != len) {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision"); // TODO: do a better job of figuring out where this collision is.
-	}
+    if (dictStringKeyLookup.Size() != len) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+    }
 } else {
-	if (dictIntKeyLookup.Size() != len) {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision"); // TODO: do a better job of figuring out where this collision is.
-	}
+    if (dictIntKeyLookup.Size() != len) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "Key collision"); // TODO: do a better job of figuring out where this collision is.
+    }
 }
 
 value = new Value(Types.DICTIONARY, new DictImpl(
-	dictIntKeyLookup,
-	dictIntValueLookup,
-	dictStringKeyLookup,
-	dictStringValueLookup,
-	len, 
-	type));
+    dictIntKeyLookup,
+    dictIntValueLookup,
+    dictStringKeyLookup,
+    dictStringValueLookup,
+    len,
+    type));
 
 @import("ValueStackCapacityCheck.cry");
 valueStack[valueStackSize] = value;

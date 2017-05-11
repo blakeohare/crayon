@@ -1,9 +1,9 @@
 ﻿if (argCount != 1) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list filter method", 1, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list filter method", 1, argCount));
 }
 value2 = funcArgs[0];
 if (value2.type != Types.FUNCTION) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list filter method requires a function pointer as its argument.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list filter method requires a function pointer as its argument.");
 }
 primitiveMethodToCoreLibraryFallback = true;
 functionId = p.primitiveMethodFunctionIdFallbackLookup[0];

@@ -15,25 +15,25 @@ namespace Crayon
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
-        
+
         public LibraryResourceDatabase Resources { get; private set; }
 
-		public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
-		{
-			return new Library(
-				this.Name, 
-				System.IO.Path.Combine(this.RootDirectory, "manifest.txt"), 
-				platform);
-		}
- 
+        public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
+        {
+            return new Library(
+                this.Name,
+                System.IO.Path.Combine(this.RootDirectory, "manifest.txt"),
+                platform);
+        }
+
         public Library(string name, string libraryManifestPath, Platform.AbstractPlatform nullablePlatform)
         {
             TODO.LibrariesNeedVersionNumber();
 
-			this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
+            this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
 
             this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
-            
+
             this.Name = name;
             this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
             string[] manifest = System.IO.File.ReadAllText(libraryManifestPath).Split('\n');
@@ -95,7 +95,7 @@ namespace Crayon
                     }
                 }
             }
-            
+
             this.CompileTimeConstants = new Dictionary<string, object>();
             foreach (string key in flagValues.Keys)
             {

@@ -11,7 +11,7 @@ namespace Crayon
         private int topIndex;
         private int topLength;
         private bool empty;
-        
+
         public TokenStream(IList<Token> tokens)
         {
             this.topIndex = 0;

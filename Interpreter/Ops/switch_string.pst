@@ -1,13 +1,13 @@
 ﻿valueStackSize -= 1;
 value = valueStack[valueStackSize];
 if (value.type == Types.STRING) {
-	string1 = ((string) value.internalValue);
-	stringSwitch = stringSwitches[row[0]];
-	if (stringSwitch.Contains(string1)) {
-		pc += stringSwitch[string1];
-	} else {
-		pc += row[1];
-	}
+    string1 = ((string) value.internalValue);
+    stringSwitch = stringSwitches[row[0]];
+    if (stringSwitch.Contains(string1)) {
+        pc += stringSwitch[string1];
+    } else {
+        pc += row[1];
+    }
 } else {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects a string.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects a string.");
 }

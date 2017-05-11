@@ -1,38 +1,38 @@
 ﻿if (esfData[pc] != null) {
-	intArray1 = esfData[pc];
-	pc = intArray1[1] - 1;
-	if (row[0] == 0) {
-		stack.returnValueTempStorage = VALUE_NULL;
-	} else {
-		stack.returnValueTempStorage = valueStack[(valueStackSize - 1)];
-	}
-	valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
-	stack.postFinallyBehavior = PostFinallyBehavior.RETURN;
+    intArray1 = esfData[pc];
+    pc = intArray1[1] - 1;
+    if (row[0] == 0) {
+        stack.returnValueTempStorage = VALUE_NULL;
+    } else {
+        stack.returnValueTempStorage = valueStack[(valueStackSize - 1)];
+    }
+    valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+    stack.postFinallyBehavior = PostFinallyBehavior.RETURN;
 } else {
-	if (stack.previous == null) {
-		return interpreterFinished(ec);
-	}
-	if (stack.markClassAsInitialized != 0) {
-		markClassAsInitialized(stack, stack.markClassAsInitialized);
-	}
-	if (stack.returnValueUsed) {
-		if (row[0] == 0) {
-			valueStackSize = stack.valueStackPopSize;
-			stack = stack.previous;
-			@import("ValueStackCapacityCheck.cry");
-			valueStack[valueStackSize] = VALUE_NULL;
-		} else {
-			value = valueStack[(valueStackSize - 1)];
-			valueStackSize = stack.valueStackPopSize;
-			stack = stack.previous;
-			valueStack[valueStackSize] = value;
-		}
-		valueStackSize += 1;
-	} else {
-		valueStackSize = stack.valueStackPopSize;
-		stack = stack.previous;
-	}
-	pc = stack.pc;
-	localsStackOffset = stack.localsStackOffset;
-	localsStackSetToken = stack.localsStackSetToken;
+    if (stack.previous == null) {
+        return interpreterFinished(ec);
+    }
+    if (stack.markClassAsInitialized != 0) {
+        markClassAsInitialized(stack, stack.markClassAsInitialized);
+    }
+    if (stack.returnValueUsed) {
+        if (row[0] == 0) {
+            valueStackSize = stack.valueStackPopSize;
+            stack = stack.previous;
+            @import("ValueStackCapacityCheck.cry");
+            valueStack[valueStackSize] = VALUE_NULL;
+        } else {
+            value = valueStack[(valueStackSize - 1)];
+            valueStackSize = stack.valueStackPopSize;
+            stack = stack.previous;
+            valueStack[valueStackSize] = value;
+        }
+        valueStackSize += 1;
+    } else {
+        valueStackSize = stack.valueStackPopSize;
+        stack = stack.previous;
+    }
+    pc = stack.pc;
+    localsStackOffset = stack.localsStackOffset;
+    localsStackSetToken = stack.localsStackSetToken;
 }

@@ -9,7 +9,7 @@ namespace Common
         private Dictionary<TKey, List<TValue>> lookup = new Dictionary<TKey, List<TValue>>();
 
         public Multimap() { }
-        
+
         public IEnumerable<TValue> this[TKey key]
         {
             get

@@ -12,6 +12,6 @@
         JAVA_AWT,
         JAVA_ANDROID,
         JAVASCRIPT_CANVAS,
-		RUBY_GOSU,
+        RUBY_GOSU,
     }
 }

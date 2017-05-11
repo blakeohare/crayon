@@ -113,7 +113,7 @@ namespace Platform
                             specifyInterpreterScope = true;
                         }
                     }
-                    
+
                     if (specifyInterpreterScope)
                     {
                         this.TranslateFunctionInvocationInterpreterScoped(sb, (FunctionReference)funcInvocation.Root, funcInvocation.Args);

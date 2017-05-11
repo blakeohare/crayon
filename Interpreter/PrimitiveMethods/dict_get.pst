@@ -1,42 +1,42 @@
 ﻿if (argCount != 1 && argCount != 2) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Dictionary get method requires 1 or 2 arguments.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Dictionary get method requires 1 or 2 arguments.");
 }
 
 // fallback
 if (argCount == 2) {
-	output = funcArgs[1];
+    output = funcArgs[1];
 } else {
-	output = VALUE_NULL;
+    output = VALUE_NULL;
 }
 
 value = funcArgs[0]; // key
 
 switch (value.type) {
-	case Types.INTEGER:
-		int1 = (int) value.internalValue;
-		if (dictImpl.keyIntLookup.Contains(int1)) {
-			output = dictImpl.valueIntLookup[int1];
-		}
-		break;
-		
-	case Types.INSTANCE:
-		objInstance1 = (ObjectInstance) value.internalValue;
-		int1 = objInstance1.objectId;
-		if (dictImpl.keyIntLookup.Contains(int1)) {
-			output = dictImpl.valueIntLookup[int1];
-		}
-		break;
-		
-	case Types.STRING:
-		string1 = (string) value.internalValue;
-		if (dictImpl.keyStringLookup.Contains(string1)) {
-			output = dictImpl.valueStringLookup[string1];
-		}
-		break;
-		
-	default:
-		// Don't warn that the type is wrong outright. Just let the fallback value return.
-		// Which is technically correct. The best kind of correct.
-		int1 = 0;
-		break;
+    case Types.INTEGER:
+        int1 = (int) value.internalValue;
+        if (dictImpl.keyIntLookup.Contains(int1)) {
+            output = dictImpl.valueIntLookup[int1];
+        }
+        break;
+
+    case Types.INSTANCE:
+        objInstance1 = (ObjectInstance) value.internalValue;
+        int1 = objInstance1.objectId;
+        if (dictImpl.keyIntLookup.Contains(int1)) {
+            output = dictImpl.valueIntLookup[int1];
+        }
+        break;
+
+    case Types.STRING:
+        string1 = (string) value.internalValue;
+        if (dictImpl.keyStringLookup.Contains(string1)) {
+            output = dictImpl.valueStringLookup[string1];
+        }
+        break;
+
+    default:
+        // Don't warn that the type is wrong outright. Just let the fallback value return.
+        // Which is technically correct. The best kind of correct.
+        int1 = 0;
+        break;
 }

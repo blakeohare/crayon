@@ -98,7 +98,7 @@ namespace Crayon.ParseTree
                 return (ClassDefinition)ex;
             }
 
-            // Still throw an exception if the found item is not a class. This is used by code to check if 
+            // Still throw an exception if the found item is not a class. This is used by code to check if
             // something is a valid variable name or a class name. Colliding with something else is bad.
             throw new ParserException(nameToken, "This is not a class.");
         }

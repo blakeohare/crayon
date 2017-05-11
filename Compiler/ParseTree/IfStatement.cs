@@ -57,7 +57,6 @@ namespace Crayon.ParseTree
                     this.FalseCode[this.FalseCode.Length - 1].IsTerminator;
             }
         }
-        
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
@@ -88,7 +87,7 @@ namespace Crayon.ParseTree
             }
             else
             {
-                // branch the variable ID allocator. 
+                // branch the variable ID allocator.
                 VariableIdAllocator trueVars = varIds.Clone();
                 VariableIdAllocator falseVars = varIds.Clone();
 

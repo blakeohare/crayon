@@ -8,7 +8,7 @@ namespace Pastel
         private Token[] tokens;
         private int index;
         private int length;
-        
+
         public TokenStream(IList<Token> tokens)
         {
             this.index = 0;

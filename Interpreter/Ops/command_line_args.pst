@@ -1,7 +1,7 @@
 ﻿stringList = Core.CommandLineArgs();
 list1 = new List<Value>();
 for (i = 0; i < stringList.Size(); i += 1) {
-	list1.Add(buildString(stringList[i]));
+    list1.Add(buildString(stringList[i]));
 }
 value = new Value(Types.LIST, list1);
 @import("ValueStackCapacityCheck.cry");

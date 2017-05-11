@@ -18,7 +18,7 @@ namespace Pastel.Nodes
         {
             this.NativeFunctionId = nativeFunctionId;
             this.Context = context;
-            
+
             this.ReturnType = NativeFunctionUtil.GetNativeFunctionReturnType(this.NativeFunctionId);
             this.ArgTypes = NativeFunctionUtil.GetNativeFunctionArgTypes(this.NativeFunctionId);
             this.ArgTypesIsRepeated = NativeFunctionUtil.GetNativeFunctionIsArgTypeRepeated(this.NativeFunctionId);

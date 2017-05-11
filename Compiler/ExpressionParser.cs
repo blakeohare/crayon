@@ -242,7 +242,7 @@ namespace Crayon
                 {
                     Token dotToken = tokens.Pop();
                     Token stepToken = tokens.Pop();
-                    // HACK alert: "class" is a valid field on a class. 
+                    // HACK alert: "class" is a valid field on a class.
                     // ParserVerifyIdentifier is invoked downstream for non-resolved fields.
                     if (stepToken.Value != "class")
                     {
@@ -327,7 +327,7 @@ namespace Crayon
             if (next == "null") return new NullConstant(tokens.Pop(), owner);
             if (next == "true") return new BooleanConstant(tokens.Pop(), true, owner);
             if (next == "false") return new BooleanConstant(tokens.Pop(), false, owner);
-            
+
             Token peekToken = tokens.Peek();
             if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
             if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);

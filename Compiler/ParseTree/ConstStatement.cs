@@ -53,13 +53,13 @@ namespace Crayon.ParseTree
             parser.RegisterConst(this.NameToken, this.Expression);
             return new Executable[0];
         }
-        
+
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
             return this;
         }
-        
+
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
         internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }

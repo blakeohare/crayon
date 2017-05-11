@@ -75,7 +75,7 @@ namespace Crayon.ParseTree
                 throw new ParserException(switchToken, "Switches need at least 1 case to indicate type.");
             }
         }
-        
+
         internal override IList<Executable> Resolve(Parser parser)
         {
             TODO.MakeSwitchStatementFallthroughsErrors();

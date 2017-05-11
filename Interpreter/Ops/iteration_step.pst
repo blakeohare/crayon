@@ -6,27 +6,27 @@ value = valueStack[(valueStackSize - 1)]; // list, string (or possibly a new Typ
 int1 = ((int) value3.internalValue); // iterator index
 int2 = ((int) value2.internalValue); // iterating variable local scope ID
 if (value.type == Types.LIST) {
-	list1 = ((List<Value>) value.internalValue); // the actual list
-	len = list1.Size();
-	bool1 = true;
+    list1 = ((List<Value>) value.internalValue); // the actual list
+    len = list1.Size();
+    bool1 = true;
 } else {
-	string2 = ((string) value.internalValue); // the actual string
-	len = string2.Size();
-	bool1 = false;
+    string2 = ((string) value.internalValue); // the actual string
+    len = string2.Size();
+    bool1 = false;
 }
 
 if (int1 < len) {
-	if (bool1) {
-		value = list1[int1];
-	} else {
-		// Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
-		value = buildCommonString(Core.CharToString(string2[int1]));
-	}
-	int3 = localsStackOffset + int2;
-	localsStack[int3] = value;
-	localsStackSet[int3] = localsStackSetToken;
+    if (bool1) {
+        value = list1[int1];
+    } else {
+        // Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
+        value = buildCommonString(Core.CharToString(string2[int1]));
+    }
+    int3 = localsStackOffset + int2;
+    localsStack[int3] = value;
+    localsStackSet[int3] = localsStackSetToken;
 } else {
-	pc += row[0];
+    pc += row[0];
 }
 
 // This feels cheesey, but all other solutions I can think of are cheesier.

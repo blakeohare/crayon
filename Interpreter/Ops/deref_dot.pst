@@ -1,72 +1,72 @@
 ﻿value = valueStack[(valueStackSize - 1)];
 nameId = row[0];
 switch (value.type) {
-	case Types.INSTANCE:
-		objInstance1 = ((ObjectInstance) value.internalValue);
-		classInfo = classTable[objInstance1.classId];
-		intIntDict1 = classInfo.globalIdToMemberId;
-		if (intIntDict1.Contains(nameId)) {
-			int1 = intIntDict1[nameId];
-			functionId = classInfo.functionIds[int1];
-			if (functionId == -1) {
-				output = objInstance1.members[int1];
-			} else {
-				output = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, value, objInstance1.classId, functionId));
-			}
-		} else {
-			output = null;
-		}
-		break;
-	case Types.STRING:
-		if (p.lengthId == nameId) {
-			int2 = Core.ForceParens(((string) value.internalValue)).Size();
-			output = buildInteger(int2);
-		} else {
-			output = null;
-		}
-		break;
-	case Types.LIST:
-		if (p.lengthId == nameId) {
-			if (@ext_boolean("IS_PHP")) {
-				int2 = ((List<Value>) value.internalValue).Size();
-			} else {
-				int2 = Core.ForceParens(((List<Value>) value.internalValue)).Size();
-			}
-			output = buildInteger(int2);
-		} else {
-			output = null;
-		}
-		break;
-	case Types.DICTIONARY:
-		if (p.lengthId == nameId) {
-			dictImpl = ((DictImpl) value.internalValue);
-			output = buildInteger(dictImpl.size);
-		} else {
-			output = null;
-		}
-		break;
-	default:
-		if (value.type == Types.NULL) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Derferenced a field from null.");
-		}
-		output = null;
-		break;
+    case Types.INSTANCE:
+        objInstance1 = ((ObjectInstance) value.internalValue);
+        classInfo = classTable[objInstance1.classId];
+        intIntDict1 = classInfo.globalIdToMemberId;
+        if (intIntDict1.Contains(nameId)) {
+            int1 = intIntDict1[nameId];
+            functionId = classInfo.functionIds[int1];
+            if (functionId == -1) {
+                output = objInstance1.members[int1];
+            } else {
+                output = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, value, objInstance1.classId, functionId));
+            }
+        } else {
+            output = null;
+        }
+        break;
+    case Types.STRING:
+        if (p.lengthId == nameId) {
+            int2 = Core.ForceParens(((string) value.internalValue)).Size();
+            output = buildInteger(int2);
+        } else {
+            output = null;
+        }
+        break;
+    case Types.LIST:
+        if (p.lengthId == nameId) {
+            if (@ext_boolean("IS_PHP")) {
+                int2 = ((List<Value>) value.internalValue).Size();
+            } else {
+                int2 = Core.ForceParens(((List<Value>) value.internalValue)).Size();
+            }
+            output = buildInteger(int2);
+        } else {
+            output = null;
+        }
+        break;
+    case Types.DICTIONARY:
+        if (p.lengthId == nameId) {
+            dictImpl = ((DictImpl) value.internalValue);
+            output = buildInteger(dictImpl.size);
+        } else {
+            output = null;
+        }
+        break;
+    default:
+        if (value.type == Types.NULL) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Derferenced a field from null.");
+        }
+        output = null;
+        break;
 }
 if (output == null) {
-	output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
-	if (output == null) {
-		if (value.type == Types.NULL) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Tried to dereference a field on null.");
-		}
-		if (value.type == Types.INSTANCE) {
-			objInstance1 = ((ObjectInstance) value.internalValue);
-			classId = objInstance1.classId;
-			classInfo = classTable[classId];
-			string1 = Core.StringConcatAll(classInfo.fullyQualifiedName, " instance");
-		} else {
-			string1 = getTypeFromId(value.type);
-		}
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, Core.StringConcatAll(string1, " does not have that field."));
-	}
+    output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
+    if (output == null) {
+        if (value.type == Types.NULL) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Tried to dereference a field on null.");
+        }
+        if (value.type == Types.INSTANCE) {
+            objInstance1 = ((ObjectInstance) value.internalValue);
+            classId = objInstance1.classId;
+            classInfo = classTable[classId];
+            string1 = Core.StringConcatAll(classInfo.fullyQualifiedName, " instance");
+        } else {
+            string1 = getTypeFromId(value.type);
+        }
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, Core.StringConcatAll(string1, " does not have that field."));
+    }
 }
 valueStack[(valueStackSize - 1)] = output;

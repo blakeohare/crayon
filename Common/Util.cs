@@ -165,7 +165,7 @@ namespace Common
         {
             // TODO: scaling
 #if OSX
-			filePath = filePath.Replace('\\', '/');
+            filePath = filePath.Replace('\\', '/');
 #endif
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
             System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(filePath);

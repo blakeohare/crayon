@@ -44,7 +44,7 @@ namespace Pastel.Nodes
             {
                 throw new ParserException(this.FirstToken, "The variable '" + this.Name + "'is not defined.");
             }
-            
+
             return this;
         }
 

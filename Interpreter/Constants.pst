@@ -15,7 +15,7 @@
     CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
     CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
     CALL_LIB_FUNCTION_DYNAMIC,
-	CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
+    CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
     COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
     CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
     CORE_FUNCTION, // 1: function ID
@@ -66,135 +66,134 @@
 // Needs to be in sync with BinaryOps.cs
 enum BinaryOps
 {
-	ADDITION = 0,
-	SUBTRACTION = 1,
-	MULTIPLICATION = 2,
-	DIVISION = 3,
-	MODULO = 4,
-	EXPONENT = 5,
-	BITWISE_AND = 6,
-	BITWISE_OR = 7,
-	BITWISE_XOR = 8,
-	BIT_SHIFT_LEFT = 9,
-	BIT_SHIFT_RIGHT = 10,
-	LESS_THAN = 11,
-	LESS_THAN_OR_EQUAL = 12,
-	GREATER_THAN = 13,
-	GREATER_THAN_OR_EQUAL = 14,
+    ADDITION = 0,
+    SUBTRACTION = 1,
+    MULTIPLICATION = 2,
+    DIVISION = 3,
+    MODULO = 4,
+    EXPONENT = 5,
+    BITWISE_AND = 6,
+    BITWISE_OR = 7,
+    BITWISE_XOR = 8,
+    BIT_SHIFT_LEFT = 9,
+    BIT_SHIFT_RIGHT = 10,
+    LESS_THAN = 11,
+    LESS_THAN_OR_EQUAL = 12,
+    GREATER_THAN = 13,
+    GREATER_THAN_OR_EQUAL = 14,
 }
 
 const int MAX_OP = BinaryOps.GREATER_THAN_OR_EQUAL + 1;
 
 // Needs to be in sync with FunctionInvocationType.cs
 enum FunctionInvocationType {
-	NORMAL_FUNCTION = 1,
-	STATIC_METHOD = 2,
-	LOCAL_METHOD = 3,
-	POINTER_PROVIDED = 4,
-	FIELD_INVOCATION = 5,
-	CONSTRUCTOR = 6,
-	BASE_CONSTRUCTOR = 7,
-	STATIC_CONSTRUCTOR = 8,
-	PRIMITIVE_METHOD = 9,
+    NORMAL_FUNCTION = 1,
+    STATIC_METHOD = 2,
+    LOCAL_METHOD = 3,
+    POINTER_PROVIDED = 4,
+    FIELD_INVOCATION = 5,
+    CONSTRUCTOR = 6,
+    BASE_CONSTRUCTOR = 7,
+    STATIC_CONSTRUCTOR = 8,
+    PRIMITIVE_METHOD = 9,
 }
 
 enum FunctionPointerType {
-	FUNCTION = 1,
-	METHOD = 2,
-	STATIC_METHOD = 3,
-	PRIMITIVE_METHOD = 4,
+    FUNCTION = 1,
+    METHOD = 2,
+    STATIC_METHOD = 3,
+    PRIMITIVE_METHOD = 4,
 }
 
 enum Types {
-	NULL = @ext_integer("TYPE_ID_NULL"),
-	BOOLEAN = @ext_integer("TYPE_ID_BOOLEAN"),
-	INTEGER = @ext_integer("TYPE_ID_INTEGER"),
-	FLOAT = @ext_integer("TYPE_ID_FLOAT"),
-	STRING = @ext_integer("TYPE_ID_STRING"),
-	LIST = @ext_integer("TYPE_ID_LIST"),
-	DICTIONARY = @ext_integer("TYPE_ID_DICTIONARY"),
-	INSTANCE = @ext_integer("TYPE_ID_INSTANCE"),
-	FUNCTION = @ext_integer("TYPE_ID_FUNCTION"),
-	CLASS = @ext_integer("TYPE_ID_CLASS"),
+    NULL = @ext_integer("TYPE_ID_NULL"),
+    BOOLEAN = @ext_integer("TYPE_ID_BOOLEAN"),
+    INTEGER = @ext_integer("TYPE_ID_INTEGER"),
+    FLOAT = @ext_integer("TYPE_ID_FLOAT"),
+    STRING = @ext_integer("TYPE_ID_STRING"),
+    LIST = @ext_integer("TYPE_ID_LIST"),
+    DICTIONARY = @ext_integer("TYPE_ID_DICTIONARY"),
+    INSTANCE = @ext_integer("TYPE_ID_INSTANCE"),
+    FUNCTION = @ext_integer("TYPE_ID_FUNCTION"),
+    CLASS = @ext_integer("TYPE_ID_CLASS"),
 }
 
 const int MAX_TYPE = (Types.CLASS + 1);
 
 enum InterpreterResultStatus {
-	FINISHED = 1,
-	SUSPENDED = 2,
-	FATAL_ERROR = 3,
-	SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
-	REINVOKE = 5, // interpret should immediately re-invoke itself instead of returning result. This is generally done as a clean stop and re-start on a particular function such as the exception invoker in Core.
+    FINISHED = 1,
+    SUSPENDED = 2,
+    FATAL_ERROR = 3,
+    SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
+    REINVOKE = 5, // interpret should immediately re-invoke itself instead of returning result. This is generally done as a clean stop and re-start on a particular function such as the exception invoker in Core.
 }
 
 enum CoreExceptionTypes {
-	// These absolutely must be in sync with Core/embed.cry's _LIB_CORE_ExType
-	FATAL = 0,
-	GENERIC_EXCEPTION = 1,
-	ASSERTION_FAILED = 2,
-	DIVISION_BY_ZERO = 3,
-	INDEX_OUT_OF_RANGE = 4,
-	INVALID_ARGUMENT = 5,
-	INVALID_ASSIGNMENT = 6,
-	INVALID_INVOCATION = 7,
-	INVALID_KEY = 8,
-	KEY_NOT_FOUND = 9,
-	NULL_REFERENCE = 10,
-	UNASSIGNED_VARIABLE = 11,
-	UNKNOWN_FIELD = 12,
-	UNSUPPORTED_OPERATION = 13,
+    // These absolutely must be in sync with Core/embed.cry's _LIB_CORE_ExType
+    FATAL = 0,
+    GENERIC_EXCEPTION = 1,
+    ASSERTION_FAILED = 2,
+    DIVISION_BY_ZERO = 3,
+    INDEX_OUT_OF_RANGE = 4,
+    INVALID_ARGUMENT = 5,
+    INVALID_ASSIGNMENT = 6,
+    INVALID_INVOCATION = 7,
+    INVALID_KEY = 8,
+    KEY_NOT_FOUND = 9,
+    NULL_REFERENCE = 10,
+    UNASSIGNED_VARIABLE = 11,
+    UNKNOWN_FIELD = 12,
+    UNSUPPORTED_OPERATION = 13,
 }
 
 const int INTEGER_POSITIVE_CACHE_SIZE = 1025;
 const int INTEGER_NEGATIVE_CACHE_SIZE = 129;
 
 enum PrimitiveMethodName {
-	ADD,
-	ARG_COUNT_MAX,
-	ARG_COUNT_MIN,
-	CHOICE,
-	CLEAR,
-	CLONE,
-	CONCAT,
-	CONTAINS,
-	CREATE_INSTANCE,
-	ENDS_WITH,
-	FILTER,
-	GET,
-	GET_NAME,
-	INDEX_OF,
-	INSERT,
-	INVOKE,
-	IS_A,
-	JOIN,
-	KEYS,
-	LOWER,
-	LTRIM,
-	MAP,
-	MERGE,
-	POP,
-	REMOVE,
-	REPLACE,
-	REVERSE,
-	RTRIM,
-	SHUFFLE,
-	SORT,
-	SPLIT,
-	STARTS_WITH,
-	TRIM,
-	UPPER,
-	VALUES,
+    ADD,
+    ARG_COUNT_MAX,
+    ARG_COUNT_MIN,
+    CHOICE,
+    CLEAR,
+    CLONE,
+    CONCAT,
+    CONTAINS,
+    CREATE_INSTANCE,
+    ENDS_WITH,
+    FILTER,
+    GET,
+    GET_NAME,
+    INDEX_OF,
+    INSERT,
+    INVOKE,
+    IS_A,
+    JOIN,
+    KEYS,
+    LOWER,
+    LTRIM,
+    MAP,
+    MERGE,
+    POP,
+    REMOVE,
+    REPLACE,
+    REVERSE,
+    RTRIM,
+    SHUFFLE,
+    SORT,
+    SPLIT,
+    STARTS_WITH,
+    TRIM,
+    UPPER,
+    VALUES,
 }
 
 /*
-	Once a finally block ends, what should the VM do?
-	This is all of course superceded by the presence of an uncaught exception.
+    Once a finally block ends, what should the VM do?
+    This is all of course superceded by the presence of an uncaught exception.
 */
 enum PostFinallyBehavior {
-	NOTHING = 0,
-	BREAK = 1,
-	CONTINUE = 2,
-	RETURN = 3,
+    NOTHING = 0,
+    BREAK = 1,
+    CONTINUE = 2,
+    RETURN = 3,
 }
-

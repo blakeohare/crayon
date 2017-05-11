@@ -25,7 +25,7 @@ namespace Crayon
         {
             return systemLibraryPathsByName.ContainsKey(name);
         }
-        
+
         public Library GetLibraryFromKey(string key)
         {
             Library output;
@@ -66,7 +66,7 @@ namespace Crayon
         }
 
         private static Dictionary<string, string> systemLibraryPathsByName = null;
-        
+
         public List<Library> GetAllAvailableLibraries(Platform.AbstractPlatform platform)
         {
             Dictionary<string, string> allLibraries = GetAvailableLibraryPathsByLibraryName(null, null);
@@ -107,7 +107,7 @@ namespace Crayon
                 (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
 
 #if OSX
-				crayonPaths = crayonPaths.Replace(':', ';');
+                crayonPaths = crayonPaths.Replace(':', ';');
 #endif
             string[] paths = crayonPaths.Split(';');
             foreach (string path in paths)
@@ -197,7 +197,7 @@ namespace Crayon
                 }
 
                 string platformName = parser.BuildContext.Platform;
-				Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
+                Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
                 library = new Library(name, libraryManifestPath, platform);
 
                 this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;

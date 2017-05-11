@@ -1,12 +1,12 @@
 ﻿if (argCount != 1) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list concat method", 1, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list concat method", 1, argCount));
 }
 value2 = funcArgs[0];
 if (value2.type != Types.LIST) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list concat methods requires a list as an argument.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list concat methods requires a list as an argument.");
 }
 list2 = ((List<Value>) value2.internalValue);
 len = list2.Size();
 for (i = 0; i < len; i += 1) {
-	list1.Add(list2[i]);
+    list1.Add(list2[i]);
 }

@@ -1,11 +1,11 @@
 ﻿if (argCount != 1) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("class isA method", 1, argCount));
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("class isA method", 1, argCount));
 }
 
 int1 = classValue.classId;
 value = funcArgs[0];
 if (value.type != Types.CLASS) {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "class isA method requires another class reference.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "class isA method requires another class reference.");
 }
 
 classValue = ((ClassValue) value.internalValue);
@@ -13,5 +13,5 @@ int2 = classValue.classId;
 
 output = VALUE_FALSE;
 if (isClassASubclassOf(int1, int2)) {
-	output = VALUE_TRUE;
+    output = VALUE_TRUE;
 }

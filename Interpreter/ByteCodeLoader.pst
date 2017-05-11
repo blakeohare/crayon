@@ -3,159 +3,159 @@
 // by passing in a reference to an integer array of length 1.
 
 string read_till(Array<int> index, string raw, int length, char char) {
-	List<char> output = new List<char>();
-	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
-		bool ctn = true;
-		char c = ' ';
-		while (ctn) {
-			c = raw[index[0]];
-			if (c == char) {
-				ctn = false;
-			} else {
-				output.Add(c);
-			}
-			index[0] = (index[0] + 1);
-		}
-	}
-	return output.Join();
+    List<char> output = new List<char>();
+    if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
+        bool ctn = true;
+        char c = ' ';
+        while (ctn) {
+            c = raw[index[0]];
+            if (c == char) {
+                ctn = false;
+            } else {
+                output.Add(c);
+            }
+            index[0] = (index[0] + 1);
+        }
+    }
+    return output.Join();
 }
 
 int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
-	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
-		int num = 0;
-		char c = raw[pindex[0]];
-		pindex[0] = (pindex[0] + 1);
-		if (c == '%') {
-			string value = read_till(pindex, raw, length, '%');
-			num = Core.ParseInt(value);
-		} else if (c == '@') {
-			num = read_integer(pindex, raw, length, alphaNums);
-			num *= 62;
-			num += read_integer(pindex, raw, length, alphaNums);
-		} else if (c == '#') {
-			num = read_integer(pindex, raw, length, alphaNums);
-			num *= 62;
-			num += read_integer(pindex, raw, length, alphaNums);
-			num *= 62;
-			num += read_integer(pindex, raw, length, alphaNums);
-		} else if (c == '^') {
-			num = -1 * read_integer(pindex, raw, length, alphaNums);
-		} else {
-			Core.EmitComment("TODO: string.IndexOfChar(c)");
-			num = alphaNums.IndexOf(Core.CharToString(c));
-			if (num == -1) {
-				// TODO: assert
-			}
-		}
-	}
-	return num;
+    if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
+        int num = 0;
+        char c = raw[pindex[0]];
+        pindex[0] = (pindex[0] + 1);
+        if (c == '%') {
+            string value = read_till(pindex, raw, length, '%');
+            num = Core.ParseInt(value);
+        } else if (c == '@') {
+            num = read_integer(pindex, raw, length, alphaNums);
+            num *= 62;
+            num += read_integer(pindex, raw, length, alphaNums);
+        } else if (c == '#') {
+            num = read_integer(pindex, raw, length, alphaNums);
+            num *= 62;
+            num += read_integer(pindex, raw, length, alphaNums);
+            num *= 62;
+            num += read_integer(pindex, raw, length, alphaNums);
+        } else if (c == '^') {
+            num = -1 * read_integer(pindex, raw, length, alphaNums);
+        } else {
+            Core.EmitComment("TODO: string.IndexOfChar(c)");
+            num = alphaNums.IndexOf(Core.CharToString(c));
+            if (num == -1) {
+                // TODO: assert
+            }
+        }
+    }
+    return num;
 }
 
 string read_string(Array<int> pindex, string raw, int length, string alphaNums) {
-	List<string> output = new List<string>();
-	if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
-		bool cont = true;
-		char c = ' ';
-		while (cont) {
-			c = raw[pindex[0]];
-			pindex[0] = (pindex[0] + 1);
-			if (c == '@') {
-				int repeat = read_integer(pindex, raw, length, alphaNums);
-				string last = output[(output.Size() - 1)];
-				while (repeat > 0) {
-					output.Add(last);
-					repeat -= 1;
-				}
-			} else if (c == '~') {
-				int d1 = read_integer(pindex, raw, length, alphaNums);
-				int d2 = read_integer(pindex, raw, length, alphaNums);
-				int charcode = (d1 * 62) + d2;
-				output.Add(Core.StringFromCharCode(charcode));
-			} else if (c == '`') {
-				int d1 = read_integer(pindex, raw, length, alphaNums);
-				int d2 = read_integer(pindex, raw, length, alphaNums);
-				int d3 = read_integer(pindex, raw, length, alphaNums);
-				int d4 = read_integer(pindex, raw, length, alphaNums);
-				int charcode = (((((d1 * 62) + d2) * 62) + d3) * 62) + d4;
-				output.Add(Core.StringFromCharCode(charcode));
-			} else if (c == '%') {
-				cont = false;
-			} else {
-				output.Add(Core.CharToString(c));
-			}
-		}
-	}
-	return output.Join("");
+    List<string> output = new List<string>();
+    if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
+        bool cont = true;
+        char c = ' ';
+        while (cont) {
+            c = raw[pindex[0]];
+            pindex[0] = (pindex[0] + 1);
+            if (c == '@') {
+                int repeat = read_integer(pindex, raw, length, alphaNums);
+                string last = output[(output.Size() - 1)];
+                while (repeat > 0) {
+                    output.Add(last);
+                    repeat -= 1;
+                }
+            } else if (c == '~') {
+                int d1 = read_integer(pindex, raw, length, alphaNums);
+                int d2 = read_integer(pindex, raw, length, alphaNums);
+                int charcode = (d1 * 62) + d2;
+                output.Add(Core.StringFromCharCode(charcode));
+            } else if (c == '`') {
+                int d1 = read_integer(pindex, raw, length, alphaNums);
+                int d2 = read_integer(pindex, raw, length, alphaNums);
+                int d3 = read_integer(pindex, raw, length, alphaNums);
+                int d4 = read_integer(pindex, raw, length, alphaNums);
+                int charcode = (((((d1 * 62) + d2) * 62) + d3) * 62) + d4;
+                output.Add(Core.StringFromCharCode(charcode));
+            } else if (c == '%') {
+                cont = false;
+            } else {
+                output.Add(Core.CharToString(c));
+            }
+        }
+    }
+    return output.Join("");
 }
 
 Code loadByteCode() {
-	if (@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
-		// PHP basically bypasses all the parsing as its bytecode is saved as a PHP file that returns these uncompressed
-		// values directly. Parsing this all on every HTTP request would be a waste of CPU, whereas doing it once for
-		// the rest of the traditional start-once-run-for-several-minutes apps that's okay.
-		Array<int> ops = Core.ByteCodeGetOps();
-		Array<int> iargs = Core.ByteCOdeGetIntArgs();
-		Array<string> sargs = Core.ByteCOdeGetStringArgs();
-	} else {
-		string raw = Core.ReadByteCodeFile();
+    if (@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
+        // PHP basically bypasses all the parsing as its bytecode is saved as a PHP file that returns these uncompressed
+        // values directly. Parsing this all on every HTTP request would be a waste of CPU, whereas doing it once for
+        // the rest of the traditional start-once-run-for-several-minutes apps that's okay.
+        Array<int> ops = Core.ByteCodeGetOps();
+        Array<int> iargs = Core.ByteCOdeGetIntArgs();
+        Array<string> sargs = Core.ByteCOdeGetStringArgs();
+    } else {
+        string raw = Core.ReadByteCodeFile();
 
-		Array<int> index = new Array<int>(1);
-		index[0] = 0;
-		int length = raw.Size();
-		
-		string header = read_till(index, raw, length, '@');
-		if (header != "CRAYON") {
-			// TODO: assert
-		}
-		
-		string alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-		int opCount = read_integer(index, raw, length, alphaNums);
-		
-		Array<int> ops = new Array<int>(opCount);
-		Array<Array<int>> iargs = new Array<Array<int>>(opCount);
-		Array<string> sargs = new Array<string>(opCount);
-		char c = ' ';
-		int argc = 0;
-		int j = 0;
-		string stringarg = null;
-		bool stringPresent = false;
-		int iarg = 0;
-		Array<int> iarglist = null;
+        Array<int> index = new Array<int>(1);
+        index[0] = 0;
+        int length = raw.Size();
 
-		for (int i = 0; i < opCount; i += 1) {
-			c = raw[index[0]];
-			index[0] = (index[0] + 1);
-			argc = 0;
-			stringPresent = true;
-			if (c == '!') argc = 1;
-			else if (c == '&') argc = 2;
-			else if (c == '*') argc = 3;
-			else {
-				if (c != '~') {
-					stringPresent = false;
-					index[0] = (index[0] - 1);
-				}
-				argc = read_integer(index, raw, length, alphaNums);
-			}
+        string header = read_till(index, raw, length, '@');
+        if (header != "CRAYON") {
+            // TODO: assert
+        }
 
-			iarglist = new Array<int>((argc - 1));
-			for (j = 0; j < argc; j += 1) {
-				iarg = read_integer(index, raw, length, alphaNums);
-				if (j == 0) {
-					ops[i] = iarg;
-				} else {
-					iarglist[(j - 1)] = iarg;
-				}
-			}
-			iargs[i] = iarglist;
-			if (stringPresent) {
-				stringarg = read_string(index, raw, length, alphaNums);
-			} else {
-				stringarg = null;
-			}
-			sargs[i] = stringarg;
-		}
-	}
+        string alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        int opCount = read_integer(index, raw, length, alphaNums);
 
-	return new Code(ops, iargs, sargs);
+        Array<int> ops = new Array<int>(opCount);
+        Array<Array<int>> iargs = new Array<Array<int>>(opCount);
+        Array<string> sargs = new Array<string>(opCount);
+        char c = ' ';
+        int argc = 0;
+        int j = 0;
+        string stringarg = null;
+        bool stringPresent = false;
+        int iarg = 0;
+        Array<int> iarglist = null;
+
+        for (int i = 0; i < opCount; i += 1) {
+            c = raw[index[0]];
+            index[0] = (index[0] + 1);
+            argc = 0;
+            stringPresent = true;
+            if (c == '!') argc = 1;
+            else if (c == '&') argc = 2;
+            else if (c == '*') argc = 3;
+            else {
+                if (c != '~') {
+                    stringPresent = false;
+                    index[0] = (index[0] - 1);
+                }
+                argc = read_integer(index, raw, length, alphaNums);
+            }
+
+            iarglist = new Array<int>((argc - 1));
+            for (j = 0; j < argc; j += 1) {
+                iarg = read_integer(index, raw, length, alphaNums);
+                if (j == 0) {
+                    ops[i] = iarg;
+                } else {
+                    iarglist[(j - 1)] = iarg;
+                }
+            }
+            iargs[i] = iarglist;
+            if (stringPresent) {
+                stringarg = read_string(index, raw, length, alphaNums);
+            } else {
+                stringarg = null;
+            }
+            sargs[i] = stringarg;
+        }
+    }
+
+    return new Code(ops, iargs, sargs);
 }

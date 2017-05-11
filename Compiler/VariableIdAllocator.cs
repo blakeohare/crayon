@@ -5,9 +5,9 @@ namespace Crayon
     internal enum VariableIdAllocPhase
     {
         REGISTER = 0x1,
-        
+
         ALLOC = 0x2,
-        
+
         REGISTER_AND_ALLOC = 0x3,
     }
 

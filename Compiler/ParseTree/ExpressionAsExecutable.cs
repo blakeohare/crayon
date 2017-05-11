@@ -36,13 +36,13 @@ namespace Crayon.ParseTree
 
             return Listify(this);
         }
-        
+
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
             return this;
         }
-        
+
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
             this.Expression.GetAllVariablesReferenced(vars);

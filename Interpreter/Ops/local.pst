@@ -1,8 +1,8 @@
 ﻿int1 = localsStackOffset + row[0];
 if (localsStackSet[int1] == localsStackSetToken) {
-	@import("ValueStackCapacityCheck.cry");
-	valueStack[valueStackSize] = localsStack[int1];
-	valueStackSize += 1;
+    @import("ValueStackCapacityCheck.cry");
+    valueStack[valueStackSize] = localsStack[int1];
+    valueStackSize += 1;
 } else {
-	return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNASSIGNED_VARIABLE, "Variable used before it was set.");
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNASSIGNED_VARIABLE, "Variable used before it was set.");
 }

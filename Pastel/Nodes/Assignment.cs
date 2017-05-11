@@ -48,7 +48,7 @@ namespace Pastel.Nodes
 
         internal override Executable ResolveWithTypeContext(PastelCompiler compiler)
         {
-            
+
             if (this.Target is BracketIndex)
             {
                 if (this.OpToken.Value != "=")

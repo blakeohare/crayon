@@ -670,22 +670,22 @@ namespace Crayon
                 /*
                     Parse patterns:
                         All exceptions:
-                            1a: catch { ... } 
+                            1a: catch { ... }
                             1b: catch (e) { ... }
 
                         A certain exception:
                             2a: catch (ExceptionName) { ... }
                             2b: catch (ExceptionName e) { ... }
-                    
+
                         Certain exceptions:
                             3a: catch (ExceptionName1 | ExceptionName2) { ... }
                             3b: catch (ExceptionName1 | ExceptionName2 e) { ... }
-                    
+
                     Non-Context-Free alert:
-                        Note that if the exception variable does not contain a '.' character, 1b and 2a are 
+                        Note that if the exception variable does not contain a '.' character, 1b and 2a are
                         ambiguous at parse time. Treat them both as 1b and then if the classname resolution
                         fails, treat this as a variable.
-                        
+
                         This is actually kind of bad because a typo in the classname will not be known.
                         e.g "catch (Excpetion) {" will compile as a variable called "Excpetion"
 

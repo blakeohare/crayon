@@ -1,646 +1,646 @@
 ﻿switch (row[0]) {
-	case 1:
-		Core.EmitComment("parseInt");
-		@import("FrameworkFunctions/1_arg.cry");
-		output = VALUE_NULL;
-		if (arg1.type == Types.STRING) {
-			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
-			if (Core.IsValidInteger(string1)) {
-				output = buildInteger(Core.ParseInt(string1));
-			}
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseInt requires a string argument.");
-		}
-		break;
-	case 2:
-		Core.EmitComment("parseFloat");
-		@import("FrameworkFunctions/1_arg.cry");
-		output = VALUE_NULL;
-		if (arg1.type == Types.STRING) {
-			string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
-			Core.TryParseFloat(string1, floatList1);
-			if (floatList1[0] >= 0) {
-				output = buildFloat(floatList1[1]);
-			}
-		} else {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseFloat requires a string argument.");
-		}
-		break;
-	case 3:
-		Core.EmitComment("print");
-		@import("FrameworkFunctions/1_arg.cry");
-		output = VALUE_NULL;
-		Core.PrintStdOut(valueToString(arg1));
-		break;
-	case 4:
-		Core.EmitComment("typeof");
-		@import("FrameworkFunctions/1_arg.cry");
-		output = buildInteger(arg1.type - 1);
-		break;
-	case 5:
-		Core.EmitComment("typeis");
-		@import("FrameworkFunctions/1_arg.cry");
-		int1 = arg1.type;
-		int2 = row[2];
-		bool1 = false;
-		while (int2 > 0) {
-			if (row[(2 + int2)] == int1) {
-				bool1 = true;
-				int2 = 0;
-			} else {
-				int2 -= 1;
-			}
-		}
-		if (bool1) {
-			output = VALUE_TRUE;
-		} else {
-			output = VALUE_FALSE;
-		}
-		break;
-	case 6:
-		Core.EmitComment("execId");
-		output = buildInteger(ec.id);
-		break;
-	case 7:
-		Core.EmitComment("assert");
-		@import("FrameworkFunctions/3_arg.cry");
-		if (arg1.type != Types.BOOLEAN) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
-		}
-		if (((bool) arg1.internalValue)) {
-			output = VALUE_NULL;
-		} else {
-			string1 = valueToString(arg2);
-			if (((bool) arg3.internalValue)) {
-				string1 = Core.StringConcatAll("Assertion failed: ", string1);
-			}
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.ASSERTION_FAILED, string1);
-		}
-		break;
-	case 8:
-		Core.EmitComment("chr");
-		output = null;
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.INTEGER) {
-			int1 = ((int) arg1.internalValue);
-			if ((int1 >= 0) && (int1 < 256)) {
-				output = buildCommonString(Core.CharToString(Core.Chr(int1)));
-			}
-		}
-		if (output == null) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "chr requires an integer between 0 and 255");
-		}
-		break;
-	case 9:
-		Core.EmitComment("ord");
-		output = null;
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.STRING) {
-			string1 = ((string) arg1.internalValue);
-			if (string1.Size() == 1) {
-				output = buildInteger(string1.CharCodeAt(0));
-			}
-		}
-		if (output == null) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ord requires a 1 character string.");
-		}
-		break;
-	case 10:
-		Core.EmitComment("currentTime");
-		output = buildFloat(Core.CurrentTimeSeconds());
-		break;
-	case 11:
-		Core.EmitComment("sortList");
-		output = VALUE_NULL;
-		@import("FrameworkFunctions/2_arg.cry");
-		list1 = ((List<Value>) arg1.internalValue);
-		list2 = ((List<Value>) arg2.internalValue);
-		sortLists(list2, list1, Core.IntBuffer16);
-		if (Core.IntBuffer16[0] > 0) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
-		}
-		break;
-	case 12:
-		Core.EmitComment("abs");
-		output = VALUE_NULL;
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.INTEGER) {
-			if (((int) arg1.internalValue) < 0) {
-				output = buildInteger(-((int) arg1.internalValue));
-			} else {
-				output = arg1;
-			}
-		} else {
-			if (arg1.type == Types.FLOAT) {
-				if (((double) arg1.internalValue) < 0) {
-					output = buildFloat(-((double) arg1.internalValue));
-				} else {
-					output = arg1;
-				}
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");
-			}
-		}
-		break;
-	case 13:
-		Core.EmitComment("arcCos");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
-			}
-		}
-		if ((float1 < -1) || (float1 > 1)) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
-		}
-		output = buildFloat(Core.ArcCos(float1));
-		break;
-	case 14:
-		Core.EmitComment("arcSin");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
-			}
-		}
-		if ((float1 < -1) || (float1 > 1)) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
-		}
-		output = buildFloat(Core.ArcSin(float1));
-		break;
-	case 15:
-		Core.EmitComment("arcTan");
-		@import("FrameworkFunctions/2_arg.cry");
-		bool1 = false;
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (arg2.type == Types.FLOAT) {
-			float2 = ((double) arg2.internalValue);
-		} else {
-			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (bool1) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
-		}
-		output = buildFloat(Core.ArcTan(float1, float2));
-		break;
-	case 16:
-		Core.EmitComment("cos");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-			output = buildFloat(Core.Cos(float1));
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				int1 = ((int) arg1.internalValue);
-				output = buildFloat(Core.Cos(int1));
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
-			}
-		}
-		break;
-	case 17:
-		Core.EmitComment("ensureRange");
-		@import("FrameworkFunctions/3_arg.cry");
-		bool1 = false;
-		if (arg2.type == Types.FLOAT) {
-			float2 = ((double) arg2.internalValue);
-		} else {
-			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (arg3.type == Types.FLOAT) {
-			float3 = ((double) arg3.internalValue);
-		} else {
-			if (arg3.type == Types.INTEGER) {
-				float3 = ((int) arg3.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (!bool1 && (float3 < float2)) {
-			float1 = float3;
-			float3 = float2;
-			float2 = float1;
-			value = arg2;
-			arg2 = arg3;
-			arg3 = value;
-		}
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (bool1) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ensureRange requires numeric arguments.");
-		}
-		if (float1 < float2) {
-			output = arg2;
-		} else {
-			if (float1 > float3) {
-				output = arg3;
-			} else {
-				output = arg1;
-			}
-		}
-		break;
-	case 18:
-		Core.EmitComment("floor");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-			if (@ext_boolean("INT_IS_FLOOR")) {
-				int1 = Core.Int(float1);
-			} else {
-				if ((float1 < 0) && ((float1 % 1) != 0)) {
-					int1 = Core.Int(float1) - 1;
-				} else {
-					int1 = Core.Int(float1);
-				}
-			}
-			if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-				if (int1 >= 0) {
-					output = INTEGER_POSITIVE_CACHE[int1];
-				} else {
-					if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-						output = INTEGER_NEGATIVE_CACHE[-int1];
-					} else {
-						output = new Value(Types.INTEGER, int1);
-					}
-				}
-			} else {
-				output = new Value(Types.INTEGER, int1);
-			}
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				output = arg1;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "floor expects a numeric argument.");
-			}
-		}
-		break;
-	case 19:
-		Core.EmitComment("max");
-		@import("FrameworkFunctions/2_arg.cry");
-		bool1 = false;
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (arg2.type == Types.FLOAT) {
-			float2 = ((double) arg2.internalValue);
-		} else {
-			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (bool1) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
-		}
-		if (float1 >= float2) {
-			output = arg1;
-		} else {
-			output = arg2;
-		}
-		break;
-	case 20:
-		Core.EmitComment("min");
-		@import("FrameworkFunctions/2_arg.cry");
-		bool1 = false;
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (arg2.type == Types.FLOAT) {
-			float2 = ((double) arg2.internalValue);
-		} else {
-			if (arg2.type == Types.INTEGER) {
-				float2 = ((int) arg2.internalValue) + 0.0;
-			} else {
-				bool1 = true;
-			}
-		}
-		if (bool1) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
-		}
-		if (float1 <= float2) {
-			output = arg1;
-		} else {
-			output = arg2;
-		}
-		break;
-	case 21:
-		Core.EmitComment("nativeInt");
-		@import("FrameworkFunctions/2_arg.cry");
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		i = ((int) arg2.internalValue);
-		output = buildInteger(((int) objInstance1.nativeData[i]));
-		break;
-	case 22:
-		Core.EmitComment("nativeString");
-		@import("FrameworkFunctions/3_arg.cry");
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		i = ((int) arg2.internalValue);
-		string1 = ((string) objInstance1.nativeData[i]);
-		if (((bool) arg3.internalValue)) {
-			output = buildCommonString(string1);
-		} else {
-			output = buildString(string1);
-		}
-		break;
-	case 23:
-		Core.EmitComment("sign");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.INTEGER) {
-			float1 = ((double) ((int) arg1.internalValue));
-		} else {
-			if (arg1.type == Types.FLOAT) {
-				float1 = ((double) arg1.internalValue);
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
-			}
-		}
-		if (float1 == 0) {
-			output = VALUE_INT_ZERO;
-		} else {
-			if (float1 > 0) {
-				output = VALUE_INT_ONE;
-			} else {
-				output = VALUE_INT_NEG_ONE;
-			}
-		}
-		break;
-	case 24:
-		Core.EmitComment("sin");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
-			}
-		}
-		output = buildFloat(Core.Sin(float1));
-		break;
-	case 25:
-		Core.EmitComment("tan");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
-			}
-		}
-		output = buildFloat(Core.Tan(float1));
-		break;
-	case 26:
-		Core.EmitComment("log");
-		@import("FrameworkFunctions/2_arg.cry");
-		if (arg1.type == Types.FLOAT) {
-			float1 = ((double) arg1.internalValue);
-		} else {
-			if (arg1.type == Types.INTEGER) {
-				float1 = ((int) arg1.internalValue) + 0.0;
-			} else {
-				return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
-			}
-		}
-		if (float1 <= 0) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
-		}
-		output = buildFloat(fixFuzzyFloatPrecision(Core.Log(float1) * ((double) arg2.internalValue)));
-		break;
-	case 27:
-		Core.EmitComment("intQueueClear");
-		output = VALUE_NULL;
-		@import("FrameworkFunctions/1_arg.cry");
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		if (objInstance1.nativeData != null) {
-			objInstance1.nativeData[1] = 0;
-		}
-		break;
-	case 28:
-		Core.EmitComment("intQueueWrite16");
-		output = VALUE_NULL;
-		int1 = row[2];
-		valueStackSize -= int1 + 1;
-		value = valueStack[valueStackSize];
-		objInstance1 = ((ObjectInstance) value.internalValue);
-		objArray1 = objInstance1.nativeData;
-		intArray1 = ((Array<int>) objArray1[0]);
-		len = ((int) objArray1[1]);
-		if (len >= intArray1.Size()) {
-			intArray2 = new Array<int>(((len * 2) + 16));
-			for (j = 0; j < len; j += 1) {
-				intArray2[j] = intArray1[j];
-			}
-			intArray1 = intArray2;
-			objArray1[0] = intArray1;
-		}
-		objArray1[1] = (len + 16);
-		for (i = int1 - 1; i >= 0; i -= 1) {
-			value = valueStack[((valueStackSize + 1) + i)];
-			if (value.type == Types.INTEGER) {
-				int2 = ((int) value.internalValue);
-			} else {
-				if (value.type == Types.FLOAT) {
-					float1 = ((double) value.internalValue) + 0.5;
-					int2 = Core.Int(float1);
-				} else {
-					return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Input must be integers.");
-				}
-			}
-			intArray1[(len + i)] = int2;
-		}
-		break;
-	case 29:
-		Core.EmitComment("execCounter");
-		output = buildInteger(ec.executionCounter);
-		break;
-	case 30:
-		Core.EmitComment("sleep");
-		@import("FrameworkFunctions/1_arg.cry");
-		float1 = getFloat(arg1);
-		if (@ext_boolean("IS_THREAD_BLOCKING_ALLOWED")) {
-			Core.ThreadSleep(float1);
-		} else {
-			if (row[1] == 1) {
-				@import("ValueStackCapacityCheck.cry");
-				valueStack[valueStackSize] = VALUE_NULL;
-				valueStackSize += 1;
-			}
-			prepareToSuspend(ec, stack, valueStackSize, pc);
-			Core.EnqueueVmResume(float1, ec.id);
-			if (ec.id > -1) {
-				Core.EmitComment("If statement to circumvent unreachable code error in translator.");
-				return suspendInterpreterWithLock();
-			}
-		}
-		break;
-	case 31:
-		Core.EmitComment("projectId");
-		output = buildCommonString(p.projectId);
-		break;
-	case 32:
-		Core.EmitComment("isJavaScript");
-		if (@ext_boolean("IS_JAVASCRIPT")) {
-			output = VALUE_TRUE;
-		} else {
-			output = VALUE_FALSE;
-		}
-		break;
-	case 33:
-		Core.EmitComment("isAndroid");
-		if (@ext_boolean("IS_ANDROID")) {
-			output = VALUE_TRUE;
-		} else {
-			output = VALUE_FALSE;
-		}
-		break;
-	case 34:
-		Core.EmitComment("allocNativeData");
-		@import("FrameworkFunctions/2_arg.cry");
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		int1 = ((int) arg2.internalValue);
-		objArray1 = new Array<object>(int1);
-		objInstance1.nativeData = objArray1;
-		break;
-	case 35:
-		Core.EmitComment("setNativeData");
-		@import("FrameworkFunctions/3_arg.cry");
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		objInstance1.nativeData[((int) arg2.internalValue)] = arg3.internalValue;
-		break;
-	case 36:
-		Core.EmitComment("getExceptionTrace");
-		@import("FrameworkFunctions/1_arg.cry");
-		intList1 = ((List<int>) getNativeDataItem(arg1, 1));
-		list1 = new List<Value>();
-		output = new Value(Types.LIST, list1);
-		if (intList1 != null) {
-			stringList1 = tokenHelperConvertPcsToStackTraceStrings(intList1);
-			for (i = 0; i < stringList1.Size(); i += 1) {
-				list1.Add(buildString(stringList1[i]));
-			}
-			list1.Reverse();
-		}
-		break;
-	case 37:
-		Core.EmitComment("reflectAllClasses");
-		list1 = new List<Value>();
-		output = new Value(Types.LIST, list1);
-		for (i = 1; i < p.classTable.Size(); i += 1) {
-			classInfo = p.classTable[i];
-			if (classInfo == null) {
-				i += p.classTable.Size();
-			} else {
-				list1.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
-			}
-		}
-		break;
-	case 38:
-		Core.EmitComment("reflectGetMethods");
-		@import("FrameworkFunctions/1_arg.cry");
-		list1 = new List<Value>();
-		output = new Value(Types.LIST, list1);
-		if (arg1.type == Types.INSTANCE) {
-			objInstance1 = ((ObjectInstance) arg1.internalValue);
-			classInfo = p.classTable[objInstance1.classId];
-			for (i = 0; i < classInfo.functionIds.Size(); i += 1) {
-				functionId = classInfo.functionIds[i];
-				if (functionId != -1) {
-					list1.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, arg1, objInstance1.classId, functionId)));
-				}
-			}
-		} else {
-			classValue = ((ClassValue) arg1.internalValue);
-			classInfo = p.classTable[classValue.classId];
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
-		}
-		break;
-	case 39:
-		Core.EmitComment("reflectGetClass");
-		@import("FrameworkFunctions/1_arg.cry");
-		if (arg1.type != Types.INSTANCE) {
-			return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
-		}
-		objInstance1 = ((ObjectInstance) arg1.internalValue);
-		output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
-		break;
-	case 40:
-		Core.EmitComment("convertFloatArgsToInts");
-		int1 = stack.localsStackOffsetEnd;
-		for (i = localsStackOffset; i < int1; i += 1) {
-			value = localsStack[i];
-			if (localsStackSet[i] != localsStackSetToken) {
-				i += int1;
-			} else {
-				if (value.type == Types.FLOAT) {
-					float1 = ((double) value.internalValue);
-					if (@ext_boolean("INT_IS_FLOOR")) {
-						int2 = Core.Int(float1);
-					} else {
-						if ((float1 < 0) && ((float1 % 1) != 0)) {
-							int2 = Core.Int(float1) - 1;
-						} else {
-							int2 = Core.Int(float1);
-						}
-					}
-					if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
-						localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
-					} else {
-						localsStack[i] = buildInteger(int2);
-					}
-				}
-			}
-		}
-		break;
+    case 1:
+        Core.EmitComment("parseInt");
+        @import("FrameworkFunctions/1_arg.cry");
+        output = VALUE_NULL;
+        if (arg1.type == Types.STRING) {
+            string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
+            if (Core.IsValidInteger(string1)) {
+                output = buildInteger(Core.ParseInt(string1));
+            }
+        } else {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseInt requires a string argument.");
+        }
+        break;
+    case 2:
+        Core.EmitComment("parseFloat");
+        @import("FrameworkFunctions/1_arg.cry");
+        output = VALUE_NULL;
+        if (arg1.type == Types.STRING) {
+            string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
+            Core.TryParseFloat(string1, floatList1);
+            if (floatList1[0] >= 0) {
+                output = buildFloat(floatList1[1]);
+            }
+        } else {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "parseFloat requires a string argument.");
+        }
+        break;
+    case 3:
+        Core.EmitComment("print");
+        @import("FrameworkFunctions/1_arg.cry");
+        output = VALUE_NULL;
+        Core.PrintStdOut(valueToString(arg1));
+        break;
+    case 4:
+        Core.EmitComment("typeof");
+        @import("FrameworkFunctions/1_arg.cry");
+        output = buildInteger(arg1.type - 1);
+        break;
+    case 5:
+        Core.EmitComment("typeis");
+        @import("FrameworkFunctions/1_arg.cry");
+        int1 = arg1.type;
+        int2 = row[2];
+        bool1 = false;
+        while (int2 > 0) {
+            if (row[(2 + int2)] == int1) {
+                bool1 = true;
+                int2 = 0;
+            } else {
+                int2 -= 1;
+            }
+        }
+        if (bool1) {
+            output = VALUE_TRUE;
+        } else {
+            output = VALUE_FALSE;
+        }
+        break;
+    case 6:
+        Core.EmitComment("execId");
+        output = buildInteger(ec.id);
+        break;
+    case 7:
+        Core.EmitComment("assert");
+        @import("FrameworkFunctions/3_arg.cry");
+        if (arg1.type != Types.BOOLEAN) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
+        }
+        if (((bool) arg1.internalValue)) {
+            output = VALUE_NULL;
+        } else {
+            string1 = valueToString(arg2);
+            if (((bool) arg3.internalValue)) {
+                string1 = Core.StringConcatAll("Assertion failed: ", string1);
+            }
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.ASSERTION_FAILED, string1);
+        }
+        break;
+    case 8:
+        Core.EmitComment("chr");
+        output = null;
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.INTEGER) {
+            int1 = ((int) arg1.internalValue);
+            if ((int1 >= 0) && (int1 < 256)) {
+                output = buildCommonString(Core.CharToString(Core.Chr(int1)));
+            }
+        }
+        if (output == null) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "chr requires an integer between 0 and 255");
+        }
+        break;
+    case 9:
+        Core.EmitComment("ord");
+        output = null;
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.STRING) {
+            string1 = ((string) arg1.internalValue);
+            if (string1.Size() == 1) {
+                output = buildInteger(string1.CharCodeAt(0));
+            }
+        }
+        if (output == null) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ord requires a 1 character string.");
+        }
+        break;
+    case 10:
+        Core.EmitComment("currentTime");
+        output = buildFloat(Core.CurrentTimeSeconds());
+        break;
+    case 11:
+        Core.EmitComment("sortList");
+        output = VALUE_NULL;
+        @import("FrameworkFunctions/2_arg.cry");
+        list1 = ((List<Value>) arg1.internalValue);
+        list2 = ((List<Value>) arg2.internalValue);
+        sortLists(list2, list1, Core.IntBuffer16);
+        if (Core.IntBuffer16[0] > 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+        }
+        break;
+    case 12:
+        Core.EmitComment("abs");
+        output = VALUE_NULL;
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.INTEGER) {
+            if (((int) arg1.internalValue) < 0) {
+                output = buildInteger(-((int) arg1.internalValue));
+            } else {
+                output = arg1;
+            }
+        } else {
+            if (arg1.type == Types.FLOAT) {
+                if (((double) arg1.internalValue) < 0) {
+                    output = buildFloat(-((double) arg1.internalValue));
+                } else {
+                    output = arg1;
+                }
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");
+            }
+        }
+        break;
+    case 13:
+        Core.EmitComment("arcCos");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number as input.");
+            }
+        }
+        if ((float1 < -1) || (float1 > 1)) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arccos requires a number in the range of -1 to 1.");
+        }
+        output = buildFloat(Core.ArcCos(float1));
+        break;
+    case 14:
+        Core.EmitComment("arcSin");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number as input.");
+            }
+        }
+        if ((float1 < -1) || (float1 > 1)) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arcsin requires a number in the range of -1 to 1.");
+        }
+        output = buildFloat(Core.ArcSin(float1));
+        break;
+    case 15:
+        Core.EmitComment("arcTan");
+        @import("FrameworkFunctions/2_arg.cry");
+        bool1 = false;
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (arg2.type == Types.FLOAT) {
+            float2 = ((double) arg2.internalValue);
+        } else {
+            if (arg2.type == Types.INTEGER) {
+                float2 = ((int) arg2.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (bool1) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "arctan requires numeric arguments.");
+        }
+        output = buildFloat(Core.ArcTan(float1, float2));
+        break;
+    case 16:
+        Core.EmitComment("cos");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+            output = buildFloat(Core.Cos(float1));
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                int1 = ((int) arg1.internalValue);
+                output = buildFloat(Core.Cos(int1));
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "cos requires a number argument.");
+            }
+        }
+        break;
+    case 17:
+        Core.EmitComment("ensureRange");
+        @import("FrameworkFunctions/3_arg.cry");
+        bool1 = false;
+        if (arg2.type == Types.FLOAT) {
+            float2 = ((double) arg2.internalValue);
+        } else {
+            if (arg2.type == Types.INTEGER) {
+                float2 = ((int) arg2.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (arg3.type == Types.FLOAT) {
+            float3 = ((double) arg3.internalValue);
+        } else {
+            if (arg3.type == Types.INTEGER) {
+                float3 = ((int) arg3.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (!bool1 && (float3 < float2)) {
+            float1 = float3;
+            float3 = float2;
+            float2 = float1;
+            value = arg2;
+            arg2 = arg3;
+            arg3 = value;
+        }
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (bool1) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "ensureRange requires numeric arguments.");
+        }
+        if (float1 < float2) {
+            output = arg2;
+        } else {
+            if (float1 > float3) {
+                output = arg3;
+            } else {
+                output = arg1;
+            }
+        }
+        break;
+    case 18:
+        Core.EmitComment("floor");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+            if (@ext_boolean("INT_IS_FLOOR")) {
+                int1 = Core.Int(float1);
+            } else {
+                if ((float1 < 0) && ((float1 % 1) != 0)) {
+                    int1 = Core.Int(float1) - 1;
+                } else {
+                    int1 = Core.Int(float1);
+                }
+            }
+            if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+                if (int1 >= 0) {
+                    output = INTEGER_POSITIVE_CACHE[int1];
+                } else {
+                    if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                        output = INTEGER_NEGATIVE_CACHE[-int1];
+                    } else {
+                        output = new Value(Types.INTEGER, int1);
+                    }
+                }
+            } else {
+                output = new Value(Types.INTEGER, int1);
+            }
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                output = arg1;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "floor expects a numeric argument.");
+            }
+        }
+        break;
+    case 19:
+        Core.EmitComment("max");
+        @import("FrameworkFunctions/2_arg.cry");
+        bool1 = false;
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (arg2.type == Types.FLOAT) {
+            float2 = ((double) arg2.internalValue);
+        } else {
+            if (arg2.type == Types.INTEGER) {
+                float2 = ((int) arg2.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (bool1) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
+        }
+        if (float1 >= float2) {
+            output = arg1;
+        } else {
+            output = arg2;
+        }
+        break;
+    case 20:
+        Core.EmitComment("min");
+        @import("FrameworkFunctions/2_arg.cry");
+        bool1 = false;
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (arg2.type == Types.FLOAT) {
+            float2 = ((double) arg2.internalValue);
+        } else {
+            if (arg2.type == Types.INTEGER) {
+                float2 = ((int) arg2.internalValue) + 0.0;
+            } else {
+                bool1 = true;
+            }
+        }
+        if (bool1) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "max requires numeric arguments.");
+        }
+        if (float1 <= float2) {
+            output = arg1;
+        } else {
+            output = arg2;
+        }
+        break;
+    case 21:
+        Core.EmitComment("nativeInt");
+        @import("FrameworkFunctions/2_arg.cry");
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        i = ((int) arg2.internalValue);
+        output = buildInteger(((int) objInstance1.nativeData[i]));
+        break;
+    case 22:
+        Core.EmitComment("nativeString");
+        @import("FrameworkFunctions/3_arg.cry");
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        i = ((int) arg2.internalValue);
+        string1 = ((string) objInstance1.nativeData[i]);
+        if (((bool) arg3.internalValue)) {
+            output = buildCommonString(string1);
+        } else {
+            output = buildString(string1);
+        }
+        break;
+    case 23:
+        Core.EmitComment("sign");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.INTEGER) {
+            float1 = ((double) ((int) arg1.internalValue));
+        } else {
+            if (arg1.type == Types.FLOAT) {
+                float1 = ((double) arg1.internalValue);
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
+            }
+        }
+        if (float1 == 0) {
+            output = VALUE_INT_ZERO;
+        } else {
+            if (float1 > 0) {
+                output = VALUE_INT_ONE;
+            } else {
+                output = VALUE_INT_NEG_ONE;
+            }
+        }
+        break;
+    case 24:
+        Core.EmitComment("sin");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sin requires a number argument.");
+            }
+        }
+        output = buildFloat(Core.Sin(float1));
+        break;
+    case 25:
+        Core.EmitComment("tan");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
+            }
+        }
+        output = buildFloat(Core.Tan(float1));
+        break;
+    case 26:
+        Core.EmitComment("log");
+        @import("FrameworkFunctions/2_arg.cry");
+        if (arg1.type == Types.FLOAT) {
+            float1 = ((double) arg1.internalValue);
+        } else {
+            if (arg1.type == Types.INTEGER) {
+                float1 = ((int) arg1.internalValue) + 0.0;
+            } else {
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require a number argument.");
+            }
+        }
+        if (float1 <= 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "logarithms require positive inputs.");
+        }
+        output = buildFloat(fixFuzzyFloatPrecision(Core.Log(float1) * ((double) arg2.internalValue)));
+        break;
+    case 27:
+        Core.EmitComment("intQueueClear");
+        output = VALUE_NULL;
+        @import("FrameworkFunctions/1_arg.cry");
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        if (objInstance1.nativeData != null) {
+            objInstance1.nativeData[1] = 0;
+        }
+        break;
+    case 28:
+        Core.EmitComment("intQueueWrite16");
+        output = VALUE_NULL;
+        int1 = row[2];
+        valueStackSize -= int1 + 1;
+        value = valueStack[valueStackSize];
+        objInstance1 = ((ObjectInstance) value.internalValue);
+        objArray1 = objInstance1.nativeData;
+        intArray1 = ((Array<int>) objArray1[0]);
+        len = ((int) objArray1[1]);
+        if (len >= intArray1.Size()) {
+            intArray2 = new Array<int>(((len * 2) + 16));
+            for (j = 0; j < len; j += 1) {
+                intArray2[j] = intArray1[j];
+            }
+            intArray1 = intArray2;
+            objArray1[0] = intArray1;
+        }
+        objArray1[1] = (len + 16);
+        for (i = int1 - 1; i >= 0; i -= 1) {
+            value = valueStack[((valueStackSize + 1) + i)];
+            if (value.type == Types.INTEGER) {
+                int2 = ((int) value.internalValue);
+            } else {
+                if (value.type == Types.FLOAT) {
+                    float1 = ((double) value.internalValue) + 0.5;
+                    int2 = Core.Int(float1);
+                } else {
+                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Input must be integers.");
+                }
+            }
+            intArray1[(len + i)] = int2;
+        }
+        break;
+    case 29:
+        Core.EmitComment("execCounter");
+        output = buildInteger(ec.executionCounter);
+        break;
+    case 30:
+        Core.EmitComment("sleep");
+        @import("FrameworkFunctions/1_arg.cry");
+        float1 = getFloat(arg1);
+        if (@ext_boolean("IS_THREAD_BLOCKING_ALLOWED")) {
+            Core.ThreadSleep(float1);
+        } else {
+            if (row[1] == 1) {
+                @import("ValueStackCapacityCheck.cry");
+                valueStack[valueStackSize] = VALUE_NULL;
+                valueStackSize += 1;
+            }
+            prepareToSuspend(ec, stack, valueStackSize, pc);
+            Core.EnqueueVmResume(float1, ec.id);
+            if (ec.id > -1) {
+                Core.EmitComment("If statement to circumvent unreachable code error in translator.");
+                return suspendInterpreterWithLock();
+            }
+        }
+        break;
+    case 31:
+        Core.EmitComment("projectId");
+        output = buildCommonString(p.projectId);
+        break;
+    case 32:
+        Core.EmitComment("isJavaScript");
+        if (@ext_boolean("IS_JAVASCRIPT")) {
+            output = VALUE_TRUE;
+        } else {
+            output = VALUE_FALSE;
+        }
+        break;
+    case 33:
+        Core.EmitComment("isAndroid");
+        if (@ext_boolean("IS_ANDROID")) {
+            output = VALUE_TRUE;
+        } else {
+            output = VALUE_FALSE;
+        }
+        break;
+    case 34:
+        Core.EmitComment("allocNativeData");
+        @import("FrameworkFunctions/2_arg.cry");
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        int1 = ((int) arg2.internalValue);
+        objArray1 = new Array<object>(int1);
+        objInstance1.nativeData = objArray1;
+        break;
+    case 35:
+        Core.EmitComment("setNativeData");
+        @import("FrameworkFunctions/3_arg.cry");
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        objInstance1.nativeData[((int) arg2.internalValue)] = arg3.internalValue;
+        break;
+    case 36:
+        Core.EmitComment("getExceptionTrace");
+        @import("FrameworkFunctions/1_arg.cry");
+        intList1 = ((List<int>) getNativeDataItem(arg1, 1));
+        list1 = new List<Value>();
+        output = new Value(Types.LIST, list1);
+        if (intList1 != null) {
+            stringList1 = tokenHelperConvertPcsToStackTraceStrings(intList1);
+            for (i = 0; i < stringList1.Size(); i += 1) {
+                list1.Add(buildString(stringList1[i]));
+            }
+            list1.Reverse();
+        }
+        break;
+    case 37:
+        Core.EmitComment("reflectAllClasses");
+        list1 = new List<Value>();
+        output = new Value(Types.LIST, list1);
+        for (i = 1; i < p.classTable.Size(); i += 1) {
+            classInfo = p.classTable[i];
+            if (classInfo == null) {
+                i += p.classTable.Size();
+            } else {
+                list1.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
+            }
+        }
+        break;
+    case 38:
+        Core.EmitComment("reflectGetMethods");
+        @import("FrameworkFunctions/1_arg.cry");
+        list1 = new List<Value>();
+        output = new Value(Types.LIST, list1);
+        if (arg1.type == Types.INSTANCE) {
+            objInstance1 = ((ObjectInstance) arg1.internalValue);
+            classInfo = p.classTable[objInstance1.classId];
+            for (i = 0; i < classInfo.functionIds.Size(); i += 1) {
+                functionId = classInfo.functionIds[i];
+                if (functionId != -1) {
+                    list1.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, arg1, objInstance1.classId, functionId)));
+                }
+            }
+        } else {
+            classValue = ((ClassValue) arg1.internalValue);
+            classInfo = p.classTable[classValue.classId];
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
+        }
+        break;
+    case 39:
+        Core.EmitComment("reflectGetClass");
+        @import("FrameworkFunctions/1_arg.cry");
+        if (arg1.type != Types.INSTANCE) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
+        }
+        objInstance1 = ((ObjectInstance) arg1.internalValue);
+        output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
+        break;
+    case 40:
+        Core.EmitComment("convertFloatArgsToInts");
+        int1 = stack.localsStackOffsetEnd;
+        for (i = localsStackOffset; i < int1; i += 1) {
+            value = localsStack[i];
+            if (localsStackSet[i] != localsStackSetToken) {
+                i += int1;
+            } else {
+                if (value.type == Types.FLOAT) {
+                    float1 = ((double) value.internalValue);
+                    if (@ext_boolean("INT_IS_FLOOR")) {
+                        int2 = Core.Int(float1);
+                    } else {
+                        if ((float1 < 0) && ((float1 % 1) != 0)) {
+                            int2 = Core.Int(float1) - 1;
+                        } else {
+                            int2 = Core.Int(float1);
+                        }
+                    }
+                    if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
+                        localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+                    } else {
+                        localsStack[i] = buildInteger(int2);
+                    }
+                }
+            }
+        }
+        break;
 }
 if (row[1] == 1) {
-	@import("ValueStackCapacityCheck.cry");
-	valueStack[valueStackSize] = output;
-	valueStackSize += 1;
+    @import("ValueStackCapacityCheck.cry");
+    valueStack[valueStackSize] = output;
+    valueStackSize += 1;
 }
