@@ -7,8 +7,8 @@
     <ProjectGuid>{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameCSharpOpenTk</RootNamespace>
-    <AssemblyName>GameCSharpOpenTk</AssemblyName>
+    <RootNamespace>CSharpApp</RootNamespace>
+    <AssemblyName>CSharpApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>

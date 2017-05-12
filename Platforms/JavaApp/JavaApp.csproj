@@ -7,8 +7,8 @@
     <ProjectGuid>{0D8C38E5-6B24-489E-9C0F-D8101086BC32}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameJavaAwt</RootNamespace>
-    <AssemblyName>GameJavaAwt</AssemblyName>
+    <RootNamespace>JavaApp</RootNamespace>
+    <AssemblyName>JavaApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -59,28 +59,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\AwtTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\BuildXml.txt" />
-    <EmbeddedResource Include="Resources\Main.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Resources\GameWindow.txt" />
     <EmbeddedResource Include="Resources\LibraryLoader.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Resources\Main.txt" />
+    <EmbeddedResource Include="Resources\RenderEngine.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\AwtTranslationHelper.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\GameWindow.txt" />
-    <EmbeddedResource Include="Resources\RenderEngine.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

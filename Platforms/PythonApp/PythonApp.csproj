@@ -7,8 +7,8 @@
     <ProjectGuid>{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GamePythonPygame</RootNamespace>
-    <AssemblyName>GamePythonPygame</AssemblyName>
+    <RootNamespace>PythonApp</RootNamespace>
+    <AssemblyName>PythonApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
