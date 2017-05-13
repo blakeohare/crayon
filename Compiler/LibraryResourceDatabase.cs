@@ -14,7 +14,7 @@ namespace Crayon
         {
             public string Type { get; set; }
             public Dictionary<string, string> Values { get; set; }
-            public string Value { get; }
+            public virtual string Value { get; set; }
         }
 
         private Library library;
