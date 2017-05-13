@@ -232,6 +232,8 @@ namespace Crayon
                 varLookup = GenerateBuildVars(buildInput, new Target(), null);
             }
 
+            ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
+
             return new BuildContext()
             {
                 ProjectDirectory = projectDir,
@@ -240,8 +242,8 @@ namespace Crayon
                 Platform = platform,
                 ProjectID = flattened.ProjectName,
                 SourceFolders = ToFilePaths(projectDir, flattened.Sources),
-                ImageSheetPrefixesById = flattened.ImageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
-                ImageSheetIds = flattened.ImageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
+                ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
+                ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 Minified = flattened.Minified,
                 ReadableByteCode = flattened.ExportDebugByteCode,
                 BuildVariableLookup = varLookup,

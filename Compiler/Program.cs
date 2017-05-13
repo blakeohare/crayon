@@ -215,7 +215,10 @@ namespace Crayon
 
             // Resource manifest is embedded into the CBX file
 
-            output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
+            if (resDb.ImageSheetManifestFile != null)
+            {
+                output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
+            }
 
             foreach (FileOutput txtResource in resDb.TextResources)
             {
