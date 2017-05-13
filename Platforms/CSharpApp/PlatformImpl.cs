@@ -145,7 +145,7 @@ namespace CSharpApp
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
-            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid);
+            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
             TODO.MoveCbxParserIntoTranslatedPastelCode();
@@ -264,7 +264,7 @@ namespace CSharpApp
                 output[baseDir + dll.HintPath] = dll.FileOutput;
             }
 
-            this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>());
+            this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
 
             return output;
         }
@@ -366,7 +366,8 @@ namespace CSharpApp
             string baseDir,
             Dictionary<string, FileOutput> output,
             Dictionary<string, string> replacements,
-            Dictionary<string, string> libraryProjectNameToGuid)
+            Dictionary<string, string> libraryProjectNameToGuid,
+            bool isStandaloneVm)
         {
             string projectId = replacements["PROJECT_ID"];
             replacements["LIBRARY_PROJECT_INCLUSIONS"] = "";
@@ -398,9 +399,10 @@ namespace CSharpApp
                 replacements["LIBRARY_PROJECT_INCLUSIONS"] = string.Join("\r\n", inclusions);
                 replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);
             }
-            
+
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", "Resources/ProjectFile.txt", replacements);
+            string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.txt";
+            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

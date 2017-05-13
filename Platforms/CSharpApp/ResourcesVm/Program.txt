@@ -12,18 +12,14 @@ namespace CrayonRuntime
 
         public static void Main(string[] args)
         {
-#if RELEASE
             try
             {
                 Run(args);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.Error.WriteLine(e.Message);
             }
-#elif DEBUG
-            Run(args);
-#endif
         }
 
         private static void Run(string[] args)

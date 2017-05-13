@@ -59,31 +59,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ProjectFile.txt" />
-    <EmbeddedResource Include="Resources\SolutionFile.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\AssemblyInfo.txt" />
     <EmbeddedResource Include="Resources\CSharpAppTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\Program.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Resources\ProjectFile.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ResourcesVm\Program.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ResourcesVm\ResourceReader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ResourcesVm\icon.ico" />
+    <EmbeddedResource Include="Resources\SolutionFile.txt" />
+
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ResourcesVm\CbxDecoder.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="ResourcesVm\icon.ico" />
     <EmbeddedResource Include="ResourcesVm\LibraryRegistry.txt" />
+    <EmbeddedResource Include="ResourcesVm\Program.txt" />
+    <EmbeddedResource Include="ResourcesVm\ProjectFile.txt" />
+    <EmbeddedResource Include="ResourcesVm\ResourceReader.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ResourcesLib\AssemblyInfo.txt" />
