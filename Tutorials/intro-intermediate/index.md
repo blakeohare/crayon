@@ -20,20 +20,19 @@ subjects to Crayon. On the other hand, if the middle of the previous sentence lo
 wildly incorrect grammar, you may want to start with the [Beginner's
 Tutorial](../intro-beginner.md) instead.
 
-Crayon is a programming language that targets multiple platforms. The output of the compiler is the 
-source code of the virtual machine coupled with the compiled byte code of your program.
+Crayon is an interpreted programming language. You can also export the VM bundled with your compiled byte code to various platforms.
 
 If you have not [downloaded](http://crayonlang.org/download) Crayon and [set up
 your environment](http://crayonlang.org/download/installation), please do so now.
 	
 # Creating a Hello World Project
-	
+
 Create a new directory caled HelloWorld for your project somewhere. Create two subdirectories called
 'source' and 'output' in here.
 
-At the core of each Crayon project is a build definition file, which is composed of relatively simple
+Each Crayon project has a build definition file, which is composed of relatively simple
 XML. This file defines the various platforms you want to target and other options that you can
-configure for these platforms.
+configure for these platforms. It also defines where your source code is and where the output should go.
 
 There is a wonderful universe of options and configurations that I could ramble about for a long
 time. But for the sake of actually getting something working, copy and paste this mostly
@@ -44,75 +43,36 @@ one-size-fits-all build definition into your HelloWorld.build file:
   <projectname>HelloWorld</projectname>
   <source>source/</source>
   <output>output/%TARGET_NAME%</output>
-
-  <!-- Targets -->
-  <target name="javascript">
-	<platform>game-javascript</platform>
-  </target>
-
-  <target name="java">
-	<platform>game-java-awt</platform>
-  </target>
-
-  <target name="python">
-	<platform>game-python-pygame</platform>
-  </target>
-
-  <target name="csharp">
-	<platform>game-csharp-opentk</platform>
-  </target>
 </build>
 ```
 
-When you compile, you will invoke crayon.exe from the command line and pass it a path to a .build
-file and a `-target` flag followed by one of the target names. Like this:
-	
-```
-C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
-```
+In the `source` directory, create a file called `main.cry`. It doesn't have to be called `main.cry` but the important thing is that it has a `.cry` file extension. Paste the following code in that file:
 
-The source code is compiled from the files in the directory defined by the value of the `<source>`
-element and the output goes into the directory defined by the vaule of the `<output>` element. The
-four platforms available are listed in the build definition above.
-
-But of course in order for this to work, you will first need some actual source code.
-
-In the source folder, create a file called main.cry (the name of the file isn't terribly important,
-as long as it ends in a .cry file extension) and paste the following code:
-	
 ```crayon
 function main() {
 	print("Hello, World!");
 }
 ```
 
-Run the compilation command for the platform you wish to use. Note that the output of Crayon is
-actually the source code of a program in the platform you choose, not an executable that is
-necessarily ready to run, so in order to run it you may need some pre-requisite libraries or
-frameworks. Use the chart below to figure out which platform is most convenient for you to run.
-
-| ID | Name |  |
-| --- | --- | --- |
-| game-csharp-opentk | C# and OpenGL (using OpenTK) | Use this if you have a C# build environemnt set up, preferably Visual Studio. The output that Crayon generates provides the necessary OpenTK and Tao DLL files, so if you can compile C#, you should be good to go. |
-| game-java-awt | Java using AWT | These creates a vanilla client-side Java project that uses AWT so it will run in desktop environments but lacks some support for certain features such as sound and gamepad. This will not run in Android. This includes an Ant build file. |
-| game-python-pygame | Python using PyGame | Exports your project as a PyGame program. It will run in Python 2.5+ or Python 3, as long as you have PyGame installed. This is however one of the slower platforms as the lack of a switch statement makes the VM hard to translate. |
-| game-javascript | JavaScript | Creates a basic JavaScript project that runs using HTML5 Canvas. Should run locally without a server as long as your project doesn't require files such as images or sounds. If you do wish to upload your project to a server, provide an additional jsfileprefix element in the build file to indicate the file prefix of where it is uploaded to. This is demonstrated in the js_remote target in the above build file sample. |
-
-I will be using Python in this tutorial but you can follow along in any platform.
-
-Run the compilation command:
-
+Now it's time to compile. Simply invoke `crayon` from the command line followed by the build file path:
+	
 ```
-C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
+C:\Stuff\HelloWorld> crayon HelloWorld.build
 ```
 
-If you see an error message that says "'crayon' is not recognized as an internal or external command,
-operable program or batch file." then your environment is not correctly configured. Revisit the
+And if all is well, you'll see this appear in the command line:
+
+```
+Hello, World!
+```
+
+If you see an error message that says `'crayon' is not recognized as an internal or external command,
+operable program or batch file.` then your environment is not correctly configured. Revisit the
 [installation instructions](http://crayonlang.org/download/installation) or go to the IRC channel
 for help.
-	
+
 If it worked, you'll notice there is now a folder called "output" which contains a folder called
-"python". In this folder there is an game.py which will display the following message when run:
+"cbx". In this folder is the compiled byte code (and eventually image/text/sound resources for your application).
 
 ![Hello World](./images/helloworld.png)
 
@@ -121,14 +81,14 @@ Congratulations on running your first Crayon program.
 # Code structure and Execution Starting Point
 
 Unlike most scripting languages, Crayon requires all code to be wrapped in a function or method
-within a class. Each program must have a function definition called `main` which is where execution
+within a class (much like Java/C#). Each program must have a function definition called `main` which is where execution
 begins. When the function ends, the program will end. The order of how things are defined is not
 important, nor is the name of the files they are in. File layout is also irrelevant as all code
 is more or less combined together into one big mushy ball at the beginning of the compilation phase,
 much like C# code within the same assembly.
 
 # Types, Variables, and Math
-	
+
 Like most programming languages, there are types and variables. The basic types are the following:
 
 | Type | Description |
@@ -549,13 +509,13 @@ There are quite a few new built-in functions introduced in this snippet.
 * **Graphics2D.Draw.rectangle** - Another Graphics2D.Draw function that draws a rectangle to the screen at the given coordinates, with the given size, and given color. The full list of Draw methods can be found [in the documentation](../../Docs/graphics2d.md).
 * **window.clockTick()** - `clockTick()` is a method off of the GameWindow that informs the game window that this frame is now complete and all graphical changes should be flushed to the screen. It also yields control briefly back to the UI thread so that your operating system (or browser) doesn't think the program is stuck in an infinite loop and also to pause just long enough to maintain the frame rate specified at the beginning of the program as an input to GameWindow's constructor.
 
-Compile...
+Compile and run...
 
 ```
-C:\Stuff\HelloWorld> crayon HelloWorld.build -target python
+C:\Stuff\HelloWorld> crayon HelloWorld.build
 ```
 
-Run it and you'll see the following...
+You'll see the following...
 
 ![Bare Bones Game](images/bare-bones-game.png)
 
