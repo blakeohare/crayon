@@ -135,7 +135,7 @@ namespace Crayon
 
                 case ExecutionType.RUN_CBX:
                     string cbxFile = Program.ExportCbx(args);
-                    string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "Vm", "CrayonRuntime.exe");
+                    string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
 

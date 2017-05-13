@@ -20,7 +20,7 @@ namespace Interpreter.Vm
 #else
                 string config = "Release";
 #endif
-                string dllFile = System.IO.Path.Combine(crayonHome, "Vm", "Libs", config, libraryName + ".dll");
+                string dllFile = System.IO.Path.Combine(crayonHome, "vm", libraryName + ".dll");
                 System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFrom(dllFile);
 
                 // TODO: compare assembly reported version against required version.

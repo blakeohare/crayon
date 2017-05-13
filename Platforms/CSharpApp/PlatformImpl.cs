@@ -390,10 +390,10 @@ namespace CSharpApp
                     configs.Add("\t{" + guid + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
                     configs.Add("\t{" + guid + "}.Debug|x86.ActiveCfg = Debug|Any CPU");
                     configs.Add("\t{" + guid + "}.Debug|x86.Build.0 = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|Any CPU.ActiveCfg = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|Any CPU.Build.0 = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|x86.ActiveCfg = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|x86.Build.0 = Debug|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.ActiveCfg = Release|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|Any CPU.Build.0 = Release|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.ActiveCfg = Release|Any CPU");
+                    configs.Add("\t{" + guid + "}.Release|x86.Build.0 = Release|Any CPU");
                 }
                 replacements["LIBRARY_PROJECT_INCLUSIONS"] = string.Join("\r\n", inclusions);
                 replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);

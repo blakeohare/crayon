@@ -2,8 +2,8 @@ VERSION = '0.2.0'
 MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
 XBUILD = 'xbuild'
 RELEASE_CONFIG = '/p:Configuration=Release'
-VM_TEMP_DIR = 'VmTemp/Source'
-
+VM_TEMP_DIR = 'VmTemp'
+VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 import shutil
 import os
 import io
@@ -17,7 +17,8 @@ def canonicalize_newline(text, lineEnding):
 def copyDirectory(source, target, ext_filter = None):
 	source = canonicalize_sep(source)
 	target = canonicalize_sep(target)
-	os.makedirs(target)
+	if not os.path.exists(target):
+		os.makedirs(target)
 	for file in os.listdir(source):
 		if ext_filter == None or file.endswith(ext_filter):
 			fullpath = os.path.join(source, file)
@@ -96,14 +97,24 @@ def main(args):
 	shutil.copyfile(canonicalize_sep(releaseDir + '/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
 
+	for lib in librariesForRelease:
+		sourcePath = '../Libraries/' + lib
+		targetPath = copyToDir + '/libs/' + lib
+		copyDirectory(sourcePath, targetPath)
+
 	for file in filter(lambda x:x.endswith('.dll'), os.listdir(releaseDir)):
 		shutil.copyfile(releaseDir + '/' + file, copyToDir + '/' + file)
 	
-	print runCommand(canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR))
-	print runCommand(' '.join([MSBUILD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR + '/CrayonRuntime.sln')]))
+	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
 	
-	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/Vm', '.dll')
-	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/Vm', '.exe')
+	print "Generating VM code..."
+	print runCommand(canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE))
+	
+	print "Compiling VM for distribution..."
+	print runCommand(' '.join([MSBUILD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime.sln')]))
+	
+	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
+	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')
 	
 	if platform == 'windows':
 		setupFile = readFile("setup-windows.txt")
@@ -111,11 +122,6 @@ def main(args):
 	if platform == 'mono':
 		setupFile = readFile("setup-mono.md")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
-
-	for lib in librariesForRelease:
-		sourcePath = '../Libraries/' + lib
-		targetPath = copyToDir + '/libs/' + lib
-		copyDirectory(sourcePath, targetPath)
 
 	print("Release directory created: " + copyToDir)
 
