@@ -79,12 +79,15 @@ namespace CSharpApp
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
+            string runtimeProjectGuid = CSharpHelper.GenerateGuid("runtime", "runtime-project");
+            string runtimeAssemblyGuid = CSharpHelper.GenerateGuid("runtime", "runtime-assembly");
+
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
                 { "PROJECT_ID", "CrayonRuntime" },
-                { "PROJECT_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-project") },
-                { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid("runtime", "runtime-assembly") },
+                { "PROJECT_GUID", runtimeProjectGuid },
+                { "ASSEMBLY_GUID", runtimeAssemblyGuid },
                 { "PROJECT_TITLE", "Crayon Runtime" },
                 { "COPYRIGHT", "©" },
                 { "CURRENT_YEAR", DateTime.Now.Year.ToString() },
@@ -137,6 +140,8 @@ namespace CSharpApp
             replacements["DLL_REFERENCES"] = dllReferencesOriginal;
             replacements["DLLS_COPIED"] = dllsCopiedOriginal;
             replacements["EMBEDDED_RESOURCES"] = embeddedResources;
+            replacements["PROJECT_GUID"] = runtimeProjectGuid;
+            replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
