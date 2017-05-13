@@ -14,7 +14,8 @@ Global
 		{%%%PROJECT_GUID%%%}.Debug|x86.Build.0 = Debug|x86
 		{%%%PROJECT_GUID%%%}.Release|x86.ActiveCfg = Release|x86
 		{%%%PROJECT_GUID%%%}.Release|x86.Build.0 = Release|x86
-%%%LIBRARY_PROJECT_CONFIG%%%	EndGlobalSection
+%%%LIBRARY_PROJECT_CONFIG%%%
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
