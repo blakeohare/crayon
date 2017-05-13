@@ -100,7 +100,10 @@ namespace Crayon
             if (crayonHome != null)
             {
                 string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
-                directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+                if (System.IO.Directory.Exists(crayonHomeLibraries))
+                {
+                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
+                }
             }
             string crayonPaths =
                 (nullableBuildFileCrayonPath ?? "") + ";" +
