@@ -1,34 +1,44 @@
 VERSION = '0.2.0'
+MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
+XBUILD = 'xbuild'
+RELEASE_CONFIG = '/p:Configuration=Release'
+VM_TEMP_DIR = 'VmTemp/Source'
 
 import shutil
 import os
 import io
 import sys
 
-def copyDirectory(source, target):
-	source = source.replace('/', os.sep)
-	target = target.replace('/', os.sep)
+def canonicalize_sep(path):
+	return path.replace('/', os.sep).replace('\\', os.sep)
+def canonicalize_newline(text, lineEnding):
+	return text.replace("\r\n", "\n").replace("\r", "\n").replace("\n", lineEnding)
+
+def copyDirectory(source, target, ext_filter = None):
+	source = canonicalize_sep(source)
+	target = canonicalize_sep(target)
 	os.makedirs(target)
 	for file in os.listdir(source):
-		fullpath = os.path.join(source, file)
-		fulltargetpath = os.path.join(target, file)
-		if os.path.isdir(fullpath):
-			copyDirectory(fullpath, fulltargetpath)
-		elif file.lower() in ('.ds_store', 'thumbs.db'):
-			pass
-		else:
-			shutil.copyfile(fullpath, fulltargetpath)
+		if ext_filter == None or file.endswith(ext_filter):
+			fullpath = os.path.join(source, file)
+			fulltargetpath = os.path.join(target, file)
+			if os.path.isdir(fullpath):
+				copyDirectory(fullpath, fulltargetpath)
+			elif file.lower() in ('.ds_store', 'thumbs.db'):
+				pass
+			else:
+				shutil.copyfile(fullpath, fulltargetpath)
 
 def readFile(path):
-	c = open(path.replace('/', os.sep), 'rt')
+	c = open(canonicalize_sep(path), 'rt')
 	text = c.read()
 	c.close()
 	return text
 
 def writeFile(path, content, lineEnding):
-	content = content.replace("\r\n", "\n").replace("\r", "\n").replace("\n", lineEnding)
+	content = canonicalize_newline(content, lineEnding)
 	ucontent = unicode(content, 'utf-8')
-	with io.open(path.replace('/', os.sep), 'w', newline=lineEnding) as f:
+	with io.open(canonicalize_sep(path), 'w', newline=lineEnding) as f:
 		f.write(ucontent)
 
 def runCommand(cmd):
@@ -77,19 +87,24 @@ def main(args):
 	os.makedirs(copyToDir)
 
 	if platform == 'mono':
-		print runCommand('xbuild /p:Configuration=Release ../Compiler/CrayonOSX.sln')
+		print runCommand(' '.join([XBUILD, RELEASE_CONFIG, '../Compiler/CrayonOSX.sln']))
 	else:
-		print runCommand(' '.join([
-			r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe',
-			'/p:Configuration=Release',
-			r'..\Compiler\CrayonWindows.sln'
-		]))
+		print runCommand(' '.join([MSBUILD, RELEASE_CONFIG, r'..\Compiler\CrayonWindows.sln']))
 
-	shutil.copyfile('../Compiler/bin/Release/Crayon.exe', copyToDir + '/crayon.exe')
-	shutil.copyfile('../Compiler/bin/Release/Interpreter.dll', copyToDir + '/Interpreter.dll')
-	shutil.copyfile('../Compiler/bin/Release/Resources.dll', copyToDir + '/Resources.dll')
-	shutil.copyfile('../Compiler/bin/Release/LICENSE.txt', copyToDir + '/LICENSE.txt')
-	shutil.copyfile('../README.md', copyToDir + '/README.md')
+	releaseDir = '../Compiler/bin/Release'
+	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
+	shutil.copyfile(canonicalize_sep(releaseDir + '/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
+	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
+
+	for file in filter(lambda x:x.endswith('.dll'), os.listdir(releaseDir)):
+		shutil.copyfile(releaseDir + '/' + file, copyToDir + '/' + file)
+	
+	print runCommand(canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR))
+	print runCommand(' '.join([MSBUILD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR + '/CrayonRuntime.sln')]))
+	
+	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/Vm', '.dll')
+	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/Vm', '.exe')
+	
 	if platform == 'windows':
 		setupFile = readFile("setup-windows.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
