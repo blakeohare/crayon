@@ -98,7 +98,7 @@ namespace LangCSharp
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
         {
-            sb.Append("(System.DateTime.Now.Ticks / 10000000.0)");
+            sb.Append("TranslationHelper.CurrentTime");
         }
 
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
