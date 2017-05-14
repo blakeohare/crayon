@@ -54,13 +54,13 @@ function main() {
 }
 ```
 
-Now it's time to compile. Simply invoke `crayon` from the command line followed by the build file path:
+To compile, invoke `crayon` from the command line. Pass the .build file path as an argument.
 	
 ```
 C:\Stuff\HelloWorld> crayon HelloWorld.build
 ```
 
-And if all is well, you'll see this appear in the command line:
+If all is well, "Hello, World!" will appear in the command line:
 
 ```
 Hello, World!
@@ -71,9 +71,6 @@ operable program or batch file.` then your environment is not correctly configur
 [installation instructions](http://crayonlang.org/download/installation) or go to the IRC channel
 for help.
 
-If it worked, you'll notice there is now a folder called "output" which contains a folder called
-"cbx". In this folder is the compiled byte code (and eventually image/text/sound resources for your application).
-
 ![Hello World](./images/helloworld.png)
 
 Congratulations on running your first Crayon program.
@@ -81,11 +78,11 @@ Congratulations on running your first Crayon program.
 # Code structure and Execution Starting Point
 
 Unlike most scripting languages, Crayon requires all code to be wrapped in a function or method
-within a class (much like Java/C#). Each program must have a function definition called `main` which is where execution
-begins. When the function ends, the program will end. The order of how things are defined is not
-important, nor is the name of the files they are in. File layout is also irrelevant as all code
-is more or less combined together into one big mushy ball at the beginning of the compilation phase,
-much like C# code within the same assembly.
+within a class (much like Java/C#). Each program must have a function definition called `main` which
+is where execution begins. When the function ends, the program will end. The order of how things are
+defined is not important, nor is the name of the files they are in. File layout is also irrelevant,
+although it's best to define each class in an individual files that has the same name, for ease of
+finding things.
 
 # Types, Variables, and Math
 
@@ -103,9 +100,9 @@ Like most programming languages, there are types and variables. The basic types 
 | **Object Instance** | An Instance of an object (covered in the OOP tutorial). |
 
 Variables can be used to store values of any type. Assigning a value to a variable is done by
-placing an equals sign after the variable name followed by the value you want to assign, followed
+placing a `=` after the variable name followed by the value you want to assign, followed
 by a semicolon. Because Crayon is not type safe, the same variable can be reused to store different
-kinds of types.
+types of values.
 
 ```crayon
 cake = 3.14159; // the cake is a pi
@@ -117,30 +114,30 @@ Variable names can only contain alphanumeric characters and underscores. However
 begin with a number.
 
 There are various operators that can be used to manipulate values. These are generally consistent
-with most C-style languages.
+with most C-style curly-brace languages.
 
 Here is an exhaustive list of all of the operators:
 
 | Operator | Description |
 | --- | --- |
-| `+` | Addition or concatenation. For lists and strings, this concatenates values. For numbers, it is simple addition. If you add a string to any other type of value, it will result in a string. |
+| `+` | Addition or concatenation. For numbers, this will add two values. For lists and strings, this concatenates the values and creates a new value. If you add a string to any other type, it will create a string. |
 | `-` | Subtraction. This is only valid for numbers. |
 | `*` | Multiplication. If a string is multiplied by an integer, it will result in that string duplicated that integer number of times. |
 | `/` | Division. Divides two numbers. If the denominator is 0, that results in an error. Integers divided by integers will result in an integer that is rounded down to the nearest integer. |
-| `%` | Modulo. Will return remainder of a division operation. Modulo 0 will result in an error. Unlike some languages, `%` will always return a positive number. |
+| `%` | Modulo. Will return remainder of a division operation. Modulo 0 will result in an error. `%` will always return a positive number. |
 | `&&` | Boolean AND. This will AND two booleans together. This supports short-circuiting. (If the left side is false, the right side will not be evaluated) |
-| `||` | Boolean OR. This will OR two booleans together. Like AND, this supports short-circuiting if the left value is true. |
+| `&#124;&#124;` | Boolean OR. This will OR two booleans together. Like AND, this supports short-circuiting i.e. if the left value is true, the right side will not be evaluated. |
 | `==` | Equals. Checks to see if two values are the same. For primitive types (such as booleans, numbers, and even strings) this will return true if the values are the same. For reference types, (such as lists, objects, dictionaries) this will return true if and only if the instance is identical. For example, comparing two lists that have identical contents but are separate list instances will result in a false when compared with `==`. |
-| `!=` | Not equals. Returns the opposite of `==`. |
+| `!=` | Not equals. Returns the opposite boolean as `==`. |
 | `<` | Less than. Returns true if the value on the left is less than the value on the right. Only works for numbers. |
 | `>` | Greater than. Returns true if the value on the left is greater than the value on the right. Only works for numbers. |
-| `<=` | Less than or equals. You get the picture by now. |
-| `>=` | Greater than or equals. |
-| `&` | Bitwise AND. Performs an AND operation for each bit in the two numbers surrounding it. |
-| `|` | Bitwise OR. |
-| `^` | Bitwise XOR. |
-| `<<` | Bit shift left. |
-| `>>` | Bit shift right (sign extended). |
+| `<=` | Less than or equals. Returns true if the value on the left is less than or equal to the value on the right. Only works for numbers. |
+| `>=` | Greater than or equals. Returns true if the value on the left is greater than or equal to the value on the right. Only works for numbers. |
+| `&` | Bitwise AND. Performs an AND operation for each bit in the two integers surrounding it. |
+| `&#124;` | Bitwise OR. Performs an OR operation for each bit in the two integers surrounding it. |
+| `^` | Bitwise XOR. Performs an XOR operation for each bit in the two integers surrounding it. |
+| `<<` | Bit shift left. Only applicable to integers. |
+| `>>` | Bit shift right (sign extended). Only applicable to integers. |
 | `**` | Exponent. Raises the number on the left to the power on the right. 00 results in 1 because I said so. |
 | `!` | Boolean NOT. This is a unary operator that prefixes a value rather than separates two values. |
 
@@ -161,6 +158,21 @@ function main() {
   f = -5 % 40; // 35
   g = "W" + 10 * "e" + 4 * "!" + 1; // Weeeeeeeeee!!!!1
 }
+```
+
+Note that integers and floats are different types. Math operations performed on integers will always
+result in integers (except for the exponent operator). Math operations performed on floats will always
+result in floats, and operations that mix integers and floats will result in floats. If math operation 
+involving integers would conventionally result in a decimal (such as division) the result is rounded
+down to force the result to be an integer. This is consistent with most languages, but not all (such 
+as JavaScript, which does not make a distinction between integers and floats) and so may be possibly 
+unintuitive depending on your previous programming background. Consider the following examples.
+
+```crayon
+value = 5 / 2; // this is 2
+value = 5.0 / 2.0; // this is 2.5
+value = 5 / 2.0; // this is also 2.5
+value = 3.8 * 10; // this is the float 38.0, not the integer 38.
 ```
 
 ## Incremental Assignment
@@ -213,8 +225,8 @@ function main() {
 
 # Control Flow
 
-Crayon supports common control flow constructs that most languages support. These include if/else
-statements, for loops, while loops, do-while loops, and switch statements.
+Crayon supports common control flow constructs that most languages support. These include `if`/`else`
+statements, `for` loops, `while` loops, `do`-`while` loops, `switch` statements, and `try`/`catch`/`finally`.
 
 ## If Statements
 
@@ -226,7 +238,7 @@ function main() {
   a = 3;
   b = 4;
   if (a * b == 12) {
-    print("This program is not exciting. I apologize.");
+    print("This program is not very exciting. I apologize.");
   }
 }
 ```
@@ -235,6 +247,7 @@ The else condition is also supported...
 
 ```crayon
 function main() {
+  someValue = 4;
   if (someValue > 10) {
     print("It gets better.");
   } else {
@@ -262,35 +275,32 @@ function main() {
   while (output.length < 10) {
     output += "o";
   }
-  print(output);
+  print(output); // fooooooooo
 }
 ```
 
 ## For Loops
 
-For loops are really just shorthand for while loops that have a setup, condition, and step
-operation. For loops are constructed with the word `for` followed by parenthesis enclosing 3
-semicolon-delimited parts. The first part is a list of statements separated by commas that indicate 
-some sort of setup. The second part is a boolean expression. The third and final part is a list of 
-statements separated by commas that indicate some sort of stepping command. After the parenthesis is
-a block of code.
+For loops work the same way as most curly-brace languages:
 
 ```crayon
 function main() {
-  for (output = "f"; output.length < 10; output += "o") {
-    print(output);
+  for (i = 10; i >= 1; i--) {
+    print(i);
   }
+  print("Lift off.");
 }
 ```
 
-The initialization (first part) is run first. Then condition is checked before running the body of
-the code. Then the nested code block runs. After the code block is done, the stepping command is 
-run. Then it loops back and checks the condition again before trying to run it again. And then it
-keeps repeating until the condition is no longer true.
+For loops are mostly just shorthand for while loops that have a some sort of initialization, a loop 
+condition, and an incremental step operation. In the example above, `i` starts at 10, gets decremented
+every loop iteration, and continues all the way down to 1. Each of these components are separated by 
+semicolons in the parenthesis after the word `for`.
 
-You'll notice this code snippet is roughly equivalent to the while loop code above (aside from the
-print statement). 
-Here's an example of a for loop that uses compound initialization and stepping...
+The initialization and the step can also be compounded with multiple statements. In that case, separate
+the components with commas instead of semicolons. 
+For example, the following code has two initialization statements: `i = 0` and `j = 10`. It also has two
+step statements: `i++` and `j--`:
 
 ```crayon
 function main() {
@@ -330,7 +340,7 @@ while (true) {}
 
 ## Do-While Loops
 
-Although a water landing is unlikely, just in case...
+A water-landing is unlikely, but just in case...
 
 ```crayon
 i = 0;
@@ -387,7 +397,7 @@ switch statement must have entirely integer cases or entirely string cases.
 
 There are several built-in Libraries. These allow you to do more advanced things other than just 
 print things to the screen, such as opening a graphics window and drawing images to it, playing 
-sounds, accessing Gamepad, etc. All built-in libraries either have a platform independent 
+sounds, interacting with a Gamepad, etc. All built-in libraries either have a platform independent 
 implementation or a graceful fallback no-op behavior for platforms where there is no implementation.
 
 `Math` is one of the more commonly used libraries. To import that math library, include 
@@ -402,13 +412,11 @@ function main() {
 }
 ```
 
-In the above example, the `import Math;` statement does 2 things. It bundles the function
-definitions in the Math library into your project if it already hasn't been already from another
-file that may also include a Math import. Additionally, it will also indicate that the `Math`
+In the above example, the `import Math;` statement does 2 things. It ensures that the Math function
+definitions are bundled into your project. Additionally, it will also indicate that the `Math`
 namespace can now be used anywhere in this file. The "Math" that appears within the print statement 
 is actually the name of a namespace and .floor indicates that you want to invoke the floor function 
-that's in the Math namespace. Because Math is imported, you can optionally leave off the namespace 
-like this...
+that's in the Math namespace. If you want, you can optionally leave off the namespace like this...
 
 ```crayon
 import Math;
@@ -419,8 +427,7 @@ function main() {
 ```
 
 This code is equivalent, but runs the risk that the compiler may get confused in the event that 
-another function called floor is defined somewhere else. Math.floor is unambiguous. Either 
-Math.floor or just floor may be considered "cleaner" depending on your school of thought. In fact,
+another function called floor is defined somewhere else. Math.floor is unambiguous. In fact,
 there is also a library called "Core". Core is implicitly imported at the top of all files and the
 print statement we've been using so far is actually a function defined in the Core library. And so 
 you could potentially also write it like this...
@@ -436,9 +443,15 @@ function main() {
 
 The entire list of built in libraries is available in the [documentation](../../Docs/index.md).
 
-# A Bare Bones "Game"
+# A Simple "Game"
 
-At the core of every game is the game loop. This is generally a while loop that runs indefinitely, or at least as long as the game is running. In this loop you read input from the user, update the game model with those inputs, make some calculations to put the game in a new state, and then draw the new state to the screen. After this is done, it pauses for some amount of time so that each loop consumes exactly the same amount of time. This amount of time is called the frame rate and is generally either 60 frames per second or 30 frames per second (where "frame" refers to the events that take place in the body of the loop).
+At the core of every game is the game loop. This is generally a while loop that runs indefinitely,
+or at least as long as the game is running. In this loop you read input from the user, update the
+game model with those inputs, make some calculations to put the game in a new state, and then draw
+the new state to the screen. After this is done, it pauses for some amount of time so that each
+loop consumes exactly the same amount of time. This amount of time is called the frame rate and
+is generally either 60 frames per second or 30 frames per second (where "frame" refers to the
+events that take place in the body of the loop).
 
 ```crayon
 import Game;
@@ -646,7 +659,7 @@ Here is a list of all the methods and fields that can be called on a list, what 
 | **.length** | Returns the length of the list. This is a field, not a method, so parenthesis are not required. | O(1) |
 | **.add(item)** | Adds an item to the end of a list. | O(1) amortized |
 | **.choice()** | Returns a random item from the list. | O(1) |
-| **.clear()**	Removes all elements of the list and changes size to 0. | O(1) |
+| **.clear()** | Removes all elements of the list and changes size to 0. | O(1) |
 | **.clone()** | Returns a shallow copy of the list. | O(n) |
 | **.concat(secondList)** | Appends all the items in the secondList to the end of this list. | O(n) |
 | **.contains(item)** | Returns true if the list contains the given item. Iterates sequentially through the list from the beginning and uses the same logic as == for comparing each item. | O(n) |
