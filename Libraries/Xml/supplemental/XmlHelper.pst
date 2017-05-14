@@ -1,4 +1,9 @@
-﻿string lib_xml_parse(string input, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
+﻿string lib_xml_parse(
+	string input,
+	Array<int> indexPtr,
+	List<Value> output,
+	Dictionary<string, string> entityLookup,
+	Dictionary<char, int> stringEnders) {
 	
 	if (entityLookup.Size() == 0) {
 		entityLookup["amp"] = "&";
@@ -6,6 +11,11 @@
 		entityLookup["gt"] = ">";
 		entityLookup["quot"] = "\"";
 		entityLookup["apos"] = "'";
+		// TODO: consider having two lookups, this one and another for character code entities whose
+		// lifetime is bound to the life of this function call. Otherwise using one cache could potentially
+		// be a huge memory leak.
+		// For documents containing foreign text, this could be a very good performance boost as opposed to
+		// parsing each code each time.
 	}
 	
 	if (stringEnders.Size() == 0) {
@@ -22,6 +32,8 @@
 	
 	indexPtr[0] = 0;
 	lib_xml_skipWhitespace(input, indexPtr);
+	// Skip the XML declaration if present. Non-Standalone is not supported and the encoding is already changed to UTF-8 if it is a Crayon string.
+	// This naive implementation feels silly though. I should parse the attributes out and verify them.
 	if (lib_xml_popIfPresent(input, indexPtr, "<?xml")) {
 		int newBegin = input.IndexOf("?>");
 		if (newBegin == -1) {
@@ -220,6 +232,7 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 	int i = indexPtr[0];
 	int start = i;
 	char c = ' ';
+	// TODO: proper char matching based on https://www.w3.org/TR/REC-xml/#d0e804
 	while (i < length) {
 		c = xml[i];
 		if ((c >= 'a' && c <= 'z') || 
@@ -229,6 +242,7 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 			c == '.' ||
 			c == ':' ||
 			c == '-') {
+			// yup, that's valid.
 		} else {
 			break;
 		}
@@ -245,11 +259,13 @@ string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeV
 	int end = length;
 	int i = start;
 	char stringType = xml[i];
+	
+	// Allow unwrapped strings. Not standard, but common enough of a mistake to support
+	// Unwrapped strings are terminated by an operator character <, >, =, ", ', or space
 	bool unwrapped = stringType != '"' && stringType != '\'';
 	bool ampFound = false;
 	char c = ' ';
 	if (unwrapped) {
-		bool stahp = false;
 		while (i < length) {
 			c = xml[i];
 			if (stringEnders.Contains(c)) {
@@ -290,12 +306,16 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
 	for (int i = 1; i < ampParts.Size(); i += 1) {
 		string component = ampParts[i];
 		int semicolon = component.IndexOf(";");
+		// stray &'s without a semicolon are bregudgingly preserved without error.
+		// TODO: Pass in a boolean for strict mode, maybe? Or maybe that's too puritanical?
 		if (semicolon != -1) {
 			string entityCode = component.SubString(0, semicolon);
 			string entityValue = lib_xml_getEntity(entityCode, entityLookup);
 			if (entityValue == null) {
+				// put the & back and just move on.
 				entityValue = "&";
 			} else {
+				// strip out the entity code and semicolon
 				component = component.SubString((semicolon + 1), (component.Size() - semicolon));
 			}
 			ampParts[i] = Core.StringConcatAll(entityValue, component);
@@ -309,5 +329,11 @@ string lib_xml_getEntity(string code, Dictionary<string, string> entityLookup) {
 	if (entityLookup.Contains(code)) {
 		return entityLookup[code];
 	}
+	
+	/*
+	if ($_string_char_code_at(code, 0) == $_ord('#')) {
+		// TODO: add parsing for stuff like &#39; and &#x123F;
+	}//*/
+	
 	return null;
 }
