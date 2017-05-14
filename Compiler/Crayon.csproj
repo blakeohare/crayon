@@ -72,6 +72,10 @@
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
+      <Project>{41debac3-73c4-4f40-93ae-9fe02319276d}</Project>
+      <Name>JavaAppAndroid</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
       <Name>JavaApp</Name>

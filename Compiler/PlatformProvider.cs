@@ -56,6 +56,7 @@ namespace Crayon
                 typeof(CApp.PlatformImpl).Assembly,
                 typeof(CSharpApp.PlatformImpl).Assembly,
                 typeof(JavaApp.PlatformImpl).Assembly,
+                typeof(JavaAppAndroid.PlatformImpl).Assembly,
                 typeof(JavaScriptAppGl.PlatformImpl).Assembly,
                 typeof(LangC.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
