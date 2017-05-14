@@ -38,6 +38,11 @@ namespace CrayonRuntime
             if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
 			if (!vmpidRaw.StartsWith("vmpid:") || !int.TryParse(vmpidRaw.Substring("vmpid:".Length), out vmPid)) throw new Exception("Invalid VM Process ID.");
 
+			if (vmPid > 0)
+			{
+				new System.Threading.Thread(ParentChecker).Start(vmPid);
+			}
+
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
 
             CbxDecoder cbxDecoder = new CbxDecoder(cbxData);
@@ -54,6 +59,20 @@ namespace CrayonRuntime
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
 
             CrayonWrapper.v_main();
+        }
+
+        // TODO: Surely there is a better way. But for now...
+        private static void ParentChecker(object pid)
+        {
+            System.Diagnostics.Process parentProcess = System.Diagnostics.Process.GetProcessById((int)pid);
+            while (true)
+            {
+                if (parentProcess == null || parentProcess.HasExited)
+                {
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                }
+                System.Threading.Thread.Sleep(50);
+            }
         }
     }
 }
