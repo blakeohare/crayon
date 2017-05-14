@@ -387,14 +387,25 @@ namespace CSharpApp
                         guid +
                         "}\"");
                     inclusions.Add("EndProject");
-                    configs.Add("\t{" + guid + "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Debug|Any CPU.Build.0 = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Debug|x86.ActiveCfg = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Debug|x86.Build.0 = Debug|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|Any CPU.ActiveCfg = Release|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|Any CPU.Build.0 = Release|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|x86.ActiveCfg = Release|Any CPU");
-                    configs.Add("\t{" + guid + "}.Release|x86.Build.0 = Release|Any CPU");
+                    foreach (string releaseConfig in new string[] {
+                        "Debug",
+                        "Release",
+                    })
+                    {
+                        foreach (string architecture in new string[] {
+                            "Any CPU",
+                            "x86",
+                        })
+                        {
+                            foreach (string activeCfg in new string[] {
+                                "ActiveCfg",
+                                "Build.0",
+                            })
+                            {
+                                configs.Add("\t\t{" + guid + "}." + releaseConfig + "|" + architecture + "." + activeCfg + " = " + releaseConfig + "|Any CPU");
+                            }
+                        }
+                    }
                 }
                 replacements["LIBRARY_PROJECT_INCLUSIONS"] = string.Join("\r\n", inclusions);
                 replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);
