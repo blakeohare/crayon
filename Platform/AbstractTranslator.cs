@@ -9,7 +9,6 @@ namespace Platform
     public abstract class AbstractTranslator
     {
         private int currentTab = 0;
-        private string currentTabValue = "";
         private string tabChar;
         private string[] tabs;
         public string NewLine { get; private set; }
@@ -27,12 +26,12 @@ namespace Platform
                 while (this.currentTab >= this.tabs.Length)
                 {
                     // Conciseness, not efficiency. Deeply nested stuff is rare.
-                    List<string> tabs = new List<string>(this.tabs);
+                    List<string> tabsBuilder = new List<string>(this.tabs);
                     for (int i = 0; i < 20; ++i)
                     {
-                        tabs.Add(tabs[tabs.Count - 1] + this.tabChar);
+                        tabsBuilder.Add(tabsBuilder[tabsBuilder.Count - 1] + this.tabChar);
                     }
-                    this.tabs = tabs.ToArray();
+                    this.tabs = tabsBuilder.ToArray();
                 }
                 this.CurrentTab = this.tabs[this.currentTab];
             }
