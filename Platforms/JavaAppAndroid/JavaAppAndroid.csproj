@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -52,6 +52,46 @@
       <Project>{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}</Project>
       <Name>Platform</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\DrawableViewJava.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\MainActivityJava.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableHdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableMdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableXhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableXxhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\DimensXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\StringsXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\StylesXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\menu\MainXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\layout\ActivityMainXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\valuesW820dp\DimensXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\IcLauncherWeb.png" />
+    <EmbeddedResource Include="Resources\app\proguardRules.txt" />
+    <EmbeddedResource Include="Resources\app\buildGradle.txt" />
+    <EmbeddedResource Include="Resources\app\appIml.txt" />
+    <EmbeddedResource Include="Resources\app\gitignore.txt" />
+    <EmbeddedResource Include="Resources\gradle\wrapper\GradleWrapper.jar" />
+    <EmbeddedResource Include="Resources\gradle\wrapper\GradleWrapperProperties.txt" />
+    <EmbeddedResource Include="Resources\idea\copyright\profileSettings.txt" />
+    <EmbeddedResource Include="Resources\idea\scopes\scopeSettings.txt" />
+    <EmbeddedResource Include="Resources\idea\compilerXml.txt" />
+    <EmbeddedResource Include="Resources\idea\encodingsXml.txt" />
+    <EmbeddedResource Include="Resources\idea\gradleXml.txt" />
+    <EmbeddedResource Include="Resources\idea\miscXml.txt" />
+    <EmbeddedResource Include="Resources\idea\modulesXml.txt" />
+    <EmbeddedResource Include="Resources\idea\name.txt" />
+    <EmbeddedResource Include="Resources\idea\vcsXml.txt" />
+    <EmbeddedResource Include="Resources\idea\workspaceXml.txt" />
+    <EmbeddedResource Include="Resources\buildGradle.txt" />
+    <EmbeddedResource Include="Resources\CrayonAppIml.txt" />
+    <EmbeddedResource Include="Resources\gitignore.txt" />
+    <EmbeddedResource Include="Resources\gradleProperties.txt" />
+    <EmbeddedResource Include="Resources\gradlew.txt" />
+    <EmbeddedResource Include="Resources\gradlewBat.txt" />
+    <EmbeddedResource Include="Resources\localProperties.txt" />
+    <EmbeddedResource Include="Resources\settingsGradle.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
