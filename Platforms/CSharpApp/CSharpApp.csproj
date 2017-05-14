@@ -65,7 +65,7 @@
     <EmbeddedResource Include="Resources\ProjectFile.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
     <EmbeddedResource Include="Resources\SolutionFile.txt" />
-
+    <EmbeddedResource Include="Resources\SolutionFileOsx.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ResourcesVm\CbxDecoder.txt" />
