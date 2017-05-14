@@ -844,8 +844,11 @@ function main() {
   window = new GameWindow("Current Time", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   while (true) {
-    // No matter how furious you click or type, the time will not change.
-    ignoredEvents = window.pumpEvents();
+    for (event : window.pumpEvents()) {
+		if (event.type == EventType.QUIT) {
+			return;
+		}
+    }
 
     epochTime = Math.floor(Core.currentTime());
     clockTime = epochTime % (60 * 60 * 12); // mod the time by 12 hours
@@ -882,16 +885,16 @@ function main() {
 
     // the clock hands are oriented such that they point up at "time 0" so
     // the sin and cos are swapped from what you're typically used to.
-    hour_x = CENTER_X + Math.floor(Math.sin(hour_angle) * HOUR_HAND_RADIUS);
-    hour_y = CENTER_Y - Math.floor(Math.cos(hour_angle) * HOUR_HAND_RADIUS);
-    minute_x = CENTER_X + Math.floor(Math.sin(minute_angle) * MINUTE_HAND_RADIUS);
-    minute_y = CENTER_Y - Math.floor(Math.cos(minute_angle) * MINUTE_HAND_RADIUS);
-    second_x = CENTER_X + Math.floor(Math.sin(second_angle) * SECOND_HAND_RADIUS);
-    second_y = CENTER_Y - Math.floor(Math.cos(second_angle) * SECOND_HAND_RADIUS);
+    hourX = CENTER_X + Math.floor(Math.sin(hourAngle) * HOUR_HAND_RADIUS);
+    hourY = CENTER_Y - Math.floor(Math.cos(hourAngle) * HOUR_HAND_RADIUS);
+    minuteX = CENTER_X + Math.floor(Math.sin(minuteAngle) * MINUTE_HAND_RADIUS);
+    minuteY = CENTER_Y - Math.floor(Math.cos(minuteAngle) * MINUTE_HAND_RADIUS);
+    secondX = CENTER_X + Math.floor(Math.sin(secondAngle) * SECOND_HAND_RADIUS);
+    secondY = CENTER_Y - Math.floor(Math.cos(secondAngle) * SECOND_HAND_RADIUS);
 
-    Graphics2D.Draw.line(hour_x, hour_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
-    Graphics2D.Draw.line(minute_x, minute_y, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
-    Graphics2D.Draw.line(second_x, second_y, CENTER_X, CENTER_Y, 3, 0, 0, 0, 255);
+    Graphics2D.Draw.line(hourX, hourY, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    Graphics2D.Draw.line(minuteX, minuteY, CENTER_X, CENTER_Y, 3, 255, 0, 0, 255);
+    Graphics2D.Draw.line(secondX, secondY, CENTER_X, CENTER_Y, 3, 0, 0, 0, 255);
 
     // name unrelated to the fact that we're rendering a ticking clock...
     window.clockTick();
