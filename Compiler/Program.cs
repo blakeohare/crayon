@@ -139,7 +139,10 @@ namespace Crayon
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
 
-                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, cbxFile)
+                    int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
+                    string flags = cbxFile + " vmpid:" + processId;
+
+                    appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, flags)
                     {
                         UseShellExecute = false,
                         CreateNoWindow = true,

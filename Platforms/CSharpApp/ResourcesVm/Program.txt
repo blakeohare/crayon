@@ -24,15 +24,19 @@ namespace CrayonRuntime
 
         private static void Run(string[] args)
         {
-            if (args.Length == 0) throw new Exception("Incorrect number of args. Requires path to a cbx file.");
+            if (args.Length < 2) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
 
             List<string> argsList = new List<string>(args);
             string cbxPath = argsList[0];
+			string vmpidRaw = argsList[1];
+            argsList.RemoveAt(0);
             argsList.RemoveAt(0);
             args = argsList.ToArray();
 
+			int vmPid = 0;
             if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
             if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
+			if (!vmpidRaw.StartsWith("vmpid:") || !int.TryParse(vmpidRaw.Substring("vmpid:".Length), out vmPid)) throw new Exception("Invalid VM Process ID.");
 
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
 
