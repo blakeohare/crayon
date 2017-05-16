@@ -9,8 +9,12 @@ namespace LangJava
 {
     public abstract class JavaTranslator : Platform.CurlyBraceTranslator
     {
+        private bool isJava6;
+
         public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n", true)
-        { }
+        {
+            this.isJava6 = platform.Name == "java-app-android"; // TODO: be more ashamed of this.
+        }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
@@ -77,7 +81,14 @@ namespace LangJava
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
             sb.Append("((");
-            sb.Append(this.Platform.TranslateType(type));
+            if (this.isJava6) // "(int) object" vs "(Integer) object"
+            {
+                sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+            }
+            else
+            {
+                sb.Append(this.Platform.TranslateType(type));
+            }
             sb.Append(") ");
             this.TranslateExpression(sb, expression);
             sb.Append(')');

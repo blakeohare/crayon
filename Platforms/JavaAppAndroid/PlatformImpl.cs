@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Common;
 using Pastel.Nodes;
 using Platform;
@@ -23,6 +24,56 @@ namespace JavaAppAndroid
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements);
 
+
+            foreach (StructDefinition structDef in structDefinitions)
+            {
+                output["app/src/main/java/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = this.GenerateCodeForStruct(structDef),
+                };
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(string.Join(this.NL, new string[] {
+                "package org.crayonlang.interpreter;",
+                "",
+                "import java.util.ArrayList;",
+                "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.structs.*;",
+                "",
+                "public final class Interpreter {",
+                "  private Interpreter() {}",
+                "",
+            }));
+
+            foreach (FunctionDefinition fnDef in functionDefinitions)
+            {
+                this.Translator.TabDepth = 1;
+                sb.Append(this.GenerateCodeForFunction(this.Translator, fnDef));
+                sb.Append(this.NL);
+            }
+            this.Translator.TabDepth = 0;
+            sb.Append("}");
+            sb.Append(this.NL);
+
+            output["app/src/main/java/org/crayonlang/interpreter/Interpreter.java"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = sb.ToString(),
+            };
+
+            output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.GenerateCodeForGlobalsDefinitions(this.Translator, globals),
+            };
+
+            // common Java helper files
+            this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
+
             return output;
         }
 
@@ -32,7 +83,7 @@ namespace JavaAppAndroid
             {
                 Type = FileOutputType.Text,
                 TextContent = this.LoadTextResource(path, replacements),
-                TrimBomIfPresent = true, //path.EndsWith("Gradle.txt"),
+                TrimBomIfPresent = true,
             };
         }
 
@@ -99,17 +150,17 @@ namespace JavaAppAndroid
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForStruct(structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

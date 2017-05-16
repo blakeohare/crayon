@@ -7,7 +7,7 @@ public final class LibraryInstance {
 
   private String name;
   private Method manifestRunner;
-  private HashMap<String, Method> methods = new HashMap<>();
+  private HashMap<String, Method> methods = new HashMap<String, Method>();
 
   public LibraryInstance(String name, Class<?> libClass) {
 	this.name = name;

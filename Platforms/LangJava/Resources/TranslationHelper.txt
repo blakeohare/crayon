@@ -193,8 +193,8 @@ public final class TranslationHelper {
     }
 
     public static String[] literalStringSplit(String original, String sep) {
-        ArrayList<String> output = new ArrayList<>();
-        ArrayList<String> currentPiece = new ArrayList<>();
+        ArrayList<String> output = new ArrayList<String>();
+        ArrayList<String> currentPiece = new ArrayList<String>();
         int length = original.length();
         int sepLength = sep.length();
         char firstSepChar = sep.charAt(0);
