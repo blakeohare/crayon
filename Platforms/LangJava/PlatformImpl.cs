@@ -29,6 +29,63 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
+        public static void ExportJavaLibraries(
+            AbstractPlatform platform,
+            string srcPath,
+            IList<LibraryForExport> libraries,
+            Dictionary<string, FileOutput> output,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            foreach (LibraryForExport library in libraries)
+            {
+                if (library.ManifestFunction != null)
+                {
+                    platform.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+
+                    List<string> libraryCode = new List<string>()
+                    {
+                        "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
+                        "",
+                        "import java.util.ArrayList;",
+                        "import java.util.HashMap;",
+                        "import org.crayonlang.interpreter.Interpreter;",
+                        "import org.crayonlang.interpreter.ResourceReader;",
+                        "import org.crayonlang.interpreter.TranslationHelper;",
+                        "import org.crayonlang.interpreter.AwtTranslationHelper;",
+                        "import org.crayonlang.interpreter.VmGlobal;",
+                        "import org.crayonlang.interpreter.structs.*;",
+                        "",
+                        "public final class LibraryWrapper {",
+                        "  private LibraryWrapper() {}",
+                        "",
+                    };
+                    platform.Translator.TabDepth = 1;
+                    libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, library.ManifestFunction));
+                    foreach (FunctionDefinition fnDef in library.Functions)
+                    {
+                        libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, fnDef));
+                    }
+                    platform.Translator.TabDepth = 0;
+                    libraryCode.Add("}");
+                    libraryCode.Add("");
+
+                    string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
+
+                    output[libraryPath + "/LibraryWrapper.java"] = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = string.Join(platform.NL, libraryCode),
+                    };
+
+                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
+                    {
+                        string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);
+                        output[path] = supFile.FileOutput;
+                    }
+                }
+            }
+        }
+
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             StringBuilder sb = new StringBuilder();

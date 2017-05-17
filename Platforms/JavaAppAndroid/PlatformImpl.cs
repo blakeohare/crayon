@@ -24,6 +24,9 @@ namespace JavaAppAndroid
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements);
 
+            string srcPath = "app/src/main/java";
+
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform);
 
             foreach (StructDefinition structDef in structDefinitions)
             {
@@ -77,6 +80,7 @@ namespace JavaAppAndroid
             
             output["app/src/main/assets/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["app/src/main/assets/resourcemanifest.txt"] = resourceDatabase.ResourceManifestFile;
+
 
             return output;
         }

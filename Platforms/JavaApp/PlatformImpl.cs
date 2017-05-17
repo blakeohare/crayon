@@ -44,56 +44,10 @@ namespace JavaApp
             TODO.OverrideJavaPackagesFromBuildFile();
 
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
-            string sourcePath = "src/" + package + "/";
-
-            foreach (LibraryForExport library in libraries)
-            {
-                if (library.ManifestFunction != null)
-                {
-                    this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
-
-                    List<string> libraryCode = new List<string>()
-                    {
-                        "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
-                        "",
-                        "import java.util.ArrayList;",
-                        "import java.util.HashMap;",
-                        "import org.crayonlang.interpreter.Interpreter;",
-                        "import org.crayonlang.interpreter.ResourceReader;",
-                        "import org.crayonlang.interpreter.TranslationHelper;",
-                        "import org.crayonlang.interpreter.AwtTranslationHelper;",
-                        "import org.crayonlang.interpreter.VmGlobal;",
-                        "import org.crayonlang.interpreter.structs.*;",
-                        "",
-                        "public final class LibraryWrapper {",
-                        "  private LibraryWrapper() {}",
-                        "",
-                    };
-                    this.Translator.TabDepth = 1;
-                    libraryCode.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
-                    foreach (FunctionDefinition fnDef in library.Functions)
-                    {
-                        libraryCode.Add(this.GenerateCodeForFunction(this.Translator, fnDef));
-                    }
-                    this.Translator.TabDepth = 0;
-                    libraryCode.Add("}");
-                    libraryCode.Add("");
-
-					string libraryPath = "src/org/crayonlang/libraries/" + library.Name.ToLower();
-
-                    output[libraryPath + "/LibraryWrapper.java"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join(this.NL, libraryCode),
-                    };
-
-                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
-                    {
-						string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);
-                        output[path] = supFile.FileOutput;
-                    }
-                }
-            }
+            string srcPath = "src";
+            string sourcePath = srcPath + "/" + package + "/";
+            
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform);
 
             foreach (StructDefinition structDef in structDefinitions)
             {
