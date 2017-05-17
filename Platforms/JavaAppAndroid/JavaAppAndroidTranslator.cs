@@ -17,14 +17,14 @@ namespace JavaAppAndroid
 
         public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
         {
-            sb.Append("Log.d(");
+            sb.Append("android.util.Log.e(\"STDERR\", ");
             this.TranslateExpression(sb, value);
             sb.Append(')');
         }
 
         public override void TranslatePrintStdOut(StringBuilder sb, Expression value)
         {
-            sb.Append("Log.d(");
+            sb.Append("android.util.Log.d(\"STDOUT\", ");
             this.TranslateExpression(sb, value);
             sb.Append(')');
         }

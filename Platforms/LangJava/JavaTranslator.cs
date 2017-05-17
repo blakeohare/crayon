@@ -80,16 +80,59 @@ namespace LangJava
 
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
-            sb.Append("((");
+            sb.Append('(');
             if (this.isJava6) // "(int) object" vs "(Integer) object"
             {
-                sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+                string castRootType = type.RootValue;
+                if (expression is CastExpression)
+                {
+                    CastExpression ce = (CastExpression)expression;
+                    string outerType = castRootType;
+                    string innerType = expression.ResolvedType.RootValue;
+
+                    if ((outerType == "int" || outerType == "double") &&
+                        (innerType == "int" || innerType == "double"))
+                    {
+                        switch (outerType + "+" + innerType)
+                        {
+                            case "int+double":
+                                sb.Append("(int) (double) (Double) ");
+                                this.TranslateExpression(sb, ce.Expression);
+                                sb.Append(')');
+                                return;
+                            case "double+int":
+                                sb.Append("(double) (int) (Integer) ");
+                                this.TranslateExpression(sb, ce.Expression);
+                                sb.Append(')');
+                                return;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                switch (castRootType)
+                {
+                    case "bool":
+                    case "int":
+                    case "double":
+                    case "char":
+                        sb.Append('(');
+                        sb.Append(this.Platform.TranslateType(type));
+                        sb.Append(") (");
+                        sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+                        sb.Append(") ");
+                        this.TranslateExpression(sb, expression);
+                        sb.Append(')');
+                        return;
+                    default:
+                        break;
+                }
             }
-            else
-            {
-                sb.Append(this.Platform.TranslateType(type));
-            }
+            sb.Append('(');
+            sb.Append(this.Platform.TranslateType(type));
             sb.Append(") ");
+
             this.TranslateExpression(sb, expression);
             sb.Append(')');
         }
@@ -136,7 +179,12 @@ namespace LangJava
         {
             TODO.PleaseRenameThisFunction();
 
-            sb.Append("new ArrayList<>(");
+            sb.Append("new ArrayList");
+            if (!this.isJava6)
+            {
+                sb.Append("<>");
+            }
+            sb.Append('(');
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
         }
@@ -188,11 +236,11 @@ namespace LangJava
 
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
-			sb.Append("new HashMap<");
-			sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(keyType));
-			sb.Append(", ");
-			sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(valueType)); 
-			sb.Append(">()");
+            sb.Append("new HashMap<");
+            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(keyType));
+            sb.Append(", ");
+            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(valueType));
+            sb.Append(">()");
         }
 
         public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)
@@ -227,7 +275,12 @@ namespace LangJava
 
         public override void TranslateDictionaryValuesToValueList(StringBuilder sb, Expression dictionary)
         {
-            sb.Append("new ArrayList<>(");
+            sb.Append("new ArrayList");
+            if (!this.isJava6)
+            {
+                sb.Append("<>");
+            }
+            sb.Append('(');
             this.TranslateExpression(sb, dictionary);
             sb.Append(".values())");
         }
@@ -574,6 +627,49 @@ namespace LangJava
         {
             sb.Append("null");
         }
+
+        /*
+        public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
+        {
+            if (this.isJava6 && opChain.Expressions.Length == 2)
+            {
+                string op = opChain.Ops[0].Value;
+                switch (op)
+                {
+                    case "==":
+                    case "!=":
+                        Expression left = opChain.Expressions[0];
+                        Expression right = opChain.Expressions[1];
+                        if (left is CastExpression || right is CastExpression)
+                        {
+                            if (!(left is CastExpression))
+                            {
+                                Expression t = left;
+                                left = right;
+                                right = t;
+                            }
+                            if (op == "!=")
+                            {
+                                sb.Append('!');
+                            }
+                            sb.Append('(');
+                            this.TranslateExpression(sb, left);
+                            sb.Append(").equals(");
+                            this.TranslateExpression(sb, right);
+                            sb.Append(')');
+                            return;
+                        }
+                        break;
+
+                    default:
+                        // fall back to regular behavior
+                        break;
+                }
+            }
+
+            base.TranslateOpChain(sb, opChain);
+        }
+        //*/
 
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
