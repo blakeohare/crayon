@@ -1,0 +1,39 @@
+﻿package org.crayonlang.crayonsampleapp.app;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public final class AndroidTranslationHelper {
+
+    private static MainActivity mainActivity;
+
+	private AndroidTranslationHelper() { }
+
+    public static void setMainActivity(MainActivity mainActivity) {
+        AndroidTranslationHelper.mainActivity = mainActivity;
+    }
+
+    public static String getTextAsset(String path) {
+        try {
+            InputStream inputStream = mainActivity.getAssets().open(path);
+            return flushTextInputStream(inputStream);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    private static String flushTextInputStream(InputStream stream) throws IOException {
+        InputStreamReader reader = new InputStreamReader(stream);
+        StringBuilder output = new StringBuilder();
+        char[] buffer = new char[256];
+        int bytesRead = 1;
+        while (bytesRead > 0) {
+            bytesRead = reader.read(buffer, 0, buffer.length);
+            if (bytesRead > 0) {
+                output.append(buffer, 0, bytesRead);
+            }
+        }
+        return output.toString();
+    }
+}

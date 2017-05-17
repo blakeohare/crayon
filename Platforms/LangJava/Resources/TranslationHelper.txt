@@ -41,17 +41,19 @@ public final class TranslationHelper {
     public static boolean alwaysTrue() { return true; }
     public static boolean alwaysFalse() { return false; }
 
-    private static ProgramData programData = null;
-
     public static Random random = new Random();
 
-    public static void setProgramData(ProgramData pd) {
-        programData = pd;
-    }
+    private static ProgramData programData = null;
+    public static void setProgramData(ProgramData pd) { programData = pd; }
+    public static ProgramData getProgramData() { return programData; }
 
-    public static ProgramData getProgramData() {
-        return programData;
-    }
+	private static String byteCode = null;
+	public static void setByteCode(String byteCode) { TranslationHelper.byteCode = byteCode; }
+	public static String getByteCode() { return byteCode; }
+
+	private static String resourceManifest = null;
+	public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
+	public static String getResourceManifest() { return resourceManifest; }
 
 	private static String[] cmdLineArgs = null;
 	public static void setCmdLineArgs(String[] args) { cmdLineArgs = args; }

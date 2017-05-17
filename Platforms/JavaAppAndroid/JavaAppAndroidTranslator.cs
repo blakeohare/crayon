@@ -31,7 +31,7 @@ namespace JavaAppAndroid
 
         public override void TranslateReadByteCodeFile(StringBuilder sb)
         {
-            sb.Append("TODO.readByteCodeFile()");
+            sb.Append("TranslationHelper.getByteCode()");
         }
     }
 }

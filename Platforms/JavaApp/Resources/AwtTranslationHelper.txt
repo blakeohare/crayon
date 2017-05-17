@@ -23,10 +23,6 @@ public final class AwtTranslationHelper {
         return ResourceReader.readFileText("resources/bytecode.txt");
     }
 	
-	public static String getResourceManifest() {
-		return ResourceReader.readFileText("resources/manifest.txt");
-	}
-
     public static String getTextResource(String path) {
         return ResourceReader.readFileText("resources/" + path);
     }

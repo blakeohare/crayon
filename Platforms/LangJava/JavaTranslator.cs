@@ -324,7 +324,7 @@ namespace LangJava
 
         public override void TranslateGetResourceManifest(StringBuilder sb)
         {
-            sb.Append("AwtTranslationHelper.getResourceManifest()");
+            sb.Append("TranslationHelper.getResourceManifest()");
         }
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)

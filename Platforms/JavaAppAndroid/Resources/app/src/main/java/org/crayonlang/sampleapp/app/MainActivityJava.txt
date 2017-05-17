@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.LinearLayout;
 
 import org.crayonlang.interpreter.Interpreter;
+import org.crayonlang.interpreter.TranslationHelper;
 
 public class MainActivity extends Activity {
 
@@ -20,7 +20,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+		AndroidTranslationHelper.setMainActivity(this);
         setContentView(new DrawableView(this));
+        TranslationHelper.setByteCode(AndroidTranslationHelper.getTextAsset("bytecode.txt"));
+		TranslationHelper.setResourceManifest(AndroidTranslationHelper.getTextAsset("resourcemanifest.txt"));
         Interpreter.v_main();
     }
 
