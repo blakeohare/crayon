@@ -293,7 +293,7 @@ public final class TranslationHelper {
     return list.remove(list.size() - 1);
   }
 
-  private static final HashMap<String, LibraryInstance> libraryByName = new HashMap<>();
+  private static final HashMap<String, LibraryInstance> libraryByName = new HashMap<String, LibraryInstance>();
 
   public static int checkLibraryAvaialability(String name, String version) {
     Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
