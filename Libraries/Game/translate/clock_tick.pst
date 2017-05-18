@@ -1,6 +1,5 @@
 ﻿Value lib_game_function_clock_tick(Array<Value> args) {
 	Value output = VALUE_NULL;
-	noop();
 	Native._lib_game_clockTick();
 	vm_suspend();
 	return output;
