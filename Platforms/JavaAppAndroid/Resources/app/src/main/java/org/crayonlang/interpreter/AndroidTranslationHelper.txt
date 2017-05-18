@@ -1,4 +1,9 @@
-﻿package org.crayonlang.crayonsampleapp.app;
+﻿package org.crayonlang.interpreter;
+
+import android.view.View;
+
+
+import android.app.Activity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,11 +11,11 @@ import java.io.InputStreamReader;
 
 public final class AndroidTranslationHelper {
 
-    private static MainActivity mainActivity;
+    private static Activity mainActivity;
 
 	private AndroidTranslationHelper() { }
 
-    public static void setMainActivity(MainActivity mainActivity) {
+    public static void setMainActivity(Activity mainActivity) {
         AndroidTranslationHelper.mainActivity = mainActivity;
     }
 
@@ -35,5 +40,13 @@ public final class AndroidTranslationHelper {
             }
         }
         return output.toString();
+    }
+
+	public static void switchToView(View view) {
+		mainActivity.setContentView(view);
+	}
+
+    public static Activity getMainActivity() {
+        return mainActivity;
     }
 }

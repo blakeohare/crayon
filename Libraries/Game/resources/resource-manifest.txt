@@ -12,3 +12,8 @@ DOTNET_DLL: from=csharp-app/libvorbis-0.dll, hintpath=libvorbis-0.dll
 DOTNET_DLL: from=csharp-app/libvorbisfile-3.dll, hintpath=libvorbisfile-3.dll
 DOTNET_LIB: name=System.Drawing
 END
+
+BEGIN
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
+END

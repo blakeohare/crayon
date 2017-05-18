@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import org.crayonlang.interpreter.AndroidTranslationHelper;
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.TranslationHelper;
 
@@ -21,7 +22,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		AndroidTranslationHelper.setMainActivity(this);
-        setContentView(new DrawableView(this));
+		// TODO: set a default content view that just shows STDOUT output.
         TranslationHelper.setByteCode(AndroidTranslationHelper.getTextAsset("bytecode.txt"));
 		TranslationHelper.setResourceManifest(AndroidTranslationHelper.getTextAsset("resourcemanifest.txt"));
         Interpreter.v_main();

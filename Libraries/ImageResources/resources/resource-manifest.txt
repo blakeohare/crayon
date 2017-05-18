@@ -3,3 +3,8 @@ BEGIN
 APPLICABLE-TO: csharp-app-android
 COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
+END

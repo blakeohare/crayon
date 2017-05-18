@@ -46,8 +46,14 @@ namespace JavaApp
             string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string srcPath = "src";
             string sourcePath = srcPath + "/" + package + "/";
-            
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform);
+
+            string[] imports = new string[]
+            {
+                "import org.crayonlang.interpreter.ResourceReader;",
+                "import org.crayonlang.interpreter.AwtTranslationHelper;",
+            };
+
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
             foreach (StructDefinition structDef in structDefinitions)
             {

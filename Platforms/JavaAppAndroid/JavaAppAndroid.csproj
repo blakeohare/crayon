@@ -54,8 +54,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\AndroidTranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\DrawableViewJava.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\interpreter\AndroidTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\MainActivityJava.txt" />
     <EmbeddedResource Include="Resources\app\src\main\res\drawableHdpi\ic_launcher.png" />
     <EmbeddedResource Include="Resources\app\src\main\res\drawableMdpi\ic_launcher.png" />

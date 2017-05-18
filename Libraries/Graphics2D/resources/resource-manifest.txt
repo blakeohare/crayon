@@ -3,3 +3,8 @@ APPLICABLE-TO: csharp-app
 DOTNET_DLL: from=LIB:Game:csharp-app/OpenTK.dll, hintpath=OpenTK.dll, name=OpenTK, version=1.0.0.0, culture=neutral, token=bad199fe84eb3df4, architecture=MSIL, specificversion=false
 LIB_DLL_REF: name=Game, version=v1
 END
+
+BEGIN
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
+END

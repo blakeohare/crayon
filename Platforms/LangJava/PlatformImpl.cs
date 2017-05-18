@@ -34,8 +34,22 @@ namespace LangJava
             string srcPath,
             IList<LibraryForExport> libraries,
             Dictionary<string, FileOutput> output,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
+            string[] extraImports)
         {
+            List<string> defaultImports = new List<string>()
+            {
+                "import java.util.ArrayList;",
+                "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.Interpreter;",
+                "import org.crayonlang.interpreter.TranslationHelper;",
+                "import org.crayonlang.interpreter.VmGlobal;",
+                "import org.crayonlang.interpreter.structs.*;",
+            };
+
+            defaultImports.AddRange(extraImports);
+            defaultImports.Sort();
+
             foreach (LibraryForExport library in libraries)
             {
                 if (library.ManifestFunction != null)
@@ -46,19 +60,16 @@ namespace LangJava
                     {
                         "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
                         "",
-                        "import java.util.ArrayList;",
-                        "import java.util.HashMap;",
-                        "import org.crayonlang.interpreter.Interpreter;",
-                        "import org.crayonlang.interpreter.ResourceReader;",
-                        "import org.crayonlang.interpreter.TranslationHelper;",
-                        "import org.crayonlang.interpreter.AwtTranslationHelper;",
-                        "import org.crayonlang.interpreter.VmGlobal;",
-                        "import org.crayonlang.interpreter.structs.*;",
+                    };
+                    libraryCode.AddRange(defaultImports);
+                    libraryCode.AddRange(new string[]
+                    {
                         "",
                         "public final class LibraryWrapper {",
                         "  private LibraryWrapper() {}",
                         "",
-                    };
+                    });
+                    
                     platform.Translator.TabDepth = 1;
                     libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, library.ManifestFunction));
                     foreach (FunctionDefinition fnDef in library.Functions)

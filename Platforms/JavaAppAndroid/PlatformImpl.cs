@@ -26,7 +26,12 @@ namespace JavaAppAndroid
 
             string srcPath = "app/src/main/java";
 
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform);
+            string[] imports = new string[]
+            {
+                "import org.crayonlang.interpreter.AndroidTranslationHelper;",
+            };
+
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
             foreach (StructDefinition structDef in structDefinitions)
             {
@@ -75,13 +80,13 @@ namespace JavaAppAndroid
 
             // common Java helper files
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/TranslationHelper.java", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/AndroidTranslationHelper.java", "Resources/app/src/main/java/org/crayonlang/interpreter/AndroidTranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.txt", replacements);
             
             output["app/src/main/assets/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["app/src/main/assets/resourcemanifest.txt"] = resourceDatabase.ResourceManifestFile;
-
-
+            
             return output;
         }
 
@@ -137,8 +142,6 @@ namespace JavaAppAndroid
             output["app/src/main/ic_launcher-web.png"] = this.LoadBinaryFile("Resources/app/src/main/IcLauncherWeb.png");
 
             output["app/src/main/java/org/crayonlang/crayonsampleapp/app/MainActivity.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
-            output["app/src/main/java/org/crayonlang/crayonsampleapp/app/DrawableView.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/DrawableViewJava.txt", replacements);
-            output["app/src/main/java/org/crayonlang/crayonsampleapp/app/AndroidTranslationHelper.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/AndroidTranslationHelper.txt", replacements);
             output["app/src/main/res/drawable-hdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableHdpi/ic_launcher.png");
             output["app/src/main/res/drawable-mdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableMdpi/ic_launcher.png");
             output["app/src/main/res/drawable-xhdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableXhdpi/ic_launcher.png");
