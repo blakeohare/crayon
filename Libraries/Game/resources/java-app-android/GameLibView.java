@@ -94,4 +94,13 @@ public class GameLibView extends View {
         lastClockTimestamp = getCurrentTime();
         Interpreter.v_runInterpreter(executionContextId);
     }
+
+    public void setRenderQueues(
+        int[] eventList,
+        int eventListLength,
+        Object[][] imagesNativeData,
+        ArrayList<Integer> textChars) {
+
+
+    }
 }
