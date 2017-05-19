@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import org.crayonlang.interpreter.AndroidTranslationHelper;
@@ -22,6 +24,10 @@ public class GameLibView extends View {
     private int executionContextId = -1;
     private int logicalWidth;
     private int logicalHeight;
+    private int screenWidth = -1;
+    private int screenHeight = -1;
+    private ArrayList<PlatformRelayObject> events = new ArrayList<PlatformRelayObject>();
+    private Paint paint = new Paint();
 
     public GameLibView(double fps, Context context) {
         super(context);
@@ -30,7 +36,47 @@ public class GameLibView extends View {
         this.fps = fps;
     }
 
-    private Paint paint = new Paint();
+    private void handleMouseEventImpl(boolean isMove, boolean isDown, float x, float y) {
+        int px = 0;
+        int py = 0;
+        if (screenWidth != -1) {
+            px = (int) (x * logicalWidth / screenWidth);
+            py = (int) (y * logicalHeight / screenHeight);
+        }
+
+        PlatformRelayObject pro;
+        if (isMove) {
+            pro = new PlatformRelayObject(32, px, py, 0, 0, "");
+        } else {
+            if (isDown) {
+                pro = new PlatformRelayObject(33, px, py, 0, 0, "");
+            } else {
+                pro = new PlatformRelayObject(34, px, py, 0, 0, "");
+            }
+        }
+        events.add(pro);
+    }
+
+    private static final MotionEvent.PointerCoords POINTER_COORDS_OUT = new MotionEvent.PointerCoords();
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                e.getPointerCoords(0, POINTER_COORDS_OUT);
+                handleMouseEventImpl(true, false, POINTER_COORDS_OUT.x, POINTER_COORDS_OUT.y);
+                break;
+            case MotionEvent.ACTION_DOWN:
+                e.getPointerCoords(0, POINTER_COORDS_OUT);
+                handleMouseEventImpl(false, true, POINTER_COORDS_OUT.x, POINTER_COORDS_OUT.y);
+                break;
+            case MotionEvent.ACTION_UP:
+                e.getPointerCoords(0, POINTER_COORDS_OUT);
+                handleMouseEventImpl(false, false, POINTER_COORDS_OUT.x, POINTER_COORDS_OUT.y);
+                break;
+        }
+        return true;
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -39,6 +85,8 @@ public class GameLibView extends View {
         paint.setColor(Color.BLUE);
         int screenWidth = canvas.getWidth();
         int screenHeight = canvas.getHeight();
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
         int logicalWidth = this.logicalWidth;
         int logicalHeight = this.logicalHeight;
 
@@ -104,8 +152,9 @@ public class GameLibView extends View {
     }
 
     public ArrayList<PlatformRelayObject> getEventsRawList() {
-        // For now, just pretend there are no events...
-        return new ArrayList<PlatformRelayObject>();
+        ArrayList<PlatformRelayObject> output = new ArrayList<PlatformRelayObject>(events);
+        events.clear();
+        return output;
     }
 
     private double getCurrentTime() {
