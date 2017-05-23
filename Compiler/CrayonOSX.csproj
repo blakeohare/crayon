@@ -102,6 +102,10 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
+      <Project>{41DEBAC3-73C4-4F40-93AE-9FE02319276D}</Project>
+      <Name>JavaAppAndroid</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
