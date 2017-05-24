@@ -117,7 +117,6 @@ namespace CSharpApp
                     replacements["LIBRARY_NAME"] = library.Name;
                     LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);
                     
-
                     libraryProjectNameToGuid[name] = projectGuid;
 
                     List<string> dotNetLibraries = new List<string>();

@@ -70,6 +70,7 @@ namespace CrayonRuntime
                 if (parentProcess == null || parentProcess.HasExited)
                 {
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
+					return; // not strictly necessary but prevents an infinite loop compiler warning.
                 }
                 System.Threading.Thread.Sleep(50);
             }

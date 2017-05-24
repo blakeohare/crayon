@@ -7,7 +7,8 @@ namespace Crayon
 {
     internal class Program
     {
-        // TODO: resource file
+#if DEBUG
+#else
         private static readonly string USAGE = Util.JoinLines(
             "Usage:",
             "  crayon BUILD-FILE -target BUILD-TARGET-NAME [OPTIONS...]",
@@ -22,6 +23,7 @@ namespace Crayon
             "  -vmdir             Directory to output the VM to (when -vm is",
             "                     specified).",
             "");
+#endif
 
         static void Main(string[] args)
         {
@@ -269,6 +271,7 @@ namespace Crayon
             Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(GetCommandLineFlagValue("-vm", args));
             string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
             if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
+            targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
             VmGenerator vmGenerator = new VmGenerator();
             List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
             Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
@@ -285,7 +288,6 @@ namespace Crayon
             BuildContext buildContext,
             ByteBuffer nullableByteCode) // CBX files will not have this in the resources
         {
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             // This really needs to go in a separate helper file.
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
             if (nullableByteCode != null)

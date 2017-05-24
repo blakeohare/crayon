@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CrayonRuntime\Interpreter.csproj">
-      <Project>{3bddab06-4e41-8ce7-fdaa-b54540742e13}</Project>
+      <Project>{af5b426c-9525-9fbb-9a3e-0cc1655de936}</Project>
       <Name>Interpreter</Name>
     </ProjectReference>
     %%%DLL_REFERENCES%%%
