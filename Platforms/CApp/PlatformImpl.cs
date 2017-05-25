@@ -19,51 +19,51 @@ namespace CApp
             this.Translator = new CAppTranslator(this);
         }
 
-		public override Dictionary<string, FileOutput> ExportProject(
-			IList<VariableDeclaration> globals,
-			IList<StructDefinition> structDefinitions,
-			IList<FunctionDefinition> functionDefinitions,
-			IList<LibraryForExport> libraries,
-			ResourceDatabase resourceDatabase,
-			Options options,
-			ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
-		{
-			Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-			Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-			StringBuilder cCode = new StringBuilder();
+        public override Dictionary<string, FileOutput> ExportProject(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            StringBuilder cCode = new StringBuilder();
 
-			cCode.Append("#include <stdio.h>\n");
-			cCode.Append("#include <stdlib.h>\n");
-			cCode.Append("#include <string.h>\n");
-			cCode.Append('\n');
+            cCode.Append("#include <stdio.h>\n");
+            cCode.Append("#include <stdlib.h>\n");
+            cCode.Append("#include <string.h>\n");
+            cCode.Append('\n');
 
-			cCode.Append(this.LoadTextResource("Resources/List.txt", replacements));
-			cCode.Append(this.LoadTextResource("Resources/String.txt", replacements));
-			cCode.Append(this.LoadTextResource("Resources/Dictionary.txt", replacements));
+            cCode.Append(this.LoadTextResource("Resources/List.txt", replacements));
+            cCode.Append(this.LoadTextResource("Resources/String.txt", replacements));
+            cCode.Append(this.LoadTextResource("Resources/Dictionary.txt", replacements));
 
-			// This needs to be done in LangC
-			foreach (StructDefinition structDef in structDefinitions)
-			{
-				string name = structDef.NameToken.Value;
-				cCode.Append("typedef struct " + name + " " + name + ";\n");
-			}
-			cCode.Append('\n');
+            // This needs to be done in LangC
+            foreach (StructDefinition structDef in structDefinitions)
+            {
+                string name = structDef.NameToken.Value;
+                cCode.Append("typedef struct " + name + " " + name + ";\n");
+            }
+            cCode.Append('\n');
 
-			foreach (StructDefinition structDef in structDefinitions)
-			{
-				cCode.Append(this.GenerateCodeForStruct(structDef));
-			}
+            foreach (StructDefinition structDef in structDefinitions)
+            {
+                cCode.Append(this.GenerateCodeForStruct(structDef));
+            }
 
-			cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
+            cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
 
-			output["main.c"] = new FileOutput()
-			{
-				Type = FileOutputType.Text,
-				TextContent = cCode.ToString(),
-			};
+            output["main.c"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = cCode.ToString(),
+            };
 
-			return output;
-		}
+            return output;
+        }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -71,34 +71,34 @@ namespace CApp
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
-		{
-			return this.GenerateCodeForFunction(translator, funcDef);
-		}
-
-		public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-			return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+            return this.GenerateCodeForFunction(translator, funcDef);
+        }
+
+        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
-			return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-			return new Dictionary<string, string>();
+            return new Dictionary<string, string>();
         }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-			return new Dictionary<string, object>();
+            return new Dictionary<string, object>();
         }
 
 
-		public override string TranslateType(Pastel.Nodes.PType type)
-		{
-			return this.ParentPlatform.TranslateType(type);
-		}
+        public override string TranslateType(Pastel.Nodes.PType type)
+        {
+            return this.ParentPlatform.TranslateType(type);
+        }
     }
 }

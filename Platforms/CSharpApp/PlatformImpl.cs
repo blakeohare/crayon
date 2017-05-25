@@ -67,7 +67,7 @@ namespace CSharpApp
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
         }
-        
+
         private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(
@@ -116,7 +116,7 @@ namespace CSharpApp
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
                     LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);
-                    
+
                     libraryProjectNameToGuid[name] = projectGuid;
 
                     List<string> dotNetLibraries = new List<string>();

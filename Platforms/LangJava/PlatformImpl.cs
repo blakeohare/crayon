@@ -69,7 +69,7 @@ namespace LangJava
                         "  private LibraryWrapper() {}",
                         "",
                     });
-                    
+
                     platform.Translator.TabDepth = 1;
                     libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, library.ManifestFunction));
                     foreach (FunctionDefinition fnDef in library.Functions)

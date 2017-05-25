@@ -62,8 +62,10 @@ MATCHERS = [
 	# C#
 	('Common/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
 	('Compiler/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
+	('Interpreter/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
 	('Pastel/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
 	('Platform/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
+	('Platforms/*.cs', FormatStyle().tabs(' ' * 4).newline('\r\n')),
 
 	# Pastel
 	('Interpreter/*.pst', FormatStyle().tabs(' ' * 4).newline('\n')),

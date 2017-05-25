@@ -9,7 +9,7 @@ namespace LangCSharp
     public static class DllReferenceHelper
     {
         public static void AddDllReferencesToProjectBasedReplacements(
-            Dictionary<string, string> replacements, 
+            Dictionary<string, string> replacements,
             List<DllFile> dlls,
             Dictionary<string, string> referenceLibraryNamesToGuids)
         {

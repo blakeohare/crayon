@@ -10,15 +10,15 @@ namespace LangPython
 {
     /*
         A switch statement has some cases and possibly a default.
-        These cases may be strings or integers. 
+        These cases may be strings or integers.
         If there is no default, then we pretend there's one with an empty code chunk.
 
         Each case/default code chunk is given an ID number from 0 to n - 1
 
-        For every single switch statement that is translated in Python, there is a dictionary 
+        For every single switch statement that is translated in Python, there is a dictionary
         that is serialized after the function definition. This dictionary has the following name format:
         "swlookup__{function name without 'v_'}__{number that is allocated starting from 1 on a per function basis}"
-        
+
         In the actual code, the switch statement is serialized as a lookup in that dictionary with a .get
         The value that is looked up is the switch condition value and the default fallback value is the code chunk ID of the default.
 
@@ -167,7 +167,7 @@ namespace LangPython
             if (lowId + 2 == highId)
             {
                 /*
-                    if id == lowId: 
+                    if id == lowId:
                       ...
                     elif id == midId:
                       ...
@@ -188,7 +188,7 @@ namespace LangPython
                       ...
                     else:
                       ...
-                    
+
                 */
                 return BuildIfStatement(lowId, "==", codeById[lowId], codeById[highId]);
             }
@@ -198,7 +198,7 @@ namespace LangPython
                   recurse through lowId to floor(mean)
                 else:
                   recurse through floor(mean) + 1 to highId
-                
+
             */
             int midId1 = (lowId + highId) / 2;
             int midId2 = midId1 + 1;

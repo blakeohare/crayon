@@ -83,10 +83,10 @@ namespace JavaAppAndroid
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/AndroidTranslationHelper.java", "Resources/app/src/main/java/org/crayonlang/interpreter/AndroidTranslationHelper.txt", replacements);
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.txt", replacements);
             this.CopyResourceAsText(output, "app/src/main/java/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.txt", replacements);
-            
+
             output["app/src/main/assets/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["app/src/main/assets/resourcemanifest.txt"] = resourceDatabase.ResourceManifestFile;
-            
+
             return output;
         }
 
