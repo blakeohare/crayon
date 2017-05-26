@@ -79,7 +79,18 @@ namespace LangC
 
         public override void TranslateDictionaryContainsKey(StringBuilder sb, Expression dictionary, Expression key)
         {
-            throw new NotImplementedException();
+            if (key.ResolvedType.RootValue == "int")
+            {
+                sb.Append("Dictionary_get_node_int(");
+            }
+            else
+            {
+                sb.Append("Dictionary_get_node_str(");
+            }
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(", ");
+            this.TranslateExpression(sb, key);
+            sb.Append(" != NULL");
         }
 
         public override void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key)
@@ -159,7 +170,7 @@ namespace LangC
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
         {
-            throw new NotImplementedException();
+            this.TranslateVariable(sb, variable);
         }
 
         public override void TranslateIntBuffer16(StringBuilder sb)
@@ -514,7 +525,17 @@ namespace LangC
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
-            throw new NotImplementedException();
+            sb.Append(this.Platform.TranslateType(varDecl.Type));
+            sb.Append(" v_");
+            sb.Append(varDecl.VariableNameToken.Value);
+            if (varDecl.Value != null)
+            {
+                sb.Append(" = ");
+                this.TranslateExpression(sb, varDecl.Value);
+            }
+            sb.Append(';');
+            sb.Append(this.NewLine);
+            sb.Append(this.CurrentTab);
         }
 
         public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)

@@ -64,7 +64,25 @@ namespace LangC
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            for (int i = 0; i < funcDef.ArgNames.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(" v_");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append(")\n{\n");
+            translator.TabDepth = 1;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth = 0;
+            sb.Append("}\n");
+
+            return sb.ToString();
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)

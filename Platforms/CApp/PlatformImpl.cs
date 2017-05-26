@@ -54,6 +54,13 @@ namespace CApp
                 cCode.Append(this.GenerateCodeForStruct(structDef));
             }
 
+            foreach (FunctionDefinition fd in functionDefinitions)
+            {
+                string functionCode = this.GenerateCodeForFunction(this.Translator, fd);
+                cCode.Append(functionCode);
+                cCode.Append("\n\n");
+            }
+
             cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
 
             output["main.c"] = new FileOutput()
@@ -72,7 +79,7 @@ namespace CApp
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.GenerateCodeForFunction(translator, funcDef);
+            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
