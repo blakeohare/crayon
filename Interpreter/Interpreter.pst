@@ -156,7 +156,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     ObjectInstance objInstance2 = null;
     object object1 = null;
     object object2 = null;
-    object object3 = null;
     List<Value> list1 = null;
     List<Value> list2 = null;
     DictImpl dictImpl = null;
@@ -167,9 +166,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     Array<int> intArray1 = null;
     Array<int> intArray2 = null;
     Array<object> objArray1 = null;
-    Array<object> objArray2 = null;
-    Array<Array<object>> objArrayArray1 = null;
-    Array<Array<object>> objArrayArray2 = null;
     FunctionPointer functionPointer1 = null;
     Dictionary<int, int> intIntDict1 = null;
     StackFrame stackFrame2 = null;
@@ -184,13 +180,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     Value arg1 = null;
     Value arg2 = null;
     Value arg3 = null;
-    Value arg4 = null;
-    Value arg5 = null;
-    Value arg6 = null;
-    Value arg7 = null;
-    Value arg8 = null;
-    Value arg9 = null;
-    Value arg10 = null;
     Array<int> globalNameIdToPrimitiveMethodName = p.globalNameIdToPrimitiveMethodName;
     MagicNumbers magicNumbers = p.magicNumbers;
     Array<Dictionary<int, int>> integerSwitches = p.integerSwitchLookups;

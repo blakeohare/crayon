@@ -78,8 +78,6 @@ namespace Interpreter.Libraries.Game
             double angle = 0.0;
             double r_cos = 0.0;
             double r_sin = 0.0;
-            double centerX = 0;
-            double centerY = 0;
             int red = 0;
             int green = 0;
             int blue = 0;
