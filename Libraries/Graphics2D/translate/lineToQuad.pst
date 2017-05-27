@@ -13,7 +13,6 @@
 	int len = 0;
 	Array<object> objArray1 = null;
 	ObjectInstance objInstance1 = null;
-	Value value = null;
 	Value output = VALUE_NULL;
 	Value arg1 = args[0];
 	objInstance1 = ((ObjectInstance) arg1.internalValue);
@@ -62,7 +61,5 @@
 	}
 	intArray1[(len + 6)] = i;
 	intArray1[(len + 8)] = j;
-	output = VALUE_NULL;
-	return output;
+	return VALUE_NULL;
 }
-
