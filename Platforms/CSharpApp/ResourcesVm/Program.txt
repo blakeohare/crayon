@@ -40,7 +40,9 @@ namespace CrayonRuntime
 
 			if (vmPid > 0)
 			{
-				new System.Threading.Thread(ParentChecker).Start(vmPid);
+                System.Threading.Thread thread = new System.Threading.Thread(ParentChecker);
+                thread.IsBackground = true;
+                thread.Start(vmPid);
 			}
 
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
