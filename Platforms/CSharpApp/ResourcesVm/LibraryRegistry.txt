@@ -15,16 +15,11 @@ namespace Interpreter.Vm
             {
                 string libraryVersion = libraryVersions[libraryName];
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
-#if DEBUG
-                string config = "Debug";
-#else
-                string config = "Release";
-#endif
                 string dllFile = System.IO.Path.Combine(crayonHome, "vm", libraryName + ".dll");
                 System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFrom(dllFile);
 
                 // TODO: compare assembly reported version against required version.
-                
+
                 foreach (Type type in asm.GetTypes().Where(t => t.Name == "LibraryWrapper"))
                 {
                     string[] namespaceComponents = type.FullName.Split('.');
