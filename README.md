@@ -3,6 +3,8 @@
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
 
+[![Build Status](https://travis-ci.org/blakeohare/crayon.svg?branch=master)](https://travis-ci.org/blakeohare/crayon)
+
 # Copyright
 Copyright 2016 crayonlang.org, All rights reserved.
 
