@@ -10,10 +10,20 @@ namespace Interpreter
     {
         public static string ReadResourceTextFile(string path)
         {
-            return ReadTextFile("Resources/" + path);
+            return ReadTextResource("Resources/" + path);
         }
 
-        public static string ReadTextFile(string path)
+        public static string ReadMetadata(string path, bool returnEmptyOnFail)
+        {
+            string value = ReadResourceTextFile(path);
+            if (value == null && !returnEmptyOnFail)
+            {
+                throw new System.Exception();
+            }
+            return value;
+        }
+
+        public static string ReadTextResource(string path)
         {
             IList<byte> bytes = ReadBytes(path);
             if (bytes == null) return null;
@@ -23,7 +33,7 @@ namespace Interpreter
             return output.ToString();
         }
 
-        public static System.Drawing.Bitmap ReadImageFile(string path)
+        public static Bitmap ReadImageResource(string path)
         {
             IList<byte> data = ReadBytes(path);
             if (data == null)

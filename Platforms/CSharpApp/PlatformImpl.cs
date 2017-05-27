@@ -30,8 +30,12 @@ namespace CSharpApp
             {
                 "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
                 "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
-                "<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>",
             };
+
+            if (resDb.ImageSheetManifestFile != null)
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>");
+            }
 
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
@@ -236,7 +240,10 @@ namespace CSharpApp
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            if (resourceDatabase.ImageSheetManifestFile != null)
+            {
+                output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            }
 
             foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
             {
