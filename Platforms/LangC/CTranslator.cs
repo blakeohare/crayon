@@ -14,57 +14,109 @@ namespace LangC
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, array);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_array_join(");
+            this.TranslateExpression(sb, array);
+            sb.Append(", ");
+            this.TranslateExpression(sb, sep);
+            sb.Append(')');
         }
 
         public override void TranslateArrayLength(StringBuilder sb, Expression array)
         {
-            throw new NotImplementedException();
+            PType itemType = array.ResolvedType.Generics[0];
+            if (itemType.RootValue == "int")
+            {
+                this.TranslateExpression(sb, array);
+                sb.Append("[-1]");
+            }
+            else
+            {
+                sb.Append("(int*)(");
+                this.TranslateExpression(sb, array);
+                sb.Append(")[-1]");
+            }
         }
 
         public override void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression)
         {
-            throw new NotImplementedException();
+            // TODO: I'd like to make a distinction (in the VM source) between arrays that need to have array
+            // length and arrays that don't. If array length isn't needed, the malloc can go inline and it saves
+            // an extra 4 bytes of space and time.
+            // Potentially there'd be a virtual function called TranslateArrayNewWithoutLength that just calls this
+            // and so it won't clutter up the interface implementation for 90% of languages that don't need the
+            // distinction.t
+            string type = this.Platform.TranslateType(arrayType);
+            sb.Append("(");
+            sb.Append(type);
+            sb.Append("*)TranslationHelper_array_new(sizeof(");
+            sb.Append(type);
+            sb.Append(") * (");
+            this.TranslateExpression(sb, lengthExpression);
+            sb.Append("))");
+
         }
 
         public override void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, array);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append("] = ");
+            this.TranslateExpression(sb, value);
         }
 
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
-            throw new NotImplementedException();
+            sb.Append("((");
+            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(")(");
+            this.TranslateExpression(sb, expression);
+            sb.Append("))");
         }
 
         public override void TranslateCharConstant(StringBuilder sb, char value)
         {
-            throw new NotImplementedException();
+            sb.Append(Common.Util.ConvertCharToCharConstantCode(value));
         }
 
         public override void TranslateCharToString(StringBuilder sb, Expression charValue)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_char_to_string(");
+            this.TranslateExpression(sb, charValue);
+            sb.Append(')');
         }
 
         public override void TranslateChr(StringBuilder sb, Expression charCode)
         {
-            throw new NotImplementedException();
+            sb.Append("(int)(");
+            this.TranslateExpression(sb, charCode);
+            sb.Append(')');
         }
 
         public override void TranslateCommandLineArgs(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_get_command_line_args()");
         }
 
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
         {
-            throw new NotImplementedException();
+            sb.Append(constructorInvocation.StructType.NameToken.Value);
+            sb.Append("_new(");
+            Expression[] args = constructorInvocation.Args;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, args[i]);
+            }
+            sb.Append(')');
         }
 
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
@@ -74,7 +126,7 @@ namespace LangC
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_current_time_seconds()");
         }
 
         public override void TranslateDictionaryContainsKey(StringBuilder sb, Expression dictionary, Expression key)
@@ -95,12 +147,25 @@ namespace LangC
 
         public override void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key)
         {
-            throw new NotImplementedException();
+            PType dictionaryType = dictionary.ResolvedType;
+            sb.Append("Dictionary_get_");
+            sb.Append(this.Platform.TranslateType(dictionaryType.Generics[0]));
+            sb.Append("_to_");
+            sb.Append(this.Platform.TranslateType(dictionaryType.Generics[1]));
+            sb.Append("(");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(", ");
+            this.TranslateExpression(sb, key);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("Dictionatry_get_keys_");
+            sb.Append(this.GetDictionaryKeyType(dictionary.ResolvedType.Generics[0]));
+            sb.Append('(');
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryKeysToValueList(StringBuilder sb, Expression dictionary)
@@ -110,7 +175,11 @@ namespace LangC
 
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
-            throw new NotImplementedException();
+            sb.Append("Dictionary_new(sizeof(");
+            sb.Append(this.Platform.TranslateType(keyType));
+            sb.Append("), sizeof(");
+            sb.Append(this.Platform.TranslateType(valueType));
+            sb.Append("))");
         }
 
         public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)
@@ -118,19 +187,63 @@ namespace LangC
             throw new NotImplementedException();
         }
 
+        private string GetDictionaryKeyType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "int":
+                case "string":
+                    return type.RootValue;
+                default:
+                    throw new Exception("Invalid key type for dictionary.");
+            }
+        }
+
+        private string GetDictionaryValueType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "bool":
+                case "int":
+                    return "int";
+                case "string":
+                case "double":
+                case "char":
+                    return type.RootValue;
+                default:
+                    return "ptr";
+            }
+        }
+
         public override void TranslateDictionarySet(StringBuilder sb, Expression dictionary, Expression key, Expression value)
         {
-            throw new NotImplementedException();
+            PType dictType = dictionary.ResolvedType;
+            sb.Append("Dictionary_set_");
+            sb.Append(this.GetDictionaryKeyType(dictType.Generics[0]));
+            sb.Append("_to_");
+            sb.Append(this.GetDictionaryValueType(dictType.Generics[1]));
+            sb.Append('(');
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(", ");
+            this.TranslateExpression(sb, key);
+            sb.Append(", ");
+            this.TranslateExpression(sb, value);
+            sb.Append(")");
         }
 
         public override void TranslateDictionarySize(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, dictionary);
+            sb.Append("->size");
         }
 
         public override void TranslateDictionaryValues(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("Dictionatry_get_values_");
+            sb.Append(this.GetDictionaryValueType(dictionary.ResolvedType.Generics[1]));
+            sb.Append('(');
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryValuesToValueList(StringBuilder sb, Expression dictionary)
@@ -140,32 +253,40 @@ namespace LangC
 
         public override void TranslateFloatBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("FLOAT_BUFFER_16");
         }
 
         public override void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator)
         {
-            throw new NotImplementedException();
+            sb.Append("(1.0 * (");
+            this.TranslateExpression(sb, floatNumerator);
+            sb.Append(") / (");
+            this.TranslateExpression(sb, floatDenominator);
+            sb.Append("))");
         }
 
         public override void TranslateFloatToInt(StringBuilder sb, Expression floatExpr)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_double_to_int(");
+            this.TranslateExpression(sb, floatExpr);
+            sb.Append(')');
         }
 
         public override void TranslateFloatToString(StringBuilder sb, Expression floatExpr)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_double_to_string(");
+            this.TranslateExpression(sb, floatExpr);
+            sb.Append(')');
         }
 
         public override void TranslateGetProgramData(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("PROGRAM_DATA");
         }
 
         public override void TranslateGetResourceManifest(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_get_resource_manifest()");
         }
 
         public override void TranslateGlobalVariable(StringBuilder sb, Variable variable)
@@ -175,17 +296,23 @@ namespace LangC
 
         public override void TranslateIntBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("INT_BUFFER_16");
         }
 
         public override void TranslateIntegerDivision(StringBuilder sb, Expression integerNumerator, Expression integerDenominator)
         {
-            throw new NotImplementedException();
+            sb.Append('(');
+            this.TranslateExpression(sb, integerNumerator);
+            sb.Append(") / (");
+            this.TranslateExpression(sb, integerDenominator);
+            sb.Append(')');
         }
 
         public override void TranslateIntToString(StringBuilder sb, Expression integer)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_int_to_string(");
+            this.TranslateExpression(sb, integer);
+            sb.Append(')');
         }
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
@@ -195,7 +322,9 @@ namespace LangC
 
         public override void TranslateIsValidInteger(StringBuilder sb, Expression stringValue)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_is_str_a_valid_int(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
         }
 
         public override void TranslateListAdd(StringBuilder sb, Expression list, Expression item)
@@ -315,12 +444,16 @@ namespace LangC
 
         public override void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n)
         {
-            throw new NotImplementedException();
+            sb.Append("multiply_list(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, n);
+            sb.Append(')');
         }
 
         public override void TranslateNullConstant(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("NULL");
         }
 
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
@@ -330,17 +463,23 @@ namespace LangC
 
         public override void TranslateParseInt(StringBuilder sb, Expression safeStringValue)
         {
-            throw new NotImplementedException();
+            sb.Append("parse_int(");
+            this.TranslateExpression(sb, safeStringValue);
+            sb.Append(')');
         }
 
         public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
         {
-            throw new NotImplementedException();
+            sb.Append("print_with_conversion(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
         }
 
         public override void TranslatePrintStdOut(StringBuilder sb, Expression value)
         {
-            throw new NotImplementedException();
+            sb.Append("print_with_conversion(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
         }
 
         public override void TranslateRandomFloat(StringBuilder sb)
@@ -385,7 +524,7 @@ namespace LangC
 
         public override void TranslateStringBuffer16(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("STRING_BUFFER_16");
         }
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)
@@ -445,7 +584,8 @@ namespace LangC
 
         public override void TranslateStringLength(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, str);
+            sb.Append("[-1]");
         }
 
         public override void TranslateStringReplace(StringBuilder sb, Expression haystack, Expression needle, Expression newNeedle)
@@ -510,7 +650,9 @@ namespace LangC
 
         public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, root);
+            sb.Append("->");
+            sb.Append(fieldName);
         }
 
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)

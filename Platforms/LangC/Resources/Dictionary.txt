@@ -246,3 +246,24 @@ void Dictionary_set_str_to_ptr(Dictionary* dict, int* str_key, void* ptr_value)
 {
 	dict->ptr_values[Dictionary_get_node_str(dict, str_key, 1)->index] = ptr_value;
 }
+
+int* Dictionary_get_values_int(Dictionary* dict) {
+	// TODO memcpy
+}
+
+int* Dictionary_get_values_int(Dictionary* dict) { return (int*) Dictionary_get_values(dict, dict->char_values, sizeof(int)); }
+char* Dictionary_get_values_char(Dictionary* dict) { return (char*) Dictionary_get_values(dict, dict->char_values, sizeof(char)); }
+double* Dictionary_get_values_double(Dictionary* dict) { return (double*) Dictionary_get_values(dict, dict->char_values, sizeof(double)); }
+void* Dictioary_get_values_ptr(Dictionary* dict) { return Dictionary_get_values(dict, dict->char_values, sizeof(void*)); }
+
+int* Dictionary_get_keys_int(Dictionary* dict) { return (int*) Dictionary_get_values(dict, dict->char_keys, sizeof(int)); }
+int** Dictioary_get_keys_str(Dictionary* dict) { return Dictionary_get_values(dict, dict->char_keys, sizeof(int**)); }
+
+void* Dictionary_get_members(Dictionary* dict, char* src, int size_of_item) {
+	int size = dict->size;
+	int* raw_output = malloc(sizeof(size_of_item) * size + sizeof(int));
+	raw_output[0] = size;
+	char* output = (char*) (raw_output + 1);
+	memcpy(output, src, size_of_item * size);
+	return output; 
+}

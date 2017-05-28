@@ -1,0 +1,57 @@
+﻿int* INT_BUFFER_16 = (int*)malloc(sizeof(int) * 16);
+int** STR_BUFFER_16 = (int**)malloc(sizeof(int*) * 16);
+double* FLOAT_BUFFER_16 = (double*)malloc(sizeof(double) * 16);
+
+void print_with_conversion(int** str)
+{
+	if (str[-1] == 0)
+	{
+		printf("\n");
+	}
+	else
+	{
+		char* c_string = String_to_cstring(str);
+		printf("%s\n", c_string);
+		free(c_string);
+	}
+}
+
+int parse_int(int** safe_str)
+{
+	int output = 0;
+	int is_positive = 1;
+	int size = safe_str[-1];
+	int index = 0;
+	if (safe_str[0] == (int) '-')
+	{
+		index++;
+		is_positive = 0;
+	}
+
+	while (index < size)
+	{
+		output = output * 10 + (int) (safe_str[index] - '0');
+	}
+
+	return is_positive ? output : -output;
+}
+
+List* multiply_list(List* original, int n, int item_size)
+{
+	List* output = List_new(item_size);
+	if (n == 0) return output;
+
+	while (output->capacity < n)
+	{
+		List_increase_capacity(output, item_size);
+	}
+	int period = item_size * n;
+	char* copy_ptr = output->char_items;
+	char* from_ptr = original->char_ptr;
+	while (period-- > 0)
+	{
+		memcpy(from_ptr, copy_ptr, period);
+		copy_ptr += period;
+	}
+	return output;
+}
