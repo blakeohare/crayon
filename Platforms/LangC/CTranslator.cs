@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Pastel.Nodes;
 
 namespace LangC
@@ -121,7 +120,9 @@ namespace LangC
 
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_get_value_struct_list_from_dictionary_values(");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateCurrentTimeSeconds(StringBuilder sb)
@@ -142,7 +143,7 @@ namespace LangC
             this.TranslateExpression(sb, dictionary);
             sb.Append(", ");
             this.TranslateExpression(sb, key);
-            sb.Append(" != NULL");
+            sb.Append(") != NULL");
         }
 
         public override void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key)
@@ -170,7 +171,9 @@ namespace LangC
 
         public override void TranslateDictionaryKeysToValueList(StringBuilder sb, Expression dictionary)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_get_value_struct_list_from_dictionary_keys(");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(')');
         }
 
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
@@ -184,7 +187,11 @@ namespace LangC
 
         public override void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key)
         {
-            throw new NotImplementedException();
+            sb.Append("Dictionary_remove_");
+            sb.Append(this.GetDictionaryKeyType(dictionary.ResolvedType.Generics[0]));
+            sb.Append('(');
+            this.TranslateExpression(sb, key);
+            sb.Append(')');
         }
 
         private string GetDictionaryKeyType(PType type)
@@ -317,7 +324,11 @@ namespace LangC
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
-            throw new NotImplementedException();
+            sb.Append("LibraryHelper_invoke_function(");
+            this.TranslateExpression(sb, functionId);
+            sb.Append(", ");
+            this.TranslateExpression(sb, argsArray);
+            sb.Append(')');
         }
 
         public override void TranslateIsValidInteger(StringBuilder sb, Expression stringValue)
@@ -329,117 +340,187 @@ namespace LangC
 
         public override void TranslateListAdd(StringBuilder sb, Expression list, Expression item)
         {
-            throw new NotImplementedException();
+            sb.Append("List_add_");
+            sb.Append(this.GetDictionaryValueType(list.ResolvedType.Generics[0]));
+            sb.Append('(');
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, item);
+            sb.Append(')');
         }
 
         public override void TranslateListClear(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("List_clear(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListConcat(StringBuilder sb, Expression list, Expression items)
         {
-            throw new NotImplementedException();
+            sb.Append("List_concat(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, items);
+            sb.Append(')');
         }
 
         public override void TranslateListGet(StringBuilder sb, Expression list, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, list);
+            sb.Append("->");
+            this.GetDictionaryValueType(list.ResolvedType.Generics[0]);
+            sb.Append("_items[");
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item)
         {
-            throw new NotImplementedException();
+            sb.Append("List_insert(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, index);
+            sb.Append(", ");
+            this.TranslateExpression(sb, item);
+            sb.Append(')');
         }
 
         public override void TranslateListJoinChars(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_list_join_chars(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListJoinStrings(StringBuilder sb, Expression list, Expression sep)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_list_join_strings(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, sep);
+            sb.Append(')');
         }
 
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
-            throw new NotImplementedException();
+            sb.Append("List_new(sizeof(");
+            sb.Append(this.Platform.TranslateType(type));
+            sb.Append("))");
         }
 
         public override void TranslateListPop(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("List_pop(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListRemoveAt(StringBuilder sb, Expression list, Expression index)
         {
-            throw new NotImplementedException();
+            sb.Append("List_remove(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, index);
+            sb.Append(')');
         }
 
         public override void TranslateListReverse(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("List_reverse(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListSet(StringBuilder sb, Expression list, Expression index, Expression value)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, list);
+            sb.Append("->");
+            sb.Append(this.GetDictionaryValueType(list.ResolvedType.Generics[0]));
+            sb.Append("_items[");
+            this.TranslateExpression(sb, index);
+            sb.Append("] = ");
+            this.TranslateExpression(sb, value);
         }
 
         public override void TranslateListShuffle(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_list_shuffle(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListSize(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, list);
+            sb.Append("->size");
         }
 
         public override void TranslateListToArray(StringBuilder sb, Expression list)
         {
-            throw new NotImplementedException();
+            sb.Append("List_to_array(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateMathArcCos(StringBuilder sb, Expression ratio)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_arc_cos(");
+            this.TranslateExpression(sb, ratio);
+            sb.Append(')');
         }
 
         public override void TranslateMathArcSin(StringBuilder sb, Expression ratio)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_arc_sin(");
+            this.TranslateExpression(sb, ratio);
+            sb.Append(')');
         }
 
         public override void TranslateMathArcTan(StringBuilder sb, Expression yComponent, Expression xComponent)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_arc_tan(");
+            this.TranslateExpression(sb, yComponent);
+            sb.Append(", ");
+            this.TranslateExpression(sb, xComponent);
+            sb.Append(')');
         }
 
         public override void TranslateMathCos(StringBuilder sb, Expression thetaRadians)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_cos(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
         }
 
         public override void TranslateMathLog(StringBuilder sb, Expression value)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_log(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
         }
 
         public override void TranslateMathPow(StringBuilder sb, Expression expBase, Expression exponent)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_pow(");
+            this.TranslateExpression(sb, expBase);
+            sb.Append(", ");
+            this.TranslateExpression(sb, exponent);
+            sb.Append(')');
         }
 
         public override void TranslateMathSin(StringBuilder sb, Expression thetaRadians)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_sin(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
         }
 
         public override void TranslateMathTan(StringBuilder sb, Expression thetaRadians)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_math_tan(");
+            this.TranslateExpression(sb, thetaRadians);
+            sb.Append(')');
         }
 
         public override void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n)
@@ -458,7 +539,9 @@ namespace LangC
 
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_parse_float_with_trusted_input(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(')');
         }
 
         public override void TranslateParseInt(StringBuilder sb, Expression safeStringValue)
@@ -484,42 +567,61 @@ namespace LangC
 
         public override void TranslateRandomFloat(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHeper_random_float()");
         }
 
         public override void TranslateReadByteCodeFile(StringBuilder sb)
         {
-            throw new NotImplementedException();
+            sb.Append("BYTE_CODE_FILE");
         }
 
-        public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
+        public override void TranslateRegisterLibraryFunction(
+            StringBuilder sb,
+            Expression libRegObj,
+            Expression functionName,
+            Expression functionArgCount)
         {
-            throw new NotImplementedException();
+            sb.Append("LibraryHelper_register_function(");
+            this.TranslateExpression(sb, libRegObj);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, functionArgCount);
+            sb.Append(')');
         }
 
         public override void TranslateResourceReadTextFile(StringBuilder sb, Expression path)
         {
-            throw new NotImplementedException();
+            sb.Append("ResourceHelper_read_text_file(");
+            this.TranslateExpression(sb, path);
+            sb.Append(')');
         }
 
         public override void TranslateSetProgramData(StringBuilder sb, Expression programData)
         {
-            throw new NotImplementedException();
+            sb.Append("PROGRAM_DATA = ");
+            this.TranslateExpression(sb, programData);
         }
 
         public override void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_array_sorted_copy_int(");
+            this.TranslateExpression(sb, intArray);
+            sb.Append(')');
         }
 
         public override void TranslateSortedCopyOfStringArray(StringBuilder sb, Expression stringArray)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_array_sorted_copy_int(");
+            this.TranslateExpression(sb, stringArray);
+            sb.Append(')');
         }
 
         public override void TranslateStringAppend(StringBuilder sb, Expression str1, Expression str2)
         {
-            throw new NotImplementedException();
+            // "stringRef += newSuffix;" is not supported.
+            // throw new Exception();
+            sb.Append("TODO(\"Replace these calls with basic string concats\")");
         }
 
         public override void TranslateStringBuffer16(StringBuilder sb)
@@ -529,57 +631,112 @@ namespace LangC
 
         public override void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, str);
+            sb.Append('[');
+            this.TranslateExpression(sb, index);
+            sb.Append(']');
         }
 
         public override void TranslateStringCharCodeAt(StringBuilder sb, Expression str, Expression index)
         {
-            throw new NotImplementedException();
+            this.TranslateStringCharAt(sb, str, index);
         }
 
         public override void TranslateStringCompareIsReverse(StringBuilder sb, Expression str1, Expression str2)
         {
-            throw new NotImplementedException();
+            sb.Append("String_compare_is_reverse(");
+            this.TranslateExpression(sb, str1);
+            sb.Append(", ");
+            this.TranslateExpression(sb, str2);
+            sb.Append(')');
         }
 
         public override void TranslateStringConcatAll(StringBuilder sb, Expression[] strings)
         {
-            throw new NotImplementedException();
+            this.TranslateStringConcatAllImpl(sb, strings, 0);
+        }
+
+        private void TranslateStringConcatAllImpl(StringBuilder sb, Expression[] strings, int startIndex)
+        {
+            // TODO: this is ugly and ineffective, but it's also rarely used.
+            // Create larger argument versions.
+            // TODO: worry about memory leaks for intermediate strings
+            int total = strings.Length - startIndex;
+            if (total == 1)
+            {
+                this.TranslateExpression(sb, strings[startIndex]);
+            }
+            else
+            {
+                sb.Append("TranslationHelper_string_concat2(");
+                this.TranslateExpression(sb, strings[startIndex]);
+                sb.Append(", ");
+                this.TranslateStringConcatAllImpl(sb, strings, startIndex + 1);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_string_concat2(");
+            this.TranslateExpression(sb, strLeft);
+            sb.Append(", ");
+            this.TranslateExpression(sb, strRight);
+            sb.Append(')');
         }
 
         public override void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_contains(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringEndsWith(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_ends_with(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringEquals(StringBuilder sb, Expression left, Expression right)
         {
-            throw new NotImplementedException();
+            sb.Append("String_equals(");
+            this.TranslateExpression(sb, left);
+            sb.Append(", ");
+            this.TranslateExpression(sb, right);
+            sb.Append(')');
         }
 
         public override void TranslateStringFromCharCode(StringBuilder sb, Expression charCode)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_string_form_char_code(");
+            this.TranslateExpression(sb, charCode);
+            sb.Append(')');
         }
 
         public override void TranslateStringIndexOf(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_index_of(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringIndexOfWithStart(StringBuilder sb, Expression haystack, Expression needle, Expression startIndex)
         {
-            throw new NotImplementedException();
+            sb.Append("String_index_of_with_start_index(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(')');
         }
 
         public override void TranslateStringLength(StringBuilder sb, Expression str)
@@ -590,62 +747,124 @@ namespace LangC
 
         public override void TranslateStringReplace(StringBuilder sb, Expression haystack, Expression needle, Expression newNeedle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_replace(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(", ");
+            this.TranslateExpression(sb, newNeedle);
+            sb.Append(')');
         }
 
         public override void TranslateStringReverse(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_reverse(");
+            this.TranslateExpression(sb, str);
+            sb.Append(')');
         }
 
         public override void TranslateStringSplit(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_split(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringStartsWith(StringBuilder sb, Expression haystack, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_starts_with(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length)
         {
-            throw new NotImplementedException();
+            sb.Append("String_substring(");
+            this.TranslateExpression(sb, str);
+            sb.Append(", ");
+            this.TranslateExpression(sb, start);
+            sb.Append(", ");
+            this.TranslateExpression(sb, length);
+            sb.Append(')');
         }
 
         public override void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("String_substring_is_equal_to(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringToLower(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_to_lower(");
+            this.TranslateExpression(sb, str);
+            sb.Append(')');
         }
 
         public override void TranslateStringToUpper(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_to_upper(");
+            this.TranslateExpression(sb, str);
+            sb.Append(')');
         }
 
         public override void TranslateStringTrim(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_trim(");
+            this.TranslateExpression(sb, str);
+            sb.Append(", 1, 1)");
         }
 
         public override void TranslateStringTrimEnd(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_trim(");
+            this.TranslateExpression(sb, str);
+            sb.Append(", 0, 1)");
         }
 
         public override void TranslateStringTrimStart(StringBuilder sb, Expression str)
         {
-            throw new NotImplementedException();
+            sb.Append("String_trim(");
+            this.TranslateExpression(sb, str);
+            sb.Append(", 1, 0)");
         }
 
         public override void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right)
         {
-            throw new NotImplementedException();
+            string type = left.ResolvedType.RootValue;
+
+            if (right.ResolvedType.RootValue != type)
+            {
+                // this should have been stopped with a type check in the VM source
+                throw new Exception();
+            }
+
+            switch (type)
+            {
+                case "object":
+                case "Array":
+                case "List":
+                case "Dictionary":
+                    // direct pointer comparison
+                    this.TranslateExpression(sb, left);
+                    sb.Append(" == ");
+                    this.TranslateExpression(sb, right);
+                    break;
+
+                default:
+                    // This shouldn't be necessary
+                    // Strings should have used string equality comparisons
+                    throw new Exception();
+            }
         }
 
         public override void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex)
@@ -657,16 +876,23 @@ namespace LangC
 
         public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_thread_sleep(");
+            this.TranslateExpression(sb, seconds);
+            sb.Append(')');
         }
 
         public override void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper_try_parse_float(");
+            this.TranslateExpression(sb, stringValue);
+            sb.Append(", ");
+            this.TranslateExpression(sb, floatOutList);
+            sb.Append(')');
         }
 
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
+            sb.Append(this.CurrentTab);
             sb.Append(this.Platform.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
@@ -677,22 +903,29 @@ namespace LangC
             }
             sb.Append(';');
             sb.Append(this.NewLine);
-            sb.Append(this.CurrentTab);
         }
 
         public override void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion)
         {
-            throw new NotImplementedException();
+            sb.Append("LibraryHelper_determine_library_availability(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libraryVersion);
+            sb.Append(')');
         }
 
         public override void TranslateVmEnqueueResume(StringBuilder sb, Expression seconds, Expression executionContextId)
         {
-            throw new NotImplementedException();
+            throw new Exception();
         }
 
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
-            throw new NotImplementedException();
+            sb.Append("LibraryHelper_run_library_manifest(");
+            this.TranslateExpression(sb, libraryName);
+            sb.Append(", ");
+            this.TranslateExpression(sb, libRegObj);
+            sb.Append(')');
         }
     }
 }
