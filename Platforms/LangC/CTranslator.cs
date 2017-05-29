@@ -8,6 +8,8 @@ namespace LangC
 {
     public abstract class CTranslator : Platform.CurlyBraceTranslator
     {
+        public StringTableBuilder StringTableBuilder { get; set; }
+
         public CTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\n", false)
         { }
 
@@ -70,6 +72,11 @@ namespace LangC
             this.TranslateExpression(sb, index);
             sb.Append("] = ");
             this.TranslateExpression(sb, value);
+        }
+
+        public override void TranslateBooleanConstant(StringBuilder sb, bool value)
+        {
+            sb.Append(value ? "1" : "0");;
         }
 
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
@@ -683,6 +690,14 @@ namespace LangC
             sb.Append(", ");
             this.TranslateExpression(sb, strRight);
             sb.Append(')');
+        }
+
+        public override void TranslateStringConstant(StringBuilder sb, string value)
+        {
+            sb.Append(this.StringTableBuilder.GetId(value));
+            sb.Append("/* ");
+            sb.Append(Common.Util.ConvertStringValueToCode(value).Replace("*/", "* /"));
+            sb.Append(" */");
         }
 
         public override void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle)

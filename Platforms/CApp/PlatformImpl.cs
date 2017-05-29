@@ -19,6 +19,8 @@ namespace CApp
             this.Translator = new CAppTranslator(this);
         }
 
+        public LangC.CTranslator CTranslator { get { return (LangC.CTranslator)this.Translator; } }
+
         public override Dictionary<string, FileOutput> ExportProject(
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
@@ -35,11 +37,12 @@ namespace CApp
             cCode.Append("#include <stdio.h>\n");
             cCode.Append("#include <stdlib.h>\n");
             cCode.Append("#include <string.h>\n");
-            cCode.Append('\n');
+            cCode.Append(this.NL);
 
             cCode.Append(this.LoadTextResource("Resources/List.txt", replacements));
             cCode.Append(this.LoadTextResource("Resources/String.txt", replacements));
             cCode.Append(this.LoadTextResource("Resources/Dictionary.txt", replacements));
+            cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
 
             // This needs to be done in LangC
             foreach (StructDefinition structDef in structDefinitions)
@@ -47,19 +50,28 @@ namespace CApp
                 string name = structDef.NameToken.Value;
                 cCode.Append("typedef struct " + name + " " + name + ";\n");
             }
-            cCode.Append('\n');
+            cCode.Append(this.NL);
 
             foreach (StructDefinition structDef in structDefinitions)
             {
                 cCode.Append(this.GenerateCodeForStruct(structDef));
             }
 
+            this.CTranslator.StringTableBuilder = new LangC.StringTableBuilder("VM");
+
+
+            StringBuilder functionCodeBuilder = new StringBuilder();
             foreach (FunctionDefinition fd in functionDefinitions)
             {
                 string functionCode = this.GenerateCodeForFunction(this.Translator, fd);
-                cCode.Append(functionCode);
-                cCode.Append("\n\n");
+                functionCodeBuilder.Append(functionCode);
+                functionCodeBuilder.Append(this.NL);
+                functionCodeBuilder.Append(this.NL);
             }
+
+            LangC.PlatformImpl.BuildStringTable(cCode, this.CTranslator.StringTableBuilder, this.NL);
+
+            cCode.Append(functionCodeBuilder);
 
             cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
 
@@ -101,7 +113,6 @@ namespace CApp
         {
             return new Dictionary<string, object>();
         }
-
 
         public override string TranslateType(Pastel.Nodes.PType type)
         {
