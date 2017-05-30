@@ -3,7 +3,7 @@
 	Array<int> indexPtr,
 	List<Value> output,
 	Dictionary<string, string> entityLookup,
-	Dictionary<char, int> stringEnders) {
+	Dictionary<int, int> stringEnders) {
 	
 	if (entityLookup.Size() == 0) {
 		entityLookup["amp"] = "&";
@@ -19,15 +19,15 @@
 	}
 	
 	if (stringEnders.Size() == 0) {
-		stringEnders[' '] = 1;
-		stringEnders['"'] = 1;
-		stringEnders['\''] = 1;
-		stringEnders['<'] = 1;
-		stringEnders['>'] = 1;
-		stringEnders['\t'] = 1;
-		stringEnders['\r'] = 1;
-		stringEnders['\n'] = 1;
-		stringEnders['/'] = 1;
+		stringEnders[Core.Ord(' ')] = 1;
+		stringEnders[Core.Ord('"')] = 1;
+		stringEnders[Core.Ord('\'')] = 1;
+		stringEnders[Core.Ord('<')] = 1;
+		stringEnders[Core.Ord('>')] = 1;
+		stringEnders[Core.Ord('\t')] = 1;
+		stringEnders[Core.Ord('\r')] = 1;
+		stringEnders[Core.Ord('\n')] = 1;
+		stringEnders[Core.Ord('/')] = 1;
 	}
 	
 	indexPtr[0] = 0;
@@ -125,7 +125,13 @@ bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
 	return false;
 }
 
-string lib_xml_parseElement(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
+string lib_xml_parseElement(
+	string xml, 
+	Array<int> indexPtr, 
+	List<Value> output,
+	Dictionary<string, string> entityLookup,
+	Dictionary<int, int> stringEnders) {
+
 	int length = xml.Size();
 	List<Value> attributeKeys = new List<Value>();
 	List<Value> attributeValues = new List<Value>();
@@ -253,25 +259,31 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 	return output;
 }
 
-string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeValueOut, Dictionary<string, string> entityLookup, Dictionary<char, int> stringEnders) {
+string lib_xml_popString(
+	string xml, 
+	Array<int> indexPtr, 
+	List<Value> attributeValueOut, 
+	Dictionary<string, string> entityLookup, 
+	Dictionary<int, int> stringEnders) {
+
 	int length = xml.Size();
 	int start = indexPtr[0];
 	int end = length;
 	int i = start;
-	char stringType = xml[i];
+	int stringType = xml.CharCodeAt(i);
 	
 	// Allow unwrapped strings. Not standard, but common enough of a mistake to support
 	// Unwrapped strings are terminated by an operator character <, >, =, ", ', or space
-	bool unwrapped = stringType != '"' && stringType != '\'';
+	bool unwrapped = stringType != Core.Ord('"') && stringType != Core.Ord('\'');
 	bool ampFound = false;
-	char c = ' ';
+	int c = Core.Ord(' ');
 	if (unwrapped) {
 		while (i < length) {
-			c = xml[i];
+			c = xml.CharCodeAt(i);
 			if (stringEnders.Contains(c)) {
 				end = i;
 				break;
-			} else if (c == '&') {
+			} else if (c == Core.Ord('&')) {
 				ampFound = true;
 			}
 			i += 1;
@@ -280,19 +292,19 @@ string lib_xml_popString(string xml, Array<int> indexPtr, List<Value> attributeV
 		i += 1;
 		start = i;
 		while (i < length) {
-			c = xml[i];
+			c = xml.CharCodeAt(i);
 			if (c == stringType) {
 				end = i;
 				i += 1;
 				break;
-			} else if (c == '&') {
+			} else if (c == Core.Ord('&')) {
 				ampFound = true;
 			}
 			i += 1;
 		}
 	}
 	indexPtr[0] = i;
-	string output = xml.SubString(start, (end - start));
+	string output = xml.SubString(start, end - start);
 	if (ampFound) {
 		output = lib_xml_ampUnescape(output, entityLookup);
 	}

@@ -40,7 +40,7 @@ Value lib_xml_function_parse(Array<Value> args) {
 		Core.IntBuffer16,
 		list1,
 		(Dictionary<string, string>) objArray1[0],
-		(Dictionary<char, int>) objArray1[1]);
+		(Dictionary<int, int>) objArray1[1]);
 
 	if (errMsg != null) {
 		return buildString(errMsg);

@@ -18,7 +18,6 @@ namespace LangPython
             }
         }
 
-
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
         private FunctionDefinition currentFunctionDefinition = null;
@@ -633,6 +632,11 @@ namespace LangPython
         public override void TranslateNullConstant(StringBuilder sb)
         {
             sb.Append("None");
+        }
+
+        public override void TranslateOrd(StringBuilder sb, Expression charValue)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateOpChain(StringBuilder sb, OpChain opChain)

@@ -257,6 +257,7 @@ namespace Platform
                 case Pastel.NativeFunction.MATH_SIN: this.TranslateMathSin(sb, args[0]); break;
                 case Pastel.NativeFunction.MATH_TAN: this.TranslateMathTan(sb, args[0]); break;
                 case Pastel.NativeFunction.MULTIPLY_LIST: this.TranslateMultiplyList(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.ORD: this.TranslateOrd(sb, args[0]); break;
                 case Pastel.NativeFunction.PARSE_FLOAT_UNSAFE: this.TranslateParseFloatUnsafe(sb, args[0]); break;
                 case Pastel.NativeFunction.PARSE_INT: this.TranslateParseInt(sb, args[0]); break;
                 case Pastel.NativeFunction.PRINT_STDERR: this.TranslatePrintStdErr(sb, args[0]); break;
@@ -391,6 +392,7 @@ namespace Platform
         public abstract void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n);
         public abstract void TranslateNegative(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateNullConstant(StringBuilder sb);
+        public abstract void TranslateOrd(StringBuilder sb, Expression charValue);
         public abstract void TranslateOpChain(StringBuilder sb, OpChain opChain);
         public abstract void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue);
         public abstract void TranslateParseInt(StringBuilder sb, Expression safeStringValue);

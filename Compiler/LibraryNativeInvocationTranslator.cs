@@ -20,7 +20,12 @@ namespace Crayon
 
         public string LibraryName { get { return library.Name; } }
 
-        public void TranslateInvocation(StringBuilder sb, AbstractTranslator translator, string functionName, Expression[] args, Pastel.Token throwToken)
+        public void TranslateInvocation(
+            StringBuilder sb,
+            AbstractTranslator translator,
+            string functionName,
+            Expression[] args,
+            Pastel.Token throwToken)
         {
             sb.Append(this.library.TranslateNativeInvocation(throwToken, translator, functionName, args));
         }

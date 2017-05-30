@@ -222,7 +222,7 @@
 		error = $$lib_xml_parse(string, output, XmlElement._DUMMY);
 		if (error != null) {
 			if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
-			Core.fail(error);
+			throw new Exception(error);
 		}
 		root = Xml._objGen(output[0], {}, options);
 		
