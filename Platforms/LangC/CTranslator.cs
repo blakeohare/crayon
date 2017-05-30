@@ -544,6 +544,11 @@ namespace LangC
             sb.Append("NULL");
         }
 
+        public override void TranslateOrd(StringBuilder sb, Expression charValue)
+        {
+            throw new Exception();
+        }
+
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("TranslationHelper_parse_float_with_trusted_input(");

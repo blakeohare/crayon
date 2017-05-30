@@ -465,6 +465,18 @@ namespace LangCSharp
             sb.Append("null");
         }
 
+        public override void TranslateOrd(StringBuilder sb, Expression charValue)
+        {
+            if (charValue is InlineConstant)
+            {
+				// this should have been optimized out.
+				// throw new Exception(); // TODO: but it isn't quite ye
+            }
+            sb.Append("((int)(");
+            this.TranslateExpression(sb, charValue);
+			sb.Append("))");
+        }
+
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("double.Parse(");

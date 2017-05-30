@@ -432,6 +432,11 @@ namespace LangJavaScript
             sb.Append("null");
         }
 
+        public override void TranslateOrd(StringBuilder sb, Expression charValue)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
         {
             sb.Append("parseFloat(");
