@@ -1,0 +1,49 @@
+import FileIO;
+import Xml;
+
+function getAllXml(docsRoot) {
+	output = [];
+	getAllXmlImpl(docsRoot, output);
+	return output;
+}
+
+function getAllXmlImpl(path, output) {
+	for (file : FileIO.directoryList(path)) {
+		fullpath = path + '/' + file;
+		if (FileIO.directoryExists(fullpath)) {
+			getAllXmlImpl(fullpath, output);
+		} else if (file.endsWith('.xml')) {
+			output.add(fullpath);
+		}
+	}
+}
+
+function generateDocumentationHtml(docRoot) {
+	output = [
+		'<html>',
+		'<head>',
+		'<title>Documentation</title>',
+		'</head>',
+		'<body>'];
+
+	output.add("Hello, World!");
+	output.add('</body></html>');
+	return output.join('');
+}
+
+function main() {
+	print("Hello, World!");
+	docsRoot = FileIO.currentDirectory();
+	docsRoot = '/Users/blakeohare/Crayon/Docs';
+	xmlFiles = getAllXml(docsRoot);
+	print(xmlFiles.join("\n"));
+	for (file : xmlFiles) {
+		xml = FileIO.fileReadText(file);
+		outputPath = file[:-'.xml'.length] + '.html';
+		print("Pre OI!");
+		doc = Xml.parse(xml);
+		print("OI!");
+		html = generateDocumentationHtml(doc);
+		FileIO.fileWriteText(outputPath, html);
+	}
+}
