@@ -29,15 +29,13 @@ function main() {
 
 	for (file : fullpaths) {
 		relativePath = xmlFiles[file];
-		print(file + ' -> ' + relativePath);
 		xml = FileIO.fileReadText(file);
 		outputPath = 'htmlout/' + relativePath[:-'.xml'.length] + '.html';
-		print(outputPath);
 		doc = Xml.parse(xml);
 		docTree = adaptXml(doc);
 		
 		html = generateDocumentationHtml(docTree);
-
+		print("Generating " + outputPath + "...");
 		FileIO.fileWriteText(outputPath, html);
 	}
 }

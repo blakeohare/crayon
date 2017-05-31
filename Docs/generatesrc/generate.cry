@@ -16,31 +16,132 @@ function generateDocumentationHtml(docRoot) {
 	return output.join('');
 }
 
+function spanCodeFont(str) {
+	return '<span class="codefont">' + htmlSpecialChars(str) + '</span>';
+}
+
 function generateLibraryHtml(library, buffer) {
 	buffer.add('<h1>' + htmlSpecialChars(library.name) + '</h1>');
 
 	library.namespaces.sort(sortByNameKeyFunction);
 
+	buffer.add('<ul>');
 	for (ns : getSortedList(library.namespaces)) {
-		buffer.add('<h2>' + htmlSpecialChars(ns.name) + ' namespace</h2>');
+		buffer.add('<li>');
+		buffer.add(spanCodeFont('namespace'));
+		buffer.add(' ');
+		buffer.add(htmlSpecialChars(ns.name));
+		
+		buffer.add('<ul>');
 		if (ns.constants.length > 0) {
 			for (cnst : getSortedList(ns.constants)) {
-				buffer.add('<h3>Constant: ' + htmlSpecialChars(cnst.name) + '</h3>');
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(ns.name.lower() + '-const-' + cnst.name.lower());
+				buffer.add('">');
+				buffer.add(spanCodeFont('const'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(cnst.name));
+				buffer.add('</a></li>');
 			}
 		}
 
 		if (ns.enums.length > 0) {
 			for (en : getSortedList(ns.enums)) {
-				buffer.add('<h3>Enum: ' + htmlSpecialChars(en.name) + '</h3>');
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(ns.name.lower() + '-enum-' + en.name.lower());
+				buffer.add('">');
+				buffer.add(spanCodeFont('enum'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(en.name));
+				buffer.add('</a></li>');
 			}
 		}
 
 		if (ns.functions.length > 0) {
 			for (fn : getSortedList(ns.functions)) {
-				buffer.add('<h3>Function: ' + htmlSpecialChars(fn.name) + '</h3>');
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(ns.name.lower() + '-function-' + en.name.lower());
+				buffer.add('">');
+				buffer.add(spanCodeFont('function'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(fn.name));
+				buffer.add('(');
+				for (i = 0; i < fn.argNames.length; ++i) {
+					if (i > 0) buffer.add(', ');
+					buffer.add(htmlSpecialChars(fn.argNames[i]));
+				}
+				buffer.add(')');
+				buffer.add('</a></li>');
 			}
 		}
+		buffer.add('</ul>');
+		buffer.add('</li>');
 	}
+	buffer.add('</ul>');
+
+
+	for (ns : library.namespaces) {
+
+		for (cnst : ns.constants) {
+			
+		}
+		
+		for (en : ns.enums) {
+			
+		}
+
+		for (fn : ns.functions) {
+			buffer.add('<div>');
+			
+			buffer.add('<h2>');
+			buffer.add('<a name="' + ns.name.lower() + '-function-' + fn.name + '"></a>');
+			buffer.add(ns.name + '.' + fn.name);
+			buffer.add('</h2>');
+			
+			buffer.add('<div class="codesnippet">');
+			buffer.add(fn.name);
+			buffer.add('(');
+			for (i = 0; i < fn.argNames.length; ++i) {
+				if (i > 0) buffer.add(', ');
+				buffer.add(fn.argNames[i]);
+			}
+			buffer.add(')');
+			buffer.add('</div>');
+
+			buffer.add('<div>');
+			buffer.add(fn.description);
+			buffer.add('</div>');
+			
+			if (fn.argNames.length > 0) {
+				buffer.add('<div>');
+				buffer.add("Args:");
+				buffer.add('<ul>');
+				for (i = 0; i < fn.argNames.length; ++i) {
+					buffer.add('<li>');
+					buffer.add('<b>' + fn.argNames[i] + '</b> ');
+					buffer.add('(' + fn.argTypes[i] + '): ');
+					buffer.add(fn.argDescriptions[i]);
+					buffer.add('</li>');
+				}
+				buffer.add('</ul>');
+				buffer.add('</div>');
+			}
+
+			if (fn.returnDescription != null) {
+				buffer.add('<div>');
+				buffer.add("<b>Returns</b> ");
+				buffer.add('(' + fn.returnType + '): ');
+				buffer.add(fn.returnDescription);
+				buffer.add('</div>');
+			}
+
+			buffer.add('</div>');
+		}
+	}
+
 }
 
 function htmlSpecialChars(str) {
