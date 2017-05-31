@@ -469,12 +469,12 @@ namespace LangCSharp
         {
             if (charValue is InlineConstant)
             {
-				// this should have been optimized out.
-				// throw new Exception(); // TODO: but it isn't quite ye
+                // this should have been optimized out.
+                // throw new Exception(); // TODO: but it isn't quite ye
             }
             sb.Append("((int)(");
             this.TranslateExpression(sb, charValue);
-			sb.Append("))");
+            sb.Append("))");
         }
 
         public override void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue)
