@@ -1,0 +1,163 @@
+import Xml;
+
+function adaptXml(xmlRoot) {
+	switch (xmlRoot.name) {
+		case 'library':
+			return adaptLibraryXml(xmlRoot);
+		default:
+			throw new Exception("Unknown root type: '" + xmlRoot.name + "'");
+	}
+}
+
+function adaptLibraryXml(libraryElement) {
+	lib = new Library();
+	lib.name = libraryElement.attributes.get('name');
+	lib.description = libraryElement.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(libraryElement)) {
+		switch (child.name) {
+			case 'description':
+				lib.description = getTextContent(child);
+				break;
+			case 'name':
+				lib.name = getTextContent(child);
+				break;
+			case 'namespace':
+				lib.namespaces.add(adaptLibraryNamespaceXml(child));
+				break;
+			default:
+				throw new Exception("Unknown child of library element: '" + child.name + "'");
+		}
+	}
+	return lib;
+}
+
+function adaptLibraryNamespaceXml(nsElement) {
+	ns = new Namespace();
+	ns.name = nsElement.attributes.get('name');
+	for (child : getAllXmlChildrenNodes(nsElement)) {
+		switch (child.name) {
+			case 'name':
+				ns.name = getTextContent(child);
+				break;
+			case 'enum':
+				ns.enums.add(adaptEnum(child));
+				break;
+			case 'function':
+				ns.functions.add(adaptFunction(child));
+				break;
+			case 'class':
+				ns.functions.add(adaptClass(child));
+				break;
+			case 'constant':
+				ns.constants.add(adaptConstant(child));
+				break;
+			default:
+				throw new Exception("Unknown child of namespace element: '" + child.name + "'");
+		}
+	}
+	return ns;
+}
+
+function adaptEnum(enumElement) {
+	en = new Enum();
+	en.name = enumElement.attributes.get('name');
+	en.description = enumElement.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(enumElement)) {
+		switch (child.name) {
+			case 'name':
+				en.name = getTextContent(child);
+				break;
+			case 'description':
+				en.description = getTextContent(child);
+				break;
+			case 'value':
+				adaptEnumValue(child, en);
+				break;
+			default:
+				throw new Exception("Unknown child of enum element: '" + child.name + "'");
+		}
+	}
+	return en;
+}
+
+function adaptEnumValue(element, enumDef) {
+	name = element.attributes.get('name');
+	description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				name = getTextContent(child);
+				break;
+			case 'description':
+				description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of enum's value element: '" + child.name + "'");
+		}
+	}
+	enumDef.valueNames.add(name);
+	enumDef.valueDescriptions.add(description);
+}
+
+function adaptFunction(element) {
+	fn = new Function();
+	fn.name = element.attributes.get('name');
+	fn.description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				fn.name = getTextContent(child);
+				break;
+			case 'description':
+				fn.description = getTextContent(child);
+				break;
+			case 'arg':
+				fn.argNames.add(child.attributes.get('name'));
+				fn.argTypes.add(child.attributes.get('type'));
+				fn.argDescriptions.add(child.attributes.get('description'));
+				break;
+			case 'returns':
+				fn.returnType = child.attributes.get('type');
+				fn.returnDescription = child.attributes.get('description');
+				break;
+			default:
+				throw new Exception("Unknown child of function element: '" + child.name + "'");
+		}
+	}
+	return fn;
+}
+
+function adaptClass(element) {
+	throw new Exception("Not implemented.");
+}
+
+function adaptConstant(element) {
+	throw new Exception("Not implemented.");
+}
+
+function getTextContent(xmlNode) {
+	text = [];
+	for (child : xmlNode.children) {
+		if (child.type == Xml.NodeType.TEXT) {
+			text.add(child.value);
+		} else {
+			throw new Exception("TODO: text styling elements.");
+		}
+	}
+	return text.join('');
+}
+
+// throws if there's a stray text node.
+function getAllXmlChildrenNodes(node) {
+	output = [];
+	for (child : node.children) {
+		if (child.type == Xml.NodeType.TEXT) {
+			if (child.value.trim().length > 0) {
+				throw new Exception("Unexpected text blob in '" + node.name + "' element.");
+			}
+		} else {
+			output.add(child);
+		}
+	}
+	return output;
+}

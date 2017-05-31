@@ -1,0 +1,31 @@
+
+class Library {
+	field name;
+	field description;
+	field namespaces = [];
+}
+
+class Namespace {
+	field name;
+	field constants = [];
+	field enums = [];
+	field functions = [];
+	field classes = [];
+}
+
+class Function {
+	field name;
+	field description;
+	field argNames = [];
+	field argTypes = [];
+	field argDescriptions = [];
+	field returnDescription;
+	field returnType;
+}
+
+class Enum {
+	field name;
+	field description;
+	field valueNames = [];
+	field valueDescriptions = [];
+}

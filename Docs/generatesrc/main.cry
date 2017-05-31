@@ -1,0 +1,43 @@
+import FileIO;
+import Xml;
+
+function getAllXml(docsRoot) {
+	output = {};
+	getAllXmlImpl(docsRoot, 'libs', output);
+	return output;
+}
+
+function getAllXmlImpl(root, relativePath, output) {
+	currentPath = root + '/' + relativePath;
+	for (file : FileIO.directoryList(currentPath)) {
+		fullpath = currentPath + '/' + file;
+		if (FileIO.directoryExists(fullpath)) {
+			getAllXmlImpl(root, currentPath, output);
+		} else if (file.endsWith('.xml')) {
+			output[fullpath] = relativePath + '/' + file;
+		}
+	}
+}
+
+function main() {
+	docsRoot = FileIO.currentDirectory();
+
+	// mapping of full path to relative paths
+	xmlFiles = getAllXml(docsRoot);
+	fullpaths = xmlFiles.keys();
+	fullpaths.sort();
+
+	for (file : fullpaths) {
+		relativePath = xmlFiles[file];
+		print(file + ' -> ' + relativePath);
+		xml = FileIO.fileReadText(file);
+		outputPath = 'htmlout/' + relativePath[:-'.xml'.length] + '.html';
+		print(outputPath);
+		doc = Xml.parse(xml);
+		docTree = adaptXml(doc);
+		
+		html = generateDocumentationHtml(docTree);
+
+		FileIO.fileWriteText(outputPath, html);
+	}
+}
