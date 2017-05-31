@@ -1,4 +1,25 @@
-<doc>
-	<title>FileIO Library</title>
-	
-</doc>
+<library name="FileIO">
+	<description>Provides basic functions for interacting with the local file system.</description>
+	<namespace name="FileIO">
+		
+		<enum name="TextEncoding">
+			<value name="UTF8" description="The UTF-8 encoding without a Byte-Order-Mark."/>
+			<value name="UTF8_BOM" description="The UTF-8 encoding with the Byte-Order-Mark."/>
+			<value name="UTF16" description="The UTF-16 encoding."/>
+			<value name="UTF32" description="The UTF-32 encoding."/>
+			<value name="ASCII" description="Basic ASCII encoding."/>
+		</enum>
+
+		<function name="pathJoin">
+			<arg name="parts" type="list-of-string" description="strings to join"/>
+			<description>Joins a list of strings with the platform's default path delimiter.</description>
+		</function>
+
+		<function name="pathExists">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="bool" description="True if the path exists."/>
+			<description>Checks to see if a path exists (either a file or a directory).</description>
+		</function>
+
+	</namespace>
+</library>
