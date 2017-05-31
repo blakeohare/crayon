@@ -27,7 +27,17 @@ namespace Crayon
             Expression[] args,
             Pastel.Token throwToken)
         {
-            sb.Append(this.library.TranslateNativeInvocation(throwToken, translator, functionName, args));
+            try
+            {
+                sb.Append(this.library.TranslateNativeInvocation(throwToken, translator, functionName, args));
+            }
+            catch (System.Reflection.TargetInvocationException tie)
+            {
+                System.Console.WriteLine("Library translation generated an error:");
+                System.Console.WriteLine(tie.InnerException.Message);
+                System.Console.WriteLine(tie.InnerException.StackTrace);
+                System.Environment.Exit(1);
+            }
         }
     }
 }
