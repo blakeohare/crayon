@@ -19,6 +19,11 @@ namespace CrayonRuntime
             catch (Exception e)
             {
                 Console.Error.WriteLine(e.Message);
+                if (e.InnerException != null)
+                {
+                	Console.Error.WriteLine("Cause:");
+                	Console.Error.WriteLine(e.InnerException.Message);
+                }
             }
         }
 
