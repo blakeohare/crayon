@@ -155,3 +155,17 @@ char* String_to_cstring(int* str)
 	}
 	return output;
 }
+
+int String_compare_is_reverse(int* s1, int* s2)
+{
+	int if_prefix_match = s1[-1] > s2[-1];
+	int shortest_length = s1[-1] < s2[-1] ? s1[-1] : s2[-1];
+	for (int i = 0; i < shortest_length; ++i)
+	{
+		if (s1[i] != s2[i])
+		{
+			return s1[i] > s2[i];
+		}
+	}
+	return if_prefix_match;
+}

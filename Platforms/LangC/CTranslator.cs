@@ -206,8 +206,9 @@ namespace LangC
             switch (type.RootValue)
             {
                 case "int":
+					return "int";
                 case "string":
-                    return type.RootValue;
+                    return "str";
                 default:
                     throw new Exception("Invalid key type for dictionary.");
             }
@@ -376,7 +377,7 @@ namespace LangC
         {
             this.TranslateExpression(sb, list);
             sb.Append("->");
-            this.GetDictionaryValueType(list.ResolvedType.Generics[0]);
+			sb.Append(this.GetDictionaryValueType(list.ResolvedType.Generics[0]));
             sb.Append("_items[");
             this.TranslateExpression(sb, index);
             sb.Append(']');
@@ -544,6 +545,32 @@ namespace LangC
             sb.Append("NULL");
         }
 
+		public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
+		{
+			if (opChain.Expressions.Length == 2)
+			{
+				// Avoid parenthesis. Extraneous parenthesis are actually warnings in C for these operators.
+				switch (opChain.Ops[0].Value)
+				{
+					case "==":
+					case "!=":
+					case ">":
+					case "<":
+					case "<=":
+					case ">=":
+						this.TranslateExpression(sb, opChain.Expressions[0]);
+						sb.Append(' ');
+						sb.Append(opChain.Ops[0].Value);
+						sb.Append(' ');
+						this.TranslateExpression(sb, opChain.Expressions[1]);
+						return;
+
+					default: break;
+				}
+			}
+			base.TranslateOpChain(sb, opChain);
+		}
+
         public override void TranslateOrd(StringBuilder sb, Expression charValue)
         {
             throw new Exception();
@@ -680,7 +707,7 @@ namespace LangC
             }
             else
             {
-                sb.Append("TranslationHelper_string_concat2(");
+                sb.Append("String_concat(");
                 this.TranslateExpression(sb, strings[startIndex]);
                 sb.Append(", ");
                 this.TranslateStringConcatAllImpl(sb, strings, startIndex + 1);
@@ -690,7 +717,7 @@ namespace LangC
 
         public override void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight)
         {
-            sb.Append("TranslationHelper_string_concat2(");
+            sb.Append("String_concat(");
             this.TranslateExpression(sb, strLeft);
             sb.Append(", ");
             this.TranslateExpression(sb, strRight);
