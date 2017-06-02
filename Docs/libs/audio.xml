@@ -1,0 +1,58 @@
+<library name="Audio">
+	<description>Provides audio functionality for games using the Game library.</description>
+	<namespace name="Audio">
+		<class name="MusicNotFoundException" parent="Core.Exception">
+			<description>An exception thrown when the music being attempted to load is not found.</description>
+		</class>
+
+		<class name="Music">
+			<description>Encapsulates a sound file for the purpose of playing music</description>
+			<function name="loadFromResource" static="true">
+				<arg name="path" type="string" description="path to a bundled OGG resource"/>
+				<returns type="Audio.Music" description="A new Audio.Music instance"/>
+			</function>
+			<function name="getCurrent" static="true">
+				<returns type="Audio.Music" description="The currently playing music."/>
+			</function>
+			<function name="fadeOutAndIn">
+				<arg name="loop" type="bool" optional="true" default="true" description="True if this music should loop indefinitely."/>
+				<arg name="outTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade the current music out"/>
+				<arg name="inTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade this music in"/>
+				<description>Fades out the currently playing music (if any) and fades in this music.</description>
+			</function>
+			<function name="fadeOutAndPlay">
+				<arg name="loop" type="bool" optional="true" default="true" description="True if this music should loop indefinitely."/>
+				<arg name="outTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade the current music out"/>
+				<description>Fades out the currently playing music (if any) and starts playing this music.</description>
+			</function>
+			<function name="play">
+				<arg name="loop" type="bool" optional="true" default="true" description="True if this music should loop indefinitely."/>
+				<description>Stops the currently playing music (if any) and starts playing this music.</description>
+			</function>
+			<function name="fadeOut">
+				<arg name="outTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade out"/>
+				<description>Fades out this music if it is currently playing. See also Music.fadeOutCurrent()</description>
+			</function>
+			<function name="fadeOutCurrent" static="true">
+				<arg name="outTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade the current music out"/>
+				<description>Fades out the current music, if any.</description>
+			</function>
+			<function name="stop" static="true">
+				<description>Stops the current music, if any.</description>
+			</function>
+			<function name="fadeIn">
+				<arg name="loop" type="bool" optional="true" default="true" description="True if this music should loop indefinitely."/>
+				<arg name="inTransition" type="float" optional="true" default="2.0" description="Number of seconds to fade this music in"/>
+				<description>Stops the currently playing music (if any) and fades in this music.</description>
+			</function>
+		</class>
+
+		<enum name="SoundPlayState" description="Current state of a sound">
+			<value name="PLAYING" description="Sound is currently playing"/>
+			<value name="PAUSED" description="Sound is paused"/>
+			<value name="STOPPED" description="Sound has stopped"/>
+		</enum>
+
+
+	</namespace>
+</library>

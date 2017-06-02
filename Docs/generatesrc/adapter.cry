@@ -46,7 +46,7 @@ function adaptLibraryNamespaceXml(nsElement) {
 				ns.functions.add(adaptFunction(child));
 				break;
 			case 'class':
-				ns.functions.add(adaptClass(child));
+				ns.classes.add(adaptClass(child));
 				break;
 			case 'constant':
 				ns.constants.add(adaptConstant(child));
@@ -103,6 +103,7 @@ function adaptFunction(element) {
 	fn = new Function();
 	fn.name = element.attributes.get('name');
 	fn.description = element.attributes.get('description');
+	fn.isStatic = element.attributes.get('static') == 'true';
 	for (child : getAllXmlChildrenNodes(element)) {
 		switch (child.name) {
 			case 'name':
@@ -128,7 +129,30 @@ function adaptFunction(element) {
 }
 
 function adaptClass(element) {
-	throw new Exception("Not implemented.");
+	cls = new Class();
+	cls.name = element.attributes.get('name');
+	cls.parent = element.attributes.get('parent');
+	cls.description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				cls.name = getTextContent(child);
+				break;
+			case 'description':
+				cls.description = getTextContent(child);
+				break;
+			case 'parent':
+				cls.parent = getTextContent(child);
+				break;
+			case 'function':
+				fn = adaptFunction(child);
+				cls.functions.add(fn);
+				break;
+			default:
+				throw new Exception("Unknown child of class element: '" + child.name + "'");
+		}
+	}
+	return cls;
 }
 
 function adaptConstant(element) {

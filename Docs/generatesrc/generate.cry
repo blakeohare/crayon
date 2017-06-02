@@ -5,7 +5,13 @@ function generateDocumentationHtml(docRoot) {
 		'<head>',
 		'<title>Documentation</title>',
 		'</head>',
-		'<body>'];
+		'<body>',
+		'<style>',
+		[
+			'body { font-family: "Arial", sans-serif; }',
+			'.codefont { font-family: "Courier New", monospace; }',
+		].join('\n'),
+		'</style>'];
 
 	if (docRoot is Library) {
 		generateLibraryHtml(docRoot, output);
@@ -63,7 +69,7 @@ function generateLibraryHtml(library, buffer) {
 			for (fn : getSortedList(ns.functions)) {
 				buffer.add('<li>');
 				buffer.add('<a href="#');
-				buffer.add(ns.name.lower() + '-function-' + en.name.lower());
+				buffer.add(ns.name.lower() + '-function-' + fn.name.lower());
 				buffer.add('">');
 				buffer.add(spanCodeFont('function'));
 				buffer.add(' ');
@@ -74,7 +80,43 @@ function generateLibraryHtml(library, buffer) {
 					buffer.add(htmlSpecialChars(fn.argNames[i]));
 				}
 				buffer.add(')');
-				buffer.add('</a></li>');
+				buffer.add('</a>');
+				buffer.add('</li>');
+			}
+		}
+
+		if (ns.classes.length > 0) {
+			for (cls : getSortedList(ns.classes)) {
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(ns.name.lower() + '-class-' + cls.name.lower());
+				buffer.add('">');
+				buffer.add(spanCodeFont('class'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(cls.name));
+				buffer.add('</a>');
+				if (cls.functions.length > 0) {
+					buffer.add('<ul>');
+					for (fn : getSortedList(cls.functions)) {
+						buffer.add('<li>');
+						buffer.add('<a href="#');
+						buffer.add(ns.name.lower() + '-function-' + cls.name.lower() + '-' + fn.name.lower());
+						buffer.add('">');
+						buffer.add(spanCodeFont((fn.isStatic ? 'static ' : '') + 'function'));
+						buffer.add(' ');
+						buffer.add(htmlSpecialChars(fn.name));
+						buffer.add('(');
+						for (i = 0; i < fn.argNames.length; ++i) {
+							if (i > 0) buffer.add(', ');
+							buffer.add(htmlSpecialChars(fn.argNames[i]));
+						}
+						buffer.add(')');
+						buffer.add('</a>');
+						buffer.add('</li>');
+					}
+					buffer.add('</ul>');
+				}
+				buffer.add('</li>');
 			}
 		}
 		buffer.add('</ul>');
@@ -86,7 +128,18 @@ function generateLibraryHtml(library, buffer) {
 	for (ns : library.namespaces) {
 
 		for (cnst : ns.constants) {
+			buffer.add('<div>');
 			
+			buffer.add('<h2>');
+			buffer.add('<a name="' + ns.name.lower() + '-const-' + cnst.name.lower() + '"></a>');
+			buffer.add(ns.name + '.' + cnst.name);
+			buffer.add('</h2>');
+			
+			buffer.add('<div>');
+			buffer.add(cnst.description);
+			buffer.add('</div>');
+
+			buffer.add('</div>');
 		}
 		
 		for (en : ns.enums) {
@@ -94,54 +147,84 @@ function generateLibraryHtml(library, buffer) {
 		}
 
 		for (fn : ns.functions) {
+			generateFunctionHtml(buffer, fn, null, ns);
+		}
+
+		for (cls : ns.classes) {
 			buffer.add('<div>');
-			
-			buffer.add('<h2>');
-			buffer.add('<a name="' + ns.name.lower() + '-function-' + fn.name + '"></a>');
-			buffer.add(ns.name + '.' + fn.name);
-			buffer.add('</h2>');
-			
-			buffer.add('<div class="codesnippet">');
-			buffer.add(fn.name);
-			buffer.add('(');
-			for (i = 0; i < fn.argNames.length; ++i) {
-				if (i > 0) buffer.add(', ');
-				buffer.add(fn.argNames[i]);
-			}
-			buffer.add(')');
-			buffer.add('</div>');
+			buffer.add('<h1>');
+			buffer.add(ns.name + '.' + cls.name);
+			buffer.add('</h1>');
 
 			buffer.add('<div>');
-			buffer.add(fn.description);
+			buffer.add(htmlSpecialChars(cls.description));
 			buffer.add('</div>');
-			
-			if (fn.argNames.length > 0) {
-				buffer.add('<div>');
-				buffer.add("Args:");
-				buffer.add('<ul>');
-				for (i = 0; i < fn.argNames.length; ++i) {
-					buffer.add('<li>');
-					buffer.add('<b>' + fn.argNames[i] + '</b> ');
-					buffer.add('(' + fn.argTypes[i] + '): ');
-					buffer.add(fn.argDescriptions[i]);
-					buffer.add('</li>');
-				}
-				buffer.add('</ul>');
-				buffer.add('</div>');
-			}
 
-			if (fn.returnDescription != null) {
-				buffer.add('<div>');
-				buffer.add("<b>Returns</b> ");
-				buffer.add('(' + fn.returnType + '): ');
-				buffer.add(fn.returnDescription);
-				buffer.add('</div>');
+			for (fn : cls.functions) {
+				generateFunctionHtml(buffer, fn, cls, ns);
 			}
 
 			buffer.add('</div>');
 		}
 	}
 
+}
+
+function generateFunctionHtml(buffer, fn, parentClass, ns) {
+	buffer.add('<div>');
+	
+	buffer.add('<h2>');
+	buffer.add('<a name="' + ns.name.lower());
+	buffer.add('-function-');
+	if (parentClass != null) {
+		buffer.add(parentClass.name.lower() + '-');
+	}
+	buffer.add(fn.name.lower() + '"></a>');
+	buffer.add(ns.name + '.');
+	if (parentClass != null) {
+		buffer.add(parentClass.name.lower() + '.');
+	}
+	buffer.add(fn.name);
+	buffer.add('</h2>');
+	
+	buffer.add('<div class="codesnippet">');
+	buffer.add(fn.name);
+	buffer.add('(');
+	for (i = 0; i < fn.argNames.length; ++i) {
+		if (i > 0) buffer.add(', ');
+		buffer.add(fn.argNames[i]);
+	}
+	buffer.add(')');
+	buffer.add('</div>');
+
+	buffer.add('<div>');
+	buffer.add(fn.description);
+	buffer.add('</div>');
+	
+	if (fn.argNames.length > 0) {
+		buffer.add('<div>');
+		buffer.add("Args:");
+		buffer.add('<ul>');
+		for (i = 0; i < fn.argNames.length; ++i) {
+			buffer.add('<li>');
+			buffer.add('<b>' + fn.argNames[i] + '</b> ');
+			buffer.add('(' + fn.argTypes[i] + '): ');
+			buffer.add(fn.argDescriptions[i]);
+			buffer.add('</li>');
+		}
+		buffer.add('</ul>');
+		buffer.add('</div>');
+	}
+
+	if (fn.returnDescription != null) {
+		buffer.add('<div>');
+		buffer.add("<b>Returns</b> ");
+		buffer.add('(' + fn.returnType + '): ');
+		buffer.add(fn.returnDescription);
+		buffer.add('</div>');
+	}
+
+	buffer.add('</div>');
 }
 
 function htmlSpecialChars(str) {

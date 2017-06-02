@@ -13,7 +13,7 @@ class Namespace {
 	field classes = [];
 }
 
-class Function {
+class Function { // or method
 	field name;
 	field description;
 	field argNames = [];
@@ -21,6 +21,7 @@ class Function {
 	field argDescriptions = [];
 	field returnDescription;
 	field returnType;
+	field isStatic = false;
 }
 
 class Enum {
@@ -28,4 +29,11 @@ class Enum {
 	field description;
 	field valueNames = [];
 	field valueDescriptions = [];
+}
+
+class Class {
+	field name;
+	field description;
+	field parent;
+	field functions = [];
 }
