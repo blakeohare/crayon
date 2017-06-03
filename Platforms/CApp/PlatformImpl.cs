@@ -57,8 +57,14 @@ namespace CApp
                 cCode.Append(this.GenerateCodeForStruct(structDef));
             }
 
-            this.CTranslator.StringTableBuilder = new LangC.StringTableBuilder("VM");
+            foreach (FunctionDefinition fd in functionDefinitions)
+            {
+                string functionDeclaration = this.GenerateCodeForFunctionDeclaration(this.Translator, fd);
+                cCode.Append(functionDeclaration);
+                cCode.Append(this.NL);
+            }
 
+            this.CTranslator.StringTableBuilder = new LangC.StringTableBuilder("VM");
 
             StringBuilder functionCodeBuilder = new StringBuilder();
             foreach (FunctionDefinition fd in functionDefinitions)

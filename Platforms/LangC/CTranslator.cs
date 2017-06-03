@@ -206,7 +206,7 @@ namespace LangC
             switch (type.RootValue)
             {
                 case "int":
-					return "int";
+                    return "int";
                 case "string":
                     return "str";
                 default:
@@ -377,7 +377,7 @@ namespace LangC
         {
             this.TranslateExpression(sb, list);
             sb.Append("->");
-			sb.Append(this.GetDictionaryValueType(list.ResolvedType.Generics[0]));
+            sb.Append(this.GetDictionaryValueType(list.ResolvedType.Generics[0]));
             sb.Append("_items[");
             this.TranslateExpression(sb, index);
             sb.Append(']');
@@ -545,31 +545,31 @@ namespace LangC
             sb.Append("NULL");
         }
 
-		public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
-		{
-			if (opChain.Expressions.Length == 2)
-			{
-				// Avoid parenthesis. Extraneous parenthesis are actually warnings in C for these operators.
-				switch (opChain.Ops[0].Value)
-				{
-					case "==":
-					case "!=":
-					case ">":
-					case "<":
-					case "<=":
-					case ">=":
-						this.TranslateExpression(sb, opChain.Expressions[0]);
-						sb.Append(' ');
-						sb.Append(opChain.Ops[0].Value);
-						sb.Append(' ');
-						this.TranslateExpression(sb, opChain.Expressions[1]);
-						return;
+        public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
+        {
+            if (opChain.Expressions.Length == 2)
+            {
+                // Avoid parenthesis. Extraneous parenthesis are actually warnings in C for these operators.
+                switch (opChain.Ops[0].Value)
+                {
+                    case "==":
+                    case "!=":
+                    case ">":
+                    case "<":
+                    case "<=":
+                    case ">=":
+                        this.TranslateExpression(sb, opChain.Expressions[0]);
+                        sb.Append(' ');
+                        sb.Append(opChain.Ops[0].Value);
+                        sb.Append(' ');
+                        this.TranslateExpression(sb, opChain.Expressions[1]);
+                        return;
 
-					default: break;
-				}
-			}
-			base.TranslateOpChain(sb, opChain);
-		}
+                    default: break;
+                }
+            }
+            base.TranslateOpChain(sb, opChain);
+        }
 
         public override void TranslateOrd(StringBuilder sb, Expression charValue)
         {

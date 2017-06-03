@@ -155,7 +155,25 @@ namespace LangC
             }
             sb.Append('}');
             sb.Append(newline);
-            sb.Append(newline);;
+            sb.Append(newline); ;
+        }
+
+        public override string GenerateCodeForFunctionDeclaration(AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            for (int i = 0; i < funcDef.ArgNames.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(" v_");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append(");");
+            return sb.ToString();
         }
     }
 }
