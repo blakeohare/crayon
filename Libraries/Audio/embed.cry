@@ -335,7 +335,7 @@ namespace Audio {
 		
 		field _id; // unique ID for this particular resource
 
-		// TODO: private constructors
+		@private
 		constructor() {
 			this._id = SoundResource._resID++;
 		}

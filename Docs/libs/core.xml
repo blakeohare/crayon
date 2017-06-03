@@ -1,0 +1,13 @@
+<library name="Core">
+	<description>
+		The core library exposes some basic built-in language functionality. 
+		Unlike other libraries, the Core library does not need to be imported and is readily available from all files.
+	</description>
+	<namespace name="Core">
+		<function name="assert">
+			<arg name="condition" type="bool" description="A boolean condition that must be true."/>
+			<arg name="message" type="string" optional="true" description="An optional error message to show when the assertion condition is false."/>
+			<description>Generates an exception if the condition is false.</description>
+		</function>
+	</namespace>
+</library>

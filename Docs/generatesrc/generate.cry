@@ -182,7 +182,7 @@ function generateFunctionHtml(buffer, fn, parentClass, ns) {
 	buffer.add(fn.name.lower() + '"></a>');
 	buffer.add(ns.name + '.');
 	if (parentClass != null) {
-		buffer.add(parentClass.name.lower() + '.');
+		buffer.add(parentClass.name + '.');
 	}
 	buffer.add(fn.name);
 	buffer.add('</h2>');
