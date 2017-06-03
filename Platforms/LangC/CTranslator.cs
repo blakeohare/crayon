@@ -35,14 +35,15 @@ namespace LangC
             PType itemType = array.ResolvedType.Generics[0];
             if (itemType.RootValue == "int")
             {
+                sb.Append('(');
                 this.TranslateExpression(sb, array);
-                sb.Append("[-1]");
+                sb.Append(")[-1]");
             }
             else
             {
-                sb.Append("(int*)(");
+                sb.Append("((int*)(");
                 this.TranslateExpression(sb, array);
-                sb.Append(")[-1]");
+                sb.Append("))[-1]");
             }
         }
 
