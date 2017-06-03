@@ -170,7 +170,7 @@ namespace LangC
 
         public override void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary)
         {
-            sb.Append("Dictionatry_get_keys_");
+            sb.Append("Dictionary_get_keys_");
             sb.Append(this.GetDictionaryKeyType(dictionary.ResolvedType.Generics[0]));
             sb.Append('(');
             this.TranslateExpression(sb, dictionary);
@@ -255,7 +255,7 @@ namespace LangC
 
         public override void TranslateDictionaryValues(StringBuilder sb, Expression dictionary)
         {
-            sb.Append("Dictionatry_get_values_");
+            sb.Append("Dictionary_get_values_");
             sb.Append(this.GetDictionaryValueType(dictionary.ResolvedType.Generics[1]));
             sb.Append('(');
             this.TranslateExpression(sb, dictionary);

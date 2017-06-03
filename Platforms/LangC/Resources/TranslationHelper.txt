@@ -59,3 +59,95 @@ List* multiply_list(List* original, int n, int item_size)
 	}
 	return output;
 }
+
+int* TranslationHelper_char_to_string(int c) {
+	int* str = malloc(sizeof(int) * 4);
+	str[0] = c < 128 ? 1 : 2; // WRONG. TODO: use the correct conversion
+	str[1] = 0;
+	str[2] = 1;
+	str[3] = c;
+	return str + 3;
+}
+
+int* TranslationHelper_int_to_string(int value) {
+	if (value == 0) return TranslationHelper_char_to_string('0');
+
+	int characters[] = int[15];
+	int size = 0;
+	int sign = 1;
+	if (value < 0)
+	{
+		sign = -1;
+		value = -value;
+	}
+
+	while (value > 0)
+	{
+		characters[size++] = (value % 10) + '0';
+		value = value / 10;
+	}
+
+	if (sign == -1)
+	{
+		characters[size++] = '-';
+	}
+
+	int* str = malloc(sizeof(int) * (size + 3));
+	str[0] = size;
+	str[1] = 0;
+	str[2] = size;
+	str += 3;
+	for (int i = 0; i < size; ++i)
+	{
+		str[i] = characters[size - i - 1];
+	}
+	return str;
+}
+
+int* TranslationHelper_double_to_string(double value) {
+	char buffer[50];
+	snprintf(buffer, 50, "%f", value);
+	return String_from_utf8(buffer);
+}
+
+int* TranslationHelper_list_join_strings(List* strings_list, int* sep)
+{
+	int strings_length = strings_list->size;
+	int total_length = (strings_length - 1) * sep[-1];
+	int total_bytes = sep[-3] * (strings_length - 1);
+	int** strings = (int**)strings_list->ptr_items;
+	for (int i = 0; i < strings_length; ++i)
+	{
+		total_length += strings[i][-1];
+		total_bytes += strings[i][-3];
+	}
+
+	int* output = malloc(sizeof(int) * (total_length + 3));
+	output[0] = total_bytes;
+	output[1] = 0;
+	output[2] = total_length;
+	output += 3;
+	int j;
+	int k;
+	int current_length;
+	int sep_length = sep[-1];
+	int* current_string;
+	int index = 0;
+	for (int i = 0; i < strings_length; ++i)
+	{
+		if (i > 0)
+		{
+			for (j = 0; j < sep_length; ++j)
+			{
+				output[index++] = sep[j];
+			}
+		}
+		current_string = strings[i];
+		current_length = current_string[-1];
+		for (j = 0; j < current_length; ++j)
+		{
+			output[index++] = current_string[j];
+		}
+	}
+	return output;
+}

@@ -258,7 +258,7 @@ double* Dictionary_get_values_double(Dictionary* dict) { return (double*) Dictio
 void* Dictioary_get_values_ptr(Dictionary* dict) { return Dictionary_get_values(dict, dict->char_values, sizeof(void*)); }
 
 int* Dictionary_get_keys_int(Dictionary* dict) { return (int*) Dictionary_get_values(dict, dict->char_keys, sizeof(int)); }
-int** Dictioary_get_keys_str(Dictionary* dict) { return (int**) Dictionary_get_values(dict, dict->char_keys, sizeof(int**)); }
+int** Dictionary_get_keys_str(Dictionary* dict) { return (int**) Dictionary_get_values(dict, dict->char_keys, sizeof(int**)); }
 
 void* Dictionary_get_members(Dictionary* dict, char* src, int size_of_item) {
 	int size = dict->size;
