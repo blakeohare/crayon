@@ -41,6 +41,12 @@ namespace LangC
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
+            if (structDef.NameToken.Value == "Value")
+            {
+                // I need to do fancy stuff with unions, so special case this one.
+                return this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
+            }
+
             StringBuilder sb = new StringBuilder();
 
             sb.Append("struct ");

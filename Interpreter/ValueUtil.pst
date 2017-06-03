@@ -183,7 +183,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                         output = 1;
                     }
                 } else {
-                    if (a.internalValue == b.internalValue) {
+                    if ((List<Value>)a.internalValue == (List<Value>)b.internalValue) {
                         output = 1;
                     }
                 }
@@ -194,7 +194,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                         output = 1;
                     }
                 } else {
-                    if (a.internalValue == b.internalValue) {
+                    if ((DictImpl)a.internalValue == (DictImpl)b.internalValue) {
                         output = 1;
                     }
                 }
@@ -205,7 +205,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                         output = 1;
                     }
                 } else {
-                    if (a.internalValue == b.internalValue) {
+                    if ((ObjectInstance)a.internalValue == (ObjectInstance)b.internalValue) {
                         output = 1;
                     }
                 }

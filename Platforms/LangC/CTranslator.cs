@@ -75,13 +75,75 @@ namespace LangC
             this.TranslateExpression(sb, value);
         }
 
+        public override void TranslateAssignment(StringBuilder sb, Assignment assignment)
+        {
+            DotField df = assignment.Target as DotField;
+            if (df != null && df.FieldName.Value == "internalValue" && df.Root.ResolvedType.RootValue == "Value")
+            {
+                bool isVar = df.Root is Variable;
+                if (!isVar) sb.Append('(');
+                this.TranslateExpression(sb, df.Root);
+                if (!isVar) sb.Append(')');
+                sb.Append("->");
+                sb.Append(this.GetValueStructInternalValueFieldName(assignment.Value.ResolvedType));
+                sb.Append(' ');
+                sb.Append(assignment.OpToken.Value);
+                sb.Append(' ');
+                this.TranslateExpression(sb, assignment.Value);
+                sb.Append(';');
+                sb.Append(this.NewLine);
+            }
+            else
+            {
+                base.TranslateAssignment(sb, assignment);
+            }
+        }
+
         public override void TranslateBooleanConstant(StringBuilder sb, bool value)
         {
             sb.Append(value ? "1" : "0");;
         }
 
+        private string GetValueStructInternalValueFieldName(PType expectedType)
+        {
+            switch (expectedType.RootValue)
+            {
+                case "bool": return "bool_internalValue";
+                case "int": return "int_internalValue";
+                case "double": return "double_internalValue";
+                case "string": return "string_internalValue";
+                case "List": return "list_internalValue";
+                case "DictImpl": return "dict_internalValue";
+                case "FunctionPointer": return "func_internalValue";
+                case "ObjectInstance": return "obj_internalValue";
+                case "ClassValue": return "class_internalValue";
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
+            if (expression is DotField)
+            {
+                DotField df = (DotField)expression;
+                if (df.FieldName.Value == "internalValue" && df.Root.ResolvedType.RootValue == "Value")
+                {
+                    if (df.Root is Variable)
+                    {
+                        this.TranslateExpression(sb, df.Root);
+                    }
+                    else
+                    {
+                        sb.Append('(');
+                        this.TranslateExpression(sb, df.Root);
+                        sb.Append(')');
+                    }
+                    sb.Append("->");
+                    sb.Append(this.GetValueStructInternalValueFieldName(type));
+                    return;
+                }
+            }
             sb.Append("((");
             sb.Append(this.Platform.TranslateType(type));
             sb.Append(")(");
@@ -919,6 +981,10 @@ namespace LangC
         {
             this.TranslateExpression(sb, root);
             sb.Append("->");
+            if (fieldName == "internalValue" && root.ResolvedType.RootValue == "Value")
+            {
+                throw new Pastel.ParserException(root.FirstToken, "Cannot access Value.internalValue without a cast.");
+            }
             sb.Append(fieldName);
         }
 

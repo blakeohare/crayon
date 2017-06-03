@@ -1,0 +1,16 @@
+﻿
+struct Value {
+	int type;
+	union {
+		int null_internalValue; // not used
+		int bool_internalValue;
+		int int_internalValue;
+		double double_internalValue;
+		int* str_internalValue;
+		List* list_internalValue;
+		DictImpl* dict_internalValue;
+		ObjectInstance* obj_internalValue;
+		ClassValue* class_internalValue;
+		FunctionPointer* func_internalValue;
+	};
+};
