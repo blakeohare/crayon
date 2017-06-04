@@ -6,6 +6,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        jsHost.scrollView.bounces = false;
+        jsHost.scrollView.scrollEnabled = false;
         
         let htmlPath = NSBundle.mainBundle().URLForResource("index", withExtension: "html", subdirectory: "jsres");
         let request = NSURLRequest(URL: htmlPath!);
