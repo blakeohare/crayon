@@ -84,6 +84,10 @@
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
       <Name>JavaScriptAppGl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
+      <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
+      <Name>JavaScriptAppIos</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
       <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>
       <Name>LangC</Name>
