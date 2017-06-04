@@ -1,4 +1,3 @@
-
 function lang_string_slicing() {
     original = 'abcdefghij';
 

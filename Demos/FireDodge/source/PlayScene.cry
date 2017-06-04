@@ -2,119 +2,119 @@ import Graphics2D;
 import Math;
 
 enum GameMode {
-	PLAYING,
-	YOU_DIED,
+    PLAYING,
+    YOU_DIED,
 }
 
 class PlayScene : AbstractScene {
 
     field player;
     field fires = [];
-	
+
     field gameCounter = 0;
-	
-	field mode = GameMode.PLAYING;
+
+    field mode = GameMode.PLAYING;
     field modeCounter = 0;
-    
+
     constructor() : base() {
-		// Start player out in the center of the screen
-		centerX = SCREEN_WIDTH / 2;
-		centerY = SCREEN_HEIGHT / 2;
-		position = [centerX, centerY];
+        // Start player out in the center of the screen
+        centerX = SCREEN_WIDTH / 2;
+        centerY = SCREEN_HEIGHT / 2;
+        position = [centerX, centerY];
         this.player = new Player(position);
     }
 
     function processInput(events) {
         for (event : events) {
-			// Player clicked
+            // Player clicked
             if (event.type == EventType.MOUSE_LEFT_DOWN) {
-			
-				// And player hasn't died yet
-				if (this.mode == GameMode.PLAYING) {
-					
-					// Ensure the coordinate isn't too close to the edge.
-					x = Math.ensureRange(event.x, 20, SCREEN_WIDTH - 20);
-					y = Math.ensureRange(event.y, 20, SCREEN_HEIGHT - 20);
-					
-					// Tell the player sprite to go there.
-					this.player.targetPosition = [x, y];
-				}
+
+                // And player hasn't died yet
+                if (this.mode == GameMode.PLAYING) {
+
+                    // Ensure the coordinate isn't too close to the edge.
+                    x = Math.ensureRange(event.x, 20, SCREEN_WIDTH - 20);
+                    y = Math.ensureRange(event.y, 20, SCREEN_HEIGHT - 20);
+
+                    // Tell the player sprite to go there.
+                    this.player.targetPosition = [x, y];
+                }
             }
         }
     }
 
     function update() {
         this.gameCounter++;
-		this.modeCounter++;
+        this.modeCounter++;
 
-		switch (this.mode) {
-			case GameMode.PLAYING:
-				
-				// Add a new fire every 2/3 of a second
-				if (this.modeCounter % (FPS * 2 / 3) == 0) {
-					fire = new Fire(randomEdgePoint());
-					fire.targetPosition = randomEdgePoint();
-					this.fires.add(fire);
-				}
+        switch (this.mode) {
+            case GameMode.PLAYING:
 
-				// Update player position
-				this.player.update();
-				
-				// Check for player touching a fire.
-				px = this.player.position[0];
-				py = this.player.position[1] + 10; // it makes more visual sense to move the vulnerable point towards his feet.
-				for (fire : this.fires) {
-					dx = fire.position[0] - px;
-					dy = fire.position[1] - py;
-					distance = (dx ** 2 + dy ** 2) * .5;
-					if (distance < 30) {
-						this.player.isDead = true;
-						this.mode = GameMode.YOU_DIED;
-						this.modeCounter = 0;
-					}
-				}
+                // Add a new fire every 2/3 of a second
+                if (this.modeCounter % (FPS * 2 / 3) == 0) {
+                    fire = new Fire(randomEdgePoint());
+                    fire.targetPosition = randomEdgePoint();
+                    this.fires.add(fire);
+                }
 
-				break;
-				
-			case GameMode.YOU_DIED:
-				// wait 2 seconds before restarting
-				if (this.modeCounter > FPS * 2) {
-					this.switchScene(new PlayScene());
-				}
-				break;
-		}
+                // Update player position
+                this.player.update();
 
-		// Update the fire positions
-		for (fire : this.fires) {
-			fire.update();
-		}
+                // Check for player touching a fire.
+                px = this.player.position[0];
+                py = this.player.position[1] + 10; // it makes more visual sense to move the vulnerable point towards his feet.
+                for (fire : this.fires) {
+                    dx = fire.position[0] - px;
+                    dy = fire.position[1] - py;
+                    distance = (dx ** 2 + dy ** 2) * .5;
+                    if (distance < 30) {
+                        this.player.isDead = true;
+                        this.mode = GameMode.YOU_DIED;
+                        this.modeCounter = 0;
+                    }
+                }
+
+                break;
+
+            case GameMode.YOU_DIED:
+                // wait 2 seconds before restarting
+                if (this.modeCounter > FPS * 2) {
+                    this.switchScene(new PlayScene());
+                }
+                break;
+        }
+
+        // Update the fire positions
+        for (fire : this.fires) {
+            fire.update();
+        }
     }
 
     function render() {
-		
-		// This color is charcoal
-		Draw.fill(40, 40, 40);
-		
-		// Draw fires
-		for (fire : this.fires) {
-			fire.render(this.gameCounter);
+
+        // This color is charcoal
+        Draw.fill(40, 40, 40);
+
+        // Draw fires
+        for (fire : this.fires) {
+            fire.render(this.gameCounter);
         }
-		
-		// Draw player (after fires, so always on top)
-		this.player.render(this.gameCounter);
-		
-		// Display number of fires on the screen.
-		this.displayScore();
+
+        // Draw player (after fires, so always on top)
+        this.player.render(this.gameCounter);
+
+        // Display number of fires on the screen.
+        this.displayScore();
     }
-	
-	function displayScore() {
-		text = this.fires.length + '';
+
+    function displayScore() {
+        text = this.fires.length + '';
         x = 10; // 10 pixels from the left
         y = SCREEN_HEIGHT - ImageLibrary.getTextChar('0').height - 10; // 10 pixels from the bottom
-		for (char : '' + text) {
-			img = ImageLibrary.getTextChar(char);
-			img.draw(x, y);
-			x += img.width + 5;
-		}
-	}
+        for (char : '' + text) {
+            img = ImageLibrary.getTextChar(char);
+            img.draw(x, y);
+            x += img.width + 5;
+        }
+    }
 }

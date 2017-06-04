@@ -1,96 +1,96 @@
 function main() {
-		doThings(false);
+        doThings(false);
 }
 
 function doThings(isUserData) {
-	
-	io = new FileIOShim(isUserData);
-	
-	print("Making changes in " + io.reportedLocation + "...");
-	print(io.currentDirectory);
-	
-	if (io.directoryExists(io.currentDirectory)) {
-		print("Directory already exists! It contains these files:");
-		print(io.directoryList(io.currentDirectory));
-		print("Deleting...");
-		io.directoryDelete(io.currentDirectory);
-		print("Done!");
-		assert(!io.directoryExists(io.currentDirectory), "Directory should be deleted.");
-	}
-	
-	print("Creating directory.");
-	io.directoryCreate(io.currentDirectory);
-	assert(io.directoryExists(io.currentDirectory), "Directory should have been created.");
-	
-	print("Writing and reading back a file...");
-	file1Contents = "This\nis\r\na\rtest.";
-	io.fileWriteText(io.currentDirectory + '/file1.txt', file1Contents);
-	readback = io.fileReadText(io.currentDirectory + '\\file1.txt');
-	assert(file1Contents == readback, "File contents did not match.");
-	print("PASS!\n");
-	
-	print("Writing text data to a file via raw bytes and reading back as text.");
-	file2Contents = [97, 98, 99, 100];
-	io.fileWriteBytes(io.currentDirectory + '\\file2.txt', file2Contents);
-	readback = io.fileReadText(io.currentDirectory + '/./sandwiches/../file2.txt');
-	assert('abcd' == readback, "File contents did not match.");
-	print("PASS!\n");
-	
-	print("Reading text and dropping the BOM.");
-	file2Contents = [239, 187, 191, 97, 98, 99, 100]; // Note the BOM as the first 3 chars
-	io.fileWriteBytes(io.currentDirectory + '/file3.txt', file2Contents);
-	readback = io.fileReadText(io.currentDirectory + '/file3.txt');
-	assert('abcd' == readback, "File contents did not match.");
-	print("PASS!\n");
-	
-	deepDir = '/dir1/dir2/dir3';
-	print("Creating a deeply nested directory: " + deepDir);
-	io.directoryCreate(io.currentDirectory + deepDir, true);
-	assert(io.directoryExists(io.currentDirectory + deepDir), "Expected directory creation.");
-	print("PASS!\n");
-	
-	print("Putting some files into " + deepDir);
-	expectedContentsFullPath = [];
-	expectedContentsPartialPath = [];
-	for (i = 1; i <= 10; ++i) {
-		filename = 'file' + i + '.txt';
-		fullpath = io.currentDirectory + deepDir + '/' + filename;
-		fullpath = io.pathJoin(fullpath.replace('\\', '/').split('/'));
-		io.fileWriteText(fullpath, "I am a file. " + i);
-		expectedContentsFullPath.add(fullpath);
-		expectedContentsPartialPath.add(filename);
-	}
-	expectedContentsFullPath.sort(); // 10 comes between 1 and 2 when sorted by string
-	expectedContentsPartialPath.sort();
-	
-	expectedFull = expectedContentsFullPath.join('|');
-	actualFull = io.directoryList(io.currentDirectory + deepDir, true).join('|');
-	if (expectedFull != actualFull) {
-		print("Expected: " + expectedFull);
-		print("Actual: " + actualFull);
-		fail("Directory listing with full path failed.");
-	}
-	
-	expectedPartial = expectedContentsPartialPath.join('|');
-	actualPartial = io.directoryList(io.currentDirectory + deepDir, false).join('|');
-	if (expectedPartial != actualPartial) {
-		print("Expected: " + expectedPartial);
-		print("Actual: " + actualPartial);
-		fail("Directory listing with partial path failed.");
-	}
-	print("PASS!\n");
-	
-	print("Rename a directory that has stuff in it.");
-	io.directoryMove(io.currentDirectory + '/dir1/dir2', io.currentDirectory + '/dir1/candy');
-	
-	expectedFull = expectedContentsFullPath.join('|').replace('dir2', 'candy');
-	actualFull = io.directoryList(io.currentDirectory + deepDir.replace('dir2', 'candy'), true).join('|');
-	if (expectedFull != actualFull) {
-		print("Expected: " + expectedFull);
-		print("Actual: " + actualFull);
-		fail("Directory listing failed after directory move.");
-	}
-	print("PASS!\n");
-	
-	print("All tests ran successfully!");
+
+    io = new FileIOShim(isUserData);
+
+    print("Making changes in " + io.reportedLocation + "...");
+    print(io.currentDirectory);
+
+    if (io.directoryExists(io.currentDirectory)) {
+        print("Directory already exists! It contains these files:");
+        print(io.directoryList(io.currentDirectory));
+        print("Deleting...");
+        io.directoryDelete(io.currentDirectory);
+        print("Done!");
+        assert(!io.directoryExists(io.currentDirectory), "Directory should be deleted.");
+    }
+
+    print("Creating directory.");
+    io.directoryCreate(io.currentDirectory);
+    assert(io.directoryExists(io.currentDirectory), "Directory should have been created.");
+
+    print("Writing and reading back a file...");
+    file1Contents = "This\nis\r\na\rtest.";
+    io.fileWriteText(io.currentDirectory + '/file1.txt', file1Contents);
+    readback = io.fileReadText(io.currentDirectory + '\\file1.txt');
+    assert(file1Contents == readback, "File contents did not match.");
+    print("PASS!\n");
+
+    print("Writing text data to a file via raw bytes and reading back as text.");
+    file2Contents = [97, 98, 99, 100];
+    io.fileWriteBytes(io.currentDirectory + '\\file2.txt', file2Contents);
+    readback = io.fileReadText(io.currentDirectory + '/./sandwiches/../file2.txt');
+    assert('abcd' == readback, "File contents did not match.");
+    print("PASS!\n");
+
+    print("Reading text and dropping the BOM.");
+    file2Contents = [239, 187, 191, 97, 98, 99, 100]; // Note the BOM as the first 3 chars
+    io.fileWriteBytes(io.currentDirectory + '/file3.txt', file2Contents);
+    readback = io.fileReadText(io.currentDirectory + '/file3.txt');
+    assert('abcd' == readback, "File contents did not match.");
+    print("PASS!\n");
+
+    deepDir = '/dir1/dir2/dir3';
+    print("Creating a deeply nested directory: " + deepDir);
+    io.directoryCreate(io.currentDirectory + deepDir, true);
+    assert(io.directoryExists(io.currentDirectory + deepDir), "Expected directory creation.");
+    print("PASS!\n");
+
+    print("Putting some files into " + deepDir);
+    expectedContentsFullPath = [];
+    expectedContentsPartialPath = [];
+    for (i = 1; i <= 10; ++i) {
+        filename = 'file' + i + '.txt';
+        fullpath = io.currentDirectory + deepDir + '/' + filename;
+        fullpath = io.pathJoin(fullpath.replace('\\', '/').split('/'));
+        io.fileWriteText(fullpath, "I am a file. " + i);
+        expectedContentsFullPath.add(fullpath);
+        expectedContentsPartialPath.add(filename);
+    }
+    expectedContentsFullPath.sort(); // 10 comes between 1 and 2 when sorted by string
+    expectedContentsPartialPath.sort();
+
+    expectedFull = expectedContentsFullPath.join('|');
+    actualFull = io.directoryList(io.currentDirectory + deepDir, true).join('|');
+    if (expectedFull != actualFull) {
+        print("Expected: " + expectedFull);
+        print("Actual: " + actualFull);
+        fail("Directory listing with full path failed.");
+    }
+
+    expectedPartial = expectedContentsPartialPath.join('|');
+    actualPartial = io.directoryList(io.currentDirectory + deepDir, false).join('|');
+    if (expectedPartial != actualPartial) {
+        print("Expected: " + expectedPartial);
+        print("Actual: " + actualPartial);
+        fail("Directory listing with partial path failed.");
+    }
+    print("PASS!\n");
+
+    print("Rename a directory that has stuff in it.");
+    io.directoryMove(io.currentDirectory + '/dir1/dir2', io.currentDirectory + '/dir1/candy');
+
+    expectedFull = expectedContentsFullPath.join('|').replace('dir2', 'candy');
+    actualFull = io.directoryList(io.currentDirectory + deepDir.replace('dir2', 'candy'), true).join('|');
+    if (expectedFull != actualFull) {
+        print("Expected: " + expectedFull);
+        print("Actual: " + actualFull);
+        fail("Directory listing failed after directory move.");
+    }
+    print("PASS!\n");
+
+    print("All tests ran successfully!");
 }

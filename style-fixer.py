@@ -69,6 +69,9 @@ MATCHERS = [
 
 	# Pastel
 	('Interpreter/*.pst', FormatStyle().tabs(' ' * 4).newline('\n')),
+
+	# Demos
+	('Demos/*.cry', FormatStyle().tabs(' ' * 4).newline('\n')),
 ]
 
 def get_all_files():

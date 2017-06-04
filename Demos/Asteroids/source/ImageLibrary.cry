@@ -3,17 +3,17 @@ import ImageResources;
 
 class ImageLibrary {
     static field images = {};
-	static field imageSheet = null;
-	
+    static field imageSheet = null;
+
     constructor() { }
 
     static function get(path) {
         img = ImageLibrary.images.get(path);
         if (img == null) {
-			if (ImageLibrary.imageSheet == null) {
-				ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
-			}
-			img = GraphicsTexture.load(ImageLibrary.imageSheet.getImage('images/' + path));
+            if (ImageLibrary.imageSheet == null) {
+                ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
+            }
+            img = GraphicsTexture.load(ImageLibrary.imageSheet.getImage('images/' + path));
             ImageLibrary.images[path] = img;
         }
         return img;

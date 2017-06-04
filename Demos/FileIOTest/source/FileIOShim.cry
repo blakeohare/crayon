@@ -4,80 +4,80 @@ import UserData;
 const TEMP_DIR_NAME = 'file_io_temp';
 
 class FileIOShim {
-	field isUserData;
-	field currentDirectory;
-	field reportedLocation;
-	
-	constructor(isUserData) {
-		this.isUserData = isUserData;
-		actualCurrentDirectory = this.isUserData
-			? UserData.currentDirectory()
-			: FileIO.currentDirectory();
-		this.currentDirectory = this.pathJoin([actualCurrentDirectory, TEMP_DIR_NAME]);
-		
-		if (isUserData) {
-			this.reportedLocation = "{app data}/" + TEMP_DIR_NAME;
-		} else {
-			this.reportedLocation = this.currentDirectory;
-		}
-	}
-	
-	function pathJoin(pathParts) {
-		output = this.isUserData
-			? UserData.pathJoin(pathParts)
-			: FileIO.pathJoin(pathParts);
-		
-		// TODO: should redundant slashes be handled by FileIOCommon's pathJoin?
-		output = output.replace('//', '/');
-		
-		return output;
-	}
-	
-	function fileWriteText(path, text) {
-		return this.isUserData
-			? UserData.fileWriteText(path, text)
-			: FileIO.fileWriteText(path, text);
-	}
-	
-	function fileWriteBytes(path, bytes) {
-		return this.isUserData
-			? UserData.fileWriteBytes(path, bytes)
-			: FileIO.fileWriteBytes(path, bytes);
-	}
-	
-	function fileReadText(path) {
-		return this.isUserData
-			? UserData.fileReadText(path)
-			: FileIO.fileReadText(path);
-	}
-	
-	function directoryExists(path) {
-		return this.isUserData
-			? UserData.directoryExists(path)
-			: FileIO.directoryExists(path);
-	}
-	
-	function directoryList(path, includeFullPath = false) {
-		return this.isUserData
-			? UserData.directoryList(path, includeFullPath)
-			: FileIO.directoryList(path, includeFullPath);
-	}
-	
-	function directoryCreate(path, createParents = false) {
-		return this.isUserData
-			? UserData.directoryCreate(path, createParents)
-			: FileIO.directoryCreate(path, createParents);
-	}
-	
-	function directoryMove(pathFrom, pathTo) {
-		return this.isUserData
-			? UserData.directoryMove(pathFrom, pathTo)
-			: FileIO.directoryMove(pathFrom, pathTo);
-	}
-	
-	function directoryDelete(path) {
-		return this.isUserData
-			? UserData.directoryDelete(path)
-			: FileIO.directoryDelete(path);
-	}
+    field isUserData;
+    field currentDirectory;
+    field reportedLocation;
+
+    constructor(isUserData) {
+        this.isUserData = isUserData;
+        actualCurrentDirectory = this.isUserData
+            ? UserData.currentDirectory()
+            : FileIO.currentDirectory();
+        this.currentDirectory = this.pathJoin([actualCurrentDirectory, TEMP_DIR_NAME]);
+
+        if (isUserData) {
+            this.reportedLocation = "{app data}/" + TEMP_DIR_NAME;
+        } else {
+            this.reportedLocation = this.currentDirectory;
+        }
+    }
+
+    function pathJoin(pathParts) {
+        output = this.isUserData
+            ? UserData.pathJoin(pathParts)
+            : FileIO.pathJoin(pathParts);
+
+        // TODO: should redundant slashes be handled by FileIOCommon's pathJoin?
+        output = output.replace('//', '/');
+
+        return output;
+    }
+
+    function fileWriteText(path, text) {
+        return this.isUserData
+            ? UserData.fileWriteText(path, text)
+            : FileIO.fileWriteText(path, text);
+    }
+
+    function fileWriteBytes(path, bytes) {
+        return this.isUserData
+            ? UserData.fileWriteBytes(path, bytes)
+            : FileIO.fileWriteBytes(path, bytes);
+    }
+
+    function fileReadText(path) {
+        return this.isUserData
+            ? UserData.fileReadText(path)
+            : FileIO.fileReadText(path);
+    }
+
+    function directoryExists(path) {
+        return this.isUserData
+            ? UserData.directoryExists(path)
+            : FileIO.directoryExists(path);
+    }
+
+    function directoryList(path, includeFullPath = false) {
+        return this.isUserData
+            ? UserData.directoryList(path, includeFullPath)
+            : FileIO.directoryList(path, includeFullPath);
+    }
+
+    function directoryCreate(path, createParents = false) {
+        return this.isUserData
+            ? UserData.directoryCreate(path, createParents)
+            : FileIO.directoryCreate(path, createParents);
+    }
+
+    function directoryMove(pathFrom, pathTo) {
+        return this.isUserData
+            ? UserData.directoryMove(pathFrom, pathTo)
+            : FileIO.directoryMove(pathFrom, pathTo);
+    }
+
+    function directoryDelete(path) {
+        return this.isUserData
+            ? UserData.directoryDelete(path)
+            : FileIO.directoryDelete(path);
+    }
 }
