@@ -22,7 +22,7 @@ function adaptLibraryXml(libraryElement) {
 				lib.name = getTextContent(child);
 				break;
 			case 'namespace':
-				lib.namespaces.add(adaptLibraryNamespaceXml(child));
+				lib.namespaces.add(adaptLibraryNamespaceXml(lib, child));
 				break;
 			default:
 				throw new Exception("Unknown child of library element: '" + child.name + "'");
@@ -31,8 +31,8 @@ function adaptLibraryXml(libraryElement) {
 	return lib;
 }
 
-function adaptLibraryNamespaceXml(nsElement) {
-	ns = new Namespace();
+function adaptLibraryNamespaceXml(lib, nsElement) {
+	ns = new Namespace(lib);
 	ns.name = nsElement.attributes.get('name');
 	for (child : getAllXmlChildrenNodes(nsElement)) {
 		switch (child.name) {
@@ -40,16 +40,16 @@ function adaptLibraryNamespaceXml(nsElement) {
 				ns.name = getTextContent(child);
 				break;
 			case 'enum':
-				ns.enums.add(adaptEnum(child));
+				ns.enums.add(adaptEnum(ns, child));
 				break;
 			case 'function':
-				ns.functions.add(adaptFunction(child));
+				ns.functions.add(adaptFunction(ns, null, child));
 				break;
 			case 'class':
-				ns.classes.add(adaptClass(child));
+				ns.classes.add(adaptClass(ns, child));
 				break;
 			case 'constant':
-				ns.constants.add(adaptConstant(child));
+				ns.constants.add(adaptConstant(ns, child));
 				break;
 			default:
 				throw new Exception("Unknown child of namespace element: '" + child.name + "'");
@@ -58,8 +58,8 @@ function adaptLibraryNamespaceXml(nsElement) {
 	return ns;
 }
 
-function adaptEnum(enumElement) {
-	en = new Enum();
+function adaptEnum(ns, enumElement) {
+	en = new Enum(ns);
 	en.name = enumElement.attributes.get('name');
 	en.description = enumElement.attributes.get('description');
 	for (child : getAllXmlChildrenNodes(enumElement)) {
@@ -99,8 +99,8 @@ function adaptEnumValue(element, enumDef) {
 	enumDef.valueDescriptions.add(description);
 }
 
-function adaptFunction(element) {
-	fn = new Function();
+function adaptFunction(ns, cls, element) {
+	fn = new Function(ns, cls);
 	fn.name = element.attributes.get('name');
 	fn.description = element.attributes.get('description');
 	fn.isStatic = element.attributes.get('static') == 'true';
@@ -128,8 +128,8 @@ function adaptFunction(element) {
 	return fn;
 }
 
-function adaptClass(element) {
-	cls = new Class();
+function adaptClass(ns, element) {
+	cls = new Class(ns);
 	cls.name = element.attributes.get('name');
 	cls.parent = element.attributes.get('parent');
 	cls.description = element.attributes.get('description');
@@ -145,11 +145,11 @@ function adaptClass(element) {
 				cls.parent = getTextContent(child);
 				break;
 			case 'function':
-				fn = adaptFunction(child);
+				fn = adaptFunction(ns, cls, child);
 				cls.functions.add(fn);
 				break;
 			case 'field':
-				fld = adaptField(child);
+				fld = adaptField(cls, child);
 				cls.fields.add(fld);
 				break;
 			default:
@@ -159,8 +159,8 @@ function adaptClass(element) {
 	return cls;
 }
 
-function adaptField(element) {
-	fi = new Field();
+function adaptField(cls, element) {
+	fi = new Field(cls);
 	fi.name = element.attributes.get('name');
 	fi.type = element.attributes.get('type');
 	fi.description = element.attributes.get('description');
@@ -179,7 +179,7 @@ function adaptField(element) {
 	return fi;
 }
 
-function adaptConstant(element) {
+function adaptConstant(ns, element) {
 	throw new Exception("Not implemented.");
 }
 

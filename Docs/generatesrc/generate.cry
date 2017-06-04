@@ -43,7 +43,7 @@ function generateLibraryHtml(library, buffer) {
 			for (cnst : getSortedList(ns.constants)) {
 				buffer.add('<li>');
 				buffer.add('<a href="#');
-				buffer.add(ns.name.lower() + '-const-' + cnst.name.lower());
+				buffer.add(cnst.getBookmark());
 				buffer.add('">');
 				buffer.add(spanCodeFont('const'));
 				buffer.add(' ');
@@ -56,7 +56,7 @@ function generateLibraryHtml(library, buffer) {
 			for (en : getSortedList(ns.enums)) {
 				buffer.add('<li>');
 				buffer.add('<a href="#');
-				buffer.add(ns.name.lower() + '-enum-' + en.name.lower());
+				buffer.add(en.getBookmark());
 				buffer.add('">');
 				buffer.add(spanCodeFont('enum'));
 				buffer.add(' ');
@@ -69,7 +69,7 @@ function generateLibraryHtml(library, buffer) {
 			for (fn : getSortedList(ns.functions)) {
 				buffer.add('<li>');
 				buffer.add('<a href="#');
-				buffer.add(ns.name.lower() + '-function-' + fn.name.lower());
+				buffer.add(fn.getBookmark());
 				buffer.add('">');
 				buffer.add(spanCodeFont('function'));
 				buffer.add(' ');
@@ -89,7 +89,7 @@ function generateLibraryHtml(library, buffer) {
 			for (cls : getSortedList(ns.classes)) {
 				buffer.add('<li>');
 				buffer.add('<a href="#');
-				buffer.add(ns.name.lower() + '-class-' + cls.name.lower());
+				buffer.add(cls.getBookmark());
 				buffer.add('">');
 				buffer.add(spanCodeFont('class'));
 				buffer.add(' ');
@@ -131,7 +131,7 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add('<div>');
 			
 			buffer.add('<h2>');
-			buffer.add('<a name="' + ns.name.lower() + '-const-' + cnst.name.lower() + '"></a>');
+			buffer.add('<a name="' + cnst.getBookmark() + '"></a>');
 			buffer.add(ns.name + '.' + cnst.name);
 			buffer.add('</h2>');
 			
@@ -147,12 +147,15 @@ function generateLibraryHtml(library, buffer) {
 		}
 
 		for (fn : ns.functions) {
-			generateFunctionHtml(buffer, fn, null, ns);
+			generateFunctionHtml(buffer, fn);
 		}
 
 		for (cls : ns.classes) {
 			buffer.add('<div>');
 			buffer.add('<h1>');
+			buffer.add('<a name="');
+			buffer.add(cls.getBookmark());
+			buffer.add('</a>');
 			buffer.add(ns.name + '.' + cls.name);
 			buffer.add('</h1>');
 
@@ -160,14 +163,13 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add(htmlSpecialChars(cls.description));
 			buffer.add('</div>');
 
+			classVar = cls.name;
+			classVar = classVar[0].lower() + classVar[1:];
+
 			for (fi : cls.fields) {
 				buffer.add('<h2>');
-				buffer.add('<a name="' + ns.name.lower());
-				buffer.add('-field-');
-				buffer.add(cls.name.lower() + '-');
-				buffer.add(fi.name.lower());
-				buffer.add('"></a>');
-				buffer.add(fi.name);
+				buffer.add('<a name="' + fi.getBookmark() + '"></a>');
+				buffer.add(classVar + '.' + fi.name);
 				buffer.add('</h2>');
 
 				buffer.add('<div>');
@@ -176,7 +178,7 @@ function generateLibraryHtml(library, buffer) {
 			}
 
 			for (fn : cls.functions) {
-				generateFunctionHtml(buffer, fn, cls, ns);
+				generateFunctionHtml(buffer, fn);
 			}
 
 			buffer.add('</div>');
@@ -185,21 +187,12 @@ function generateLibraryHtml(library, buffer) {
 
 }
 
-function generateFunctionHtml(buffer, fn, parentClass, ns) {
+function generateFunctionHtml(buffer, fn) {
 	buffer.add('<div>');
-	
+
 	buffer.add('<h2>');
-	buffer.add('<a name="' + ns.name.lower());
-	buffer.add('-function-');
-	if (parentClass != null) {
-		buffer.add(parentClass.name.lower() + '-');
-	}
-	buffer.add(fn.name.lower() + '"></a>');
-	buffer.add(ns.name + '.');
-	if (parentClass != null) {
-		buffer.add(parentClass.name + '.');
-	}
-	buffer.add(fn.name);
+	buffer.add('<a name="' + fn.getBookmark() + '"></a>');
+	buffer.add(fn.getDisplayName());
 	buffer.add('</h2>');
 	
 	buffer.add('<div class="codesnippet">');

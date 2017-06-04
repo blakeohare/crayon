@@ -6,14 +6,29 @@ class Library {
 }
 
 class Namespace {
+	field parentLibrary;
 	field name;
 	field constants = [];
 	field enums = [];
 	field functions = [];
 	field classes = [];
+
+	constructor(lib) {
+		this.parentLibrary = lib;
+	}
+
+	function getBookmark() {
+		return 'namespace-' + this.getKey();
+	}
+
+	function getKey() {
+		return this.name.lower().replace('.', '-');
+	}
 }
 
 class Function { // or method
+	field parentNamespace;
+	field parentClass;
 	field name;
 	field description;
 	field argNames = [];
@@ -22,25 +37,106 @@ class Function { // or method
 	field returnDescription;
 	field returnType;
 	field isStatic = false;
+
+	constructor(ns, cls = null) {
+		this.parentNamespace = ns;
+		this.parentClass = cls;
+	}
+
+	function getBookmark() {
+		return [
+			'func-',
+			this.parentNamespace.getKey(),
+			'-',
+			this.parentClass == null ? '' : (this.parentClass.name.lower() + '-'),
+			this.name.lower()
+		].join();
+	}
+
+	function getDisplayName() {
+		sb = [];
+		if (this.parentClass != null) {
+			clsName = this.parentClass.name;
+			if (!this.isStatic) {
+				sb.add(clsName[0].lower());
+				sb.add(clsName[1:]);
+			} else {
+				sb.add(clsName);
+			}
+			sb.add('.');
+		}
+		sb.add(this.name);
+		sb.add('(');
+		for (i = 0; i < this.argNames.length; ++i) {
+			if (i > 0) sb.add(', ');
+			sb.add(this.argNames[i]);
+		}
+		sb.add(')');
+		return sb.join();
+	}
 }
 
 class Enum {
+	field parentNamespace;
 	field name;
 	field description;
 	field valueNames = [];
 	field valueDescriptions = [];
+
+	constructor(ns) {
+		this.parentNamespace = ns;
+	}
+
+	function getBookmark() {
+		return [
+			'enum-',
+			this.parentNamespace.getKey(),
+			'-',
+			this.name.lower()
+		].join();
+	}
 }
 
 class Class {
+	field parentNamespace;
 	field name;
 	field description;
 	field parent;
 	field functions = [];
 	field fields = [];
+
+	constructor(ns) {
+		this.parentNamespace = ns;
+	}
+
+	function getBookmark() {
+		return [
+			'class-',
+			this.parentNamespace.getKey(),
+			'-',
+			this.name.lower()
+		].join();
+	}
 }
 
 class Field {
+	field parentClass;
 	field name;
 	field type;
 	field description;
+
+	constructor(cls) {
+		this.parentClass = cls;
+	}
+
+	function getBookmark() {
+		return [
+			'field-',
+			this.parentClass.parentNamespace.getKey(),
+			'-',
+			this.parentClass.name.lower(),
+			'-',
+			this.name.lower()
+		].join();
+	}
 }
