@@ -155,7 +155,10 @@ namespace Core {
 		}
 	}
 	
-	class Object { } // Sometimes you just need a dummy object.
+	// A simple dummy object.
+	// The VM supports attaching native data to any object instance, and so this generally serves as 
+	// the canonical object to use for that purpose.
+	class Object { }
 	
 	class Exception {
 		/*
@@ -167,7 +170,7 @@ namespace Core {
 		// Do not re-order these.
 		// .message field position within the class is assumed at compile time.
 		field cause;
-		field message; 
+		field message;
 		
 		constructor(message = null, cause = null) {
 			$$$('allocNativeData', this, 2);
@@ -205,6 +208,7 @@ namespace Core {
 	namespace Reflection {
 	
 		function getClassFromInstance(instance) {
+			// TODO: document what happens when instance is not an instance.
 			return $$$('reflectGetClass', instance);
 		}
 		
@@ -224,6 +228,7 @@ namespace Core {
 		
 		function getMethods(instanceOrClass) {
 			switch (Core.typeof(instanceOrClass)) {
+				// TODO: verify that static methods are returned only from class inputs.
 				case Core.Type.OBJECT:
 				case Core.Type.CLASS:
 					return $$$('reflectGetMethods', instanceOrClass);
