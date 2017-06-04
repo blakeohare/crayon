@@ -65,8 +65,8 @@ namespace CSharpApp
             return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
-                    { "PROJECT_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
-                    { "ASSEMBLY_GUID", CSharpHelper.GenerateGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
+                    { "PROJECT_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
+                    { "ASSEMBLY_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
@@ -83,8 +83,8 @@ namespace CSharpApp
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
-            string runtimeProjectGuid = CSharpHelper.GenerateGuid("runtime", "runtime-project");
-            string runtimeAssemblyGuid = CSharpHelper.GenerateGuid("runtime", "runtime-assembly");
+            string runtimeProjectGuid = GuidHelper.GenerateCSharpGuid("runtime", "runtime-project");
+            string runtimeAssemblyGuid = GuidHelper.GenerateCSharpGuid("runtime", "runtime-assembly");
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
@@ -114,9 +114,9 @@ namespace CSharpApp
                 if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
                 {
                     string name = library.Name;
-                    string projectGuid = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-project");
+                    string projectGuid = GuidHelper.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
                     replacements["PROJECT_GUID"] = projectGuid;
-                    replacements["ASSEMBLY_GUID"] = CSharpHelper.GenerateGuid(library.Name + "|" + library.Version, "library-assembly");
+                    replacements["ASSEMBLY_GUID"] = GuidHelper.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
                     LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);

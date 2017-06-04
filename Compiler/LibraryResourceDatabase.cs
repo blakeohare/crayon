@@ -336,7 +336,7 @@ namespace Crayon
                         this.EnsureInstructionContainsAttribute(command, instruction, "version");
                         string name = instruction["name"];
                         string version = instruction["version"];
-                        projectReferenceToGuid[name] = CSharpHelper.GenerateGuid(name + "|" + version, "library-project");
+                        projectReferenceToGuid[name] = GuidHelper.GenerateCSharpGuid(name + "|" + version, "library-project");
                         break;
 
                     default:
