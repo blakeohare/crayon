@@ -106,6 +106,10 @@
       <Project>{41DEBAC3-73C4-4F40-93AE-9FE02319276D}</Project>
       <Name>JavaAppAndroid</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
+      <Project>{C1876949-86D6-405E-B717-AFC56C27E1C8}</Project>
+      <Name>JavaScriptAppIos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
