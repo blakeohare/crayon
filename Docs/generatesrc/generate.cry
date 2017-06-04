@@ -160,6 +160,21 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add(htmlSpecialChars(cls.description));
 			buffer.add('</div>');
 
+			for (fi : cls.fields) {
+				buffer.add('<h2>');
+				buffer.add('<a name="' + ns.name.lower());
+				buffer.add('-field-');
+				buffer.add(cls.name.lower() + '-');
+				buffer.add(fi.name.lower());
+				buffer.add('"></a>');
+				buffer.add(fi.name);
+				buffer.add('</h2>');
+
+				buffer.add('<div>');
+				buffer.add(htmlSpecialChars(fi.description));
+				buffer.add('</div>');
+			}
+
 			for (fn : cls.functions) {
 				generateFunctionHtml(buffer, fn, cls, ns);
 			}

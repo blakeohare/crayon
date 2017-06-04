@@ -148,11 +148,35 @@ function adaptClass(element) {
 				fn = adaptFunction(child);
 				cls.functions.add(fn);
 				break;
+			case 'field':
+				fld = adaptField(child);
+				cls.fields.add(fld);
+				break;
 			default:
 				throw new Exception("Unknown child of class element: '" + child.name + "'");
 		}
 	}
 	return cls;
+}
+
+function adaptField(element) {
+	fi = new Field();
+	fi.name = element.attributes.get('name');
+	fi.type = element.attributes.get('type');
+	fi.description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				fi.name = getTextContent(child);
+				break;
+			case 'description':
+				fi.description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of field element: '" + child.name + "'");
+		}
+	}
+	return fi;
 }
 
 function adaptConstant(element) {

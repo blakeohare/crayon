@@ -36,4 +36,11 @@ class Class {
 	field description;
 	field parent;
 	field functions = [];
+	field fields = [];
+}
+
+class Field {
+	field name;
+	field type;
+	field description;
 }

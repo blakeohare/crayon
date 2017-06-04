@@ -103,6 +103,8 @@
 
 		<class name="Exception">
 			<description>The root class of all exceptions.</description>
+			<field name="message" type="string" description="Error message of the exception"/>
+			<field name="cause" type="Core.Exception" description="A wrapped exception that caused this exception to occur."/>
 			<function name="(constructor)">
 				<arg name="message" type="string" optional="true" description="Message to show in the exception"/>
 				<arg name="cause" type="Core.Exception" optional="true" description="Another exception"/>
