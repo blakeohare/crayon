@@ -170,9 +170,9 @@ C$common$stringTrimOneSide = function (value, isLeft) {
 };
 
 C$common$scrapeLibFuncNames = function(libname) {
-	let prefix = 'v_lib_' + libname + '_function_';
-	let functions = {};
-	for (let key in window) {
+	var prefix = 'v_lib_' + libname + '_function_';
+	var functions = {};
+	for (var key in window) {
 		if (key.indexOf(prefix) === 0) {
 			functions[C$common$substring(key, prefix.length, key.length)] = window[key];
 		}
@@ -188,13 +188,13 @@ C$common$determineLibraryAvailability = function(name, version) {
 };
 
 C$common$runLibraryManifest = function(name, lro) {
-	let manifestFn = window['v_lib_' + name.toLowerCase() + '_manifest'];
+	var manifestFn = window['v_lib_' + name.toLowerCase() + '_manifest'];
 	manifestFn(lro);
 };
 
 C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
-	let fn = C$common$libraryFunctionLookups[libName][fnName];
-	let lookupName = 'lib_' + libName + '_' + fnName;
+	var fn = C$common$libraryFunctionLookups[libName][fnName];
+	var lookupName = 'lib_' + libName + '_' + fnName;
 	v_registerLibraryFunction(fn, lro, lookupName, argc);
 };
 

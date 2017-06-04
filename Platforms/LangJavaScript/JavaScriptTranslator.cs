@@ -738,7 +738,7 @@ namespace LangJavaScript
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
             sb.Append(this.CurrentTab);
-            sb.Append("let v_");
+            sb.Append("var v_");
             sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
             if (varDecl.Value == null)

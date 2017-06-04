@@ -1,0 +1,14 @@
+﻿import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var jsHost: UIWebView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let htmlPath = NSBundle.mainBundle().URLForResource("index", withExtension: "html", subdirectory: "jsres");
+        let request = NSURLRequest(URL: htmlPath!);
+        jsHost.loadRequest(request);
+    }
+}

@@ -131,7 +131,7 @@ namespace JavaScriptAppGl
 
             FileOutput imageSheetManifest = resourceDatabase.ImageSheetManifestFile;
             resourcesJs.Append("C$common$addTextRes('image_sheets.txt', ");
-            resourcesJs.Append(Util.ConvertStringValueToCode(imageSheetManifest.TextContent));
+            resourcesJs.Append(imageSheetManifest == null ? "''" : Util.ConvertStringValueToCode(imageSheetManifest.TextContent));
             resourcesJs.Append(");\n");
 
             resourcesJs.Append("C$common$resourceManifest = ");

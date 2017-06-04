@@ -58,6 +58,18 @@
       <Name>LangJavaScript</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SwiftResources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SwiftResources\PbxProj.txt" />
+    <EmbeddedResource Include="SwiftResources\IconSetContentJson.txt" />
+    <EmbeddedResource Include="SwiftResources\LaunchScreenStoryboard.txt" />
+    <EmbeddedResource Include="SwiftResources\MainStoryboard.txt" />
+    <EmbeddedResource Include="SwiftResources\AppDelegateSwift.txt" />
+    <EmbeddedResource Include="SwiftResources\InfoPlist.txt" />
+    <EmbeddedResource Include="SwiftResources\ViewControllerSwift.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
