@@ -6,3 +6,14 @@ C$game$enforcedScreenSize = function(width, height) {
 console.log = function(msg) {
   window.webkit.messageHandlers.interop.postMessage(msg + '');
 };
+
+C$ios$invokePointer = function(type, x, y) {
+  var x = Math.floor(C$game$width * x);
+  var y = Math.floor(C$game$height * y);
+  var typeStr = type == 0 ? 'DOWN' : (type == 1 ? 'UP' : 'MOVE');
+  if (type < 2) {
+    C$input$eventRelays.push(v_buildRelayObj(33 + type, x, y, 0, 0, ''));
+  } else {
+    C$input$eventRelays.push(v_buildRelayObj(32, x, y, 0, 0, ''));
+  }
+}

@@ -16,9 +16,50 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         let request = NSURLRequest(URL: htmlPath!);
         webView.loadRequest(request);
         self.view.addSubview(webView);
+        let cc = ClickCatcher(frame: self.view.frame, webView: webView);
+        self.view.addSubview(cc);
     }
     
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         print(message.body);
+    }
+    
+    class ClickCatcher : UIView {
+        
+        var webView : WKWebView?;
+        
+        init(frame: CGRect, webView : WKWebView) {
+            super.init(frame: frame)
+            self.webView = webView;
+        }
+
+        required init?(coder: NSCoder) {
+            super.init(coder: coder);
+        }
+        
+        override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+            let touch = touches.first as UITouch!;
+            let currentPoint = touch.locationInView(self);
+            invokeJs(0, x: currentPoint.x, y: currentPoint.y);
+        }
+        
+        override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+            let touch = touches.first as UITouch!;
+            let currentPoint = touch.locationInView(self);
+            invokeJs(2, x: currentPoint.x, y: currentPoint.y);
+        }
+        
+        override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+            let touch = touches.first as UITouch!;
+            let currentPoint = touch.locationInView(self);
+            invokeJs(1, x: currentPoint.x, y: currentPoint.y);
+        }
+        
+        func invokeJs(type : Int, x : CGFloat, y : CGFloat) {
+            let xratio = x / self.frame.width;
+            let yratio = y / self.frame.height;
+            let js = "C$ios$invokePointer(\(type), \(xratio), \(yratio));";
+            webView!.evaluateJavaScript(js, completionHandler: nil);
+        }
     }
 }
