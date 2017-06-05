@@ -24,6 +24,18 @@ namespace JavaScriptAppIos
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
+            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
+                "\n",
+                "<script type=\"text/javascript\" src=\"ios.js\"></script>",
+                "<style type=\"text/css\">",
+                "  body { margin:0px; background-color:#ff0; }",
+                "  #crayon_host {",
+                "    background-color:#00f;",
+                "    width:100%;",
+                "    height:100%;",
+                "  }",
+                "</style>"
+            ));
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = this.ParentPlatform.ExportProject(
@@ -50,6 +62,7 @@ namespace JavaScriptAppIos
                 "CrayonApp/CrayonApp/Base.lproj/Main.storyboard|SwiftResources/MainStoryboard.txt",
                 "CrayonApp/CrayonApp/Info.plist|SwiftResources/InfoPlist.txt",
                 "CrayonApp/CrayonApp/ViewController.swift|SwiftResources/ViewControllerSwift.txt",
+                "CrayonApp/CrayonApp/jsres/ios.js|SwiftResources/iOSjs.txt",
             })
             {
                 string[] parts = pair.Split('|');

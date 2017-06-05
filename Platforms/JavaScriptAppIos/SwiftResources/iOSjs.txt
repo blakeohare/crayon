@@ -1,0 +1,4 @@
+﻿
+C$game$enforcedScreenSize = function(width, height) { 
+	return [window.innerWidth, window.innerHeight];
+}

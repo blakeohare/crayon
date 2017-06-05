@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="resources.js"></script>
 		<script type="text/javascript" src="lib_supplemental.js"></script>
 %%%JS_LIB_INCLUSIONS%%%
+%%%JS_EXTRA_HEAD%%%
 	</head>
 	<body onload="v_main()">
 		<div id="crayon_host" oncontextmenu="return false;"></div>

@@ -56,6 +56,9 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   var canvasWidth;
   var canvasHeight;
   var virtualCanvas = null;
+  var screenSize = C$game$enforcedScreenSize(pwidth, pheight);
+  pwidth = screenSize[0];
+  pheight = screenSize[1];
   if (pwidth === null || pheight === null) {
     scaledMode = false;
     canvasWidth = width;
@@ -113,6 +116,8 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
 C$game$setTitle = function (title) {
   window.document.title = title;
 };
+
+C$game$enforcedScreenSize = function(width, height) { return [width, height]; }
 
 window.addEventListener('keydown', function(e) {
   if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {

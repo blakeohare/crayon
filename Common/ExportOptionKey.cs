@@ -8,6 +8,7 @@
         PROJECT_ID,
         HAS_ICON,
         JS_FILE_PREFIX,
+        JS_HEAD_EXTRAS,
         LIBRARIES_USED,
     }
 }
