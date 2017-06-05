@@ -1,17 +1,24 @@
 ﻿import UIKit
+import WebKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, WKScriptMessageHandler {
 
-    @IBOutlet weak var jsHost: UIWebView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        jsHost.scrollView.bounces = false;
-        jsHost.scrollView.scrollEnabled = false;
-        
+        let userController:WKUserContentController = WKUserContentController();
+        userController.addScriptMessageHandler(self, name: "interop");
+        let webViewConfig = WKWebViewConfiguration();
+        webViewConfig.userContentController = userController;
+        let webView = WKWebView(frame: self.view.frame, configuration: webViewConfig);
+        webView.scrollView.bounces = false;
+        webView.scrollView.scrollEnabled = false;
         let htmlPath = NSBundle.mainBundle().URLForResource("index", withExtension: "html", subdirectory: "jsres");
         let request = NSURLRequest(URL: htmlPath!);
-        jsHost.loadRequest(request);
+        webView.loadRequest(request);
+        self.view.addSubview(webView);
+    }
+    
+    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+        print(message.body);
     }
 }

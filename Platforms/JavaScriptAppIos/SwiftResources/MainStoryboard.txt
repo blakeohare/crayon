@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,25 +16,8 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <webView contentMode="scaleToFill" misplaced="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lDf-Ro-yu6">
-                                <rect key="frame" x="0.0" y="46" width="600" height="486"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
-                            </webView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="lDf-Ro-yu6" secondAttribute="bottom" id="74V-IJ-sfV"/>
-                            <constraint firstItem="lDf-Ro-yu6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="ATZ-B6-Ywn"/>
-                            <constraint firstItem="lDf-Ro-yu6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Cyu-8d-VAa"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="lDf-Ro-yu6" secondAttribute="trailing" id="ezt-Bw-5Ig"/>
-                            <constraint firstItem="lDf-Ro-yu6" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="jiB-LO-wrB"/>
-                            <constraint firstAttribute="trailing" secondItem="lDf-Ro-yu6" secondAttribute="trailing" id="oDT-er-VEc"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="jsHost" destination="lDf-Ro-yu6" id="ZCh-ME-G2Y"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
