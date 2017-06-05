@@ -62,11 +62,13 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
             }
 
+            string guidSeed = GuidHelper.GetRandomSeed();
+
             return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
-                    { "PROJECT_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "project") },
-                    { "ASSEMBLY_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED), "assembly") },
+                    { "PROJECT_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
+                    { "ASSEMBLY_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
@@ -91,6 +93,7 @@ namespace CSharpApp
             {
                 { "PROJECT_ID", "CrayonRuntime" },
                 { "PROJECT_GUID", runtimeProjectGuid },
+                { "INTERPRETER_PROJECT_GUID", runtimeProjectGuid },
                 { "ASSEMBLY_GUID", runtimeAssemblyGuid },
                 { "PROJECT_TITLE", "Crayon Runtime" },
                 { "COPYRIGHT", "©" },

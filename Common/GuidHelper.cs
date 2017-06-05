@@ -7,29 +7,32 @@ namespace Common
 {
     public static class GuidHelper
     {
-        private static readonly string CSHARP_UPPER = "HHHHHHHH-HHHH-HHHH-HHHHHHHHHHHH";
-        private static readonly string CSHARP_LOWER = "hhhhhhhh-hhhh-hhhh-hhhhhhhhhhhh";
+        private static readonly string CSHARP_UPPER = "HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH";
+        private static readonly string CSHARP_LOWER = "hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh";
         private static readonly string XCODE_PROJ = "HHHHHHHHHHHHHHHHHHHHHHHH";
 
         private static readonly string HEX_UPPER = "0123456789ABCDEF";
         private static readonly string HEX_LOWER = "0123456789abcdef";
 
-        public static string GenerateCSharpGuid(string optionalSeed, string salt)
+        public static string GenerateCSharpGuid(string seed, string salt)
         {
-            return GenerateGuid(optionalSeed, salt + "-cs", CSHARP_UPPER.ToCharArray());
+            return GenerateGuid(seed, salt + "-cs", CSHARP_UPPER.ToCharArray());
         }
 
-        public static string GenerateXProjUuid(string optionalSeed, string salt)
+        public static string GenerateXProjUuid(string seed, string salt)
         {
-            return GenerateGuid(optionalSeed, salt + "-xc", XCODE_PROJ.ToCharArray());
+            return GenerateGuid(seed, salt + "-xc", XCODE_PROJ.ToCharArray());
         }
-
+        
         private static readonly Random random = new Random((int)(DateTime.Now.Ticks % 2000000000));
 
-        private static string GenerateGuid(string optionalSeed, string salt, char[] format)
+        public static string GetRandomSeed()
         {
-            string seed = optionalSeed ?? (DateTime.Now.Ticks.ToString() + "," + random.NextDouble());
+            return DateTime.Now.Ticks.ToString() + "," + random.NextDouble();
+        }
 
+        private static string GenerateGuid(string seed, string salt, char[] format)
+        {
             int seedSuffix = 0;
             Stack<byte> bytes = new Stack<byte>();
             for (int i = 0; i < format.Length; ++i)
