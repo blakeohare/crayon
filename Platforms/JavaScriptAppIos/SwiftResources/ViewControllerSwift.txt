@@ -6,21 +6,21 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func viewDidLoad() {
         super.viewDidLoad()
         let userController:WKUserContentController = WKUserContentController();
-        userController.addScriptMessageHandler(self, name: "interop");
+        userController.add(self, name: "interop");
         let webViewConfig = WKWebViewConfiguration();
         webViewConfig.userContentController = userController;
         let webView = WKWebView(frame: self.view.frame, configuration: webViewConfig);
         webView.scrollView.bounces = false;
-        webView.scrollView.scrollEnabled = false;
-        let htmlPath = NSBundle.mainBundle().URLForResource("index", withExtension: "html", subdirectory: "jsres");
-        let request = NSURLRequest(URL: htmlPath!);
-        webView.loadRequest(request);
+        webView.scrollView.isScrollEnabled = false;
+        let htmlPath = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "jsres");
+        let request = URLRequest(url: htmlPath!);
+        webView.load(request);
         self.view.addSubview(webView);
         let cc = ClickCatcher(frame: self.view.frame, webView: webView);
         self.view.addSubview(cc);
     }
     
-    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         print(message.body);
     }
     
@@ -37,27 +37,23 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             super.init(coder: coder);
         }
         
-        override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-            let touch = touches.first as UITouch!;
-            let currentPoint = touch.locationInView(self);
-            invokeJs(0, x: currentPoint.x, y: currentPoint.y);
+        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            invokeJsForMouseEvent(0, touches: touches);
         }
         
-        override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-            let touch = touches.first as UITouch!;
-            let currentPoint = touch.locationInView(self);
-            invokeJs(2, x: currentPoint.x, y: currentPoint.y);
+        override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+            invokeJsForMouseEvent(2, touches: touches);
         }
         
-        override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-            let touch = touches.first as UITouch!;
-            let currentPoint = touch.locationInView(self);
-            invokeJs(1, x: currentPoint.x, y: currentPoint.y);
+        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+            invokeJsForMouseEvent(1, touches: touches);
         }
         
-        func invokeJs(type : Int, x : CGFloat, y : CGFloat) {
-            let xratio = x / self.frame.width;
-            let yratio = y / self.frame.height;
+        func invokeJsForMouseEvent(_ type : Int, touches: Set<UITouch>) {
+        	let touch = touches.first as UITouch!;
+        	let currentPoint = touch?.location(in: self);
+            let xratio = (currentPoint?.x)! / self.frame.width;
+            let yratio = (currentPoint?.y)! / self.frame.height;
             let js = "C$ios$invokePointer(\(type), \(xratio), \(yratio));";
             webView!.evaluateJavaScript(js, completionHandler: nil);
         }

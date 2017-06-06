@@ -23,7 +23,7 @@ namespace Common
         {
             return GenerateGuid(seed, salt + "-xc", XCODE_PROJ.ToCharArray());
         }
-        
+
         private static readonly Random random = new Random((int)(DateTime.Now.Ticks % 2000000000));
 
         public static string GetRandomSeed()

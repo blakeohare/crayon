@@ -17,7 +17,7 @@
 
 /* Begin PBXFileReference section */
 		69984F0E1EE4526D008458E4 /* jsres */ = {isa = PBXFileReference; lastKnownFileType = folder; path = jsres; sourceTree = "<group>"; };
-		69F72C141EE448D500F89B5E /* CrayonApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CrayonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69F72C141EE448D500F89B5E /* %%%PROJECT_ID%%%.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CrayonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69F72C171EE448D500F89B5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69F72C191EE448D500F89B5E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		69F72C1C1EE448D500F89B5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -40,7 +40,7 @@
 		69F72C0B1EE448D500F89B5E = {
 			isa = PBXGroup;
 			children = (
-				69F72C161EE448D500F89B5E /* CrayonApp */,
+				69F72C161EE448D500F89B5E /* %%%PROJECT_ID%%% */,
 				69F72C151EE448D500F89B5E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,12 +48,12 @@
 		69F72C151EE448D500F89B5E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				69F72C141EE448D500F89B5E /* CrayonApp.app */,
+				69F72C141EE448D500F89B5E /* %%%PROJECT_ID%%%.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		69F72C161EE448D500F89B5E /* CrayonApp */ = {
+		69F72C161EE448D500F89B5E /* %%%PROJECT_ID%%% */ = {
 			isa = PBXGroup;
 			children = (
 				69984F0E1EE4526D008458E4 /* jsres */,
@@ -64,15 +64,15 @@
 				69F72C201EE448D500F89B5E /* LaunchScreen.storyboard */,
 				69F72C231EE448D500F89B5E /* Info.plist */,
 			);
-			path = CrayonApp;
+			path = %%%PROJECT_ID%%%;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		69F72C131EE448D500F89B5E /* CrayonApp */ = {
+		69F72C131EE448D500F89B5E /* %%%PROJECT_ID%%% */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 69F72C261EE448D500F89B5E /* Build configuration list for PBXNativeTarget "CrayonApp" */;
+			buildConfigurationList = 69F72C261EE448D500F89B5E /* Build configuration list for PBXNativeTarget "%%%PROJECT_ID%%%" */;
 			buildPhases = (
 				69F72C101EE448D500F89B5E /* Sources */,
 				69F72C111EE448D500F89B5E /* Frameworks */,
@@ -82,9 +82,9 @@
 			);
 			dependencies = (
 			);
-			name = CrayonApp;
-			productName = CrayonApp;
-			productReference = 69F72C141EE448D500F89B5E /* CrayonApp.app */;
+			name = %%%PROJECT_ID%%%;
+			productName = %%%PROJECT_ID%%%;
+			productReference = 69F72C141EE448D500F89B5E /* %%%PROJECT_ID%%%.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -95,14 +95,15 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0730;
-				ORGANIZATIONNAME = "Noisy Protozoa";
+				ORGANIZATIONNAME = "%%%ORGANIZATION_NAME%%%";
 				TargetAttributes = {
 					69F72C131EE448D500F89B5E = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0830;
 					};
 				};
 			};
-			buildConfigurationList = 69F72C0F1EE448D500F89B5E /* Build configuration list for PBXProject "CrayonApp" */;
+			buildConfigurationList = 69F72C0F1EE448D500F89B5E /* Build configuration list for PBXProject "%%%PROJECT_ID%%%" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -115,7 +116,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				69F72C131EE448D500F89B5E /* CrayonApp */,
+				69F72C131EE448D500F89B5E /* %%%PROJECT_ID%%% */,
 			);
 		};
 /* End PBXProject section */
@@ -255,10 +256,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = CrayonApp/Info.plist;
+				INFOPLIST_FILE = %%%PROJECT_ID%%%/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = noisyprotozoa.CrayonApp;
+				PRODUCT_BUNDLE_IDENTIFIER = noisyprotozoa.%%%PROJECT_ID%%%;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -266,17 +268,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = CrayonApp/Info.plist;
+				INFOPLIST_FILE = %%%PROJECT_ID%%%/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = noisyprotozoa.CrayonApp;
+				PRODUCT_BUNDLE_IDENTIFIER = noisyprotozoa.%%%PROJECT_ID%%%;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		69F72C0F1EE448D500F89B5E /* Build configuration list for PBXProject "CrayonApp" */ = {
+		69F72C0F1EE448D500F89B5E /* Build configuration list for PBXProject "%%%PROJECT_ID%%%" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				69F72C241EE448D500F89B5E /* Debug */,
@@ -285,7 +288,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		69F72C261EE448D500F89B5E /* Build configuration list for PBXNativeTarget "CrayonApp" */ = {
+		69F72C261EE448D500F89B5E /* Build configuration list for PBXNativeTarget "%%%PROJECT_ID%%%" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				69F72C271EE448D500F89B5E /* Debug */,

@@ -102,14 +102,29 @@ namespace Platform
                 return parent.LoadTextResource(resourcePath, replacements);
             }
 
-            if (content.Contains("%%%"))
+            return this.ApplyReplacements(content, replacements);
+        }
+
+        protected string ApplyReplacements(string text, Dictionary<string, string> replacements)
+        {
+            if (text.Contains("%%%"))
             {
-                foreach (string key in replacements.Keys)
+                string[] segments = text.Split(new string[] { "%%%" }, StringSplitOptions.None);
+                for (int i = 1; i < segments.Length; i += 2)
                 {
-                    content = content.Replace("%%%" + key + "%%%", replacements[key]);
+                    string replacement;
+                    if (replacements.TryGetValue(segments[i], out replacement))
+                    {
+                        segments[i] = replacement;
+                    }
+                    else
+                    {
+                        segments[i] = "%%%" + segments[i] + "%%%";
+                    }
                 }
+                text = string.Join("", segments);
             }
-            return content;
+            return text;
         }
 
         private bool parentPlatformSet = false;

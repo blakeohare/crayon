@@ -48,21 +48,21 @@ namespace JavaScriptAppIos
                 libraryNativeInvocationTranslatorProviderForPlatform);
             foreach (string filePath in basicProject.Keys)
             {
-                files["CrayonApp/CrayonApp/jsres/" + filePath] = basicProject[filePath];
+                files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/jsres/" + filePath] = basicProject[filePath];
             }
 
             // TODO: use this in the pbxproj file.
             string uuidSeed = options.GetStringOrNull(ExportOptionKey.GUID_SEED);
 
             foreach (string pair in new string[] {
-                "CrayonApp/CrayonApp.xcodeproj/project.pbxproj|SwiftResources/PbxProj.txt",
-                "CrayonApp/CrayonApp/AppDelegate.swift|SwiftResources/AppDelegateSwift.txt",
-                "CrayonApp/CrayonApp/Assets.xcassets/AppIcon.appiconset/Contents.json|SwiftResources/IconSetContentJson.txt",
-                "CrayonApp/CrayonApp/Base.lproj/LaunchScreen.storyboard|SwiftResources/LaunchScreenStoryboard.txt",
-                "CrayonApp/CrayonApp/Base.lproj/Main.storyboard|SwiftResources/MainStoryboard.txt",
-                "CrayonApp/CrayonApp/Info.plist|SwiftResources/InfoPlist.txt",
-                "CrayonApp/CrayonApp/ViewController.swift|SwiftResources/ViewControllerSwift.txt",
-                "CrayonApp/CrayonApp/jsres/ios.js|SwiftResources/iOSjs.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.xcodeproj/project.pbxproj|SwiftResources/PbxProj.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/AppDelegate.swift|SwiftResources/AppDelegateSwift.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/AppIcon.appiconset/Contents.json|SwiftResources/IconSetContentJson.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Base.lproj/LaunchScreen.storyboard|SwiftResources/LaunchScreenStoryboard.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Base.lproj/Main.storyboard|SwiftResources/MainStoryboard.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Info.plist|SwiftResources/InfoPlist.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/ViewController.swift|SwiftResources/ViewControllerSwift.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/jsres/ios.js|SwiftResources/iOSjs.txt",
             })
             {
                 string[] parts = pair.Split('|');
@@ -74,7 +74,13 @@ namespace JavaScriptAppIos
                 };
             }
 
-            return files;
+            Dictionary<string, FileOutput> filesFixed = new Dictionary<string, FileOutput>();
+            foreach (string filename in files.Keys)
+            {
+                filesFixed[this.ApplyReplacements(filename, replacements)] = files[filename];
+            }
+
+            return filesFixed;
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(
@@ -104,7 +110,9 @@ namespace JavaScriptAppIos
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            replacements["ORGANIZTION_NAME"] = "Organization Name";
+            return replacements;
         }
 
         public override IDictionary<string, object> GetConstantFlags()
