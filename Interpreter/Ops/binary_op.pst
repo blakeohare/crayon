@@ -75,7 +75,7 @@ if (Core.ForceParens((leftType == Types.STRING) || (rightType == Types.STRING)) 
             if (int2 == 0) {
                 return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
             }
-            int1 = (int) left % int2;
+            int1 = (int) leftValue.internalValue % int2;
             if (int1 < 0) {
                 int1 += int2;
             }

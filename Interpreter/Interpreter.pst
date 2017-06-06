@@ -173,8 +173,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     Value rightValue = null;
     ClassValue classValue = null;
     int op = 0;
-    object left = 0;
-    object right = 0;
     int leftType = 0;
     int rightType = 0;
     Value arg1 = null;
