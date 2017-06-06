@@ -10,7 +10,8 @@ namespace Interpreter
     {
         public static string ReadResourceTextFile(string path)
         {
-            return ReadTextResource("Resources/" + path);
+			// TODO: Remove one of these
+            return ReadTextResource(path);
         }
 
         public static string ReadMetadata(string path, bool returnEmptyOnFail)
@@ -25,7 +26,7 @@ namespace Interpreter
 
         public static string ReadTextResource(string path)
         {
-            IList<byte> bytes = ReadBytes(path);
+            IList<byte> bytes = ReadBytes("Resources/" + path);
             if (bytes == null) return null;
             bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
             StringBuilder output = new StringBuilder(bytes.Count);
@@ -35,12 +36,22 @@ namespace Interpreter
 
         public static Bitmap ReadImageResource(string path)
         {
-            IList<byte> data = ReadBytes(path);
+            IList<byte> data = ReadBytes("Resources/" + path);
             if (data == null)
             {
                 return null;
             }
             return (Bitmap)Bitmap.FromStream(new MemoryStream(data.ToArray()));
+        }
+
+        public static byte[] ReadSoundResource(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public static Bitmap ReadIconResource(string path)
+        {
+            return ReadImageResource("icons/" + path);
         }
 
         // C# does not like it when you access resources from different threads.
