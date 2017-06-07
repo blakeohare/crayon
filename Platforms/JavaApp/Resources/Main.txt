@@ -2,6 +2,7 @@
 
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.TranslationHelper;
+import org.crayonlang.interpreter.ResourceReader;
 
 public final class Main {
 
