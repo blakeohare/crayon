@@ -1,8 +1,0 @@
-﻿/*
-	arg 1: title
-	
-	Argument is guaranteed to be a non-empty string.
-*/
-import inline "FrameworkFunctions/1_arg.cry";
-
-$_lib_game_set_title($_cast('string', Value$arg1.internalValue));

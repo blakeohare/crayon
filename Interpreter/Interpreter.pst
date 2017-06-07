@@ -491,7 +491,10 @@ ExecutionContext getExecutionContext(int id) {
 }
 
 int vm_suspend() {
-    ExecutionContext ec = getExecutionContext(-1);
+    return vm_suspend_for_context(getExecutionContext(-1));
+}
+
+int vm_suspend_for_context(ExecutionContext ec) {
     ec.executionStateChange = true;
     ec.executionStateChangeCommand = 1;
     return 0;

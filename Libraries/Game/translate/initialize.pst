@@ -1,13 +1,7 @@
-﻿Value lib_game_function_initialize(Array<Value> args) {
-	double float1 = 0.0;
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	if (arg1.type == Types.INTEGER) {
-		float1 = ((int) arg1.internalValue) + 0.0;
-	} else {
-		float1 = ((double) arg1.internalValue);
-	}
-	Native._lib_game_initialize_game_with_fps(float1);
-	return output;
+﻿/*
+	args[0]: FPS float or integer, type already verified.
+*/
+Value lib_game_function_initialize(Array<Value> args) {
+	Native._lib_game_initialize_game_with_fps(getFloat(args[0]));
+	return VALUE_NULL;
 }
-
