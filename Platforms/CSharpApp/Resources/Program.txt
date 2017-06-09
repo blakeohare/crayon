@@ -12,6 +12,7 @@ namespace %%%PROJECT_ID%%%
             TranslationHelper.LibraryRegistry = new LibraryRegistry();
             TranslationHelper.ByteCode = ResourceReader.ReadResourceTextFile("ByteCode.txt");
             TranslationHelper.ResourceManifest = ResourceReader.ReadResourceTextFile("ResourceManifest.txt");
+            TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
             CrayonWrapper.v_main();
         }
     }

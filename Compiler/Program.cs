@@ -206,6 +206,14 @@ namespace Crayon
             cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
             cbxOutput.AddRange(resourceManifest);
 
+            if (resDb.ImageSheetManifestFile != null)
+            {
+                byte[] imageSheetManifest = StringToBytes(resDb.ImageSheetManifestFile.TextContent);
+                cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
+                cbxOutput.AddRange(imageSheetManifest);
+            }
+
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
             string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
@@ -218,12 +226,7 @@ namespace Crayon
                 BinaryContent = cbxOutput.ToArray(),
             };
 
-            // Resource manifest is embedded into the CBX file
-
-            if (resDb.ImageSheetManifestFile != null)
-            {
-                output["res/image_sheet_manifest.txt"] = resDb.ImageSheetManifestFile;
-            }
+            // Resource manifest and image sheet manifest is embedded into the CBX file
 
             foreach (FileOutput txtResource in resDb.TextResources)
             {

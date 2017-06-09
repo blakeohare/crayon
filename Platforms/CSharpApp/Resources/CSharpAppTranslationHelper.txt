@@ -68,11 +68,6 @@ namespace Interpreter
             return false;
         }
 
-        public static string GetImageResourceManifestString()
-        {
-            return ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-        }
-
         public static object GenerateNativeBitmapOfSize(int width, int height)
         {
             return new UniversalBitmap(width, height);
