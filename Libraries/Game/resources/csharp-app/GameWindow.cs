@@ -64,10 +64,13 @@ namespace Interpreter.Libraries.Game
             this.Keyboard.KeyDown += (sender, e) => this.KeyEvent(e.Key, true);
             this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
 
-            System.Drawing.Bitmap bmp = ResourceReader.ReadIconResource("icon.ico");
-            if (bmp != null)
+            if (UniversalBitmap.IconSupported)
             {
-                this.Icon = System.Drawing.Icon.FromHandle(bmp.GetHicon());
+                UniversalBitmap bmp = ResourceReader.ReadIconResource("icon.ico");
+                if (bmp != null)
+                {
+                    this.Icon = bmp.GenerateIcon();
+                }
             }
         }
 

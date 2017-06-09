@@ -1,0 +1,133 @@
+﻿
+namespace Interpreter
+{
+    public class UniversalBitmap
+    {
+        private System.Drawing.Bitmap internalBitmap;
+
+        private DrawingSession activeDrawingSession = null;
+        private BitLockSession activeBitLockSession = null;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        private UniversalBitmap() { }
+        
+        public UniversalBitmap(byte[] bytes)
+        {
+            this.internalBitmap = (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new System.IO.MemoryStream(bytes));
+            this.Width = this.internalBitmap.Width;
+            this.Height = this.internalBitmap.Height;
+
+            if (this.internalBitmap.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+            {
+                System.Drawing.Bitmap newBmp = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                newBmp.SetResolution(this.internalBitmap.HorizontalResolution, this.internalBitmap.VerticalResolution);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBmp);
+                g.DrawImage(this.internalBitmap, new System.Drawing.PointF(0, 0));
+                g.Flush();
+                this.internalBitmap = newBmp;
+            }
+        }
+
+        public UniversalBitmap(int width, int height)
+        {
+            this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            this.Width = width;
+            this.Height = height;
+        }
+
+        public DrawingSession GetActiveDrawingSession()
+        {
+            if (this.activeDrawingSession == null) this.activeDrawingSession = new DrawingSession(this);
+            return this.activeDrawingSession;
+        }
+
+        public BitLockSession GetActiveBitLockSession()
+        {
+            if (this.activeBitLockSession == null) this.activeBitLockSession = new BitLockSession(this);
+            return this.activeBitLockSession;
+        }
+		
+		public static bool IconSupported
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+        public System.Drawing.Icon GenerateIcon()
+        {
+            return System.Drawing.Icon.FromHandle(this.internalBitmap.GetHicon());
+        }
+        
+        public class BitLockSession
+        {
+            private UniversalBitmap bmp;
+            private System.Drawing.Imaging.BitmapData internalSession;
+
+            public BitLockSession(UniversalBitmap bmp)
+            {
+                this.bmp = bmp;
+                this.internalSession = bmp.internalBitmap.LockBits(
+                    new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            }
+
+            public System.IntPtr GetPtr()
+            {
+                return this.internalSession.Scan0;
+            }
+
+            public void Free()
+            {
+                this.bmp.internalBitmap.UnlockBits(this.internalSession);
+            }
+        }
+
+        public class DrawingSession
+        {
+            private static int activeSessions = 0;
+
+            private UniversalBitmap bmp;
+            private System.Drawing.Graphics internalSession;
+
+            public DrawingSession(UniversalBitmap bmp)
+            {
+                activeSessions++;
+
+                this.bmp = bmp;
+                this.internalSession = System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)bmp.internalBitmap);
+            }
+            
+            public DrawingSession Draw(UniversalBitmap bmp, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
+            {
+                this.internalSession.DrawImage(
+                    bmp.internalBitmap,
+                    new System.Drawing.Rectangle(targetX, targetY, width, height),
+                    new System.Drawing.Rectangle(sourceX, sourceY, width, height),
+                    System.Drawing.GraphicsUnit.Pixel);
+                return this;
+            }
+
+            public void Flush()
+            {
+                activeSessions--;
+
+                this.internalSession.Flush();
+                this.internalSession.Dispose();
+                this.bmp.activeDrawingSession = null;
+            }
+
+            public static void VerifyCleaned()
+            {
+                if (activeSessions != 0)
+                {
+                    throw new System.Exception("");
+                }
+            }
+        }
+    }
+}
