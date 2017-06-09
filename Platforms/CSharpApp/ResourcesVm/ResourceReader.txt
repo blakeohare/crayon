@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -24,12 +23,12 @@ namespace Interpreter
             return ReadTextFile("res/txt/" + path);
         }
 
-        public static Bitmap ReadIconResource(string path)
+        public static UniversalBitmap ReadIconResource(string path)
         {
             return ReadImage("res/ico/" + path);
         }
 
-        public static Bitmap ReadImageResource(string path)
+        public static UniversalBitmap ReadImageResource(string path)
         {
             return ReadImage("res/img/" + path);
         }
@@ -50,14 +49,14 @@ namespace Interpreter
             return output.ToString();
         }
 
-        public static Bitmap ReadImage(string path)
+        public static UniversalBitmap ReadImage(string path)
         {
             IList<byte> data = ReadBytes(path);
             if (data == null)
             {
                 return null;
             }
-            return (Bitmap)Bitmap.FromStream(new System.IO.MemoryStream(data.ToArray()));
+            return new UniversalBitmap(data.ToArray());
         }
 
         private static List<byte> ReadBytes(string path)
