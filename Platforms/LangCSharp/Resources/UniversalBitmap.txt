@@ -35,9 +35,37 @@ namespace Interpreter
                 this.internalBitmap = newBmp;
             }
 #elif OSX
-            throw new System.NotImplementedException();
+            this.internalBitmap = GetCairoImageFromBytes(bytes);
+            this.Width = this.internalBitmap.Width;
+            this.Height = this.internalBitmap.Height;
+            if (this.internalBitmap.Format != Cairo.Format.ARGB32)
+            {
+                UniversalBitmap newBmp = new UniversalBitmap(this.Width, this.Height);
+                newBmp.GetActiveDrawingSession().Draw(this, 0, 0, 0, 0, this.Width, this.Height).Flush();
+                this.internalBitmap = newBmp.internalBitmap;
+            }
 #endif
         }
+
+#if OSX
+        private static string tmpFileHack = null;
+        private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
+        {
+            if (UniversalBitmap.tmpFileHack == null)
+            {
+                UniversalBitmap.tmpFileHack = System.IO.Path.GetTempFileName();
+            }
+            // TODO: be more ashamed of this than the current level of shame.
+            // Since the only raw image file format decoder I can find in the Cairo library
+            // is in the API that takes in a file as a string filepath, this seems to be the
+            // only answer. The byte array constructor for ImageSurface is based on decoded
+            // image data, not raw PNG or JPEG data.
+            System.IO.File.WriteAllBytes(UniversalBitmap.tmpFileHack, bytes);
+            Cairo.ImageSurface image = new Cairo.ImageSurface(UniversalBitmap.tmpFileHack);
+            System.IO.File.Delete(UniversalBitmap.tmpFileHack);
+            return image;
+        }
+#endif
 
         public UniversalBitmap(int width, int height)
         {
@@ -46,7 +74,7 @@ namespace Interpreter
 #if WINDOWS
             this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 #elif OSX
-            throw new System.NotImplementedException();
+            this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
 #endif
         }
 
@@ -90,7 +118,7 @@ namespace Interpreter
 #if WINDOWS
             private System.Drawing.Imaging.BitmapData internalSession;
 #elif OSX
-            
+            private System.IntPtr ptr;
 #endif
 
             public BitLockSession(UniversalBitmap bmp)
@@ -102,7 +130,7 @@ namespace Interpreter
                     System.Drawing.Imaging.ImageLockMode.ReadOnly,
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 #elif OSX
-                throw new System.NotImplementedException();
+                this.ptr = bmp.internalBitmap.DataPtr;
 #endif
             }
 
@@ -111,7 +139,7 @@ namespace Interpreter
 #if WINDOWS
                 return this.internalSession.Scan0;
 #elif OSX
-            throw new System.NotImplementedException();
+                return this.ptr;
 #endif
             }
 
@@ -120,7 +148,7 @@ namespace Interpreter
 #if WINDOWS
                 this.bmp.internalBitmap.UnlockBits(this.internalSession);
 #elif OSX
-                throw new System.NotImplementedException();
+                // nothing to do, really.
 #endif
             }
         }
@@ -134,7 +162,7 @@ namespace Interpreter
 #if WINDOWS
             private System.Drawing.Graphics internalSession;
 #elif OSX
-            throw new System.NotImplementedException();
+            private readonly Cairo.Context context;
 #endif
 
             public DrawingSession(UniversalBitmap bmp)
@@ -145,7 +173,7 @@ namespace Interpreter
 #if WINDOWS
                 this.internalSession = System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)bmp.internalBitmap);
 #elif OSX
-                throw new System.NotImplementedException();
+                this.context = new Cairo.Context(bmp.internalBitmap);
 #endif
             }
 
@@ -158,7 +186,13 @@ namespace Interpreter
                     new System.Drawing.Rectangle(sourceX, sourceY, width, height),
                     System.Drawing.GraphicsUnit.Pixel);
 #elif OSX
-                throw new System.NotImplementedException();
+                if (width != bmp.Width || height != bmp.Height)
+                {
+                    throw new System.NotImplementedException();
+                }
+
+                this.context.SetSource(bmp.internalBitmap, targetX, targetY);
+                this.context.Paint();
 #endif
                 return this;
             }
@@ -171,7 +205,7 @@ namespace Interpreter
                 this.internalSession.Dispose();
                 this.bmp.activeDrawingSession = null;
 #elif OSX
-                throw new System.NotImplementedException();
+                this.context.Dispose();
 #endif
             }
 
