@@ -3,7 +3,12 @@ namespace Interpreter
 {
     public class UniversalBitmap
     {
+
+#if WINDOWS
         private System.Drawing.Bitmap internalBitmap;
+#elif OSX
+        private readonly Cairo.ImageSurface internalBitmap;
+#endif
 
         private DrawingSession activeDrawingSession = null;
         private BitLockSession activeBitLockSession = null;
@@ -12,9 +17,10 @@ namespace Interpreter
         public int Height { get; private set; }
 
         private UniversalBitmap() { }
-        
+
         public UniversalBitmap(byte[] bytes)
         {
+#if WINDOWS
             this.internalBitmap = (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new System.IO.MemoryStream(bytes));
             this.Width = this.internalBitmap.Width;
             this.Height = this.internalBitmap.Height;
@@ -28,13 +34,20 @@ namespace Interpreter
                 g.Flush();
                 this.internalBitmap = newBmp;
             }
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
         }
 
         public UniversalBitmap(int width, int height)
         {
-            this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             this.Width = width;
             this.Height = height;
+#if WINDOWS
+            this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
         }
 
         public DrawingSession GetActiveDrawingSession()
@@ -48,42 +61,67 @@ namespace Interpreter
             if (this.activeBitLockSession == null) this.activeBitLockSession = new BitLockSession(this);
             return this.activeBitLockSession;
         }
-		
-		public static bool IconSupported
-		{
-			get
-			{
-				return true;
-			}
-		}
+
+        public static bool IconSupported
+        {
+            get
+            {
+#if WINDOWS
+                return true;
+#elif OSX
+                return false;
+#endif
+            }
+        }
 
         public System.Drawing.Icon GenerateIcon()
         {
+#if WINDOWS
             return System.Drawing.Icon.FromHandle(this.internalBitmap.GetHicon());
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
         }
-        
+
         public class BitLockSession
         {
             private UniversalBitmap bmp;
+
+#if WINDOWS
             private System.Drawing.Imaging.BitmapData internalSession;
+#elif OSX
+            
+#endif
 
             public BitLockSession(UniversalBitmap bmp)
             {
                 this.bmp = bmp;
+#if WINDOWS
                 this.internalSession = bmp.internalBitmap.LockBits(
                     new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
                     System.Drawing.Imaging.ImageLockMode.ReadOnly,
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+#elif OSX
+                throw new System.NotImplementedException();
+#endif
             }
 
             public System.IntPtr GetPtr()
             {
+#if WINDOWS
                 return this.internalSession.Scan0;
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
             }
 
             public void Free()
             {
+#if WINDOWS
                 this.bmp.internalBitmap.UnlockBits(this.internalSession);
+#elif OSX
+                throw new System.NotImplementedException();
+#endif
             }
         }
 
@@ -92,33 +130,49 @@ namespace Interpreter
             private static int activeSessions = 0;
 
             private UniversalBitmap bmp;
+
+#if WINDOWS
             private System.Drawing.Graphics internalSession;
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
 
             public DrawingSession(UniversalBitmap bmp)
             {
                 activeSessions++;
 
                 this.bmp = bmp;
+#if WINDOWS
                 this.internalSession = System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)bmp.internalBitmap);
+#elif OSX
+                throw new System.NotImplementedException();
+#endif
             }
-            
+
             public DrawingSession Draw(UniversalBitmap bmp, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
             {
+#if WINDOWS
                 this.internalSession.DrawImage(
                     bmp.internalBitmap,
                     new System.Drawing.Rectangle(targetX, targetY, width, height),
                     new System.Drawing.Rectangle(sourceX, sourceY, width, height),
                     System.Drawing.GraphicsUnit.Pixel);
+#elif OSX
+                throw new System.NotImplementedException();
+#endif
                 return this;
             }
 
             public void Flush()
             {
                 activeSessions--;
-
+#if WINDOWS
                 this.internalSession.Flush();
                 this.internalSession.Dispose();
                 this.bmp.activeDrawingSession = null;
+#elif OSX
+                throw new System.NotImplementedException();
+#endif
             }
 
             public static void VerifyCleaned()
