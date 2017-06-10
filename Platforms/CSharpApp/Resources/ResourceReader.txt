@@ -44,7 +44,7 @@ namespace Interpreter
 
         public static byte[] ReadSoundResource(string path)
         {
-            List<byte> bytes = ReadBytes(path);
+            List<byte> bytes = ReadBytes("Resources/" + path);
             return bytes == null ? null : bytes.ToArray();
         }
 
