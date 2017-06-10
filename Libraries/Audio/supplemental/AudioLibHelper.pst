@@ -41,13 +41,6 @@ int lib_audio_load_sfx_from_resource(ObjectInstance obj, string path) {
 	return 1;
 }
 
-Value lib_audio_is_music_playing() {
-	if (Native._lib_audio_musicIsPlaying()) {
-		return VALUE_TRUE;
-	}
-	return VALUE_FALSE;
-}
-
 int lib_audio_music_play(ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop) {
 	Native._lib_audio_musicSetVolume(startingVolume);
 	object nativeObject = null;

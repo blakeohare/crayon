@@ -1,7 +1,7 @@
-﻿Value lib_audio_function_sfx_load_from_file(Array<Value> args) {
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	return output;
+﻿/*
+	args[0] -> blank sound object instance
+	args[1] -> file path
+*/
+Value lib_audio_function_sfx_load_from_file(Array<Value> args) {
+	return VALUE_NULL;
 }
-

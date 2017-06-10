@@ -1,5 +1,0 @@
-﻿if ($_lib_audio_isAudioSupported()) {
-	output = VALUE_TRUE;
-} else {
-	output = VALUE_FALSE;
-}

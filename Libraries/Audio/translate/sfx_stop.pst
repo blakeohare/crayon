@@ -1,28 +1,28 @@
-﻿Value lib_audio_function_sfx_stop(Array<Value> args) {
-	bool bool1 = false;
-	bool bool2 = false;
-	int int1 = 0;
-	int int2 = 0;
-	object object1 = null;
-	object object2 = null;
-	ObjectInstance objInstance1 = null;
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	Value arg4 = args[3];
-	Value arg5 = args[4];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	object1 = objInstance1.nativeData[0];
-	objInstance1 = ((ObjectInstance) arg2.internalValue);
-	object2 = objInstance1.nativeData[0];
-	int1 = ((int) arg3.internalValue);
-	int2 = ((int) arg4.internalValue);
-	bool1 = ((bool) arg5.internalValue);
-	bool2 = (int2 == 2) && !bool1;
-	if ((int1 != 3) && !bool2) {
-		lib_audio_sfx_stop(object1, object2, int1, int2 == 1, bool1);
-	}
-	return output;
-}
+﻿/*
+	args[0] -> Channel instance
+	args[1] -> SoundResource instance
+	args[2] -> Resource ID
+	args[3] -> current state (1 -> playing, 2 -> paused, 3 -> stopped)
+	args[4] -> true if the sound should be stopped completely and freed from the channel.
+*/
+Value lib_audio_function_sfx_stop(Array<Value> args) {
+	ObjectInstance channel = (ObjectInstance) args[0].internalValue;
+	object nativeChannel = channel.nativeData[0];
+	ObjectInstance resource = (ObjectInstance) args[1].internalValue;
+	object nativeResource = resource.nativeData[0];
+	int resourceId = (int) args[2].internalValue;
+	int currentState = (int) args[3].internalValue;
+	bool completeStopAndFreeChannel = (bool) args[4].internalValue;
+	bool isAlreadyPaused = currentState == 2 && !completeStopAndFreeChannel;
 
+	if (currentState != 3 && !isAlreadyPaused) {
+		lib_audio_sfx_stop(
+			nativeChannel,
+			nativeResource,
+			resourceId,
+			currentState == 1,
+			completeStopAndFreeChannel);
+	}
+
+	return VALUE_NULL;
+}

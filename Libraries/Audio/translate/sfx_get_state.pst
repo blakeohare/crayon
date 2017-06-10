@@ -1,18 +1,18 @@
-﻿Value lib_audio_function_sfx_get_state(Array<Value> args) {
-	int int1 = 0;
-	object object1 = null;
-	object object2 = null;
-	ObjectInstance objInstance1 = null;
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	object1 = objInstance1.nativeData[0];
-	objInstance1 = ((ObjectInstance) arg2.internalValue);
-	object2 = objInstance1.nativeData[0];
-	int1 = ((int) arg3.internalValue);
-	output = buildInteger(lib_audio_sfx_get_state(object1, object2, int1));
-	return output;
-}
+﻿/*
+	args[0] -> Channel instance
+	args[1] -> SoundResource instance 
+	args[2] -> SoundResource ID
 
+	Output (from SoundPlayState enum in embed.cry):
+	1 -> PLAYING
+	2 -> PAUSED
+	3 -> STOPPED
+*/
+Value lib_audio_function_sfx_get_state(Array<Value> args) {
+	ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue); // channel
+	object nativeChannel = channelInstance.nativeData[0];
+	ObjectInstance soundInstance = ((ObjectInstance) args[1].internalValue); // sound
+	object nativeSound = soundInstance.nativeData[0];
+	int resourceId = (int) args[2].internalValue;
+	return buildInteger(lib_audio_sfx_get_state(nativeChannel, nativeSound, resourceId));
+}

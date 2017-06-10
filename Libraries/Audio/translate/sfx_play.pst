@@ -1,23 +1,19 @@
-﻿Value lib_audio_function_sfx_play(Array<Value> args) {
-	double float1 = 0.0;
-	double float2 = 0.0;
-	int int1 = 0;
-	object object1 = null;
-	ObjectInstance objInstance1 = null;
-	ObjectInstance objInstance2 = null;
-	Value output = VALUE_NULL;
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	Value arg4 = args[3];
-	objInstance1 = ((ObjectInstance) arg1.internalValue);
-	objInstance2 = ((ObjectInstance) arg2.internalValue);
-	float1 = ((double) arg3.internalValue);
-	float2 = ((double) arg4.internalValue);
-	objInstance1.nativeData = new Array<object>(1);
-	object1 = objInstance2.nativeData[0];
-	int1 = lib_audio_sfx_launch(object1, objInstance1.nativeData, float1, float2);
-	output = buildInteger(int1);
-	return output;
-}
+﻿/*
+	args[0] -> Uninitialized channel instance
+	args[1] -> Sound Resource instance 
+	args[2] -> Volume ratio (0.0 to 1.0)
+	args[3] -> Pan ratio (-1.0 to 1.0)
 
+	returns:
+		1 -> playing on a channel
+		0 -> channel allocation failed, not playing
+*/
+Value lib_audio_function_sfx_play(Array<Value> args) {
+	ObjectInstance channelInstance = (ObjectInstance) args[0].internalValue;
+	ObjectInstance resourceInstance = (ObjectInstance) args[1].internalValue;
+	channelInstance.nativeData = new Array<object>(1);
+	object nativeResource = resourceInstance.nativeData[0];
+	double vol = (double) args[2].internalValue;
+	double pan = (double) args[3].internalValue;
+	return buildInteger(lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
+}

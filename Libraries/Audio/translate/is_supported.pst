@@ -1,10 +1,6 @@
 ﻿Value lib_audio_function_is_supported(Array<Value> args) {
-	Value output = VALUE_NULL;
 	if (Native._lib_audio_isAudioSupported()) {
-		output = VALUE_TRUE;
-	} else {
-		output = VALUE_FALSE;
+		return VALUE_TRUE;
 	}
-	return output;
+	return VALUE_FALSE;
 }
-
