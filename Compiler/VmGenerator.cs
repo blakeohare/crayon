@@ -128,7 +128,8 @@ namespace Crayon
                     .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
                     .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableCompilationBundle.DefaultTitle)
                     .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
-                    .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null);
+                    .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null)
+                    .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix);
 
                 return platform.ExportProject(
                     vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),

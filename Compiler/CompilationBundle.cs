@@ -10,6 +10,7 @@ namespace Crayon
         public ICollection<Library> LibrariesUsed { get; set; }
         public string IconPath { get; set; }
         public string DefaultTitle { get; set; }
+        public string IosBundlePrefix { get; set; }
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {
@@ -26,6 +27,7 @@ namespace Crayon
                 ProjectID = buildContext.ProjectID,
                 GuidSeed = buildContext.GuidSeed,
                 DefaultTitle = buildContext.DefaultTitle,
+                IosBundlePrefix = buildContext.IosBundlePrefix,
             };
         }
     }

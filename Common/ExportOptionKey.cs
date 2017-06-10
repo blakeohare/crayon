@@ -7,6 +7,7 @@
         GUID_SEED,
         PROJECT_ID,
         HAS_ICON,
+        IOS_BUNDLE_PREFIX,
         JS_FILE_PREFIX,
         JS_HEAD_EXTRAS,
         LIBRARIES_USED,

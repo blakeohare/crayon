@@ -27,6 +27,7 @@ namespace Crayon
         public string DefaultTitle { get; set; }
         public string Orientation { get; set; }
         public string CrayonPath { get; set; }
+        public string IosBundlePrefix { get; set; }
 
         public enum VarType
         {
@@ -98,6 +99,9 @@ namespace Crayon
 
             [XmlElement("crayonpath")]
             public string CrayonPath { get; set; }
+
+            [XmlElement("iosbundleprefix")]
+            public string IosBundlePrefix { get; set; }
 
             private bool TranslateStringToBoolean(string value)
             {
@@ -252,6 +256,7 @@ namespace Crayon
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
                 CrayonPath = flattened.CrayonPath,
+                IosBundlePrefix = flattened.IosBundlePrefix,
             };
         }
 

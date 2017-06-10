@@ -9,6 +9,7 @@
 		</sheet>
 	</imagesheets>
 
+	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
 	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->

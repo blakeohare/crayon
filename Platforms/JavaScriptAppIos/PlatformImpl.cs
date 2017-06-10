@@ -31,7 +31,7 @@ namespace JavaScriptAppIos
                 "  body { margin:0px; background-color:#000; }",
                 "  #crayon_host {",
                 "    background-color:#000;",
-				"    text-align:left;",
+                "    text-align:left;",
                 "    width:100%;",
                 "    height:100%;",
                 "  }",
@@ -113,6 +113,12 @@ namespace JavaScriptAppIos
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
             replacements["ORGANIZTION_NAME"] = "Organization Name";
+
+            string bundleIdPrefix = options.GetString(ExportOptionKey.IOS_BUNDLE_PREFIX);
+            replacements["IOS_BUNDLE_ID"] = bundleIdPrefix == null
+                ? options.GetString(ExportOptionKey.PROJECT_ID)
+         		: bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
+
             return replacements;
         }
 
