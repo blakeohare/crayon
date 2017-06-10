@@ -48,21 +48,17 @@ namespace Interpreter
         }
 
 #if OSX
-        private static string tmpFileHack = null;
         private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
         {
-            if (UniversalBitmap.tmpFileHack == null)
-            {
-                UniversalBitmap.tmpFileHack = System.IO.Path.GetTempFileName();
-            }
             // TODO: be more ashamed of this than the current level of shame.
             // Since the only raw image file format decoder I can find in the Cairo library
             // is in the API that takes in a file as a string filepath, this seems to be the
             // only answer. The byte array constructor for ImageSurface is based on decoded
             // image data, not raw PNG or JPEG data.
-            System.IO.File.WriteAllBytes(UniversalBitmap.tmpFileHack, bytes);
-            Cairo.ImageSurface image = new Cairo.ImageSurface(UniversalBitmap.tmpFileHack);
-            System.IO.File.Delete(UniversalBitmap.tmpFileHack);
+            string tmpFile = System.IO.Path.GetTempFileName();
+            System.IO.File.WriteAllBytes(tmpFile, bytes);
+            Cairo.ImageSurface image = new Cairo.ImageSurface(tmpFile);
+            System.IO.File.Delete(tmpFile);
             return image;
         }
 #endif
