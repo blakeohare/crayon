@@ -6,26 +6,31 @@ namespace Interpreter.Libraries.FileIOCommon
 {
     internal static class FileIOCommonHelper
     {
+        private static readonly bool _IsOSX =
+            Environment.OSVersion.Platform == PlatformID.MacOSX ||
+            Environment.OSVersion.Platform == PlatformID.Unix;
+
+        private static readonly bool _IsWindows = 
+            Environment.OSVersion.Platform == PlatformID.Win32NT ||
+            Environment.OSVersion.Platform == PlatformID.Win32S ||
+            Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+            Environment.OSVersion.Platform == PlatformID.WinCE ||
+            Environment.OSVersion.Platform == PlatformID.Xbox;
+
         public static bool IsWindows()
         {
-            switch (Environment.OSVersion.Platform)
-            {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                case PlatformID.Xbox:
-                    return true;
-                default:
-                    return false;
-            }
+            return _IsWindows;
         }
 
         public static string GetUserDirectory()
         {
-            if (IsWindows())
+            if (_IsWindows)
             {
                 return Environment.GetEnvironmentVariable("APPDATA");
+            }
+            if (_IsOSX)
+            {
+                return "/Users/" + Environment.UserName;
             }
             return "~";
         }
@@ -37,11 +42,12 @@ namespace Interpreter.Libraries.FileIOCommon
 
         private static string NormalizePath(string path)
         {
+            path = Canonicalize(path);
             if (path.Length == 2 && path[1] == ':')
             {
                 path += "/";
             }
-            if (IsWindows())
+            if (_IsWindows)
             {
                 path = path.Replace('/', '\\');
             }
@@ -52,6 +58,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static void GetFileInfo(string path, int mask, int[] intOut, double[] floatOut)
         {
+            path = Canonicalize(path);
             bool fileExists = System.IO.File.Exists(path);
             bool directoryExists = System.IO.Directory.Exists(path);
 
@@ -84,6 +91,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int GetDirectoryList(string path, bool includeFullPath, List<string> output)
         {
+            path = Canonicalize(path);
             int trimLength = path.Length + 1;
             path = NormalizePath(path);
             List<string> items = new List<string>();
@@ -121,6 +129,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int FileRead(string path, bool isBytes, string[] stringOut, Value[] integers, List<Value> byteOutput)
         {
+            path = Canonicalize(path);
             try
             {
                 if (isBytes)
@@ -158,6 +167,8 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int FileWrite(string path, int format, string content, object bytesObj)
         {
+            path = Canonicalize(path);
+
             byte[] bytes = null;
             System.Text.Encoding encoding = null;
             bool addBom = false;
@@ -235,6 +246,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int FileDelete(string path)
         {
+            path = Canonicalize(path);
             try
             {
                 if (!System.IO.File.Exists(path))
@@ -262,6 +274,8 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int FileMove(string fromPath, string toPath, bool isCopy, bool allowOverwrite)
         {
+            fromPath = Canonicalize(fromPath);
+            toPath = Canonicalize(toPath);
             if (!System.IO.File.Exists(fromPath))
             {
                 return 4;
@@ -363,6 +377,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int CreateDirectory(string path)
         {
+            path = Canonicalize(path);
             string parent;
             try
             {
@@ -391,6 +406,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         private static int CreateDirectoryWithStatus(string path)
         {
+            path = Canonicalize(path);
             try
             {
                 System.IO.Directory.CreateDirectory(path);
@@ -408,6 +424,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int DeleteDirectory(string path)
         {
+            path = Canonicalize(path);
             try
             {
                 System.IO.Directory.Delete(path, true);
@@ -434,6 +451,8 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int MoveDirectory(string from, string to)
         {
+            from = Canonicalize(from);
+            to = Canonicalize(to);
             string parentFolder;
             try
             {
@@ -473,12 +492,13 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static bool DirectoryExists(string path)
         {
+            path = Canonicalize(path);
             return System.IO.Directory.Exists(path);
         }
 
         public static string GetDirRoot(string path)
         {
-            if (IsWindows())
+            if (_IsWindows)
             {
                 return path.Split(':')[0] + ":\\";
             }
@@ -488,6 +508,7 @@ namespace Interpreter.Libraries.FileIOCommon
 
         public static int GetDirParent(string path, string[] pathOut)
         {
+            path = Canonicalize(path);
             try
             {
                 pathOut[0] = System.IO.Path.GetDirectoryName(path);
@@ -497,6 +518,15 @@ namespace Interpreter.Libraries.FileIOCommon
                 return 5;
             }
             return 0;
+        }
+
+        private static string Canonicalize(string path)
+        {
+            if (_IsOSX && path.Length > 0 && path[0] == '~')
+            {
+                return GetUserDirectory() + path.Substring(1);
+            }
+            return path;
         }
     }
 }
