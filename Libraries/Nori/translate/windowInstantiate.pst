@@ -1,25 +1,25 @@
 ﻿/*
-	arg 1: Window instance
-	arg 2: UI Box instance
-	arg 3: Size relay list
-		...this is a value list with 2 integers in it. This is used to push
-		window size information between the VM and UI code.
-	
-	Set the native data instance for both.
+    arg 1: Window instance
+    arg 2: UI Box instance
+    arg 3: Size relay list
+        ...this is a value list with 2 integers in it. This is used to push
+        window size information between the VM and UI code.
+
+    Set the native data instance for both.
 */
 Value lib_nori_function_windowInstantiate(Array<Value> args) {
 
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
 
-	ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
-	ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue);
+    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+    ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue);
 
-	Native._lib_nori_windowInstantiate(
-		objInstance1.nativeData,
-		objInstance2.nativeData,
-		(List<Value>) arg3.internalValue);
+    Native._lib_nori_windowInstantiate(
+        objInstance1.nativeData,
+        objInstance2.nativeData,
+        (List<Value>) arg3.internalValue);
 
-	return VALUE_NULL;
+    return VALUE_NULL;
 }

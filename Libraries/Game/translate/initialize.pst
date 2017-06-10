@@ -1,7 +1,7 @@
 ﻿/*
-	args[0]: FPS float or integer, type already verified.
+    args[0]: FPS float or integer, type already verified.
 */
 Value lib_game_function_initialize(Array<Value> args) {
-	Native._lib_game_initialize_game_with_fps(getFloat(args[0]));
-	return VALUE_NULL;
+    Native._lib_game_initialize_game_with_fps(getFloat(args[0]));
+    return VALUE_NULL;
 }

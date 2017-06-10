@@ -1,7 +1,7 @@
 ﻿void lib_manifest_RegisterFunctions(object libRegData) {
-	Core.RegisterLibraryFunction(libRegData, "fastEnsureAllBytes", 2);
-	Core.RegisterLibraryFunction(libRegData, "getResponseBytes", 2);
-	Core.RegisterLibraryFunction(libRegData, "pollRequest", 1);
-	Core.RegisterLibraryFunction(libRegData, "populateResponse", 4);
-	Core.RegisterLibraryFunction(libRegData, "sendRequest", 7);
+    Core.RegisterLibraryFunction(libRegData, "fastEnsureAllBytes", 2);
+    Core.RegisterLibraryFunction(libRegData, "getResponseBytes", 2);
+    Core.RegisterLibraryFunction(libRegData, "pollRequest", 1);
+    Core.RegisterLibraryFunction(libRegData, "populateResponse", 4);
+    Core.RegisterLibraryFunction(libRegData, "sendRequest", 7);
 }

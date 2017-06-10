@@ -1,10 +1,9 @@
 ﻿Value lib_gamepad_function_jsIsOsx(Array<Value> args) {
-	Value output = VALUE_NULL;
-	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-		output = buildInteger(Native._lib_gamepad_jsIsOsx());
-	} else {
-		output = VALUE_NULL;
-	}
-	return output;
+    Value output = VALUE_NULL;
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+        output = buildInteger(Native._lib_gamepad_jsIsOsx());
+    } else {
+        output = VALUE_NULL;
+    }
+    return output;
 }
-

@@ -1,11 +1,11 @@
 ﻿/*
-	args[0] -> blank sound object instance
-	args[1] -> resource path
+    args[0] -> blank sound object instance
+    args[1] -> resource path
 */
 Value lib_audio_function_sfx_load_from_resource(Array<Value> args) {
-	ObjectInstance soundInstance = (ObjectInstance) args[0].internalValue;
-	lib_audio_load_sfx_from_resource(
-		soundInstance, // TODO: pass in nativeData instead
-		(string) args[1].internalValue);
-	return VALUE_NULL;
+    ObjectInstance soundInstance = (ObjectInstance) args[0].internalValue;
+    lib_audio_load_sfx_from_resource(
+        soundInstance, // TODO: pass in nativeData instead
+        (string) args[1].internalValue);
+    return VALUE_NULL;
 }

@@ -1,8 +1,7 @@
 ﻿Value lib_gamepad_function_refresh_devices(Array<Value> args) {
-	Value output = VALUE_NULL;
-	if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-		Native._lib_gamepad_refresh_devices();
-	}
-	return output;
+    Value output = VALUE_NULL;
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+        Native._lib_gamepad_refresh_devices();
+    }
+    return output;
 }
-

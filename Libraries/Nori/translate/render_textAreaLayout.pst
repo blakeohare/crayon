@@ -1,37 +1,37 @@
 ﻿/*
-	arg 1: textarea instance
-	arg 2: UI Box instance
-	arg 3: x
-	arg 4: y
-	arg 5: width
-	arg 6: height
+    arg 1: textarea instance
+    arg 2: UI Box instance
+    arg 3: x
+    arg 4: y
+    arg 5: width
+    arg 6: height
 */
 Value lib_nori_function_render_textAreaLayout(Array<Value> args) {
-	
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	Value arg4 = args[3];
-	Value arg5 = args[4];
-	Value arg6 = args[5];
-	
-	ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue); // textarea UI instance
-	ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue); // UI Box instance
-	Array<object> objArray1 = objInstance1.nativeData;
-	Array<object> objArray2 = objInstance2.nativeData;
-	object object1 = objArray1[0]; // native textarea instance OR null
-	object object2 = objArray2[0]; // native UI Box container (not null, ever)
-	object object3 = Native._lib_nori_render_textAreaLayout(
-		object1,
-		object2,
-		(int) arg3.internalValue,
-		(int) arg4.internalValue,
-		(int) arg5.internalValue,
-		(int) arg6.internalValue);
-	
-	if (object1 == null) {
-		objArray1[0] = object3;
-	}
-	
-	return VALUE_NULL;
+
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    Value arg5 = args[4];
+    Value arg6 = args[5];
+
+    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue); // textarea UI instance
+    ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue); // UI Box instance
+    Array<object> objArray1 = objInstance1.nativeData;
+    Array<object> objArray2 = objInstance2.nativeData;
+    object object1 = objArray1[0]; // native textarea instance OR null
+    object object2 = objArray2[0]; // native UI Box container (not null, ever)
+    object object3 = Native._lib_nori_render_textAreaLayout(
+        object1,
+        object2,
+        (int) arg3.internalValue,
+        (int) arg4.internalValue,
+        (int) arg5.internalValue,
+        (int) arg6.internalValue);
+
+    if (object1 == null) {
+        objArray1[0] = object3;
+    }
+
+    return VALUE_NULL;
 }

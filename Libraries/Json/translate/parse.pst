@@ -1,13 +1,13 @@
 ﻿/*
-	arg 1: the string to parse.
+    arg 1: the string to parse.
 */
 Value lib_json_function_parse(Array<Value> args) {
-	string raw = (string) args[0].internalValue;
-	if (raw.Size() > 0) {
-		Value output = Native._lib_json_parse(raw);
-		if (output != null) {
-			return output;
-		}
-	}
-	return VALUE_NULL;
+    string raw = (string) args[0].internalValue;
+    if (raw.Size() > 0) {
+        Value output = Native._lib_json_parse(raw);
+        if (output != null) {
+            return output;
+        }
+    }
+    return VALUE_NULL;
 }

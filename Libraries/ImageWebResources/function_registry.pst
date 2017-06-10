@@ -1,6 +1,6 @@
 ﻿void lib_manifest_RegisterFunctions(object libRegData) {
-	Core.RegisterLibraryFunction(libRegData, "bytesToImage", 2);
-	Core.RegisterLibraryFunction(libRegData, "jsDownload", 2);
-	Core.RegisterLibraryFunction(libRegData, "jsGetImage", 2);
-	Core.RegisterLibraryFunction(libRegData, "jsPoll", 1);
+    Core.RegisterLibraryFunction(libRegData, "bytesToImage", 2);
+    Core.RegisterLibraryFunction(libRegData, "jsDownload", 2);
+    Core.RegisterLibraryFunction(libRegData, "jsGetImage", 2);
+    Core.RegisterLibraryFunction(libRegData, "jsPoll", 1);
 }

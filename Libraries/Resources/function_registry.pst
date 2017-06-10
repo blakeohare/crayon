@@ -1,4 +1,4 @@
 ﻿void lib_manifest_RegisterFunctions(object libRegData) {
-	Core.RegisterLibraryFunction(libRegData, "getResourceData", 0);
-	Core.RegisterLibraryFunction(libRegData, "readText", 1);
+    Core.RegisterLibraryFunction(libRegData, "getResourceData", 0);
+    Core.RegisterLibraryFunction(libRegData, "readText", 1);
 }

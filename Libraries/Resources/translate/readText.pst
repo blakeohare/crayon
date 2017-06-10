@@ -1,7 +1,7 @@
 ﻿/*
-	arg[0]: Internal file path relative to where text files are stored. Not a user-defined path. 
+    arg[0]: Internal file path relative to where text files are stored. Not a user-defined path.
 */
 Value lib_resources_function_readText(Array<Value> args) {
-	string string1 = Core.ReadResourceTextFile(((string) args[0].internalValue));
-	return buildString(string1);
+    string string1 = Core.ReadResourceTextFile(((string) args[0].internalValue));
+    return buildString(string1);
 }

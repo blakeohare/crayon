@@ -1,45 +1,45 @@
 ﻿/*
-	arg1: some user provided value. 
-	arg2: an object to populate native data.
-		nativeData[0] -> array of bytes
-	
-	Ensure the value is a list of values that are valid for the byte range (-128 to 255)
-	and then set that array of bytes to the object
-	
-	return true upon success.
+    arg1: some user provided value.
+    arg2: an object to populate native data.
+        nativeData[0] -> array of bytes
+
+    Ensure the value is a list of values that are valid for the byte range (-128 to 255)
+    and then set that array of bytes to the object
+
+    return true upon success.
 */
 
 Value lib_http_function_fastEnsureAllBytes(Array<Value> args) {
-	
-	if (args[0].type == Types.LIST) {
-		List<Value> list1 = ((List<Value>) args[0].internalValue);
-		int i = list1.Size();
-		int int1 = 0;
-		Array<int> intArray1 = new Array<int>(i);
-		Value value = null;
-		while (i > 0) {
-			i -= 1;
-			value = list1[i];
-			if (value.type != Types.INTEGER) {
-				return VALUE_FALSE;
-			}
-			
-			int1 = ((int) value.internalValue);
-			if (int1 < 0) {
-				if (int1 < -128) return VALUE_FALSE;
-				int1 += 256;
-			} else if (int1 >= 256) {
-				return VALUE_FALSE;
-			}
-			
-			intArray1[i] = int1;
-		}
-		
-		Array<object> objArray1 = new Array<object>(1);
-		objArray1[0] = intArray1;
-		ObjectInstance objInstance1 = ((ObjectInstance) args[1].internalValue);
-		objInstance1.nativeData = objArray1;
-		return VALUE_TRUE;
-	}
-	return VALUE_FALSE;
+
+    if (args[0].type == Types.LIST) {
+        List<Value> list1 = ((List<Value>) args[0].internalValue);
+        int i = list1.Size();
+        int int1 = 0;
+        Array<int> intArray1 = new Array<int>(i);
+        Value value = null;
+        while (i > 0) {
+            i -= 1;
+            value = list1[i];
+            if (value.type != Types.INTEGER) {
+                return VALUE_FALSE;
+            }
+
+            int1 = ((int) value.internalValue);
+            if (int1 < 0) {
+                if (int1 < -128) return VALUE_FALSE;
+                int1 += 256;
+            } else if (int1 >= 256) {
+                return VALUE_FALSE;
+            }
+
+            intArray1[i] = int1;
+        }
+
+        Array<object> objArray1 = new Array<object>(1);
+        objArray1[0] = intArray1;
+        ObjectInstance objInstance1 = ((ObjectInstance) args[1].internalValue);
+        objInstance1.nativeData = objArray1;
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
 }

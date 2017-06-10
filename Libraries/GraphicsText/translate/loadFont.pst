@@ -1,20 +1,19 @@
 ﻿/*
-	arg 1: (boolean) is this a system font? false if this refers to a font file resource.
-	arg 2: (string) font name (or path)
-	arg 3: (int) unique ID# that has been allocated for this font (although it will be reused if font loading fails)
-	
-	output: (boolean) true for successful loading
-	
+    arg 1: (boolean) is this a system font? false if this refers to a font file resource.
+    arg 2: (string) font name (or path)
+    arg 3: (int) unique ID# that has been allocated for this font (although it will be reused if font loading fails)
+
+    output: (boolean) true for successful loading
+
 */
 
 Value lib_graphicstext_function_loadFont(Array<Value> args) {
-	bool isSystemFont = ((bool) args[0].internalValue);
-	string fontNameOrPath = ((string) args[1].internalValue);
-	int id = ((int) args[2].internalValue);
-	
-	if (Native._lib_graphicstext_loadFont(isSystemFont, fontNameOrPath, id)) {
-		return VALUE_TRUE;
-	}
-	return VALUE_FALSE;
-}
+    bool isSystemFont = ((bool) args[0].internalValue);
+    string fontNameOrPath = ((string) args[1].internalValue);
+    int id = ((int) args[2].internalValue);
 
+    if (Native._lib_graphicstext_loadFont(isSystemFont, fontNameOrPath, id)) {
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
+}

@@ -1,54 +1,53 @@
 ﻿/*
-	arg 1 -> Database object.
-	arg 2 -> Result object (out param). Add result to native_data[0].
-	arg 3 -> string: SQL query
-	arg 4 -> out list for numeric data.
-	  list[0] -> insert ID, if applicable, or null
-	  list[1] -> num rows of result
-	arg 5 -> out list for column data
-	  list[2n + 0] -> column name as a value string
-	  list[2n + 1] -> column type as an integer (0: bool, 1: int, 2: float, 3: string)
-	
-	Output is an error, if one occurs, or null.
+    arg 1 -> Database object.
+    arg 2 -> Result object (out param). Add result to native_data[0].
+    arg 3 -> string: SQL query
+    arg 4 -> out list for numeric data.
+      list[0] -> insert ID, if applicable, or null
+      list[1] -> num rows of result
+    arg 5 -> out list for column data
+      list[2n + 0] -> column name as a value string
+      list[2n + 1] -> column type as an integer (0: bool, 1: int, 2: float, 3: string)
+
+    Output is an error, if one occurs, or null.
 */
 Value lib_mysql_function_runQuery(Array<Value> args) {
-	Value arg1 = args[0];
-	Value arg2 = args[1];
-	Value arg3 = args[2];
-	Value arg4 = args[3];
-	Value arg5 = args[4];
-	ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
-	object object1 = objInstance1.nativeData[0];
-	List<int> intList1 = new List<int>();
-	List<string> stringList1 = new List<string>();
-	object object2 = Native._lib_mysql_query(object1, ((string) arg3.internalValue), Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
-	string errMsg = Core.StringBuffer16[0];
-	if (errMsg == null) {
-		List<Value> list1 = ((List<Value>) arg4.internalValue);
-		List<Value> list2 = ((List<Value>) arg5.internalValue);
-		int int1 = 0;
-		if (object2 != null) {
-			ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue);
-			objInstance2.nativeData = new Array<object>(1);
-			objInstance2.nativeData[0] = object2;
-			list1[1] = buildInteger(Native._lib_mysql_num_rows(object2));
-			for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
-				list2.Add(buildString(stringList1[int1]));
-				list2.Add(buildInteger(intList1[int1]));
-			}
-		} else {
-			list1[1] = VALUE_NULL;
-		}
-		
-		if (Core.IntBuffer16[0] == -1) {
-			list1[0] = VALUE_NULL;
-		} else {
-			list1[0] = buildInteger(int1);
-		}
-		
-		return VALUE_NULL;
-	}
-	
-	return buildString(errMsg);
-}
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    Value arg5 = args[4];
+    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+    object object1 = objInstance1.nativeData[0];
+    List<int> intList1 = new List<int>();
+    List<string> stringList1 = new List<string>();
+    object object2 = Native._lib_mysql_query(object1, ((string) arg3.internalValue), Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
+    string errMsg = Core.StringBuffer16[0];
+    if (errMsg == null) {
+        List<Value> list1 = ((List<Value>) arg4.internalValue);
+        List<Value> list2 = ((List<Value>) arg5.internalValue);
+        int int1 = 0;
+        if (object2 != null) {
+            ObjectInstance objInstance2 = ((ObjectInstance) arg2.internalValue);
+            objInstance2.nativeData = new Array<object>(1);
+            objInstance2.nativeData[0] = object2;
+            list1[1] = buildInteger(Native._lib_mysql_num_rows(object2));
+            for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
+                list2.Add(buildString(stringList1[int1]));
+                list2.Add(buildInteger(intList1[int1]));
+            }
+        } else {
+            list1[1] = VALUE_NULL;
+        }
 
+        if (Core.IntBuffer16[0] == -1) {
+            list1[0] = VALUE_NULL;
+        } else {
+            list1[0] = buildInteger(int1);
+        }
+
+        return VALUE_NULL;
+    }
+
+    return buildString(errMsg);
+}

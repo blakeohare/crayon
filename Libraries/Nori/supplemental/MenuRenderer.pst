@@ -1,34 +1,33 @@
 ﻿Array<object> libNoriUnwrapMenus(Value menuBarList) {
-	List<Value> items = ((List<Value>) menuBarList.internalValue);
-	int length = items.Size();
-	Array<object> output = new Array<object>(length);
-	for (int i = 0; i < length; i += 1) {
-		Value item = items[i];
-		output[i] = libNoriUnwrapMenuItem(item);
-	}
-	return output;
+    List<Value> items = ((List<Value>) menuBarList.internalValue);
+    int length = items.Size();
+    Array<object> output = new Array<object>(length);
+    for (int i = 0; i < length; i += 1) {
+        Value item = items[i];
+        output[i] = libNoriUnwrapMenuItem(item);
+    }
+    return output;
 }
 
 Array<object> libNoriUnwrapMenuItem(Value menuItemDescriptorArray) {
-	List<Value> menu = ((List<Value>) menuItemDescriptorArray.internalValue);
-	Value value = menu[0];
-	Array<object> output = null;
-	if (((bool) value.internalValue)) {
-		output = new Array<object>(7);
-		for (int i = 0; i < 6; i += 1) {
-			value = menu[i];
-			output[i] = value.internalValue;
-		}
-		value = menu[6];
-		if (value.type == Types.NULL) {
-			output[6] = null;
-		} else {
-			output[6] = libNoriUnwrapMenus(value);
-		}
-	} else {
-		output = new Array<object>(1);
-		output[0] = false;
-	}
-	return output;
+    List<Value> menu = ((List<Value>) menuItemDescriptorArray.internalValue);
+    Value value = menu[0];
+    Array<object> output = null;
+    if (((bool) value.internalValue)) {
+        output = new Array<object>(7);
+        for (int i = 0; i < 6; i += 1) {
+            value = menu[i];
+            output[i] = value.internalValue;
+        }
+        value = menu[6];
+        if (value.type == Types.NULL) {
+            output[6] = null;
+        } else {
+            output[6] = libNoriUnwrapMenus(value);
+        }
+    } else {
+        output = new Array<object>(1);
+        output[0] = false;
+    }
+    return output;
 }
-

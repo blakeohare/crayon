@@ -1,13 +1,13 @@
 ﻿/*
-	arg 1: textarea instance
-	
-	There isn't really much here yet.
+    arg 1: textarea instance
+
+    There isn't really much here yet.
 */
 Value lib_nori_function_render_textAreaVisuals(Array<Value> args) {
-	
-	ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
-	
-	Native._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);
-	
-	return VALUE_NULL;
+
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+
+    Native._lib_nori_render_textAreaVisuals(objInstance1.nativeData[0]);
+
+    return VALUE_NULL;
 }

@@ -1,22 +1,22 @@
 ﻿/*
-	args[0] -> an output param. An empty list.
-	
-	Output:
-	list[0] -> method
-	list[1] -> string path
-	list[2] -> User IP
-	list[3] -> User Agent
+    args[0] -> an output param. An empty list.
+
+    Output:
+    list[0] -> method
+    list[1] -> string path
+    list[2] -> User IP
+    list[3] -> User Agent
 */
 Value lib_httpserver_function_getRequest(Array<Value> args) {
 
-	Native._lib_httpserver_getRequest(Core.StringBuffer16);
+    Native._lib_httpserver_getRequest(Core.StringBuffer16);
 
-	List<Value> list1 = (List<Value>) args[0].internalValue;
+    List<Value> list1 = (List<Value>) args[0].internalValue;
 
-	list1.Add(buildString(Core.StringBuffer16[0]));
-	list1.Add(buildString(Core.StringBuffer16[1]));
-	list1.Add(buildString(Core.StringBuffer16[2]));
-	list1.Add(buildString(Core.StringBuffer16[3]));
+    list1.Add(buildString(Core.StringBuffer16[0]));
+    list1.Add(buildString(Core.StringBuffer16[1]));
+    list1.Add(buildString(Core.StringBuffer16[2]));
+    list1.Add(buildString(Core.StringBuffer16[3]));
 
-	return VALUE_NULL;
+    return VALUE_NULL;
 }
