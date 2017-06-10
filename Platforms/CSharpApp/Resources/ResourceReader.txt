@@ -44,7 +44,8 @@ namespace Interpreter
 
         public static byte[] ReadSoundResource(string path)
         {
-            throw new System.NotImplementedException();
+            List<byte> bytes = ReadBytes(path);
+            return bytes == null ? null : bytes.ToArray();
         }
 
         public static UniversalBitmap ReadIconResource(string path)
