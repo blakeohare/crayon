@@ -3,6 +3,7 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
+	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
 	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->
