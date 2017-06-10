@@ -21,7 +21,7 @@ C$game$endFrame = function() {
     if (C$game$scaled_mode) {
         C$game$real_canvas.getContext('2d').drawImage(C$game$virtual_canvas, 0, 0);
     }
-
+    C$game$everyFrame();
     window.setTimeout(C$game$runFrame, C$game$computeDelayMillis());
 };
 
@@ -47,6 +47,10 @@ C$game$pumpEventObjects = function () {
   var output = C$input$eventRelays;
   C$input$eventRelays = newEvents;
   return output;
+};
+
+C$game$everyFrame = function() {
+// override in other platforms
 };
 
 // TODO: also apply keydown and mousedown handlers

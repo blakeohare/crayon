@@ -17,3 +17,23 @@ C$ios$invokePointer = function(type, x, y) {
     C$input$eventRelays.push(v_buildRelayObj(32, x, y, 0, 0, ''));
   }
 }
+
+C$ios$knownSize = null;
+C$ios$adjustScreen = function() {
+  var screen = [window.innerWidth, window.innerHeight];
+
+  if (C$ios$knownSize === null ||
+      C$ios$knownSize[0] != screen[0] ||
+      C$ios$knownSize[1] != screen[1]) {
+	var phsCanvas = C$game$real_canvas;
+	var gameCanavs = C$game$virtual_canvas;
+    C$ios$knownSize = screen;
+    phsCanvas.width = screen[0];
+    phsCanvas.height = screen[1];
+    C$game$ctx.scale(screen[0] / C$game$width, screen[1] / C$game$height);
+  }
+};
+
+C$game$everyFrame = function() {
+	C$ios$adjustScreen();
+};

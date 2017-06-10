@@ -12,6 +12,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         let webView = WKWebView(frame: self.view.frame, configuration: webViewConfig);
         webView.scrollView.bounces = false;
         webView.scrollView.isScrollEnabled = false;
+        webView.autoresizingMask = UIViewAutoresizing.flexibleWidth.union(UIViewAutoresizing.flexibleHeight);
         let htmlPath = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "jsres");
         let request = URLRequest(url: htmlPath!);
         webView.load(request);
