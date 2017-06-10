@@ -4,23 +4,19 @@
 	<output>output/%TARGET_NAME%</output>
 	
 	<!-- Targets -->
-	<target name="js_local">
-		<platform>game-javascript</platform>
+	<target name="javscript">
+		<platform>javascript-app-gl</platform>
 	</target>
 	
-	<target name="js_remote">
-		<platform>game-javascript</platform>
+	<target name="csharp">
+		<platform>csharp-app</platform>
 	</target>
 	
-	<target name="windows">
-		<platform>game-csharp-opentk</platform>
-	</target>
-	
-	<target name="javaawt">
-		<platform>game-java-awt</platform>
+	<target name="java">
+		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
-		<platform>game-python-pygame</platform>
+		<platform>python-app</platform>
 	</target>
 </build>

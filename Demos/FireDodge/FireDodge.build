@@ -13,27 +13,27 @@
 	
 	<!-- Targets -->
 	<target name="javascript">
-		<platform>game-javascript</platform>
+		<platform>javascript-app-gl</platform>
 		<jsfileprefix>/demos/firedodge/</jsfileprefix>
 	</target>
 	
 	<target name="csharp">
-		<platform>game-csharp-opentk</platform>
+		<platform>csharp-app</platform>
 	</target>
 	
 	<target name="java">
-		<platform>game-java-awt</platform>
+		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
-		<platform>game-python-pygame</platform>
+		<platform>python-app</platform>
 	</target>
 	
 	<target name="android">
-		<platform>game-csharp-android</platform>
+		<platform>java-app-android</platform>
 	</target>
 	
 	<target name="ios">
-		<platform>game-csharp-ios</platform>
+		<platform>javascript-app-ios</platform>
 	</target>
 </build>
