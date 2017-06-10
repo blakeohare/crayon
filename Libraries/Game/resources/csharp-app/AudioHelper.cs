@@ -8,7 +8,6 @@ namespace Interpreter.Libraries.Game
 {
     public static class AudioHelper
     {
-    
         public static SdlDotNet.Audio.Sound GetSoundInstance(string path)
         {
             IList<byte> soundBytesList = ResourceReader.ReadSoundResource(path);
@@ -103,33 +102,25 @@ namespace Interpreter.Libraries.Game
 
         public static bool MusicSetVolume(double ratio)
         {
-            SdlDotNet.Audio.MusicPlayer.Volume = (int)(ratio * 255);
+            MusicInstance.SetAmbientVolume(ratio);
             return true;
         }
 
         public static void AudioMusicPlay(object nativeMusicObject, bool loop)
         {
-            SdlDotNet.Audio.Music music = (SdlDotNet.Audio.Music)nativeMusicObject;
-            if (loop)
-            {
-                music.Play(loop);
-            }
-            else
-            {
-                music.Play(1);
-            }
+            ((MusicInstance)nativeMusicObject).Play(loop);
         }
 
         public static object MusicLoadResource(string path)
         {
             byte[] musicData = ResourceReader.ReadSoundResource(path);
-            return new SdlDotNet.Audio.Music(musicData);
+            if (musicData == null) return null;
+            return new MusicInstance(musicData);
         }
 
         public static bool AudioMusicIsPlaying()
         {
-            return SdlDotNet.Audio.MusicPlayer.IsPlaying;
+            return MusicInstance.IsAudioPlaying;
         }
-
     }
 }
