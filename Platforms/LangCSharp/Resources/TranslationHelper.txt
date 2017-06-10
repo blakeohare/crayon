@@ -15,6 +15,7 @@ namespace Interpreter.Vm
         public static string[] StringBuffer16 { get; private set; }
         public static string[] CommandLineArgs { get; set; }
         public static string ResourceManifest { get; set; }
+        public static string ImageSheetManifest { get; set; }
         public static string ByteCode { get; set; }
 
         public static readonly bool IsWindows =

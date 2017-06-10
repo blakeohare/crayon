@@ -56,7 +56,7 @@ namespace Interpreter
 
         public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
         {
-            System.Drawing.Bitmap bmp = ResourceReader.ReadImageResource(filename);
+            UniversalBitmap bmp = ResourceReader.ReadImageResource(filename);
             if (bmp != null)
             {
                 if (statusOutCheesy != null) statusOutCheesy.Reverse();
@@ -68,14 +68,9 @@ namespace Interpreter
             return false;
         }
 
-        public static string GetImageResourceManifestString()
-        {
-            return ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-        }
-
         public static object GenerateNativeBitmapOfSize(int width, int height)
         {
-            return new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            return new UniversalBitmap(width, height);
         }
 
         public static void BlitImage(
@@ -85,25 +80,19 @@ namespace Interpreter
             int width, int height,
             object graphicsSession)
         {
-            System.Drawing.Bitmap target = (System.Drawing.Bitmap)targetBmp;
-            System.Drawing.Bitmap source = (System.Drawing.Bitmap)sourceBmp;
-            ((System.Drawing.Graphics)graphicsSession).DrawImage(
-                source,
-                new System.Drawing.Rectangle(targetX, targetY, width, height),
-                new System.Drawing.Rectangle(sourceX, sourceY, width, height),
-                System.Drawing.GraphicsUnit.Pixel);
+            UniversalBitmap target = (UniversalBitmap)targetBmp;
+            UniversalBitmap source = (UniversalBitmap)sourceBmp;
+            ((UniversalBitmap.DrawingSession)graphicsSession).Draw(source, targetX, targetY, sourceX, sourceY, width, height);
         }
 
         public static object GetPixelEditSession(object nativeImageResource)
         {
-            return System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)nativeImageResource);
+            return ((UniversalBitmap)nativeImageResource).GetActiveDrawingSession();
         }
 
         public static void FlushPixelEditSession(object graphicsObj)
         {
-            System.Drawing.Graphics g = (System.Drawing.Graphics)graphicsObj;
-            g.Flush();
-            g.Dispose();
+            ((UniversalBitmap.DrawingSession)graphicsObj).Flush();
         }
 
         public static bool LoadFont(bool isSystem, string name, int fontId)

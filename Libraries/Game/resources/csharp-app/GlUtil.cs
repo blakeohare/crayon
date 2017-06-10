@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 using Interpreter.Vm;
 
@@ -15,17 +13,15 @@ namespace Interpreter.Libraries.Game
 			GL.LoadIdentity();
 		}
 
-		public static int ForceLoadTexture(Bitmap bitmap)
+		public static int ForceLoadTexture(UniversalBitmap bitmap)
 		{
 			bitmap = NormalizeBitmap(bitmap);
 			int width = bitmap.Width;
 			int height = bitmap.Height;
 			int textureId;
 
-			Rectangle rectangle = new Rectangle(0, 0, width, height);
-			BitmapData bmpData = bitmap.LockBits(
-				rectangle, ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
+            UniversalBitmap.BitLockSession bitlock = bitmap.GetActiveBitLockSession();
+            
 			GL.GenTextures(1, out textureId);
 			GL.BindTexture(TextureTarget.Texture2D, textureId);
 			GL.TexImage2D(
@@ -33,10 +29,10 @@ namespace Interpreter.Libraries.Game
 				0,
 				PixelInternalFormat.Rgba,
 				width, height, 0,
-				OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte,
-				bmpData.Scan0);
+				PixelFormat.Bgra, PixelType.UnsignedByte,
+				bitlock.GetPtr());
 
-			bitmap.UnlockBits(bmpData);
+            bitlock.Free();
 
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
@@ -44,8 +40,7 @@ namespace Interpreter.Libraries.Game
 			return textureId;
 		}
 
-		private static readonly Point TOP_LEFT = new Point(0, 0);
-		private static Bitmap NormalizeBitmap(Bitmap bitmap)
+		private static UniversalBitmap NormalizeBitmap(UniversalBitmap bitmap)
 		{
 			int oldWidth = bitmap.Width;
 			int oldHeight = bitmap.Height;
@@ -54,17 +49,14 @@ namespace Interpreter.Libraries.Game
 			int newHeight = CrayonWrapper.v_nextPowerOf2(oldHeight);
 
 			if (newWidth == oldWidth &&
-				newHeight == oldHeight &&
-				bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+				newHeight == oldHeight)
 			{
 				return bitmap;
 			}
 
-			Bitmap targetBmp = new Bitmap(newWidth, newHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			targetBmp.SetResolution(bitmap.HorizontalResolution, bitmap.VerticalResolution);
-			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(targetBmp);
-			g.DrawImage(bitmap, TOP_LEFT);
-			return targetBmp;
+            UniversalBitmap newBmp = new UniversalBitmap(newWidth, newHeight);
+            newBmp.GetActiveDrawingSession().Draw(bitmap, 0, 0, 0, 0, oldWidth, oldHeight).Flush();
+			return newBmp;
 		}
 	}
 }

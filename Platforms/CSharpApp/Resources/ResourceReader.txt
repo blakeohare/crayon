@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -34,14 +32,14 @@ namespace Interpreter
             return output.ToString();
         }
 
-        public static Bitmap ReadImageResource(string path)
+        public static UniversalBitmap ReadImageResource(string path)
         {
             IList<byte> data = ReadBytes("Resources/" + path);
             if (data == null)
             {
                 return null;
             }
-            return (Bitmap)Bitmap.FromStream(new MemoryStream(data.ToArray()));
+            return new UniversalBitmap(data.ToArray());
         }
 
         public static byte[] ReadSoundResource(string path)
@@ -49,7 +47,7 @@ namespace Interpreter
             throw new System.NotImplementedException();
         }
 
-        public static Bitmap ReadIconResource(string path)
+        public static UniversalBitmap ReadIconResource(string path)
         {
             return ReadImageResource("icons/" + path);
         }

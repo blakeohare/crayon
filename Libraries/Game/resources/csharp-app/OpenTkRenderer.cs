@@ -425,7 +425,7 @@ namespace Interpreter.Libraries.Game
                                 state = null;
                                 GL.End();
                             }
-                            textureResourceNativeData[2] = GlUtil.ForceLoadTexture((System.Drawing.Bitmap)textureResourceNativeData[3]);
+                            textureResourceNativeData[2] = GlUtil.ForceLoadTexture((UniversalBitmap)textureResourceNativeData[3]);
                             textureResourceNativeData[1] = true;
                         }
 

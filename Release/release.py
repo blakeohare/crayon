@@ -120,7 +120,7 @@ def main(args):
 	print runCommand(runtimeCompilationCommand)
 	
 	print "Compiling VM for distribution..."
-	print runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime.sln')]))
+	print runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')]))
 	
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')
