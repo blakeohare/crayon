@@ -137,6 +137,11 @@ namespace PythonApp
             output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
             output["res/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
 
+            foreach (FileOutput image in resourceDatabase.ImageResources)
+            {
+                output["res/images/" + image.CanonicalFileName] = image;
+            }
+
             foreach (string imageSheetFile in resourceDatabase.ImageSheetFiles.Keys)
             {
                 output["res/images/" + imageSheetFile] = resourceDatabase.ImageSheetFiles[imageSheetFile];
