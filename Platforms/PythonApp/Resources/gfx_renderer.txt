@@ -7,6 +7,14 @@ _gfxRendererVars = {
   'textChars': [],
   'fontLookup': {},
   'fontCharLookupByStyle': {},
+  
+  # Cache temporary surfaces that are needed for some of the more complex image operations.
+  # The upper cache (current) is populated when items are used during a frame
+  # The lower cache (previous) is checked if the upper cache does not have the image and then
+  #   the item is moved back to the upper cache.
+  # The lower cache is cleared between frames and the upper cache is moved down to the lower cache.
+  'tempSurfacesCurrent': {},
+  'tempSurfacesPrevious': {},
 }
 
 def gfxRendererSetData(events, eventsLength, images, textChars):
@@ -14,6 +22,15 @@ def gfxRendererSetData(events, eventsLength, images, textChars):
   _gfxRendererVars['eventsLength'] = eventsLength
   _gfxRendererVars['images'] = images
   _gfxRendererVars['textChars'] = textChars
+  
+def gfxRendererGetTempSurface(dim):
+  s = _gfxRendererVars['tempSurfacesCurrent'].get(dim)
+  if s != None: return s
+  s = _gfxRendererVars['tempSurfacesPrevious'].get(dim)
+  if s == None:
+    s = pygame.Surface(dim, pygame.SRCALPHA)
+  _gfxRendererVars['tempSurfacesCurrent'][dim] = s
+  return s
 
 def gfxRender():
   screen = _global_vars['virtual_screen']
@@ -49,11 +66,19 @@ def gfxRender():
         screen.blit(image, (x, y), (sx, sy, sw, sh))
       elif mask == 2:
         # stretch
-        screen.blit(image, (x, y, events[i | 6], events[i | 7]))
+        sz = (events[i | 6], events[i | 7])
+        temp = pygame.transform.scale(image, sz, gfxRendererGetTempSurface(sz))
+        screen.blit(temp, (x, y))
       elif mask == 3:
         # slice and stretch
-        sx, sy, sw, sh = events[i | 2], events[i | 3], events[i | 4], events[i | 5]
-        screen.blit(image, (x, y, events[i | 6], events[i | 7]), (sx, sy, sw, sh))
+        srcX, srcY = events[i | 2], events[i | 3]
+        srcSz = (events[i | 4], events[i | 5])
+        targetSz = (events[i | 6], events[i | 7])
+        tempSurf = gfxRendererGetTempSurface(srcSz)
+        tempSurf.blit(image, (-srcX, -srcY))
+        tempSurf2 = gfxRendererGetTempSurface(targetSz)
+        pygame.transform.scale(tempSurf, targetSz, tempSurf2)
+        screen.blit(tempSurf2, (x, y))
       else:
 
         alpha = 255
