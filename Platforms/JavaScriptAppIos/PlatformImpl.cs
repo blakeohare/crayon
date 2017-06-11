@@ -114,7 +114,7 @@ namespace JavaScriptAppIos
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
             replacements["ORGANIZTION_NAME"] = "Organization Name";
 
-            string bundleIdPrefix = options.GetString(ExportOptionKey.IOS_BUNDLE_PREFIX);
+            string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);
             replacements["IOS_BUNDLE_ID"] = bundleIdPrefix == null
                 ? options.GetString(ExportOptionKey.PROJECT_ID)
          		: bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
