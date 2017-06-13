@@ -1,407 +1,479 @@
-﻿valueStackSize -= 2;
-rightValue = valueStack[(valueStackSize + 1)];
+﻿
+/*
+    All 4 basic operations for integers and integers have the buildInteger code inlined.
+*/
+
+valueStackSize -= 2;
+rightValue = valueStack[valueStackSize + 1];
 leftValue = valueStack[valueStackSize];
-leftType = leftValue.type;
-rightType = rightValue.type;
-op = row[0];
+
 value = null;
-if (Core.ForceParens((leftType == Types.STRING) || (rightType == Types.STRING)) && (op == BinaryOps.ADDITION) && (leftType != Types.NULL) && (rightType != Types.NULL)) {
-    value = new Value(Types.STRING, Core.StringConcatAll(valueToString(leftValue), valueToString(rightValue)));
-} else {
-    switch (((((leftValue.type * MAX_OP) + op) * MAX_TYPE) + rightValue.type)) {
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int ** int");
-            if (((int) rightValue.internalValue) == 0) {
-                value = VALUE_INT_ONE;
+
+switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
+
+    case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
+        Core.EmitComment("int ** int");
+        if ((int) rightValue.internalValue == 0) {
+            value = VALUE_INT_ONE;
+        } else if ((int) rightValue.internalValue > 0) {
+            value = buildInteger(Core.Int(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue))));
+        } else {
+            value = buildFloat(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue)));
+        }
+        break;
+
+    // add 0.0 just in case underlying platform likes to fall back to integer when possible
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int ** float");
+        value = buildFloat(0.0 + Core.Pow(((int) leftValue.internalValue), ((double) rightValue.internalValue)));
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float ** int");
+        value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((int) rightValue.internalValue)));
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float ** float");
+        value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((double) rightValue.internalValue)));
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float % float");
+        float1 = (double) rightValue.internalValue;
+        if (float1 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+        }
+        float3 = (double) leftValue.internalValue % float1;
+        if (float3 < 0) {
+            float3 += float1;
+        }
+        value = buildFloat(float3);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float % int");
+        int1 = (int) rightValue.internalValue;
+        if (int1 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+        }
+        float1 = (double) leftValue.internalValue % int1;
+        if (float1 < 0) {
+            float1 += int1;
+        }
+        value = buildFloat(float1);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int % float");
+        float3 = (double) rightValue.internalValue;
+        if (float3 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+        }
+        float1 = (int) leftValue.internalValue % float3;
+        if (float1 < 0) {
+            float1 += float3;
+        }
+        value = buildFloat(float1);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int % int");
+        int2 = (int) rightValue.internalValue;
+        if (int2 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
+        }
+        int1 = (int) leftValue.internalValue % int2;
+        if (int1 < 0) {
+            int1 += int2;
+        }
+        value = buildInteger(int1);
+        break;
+
+    case (((Types.LIST * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.LIST:
+        Core.EmitComment("list + list");
+        value = new Value(Types.LIST, Core.ListConcat((List<Value>) leftValue.internalValue, (List<Value>) rightValue.internalValue));
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int + int");
+        int1 = (int) leftValue.internalValue + (int) rightValue.internalValue;
+        if (int1 < 0) {
+            if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
             } else {
-                if (((int) rightValue.internalValue) > 0) {
-                    value = buildInteger(Core.Int(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue))));
-                } else {
-                    value = buildFloat(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue)));
-                }
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int ** float");
-            value = buildFloat(0.0 + Core.Pow(((int) leftValue.internalValue), ((double) rightValue.internalValue)));
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float ** int");
-            value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((int) rightValue.internalValue)));
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float ** float");
-            value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((double) rightValue.internalValue)));
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float % float");
-            float1 = (double) rightValue.internalValue;
-            if (float1 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
-            }
-            float3 = (double) leftValue.internalValue % float1;
-            if (float3 < 0) {
-                float3 += float1;
-            }
-            value = buildFloat(float3);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float % int");
-            int1 = (int) rightValue.internalValue;
-            if (int1 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
-            }
-            float1 = (double) leftValue.internalValue % int1;
-            if (float1 < 0) {
-                float1 += int1;
-            }
-            value = buildFloat(float1);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int % float");
-            float3 = (double) rightValue.internalValue;
-            if (float3 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
-            }
-            float1 = (int) leftValue.internalValue % float3;
-            if (float1 < 0) {
-                float1 += float3;
-            }
-            value = buildFloat(float1);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int % int");
-            int2 = (int) rightValue.internalValue;
-            if (int2 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Modulo by 0.");
-            }
-            int1 = (int) leftValue.internalValue % int2;
-            if (int1 < 0) {
-                int1 += int2;
-            }
-            value = buildInteger(int1);
-            break;
-        case (((Types.LIST * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.LIST:
-            Core.EmitComment("list + list");
-            value = new Value(Types.LIST, Core.ListConcat((List<Value>) leftValue.internalValue, (List<Value>) rightValue.internalValue));
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int + int");
-            int1 = (int) leftValue.internalValue + (int) rightValue.internalValue;
-            if (int1 < 0) {
-                if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = INTEGER_NEGATIVE_CACHE[-int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+        } else {
+            if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+                value = INTEGER_POSITIVE_CACHE[int1];
             } else {
-                if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = INTEGER_POSITIVE_CACHE[int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int - int");
-            int1 = (int) leftValue.internalValue - (int) rightValue.internalValue;
-            if (int1 < 0) {
-                if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = INTEGER_NEGATIVE_CACHE[-int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int - int");
+        int1 = (int) leftValue.internalValue - (int) rightValue.internalValue;
+        if (int1 < 0) {
+            if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
             } else {
-                if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = INTEGER_POSITIVE_CACHE[int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int * int");
-            int1 = (int) leftValue.internalValue * (int) rightValue.internalValue;
-            if (int1 < 0) {
-                if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = INTEGER_NEGATIVE_CACHE[-int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+        } else {
+            if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+                value = INTEGER_POSITIVE_CACHE[int1];
             } else {
-                if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = INTEGER_POSITIVE_CACHE[int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int / int");
-            int2 = (int) rightValue.internalValue;
-            if (int2 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
-            }
-            int1 = Core.IntegerDivision((int) leftValue.internalValue, int2);
-            if (int1 < 0) {
-                if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = INTEGER_NEGATIVE_CACHE[-int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int * int");
+        int1 = (int) leftValue.internalValue * (int) rightValue.internalValue;
+        if (int1 < 0) {
+            if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
             } else {
-                if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = INTEGER_POSITIVE_CACHE[int1];
-                } else {
-                    value = new Value(Types.INTEGER, int1);
-                }
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float + int");
-            value = buildFloat((double) leftValue.internalValue + (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int + float");
-            value = buildFloat((int) leftValue.internalValue + (double) rightValue.internalValue);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float + float");
-            value = buildFloat((double) leftValue.internalValue + (double) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int - float");
-            value = buildFloat((int) leftValue.internalValue - (double) rightValue.internalValue);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float - int");
-            value = buildFloat((double) leftValue.internalValue - (int) rightValue.internalValue);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float - float");
-            value = buildFloat((double) leftValue.internalValue - (double) rightValue.internalValue);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float * int");
-            value = buildFloat((double) leftValue.internalValue * (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int * float");
-            value = buildFloat((int) leftValue.internalValue * (double) rightValue.internalValue);
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float * float");
-            value = buildFloat((double) leftValue.internalValue * (double) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int / float");
-            float1 = (double) rightValue.internalValue;
-            if (float1 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
-            }
-            value = buildFloat(Core.FloatDivision((int) leftValue.internalValue, float1));
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float / int");
-            int1 = (int) rightValue.internalValue;
-            if (int1 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
-            }
-            value = buildFloat(Core.FloatDivision((double) leftValue.internalValue, int1));
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float / float");
-            float1 = (double) rightValue.internalValue;
-            if (float1 == 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
-            }
-            value = buildFloat(Core.FloatDivision(((double) leftValue.internalValue), float1));
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_AND) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int & int");
-            value = buildInteger((int) leftValue.internalValue & (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_OR) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int | int");
-            value = buildInteger((int) leftValue.internalValue | (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_XOR) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int ^ int");
-            value = buildInteger((int) leftValue.internalValue ^ (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int << int");
-            int1 = (int) rightValue.internalValue;
-            if (int1 < 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
-            }
-            value = buildInteger((int) leftValue.internalValue << int1);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int >> int");
-            int1 = (int) rightValue.internalValue;
-            if (int1 < 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
-            }
-            value = buildInteger((int) leftValue.internalValue >> int1);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int < int");
-            if ((int) leftValue.internalValue < (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
+        } else {
+            if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+                value = INTEGER_POSITIVE_CACHE[int1];
             } else {
-                value = VALUE_FALSE;
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int <= int");
-            if ((int) leftValue.internalValue <= (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int / int");
+        int2 = (int) rightValue.internalValue;
+        if (int2 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+        }
+        int1 = Core.IntegerDivision((int) leftValue.internalValue, int2);
+        if (int1 < 0) {
+            if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
             } else {
-                value = VALUE_FALSE;
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float < int");
-            if ((double) leftValue.internalValue < (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
+        } else {
+            if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+                value = INTEGER_POSITIVE_CACHE[int1];
             } else {
-                value = VALUE_FALSE;
+                value = new Value(Types.INTEGER, int1);
             }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float <= int");
-            if ((double) leftValue.internalValue <= (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int < float");
-            if ((int) leftValue.internalValue < (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int <= float");
-            if ((int) leftValue.internalValue <= (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float < float");
-            if ((double) leftValue.internalValue < (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float <= float");
-            if ((double) leftValue.internalValue <= (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int >= int");
-            if ((int) leftValue.internalValue >= (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("int > int");
-            if ((int) leftValue.internalValue > (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float >= int");
-            if ((double) leftValue.internalValue >= (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("float > int");
-            if ((double) leftValue.internalValue > (int) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int >= float");
-            if ((int) leftValue.internalValue >= (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("int > float");
-            if ((int) leftValue.internalValue > (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float >= float");
-            if ((double) leftValue.internalValue >= (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.FLOAT:
-            Core.EmitComment("float > float");
-            if ((double) leftValue.internalValue > (double) rightValue.internalValue) {
-                value = VALUE_TRUE;
-            } else {
-                value = VALUE_FALSE;
-            }
-            break;
-        case (((Types.STRING * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("string * int");
-            value = multiplyString(leftValue, (string) leftValue.internalValue, (int) rightValue.internalValue);
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.STRING:
-            Core.EmitComment("int * string");
-            value = multiplyString(rightValue, (string) rightValue.internalValue, (int) leftValue.internalValue);
-            break;
-        case (((Types.LIST * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
-            Core.EmitComment("list * int");
-            int1 = (int) rightValue.internalValue;
-            if (int1 < 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
-            }
-            value = new Value(Types.LIST, Core.MultiplyList((List<Value>) leftValue.internalValue, int1));
-            break;
-        case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.LIST:
-            Core.EmitComment("int * list");
-            int1 = (int) leftValue.internalValue;
-            if (int1 < 0) {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
-            }
-            value = new Value(Types.LIST, Core.MultiplyList((List<Value>) rightValue.internalValue, int1));
-            break;
-        default:
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float + int");
+        value = buildFloat((double) leftValue.internalValue + (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int + float");
+        value = buildFloat((int) leftValue.internalValue + (double) rightValue.internalValue);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float + float");
+        float1 = (double) leftValue.internalValue + (double) rightValue.internalValue;
+        // inline the behavior for buildFloat
+        if (float1 == 0) value = VALUE_FLOAT_ZERO;
+        else if (float1 == 1) value = VALUE_FLOAT_ONE;
+        else value = new Value(Types.FLOAT, float1);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int - float");
+        value = buildFloat((int) leftValue.internalValue - (double) rightValue.internalValue);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float - int");
+        value = buildFloat((double) leftValue.internalValue - (int) rightValue.internalValue);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.SUBTRACTION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float - float");
+        float1 = (double) leftValue.internalValue - (double) rightValue.internalValue;
+        // inline the behavior for buildFloat
+        if (float1 == 0) value = VALUE_FLOAT_ZERO;
+        else if (float1 == 1) value = VALUE_FLOAT_ONE;
+        else value = new Value(Types.FLOAT, float1);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float * int");
+        value = buildFloat((double) leftValue.internalValue * (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int * float");
+        value = buildFloat((int) leftValue.internalValue * (double) rightValue.internalValue);
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float * float");
+        value = buildFloat((double) leftValue.internalValue * (double) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int / float");
+        float1 = (double) rightValue.internalValue;
+        if (float1 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+        }
+        value = buildFloat(Core.FloatDivision((int) leftValue.internalValue, float1));
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float / int");
+        int1 = (int) rightValue.internalValue;
+        if (int1 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+        }
+        value = buildFloat(Core.FloatDivision((double) leftValue.internalValue, int1));
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float / float");
+        float1 = (double) rightValue.internalValue;
+        if (float1 == 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Division by 0.");
+        }
+        value = buildFloat(Core.FloatDivision(((double) leftValue.internalValue), float1));
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_AND) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int & int");
+        value = buildInteger((int) leftValue.internalValue & (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_OR) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int | int");
+        value = buildInteger((int) leftValue.internalValue | (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.BITWISE_XOR) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int ^ int");
+        value = buildInteger((int) leftValue.internalValue ^ (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.BIT_SHIFT_LEFT) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int << int");
+        int1 = (int) rightValue.internalValue;
+        if (int1 < 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+        }
+        value = buildInteger((int) leftValue.internalValue << int1);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int >> int");
+        int1 = (int) rightValue.internalValue;
+        if (int1 < 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+        }
+        value = buildInteger((int) leftValue.internalValue >> int1);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int < int");
+        if ((int) leftValue.internalValue < (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int <= int");
+        if ((int) leftValue.internalValue <= (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float < int");
+        if ((double) leftValue.internalValue < (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float <= int");
+        if ((double) leftValue.internalValue <= (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int < float");
+        if ((int) leftValue.internalValue < (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int <= float");
+        if ((int) leftValue.internalValue <= (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float < float");
+        if ((double) leftValue.internalValue < (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.LESS_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float <= float");
+        if ((double) leftValue.internalValue <= (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int >= int");
+        if ((int) leftValue.internalValue >= (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("int > int");
+        if ((int) leftValue.internalValue > (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float >= int");
+        if ((double) leftValue.internalValue >= (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("float > int");
+        if ((double) leftValue.internalValue > (int) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int >= float");
+        if ((int) leftValue.internalValue >= (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("int > float");
+        if ((int) leftValue.internalValue > (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN_OR_EQUAL) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float >= float");
+        if ((double) leftValue.internalValue >= (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.FLOAT * MAX_OP) + BinaryOps.GREATER_THAN) * MAX_TYPE) + Types.FLOAT:
+        Core.EmitComment("float > float");
+        if ((double) leftValue.internalValue > (double) rightValue.internalValue) {
+            value = VALUE_TRUE;
+        } else {
+            value = VALUE_FALSE;
+        }
+        break;
+
+    case (((Types.STRING * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.STRING:
+        Core.EmitComment("string + string");
+        value = new Value(
+            Types.STRING,
+            Core.StringConcatAll((string) leftValue.internalValue, (string) rightValue.internalValue));
+        break;
+
+    case (((Types.STRING * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("string * int");
+        value = multiplyString(leftValue, (string) leftValue.internalValue, (int) rightValue.internalValue);
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.STRING:
+        Core.EmitComment("int * string");
+        value = multiplyString(rightValue, (string) rightValue.internalValue, (int) leftValue.internalValue);
+        break;
+
+    case (((Types.LIST * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.INTEGER:
+        Core.EmitComment("list * int");
+        int1 = (int) rightValue.internalValue;
+        if (int1 < 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
+        }
+        value = new Value(Types.LIST, Core.MultiplyList((List<Value>) leftValue.internalValue, int1));
+        break;
+
+    case (((Types.INTEGER * MAX_OP) + BinaryOps.MULTIPLICATION) * MAX_TYPE) + Types.LIST:
+        Core.EmitComment("int * list");
+        int1 = (int) leftValue.internalValue;
+        if (int1 < 0) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot multiply list by negative number.");
+        }
+        value = new Value(Types.LIST, Core.MultiplyList((List<Value>) rightValue.internalValue, int1));
+        break;
+
+    default:
+        if (row[0] == BinaryOps.ADDITION && 
+            Core.ForceParens(leftValue.type == Types.STRING || rightValue.type == Types.STRING)) {
+            value = new Value(Types.STRING, Core.StringConcatAll(valueToString(leftValue), valueToString(rightValue)));
+        } else {
             Core.EmitComment("unrecognized op");
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, Core.StringConcatAll("The '", getBinaryOpFromId(row[0]), "' operator is not supported for these types: ", getTypeFromId(leftValue.type), " and ", getTypeFromId(rightValue.type)));
-    }
+        }
+        break;
 }
+
 @import("ValueStackCapacityCheck.cry");
 valueStack[valueStackSize] = value;
 valueStackSize += 1;

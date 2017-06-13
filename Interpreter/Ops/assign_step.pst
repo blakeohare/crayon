@@ -1,14 +1,19 @@
-﻿valueStackSize -= 2;
-value = valueStack[(valueStackSize + 1)];
-value2 = valueStack[valueStackSize];
+﻿
+// row[0] -> name ID
+// row[1] -> push the assigned value back to the stack if this is 1.
+
+valueStackSize -= 2;
+value = valueStack[(valueStackSize + 1)]; // value to assign
+value2 = valueStack[valueStackSize]; // target root
 nameId = row[0];
+
 if (value2.type == Types.INSTANCE) {
     objInstance1 = ((ObjectInstance) value2.internalValue);
     classId = objInstance1.classId;
     classInfo = classTable[classId];
     intIntDict1 = classInfo.globalIdToMemberId;
     if (intIntDict1.Contains(nameId)) {
-        int1 = intIntDict1[nameId];
+        int1 = intIntDict1[nameId]; // member ID
         int2 = classInfo.functionIds[int1];
         if (int2 == -1) {
             objInstance1.members[int1] = value;
@@ -19,6 +24,7 @@ if (value2.type == Types.INSTANCE) {
 } else {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot assign to a field on this type.");
 }
+
 if (row[1] == 1) {
     valueStack[valueStackSize] = value;
     valueStackSize += 1;

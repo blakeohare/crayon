@@ -1,20 +1,22 @@
 ﻿if (argCount != 1) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount));
 }
+
 value2 = funcArgs[0];
 if (value2.type != Types.DICTIONARY) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "dictionary merge method requires another dictionary as a parameeter.");
 }
+
 dictImpl2 = ((DictImpl) value2.internalValue);
+
 if (dictImpl2.size > 0) {
     if (dictImpl.size == 0) {
         value.internalValue = cloneDictionary(dictImpl2, null);
+    } else if (dictImpl2.keyType != dictImpl.keyType) {
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "dictionaries with different key types cannot be merged.");
     } else {
-        if (dictImpl2.keyType != dictImpl.keyType) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "dictionaries with different key types cannot be merged.");
-        } else {
-            cloneDictionary(dictImpl2, dictImpl);
-        }
+        cloneDictionary(dictImpl2, dictImpl);
     }
 }
+
 output = VALUE_NULL;

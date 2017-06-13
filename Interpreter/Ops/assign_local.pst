@@ -1,4 +1,5 @@
-﻿valueStackSize -= 1;
+﻿
+valueStackSize -= 1;
 value = valueStack[valueStackSize];
 int1 = localsStackOffset + row[0];
 localsStack[int1] = value;
