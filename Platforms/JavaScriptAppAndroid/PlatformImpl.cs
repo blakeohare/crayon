@@ -34,12 +34,22 @@ namespace JavaScriptAppAndroid
                 Type = FileOutputType.Text,
                 TextContent = this.LoadTextResource("Resources/MainActivityJava.txt", replacements),
             };
-            
+
+            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
+                "\n",
+                "<script type=\"text/javascript\" src=\"android.js\"></script>"
+            ));
+
             Dictionary<string, FileOutput> jsFiles = this.ParentPlatform.ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
             foreach (string file in jsFiles.Keys)
             {
                 files["app/src/main/assets/js/" + file] = jsFiles[file];
             }
+            files["app/src/main/assets/js/android.js"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = this.LoadTextResource("Resources/AndroidJs.txt", replacements),
+            };
             return files;
         }
 

@@ -1,0 +1,14 @@
+﻿
+C$game$enforcedScreenSize = function(width, height) { 
+  return [window.innerWidth, window.innerHeight];
+}
+
+console.log = function(msg) {
+  // TODO: implenent me!
+};
+
+android_shim_send_event = function(type, x, y) {
+  var x = Math.floor(C$game$width * x);
+  var y = Math.floor(C$game$height * y);
+  C$input$eventRelays.push(v_buildRelayObj(type, x, y, 0, 0, ''));
+}
