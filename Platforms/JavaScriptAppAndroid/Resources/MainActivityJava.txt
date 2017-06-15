@@ -2,11 +2,13 @@
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -40,7 +42,15 @@ public class MainActivity extends Activity {
         this.setContentView(webview);
         WebSettings settings = webview.getSettings();
         settings.setJavaScriptEnabled(true);
+        webview.addJavascriptInterface(new JavaScriptPrinter(), "JSPrinter");
         webview.loadUrl("file:///android_asset/js/index.html");
+    }
+
+    public static class JavaScriptPrinter {
+        @JavascriptInterface
+        public void javaPrint(String value) {
+            Log.d("STDOUT", value);
+        }
     }
 
     @Override

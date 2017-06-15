@@ -4,7 +4,7 @@ C$game$enforcedScreenSize = function(width, height) {
 }
 
 console.log = function(msg) {
-  // TODO: implenent me!
+  window.JSPrinter.javaPrint('' + msg);
 };
 
 android_shim_send_event = function(type, x, y) {
