@@ -109,7 +109,7 @@ namespace JavaAppAndroid
             };
         }
 
-        private void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements)
+        public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements)
         {
             output[".gitignore"] = this.LoadTextFile("Resources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("Resources/buildGradle.txt", replacements);

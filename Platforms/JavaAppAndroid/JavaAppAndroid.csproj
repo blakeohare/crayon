@@ -93,5 +93,8 @@
     <EmbeddedResource Include="Resources\localProperties.txt" />
     <EmbeddedResource Include="Resources\settingsGradle.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -28,7 +28,7 @@
 	</target>
 	
 	<target name="android">
-		<platform>java-app-android</platform>
+		<platform>javascript-app-android</platform>
 	</target>
 
 	<target name="ios">

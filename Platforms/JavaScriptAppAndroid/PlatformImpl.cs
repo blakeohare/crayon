@@ -23,7 +23,24 @@ namespace JavaScriptAppAndroid
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+            Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+
+            JavaAppAndroid.PlatformImpl javaAndroidPlatform = (JavaAppAndroid.PlatformImpl)this.PlatformProvider.GetPlatform("java-app-android");
+            javaAndroidPlatform.OutputAndroidBoilerplate(files, replacements);
+            files["app/src/main/java/org/crayonlang/crayonsampleapp/app/MainActivity.java"] = new FileOutput()
+            {
+                TrimBomIfPresent = true,
+                Type = FileOutputType.Text,
+                TextContent = this.LoadTextResource("Resources/MainActivityJava.txt", replacements),
+            };
+            
+            Dictionary<string, FileOutput> jsFiles = this.ParentPlatform.ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
+            foreach (string file in jsFiles.Keys)
+            {
+                files["app/src/main/assets/js/" + file] = jsFiles[file];
+            }
+            return files;
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -33,27 +50,27 @@ namespace JavaScriptAppAndroid
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
         }
 
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateCodeForStruct(structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            throw new NotImplementedException();
+            return this.ParentPlatform.GetConstantFlags();
         }
     }
 }
