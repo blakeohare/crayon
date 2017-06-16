@@ -114,6 +114,10 @@
       <Project>{90CACD18-603E-483F-A5F0-7E87F1C1F5A2}</Project>
       <Name>JavaScriptAppAndroid</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
+      <Project>{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}</Project>
+      <Name>JavaScriptAppChrome</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
