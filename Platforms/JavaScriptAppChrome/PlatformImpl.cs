@@ -37,9 +37,10 @@ namespace JavaScriptAppChrome
             SystemBitmap smallIcon = iconFile.CloneToNewSize(16, 16);
             SystemBitmap largeIcon = iconFile.CloneToNewSize(128, 128);
 
-            Dictionary<string, FileOutput> files = this.PlatformProvider.GetPlatform("javascript-app-gl").ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
-
+            JavaScriptAppGl.PlatformImpl jsBasicPlatform = (JavaScriptAppGl.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app-gl");
+            Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            replacements["JS_LIB_INCLUSIONS"] = jsBasicPlatform.GenerateJsLibInclusionHtml(files.Keys);
             this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
             this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app-gl
             this.CopyResourceAsText(files, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);

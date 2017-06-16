@@ -56,6 +56,10 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JavaScriptAppGl\JavaScriptAppGl.csproj">
+      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
+      <Name>JavaScriptAppGl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LangJavaScript\LangJavaScript.csproj">
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
