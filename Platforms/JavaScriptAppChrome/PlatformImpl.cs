@@ -41,6 +41,8 @@ namespace JavaScriptAppChrome
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
+            this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app-gl
+            this.CopyResourceAsText(files, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);
             this.CopyResourceAsText(files, "manifest.json", "Resources/ManifestJson.txt", Util.MakeReplacementStringsJsonSafe(replacements));
             files["icon-16.png"] = new FileOutput()
             {
