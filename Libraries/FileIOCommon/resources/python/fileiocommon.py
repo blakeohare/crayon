@@ -167,3 +167,19 @@ def lib_fileiocommon_getDirRoot(path):
 
 def lib_fileiocommon_directoryExists(path):
 	return os.path.isdir(path)
+
+def lib_fileiocommon_textToLines(text, output):
+	startIndex = 0
+	i = 0
+	length = len(text)
+	while i < length:
+		c = text[i]
+		if c == '\r' and text[i:i + 2] == '\r\n':
+			output.append(text[startIndex:i + 2])
+			startIndex = i + 2
+			i += 1
+		elif c == '\n' or c == '\r':
+			output.append(text[startIndex:i + 1])
+			startIndex = i + 1
+		i += 1
+	output.append(text[startIndex:])
