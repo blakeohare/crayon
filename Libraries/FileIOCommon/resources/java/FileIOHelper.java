@@ -210,7 +210,21 @@ public class FileIOHelper {
 	}
 	
 	public static void textToLines(String text, ArrayList<String> output) {
-		throw new RuntimeException();
+		int startIndex = 0;
+		int length = text.length();
+		char c;
+		for (int i = 0; i < length; ++i) {
+			c = text.charAt(i);
+			if (c == '\r' && i + 1 < length && text.charAt(i + 1) == '\n') {
+				output.add(text.substring(startIndex, i + 2));
+				startIndex = i + 2;
+				i++;
+			} else if (c == '\r' || c == '\n') {
+				output.add(text.substring(startIndex, i + 1));
+				startIndex = i + 1;
+			}
+		}
+		output.add(text.substring(startIndex));
 	}
 	
 	public static int createDirectory(String path) {
