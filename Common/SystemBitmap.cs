@@ -52,6 +52,22 @@ namespace Common
 #endif
         }
 
+        public SystemBitmap CloneToNewSize(int width, int height)
+        {
+            SystemBitmap newBitmap = new SystemBitmap(width, height);
+            Graphics g = newBitmap.MakeGraphics();
+            if (width == this.Width && height == this.Height)
+            {
+                g.Blit(this, 0, 0);
+            }
+            else
+            {
+                g.Blit(this, 0, 0, width, height);
+            }
+            g.Cleanup();
+            return newBitmap;
+        }
+
         public void Save(string path)
         {
 #if WINDOWS
@@ -92,6 +108,15 @@ namespace Common
 
                 this.context.SetSource(bmp.bitmap, x, y);
                 this.context.Paint();
+#endif
+            }
+
+            public void Blit(SystemBitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
+            {
+#if WINDOWS
+                this.systemGraphics.DrawImage(bmp.bitmap, x, y, stretchWidth, stretchHeight);
+#elif OSX
+                throw new Exception("Not implemented.");
 #endif
             }
 

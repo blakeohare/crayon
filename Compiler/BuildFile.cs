@@ -28,6 +28,10 @@ namespace Crayon
         public string Orientation { get; set; }
         public string CrayonPath { get; set; }
         public string IosBundlePrefix { get; set; }
+        public int? WindowWidth { get; set; }
+        public int? WindowHeight { get; set; }
+        public string Description { get; set; }
+        public string Version { get; set; }
 
         public enum VarType
         {
@@ -60,6 +64,12 @@ namespace Crayon
         {
             [XmlElement("projectname")]
             public string ProjectName { get; set; }
+
+            [XmlElement("version")]
+            public string Version { get; set; }
+
+            [XmlElement("description")]
+            public string Description { get; set; }
 
             [XmlElement("source")]
             public SourceItem[] Sources { get; set; }
@@ -102,6 +112,9 @@ namespace Crayon
 
             [XmlElement("iosbundleprefix")]
             public string IosBundlePrefix { get; set; }
+
+            [XmlElement("windowsize")]
+            public Size WindowSize { get; set; }
 
             private bool TranslateStringToBoolean(string value)
             {
@@ -159,6 +172,26 @@ namespace Crayon
 
             [XmlElement("prefix")]
             public string[] Prefixes { get; set; }
+        }
+
+        public class Size
+        {
+            [XmlAttribute("width")]
+            public string Width { get; set; }
+
+            [XmlAttribute("height")]
+            public string Height { get; set; }
+
+            public static Size Merge(Size primary, Size secondary)
+            {
+                if (primary == null) return secondary;
+                if (secondary == null) return primary;
+                return new Size()
+                {
+                    Width = primary.Width ?? secondary.Width,
+                    Height = primary.Height ?? secondary.Height,
+                };
+            }
         }
 
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
@@ -228,6 +261,9 @@ namespace Crayon
                 flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
                 flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
                 flattened.CrayonPath = DoReplacement(targetName, desiredTarget.CrayonPath ?? flattened.CrayonPath);
+                flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
+                flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
+                flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
 
                 platform = desiredTarget.Platform;
             }
@@ -245,6 +281,8 @@ namespace Crayon
                 OutputFolder = flattened.Output,
                 Platform = platform,
                 ProjectID = flattened.ProjectName,
+                Description = flattened.Description,
+                Version = flattened.Version,
                 SourceFolders = ToFilePaths(projectDir, flattened.Sources),
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
@@ -257,6 +295,8 @@ namespace Crayon
                 Orientation = flattened.Orientation,
                 CrayonPath = flattened.CrayonPath,
                 IosBundlePrefix = flattened.IosBundlePrefix,
+                WindowWidth = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Width, "Invalid window width in build file."),
+                WindowHeight = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Height, "Invalid window height in build file."),
             };
         }
 

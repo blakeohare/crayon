@@ -199,7 +199,7 @@ namespace Platform
             {
                 return this.ParentPlatform.GenerateCodeForFunctionDeclaration(translator, funcDef);
             }
-            throw new NotSupportedException();;
+            throw new NotSupportedException();
         }
 
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
@@ -209,6 +209,12 @@ namespace Platform
             return new Dictionary<string, string>()
             {
                 { "PROJECT_ID", options.GetString(ExportOptionKey.PROJECT_ID) },
+                { "PROJECT_NAME", options.GetString(ExportOptionKey.DEFAULT_TITLE) },
+                { "DEFAULT_TITLE", options.GetString(ExportOptionKey.DEFAULT_TITLE) },
+                { "PROJECT_DESCRIPTION", options.GetStringOrEmpty(ExportOptionKey.DESCRIPTION) },
+                { "PROJECT_VERSION", options.GetStringOrEmpty(ExportOptionKey.VERSION) },
+                { "DEFAULT_WINDOW_WIDTH", options.GetInteger(ExportOptionKey.WINDOW_WIDTH, 800).ToString() },
+                { "DEFAULT_WINDOW_HEIGHT", options.GetInteger(ExportOptionKey.WINDOW_HEIGHT, 600).ToString() },
             };
         }
     }

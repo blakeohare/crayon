@@ -133,6 +133,12 @@ namespace Common
             return System.IO.Directory.Exists(path);
         }
 
+        public static bool FileExists(string path)
+        {
+            path = NormalizePath(path);
+            return System.IO.File.Exists(path);
+        }
+
         public static void CopyFile(string source, string dest)
         {
             if (!IS_WINDOWS)

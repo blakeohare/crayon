@@ -26,7 +26,34 @@ namespace JavaScriptAppChrome
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            throw new NotImplementedException();
+            if (!options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                throw new InvalidOperationException("Cannot generate a Chrome Web App without an icon resource.");
+            }
+
+            string iconFilePath = options.GetString(ExportOptionKey.ICON_PATH);
+            if (!FileUtil.FileExists(iconFilePath)) throw new InvalidOperationException("Icon resource path points to non-existent file.");
+            SystemBitmap iconFile = new SystemBitmap(iconFilePath);
+            SystemBitmap smallIcon = iconFile.CloneToNewSize(16, 16);
+            SystemBitmap largeIcon = iconFile.CloneToNewSize(128, 128);
+
+            Dictionary<string, FileOutput> files = this.PlatformProvider.GetPlatform("javascript-app-gl").ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
+
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
+            this.CopyResourceAsText(files, "manifest.json", "Resources/ManifestJson.txt", Util.MakeReplacementStringsJsonSafe(replacements));
+            files["icon-16.png"] = new FileOutput()
+            {
+                Type = FileOutputType.Image,
+                Bitmap = smallIcon,
+            };
+            files["icon-128.png"] = new FileOutput()
+            {
+                Type = FileOutputType.Image,
+                Bitmap = largeIcon,
+            };
+
+            return files;
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)

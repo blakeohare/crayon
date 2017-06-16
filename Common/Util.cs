@@ -280,5 +280,26 @@ namespace Common
         {
             return string.Join("\n", lines);
         }
+
+        public static int? ParseIntWithErrorNullOkay(string value, string error)
+        {
+            if (value == null) return null;
+            int output;
+            if (int.TryParse(value, out output))
+            {
+                return output;
+            }
+            throw new System.InvalidOperationException(error);
+        }
+
+        public static Dictionary<string, string> MakeReplacementStringsJsonSafe(Dictionary<string, string> values)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (string key in values.Keys)
+            {
+                output[key] = values[key].Replace("\"", "\\\"");
+            }
+            return output;
+        }
     }
 }
