@@ -1,5 +1,0 @@
-if (%%%IS_OPEN_GL_BASED%%%) {
-    output = VALUE_TRUE;
-} else {
-    output = VALUE_FALSE;
-}

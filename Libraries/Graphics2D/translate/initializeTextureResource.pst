@@ -1,30 +1,41 @@
-﻿Value lib_graphics2d_function_initializeTextureResource(Array<Value> args) {
-    Array<object> objArray1 = null;
-    Array<object> objArray2 = null;
-    ObjectInstance objInstance1 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = new Array<object>(6);
-    objInstance1.nativeData = objArray1;
-    objInstance1 = ((ObjectInstance) arg3.internalValue);
-    objArray2 = objInstance1.nativeData;
-    if (((bool) arg2.internalValue)) {
-        objArray1[0] = @ext_boolean("IS_OPEN_GL_BASED");
-        objArray1[1] = false;
-        objArray1[2] = -1;
-        objArray1[3] = objArray2[0];
-        objArray1[4] = objArray2[1];
-        objArray1[5] = objArray2[2];
+﻿/*
+    args[0]: GraphicsTextureResource object instance
+    args[1]: true if arg3 is a NativeImageData object. false if it is another GraphicsTextureResource
+    args[2]: NativeImageData object that represents an atlas (but possibly an atlas of 1)
+
+    This populates the native data of the texture resource.
+    nativeData[0] -> boolean if this is GL-based
+    nativeData[1] -> boolean if the texture is loaded. Always starts with false since textures are cached.
+    nativeData[2] -> texture ID. Set this to -1.
+    nativeData[3] -> native bitmap resource. Get this from the NativeImageData in arg2
+    nativeData[4] -> atlas width
+    nativeData[5] -> atlas height
+
+    NativeImageData's nativeData is basically used for most of this, which looks like...
+        nativeData[0] -> bitmap
+        nativeData[1] -> width
+        nativeData[2] -> height
+*/
+Value lib_graphics2d_function_initializeTextureResource(Array<Value> args) {
+    ObjectInstance textureResourceInstance = (ObjectInstance) args[0].internalValue;
+    Array<object> textureResourceNativeData = new Array<object>(6);
+    textureResourceInstance.nativeData = textureResourceNativeData;
+    ObjectInstance nativeImageDataInstance = (ObjectInstance) args[2].internalValue;
+    Array<object> nativeImageDataNativeData = nativeImageDataInstance.nativeData;
+    if (((bool) args[1].internalValue)) {
+        textureResourceNativeData[0] = @ext_boolean("IS_OPEN_GL_BASED");
+        textureResourceNativeData[1] = false;
+        textureResourceNativeData[2] = -1;
+        textureResourceNativeData[3] = nativeImageDataNativeData[0];
+        textureResourceNativeData[4] = nativeImageDataNativeData[1];
+        textureResourceNativeData[5] = nativeImageDataNativeData[2];
     } else {
-        objArray1[0] = false;
-        objArray1[1] = true;
-        objArray1[2] = -1;
-        objArray1[3] = objArray2[3];
-        objArray1[4] = objArray2[4];
-        objArray1[5] = objArray2[5];
+        textureResourceNativeData[0] = false;
+        textureResourceNativeData[1] = true;
+        textureResourceNativeData[2] = -1;
+        textureResourceNativeData[3] = nativeImageDataNativeData[3];
+        textureResourceNativeData[4] = nativeImageDataNativeData[4];
+        textureResourceNativeData[5] = nativeImageDataNativeData[5];
     }
-    return output;
+    return VALUE_NULL;
 }
