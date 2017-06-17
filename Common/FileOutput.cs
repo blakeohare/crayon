@@ -5,6 +5,7 @@
         Text,
         Binary,
         Copy,
+        Move,
         Image,
 
         // A stub indicating the original file path of a file that was once here but is no longer

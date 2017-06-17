@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common;
 
-namespace Crayon
+namespace Common
 {
-    internal class FileOutputExporter
+    public class FileOutputExporter
     {
         private string targetDirectory;
 
@@ -40,7 +39,8 @@ namespace Crayon
                     break;
 
                 case FileOutputType.Copy:
-                    this.ExportCopiedFile(absolutePath, file.AbsoluteInputPath);
+                case FileOutputType.Move:
+                    this.ExportCopiedFile(absolutePath, file.AbsoluteInputPath, file.Type == FileOutputType.Move);
                     break;
 
                 case FileOutputType.Image:
@@ -65,9 +65,16 @@ namespace Crayon
             FileUtil.WriteFileBytes(path, content);
         }
 
-        private void ExportCopiedFile(string path, string originalAbsolutePath)
+        private void ExportCopiedFile(string path, string originalAbsolutePath, bool isMove)
         {
-            FileUtil.CopyFile(originalAbsolutePath, path);
+            if (isMove)
+            {
+                FileUtil.MoveFile(originalAbsolutePath, path);
+            }
+            else
+            {
+                FileUtil.CopyFile(originalAbsolutePath, path);
+            }
         }
 
         private void ExportImageFile(string path, SystemBitmap image)

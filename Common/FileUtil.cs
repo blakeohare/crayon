@@ -97,6 +97,12 @@ namespace Common
             return ListDirImpl(dir, false, true);
         }
 
+        public static void DirectoryDelete(string dir)
+        {
+            string path = JoinAndCanonicalizePath(dir);
+            System.IO.Directory.Delete(dir, true);
+        }
+
         public static void EnsureFolderExists(string path)
         {
             path = path.Trim();
@@ -161,6 +167,16 @@ namespace Common
                     throw new InvalidOperationException("The file '" + dest + "' could not be copied to the output directory.");
                 }
             }
+        }
+
+        public static void MoveFile(string source, string dest)
+        {
+            if (!IS_WINDOWS)
+            {
+                source = source.Remove('\\', '/');
+                dest = dest.Replace('\\', '/');
+            }
+            System.IO.File.Move(source, dest);
         }
 
         public static string[] GetAllAbsoluteFilePathsDescendentsOf(string absoluteRoot)

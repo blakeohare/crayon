@@ -56,7 +56,10 @@ namespace JavaScriptAppChrome
                 Bitmap = largeIcon,
             };
 
-            return files;
+            return new Dictionary<string, FileOutput>()
+            {
+                { replacements["PROJECT_ID"] + ".zip", ZipCreator.Create(files, false) }
+            };
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)

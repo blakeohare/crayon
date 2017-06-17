@@ -88,7 +88,7 @@ namespace Common
             private System.Drawing.Graphics systemGraphics;
 #elif OSX
             private readonly Cairo.Context context;
-			private readonly SystemBitmap sysBmp;
+            private readonly SystemBitmap sysBmp;
 #endif
 
             public Graphics(SystemBitmap owner)
@@ -96,7 +96,7 @@ namespace Common
 #if WINDOWS
                 this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
 #elif OSX
-				this.sysBmp = owner;
+                this.sysBmp = owner;
                 this.context = new Cairo.Context(owner.bitmap);
 #endif
                 undisposed.Add(this);
@@ -118,9 +118,9 @@ namespace Common
 #if WINDOWS
                 this.systemGraphics.DrawImage(bmp.bitmap, x, y, stretchWidth, stretchHeight);
 #elif OSX
-				this.context.Scale(1.0 * this.sysBmp.Width / bmp.bitmap.Width, 1.0 * this.sysBmp.Height / bmp.bitmap.Height);
-				this.context.SetSource(bmp.bitmap, x, y);
-				this.context.Paint();
+                this.context.Scale(1.0 * this.sysBmp.Width / bmp.bitmap.Width, 1.0 * this.sysBmp.Height / bmp.bitmap.Height);
+                this.context.SetSource(bmp.bitmap, x, y);
+                this.context.Paint();
 #endif
             }
 
